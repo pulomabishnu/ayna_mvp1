@@ -49,6 +49,8 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   const lastConfirmationCheck = useRef(0);
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
+  const [emailSignupStep, setEmailSignupStep] = useState('details');
+  const [emailCode, setEmailCode] = useState('');
   // Signup via native Supabase phone-OTP auth instead of email/password —
   // requested 2026-08-25 as an alternative for anyone whose confirmation
   // email never arrives (see the resend feature above). Fully independent
@@ -128,7 +130,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
         if (data.session) {
           setSuccessMsg('You\'re all set. Signing you in...');
         } else {
-          setSuccessMsg('Almost there! A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
+          setEmailSignupStep('code');
+          setEmailCode('');
+          setSuccessMsg(`We sent a verification code to ${email}. Enter it below to finish creating your account.`);
           setNeedsConfirmation(true);
         }
       } else {
@@ -136,6 +140,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
         if (error) {
           if (/email not confirmed/i.test(error.message || '')) {
             setNeedsConfirmation(true);
+            setEmailSignupStep('code');
+            setEmailCode('');
+            setSuccessMsg('Your email still needs verification. Enter the code from your email below.');
           }
           throw error;
         }
@@ -158,11 +165,46 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
         options: { emailRedirectTo: 'https://www.aynahealth.co/confirmed' },
       });
       if (error) throw error;
-      setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
+      setResendMsg('New code sent. Check your inbox and spam folder.');
     } catch (err) {
       setResendMsg(err.message || 'Could not resend right now — try again in a moment.');
     } finally {
       setResending(false);
+    }
+  };
+
+  const handleVerifyEmailOtp = async (e) => {
+    e.preventDefault();
+    if (!supabase || !email) return;
+    const token = emailCode.replace(/\D/g, '').slice(0, 8);
+    if (token.length < 6) {
+      setError('Enter the verification code from your email.');
+      return;
+    }
+    setError('');
+    setSuccessMsg('');
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: email.trim(),
+        token,
+        type: 'email',
+      });
+      if (error) throw error;
+      if (!data?.session) {
+        throw new Error('Your email was verified, but we could not start your session. Please sign in.');
+      }
+      setNeedsConfirmation(false);
+      setResendMsg('');
+      setSuccessMsg('Email verified. Signing you in...');
+    } catch (err) {
+      setError(
+        /expired|invalid|token/i.test(err?.message || '')
+          ? 'That code is invalid or expired. Request a new code and try again.'
+          : (err.message || 'Could not verify that code. Please try again.')
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -314,6 +356,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
     setAuthMethod('email');
     setPhoneStep('number');
     setChecked([false, false, false, false]);
+    setEmailSignupStep('details');
+    setEmailCode('');
+    setNeedsConfirmation(false);
+    setResendMsg('');
   };
 
   const switchAuthMethod = (next) => {
@@ -322,6 +368,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
     setSuccessMsg('');
     setNeedsConfirmation(false);
     setPhoneStep('number');
+    setEmailSignupStep('details');
+    setEmailCode('');
+    setResendMsg('');
   };
 
   const overlayStyle = isModal ? {
@@ -421,7 +470,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
           onSubmit={
             isSignup && authMethod === 'phone'
               ? (phoneStep === 'number' ? handleSendPhoneOtp : handleVerifyPhoneOtp)
-              : handleEmailAuth
+              : authMethod === 'email' && emailSignupStep === 'code'
+                ? handleVerifyEmailOtp
+                : handleEmailAuth
           }
           style={styles.form}
         >
@@ -548,6 +599,48 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
                 </button>
               </>
             )
+          ) : authMethod === 'email' && emailSignupStep === 'code' ? (
+            <>
+              <p style={{ ...styles.success, color: 'var(--color-text-muted)' }}>
+                Enter the verification code sent to <strong>{email}</strong>.
+              </p>
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder="Verification code"
+                value={emailCode}
+                onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                required
+                style={styles.input}
+                autoComplete="one-time-code"
+                maxLength={8}
+                autoFocus
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmailSignupStep('details');
+                    setEmailCode('');
+                    setError('');
+                    setSuccessMsg('');
+                    setResendMsg('');
+                  }}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer' }}
+                >
+                  Change email
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resending}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: resending ? 'not-allowed' : 'pointer' }}
+                >
+                  {resending ? 'Sending…' : 'Resend code'}
+                </button>
+              </div>
+              {resendMsg && <p style={{ ...styles.success, margin: 0 }}>{resendMsg}</p>}
+            </>
           ) : (
             <>
               {isSignup && (
@@ -599,7 +692,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
 
           {error && <p style={styles.error}>{error}</p>}
           {successMsg && <p style={styles.success}>{successMsg}</p>}
-          {needsConfirmation && authMethod === 'email' && (
+          {needsConfirmation && authMethod === 'email' && emailSignupStep !== 'code' && (
             <p style={{ ...styles.error, color: 'var(--color-text-muted)' }}>
               After confirming in Safari, return to ayna. We’ll check when you come back.{' '}
               <button
@@ -618,7 +711,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
                 disabled={resending}
                 style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: resending ? 'not-allowed' : 'pointer' }}
               >
-                {resending ? 'Sending…' : 'Resend confirmation email'}
+                {resending ? 'Sending…' : 'Resend code'}
               </button>
               {resendMsg && <><br />{resendMsg}</>}
             </p>
@@ -636,7 +729,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
               ? 'Please wait…'
               : isSignup && authMethod === 'phone'
                 ? (phoneStep === 'number' ? 'Send code' : 'Verify')
-                : isSignup ? 'Create account' : 'Log in'}
+                : authMethod === 'email' && emailSignupStep === 'code'
+                  ? 'Verify email'
+                  : isSignup ? 'Send verification code' : 'Log in'}
           </button>
         </form>
 
