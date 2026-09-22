@@ -3523,7 +3523,8 @@ function App() {
           />
         )}
       </main>
-      <SiteFooter
+      {currentView !== 'quiz' && (
+        <SiteFooter
           onViewHowItWorks={handleViewHowItWorks}
           onViewAbout={handleViewAbout}
           onViewContact={handleViewContact}
@@ -3532,8 +3533,9 @@ function App() {
           onViewArticles={handleViewArticles}
           onViewPrivacyPolicy={() => setCurrentView('privacy-policy')}
           onViewTermsOfUse={() => setCurrentView('terms-of-use')}
-        onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
-      />
+          onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
+        />
+      )}
       {/* Outside the currentView switch on purpose — the same bar on every
           view, fixed to the bottom of the viewport, so DOM order here is
           only about it never being unmounted by navigation. */}
