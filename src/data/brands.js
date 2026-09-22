@@ -222,7 +222,7 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher states its formulas are developed with input from "scientists, doctors, and researchers" and are "OB/GYN and real people-approved," per the brand\'s own site.',
+        doctorOpinion: 'Neycher states its formulas are developed with input from "scientists, doctors, and researchers" and are "OB/GYN and real people-approved," per the brand\'s own site.\n\nNeycher also cites its own clinical evaluation: 20 women (ages 29-74) with vulvovaginal symptoms used the product for about a month, assessed with the Vulvovaginal Symptoms Questionnaire (VSQ) — a real, peer-reviewed tool (Erekson et al., Menopause, 2013) — analyzed by paired t-test (brand-reported as p<0.001 on every measure). This is Neycher\'s own brand-funded evaluation, not an independently published or peer-reviewed study of the product itself; the VSQ instrument it used is real and independently validated.',
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
             'Women in perimenopause and menopause',
@@ -230,16 +230,21 @@ export const BRAND_PRODUCTS = [
             'Postpartum women, once their doctor has cleared them (usually at the 6-week checkup), and breastfeeding women',
             'Breast cancer survivors and anyone who can\'t or doesn\'t want to use hormone therapy',
         ],
-        // Rendered as a bulleted list on the Evidence view.
+        // Rendered as a bulleted list on the Evidence view. Matches the
+        // "Application" section on Neycher's own live product page (updated
+        // from the earlier brand-guidelines PDF, which said "2 to 3 times a
+        // week" instead of "every 3 to 5 nights" — the live site is the more
+        // current source).
         howToUse: {
-            intro: 'With clean, dry hands, insert one suppository into the vagina at night, no applicator needed.',
+            intro: 'Lie down and insert one suppository into the vagina. Stay lying down for about 30 minutes so it absorbs fully, which makes bedtime the easiest time to use it.',
             steps: [
-                'First course: one a night for 10 nights in a row.',
-                'After that: 2 to 3 times a week to keep the effect, or as needed; many customers find 1 to 2 times a week is enough.',
+                'For the first 10 nights, use one each night.',
+                'After that, every 3 to 5 nights is enough for most, or adjust to your comfort and your doctor\'s guidance.',
                 'Don\'t use it more than 30 days in a row. Some customers cut a suppository in half.',
                 'Don\'t use it during your period. A thin pad can help with any discharge.',
-                'Step-by-step guide at helloneycher.com.',
             ],
+            sourceUrl: 'https://helloneycher.com/products/vaginal-moisturizer?Title=Default',
+            sourceLabel: 'helloneycher.com: Vaginal Moisturizer — Application',
         },
         // Rendered as a red warning box on the Evidence view.
         warnings: [
@@ -332,6 +337,12 @@ export const BRAND_PRODUCTS = [
                         text: 'ACOG: Vulvovaginal Health',
                         summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
                         justification: 'ACOG is the leading professional body for OB/GYN care in the U.S.',
+                    },
+                    {
+                        url: 'https://pubmed.ncbi.nlm.nih.gov/23481118/',
+                        text: 'The Vulvovaginal Symptoms Questionnaire (VSQ): a questionnaire for measuring vulvovaginal symptoms in postmenopausal women',
+                        summary: 'Erekson et al., Menopause, 2013 (Yale). This is the real, peer-reviewed, validated questionnaire Neycher says it used to assess its own brand-funded 20-person evaluation — the tool itself is independently validated; Neycher\'s specific evaluation using it is not independently published or peer-reviewed.',
+                        justification: 'Peer-reviewed instrument-validation study, PubMed-indexed.',
                     },
                 ],
             },

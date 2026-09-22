@@ -581,8 +581,10 @@ export default function ProductModal({
       extra.push({ id: 'howtouse', label: 'How to use' });
     }
     if (extra.length === 0) return AYNA_TABS;
-    const communityIdx = AYNA_TABS.findIndex((t) => t.id === 'community');
-    return [...AYNA_TABS.slice(0, communityIdx), ...extra, ...AYNA_TABS.slice(communityIdx)];
+    // After Social Media, not before — inserted ahead of 'ask' (Ask Ayna),
+    // which always stays last.
+    const askIdx = AYNA_TABS.findIndex((t) => t.id === 'ask');
+    return [...AYNA_TABS.slice(0, askIdx), ...extra, ...AYNA_TABS.slice(askIdx)];
   }, [product]);
 
   const sourceCounts = useMemo(() => {
@@ -865,7 +867,28 @@ export default function ProductModal({
           {/* Product head — mockup board 1f: square product tile beside the
               eyebrow / name / price / actions column. */}
           <div className="pdp-head">
-            {galleryTile}
+            <div>
+              {galleryTile}
+
+              {/* Fills the dead space below a short square image while the
+                  detail column (name/price/tabs/tab content) runs much
+                  taller — same fix as the Evidence view's left column. Only
+                  rendered when a catalog entry has this on file. */}
+              {Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
+                <div style={{ marginTop: 20 }}>
+                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
+                    INSIDE
+                  </div>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {product.ingredientScience.map((item) => (
+                      <li key={item.name} style={{ fontSize: 13, lineHeight: 1.5, color: '#3f3831', marginBottom: 10 }}>
+                        <strong>{item.name}:</strong> {item.text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
 
             <div className="pdp-head__detail">
               <div className="pdp-head__eyebrow">{eyebrow}</div>
@@ -1017,6 +1040,16 @@ export default function ProductModal({
                         </li>
                       ))}
                     </ul>
+                    {product.howToUse?.sourceUrl && (
+                      <a
+                        href={product.howToUse.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontSize: 12, color: '#B4732A', textDecoration: 'underline' }}
+                      >
+                        Source: {product.howToUse.sourceLabel || product.howToUse.sourceUrl}
+                      </a>
+                    )}
                   </div>
                 )}
 
@@ -1218,6 +1251,16 @@ export default function ProductModal({
                       </li>
                     ))}
                   </ul>
+                  {product.howToUse.sourceUrl && (
+                    <a
+                      href={product.howToUse.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: 12, color: '#B4732A', textDecoration: 'underline' }}
+                    >
+                      Source: {product.howToUse.sourceLabel || product.howToUse.sourceUrl}
+                    </a>
+                  )}
                 </div>
               )}
             </div>
