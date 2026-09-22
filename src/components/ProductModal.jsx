@@ -12,6 +12,7 @@ import MatchGauge from './MatchGauge';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
 import { getAmazonAffiliateUrl } from '../data/productAffiliateUrls';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
+import { getSafetyAlertText, buildSummarySentences } from '../utils/productSafetyAlert';
 import posthog from 'posthog-js';
 import { productHref } from '../utils/productRoute';
 
@@ -303,29 +304,12 @@ function truncate(s, max) {
   return `${t.slice(0, max - 1)}…`;
 }
 
-/**
- * Surfaces a real, already-on-file safety/opinion concern (e.g. the Always
- * Pads PFAS controversy) regardless of which tab is active. safety.recalls
- * and safety.opinionAlerts were both being written into the catalog with
- * real, accurate detail, but neither was ever rendered anywhere in this
- * file — the default "ayna summary" a user sees first is built only from
- * product.summary + product.effectiveness, both purely positive/performance
- * fields, so a product could read as unqualified positive even when the
- * SAME entry already had a well-documented concern on file just one tab
- * away (or, for opinionAlerts, nowhere at all — grep confirms zero
- * components read that field anywhere in the app before this).
- *
- * The legacy warning marker is the existing convention for "this is a real flagged concern," not
- * a new one — the same check Discovery.jsx's safety scoring and
- * Recommendations.jsx's "Safety note" badge already use. A product with no
- * flag returns null, so this only ever adds visibility to what the catalog
- * already documented, never invents a concern that isn't on file.
- */
-export function getSafetyAlertText(product) {
-  const recalls = product?.safety?.recalls;
-  if (!recalls || !String(recalls).includes('\u26A0\uFE0F')) return null;
-  return product?.safety?.opinionAlerts || recalls;
-}
+// getSafetyAlertText and buildSummarySentences now live in
+// ../utils/productSafetyAlert (getSafetyAlertText is shared with
+// Discovery.jsx's safety scoring and Recommendations.jsx's "Safety note"
+// badge, which independently duplicated this check). Re-exported here so
+// existing imports of them from this module keep working.
+export { getSafetyAlertText, buildSummarySentences } from '../utils/productSafetyAlert';
 
 /** First sentence only, so a long safety/materials blob stays a spec row, not a paragraph — cut on a word boundary. */
 function firstSentence(text, max = 140) {
@@ -585,21 +569,8 @@ export default function ProductModal({
     return [categoryLabel, product.brand].filter(Boolean).join(' · ').toUpperCase();
   }, [product]);
 
-  // ayna summary card: the catalog's own short, single-sentence fields —
-  // never a live AI call, so there's no loading state, quota, or paywall to
-  // show, and nothing here is longer than what's actually on file.
-  const summarySentences = useMemo(() => {
-    if (!product) return [];
-    const parts = [product.summary, product.effectiveness]
-      .map((s) => (s || '').trim())
-      .filter(Boolean);
-    const out = [];
-    for (const p of parts) {
-      const already = out.some((o) => o.toLowerCase() === p.toLowerCase() || o.toLowerCase().includes(p.slice(0, 30).toLowerCase()));
-      if (!already) out.push(p);
-    }
-    return out.slice(0, 2);
-  }, [product]);
+  // ayna summary card: see buildSummarySentences for what feeds it and why.
+  const summarySentences = useMemo(() => buildSummarySentences(product), [product]);
 
   const safetyAlert = useMemo(() => getSafetyAlertText(product), [product]);
 

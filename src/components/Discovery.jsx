@@ -7,6 +7,7 @@ import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands'
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import useStaticPlaceholder from '../utils/useStaticPlaceholder';
 import { getVerificationLinks } from '../utils/verificationLinks';
+import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
 import Disclaimer from './Disclaimer';
@@ -210,7 +211,7 @@ function getQualityScore(item, aynaReviews = {}) {
     // Same idea for rating: no rating yet isn't evidence of a bad product, just an unrated one —
     // default to a neutral 0.7 (out of 1) instead of 0.
     const rating = hasRating ? ratedValue : 0.7;
-    const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('\u26A0\uFE0F')) ? 1 : 0;
+    const safetyOk = hasFlaggedRecall(item.safety?.recalls) ? 0 : 1;
     return (rating * 2) + consensusScore + safetyOk;
 }
 

@@ -15,6 +15,7 @@ import {
     saveCachedLlmRecommendations,
     clearCachedLlmRecommendations,
 } from '../utils/fetchLlmRecommendations';
+import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 
 const TYPE_OPTIONS = [
     { value: 'all', label: 'All types' },
@@ -291,10 +292,10 @@ export default function Recommendations({
                     )}
 
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                        {product.safety?.recalls && !product.safety.recalls.includes('\u26A0\uFE0F') && (
+                        {product.safety?.recalls && !hasFlaggedRecall(product.safety.recalls) && (
                             <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No recall alert</span>
                         )}
-                        {product.safety?.recalls && product.safety.recalls.includes('\u26A0\uFE0F') && (
+                        {product.safety?.recalls && hasFlaggedRecall(product.safety.recalls) && (
                             <span style={{ fontSize: '0.75rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>Safety note</span>
                         )}
                         {product.privacy?.sellsData?.includes('\u274C') && (
