@@ -1,5 +1,6 @@
 import React from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { loadProductCatalog } from '../utils/productCatalog';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
@@ -54,9 +55,29 @@ import { ProductImageFallback } from './ProductTileImage';
  * Added 2026-09-15: LOLA — confirmed affiliate partnership. Each LOLA
  * product uses its own product-specific lvnta.com affiliate link (they
  * redirect to different Amazon ASINs, not one shared link).
+ *
+ * Synced 2026-09-22 from the partnership tracker: SootheHer, Winx Health,
+ * and gina are also confirmed affiliate/social partners. The page now loads
+ * /api/products (the same live catalog used by Browse) before falling back
+ * to ALL_PRODUCTS, so DB-seeded partner products such as gina do not vanish
+ * from this page just because the bundled fallback has not caught up yet.
  */
 
 const PARTNERS = [
+  {
+    brand: 'BUNI',
+    logo: '/brands/buni.png',
+    url: 'https://www.bunibody.com/',
+    blurb:
+      'Intimate and body care for vulvar moisture, nipple and lip care, scar and body care, pregnancy, postpartum, menopause, and everyday comfort.',
+  },
+  {
+    brand: 'SootheHer',
+    logo: '/brands/sootheher.png',
+    url: 'https://sootheher.com/',
+    blurb:
+      'Drug-free, wearable period-pain support built around the Elaris TENS pod and reusable gel-pad refills.',
+  },
   {
     brand: 'Neycher',
     /** Drop a file at public/brands/neycher.png and it replaces the wordmark. */
@@ -90,6 +111,20 @@ const PARTNERS = [
       'At-home fertility and hormone testing. Track your full cycle, confirm ovulation, screen for common fertility factors, and get personalized next steps.',
   },
   {
+    brand: 'Winx Health',
+    logo: '/brands/winx-health.png',
+    url: 'https://hellowinx.com/',
+    blurb:
+      'At-home vaginal and urinary health products, diagnostics, supplements, pregnancy tests, and clinician-connected care.',
+  },
+  {
+    brand: 'gina',
+    logo: '/brands/gina.png',
+    url: 'https://www.gina.health/',
+    blurb:
+      'Women-focused nutrition and mineral supplements, including POWER amino-acid protein and MINERALIZE shilajit support.',
+  },
+  {
     brand: 'Elitone',
     /** Drop a file at public/brands/elitone.png and it replaces the wordmark. */
     logo: '/brands/elitone.png',
@@ -104,14 +139,6 @@ const PARTNERS = [
     url: 'https://pelvic-bra.myshopify.com/nlbs3u',
     blurb:
       'A discreet, adjustable compression garment for pelvic heaviness, pressure, bulging, and leakage — worn during daily activity, not a corrective device.',
-  },
-  {
-    brand: 'BUNI',
-    /** Drop a file at public/brands/buni.png and it replaces the wordmark. */
-    logo: '/brands/buni.png',
-    url: 'https://www.bunibody.com/',
-    blurb:
-      'Intimate and body care for vulvar moisture, nipple and lip care, scar and body care, pregnancy, postpartum, menopause, and everyday comfort.',
   },
   {
     brand: 'LiM Method',
@@ -154,6 +181,23 @@ function BrandMark({ partner }) {
 }
 
 export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem }) {
+  const [catalogProducts, setCatalogProducts] = React.useState(ALL_PRODUCTS);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    loadProductCatalog()
+      .then(({ products }) => {
+        if (cancelled || !Array.isArray(products) || !products.length) return;
+        const byId = new Map(ALL_PRODUCTS.map((product) => [product.id, product]));
+        products.forEach((product) => {
+          if (product?.id) byId.set(product.id, product);
+        });
+        setCatalogProducts([...byId.values()]);
+      })
+      .catch((error) => console.warn('[Ayna] partner catalog refresh failed:', error?.message));
+    return () => { cancelled = true; };
+  }, []);
+
   return (
     <section className="brands">
       <div className="mockup-page brands__head">
@@ -170,7 +214,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
 
       <div className="mockup-page">
         {PARTNERS.map((partner) => {
-          const products = ALL_PRODUCTS.filter((p) => p.brand === partner.brand);
+          const products = catalogProducts.filter((p) => String(p.brand || '').toLowerCase() === partner.brand.toLowerCase());
           return (
             <article key={partner.brand} className="brand-partner">
               <header className="brand-partner__head">
