@@ -1432,24 +1432,108 @@ export const BRAND_PRODUCTS = [
         type: 'digital',
         internal: false,
         healthFunctions: ['vaginal-health'],
-        tags: ['pelvic-floor', 'leaks', 'discomfort', 'fitness'],
-        price: 'Subscription',
+        tags: ['pelvic-floor', 'leaks', 'discomfort', 'fitness', 'postpartum', 'prolapse'],
+        price: '$30/month or $180/year (14-day free trial)',
         whereToBuy: ['Connect Pelvic Floor Fitness'],
-        platform: 'Web, app',
+        platform: 'Web, app, Roku, Amazon Fire TV, Apple TV',
         url: 'https://www.connectpelvicfloorfitness.com/',
         affiliateUrl: 'https://goto.connectpelvicfloorfitness.com/YVk7WO',
         image: '',
-        summary: 'A DPT-led pelvic floor fitness program with 500+ guided workouts for women, designed to build pelvic floor and whole-body strength and help reduce common pelvic floor symptoms.',
+        summary: 'A pelvic-floor-informed fitness program founded by Caroline Packard, DPT — a pelvic floor physical therapist who developed stress incontinence and prolapse after her first pregnancy. Combines pelvic floor rehab principles with real strength training, HIIT, yoga, and mobility work, designed to build pelvic floor and whole-body strength and help reduce common pelvic floor symptoms.',
+        ingredients: 'Not a physical product — see "How it works" below for what the membership includes.',
         safety: {
             fdaStatus: 'Fitness and education service; not a medical device.',
             materials: 'N/A',
             recalls: 'N/A',
-            sideEffects: 'Exercise programs may not be appropriate for every pelvic floor condition. Stop if exercises cause pain or worsen symptoms and consult a pelvic floor physical therapist or clinician when needed.',
-            opinionAlerts: 'Program information is based on the brand\'s own description.'
+            sideEffects: 'Exercise programs may not be appropriate for every pelvic floor condition. Stop if exercises cause pain or worsen symptoms and consult a pelvic floor physical therapist or clinician when needed. Diastasis recti evidence for exercise alone is limited (see Clinician opinion below) — anyone with a significant abdominal separation should be evaluated by a clinician before relying on exercise as a sole treatment.',
+            opinionAlerts: 'Program information is based on the brand\'s own description; individual results depend on the specific condition, adherence, and guidance from a clinician when needed.'
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Program is led by a Doctor of Physical Therapy. Description sourced from Connect Pelvic Floor Fitness.',
-        effectiveness: 'Provides guided pelvic floor and whole-body exercise programming. Individual results vary by condition and adherence.',
+        clinicianAttribution: 'Program is designed by Caroline Packard, DPT — a pelvic floor physical therapist with 15+ years of clinical experience. Description sourced from Connect Pelvic Floor Fitness; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Connect was created by Caroline Packard, DPT, after her own experience with postpartum stress incontinence and prolapse — she found that the strength workouts she\'d always relied on were making her symptoms worse, and built this program to combine pelvic floor rehab technique with real strength training, HIIT, yoga, mobility, and breathwork rather than isolated Kegels, per the brand\'s own site. Membership includes a growing library of guided workouts (typically 35–45 minutes), self-assessments to track progress, monthly live Q&A sessions with Caroline, a private members-only community, and pelvic floor educational resources.\n\nThe underlying approach — pelvic floor muscle training (PFMT) — has real, strong independent evidence behind it for two of the conditions this program targets. A Cochrane systematic review of 31 trials in 1,817 women found PFMT can cure or improve stress and other types of urinary incontinence, and is recommended as part of first-line conservative management. A separate systematic review and meta-analysis of 13 trials in 2,340 women found PFMT produced greater subjective and objective improvement in pelvic organ prolapse symptoms and stage compared to controls.\n\nEvidence for exercise specifically correcting diastasis recti (abdominal separation) is more limited. A recent systematic review and meta-analysis found no clear evidence that exercise-based interventions alone reduce inter-recti distance in postpartum women, though exercise may still provide functional or symptomatic benefit even without measurably closing the gap.\n\nThese citations are for pelvic floor muscle training and postpartum exercise generally — no independent study of this specific program\'s protocol was found.',
+        doctorOpinionShort: 'Pelvic floor muscle training (the program\'s core approach) has strong independent evidence for improving urinary incontinence and pelvic organ prolapse symptoms specifically. Evidence for exercise alone correcting diastasis recti is more limited. No independent study of this specific program\'s protocol was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/25408383/', label: 'PubMed: Pelvic floor muscle training for urinary incontinence in women — a Cochrane systematic review' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/26407564/', label: 'PubMed: The efficacy of pelvic floor muscle training for pelvic organ prolapse — a systematic review and meta-analysis' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Postpartum women dealing with leakage, prolapse symptoms, or diastasis recti',
+            'Women who want strength training that\'s built around pelvic floor function rather than around it',
+            'Anyone told their only options were "live with it" or surgery, who wants to try a structured conservative program first',
+            'Women wanting DPT-designed programming without needing to attend in-person physical therapy',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // connectpelvicfloorfitness.com/membership and /faqs.
+        howToUse: {
+            intro: 'Per Connect\'s own site: start with a 14-day free trial, then continue on a monthly or annual membership.',
+            steps: [
+                'Access a growing library of strength training, HIIT, advanced core, yoga, and mobility workouts, each 35–45 minutes and fully guided, with instruction on form, breathing, and modifications.',
+                'Use built-in self-assessments throughout to track progress and guide what to do next.',
+                'Join monthly live Q&A sessions with Caroline Packard, DPT.',
+                'Get access to a private members-only community and pelvic floor educational resources.',
+                'Stream on the website, the iOS/Android app, or Roku, Amazon Fire TV, and Apple TV.',
+                'HSA/FSA eligible through Connect\'s partner Flex, per the brand\'s site.',
+            ],
+            sourceUrl: 'https://connectpelvicfloorfitness.com/membership',
+            sourceLabel: 'connectpelvicfloorfitness.com: Membership',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not a substitute for an in-person pelvic floor physical therapy evaluation, especially for significant prolapse, diastasis recti, or persistent leakage.',
+            'Stop any exercise that causes pain or worsens symptoms and consult a pelvic floor physical therapist or clinician.',
+            'Cancel at least 24 hours before renewal to avoid being charged for the next billing period, per the brand\'s site.',
+        ],
+        communityReview: 'Reviews on Connect\'s own site and app store listings include: "How Caroline explains things and how this app is set up is 100 out of 10," and "I wholeheartedly recommend this program to anyone who has been told to live with symptoms or that surgery is the only option. It has transformed my approach to fitness and my overall well-being." No independently verifiable aggregate star rating was found on the Apple App Store at time of writing.',
+        effectiveness: 'Provides guided pelvic floor and whole-body exercise programming built on pelvic floor muscle training, which has strong independent evidence for improving urinary incontinence and pelvic organ prolapse symptoms specifically; evidence for exercise alone correcting diastasis recti is more limited. Individual results vary by condition and adherence, and no independent study of this specific program was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/25408383/',
+                text: 'PubMed: Pelvic floor muscle training for urinary incontinence in women — a Cochrane systematic review',
+                summary: '31 trials, 1,817 women. Found PFMT can cure or improve stress and other types of urinary incontinence — general evidence for the training approach, not this specific program.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/26407564/',
+                text: 'PubMed: The efficacy of pelvic floor muscle training for pelvic organ prolapse — a systematic review and meta-analysis',
+                summary: '13 trials, 2,340 women. Found PFMT improved both subjective prolapse symptoms and objective prolapse severity versus controls.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/41995773/',
+                text: 'PubMed: What is the evidence for abdominal and pelvic floor muscle training to treat diastasis recti abdominis postpartum? — an updated systematic review and meta-analysis',
+                summary: 'Found no clear evidence that exercise-based interventions alone reduce inter-recti distance, though exercise may still help function/symptoms. Included for balance — this is a more cautious finding than the incontinence/prolapse evidence above.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://connectpelvicfloorfitness.com/faqs',
+                        text: 'connectpelvicfloorfitness.com: FAQs',
+                        summary: 'Connect\'s own FAQ page, covering membership details, cancellation, and program logistics.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://apps.apple.com/us/app/connect-pelvic-floor-fitness/id6475697994',
+                        text: 'Apple App Store: Connect Pelvic Floor Fitness',
+                        summary: 'Real, current App Store listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://play.google.com/store/apps/details?id=com.VidApp.ConnectPelvicFloor',
+                        text: 'Google Play: Connect Pelvic Floor Fitness',
+                        summary: 'Real, current Google Play listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
