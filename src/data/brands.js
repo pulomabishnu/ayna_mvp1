@@ -2397,7 +2397,7 @@ export const BRAND_PRODUCTS = [
         // Scientific literature tab's citation list.
         doctorOpinionCitations: [
             { url: 'https://pubmed.ncbi.nlm.nih.gov/41586016/', label: 'PubMed: Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction' },
-            { url: 'https://www.researchgate.net/publication/51408102_The_effectiveness_of_supportive_underwear_in_women_with_pelvic_organ_prolapse_A_pilot_study', label: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study' },
+            { url: 'https://doi.org/10.1007/s00192-008-0676-x', label: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study' },
         ],
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
@@ -2436,7 +2436,7 @@ export const BRAND_PRODUCTS = [
                 summary: '2026 exploratory, randomized crossover study, 13 postpartum runners. Found real biomechanical improvements and increased perceived pelvic floor/core support. General category evidence, not product-specific.',
             },
             {
-                url: 'https://www.researchgate.net/publication/51408102_The_effectiveness_of_supportive_underwear_in_women_with_pelvic_organ_prolapse_A_pilot_study',
+                url: 'https://doi.org/10.1007/s00192-008-0676-x',
                 text: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study',
                 summary: '13 women with prolapse. Found no significant quality-of-life improvement on validated questionnaires, though some participants subjectively felt relief. Included for balance — a real negative finding for a similar (not identical) product.',
             },
@@ -2453,9 +2453,9 @@ export const BRAND_PRODUCTS = [
                 links: [
                     {
                         platform: 'website',
-                        url: 'https://www.mypelvicbra.shop/pages/about',
-                        text: 'mypelvicbra.shop: About',
-                        summary: 'My Pelvic Bra\'s own about page with founder Jeanice Mitchell\'s story.',
+                        url: 'https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE',
+                        text: 'mypelvicbra.shop: Classic Pelvic Bra — customer reviews',
+                        summary: 'The Classic Pelvic Bra\'s own product page, which displays customer reviews directly on the listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
                     },
                 ],
             },
@@ -2989,6 +2989,11 @@ export const BRAND_PRODUCTS = [
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Educational positioning is sourced from My Pelvic Bra, founded by pelvic floor physical therapist Jeanice Mitchell, PT, MPT, WCS, BCB-PMD; no independent clinician endorsement verified by ayna.',
         doctorOpinion: 'The product is intended as a hands-on teaching aid for explaining prolapse and external support concepts, not as a therapeutic device. Pelvic organ prolapse is genuinely common — ACOG estimates women in the US have a 13% lifetime risk of undergoing surgery for it — so a visual, tactile teaching tool like this has real educational value for explaining a condition many people have never had described to them clearly.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31651832/', label: 'ACOG Practice Bulletin 214: Pelvic Organ Prolapse' },
+        ],
         effectiveness: 'Educational demonstration tool only; it is not intended to provide a clinical treatment effect.',
         // Category-level citation shown only on the Scientific literature
         // tab, kept out of verificationLinks so it doesn't also pool onto
@@ -3096,6 +3101,76 @@ export const BRAND_PRODUCTS = [
                         url: 'https://www.mypelvicbra.shop/pages/about',
                         text: 'mypelvicbra.shop: About',
                         summary: 'My Pelvic Bra\'s own about page with founder Jeanice Mitchell\'s story.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-mypelvicbra-sports',
+        name: 'Sports Pelvic Bra®',
+        brand: 'My Pelvic Bra',
+        category: 'pelvic-floor',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['pelvic-floor', 'postpartum', 'comfort', 'bladder-leaks', 'fitness'],
+        price: '$49.00',
+        whereToBuy: [],
+        url: 'https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE',
+        affiliateUrl: 'https://pelvic-bra.myshopify.com/products/sports-pelvic-bra%C2%AE?bg_ref=bZYYwMBpTa',
+        image: '',
+        summary: 'From My Pelvic Bra — founded by pelvic floor physical therapist Jeanice Mitchell, PT (see the Classic Pelvic Bra entry for her story). The Sports Pelvic Bra is a lightweight, fully adjustable style with a snug bikini-style fit for activities where an extra pelvic-floor lift is wanted, per the brand\'s own site.',
+        safety: {
+            fdaStatus: 'Compression support garment; not an FDA-cleared medical device and not a corrective treatment for prolapse.',
+            materials: 'Premium, breathable, skin-friendly stretch fabric with a slim, seamless construction, creaseless gusset, reinforced hammock, sweat-wicking liner, and a fully adjustable, bra-like tightening system with a flexible contoured waistband that raises or lowers for the amount of support needed, per the brand.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Use the minimum compression needed for comfort and support. Remove for sleep and reduce or stop use if the garment causes pain, numbness, skin irritation, or worsening symptoms.',
+            opinionAlerts: 'Fit and support descriptions are sourced from My Pelvic Bra\'s product page; product-specific clinical outcomes have not been independently established.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Same founder (Jeanice Mitchell, PT, MPT, WCS, BCB-PMD) and brand as the Classic Pelvic Bra; no independent clinician endorsement of this specific product has been verified by ayna.',
+        doctorOpinion: 'My Pelvic Bra positions the Sports style as its lightest-weight, most activity-focused option — a fully adjustable, seamless design meant to disappear under workout clothing while giving a custom, secure fit for sports and other movement.\n\nSee the Classic Pelvic Bra entry for the independent research on external pelvic compression garments as a category (a 2026 study found real biomechanical and perceived-support benefits specifically in postpartum runners; an earlier pilot study found no significant quality-of-life change from a similar product) — that research applies to the garment category generally, not this specific style, and no independent clinical study of the Sports Pelvic Bra itself was found.',
+        doctorOpinionShort: 'Same brand and founder as the Classic Pelvic Bra, in a lighter-weight, more activity-focused design. See the Classic Pelvic Bra entry for the mixed independent research on external compression garments as a category. No independent study of this specific style was found.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women wanting a lightweight, seamless option for sports, running, or other workouts',
+            'Anyone who wants a custom, adjustable fit that disappears under athletic clothing',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // mypelvicbra.shop/products/sports-pelvic-bra.
+        howToUse: {
+            intro: 'Per My Pelvic Bra\'s own site: use the bra-like tightening system and contoured waistband to dial in support before activity.',
+            steps: [
+                'Adjust the bra-like tightening system for a custom, secure fit.',
+                'Raise or lower the flexible, contoured waistband depending on how much support is needed.',
+                'Wear during sports, running, or other movement where extra pelvic-floor lift is wanted.',
+                'Remove for sleep, per the brand.',
+            ],
+            sourceUrl: 'https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE',
+            sourceLabel: 'mypelvicbra.shop: Sports Pelvic Bra',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not designed to correct prolapse — this is symptom-management support wear, not a structural treatment, per the brand.',
+            'Remove for sleep, and use the minimum compression needed for comfort and support.',
+            'Reduce or stop use if the garment causes pain, numbness, skin irritation, or worsening symptoms.',
+        ],
+        communityReview: 'No independently verified customer review data was found for this product at time of writing.',
+        effectiveness: 'Positioned as external symptom-management support wear rather than a corrective device. See the Classic Pelvic Bra entry for the mixed independent research on external compression garments as a category; no independent clinical study of the Sports Pelvic Bra specifically was found.',
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.mypelvicbra.shop/collections/all/products/sports-pelvic-bra%C2%AE',
+                        text: 'mypelvicbra.shop: Sports Pelvic Bra — customer reviews',
+                        summary: 'The Sports Pelvic Bra\'s own product page, which displays customer reviews directly on the listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
                     },
                 ],
             },
