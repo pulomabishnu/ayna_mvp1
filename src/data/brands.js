@@ -1755,7 +1755,7 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['vaginal-health'],
-        tags: ['discomfort', 'menopause', 'postpartum', 'hormone-free', 'organic', 'cruelty-free', 'vegan'],
+        tags: ['discomfort', 'menopause', 'postpartum', 'hormone-free', 'organic', 'cruelty-free', 'vegan', 'ph-neutral'],
         price: '$42',
         whereToBuy: ['Amazon', 'BUNI Body'],
         url: 'https://www.bunibody.com/products/buni-vulva-balm',
@@ -1765,22 +1765,22 @@ export const BRAND_PRODUCTS = [
             'BUNI Body': 'https://www.bunibody.com/products/buni-vulva-balm',
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-vulva-balm-product-page-main.webp?v=1776773714',
-        summary: 'A hormone-free external vulva moisturizer in an airless pump, formulated for dryness, friction, itching, and everyday vulvar skin comfort. BUNI positions it for menopause and perimenopause, pregnancy and postpartum, grooming, exercise, and intimate activity.',
-        ingredients: 'Key ingredients listed by BUNI include organic avocado oil, honey and propolis, chamomile, lavender, shea butter, cacao butter, hyaluronic acid, and sea buckthorn oil.',
+        summary: 'A hormone-free, pH-balanced external vulva moisturizer in an airless pump, formulated to relieve dryness, reduce friction and chafing, soothe itching and irritation, and help prevent ingrown hairs. BUNI positions it for menopause and perimenopause, pregnancy and postpartum, grooming, exercise, and comfort during intimacy.',
+        ingredients: 'Per BUNI\'s own "What\'s Inside" list: organic avocado oil (deep moisture + elasticity), honey & propolis (prebiotic + antioxidant, natural healing for stressed skin), chamomile & lavender (calming + soothing, reduces irritation and redness), shea & cacao (deep conditioning + antioxidant protection, locks in moisture), hyaluronic acid (intense hydration, holds up to 1,000x its weight in water), and sea buckthorn oil (rich in linoleic acid, supports elasticity and hydration).',
         safety: {
             fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the balm itself is a cosmetic / external personal-care product, not an FDA-cleared drug or medical device.',
             // Full packaging/formula description — shown in full under
             // "Materials" on the Evidence view (see buildFactRows in
             // ProductModal.jsx, which doesn't truncate this field).
-            materials: 'Airless pump dispenser. Formula is hormone-free, paraben-free, phthalate-free, dye-free, and made with 99.5–100% natural ingredients, per BUNI. Key ingredients: organic avocado oil, honey and propolis, organic chamomile, organic lavender, shea butter, cacao butter, hyaluronic acid, and sea buckthorn oil.',
+            materials: 'Dispensed through an airless pump — BUNI positions this against an open-jar format, saying it protects the formula from air and repeated contact, gives clean touch-free application, and keeps dosing more consistent; the packaging is also recyclable, per BUNI. Formula is hormone-free, paraben-free, phthalate-free, dye-free, pH-balanced, and made with 99.5–100% natural ingredients, per BUNI. Per BUNI\'s own "What\'s Inside" list: organic avocado oil (deep moisture + elasticity), honey & propolis (prebiotic + antioxidant), chamomile & lavender (calming + soothing), shea & cacao (deep conditioning + antioxidant protection), hyaluronic acid (intense hydration), and sea buckthorn oil (elasticity + hydration).',
             recalls: 'No recalls found.',
             sideEffects: 'For external vulvar use only — not intended for internal vaginal use, per the brand. Discontinue and see a doctor if you notice irritation or an allergic reaction. Full warnings are listed below.',
             opinionAlerts: 'Benefit and ingredient claims are from BUNI; no independent clinical trial of the finished product was identified.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'BUNI states the product was developed by board-certified OB/GYNs and dermatologists; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'BUNI positions REJUVENATE as a gynecologist- and dermatologist-developed, hormone-free external moisturizer for vulvar dryness, friction, and irritation — pure, simple, and effective, per the brand\'s own site.\n\nSeveral of its named ingredients have real supporting research, though none of it tested this finished product. Honey and propolis have documented antibacterial, antifungal, and wound-healing properties in general skin studies, and propolis specifically has shown antifungal activity against vaginal Candida albicans in lab research. Hyaluronic acid is a well-studied humectant that draws and holds moisture in tissue. Avocado oil has shown skin-barrier-repair and wound-healing effects in review literature covering several plant oils.\n\nSea buckthorn oil has real clinical evidence for vaginal dryness specifically — a randomized, placebo-controlled trial found daily oral sea buckthorn oil improved vaginal epithelium integrity in postmenopausal women over 3 months. That trial tested oral intake, though, not a topical balm like this one, so it doesn\'t directly validate this product\'s use.\n\nNo independent clinical study of this specific product was found.',
-        doctorOpinionShort: 'Several named ingredients (honey, propolis, hyaluronic acid, avocado oil, sea buckthorn oil) have real supporting research individually, including one placebo-controlled trial on oral sea buckthorn oil for vaginal dryness — though that tested oral intake, not a topical balm. No independent clinical study of this specific product was found.',
+        doctorOpinion: 'BUNI positions REJUVENATE as a gynecologist- and dermatologist-developed, hormone-free, pH-balanced external moisturizer for vulvar dryness, friction, chafing, itching, and ingrown hairs, and for comfort during intimacy — pure, simple, and effective, per the brand\'s own site. It\'s dispensed through an airless pump, which BUNI says protects the formula from air and repeated contact and gives more consistent, touch-free dosing than an open-jar format.\n\nSeveral of its named ingredients have real supporting research, though none of it tested this finished product. Honey and propolis have documented antibacterial, antifungal, and wound-healing properties in general skin studies, and propolis specifically has shown antifungal activity against vaginal Candida albicans in lab research. Hyaluronic acid is a well-studied humectant that draws and holds moisture in tissue. Avocado oil has shown skin-barrier-repair and wound-healing effects in review literature covering several plant oils.\n\nChamomile and lavender both have supporting evidence for BUNI\'s calming and soothing claim: a controlled study found topical chamomile extract reduced inflammation, and a rat study found lavender oil accelerated wound healing and increased collagen via TGF-β signaling. Shea and cacao butter both have supporting evidence for BUNI\'s deep-conditioning and antioxidant claim: a clinical trial found a shea-butter-based cream performed comparably to a ceramide-based product for skin barrier repair, and cocoa (cacao) polyphenols have documented, measurable antioxidant activity after topical application.\n\nSea buckthorn oil has real clinical evidence for vaginal dryness specifically — a randomized, placebo-controlled trial found daily oral sea buckthorn oil improved vaginal epithelium integrity in postmenopausal women over 3 months. That trial tested oral intake, though, not a topical balm like this one, so it doesn\'t directly validate this product\'s use.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'BUNI positions this hormone-free, pH-balanced balm for vulvar dryness, friction, itching, ingrown hairs, and comfort during intimacy. Several named ingredients (honey, propolis, hyaluronic acid, avocado oil, chamomile, lavender, shea, cacao, sea buckthorn oil) have real supporting research individually, including one placebo-controlled trial on oral sea buckthorn oil for vaginal dryness — though that tested oral intake, not a topical balm. No independent clinical study of this specific product was found.',
         // Kept out of verificationLinks so it doesn't pool with the
         // Scientific literature tab's citation list.
         doctorOpinionCitations: [
@@ -1790,8 +1790,9 @@ export const BRAND_PRODUCTS = [
         whoItsFor: [
             'Women with vulvar dryness, friction, or itching from menopause or perimenopause',
             'Postpartum women, once cleared by their doctor',
-            'Women dealing with irritation from shaving, waxing, tight clothing, or exercise',
-            'Women who want a hormone-free, external-only option',
+            'Women dealing with irritation, ingrown hairs, or chafing from shaving, waxing, tight clothing, or exercise',
+            'Women wanting more comfort during intimacy',
+            'Women who want a hormone-free, external-only, pH-balanced option',
         ],
         // Rendered as a bulleted list on the Evidence view. Matches
         // bunibody.com/products/buni-vulva-balm.
@@ -1811,7 +1812,7 @@ export const BRAND_PRODUCTS = [
             'Irritation or an allergic reaction: stop using it and see a doctor.',
         ],
         communityReview: 'One customer review on BUNI\'s site: "I use Rejuvenate after every spin class. No more irritation from the seat, no more dryness from tight leggings." No star rating or review count was shown alongside it, and no independent (non-brand) review data was found at time of writing.',
-        effectiveness: 'Formulated by board-certified OB/GYNs and dermatologists to moisturize and reduce friction on external vulvar skin; no independent clinical study of the finished product was found.',
+        effectiveness: 'Formulated by board-certified OB/GYNs and dermatologists to moisturize vulvar skin and reduce friction, chafing, and irritation; each named ingredient has real independent research behind the specific mechanism BUNI claims for it. No independent clinical study of the finished product was found.',
         // Per-ingredient science claims, each paired with a credible
         // source (NIH-hosted or PubMed). Rendered on the Scientific
         // literature tab.
@@ -1842,6 +1843,22 @@ export const BRAND_PRODUCTS = [
                 text: 'In a placebo-controlled trial, daily oral sea buckthorn oil improved vaginal epithelium integrity in postmenopausal women over 3 months. That trial tested oral intake, not a topical balm.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/25104582/', label: 'PubMed: Effects of sea buckthorn oil intake on vaginal atrophy in postmenopausal women — a randomized, double-blind, placebo-controlled study' },
+                ],
+            },
+            {
+                name: 'Chamomile & lavender',
+                text: 'BUNI states these calm and soothe skin, reducing irritation and redness. Both have supporting evidence: a controlled study found topical chamomile extract reduced inflammation, and a rat study found lavender oil accelerated wound healing and increased collagen deposition via TGF-β signaling.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/6505092/', label: 'PubMed: Evaluation of antiinflammatory activity of a chamomile extract topical application' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27229681/', label: 'PubMed: Wound healing potential of lavender oil by acceleration of granulation and wound contraction through induction of TGF-β in a rat model' },
+                ],
+            },
+            {
+                name: 'Shea & cacao',
+                text: 'BUNI states these give deep conditioning and antioxidant protection, and lock in moisture. A clinical trial found a shea-butter-based cream performed comparably to a ceramide-based product for skin barrier repair and hydration, and cocoa (cacao) polyphenols have documented, measurable antioxidant activity after topical application.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26314567/', label: 'PubMed: Patient acceptability, efficacy, and skin biophysiology of a cream containing shea butter extract versus a ceramide product' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/39429210/', label: 'PubMed: Topical Antioxidant Cocoa Polyphenol Skin Penetration' },
                 ],
             },
         ],
