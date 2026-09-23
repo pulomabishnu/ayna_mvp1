@@ -16,7 +16,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$7 for 24',
         userRating: 4.4,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '', // caught by catalog-wide sweep — was the literal Ayna placeholder image, not a real photo
+        image: '/products/kotex/security-ultra-thin.png',
         summary: 'LeakGuard protection with 3D capture core. Widely available mainstream pad.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Absorbent core, wings', recalls: 'No recalls.', allergens: 'Fragrance-free options' },
         clinicianOpinionSource: 'independent',
@@ -62,7 +62,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$8 for 14',
         userRating: 4.4,
         whereToBuy: ['Target', 'Whole Foods', 'Amazon'],
-        image: '',
+        image: '/products/seventhgeneration/ultra-thin-pads.png',
         summary: 'Chlorine-free, fragrance-free pads. Plant-based materials where possible.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Chlorine-free, plant-based', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',
