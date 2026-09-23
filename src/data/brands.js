@@ -3105,7 +3105,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE',
         affiliateUrl: 'https://pelvic-bra.myshopify.com/products/sports-pelvic-bra%C2%AE?bg_ref=bZYYwMBpTa',
-        image: '',
+        image: '/products/mypelvicbra/sports-pelvic-bra.webp',
         summary: 'From My Pelvic Bra — founded by pelvic floor physical therapist Jeanice Mitchell, PT (see the Classic Pelvic Bra entry for her story). The Sports Pelvic Bra is a lightweight, fully adjustable style with a snug bikini-style fit for activities where an extra pelvic-floor lift is wanted, per the brand\'s own site.',
         safety: {
             fdaStatus: 'Compression support garment; not an FDA-cleared medical device and not a corrective treatment for prolapse.',
