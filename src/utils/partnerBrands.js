@@ -26,8 +26,12 @@
  * links use the ref=Ayna_Health parameter supplied by the partnership team.
  *
  * Added 2026-09-23: Winx Health, SootheHer, gina — confirmed brand partnerships.
+ *
+ * Added 2026-09-23: Liv Labs (Pippa Resistance Spring) — confirmed brand
+ * partnership. Distinct from LiM Method above; similarly named, different
+ * company (livlabsfitness.com vs. limmethod.com).
  */
-export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/, /\bproov\b/, /\belitone\b/, /\bmy pelvic bra\b/, /\bbuni\b/, /\blim method\b/, /\bwinx health\b/, /\bsootheher\b/, /\bgina\b/];
+export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/, /\bproov\b/, /\belitone\b/, /\bmy pelvic bra\b/, /\bbuni\b/, /\blim method\b/, /\bwinx health\b/, /\bsootheher\b/, /\bgina\b/, /\bliv labs\b/];
 
 export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();

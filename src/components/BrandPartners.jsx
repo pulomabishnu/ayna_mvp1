@@ -90,6 +90,14 @@ const PARTNERS = [
     blurb:
       'Hormone-free vaginal moisturizing glides and applicator refills for intimate comfort.',
   },
+  {
+    // Distinct from LiM Method above — similarly named, different company.
+    brand: 'Liv Labs',
+    logo: '',
+    url: 'https://livlabsfitness.com/',
+    blurb:
+      'The Pippa Resistance Spring, a wearable silicone device that gently activates the pelvic floor during everyday movement. Y Combinator-backed; a 2025 Fast Company Innovation by Design honoree.',
+  },
 ];
 
 function eyebrowFor(product) {
