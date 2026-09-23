@@ -6,6 +6,7 @@
 // and the brand/product exists. Do not add placeholder or fake entries.
 // ============================================================
 import { EXTENDED_PHYSICAL, EXTENDED_DIGITAL } from './productsExtended.js';
+import { applyCatalogEvidence } from './catalogEvidence.js';
 import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js';
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
 import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
@@ -756,7 +757,12 @@ export const ALL_PRODUCTS = [
     ...MENSTRUAL_PHYSICAL,
     ...BRAND_PRODUCTS,
     ...INCONTINENCE_PHYSICAL
-].filter((p) => !isRxOnlyProduct(p));
+]
+    // Same evidence guardrails as the website (2026-09-22 audit): unsourced
+    // star ratings / community claims are removed, clinician text without a
+    // real attribution is labeled as ayna synthesis.
+    .map(applyCatalogEvidence)
+    .filter((p) => !isRxOnlyProduct(p));
 
 /**
  * Look up a catalog product by id. Returns null for ids that don't exist in
