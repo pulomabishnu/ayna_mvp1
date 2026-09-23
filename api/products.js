@@ -15,6 +15,7 @@
  * safety object), so every existing consumer works unchanged.
  */
 import { createClient } from '@supabase/supabase-js';
+import { applyCatalogEvidence } from '../src/data/catalogEvidence.js';
 
 let _client = null;
 function getClient() {
@@ -60,7 +61,12 @@ export function toClientProduct(row) {
   // Provenance travels with the product so the UI can never present a
   // non-curated row with verified-clinician affordances.
   p.source = row.source || 'curated';
-  return p;
+  // PRODUCT INTEGRITY (2026-09-22 audit): the DB rows skipped the guardrails
+  // the bundled catalog already runs (src/data/catalogEvidence.js), so the
+  // live feed — which the iOS app renders directly — showed unsourced star
+  // ratings (145 rows), unsourced community-review claims and unlabeled
+  // clinician text. Same guardrails, applied at the API boundary.
+  return applyCatalogEvidence(p);
 }
 
 /**

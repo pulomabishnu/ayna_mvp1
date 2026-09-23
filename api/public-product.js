@@ -13,6 +13,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { rateLimit, getClientIp } from './_rateLimit.js';
 import { isPublishable } from './products.js';
+import { applyCatalogEvidence } from '../src/data/catalogEvidence.js';
 
 let _admin = null;
 
@@ -114,7 +115,7 @@ function catalogRowToClient(row) {
 
   product.source = row.source || 'curated';
 
-  return product;
+  return applyCatalogEvidence(product);
 }
 
 export default async function handler(req, res) {

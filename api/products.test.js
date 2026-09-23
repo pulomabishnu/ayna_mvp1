@@ -77,7 +77,7 @@ describe('products', () => {
         requires_prescription: false,
         user_rating: 4.5,
         source: 'curated',
-        extra: { verificationLinks: { doctor: { aiSummary: 'x' } } },
+        extra: { verificationLinks: { doctor: { aiSummary: 'x' } }, userRatingSourceUrl: 'https://example.com/reviews', communityReviewSourceUrl: 'https://example.com/community' },
       }],
       error: null,
     };
@@ -150,5 +150,18 @@ describe('products', () => {
     await handler({ method: 'GET' }, res);
     expect(res.statusCode).toBe(200);
     expect(res.body.products.map((p) => p.id)).toEqual(['curated-1', 'disc-human']);
+  });
+
+  it('strips unsourced star ratings and community-review claims from DB rows', async () => {
+    queryResult = {
+      data: [{ id: 'p2', name: 'Some Pad', category: 'pad', product_type: 'physical', community_review: 'Women love it.', user_rating: 4.8, source: 'curated', extra: {} }],
+      error: null,
+    };
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({ method: 'GET' }, res);
+    const p = res.body.products[0];
+    expect(p.userRating ?? null).toBeNull();
+    expect(p.communityReview ?? null).toBeNull();
   });
 });
