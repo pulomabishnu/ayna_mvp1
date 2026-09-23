@@ -1394,25 +1394,104 @@ export const BRAND_PRODUCTS = [
         // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
         affiliateUrl: 'https://goto.connectpelvicfloorfitness.com/YVk7WO',
         image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/b1/39/0f/b1390fbf-2c51-b7ff-af3b-b9a7660f4b9c/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
-        platform: 'iOS, Android, web, Apple TV, Amazon Fire TV, Roku',
-        summary: '850+ guided workouts (strength, HIIT, yoga, mobility) built specifically to train with the pelvic floor rather than against it. Developed by Caroline Packard, DPT, a pelvic floor physical therapist.',
+        summary: 'A pelvic-floor-informed fitness program founded by Caroline Packard, DPT, after her own postpartum stress incontinence and prolapse. Combines pelvic floor rehab principles with real strength training, HIIT, yoga, and mobility work to build pelvic floor and whole-body strength.',
+        ingredients: 'Not a physical product — see "How it works" below for what the membership includes.',
         safety: {
-            fdaStatus: 'N/A (fitness/wellness app, not a medical device)',
+            fdaStatus: 'Fitness and education service; not a medical device.',
             materials: 'N/A',
             recalls: 'N/A',
-            allergens: 'N/A',
-            sideEffects: 'No physical side effects from the app itself. As with any pelvic floor exercise program, working too hard too fast can cause temporary soreness or symptom flare-ups.',
+            sideEffects: 'Exercise programs may not be appropriate for every pelvic floor condition. Stop if exercises cause pain or worsen symptoms and consult a pelvic floor physical therapist or clinician when needed. Diastasis recti evidence for exercise alone is limited (see Clinician opinion below) — anyone with a significant abdominal separation should be evaluated by a clinician before relying on exercise as a sole treatment.',
+            opinionAlerts: 'Program information is based on the brand\'s own description; individual results depend on the specific condition, adherence, and guidance from a clinician when needed.'
         },
-        privacy: { dataStorage: 'Check app', sellsData: 'Check policy', hipaa: 'N/A', keyPolicy: 'Check the brand\'s privacy policy for health-data handling.' },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Developed by Caroline Packard, DPT, a licensed pelvic floor physical therapist; positioning per the brand\'s own site.',
-        doctorOpinion: 'Structured, PT-designed pelvic floor programs with progressive difficulty and form cues can improve consistency and technique versus generic Kegel advice.',
-        communityReview: 'Monthly live Q&As with the founder and a members-only community are part of the membership, per the brand\'s own site.',
-        effectiveness: 'Offers 850+ guided workouts and 10+ specialized programs with self-assessments to track progress; no independent clinical study of the program was found.',
+        clinicianAttribution: 'Program is designed by Caroline Packard, DPT — a pelvic floor physical therapist with 15+ years of clinical experience. Description sourced from Connect Pelvic Floor Fitness; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'This program\'s core approach — pelvic floor muscle training (PFMT) — has real, strong independent evidence behind it for two of the conditions it targets. A Cochrane systematic review of 31 trials in 1,817 women found PFMT can cure or improve stress and other types of urinary incontinence, and is recommended as part of first-line conservative management. A separate systematic review and meta-analysis of 13 trials in 2,340 women found PFMT produced greater subjective and objective improvement in pelvic organ prolapse symptoms and stage compared to controls.\n\nEvidence for exercise specifically correcting diastasis recti (abdominal separation) is more limited. A recent systematic review and meta-analysis found no clear evidence that exercise-based interventions alone reduce inter-recti distance in postpartum women, though exercise may still provide functional or symptomatic benefit even without measurably closing the gap.\n\nThese citations are for pelvic floor muscle training and postpartum exercise generally — no independent study of this specific program\'s protocol was found.',
+        doctorOpinionShort: 'Pelvic floor muscle training (the program\'s core approach) has strong independent evidence for improving urinary incontinence and pelvic organ prolapse symptoms specifically. Evidence for exercise alone correcting diastasis recti is more limited. No independent study of this specific program\'s protocol was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/25408383/', label: 'PubMed: Pelvic floor muscle training for urinary incontinence in women — a Cochrane systematic review' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/26407564/', label: 'PubMed: The efficacy of pelvic floor muscle training for pelvic organ prolapse — a systematic review and meta-analysis' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Postpartum women dealing with leakage, prolapse symptoms, or diastasis recti',
+            'Women who want strength training that\'s built around pelvic floor function rather than around it',
+            'Anyone told their only options were "live with it" or surgery, who wants to try a structured conservative program first',
+            'Women wanting DPT-designed programming without needing to attend in-person physical therapy',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // connectpelvicfloorfitness.com/membership and /faqs.
+        howToUse: {
+            intro: 'Per Connect\'s own site: start with a 14-day free trial, then continue on a monthly or annual membership.',
+            steps: [
+                'Access a growing library of strength training, HIIT, advanced core, yoga, and mobility workouts, each 35–45 minutes and fully guided, with instruction on form, breathing, and modifications.',
+                'Use built-in self-assessments throughout to track progress and guide what to do next.',
+                'Join monthly live Q&A sessions with Caroline Packard, DPT.',
+                'Get access to a private members-only community and pelvic floor educational resources.',
+                'Stream on the website, the iOS/Android app, or Roku, Amazon Fire TV, and Apple TV.',
+                'HSA/FSA eligible through Connect\'s partner Flex, per the brand\'s site.',
+            ],
+            sourceUrl: 'https://connectpelvicfloorfitness.com/membership',
+            sourceLabel: 'connectpelvicfloorfitness.com: Membership',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not a substitute for an in-person pelvic floor physical therapy evaluation, especially for significant prolapse, diastasis recti, or persistent leakage.',
+            'Stop any exercise that causes pain or worsens symptoms and consult a pelvic floor physical therapist or clinician.',
+            'Cancel at least 24 hours before renewal to avoid being charged for the next billing period, per the brand\'s site.',
+        ],
+        communityReview: 'Reviews on Connect\'s own site and app store listings include: "How Caroline explains things and how this app is set up is 100 out of 10," and "I wholeheartedly recommend this program to anyone who has been told to live with symptoms or that surgery is the only option. It has transformed my approach to fitness and my overall well-being." No independently verifiable aggregate star rating was found on the Apple App Store at time of writing.',
+        effectiveness: 'Built on pelvic floor muscle training, which has strong independent evidence for improving urinary incontinence and pelvic organ prolapse; evidence for exercise alone correcting diastasis recti is more limited. Individual results vary, and no independent study of this specific program was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/25408383/',
+                text: 'PubMed: Pelvic floor muscle training for urinary incontinence in women — a Cochrane systematic review',
+                summary: '31 trials, 1,817 women. Found PFMT can cure or improve stress and other types of urinary incontinence — general evidence for the training approach, not this specific program.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/26407564/',
+                text: 'PubMed: The efficacy of pelvic floor muscle training for pelvic organ prolapse — a systematic review and meta-analysis',
+                summary: '13 trials, 2,340 women. Found PFMT improved both subjective prolapse symptoms and objective prolapse severity versus controls.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/41995773/',
+                text: 'PubMed: What is the evidence for abdominal and pelvic floor muscle training to treat diastasis recti abdominis postpartum? — an updated systematic review and meta-analysis',
+                summary: 'Found no clear evidence that exercise-based interventions alone reduce inter-recti distance, though exercise may still help function/symptoms. Included for balance — this is a more cautious finding than the incontinence/prolapse evidence above.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://connectpelvicfloorfitness.com/faqs',
+                        text: 'connectpelvicfloorfitness.com: FAQs',
+                        summary: 'Connect\'s own FAQ page, covering membership details, cancellation, and program logistics.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://apps.apple.com/us/app/connect-pelvic-floor-fitness/id6475697994',
+                        text: 'Apple App Store: Connect Pelvic Floor Fitness',
+                        summary: 'Real, current App Store listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://play.google.com/store/apps/details?id=com.VidApp.ConnectPelvicFloor',
+                        text: 'Google Play: Connect Pelvic Floor Fitness',
+                        summary: 'Real, current Google Play listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
-        badges: ['Pelvic Health', 'PT-Developed'],
-        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PelvicFloor/search/?q=connect+pelvic+floor&restrict_sr=1', text: 'Reddit r/PelvicFloor', summary: 'Community discussions on pelvic floor training apps.' }] } },
-        isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
+        badges: [],
+        isEmergingBrand: true,
     },
     {
         id: 'p-vio2-mouth-tape',
@@ -1430,18 +1509,98 @@ export const BRAND_PRODUCTS = [
         // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
         affiliateUrl: 'https://go.shopmy.us/p-83948920',
         image: 'https://www.vio2tape.com/cdn/shop/files/vio2tape-health-beauty-1-pack-try-it-vio2-unscented-mouth-tape-33555330531505_1024x874.png?v=1781819129',
-        summary: 'A patented partial-coverage mouth tape, designed by a dentist, meant to encourage a gentle lip seal during sleep while still allowing natural airflow — intended to support nasal breathing, reduce snoring, and cut down on dry mouth.',
+        summary: 'A patented, partial-coverage mouth tape designed by dentist Dr. Vincent Ip and his wife Lindsey Ip after their young son was diagnosed with a breathing disorder and open-mouth posture. Meant to encourage a gentle lip seal during sleep while still allowing natural airflow — intended to support nasal breathing and reduce snoring.',
         safety: {
             fdaStatus: 'Personal-care product; not an FDA-cleared medical device.',
-            materials: 'Breathable cotton fabric with hypoallergenic medical-grade adhesive. Free from latex, PFAS, and gluten. Unscented. Made in USA.',
+            materials: 'Breathable cotton-and-spandex blend fabric with hypoallergenic medical-grade adhesive, in a patented I-shaped, partial-coverage design (U.S. Design Patent No. D1,047,152). Free from latex, PFAS, and gluten. Unscented. Made in USA.',
             recalls: 'No recalls found.',
-            sideEffects: 'Brand states this is not intended for children under 6, or for anyone with a breathing disorder, heart condition, nasal congestion, risk of vomiting, who has used alcohol or sedatives, or who is unable to remove the tape themselves. Single-use; discard after each application.',
-            opinionAlerts: 'Brand markets this as "the only mouth tape on the market designed, created & approved by a doctor" — a brand claim, not independently verified here.',
+            sideEffects: 'Brand states this is not intended for children under 6, or for anyone with a breathing disorder, heart condition, nasal congestion, risk of vomiting, who has used alcohol or sedatives, or who is unable to remove the tape themselves. Single-use; discard after each application. Independent sleep and ENT specialists separately caution that mouth taping in general is not recommended for anyone with untreated or undiagnosed sleep apnea, significant nasal obstruction, GERD, or a heart or lung condition (including asthma), since forcing the mouth closed can worsen airway resistance if nasal breathing is already blocked.',
+            opinionAlerts: 'Brand markets this as "the only mouth tape on the market designed, created & approved by a doctor" and "the #1 recommended mouth tape by medical professionals" — brand claims, not independently verified here.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from VIO2\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'VIO2 states the tape was created by a dentist and designed to promote nasal breathing over mouth breathing during sleep, which the brand links to better sleep quality, oral/jaw muscle tone, and recovery.',
-        effectiveness: 'Positioned as a gentler, partial-coverage alternative to full-seal mouth tape; no independent clinical study of the product was found.',
+        clinicianAttribution: 'Sourced from VIO2\'s own site; Dr. Vincent Ip, DDS, is a real, practicing dentist in Austin, TX, but no independent clinician endorsement of this specific product has been verified by ayna.',
+        doctorOpinion: 'Independent research on mouth taping generally is real but still limited and mixed. A 2024 scoping review found only 9 studies (4 randomized controlled trials) on the topic, described the evidence as markedly heterogeneous, and noted many of the touted benefits aren\'t grounded in the literature. A separate preliminary study specifically in mouth-breathers with mild obstructive sleep apnea found mouth-taping roughly halved measures of apnea severity (AHI) and snoring — a real, positive finding, but from a small, preliminary study, and not a test of this specific product.\n\nSeparately, several sleep and ENT specialists have publicly cautioned against mouth taping for people with untreated sleep apnea or nasal obstruction, since it doesn\'t address the underlying airway issue and could worsen it. No independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'Independent research on mouth taping is real but limited: a 2024 scoping review found the evidence heterogeneous and many claimed benefits not literature-backed, while a small preliminary study in mild OSA mouth-breathers found roughly a 50% reduction in apnea severity. Sleep and ENT specialists caution against it for anyone with untreated sleep apnea or nasal obstruction. No independent study of this specific product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/39662104/', label: 'PubMed: Nocturnal mouth-taping and social media — a scoping review of the evidence' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/36141367/', label: 'PubMed: The Impact of Mouth-Taping in Mouth-Breathers with Mild Obstructive Sleep Apnea — a preliminary study' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Adults who want to try partial-coverage mouth taping as a gentler alternative to full-seal tape',
+            'People with mild, occasional mouth-breathing or snoring who have no diagnosed sleep apnea or nasal obstruction',
+            'Anyone curious about mouth taping who wants an easy-to-remove, emergency-breathable design over a full seal',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // vio2tape.com/products/vio2-unscented-mouth-tape.
+        howToUse: {
+            intro: 'Per VIO2\'s own site: remove one strip from the backing paper and apply nightly.',
+            steps: [
+                'Choose your preferred orientation — the patented design can be worn two ways.',
+                'Close your mouth, apply the tape over the lips, and press gently to secure.',
+                'Leave on overnight; the partial-coverage shape leaves room for natural lip movement and emergency mouth breathing if needed.',
+                'Remove and discard in the morning — single-use, one strip per night.',
+            ],
+            sourceUrl: 'https://www.vio2tape.com/products/vio2-unscented-mouth-tape',
+            sourceLabel: 'vio2tape.com: Partial-Coverage Mouth Tape',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not for anyone with untreated or undiagnosed sleep apnea, significant nasal obstruction, GERD, or a heart or lung condition (including asthma) — get evaluated by a doctor first.',
+            'Not intended for children under 6, or for anyone who has used alcohol or sedatives, or who is unable to remove the tape themselves.',
+            'Single-use — discard after each night.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'Customer reviews across retailers describe the tape as staying securely in place overnight while remaining comfortable, with the flexible two-way design and adhesive that holds well but removes easily in the morning cited as pluses; some reviews mention removal can feel sticky or mildly uncomfortable. No independently verified aggregate star rating was found at time of writing.',
+        effectiveness: 'Positioned as a gentler, partial-coverage alternative to full-seal mouth tape. Independent research on mouth taping generally is limited but shows some promise specifically for mild OSA mouth-breathers; evidence for snorers without diagnosed sleep apnea is less clear, and no independent clinical study of this specific product was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/39662104/',
+                text: 'PubMed: Nocturnal mouth-taping and social media — a scoping review of the evidence',
+                summary: 'Found only 9 studies (4 RCTs) on mouth taping as of 2024; called the evidence markedly heterogeneous and noted many popular claims aren\'t literature-backed.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/36141367/',
+                text: 'PubMed: The Impact of Mouth-Taping in Mouth-Breathers with Mild Obstructive Sleep Apnea — a preliminary study',
+                summary: 'Found mouth-taping roughly halved apnea-severity (AHI) and snoring measures in mouth-breathers with mild OSA — a real but small, preliminary finding.',
+            },
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7153879/',
+                text: 'NIH (PMC): The effect of nasal and oral breathing on airway collapsibility in obstructive sleep apnea — computational fluid dynamics analyses',
+                summary: 'Mechanistic evidence that oral breathing is associated with greater airway collapsibility than nasal breathing — general physiology, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'tiktok',
+                        url: 'https://www.tiktok.com/discover/vio2-mouth-tape-review',
+                        text: 'TikTok: VIO2 mouth tape reviews',
+                        summary: 'Real, current TikTok discover page aggregating VIO2 mouth tape review content. Individual video claims are user-generated and not independently verified here.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.ulta.com/p/unscented-partial-coverage-mouth-tape-mkt77007521?sku=77011678',
+                        text: 'Ulta Beauty: VIO2 Unscented Partial-Coverage Mouth Tape',
+                        summary: 'Real, current retail listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.vio2tape.com/products/vio2-partial-coverage-mouth-tape-for-sleep-unscented?variant=40800110837937&utm_source=ShopMy&utm_medium=affiliate&utm_campaign=Puloma%20Bishnu&utm_content=Quick%20Link&utm_referrer=shopmy.us&smsclickid=fd2d10e7-a850-4203-9d74-4bcb9c91f6bd&utm_term=fd2d10e7-a850-4203-9d74-4bcb9c91f6bd',
+                        text: 'vio2tape.com: Customer reviews',
+                        summary: 'VIO2\'s own product page, which displays customer reviews directly on the listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
@@ -1467,18 +1626,109 @@ export const BRAND_PRODUCTS = [
         // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
         affiliateUrl: 'https://proov.pxf.io/9VjJQj',
         image: 'https://proovtest.com/cdn/shop/files/Complete-PDP-HSA_FSA_3.png?v=1767377529&width=1920',
-        summary: 'An at-home fertility testing system that tracks FSH, E1G, LH, and PdG across a full cycle to identify up to a 6-day fertile window and confirm ovulation, rather than only predicting it.',
+        summary: 'Proov was founded by Amy Beckley, PhD (pharmacology), after years of infertility and seven miscarriages she traced to a luteal phase defect — low progesterone after ovulation. She invented the PdG test at home to track her own hormones, founded MFB Fertility, and the resulting Proov PdG test received FDA clearance in 2020 (510(k) K191462) as the first at-home test cleared to confirm ovulation. This kit tracks FSH, E1G, LH, and PdG across a full cycle to identify up to a 6-day fertile window and confirm ovulation, rather than only predicting it.',
         safety: {
-            fdaStatus: 'Physician-grade at-home urine test; verify current FDA clearance status directly on proovtest.com.',
+            fdaStatus: 'The core PdG (progesterone metabolite) test technology in this kit received FDA 510(k) clearance in 2020 (K191462, MFB Fertility, Inc.) as the first at-home test cleared to confirm ovulation; verify current clearance status for the full Complete kit directly on proovtest.com.',
             materials: '20 test strips (3 FSH + 17 multi-hormone) plus the Proov Insight app for automatic reading. See packaging for full component list.',
             recalls: 'No recalls found.',
             sideEffects: 'None specific to the test itself.',
             opinionAlerts: 'Brand states "women who track their whole cycle get pregnant 3x faster" than those tracking ovulation timing alone — a brand claim, not independently verified here.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Proov\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Proov positions Complete as covering a full-cycle hormone picture (ovarian reserve, fertile window, ovulation confirmation) in one kit, with a Progesterone Score and access to fertility coaching for follow-up.',
-        effectiveness: 'Tracks four hormones across a full cycle rather than a single ovulation-prediction hormone; no independent clinical study of the finished product itself was found.',
+        clinicianAttribution: 'Sourced from Proov\'s own site; founder Amy Beckley, PhD, is a real pharmacologist, but no independent clinician endorsement of this specific kit has been verified by ayna.',
+        doctorOpinion: 'A published pilot study of the PdG test (13 women, 34 cycles) found it could confirm ovulation using a validated urine PdG threshold, building on prior ultrasound-validated research. Proov has also published its own later study (in Obstetrics & Gynecology Research, 2022) linking sustained elevated PdG across a cycle to higher clinical pregnancy rates and lower first-trimester loss — a real, notable finding, though it\'s the brand\'s own sponsored research rather than a fully independent trial.\n\nComplete adds FSH and estrogen (E1G) tracking on top of the core PdG technology, covering ovarian reserve and the fertile window in the same kit; no independent study of the full Complete kit specifically (versus the standalone PdG test) was found.',
+        doctorOpinionShort: 'The core PdG technology in this kit is FDA-cleared (2020) and has real, published, if still limited, evidence behind it — a pilot study and the brand\'s own larger follow-up study linking PdG patterns to pregnancy outcomes. No independent study of the full Complete kit (FSH + estrogen + PdG together) was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6614355/', label: 'NIH (PMC): Pilot Evaluation of a New Urine Progesterone Test to Confirm Ovulation in Women Using a Fertility Monitor' },
+            { url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K191462', label: 'FDA: 510(k) clearance K191462 — MFB Fertility, Inc. (Proov)' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women trying to conceive who want to confirm ovulation actually happened, not just predict when it might',
+            'Anyone with irregular cycles or suspected luteal phase issues who wants a fuller hormone picture before a fertility clinic visit',
+            'Women wanting ovarian reserve (FSH), fertile-window (E1G), and ovulation-confirmation (PdG) tracking in one kit',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // proovtest.com/products/complete-testing-system.
+        howToUse: {
+            intro: 'Per Proov\'s own site: test FSH early in the cycle, then track E1G and PdG through the rest of the cycle using the Proov Insight app to read results.',
+            steps: [
+                'Use the 3 FSH strips near the start of your cycle to check ovarian reserve.',
+                'Use the multi-hormone strips to track E1G (estrogen) daily to identify your fertile window.',
+                'Continue testing PdG after ovulation to confirm it actually occurred.',
+                'Scan each strip with the Proov Insight app for an automatic, unbiased reading.',
+            ],
+            sourceUrl: 'https://proovtest.com/products/complete-testing-system',
+            sourceLabel: 'proovtest.com: Complete Testing System',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'A single cycle of testing doesn\'t diagnose infertility — talk to a doctor about persistent irregular results, or if you don\'t conceive after 6–12 months of trying (standard fertility guidance).',
+            'Follow the app\'s testing-window and strip-reading instructions closely; urine concentration and timing affect hormone test accuracy.',
+        ],
+        communityReview: 'Proov has 181 reviews on the independent platform reviews.io, averaging 4.43/5 stars (138 rated "excellent"). Feedback is mixed — many highlight the app-based reading and full-cycle hormone picture as genuinely useful, while others report frustration with test accuracy or customer service.',
+        effectiveness: 'Tracks four hormones across a full cycle rather than a single ovulation-prediction hormone. The underlying PdG technology is FDA-cleared and has real published validation; the full 3-hormone Complete kit itself hasn\'t been independently studied as a unit.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6614355/',
+                text: 'NIH (PMC): Pilot Evaluation of a New Urine Progesterone Test to Confirm Ovulation in Women Using a Fertility Monitor',
+                summary: '13 women, 34 cycles — an early, small pilot validation of the PdG test technology at the heart of this kit.',
+            },
+            {
+                url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K191462',
+                text: 'FDA 510(k) K191462 — MFB Fertility, Inc.',
+                summary: 'The FDA clearance record for the Proov PdG test, cleared in 2020 as the first at-home test to confirm ovulation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.reviews.io/company-reviews/store/proov-test',
+                        text: 'reviews.io: Proov Test reviews',
+                        summary: 'Independent, third-party review platform — 181 reviews, 4.43/5 average at time of writing.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.trustpilot.com/review/proovtest.com',
+                        text: 'Trustpilot: proovtest.com reviews',
+                        summary: 'Real, current Trustpilot listing. Review content/aggregate rating weren\'t independently re-verified beyond the reviews.io figure above — read them directly on the page.',
+                    },
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/tryingtoconceive/comments/1h6ruhz/proovworth_it/',
+                        text: 'Reddit r/tryingtoconceive: "Proov...worth it?"',
+                        summary: 'Real, current Reddit thread discussing whether Proov is worth buying. Reddit couldn\'t be fetched directly, so individual comment content wasn\'t independently verified here — read them on the page.',
+                    },
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/TryingForABaby/comments/1spmq1x/proov_pdg_tests/',
+                        text: 'Reddit r/TryingForABaby: "Proov PdG tests"',
+                        summary: 'Real, current Reddit thread discussing Proov\'s PdG test strips — the same underlying technology used in this kit. Content wasn\'t independently verified here — read it on the page.',
+                    },
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/TryingForABaby/comments/1m327gy/field_report_proov_test_strips_are_not_reliable/',
+                        text: 'Reddit r/TryingForABaby: "Field Report: Proov test strips are not reliable"',
+                        summary: 'Real, current Reddit thread reporting reliability concerns with Proov\'s test strips. This is a genuine user complaint worth reading directly — ayna couldn\'t independently verify the specifics behind the claim.',
+                    },
+                    {
+                        platform: 'tiktok',
+                        url: 'https://www.tiktok.com/tag/proov',
+                        text: 'TikTok: #proov',
+                        summary: 'Real, current TikTok hashtag page aggregating Proov-related content. Individual video claims are user-generated and not independently verified here.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1499,16 +1749,82 @@ export const BRAND_PRODUCTS = [
         image: 'https://proovtest.com/cdn/shop/files/His_Hers-PDP-HSA_FSA_1.png?v=1771351002&width=1920',
         summary: 'A couples\' fertility kit pairing Proov\'s Complete testing (ovarian reserve, fertile window, ovulation confirmation) for her with an at-home motile sperm concentration test for him, plus early pregnancy tests — covering both sides of a fertility picture at once.',
         safety: {
-            fdaStatus: 'Physician-grade at-home urine and semen tests; verify current FDA clearance status directly on proovtest.com.',
-            materials: 'Includes Complete for Her, an at-home sperm test for Him, and Check for Her (early pregnancy tests). See packaging for full component list.',
+            fdaStatus: 'Uses the same FDA-cleared PdG ovulation test as Proov Complete (510(k) K191462) plus the FDA-cleared YO Home Sperm Test for the male-fertility component; verify current clearance status for the combined kit directly on proovtest.com.',
+            materials: 'Includes Complete for Her, an at-home YO sperm test for Him, and Check for Her (early pregnancy tests). See packaging for full component list.',
             recalls: 'No recalls found.',
             sideEffects: 'None specific to the tests themselves.',
-            opinionAlerts: 'Brand states results are "99% accurate" and that "up to 60% of fertility challenges" involve a male factor — brand claims, not independently verified here.',
+            opinionAlerts: 'Brand states results are "99% accurate" and that "up to 60% of fertility challenges" involve a male factor — brand claims, not independently verified here. Independent ASRM/WHO data put male factor as sole or contributing cause in roughly 40–50% of infertile couples, somewhat lower than the brand\'s figure.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Proov\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Proov positions this as a lower-cost, at-home alternative to a first fertility clinic visit by screening both partners for common fertility factors together, with an optional expedited telehealth consult for male-factor results.',
-        effectiveness: 'Combines female hormone testing with a male sperm test across two cycles; no independent clinical study of the finished kit itself was found.',
+        doctorOpinion: 'The male-fertility component of this kit uses the YO Home Sperm Test, an FDA-cleared at-home device that reads a semen sample through a phone-connected microscope to measure motile sperm concentration — the brand states 97% accuracy for the device, a manufacturer claim not independently verified here. The female-fertility component reuses Proov\'s FDA-cleared PdG ovulation-confirmation technology (see Proov Complete\'s entry for that validation).\n\nMale-factor issues are a real, commonly under-tested part of fertility: ASRM and WHO data put male factor as the sole or contributing cause in roughly 40–50% of infertile couples — somewhat lower than the brand\'s "up to 60%" figure, but still a substantial share. Testing both partners together, as this kit does, reflects real clinical guidance to evaluate male factor alongside female factor rather than only after female testing is exhausted.\n\nNo independent study of this specific combined kit was found.',
+        doctorOpinionShort: 'Combines Proov\'s FDA-cleared PdG ovulation test with the FDA-cleared YO home sperm test. Real ASRM/WHO data support testing male factor early — it\'s the sole or contributing cause in roughly 40–50% of infertile couples — though the brand\'s "up to 60%" figure runs a bit higher than that commonly cited range. No independent study of the combined kit itself was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://www.asrm.org/news-and-events/asrm-news/press-releasesbulletins/half-of-infertility-cases-involve-men.-why-does-care-still-treat-it-as-a-womens-issue/', label: 'ASRM: Half of Infertility Cases Involve Men' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Couples wanting to test both partners for common fertility factors at the same time, before or instead of a first clinic visit',
+            'Couples who\'ve only pursued female-side testing so far and want to rule a male-factor contribution in or out',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // proovtest.com/products/his-and-hers-fertility-starter-kit.
+        howToUse: {
+            intro: 'Per Proov\'s own site: she completes the Complete kit and Check tests across a cycle, he completes the YO sperm test.',
+            steps: [
+                'He collects a semen sample at home, ideally 2–5 days after his last ejaculation for the most reliable result.',
+                'The YO device and app read motile sperm concentration from the sample.',
+                'She tests FSH, E1G, and PdG across her cycle as in Proov Complete, and uses Check tests to test for pregnancy.',
+                'Results for both partners are viewable in their respective apps.',
+            ],
+            sourceUrl: 'https://proovtest.com/products/his-and-hers-fertility-starter-kit',
+            sourceLabel: 'proovtest.com: His & Hers Fertility Kit',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'At-home semen analysis has real limitations (sample collection technique, transport time to the reader) versus a lab-based semen analysis — consult a doctor for a full clinical work-up if results are abnormal or concerning.',
+            'A single cycle of female hormone testing or one semen sample doesn\'t diagnose infertility on its own.',
+        ],
+        communityReview: 'No independently verified rating specific to this combined kit was found; see Proov\'s general reviews (181 reviews, 4.43/5 on reviews.io) for the Complete component, and the YO Home Sperm Test\'s own listings for the male-test component.',
+        effectiveness: 'Combines FDA-cleared female ovulation-confirmation technology with an FDA-cleared home sperm test, reflecting real clinical guidance to evaluate both partners together; no independent study of the combined kit itself was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.asrm.org/news-and-events/asrm-news/press-releasesbulletins/half-of-infertility-cases-involve-men.-why-does-care-still-treat-it-as-a-womens-issue/',
+                text: 'ASRM: Half of Infertility Cases Involve Men',
+                summary: 'Real-world data on how common male-factor infertility is — general clinical context, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.reviews.io/company-reviews/store/proov-test',
+                        text: 'reviews.io: Proov Test reviews',
+                        summary: 'Independent, third-party review platform — 181 reviews, 4.43/5 average at time of writing (covers Proov overall, not this kit specifically).',
+                    },
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/YO-Analysis-Concentration-Motility-Progressive/dp/B0DWXGG9M8',
+                        text: 'Amazon: YO Home Sperm Test',
+                        summary: 'Real, current Amazon listing for the sperm-test device used in this kit\'s male-fertility component. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                    {
+                        platform: 'tiktok',
+                        url: 'https://www.tiktok.com/tag/proov',
+                        text: 'TikTok: #proov',
+                        summary: 'Real, current TikTok hashtag page aggregating Proov-related content (brand-wide, not specific to this kit). Individual video claims are user-generated and not independently verified here.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1529,16 +1845,74 @@ export const BRAND_PRODUCTS = [
         image: 'https://proovtest.com/cdn/shop/files/Empower-PDP-HSA_FSA.png?v=1759414142&width=1920',
         summary: 'An at-home hormone testing system for women 35+ that measures FSH, LH, E1G, and PdG at four points in the cycle, aimed at explaining perimenopause-linked symptoms like brain fog, anxiety, and sleep disturbance and offering personalized next steps.',
         safety: {
-            fdaStatus: 'At-home urine hormone test; verify current FDA clearance status directly on proovtest.com.',
+            fdaStatus: 'Uses the same FDA-cleared PdG ovulation-test technology as Proov Complete (510(k) K191462), repositioned for perimenopause tracking; verify current clearance status for this specific kit directly on proovtest.com.',
             materials: 'Non-invasive urine test strips read via the Proov Insights app. See packaging for full component list.',
             recalls: 'No recalls found.',
             sideEffects: 'None specific to the test itself.',
-            opinionAlerts: 'Brand states "85% of women have hormone imbalances that cause symptoms like anxiety, weight gain, brain fog" — a brand claim, not independently verified here.',
+            opinionAlerts: 'Brand states "85% of women have hormone imbalances that cause symptoms like anxiety, weight gain, brain fog" — this specific figure wasn\'t independently traceable to a clinical source and should be read as marketing language, not a verified statistic.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Proov\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Proov positions Empower as a way to see which hormones are actually shifting during perimenopause, then connect to medical professionals for prescriptions or the brand\'s own Cycle Wisely supplement recommendations.',
-        effectiveness: 'Tracks four hormones across multiple cycle timepoints rather than a single snapshot; no independent clinical study of the finished product itself was found.',
+        doctorOpinion: 'Empower repositions Proov\'s core hormone-strip technology (the same FSH, LH, E1G, and PdG tests used in Complete — see that entry for validation) for women 35+ navigating perimenopause, testing at four points across the cycle rather than a single day. Perimenopause hormone fluctuation is real and well documented in clinical literature — FSH and LH generally rise while estrogen and progesterone become more erratic in the years before menopause — but the brand\'s specific "85% of women have hormone imbalances" figure wasn\'t traceable to an independent source and should be read as marketing language rather than a clinical statistic.\n\nNo independent study of the Empower kit or protocol specifically was found.',
+        doctorOpinionShort: 'Reuses the same FDA-cleared hormone-strip technology validated for Proov Complete, repositioned for perimenopause. The brand\'s "85% of women have hormone imbalances" statistic wasn\'t independently traceable — treat it as marketing language, not a clinical figure. No independent study of the Empower kit itself was found.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women 35+ noticing possible perimenopause symptoms (brain fog, anxiety, sleep disturbance, cycle changes) who want to see which hormones are actually shifting',
+            'Women wanting objective, at-home hormone data to bring to a clinician conversation about perimenopause',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // proovtest.com/products/empower-perimenopause-test-kit.
+        howToUse: {
+            intro: 'Per Proov\'s own site: test FSH, LH, E1G, and PdG at four points across your cycle using the Proov Insights app to read results.',
+            steps: [
+                'Test at the four recommended cycle timepoints rather than on a single day.',
+                'Scan each strip with the Proov Insights app for an automatic reading.',
+                'Review your hormone pattern in the app and use it as a starting point for a clinician conversation.',
+            ],
+            sourceUrl: 'https://proovtest.com/products/empower-perimenopause-test-kit',
+            sourceLabel: 'proovtest.com: Empower Perimenopause Test Kit',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'A home hormone-strip test doesn\'t replace a clinical perimenopause or menopause work-up — bring results to a doctor rather than self-diagnosing or self-treating.',
+        ],
+        communityReview: 'No independently verified rating specific to Empower was found; see Proov\'s general reviews (181 reviews, 4.43/5 on reviews.io) for feedback on the brand\'s hormone-strip technology overall.',
+        effectiveness: 'Reuses FDA-cleared hormone-strip technology across four cycle timepoints; the underlying strips have real published validation for ovulation confirmation, though no independent study of the Empower kit/protocol for perimenopause specifically was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6614355/',
+                text: 'NIH (PMC): Pilot Evaluation of a New Urine Progesterone Test to Confirm Ovulation in Women Using a Fertility Monitor',
+                summary: 'Early, small pilot validation of the underlying PdG strip technology this kit reuses for perimenopause tracking.',
+            },
+            {
+                url: 'https://www.acog.org/womens-health/faqs/the-menopause-years',
+                text: 'ACOG: The Menopause Years',
+                summary: 'ACOG on perimenopause hormone changes and symptoms — general clinical guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.reviews.io/company-reviews/store/proov-test',
+                        text: 'reviews.io: Proov Test reviews',
+                        summary: 'Independent, third-party review platform — 181 reviews, 4.43/5 average at time of writing (covers Proov overall, not this kit specifically).',
+                    },
+                    {
+                        platform: 'tiktok',
+                        url: 'https://www.tiktok.com/tag/proov',
+                        text: 'TikTok: #proov',
+                        summary: 'Real, current TikTok hashtag page aggregating Proov-related content (brand-wide, not specific to this kit). Individual video claims are user-generated and not independently verified here.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1563,13 +1937,97 @@ export const BRAND_PRODUCTS = [
             fdaStatus: 'Dietary supplement / topical cosmetic; not evaluated by the FDA.',
             materials: 'See ingredients above; full formulation on product packaging.',
             recalls: 'No recalls found.',
-            sideEffects: 'Consult a clinician before use if pregnant, nursing, or taking medications, especially given the bioidentical progesterone content.',
-            opinionAlerts: 'No clinical-study claims found on the brand site for this specific bundle.',
+            sideEffects: 'Consult a clinician before use if pregnant, nursing, or taking medications, especially given the bioidentical progesterone and chasteberry content — chasteberry can interact with hormonal medications, including hormonal birth control.',
+            opinionAlerts: 'No independent clinical-study claims found for this specific bundle; independent literature on transdermal progesterone specifically (see Clinician opinion) is more skeptical than the brand\'s absorption claim implies.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Proov\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Proov markets the Balancing Oil\'s progesterone as absorbed via nanoemulsion technology for topical delivery, paired with herbal luteal-phase support in the Pro capsules.',
-        effectiveness: 'Combines a topical progesterone product with an herbal supplement; no independent clinical study of the bundle itself was found.',
+        doctorOpinion: 'Proov markets the Balancing Oil\'s bioidentical progesterone as absorbed via nanoemulsion technology for topical delivery, paired with chasteberry (vitex), ashwagandha, and maca in the Pro capsules for broader hormonal and luteal-phase support.\n\nTransdermal progesterone specifically has real, documented skepticism in reproductive medicine: a review in Maturitas found insufficient evidence that topical progesterone reaches meaningful systemic levels, and identified vaginal or oral micronized progesterone — not transdermal — as the routes with proven efficacy for luteal-phase support in fertility care. That\'s a real gap between the brand\'s absorption claim and the independent literature.\n\nThe capsule ingredients have more independent support. A randomized, placebo-controlled study found chasteberry normalized luteal-phase length and progesterone synthesis in women with luteal phase defects, and a systematic review of clinical trials found supporting evidence for chasteberry across several reproductive conditions. Ashwagandha has a randomized, placebo-controlled trial showing improved estradiol/progesterone and reduced FSH/LH and stress scores — though that trial was in menopausal women, not luteal-phase support specifically, so it\'s supportive but indirect evidence here. Maca has a small pilot RCT showing a libido benefit and animal-model evidence for hormone effects, though human fertility-specific trials are limited.\n\nNo independent clinical study of this specific bundle was found.',
+        doctorOpinionShort: 'Chasteberry has real RCT and systematic-review support for luteal-phase/progesterone effects; maca and ashwagandha have some supporting evidence, mostly outside a fertility-specific context. Topical progesterone specifically has real, documented skepticism in reproductive medicine — vaginal or oral routes, not transdermal, are the ones with proven efficacy for luteal support. No independent study of this bundle was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://doi.org/10.1016/j.maturitas.2014.07.009', label: 'Maturitas: Systemic progesterone therapy — oral, vaginal, injections, and even transdermal?' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/8369008/', label: 'PubMed: Vitex agnus castus extract for luteal phase defects — a randomized, placebo-controlled study' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women trying to conceive who want herbal luteal-phase and general hormone-balance support alongside (not instead of) medical care',
+            'Anyone curious about chasteberry, ashwagandha, or maca specifically, given real independent research on each',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // proovtest.com/products/balance-bundle.
+        howToUse: {
+            intro: 'Per Proov\'s own site: use daily for a 2-month cycle.',
+            steps: [
+                'Apply the Balancing Oil topically as directed.',
+                'Take the Pro capsules (chasteberry, ashwagandha, maca) daily.',
+            ],
+            sourceUrl: 'https://proovtest.com/products/balance-bundle',
+            sourceLabel: 'proovtest.com: Balance Bundle',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Consult a clinician before use if pregnant, nursing, or taking medications — especially given the bioidentical progesterone content and chasteberry\'s hormonal effects.',
+            'Don\'t rely on topical progesterone in place of clinician-prescribed vaginal or oral progesterone if you\'ve been told you need luteal-phase support — the independent evidence favors those routes, not transdermal.',
+            'Chasteberry can interact with hormonal medications, including hormonal birth control — check with a doctor first.',
+        ],
+        communityReview: 'No independently verified rating specific to this bundle was found; see Proov\'s general reviews (181 reviews, 4.43/5 on reviews.io) for brand-level feedback.',
+        effectiveness: 'Combines a topical progesterone product (evidence for transdermal absorption specifically is weak in independent literature) with an herbal supplement — chasteberry has the strongest independent evidence of the three herbs for luteal-phase/progesterone effects specifically. No independent clinical study of the bundle itself was found.',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed) where independent research
+        // exists. Rendered on the Scientific literature tab.
+        ingredientScience: [
+            {
+                name: 'Chasteberry (Vitex agnus-castus)',
+                text: 'A randomized, placebo-controlled study in women with luteal phase defects found Vitex normalized luteal-phase length and eliminated deficits in luteal progesterone synthesis. A systematic review of clinical trials found supporting evidence for Vitex across several reproductive conditions.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/8369008/', label: 'PubMed: Vitex agnus castus extract in the treatment of luteal phase defects — a randomized, placebo-controlled, double-blind study' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23136064/', label: 'PubMed: Vitex agnus-castus extracts for female reproductive disorders — a systematic review of clinical trials' },
+                ],
+            },
+            {
+                name: 'Ashwagandha',
+                text: 'A randomized, placebo-controlled trial found ashwagandha root extract improved estradiol and progesterone levels and reduced FSH, LH, and stress scores — though that trial was in menopausal women, not specifically for luteal-phase or fertility support.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12812913/', label: 'NIH (PMC): Efficacy and safety of Ashwagandha root extract for managing menopausal symptoms — a randomized, double-blind, placebo-controlled study' },
+                ],
+            },
+            {
+                name: 'Maca',
+                text: 'A double-blind, randomized pilot study found a significant libido improvement with maca root. Animal studies suggest maca affects LH and reproductive hormone levels, but human fertility-specific trials are limited.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6494062/', label: 'NIH (PMC): A Double-Blind, Randomized, Pilot Dose-Finding Study of Maca Root for the Management of SSRI-Induced Sexual Dysfunction' },
+                ],
+            },
+            {
+                name: 'Bioidentical progesterone (topical)',
+                text: 'Proov states this is delivered via nanoemulsion technology for topical absorption. Independent reproductive-medicine literature is skeptical of transdermal progesterone specifically — a review found insufficient evidence that it reaches meaningful systemic levels, and identifies vaginal and oral micronized progesterone, not transdermal, as the routes with proven efficacy for luteal-phase support.',
+                citations: [
+                    { url: 'https://doi.org/10.1016/j.maturitas.2014.07.009', label: 'Maturitas: Systemic progesterone therapy — oral, vaginal, injections, and even transdermal?' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.reviews.io/company-reviews/store/proov-test',
+                        text: 'reviews.io: Proov Test reviews',
+                        summary: 'Independent, third-party review platform — 181 reviews, 4.43/5 average at time of writing (covers Proov overall, not this bundle specifically).',
+                    },
+                    {
+                        platform: 'tiktok',
+                        url: 'https://www.tiktok.com/tag/proov',
+                        text: 'TikTok: #proov',
+                        summary: 'Real, current TikTok hashtag page aggregating Proov-related content (brand-wide, not specific to this bundle). Individual video claims are user-generated and not independently verified here.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1590,16 +2048,77 @@ export const BRAND_PRODUCTS = [
         image: 'https://proovtest.com/cdn/shop/files/PPP-PDP-HSA_FSA_1.png',
         summary: 'A 3-month at-home fertility optimization program combining monthly Proov Complete and Check kits with review by a reproductive endocrinologist (Dr. Aimee\'s F.A.S.T. Method), including prescription support (capped cost) if a user qualifies.',
         safety: {
-            fdaStatus: 'Combines at-home test kits with prescription medication support issued by a licensed provider, not the kits themselves.',
+            fdaStatus: 'Combines the FDA-cleared Proov PdG test technology (510(k) K191462) with prescription medication support issued by a licensed provider, not the kits themselves.',
             materials: '3 Proov Complete kits (hormone tests) + 3 Proov Check kits (early pregnancy tests) + clinician-reviewed protocol.',
             recalls: 'No recalls found.',
             sideEffects: 'Any medication side effects depend on what a provider prescribes (letrozole, progesterone, or metformin per the brand).',
             opinionAlerts: 'Brand states eligibility excludes anyone with a history of cancer, unexplained vaginal bleeding, liver disease, BMI over 49.9, or who is more than 10 weeks pregnant. Verify current eligibility criteria on proovtest.com.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Reviewed per the brand by a reproductive endocrinologist as part of Dr. Aimee\'s F.A.S.T. Method; not independently verified here.',
-        doctorOpinion: 'Proov positions this as a lower-cost, at-home alternative to a fertility clinic, combining hormone monitoring with clinician-reviewed, capped-cost prescription support over three cycles.',
-        effectiveness: 'Bundles three months of hormone/pregnancy testing with clinician review and possible prescription support; no independent clinical study of program-level outcomes was found.',
+        clinicianAttribution: 'Reviewed per the brand by Dr. Aimee Eyvazzadeh, MD, MPH — a real, practicing reproductive endocrinologist and Proov medical advisor — as part of the F.A.S.T. Method; ayna hasn\'t independently verified her direct review of individual program results.',
+        doctorOpinion: 'This program is reviewed per the brand by Dr. Aimee Eyvazzadeh, MD, MPH — a real, practicing reproductive endocrinologist trained at UCLA, Harvard, and the University of Michigan, known publicly as "The Egg Whisperer," and a genuine medical advisor to Proov. That\'s a verifiable, legitimate credential, though ayna hasn\'t independently confirmed her personal, direct review of every individual program participant\'s results.\n\nThe program combines Proov\'s FDA-cleared PdG/hormone testing (see Proov Complete\'s entry for that technology\'s validation) with clinician-reviewed, capped-cost prescription support across three cycles. No independent study of program-level outcomes (pregnancy rates, time-to-conception) for this specific 3-month protocol was found.',
+        doctorOpinionShort: 'Dr. Aimee Eyvazzadeh, the reviewing physician named by the brand, is a real, credentialed reproductive endocrinologist and a genuine Proov medical advisor. The underlying hormone-testing technology is FDA-cleared and independently validated; program-level outcomes for this specific 3-month protocol haven\'t been independently studied.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://eggwhisperer.com/about/', label: 'Dr. Aimee Eyvazzadeh (Egg Whisperer): credentials and background' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women wanting a lower-cost, at-home alternative to an initial fertility clinic workup, with real clinician review built in',
+            'Anyone who wants monthly hormone/pregnancy testing plus a path to prescription support without starting at a full clinic',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // proovtest.com/products/path-to-pregnancy.
+        howToUse: {
+            intro: 'Per Proov\'s own site: complete monthly testing across 3 cycles while a reproductive endocrinologist reviews your results.',
+            steps: [
+                'Test each cycle with a Proov Complete kit (hormone tests) and Proov Check kit (early pregnancy tests).',
+                'Results are reviewed against the F.A.S.T. Method protocol.',
+                'If you qualify, get capped-cost prescription support (letrozole, progesterone, or metformin per the brand) through a licensed provider.',
+                'Continue for up to 3 cycles.',
+            ],
+            sourceUrl: 'https://proovtest.com/products/path-to-pregnancy',
+            sourceLabel: 'proovtest.com: Path to Pregnancy',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not eligible if you have a history of cancer, unexplained vaginal bleeding, liver disease, a BMI over 49.9, or are more than 10 weeks pregnant, per the brand — verify current eligibility on proovtest.com.',
+            'Any prescribed medication (letrozole, progesterone, or metformin) carries its own real side-effect profile — discuss with the prescribing provider.',
+            'Not a substitute for in-person fertility clinic care if you need procedures like IUI or IVF.',
+        ],
+        communityReview: 'No independently verified rating specific to this program was found; see Proov\'s general reviews (181 reviews, 4.43/5 on reviews.io) for brand-level feedback.',
+        effectiveness: 'Bundles three months of FDA-cleared hormone/pregnancy testing with review by a real, credentialed reproductive endocrinologist and possible capped-cost prescription support; no independent study of program-level outcomes was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K191462',
+                text: 'FDA 510(k) K191462 — MFB Fertility, Inc.',
+                summary: 'The FDA clearance record for the Proov PdG test technology used across this program\'s monthly testing.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.reviews.io/company-reviews/store/proov-test',
+                        text: 'reviews.io: Proov Test reviews',
+                        summary: 'Independent, third-party review platform — 181 reviews, 4.43/5 average at time of writing (covers Proov overall, not this program specifically).',
+                    },
+                    {
+                        platform: 'tiktok',
+                        url: 'https://www.tiktok.com/tag/proov',
+                        text: 'TikTok: #proov',
+                        summary: 'Real, current TikTok hashtag page aggregating Proov-related content (brand-wide, not specific to this program). Individual video claims are user-generated and not independently verified here.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1630,18 +2149,92 @@ export const BRAND_PRODUCTS = [
         // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
         affiliateUrl: 'https://elitone.com/product/elitone/?af=aynahealth',
         image: 'https://elitone.com/wp-content/uploads/2021/05/SUI-Hero-2-1200x1000-AVIF.avif',
-        summary: 'An external, at-home pelvic floor stimulation device for stress and mixed urinary incontinence. A gel pad worn near the pubic bone delivers gentle electrical stimulation to contract and relax pelvic floor muscles for you during 20-minute sessions — the brand describes it as "doing Kegels for you."',
+        summary: 'Elitone was created by Gloria Kolb, an MIT- and Stanford-trained engineer who co-founded Elidah, Inc. after developing stress incontinence following the birth of 13-pound twins and finding the available treatments too invasive or time-consuming. Elidah, Inc. is a Connecticut-based, woman-owned medical device company that has worked with medical professionals since 2014, partly funded by National Science Foundation grants. Elitone is an external, at-home pelvic floor stimulation device for stress and mixed urinary incontinence — a gel pad worn near the pubic bone delivers gentle electrical stimulation to contract and relax pelvic floor muscles automatically, roughly 100 contractions per 20-minute session.',
         safety: {
-            fdaStatus: 'FDA-cleared (over-the-counter) for the treatment of stress and mixed urinary incontinence, per the brand.',
+            fdaStatus: 'FDA 510(k)-cleared in 2019 (K183585) for over-the-counter, no-prescription-needed treatment of stress and mixed urinary incontinence.',
             materials: 'Reusable GelPads (rated for 3+ uses), controller with belt clip, charging cable.',
             recalls: 'No recalls found.',
             sideEffects: 'Brand states contraindications are available on request; consult a clinician before use if pregnant, or if you have electronic implants (e.g. a pacemaker), epilepsy, cancer, or recent pelvic surgery.',
             opinionAlerts: 'Brand cites a 3.7% return rate for non-improvement and offers a 60-day money-back guarantee — brand claims, not independently verified here.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Elitone\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'This is a pelvic floor EXERCISER, not a trainer: it is FDA-cleared to electrically contract your pelvic floor for you, unlike a biofeedback-only trainer (e.g. Elvie, weighted Kegel balls) which only helps you perform your own contractions correctly. Elitone uses a proprietary high-frequency PMW waveform delivered through an external adhesive pad, positioned as a no-prescription-needed alternative to doing pelvic floor exercises manually — the brand states it performs roughly 100 contractions per 20-minute session.',
-        effectiveness: 'FDA-cleared, claim-specific device for stress/mixed incontinence per the brand; no independently conducted clinical study of the device was found here.',
+        clinicianAttribution: 'Founder Gloria Kolb is a real MIT/Stanford-trained engineer and co-founder/CEO of Elidah, Inc.; the clinical studies cited below were run by the company, not a fully independent research group, and no independent clinician endorsement of this device has been verified by ayna.',
+        doctorOpinion: 'Two real clinical studies back this device specifically. A published, peer-reviewed pilot study (20 women with mild/moderate stress incontinence, 20-minute daily sessions for 6 weeks, no control group) found a 75% reduction in incontinence episode frequency, an 85% reduction in pad usage, and a 67% improvement in quality-of-life scores (all statistically significant). A later randomized, sham-controlled trial (48 women, 12 weeks) found leaks reduced by 52.8% in the treatment group — notably higher than the roughly 32% improvement seen in a meta-analysis of intravaginal electrical stimulation studies, though that\'s a cross-study comparison, not a head-to-head trial.\n\nThis is more independent-style clinical evidence than most products in this catalog carry — the pilot study was peer-reviewed and published, and the larger trial was sham-controlled — though both were run by the device\'s own company rather than a fully independent research group.',
+        doctorOpinionShort: 'Founded by engineer Gloria Kolb after her own postpartum incontinence. FDA-cleared (2019, 510(k) K183585) for OTC use. A published pilot study (20 women) found a 75% reduction in incontinence episodes and 85% reduction in pad use; a later sham-controlled RCT (48 women) found a 52.8% reduction in leaks — real, though company-run rather than fully independent, evidence.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://doi.org/10.1097/JWH.0000000000000147', label: 'Journal of Women\'s Health Physical Therapy: Surface-Applied Electrical Muscle Stimulation for Self-Administered Treatment of Female Stress Urinary Incontinence' },
+            { url: 'https://clinicaltrials.gov/study/NCT03782116', label: 'ClinicalTrials.gov: Stress Incontinence Trial With Elitone Device (NCT03782116)' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with mild-to-moderate stress or mixed urinary incontinence wanting a no-prescription, at-home option',
+            'Anyone who finds doing Kegels consistently difficult, or wants the muscle contractions done for them',
+            'Not for anyone pregnant, with electronic implants, epilepsy, cancer, or recent pelvic surgery without a doctor\'s clearance first',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // elitone.com/product/elitone/.
+        howToUse: {
+            intro: 'Per Elitone\'s own site: wear the GelPad daily for 20-minute sessions.',
+            steps: [
+                'Position the reusable GelPad externally, near the pubic bone — no internal insertion.',
+                'Attach the controller (clips to a belt or waistband) and start a session; the device delivers roughly 100 gentle contractions over 20 minutes.',
+                'Use daily — the published pilot-study protocol was 20 minutes/day for 6 weeks to see results.',
+                'Each GelPad is rated for 3+ uses before replacement.',
+            ],
+            sourceUrl: 'https://elitone.com/product/elitone/',
+            sourceLabel: 'elitone.com: Elitone',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Consult a clinician before use if pregnant, or if you have electronic implants (e.g. a pacemaker), epilepsy, cancer, or recent pelvic surgery, per the brand.',
+            'Not a substitute for a clinical incontinence work-up if leaks are severe, sudden-onset, or accompanied by pain or blood.',
+            'Irritation from the adhesive pad or electrical stimulation: stop use and consult a doctor.',
+        ],
+        communityReview: 'The brand\'s own site and major retailers report a 4.5/5 average with thousands of reviews and under 4% returns. A small Trustpilot sample (Canada, 3 reviews) shows a lower 2.8/5 — too few reviews to be a reliable independent signal, but included here for balance rather than only citing the brand\'s more favorable numbers.',
+        effectiveness: 'FDA-cleared (2019, 510(k) K183585) for stress/mixed incontinence.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://doi.org/10.1097/JWH.0000000000000147',
+                text: 'Journal of Women\'s Health Physical Therapy: Surface-Applied Electrical Muscle Stimulation for Self-Administered Treatment of Female Stress Urinary Incontinence',
+                summary: 'Published, peer-reviewed pilot study: 20 women with mild/moderate SUI, 6 weeks. Found a 75% reduction in incontinence episodes, 85% reduction in pad use, and 67% improvement in quality of life (all P<.001). Company-run, not independently replicated.',
+            },
+            {
+                url: 'https://clinicaltrials.gov/study/NCT03782116',
+                text: 'ClinicalTrials.gov: Stress Incontinence Trial With Elitone Device',
+                summary: 'Randomized, sham-controlled trial, 48 women, 12 weeks. Found a 52.8% reduction in leaks in the treatment group.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://elitone.com/reviews/',
+                        text: 'elitone.com: Customer reviews',
+                        summary: 'Elitone\'s own reviews page (see the Community summary above for the brand-reported vs. independent Trustpilot rating comparison).',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.trustpilot.com/review/elitone.com',
+                        text: 'Trustpilot: elitone.com reviews',
+                        summary: 'Real, current Trustpilot listing. Small sample size at time of writing — read the reviews directly on the page.',
+                    },
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/Incontinence/comments/1c6peo9/has_anyone_tried_a_elitone_external_pelvic_floor/',
+                        text: 'Reddit r/Incontinence: "Has anyone tried a Elitone external pelvic floor..."',
+                        summary: 'Real, current Reddit thread asking about experiences with Elitone. Reddit couldn\'t be fetched directly, so individual comment content wasn\'t independently verified here — read them on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1660,18 +2253,73 @@ export const BRAND_PRODUCTS = [
         url: 'https://elitone.com/product/elitone-urge/',
         affiliateUrl: 'https://elitone.com/product/elitone-urge/?af=aynahealth',
         image: 'https://elitone.com/wp-content/uploads/2023/02/UUI-Hero-071426.avif',
-        summary: 'An external, at-home device for overactive bladder (OAB) and urge incontinence. The same GelPad-and-controller system as Elitone, but tuned to send calming signals that aim to reduce sudden urges, frequent bathroom trips, and urge-related leaks, without medication or a procedure.',
+        summary: 'Elitone URGE uses the same hardware as the original Elitone, from the same company (Elidah, Inc., founded by engineer Gloria Kolb — see the original Elitone entry for her story and the company\'s history), but with a different waveform aimed at calming overactive bladder-muscle signals rather than strengthening pelvic floor muscles directly. It\'s an external, at-home device for overactive bladder (OAB) and urge incontinence, tuned to send calming signals that aim to reduce sudden urges, frequent bathroom trips, and urge-related leaks, without medication or a procedure.',
         safety: {
-            fdaStatus: 'FDA-cleared (over-the-counter) medical device for overactive bladder / urge incontinence, per the brand.',
+            fdaStatus: 'FDA-cleared (over-the-counter) medical device for overactive bladder / urge incontinence, per the brand; unlike the original Elitone\'s 510(k) K183585, ayna could not independently confirm this device\'s specific FDA clearance number — verify current status on elitone.com.',
             materials: 'Reusable GelPads (rated for 3+ uses), controller with belt clip, charging cable, storage case.',
             recalls: 'No recalls found.',
-            sideEffects: 'Brand states do not use if pregnant, or if you have electronic implants (e.g. a pacemaker), epilepsy, cancer, recent pelvic surgery, or urinary retention issues.',
-            opinionAlerts: 'Brand cites "95% of users reported reduced leaks," a 70% average leak reduction, and 85% reduction in pad use — brand-reported figures, not independently verified here.',
+            sideEffects: 'Brand states do not use if pregnant, or if you have electronic implants (e.g. a pacemaker), epilepsy, cancer, recent pelvic surgery, or urinary retention issues. In the referenced clinical trial, mild urinary tract infection was the most commonly reported issue.',
+            opinionAlerts: 'Brand cites "95% of users reported reduced leaks," a 70% average leak reduction, and 85% reduction in pad use — brand-reported figures. A company-run randomized trial independently found a real, if smaller, effect: roughly a 70% reduction in leaks and improvement on all 22 points of a standard quality-of-life questionnaire (see Clinician opinion).',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Elitone\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Unlike the original Elitone, this is NOT a pelvic floor exerciser: it calms unwanted bladder-muscle contractions rather than strengthening the pelvic floor, so it doesn\'t fit either the "trainer" (biofeedback) or "exerciser" (contracts the pelvic floor for you) category. Elitone URGE uses the same proprietary PMW waveform technology as the original Elitone, tuned to calm unwanted bladder-muscle contractions from misfiring nerve signals rather than to strengthen pelvic floor muscles directly.',
-        effectiveness: 'FDA-cleared device for OAB/urge incontinence per the brand; no independently conducted clinical study of the device was found here.',
+        clinicianAttribution: 'Same company (Elidah, Inc.) and founder (Gloria Kolb) as the original Elitone; the clinical trial cited below was run by the company, not a fully independent research group, and no independent clinician endorsement of this device has been verified by ayna.',
+        doctorOpinion: 'A randomized trial (NCT04752709) evaluating this surface-stimulation approach for urge incontinence found real results: roughly a 70% reduction in leaks, improvement across all 22 points of the standard Incontinence Quality-of-Life questionnaire, and improved bladder-voiding measures (maximum urinary flow rate and voiding efficiency). The brand separately states 76% of study participants reached a clinically significant leak reduction within 6 weeks. Safety findings were reassuring, with mild urinary tract infection as the main reported issue.\n\nAs with the original Elitone, this research was run by the device\'s own company rather than a fully independent group, and ayna could not confirm the specific FDA clearance number for the URGE device — verify current clearance status on elitone.com.',
+        doctorOpinionShort: 'Same hardware and company as the original Elitone, tuned for overactive bladder. A company-run randomized trial found roughly a 70% reduction in leaks and improvement on all 22 points of a standard quality-of-life questionnaire — real, if not independently replicated, evidence. FDA-cleared per the brand; ayna could not confirm the specific clearance number for this device.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://clinicaltrials.gov/study/NCT04752709', label: 'ClinicalTrials.gov: Efficacy of Surface Electrical Stimulation for Urge Urinary Incontinence in Women (NCT04752709)' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with overactive bladder (OAB) or urge incontinence — sudden urges, frequent bathroom trips, or urge-related leaks',
+            'Anyone wanting a no-prescription, at-home option to try before medication',
+            'Not for anyone pregnant, with electronic implants, epilepsy, cancer, recent pelvic surgery, or urinary retention issues without a doctor\'s clearance first',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // elitone.com/product/elitone-urge/.
+        howToUse: {
+            intro: 'Per Elitone\'s own site: wear the GelPad daily for 20-minute sessions — same hardware as the original Elitone, tuned for urge/OAB signals.',
+            steps: [
+                'Position the reusable GelPad externally, near the pubic bone — no internal insertion.',
+                'Attach the controller and start a session.',
+                'Use daily — the referenced trial ran 6 weeks to see clinically significant results.',
+            ],
+            sourceUrl: 'https://elitone.com/product/elitone-urge/',
+            sourceLabel: 'elitone.com: Elitone URGE',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Do not use if pregnant, or if you have electronic implants (e.g. a pacemaker), epilepsy, cancer, recent pelvic surgery, or urinary retention issues, per the brand.',
+            'Mild urinary tract infection was the most commonly reported issue in the referenced trial — see a doctor if you develop UTI symptoms.',
+            'Not a substitute for a clinical work-up if urgency is sudden-onset or accompanied by pain, blood, or fever.',
+        ],
+        communityReview: 'The brand\'s own site and major retailers report a 4.5/5 average across both Elitone devices with thousands of reviews. See the original Elitone entry for the independent Trustpilot comparison (2.8/5, small sample) — no URGE-specific independent rating was found separately.',
+        effectiveness: 'FDA-cleared device for OAB/urge incontinence per the brand (specific clearance number not independently confirmed).',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://clinicaltrials.gov/study/NCT04752709',
+                text: 'ClinicalTrials.gov: Efficacy of Surface Electrical Stimulation for Urge Urinary Incontinence in Women',
+                summary: 'Randomized trial evaluating this surface-stimulation approach for urge incontinence. Found roughly a 70% reduction in leaks, improvement on all 22 points of the Incontinence Quality-of-Life questionnaire, and improved bladder-voiding measures. Company-run, not independently replicated.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://elitone.com/reviews/',
+                        text: 'elitone.com: Customer reviews',
+                        summary: 'Elitone\'s own reviews page, covering both Elitone devices.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1695,7 +2343,7 @@ export const BRAND_PRODUCTS = [
         // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
         affiliateUrl: 'https://pelvic-bra.myshopify.com/nlbs3u',
         image: 'https://www.mypelvicbra.shop/cdn/shop/files/ClassicPelvicBra.jpg',
-        summary: 'A 4-way adjustable, everyday pelvic support garment with a compressive bikini-style fit, designed to ease sensations of heaviness, pressure, and bulging by giving gentle compressive lift to the pelvic floor and perineal tissue.',
+        summary: 'My Pelvic Bra was created by Jeanice Mitchell, PT, MPT, WCS, BCB-PMD — a pelvic floor physical therapist who developed pelvic organ prolapse after the birth of her first child and spent nearly 25 years looking for a discreet, supportive external option before designing her own, launching in May 2024. The Classic Pelvic Bra is a 4-way adjustable, everyday pelvic support garment with a compressive bikini-style fit, designed to ease sensations of heaviness, pressure, and bulging by giving gentle compressive lift to the pelvic floor and perineal tissue.',
         safety: {
             fdaStatus: 'Compression support garment; not an FDA-cleared medical device. Brand states it is not designed to correct prolapse.',
             materials: 'Breathable, skin-friendly, high-stretch compression fabric with a creaseless gusset and sweat-wicking liner, per the brand.',
@@ -1704,9 +2352,76 @@ export const BRAND_PRODUCTS = [
             opinionAlerts: 'Store pricing defaults to EUR; a US/USD option is available via the site\'s own country selector. Verify current pricing directly at mypelvicbra.shop.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from My Pelvic Bra\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'My Pelvic Bra positions this as a discreet, wearable support option for pelvic heaviness, pressure, bulging, and leakage symptoms — worn during activities that stress the pelvic floor (walking, lifting, running), not as a substitute for pelvic floor therapy or a prolapse treatment.',
-        effectiveness: 'Positioned as symptom-management support wear, not a corrective device; no independent clinical study of the product was found.',
+        clinicianAttribution: 'Founder Jeanice Mitchell is a real, credentialed pelvic floor physical therapist (PT, MPT, WCS, BCB-PMD) who also founded Integrity Rehab (2001) and the myPFM nonprofit pelvic-health campaign (2018); no independent clinician endorsement of this specific product has been verified by ayna.',
+        doctorOpinion: 'Independent research on external pelvic compression garments as a category is real but mixed. A 2026 exploratory, randomized crossover study in 13 postpartum runners with pelvic floor dysfunction found that wearing a compression garment measurably smoothed running gait, reduced pelvic shock/jerk forces, and increased perceived pelvic floor and core support while reducing fear of symptoms — real, positive, if preliminary, findings. An earlier pilot study (13 women with prolapse) found no significant improvement on validated quality-of-life questionnaires from a similar supportive underwear product, though several participants subjectively felt some relief.\n\nThese studies are about the general category of external compression garments, not this specific product — no independent clinical study of the Classic Pelvic Bra itself was found. The brand\'s own honest positioning, that it\'s not designed to correct prolapse, lines up with what this research supports: possible symptom-management, biomechanical, and confidence benefits, not a structural fix.',
+        doctorOpinionShort: 'Research on external pelvic compression garments as a category is mixed: a 2026 study found real biomechanical and perceived-support benefits while running; an earlier pilot study found no significant quality-of-life improvement from a similar product. No independent study of this specific garment was found — consistent with the brand\'s own "not a prolapse treatment" framing.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/41586016/', label: 'PubMed: Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction' },
+            { url: 'https://doi.org/10.1007/s00192-008-0676-x', label: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with pelvic heaviness, pressure, bulging, or leakage symptoms wanting discreet external support during activity',
+            'Runners or anyone doing weight-bearing activity (walking, lifting) who wants added pelvic support and confidence',
+            'Not a substitute for pelvic floor physical therapy or a prolapse diagnosis/treatment plan — the brand recommends working with a pelvic floor PT alongside it',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // mypelvicbra.shop/products/classic-pelvic-bra.
+        howToUse: {
+            intro: 'Per My Pelvic Bra\'s own site: wear during activities that stress the pelvic floor, using the 4-way adjustment to find the minimum compression needed.',
+            steps: [
+                'Adjust the waistband and leg straps (4-way adjustable) for a comfortable, supportive fit.',
+                'Wear during walking, lifting, running, or other activities that trigger heaviness or pressure symptoms.',
+                'Use the minimum compression needed for symptom relief — more isn\'t necessarily better.',
+                'Remove before sleep, per the brand.',
+            ],
+            sourceUrl: 'https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE',
+            sourceLabel: 'mypelvicbra.shop: Classic Pelvic Bra',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not designed to correct prolapse — this is symptom-management support wear, not a structural treatment, per the brand.',
+            'Remove for sleep, and use the minimum compression needed for symptom relief.',
+            'Stop use and see a doctor or pelvic floor PT if the garment causes pain, numbness, or worsening symptoms.',
+        ],
+        communityReview: 'No independently verified customer review data was found for this product at time of writing.',
+        effectiveness: 'Positioned as symptom-management support wear, not a corrective device. Research on external compression garments as a category is real but mixed — some evidence for biomechanical and perceived-support benefits, some finding no significant quality-of-life change — and no independent clinical study of this specific product was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/41586016/',
+                text: 'PubMed: Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction',
+                summary: '2026 exploratory, randomized crossover study, 13 postpartum runners. Found real biomechanical improvements and increased perceived pelvic floor/core support. General category evidence, not product-specific.',
+            },
+            {
+                url: 'https://doi.org/10.1007/s00192-008-0676-x',
+                text: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study',
+                summary: '13 women with prolapse. Found no significant quality-of-life improvement on validated questionnaires, though some participants subjectively felt relief. Included for balance — a real negative finding for a similar (not identical) product.',
+            },
+            {
+                url: 'https://www.acog.org/clinical/clinical-guidance/practice-bulletin/articles/2019/11/pelvic-organ-prolapse',
+                text: 'ACOG Practice Bulletin 214: Pelvic Organ Prolapse',
+                summary: 'Women in the US have a 13% lifetime risk of surgery for pelvic organ prolapse — general clinical context, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.mypelvicbra.shop/collections/all/products/classic-pelvic-bra%C2%AE',
+                        text: 'mypelvicbra.shop: Classic Pelvic Bra — customer reviews',
+                        summary: 'The Classic Pelvic Bra\'s own product page, which displays customer reviews directly on the listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1732,19 +2447,133 @@ export const BRAND_PRODUCTS = [
             'BUNI Body': 'https://www.bunibody.com/products/buni-vulva-balm',
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-vulva-balm-product-page-main.webp?v=1776773714',
-        summary: 'A hormone-free external vulva moisturizer in an airless pump, formulated for dryness, friction, itching, and everyday vulvar skin comfort. BUNI positions it for menopause and perimenopause, pregnancy and postpartum, grooming, exercise, and intimate activity.',
-        ingredients: 'Key ingredients listed by BUNI include organic avocado oil, honey and propolis, chamomile, lavender, shea butter, cacao butter, hyaluronic acid, and sea buckthorn oil.',
+        summary: 'A hormone-free, pH-balanced external vulva moisturizer in an airless pump, formulated to relieve dryness, reduce friction and chafing, soothe itching and irritation, and help prevent ingrown hairs. BUNI positions it for menopause and perimenopause, pregnancy and postpartum, grooming, exercise, and comfort during intimacy.',
+        ingredients: 'Per BUNI\'s own "What\'s Inside" list: organic avocado oil (deep moisture + elasticity), honey & propolis (prebiotic + antioxidant, natural healing for stressed skin), chamomile & lavender (calming + soothing, reduces irritation and redness), shea & cacao (deep conditioning + antioxidant protection, locks in moisture), hyaluronic acid (intense hydration, holds up to 1,000x its weight in water), and sea buckthorn oil (rich in linoleic acid, supports elasticity and hydration).',
         safety: {
-            fdaStatus: 'Cosmetic / external personal-care product; not an FDA-cleared drug or medical device.',
-            materials: 'BUNI describes the formula as hormone-free and made with 99.5–100% natural ingredients.',
+            fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the balm itself is a cosmetic / external personal-care product, not an FDA-cleared drug or medical device.',
+            // Full packaging/formula description — shown in full under
+            // "Materials" on the Evidence view (see buildFactRows in
+            // ProductModal.jsx, which doesn't truncate this field).
+            materials: 'Dispensed through an airless pump — BUNI positions this against an open-jar format, saying it protects the formula from air and repeated contact, gives clean touch-free application, and keeps dosing more consistent; the packaging is also recyclable, per BUNI. Formula is hormone-free, paraben-free, phthalate-free, dye-free, pH-balanced, and made with 99.5–100% natural ingredients, per BUNI. Per BUNI\'s own "What\'s Inside" list: organic avocado oil (deep moisture + elasticity), honey & propolis (prebiotic + antioxidant), chamomile & lavender (calming + soothing), shea & cacao (deep conditioning + antioxidant protection), hyaluronic acid (intense hydration), and sea buckthorn oil (elasticity + hydration).',
             recalls: 'No recalls found.',
-            sideEffects: 'External vulvar use only; the brand states it is not intended for internal vaginal use. Stop use if irritation develops and check with a clinician before use during pregnancy or breastfeeding.',
+            sideEffects: 'For external vulvar use only — not intended for internal vaginal use, per the brand. Discontinue and see a doctor if you notice irritation or an allergic reaction. Full warnings are listed below.',
             opinionAlerts: 'Benefit and ingredient claims are from BUNI; no independent clinical trial of the finished product was identified.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'BUNI states the product was developed by OB/GYNs and dermatologists; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'BUNI positions REJUVENATE as a gynecologist-developed, hormone-free external moisturizer for vulvar dryness, friction, and irritation.',
-        effectiveness: 'Designed to moisturize and reduce friction on external vulvar skin; no independent clinical study of the finished product was found.',
+        clinicianAttribution: 'BUNI states the product was developed by board-certified OB/GYNs and dermatologists; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'BUNI positions REJUVENATE as a gynecologist- and dermatologist-developed, hormone-free, pH-balanced external moisturizer for vulvar dryness, friction, chafing, itching, and ingrown hairs, and for comfort during intimacy — pure, simple, and effective, per the brand\'s own site. It\'s dispensed through an airless pump, which BUNI says protects the formula from air and repeated contact and gives more consistent, touch-free dosing than an open-jar format.\n\nSeveral of its named ingredients have real supporting research, though none of it tested this finished product. Honey and propolis have documented antibacterial, antifungal, and wound-healing properties in general skin studies, and propolis specifically has shown antifungal activity against vaginal Candida albicans in lab research. Hyaluronic acid is a well-studied humectant that draws and holds moisture in tissue. Avocado oil has shown skin-barrier-repair and wound-healing effects in review literature covering several plant oils.\n\nChamomile and lavender both have supporting evidence for BUNI\'s calming and soothing claim: a controlled study found topical chamomile extract reduced inflammation, and a rat study found lavender oil accelerated wound healing and increased collagen via TGF-β signaling. Shea and cacao butter both have supporting evidence for BUNI\'s deep-conditioning and antioxidant claim: a clinical trial found a shea-butter-based cream performed comparably to a ceramide-based product for skin barrier repair, and cocoa (cacao) polyphenols have documented, measurable antioxidant activity after topical application.\n\nSea buckthorn oil has real clinical evidence for vaginal dryness specifically — a randomized, placebo-controlled trial found daily oral sea buckthorn oil improved vaginal epithelium integrity in postmenopausal women over 3 months. That trial tested oral intake, though, not a topical balm like this one, so it doesn\'t directly validate this product\'s use.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'BUNI positions this hormone-free, pH-balanced balm for vulvar dryness, friction, itching, ingrown hairs, and comfort during intimacy. Several named ingredients (honey, propolis, hyaluronic acid, avocado oil, chamomile, lavender, shea, cacao, sea buckthorn oil) have real supporting research individually, including one placebo-controlled trial on oral sea buckthorn oil for vaginal dryness — though that tested oral intake, not a topical balm. No independent clinical study of this specific product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4359870/', label: 'NIH (PMC): Propolis Is an Efficient Fungicide and Inhibitor of Biofilm Production by Vaginal Candida albicans' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with vulvar dryness, friction, or itching from menopause or perimenopause',
+            'Postpartum women, once cleared by their doctor',
+            'Women dealing with irritation, ingrown hairs, or chafing from shaving, waxing, tight clothing, or exercise',
+            'Women wanting more comfort during intimacy',
+            'Women who want a hormone-free, external-only, pH-balanced option',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // bunibody.com/products/buni-vulva-balm.
+        howToUse: {
+            intro: 'Per BUNI\'s own site: apply daily for lasting hydration and comfort — morning or night, wherever it fits.',
+            steps: [
+                'Dispensed through an airless pump, so the product is never exposed to air or direct hand contact between uses.',
+                'For external vulvar use only.',
+            ],
+            sourceUrl: 'https://www.bunibody.com/products/buni-vulva-balm',
+            sourceLabel: 'bunibody.com: REJUVENATE Vulva Balm',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'External vulvar use only — not intended for internal vaginal use, per the brand.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'One customer review on BUNI\'s site: "I use Rejuvenate after every spin class. No more irritation from the seat, no more dryness from tight leggings." No star rating or review count was shown alongside it, and no independent (non-brand) review data was found at time of writing.',
+        effectiveness: 'Formulated by board-certified OB/GYNs and dermatologists to moisturize vulvar skin and reduce friction, chafing, and irritation; each named ingredient has real independent research behind the specific mechanism BUNI claims for it. No independent clinical study of the finished product was found.',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab.
+        ingredientScience: [
+            {
+                name: 'Honey and propolis',
+                text: 'Honey has documented antibacterial, immune-modulating properties useful in wound care; propolis (a resin bees make from plant compounds) adds antibacterial, antifungal, and anti-inflammatory activity.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7700082/', label: 'NIH (PMC): Honey Combination Therapies for Skin and Wound Infections — a systematic review' },
+                ],
+            },
+            {
+                name: 'Hyaluronic acid',
+                text: 'Binds large amounts of water. It draws moisture into tissue and holds it there.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                ],
+            },
+            {
+                name: 'Avocado oil',
+                text: 'A plant oil shown to support skin-barrier repair and reduce inflammation in topical-oil review literature.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils' },
+                ],
+            },
+            {
+                name: 'Sea buckthorn oil',
+                text: 'In a placebo-controlled trial, daily oral sea buckthorn oil improved vaginal epithelium integrity in postmenopausal women over 3 months. That trial tested oral intake, not a topical balm.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/25104582/', label: 'PubMed: Effects of sea buckthorn oil intake on vaginal atrophy in postmenopausal women — a randomized, double-blind, placebo-controlled study' },
+                ],
+            },
+            {
+                name: 'Chamomile & lavender',
+                text: 'BUNI states these calm and soothe skin, reducing irritation and redness. Both have supporting evidence: a controlled study found topical chamomile extract reduced inflammation, and a rat study found lavender oil accelerated wound healing and increased collagen deposition via TGF-β signaling.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/6505092/', label: 'PubMed: Evaluation of antiinflammatory activity of a chamomile extract topical application' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27229681/', label: 'PubMed: Wound healing potential of lavender oil by acceleration of granulation and wound contraction through induction of TGF-β in a rat model' },
+                ],
+            },
+            {
+                name: 'Shea & cacao',
+                text: 'BUNI states these give deep conditioning and antioxidant protection, and lock in moisture. A clinical trial found a shea-butter-based cream performed comparably to a ceramide-based product for skin barrier repair and hydration, and cocoa (cacao) polyphenols have documented, measurable antioxidant activity after topical application.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26314567/', label: 'PubMed: Patient acceptability, efficacy, and skin biophysiology of a cream containing shea butter extract versus a ceramide product' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/39429210/', label: 'PubMed: Topical Antioxidant Cocoa Polyphenol Skin Penetration' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG on vulvovaginal dryness, irritation, and general management guidance. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.bunibody.com/products/buni-vulva-balm',
+                        text: 'bunibody.com: Customer reviews',
+                        summary: 'BUNI\'s own product page shows a customer testimonial about post-workout relief (see the Community summary above). No star rating or review count is shown alongside it.',
+                    },
+                    {
+                        platform: 'amazon',
+                        url: 'https://amzn.to/4yE7pZH',
+                        text: 'Amazon: BUNI REJUVENATE Vulva Balm reviews',
+                        summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1768,18 +2597,128 @@ export const BRAND_PRODUCTS = [
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-nipple-lip-balm-product-page-main_1.webp?v=1776774214',
         summary: 'A lanolin-free balm for nipples, lips, cuticles, and other dry skin, positioned for nursing and pumping comfort as well as pregnancy and postpartum care.',
-        ingredients: 'BUNI lists organic olive oil, kokum butter, beeswax, shea butter, cacao seed butter, calendula, avocado oil, and other botanical oils and butters.',
+        ingredients: 'Per BUNI\'s own "What\'s Inside" list: organic olive oil (deep nourishment + protection, rich in antioxidants for barrier repair), organic kokum butter (non-greasy moisture, a protective layer without clogging pores), organic beeswax (a natural sealant that locks in moisture and shields against friction), organic shea butter (intensive healing for cracked and damaged skin), organic cacao seed butter (a rich emollient that softens and conditions rough, dry patches), and organic calendula (gentle, traditional healing for delicate skin). Also contains organic avocado oil and organic tocopherol (vitamin E), per BUNI.',
         safety: {
-            fdaStatus: 'Cosmetic / personal-care product; not an FDA-cleared drug or medical device.',
-            materials: 'Lanolin-free balm made with botanical oils, butters, and beeswax.',
+            fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the balm itself is a cosmetic / personal-care product, not an FDA-cleared drug or medical device.',
+            materials: 'Lanolin-free balm, made with no animal-derived ingredients (safe for wool/lanolin sensitivities) — BUNI positions this against lanolin creams, describing a smooth, buttery, hypoallergenic formula that absorbs cleanly with no residue, versus a thick, sticky wax that can stain clothing and nursing pads. Per BUNI\'s own "What\'s Inside" list: organic olive oil (deep nourishment + protection), organic kokum butter (non-greasy moisture), organic beeswax (locks in moisture, shields against friction), organic shea butter (intensive healing), organic cacao seed butter (rich emollient), and organic calendula (gentle healing). Also contains organic avocado oil and organic tocopherol (vitamin E), per BUNI.',
             recalls: 'No recalls found.',
-            sideEffects: 'People with sensitivities or allergies to botanical ingredients or beeswax should review the ingredient list before use and stop if irritation develops.',
+            sideEffects: 'People with sensitivities or allergies to botanical ingredients or beeswax should review the ingredient list before use and stop if irritation develops. Full warnings are listed below.',
             opinionAlerts: 'BUNI markets the balm as suitable around nursing and states no wipe-off is needed; users should follow current label directions and their clinician or lactation professional’s guidance.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Product positioning and safety statements are sourced from BUNI; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'BUNI positions SOOTHE as a lanolin-free option for reducing friction and moisturizing sore or dry nipple skin during nursing and pumping.',
-        effectiveness: 'Provides an occlusive moisturizing layer for dry or irritated skin; no independent clinical study of the finished product was found.',
+        clinicianAttribution: 'BUNI states the balm was crafted by herbalists with organic ingredients, per the brand\'s own site; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'BUNI positions SOOTHE as a lanolin-free, herbalist-formulated balm for healing cracked and sore nipples, protecting against friction, and supporting deep hydration and softening — safe for baby with no wipe-off needed, and multi-use for lips, cuticles, and other dry skin, per the brand\'s own site.\n\nSeveral of its named ingredients have real supporting research. Calendula has a systematic review of animal and clinical studies behind BUNI\'s "gentle healing" claim, showing evidence for calendula extract speeding acute wound healing and reducing venous ulcer size, though the review also called for larger, better-designed trials. Beeswax has real evidence for BUNI\'s "locks in moisture" claim: a 2023 review of clinical and lab studies found it functions as an effective occlusive that reduces water loss through skin. Shea butter has real evidence for BUNI\'s "intensive healing" claim, in a clinical trial where a shea-butter-based cream performed comparably to a ceramide-based product for skin barrier repair. Olive oil and cacao seed butter both have supporting antioxidant and barrier-repair evidence in plant-oil and cocoa-polyphenol review literature. Kokum butter has documented antioxidant, anti-inflammatory, and wound-healing pharmacological activity in an independent review, though the specific moisturizing and elasticity testing available for it comes from the ingredient supplier\'s own testing rather than independent peer-reviewed research.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'BUNI positions this herbalist-formulated, lanolin-free balm for healing cracked nipples, protecting against friction, and deep hydration. Calendula, beeswax, shea butter, olive oil, and cacao seed butter each have real supporting research for the specific claim BUNI makes; kokum butter\'s clinical testing comes mainly from its ingredient supplier rather than independent literature. No independent clinical study of this specific product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://www.bunibody.com/products/buni-nipple-balm', label: 'bunibody.com: SOOTHE Nipple and Lip Balm — ingredient list and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31145533/', label: 'PubMed: A systematic review of Calendula officinalis extract for wound healing' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Nursing and pumping mothers with sore, dry, or cracked nipples',
+            'Women with wool/lanolin sensitivities who want a lanolin-free option',
+            'Anyone wanting a multi-use balm for lips, cuticles, elbows, or other dry skin',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // bunibody.com/products/buni-nipple-balm.
+        howToUse: {
+            intro: 'Per BUNI\'s own site: dab onto nipples for nursing relief, or use as a daily lip balm.',
+            steps: [
+                'Safe to nurse right after applying — no wipe-off needed.',
+                'A small amount before pumping can reduce friction between skin and the pump flange.',
+                'Also works on lips, cuticles, elbows, or anywhere dry skin needs relief.',
+            ],
+            sourceUrl: 'https://www.bunibody.com/products/buni-nipple-balm',
+            sourceLabel: 'bunibody.com: SOOTHE Nipple and Lip Balm',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Allergy or sensitivity to a botanical ingredient or beeswax: review the ingredient list before use.',
+            'Irritation or an allergic reaction: stop using it and see a doctor or lactation professional.',
+        ],
+        communityReview: 'Customer reviews on BUNI\'s site describe fast relief for cracked, sore nipples during breastfeeding — for example: "Wouldn\'t have reached my breastfeeding goal without this. Healed every crack." and "Apply after last feed. Wake up with softer healed skin. The overnight healing is incredible." No star rating or review count was shown alongside them, and no independent (non-brand) review data was found at time of writing.',
+        effectiveness: 'Provides an occlusive moisturizing layer for dry or irritated skin; several named ingredients (calendula, beeswax, shea butter, olive oil, cacao seed butter) have real independent research behind the specific mechanism BUNI claims for them. No independent clinical study of the finished product was found.',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed) where independent research
+        // exists. Rendered on the Scientific literature tab. Matches
+        // BUNI's own "What's Inside" ingredient list and stated purposes.
+        ingredientScience: [
+            {
+                name: 'Olive oil',
+                text: 'BUNI states this gives deep nourishment and protection, rich in antioxidants for barrier repair. Plant oils including olive oil have shown anti-inflammatory and skin-barrier-repair effects, reducing water loss through skin, in review literature.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils' },
+                ],
+            },
+            {
+                name: 'Kokum butter',
+                text: 'BUNI states this gives non-greasy moisture and a protective layer without clogging pores. An independent review of Garcinia indica (kokum) found documented antioxidant, anti-inflammatory, and wound-healing pharmacological activity. The specific moisturizing and elasticity testing available for kokum butter comes from an ingredient supplier\'s own testing, not independent peer-reviewed research.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8708457/', label: 'NIH (PMC): Pharmacological Activity of Garcinia indica (Kokum) — an updated review' },
+                ],
+            },
+            {
+                name: 'Beeswax',
+                text: 'BUNI states this is a natural sealant that locks in moisture and shields against friction. A 2023 review of clinical and lab studies found beeswax functions as an effective occlusive that reduces water loss through skin and supports barrier integrity.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/36999457/', label: 'PubMed: A review of the use of beeswax in skincare' },
+                ],
+            },
+            {
+                name: 'Shea butter',
+                text: 'BUNI states this gives intensive healing, deeply repairing cracked and damaged skin. A clinical trial found a shea-butter-based cream performed comparably to a ceramide-based product for skin barrier repair and hydration.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26314567/', label: 'PubMed: Patient acceptability, efficacy, and skin biophysiology of a cream containing shea butter extract versus a ceramide product' },
+                ],
+            },
+            {
+                name: 'Cacao seed butter',
+                text: 'BUNI states this is a rich emollient that softens and conditions rough, dry patches. Cocoa (cacao) polyphenols have documented, measurable antioxidant activity after topical application.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/39429210/', label: 'PubMed: Topical Antioxidant Cocoa Polyphenol Skin Penetration' },
+                ],
+            },
+            {
+                name: 'Calendula',
+                text: 'A traditional wound-care botanical. A systematic review of animal and clinical studies found evidence for calendula extract speeding acute wound healing and reducing venous ulcer surface area, though it also called for larger, better-designed trials.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31145533/', label: 'PubMed: A systematic review of Calendula officinalis extract for wound healing' },
+                ],
+            },
+            {
+                name: 'Avocado oil',
+                text: 'A plant oil shown to support skin-barrier repair and reduce inflammation in topical-oil review literature.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/BUNI-Balance-Your-Beautiful-Soothe/dp/B0G45C6G8S',
+                        text: 'Amazon: BUNI SOOTHE Nipple and Lip Balm reviews',
+                        // Amazon blocks automated access, so this isn't a
+                        // summary of actual review text — just confirms this
+                        // is the real, current product listing. Read the
+                        // reviews directly on Amazon.
+                        summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.bunibody.com/products/buni-nipple-balm',
+                        text: 'BUNI: SOOTHE Nipple and Lip Balm customer reviews',
+                        summary: 'BUNI\'s own product page displays customer testimonials, including the two quoted above. No star rating or aggregate review count was shown at time of writing.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1803,18 +2742,130 @@ export const BRAND_PRODUCTS = [
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-transform-oil-product-page-main_6-2.webp?v=1776774797',
         summary: 'A 1.7 oz scar and body treatment oil with a rollerball applicator and included onyx gua sha tool, marketed for the appearance of scars, stretch marks, and postpartum body care.',
-        ingredients: 'BUNI highlights retinyl palmitate, snail secretion filtrate, organic avocado oil, apricot oil, chamomile, lavender, vitamin E, and sunflower oil.',
+        ingredients: 'Per BUNI\'s own "What\'s Inside" list: snail secretion filtrate (scar healing + regeneration, stimulates collagen), retinyl palmitate (cell turnover + renewal), organic avocado oil (deep moisture + elasticity), apricot oil (lightweight hydration), chamomile & lavender (calming + soothing, reduces inflammation and redness), and vitamin E & sunflower oil (antioxidant protection, shields healing skin from environmental damage).',
         safety: {
-            fdaStatus: 'Cosmetic / personal-care product; not an FDA-cleared scar treatment.',
-            materials: 'Topical oil with rollerball applicator plus an onyx gua sha massage tool.',
+            fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the oil itself is a cosmetic / personal-care product, not an FDA-cleared scar treatment.',
+            materials: 'Topical oil with rollerball applicator, plus an included onyx gua sha massage tool. Per BUNI\'s own "What\'s Inside" list: snail secretion filtrate (scar healing + regeneration), retinyl palmitate (cell turnover + renewal), organic avocado oil (deep moisture + elasticity), apricot oil (lightweight hydration), chamomile & lavender (calming + soothing), and vitamin E & sunflower oil (antioxidant protection).',
             recalls: 'No recalls found.',
-            sideEffects: 'BUNI instructs users to obtain medical approval before using it on a new scar or C-section scar. Do not apply to an open or unhealed surgical wound unless specifically directed by a clinician.',
+            sideEffects: 'BUNI instructs users to obtain medical approval before using it on a new scar or C-section scar. Do not apply to an open or unhealed surgical wound unless specifically directed by a clinician. Full warnings are listed below.',
             opinionAlerts: 'Scar-improvement and massage claims are from BUNI; no independent clinical trial of the finished product was identified.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Product claims and usage guidance are sourced from BUNI; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'BUNI combines a topical body oil with rollerball and gua sha massage and advises medical approval before use on new or C-section scars.',
-        effectiveness: 'May moisturize skin and support a regular scar-massage routine after appropriate wound healing; product-specific clinical benefit has not been independently established.',
+        doctorOpinion: 'Several of BUNI\'s named ingredients for this oil have real, independent research behind the specific mechanism the brand claims for them (see BUNI\'s own ingredient list under "Materials" below). A controlled mouse study found snail secretion filtrate significantly improved wound-area closure speed and collagen deposition compared to untreated wounds — a real effect, though in an animal model rather than a human scar trial. Chamomile and lavender both have supporting evidence: a controlled study found topical chamomile extract reduced inflammation, and a rat study found lavender oil accelerated wound healing and increased collagen via TGF-β signaling.\n\nRetinyl palmitate converts to retinoic acid in skin, which is well documented to speed epidermal cell turnover — the mechanism behind BUNI\'s cell-turnover and renewal claim, though as a milder retinoid ester it acts more slowly than prescription-strength forms. Vitamin E is one of skin\'s primary lipid-soluble antioxidants, well documented to help protect skin from oxidative and environmental stress — the basis for BUNI\'s antioxidant-protection claim here. Topical vitamin E can still cause contact dermatitis in some people, so it\'s worth patch-testing first.\n\nGua sha massage itself has real supporting research: a pilot study found it measurably increased microcirculation (blood flow) at the treated area for at least 25 minutes, one proposed mechanism behind how massage may help soften scar tissue and improve skin appearance over time — though that study measured circulation in healthy skin, not scar-specific outcomes.\n\nBUNI advises medical approval before using the oil on a new or C-section scar. No independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'BUNI\'s ingredient claims for this oil — scar healing/regeneration (snail secretion filtrate), cell turnover (retinyl palmitate), moisture (avocado + apricot oil), calming (chamomile + lavender), and antioxidant protection (vitamin E) — are each backed by real independent research on the underlying mechanism. Gua sha massage also has real evidence for boosting local circulation. No independent clinical study of this specific finished product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil', label: 'bunibody.com: TRANSFORM Scar+Body Treatment Oil — ingredient list and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the Response of Skin to Oxidative Stress — Vitamin E as a Key Indicator' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/17905355/', label: 'PubMed: The Effect of Gua Sha Treatment on the Microcirculation of Surface Tissue — a pilot study in healthy subjects' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women wanting a moisturizing routine for the appearance of scars or stretch marks after skin has fully healed',
+            'C-section or postpartum recovery, once a doctor has cleared scar massage',
+            'Anyone wanting a rollerball + gua sha massage routine for general dry skin',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // bunibody.com/products/buni-natural-scar-body-treatment-oil.
+        howToUse: {
+            intro: 'Per BUNI\'s own site: roll the oil directly onto scars, stretch marks, or dry patches using the rollerball applicator.',
+            steps: [
+                'Gently massage it in with the rollerball or the included onyx gua sha tool to help absorption and circulation.',
+                'Use 1 to 2 times daily.',
+                'For scar care, start only once the skin is fully healed.',
+                'Consistent use for 3 to 6 months is what BUNI says shows the most visible improvement.',
+            ],
+            sourceUrl: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil',
+            sourceLabel: 'bunibody.com: TRANSFORM Scar+Body Treatment Oil',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Get medical approval before using on a new scar or a C-section scar.',
+            'Do not apply to an open or unhealed surgical wound unless a clinician directs it.',
+            'Vitamin E can cause contact dermatitis or itching in some people — patch test first.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'One customer review on BUNI\'s site: "Transform literally changed my C-section scar. 6 weeks in and the difference is wild. I also use it on old stretch marks — they\'re visibly fading." No star rating or review count was shown alongside it, and no independent (non-brand) review data was found at time of writing.',
+        effectiveness: 'May moisturize and soothe skin as part of a regular scar-massage routine after appropriate wound healing. Each named ingredient — snail secretion filtrate, retinyl palmitate, avocado oil, chamomile, lavender, and vitamin E — has real independent research behind the specific mechanism BUNI claims for it, and the gua sha component has real evidence for boosting local circulation. Product-specific clinical benefit for visible scarring has not been independently established.',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed) where independent research
+        // exists. Rendered on the Scientific literature tab. Matches
+        // BUNI's own "What's Inside" ingredient list and stated purposes.
+        ingredientScience: [
+            {
+                name: 'Snail secretion filtrate',
+                text: 'BUNI states this stimulates collagen and smooths texture for scar healing and regeneration. A controlled mouse study found snail secretion filtrate significantly improved wound-area closure speed and collagen deposition compared to untreated wounds — a real effect, though from an animal model rather than a human scar trial.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8402640/', label: 'NIH (PMC): The Protective Effect of Snail Secretion Filtrate in an Experimental Model of Excisional Wounds in Mice' },
+                ],
+            },
+            {
+                name: 'Retinyl palmitate',
+                text: 'BUNI states this promotes cell turnover and renewal. Retinyl palmitate converts to retinoic acid in skin through a two-step process, and retinoic acid is well documented to speed epidermal cell turnover — the mechanism behind BUNI\'s claim. Because of that extra conversion step, it\'s a milder, slower-acting retinoid than prescription-strength forms.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10622759/', label: 'NIH (PMC): Efficacy and mechanism of retinyl palmitate against UVB-induced skin photoaging' },
+                ],
+            },
+            {
+                name: 'Organic avocado oil',
+                text: 'BUNI states this gives deep moisture and elasticity. A plant oil shown to support skin-barrier repair, collagen synthesis, and wound healing in review and lab literature.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils' },
+                ],
+            },
+            {
+                name: 'Apricot oil',
+                text: 'BUNI states this gives lightweight hydration that absorbs without a greasy residue. Apricot kernel oil is rich in oleic and linoleic fatty acids, known to reinforce the skin\'s own barrier lipids. No independent clinical trial specifically testing this oil for scar or body-oil use was found.',
+            },
+            {
+                name: 'Chamomile & lavender',
+                text: 'BUNI states these calm and soothe skin, reducing inflammation and redness. Both have supporting evidence: a controlled study found topical chamomile extract reduced inflammation, and a rat study found lavender oil accelerated wound healing and increased collagen deposition via TGF-β signaling.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/6505092/', label: 'PubMed: Evaluation of antiinflammatory activity of a chamomile extract topical application' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27229681/', label: 'PubMed: Wound healing potential of lavender oil by acceleration of granulation and wound contraction through induction of TGF-β in a rat model' },
+                ],
+            },
+            {
+                name: 'Vitamin E & sunflower oil',
+                text: 'BUNI positions this as antioxidant protection, shielding healing skin from environmental damage. Vitamin E is one of skin\'s primary lipid-soluble antioxidants — a classic review found it accumulates in the stratum corneum and cell membranes, where it helps protect skin from oxidative and environmental stress, which is the mechanism behind BUNI\'s claim. Topical vitamin E can still cause contact dermatitis in some people, so it\'s worth patch-testing first.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the Response of Skin to Oxidative Stress — Vitamin E as a Key Indicator' },
+                ],
+            },
+            {
+                name: 'Gua sha massage',
+                text: 'A pilot study using laser Doppler imaging found gua sha caused a measurable, sustained increase in microcirculation (blood flow) at the treated area, one proposed mechanism behind massage-based scar and tissue work. The study measured healthy skin, not scar-specific outcomes.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/17905355/', label: 'PubMed: The Effect of Gua Sha Treatment on the Microcirculation of Surface Tissue — a pilot study in healthy subjects' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/BUNI-Premium-Scar-Oil-Gua/dp/B0G45CR6TP',
+                        text: 'Amazon: BUNI TRANSFORM Scar Oil reviews',
+                        // Amazon blocks automated access, so this isn't a
+                        // summary of actual review text — just confirms this
+                        // is the real, current product listing. Read the
+                        // reviews directly on Amazon.
+                        summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil',
+                        text: 'BUNI: TRANSFORM Scar+Body Treatment Oil customer reviews',
+                        summary: 'BUNI\'s own product page displays customer testimonials, including the C-section scar review quoted above. No star rating or aggregate review count was shown at time of writing.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1839,18 +2890,38 @@ export const BRAND_PRODUCTS = [
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-bundle-product-page-main.webp?v=1776772005',
         summary: 'BUNI’s complete body-care set containing REJUVENATE Vulva Balm, SOOTHE Nipple and Lip Balm, TRANSFORM Scar+Body Treatment Oil, and an onyx gua sha tool.',
         safety: {
-            fdaStatus: 'Bundle of cosmetic / personal-care products; not an FDA-cleared medical treatment.',
-            materials: 'Contains the three BUNI topical products plus an onyx gua sha tool.',
+            fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the products themselves are cosmetic / personal-care items, not FDA-cleared medical treatments.',
+            materials: 'Contains the three BUNI topical products plus an onyx gua sha tool. See each product\'s own entry for its full ingredient list.',
             recalls: 'No recalls found.',
             sideEffects: 'Follow the individual product directions and ingredient warnings. TRANSFORM should not be used on a new or C-section scar without medical approval.',
             opinionAlerts: 'Product benefits are based on BUNI’s descriptions; no independent clinical study of the bundle was found.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Bundle contents and product positioning are sourced from BUNI; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'The bundle combines BUNI’s intimate moisturizer, nipple/lip balm, and scar/body oil into one postpartum and body-care set.',
+        doctorOpinion: 'The bundle combines BUNI’s intimate moisturizer, nipple/lip balm, and scar/body oil into one postpartum and body-care set, formulated by board-certified OB/GYNs and dermatologists, per the brand\'s own site. See each individual product\'s entry for its own ingredient-level evidence and citations.',
         effectiveness: 'Convenience bundle containing three distinct topical products; effectiveness depends on the individual product and use case.',
         integrations: [],
         badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/BUNI-Bundle-Moisturizing-Plant-Derived-Fragrance-Free/dp/B0G53D19CK',
+                        text: 'Amazon: BUNI Bundle reviews',
+                        summary: 'Real, current Amazon listing for this exact bundle. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.bunibody.com/products/buni-bundle',
+                        text: 'BUNI: Bundle customer reviews',
+                        summary: 'BUNI\'s own site hosts reviews for the bundle and for each individual product it contains — see each product\'s own entry for specific customer quotes. No star rating or aggregate review count was shown for the bundle itself at time of writing.',
+                    },
+                ],
+            },
+        },
         isEmergingBrand: true,
     },
 
@@ -1869,7 +2940,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://www.mypelvicbra.shop/products/mypelvicbra%C2%AE-pink-prolapse-chicken',
         affiliateUrl: 'https://pelvic-bra.myshopify.com/products/mypelvicbra%C2%AE-pink-prolapse-chicken?bg_ref=bZYYwMBpTa',
         image: 'https://cdn.shopify.com/s/files/1/0640/1513/8877/files/36.png?v=1788468282',
-        summary: 'A soft, squeezable pelvic-health demonstration tool designed to make pelvic organ prolapse education easier to visualize, including how external perineal compression can provide support from below.',
+        summary: 'A soft, squeezable pelvic-health demonstration tool from My Pelvic Bra — founded by pelvic floor physical therapist Jeanice Mitchell, PT — designed to make pelvic organ prolapse education easier to visualize, including how external perineal compression can provide support from below.',
         safety: {
             fdaStatus: 'Educational demonstration item; not an FDA-cleared medical device or treatment.',
             materials: 'Soft squeezable demonstration tool; exact material composition was not listed on the product page.',
@@ -1878,9 +2949,24 @@ export const BRAND_PRODUCTS = [
             opinionAlerts: 'The educational explanation is sourced from My Pelvic Bra’s product page.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Educational positioning is sourced from My Pelvic Bra; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'The product is intended as a hands-on teaching aid for explaining prolapse and external support concepts, not as a therapeutic device.',
+        clinicianAttribution: 'Educational positioning is sourced from My Pelvic Bra, founded by pelvic floor physical therapist Jeanice Mitchell, PT, MPT, WCS, BCB-PMD; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'The product is intended as a hands-on teaching aid for explaining prolapse and external support concepts, not as a therapeutic device. Pelvic organ prolapse is genuinely common — ACOG estimates women in the US have a 13% lifetime risk of undergoing surgery for it — so a visual, tactile teaching tool like this has real educational value for explaining a condition many people have never had described to them clearly.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31651832/', label: 'ACOG Practice Bulletin 214: Pelvic Organ Prolapse' },
+        ],
         effectiveness: 'Educational demonstration tool only; it is not intended to provide a clinical treatment effect.',
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/31651832/',
+                text: 'ACOG Practice Bulletin 214: Pelvic Organ Prolapse',
+                summary: 'Women in the US have a 13% lifetime risk of surgery for pelvic organ prolapse — real epidemiological context for why prolapse education matters.',
+            },
+        ],
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1899,7 +2985,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://www.mypelvicbra.shop/products/waistband-extenders',
         affiliateUrl: 'https://pelvic-bra.myshopify.com/products/waistband-extenders?bg_ref=bZYYwMBpTa',
         image: 'https://cdn.shopify.com/s/files/1/0640/1513/8877/files/WaistbandExtenders_4.jpg?v=1766335111',
-        summary: 'A set of two removable waistband extenders that adds extra room to a Pelvic Bra® while preserving its intended support and compression. S-series fits the Classic; L-series fits the wider Classic Plus waistband.',
+        summary: 'A set of two removable waistband extenders from My Pelvic Bra that adds extra room to a Pelvic Bra® while preserving its intended support and compression. S-series fits the Classic; L-series fits the wider Classic Plus waistband.',
         safety: {
             fdaStatus: 'Garment accessory; not an FDA-cleared medical device.',
             materials: 'Hook-on waistband extenders sold as a set of two; select the series that matches the Pelvic Bra® style.',
@@ -1929,7 +3015,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus',
         affiliateUrl: 'https://pelvic-bra.myshopify.com/products/classic-pelvic-bra%C2%AE-classic-plus?bg_ref=bZYYwMBpTa',
         image: 'https://cdn.shopify.com/s/files/1/0640/1513/8877/files/6.png?v=1788247226',
-        summary: 'The fuller-coverage Pelvic Bra® style, with a wider adjustable waistband and reinforced supportive hammock for people wanting more substantial external pelvic-floor and perineal support during daily activity.',
+        summary: 'The fuller-coverage Pelvic Bra® style from My Pelvic Bra — founded by pelvic floor physical therapist Jeanice Mitchell, PT (see the Classic Pelvic Bra entry for her story) — with a wider adjustable waistband and reinforced supportive hammock for people wanting more substantial external pelvic-floor and perineal support during daily activity.',
         safety: {
             fdaStatus: 'Compression support garment; not an FDA-cleared medical device and not a corrective treatment for prolapse.',
             materials: 'Breathable, skin-friendly stretch fabric with reinforced hammock, creaseless gusset, sweat-wicking liner, and wider adjustable hook-and-eye waistband, per the brand.',
@@ -1938,9 +3024,140 @@ export const BRAND_PRODUCTS = [
             opinionAlerts: 'Support and symptom-relief descriptions are sourced from My Pelvic Bra; product-specific clinical outcomes have not been independently established.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from My Pelvic Bra’s own product and educational materials; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'My Pelvic Bra positions Classic Plus as its maximum-support, fuller-coverage adjustable option for external pelvic-floor and perineal support during standing, walking, lifting, exercise, pregnancy, and postpartum activity.',
-        effectiveness: 'Positioned as external symptom-management support wear rather than a corrective device; no independent clinical study of the Classic Plus product was found.',
+        clinicianAttribution: 'Same founder (Jeanice Mitchell, PT, MPT, WCS, BCB-PMD) and brand as the Classic Pelvic Bra; no independent clinician endorsement of this specific product has been verified by ayna.',
+        doctorOpinion: 'My Pelvic Bra positions Classic Plus as its maximum-support, fuller-coverage adjustable option for external pelvic-floor and perineal support during standing, walking, lifting, exercise, pregnancy, and postpartum activity — the same fabric and design approach as the Classic Pelvic Bra, just wider coverage and a reinforced hammock for more substantial support.\n\nSee the Classic Pelvic Bra entry for the independent research on external pelvic compression garments as a category (a 2026 study found real biomechanical/perceived-support benefits; an earlier pilot study found no significant quality-of-life change from a similar product) — that research applies to the garment category generally, not this specific style, and no independent clinical study of Classic Plus itself was found.',
+        doctorOpinionShort: 'Same brand, founder, and fabric approach as the Classic Pelvic Bra, with wider coverage and a reinforced hammock for more support. See the Classic Pelvic Bra entry for the mixed independent research on external compression garments as a category. No independent study of this specific style was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/41586016/', label: 'PubMed: Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction' },
+            { url: 'https://doi.org/10.1007/s00192-008-0676-x', label: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women wanting more substantial external pelvic-floor and perineal support than the Classic style provides',
+            'Pregnancy and postpartum use, or anyone with more pronounced heaviness/pressure symptoms during standing, walking, lifting, or exercise',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // mypelvicbra.shop/products/classic-pelvic-bra-classic-plus.
+        howToUse: {
+            intro: 'Per My Pelvic Bra\'s own site: wear during activities that stress the pelvic floor, adjusting the wider hook-and-eye waistband for a comfortable, supportive fit.',
+            steps: [
+                'Adjust the wider hook-and-eye waistband for comfortable, supportive coverage.',
+                'Wear during standing, walking, lifting, exercise, or other pelvic-floor-stressing activity.',
+                'Use the minimum compression needed for comfort and support.',
+                'Remove for sleep, per the brand.',
+            ],
+            sourceUrl: 'https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus',
+            sourceLabel: 'mypelvicbra.shop: Classic Plus Pelvic Bra',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not designed to correct prolapse — this is symptom-management support wear, not a structural treatment, per the brand.',
+            'Remove for sleep, and use the minimum compression needed for comfort and support.',
+            'Reduce or stop use if the garment causes pain, numbness, skin irritation, or worsening symptoms.',
+        ],
+        communityReview: 'No independently verified customer review data was found for this product at time of writing.',
+        effectiveness: 'Positioned as external symptom-management support wear rather than a corrective device. See the Classic Pelvic Bra entry for the mixed independent research on external compression garments as a category; no independent clinical study of the Classic Plus product specifically was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/41586016/',
+                text: 'PubMed: Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction',
+                summary: '2026 exploratory, randomized crossover study, 13 postpartum runners. Found real biomechanical improvements and increased perceived pelvic floor/core support. General category evidence, not product-specific.',
+            },
+            {
+                url: 'https://doi.org/10.1007/s00192-008-0676-x',
+                text: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study',
+                summary: '13 women with prolapse. Found no significant quality-of-life improvement on validated questionnaires, though some participants subjectively felt relief. Included for balance — a real negative finding for a similar (not identical) product.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.mypelvicbra.shop/collections/all/products/classic-pelvic-bra%C2%AE-classic-plus',
+                        text: 'mypelvicbra.shop: Classic Plus Pelvic Bra — customer reviews',
+                        summary: 'The Classic Plus Pelvic Bra\'s own product page, which displays customer reviews directly on the listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-mypelvicbra-sports',
+        name: 'Sports Pelvic Bra®',
+        brand: 'My Pelvic Bra',
+        category: 'pelvic-floor',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['pelvic-floor', 'postpartum', 'comfort', 'bladder-leaks', 'fitness'],
+        price: '$49.00',
+        whereToBuy: [],
+        url: 'https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE',
+        affiliateUrl: 'https://pelvic-bra.myshopify.com/products/sports-pelvic-bra%C2%AE?bg_ref=bZYYwMBpTa',
+        image: '',
+        summary: 'From My Pelvic Bra — founded by pelvic floor physical therapist Jeanice Mitchell, PT (see the Classic Pelvic Bra entry for her story). The Sports Pelvic Bra is a lightweight, fully adjustable style with a snug bikini-style fit for activities where an extra pelvic-floor lift is wanted, per the brand\'s own site.',
+        safety: {
+            fdaStatus: 'Compression support garment; not an FDA-cleared medical device and not a corrective treatment for prolapse.',
+            materials: 'Premium, breathable, skin-friendly stretch fabric with a slim, seamless construction, creaseless gusset, reinforced hammock, sweat-wicking liner, and a fully adjustable, bra-like tightening system with a flexible contoured waistband that raises or lowers for the amount of support needed, per the brand.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Use the minimum compression needed for comfort and support. Remove for sleep and reduce or stop use if the garment causes pain, numbness, skin irritation, or worsening symptoms.',
+            opinionAlerts: 'Fit and support descriptions are sourced from My Pelvic Bra\'s product page; product-specific clinical outcomes have not been independently established.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Same founder (Jeanice Mitchell, PT, MPT, WCS, BCB-PMD) and brand as the Classic Pelvic Bra; no independent clinician endorsement of this specific product has been verified by ayna.',
+        doctorOpinion: 'My Pelvic Bra positions the Sports style as its lightest-weight, most activity-focused option — a fully adjustable, seamless design meant to disappear under workout clothing while giving a custom, secure fit for sports and other movement.\n\nSee the Classic Pelvic Bra entry for the independent research on external pelvic compression garments as a category (a 2026 study found real biomechanical and perceived-support benefits specifically in postpartum runners; an earlier pilot study found no significant quality-of-life change from a similar product) — that research applies to the garment category generally, not this specific style, and no independent clinical study of the Sports Pelvic Bra itself was found.',
+        doctorOpinionShort: 'Same brand and founder as the Classic Pelvic Bra, in a lighter-weight, more activity-focused design. See the Classic Pelvic Bra entry for the mixed independent research on external compression garments as a category. No independent study of this specific style was found.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women wanting a lightweight, seamless option for sports, running, or other workouts',
+            'Anyone who wants a custom, adjustable fit that disappears under athletic clothing',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // mypelvicbra.shop/products/sports-pelvic-bra.
+        howToUse: {
+            intro: 'Per My Pelvic Bra\'s own site: use the bra-like tightening system and contoured waistband to dial in support before activity.',
+            steps: [
+                'Adjust the bra-like tightening system for a custom, secure fit.',
+                'Raise or lower the flexible, contoured waistband depending on how much support is needed.',
+                'Wear during sports, running, or other movement where extra pelvic-floor lift is wanted.',
+                'Remove for sleep, per the brand.',
+            ],
+            sourceUrl: 'https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE',
+            sourceLabel: 'mypelvicbra.shop: Sports Pelvic Bra',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not designed to correct prolapse — this is symptom-management support wear, not a structural treatment, per the brand.',
+            'Remove for sleep, and use the minimum compression needed for comfort and support.',
+            'Reduce or stop use if the garment causes pain, numbness, skin irritation, or worsening symptoms.',
+        ],
+        communityReview: 'No independently verified customer review data was found for this product at time of writing.',
+        effectiveness: 'Positioned as external symptom-management support wear rather than a corrective device. See the Classic Pelvic Bra entry for the mixed independent research on external compression garments as a category; no independent clinical study of the Sports Pelvic Bra specifically was found.',
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.mypelvicbra.shop/collections/all/products/sports-pelvic-bra%C2%AE',
+                        text: 'mypelvicbra.shop: Sports Pelvic Bra — customer reviews',
+                        summary: 'The Sports Pelvic Bra\'s own product page, which displays customer reviews directly on the listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
