@@ -55,3 +55,15 @@ describe('/api/push-broadcast', () => {
     expect(r.body).toContain('ADMIN_PUSH_SECRET');
   });
 });
+
+describe('/api/push-broadcast failure reasons', () => {
+  beforeEach(() => {
+    vi.stubEnv('ADMIN_PUSH_SECRET', 's3cret'); vi.stubEnv('SUPABASE_URL', 'https://x.supabase.co'); vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'k');
+    Object.assign(state, { configured: true, tokens: [{ device_token: 'a', user_id: 'u1' }], off: [], deleted: [] });
+  });
+  it('shows Apple\'s reason and a fix', async () => {
+    state.results = [{ deviceToken: 'a', ok: false, status: 403, reason: 'InvalidProviderToken' }];
+    const r = await call('POST', { title: 'Hi', body: 'There', password: 's3cret', action: 'send' });
+    expect(r.body).toContain('InvalidProviderToken'); expect(r.body).toContain('APNS_KEY_ID');
+  });
+});

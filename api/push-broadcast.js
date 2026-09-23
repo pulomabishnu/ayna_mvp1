@@ -63,6 +63,24 @@ ${n}
 </form></main></body></html>`;
 }
 
+// Plain-English fixes for the APNs errors people actually hit.
+const APNS_FIXES = {
+  InvalidProviderToken: 'The key or Key ID in Vercel is wrong: APNS_KEY_ID must be the 10 characters from the .p8 file name, APNS_KEY_P8 the whole file (BEGIN/END lines included), and the key must belong to the same Apple team as the app.',
+  ExpiredProviderToken: 'Server clock/token issue — just try again in a minute.',
+  MissingProviderToken: 'APNS_KEY_P8 / APNS_KEY_ID are missing in Vercel.',
+  BadDeviceToken: "These phones are registered for the other Apple environment. Builds run straight from Xcode need APNS_ENV=development in Vercel; TestFlight/App Store builds need it unset. Or the phones are on an old build — update in TestFlight, then turn Notifications on again.",
+  DeviceTokenNotForTopic: 'The app ID doesn\'t match — APNS_BUNDLE_ID should be co.aynahealth.app (or unset).',
+  TopicDisallowed: 'This key is not allowed to send for co.aynahealth.app — create the key in the same Apple Developer team as the app.',
+  Unregistered: 'Those phones uninstalled the app or turned notifications off; they were removed from the list.',
+  TooManyProviderTokenUpdates: 'Try again in 20 minutes.',
+};
+function explainApnsReasons(reasons) {
+  const fixes = reasons.map((r) => APNS_FIXES[r]).filter(Boolean);
+  if (fixes.length) return fixes.join(' ');
+  if (reasons.some((r) => /ERR_|key|decoder|PEM|asn1/i.test(r))) return 'The APNS_KEY_P8 value in Vercel could not be read — paste the whole .p8 file again, including the BEGIN and END lines.';
+  return '';
+}
+
 let _admin = null;
 function getAdmin() {
   if (_admin) return _admin;
@@ -126,11 +144,20 @@ export default async function handler(req, res) {
     return send(200, page({ ...keep, notice: { tone: 'err', text: 'Nobody can receive it yet — no one has allowed notifications on the new app build.' } }));
   }
 
-  const results = await sendPush(audience.tokens, { title, body, data: { type: 'broadcast' } });
+  let results;
+  try {
+    results = await sendPush(audience.tokens, { title, body, data: { type: 'broadcast' } });
+  } catch (e) {
+    console.error('[push-broadcast] send failed:', e?.message);
+    return send(500, page({ ...keep, notice: { tone: 'err', text: `Couldn't send: ${e?.message || 'unknown error'}. ${explainApnsReasons([String(e?.message || '')])}` } }));
+  }
   const dead = results.filter((r) => r.status === 410 || DEAD_TOKEN_REASONS.has(r.reason)).map((r) => r.deviceToken);
   if (dead.length) await admin.from('device_tokens').delete().in('device_token', dead);
   const sent = results.filter((r) => r.ok).length;
   const failed = results.length - sent;
   console.log(`[push-broadcast] sent=${sent} failed=${failed} removedDead=${dead.length}`);
-  return send(200, page({ notice: { tone: sent ? 'ok' : 'err', text: sent ? `Sent to ${sent} phone${sent === 1 ? '' : 's'}${failed ? ` (${failed} couldn't be reached)` : ''}.` : `Apple didn't accept it for any phone (${failed} failed). Check the APNs key in Vercel.` } }));
+  const reasons = [...new Set(results.filter((r) => !r.ok).map((r) => r.reason || `HTTP ${r.status}`))];
+  if (reasons.length) console.warn('[push-broadcast] failure reasons:', reasons.join(', '));
+  const why = reasons.length ? ` Apple said: ${reasons.join(', ')}. ${explainApnsReasons(reasons)}` : '';
+  return send(200, page({ notice: { tone: sent ? 'ok' : 'err', text: sent ? `Sent to ${sent} phone${sent === 1 ? '' : 's'}${failed ? ` (${failed} couldn't be reached.${why})` : ''}.` : `Apple didn't accept it for any phone (${failed} failed).${why}` } }));
 }
