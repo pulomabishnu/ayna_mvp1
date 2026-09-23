@@ -407,80 +407,89 @@ export const BRAND_PRODUCTS = [
         },
         isEmergingBrand: true,
     },
-    // SootheHer — confirmed Ayna brand partner (added 2026-09-23). Product
-    // facts checked against sootheher.com and its own product-page copy via
-    // web search (direct fetch of sootheher.com is blocked in this
-    // environment). No independently confirmed FDA 510(k) clearance number
-    // was found; the "FDA cleared" claim below is the brand's own and is
-    // flagged as such, consistent with how unverified brand claims are
-    // handled elsewhere in this file.
+    // SootheHer brand partnership (2026-09-16) — affiliate links supplied by
+    // Ayna (collabs.shop short links carrying the AYNA discount/tracking
+    // code); product facts, pricing, and safety details checked live against
+    // sootheher.com on 2026-09-16. Category is 'cramp-relief', not a pelvic
+    // floor trainer/exerciser: Elaris is a TENS device for menstrual cramp
+    // pain, not a device that trains or contracts the pelvic floor.
     {
         id: 'p-sootheher-elaris-pod',
-        name: 'SootheHer Elaris Pod',
+        name: "SootheHer's Elaris Pod",
         brand: 'SootheHer',
         category: 'cramp-relief',
         type: 'physical',
         internal: false,
         healthFunctions: ['cramp-relief'],
-        tags: ['cramps', 'discomfort', 'drug-free', 'safety-concern'],
-        price: '$89.99',
-        whereToBuy: ['sootheher.com'],
+        tags: ['cramps', 'discomfort', 'wearable', 'drug-free'],
+        price: '$89.99 (list $120)',
+        whereToBuy: [], // direct-to-consumer only; affiliateUrl below covers it
         url: 'https://sootheher.com/',
-        image: '',
-        summary: 'A wearable TENS (transcutaneous electrical nerve stimulation) device from SootheHer designed for drug-free period cramp relief. The slim pod pairs with a butterfly-shaped gel pad worn under clothing, delivering adjustable electrical pulses the brand says interrupt cramp pain signals and prompt the body to release its own endorphins. Comes with a 30-day return window.',
+        // Ayna affiliate partnership — affiliateUrl wins over `url` for the
+        // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
+        affiliateUrl: 'https://collabs.shop/jfue1u',
+        image: 'https://sootheher.com/assets/elaris-butterfly-hero-DnUO3OIN.webp',
+        summary: 'A discreet, wearable TENS (transcutaneous electrical nerve stimulation) device for menstrual cramps. A butterfly-shaped gel pad worn on the lower abdomen sends adjustable electrical pulses meant to block pain signals, prompt endorphin release, and relax uterine muscles — worn under clothing, drug-free.',
         safety: {
-            fdaStatus: 'Marketed by the brand as FDA cleared; ayna was not able to independently confirm a specific 510(k) clearance number in the FDA database at time of writing — verify current regulatory status directly with SootheHer.',
-            materials: 'Reusable electronic pod; single-use adhesive gel pads (each gel pad rated for roughly 30–40 uses, about 12 cycles, per the brand).',
+            fdaStatus: 'FDA-cleared, per the brand.',
+            materials: 'Device, reusable butterfly and circular gel pads, connecting wire, USB-C charging cable, user manual, per the brand.',
             recalls: 'No recalls found.',
-            sideEffects: 'TENS therapy is generally well tolerated. Published trials report mild skin redness or irritation at the electrode site as the main side effect; no serious adverse events have been reported in the dysmenorrhea TENS literature, though safety reporting in that literature is limited.',
-            opinionAlerts: 'TENS devices should not be used by people with a pacemaker or other implanted electrical device, over broken or irritated skin, or — per general TENS guidance — during pregnancy without a clinician\'s okay. Confirm current contraindications directly with SootheHer or the product manual.',
+            sideEffects: 'Brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition — consult a clinician first if any of these apply.',
+            opinionAlerts: 'Brand cites a 4.8-star rating across 718 reviews and offers a 30-day money-back guarantee — brand-hosted figures, not independently verified here.',
         },
-        clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'TENS for period pain is a genuinely well-studied, non-pharmacological option, which puts it on firmer footing than a lot of period-pain gadgets. A 2024 Cochrane review found both high- and low-frequency TENS may reduce pain compared with placebo or no treatment, and a separate 2024 meta-analysis of 10 randomized trials (469 women) found a statistically significant reduction in pain intensity. The mechanism is plausible and established: TENS is thought to work by blocking pain-signal transmission at the spinal level and prompting the body to release its own endorphins.\n\nThe honest caveat is about evidence quality, not the concept: the Cochrane reviewers downgraded their certainty because of risk of bias in the underlying trials, and the newer meta-analysis found very high heterogeneity between studies, meaning results varied a lot from trial to trial, which makes it hard to say precisely how much relief to expect. Safety data is reassuring — mild skin irritation is the main reported side effect, with no serious adverse events across trials — though as with the efficacy data, safety reporting in these trials wasn\'t always rigorous. This SootheHer-branded pod itself has not been through an independent published clinical trial that ayna could find; the evidence above is for TENS as a category/modality, not proof of this exact product\'s results.',
-        doctorOpinionShort: 'TENS for period cramps has real, if imperfect, evidence: a 2024 Cochrane review found it may reduce pain vs. placebo, and a separate meta-analysis found a significant effect — but both flag meaningful study-quality and heterogeneity concerns. This specific pod hasn\'t been independently trialed itself.',
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: "Sourced from SootheHer's own site marketing claims, not independent clinical literature.",
+        doctorOpinion: 'TENS (transcutaneous electrical nerve stimulation) has real supportive evidence for reducing primary dysmenorrhea pain via the gate-control mechanism the brand describes; this does not independently establish that the Elaris Pod specifically matches published TENS study outcomes. A 2024 Cochrane review found both high- and low-frequency TENS may reduce period pain compared with placebo or no treatment, though the reviewers downgraded their certainty because of risk of bias in the underlying trials, and a separate 2024 meta-analysis (10 RCTs, 469 women) found a statistically significant effect but with very high heterogeneity between studies — real evidence for the modality, with genuine uncertainty about how much relief to expect from any one device.',
         doctorOpinionCitations: [
             { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', label: 'Cochrane: TENS for pain control in primary dysmenorrhea (2024)' },
             { url: 'https://doi.org/10.1080/17581869.2026.2714978', label: 'Pain Management: TENS for primary dysmenorrhea — systematic review & meta-analysis' },
         ],
         whoItsFor: [
             'People looking for a drug-free, reusable option for period cramp pain alongside or instead of OTC pain relievers',
-            'Not recommended for anyone with a pacemaker or other implanted electrical device, or over broken/irritated skin',
-            'Best understood as a real but variable-benefit option — trial evidence is genuinely mixed on how much relief to expect',
+            'Not recommended for anyone with a pacemaker, epilepsy, a heart rhythm condition, or who is pregnant, per the brand',
+            'Best understood as a real but variable-benefit option — trial evidence for TENS generally is genuinely mixed on how much relief to expect',
         ],
-        howToUse: {
-            intro: 'Per SootheHer\'s own instructions:',
-            steps: [
-                'Attach the pod to a fresh gel pad and place the butterfly pad on clean, dry skin (typically lower abdomen).',
-                'Select a treatment mode and intensity level — sensations range from tingling to tapping to pulsing.',
-                'Adjust intensity to find a comfortable, effective level; most users report feeling relief within minutes.',
-                'Replace the gel pad after roughly 30–40 uses (about 12 cycles), or sooner if adhesion or sensation weakens.',
-            ],
-            sourceUrl: 'https://sootheher.com/',
-            sourceLabel: 'sootheher.com: Elaris Pod',
-        },
         warnings: [
-            'Do not use if you have a pacemaker or other implanted electrical medical device.',
-            'Do not apply over broken, irritated, or numb skin.',
-            'Check with a clinician before use during pregnancy, per general TENS guidance.',
-            'Persistent, severe, or worsening pelvic pain — or pain that doesn\'t respond to typical measures — warrants clinical evaluation; conditions like endometriosis can present as "just bad cramps."',
+            'Do not use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition, per the brand.',
+            'Persistent, severe, or worsening pelvic pain — or pain that doesn\'t respond to typical measures — warrants clinical evaluation.',
         ],
-        communityReview: 'Independent (non-brand) review volume specific to the SootheHer Elaris Pod is limited at time of writing; the brand offers a 30-day no-questions-asked return window. Broader TENS-for-period-pain community sentiment (Reddit, TikTok) is generally positive for the concept, with individual results varying — consistent with the high heterogeneity seen in the clinical trial literature.',
-        ingredients: 'Reusable electronic TENS pod with adjustable intensity levels; single-use adhesive gel pads.',
-        effectiveness: 'TENS as a modality has real, if heterogeneous, trial support for reducing dysmenorrhea pain. This specific product has not been independently clinically trialed; expect the same trial-to-trial variability seen in the broader TENS literature rather than a guaranteed result.',
+        effectiveness: 'Positioned by the brand as fast-acting, drug-free cramp relief; no independently conducted clinical study of this specific device was found here. TENS as a pain-relief category has supportive evidence for dysmenorrhea.',
         scientificCitations: [
             { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', text: 'Cochrane: Transcutaneous electrical nerve stimulation (TENS) for pain control in women with primary dysmenorrhoea', summary: '2024 Cochrane review: both high- and low-frequency TENS may reduce pain vs. placebo/no treatment, though certainty was downgraded for risk of bias in the underlying trials.' },
             { url: 'https://doi.org/10.1080/17581869.2026.2714978', text: 'Pain Management: Transcutaneous electrical nerve stimulation in the relief of primary dysmenorrhea — systematic review and meta-analysis', summary: '10 RCTs, 469 women: statistically significant reduction in pain intensity favoring TENS, with very high heterogeneity between studies.' },
         ],
         integrations: [],
-        badges: ['Drug-Free'],
-        verificationLinks: {
-            community: { links: [
-                { platform: 'reddit', url: 'https://www.reddit.com/r/PeriodProblems/search/?q=TENS%20OR%20elaris%20OR%20sootheher', text: 'Reddit r/PeriodProblems: TENS/Elaris/SootheHer search', summary: 'User discussion of TENS devices for period pain.' },
-                { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=sootheher%20elaris%20pod', text: 'TikTok: SootheHer Elaris Pod', summary: 'Real-use videos and reviews.' },
-                { platform: 'instagram', url: 'https://www.instagram.com/sootheher/', text: 'SootheHer on Instagram', summary: 'Brand content and community posts.' },
-            ] },
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-sootheher-gel-pad-refills',
+        name: 'SootheHer Gel Pad Refills',
+        brand: 'SootheHer',
+        category: 'cramp-relief',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['cramp-relief'],
+        tags: ['cramps', 'accessory', 'reusable'],
+        price: '$11.99 (list $16, pack of 4)',
+        whereToBuy: [],
+        url: 'https://sootheher.com/',
+        affiliateUrl: 'https://collabs.shop/uj8q5x',
+        image: '/products/sootheher/gel-pad-refills.png',
+        summary: 'A 4-pack of replacement butterfly gel pads for the Elaris Pod. Each gel pad is rated for roughly 30-40 uses; store on the plastic backing between uses to extend pad life, per the brand.',
+        safety: {
+            fdaStatus: 'Accessory to the FDA-cleared Elaris Pod device, per the brand; not separately FDA-cleared.',
+            materials: 'Reusable gel pad material, per the brand.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Same use precautions as the Elaris Pod — brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition.',
+            opinionAlerts: 'Brand-hosted rating shown at time of listing was based on very few reviews — check current review volume before treating it as representative.',
         },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: "Sourced from SootheHer's own site marketing claims, not independent clinical literature.",
+        doctorOpinion: 'A consumable accessory for the Elaris Pod rather than a standalone treatment; replacing worn gel pads maintains the skin contact needed for the device to deliver its stimulation effectively.',
+        effectiveness: 'Maintenance accessory, not a standalone treatment — effectiveness depends on the Elaris Pod device itself.',
+        integrations: [],
+        badges: [],
         isEmergingBrand: true,
     },
     {

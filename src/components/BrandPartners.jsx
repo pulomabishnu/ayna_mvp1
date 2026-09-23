@@ -1,12 +1,5 @@
 import React from 'react';
-import { BRAND_PRODUCTS } from '../data/brands';
-import { LIM_METHOD_PRODUCTS } from '../data/limMethodProducts';
-import { CATEGORY_LABELS } from '../data/products';
-
-// LiM Method's products live in their own file (not brands.js), same as the
-// main catalog merges them in incontinenceProducts.js — merged here too so
-// its partner card shows a product grid like every other partner's does.
-const ALL_PARTNER_PRODUCTS = [...BRAND_PRODUCTS, ...LIM_METHOD_PRODUCTS];
+import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
@@ -18,9 +11,10 @@ import { ProductImageFallback } from './ProductTileImage';
  * plus a list of unreleased startups to join waitlists for. Neither is what
  * this page is for any more: it holds the brands Ayna actually works with.
  *
- * Only confirmed partners belong here. src/data/brands.js is explicit that its
- * entries are catalog entries and "NOT partnership relationships", so the
- * partner list is its own thing below.
+ * Only confirmed partners belong here. The products themselves can live in
+ * any catalog module (brands.js, productsExtended.js, limMethodProducts.js
+ * via incontinenceProducts.js, etc.), so this page reads from ALL_PRODUCTS
+ * rather than only src/data/brands.js.
  *
  * Emptied 2026-08-24 (no contract signed yet), refilled 2026-08-25: Neycher
  * signed a real, official partnership — confirmed by Aditi. No logo file has
@@ -68,6 +62,42 @@ const PARTNERS = [
     url: 'https://www.limmethod.com/?ref=Ayna_Health',
     blurb:
       'Guided pelvic-floor wellness kit built by a pelvic floor occupational therapist, combining low-impact movement training with a sliding board and accessories.',
+  },
+  {
+    // Confirmed partner since 2026-09-07 (see src/utils/partnerBrands.js) but
+    // missing a card on this page until 2026-09-23.
+    brand: 'VIO2',
+    logo: '',
+    url: 'https://go.shopmy.us/p-83948920',
+    blurb:
+      'Dentist-designed, partial-coverage mouth tape for sleep. Encourages a gentle lip seal and nasal breathing to help with snoring and dry mouth.',
+  },
+  {
+    // Confirmed partner since 2026-09-07 (see src/utils/partnerBrands.js) but
+    // missing a card on this page until 2026-09-23.
+    brand: 'My Pelvic Bra',
+    logo: '',
+    url: 'https://pelvic-bra.myshopify.com/nlbs3u',
+    blurb:
+      'A discreet, adjustable compression garment for pelvic heaviness, pressure, bulging, and leakage — worn during daily activity, not a corrective device.',
+  },
+  {
+    // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
+    // missing a card on this page until 2026-09-23.
+    brand: 'BUNI',
+    logo: '',
+    url: 'https://www.bunibody.com/',
+    blurb:
+      'Intimate and body care for vulvar moisture, nipple and lip care, scar and body care, pregnancy, postpartum, menopause, and everyday comfort.',
+  },
+  {
+    // Confirmed partner since 2026-09-23 (see src/utils/partnerBrands.js).
+    // No single shared affiliate link — each LOLA product below has its own.
+    brand: 'LOLA',
+    logo: '',
+    url: 'https://mylola.com/',
+    blurb:
+      'Organic cotton period care. Tampons and pads made with 100% organic cotton, transparent ingredients, and a customizable subscription.',
   },
   {
     brand: 'Winx Health',
@@ -134,7 +164,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
 
       <div className="mockup-page">
         {PARTNERS.map((partner) => {
-          const products = ALL_PARTNER_PRODUCTS.filter((p) => p.brand === partner.brand);
+          const products = ALL_PRODUCTS.filter((p) => p.brand === partner.brand);
           return (
             <article key={partner.brand} className="brand-partner">
               <header className="brand-partner__head">

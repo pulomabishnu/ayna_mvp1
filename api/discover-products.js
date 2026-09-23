@@ -128,7 +128,13 @@ export function slugify(s) {
  * split. Concatenating first means both produce the identical slug.
  */
 export function normalizeKey(name, brand) {
-  return slugify(`${brand || ''} ${name || ''}`);
+  // Catalog entries may also carry the brand in BOTH fields
+  // ({ brand: 'LOLA', name: 'LOLA Organic Cotton Pads' }) — drop the repeat
+  // so that still matches { brand: 'LOLA', name: 'Organic Cotton Pads' }.
+  const b = slugify(brand || '');
+  let n = slugify(name || '');
+  if (b && n.startsWith(`${b}-`)) n = n.slice(b.length + 1);
+  return slugify(`${b} ${n}`);
 }
 
 async function searchForCategory(categoryLabel) {
