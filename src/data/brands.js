@@ -2014,7 +2014,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://sootheher.com/',
         affiliateUrl: 'https://collabs.shop/uj8q5x',
-        image: '',
+        image: '/products/sootheher/gel-pad-refills.png',
         summary: 'A 4-pack of replacement butterfly gel pads for the Elaris Pod. Each gel pad is rated for roughly 30-40 uses; store on the plastic backing between uses to extend pad life, per the brand.',
         safety: {
             fdaStatus: 'Accessory to the FDA-cleared Elaris Pod device, per the brand; not separately FDA-cleared.',

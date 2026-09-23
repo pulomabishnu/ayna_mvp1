@@ -3185,8 +3185,8 @@ a.pdp-head__badge:focus-visible {
   margin: 0.75rem 0;
   padding: 0.85rem 1rem;
   background: #FEF2F2;
-  border: 1px solid #FEE2E2;
-  border-left: 4px solid #DC2626;
+  border: 1px solid #991B1B;
+  border-left: 4px solid #991B1B;
   border-radius: var(--radius-sm);
 }
 .pdp-safety-alert strong {
