@@ -77,24 +77,32 @@ export default function SearchBar({ value = '', onChange, onFilterClick, terms =
           />
         </div>
 
-        <div
-          onClick={onFilterClick}
-          style={{
-            width: 28,
-            height: 28,
-            borderRadius: '50%',
-            background: '#FFEFD6',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flex: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A2603C" strokeWidth="2" strokeLinecap="round">
-            <path d="M4 6h16M7 12h10M10 18h4" />
-          </svg>
-        </div>
+        {/* This icon used to render on Browse with no handler, so tapping it
+            did nothing (2026-09-22 audit). Show it only when there is a real
+            filter action; otherwise offer a working "clear search" button. */}
+        {onFilterClick ? (
+          <div
+            role="button"
+            aria-label="Filters"
+            onClick={onFilterClick}
+            style={{ width: 28, height: 28, borderRadius: '50%', background: '#FFEFD6', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', cursor: 'pointer' }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A2603C" strokeWidth="2" strokeLinecap="round">
+              <path d="M4 6h16M7 12h10M10 18h4" />
+            </svg>
+          </div>
+        ) : value ? (
+          <div
+            role="button"
+            aria-label="Clear search"
+            onClick={() => onChange && onChange({ target: { value: '' } })}
+            style={{ width: 28, height: 28, borderRadius: '50%', background: '#FFEFD6', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', cursor: 'pointer' }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#A2603C" strokeWidth="2.4" strokeLinecap="round">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </div>
+        ) : null}
       </div>
     </div>
   );

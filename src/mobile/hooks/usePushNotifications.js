@@ -14,6 +14,8 @@ import { registerDeviceToken } from '../utils/deviceTokenApi.js';
  * Registration + storage only — nothing here sends a push. That needs the
  * APNs auth key wired in server-side, a separate, later piece of work.
  */
+const PUSH_PROMPT_ENABLED = false;
+
 export function usePushNotifications(userId) {
   const [token, setToken] = useState(null);
   const [status, setStatus] = useState('idle'); // idle | requesting | granted | denied | error
@@ -41,7 +43,15 @@ export function usePushNotifications(userId) {
     (async () => {
       setStatus('requesting');
       try {
-        const perm = await PushNotifications.requestPermissions();
+        // Nothing sends a push yet (see header). Asking for permission on
+        // first launch — stacked on top of the analytics and AI consent
+        // prompts — for a feature that doesn't exist was a bad first
+        // impression and an App Review risk (2026-09-22 audit). Only
+        // register silently if permission was already granted; flip
+        // PUSH_PROMPT_ENABLED when APNs sending ships.
+        const perm = PUSH_PROMPT_ENABLED
+          ? await PushNotifications.requestPermissions()
+          : await PushNotifications.checkPermissions();
         if (perm.receive !== 'granted') {
           if (!cancelled) setStatus('denied');
           return;

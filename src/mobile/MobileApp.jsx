@@ -267,7 +267,11 @@ export default function MobileApp() {
     return () => {
       cancelled = true;
     };
-  }, [authUser, updateSession, setTextSizeIndex]);
+    // Keyed on the user id, not the authUser object: Supabase emits several
+    // auth events on launch (INITIAL_SESSION, SIGNED_IN, TOKEN_REFRESHED),
+    // each a new object, which re-ran this whole sync 3x — including the
+    // clear-then-upsert of a just-built ecosystem (2026-09-22 audit).
+  }, [authUser?.id, updateSession, setTextSizeIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Website and iPhone now consume the exact same live product_catalog feed.
   // Start with the bundled copy so Browse is never empty, then replace it with
