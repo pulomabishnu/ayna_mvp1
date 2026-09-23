@@ -440,7 +440,14 @@ export default async function handler(req, res) {
       maxTokens: 3000,
       timeoutMs: 25_000,
       signal: AbortSignal.timeout(FUNCTION_BUDGET_MS - 8000),
-      trace: { name: 'discover-products' },
+      trace: {
+        name: 'discover-products',
+        // Scheduled catalog job, not a user conversation: one session per run.
+        sessionId: `discover-products:${category}:${new Date(startedAt).toISOString().slice(0, 13)}`,
+        messages: [{ role: 'user', content: `Find new ${label} not already in the catalog` }],
+        formatOutput: (text) => (tryParseJsonCandidate(text)?.products || [])
+          .map((p) => `- ${[p?.brand, p?.name].filter(Boolean).join(' ')}`).join('\n'),
+      },
     });
 
     const parsed = tryParseJsonCandidate(out.text);

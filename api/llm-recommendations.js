@@ -724,6 +724,23 @@ Return ONLY valid JSON — exactly this shape:
 }`.trim();
 }
 
+/** The recommendation tiers as she sees them, for the PRISM trace (raw JSON stays in metadata). */
+function describeRecommendationsForTrace(parsed, catalogIndex) {
+  const productName = (id) => {
+    const p = catalogIndex.byId.get(String(id || '').toLowerCase());
+    return p ? [p.brand, p.name].filter(Boolean).join(' ') : `${id} (not in catalog)`;
+  };
+  const lines = [];
+  for (const rec of Array.isArray(parsed?.recommendations) ? parsed.recommendations : []) {
+    if (rec?.concern) lines.push(`${rec.concern}:`);
+    for (const tier of Array.isArray(rec?.tiers) ? rec.tiers : []) {
+      if (!tier?.product?.catalogId) continue;
+      lines.push(`- ${tier.name || tier.id}: ${productName(tier.product.catalogId)}${tier.product.whyItWorks ? ` — ${tier.product.whyItWorks}` : ''}`);
+    }
+  }
+  return lines.join('\n');
+}
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method === 'OPTIONS') {
@@ -847,7 +864,12 @@ async function handleRequest(req, res) {
           maxTokens: 8000,
           timeoutMs: 28_000,
           signal: deadline,
-          trace: { name: 'llm-recommendations', sessionId: traceSessionId('llm-recommendations', { userId: user.id }) },
+          trace: {
+            name: 'llm-recommendations',
+            sessionId: traceSessionId({ conversationId: body?.conversationId, userId: user.id }),
+            messages: [{ role: 'user', content: `Recommend products for: ${concern}` }],
+            formatOutput: (text) => describeRecommendationsForTrace(tryParseJsonCandidate(text), catalogIndex),
+          },
         });
         if (out.truncated) {
           console.warn(`[llm-recs] concern ${idx + 1} hit max_tokens — output truncated`);

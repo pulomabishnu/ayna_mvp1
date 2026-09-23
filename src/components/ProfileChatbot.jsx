@@ -3,7 +3,7 @@ import { useSpeechToText } from '../hooks/useSpeechToText';
 import SearchMicButton from './SearchMicButton';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
-import { newConversationId } from '../utils/conversationId';
+import { getAppSessionId } from '../utils/conversationId';
 
 /** Merges a profileUpdate the backend returned into the current profile, deduping against what's already there. */
 function mergeProfileUpdate(currentProfile, update) {
@@ -68,7 +68,6 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   const [messages, setMessages] = useState(
     chatHistory?.length > 0 ? chatHistory : buildWelcome(firstName)
   );
-  const [conversationId] = useState(newConversationId);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState('');
@@ -251,7 +250,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
           message: msg,
           profileSummary: summarizeProfile(profile || {}),
           chatHistory: messages.slice(-6),
-          conversationId,
+          conversationId: getAppSessionId(),
         }),
       });
       const data = await res.json().catch(() => ({}));

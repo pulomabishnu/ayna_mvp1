@@ -1,6 +1,7 @@
 import posthog from 'posthog-js';
 import { buildUserHealthContextString } from './userHealthContextForInsights';
 import { deriveBrandSearchContext } from './productBrandContext.js';
+import { getAppSessionId } from './conversationId';
 
 const API_PATH = '/api/product-insights';
 const CACHE_PREFIX = 'ayna_insights_v2_';
@@ -155,7 +156,7 @@ export async function fetchProductInsights(product, options = {}) {
         'Content-Type': 'application/json',
         ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ ...body, conversationId: getAppSessionId() }),
       signal: controller.signal,
     });
   } catch (e) {

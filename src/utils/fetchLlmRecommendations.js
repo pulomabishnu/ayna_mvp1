@@ -7,6 +7,7 @@ import {
   saveLearningMemoryForUser,
 } from './learningMemoryStore';
 import { filterRecommendationsToCatalog } from './catalogIntegrity';
+import { getAppSessionId } from './conversationId';
 
 const API_PATH = '/api/llm-recommendations';
 const DEFAULT_FETCH_TIMEOUT_MS = 75_000;
@@ -227,7 +228,7 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
         'Content-Type': 'application/json',
         ...(requestAuthToken ? { Authorization: `Bearer ${requestAuthToken}` } : {}),
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ ...body, conversationId: getAppSessionId() }),
       signal: controller.signal,
     });
   } catch (e) {

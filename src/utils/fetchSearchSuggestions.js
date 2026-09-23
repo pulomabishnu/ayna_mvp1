@@ -1,5 +1,6 @@
 import posthog from 'posthog-js';
 import { filterProductListToCatalog } from './catalogIntegrity';
+import { getAppSessionId } from './conversationId';
 
 /**
  * Calls /api/search-suggestions (multi-provider AI on the server). Same-origin on Vercel.
@@ -120,7 +121,7 @@ export async function fetchSearchSuggestions(opts) {
   const res = await fetch('/api/search-suggestions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults }),
+    body: JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults, conversationId: getAppSessionId() }),
     signal: opts?.signal,
   });
 

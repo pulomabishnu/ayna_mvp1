@@ -226,7 +226,7 @@ export default async function handler(req, res) {
       timeoutMs: 20_000,
       trace: {
         name: 'product-chat',
-        sessionId: traceSessionId('product-chat', { conversationId, userId: user.id }),
+        sessionId: traceSessionId({ conversationId, userId: user.id }),
         messages: traceMessages(chatHistory, question),
       },
     });

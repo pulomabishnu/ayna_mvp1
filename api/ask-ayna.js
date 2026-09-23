@@ -131,8 +131,10 @@ export default async function handler(req, res) {
       timeoutMs: 20_000,
       trace: {
         name: 'ask-ayna',
-        sessionId: traceSessionId('ask-ayna', { conversationId, userId: user.id }),
+        sessionId: traceSessionId({ conversationId, userId: user.id }),
         messages: traceMessages(chatHistory, message),
+        // The reply is JSON; she only sees `answer`.
+        formatOutput: (text) => tryParseJsonCandidate(text)?.answer,
       },
     });
     parsed = tryParseJsonCandidate(out.text);
