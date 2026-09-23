@@ -10,6 +10,8 @@
  * retryable or not.
  */
 
+import { emitTrace } from './_prismTrace.js';
+
 export class LlmError extends Error {
   constructor(message, { provider, status = 0, retryable = false, body = '' } = {}) {
     super(message);
@@ -100,7 +102,7 @@ async function requestWithRetry(url, init, { provider, timeoutMs, maxAttempts, s
  *   `truncated` is true when the model hit max_tokens — the caller must treat
  *   the payload as incomplete rather than trying to parse a half-written object.
  */
-export async function callAnthropic({
+async function callAnthropicUntraced({
   system,
   prompt,
   maxTokens = 4000,
@@ -141,7 +143,7 @@ export async function callAnthropic({
   return { text, stopReason, truncated: stopReason === 'max_tokens', provider: 'anthropic' };
 }
 
-export async function callOpenAI({
+async function callOpenAIUntraced({
   system,
   prompt,
   maxTokens = 4000,
@@ -213,7 +215,7 @@ function geminiCredentials() {
   return null;
 }
 
-export async function callGemini({
+async function callGeminiUntraced({
   system,
   prompt,
   maxTokens = 4000,
@@ -284,6 +286,40 @@ export async function callGemini({
   }
   return { text, stopReason, truncated: stopReason === 'MAX_TOKENS', provider: 'gemini' };
 }
+
+/**
+ * Every provider call is reported to PRISM (api/_prismTrace.js), success or
+ * failure. Callers may pass `trace: { name, sessionId }` to label the route and
+ * group a conversation; it is stripped before the provider request is built.
+ */
+function withPrismTrace(provider, fn, defaultModel) {
+  return async function traced({ trace, ...args } = {}) {
+    const started = Date.now();
+    const base = {
+      name: trace?.name,
+      sessionId: trace?.sessionId,
+      provider,
+      model: args.model || defaultModel(),
+      system: args.system,
+      prompt: args.prompt,
+    };
+    try {
+      const out = await fn(args);
+      await emitTrace({ ...base, output: out.text, stopReason: out.stopReason, latencyMs: Date.now() - started });
+      return out;
+    } catch (e) {
+      await emitTrace({ ...base, error: e, latencyMs: Date.now() - started });
+      throw e;
+    }
+  };
+}
+
+export const callAnthropic = withPrismTrace('anthropic', callAnthropicUntraced,
+  () => process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001');
+export const callOpenAI = withPrismTrace('openai', callOpenAIUntraced,
+  () => process.env.OPENAI_MODEL || 'gpt-4o-mini');
+export const callGemini = withPrismTrace('gemini', callGeminiUntraced,
+  () => geminiCredentials()?.model || 'gemini');
 
 export function providerConfigured(name) {
   const n = name === 'claude' ? 'anthropic' : name;

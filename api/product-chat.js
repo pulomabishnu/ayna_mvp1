@@ -223,6 +223,7 @@ export default async function handler(req, res) {
       prompt,
       maxTokens: 1024,
       timeoutMs: 20_000,
+      trace: { name: 'product-chat' },
     });
     answer = stripDiagnosticLanguage(out.text.trim());
   } catch (e) {

@@ -128,6 +128,7 @@ export default async function handler(req, res) {
       jsonMode: true,
       maxTokens: 1024,
       timeoutMs: 20_000,
+      trace: { name: 'ask-ayna' },
     });
     parsed = tryParseJsonCandidate(out.text);
   } catch (e) {
