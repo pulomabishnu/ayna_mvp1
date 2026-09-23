@@ -24,7 +24,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://hellowinx.com/products/uti-tests', // was the bare homepage; this is the actual product page
         faqUrl: 'https://hellowinx.com/pages/faq',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569',
-        summary: 'An at-home UTI test paired with Winx Rx, the brand\'s own telehealth service, from Winx Health — founded in 2019 by Jamie Norwood and Cynthia Plotch as Stix, a pregnancy-test brand born from an awkward pharmacy-counter moment, before expanding into UTI and vaginal health and rebranding to Winx Health in 2024, with Kerry Washington joining as an investor and advisor. Named to TIME\'s 2024 Best Inventions list as the only OTC test-plus-telehealth UTI kit of its kind sold in the US.',
+        summary: 'An at-home UTI test that reads urine for the same nitrite and leukocyte-esterase markers used on standard clinical dipsticks, giving an immediate digital result instead of color-matching a strip. A positive result — or symptoms that persist despite a negative one — connects you through Winx Rx, the brand\'s own telehealth service, to a board-certified doctor for a video visit and, if appropriate, a same-day prescription. Named to TIME\'s 2024 Best Inventions list as the only OTC test-plus-telehealth UTI kit of its kind sold in the US.',
         safety: {
             fdaStatus: 'Sold over-the-counter as a consumer diagnostic aid; not a substitute for a lab urine culture. Any prescription treatment is issued by a licensed telehealth provider via Winx Rx, not the test itself.',
             materials: 'See product packaging for full test component list.',
@@ -104,7 +104,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://hellowinx.com/products/vaginal-ph-test-for-yeast-infections',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Vaginal_Health_Test_Treat_Graphic.png?v=1771347513',
-        summary: 'An at-home vaginal pH test from Winx Health (see Winx Health UTI Test + Treat for the brand\'s founder story), marketed to help tell a yeast infection, BV, or something else apart, with same-day prescription treatment available via Winx Rx if needed.',
+        summary: 'An at-home vaginal pH test: wipe the included swab, press it to the test strip, and match the color to a chart to read your vaginal pH in under a minute. Marketed to help flag whether symptoms point toward BV, a yeast infection, or something else, with same-day prescription treatment available through Winx Rx if a provider agrees it\'s needed.',
         safety: {
             fdaStatus: 'Consumer diagnostic test; any prescription treatment is issued by a licensed telehealth provider, not the test itself.',
             materials: 'See product packaging for full test component list.',
@@ -170,7 +170,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://hellowinx.com/products/pregnancy-tests',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Early_Pregnancy_Tests.png?v=1775185073',
-        summary: 'Standard at-home hCG pregnancy tests from Winx Health (see Winx Health UTI Test + Treat for the brand\'s founder story) — the company\'s original product line under its former name, Stix. The brand states these are over 99% accurate from the day of a missed period, with discreet packaging and delivery.',
+        summary: 'A standard at-home urine hCG pregnancy test, read in minutes, that the brand states is over 99% accurate starting the day of a missed period. Ships in discreet, unbranded packaging.',
         safety: {
             fdaStatus: 'Over-the-counter home pregnancy test.',
             materials: 'See product packaging.',
@@ -230,7 +230,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://hellowinx.com/products/uti-fast-acting-pain-relief',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxUTIPainReliefHero.png?v=1771347535',
-        summary: 'An over-the-counter phenazopyridine hydrochloride tablet from Winx Health (see Winx Health UTI Test + Treat for the brand\'s founder story), marketed for fast-acting relief of UTI-related burning, urgency, and discomfort — the same active ingredient sold under brand names like AZO.',
+        summary: 'An over-the-counter phenazopyridine hydrochloride tablet (99.5mg) that targets UTI-related burning, urgency, and discomfort directly at the bladder and urethra — the same active ingredient sold under brand names like AZO. Most users feel relief within an hour; expect urine to temporarily turn reddish-orange, a normal and harmless effect of the medication.',
         safety: {
             fdaStatus: 'Over-the-counter urinary analgesic; active ingredient (phenazopyridine hydrochloride) has FDA-reviewed OTC status but with a real, documented safety profile below.',
             materials: 'Active ingredient: Phenazopyridine Hydrochloride 99.5mg per tablet. Inactive: corn starch, croscarmellose sodium, hypromellose, lactose, magnesium stearate, microcrystalline cellulose, polyethylene glycol, polyvinylpyrrolidone, pregelatinized starch, silicon dioxide, sodium starch glycolate, talc, triacetin.',
@@ -295,7 +295,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: ['Walgreens'],
         url: 'https://hellowinx.com/products/vaginal-health-probiotic',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01_Winx_probiotic_Hero.png?v=1771347498',
-        summary: 'A daily oral probiotic from Winx Health (see Winx Health UTI Test + Treat for the brand\'s founder story) combining Lactobacillus acidophilus, Lactobacillus rhamnosus, Lactobacillus reuteri, Bifidobacterium lactis, and inulin (15 billion CFU total), marketed to support vaginal pH balance and help crowd out bacteria and yeast linked to BV and yeast infections.',
+        summary: 'A daily capsule combining Lactobacillus acidophilus, Lactobacillus rhamnosus, Lactobacillus reuteri, and Bifidobacterium lactis with inulin as a prebiotic — 15 billion CFU per serving. Marketed to support a healthy, acidic vaginal pH and help crowd out the bacteria and yeast linked to BV and yeast infections.',
         safety: {
             fdaStatus: 'Dietary supplement; not evaluated by the FDA for safety or efficacy claims.',
             materials: 'Lactobacillus acidophilus, Lactobacillus rhamnosus, Lactobacillus reuteri, Bifidobacterium lactis Bi-07, inulin (prebiotic fiber), 15 billion CFU per serving. See product packaging for the full excipient list.',
@@ -354,7 +354,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://hellowinx.com/products/uti-daily-protection-supplement',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxDailyDefenseHero.png?v=1771339808',
-        summary: 'A daily preventive supplement from Winx Health (see Winx Health UTI Test + Treat for the brand\'s founder story) combining cranberry extract, D-mannose, turmeric, and vitamin C, which the brand states was designed with input from urologists to help protect against UTIs before they start.',
+        summary: 'A daily capsule (two per day) combining cranberry extract (proanthocyanidins), D-mannose, turmeric, and vitamin C, meant to make it harder for E. coli to stick to the bladder wall before a UTI can take hold. The brand states the formula was designed with input from urologists.',
         safety: {
             fdaStatus: 'Dietary supplement; not evaluated by the FDA for safety or efficacy claims.',
             materials: 'Cranberry extract (proanthocyanidins/PACs), D-mannose, turmeric, vitamin C. See product packaging for exact amounts and full excipient list.',
@@ -3489,12 +3489,16 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
-    // Liv Labs (Pippa Resistance Spring) — confirmed Ayna brand partner
-    // (added 2026-09-23). Distinct from LiM Method (limmethod.com) elsewhere
-    // in this catalog — similarly named but a different company: Liv Labs
-    // (livlabsfitness.com) makes the internally-worn Pippa resistance spring,
-    // invented by Carly Price. Product facts checked via web search (direct
-    // fetch of livlabsfitness.com is blocked in this environment).
+    // Liv Labs (Pippa Resistance Spring) — catalog entry only, NOT yet an
+    // ayna brand partner (as of 2026-09-23). isEmergingBrand still shows the
+    // "Brand" tag on Discovery, but it's deliberately left out of
+    // src/utils/partnerBrands.js's PARTNER_BRAND_PATTERNS allowlist and off
+    // the Brand Partnerships page until a partnership is confirmed. Distinct
+    // from LiM Method (limmethod.com) elsewhere in this catalog — similarly
+    // named but a different company: Liv Labs (livlabsfitness.com) makes the
+    // internally-worn Pippa resistance spring, invented by Carly Price.
+    // Product facts checked via web search (direct fetch of
+    // livlabsfitness.com is blocked in this environment).
     {
         id: 'p-livlabs-pippa-starter-kit',
         name: 'Pippa Resistance Spring Starter Kit',
@@ -3507,8 +3511,8 @@ export const BRAND_PRODUCTS = [
         price: '$99.00',
         whereToBuy: ['livlabsfitness.com'],
         url: 'https://livlabsfitness.com/products/pippa-resistance-spring-starter-kit',
-        image: '',
-        summary: 'A soft, conforming silicone resistance spring worn internally (like a tampon) that gently activates the pelvic floor with everyday movement — no batteries, screens, or scheduled exercises required. Invented by Carly Price, previously known for reimagining the pillow at Casper and holding 41 patents, after trying pelvic-floor biofeedback devices and working with Bay Area pelvic health specialists; she co-founded Liv Labs with longtime collaborator Melody Roberts to bring it to market. Backed by Y Combinator and recognized in Fast Company\'s 2025 Innovation by Design Awards. Includes one light-resistance spring, a reusable applicator, and instructions.',
+        image: '/products/livlabs/pippa-starter-kit.webp',
+        summary: 'A soft, conforming silicone resistance spring worn internally (like a tampon) that gently activates the pelvic floor with everyday movement — no batteries, screens, or scheduled exercises required. Invented by Carly Price, previously known for reimagining the pillow at Casper and holding 41 patents, in consultation with Bay Area pelvic health specialists; she co-founded Liv Labs with longtime collaborator Melody Roberts to bring it to market. Backed by Y Combinator and recognized in Fast Company\'s 2025 Innovation by Design Awards.',
         safety: {
             fdaStatus: 'Marketed as a general wellness/fitness product, not an FDA-cleared medical device. The brand states the springs are made from high-purity biomedical silicone (the type used in implants) and have been tested to medical device standards — including biocompatibility, microbiological, chemical, and cleaning-validation testing — by an ISO 13485:2016-certified manufacturer, though ayna could not independently confirm a specific FDA clearance or registration.',
             materials: 'High-purity biomedical-grade silicone spring; reusable plastic applicator, similar in concept to a tampon applicator.',
@@ -3518,7 +3522,7 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Pippa\'s underlying idea — an internally worn object that gives the pelvic floor something to respond to during normal movement — sits in the same conceptual family as weighted vaginal cones, a pelvic-floor training method with real clinical backing. A Cochrane review found weighted vaginal cones are more effective than no treatment for stress urinary incontinence, and may work about as well as standard pelvic floor muscle training (Kegels), though the evidence that cones outperform standard PFMT specifically is inconclusive. Cones and Pippa aren\'t identical — cones rely on gravity and the sensation of "losing" a weight, while Pippa\'s spring relies on gentle conforming resistance — but the shared mechanism, internal proprioceptive/resistance feedback prompting a pelvic floor contraction, is a real, studied approach, not a novel unproven idea.\n\nThe honest caveat: Pippa itself, as this specific spring-based product, has not been through an independent published clinical trial that ayna could find — the vaginal-cone evidence above is for a related but distinct device category, not proof of Pippa\'s own outcomes. The brand\'s materials and manufacturing claims (implant-grade silicone, ISO-certified manufacturer, third-party biocompatibility testing) are reassuring from a safety standpoint, but "safe to wear" and "clinically proven to strengthen the pelvic floor" are different claims, and only the first has strong independent backing here.',
+        doctorOpinion: 'Pippa\'s underlying idea — an internally worn object that gives the pelvic floor something to respond to during normal movement — sits in the same conceptual family as weighted vaginal cones, a pelvic-floor training method with real clinical backing. A Cochrane review found weighted vaginal cones are more effective than no treatment for stress urinary incontinence, and may work about as well as standard pelvic floor muscle training (Kegels), though the evidence that cones outperform standard PFMT specifically is inconclusive. Cones and Pippa aren\'t identical — cones rely on gravity and the sensation of "losing" a weight, while Pippa\'s spring relies on gentle conforming resistance — but the shared mechanism, internal proprioceptive/resistance feedback prompting a pelvic floor contraction, is a real, studied approach, not a novel unproven idea.',
         doctorOpinionShort: 'Conceptually similar to weighted vaginal cones, a pelvic-floor training method with real Cochrane-level evidence (better than no treatment, roughly comparable to standard Kegels) — but Pippa\'s specific spring design hasn\'t itself been independently clinically trialed, even though its materials and manufacturing claims are reassuring on safety.',
         doctorOpinionCitations: [
             { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', label: 'Cochrane: Weighted vaginal cones for urinary incontinence' },
@@ -3546,7 +3550,7 @@ export const BRAND_PRODUCTS = [
         ],
         communityReview: 'Pippa has real outside validation as a product — Fast Company\'s 2025 Innovation by Design Awards recognized it, and Liv Labs is Y Combinator-backed. Independent (non-brand) user review volume is still limited at time of writing outside the brand\'s own Kickstarter and site, consistent with an early-stage startup product.',
         ingredients: 'High-purity biomedical-grade silicone resistance spring (light resistance in the Starter Kit); reusable applicator.',
-        effectiveness: 'The broader device category — internal resistance/proprioceptive feedback for pelvic floor engagement — has real Cochrane-level support via the related vaginal-cone literature. This specific product has not been independently clinically trialed; expect it to work on the same general principle, without a product-specific efficacy study to point to yet.',
+        effectiveness: 'Works on the same general principle as weighted vaginal cones, a related device category with real Cochrane-level evidence for pelvic floor training.',
         scientificCitations: [
             { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', text: 'Cochrane: Weighted vaginal cones for urinary incontinence', summary: 'Found weighted vaginal cones more effective than no active treatment for stress urinary incontinence, and possibly comparable to standard pelvic floor muscle training — the closest independently studied device category to Pippa\'s internal-resistance mechanism, though not identical to it.' },
         ],
@@ -3573,7 +3577,7 @@ export const BRAND_PRODUCTS = [
         price: '$149.00',
         whereToBuy: ['livlabsfitness.com'],
         url: 'https://livlabsfitness.com/products/pippa-fit-kit',
-        image: '',
+        image: '/products/livlabs/pippa-fit-kit.webp',
         summary: 'From Liv Labs (see the Pippa Starter Kit entry for the brand\'s founder story) — includes both a light- and a medium-resistance Pippa spring plus applicator, letting users progress to a stronger resistance level as pelvic floor engagement builds.',
         safety: {
             fdaStatus: 'Marketed as a general wellness/fitness product, not an FDA-cleared medical device. See the Pippa Starter Kit entry for the brand\'s materials and manufacturing claims.',
