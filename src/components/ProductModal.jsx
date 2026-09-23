@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { newConversationId } from '../utils/conversationId';
 import ProductEvidenceRail from './ProductEvidenceRail';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
@@ -73,6 +74,7 @@ function fallbackCopyText(value) {
  */
 function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts }) {
   const [messages, setMessages] = useState([]);
+  const [conversationId] = useState(newConversationId);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
@@ -121,6 +123,8 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
           aiInsights: aiContext || {},
           userContext: quizResults?.fullHealthIntake ? JSON.stringify(quizResults.fullHealthIntake).slice(0, 4000) : '',
           ecosystemProducts: Array.isArray(ecosystemProducts) ? ecosystemProducts.slice(0, 20) : [],
+          chatHistory: messages.slice(-6),
+          conversationId,
         }),
       });
       const data = await res.json().catch(() => ({}));

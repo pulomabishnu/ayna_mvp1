@@ -22,6 +22,7 @@
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, stripDiagnosticLanguage } from './_llm.js';
+import { traceSessionId, traceMessages } from './_prismTrace.js';
 import { stripLinks } from './_catalogGrounding.js';
 
 function clamp(v, max) {
@@ -90,7 +91,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_json' });
   }
 
-  const { message, profileSummary, chatHistory } = body || {};
+  const { message, profileSummary, chatHistory, conversationId } = body || {};
   if (!message || typeof message !== 'string' || !message.trim()) {
     return res.status(400).json({ error: 'message is required' });
   }
@@ -128,7 +129,11 @@ export default async function handler(req, res) {
       jsonMode: true,
       maxTokens: 1024,
       timeoutMs: 20_000,
-      trace: { name: 'ask-ayna' },
+      trace: {
+        name: 'ask-ayna',
+        sessionId: traceSessionId('ask-ayna', { conversationId, userId: user.id }),
+        messages: traceMessages(chatHistory, message),
+      },
     });
     parsed = tryParseJsonCandidate(out.text);
   } catch (e) {

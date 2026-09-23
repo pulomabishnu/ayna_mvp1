@@ -2,6 +2,7 @@
 import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
 import { verifyUser, claimEcosystemBuild, releaseEcosystemBuild } from './_usageLimit.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, providerConfigured } from './_llm.js';
+import { traceSessionId } from './_prismTrace.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { routeHealthQuery } from './_healthKnowledge.js';
 import {
@@ -846,7 +847,7 @@ async function handleRequest(req, res) {
           maxTokens: 8000,
           timeoutMs: 28_000,
           signal: deadline,
-          trace: { name: 'llm-recommendations' },
+          trace: { name: 'llm-recommendations', sessionId: traceSessionId('llm-recommendations', { userId: user.id }) },
         });
         if (out.truncated) {
           console.warn(`[llm-recs] concern ${idx + 1} hit max_tokens — output truncated`);

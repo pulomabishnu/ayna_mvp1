@@ -8,6 +8,7 @@ import { loadGroundingCatalog, buildCatalogIndex, resolveCatalogProduct } from '
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder, stripDiagnosticLanguage } from './_llm.js';
+import { traceSessionId, traceMessages } from './_prismTrace.js';
 import { fetchOfficialSiteText } from './_officialSiteFetch.js';
 
 /**
@@ -152,7 +153,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_json' });
   }
 
-  const { question, product: clientProduct, aiInsights, userContext, ecosystemProducts } = body || {};
+  const { question, product: clientProduct, aiInsights, userContext, ecosystemProducts, conversationId, chatHistory } = body || {};
   if (!question || typeof question !== 'string' || !question.trim()) {
     return res.status(400).json({ error: 'question is required' });
   }
@@ -223,7 +224,11 @@ export default async function handler(req, res) {
       prompt,
       maxTokens: 1024,
       timeoutMs: 20_000,
-      trace: { name: 'product-chat' },
+      trace: {
+        name: 'product-chat',
+        sessionId: traceSessionId('product-chat', { conversationId, userId: user.id }),
+        messages: traceMessages(chatHistory, question),
+      },
     });
     answer = stripDiagnosticLanguage(out.text.trim());
   } catch (e) {

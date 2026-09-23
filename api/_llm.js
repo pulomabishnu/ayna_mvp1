@@ -290,7 +290,9 @@ async function callGeminiUntraced({
 /**
  * Every provider call is reported to PRISM (api/_prismTrace.js), success or
  * failure. Callers may pass `trace: { name, sessionId }` to label the route and
- * group a conversation; it is stripped before the provider request is built.
+ * group a conversation, plus `messages` ([{role, content}] — the chat turns
+ * as the user saw them) so the trace reads as a conversation rather than one
+ * rendered prompt; it is stripped before the provider request is built.
  */
 function withPrismTrace(provider, fn, defaultModel) {
   return async function traced({ trace, ...args } = {}) {
@@ -298,6 +300,7 @@ function withPrismTrace(provider, fn, defaultModel) {
     const base = {
       name: trace?.name,
       sessionId: trace?.sessionId,
+      messages: trace?.messages,
       provider,
       model: args.model || defaultModel(),
       system: args.system,
