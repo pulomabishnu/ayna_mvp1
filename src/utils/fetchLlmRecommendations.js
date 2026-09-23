@@ -6,11 +6,14 @@ import {
   saveLearningMemorySession,
   saveLearningMemoryForUser,
 } from './learningMemoryStore';
+import { filterRecommendationsToCatalog } from './catalogIntegrity';
 
 const API_PATH = '/api/llm-recommendations';
 const DEFAULT_FETCH_TIMEOUT_MS = 75_000;
-const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v2';
-const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v2';
+// v3: bumped in the 2026-09-22 integrity audit so caches holding free-form
+// model products from older builds are never read back.
+const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v3';
+const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v3';
 
 function captureRecommendationAnalytics(event, properties) {
   try { posthog.capture(event, properties); } catch { /* analytics must never break recommendations */ }
@@ -64,8 +67,8 @@ export function loadCachedLlmRecommendations(fingerprint) {
     if (!raw) return null;
     const o = JSON.parse(raw);
     if (!o || o.fingerprint !== fingerprint) return null;
-    const recs = o.recommendations;
-    return Array.isArray(recs) && recs.length > 0 ? recs : null;
+    const recs = filterRecommendationsToCatalog(o.recommendations);
+    return recs.length > 0 ? recs : null;
   } catch {
     return null;
   }
@@ -275,6 +278,11 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
     err.status = res.status;
     err.code = data?.error;
     throw err;
+  }
+
+  // Belt and braces: the server already hydrates from the catalog.
+  if (Array.isArray(data?.recommendations)) {
+    data.recommendations = filterRecommendationsToCatalog(data.recommendations);
   }
 
   captureRecommendationAnalytics('ai_recommendations_completed', {

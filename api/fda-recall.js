@@ -439,7 +439,18 @@ async function notifyUsersOfRecall(admin, { productId, productName, recallSignat
       .eq('user_id', user_id)
       .maybeSingle();
 
-    const hasUsableNumber = phoneRow?.phone_number && phoneRow.is_verified && !phoneRow.sms_opted_out;
+    // Respect the app's Preferences > Notifications switch (notification_
+    // preferences.notifications_enabled). Before the 2026-09-22 audit this
+    // sweep texted anyone with a verified number even after they turned
+    // notifications off. A missing row = column default (on).
+    const { data: prefRow } = await admin
+      .from('notification_preferences')
+      .select('notifications_enabled')
+      .eq('user_id', user_id)
+      .maybeSingle();
+    const notificationsOff = prefRow?.notifications_enabled === false;
+
+    const hasUsableNumber = !notificationsOff && phoneRow?.phone_number && phoneRow.is_verified && !phoneRow.sms_opted_out;
 
     if (dryRun) {
       // Zero writes in dry run — see the header comment above for why.
@@ -456,7 +467,7 @@ async function notifyUsersOfRecall(admin, { productId, productName, recallSignat
       skipped++;
       await admin.from('recall_notifications').insert({
         user_id, product_id: productId, product_name: productName,
-        recall_signature: recallSignature, status: 'skipped_no_phone',
+        recall_signature: recallSignature, status: notificationsOff ? 'skipped_opted_out' : 'skipped_no_phone',
       });
       return;
     }

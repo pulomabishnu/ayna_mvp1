@@ -1,4 +1,5 @@
 import { compactLegacyAuthMetadata } from './authMetadataCleanup';
+import { toCatalogProduct } from './catalogIntegrity';
 
 /**
  * Supabase persistence for user_ecosystems.
@@ -79,7 +80,8 @@ function compactProduct(product) {
     'id', 'name', 'brand', 'category', 'type', 'price', 'priceDisplay', 'stage',
     'image', 'imageUrl', 'images', 'summary', 'description', 'tagline',
     'whereToBuy', 'url', 'website', 'buyUrl', 'purchaseUrl', 'affiliateUrl',
-    'llmGenerated', 'intakeGenerated', '_llmConcern', '_userSwapped',
+    'intakeGenerated', '_llmConcern', '_userSwapped',
+    'catalogId', 'catalogVerified', 'whyItWorks', 'considerations', 'matchExplanation',
     'aynaMatch', 'aynaMatchPercent', 'matchPercent', 'matchPercentage',
   ];
   const out = {};
@@ -162,9 +164,13 @@ function hydrateFromRows(rowsById) {
   const omittedProducts = {};
   const ecosystemUpdatedAt = {};
 
-  for (const [productId, row] of Object.entries(rowsById || {})) {
-    const product = row?.product;
+  for (const [, row] of Object.entries(rowsById || {})) {
+    // PRODUCT INTEGRITY: saved snapshots from older builds can hold free-form
+    // model output (invented names/URLs). Only catalog-backed products are
+    // shown, always with current catalog facts. Rows are NOT deleted.
+    const product = toCatalogProduct(row?.product);
     if (!product?.id) continue;
+    const productId = product.id;
     if (row.inEcosystem) {
       myProducts[productId] = product;
       ecosystemUpdatedAt[productId] = row.updatedAt ? new Date(row.updatedAt).toISOString() : null;

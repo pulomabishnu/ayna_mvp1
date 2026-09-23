@@ -22,6 +22,7 @@
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, stripDiagnosticLanguage } from './_llm.js';
+import { stripLinks } from './_catalogGrounding.js';
 
 function clamp(v, max) {
   if (typeof v !== 'string') return '';
@@ -43,6 +44,7 @@ RULES:
 - You are not a doctor. NEVER diagnose, under any framing — this means never naming, listing, or suggesting specific medical conditions as a possible explanation for symptoms she describes, even hedged ("this could be X, Y, or Z" still counts as diagnosing). Never prescribe treatment or tell her what medication to take. When she describes symptoms or asks what might be going on, answer with general, non-diagnostic guidance instead — what that kind of symptom commonly involves, general self-care, what to track or watch for — without naming any candidate condition, and firmly direct her to a healthcare provider for an actual diagnosis. Always still give a substantively useful answer alongside that guidance, never just the disclaimer alone.
 - If anything in her message sounds like it could be urgent (severe or worsening pain, heavy or prolonged bleeding, signs of infection like fever, fainting, or anything she describes as sudden/severe) — say so directly and tell her to seek medical care promptly, before anything else in your answer.
 - Never fabricate specific studies, statistics, or product facts you don't actually know.
+- Do NOT name specific brands or products and do NOT include any links or URLs. Product picks only come from Ayna's reviewed catalog, which the app shows her itself — describe the TYPE of product instead and use browseIntent.
 - If she asks how to browse or find products (e.g. "show me pads", "I need supplements for cramps"), tell her what you're doing for her in the answer AND set "browseIntent" (see JSON shape) so the app can actually take her there.
 
 SEPARATELY, decide whether this message reveals something worth remembering in her health profile — a real stated concern, sensitivity, avoidance, or priority, not just a passing question. Only include a category below if she clearly stated something new; leave arrays empty / preference null otherwise. Do not invent something she didn't say.
@@ -53,7 +55,7 @@ HER MESSAGE: ${message}
 
 Return ONLY valid JSON, exactly this shape, no markdown code fences:
 {
-  "answer": "your reply, markdown allowed (**bold**, [text](url), - lists)",
+  "answer": "your reply, markdown allowed (**bold**, - lists), no links",
   "profileUpdate": { "frustrations": [], "sensitivities": [], "productsToAvoid": [], "preference": null },
   "browseIntent": { "category": "pad" } or null
 }`.trim();
@@ -132,7 +134,7 @@ export default async function handler(req, res) {
     console.error('[ask-ayna] all providers failed:', e?.status || '', e?.message);
   }
 
-  const answer = typeof parsed?.answer === 'string' ? stripDiagnosticLanguage(parsed.answer.trim()) : '';
+  const answer = typeof parsed?.answer === 'string' ? stripLinks(stripDiagnosticLanguage(parsed.answer.trim())) : '';
   if (!answer) {
     await refund();
     return res.status(502).json({

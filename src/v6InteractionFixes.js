@@ -150,7 +150,7 @@ function bindCatalogTypeahead(input, source) {
     const exactProduct=PRODUCT_RECORDS.some((record)=>norm(record.title)===norm(query));
     if (query.length>=2 && !exactProduct) {
       const add=document.createElement('button'); add.type='button'; add.className='v6-typeahead-add'; add.setAttribute('role','option');
-      add.innerHTML='<span class="v6-typeahead-plus">+</span><span class="v6-typeahead-addcopy"><strong></strong><small>new submissions appear in Browse right away</small></span><em>add</em>';
+      add.innerHTML='<span class="v6-typeahead-plus">+</span><span class="v6-typeahead-addcopy"><strong></strong><small>we’ll review it for the catalog</small></span><em>add</em>';
       add.querySelector('strong').textContent=`Can’t find “${query}”?`; add.addEventListener('mousedown',(event)=>event.preventDefault());
       add.addEventListener('click',async()=>{await submitMissingProduct(query,source==='home'?'global_search':source,add.querySelector('em'));}); dropdown.appendChild(add);
     }
@@ -160,7 +160,7 @@ function bindCatalogTypeahead(input, source) {
   input.addEventListener('keydown',(event)=>{
     if (dropdown.hidden) { if(event.key==='ArrowDown'){render();event.preventDefault();} return; }
     const rows=[...dropdown.querySelectorAll('button:not(:disabled)')]; if(!rows.length)return;
-    if(event.key==='ArrowDown'){event.preventDefault();activeIndex=(activeIndex+1)%rows.length;} else if(event.key==='ArrowUp'){event.preventDefault();activeIndex=(activeIndex-1+rows.length)%rows.length;} else if(event.key==='Escape'){event.preventDefault();close();return;} else if(event.key==='Enter'&&activeIndex>=0){event.preventDefault();rows[activeIndex]?.click();return;} else return;
+    if(event.key==='ArrowDown'){event.preventDefault();activeIndex=(activeIndex+1)%rows.length;} else if(event.key==='ArrowUp'){event.preventDefault();activeIndex=(activeIndex-1+rows.length)%rows.length;} else if(event.key==='Escape'){event.preventDefault();close();return;} else if(event.key==='Enter'&&activeIndex>=0){event.preventDefault();rows[activeIndex]?.click();return;} else if(event.key==='Enter'){close();return;} else return;
     rows.forEach((row,index)=>row.classList.toggle('is-keyboard-active',index===activeIndex)); rows[activeIndex]?.scrollIntoView({block:'nearest'});
   });
 }

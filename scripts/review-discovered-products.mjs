@@ -96,7 +96,7 @@ async function listAutoApproved(category) {
     .select('*')
     .eq('source', 'discovered')
     .eq('review_status', 'approved')
-    .eq('discovery_meta->>autoApproved', 'true')
+    .is('discovery_meta->>humanReviewedAt', null)
     .order('created_at', { ascending: false });
   if (category) query = query.eq('category', category);
 
@@ -111,7 +111,7 @@ async function listAutoApproved(category) {
       : 'No auto-approved discovered products yet.');
     return;
   }
-  console.log(`${data.length} auto-approved discovered product(s)${category ? ` in "${category}"` : ''} — already live, spot-check and reject if anything looks wrong:`);
+  console.log(`${data.length} approved-but-unreviewed discovered product(s)${category ? ` in "${category}"` : ''} — HIDDEN from the site until a human checks the facts and runs approve <id>:`);
   data.forEach(printProduct);
   console.log(`\nPull one offline with:  node scripts/review-discovered-products.mjs reject ${data[0].id}`);
 }
@@ -122,12 +122,30 @@ async function setStatus(ids, status) {
     process.exit(2);
   }
   const isActive = status === 'approved';
-  const { data, error } = await admin
+  // Stamp humanReviewedAt so /api/products (isPublishable) can tell a
+  // human-approved discovered row from a legacy auto-approved one.
+  const { data: current, error: readError } = await admin
     .from('product_catalog')
-    .update({ review_status: status, is_active: isActive })
+    .select('id, discovery_meta')
     .eq('source', 'discovered')
-    .in('id', ids)
-    .select('id, name, review_status, is_active');
+    .in('id', ids);
+  if (readError) {
+    console.error('Read failed:', readError.message);
+    process.exit(1);
+  }
+  const reviewedAt = new Date().toISOString();
+  const data = [];
+  let error = null;
+  for (const row of current || []) {
+    const discovery_meta = { ...(row.discovery_meta || {}), humanReviewedAt: reviewedAt, humanReviewStatus: status };
+    const { data: updated, error: updError } = await admin
+      .from('product_catalog')
+      .update({ review_status: status, is_active: isActive, discovery_meta })
+      .eq('id', row.id)
+      .select('id, name, review_status, is_active');
+    if (updError) { error = updError; break; }
+    if (updated) data.push(...updated);
+  }
 
   if (error) {
     console.error('Update failed:', error.message);

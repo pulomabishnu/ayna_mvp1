@@ -1,4 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AVOID_INGREDIENTS, PREFERENCE_MAP } from '../utils/intakePreferenceMap';
+
+// Plain-language groups so it's obvious what is being preferred; the "X-free"
+// twins of the avoid list mean the same thing and only show if already picked.
+const PREFERENCE_GROUPS = [
+  { label: 'I want to avoid products with…', items: ['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived', 'Added sugar', 'Artificial sweeteners'] },
+  { label: 'I prefer products that are…', items: ['Vegan', 'Cruelty-free', 'Organic', 'Unscented', 'Minimal ingredients', 'Eco-friendly', 'Reusable'] },
+  { label: 'I prefer brands that are…', items: ['Black-owned', 'Brown-owned'] },
+  { label: 'I need products suited for…', items: ['Sensitive skin', 'Pregnancy considerations'] },
+];
+const DUPLICATE_FREE_OPTIONS = ['Fragrance-free', 'Dye-free', 'Paraben-free', 'Sulfate-free', 'Latex-free'];
 import { ALL_PRODUCTS } from '../data/products';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
@@ -103,36 +114,6 @@ const BRAND_OPENNESS = [
   'I prefer trusted brands but am open to something new',
   'I like a mix of familiar and new brands',
   'I enjoy discovering new brands',
-  'No preference',
-];
-const AVOID_INGREDIENTS = [
-  'Fragrance',
-  'Dyes',
-  'Parabens',
-  'Sulfates',
-  'Phthalates',
-  'Latex',
-  'Synthetic materials',
-  'Animal-derived',
-  'Added sugar',
-  'Artificial sweeteners',
-  'Pregnancy considerations',
-  'Fragrance-free',
-  'Dye-free',
-  'Paraben-free',
-  'Sulfate-free',
-  'Latex-free',
-  'Vegan',
-  'Cruelty-free',
-  'Black-owned',
-  'Brown-owned',
-  'Eco-friendly',
-  'Reusable',
-  'Organic',
-  'Minimal ingredients',
-  'Sensitive skin',
-  'Unscented',
-  'Other',
   'No preference',
 ];
 const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
@@ -292,11 +273,7 @@ const FORMAT_TO_LEGACY = {
   'Devices or wearables': 'devices', 'Period-care products': 'pads',
 };
 
-const PREFERENCE_MAP = {
-  Fragrance: 'fragrance-free', Dyes: 'dye-free', Parabens: 'paraben-free', Sulfates: 'sulfate-free',
-  Phthalates: 'phthalate-free', Latex: 'latex-free', 'Synthetic materials': 'natural-materials',
-  'Animal-derived ingredients': 'vegan', 'Added sugar': 'sugar-free', 'Artificial sweeteners': 'no-artificial-sweeteners',
-};
+
 
 function arrayHasAny(arr, set) {
   return (arr || []).some((value) => set.has(value));
@@ -923,7 +900,7 @@ function BrandSpectrum({ value, onChange }) {
   );
 }
 
-function TrustRanker({ order, onChange, onTouch }) {
+function TrustRanker({ order, onChange, onTouch, confirmed = false }) {
   const move = (index, delta) => {
     const nextIndex = index + delta;
     if (nextIndex < 0 || nextIndex >= order.length) return;
@@ -939,6 +916,11 @@ function TrustRanker({ order, onChange, onTouch }) {
           <span className="ayna-drag" aria-hidden="true">⋮⋮</span><span className="ayna-rank">{index + 1}</span><span className="ayna-trust-label">{item}</span><span className="ayna-move"><button type="button" onClick={() => move(index, -1)} aria-label={`Move ${item} up`}>↑</button><button type="button" onClick={() => move(index, 1)} aria-label={`Move ${item} down`}>↓</button></span>
         </div>
       ))}
+      <div style={{ textAlign: 'center', marginTop: 14 }}>
+        <button type="button" className={`ayna-pill${confirmed ? ' selected' : ''}`} aria-pressed={confirmed} onClick={() => !confirmed && onTouch()}>
+          {confirmed ? '✓ Ranking saved' : 'Keep this order'}
+        </button>
+      </div>
     </div>
   );
 }
@@ -950,6 +932,8 @@ function requiredReady(stepId, intake) {
   if (stepId === 'medications') return !!intake.takesCurrent && (intake.takesCurrent !== 'Yes' || intake.currentMedicationItems.length > 0);
   if (stepId === 'safety') return !!intake.safetyConcern;
   if (stepId === 'products') return true;
+  // Required: the default order is not an answer — reorder or confirm it.
+  if (stepId === 'trust') return intake.trustRankingTouched === true;
   return true;
 }
 
@@ -1271,9 +1255,9 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'largePurchaseFrequency', section: 'preferences', title: 'How often do you make larger health or wellness purchases of $75 or more?', subtitle: 'This is about purchase frequency, not your usual preferred price per product.', type: 'largeSpend', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'tokens', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Preferences', subtitle: 'Select any that matter to you. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
+      { id: 'avoidIngredients', section: 'preferences', title: 'What should your products avoid, or be?', subtitle: 'Select anything that applies — we use these to filter and rank what we suggest. Allergies are asked separately.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', subtitle: 'Drag to rank, or use the arrows. You can also skip this.', type: 'trust', optional: true },
+      { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', type: 'trust', optional: false },
       { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
     ];
     return steps;
@@ -1435,9 +1419,18 @@ export default function HealthIntakeForm({ onComplete }) {
     if (step.type === 'price') { const selectedPrices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []); return <div className="ayna-pills">{PRICE_RANGES.map((option) => <Pill key={option} label={option} selected={selectedPrices.includes(option)} onClick={() => toggleExclusive('priceRange', option, ['Price is not a major factor for me'])} />)}</div>; }
     if (step.type === 'largeSpend') return <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(value) => set('largePurchaseFrequency', value)} />;
     if (step.type === 'brand') return <BrandSpectrum value={intake.brandOpenness} onChange={(value) => set('brandOpenness', value)} />;
-    if (step.type === 'avoidIngredients') return <><div className="ayna-pills">{AVOID_INGREDIENTS.map((option) => <Pill key={option} label={option} selected={intake.avoidIngredients.includes(option)} onClick={() => toggleExclusive('avoidIngredients', option, ['No preference'])} />)}</div>{intake.avoidIngredients.includes('Other') && <div className="ayna-other-box"><label>Other preference</label><input className="ayna-text-input" value={intake.avoidIngredientsOtherText} onChange={(e) => set('avoidIngredientsOtherText', e.target.value)} placeholder="Type here..." /></div>}</>;
+    if (step.type === 'avoidIngredients') return <>{[
+      ...PREFERENCE_GROUPS.map((g) => ({ label: g.label, items: AVOID_INGREDIENTS.filter((o) => g.items.includes(o)) })),
+      { label: 'Also selected', items: AVOID_INGREDIENTS.filter((o) => DUPLICATE_FREE_OPTIONS.includes(o) && intake.avoidIngredients.includes(o)) },
+      { label: null, items: AVOID_INGREDIENTS.filter((o) => ['Other', 'No preference'].includes(o)) },
+    ].filter((g) => g.items.length).map((g) => (
+      <div key={g.label || 'rest'} className="ayna-category" style={{ maxWidth: 560 }}>
+        {g.label && <div className="ayna-category-title" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 13 }}>{g.label}</div>}
+        <div className="ayna-pills left">{g.items.map((option) => <Pill key={option} label={option} selected={intake.avoidIngredients.includes(option)} onClick={() => toggleExclusive('avoidIngredients', option, ['No preference'])} />)}</div>
+      </div>
+    ))}{intake.avoidIngredients.includes('Other') && <div className="ayna-other-box"><label>Other preference</label><input className="ayna-text-input" value={intake.avoidIngredientsOtherText} onChange={(e) => set('avoidIngredientsOtherText', e.target.value)} placeholder="Type here..." /></div>}</>;
     if (step.type === 'fsa') return <div className="ayna-pills">{FSA_HSA.map((option) => <Pill key={option} label={option} selected={intake.fsaHsaAnswer === option} onClick={() => set('fsaHsaAnswer', option)} />)}</div>;
-    if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
+    if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} confirmed={intake.trustRankingTouched === true} />;
     if (step.type === 'textarea') return <textarea className="ayna-textarea" value={intake.anythingElse} onChange={(e) => set('anythingElse', e.target.value)} placeholder="Share anything else that could help us personalize your recommendations." />;
     return null;
   };

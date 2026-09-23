@@ -1,4 +1,5 @@
 import { compactLegacyAuthMetadata } from './authMetadataCleanup';
+import { filterProductMapToCatalog } from './catalogIntegrity';
 
 /**
  * Wishlist / Save for later persistence.
@@ -21,7 +22,8 @@ export function loadSavedProducts() {
   try {
     const raw = localStorage.getItem(LS_KEY);
     const parsed = raw ? JSON.parse(raw) : {};
-    return parsed && typeof parsed === 'object' ? parsed : {};
+    // PRODUCT INTEGRITY: only catalog products, with current catalog facts.
+    return parsed && typeof parsed === 'object' ? filterProductMapToCatalog(parsed) : {};
   } catch {
     return {};
   }
@@ -75,7 +77,7 @@ export async function loadSavedForUser(supabase, userId) {
       type: row.product_type,
     };
   }
-  return out;
+  return filterProductMapToCatalog(out);
 }
 
 /** Set or clear a saved product in user_ecosystems only. */

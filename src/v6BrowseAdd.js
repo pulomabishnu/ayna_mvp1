@@ -71,8 +71,8 @@ async function submitProduct(name, source, helper) {
     const current = readLocal();
     const withoutDuplicate = current.filter((item) => normalized(item.name) !== normalized(trimmed));
     writeLocal([localEntry(trimmed, source, body.submission), ...withoutDuplicate]);
-    status.textContent = 'added to Browse ✓';
-    button.textContent = 'added';
+    status.textContent = 'submitted for review ✓';
+    button.textContent = 'submitted';
     renderSubmittedSection();
   } catch (error) {
     status.textContent = error?.message === 'too_many_submissions'
@@ -122,7 +122,7 @@ function ensureBrowseLink(input, helper) {
     link = document.createElement('button');
     link.type = 'button';
     link.className = 'v6-add-product-link';
-    link.textContent = 'Can’t find the exact product you’re looking for? ayna can populate it for you.';
+    link.textContent = 'Can’t find the exact product you’re looking for? Suggest it and our team will review it for the catalog.';
     link.addEventListener('click', () => {
       helper.dataset.v6Open = '1';
       syncInput(input, 'browse');

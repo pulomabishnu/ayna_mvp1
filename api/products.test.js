@@ -77,7 +77,7 @@ describe('products', () => {
         requires_prescription: false,
         user_rating: 4.5,
         source: 'curated',
-        extra: { verificationLinks: { doctor: { aiSummary: 'x' } } },
+        extra: { verificationLinks: { doctor: { aiSummary: 'x' } }, userRatingSourceUrl: 'https://example.com/reviews', communityReviewSourceUrl: 'https://example.com/community' },
       }],
       error: null,
     };
@@ -132,5 +132,36 @@ describe('products', () => {
     const res = mockRes();
     await handler({ method: 'GET' }, res);
     expect(res.headers['cache-control']).toMatch(/s-maxage=300\b/);
+  });
+
+  it('withholds every discovered row that has no human review stamp', async () => {
+    queryResult = {
+      data: [
+        { id: 'curated-1', name: 'Real Curated', category: 'pad', product_type: 'physical', is_active: true },
+        { id: 'disc-auto', name: 'AI Guess', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'approved', discovery_meta: { autoApproved: true } },
+        { id: 'disc-pending', name: 'Pending', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'pending' },
+        { id: 'disc-legacy', name: 'Legacy approved, no stamp', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'approved', discovery_meta: {} },
+        { id: 'disc-human', name: 'Human OK', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'approved', discovery_meta: { autoApproved: true, humanReviewedAt: '2026-09-22T00:00:00Z' } },
+      ],
+      error: null,
+    };
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({ method: 'GET' }, res);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.products.map((p) => p.id)).toEqual(['curated-1', 'disc-human']);
+  });
+
+  it('strips unsourced star ratings and community-review claims from DB rows', async () => {
+    queryResult = {
+      data: [{ id: 'p2', name: 'Some Pad', category: 'pad', product_type: 'physical', community_review: 'Women love it.', user_rating: 4.8, source: 'curated', extra: {} }],
+      error: null,
+    };
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({ method: 'GET' }, res);
+    const p = res.body.products[0];
+    expect(p.userRating ?? null).toBeNull();
+    expect(p.communityReview ?? null).toBeNull();
   });
 });

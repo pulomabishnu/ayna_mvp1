@@ -13,10 +13,9 @@
  * SAFETY CONTRACT — read before changing anything in this file.
  *
  * Every row this endpoint writes goes in as source='discovered',
- * is_active=false, review_status='pending', UNLESS it clears the narrow
- * auto-approval gate in isAutoApprovable() (a fully-answered, clean FDA
- * recall check AND a real https source URL the model was confident enough to
- * name) — see that function for exactly what "narrow" means. Everything else
+ * is_active=false, review_status='pending'. Auto-approval was REMOVED in the
+ * 2026-09-22 product-integrity audit: isAutoApprovable()/verifyUrlIsLive()
+ * are now only review HINTS surfaced to the human reviewer. Everything
  * stays pending until a human runs scripts/review-discovered-products.mjs and
  * explicitly approves it (which flips is_active=true). The is_active=false
  * default (and the auto-approval gate's conditions) are enforced twice —
@@ -137,7 +136,16 @@ export function slugify(s) {
  * split. Concatenating first means both produce the identical slug.
  */
 export function normalizeKey(name, brand) {
-  return slugify(`${brand || ''} ${name || ''}`);
+  // Catalog rows also exist with the brand BOTH in `brand` and repeated at
+  // the start of `name` ({ brand: 'LOLA', name: 'LOLA Organic Cotton Pads' }).
+  // Strip a leading copy of the brand from the name so all three shapes
+  // collapse to the same key instead of "lola-lola-organic-cotton-pads".
+  const b = String(brand || '').trim();
+  let n = String(name || '').trim();
+  if (b && slugify(n).startsWith(`${slugify(b)}-`)) {
+    n = n.slice(b.length).replace(/^[\s\-–—:|]+/, '');
+  }
+  return slugify(`${b} ${n}`);
 }
 
 // Code-level backstop for the NAME rule in buildDiscoveryPrompt — a prompt
@@ -385,19 +393,6 @@ export async function verifyUrlIsLive(url) {
   }
 }
 
-function autoApprove(row) {
-  return {
-    ...row,
-    review_status: 'approved',
-    is_active: true,
-    discovery_meta: {
-      ...row.discovery_meta,
-      autoApproved: true,
-      autoApprovedAt: new Date().toISOString(),
-    },
-  };
-}
-
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method !== 'GET' && req.method !== 'POST') {
@@ -497,20 +492,12 @@ export default async function handler(req, res) {
       .in('id', rows.map((r) => r.id));
     const alreadyReviewed = new Map((existingReviewed || []).map((r) => [r.id, r.review_status]));
 
-    // Auto-approval only ever applies to brand-new rows, never to
-    // toUpdateMetaOnly — a human's prior verdict on an id is never touched.
-    // verifyUrlIsLive is a real network call, so only pay for it on rows that
-    // already cleared the (free, synchronous) rest of isAutoApprovable — a
-    // row failing on the recall check shouldn't also wait on a fetch whose
-    // result can't change the outcome.
-    const newRows = rows.filter((r) => !alreadyReviewed.has(r.id));
-    const toInsert = await Promise.all(
-      newRows.map(async (r) => {
-        if (!isAutoApprovable(r)) return r;
-        const urlIsLive = await verifyUrlIsLive(r.url);
-        return urlIsLive ? autoApprove(r) : r;
-      })
-    );
+    // PRODUCT INTEGRITY (2026-09-22 audit): AI-discovered candidates are
+    // NEVER auto-approved. A clean recall check + a live URL proves a page
+    // exists, not that the model's name/summary/price/brand pairing is true,
+    // so every discovered row goes in as is_active=false / pending and only a
+    // human review (scripts/review-discovered-products.mjs) can publish it.
+    const toInsert = rows.filter((r) => !alreadyReviewed.has(r.id));
     const toUpdateMetaOnly = rows.filter((r) => alreadyReviewed.has(r.id));
 
     let inserted = 0;
@@ -533,7 +520,7 @@ export default async function handler(req, res) {
       found: rawCandidates.length,
       afterDedup: fresh.length,
       inserted,
-      autoApproved: toInsert.filter((r) => r.discovery_meta?.autoApproved).length,
+      autoApproved: 0,
       metaRefreshed: toUpdateMetaOnly.length,
       insertedIds: toInsert.map((r) => r.id),
     });

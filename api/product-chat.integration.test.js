@@ -27,9 +27,21 @@ vi.mock('./_officialSiteFetch.js', () => ({
   fetchOfficialSiteText: (...args) => fetchOfficialSiteTextMock(...args),
 }));
 
+// Catalog grounding: the handler resolves the product from the catalog, never
+// the client body. Tests control the catalog through globalThis.__testCatalog.
+vi.mock('./_catalogGrounding.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, loadGroundingCatalog: async () => globalThis.__testCatalog || [] };
+});
+
 async function loadHandler() {
   vi.resetModules();
   return (await import('./product-chat.js')).default;
+}
+
+const CATALOG_P1 = { id: 'p1', name: 'Magnesium Glycinate', summary: 'A supplement.' };
+function setCatalog(overrides = {}) {
+  globalThis.__testCatalog = [{ ...CATALOG_P1, ...overrides }];
 }
 
 const validBody = {
@@ -52,6 +64,7 @@ beforeEach(() => {
     },
   });
   globalThis.__mockSupabase = supa;
+  setCatalog();
 });
 
 afterEach(() => {
@@ -224,6 +237,7 @@ describe('POST /api/product-chat — input handling', () => {
 describe('POST /api/product-chat — official-site grounding', () => {
   it('fetches the official site when product.url looks like a real http(s) URL', async () => {
     fetchOfficialSiteTextMock.mockResolvedValue('This cup holds 25mL and is safe for overnight use.');
+    setCatalog({ url: 'https://real-brand.example.com/product' });
     let sentBody = null;
     globalThis.fetch = vi.fn(async (_url, init) => {
       sentBody = JSON.parse(init.body);
@@ -251,6 +265,7 @@ describe('POST /api/product-chat — official-site grounding', () => {
   });
 
   it('never calls fetchOfficialSiteText when product.url is not a real http(s) string', async () => {
+    setCatalog({ url: 'javascript:alert(1)' });
     globalThis.fetch = vi.fn(async () => anthropicOk('An answer.'));
     const res = mockRes();
     await (await loadHandler())(mockReq({
@@ -263,6 +278,7 @@ describe('POST /api/product-chat — official-site grounding', () => {
 
   it('tells the model no verified source exists when the site fetch returns nothing', async () => {
     fetchOfficialSiteTextMock.mockResolvedValue(null);
+    setCatalog({ url: 'https://real-brand.example.com/product' });
     let sentBody = null;
     globalThis.fetch = vi.fn(async (_url, init) => {
       sentBody = JSON.parse(init.body);
@@ -299,5 +315,34 @@ describe('POST /api/product-chat — never-diagnose safety net', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.answer).not.toMatch(/\bdiagnos/i);
+  });
+});
+
+describe('POST /api/product-chat — product integrity', () => {
+  it('404s for a product that is not in the catalog, without spending quota or calling the model', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk('An answer.'));
+    const res = mockRes();
+    await (await loadHandler())(mockReq({
+      body: { ...validBody, product: { id: 'gen-abc', name: 'Invented Serum', url: 'https://invented.example' } },
+    }), res);
+    expect(res.statusCode).toBe(404);
+    expect(res.body.error).toBe('product_not_in_catalog');
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+    expect(fetchOfficialSiteTextMock).not.toHaveBeenCalled();
+  });
+
+  it('grounds on the catalog record and ignores client-supplied facts and URLs', async () => {
+    let sentBody = null;
+    globalThis.fetch = vi.fn(async (_url, init) => {
+      sentBody = JSON.parse(init.body);
+      return anthropicOk('An answer.');
+    });
+    const res = mockRes();
+    await (await loadHandler())(mockReq({
+      body: { ...validBody, product: { id: 'p1', name: 'Magnesium Glycinate', summary: 'Cures everything instantly.', url: 'https://tampered.example' } },
+    }), res);
+    expect(res.statusCode).toBe(200);
+    expect(fetchOfficialSiteTextMock).not.toHaveBeenCalled();
+    expect(sentBody.messages[0].content).not.toContain('Cures everything instantly.');
   });
 });

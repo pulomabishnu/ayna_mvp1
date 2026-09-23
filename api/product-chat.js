@@ -4,6 +4,7 @@
  * plus core product data as context, so we don't need a full retrieval pass.
  */
 /* global process */
+import { loadGroundingCatalog, buildCatalogIndex, resolveCatalogProduct } from './_catalogGrounding.js';
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder, stripDiagnosticLanguage } from './_llm.js';
@@ -151,12 +152,23 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_json' });
   }
 
-  const { question, product, aiInsights, userContext, ecosystemProducts } = body || {};
+  const { question, product: clientProduct, aiInsights, userContext, ecosystemProducts } = body || {};
   if (!question || typeof question !== 'string' || !question.trim()) {
     return res.status(400).json({ error: 'question is required' });
   }
-  if (!product || typeof product !== 'object') {
+  if (!clientProduct || typeof clientProduct !== 'object') {
     return res.status(400).json({ error: 'product is required' });
+  }
+  // PRODUCT INTEGRITY: the product the model is grounded on (and whose URL
+  // gets fetched) is the reviewed catalog record, never the client's copy —
+  // a stale saved snapshot or tampered body could carry invented facts/URLs.
+  const catalogIndex = buildCatalogIndex(await loadGroundingCatalog());
+  const product = resolveCatalogProduct(clientProduct, catalogIndex);
+  if (!product) {
+    return res.status(404).json({
+      error: 'product_not_in_catalog',
+      answer: "I can only answer questions about products in Ayna's reviewed catalog, and I couldn't find this one.",
+    });
   }
 
   // Free (no LLM cost), so this runs before quota reservation — same

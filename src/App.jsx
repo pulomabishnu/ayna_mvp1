@@ -1554,7 +1554,7 @@ function App() {
     if (currentView === 'product') {
       document.title = displayedProduct?.name
         ? `${displayedProduct.name} | ayna`
-        : (productStillResolving ? 'Loading… | ayna' : base);
+        : (productStillResolving ? 'Loading… | ayna' : 'Product Not Found | ayna');
       return;
     }
     const label = VIEW_TITLES[currentView];

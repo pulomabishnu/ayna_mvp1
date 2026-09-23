@@ -8,7 +8,7 @@ import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../data/products
 // generateTieredRecommendations) — category is a controlled, always-present
 // field, unlike free-text tags, so it's the more reliable signal. Rewritten
 // against the real current category taxonomy (2026-08-25).
-const CONCERN_CONFIG = [
+export const CONCERN_CONFIG = [
   { key: 'Period care (pads, tampons, cups, discs, underwear)', tags: ['heavy-flow', 'leaks', 'cramps'], categories: ['pad', 'liner', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'] },
   { key: 'Cramp and pain relief (devices, supplements, heat)', tags: ['cramps'], categories: ['cramp-relief', 'supplement'] },
   { key: 'Hormone balance (supplements, lifestyle)', tags: ['pcos', 'irregular', 'bloating'], categories: ['supplement'] },
