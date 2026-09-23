@@ -228,6 +228,7 @@ export const PHYSICAL_PRODUCTS = [
     {
         id: 'p-lola-tampon',
         name: 'LOLA Organic Tampons',
+        brand: 'LOLA',
         productUrl: 'https://mylola.com/products/applicator-tampons',
         category: 'tampon',
         type: 'physical',
@@ -238,6 +239,9 @@ export const PHYSICAL_PRODUCTS = [
         userRating: 4.5,
         whereToBuy: ['Amazon', 'LOLA.com'],
         url: 'https://mylola.com/',
+        // Ayna affiliate partnership — affiliateUrl wins over `url`/`productUrl`
+        // for the Buy Now destination (see getBuyUrl in src/mobile/data/buyUrl.js).
+        affiliateUrl: 'https://lvnta.com/lv_lV9gmDbqDB8xIEp6W2',
         faqUrl: 'https://help.mylola.com/',
         image: 'https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946',
         summary: '100% organic cotton tampon with a BPA-free compact applicator, from LOLA — founded in 2014 by Jordana Kier and Alex Friedman after one asked the other "have you ever wondered what\'s in a tampon?" and neither could find a real answer. LOLA was built around ingredient transparency: no synthetic fibers, fragrance, dyes, or chlorine-bleaching byproducts. Customizable subscription box.',

@@ -156,3 +156,8 @@
   cursor: pointer;
   margin-top: -8px;
 }
+
+/* Product detail screen's sticky tab rail — scrollable but no visible scrollbar. */
+.ay-pdp-rail::-webkit-scrollbar {
+  display: none;
+}

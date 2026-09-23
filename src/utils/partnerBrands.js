@@ -27,6 +27,9 @@
  *
  * Added 2026-09-23: Winx Health, SootheHer, gina — confirmed brand partnerships.
  *
+ * Added 2026-09-23: LOLA — confirmed affiliate partnership (was still "in
+ * discussion" per the note above as of 2026-08-25; contracted since).
+ *
  * Liv Labs (Pippa Resistance Spring) — NOT a confirmed partner. Its two
  * products stay in the catalog (src/data/brands.js) so they still surface
  * in Discovery/search, but deliberately left out of this allowlist (no
@@ -34,7 +37,7 @@
  * from LiM Method above despite the similar name — different company
  * (livlabsfitness.com vs. limmethod.com).
  */
-export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/, /\bproov\b/, /\belitone\b/, /\bmy pelvic bra\b/, /\bbuni\b/, /\blim method\b/, /\bwinx health\b/, /\bsootheher\b/, /\bgina\b/];
+export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/, /\bproov\b/, /\belitone\b/, /\bmy pelvic bra\b/, /\bbuni\b/, /\blim method\b/, /\bwinx health\b/, /\bsootheher\b/, /\bgina\b/, /\blola\b/];
 
 export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
