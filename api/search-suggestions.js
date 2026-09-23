@@ -162,6 +162,7 @@ async function callSuggestionsModel(prompt) {
       maxTokens: 8192,
       temperature: 0.2,
       jsonMode: true,
+      trace: { name: 'search-suggestions' },
     });
     if (out.truncated) {
       // Truncated output can't be recovered after the fact — this is here so a

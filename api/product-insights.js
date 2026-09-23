@@ -330,7 +330,7 @@ const INSIGHTS_SYSTEM_PROMPT =
   "You produce only valid JSON for a women's health education app. Never include URLs, links, domains, or fabricated citations. Use short search phrases only. Output a single JSON object only — no markdown, no code fences, no text before or after the JSON.";
 
 async function callProvider(provider, prompt) {
-  const args = { system: INSIGHTS_SYSTEM_PROMPT, prompt, maxTokens: 2000, temperature: 0.25, jsonMode: true };
+  const args = { system: INSIGHTS_SYSTEM_PROMPT, prompt, maxTokens: 2000, temperature: 0.25, jsonMode: true, trace: { name: 'product-insights' } };
   if (provider === 'claude' || provider === 'anthropic') return callAnthropic(args);
   if (provider === 'openai') return callOpenAI(args);
   if (provider === 'gemini') return callGemini(args);

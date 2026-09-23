@@ -846,6 +846,7 @@ async function handleRequest(req, res) {
           maxTokens: 8000,
           timeoutMs: 28_000,
           signal: deadline,
+          trace: { name: 'llm-recommendations' },
         });
         if (out.truncated) {
           console.warn(`[llm-recs] concern ${idx + 1} hit max_tokens — output truncated`);

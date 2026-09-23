@@ -11,6 +11,7 @@ import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/
 import { consumeUsage } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import { callWithFallback, parseProviderOrder } from './_llm.js';
+import { hashedSessionId } from './_prismTrace.js';
 import { ALL_PRODUCTS } from '../src/data/products.js';
 import { stripLinks } from './_catalogGrounding.js';
 
@@ -138,7 +139,7 @@ Reply only with the text message itself — no preamble, no signature.`;
  * unanswerable with no fallback. Now goes through the same multi-provider
  * callWithFallback every other AI route uses.
  */
-async function callSmsModel(systemPrompt, userPrompt) {
+async function callSmsModel(systemPrompt, userPrompt, userId) {
   const order = parseProviderOrder('AI_SMS_PROVIDER_ORDER', 'anthropic,openai,gemini');
   try {
     const out = await callWithFallback(order, {
@@ -147,6 +148,7 @@ async function callSmsModel(systemPrompt, userPrompt) {
       maxTokens: 250,
       temperature: 0.3,
       timeoutMs: 8000,
+      trace: { name: 'sms-webhook', sessionId: hashedSessionId('sms', userId) },
     });
     return out.text.trim() || null;
   } catch (e) {
@@ -320,7 +322,7 @@ export default async function handler(req, res) {
 
   let reply;
   try {
-    reply = await callSmsModel(SMS_SYSTEM_PROMPT, userPrompt);
+    reply = await callSmsModel(SMS_SYSTEM_PROMPT, userPrompt, userId);
   } catch (e) {
     console.error('[sms-webhook] Claude error:', e?.message);
   }

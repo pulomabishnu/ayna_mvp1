@@ -440,6 +440,7 @@ export default async function handler(req, res) {
       maxTokens: 3000,
       timeoutMs: 25_000,
       signal: AbortSignal.timeout(FUNCTION_BUDGET_MS - 8000),
+      trace: { name: 'discover-products' },
     });
 
     const parsed = tryParseJsonCandidate(out.text);
