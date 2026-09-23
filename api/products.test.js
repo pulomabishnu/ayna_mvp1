@@ -134,12 +134,13 @@ describe('products', () => {
     expect(res.headers['cache-control']).toMatch(/s-maxage=300\b/);
   });
 
-  it('withholds discovered rows that were auto-approved but never human-reviewed', async () => {
+  it('withholds every discovered row that has no human review stamp', async () => {
     queryResult = {
       data: [
         { id: 'curated-1', name: 'Real Curated', category: 'pad', product_type: 'physical', is_active: true },
         { id: 'disc-auto', name: 'AI Guess', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'approved', discovery_meta: { autoApproved: true } },
         { id: 'disc-pending', name: 'Pending', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'pending' },
+        { id: 'disc-legacy', name: 'Legacy approved, no stamp', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'approved', discovery_meta: {} },
         { id: 'disc-human', name: 'Human OK', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'approved', discovery_meta: { autoApproved: true, humanReviewedAt: '2026-09-22T00:00:00Z' } },
       ],
       error: null,

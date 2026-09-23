@@ -65,9 +65,10 @@ export function toClientProduct(row) {
 
 /**
  * PRODUCT INTEGRITY (2026-09-22 audit): is_active alone is not enough.
- * Before the audit, api/discover-products.js could flip an AI-generated
- * candidate to is_active=true on its own ("auto-approval"). Those rows were
- * never seen by a human, so they are withheld here until someone runs
+ * The live catalog carried ~150 source='discovered' rows written by the AI
+ * discovery job — model-written summaries, guessed price ranges, homepage
+ * URLs, no images. None of them carry a record of a human reviewing the
+ * product facts, so every discovered row is withheld until someone runs
  * `scripts/review-discovered-products.mjs approve <id>`, which stamps
  * discovery_meta.humanReviewedAt. Curated rows are unaffected.
  */
@@ -75,9 +76,7 @@ export function isPublishable(row) {
   if (!row || row.is_active === false) return false;
   if ((row.source || 'curated') !== 'discovered') return true;
   if (row.review_status !== 'approved') return false;
-  const meta = row.discovery_meta || {};
-  if (meta.autoApproved && !meta.humanReviewedAt) return false;
-  return true;
+  return Boolean(row.discovery_meta?.humanReviewedAt);
 }
 
 export default async function handler(req, res) {

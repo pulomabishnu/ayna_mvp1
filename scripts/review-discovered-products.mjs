@@ -96,7 +96,7 @@ async function listAutoApproved(category) {
     .select('*')
     .eq('source', 'discovered')
     .eq('review_status', 'approved')
-    .eq('discovery_meta->>autoApproved', 'true')
+    .is('discovery_meta->>humanReviewedAt', null)
     .order('created_at', { ascending: false });
   if (category) query = query.eq('category', category);
 
@@ -111,7 +111,7 @@ async function listAutoApproved(category) {
       : 'No auto-approved discovered products yet.');
     return;
   }
-  console.log(`${data.length} auto-approved discovered product(s)${category ? ` in "${category}"` : ''} — already live, spot-check and reject if anything looks wrong:`);
+  console.log(`${data.length} approved-but-unreviewed discovered product(s)${category ? ` in "${category}"` : ''} — HIDDEN from the site until a human checks the facts and runs approve <id>:`);
   data.forEach(printProduct);
   console.log(`\nPull one offline with:  node scripts/review-discovered-products.mjs reject ${data[0].id}`);
 }
