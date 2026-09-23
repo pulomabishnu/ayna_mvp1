@@ -1,6 +1,12 @@
 import React from 'react';
 import { BRAND_PRODUCTS } from '../data/brands';
+import { LIM_METHOD_PRODUCTS } from '../data/limMethodProducts';
 import { CATEGORY_LABELS } from '../data/products';
+
+// LiM Method's products live in their own file (not brands.js), same as the
+// main catalog merges them in incontinenceProducts.js — merged here too so
+// its partner card shows a product grid like every other partner's does.
+const ALL_PARTNER_PRODUCTS = [...BRAND_PRODUCTS, ...LIM_METHOD_PRODUCTS];
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
@@ -53,7 +59,37 @@ const PARTNERS = [
     blurb:
       'At-home fertility testing designed to help track hormones and confirm ovulation.',
   },
-
+  {
+    // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
+    // missing from this page until 2026-09-23 — folded in alongside the
+    // Winx/SootheHer/gina additions below.
+    brand: 'LiM Method',
+    logo: 'https://www.limmethod.com/cdn/shop/files/IMG_2821.jpg?v=1696450654&width=1946',
+    url: 'https://www.limmethod.com/?ref=Ayna_Health',
+    blurb:
+      'Guided pelvic-floor wellness kit built by a pelvic floor occupational therapist, combining low-impact movement training with a sliding board and accessories.',
+  },
+  {
+    brand: 'Winx Health',
+    logo: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569',
+    url: 'https://hellowinx.com/',
+    blurb:
+      'At-home UTI and vaginal health testing paired with telehealth, plus pregnancy tests and daily-defense supplements. Formerly known as Stix.',
+  },
+  {
+    brand: 'SootheHer',
+    logo: '',
+    url: 'https://sootheher.com/',
+    blurb:
+      'The Elaris Pod, a wearable TENS device for drug-free period cramp relief.',
+  },
+  {
+    brand: 'gina',
+    logo: '',
+    url: 'https://getgina.com/',
+    blurb:
+      'Hormone-free vaginal moisturizing glides and applicator refills for intimate comfort.',
+  },
 ];
 
 function eyebrowFor(product) {
@@ -94,7 +130,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
 
       <div className="mockup-page">
         {PARTNERS.map((partner) => {
-          const products = BRAND_PRODUCTS.filter((p) => p.brand === partner.brand);
+          const products = ALL_PARTNER_PRODUCTS.filter((p) => p.brand === partner.brand);
           return (
             <article key={partner.brand} className="brand-partner">
               <header className="brand-partner__head">
