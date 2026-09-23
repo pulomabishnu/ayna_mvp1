@@ -38,5 +38,7 @@ export function useRoutine() {
     });
   }, []);
 
-  return { routineMap, setProductBucket, removeFromRoutine };
+  const resetRoutine = useCallback(() => setRoutineMap({}), []);
+
+  return { routineMap, setProductBucket, removeFromRoutine, resetRoutine };
 }

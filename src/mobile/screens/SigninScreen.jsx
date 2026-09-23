@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
+import { getSupabaseClient } from '../../utils/supabaseClient.js';
+
+// Reset links must open on the website (an email can't open capacitor://).
+// /auth/callback handles type=recovery with a set-new-password form.
+const PASSWORD_RESET_REDIRECT = 'https://www.aynahealth.co/auth/callback';
 
 const DEFAULT_STATS = [
   { label: 'Products', value: 0 },
@@ -164,8 +169,9 @@ export default function SigninScreen({
   onResendConfirmation,
   onVerifyEmailOtp,
   onAuthenticated,
+  initialMode = 'signup',
 }) {
-  const [mode, setMode] = useState('signup'); // 'signup' | 'signin' | 'check-email'
+  const [mode, setMode] = useState(initialMode === 'signin' ? 'signin' : 'signup'); // 'signup' | 'signin' | 'check-email'
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -176,6 +182,8 @@ export default function SigninScreen({
   const [error, setError] = useState('');
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
+  const [resetMsg, setResetMsg] = useState('');
+  const [resetting, setResetting] = useState(false);
   const [emailCode, setEmailCode] = useState('');
   const [verifyingCode, setVerifyingCode] = useState(false);
 
@@ -312,6 +320,27 @@ export default function SigninScreen({
     }
   };
 
+  // Before the 2026-09-22 audit a signed-out user who forgot their password
+  // had no way back in (reset only existed inside Settings, behind sign-in).
+  const handleForgotPassword = async () => {
+    const cleanEmail = email.trim().toLowerCase();
+    setError('');
+    setResetMsg('');
+    if (!cleanEmail) { setError('Enter your email above, then tap "Forgot password?".'); return; }
+    const supabase = getSupabaseClient();
+    if (!supabase) { setError('Could not reach ayna. Please try again.'); return; }
+    setResetting(true);
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(cleanEmail, { redirectTo: PASSWORD_RESET_REDIRECT });
+      if (resetError) throw resetError;
+      setResetMsg(`If an account exists for ${cleanEmail}, we sent a link to reset your password. Open it, set a new password, then sign in here.`);
+    } catch (e) {
+      setError(e?.message || 'Could not send a reset email right now. Please try again.');
+    } finally {
+      setResetting(false);
+    }
+  };
+
   const handleResend = async () => {
     setResending(true);
     setResendMsg('');
@@ -360,7 +389,6 @@ export default function SigninScreen({
               placeholder="12345678"
               value={emailCode}
               onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
-              maxLength={8}
               autoFocus
               style={{ ...inputStyle, textAlign: 'center', fontSize: '24px', letterSpacing: '8px', fontWeight: 700, padding: '8px 0 2px' }}
             />
@@ -434,6 +462,17 @@ export default function SigninScreen({
             </div>
           )}
 
+          {mode === 'signin' && (
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={resetting ? undefined : handleForgotPassword}
+              style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: '#FFC774', marginTop: 10, cursor: resetting ? 'default' : 'pointer', alignSelf: 'flex-start' }}
+            >
+              {resetting ? 'Sending reset link…' : 'Forgot password?'}
+            </div>
+          )}
+          {resetMsg && <div style={{ color: 'rgba(255,252,249,.85)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', marginTop: 10, lineHeight: 1.5 }}>{resetMsg}</div>}
           {error && <div style={{ color: '#FFC9BC', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', marginTop: 10 }}>{error}</div>}
 
           <div style={{ flex: 1, minHeight: 14 }} />

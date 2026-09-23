@@ -46,10 +46,18 @@ function ModeTab({ label, active, onClick }) {
 }
 
 function PersonalizedToggle({ on, disabled, onClick }) {
+  // On a phone the old disabled state gave no feedback at all (a `title`
+  // tooltip never shows on touch), so tapping "For You" looked broken.
+  const [hint, setHint] = useState(false);
+  const tapDisabled = () => { setHint(true); setTimeout(() => setHint(false), 2600); };
   return (
+    <div style={{ position: 'relative' }}>
     <div
-      onClick={disabled ? undefined : onClick}
-      title={disabled ? 'Complete your profile to personalize' : undefined}
+      role="switch"
+      aria-checked={on ? 'true' : 'false'}
+      aria-disabled={disabled ? 'true' : undefined}
+      aria-label="For You"
+      onClick={disabled ? tapDisabled : onClick}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -86,6 +94,12 @@ function PersonalizedToggle({ on, disabled, onClick }) {
           }}
         />
       </div>
+    </div>
+    {hint && (
+      <div role="status" style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', zIndex: 5, width: 200, background: 'var(--ayna-text)', color: 'var(--ayna-bg)', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.4, padding: '8px 10px', borderRadius: 10, boxShadow: '0 8px 20px rgba(0,0,0,.18)' }}>
+        Finish your health profile to turn on For You.
+      </div>
+    )}
     </div>
   );
 }

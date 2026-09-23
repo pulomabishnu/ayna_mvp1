@@ -67,9 +67,13 @@ export default function RevealScreen({
           Intake complete
         </div>
         <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 500, fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '0 0 8px' }}>
-          Your ecosystem is ready.
+          {productCount > 0 ? 'Your ecosystem is ready.' : 'Your profile is saved.'}
         </div>
-        <p style={{ margin: '0 auto', maxWidth: 280, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', lineHeight: 1.5 }}>Built from your answers.</p>
+        <p style={{ margin: '0 auto', maxWidth: 280, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', lineHeight: 1.5 }}>
+          {productCount > 0
+            ? 'Built from your answers.'
+            : "You didn't pick anything you want help with yet, so there are no matches to show. You can add goals anytime from your ecosystem."}
+        </p>
       </div>
 
       <div style={{ position: 'relative', width: 320, height: 320, margin: '22px auto 0' }}>

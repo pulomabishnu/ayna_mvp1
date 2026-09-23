@@ -1,6 +1,6 @@
 import OrbHero from '../components/OrbHero.jsx';
 
-export default function LandingScreen({ onStartQuiz, onBrowse }) {
+export default function LandingScreen({ onStartQuiz, onBrowse, onGoSignIn }) {
   return (
     <div
       style={{
@@ -155,6 +155,18 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
         >
           Browse everything
         </div>
+        {/* Returning users had no way to sign in from here (2026-09-22 audit)
+            — Sign in was buried in Browse > profile > Settings. */}
+        {onGoSignIn && (
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={onGoSignIn}
+            style={{ textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.82)', cursor: 'pointer', padding: '6px 0 0' }}
+          >
+            Already have an account? <span style={{ color: '#FFC774', fontWeight: 600 }}>Sign in</span>
+          </div>
+        )}
       </div>
     </div>
   );

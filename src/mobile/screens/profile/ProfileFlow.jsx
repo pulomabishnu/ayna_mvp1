@@ -150,10 +150,15 @@ function BackHeader({ title, onBack, dark }) {
   );
 }
 
-function Toggle({ on, onClick }) {
+function Toggle({ on, onClick, label }) {
   return (
     <div
-      onClick={onClick}
+      role="switch"
+      aria-checked={on ? 'true' : 'false'}
+      aria-label={label}
+      tabIndex={onClick ? 0 : -1}
+      onClick={onClick ? (e) => { e.stopPropagation(); onClick(); } : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
       style={{
         width: 42,
         height: 25,
@@ -180,22 +185,28 @@ function Toggle({ on, onClick }) {
   );
 }
 
+// The whole row toggles, not just the 42x25px switch: before the 2026-09-22
+// audit tapping the setting's title/description did nothing, which read as
+// "the preference buttons don't work" on a phone.
 function ToggleRow({ title, sub, on, onClick, first }) {
   return (
     <div
+      onClick={onClick}
       style={{
         display: 'flex',
         alignItems: 'center',
         gap: 14,
         padding: '17px 0',
         borderTop: first ? 'none' : '1px solid var(--ayna-border)',
+        cursor: onClick ? 'pointer' : 'default',
+        WebkitTapHighlightColor: 'transparent',
       }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{title}</div>
         <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>{sub}</div>
       </div>
-      <Toggle on={on} onClick={onClick} />
+      <Toggle on={on} onClick={onClick} label={title} />
     </div>
   );
 }
@@ -327,10 +338,14 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
 
 /* ------------------------- Shopper Profile ------------------------- */
 
-function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProducts = {}, onViewAlternative, onBrowse }) {
+function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProducts = {}, onViewAlternative, onBrowse, routine }) {
   const [dismissedAlerts, setDismissedAlerts] = useState([]);
   const [activeBucket, setActiveBucket] = useState('morning');
-  const { routineMap, setProductBucket, removeFromRoutine } = useRoutine();
+  // Routine lives in MobileApp (passed as `routine`) so sorting products
+  // survives leaving this screen. Before the 2026-09-22 audit it was local to
+  // this component and silently reset every time Shopper Profile closed.
+  const localRoutine = useRoutine();
+  const { routineMap, setProductBucket, removeFromRoutine } = routine || localRoutine;
 
   const allAlerts = getSafetyAlerts(myProducts, quizAnswers);
   const activeAlerts = allAlerts.filter((a) => !dismissedAlerts.includes(a.id));
@@ -1095,7 +1110,7 @@ function PreferencesScreen({
       <BackHeader title="Preferences" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
         <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '4px 0 6px', color: 'var(--ayna-heading)' }}>How Ayna reaches you.</div>
-        <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 22 }}>Everything here is off by default and reversible.</div>
+        <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 22 }}>You can change any of these at any time.</div>
 
         {/* Always visible regardless of the notification-preferences backend's
             load state below — Substack subscription has nothing to do with
@@ -1149,14 +1164,14 @@ function PreferencesScreen({
         {loadState === 'ready' && prefs && (
           <>
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
-              <ToggleRow first title="Notifications" sub="Recalls and safety flags on things you own." on={prefs.notificationsEnabled} onClick={() => patchField('notifications_enabled', !prefs.notificationsEnabled, 'notificationsEnabled')} />
-              <ToggleRow title="Updates" sub="New matches and restocks, weekly digest." on={prefs.updatesEnabled} onClick={() => patchField('updates_enabled', !prefs.updatesEnabled, 'updatesEnabled')} />
+              <ToggleRow first title="Notifications" sub="Recall and safety alerts for products you track, sent by text to your verified phone." on={prefs.notificationsEnabled} onClick={() => patchField('notifications_enabled', !prefs.notificationsEnabled, 'notificationsEnabled')} />
+              <ToggleRow title="Updates" sub="New matches and restocks. Coming soon — we'll use this setting when it launches." on={prefs.updatesEnabled} onClick={() => patchField('updates_enabled', !prefs.updatesEnabled, 'updatesEnabled')} />
               <DrillRow title="Channels & quiet hours" sub={channelsSummary} onClick={onOpenChannels} />
             </div>
 
             <SectionLabel>AI & personalization</SectionLabel>
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
-              <ToggleRow first title="Personalize with my data" sub="Your intake answers and cycle logs shape your matches and Ask Ayna replies." on={personalizeWithData} onClick={handlePersonalizeToggle} />
+              <ToggleRow first title="Personalize with my data" sub="Your intake answers and monthly check-ins shape your matches and Ask Ayna replies." on={personalizeWithData} onClick={handlePersonalizeToggle} />
             </div>
           </>
         )}
@@ -1360,9 +1375,9 @@ function ChannelsScreen({ onBack }) {
             <SectionLabel>Delivery channel</SectionLabel>
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '5px 18px' }}>
               {[
-                ['push', 'Push', null],
+                ['push', 'Push', 'COMING SOON'],
                 ['sms', 'Text message', prefs.phoneVerified ? 'VERIFIED' : 'VERIFY TO USE'],
-                ['email', 'Email only', null],
+                ['email', 'Email only', 'COMING SOON'],
               ].map(([key, label, badge], i) => (
                 <div key={key} onClick={() => selectChannel(key)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '15px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)', cursor: 'pointer' }}>
                   <div style={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid ' + (prefs.deliveryChannel === key ? 'var(--ayna-cta-bg)' : 'var(--ayna-border)'), flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1374,9 +1389,13 @@ function ChannelsScreen({ onBack }) {
               ))}
             </div>
 
+            <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, margin: '10px 2px 0' }}>
+              Today, recall alerts go out by text message to your verified number whenever Notifications is on. Push and email delivery are coming soon.
+            </div>
+
             <SectionLabel>Quiet hours</SectionLabel>
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
-              <ToggleRow first title="Quiet hours" sub="Hold notifications overnight; they'll still be there when it opens." on={prefs.quietHoursEnabled} onClick={() => patchField('quiet_hours_enabled', !prefs.quietHoursEnabled, 'quietHoursEnabled')} />
+              <ToggleRow first title="Quiet hours" sub="Saved for when push alerts launch. Today's text alerts already go out once a day in the morning (8–9am ET), never overnight." on={prefs.quietHoursEnabled} onClick={() => patchField('quiet_hours_enabled', !prefs.quietHoursEnabled, 'quietHoursEnabled')} />
               {prefs.quietHoursEnabled && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '4px 0 16px' }}>
                   <label style={{ flex: 1 }}>
@@ -2732,7 +2751,9 @@ function PasswordScreen({ onBack, authUser }) {
       const supabase = getSupabaseClient();
       if (!supabase || !authUser?.email) throw new Error('no_email');
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(authUser.email, {
-        redirectTo: `${window.location.origin}/mobile-preview`,
+        // An emailed link can't open capacitor://localhost; the website's
+        // /auth/callback handles type=recovery with a new-password form.
+        redirectTo: 'https://www.aynahealth.co/auth/callback',
       });
       if (resetError) throw resetError;
       setResetSent(true);
@@ -3270,6 +3291,7 @@ export default function ProfileFlow({
   onClearAskAynaHistory,
   textSizeIndex = 1,
   onTextSizeChange,
+  routine,
 }) {
   // A real back-navigation stack rather than a static single-parent map —
   // several screens (Preferences/Notifications, in particular) are now
@@ -3314,7 +3336,8 @@ export default function ProfileFlow({
         savedProducts={savedProducts}
         onViewAlternative={onViewAlternative ? (product) => { onClose(); onViewAlternative(product); } : undefined}
         onBrowse={onBrowse ? () => { onClose(); onBrowse(); } : undefined}
-      />
+        routine={routine}
+        />
     );
   } else if (screen === 'startups') {
     body = <EarlyStageScreen onBack={goBack} quizAnswers={quizAnswers} />;

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { generateTieredRecommendations } from '../utils/recommendationEngine.js';
+import { useRoutine } from './hooks/useRoutine.js';
 import { Capacitor } from '@capacitor/core';
 import './mobile.css';
 import { ALL_PRODUCTS, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate } from '../data/products.js';
@@ -97,7 +99,23 @@ function buildBrowseProducts(catalogProducts) {
 // then add only mobile's display-only areaKey after the shared picks exist.
 function seedEcosystemFromAnswers(quizAnswers, healthProfile = null) {
   const { mergedProducts } = getEcosystemSeedFromQuiz(quizAnswers, healthProfile);
-  const seeded = Object.values(mergedProducts || {}).map((product) => {
+  // The seed picks ONE product per concern, so a mobile-only build ended up
+  // with 1-2 products total (desktop tops it up with the catalog-grounded
+  // LLM build; mobile never did). Add the catalog engine's 3-5 diverse picks
+  // per selected concern — still catalog-only, deterministic, and capped per
+  // category below (2026-09-22 audit).
+  const byId = new Map(Object.values(mergedProducts || {}).filter((p) => p?.id).map((p) => [p.id, p]));
+  try {
+    for (const entry of generateTieredRecommendations(quizAnswers || {})) {
+      for (const tier of entry?.tiers || []) {
+        const product = tier?.product;
+        if (product?.id && !byId.has(product.id)) byId.set(product.id, product);
+      }
+    }
+  } catch (error) {
+    console.warn('[Ayna] tiered ecosystem picks failed; using seed only:', error?.message);
+  }
+  const seeded = [...byId.values()].map((product) => {
     const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
     return {
       ...product,
@@ -125,6 +143,9 @@ export default function MobileApp() {
   // scroll pagination) is exactly as the user left it, not reset to a
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
+  // Which tab the sign-in screen opens on: returning users ("Sign in" links)
+  // land on the sign-in form, the post-intake funnel lands on sign-up.
+  const [signinMode, setSigninMode] = useState('signup');
   const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation, verifyEmailOtp } = useSupabaseAuth();
 
   // Backend-only state used to keep mobile ecosystem writes consistent with
@@ -139,6 +160,7 @@ export default function MobileApp() {
   // Registration only — nothing sends a push yet.
   usePushNotifications(authUser?.id);
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
+  const routine = useRoutine();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
   const [askAynaHistory, setAskAynaHistory] = useState([]);
   // App-wide gate for Preferences > AI & Personalization > "Personalize with
@@ -331,6 +353,7 @@ export default function MobileApp() {
     pendingQuizEcosystemRef.current = null;
     ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
     resetSaved();
+    routine.resetRoutine();
     resetSession();
     signOutSupabase();
     setScreen('landing');
@@ -389,6 +412,7 @@ export default function MobileApp() {
     onOpenSaved: () => setScreen('saved'),
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
     onGoLanding: () => setScreen('landing'),
+    onGoSignIn: () => { setSigninMode('signin'); setScreen('signin'); },
     onOpenProduct: (p) => setOverlay({ type: 'product', item: p }),
     onOpenArticle: (a) => setOverlay({ type: 'article', item: a }),
     onOpenProfile: () => setOverlay({ type: 'profile' }),
@@ -440,7 +464,8 @@ export default function MobileApp() {
     // account and this same ecosystem attached to it — routing them through
     // "sign in" again after finishing is a dead end, not a next step.
     onFinish: () => setScreen(authUser ? 'eco' : 'reveal'),
-    onContinue: () => setScreen('signin'),
+    onContinue: () => { setSigninMode('signup'); setScreen('signin'); },
+    initialMode: signinMode,
     // Real Supabase auth (src/mobile/hooks/useSupabaseAuth.js) — the name
     // comes from whatever SigninScreen already has in its own form state
     // (the person just typed it) rather than from authUser here, since
@@ -532,7 +557,7 @@ export default function MobileApp() {
           theme={theme}
           onToggleTheme={setThemeMode}
           onSignOut={handleSignOut}
-          onSignIn={() => setScreen('signin')}
+          onSignIn={() => { setOverlay(null); setSigninMode('signin'); setScreen('signin'); }}
           authUser={authUser}
           name={resolvedName}
           onNameChanged={(next) => updateSession({ userName: next })}
@@ -553,6 +578,7 @@ export default function MobileApp() {
           onTextSizeChange={setTextSizeIndex}
           onEditProfile={() => { setEditingHealthProfile(true); setScreen('quiz'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
+          routine={routine}
         />
       )}
       {!askAynaOpen && (
