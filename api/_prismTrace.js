@@ -15,6 +15,38 @@ export function prismTraceEnabled() {
   return Boolean(process.env.PRISMTRACE_API_KEY && process.env.PRISMTRACE_PROJECT_ID);
 }
 
+const CONVERSATION_ID_RE = /^[A-Za-z0-9_-]{8,64}$/;
+
+/**
+ * Session id for a route's trace. PRISM only builds a trajectory from traces
+ * that share a session_id, so a random id per call leaves every turn split
+ * into its own one-message session.
+ *   - conversationId (sent by the chat UI, one per conversation) groups a chat's turns;
+ *   - otherwise a hashed user id + UTC day groups one user's calls to that route;
+ *   - otherwise undefined, and emitTrace falls back to a per-call id.
+ */
+export function traceSessionId(name, { conversationId, userId } = {}) {
+  if (typeof conversationId === 'string' && CONVERSATION_ID_RE.test(conversationId)) {
+    return `${name}:${conversationId}`;
+  }
+  if (userId) return hashedSessionId(name, `${userId}:${new Date().toISOString().slice(0, 10)}`);
+  return undefined;
+}
+
+/**
+ * The chat as the user saw it: the UI's recent history ({role, text}) plus the
+ * new message, as {role, content} turns. Client-supplied, so capped and
+ * restricted to user/assistant roles.
+ */
+export function traceMessages(chatHistory, message) {
+  const prior = Array.isArray(chatHistory) ? chatHistory.slice(-6) : [];
+  const turns = prior
+    .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.text === 'string' && m.text.trim())
+    .map((m) => ({ role: m.role, content: m.text.slice(0, 2000) }));
+  if (typeof message === 'string' && message.trim()) turns.push({ role: 'user', content: message.trim().slice(0, 2000) });
+  return turns;
+}
+
 /** Stable, non-reversible session id so an SMS thread groups without sending the raw user id. */
 export function hashedSessionId(prefix, value) {
   if (!value) return undefined;
@@ -28,6 +60,7 @@ export async function emitTrace({
   model,
   system,
   prompt,
+  messages,
   output = '',
   latencyMs = 0,
   error,
@@ -45,9 +78,14 @@ export async function emitTrace({
       body: JSON.stringify({
         project_id: process.env.PRISMTRACE_PROJECT_ID,
         model: model || provider || 'unknown',
+        // `messages` is the conversation as the user saw it (prior turns + her
+        // new message). Without it the whole rendered prompt goes in as one
+        // user message, which is what the model actually received.
         input_messages: [
           ...(system ? [{ role: 'system', content: system }] : []),
-          { role: 'user', content: String(prompt ?? '') },
+          ...(Array.isArray(messages) && messages.length
+            ? messages.map((m) => ({ role: m.role, content: String(m.content ?? '') }))
+            : [{ role: 'user', content: String(prompt ?? '') }]),
         ],
         output_message: output,
         latency_ms: Math.round(latencyMs),
@@ -55,6 +93,9 @@ export async function emitTrace({
         metadata: {
           name: name || 'llm',
           provider,
+          // Keep the full rendered prompt findable when input_messages shows
+          // the conversation instead.
+          prompt: Array.isArray(messages) && messages.length ? String(prompt ?? '').slice(0, 20_000) : undefined,
           stop_reason: stopReason || undefined,
           error: error ? String(error?.message || error) : undefined,
           error_status: error?.status || undefined,

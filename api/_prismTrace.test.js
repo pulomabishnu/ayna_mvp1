@@ -1,7 +1,7 @@
 /* global process */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { callAnthropic } from './_llm.js';
-import { hashedSessionId } from './_prismTrace.js';
+import { hashedSessionId, traceSessionId, traceMessages } from './_prismTrace.js';
 
 const realFetch = globalThis.fetch;
 const ENV_KEYS = ['ANTHROPIC_API_KEY', 'PRISMTRACE_API_KEY', 'PRISMTRACE_PROJECT_ID', 'PRISMTRACE_HOST'];
@@ -82,5 +82,41 @@ describe('PRISM tracing in api/_llm.js', () => {
     expect(id).not.toContain('user-123');
     expect(hashedSessionId('sms', 'user-123')).toBe(id);
     expect(hashedSessionId('sms', undefined)).toBeUndefined();
+  });
+
+  it('groups a chat by conversation id, else by hashed user + day, else nothing', () => {
+    expect(traceSessionId('ask-ayna', { conversationId: 'abc12345-conv', userId: 'u1' })).toBe('ask-ayna:abc12345-conv');
+    const byUser = traceSessionId('ask-ayna', { conversationId: 'bad id!', userId: 'u1' });
+    expect(byUser).toMatch(/^ask-ayna:[0-9a-f]{16}$/);
+    expect(byUser).toBe(traceSessionId('ask-ayna', { userId: 'u1' }));
+    expect(traceSessionId('ask-ayna', {})).toBeUndefined();
+  });
+
+  it('builds the conversation turns from the UI history, dropping system rows', () => {
+    const turns = traceMessages(
+      [{ role: 'assistant', text: 'Hi!' }, { role: 'system', text: 'Updated your profile' }, { role: 'user', text: 'cramps?' }, { role: 'assistant', text: 'Try heat.' }],
+      '  what else?  '
+    );
+    expect(turns).toEqual([
+      { role: 'assistant', content: 'Hi!' },
+      { role: 'user', content: 'cramps?' },
+      { role: 'assistant', content: 'Try heat.' },
+      { role: 'user', content: 'what else?' },
+    ]);
+    expect(traceMessages(undefined, 'hello')).toEqual([{ role: 'user', content: 'hello' }]);
+  });
+
+  it('sends the conversation turns as input_messages and keeps the rendered prompt in metadata', async () => {
+    process.env.PRISMTRACE_API_KEY = 'pt-sk-test';
+    process.env.PRISMTRACE_PROJECT_ID = 'proj-1';
+    const fetchMock = vi.fn().mockResolvedValueOnce(anthropicOk('answer')).mockResolvedValueOnce(ingestOk);
+    globalThis.fetch = fetchMock;
+    const messages = [{ role: 'user', content: 'a' }, { role: 'assistant', content: 'b' }, { role: 'user', content: 'c' }];
+    await callAnthropic({ system: 'sys', prompt: 'FULL PROMPT', trace: { name: 'ask-ayna', sessionId: 'ask-ayna:conv-1234', messages } });
+    const body = JSON.parse(fetchMock.mock.calls[1][1].body);
+    expect(body.input_messages).toEqual([{ role: 'system', content: 'sys' }, ...messages]);
+    expect(body.session_id).toBe('ask-ayna:conv-1234');
+    expect(body.metadata.prompt).toBe('FULL PROMPT');
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).messages).toEqual([{ role: 'user', content: 'FULL PROMPT' }]);
   });
 });
