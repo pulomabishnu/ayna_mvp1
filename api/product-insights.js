@@ -9,7 +9,8 @@ import { retrieveKnowledgeForProduct, buildKnowledgeContext } from '../src/utils
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
-import { callAnthropic, callOpenAI, callGemini, providerConfigured, parseProviderOrder } from './_llm.js';
+import { callAnthropic, callOpenAI, callGemini, providerConfigured, parseProviderOrder, tryParseJsonCandidate } from './_llm.js';
+import { traceSessionId } from './_prismTrace.js';
 
 const MAX_NARRATIVE_LEN = 2200;
 const MAX_EXTRA_SUMMARY_LEN = 800;
@@ -329,8 +330,21 @@ function buildSafeLinks(parsed, productCategory) {
 const INSIGHTS_SYSTEM_PROMPT =
   "You produce only valid JSON for a women's health education app. Never include URLs, links, domains, or fabricated citations. Use short search phrases only. Output a single JSON object only — no markdown, no code fences, no text before or after the JSON.";
 
-async function callProvider(provider, prompt) {
-  const args = { system: INSIGHTS_SYSTEM_PROMPT, prompt, maxTokens: 2000, temperature: 0.25, jsonMode: true, trace: { name: 'product-insights' } };
+/** The insight panel as she reads it, for the PRISM trace (raw JSON stays in metadata). */
+function describeInsightsForTrace(text) {
+  const p = tryParseJsonCandidate(text);
+  if (!p) return '';
+  const bullets = (label, arr) => (Array.isArray(arr) && arr.length ? `${label}:\n${arr.map((s) => `- ${s}`).join('\n')}` : '');
+  return [
+    p.clinicalNarrative,
+    bullets('Pros', p.quickOverviewPros),
+    bullets('Cons', p.quickOverviewCons),
+    bullets('Fit for you', p.quickOverviewFit),
+  ].filter(Boolean).join('\n\n');
+}
+
+async function callProvider(provider, prompt, trace) {
+  const args = { system: INSIGHTS_SYSTEM_PROMPT, prompt, maxTokens: 2000, temperature: 0.25, jsonMode: true, trace: { name: 'product-insights', ...trace } };
   if (provider === 'claude' || provider === 'anthropic') return callAnthropic(args);
   if (provider === 'openai') return callOpenAI(args);
   if (provider === 'gemini') return callGemini(args);
@@ -343,11 +357,15 @@ async function callProvider(provider, prompt) {
  * fall through to the next provider in the handler's loop below, and
  * callWithFallback only falls through on a hard HTTP/API failure.
  */
-async function runModel(product, provider, userContextText = '') {
+async function runModel(product, provider, userContextText = '', traceSession) {
   if (!providerConfigured(provider)) return null;
   let out;
   try {
-    out = await callProvider(provider, buildUserPrompt(product, userContextText));
+    out = await callProvider(provider, buildUserPrompt(product, userContextText), {
+      sessionId: traceSession,
+      messages: [{ role: 'user', content: `Tell me about ${[product?.brand, product?.name].filter(Boolean).join(' ')}` }],
+      formatOutput: describeInsightsForTrace,
+    });
   } catch (e) {
     console.error(`[product-insights] ${provider} failed:`, e?.status || '', e?.message, e?.body ? `| ${e.body}` : '');
     return null;
@@ -480,7 +498,8 @@ export default async function handler(req, res) {
       const out = await runModel(
         product,
         p === 'anthropic' ? 'claude' : p,
-        userContextText
+        userContextText,
+        traceSessionId({ conversationId: body?.conversationId, userId: user.id })
       );
       if (!out) continue;
       const { clinicianLinks, literatureLinks, communityLinks } = buildSafeLinks(out.normalized, product?.category);

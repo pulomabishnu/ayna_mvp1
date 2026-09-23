@@ -18,18 +18,20 @@ export function prismTraceEnabled() {
 const CONVERSATION_ID_RE = /^[A-Za-z0-9_-]{8,64}$/;
 
 /**
- * Session id for a route's trace. PRISM only builds a trajectory from traces
- * that share a session_id, so a random id per call leaves every turn split
- * into its own one-message session.
- *   - conversationId (sent by the chat UI, one per conversation) groups a chat's turns;
- *   - otherwise a hashed user id + UTC day groups one user's calls to that route;
+ * Session id for a trace. PRISM only builds a trajectory from traces that
+ * share a session_id, so a random id per call leaves every turn split into its
+ * own one-message session. Not prefixed by route: a chat turn and the product
+ * search it navigates to belong to the same visit, so they share a session.
+ *   - the client's per-tab session id (`conversationId` in the request body,
+ *     from src/utils/conversationId.js getAppSessionId) groups one visit;
+ *   - otherwise a hashed user id + UTC day groups one user's calls;
  *   - otherwise undefined, and emitTrace falls back to a per-call id.
  */
-export function traceSessionId(name, { conversationId, userId } = {}) {
+export function traceSessionId({ conversationId, userId } = {}) {
   if (typeof conversationId === 'string' && CONVERSATION_ID_RE.test(conversationId)) {
-    return `${name}:${conversationId}`;
+    return `ayna:${conversationId}`;
   }
-  if (userId) return hashedSessionId(name, `${userId}:${new Date().toISOString().slice(0, 10)}`);
+  if (userId) return hashedSessionId('ayna', `${userId}:${new Date().toISOString().slice(0, 10)}`);
   return undefined;
 }
 
@@ -62,6 +64,7 @@ export async function emitTrace({
   prompt,
   messages,
   output = '',
+  rawOutput,
   latencyMs = 0,
   error,
   stopReason,
@@ -96,6 +99,8 @@ export async function emitTrace({
           // Keep the full rendered prompt findable when input_messages shows
           // the conversation instead.
           prompt: Array.isArray(messages) && messages.length ? String(prompt ?? '').slice(0, 20_000) : undefined,
+          // The model's raw reply, when output_message is the readable version of it.
+          raw_output: rawOutput ? String(rawOutput).slice(0, 20_000) : undefined,
           stop_reason: stopReason || undefined,
           error: error ? String(error?.message || error) : undefined,
           error_status: error?.status || undefined,

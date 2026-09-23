@@ -11,7 +11,7 @@ import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/
 import { consumeUsage } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import { callWithFallback, parseProviderOrder } from './_llm.js';
-import { hashedSessionId } from './_prismTrace.js';
+import { hashedSessionId, traceMessages } from './_prismTrace.js';
 import { ALL_PRODUCTS } from '../src/data/products.js';
 import { stripLinks } from './_catalogGrounding.js';
 
@@ -139,7 +139,7 @@ Reply only with the text message itself — no preamble, no signature.`;
  * unanswerable with no fallback. Now goes through the same multi-provider
  * callWithFallback every other AI route uses.
  */
-async function callSmsModel(systemPrompt, userPrompt, userId) {
+async function callSmsModel(systemPrompt, userPrompt, userId, traceTurns) {
   const order = parseProviderOrder('AI_SMS_PROVIDER_ORDER', 'anthropic,openai,gemini');
   try {
     const out = await callWithFallback(order, {
@@ -148,7 +148,7 @@ async function callSmsModel(systemPrompt, userPrompt, userId) {
       maxTokens: 250,
       temperature: 0.3,
       timeoutMs: 8000,
-      trace: { name: 'sms-webhook', sessionId: hashedSessionId('sms', userId) },
+      trace: { name: 'sms-webhook', sessionId: hashedSessionId('sms', userId), messages: traceTurns },
     });
     return out.text.trim() || null;
   } catch (e) {
@@ -322,7 +322,16 @@ export default async function handler(req, res) {
 
   let reply;
   try {
-    reply = await callSmsModel(SMS_SYSTEM_PROMPT, userPrompt, userId);
+    // The text thread as she sees it. recentMessages is newest-first and
+    // already holds this inbound text (logged above), so drop it before
+    // traceMessages appends it as the new turn.
+    const prior = (recentMessages || []).slice();
+    if (prior[0]?.direction === 'inbound' && prior[0]?.message_body === text) prior.shift();
+    const traceTurns = traceMessages(
+      prior.reverse().map((m) => ({ role: m.direction === 'inbound' ? 'user' : 'assistant', text: m.message_body })),
+      text
+    );
+    reply = await callSmsModel(SMS_SYSTEM_PROMPT, userPrompt, userId, traceTurns);
   } catch (e) {
     console.error('[sms-webhook] Claude error:', e?.message);
   }

@@ -84,12 +84,12 @@ describe('PRISM tracing in api/_llm.js', () => {
     expect(hashedSessionId('sms', undefined)).toBeUndefined();
   });
 
-  it('groups a chat by conversation id, else by hashed user + day, else nothing', () => {
-    expect(traceSessionId('ask-ayna', { conversationId: 'abc12345-conv', userId: 'u1' })).toBe('ask-ayna:abc12345-conv');
-    const byUser = traceSessionId('ask-ayna', { conversationId: 'bad id!', userId: 'u1' });
-    expect(byUser).toMatch(/^ask-ayna:[0-9a-f]{16}$/);
-    expect(byUser).toBe(traceSessionId('ask-ayna', { userId: 'u1' }));
-    expect(traceSessionId('ask-ayna', {})).toBeUndefined();
+  it('groups a visit by the client session id, else by hashed user + day, else nothing', () => {
+    expect(traceSessionId({ conversationId: 'abc12345-conv', userId: 'u1' })).toBe('ayna:abc12345-conv');
+    const byUser = traceSessionId({ conversationId: 'bad id!', userId: 'u1' });
+    expect(byUser).toMatch(/^ayna:[0-9a-f]{16}$/);
+    expect(byUser).toBe(traceSessionId({ userId: 'u1' }));
+    expect(traceSessionId({})).toBeUndefined();
   });
 
   it('builds the conversation turns from the UI history, dropping system rows', () => {
@@ -118,5 +118,37 @@ describe('PRISM tracing in api/_llm.js', () => {
     expect(body.session_id).toBe('ask-ayna:conv-1234');
     expect(body.metadata.prompt).toBe('FULL PROMPT');
     expect(JSON.parse(fetchMock.mock.calls[0][1].body).messages).toEqual([{ role: 'user', content: 'FULL PROMPT' }]);
+  });
+
+  it('reports the readable reply from formatOutput and keeps the raw reply in metadata', async () => {
+    process.env.PRISMTRACE_API_KEY = 'pt-sk-test';
+    process.env.PRISMTRACE_PROJECT_ID = 'proj-1';
+    const raw = '{"answer":"Try a heating pad.","profileUpdate":{}}';
+    const fetchMock = vi.fn().mockResolvedValueOnce(anthropicOk(raw)).mockResolvedValueOnce(ingestOk);
+    globalThis.fetch = fetchMock;
+    const out = await callAnthropic({
+      prompt: 'FULL PROMPT',
+      trace: { name: 'ask-ayna', formatOutput: (text) => JSON.parse(text).answer },
+    });
+    expect(out.text).toBe(raw);
+    const body = JSON.parse(fetchMock.mock.calls[1][1].body);
+    expect(body.output_message).toBe('Try a heating pad.');
+    expect(body.metadata.raw_output).toBe(raw);
+  });
+
+  it('falls back to the raw reply when formatOutput throws or returns nothing', async () => {
+    process.env.PRISMTRACE_API_KEY = 'pt-sk-test';
+    process.env.PRISMTRACE_PROJECT_ID = 'proj-1';
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(anthropicOk('not json')).mockResolvedValueOnce(ingestOk)
+      .mockResolvedValueOnce(anthropicOk('also raw')).mockResolvedValueOnce(ingestOk);
+    globalThis.fetch = fetchMock;
+    await callAnthropic({ prompt: 'p', trace: { formatOutput: (text) => JSON.parse(text).answer } });
+    await callAnthropic({ prompt: 'p', trace: { formatOutput: () => '' } });
+    for (const i of [1, 3]) {
+      const body = JSON.parse(fetchMock.mock.calls[i][1].body);
+      expect(body.output_message).toBe(i === 1 ? 'not json' : 'also raw');
+      expect(body.metadata.raw_output).toBeUndefined();
+    }
   });
 });

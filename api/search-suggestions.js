@@ -13,6 +13,7 @@
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { verifyUser } from './_usageLimit.js';
 import { tryParseJsonCandidate, callWithFallback, parseProviderOrder, providerConfigured } from './_llm.js';
+import { traceSessionId } from './_prismTrace.js';
 import {
   loadGroundingCatalog,
   buildCatalogIndex,
@@ -135,7 +136,27 @@ More rules:
  * failure on the first configured provider falls through to the next one
  * instead of failing the whole request.
  */
-async function callSuggestionsModel(prompt) {
+/** Discovery appends a "(batch N of several — …)" steer for follow-up rounds; drop it for display. */
+function describeSearchForTrace(query, category, symptom) {
+  const q = query.replace(/\s*\(batch \d+ of several[^)]*\)\s*$/i, '').trim();
+  const batch = query.match(/\(batch (\d+) of several/i)?.[1];
+  const filters = [category && `category: ${category}`, symptom && `symptom: ${symptom}`, batch && `more results, batch ${batch}`].filter(Boolean);
+  return `Search: "${q}"${filters.length ? ` (${filters.join(', ')})` : ''}`;
+}
+
+/** The results as she sees them: the summary line plus each product's name and reason. */
+function describeSuggestionsForTrace(parsed, catalogIndex) {
+  if (!parsed) return '';
+  const lines = (Array.isArray(parsed.suggestions) ? parsed.suggestions : []).map((s) => {
+    const id = String(s?.catalogId || s?.id || '').toLowerCase();
+    const p = catalogIndex.byId.get(id);
+    const name = p ? [p.brand, p.name].filter(Boolean).join(' ') : `${id} (not in catalog)`;
+    return `- ${name}${s?.reason ? `: ${s.reason}` : ''}`;
+  });
+  return [parsed.querySummary, lines.length ? lines.join('\n') : 'No matching products.'].filter(Boolean).join('\n\n');
+}
+
+async function callSuggestionsModel(prompt, trace) {
   const order = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai,gemini');
   try {
     const out = await callWithFallback(order, {
@@ -162,7 +183,7 @@ async function callSuggestionsModel(prompt) {
       maxTokens: 8192,
       temperature: 0.2,
       jsonMode: true,
-      trace: { name: 'search-suggestions' },
+      trace: { name: 'search-suggestions', ...trace },
     });
     if (out.truncated) {
       // Truncated output can't be recovered after the fact — this is here so a
@@ -259,7 +280,15 @@ export default async function handler(req, res) {
   const catalogIndex = buildCatalogIndex(catalog);
   const promptCatalog = scopeCatalog(catalog, categoryHint);
 
-  const rawJson = await callSuggestionsModel(buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts, promptCatalog));
+  const rawJson = await callSuggestionsModel(
+    buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts, promptCatalog),
+    {
+      sessionId: traceSessionId({ conversationId: body?.conversationId }),
+      // What she searched, not the catalog-sized prompt (kept in trace metadata).
+      messages: [{ role: 'user', content: describeSearchForTrace(query, categoryHint, symptomHint) }],
+      formatOutput: (text) => describeSuggestionsForTrace(tryParseJsonCandidate(text), catalogIndex),
+    }
+  );
   if (!rawJson) {
     return res.status(502).json({ error: 'claude_failed' });
   }

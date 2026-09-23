@@ -292,7 +292,8 @@ async function callGeminiUntraced({
  * failure. Callers may pass `trace: { name, sessionId }` to label the route and
  * group a conversation, plus `messages` ([{role, content}] — the chat turns
  * as the user saw them) so the trace reads as a conversation rather than one
- * rendered prompt; it is stripped before the provider request is built.
+ * rendered prompt, and `formatOutput(text)` to turn a JSON reply into the text
+ * the user actually sees (the raw reply is kept in metadata); it is stripped before the provider request is built.
  */
 function withPrismTrace(provider, fn, defaultModel) {
   return async function traced({ trace, ...args } = {}) {
@@ -308,7 +309,17 @@ function withPrismTrace(provider, fn, defaultModel) {
     };
     try {
       const out = await fn(args);
-      await emitTrace({ ...base, output: out.text, stopReason: out.stopReason, latencyMs: Date.now() - started });
+      let output = out.text;
+      if (typeof trace?.formatOutput === 'function') {
+        try { output = trace.formatOutput(out.text) || out.text; } catch { /* keep raw */ }
+      }
+      await emitTrace({
+        ...base,
+        output,
+        rawOutput: output !== out.text ? out.text : undefined,
+        stopReason: out.stopReason,
+        latencyMs: Date.now() - started,
+      });
       return out;
     } catch (e) {
       await emitTrace({ ...base, error: e, latencyMs: Date.now() - started });
