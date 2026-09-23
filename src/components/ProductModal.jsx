@@ -581,8 +581,10 @@ export default function ProductModal({
       extra.push({ id: 'howtouse', label: 'How to use' });
     }
     if (extra.length === 0) return AYNA_TABS;
-    const communityIdx = AYNA_TABS.findIndex((t) => t.id === 'community');
-    return [...AYNA_TABS.slice(0, communityIdx), ...extra, ...AYNA_TABS.slice(communityIdx)];
+    // After Social Media, not before — inserted ahead of 'ask' (Ask Ayna),
+    // which always stays last.
+    const askIdx = AYNA_TABS.findIndex((t) => t.id === 'ask');
+    return [...AYNA_TABS.slice(0, askIdx), ...extra, ...AYNA_TABS.slice(askIdx)];
   }, [product]);
 
   const sourceCounts = useMemo(() => {
@@ -639,6 +641,48 @@ export default function ProductModal({
         if (!label) continue;
         seenUrls.add(url);
         entries.push({ url, label, kind, text: link.text || null, summary: link.summary || null });
+      }
+    }
+    return entries;
+  }, [product]);
+
+  // Curated category-level citations (product.scientificCitations) — kept
+  // out of verificationLinks for the same reason as ingredientCitationEntries
+  // below: that data also feeds the Clinician opinion card's chip row, which
+  // here only wants doctorOpinionCitations (the two clinical-study links).
+  const curatedScientificEntries = useMemo(() => {
+    const seenUrls = new Set();
+    const entries = [];
+    for (const c of product?.scientificCitations || []) {
+      if (!c.url || seenUrls.has(c.url)) continue;
+      const label = hostLabel(c.url);
+      if (!label) continue;
+      seenUrls.add(c.url);
+      entries.push({ url: c.url, label, kind: 'Scientific', text: c.text || null, summary: c.summary || null });
+    }
+    return entries;
+  }, [product]);
+
+  // Per-ingredient citations, rendered as extra cards on the Scientific
+  // literature tab only — deliberately NOT part of verificationLinks, since
+  // that also feeds the Clinician opinion card's chip row (pools doctor +
+  // scientific), and 7 ingredient-level NIH links there would bury the 1-2
+  // study-level citations that chip row actually wants to surface.
+  const ingredientCitationEntries = useMemo(() => {
+    const seenUrls = new Set();
+    const entries = [];
+    for (const item of product?.ingredientScience || []) {
+      // When one ingredient entry cites more than one source (vitamins E
+      // and A share a paragraph but each has its own NIH fact sheet), the
+      // citation's own label distinguishes the cards instead of both
+      // showing the same shared ingredient name and text.
+      const multi = (item.citations || []).length > 1;
+      for (const c of item.citations || []) {
+        if (!c.url || seenUrls.has(c.url)) continue;
+        const label = hostLabel(c.url);
+        if (!label) continue;
+        seenUrls.add(c.url);
+        entries.push({ url: c.url, label, kind: 'Scientific', text: multi ? c.label : item.name, summary: item.text });
       }
     }
     return entries;
@@ -865,7 +909,30 @@ export default function ProductModal({
           {/* Product head — mockup board 1f: square product tile beside the
               eyebrow / name / price / actions column. */}
           <div className="pdp-head">
-            {galleryTile}
+            <div>
+              {galleryTile}
+
+              {/* Fills the dead space below a short square image while the
+                  detail column (name/price/tabs/tab content) runs much
+                  taller — same fix as the Evidence view's left column. Only
+                  on the Scientific literature tab (where this ingredient
+                  detail is relevant), not shown under every tab, and only
+                  when a catalog entry has this on file. */}
+              {activeTab === 'scientific' && Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
+                <div style={{ marginTop: 20 }}>
+                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
+                    INSIDE
+                  </div>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {product.ingredientScience.map((item) => (
+                      <li key={item.name} style={{ fontSize: 13, lineHeight: 1.5, color: '#3f3831', marginBottom: 10 }}>
+                        <strong>{item.name}:</strong> {item.text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
 
             <div className="pdp-head__detail">
               <div className="pdp-head__eyebrow">{eyebrow}</div>
@@ -968,7 +1035,7 @@ export default function ProductModal({
                         {product.clinicianAttribution && (
                           <div className="pdp-summary-card__foot">{product.clinicianAttribution}</div>
                         )}
-                        {clinicianSourceLinks.length > 0 && (
+                        {(clinicianSourceLinks.length > 0 || Array.isArray(product.doctorOpinionCitations)) && (
                           <div className="pdp-summary-card__chips">
                             {clinicianSourceLinks.map((chip) => (
                               <a
@@ -980,6 +1047,23 @@ export default function ProductModal({
                                 title={chip.text || chip.url}
                               >
                                 {chip.label}
+                              </a>
+                            ))}
+                            {/* Kept out of verificationLinks on purpose — that data
+                                also feeds the Scientific literature tab's citation
+                                list, and this link (the VSQ questionnaire Neycher
+                                says it used) belongs only here, on the clinical
+                                claim it backs, not mixed into that list. */}
+                            {(product.doctorOpinionCitations || []).map((c) => (
+                              <a
+                                key={c.url}
+                                className="pdp-head__badge"
+                                href={c.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={c.label}
+                              >
+                                {hostLabel(c.url) || c.label}
                               </a>
                             ))}
                           </div>
@@ -1017,6 +1101,19 @@ export default function ProductModal({
                         </li>
                       ))}
                     </ul>
+                    {product.howToUse?.sourceUrl && (
+                      <div style={{ marginTop: 10 }}>
+                        <a
+                          href={product.howToUse.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="pdp-head__badge"
+                          title={product.howToUse.sourceLabel || product.howToUse.sourceUrl}
+                        >
+                          {hostLabel(product.howToUse.sourceUrl) || 'Source'}
+                        </a>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1109,9 +1206,9 @@ export default function ProductModal({
 
                 {activeTab === 'scientific' && (
                   <div className="pdp-summary-card">
-                    {scientificLiteratureEntries.length > 0 ? (
+                    {(scientificLiteratureEntries.length + curatedScientificEntries.length + ingredientCitationEntries.length) > 0 ? (
                       <div className="pdp-scientific__list">
-                        {scientificLiteratureEntries.map((entry) => (
+                        {[...scientificLiteratureEntries, ...curatedScientificEntries, ...ingredientCitationEntries].map((entry) => (
                           <a
                             key={entry.url}
                             className="pdp-scientific__entry"
@@ -1130,40 +1227,6 @@ export default function ProductModal({
                       </div>
                     ) : (
                       <p className="pdp-summary-card__empty">No scientific literature yet.</p>
-                    )}
-                    {Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
-                      <>
-                        <div className="pdp-summary-card__meta" style={{ marginTop: 20 }}>
-                          <span className="pdp-summary-card__dot" />
-                          HOW EACH INGREDIENT WORKS
-                        </div>
-                        <p style={{ fontSize: 12, color: '#9a8d82', margin: '10px 0 0' }}>
-                          General ingredient-level evidence from credible sources (NIH) — not a study of this specific product.
-                        </p>
-                        {product.ingredientScience.map((item) => (
-                          <div key={item.name} style={{ marginTop: 16 }}>
-                            <p className="pdp-summary-card__body" style={{ margin: 0 }}>
-                              <strong>{item.name}:</strong> {item.text}
-                            </p>
-                            {item.citations?.length > 0 && (
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 6 }}>
-                                {item.citations.map((c) => (
-                                  <a
-                                    key={c.url}
-                                    href={c.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{ fontSize: 12, color: '#B4732A', textDecoration: 'underline' }}
-                                    title={c.label}
-                                  >
-                                    Source: {c.label}
-                                  </a>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </>
                     )}
                   </div>
                 )}
@@ -1218,6 +1281,19 @@ export default function ProductModal({
                       </li>
                     ))}
                   </ul>
+                  {product.howToUse.sourceUrl && (
+                    <div style={{ marginTop: 10 }}>
+                      <a
+                        href={product.howToUse.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="pdp-head__badge"
+                        title={product.howToUse.sourceLabel || product.howToUse.sourceUrl}
+                      >
+                        {hostLabel(product.howToUse.sourceUrl) || 'Source'}
+                      </a>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
