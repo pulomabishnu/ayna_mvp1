@@ -1,4 +1,16 @@
 import { verifyUser } from './_usageLimit.js';
+import { revokeStoredAppleAuthorization } from './_appleSignIn.js';
+
+const USER_TABLES = [
+  'health_intakes', 'notification_preferences', 'pending_phone_verifications', 'phone_numbers',
+  'recall_notifications', 'sms_conversations', 'user_ai_usage', 'user_ecosystem_builds',
+  'user_ecosystems', 'user_health_profiles', 'user_learning_memory', 'user_reviews',
+  'device_tokens', 'apple_oauth_tokens',
+];
+
+function missingTable(error) {
+  return error?.code === '42P01' || error?.code === 'PGRST205' || /does not exist|schema cache/i.test(error?.message || '');
+}
 
 function setPrivateResponseHeaders(res) {
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
@@ -51,6 +63,19 @@ export default async function handler(req, res) {
     if (user.email) {
       const { error: approvedError } = await admin.from('approved_users').delete().eq('email', user.email);
       if (approvedError) throw new Error(`approved_users: ${approvedError.message}`);
+    }
+
+    // Sign in with Apple: Apple requires revoking the user's token on account
+    // deletion (App Store guideline 5.1.1(v)). Best-effort — never blocks.
+    try { await revokeStoredAppleAuthorization(admin, user.id); } catch (e) {
+      console.warn('[account-delete] Apple revocation skipped:', e?.message);
+    }
+
+    // Explicitly purge user-owned tables (the app adds several that may not
+    // cascade); a table that doesn't exist yet is skipped.
+    for (const table of USER_TABLES) {
+      const { error: tableError } = await admin.from(table).delete().eq('user_id', user.id);
+      if (tableError && !missingTable(tableError)) throw new Error(`${table}: ${tableError.message}`);
     }
 
     // Every other user-owned public table has an auth.users FK with ON DELETE
