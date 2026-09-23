@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import posthog from 'posthog-js';
 import { ALL_PRODUCTS } from '../../../data/products.js';
 import { getSupabaseClient } from '../../../utils/supabaseClient.js';
@@ -14,7 +14,8 @@ import {
   sendPhoneVerificationCode,
   confirmPhoneVerificationCode,
 } from '../../utils/notificationPreferencesApi.js';
-import { requestAccountDeletion } from '../../utils/dataExportApi.js';
+import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportApi.js';
+import { shareTextFile } from '../../utils/shareFile.js';
 import { sendTestPush } from '../../utils/deviceTokenApi.js';
 import { enablePushNotifications, pushSupported } from '../../hooks/usePushNotifications.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
@@ -1596,7 +1597,7 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
           <div onClick={onOpenPrivacyData} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Privacy & data</div>
-              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, what we hold, and deletion.</div>
+              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>See, download or delete your data.</div>
             </div>
             <ChevronIcon />
           </div>
@@ -1638,7 +1639,7 @@ function readAnalyticsEnabled() {
   return getStoredConsent() === 'granted';
 }
 
-function PrivacyDataScreen({ onBack, onOpenDeleteAccount, authUser }) {
+function PrivacyDataScreen({ onBack, onOpenManageData, onDownloadData, onOpenDeleteAccount, authUser }) {
   const [analyticsEnabled, setAnalyticsEnabled] = useState(readAnalyticsEnabled);
   const [aiOverride, setAiOverride] = useState(null);
   const [privacyStatus, setPrivacyStatus] = useState('');
@@ -1696,8 +1697,9 @@ function PrivacyDataScreen({ onBack, onOpenDeleteAccount, authUser }) {
 
         <div style={{ margin: '0 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+          <AccountRow borderTop={false} title="Manage my data" sub="See everything saved to your account." onClick={onOpenManageData} />
+          <AccountRow title="Download my data" sub="Get a full copy to save, AirDrop or email." onClick={onDownloadData} />
           <AccountRow
-            borderTop={false}
             title={<span style={{ color: '#B4402A' }}>Delete my account & data</span>}
             sub="Your account and associated personal data will be deleted, except information we are legally required to retain."
             onClick={onOpenDeleteAccount}
@@ -1827,7 +1829,7 @@ const HEALTH_DATA_PROCESSORS = [
 ];
 
 const HEALTH_DATA_RIGHTS = [
-  { title: 'See or download what we hold', how: 'Email puloma@aynahealth.co — we will send it directly' },
+  { title: 'See or download what we hold', how: 'Settings → Privacy & data → Manage my data or Download my data, or email puloma@aynahealth.co' },
   { title: 'Withdraw consent for analytics', how: 'Settings → Privacy & data → the analytics toggle' },
   { title: 'Turn off third-party AI processing', how: 'Settings → Privacy & data → Allow AI features' },
   { title: 'Delete your account and data', how: 'Settings → Account → Delete account. Email puloma@aynahealth.co for additional privacy support.' },
@@ -1948,40 +1950,6 @@ const LICENSE_GROUP_STYLES = {
   '0BSD': { tint: '#F1EDE6', ink: '#6B6257' },
 };
 
-// iOS WKWebView ignores <a download> on blob URLs (the button silently did
-// nothing in the app), so prefer the native share sheet, then the clipboard,
-// and only fall back to a blob download in desktop browsers.
-async function shareOrDownloadText(content, filename) {
-  try {
-    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
-      await navigator.share({ title: filename, text: content });
-      return 'shared';
-    }
-  } catch (e) {
-    if (e?.name === 'AbortError') return 'cancelled';
-  }
-  try {
-    if (navigator?.clipboard?.writeText) {
-      await navigator.clipboard.writeText(content);
-      return 'copied';
-    }
-  } catch { /* fall through */ }
-  try {
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    return 'downloaded';
-  } catch {
-    return 'failed';
-  }
-}
-
 function buildLicensesText(grouped) {
   const lines = ['ayna — open-source licences', `Generated ${new Date().toISOString().slice(0, 10)}`, ''];
   for (const [license, packages] of grouped) {
@@ -2046,8 +2014,8 @@ function OpenSourceLicensesScreen({ onBack }) {
           <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>Full licence texts ship with every build.</div>
           <div
             onClick={async () => {
-              const r = await shareOrDownloadText(buildLicensesText(grouped), 'ayna-open-source-licences.txt');
-              setLicenceStatus(r === 'copied' ? 'Licences copied to your clipboard.' : r === 'failed' ? 'Could not export the licences on this device.' : r === 'downloaded' ? 'Licences downloaded.' : '');
+              const r = await shareTextFile({ filename: 'ayna-open-source-licences.txt', content: buildLicensesText(grouped), mimeType: 'text/plain', title: 'ayna open-source licences' });
+              setLicenceStatus(r === 'failed' ? 'Could not export the licences on this device.' : r === 'downloaded' ? 'Licences downloaded.' : '');
             }}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 10, background: '#242A52', color: '#FFFCF9', borderRadius: 99, padding: '10px 17px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, cursor: 'pointer' }}
           >
@@ -2258,6 +2226,209 @@ function ResearchSourcesScreen({ onBack }) {
   );
 }
 
+/* ------------------------------ Manage my data ------------------------------ */
+
+// Human labels for the health-intake snapshot (IntakeScreen buildSnapshot),
+// in the order people answered them. Internal/derived keys are left out.
+const HEALTH_FIELDS = [
+  ['age', 'Age'], ['zipcode', 'ZIP code'], ['lifeStageSelections', 'Life stage'], ['lifeStageOther', 'Life stage (other)'],
+  ['supportSelections', 'Looking for support with'], ['supportOtherText', 'Other support'],
+  ['periodFlow', 'Period flow'], ['periodPain', 'Period pain'], ['utiFrequency', 'UTIs'],
+  ['pregnancyTrimester', 'Pregnancy'], ['postpartumTiming', 'Postpartum'], ['breastfeedingStatus', 'Breastfeeding'], ['perimenopauseLastPeriod', 'Last period'],
+  ['diagnosisSelections', 'Diagnosed conditions'], ['conditionOtherText', 'Other condition'],
+  ['allergyStatus', 'Allergies or sensitivities'], ['allergyItems', 'Allergies'],
+  ['takesCurrent', 'Taking medications or supplements'], ['currentMedicationItems', 'Medications & supplements'],
+  ['productHistory', 'Products tried'], ['avoidRepeat', "Don't recommend again"], ['safetyConcern', 'New or worsening symptoms'],
+  ['preferredFormats', 'Preferred formats'], ['priceRange', 'Price range'], ['largePurchaseFrequency', 'Purchases of $75+'],
+  ['brandOpenness', 'Trying new brands'], ['trustedBrands', 'Trusted brands'], ['brandSupportPreferences', 'Brands you like to support'],
+  ['avoidIngredients', 'Product preferences'], ['avoidIngredientsOtherText', 'Other preference'], ['fsaHsa', 'FSA / HSA'],
+  ['trustRanking', 'What matters most (in order)'], ['anythingElse', 'Anything else'],
+];
+const FSA_LABELS = { fsa: 'FSA', hsa: 'HSA', both: 'FSA and HSA', none: 'No', unsure: 'Not sure' };
+const AVOID_ANSWERS = new Set(['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived', 'Added sugar', 'Artificial sweeteners']);
+function preferenceSummary(list) {
+  const items = Array.isArray(list) ? list : [];
+  const avoid = items.filter((x) => AVOID_ANSWERS.has(x));
+  const prefer = items.filter((x) => !AVOID_ANSWERS.has(x));
+  return [avoid.length ? `Avoid: ${avoid.join(', ')}` : '', prefer.length ? `Prefer: ${prefer.join(', ')}` : ''].filter(Boolean).join(' · ');
+}
+
+function readable(value) {
+  if (value === null || value === undefined || value === '') return '';
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  if (Array.isArray(value)) {
+    return value
+      .map((v) => (v && typeof v === 'object' ? (v.name || v.label || '') : String(v)))
+      .filter(Boolean)
+      .join(', ');
+  }
+  if (typeof value === 'object') return '';
+  return String(value);
+}
+
+function formatDate(value) {
+  if (!value) return '';
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function DataSection({ title, rows, empty }) {
+  const visible = rows.filter(([, v]) => v !== '' && v !== null && v !== undefined);
+  return (
+    <div style={{ marginBottom: 22 }}>
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>{title}</div>
+      <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+        {visible.length === 0 ? (
+          <div style={{ padding: '14px 0', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{empty || 'Nothing saved yet.'}</div>
+        ) : visible.map(([label, value], i) => (
+          <div key={label} style={{ display: 'flex', gap: 14, padding: '13px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)' }}>
+            <div style={{ flex: 'none', width: 118, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.45 }}>{label}</div>
+            <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', lineHeight: 1.5, wordBreak: 'break-word' }}>{value}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// GET /api/export-data — everything account-linked, read live from the
+// database. "Download my data" opens this screen and goes straight to the
+// share sheet; the file is the complete export, not just what's shown here.
+function ManageDataScreen({ onBack, autoDownload = false }) {
+  const [loadState, setLoadState] = useState('loading'); // 'loading' | 'signed_out' | 'error' | 'ready'
+  const [data, setData] = useState(null);
+  const [shareState, setShareState] = useState('idle'); // idle | working
+  const [notice, setNotice] = useState(null); // { tone, text }
+  const autoStarted = useRef(false);
+
+  const fetchData = () => {
+    fetchDataExport()
+      .then((result) => { setData(result); setLoadState('ready'); })
+      .catch((e) => setLoadState(e instanceof NotSignedInError ? 'signed_out' : 'error'));
+  };
+
+  useEffect(() => { fetchData(); }, []);
+
+  const retry = () => { setLoadState('loading'); fetchData(); };
+
+  const handleDownload = async () => {
+    if (!data || shareState === 'working') return;
+    setShareState('working');
+    setNotice(null);
+    const result = await shareTextFile({
+      filename: `ayna-my-data-${new Date().toISOString().slice(0, 10)}.json`,
+      content: JSON.stringify(data, null, 2),
+      title: 'My ayna data',
+    });
+    setShareState('idle');
+    if (result === 'failed') setNotice({ tone: 'error', text: "Couldn't create the file on this device. Try again, or email puloma@aynahealth.co and we'll send it." });
+    else if (result === 'downloaded') setNotice({ tone: 'success', text: 'Downloaded to your device.' });
+  };
+
+  useEffect(() => {
+    if (autoDownload && loadState === 'ready' && data && !autoStarted.current) {
+      autoStarted.current = true;
+      handleDownload();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoDownload, loadState, data]);
+
+  const intake = data?.healthIntake?.profile || null;
+  const prefs = data?.notificationPreferences || null;
+  const products = data?.savedAndEcosystemProducts || [];
+  const productNames = (filter) => products.filter(filter).map((p) => [p.product_name || p.product_id, [p.brand, p.category].filter(Boolean).join(' · ') || ' ']);
+  const channelLabel = { push: 'Push notifications', sms: 'Text message', email: 'Email' };
+
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Manage my data" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
+        <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 18 }}>
+          Everything ayna has saved to your account, read live. Download a full copy any time.
+        </div>
+
+        {loadState === 'loading' && (
+          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading your data…</div>
+        )}
+        {loadState === 'signed_out' && (
+          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
+            Sign in to see and download your data.
+          </div>
+        )}
+        {loadState === 'error' && (
+          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, textAlign: 'center' }}>
+            <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load your data.</div>
+            <div role="button" onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
+          </div>
+        )}
+
+        {loadState === 'ready' && data && (
+          <>
+            <div
+              role="button"
+              aria-label="Download my data"
+              onClick={handleDownload}
+              style={{ textAlign: 'center', padding: '14px 0', borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', cursor: shareState === 'working' ? 'progress' : 'pointer', opacity: shareState === 'working' ? 0.7 : 1, marginBottom: 8 }}
+            >
+              {shareState === 'working' ? 'Preparing your file…' : 'Download my data'}
+            </div>
+            <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, textAlign: 'center', marginBottom: notice ? 10 : 22 }}>
+              A complete copy (.json) — save it to Files, AirDrop it or email it.
+            </div>
+            {notice && (
+              <div role={notice.tone === 'error' ? 'alert' : 'status'} style={{ marginBottom: 22, padding: '11px 13px', borderRadius: 12, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, background: notice.tone === 'error' ? 'rgba(180,64,42,.12)' : 'rgba(47,107,79,.12)', color: notice.tone === 'error' ? '#B4402A' : '#2F6B4F' }}>{notice.text}</div>
+            )}
+            {data.incomplete && (
+              <div style={{ marginBottom: 18, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
+                Some records couldn't be read just now; the download includes everything that could.
+              </div>
+            )}
+
+            <DataSection title="Account" rows={[
+              ['Email', data.account?.email || ''],
+              ['Email verified', data.account?.email ? readable(data.account.emailVerified) : ''],
+              ['Member since', formatDate(data.account?.createdAt)],
+              ['Sign-in', readable((data.account?.signInMethods || []).map((m) => ({ email: 'Email', google: 'Google', apple: 'Apple' }[m.provider] || m.provider)))],
+              ['Phone', data.phone?.number ? `${data.phone.number}${data.phone.verified ? ' (verified)' : ' (not verified)'}` : ''],
+              ['AI features', data.account?.consent?.aiHealthProcessingAllowed ? 'Allowed' : 'Off'],
+            ]} />
+
+            <DataSection
+              title="Health profile"
+              empty="You haven't completed the health intake yet."
+              rows={intake ? HEALTH_FIELDS.map(([key, label]) => [label, key === 'fsaHsa' ? (FSA_LABELS[intake[key]] || '') : key === 'avoidIngredients' ? preferenceSummary(intake[key]) : readable(intake[key])]) : []}
+            />
+
+            <DataSection title="Notification settings" empty="Default settings — nothing changed yet." rows={prefs ? [
+              ['Notifications', readable(prefs.notifications_enabled)],
+              ['Updates', readable(prefs.updates_enabled)],
+              ['Delivery', channelLabel[prefs.delivery_channel] || ''],
+              ['Personalize with my data', readable(prefs.personalize_with_data_enabled)],
+              ['Quiet hours', prefs.quiet_hours_enabled ? `${prefs.quiet_hours_start}–${prefs.quiet_hours_end}` : 'Off'],
+            ] : []} />
+
+            <DataSection title="My ecosystem" empty="No products in your ecosystem yet." rows={productNames((p) => p.in_ecosystem && !p.is_omitted)} />
+            <DataSection title="Saved (wishlist)" empty="Nothing saved yet." rows={productNames((p) => p.is_saved)} />
+            <DataSection title="Tracking for recalls" empty="You're not tracking any products." rows={productNames((p) => p.is_tracked)} />
+
+            <DataSection title="Other records" rows={[
+              ['Ask Ayna / AI usage', data.aiUsageRecords?.length ? `${data.aiUsageRecords.length} record${data.aiUsageRecords.length === 1 ? '' : 's'}` : ''],
+              ['Text messages', data.smsConversationHistory?.length ? `${data.smsConversationHistory.length} message${data.smsConversationHistory.length === 1 ? '' : 's'}` : ''],
+              ['Reviews', data.reviews?.length ? String(data.reviews.length) : ''],
+              ['Recall alerts sent', data.recallNotificationRecords?.length ? String(data.recallNotificationRecords.length) : ''],
+            ]} empty="None." />
+
+            <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, padding: '0 4px' }}>
+              Want something changed or removed? Update it in the app, or email <a href="mailto:puloma@aynahealth.co" style={{ color: 'var(--ayna-brown)' }}>puloma@aynahealth.co</a>.
+            </div>
+          </>
+        )}
+        <LegalFooter />
+      </div>
+    </div>
+  );
+}
+
 /* --------------------------- Account information --------------------------- */
 
 function formatMemberSince(dateStr) {
@@ -2321,7 +2492,7 @@ function AccountRow({ title, sub, value, badge, badgeTone = 'neutral', onClick, 
 // either is real. Delete account opens a real in-app confirm flow
 // (DeleteAccountScreen) backed by account_deletion_requests, not an email
 // link.
-function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile, onOpenDeleteAccount }) {
+function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile, onOpenManageData, onDownloadData, onOpenDeleteAccount }) {
   const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
   const [phone, setPhone] = useState({ loading: true, number: '', verified: false });
   // Real Supabase auth.updateUser() call, same first_name/full_name fields
@@ -2503,7 +2674,9 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <AccountRow borderTop={false} title={<span style={{ color: '#B4402A' }}>Delete account</span>} sub="Removes your profile and health answers." onClick={onOpenDeleteAccount} />
+          <AccountRow borderTop={false} title="Manage my data" sub="See everything saved to your account." onClick={onOpenManageData} />
+          <AccountRow title="Download my data" sub="Get a full copy to save, AirDrop or email." onClick={onDownloadData} />
+          <AccountRow title={<span style={{ color: '#B4402A' }}>Delete account</span>} sub="Removes your profile and health answers." onClick={onOpenDeleteAccount} />
         </div>
 
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px' }}>
@@ -3377,6 +3550,8 @@ export default function ProfileFlow({
         quizAnswers={quizAnswers}
         onOpenPassword={() => pushScreen('password')}
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
+        onOpenManageData={() => pushScreen('manageData')}
+        onDownloadData={() => pushScreen('manageData:download')}
         onOpenDeleteAccount={() => pushScreen('deleteAccount')}
       />
     );
@@ -3386,6 +3561,8 @@ export default function ProfileFlow({
     body = (
       <PrivacyDataScreen
         onBack={goBack}
+        onOpenManageData={() => pushScreen('manageData')}
+        onDownloadData={() => pushScreen('manageData:download')}
         onOpenDeleteAccount={() => pushScreen('deleteAccount')}
         authUser={authUser}
       />
@@ -3410,6 +3587,8 @@ export default function ProfileFlow({
     body = <TypefacesScreen onBack={goBack} />;
   } else if (screen === 'researchSources') {
     body = <ResearchSourcesScreen onBack={goBack} />;
+  } else if (screen === 'manageData' || screen === 'manageData:download') {
+    body = <ManageDataScreen onBack={goBack} autoDownload={screen === 'manageData:download'} />;
   }
 
   return (
