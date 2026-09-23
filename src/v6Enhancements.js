@@ -48,7 +48,10 @@ function syncQuizContinue(root) {
   const saving = /saving/i.test(cleanText(button));
 
   if (required || saving) {
+    // React owns `disabled` on required steps; clear any stale state this
+    // function left on the same (reused) button from an optional step.
     button.classList.remove('v6-unanswered');
+    button.removeAttribute('aria-disabled');
     return;
   }
 
