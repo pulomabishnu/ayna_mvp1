@@ -24,20 +24,62 @@ export const BRAND_PRODUCTS = [
         url: 'https://hellowinx.com/products/uti-tests', // was the bare homepage; this is the actual product page
         faqUrl: 'https://hellowinx.com/pages/faq',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569',
-        summary: 'An at-home UTI test paired with Winx Rx, the brand\'s own telehealth service. Check symptoms with a rapid test, then connect to a licensed provider for prescription treatment if needed. Recognized as a TIME Best Invention.',
+        summary: 'An at-home UTI test that reads urine for the same nitrite and leukocyte-esterase markers used on standard clinical dipsticks, giving an immediate digital result instead of color-matching a strip. A positive result — or symptoms that persist despite a negative one — connects you through Winx Rx, the brand\'s own telehealth service, to a board-certified doctor for a video visit and, if appropriate, a same-day prescription. Named to TIME\'s 2024 Best Inventions list as the only OTC test-plus-telehealth UTI kit of its kind sold in the US.',
         safety: {
-            fdaStatus: 'Consumer diagnostic test; any prescription treatment is issued by a licensed telehealth provider, not the test itself.',
-            materials: 'See product packaging for full test component and ingredient list.',
+            fdaStatus: 'Sold over-the-counter as a consumer diagnostic aid; not a substitute for a lab urine culture. Any prescription treatment is issued by a licensed telehealth provider via Winx Rx, not the test itself.',
+            materials: 'See product packaging for full test component list.',
             recalls: 'No recalls found.',
-            sideEffects: 'None specific to the test itself; any treatment side effects depend on the medication a provider prescribes.',
-            opinionAlerts: 'Winx Health markets this as "OBGYN approved" on its own site. Verify current claims and availability directly at hellowinx.com.',
+            sideEffects: 'None from the test itself. A home UTI test is a screening aid, not a diagnosis — persistent, worsening, or recurrent symptoms need in-person evaluation regardless of the result.',
+            opinionAlerts: 'Winx Health markets this as "OBGYN approved" and cites that roughly half of US counties lack a practicing OB-GYN as the access gap this closes — both figures are from the brand\'s own site and TIME\'s coverage, not independently re-verified here.',
         },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Winx Health\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Winx Health describes its UTI Test + Treat as "OBGYN approved," with Winx Rx able to deliver prescription treatment results in about 4 hours.',
-        effectiveness: 'Combines an at-home rapid test with telehealth access to prescription treatment; the underlying test was recognized as a TIME Best Invention.',
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'A home test with an immediate result and telehealth access to prescription treatment is a real improvement in access for a condition where roughly half of US counties don\'t have a practicing OB-GYN, and where a several-day wait for an in-person appointment often means days of untreated discomfort. UTIs are also genuinely common, with public-health estimates putting diagnoses in the hundreds of millions per year in the US, so an accessible screening option has real value.\n\nWhat this test doesn\'t do is replace a urine culture for recurrent, complicated, or atypical symptoms. Home UTI tests like this one generally screen for nitrites and/or leukocyte esterase, the same markers used on standard urine dipsticks, which have documented real-world sensitivity and specificity limits — a normal result doesn\'t fully rule out infection if symptoms are clearly present, and a positive result still benefits from culture-guided antibiotic choice if symptoms don\'t resolve or keep recurring. Fever, flank/back pain, or visible blood in urine are reasons to seek in-person care regardless of what a home test shows.',
+        doctorOpinionShort: 'A real access improvement for uncomplicated UTI symptoms, especially where in-person OB-GYN care is scarce — but it\'s a screening aid built on standard dipstick-style markers, not a lab culture, and doesn\'t replace in-person care for fever, flank pain, or recurrent infections.',
+        doctorOpinionCitations: [
+            { url: 'https://time.com/collections/best-inventions-2024/7094898/winx-health-uti-test-and-treat/', label: 'TIME: 2024 Best Inventions — Winx Health UTI Test + Treat' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6754830/', label: 'PMC: Diagnostic value of dipstick testing in adult UTI' },
+        ],
+        whoItsFor: [
+            'People with classic UTI symptoms (burning, urgency, frequency) who want a fast home read before deciding whether to seek treatment',
+            'Anyone in one of the many US counties without a nearby OB-GYN, or who can\'t get a same-day in-person appointment',
+            'Not a replacement for in-person or lab-based care if you have fever, flank/back pain, blood in urine, or symptoms that keep recurring',
+        ],
+        howToUse: {
+            intro: 'Per Winx Health\'s own instructions:',
+            steps: [
+                'Urinate on the test strip pad as directed.',
+                'Read the digital result via the Winx app.',
+                'If positive — or symptoms persist despite a negative result — start a video visit with a board-certified doctor through Winx Rx.',
+                'Pick up same-day prescription treatment if the provider prescribes one.',
+            ],
+            sourceUrl: 'https://hellowinx.com/products/uti-tests',
+            sourceLabel: 'hellowinx.com: UTI Test + Treat',
+        },
+        warnings: [
+            'Seek in-person or emergency care for fever, chills, flank/back pain, nausea, or vomiting — these can signal a kidney infection, which a home test won\'t catch.',
+            'A negative result doesn\'t fully rule out infection if you have clear symptoms; a positive result still benefits from a follow-up culture if symptoms don\'t resolve or keep recurring.',
+            'Frequent recurrent UTIs (3+ per year) warrant an in-person workup, not repeated home testing alone.',
+        ],
+        communityReview: 'Winx\'s UTI Test + Treat was named to TIME\'s 2024 Best Inventions list, and the brand has highlighted it as the only OTC test-plus-telehealth kit of its kind sold in the US. Independent (non-brand) review volume specific to this exact kit is still limited outside retailer star ratings; broader Winx/Stix community sentiment on Reddit and TikTok is generally positive on convenience and discretion.',
+        ingredients: 'Test strip pad for nitrite/leukocyte-esterase-style urinalysis screening; any prescribed treatment is separate and determined by a Winx Rx provider.',
+        effectiveness: 'Gives a same-day path from symptom to (if appropriate) prescription treatment, a real access improvement, especially where nearby OB-GYN care is scarce. Home urine screening for nitrites/leukocyte esterase has documented real-world sensitivity and specificity limits in the published dipstick-testing literature, so a home negative result in someone with clear symptoms is not the same as a lab-confirmed negative.',
+        // Category-level citations shown only on the Scientific literature tab,
+        // kept out of verificationLinks so they don't also pool onto the
+        // Clinician opinion card's chip row (already surfaced via doctorOpinionCitations).
+        scientificCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6754830/', text: 'PMC: Diagnostic value of dipstick test in adult symptomatic urinary tract infections', summary: 'Cross-sectional study quantifying real sensitivity/specificity limits of the nitrite/leukocyte-esterase dipstick testing that home UTI tests are generally built on.' },
+        ],
         integrations: [],
-        badges: [],
+        badges: ['Female-Founded', 'TIME Best Invention 2024'],
+        verificationLinks: {
+            community: { links: [
+                { platform: 'reddit', url: 'https://www.reddit.com/r/UTI/search/?q=winx', text: 'Reddit r/UTI: Winx search', summary: 'User discussion of the Winx UTI test and telehealth experience.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=winx%20health%20uti%20test', text: 'TikTok: Winx Health UTI test', summary: 'Unboxing and real-use videos.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/hellowinx/', text: 'Winx Health on Instagram', summary: 'Brand content and community posts.' },
+                { platform: 'wikipedia', url: 'https://en.wikipedia.org/wiki/Winx_Health', text: 'Wikipedia: Winx Health', summary: 'Independent background on the brand\'s history, founders, and rebrand from Stix.' },
+            ] },
+        },
         isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
     },
     // Winx Health's real remaining standalone catalog (2026-08-24) — the
@@ -62,20 +104,57 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://hellowinx.com/products/vaginal-ph-test-for-yeast-infections',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Vaginal_Health_Test_Treat_Graphic.png?v=1771347513',
-        summary: 'An at-home vaginal pH test to help tell a yeast infection, BV, or something else apart, with same-day prescription treatment available via Winx\'s own telehealth service if needed.',
+        summary: 'An at-home vaginal pH test: wipe the included swab, press it to the test strip, and match the color to a chart to read your vaginal pH in under a minute. Marketed to help flag whether symptoms point toward BV, a yeast infection, or something else, with same-day prescription treatment available through Winx Rx if a provider agrees it\'s needed.',
         safety: {
             fdaStatus: 'Consumer diagnostic test; any prescription treatment is issued by a licensed telehealth provider, not the test itself.',
             materials: 'See product packaging for full test component list.',
-            recalls: 'No recalls found.',
-            sideEffects: 'None specific to the test itself; any treatment side effects depend on the medication a provider prescribes.',
-            opinionAlerts: 'Marketed by Winx Health as its own product; verify current claims and availability directly at hellowinx.com.',
+            recalls: '⚠️ Marketing-accuracy note (not a recall): this is a single-marker pH strip test. Published research comparing pH testing to the lab-standard Nugent score found pH alone caught only about 22% of true BV cases, and yeast infections typically don\'t raise vaginal pH at all — so a normal result doesn\'t rule out a yeast infection, despite the product being marketed to help tell the two apart.',
+            sideEffects: 'None from the test itself; any treatment side effects depend on the medication a provider prescribes.',
+            opinionAlerts: 'A pH strip is a real but limited signal, mainly useful for flagging possible BV or trichomoniasis — not for ruling out a yeast infection. See Clinician opinion for the specifics.',
         },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Winx Health\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Winx Health positions this as a way to tell yeast infection, BV, or other causes apart at home before deciding whether treatment is needed.',
-        effectiveness: 'Combines an at-home pH test with telehealth access to prescription treatment when appropriate; no independent clinical study of the product was found.',
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Vaginal pH testing is a real, commonly used first clue in evaluating vaginitis — bacterial vaginosis and trichomoniasis typically raise vaginal pH above 4.5, and that\'s genuinely useful information. What this product\'s marketing (helping you "tell a yeast infection, BV, or something else apart") oversells is how much a pH strip alone can actually distinguish: published research comparing pH testing to the lab-standard Nugent score found pH alone caught only about 22% of true BV cases, and vulvovaginal candidiasis (yeast infection) typically does not raise pH at all, staying in the same range you\'d see in a healthy vagina.\n\nIn practice, that means an elevated pH is a real, weak-but-real signal to consider BV or trichomoniasis and seek treatment or testing, while a normal pH result tells you comparatively little — it does not rule out a yeast infection. If symptoms persist regardless of what the strip shows, in-person testing (which can look at more than pH) is the more reliable next step, and Winx Rx is one route to a same-day prescription if a provider agrees treatment is warranted.',
+        doctorOpinionShort: 'A pH strip is a real but weak signal, mainly for BV — published data show it catches only around 22% of true BV cases, and it typically won\'t flag a yeast infection at all since those don\'t raise pH. A normal result doesn\'t rule much out.',
+        doctorOpinionCitations: [
+            { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5331313/', label: 'PMC: Colorimetric vaginal pH vs. Nugent score for BV detection' },
+        ],
+        whoItsFor: [
+            'People who want a quick first clue (elevated vs. normal pH) before deciding whether to seek care',
+            'Not a reliable stand-alone way to rule out a yeast infection — a normal pH doesn\'t mean "no yeast infection"',
+            'Best paired with in-person testing or a Winx Rx telehealth visit if symptoms persist regardless of the reading',
+        ],
+        howToUse: {
+            intro: 'Per Winx Health\'s own instructions:',
+            steps: [
+                'Wipe the cotton swab across the vaginal opening as directed.',
+                'Press the swab onto the test strip\'s test area.',
+                'Compare the color to the included chart within the stated time window.',
+                'If elevated — or if symptoms persist regardless of the reading — use Winx Rx for a telehealth visit.',
+            ],
+            sourceUrl: 'https://hellowinx.com/products/vaginal-ph-test-for-yeast-infections',
+            sourceLabel: 'hellowinx.com: Vaginal Health Test + Treat',
+        },
+        warnings: [
+            'A normal pH result does not rule out a yeast infection — candidiasis typically does not raise vaginal pH.',
+            'Recurrent or persistent symptoms, unusual odor, fever, or pelvic pain warrant in-person evaluation regardless of the pH result.',
+            'Not a test for STIs other than trichomoniasis-associated pH changes; it does not screen for chlamydia, gonorrhea, or other STIs.',
+        ],
+        communityReview: 'Community discussion of Winx\'s standalone vaginal pH test specifically is limited outside retailer reviews; broader Winx/Stix brand sentiment on Reddit and TikTok is generally positive on convenience and discretion, though pH-test accuracy for BV vs. yeast isn\'t something home-test users can typically verify themselves.',
+        ingredients: 'pH-indicator test strip and cotton swab; no active treatment ingredient in the test itself.',
+        effectiveness: 'Useful as a rough first signal (elevated vs. not), materially better at flagging possible BV/trichomoniasis than at ruling out a yeast infection. No independent clinical accuracy study of this specific Winx test was found; the pH-based limitations above come from the broader clinical literature on vaginal pH testing generally.',
+        scientificCitations: [
+            { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5331313/', text: 'PMC: A Comparison of Colorimetric Assessment of Vaginal pH with Nugent Score for the Detection of Bacterial Vaginosis', summary: 'Found vaginal pH alone has poor sensitivity (~22%) for detecting BV against the lab-standard Nugent score, and doesn\'t reliably flag yeast infections, which don\'t elevate pH.' },
+        ],
         integrations: [],
         badges: [],
+        verificationLinks: {
+            community: { links: [
+                { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=winx%20vaginal%20ph', text: 'Reddit r/WomensHealth: Winx vaginal pH search', summary: 'User discussion of the Winx vaginal pH test.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=winx%20health%20vaginal%20ph%20test', text: 'TikTok: Winx Health vaginal pH test', summary: 'Real-use videos of the test kit.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/hellowinx/', text: 'Winx Health on Instagram', summary: 'Brand content and community posts.' },
+            ] },
+        },
         isEmergingBrand: true,
     },
     {
@@ -91,20 +170,51 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://hellowinx.com/products/pregnancy-tests',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Early_Pregnancy_Tests.png?v=1775185073',
-        summary: 'Early pregnancy tests from Winx Health (formerly Stix), the brand states are over 99% accurate, with discreet packaging and delivery.',
+        summary: 'A standard at-home urine hCG pregnancy test, read in minutes, that the brand states is over 99% accurate starting the day of a missed period. Ships in discreet, unbranded packaging.',
         safety: {
             fdaStatus: 'Over-the-counter home pregnancy test.',
             materials: 'See product packaging.',
             recalls: 'No recalls found.',
             sideEffects: 'None.',
-            opinionAlerts: 'Accuracy claim ("over 99% accurate") is the brand\'s own; not independently verified here.',
+            opinionAlerts: 'The "over 99% accurate" claim is standard phrasing across the home pregnancy test category (most OTC and store brands cite similar figures for testing on or after the day of a missed period) and is the brand\'s own claim, not independently verified product-by-product here.',
         },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Winx Health\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'A standard at-home pregnancy test; Winx Health emphasizes discreet packaging and privacy.',
-        effectiveness: 'Positioned as an accurate, private at-home pregnancy test; no independent clinical study of the product was found.',
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Home urine hCG pregnancy tests are a well-established, reliable technology when used as directed — accuracy is highest starting the day of a missed period, and testing earlier increases the chance of a false negative simply because hCG may not yet be detectable, not because the test itself is unreliable. A single test, taken correctly at the right time, is genuinely accurate for most people; if a period doesn\'t start and a test reads negative, retesting in a few days or seeing a clinician is the standard next step, not assuming the first result is final.',
+        doctorOpinionShort: 'A standard, well-established hCG urine test. Timing matters more than brand — testing on or after the day of a missed period is when accuracy is highest; a too-early negative can just mean hCG isn\'t detectable yet.',
+        doctorOpinionCitations: [
+            { url: 'https://www.fda.gov/medical-devices/home-use-tests/pregnancy', label: 'FDA: Pregnancy (Home Use Tests)' },
+        ],
+        whoItsFor: [
+            'Anyone wanting a private, at-home pregnancy test with discreet packaging',
+            'Best used on or after the day of a missed period for the most reliable result',
+            'Not a substitute for a blood test or clinician follow-up if timing is uncertain or results are ambiguous',
+        ],
+        howToUse: {
+            intro: 'Per FDA guidance for home pregnancy tests generally (Winx does not publish unique instructions beyond standard use):',
+            steps: [
+                'Test on or after the first day of a missed period for the most reliable result.',
+                'Use first-morning urine when possible, since hCG is most concentrated then.',
+                'Read the result within the test\'s stated time window — reading too early or too late can distort results.',
+                'If negative but your period still doesn\'t start, retest in a few days or see a clinician.',
+            ],
+            sourceUrl: 'https://www.fda.gov/medical-devices/home-use-tests/pregnancy',
+            sourceLabel: 'FDA: Pregnancy (Home Use Tests)',
+        },
+        communityReview: 'Winx Health\'s pregnancy tests trace back to the brand\'s original 2019 launch as Stix; community sentiment (Reddit, TikTok) on the brand\'s test-strip products is generally positive on discretion and ease of ordering, consistent with reviews of most mainstream at-home hCG test strips.',
+        ingredients: 'Standard urine hCG (human chorionic gonadotropin) lateral-flow test strip.',
+        effectiveness: 'Performs like standard hCG test strips generally do: most reliable starting the day of a missed period. No independent, brand-specific accuracy study of Winx\'s test was found; the "99% accurate" figure is the brand\'s claim, consistent with the category norm when tests are used as directed and timed correctly.',
+        scientificCitations: [
+            { url: 'https://www.fda.gov/medical-devices/home-use-tests/pregnancy', text: 'FDA: Pregnancy (Home Use Tests)', summary: 'Federal guidance on how home pregnancy tests work and how timing affects accuracy.' },
+        ],
         integrations: [],
         badges: [],
+        verificationLinks: {
+            community: { links: [
+                { platform: 'reddit', url: 'https://www.reddit.com/r/tryingtoconceive/search/?q=winx%20OR%20stix%20pregnancy%20test', text: 'Reddit r/tryingtoconceive: Winx/Stix pregnancy test search', summary: 'User discussion of the test.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/hellowinx/', text: 'Winx Health on Instagram', summary: 'Brand content and community posts.' },
+            ] },
+        },
         isEmergingBrand: true,
     },
     {
@@ -120,20 +230,56 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://hellowinx.com/products/uti-fast-acting-pain-relief',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxUTIPainReliefHero.png?v=1771347535',
-        summary: 'An over-the-counter supplement from Winx Health marketed for fast-acting relief of UTI-related discomfort.',
+        summary: 'An over-the-counter phenazopyridine hydrochloride tablet (99.5mg) that targets UTI-related burning, urgency, and discomfort directly at the bladder and urethra — the same active ingredient sold under brand names like AZO. Most users feel relief within an hour; expect urine to temporarily turn reddish-orange, a normal and harmless effect of the medication.',
         safety: {
-            fdaStatus: 'Dietary supplement; not evaluated by the FDA.',
-            materials: 'See product packaging for full ingredient list.',
-            recalls: 'No recalls found.',
-            sideEffects: 'Consult a clinician before use if pregnant, nursing, or taking medications; UTI pain relief products can mask symptoms of a worsening infection.',
-            opinionAlerts: 'No clinical-study claims found on the brand site.',
+            fdaStatus: 'Over-the-counter urinary analgesic; active ingredient (phenazopyridine hydrochloride) has FDA-reviewed OTC status but with a real, documented safety profile below.',
+            materials: 'Active ingredient: Phenazopyridine Hydrochloride 99.5mg per tablet. Inactive: corn starch, croscarmellose sodium, hypromellose, lactose, magnesium stearate, microcrystalline cellulose, polyethylene glycol, polyvinylpyrrolidone, pregelatinized starch, silicon dioxide, sodium starch glycolate, talc, triacetin.',
+            recalls: '⚠️ Not a recall, but a real FDA-labeled concern worth knowing: phenazopyridine\'s FDA-reviewed label carries a carcinogenicity warning based on tumors seen in long-term animal studies (rats/mice), and rare cases of methemoglobinemia (a blood disorder) have been reported, more so in people with kidney disease. The label caps use at 2 days when taken alongside an antibiotic.',
+            sideEffects: 'Turns urine reddish-orange (harmless, expected, but can stain fabric/contact lenses). Rare: methemoglobinemia (bluish skin/lips, unusual tiredness, shortness of breath — seek care immediately if these occur), especially with kidney disease. Masks the burning/urgency symptoms that would otherwise signal a worsening infection — it treats discomfort, not the infection itself.',
+            opinionAlerts: 'This is a symptom-relief product, not an antibiotic — it does not treat the underlying infection. The FDA-reviewed label limits use alongside an antibiotic to 2 days, and it should not be used as a way to avoid or delay treating the infection itself.',
         },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Winx Health\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Positioned by the brand for short-term relief of UTI discomfort, not as a substitute for diagnosis or treatment.',
-        effectiveness: 'Positioned as fast-acting symptom relief; no independent clinical study of the product was found.',
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Phenazopyridine is a genuinely effective, fast-acting urinary analgesic — it\'s the same active ingredient in AZO and similar store brands, has been used since the 1920s, and does provide real short-term relief from the burning and urgency of a UTI. That said, it treats the symptom, not the infection: taking it without also getting antibiotic treatment, if a UTI is actually present, risks masking symptoms while an untreated infection progresses.\n\nThe FDA-reviewed label also carries findings worth knowing before use: long-term animal studies found tumors associated with phenazopyridine, which is why the label includes a carcinogenicity warning and why the drug is meant for short-term use only — no more than 2 days alongside an antibiotic. Rare cases of methemoglobinemia, a blood disorder that reduces oxygen delivery, have also been reported, with higher risk in people with kidney disease. None of this makes an occasional, short course of a UTI pain reliever unreasonable — it\'s a real, useful product — but "short-term" is doing real work in that sentence.',
+        doctorOpinionShort: 'A genuinely effective, fast-acting symptom reliever (same active ingredient as AZO) — but it treats discomfort, not the infection, and the FDA label caps use at 2 days alongside an antibiotic due to a carcinogenicity warning from animal studies and rare methemoglobinemia risk.',
+        doctorOpinionCitations: [
+            { url: 'https://www.ncbi.nlm.nih.gov/books/NBK580545/', label: 'NCBI StatPearls: Phenazopyridine' },
+        ],
+        whoItsFor: [
+            'Short-term relief (1-2 days) of UTI-related burning, urgency, and discomfort, ideally alongside — not instead of — actual infection treatment',
+            'Not for anyone with kidney disease without a clinician\'s okay, given the methemoglobinemia risk',
+            'Not a substitute for diagnosing or treating the underlying infection',
+        ],
+        howToUse: {
+            intro: 'Per the FDA-reviewed label for phenazopyridine hydrochloride products:',
+            steps: [
+                'Take only as directed on the package; do not exceed the labeled dose.',
+                'Limit use to 2 days if also taking an antibacterial for a UTI, per the FDA-reviewed label.',
+                'Expect reddish-orange urine — this is normal and expected, not a sign of a problem.',
+                'Seek immediate medical attention for bluish/gray skin or lips, unusual tiredness, or shortness of breath.',
+            ],
+            sourceUrl: 'https://www.ncbi.nlm.nih.gov/books/NBK580545/',
+            sourceLabel: 'NCBI StatPearls: Phenazopyridine',
+        },
+        warnings: [
+            'FDA-reviewed label carries a carcinogenicity warning based on long-term animal studies; the drug is intended for short-term use only.',
+            'Rare but serious: methemoglobinemia. Seek immediate care for bluish/gray skin, lips, or nails, unusual fatigue, rapid heartbeat, or shortness of breath — risk is higher with kidney disease.',
+            'Do not use longer than 2 days when also taking an antibiotic, per the FDA-reviewed label, and don\'t use it as a substitute for actual infection treatment.',
+        ],
+        communityReview: 'Community reviews (Reddit, retailer sites) of phenazopyridine-based UTI relief products generally describe fast, real relief from burning and urgency, consistent across brands (AZO, store brands, Winx) since they share the same active ingredient; the main recurring complaint across the category is the orange-red urine color surprising first-time users despite label warnings.',
+        ingredients: 'Phenazopyridine Hydrochloride 99.5mg per tablet, plus standard tablet excipients (corn starch, lactose, microcrystalline cellulose, and others — see full list above).',
+        effectiveness: 'Reliable, well-established short-term symptom relief; this is a decades-old, widely used active ingredient, not a novel or unproven formulation. Its real limitation is that it treats discomfort, not infection.',
+        scientificCitations: [
+            { url: 'https://www.ncbi.nlm.nih.gov/books/NBK580545/', text: 'NCBI StatPearls: Phenazopyridine', summary: 'Comprehensive clinical reference covering phenazopyridine\'s mechanism, FDA carcinogenicity warning from animal studies, methemoglobinemia risk, and the 2-day use limit alongside antibiotics.' },
+        ],
         integrations: [],
         badges: [],
+        verificationLinks: {
+            community: { links: [
+                { platform: 'reddit', url: 'https://www.reddit.com/r/UTI/search/?q=phenazopyridine%20OR%20winx%20pain%20relief', text: 'Reddit r/UTI: phenazopyridine / Winx pain relief search', summary: 'User discussion of fast-acting UTI pain relief tablets.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/hellowinx/', text: 'Winx Health on Instagram', summary: 'Brand content and community posts.' },
+            ] },
+        },
         isEmergingBrand: true,
     },
     {
@@ -146,23 +292,53 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['vaginal-health'],
         tags: ['comfort'],
         price: '$28',
-        whereToBuy: [],
+        whereToBuy: ['Walgreens'],
         url: 'https://hellowinx.com/products/vaginal-health-probiotic',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01_Winx_probiotic_Hero.png?v=1771347498',
-        summary: 'A daily probiotic supplement the brand describes as supporting vaginal health with "good bacteria" that can help crowd out bacteria and yeast linked to BV and yeast infections.',
+        summary: 'A daily capsule combining Lactobacillus acidophilus, Lactobacillus rhamnosus, Lactobacillus reuteri, and Bifidobacterium lactis with inulin as a prebiotic — 15 billion CFU per serving. Marketed to support a healthy, acidic vaginal pH and help crowd out the bacteria and yeast linked to BV and yeast infections.',
         safety: {
-            fdaStatus: 'Dietary supplement; not evaluated by the FDA.',
-            materials: 'See product packaging for full ingredient list.',
+            fdaStatus: 'Dietary supplement; not evaluated by the FDA for safety or efficacy claims.',
+            materials: 'Lactobacillus acidophilus, Lactobacillus rhamnosus, Lactobacillus reuteri, Bifidobacterium lactis Bi-07, inulin (prebiotic fiber), 15 billion CFU per serving. See product packaging for the full excipient list.',
             recalls: 'No recalls found.',
-            sideEffects: 'Consult a clinician before use if pregnant, nursing, or taking medications.',
-            opinionAlerts: 'No clinical-study claims found on the brand site.',
+            sideEffects: 'Generally well tolerated; mild bloating or GI upset is possible when starting any new probiotic. Consult a clinician before use if pregnant, nursing, immunocompromised, or taking medications.',
+            opinionAlerts: 'Oral Lactobacillus probiotics for vaginal health are a real, actively studied area with genuinely promising (though still evolving) evidence for specific strains and doses — not settled science, but not just marketing either. See Clinician opinion for the honest state of that research.',
         },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Winx Health\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Positioned as daily maintenance support for vaginal flora balance, not a treatment for an active infection.',
-        effectiveness: 'Positioned as a daily preventive supplement; no independent clinical study of the product was found.',
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'This is one of the more evidence-backed categories in vaginal wellness supplements, worth saying plainly since so much of this space is under-studied. Lactobacillus dominance is genuinely associated with a healthier vaginal microbiome and lower rates of BV and UTIs, and specific Lactobacillus strains — rhamnosus and reuteri among them — have real randomized-trial support for helping restore or maintain that balance, whether taken orally or vaginally.\n\nThe honest caveats: strain, dose, and duration matter a lot in this literature — results don\'t generalize cleanly across every Lactobacillus product, and reviews consistently call for more standardized, larger trials before this can be called settled. This product\'s specific 4-strain, 15-billion-CFU blend has not itself been through an independent published clinical trial that ayna could find; the evidence above is for the strain category and related formulations, not proof of this exact product\'s outcomes. It\'s a reasonable, biologically plausible daily supplement for someone maintaining vaginal health — not a proven treatment for an active infection.',
+        doctorOpinionShort: 'Lactobacillus probiotics for vaginal health are a genuinely promising, actively researched area with real trial support for specific strains — this product\'s exact 4-strain blend hasn\'t itself been independently trialed, but the underlying strain category has real evidence behind it.',
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11318795/', label: 'PMC: Probiotics for the Prevention of Vaginal Infections — Systematic Review' },
+        ],
+        whoItsFor: [
+            'People wanting daily maintenance support for vaginal microbiome balance, not treatment of an active infection',
+            'Those prone to recurrent BV or yeast infections who\'ve discussed probiotic strategies with a clinician',
+            'Not a substitute for treating a current, symptomatic infection',
+        ],
+        howToUse: {
+            intro: 'Per Winx Health\'s own instructions:',
+            steps: [
+                'Take one capsule daily with water.',
+                'Take consistently — probiotic effects on the vaginal microbiome are cumulative, not immediate.',
+                'Store as directed on the label (many probiotics are moisture- and heat-sensitive).',
+            ],
+            sourceUrl: 'https://hellowinx.com/products/vaginal-health-probiotic',
+            sourceLabel: 'hellowinx.com: Vaginal Health Probiotic',
+        },
+        communityReview: 'Community discussion of vaginal-health probiotics broadly (Reddit r/WomensHealth) is generally favorable for daily maintenance and odor concerns, though individual response varies and this specific 4-strain Winx formulation doesn\'t yet have a large independent review base outside retailer star ratings.',
+        ingredients: 'Lactobacillus acidophilus, Lactobacillus rhamnosus, Lactobacillus reuteri, Bifidobacterium lactis Bi-07, inulin. 15 billion CFU per serving.',
+        effectiveness: 'Grounded in a genuinely active, promising research area for the strain category; this exact product blend has not been independently clinically trialed. Best understood as daily maintenance support, not treatment.',
+        scientificCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11318795/', text: 'PMC: Probiotics for the Prevention of Vaginal Infections: A Systematic Review', summary: 'Reviews Lactobacillus strain evidence for vaginal infection prevention — genuine, growing support for specific strains, with a continued need for larger, more standardized trials.' },
+        ],
         integrations: [],
         badges: [],
+        verificationLinks: {
+            community: { links: [
+                { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=winx%20probiotic', text: 'Reddit r/WomensHealth: Winx probiotic search', summary: 'User discussion of the Winx vaginal health probiotic.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/hellowinx/', text: 'Winx Health on Instagram', summary: 'Brand content and community posts.' },
+            ] },
+        },
         isEmergingBrand: true,
     },
     {
@@ -178,20 +354,57 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://hellowinx.com/products/uti-daily-protection-supplement',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxDailyDefenseHero.png?v=1771339808',
-        summary: 'A daily supplement the brand states was designed with urologists, using science-backed natural ingredients intended to help protect against UTIs before they start.',
+        summary: 'A daily capsule (two per day) combining cranberry extract (proanthocyanidins), D-mannose, turmeric, and vitamin C, meant to make it harder for E. coli to stick to the bladder wall before a UTI can take hold. The brand states the formula was designed with input from urologists.',
         safety: {
-            fdaStatus: 'Dietary supplement; not evaluated by the FDA.',
-            materials: 'See product packaging for full ingredient list.',
+            fdaStatus: 'Dietary supplement; not evaluated by the FDA for safety or efficacy claims.',
+            materials: 'Cranberry extract (proanthocyanidins/PACs), D-mannose, turmeric, vitamin C. See product packaging for exact amounts and full excipient list.',
             recalls: 'No recalls found.',
-            sideEffects: 'Consult a clinician before use if pregnant, nursing, or taking medications.',
-            opinionAlerts: 'The "designed with urologists" claim is the brand\'s own; not independently verified here.',
+            sideEffects: 'Generally well tolerated. D-mannose can cause mild GI upset in some people; high-dose vitamin C can cause stomach upset or, rarely, kidney stone risk in predisposed individuals. Consult a clinician before use if pregnant, nursing, or managing kidney issues or diabetes (D-mannose is a sugar).',
+            opinionAlerts: 'The two headline ingredients have real but different evidence bases: cranberry PACs have decent supporting evidence from a large, recent Cochrane review, while D-mannose\'s evidence has gotten weaker with newer, larger trials. See Clinician opinion for specifics.',
         },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Winx Health\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Positioned as a daily preventive supplement for recurrent UTI risk, not a treatment for an active infection.',
-        effectiveness: 'Positioned as a daily preventive supplement; no independent clinical study of the product was found.',
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Cranberry and D-mannose are the two most-studied "natural" UTI-prevention ingredients, and it\'s worth being specific about how the evidence for each actually stacks up, because it\'s genuinely different. Cranberry\'s active compounds (A-type proanthocyanidins, or PACs) interfere with E. coli\'s ability to stick to the bladder wall, and a large 2023 Cochrane review — 50 studies, nearly 9,000 participants — found cranberry products reduced UTI risk by about 30% in women with recurrent UTIs: real, moderate-certainty evidence, though the review also found no clear dose-response relationship and didn\'t support use in pregnant women, the elderly, or people with bladder-emptying problems.\n\nD-mannose is the weaker story right now: it works on paper the same way, binding E. coli so it can\'t adhere to the bladder wall, and some smaller, earlier studies looked promising, but the most recent, larger systematic reviews and meta-analyses of randomized trials — including a major UK primary-care trial — have not found a significant reduction in recurrent UTI risk compared to placebo. That\'s a meaningfully different evidence picture than cranberry, and worth knowing if D-mannose is the ingredient someone is buying this product for specifically.',
+        doctorOpinionShort: 'Cranberry PACs have real, moderate-certainty support from a large 2023 Cochrane review (~30% UTI risk reduction in recurrent-UTI-prone women). D-mannose\'s evidence is weaker than commonly believed — recent larger trials haven\'t found a significant benefit over placebo.',
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/37068952/', label: 'Cochrane: Cranberries for preventing urinary tract infections (2023)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/41004704/', label: 'PubMed: D-mannose for recurrent UTI — systematic review & meta-analysis' },
+        ],
+        whoItsFor: [
+            'People prone to recurrent UTIs looking for a daily preventive supplement, particularly for the cranberry-PAC component',
+            'Not a treatment for an active, symptomatic UTI — this is prevention, not treatment',
+            'Worth knowing: the D-mannose component has weaker trial support than the cranberry component',
+        ],
+        howToUse: {
+            intro: 'Per Winx Health\'s own instructions:',
+            steps: [
+                'Take two capsules daily with water.',
+                'Take consistently for preventive effect — this is not a fast-acting treatment.',
+                'Stay well hydrated, which independently supports urinary tract health.',
+            ],
+            sourceUrl: 'https://hellowinx.com/products/uti-daily-protection-supplement',
+            sourceLabel: 'hellowinx.com: Urinary Daily Defense',
+        },
+        warnings: [
+            'Not a treatment for an active UTI — seek care for burning, urgency, fever, or back pain.',
+            'D-mannose is a sugar; people managing diabetes or blood sugar should factor that in.',
+            'High-dose vitamin C can raise kidney stone risk in people already predisposed — check with a clinician if you have a stone history.',
+        ],
+        communityReview: 'Community sentiment on cranberry/D-mannose UTI-prevention supplements broadly (Reddit r/UTI) is mixed and often anecdotal, split between people who feel real preventive benefit and people, often those with more complex recurrent-UTI histories, who don\'t notice a difference — consistent with the split clinical evidence between the two headline ingredients.',
+        ingredients: 'Cranberry extract (proanthocyanidins), D-mannose, turmeric, vitamin C.',
+        effectiveness: 'Cranberry PAC component has real, moderate-certainty supporting evidence; D-mannose component\'s evidence has weakened in more recent, larger trials. No independent trial of this exact combined formulation was found.',
+        scientificCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/37068952/', text: 'Cochrane: Cranberries for preventing urinary tract infections', summary: '2023 update, 50 studies / ~8,857 participants: cranberry products reduced UTI risk (RR 0.70) in women with recurrent UTIs, children, and people with UTI susceptibility from an intervention; moderate-certainty evidence.' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/41004704/', text: 'PubMed: Efficacy of D-mannose as prophylaxis of recurrent urinary tract infection — systematic review and meta-analysis of RCTs', summary: '6 RCTs, 1,167 participants: D-mannose was not associated with a significant reduction in recurrent UTI risk compared with control.' },
+        ],
         integrations: [],
         badges: [],
+        verificationLinks: {
+            community: { links: [
+                { platform: 'reddit', url: 'https://www.reddit.com/r/UTI/search/?q=d-mannose%20OR%20cranberry%20winx', text: 'Reddit r/UTI: D-mannose/cranberry/Winx search', summary: 'User discussion of daily UTI-prevention supplements.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/hellowinx/', text: 'Winx Health on Instagram', summary: 'Brand content and community posts.' },
+            ] },
+        },
         isEmergingBrand: true,
     },
     {
@@ -1765,8 +1978,25 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: "Sourced from SootheHer's own site marketing claims, not independent clinical literature.",
-        doctorOpinion: 'TENS (transcutaneous electrical nerve stimulation) has real supportive evidence for reducing primary dysmenorrhea pain via the gate-control mechanism the brand describes; this does not independently establish that the Elaris Pod specifically matches published TENS study outcomes.',
+        doctorOpinion: 'TENS (transcutaneous electrical nerve stimulation) has real supportive evidence for reducing primary dysmenorrhea pain via the gate-control mechanism the brand describes; this does not independently establish that the Elaris Pod specifically matches published TENS study outcomes. A 2024 Cochrane review found both high- and low-frequency TENS may reduce period pain compared with placebo or no treatment, though the reviewers downgraded their certainty because of risk of bias in the underlying trials, and a separate 2024 meta-analysis (10 RCTs, 469 women) found a statistically significant effect but with very high heterogeneity between studies — real evidence for the modality, with genuine uncertainty about how much relief to expect from any one device.',
+        doctorOpinionCitations: [
+            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', label: 'Cochrane: TENS for pain control in primary dysmenorrhea (2024)' },
+            { url: 'https://doi.org/10.1080/17581869.2026.2714978', label: 'Pain Management: TENS for primary dysmenorrhea — systematic review & meta-analysis' },
+        ],
+        whoItsFor: [
+            'People looking for a drug-free, reusable option for period cramp pain alongside or instead of OTC pain relievers',
+            'Not recommended for anyone with a pacemaker, epilepsy, a heart rhythm condition, or who is pregnant, per the brand',
+            'Best understood as a real but variable-benefit option — trial evidence for TENS generally is genuinely mixed on how much relief to expect',
+        ],
+        warnings: [
+            'Do not use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition, per the brand.',
+            'Persistent, severe, or worsening pelvic pain — or pain that doesn\'t respond to typical measures — warrants clinical evaluation.',
+        ],
         effectiveness: 'Positioned by the brand as fast-acting, drug-free cramp relief; no independently conducted clinical study of this specific device was found here. TENS as a pain-relief category has supportive evidence for dysmenorrhea.',
+        scientificCitations: [
+            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', text: 'Cochrane: Transcutaneous electrical nerve stimulation (TENS) for pain control in women with primary dysmenorrhoea', summary: '2024 Cochrane review: both high- and low-frequency TENS may reduce pain vs. placebo/no treatment, though certainty was downgraded for risk of bias in the underlying trials.' },
+            { url: 'https://doi.org/10.1080/17581869.2026.2714978', text: 'Pain Management: Transcutaneous electrical nerve stimulation in the relief of primary dysmenorrhea — systematic review and meta-analysis', summary: '10 RCTs, 469 women: statistically significant reduction in pain intensity favoring TENS, with very high heterogeneity between studies.' },
+        ],
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1801,5 +2031,327 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
-
+    {
+        // Confirmed ayna brand partner (2026-09-23). isEmergingBrand only
+        // adds the "Brand" tag on Discovery — the "ayna Partner" badge comes
+        // from src/utils/partnerBrands.js's PARTNER_BRAND_PATTERNS allowlist,
+        // which gina is now in.
+        // Brand name is styled lowercase ("gina"), matching its own
+        // packaging/wordmark — same convention this app already uses for
+        // "ayna" itself.
+        id: 'p-gina-vaginal-moisturizing-glides',
+        name: 'gina Vaginal Moisturizing Glides',
+        brand: 'gina',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        // 'cruelty-free', 'non-toxic', 'ph-neutral', 'single-use', and
+        // 'clinician-informed' are gina's own stated Key Benefits (per the
+        // brand's site) — feeds both the Discovery "Preferences" filter
+        // (matchesPreference in Discovery.jsx) and the ecosystem
+        // preference matcher (preferenceLabelMatchesProduct in
+        // products.js), both of which scan this tags array as text.
+        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal', 'cruelty-free', 'non-toxic', 'ph-neutral', 'single-use', 'clinician-informed'],
+        price: '$101.00',
+        whereToBuy: ['getgina.com'],
+        url: 'https://getgina.com/products/vaginal-moisturizing-glides',
+        image: '/products/gina/vaginal-moisturizing-glides.webp',
+        summary: 'Vaginal dryness, irritation, or discomfort during intimacy can happen at any life stage — perimenopause, menopause, postpartum, or day to day. This single-ingredient suppository (12 per box, 1.72 g each) is 100% pure, extra virgin, unrefined, cold-pressed coconut oil, inserted directly or with gina\'s optional reusable applicator to hydrate and soothe.',
+        safety: {
+            // No FDA-registered-facility claim was found on gina's site
+            // (unlike Neycher's), so fdaStatus is left off rather than
+            // assumed.
+            // Full packaging text — shown in full under "Materials" on
+            // the Evidence view (see buildFactRows in ProductModal.jsx,
+            // which doesn't truncate this field).
+            materials: 'Box of 12 vaginal moisturizing glides. Ingredients (from the box): 100% pure, extra virgin, unrefined, cold-pressed coconut oil. Net weight per glide: 0.061 oz (1.72 g). Chill before use.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation or an allergic reaction. Coconut oil is oil-based and can weaken latex condoms. Full warnings are listed below.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
+        doctorOpinion: 'gina positions its coconut-oil glides as pure, simple, and effective — developed without hormones or harsh additives, non-irritating, non-toxic, pH-neutral, cruelty-free, pre-portioned for single use, and clinician-informed — per the brand\'s own site.\n\nThere\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration) — though it wasn\'t placebo-controlled and didn\'t test this specific product.\n\nLab evidence is more mixed: one study found coconut oil, unlike several other commercial vaginal products, didn\'t inhibit the growth of E. coli in vitro. Coconut oil\'s natural pH (roughly 7 to 8) is also more alkaline than the vagina\'s normal acidic range (3.8 to 4.5), and a separate cohort study found intravaginal oil use was linked to a much higher rate of yeast colonization — a documented reason intravaginal oil use is linked to a higher risk of bacterial vaginosis or a yeast infection in some people.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness over 6 months reported real improvement, though it wasn\'t placebo-controlled. Coconut oil is also naturally alkaline (pH roughly 7 to 8) versus the vagina\'s normal acidic range, which can raise BV/yeast risk in some people. No independent clinical study of this specific product was found.',
+        // Backs specific claims made in doctorOpinion with direct links,
+        // same as Neycher's doctorOpinionCitations — kept out of
+        // verificationLinks so it doesn't pool with the Scientific
+        // literature tab's citation list (the first is also listed there,
+        // in scientificCitations below, since it backs a general claim too).
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7203152/', label: 'NIH (PMC): Effect of Commercial Vaginal Products on the Growth of Uropathogenic and Commensal Vaginal Bacteria' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23635677/', label: 'PubMed: Intravaginal Practices and Risk of Bacterial Vaginosis and Candidiasis Infection Among a Cohort of Women in the United States' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with vaginal dryness or irritation at any life stage — perimenopause, menopause, postpartum, or day to day',
+            'Women who prefer a single-ingredient, hormone-free option over multi-ingredient formulas',
+            'Women who want a precision applicator rather than applying oil by hand',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // getgina.com/pages/how-to-use-moisturizing-glides.
+        howToUse: {
+            intro: 'Per gina\'s own site: insert up to 3 times a week before bedtime or intercourse for ongoing hydration.',
+            steps: [
+                'Empty your bladder, clean the area, and wash your hands.',
+                'Separate a single chilled glide, wait 1 to 3 minutes, then peel back the foil.',
+                'Squeeze to pop the glide out onto a clean surface.',
+                'Insert while lying on your back, with your knees raised.',
+                'Wait 3 minutes, or until it\'s fully melted.',
+            ],
+            sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
+            sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Oil-based: can weaken latex condoms.',
+            'Coconut oil\'s natural pH is more alkaline than the vagina\'s — introducing it can shift vaginal pH and, in some people, raise the risk of bacterial vaginosis or a yeast infection.',
+            'Chill before use, per the box.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'gina\'s own product page shows three customer testimonials: "The moisturizing glide melts instantly and feels so clean and natural," "I love that it\'s one ingredient and pre-measured. No more mess, just long lasting hydration and comfort," and "The glide melts instantly and gives a precise, soothing dose of hydration. The relief was immediate." No star rating or review count was shown alongside them, and no independent (non-brand) review data was found at time of writing — gina launched in April 2026.',
+        // Kept short and product-focused — the pilot-study specifics (who,
+        // how many, over how long) live on the Clinician opinion tab, which
+        // has room for that detail; this field feeds the ayna-summary card
+        // alongside `summary` above, so it stays to the point.
+        effectiveness: 'Real clinical evidence supports coconut oil for vaginal dryness generally, though no independent study has tested this specific product.',
+        // Plain-text ingredient summary — kept as a string since search
+        // indexing, the interaction checker, DoctorPrep.jsx, and the Ask
+        // Ayna context builder all read this field as a string.
+        ingredients: 'Coconut oil (100% pure, extra virgin, unrefined, cold-pressed).',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab.
+        ingredientScience: [
+            {
+                name: 'Coconut oil (100% pure, extra virgin, unrefined, cold-pressed)',
+                text: 'A natural moisturizer rich in lauric acid. In a randomized, double-blind clinical trial, topical virgin coconut oil improved skin barrier function (lower transepidermal water loss, higher skin capacitance) more than mineral oil.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/24320105/', label: 'PubMed: Topical virgin coconut oil in pediatric atopic dermatitis — a randomized, double-blind clinical trial' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7203152/',
+                text: 'Effect of Commercial Vaginal Products on the Growth of Uropathogenic and Commensal Vaginal Bacteria',
+                summary: 'A lab study (Scientific Reports) compared five commercial vaginal products, including coconut oil, for effects on E. coli and Lactobacillus growth — coconut oil, unlike the others, didn\'t inhibit E. coli growth in vitro. This is ingredient-level lab evidence, not a clinical study of this specific product.',
+            },
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/37594604/',
+                text: 'Antimicrobial Potential of Cocos nucifera (Coconut) Oil on Bacterial Isolates',
+                summary: 'An in vitro lab study testing coconut oil against clinical and reference bacterial isolates — Streptococcus species showed the highest susceptibility, E. coli the least, attributed to coconut oil\'s lauric acid content. This is ingredient-level lab evidence, not a clinical study of this specific product.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/28707186/',
+                text: 'Natural Oils for Skin-Barrier Repair: Ancient Compounds Now Backed by Modern Science',
+                summary: 'A 2018 review (Vaughn et al., American Journal of Clinical Dermatology) of natural plant oils — including coconut oil — for repairing skin-barrier function, covering antimicrobial, antioxidant, and anti-inflammatory properties. This is general dermatology evidence about the oil, not a clinical study of this specific product or vaginal use.',
+            },
+            {
+                // Same paper as PubMed 37461787 (PMC is the full-text
+                // mirror) — included once, under its PMC link, rather than
+                // as two separate entries for the same study.
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/',
+                text: 'Virgin Coconut Oil in Paste Form as Treatment for Dyspareunia and Vaginal Dryness in Patients With and Without Rheumatic Autoimmune Diseases: An Efficacy and Safety Assessment Pilot Study',
+                summary: 'A 2023 pilot study (Cureus) followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months — 83% reported improved dryness and 87% reported improved moisture duration. Real clinical outcomes, but not placebo-controlled and not a study of this specific product.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://getgina.com/products/vaginal-moisturizing-glides',
+                        text: 'getgina.com: Customer testimonials',
+                        summary: 'gina\'s own product page shows three customer testimonials (see the Community summary above). No star rating or review count is shown alongside them.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        // See the note on the Glides entry above re: partner status and
+        // gina's lowercase brand styling.
+        id: 'p-gina-insertion-applicator-refills',
+        name: 'gina Insertion Applicator Refills',
+        brand: 'gina',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['comfort', 'non-hormonal'],
+        // Exact refill-pack count wasn't confirmed.
+        price: '$10.00',
+        whereToBuy: ['getgina.com'],
+        url: 'https://getgina.com/products/insertion-applicator-refills',
+        image: '/products/gina/insertion-applicator-refills.png',
+        summary: 'A reusable, BPA-free applicator designed exclusively for gina\'s Vaginal Moisturizing Glides, for smooth, precise, and deeper placement. This refill replaces a worn or lost applicator — exact pack size wasn\'t confirmed at time of writing.',
+        safety: {
+            materials: 'BPA-free reusable applicator, designed exclusively for gina Vaginal Moisturizing Glides.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation. Rinse well and air-dry before storing.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
+        doctorOpinion: 'gina states this applicator allows for smooth, precise, and deeper placement of its Glide, per the brand\'s own site. It\'s a delivery accessory, not an active ingredient — see the Vaginal Moisturizing Glides entry for the product it\'s used with.',
+        // Rendered as a bulleted list on the Evidence view.
+        howToUse: {
+            intro: 'Unwrap the applicator and moisten the tip with water or lubricant. Pull the plunger down to stop, then load a gina glide rounded side first.',
+            steps: [
+                'Lie back with your knees raised and insert to a comfortable depth, then press the plunger to release the glide and remove the applicator.',
+                'Rinse the applicator well and air-dry it before storing — it\'s reusable.',
+            ],
+            sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
+            sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
+        },
+        warnings: [
+            'Designed exclusively for use with gina Vaginal Moisturizing Glides.',
+            'Rinse well and air-dry between uses.',
+            'Irritation or discomfort: stop using it and see a doctor.',
+        ],
+        communityReview: 'No independent customer review data was found for this product at time of writing — gina launched in April 2026.',
+        effectiveness: 'A reusable delivery accessory rather than an active ingredient; effectiveness depends on the Vaginal Moisturizing Glide it\'s used with.',
+        ingredients: 'BPA-free applicator (plastic components; no active ingredients).',
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [] },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // Liv Labs (Pippa Resistance Spring) — catalog entry only, NOT yet an
+    // ayna brand partner (as of 2026-09-23). isEmergingBrand still shows the
+    // "Brand" tag on Discovery, but it's deliberately left out of
+    // src/utils/partnerBrands.js's PARTNER_BRAND_PATTERNS allowlist and off
+    // the Brand Partnerships page until a partnership is confirmed. Distinct
+    // from LiM Method (limmethod.com) elsewhere in this catalog — similarly
+    // named but a different company: Liv Labs (livlabsfitness.com) makes the
+    // internally-worn Pippa resistance spring, invented by Carly Price.
+    // Product facts checked via web search (direct fetch of
+    // livlabsfitness.com is blocked in this environment).
+    {
+        id: 'p-livlabs-pippa-starter-kit',
+        name: 'Pippa Resistance Spring Starter Kit',
+        brand: 'Liv Labs',
+        category: 'pelvic-floor',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['pelvic-floor'],
+        tags: ['incontinence', 'fitness', 'comfort', 'safety-concern'],
+        price: '$99.00',
+        whereToBuy: ['livlabsfitness.com'],
+        url: 'https://livlabsfitness.com/products/pippa-resistance-spring-starter-kit',
+        image: '/products/livlabs/pippa-starter-kit.webp',
+        summary: 'A soft, conforming silicone resistance spring worn internally (like a tampon) that gently activates the pelvic floor with everyday movement — no batteries, screens, or scheduled exercises required. Invented by Carly Price, previously known for reimagining the pillow at Casper and holding 41 patents, in consultation with Bay Area pelvic health specialists; she co-founded Liv Labs with longtime collaborator Melody Roberts to bring it to market. Backed by Y Combinator and recognized in Fast Company\'s 2025 Innovation by Design Awards.',
+        safety: {
+            fdaStatus: 'Marketed as a general wellness/fitness product, not an FDA-cleared medical device. The brand states the springs are made from high-purity biomedical silicone (the type used in implants) and have been tested to medical device standards — including biocompatibility, microbiological, chemical, and cleaning-validation testing — by an ISO 13485:2016-certified manufacturer, though ayna could not independently confirm a specific FDA clearance or registration.',
+            materials: 'High-purity biomedical-grade silicone spring; reusable plastic applicator, similar in concept to a tampon applicator.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Worn internally, like a tampon or menstrual cup, so the same general hygiene and infection-risk considerations apply: wash hands before handling, clean the spring after every use as directed, and don\'t share it. Unlike a tampon, it isn\'t absorbent, so it doesn\'t carry the same toxic shock syndrome risk profile tied to absorbency — but any object worn internally for extended periods still carries some infection risk if hygiene guidance isn\'t followed.',
+            opinionAlerts: 'The brand states Pippa can be worn during pregnancy and menses and that wear duration is "a matter of individual preference," with some users reportedly wearing it all day. Ayna was not able to independently verify a brand-recommended maximum daily wear time or independent clinical guidance specific to extended internal wear of this device; check current guidance directly with Liv Labs and, if pregnant or postpartum, with a clinician first.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Pippa\'s underlying idea — an internally worn object that gives the pelvic floor something to respond to during normal movement — sits in the same conceptual family as weighted vaginal cones, a pelvic-floor training method with real clinical backing. A Cochrane review found weighted vaginal cones are more effective than no treatment for stress urinary incontinence, and may work about as well as standard pelvic floor muscle training (Kegels), though the evidence that cones outperform standard PFMT specifically is inconclusive. Cones and Pippa aren\'t identical — cones rely on gravity and the sensation of "losing" a weight, while Pippa\'s spring relies on gentle conforming resistance — but the shared mechanism, internal proprioceptive/resistance feedback prompting a pelvic floor contraction, is a real, studied approach, not a novel unproven idea.',
+        doctorOpinionShort: 'Conceptually similar to weighted vaginal cones, a pelvic-floor training method with real Cochrane-level evidence (better than no treatment, roughly comparable to standard Kegels) — but Pippa\'s specific spring design hasn\'t itself been independently clinically trialed, even though its materials and manufacturing claims are reassuring on safety.',
+        doctorOpinionCitations: [
+            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', label: 'Cochrane: Weighted vaginal cones for urinary incontinence' },
+        ],
+        whoItsFor: [
+            'People wanting a passive, no-routine-required way to engage the pelvic floor during everyday movement or exercise',
+            'Those who\'ve tried standard Kegels/PFMT and want to try a device-assisted alternative in the same general category as vaginal cones',
+            'Not a substitute for an individualized pelvic floor PT evaluation for significant or persistent incontinence or prolapse symptoms',
+        ],
+        howToUse: {
+            intro: 'Per Liv Labs\' own instructions:',
+            steps: [
+                'Wash hands and the spring before first use and before/after each use going forward.',
+                'Insert using the included reusable applicator, similar to inserting a tampon.',
+                'Wear during daily movement, exercise, or as preferred — the brand describes wear duration as a matter of individual preference.',
+                'Remove, clean, and store as directed; keep away from children and pets.',
+            ],
+            sourceUrl: 'https://livlabsfitness.com/products/pippa-resistance-spring-starter-kit',
+            sourceLabel: 'livlabsfitness.com: Pippa Starter Kit',
+        },
+        warnings: [
+            'This is worn internally — follow the brand\'s hygiene instructions closely (wash hands and the device before and after each use) to reduce infection risk.',
+            'If pregnant, postpartum, or managing a diagnosed pelvic floor condition (prolapse, significant incontinence), check with a clinician or pelvic floor PT before use.',
+            'Stop use and seek care for pain, unusual discharge, bleeding, or signs of infection.',
+        ],
+        communityReview: 'Pippa has real outside validation as a product — Fast Company\'s 2025 Innovation by Design Awards recognized it, and Liv Labs is Y Combinator-backed. Independent (non-brand) user review volume is still limited at time of writing outside the brand\'s own Kickstarter and site, consistent with an early-stage startup product.',
+        ingredients: 'High-purity biomedical-grade silicone resistance spring (light resistance in the Starter Kit); reusable applicator.',
+        effectiveness: 'Works on the same general principle as weighted vaginal cones, a related device category with real Cochrane-level evidence for pelvic floor training.',
+        scientificCitations: [
+            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', text: 'Cochrane: Weighted vaginal cones for urinary incontinence', summary: 'Found weighted vaginal cones more effective than no active treatment for stress urinary incontinence, and possibly comparable to standard pelvic floor muscle training — the closest independently studied device category to Pippa\'s internal-resistance mechanism, though not identical to it.' },
+        ],
+        integrations: [],
+        badges: ['Female-Founded', 'Fast Company 2025 Innovation Award'],
+        verificationLinks: {
+            community: { links: [
+                { platform: 'reddit', url: 'https://www.reddit.com/r/pelvicfloor/search/?q=pippa%20liv%20labs', text: 'Reddit r/pelvicfloor: Pippa/Liv Labs search', summary: 'User discussion of the Pippa resistance spring.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/livlabsfitness/', text: 'Liv Labs on Instagram', summary: 'Brand content and community posts.' },
+                { platform: 'press', url: 'https://www.prweb.com/releases/pippa-by-liv-labs-recognized-in-fast-companys-2025-innovation-by-design-awards-302566602.html', text: 'PRWeb: Pippa recognized in Fast Company 2025 Innovation by Design Awards', summary: 'Independent press recognition of the product.' },
+            ] },
+        },
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-livlabs-pippa-fit-kit',
+        name: 'Pippa Resistance Spring Fit Kit',
+        brand: 'Liv Labs',
+        category: 'pelvic-floor',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['pelvic-floor'],
+        tags: ['incontinence', 'fitness', 'comfort'],
+        price: '$149.00',
+        whereToBuy: ['livlabsfitness.com'],
+        url: 'https://livlabsfitness.com/products/pippa-fit-kit',
+        image: '/products/livlabs/pippa-fit-kit.webp',
+        summary: 'From Liv Labs (see the Pippa Starter Kit entry for the brand\'s founder story) — includes both a light- and a medium-resistance Pippa spring plus applicator, letting users progress to a stronger resistance level as pelvic floor engagement builds.',
+        safety: {
+            fdaStatus: 'Marketed as a general wellness/fitness product, not an FDA-cleared medical device. See the Pippa Starter Kit entry for the brand\'s materials and manufacturing claims.',
+            materials: 'High-purity biomedical-grade silicone springs (light and medium resistance); reusable applicator.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Same internal-wear hygiene considerations as the Starter Kit — wash hands and the spring before and after each use.',
+            opinionAlerts: 'Same as the Starter Kit: wear-duration guidance is described by the brand as a matter of preference; ayna could not independently verify a specific maximum recommended wear time.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Same underlying device category and evidence picture as the Pippa Starter Kit (see that entry for the fuller discussion of the related vaginal-cone research) — this kit simply adds a medium-resistance spring so users can progress in resistance level as pelvic floor engagement builds, similar in concept to progressing to a heavier weighted cone in that literature.',
+        doctorOpinionShort: 'Same evidence and caveats as the Pippa Starter Kit; this kit adds a medium-resistance spring for progression.',
+        doctorOpinionCitations: [
+            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', label: 'Cochrane: Weighted vaginal cones for urinary incontinence' },
+        ],
+        communityReview: 'See the Pippa Starter Kit entry — independent (non-brand) review volume for this specific kit is limited at time of writing.',
+        ingredients: 'High-purity biomedical-grade silicone resistance springs (light and medium resistance); reusable applicator.',
+        effectiveness: 'Same underlying evidence picture as the Starter Kit; the added medium-resistance spring is a progression option, not a separately studied variant.',
+        scientificCitations: [
+            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002114.pub2/full', text: 'Cochrane: Weighted vaginal cones for urinary incontinence', summary: 'Found weighted vaginal cones more effective than no active treatment for stress urinary incontinence, and possibly comparable to standard pelvic floor muscle training.' },
+        ],
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            community: { links: [
+                { platform: 'instagram', url: 'https://www.instagram.com/livlabsfitness/', text: 'Liv Labs on Instagram', summary: 'Brand content and community posts.' },
+            ] },
+        },
+        isEmergingBrand: true,
+    },
 ];

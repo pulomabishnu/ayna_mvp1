@@ -54,6 +54,12 @@ import { ProductImageFallback } from './ProductTileImage';
  * Added 2026-09-15: LOLA — confirmed affiliate partnership. Each LOLA
  * product uses its own product-specific lvnta.com affiliate link (they
  * redirect to different Amazon ASINs, not one shared link).
+ *
+ * Added 2026-09-23: Winx Health, SootheHer, gina — confirmed brand
+ * partnerships. No dedicated affiliate link supplied yet for any of the
+ * three, so `url` goes to the official brand site; same no-logo-yet
+ * situation as most brands above — falls back to the text wordmark until
+ * a file lands at the paths below.
  */
 
 const PARTNERS = [
@@ -129,6 +135,30 @@ const PARTNERS = [
     url: 'https://mylola.com/',
     blurb:
       'Organic cotton period care. Tampons and pads made with 100% organic cotton, transparent ingredients, and a customizable subscription.',
+  },
+  {
+    brand: 'Winx Health',
+    /** Drop a file at public/brands/winx-health.png and it replaces the wordmark. */
+    logo: '/brands/winx-health.png',
+    url: 'https://hellowinx.com/',
+    blurb:
+      'At-home UTI and vaginal health testing paired with telehealth, plus pregnancy tests and daily-defense supplements. Formerly known as Stix.',
+  },
+  {
+    brand: 'SootheHer',
+    /** Drop a file at public/brands/sootheher.png and it replaces the wordmark. */
+    logo: '/brands/sootheher.png',
+    url: 'https://sootheher.com/',
+    blurb:
+      'The Elaris Pod, a wearable TENS device for drug-free period cramp relief.',
+  },
+  {
+    brand: 'gina',
+    /** Drop a file at public/brands/gina.png and it replaces the wordmark. */
+    logo: '/brands/gina.png',
+    url: 'https://getgina.com/',
+    blurb:
+      'Hormone-free vaginal moisturizing glides and applicator refills for intimate comfort.',
   },
 ];
 

@@ -253,28 +253,64 @@ export const PHYSICAL_PRODUCTS = [
         affiliateUrl: 'https://lvnta.com/lv_lV9gmDbqDB8xIEp6W2',
         faqUrl: 'https://help.mylola.com/',
         image: 'https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946',
-        summary: '100% organic cotton with compact BPA-free applicator. Customizable subscription box.',
+        summary: '100% organic cotton tampon with a BPA-free compact applicator, from LOLA — founded in 2014 by Jordana Kier and Alex Friedman after one asked the other "have you ever wondered what\'s in a tampon?" and neither could find a real answer. LOLA was built around ingredient transparency: no synthetic fibers, fragrance, dyes, or chlorine-bleaching byproducts. Customizable subscription box.',
         safety: {
             fdaStatus: 'FDA-registered',
-            materials: '100% organic cotton, BPA-free compact applicator',
-            recalls: 'No recalls.',
+            materials: '100% organic cotton (tampon and string), BPA-free compact plastic applicator',
+            recalls: '⚠️ 2021: An active federal class-action (Manson v. ALYK Inc., S.D.N.Y., Case No. 7:21-cv-05688) alleges LOLA tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body during removal. No recall has been issued; LOLA/ALYK denies wrongdoing and continues to sell the product, and the case remains open as of 2026.',
             allergens: 'Hypoallergenic, fragrance-free, dye-free',
-            sideEffects: 'TSS risk. Irritation if worn longer than 8 hours.',
-            opinionAlerts: 'Compact applicator can occasionally collapse during use if not fully extended properly.'
+            sideEffects: 'TSS risk — use the lowest absorbency for your flow and never wear longer than 8 hours. A subset of user reviews and the pending lawsuit above describe the tampon unraveling or shedding fibers on removal.',
+            opinionAlerts: 'A 2021 class-action complaint, still active as of 2026, alleges LOLA tampons shed cotton fibers inside the vaginal canal on removal because they lack the protective outer coating most competing tampons use, with some plaintiffs describing needing medical help to remove retained fibers; LOLA denies wrongdoing and no recall has followed. Separately, and unrelated to the lawsuit: research on cotton-only vs. cotton/rayon-blend tampons and bacterial toxin growth is genuinely mixed — a 2018 in-vitro comparison of currently marketed tampons found LOWER Staphylococcus aureus growth with cotton/rayon-blend tampons than with cotton-only tampons, which cuts against the common assumption that "all-organic-cotton" is automatically the lower-TSS-risk choice.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Ingredient transparency and organic cotton reduce irritation risk; OB-GYNs often recommend organic options for sensitive patients.',
-        communityReview: 'Community discussions on Reddit r/periods note satisfaction with organic tampons and subscription convenience.',
-        ingredients: '100% organic cotton core and string, BPA-free plastic applicator.',
-        effectiveness: 'Highly absorbent for heavy days. Compact applicator is great for on-the-go.',
-        badges: ['Female-Owned', 'B-Corp', 'Sustainable'],
+        doctorOpinion: 'Organic cotton, and freedom from added dyes, chlorine-bleaching byproducts, and synthetic fragrance, are things clinicians will generally support for someone with a history of vulvar irritation or contact sensitivity. What the evidence doesn\'t support is treating "100% organic cotton" as an automatic toxic-shock-syndrome safety upgrade: research comparing cotton-only to cotton/rayon-blend tampons is mixed, and a 2018 in-vitro study of currently marketed tampons actually found lower Staphylococcus aureus growth with cotton/rayon-blend tampons than with cotton-only tampons. Fiber type matters less for TSS risk than using the lowest absorbency that handles your flow and never wearing a tampon longer than 8 hours.\n\nIt\'s also worth knowing before buying: LOLA is currently a defendant in an active federal class-action, filed in 2021 in the Southern District of New York, alleging its tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body on removal — some plaintiffs describe needing medical help to remove retained pieces. The case is still open as of 2026, LOLA has not recalled the product and denies wrongdoing, but if a tampon feels like it\'s coming apart when you remove it, that\'s a documented, reported issue worth stopping and seeking care for, not dismissing.',
+        doctorOpinionShort: 'Organic cotton reduces exposure to dyes, bleaching byproducts, and fragrance, but isn\'t a proven TSS-risk downgrade — a 2018 study found cotton/rayon blends grew less bacteria than cotton-only tampons. LOLA is also a defendant in an active 2021 class-action alleging its tampons can unravel or shed fibers during removal.',
+        doctorOpinionCitations: [
+            { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', label: 'FDA: Facts About Tampons and How to Use Them Safely' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/29678918/', label: 'PubMed: Tampon/menstrual cup S. aureus growth & TSST-1 production' },
+            { url: 'https://topclassactions.com/lawsuit-settlements/medical-devices/womens-health-medical-devices/these-organic-tampons-can-unravel-inside-your-body-a-class-action-lawsuit-alleges/', label: 'Top Class Actions: LOLA tampon unraveling lawsuit' },
+        ],
+        whoItsFor: [
+            'People who want full ingredient transparency and no synthetic fragrance, dyes, or chlorine-bleaching byproducts in a tampon',
+            'Those with a history of vulvar or vaginal irritation from mainstream tampon materials',
+            'Subscription shoppers who want a customizable period-product box',
+            'Not the pick for anyone who specifically wants a tampon brand without an open lawsuit over reported removal issues — LOLA currently has one active',
+        ],
+        howToUse: {
+            intro: 'Per LOLA\'s own instructions and general FDA tampon guidance:',
+            steps: [
+                'Wash hands before and after insertion and removal.',
+                'Choose the lowest absorbency that comfortably handles your flow.',
+                'Change every 4–8 hours, and never leave a tampon in longer than 8 hours.',
+                'If it doesn\'t feel like it came out in one piece, stop, check carefully for any retained fragments, and contact a doctor if you can\'t confirm it was removed intact.',
+            ],
+            sourceUrl: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely',
+            sourceLabel: 'FDA: Facts About Tampons and How to Use Them Safely',
+        },
+        warnings: [
+            'Toxic shock syndrome (TSS) is rare but serious — remove within 8 hours and seek emergency care for sudden fever, rash, vomiting, or dizziness during your period.',
+            'An active class-action lawsuit alleges LOLA tampons can unravel or shed fibers on removal; if a tampon doesn\'t come out intact, check for retained fragments and contact a doctor if you\'re unsure it was fully removed.',
+            'Not a form of contraception and does not protect against STIs.',
+        ],
+        communityReview: 'Community sentiment is mixed. Many reviewers praise the organic cotton, subscription convenience, and clean packaging; others report slow or missing shipments, applicators that feel flimsy or occasionally collapse, and leakage on heavy-flow days. The unraveling/shedding-fiber complaints described in the pending class-action also show up in individual user reviews, not just the lawsuit filing.',
+        ingredients: '100% organic cotton (tampon and string), BPA-free plastic applicator.',
+        effectiveness: 'Reliable absorption for light-to-moderate days; compact applicator suits on-the-go use. No independent lab comparison of LOLA specifically against mainstream tampon brands for absorbency or leak rate was found.',
+        badges: ['Female-Founded', 'Ingredient Transparency', 'Sustainable'],
+        // Category-level citations shown only on the Scientific literature tab,
+        // kept out of verificationLinks so they don't also pool onto the
+        // Clinician opinion card's chip row (which already surfaces these via
+        // doctorOpinionCitations, anchored to the specific claims they back).
+        scientificCitations: [
+            { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon Safety', summary: 'Federal safety standards for tampon absorption and materials.' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/29678918/', text: 'PubMed: Impact of currently marketed tampons and menstrual cups on S. aureus growth and TSST-1 production', summary: 'In-vitro comparison of currently marketed products found lower bacterial growth with cotton/rayon-blend tampons than with cotton-only tampons.' },
+        ],
         verificationLinks: {
             doctor: { links: [
-                
+
             ] },
             scientific: { links: [
-                { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon Safety', summary: 'Federal safety standards for tampon absorption and materials.' }
+
             ] },
             community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Discussions on organic tampons and subscriptions.' },

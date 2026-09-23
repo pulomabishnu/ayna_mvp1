@@ -12,25 +12,41 @@ export const EXTENDED_PHYSICAL = [
         // ProductModal.jsx). Product-specific LOLA affiliate link — this
         // lvnta.com link resolves to amazon.com/dp/B0BPP9J2GQ (LOLA Organic
         // Cotton Pads, Ultra Thin with Wings, Heavy, 36ct).
-        affiliateUrl: 'https://lvnta.com/lv_9s1mlpiV0gHbgRP8fx', image: 'https://m.media-amazon.com/images/I/71j3reiHuBL.jpg', summary: '100% organic cotton pads with a breathable back sheet. Customizable subscription.', safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic, fragrance-free', sideEffects: 'Minimal irritation risk. Rare sensitivity to adhesive.', opinionAlerts: 'Subscription can be difficult to cancel through the website; some users prefer buying in-store at Target.' },
+        affiliateUrl: 'https://lvnta.com/lv_9s1mlpiV0gHbgRP8fx', image: 'https://m.media-amazon.com/images/I/71j3reiHuBL.jpg', summary: 'From LOLA (see LOLA Organic Tampons for the founder story) — a 100% organic cotton pad with a plant-based bioplastic back sheet, built around the same ingredient-transparency approach as the rest of the line. Customizable subscription.', safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton (top sheet and core), plant-based bioplastic back sheet, non-toxic adhesive', recalls: 'No recalls. (LOLA\'s tampon line is currently facing an active class-action over reported unraveling during removal — see LOLA Organic Tampons; that allegation is specific to tampon removal and has not been reported for the pad line.)', allergens: 'Hypoallergenic, fragrance-free', sideEffects: 'Minimal irritation risk. Rare sensitivity to adhesive.', opinionAlerts: 'Subscription can be difficult to cancel through the website; some users prefer buying in-store at Target.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Organic cotton construction and ingredient transparency reduce exposure to bleaching byproducts and synthetic fragrances, benefiting patients with vulvar sensitivity.', communityReview: 'Community discussions on Reddit r/periods note appreciation for the subscription model and convenience.', communityReviewSourceUrl: 'https://www.reddit.com/r/periods/search/?q=LOLA', communityReviewSourceLabel: 'Reddit r/periods', ingredients: '100% organic cotton, wood pulp core, adhesive.', effectiveness: 'Good absorption, organic certification.', badges: ['Female-Owned', 'Sustainable'],
+        doctorOpinion: 'Organic cotton construction and freedom from added synthetic fragrance reduce exposure to bleaching byproducts, which can help patients with vulvar sensitivity or contact-irritation history. The plant-based bioplastic back sheet is a genuine departure from the polyethylene backing on most mainstream pads, though no independent clinical study of this specific pad\'s irritation rate versus conventional pads was found — the case for it is ingredient transparency and material choice, not a proven clinical outcome difference.',
+        whoItsFor: [
+            'People who want organic cotton and a plastic-reduced back sheet over mainstream synthetic pads',
+            'Those with a history of vulvar irritation from fragranced or synthetic-material pads',
+            'Subscription shoppers who already use or are considering LOLA\'s other products',
+        ],
+        howToUse: {
+            intro: 'General pad-use guidance (LOLA does not publish pad-specific instructions beyond sizing by flow):',
+            steps: [
+                'Choose absorbency (regular, super, overnight) based on flow.',
+                'Change every 4–8 hours, or sooner if soaked through, to reduce odor and skin irritation.',
+                'Watch for adhesive-related redness or itching and switch styles if it recurs.',
+            ],
+            sourceUrl: 'https://mylola.com/pages/about',
+            sourceLabel: 'mylola.com: About LOLA',
+        },
+        communityReview: 'Community discussions on Reddit r/periods note appreciation for the subscription model, breathability, and reduced "plastic feel" compared to mainstream synthetic pads, alongside occasional complaints about subscription cancellation being harder than it should be.', communityReviewSourceUrl: 'https://www.reddit.com/r/periods/search/?q=LOLA', communityReviewSourceLabel: 'Reddit r/periods', ingredients: '100% organic cotton (top sheet and core), plant-based bioplastic back sheet, non-toxic adhesive.', effectiveness: 'Reliable absorption for light-to-moderate flow. No independent lab comparison against mainstream pad brands was found.', badges: ['Female-Founded', 'Sustainable'],
         verificationLinks: {
             doctor: {
                 aiSummary: "LOLA uses an organic cotton construction and avoids added synthetic fragrances. Some people with vulvar sensitivity may prefer fragrance-free menstrual products, though individual tolerance varies.",
                 links: [
-                    
+
                 ]
             },
             scientific: {
-                aiSummary: "Scientific evaluation of LOLA products confirms their status as FDA-registered medical devices. Peer-reviewed research supports the correlation between additive-free organic cotton and the maintenance of a healthy vaginal microbiome, particularly in preventing chemical-induced flora disruption.",
+                aiSummary: "LOLA pads are FDA-registered as medical devices, the standard federal classification for menstrual pads. Independent, product-specific clinical research on this exact pad was not found; the safety case rests on ingredient disclosure and material choice rather than a published outcomes study.",
                 links: [
                     { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Menstrual Product Safety', summary: 'FDA regulates pads and tampons as medical devices and sets safety standards.', justification: 'The FDA is the federal authority for medical device safety in the US.' }
                 ]
             },
             community: {
-                aiSummary: "Community sentiment heavily favors LOLA for its customizable subscription and breathable design. Longitudinal reports on specialized subreddits like r/periods consistently mention a reduction in the 'plastic rash' common with mainstream synthetic pads.",
+                aiSummary: "Community sentiment favors LOLA for its customizable subscription and breathable, less-plastic-feeling design. Some subreddit threads mention reduced irritation versus mainstream synthetic pads, though this is user-reported, not clinically measured.",
                 links: [
                     { url: 'https://www.reddit.com/r/periods/search/?q=LOLA', text: 'Reddit LOLA Reviews', summary: 'The community frequently recommends LOLA for its customizable subscription and breathable design.', justification: 'Reddit provides unfiltered, high-volume qualitative data from experienced menstrual product users.' },
                     { url: 'https://www.tiktok.com/search?q=lola+pads+review', text: 'TikTok #LolaPads Reviews', summary: 'Gen Z and Millennial users share their experiences with Lola\'s subscription service and product comfort.', justification: 'TikTok reflects rapid social proof and user-generated visual reviews of product performance.' }

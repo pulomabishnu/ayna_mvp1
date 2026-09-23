@@ -17,7 +17,7 @@
  */
 export const PARTNER_BRAND_ORDER = [
   /\bbuni\b/, // BUNI Body
-  /\bsoothe ?her\b/, // SootheHer — not yet in the catalog as of this ranking
+  /\bsoothe ?her\b/, // SootheHer — Elaris Pod added to the catalog 2026-09-23
   /\bneycher\b/, // Neycher
   /\bwinx\b/, // Winx Health
   /\bgina\b/, // gina

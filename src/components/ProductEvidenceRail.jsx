@@ -126,7 +126,7 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
       </div>
 
       {Array.isArray(product.warnings) && product.warnings.length > 0 && (
-        <div className="pdp-rail__card" style={{ background: '#FEF2F2', border: '1px solid #FEE2E2', borderLeft: '4px solid #DC2626' }}>
+        <div className="pdp-rail__card" style={{ background: '#FEF2F2', border: '1px solid #991B1B', borderLeft: '4px solid #991B1B' }}>
           <div className="pdp-rail__label" style={{ color: '#991B1B' }}>Warnings</div>
           <ul style={{ margin: '8px 0 0', padding: 0, listStyle: 'none' }}>
             {product.warnings.map((item) => (
