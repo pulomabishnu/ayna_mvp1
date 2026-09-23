@@ -3288,16 +3288,8 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'gina positions its coconut-oil glides as pure, simple, and effective — developed without hormones or harsh additives, non-irritating, non-toxic, pH-neutral, cruelty-free, pre-portioned for single use, and clinician-informed — per the brand\'s own site.\n\nThere\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration) — though it wasn\'t placebo-controlled and didn\'t test this specific product.\n\nLab evidence is more mixed: one study found coconut oil, unlike several other commercial vaginal products, didn\'t inhibit the growth of E. coli in vitro. Coconut oil\'s natural pH (roughly 7 to 8) is also more alkaline than the vagina\'s normal acidic range (3.8 to 4.5).\n\nNo independent clinical study of this specific product was found.',
-        doctorOpinionShort: 'A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness over 6 months reported real improvement, though it wasn\'t placebo-controlled. Coconut oil is also naturally alkaline (pH roughly 7 to 8) versus the vagina\'s normal acidic range. No independent clinical study of this specific product was found.',
-        // Backs specific claims made in doctorOpinion with direct links,
-        // same as Neycher's doctorOpinionCitations — kept out of
-        // verificationLinks so it doesn't pool with the Scientific
-        // literature tab's citation list (also listed there, in
-        // scientificCitations below, since it backs a general claim too).
-        doctorOpinionCitations: [
-            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7203152/', label: 'NIH (PMC): Effect of Commercial Vaginal Products on the Growth of Uropathogenic and Commensal Vaginal Bacteria' },
-        ],
+        doctorOpinion: 'gina positions its coconut-oil glides as pure, simple, and effective — developed without hormones or harsh additives, non-irritating, non-toxic, pH-neutral, cruelty-free, pre-portioned for single use, and clinician-informed — per the brand\'s own site.\n\nThere\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration) — though it wasn\'t placebo-controlled and didn\'t test this specific product.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness over 6 months reported real improvement, though it wasn\'t placebo-controlled. No independent clinical study of this specific product was found.',
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
             'Women with vaginal dryness or irritation at any life stage — perimenopause, menopause, postpartum, or day to day',
@@ -3321,7 +3313,6 @@ export const BRAND_PRODUCTS = [
         // Rendered as a red warning box on the Evidence view.
         warnings: [
             'Oil-based: can weaken latex condoms.',
-            'Coconut oil\'s natural pH is more alkaline than the vagina\'s — introducing it can shift vaginal pH and, in some people, raise the risk of bacterial vaginosis or a yeast infection.',
             'Chill before use, per the box.',
             'Pregnant or breastfeeding: check with a doctor first.',
             'Irritation or an allergic reaction: stop using it and see a doctor.',
@@ -3352,11 +3343,6 @@ export const BRAND_PRODUCTS = [
         // tab, kept out of verificationLinks so it doesn't also pool onto
         // the Clinician opinion card's chip row.
         scientificCitations: [
-            {
-                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7203152/',
-                text: 'Effect of Commercial Vaginal Products on the Growth of Uropathogenic and Commensal Vaginal Bacteria',
-                summary: 'A lab study (Scientific Reports) compared five commercial vaginal products, including coconut oil, for effects on E. coli and Lactobacillus growth — coconut oil, unlike the others, didn\'t inhibit E. coli growth in vitro. This is ingredient-level lab evidence, not a clinical study of this specific product.',
-            },
             {
                 url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
                 text: 'ACOG: Vulvovaginal Health',

@@ -27,8 +27,9 @@ const ADVISORS = [
   { name: 'Albert Charles', title: 'Co-Founder, Gorges Ventures', photo: '/advisors/albert-charles.png' },
   { name: 'Erika Demonsant', title: 'Healthcare Consultant, Huron', photo: '/advisors/erika-demonsant.png' },
   { name: 'Pamela Nasr', title: 'Product Lead, Benchling', photo: '/advisors/pamela-nasr.png' },
-  { name: 'Nishtha Kaushik', title: 'Advisor', linkedin: 'https://www.linkedin.com/in/nkaushik29/' },
-  { name: 'Navneet Kaur', title: 'Advisor', linkedin: 'https://www.linkedin.com/in/navneet-kaur-80109b227' },
+  { name: 'Nishtha Kaushik', title: 'Advisor', photo: '/advisors/nishtha-kaushik.jpg', linkedin: 'https://www.linkedin.com/in/nkaushik29/' },
+  { name: 'Navneet Kaur', title: 'Advisor', photo: '/advisors/navneet-kaur.jpg', linkedin: 'https://www.linkedin.com/in/navneet-kaur-80109b227' },
+  { name: 'Dr. Anuja Vyas', title: 'Board-Certified OB/GYN, Advisor', photo: '/advisors/anuja-vyas.jpg' },
 ];
 
 
