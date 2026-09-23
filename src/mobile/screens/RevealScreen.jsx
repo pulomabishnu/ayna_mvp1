@@ -85,8 +85,9 @@ export default function RevealScreen({
             width: 128,
             height: 128,
             borderRadius: '50%',
-            background: 'linear-gradient(135deg,#F0A84B 0%,#E8A94F 100%)',
-            boxShadow: '0 24px 50px -20px rgba(232,169,79,.75)',
+            // Same orange orb as the landing page (OrbHero).
+            background: 'radial-gradient(circle at 34% 28%,#FFDCA8,#FFC774 46%,#E8843C)',
+            boxShadow: '0 26px 56px -14px rgba(255,150,60,.7)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -94,75 +95,84 @@ export default function RevealScreen({
             zIndex: 1,
           }}
         >
-          <span style={{ color: '#1A1714', fontFamily: "'Playfair Display',serif", fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>you</span>
+          <span style={{ color: '#3A2547', fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 'calc(22px * var(--ayna-text-scale, 1))' }}>you</span>
         </div>
         <div style={{ position: 'absolute', inset: 0, zIndex: 2, animation: 'ay-orbit 28s linear infinite' }}>
           {orbit1 && (
-            <div style={{ position: 'absolute', left: 114, top: 9, width: 92, height: 38 }}>
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  animation: 'ay-counter 28s linear infinite',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  padding: '0 12px',
-                  background: '#FFFFFF',
-                  border: '1.5px solid rgba(26,23,20,.08)',
-                  borderRadius: 999,
-                  boxShadow: '0 10px 22px -12px rgba(26,23,20,.3)',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#4E3866', flex: 'none' }} />
-                <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{orbit1}</span>
+            <div style={{ position: 'absolute', left: 160, top: 26, width: 0, height: 0 }}>
+              <div style={{ position: 'absolute', left: 0, top: 0, transform: 'translate(-50%,-50%)' }}>
+                <div
+                  style={{
+                    animation: 'ay-counter 28s linear infinite',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 7,
+                    height: 36,
+                    padding: '0 14px 0 12px',
+                    background: '#FFFFFF',
+                    color: '#1A1714',
+                    whiteSpace: 'nowrap',
+                    border: '1.5px solid rgba(26,23,20,.08)',
+                    borderRadius: 999,
+                    boxShadow: '0 10px 22px -12px rgba(26,23,20,.3)',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#4E3866', flex: 'none' }} />
+                  <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#1A1714' }}>{orbit1}</span>
+                </div>
               </div>
             </div>
           )}
           {orbit2 && (
-            <div style={{ position: 'absolute', left: 228, top: 207, width: 92, height: 38 }}>
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  animation: 'ay-counter 28s linear infinite',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  padding: '0 12px',
-                  background: '#FFFFFF',
-                  border: '1.5px solid rgba(26,23,20,.08)',
-                  borderRadius: 999,
-                  boxShadow: '0 10px 22px -12px rgba(26,23,20,.3)',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#C0761F', flex: 'none' }} />
-                <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{orbit2}</span>
+            <div style={{ position: 'absolute', left: 262, top: 236, width: 0, height: 0 }}>
+              <div style={{ position: 'absolute', left: 0, top: 0, transform: 'translate(-50%,-50%)' }}>
+                <div
+                  style={{
+                    animation: 'ay-counter 28s linear infinite',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 7,
+                    height: 36,
+                    padding: '0 14px 0 12px',
+                    background: '#FFFFFF',
+                    color: '#1A1714',
+                    whiteSpace: 'nowrap',
+                    border: '1.5px solid rgba(26,23,20,.08)',
+                    borderRadius: 999,
+                    boxShadow: '0 10px 22px -12px rgba(26,23,20,.3)',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#C0761F', flex: 'none' }} />
+                  <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#1A1714' }}>{orbit2}</span>
+                </div>
               </div>
             </div>
           )}
           {orbit3 && (
-            <div style={{ position: 'absolute', left: 0, top: 207, width: 92, height: 38 }}>
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  animation: 'ay-counter 28s linear infinite',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  padding: '0 12px',
-                  background: '#FFFFFF',
-                  border: '1.5px solid rgba(26,23,20,.08)',
-                  borderRadius: 999,
-                  boxShadow: '0 10px 22px -12px rgba(26,23,20,.3)',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#242A52', flex: 'none' }} />
-                <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{orbit3}</span>
+            <div style={{ position: 'absolute', left: 58, top: 236, width: 0, height: 0 }}>
+              <div style={{ position: 'absolute', left: 0, top: 0, transform: 'translate(-50%,-50%)' }}>
+                <div
+                  style={{
+                    animation: 'ay-counter 28s linear infinite',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 7,
+                    height: 36,
+                    padding: '0 14px 0 12px',
+                    background: '#FFFFFF',
+                    color: '#1A1714',
+                    whiteSpace: 'nowrap',
+                    border: '1.5px solid rgba(26,23,20,.08)',
+                    borderRadius: 999,
+                    boxShadow: '0 10px 22px -12px rgba(26,23,20,.3)',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#242A52', flex: 'none' }} />
+                  <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#1A1714' }}>{orbit3}</span>
+                </div>
               </div>
             </div>
           )}

@@ -11,7 +11,7 @@
   --ayna-text-muted: #78716C;
   --ayna-text-faint: #A8A29E;
   --ayna-accent: #FFC774;
-  --ayna-accent-dark: #E8A94F;
+  --ayna-accent-dark: #A8651E; /* was #E8A94F: 1.8:1 on the cream bg, section labels were hard to read */
   --ayna-brown: #A2603C;
   --ayna-navy: #242A52;
   --ayna-purple: #4E3866;

@@ -300,7 +300,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
           { key: 'checkin', title: 'Monthly check-in', sub: "What's changed since last time", onClick: onOpenMonthlyCheckin },
           { key: 'shopper', title: 'Shopper Profile', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} NEW` : null },
           { key: 'startups', title: 'Early Stage Startups', sub: 'Emerging brands worth backing' },
-          { key: 'preferences', title: 'Preferences', sub: 'Notifications, updates, night mode' },
+          { key: 'preferences', title: 'Preferences', sub: 'Notifications, updates, appearance' },
           { key: 'settings', title: 'Settings', sub: 'Account, privacy, about Ayna' },
         ].map((row) => (
           <div
@@ -717,7 +717,8 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
             const openLink = href ? () => window.open(href, '_blank', 'noopener,noreferrer') : undefined;
             return s.featured ? (
               <div key={s.id} onClick={openLink} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, overflow: 'hidden', cursor: openLink ? 'pointer' : 'default' }}>
-                <div style={{ height: 168, background: s.image ? undefined : 'linear-gradient(160deg,#F3EADC,#EFE3D2)', backgroundImage: s.image ? `url(${s.image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+                <div style={{ height: 168, background: s.image ? undefined : 'linear-gradient(160deg,#F3EADC,#EFE3D2)', backgroundImage: s.image ? `url(${s.image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {!s.image && <div aria-hidden="true" style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(54px * var(--ayna-text-scale, 1))', color: '#A2603C', opacity: 0.55 }}>{s.name.charAt(0)}</div>}
                   {s.foundedYear && (
                     <div style={{ position: 'absolute', left: 12, top: 12, background: 'rgba(255,255,255,.93)', color: '#C0761F', fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', padding: '5px 9px', borderRadius: 99 }}>FOUNDED {s.foundedYear}</div>
                   )}
@@ -752,7 +753,9 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
               </div>
             ) : (
               <div key={s.id} onClick={openLink} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, overflow: 'hidden', display: 'flex', cursor: openLink ? 'pointer' : 'default' }}>
-                <div style={{ width: 120, flex: 'none', background: s.image ? undefined : 'linear-gradient(160deg,#F3EADC,#EFE3D2)', backgroundImage: s.image ? `url(${s.image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                <div style={{ width: 120, flex: 'none', background: s.image ? undefined : 'linear-gradient(160deg,#F3EADC,#EFE3D2)', backgroundImage: s.image ? `url(${s.image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {!s.image && <div aria-hidden="true" style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(36px * var(--ayna-text-scale, 1))', color: '#A2603C', opacity: 0.55 }}>{s.name.charAt(0)}</div>}
+                </div>
                 <div style={{ flex: 1, minWidth: 0, padding: '14px 15px' }}>
                   <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{formatCategoryLabel(s.category)}</div>
                   <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '6px 0 5px', color: 'var(--ayna-text)' }}>{s.name}</div>
@@ -1129,7 +1132,7 @@ function PreferencesScreen({
   };
 
   const channelsSummary = prefs
-    ? [{ push: 'Push', sms: 'Text message', email: 'Email' }[prefs.deliveryChannel], prefs.quietHoursEnabled ? `Quiet ${prefs.quietHoursStart}–${prefs.quietHoursEnd}` : null]
+    ? [{ push: 'Push (coming soon)', sms: 'Text message', email: 'Email (coming soon)' }[prefs.deliveryChannel], prefs.quietHoursEnabled ? `Quiet ${prefs.quietHoursStart}–${prefs.quietHoursEnd}` : null]
         .filter(Boolean)
         .join(' · ')
     : '';
@@ -2822,7 +2825,7 @@ function HowItWorksScreen({ onBack }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px' }}>
             <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Pulled in</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-navy)' }}>3,140</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>3,140</div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px' }}>
             <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Relevant to you</div>
