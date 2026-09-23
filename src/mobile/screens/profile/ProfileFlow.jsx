@@ -2534,7 +2534,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow borderTop={false} title="Age" value={intake?.age ? String(intake.age) : 'Not set'} onClick={onEditProfile} />
           <AccountRow title="Zip code" value={intake?.zipcode || 'Not set'} onClick={onEditProfile} />
-          <AccountRow title="FSA / HSA account" sub="We'll show the lower price you'd pay." value={fsaHsaLabel || 'Not set'} onClick={onEditProfile} />
+          <AccountRow title="FSA / HSA account" sub="Helps us favor FSA/HSA-eligible products for you." value={fsaHsaLabel || 'Not set'} onClick={onEditProfile} />
         </div>
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
           Tap any of these to update your health profile.
@@ -3148,8 +3148,15 @@ function AboutAynaScreen({ onBack }) {
 // team) the desktop contact page uses, not a local-only mock.
 const CONTACT_REASONS = ['Partnerships', 'Help & Support', 'Feedback or Feature Request', 'Press & Media', 'Other'];
 
-function ContactScreen({ onBack }) {
-  const [form, setForm] = useState({ name: '', email: '', reason: '', subject: '', message: '' });
+function ContactScreen({ onBack, authUser, name: accountName }) {
+  // Signed-in users shouldn't have to retype who they are.
+  const [form, setForm] = useState({
+    name: accountName && accountName !== 'You' ? accountName : '',
+    email: authUser?.email || '',
+    reason: '',
+    subject: '',
+    message: '',
+  });
   const [reasonOpen, setReasonOpen] = useState(false);
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
@@ -3378,7 +3385,7 @@ export default function ProfileFlow({
   } else if (screen === 'aboutAyna') {
     body = <AboutAynaScreen onBack={goBack} />;
   } else if (screen === 'contact') {
-    body = <ContactScreen onBack={goBack} />;
+    body = <ContactScreen onBack={goBack} authUser={authUser} name={name} />;
   } else if (screen === 'accountInfo') {
     body = (
       <AccountInfoScreen

@@ -83,7 +83,10 @@ const BADGE_STYLES = {
 };
 
 function statusFor(item, ecoIds) {
-  if (item?.safety?.recalls) return 'flag';
+  // Only an ACTUAL recall flag. Before the 2026-09-22 audit any non-empty
+  // safety.recalls string — including "No recalls." — put a red RECALL FLAG
+  // badge on the product (nearly every catalog item, partners included).
+  if (item?.safety && recallStatus(item).label === 'Active recall') return 'flag';
   if (ecoIds.has(item.id)) return 'eco';
   return 'new';
 }
