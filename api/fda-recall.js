@@ -1,6 +1,7 @@
 /* global process */
 import { createClient } from '@supabase/supabase-js';
 import twilio from 'twilio';
+import { apnsConfigured, pushToUser } from './_apns.js';
 
 // OpenFDA recall lookup — free, no API key required for basic use.
 // Add OPENFDA_API_KEY to Vercel env vars for higher rate limits (free at open.fda.gov).
@@ -439,24 +440,45 @@ async function notifyUsersOfRecall(admin, { productId, productName, recallSignat
       .eq('user_id', user_id)
       .maybeSingle();
 
-    const hasUsableNumber = phoneRow?.phone_number && phoneRow.is_verified && !phoneRow.sms_opted_out;
+    // Respect the app's Preferences > Notifications switch (notification_
+    // preferences.notifications_enabled). Before the 2026-09-22 audit this
+    // sweep texted anyone with a verified number even after they turned
+    // notifications off. A missing row = column default (on).
+    const { data: prefRow } = await admin
+      .from('notification_preferences')
+      .select('notifications_enabled, delivery_channel')
+      .eq('user_id', user_id)
+      .maybeSingle();
+    const notificationsOff = prefRow?.notifications_enabled === false;
+
+    // Push goes to every phone signed in to the account (when APNs is set
+    // up); a text also goes out when the user picked "Text message", or when
+    // they have no phone registered for push.
+    let pushDevices = 0;
+    if (!notificationsOff && apnsConfigured()) {
+      const { count } = await admin.from('device_tokens').select('id', { count: 'exact', head: true }).eq('user_id', user_id);
+      pushDevices = count || 0;
+    }
+    const wantsSms = prefRow?.delivery_channel === 'sms' || pushDevices === 0;
+    const hasUsableNumber = !notificationsOff && wantsSms && phoneRow?.phone_number && phoneRow.is_verified && !phoneRow.sms_opted_out;
+    const canReach = hasUsableNumber || pushDevices > 0;
 
     if (dryRun) {
       // Zero writes in dry run — see the header comment above for why.
       console.log(
-        hasUsableNumber
-          ? `[fda-recall sweep] DRY RUN — would text user ${user_id} about ${productName}`
-          : `[fda-recall sweep] DRY RUN — would SKIP user ${user_id} (no verified/opted-in number) for ${productName}`
+        canReach
+          ? `[fda-recall sweep] DRY RUN — would notify user ${user_id} (push devices: ${pushDevices}, sms: ${Boolean(hasUsableNumber)}) about ${productName}`
+          : `[fda-recall sweep] DRY RUN — would SKIP user ${user_id} (no push device or verified/opted-in number) for ${productName}`
       );
-      if (hasUsableNumber) notified++; else skipped++;
+      if (canReach) notified++; else skipped++;
       return;
     }
 
-    if (!hasUsableNumber) {
+    if (!canReach) {
       skipped++;
       await admin.from('recall_notifications').insert({
         user_id, product_id: productId, product_name: productName,
-        recall_signature: recallSignature, status: 'skipped_no_phone',
+        recall_signature: recallSignature, status: notificationsOff ? 'skipped_opted_out' : 'skipped_no_phone',
       });
       return;
     }
@@ -474,6 +496,30 @@ async function notifyUsersOfRecall(admin, { productId, productName, recallSignat
       return;
     }
 
+    let delivered = false;
+    if (pushDevices > 0) {
+      try {
+        const cleanReason = String(reason || '').replace(/\s+/g, ' ').trim().slice(0, 140);
+        const push = await pushToUser(admin, user_id, {
+          title: `Safety alert: ${productName}`,
+          body: cleanReason ? `New FDA safety alert: ${cleanReason}` : 'There is a new FDA safety alert for a product you track. Tap for details and alternatives.',
+          data: { type: 'recall', productId },
+        });
+        delivered = push.sent > 0;
+      } catch (e) {
+        console.error(`[fda-recall sweep] push failed for user ${user_id}:`, e?.message);
+      }
+    }
+    // If push didn't land on any device, fall back to a text when possible.
+    const smsNumberOk = !notificationsOff && phoneRow?.phone_number && phoneRow.is_verified && !phoneRow.sms_opted_out;
+    if (!(hasUsableNumber || (!delivered && smsNumberOk))) {
+      if (delivered) { notified++; return; }
+      await admin.from('recall_notifications')
+        .update({ status: 'failed' })
+        .eq('user_id', user_id).eq('product_id', productId).eq('recall_signature', recallSignature);
+      failed++;
+      return;
+    }
     try {
       const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
       await client.messages.create({
@@ -483,6 +529,7 @@ async function notifyUsersOfRecall(admin, { productId, productName, recallSignat
       });
       notified++;
     } catch (e) {
+      if (delivered) { notified++; return; }
       console.error(`[fda-recall sweep] Twilio send failed for user ${user_id}:`, e?.message);
       await admin.from('recall_notifications')
         .update({ status: 'failed' })

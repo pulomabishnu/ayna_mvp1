@@ -15,6 +15,8 @@ import {
   confirmPhoneVerificationCode,
 } from '../../utils/notificationPreferencesApi.js';
 import { requestAccountDeletion } from '../../utils/dataExportApi.js';
+import { sendTestPush } from '../../utils/deviceTokenApi.js';
+import { enablePushNotifications, pushSupported } from '../../hooks/usePushNotifications.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
 import { denyConsent, getStoredConsent, grantConsent } from '../../../utils/analyticsConsent.js';
@@ -1132,7 +1134,7 @@ function PreferencesScreen({
   };
 
   const channelsSummary = prefs
-    ? [{ push: 'Push (coming soon)', sms: 'Text message', email: 'Email (coming soon)' }[prefs.deliveryChannel], prefs.quietHoursEnabled ? `Quiet ${prefs.quietHoursStart}–${prefs.quietHoursEnd}` : null]
+    ? [{ push: 'Push', sms: 'Text message', email: 'Email (coming soon)' }[prefs.deliveryChannel], prefs.quietHoursEnabled ? `Quiet ${prefs.quietHoursStart}–${prefs.quietHoursEnd}` : null]
         .filter(Boolean)
         .join(' · ')
     : '';
@@ -1196,7 +1198,11 @@ function PreferencesScreen({
         {loadState === 'ready' && prefs && (
           <>
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
-              <ToggleRow first title="Notifications" sub="Recall and safety alerts for products you track, sent by text to your verified phone." on={prefs.notificationsEnabled} onClick={() => patchField('notifications_enabled', !prefs.notificationsEnabled, 'notificationsEnabled')} />
+              <ToggleRow first title="Notifications" sub="Safety recall alerts for products you track — as a notification on this phone, or by text if you choose Text message." on={prefs.notificationsEnabled} onClick={() => {
+                const next = !prefs.notificationsEnabled;
+                patchField('notifications_enabled', next, 'notificationsEnabled');
+                if (next && pushSupported()) enablePushNotifications();
+              }} />
               <ToggleRow title="Updates" sub="New matches and restocks. Coming soon — we'll use this setting when it launches." on={prefs.updatesEnabled} onClick={() => patchField('updates_enabled', !prefs.updatesEnabled, 'updatesEnabled')} />
               <DrillRow title="Channels & quiet hours" sub={channelsSummary} onClick={onOpenChannels} />
             </div>
@@ -1341,9 +1347,11 @@ function ChannelsScreen({ onBack }) {
     fetchPrefs();
   };
 
-  const showToast = (message) => {
+  const [toastTone, setToastTone] = useState('error');
+  const showToast = (message, tone = 'error') => {
     setToast(message);
-    setTimeout(() => setToast(''), 3500);
+    setToastTone(tone);
+    setTimeout(() => setToast(''), 4000);
   };
 
   const patchField = (apiField, value, clientField) => {
@@ -1359,12 +1367,51 @@ function ChannelsScreen({ onBack }) {
       });
   };
 
+  const [testState, setTestState] = useState('idle');
+  const TEST_PUSH_MESSAGES = {
+    not_signed_in: 'Sign in to send a test notification.',
+    no_device_registered: "This phone isn't registered for notifications yet — allow notifications for ayna, then try again.",
+    push_not_configured: "Push notifications aren't switched on on our server yet.",
+    push_failed: "Apple didn't accept the notification. Try again in a minute.",
+    rate_limited: 'Too many tests — wait a few minutes.',
+  };
+  const handleTestPush = async () => {
+    if (testState === 'sending') return;
+    setTestState('sending');
+    const perm = await enablePushNotifications();
+    if (perm === 'denied') {
+      setTestState('idle');
+      showToast('Notifications are off for ayna. Turn them on in iPhone Settings → ayna → Notifications.');
+      return;
+    }
+    // Give a first-time registration a moment to reach the server.
+    let result = await sendTestPush();
+    if (!result.ok && result.error === 'no_device_registered') {
+      await new Promise((r) => setTimeout(r, 2500));
+      result = await sendTestPush();
+    }
+    setTestState('idle');
+    showToast(result.ok ? 'Sent — it should appear in a few seconds.' : (TEST_PUSH_MESSAGES[result.error] || "Couldn't send a test notification right now."), result.ok ? 'success' : 'error');
+  };
+
   const selectChannel = (key) => {
     if (!prefs || key === prefs.deliveryChannel) return;
     // Push and email delivery aren't live yet — say so instead of a tap that
     // silently does nothing.
-    if (key === 'push' || key === 'email') {
-      showToast(`${key === 'push' ? 'Push' : 'Email'} alerts are coming soon. Text message is the live channel today.`);
+    if (key === 'email') {
+      showToast('Email alerts are coming soon. Push and text message work today.');
+      return;
+    }
+    if (key === 'push') {
+      if (!pushSupported()) {
+        showToast('Push notifications work in the ayna iPhone app.');
+        return;
+      }
+      enablePushNotifications().then((result) => {
+        if (result === 'granted') patchField('delivery_channel', 'push', 'deliveryChannel');
+        else if (result === 'denied') showToast('Notifications are off for ayna. Turn them on in iPhone Settings → ayna → Notifications.');
+        else showToast("Couldn't turn on push notifications. Try again.");
+      });
       return;
     }
     if (key === 'sms' && !prefs.phoneVerified) {
@@ -1417,7 +1464,7 @@ function ChannelsScreen({ onBack }) {
             <SectionLabel>Delivery channel</SectionLabel>
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '5px 18px' }}>
               {[
-                ['push', 'Push', 'COMING SOON'],
+                ['push', 'Push notifications', pushSupported() ? 'THIS PHONE' : 'IPHONE APP'],
                 ['sms', 'Text message', prefs.phoneVerified ? 'VERIFIED' : 'VERIFY TO USE'],
                 ['email', 'Email only', 'COMING SOON'],
               ].map(([key, label, badge], i) => (
@@ -1432,8 +1479,19 @@ function ChannelsScreen({ onBack }) {
             </div>
 
             <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, margin: '10px 2px 0' }}>
-              Today, recall alerts go out by text message to your verified number whenever Notifications is on. Push and email delivery are coming soon.
+              When Notifications is on, recall alerts arrive as a notification on every phone you're signed in on. Choose Text message to also get them by text. Email is coming soon.
             </div>
+
+            {pushSupported() && (
+              <div
+                role="button"
+                aria-disabled={testState === 'sending'}
+                onClick={handleTestPush}
+                style={{ marginTop: 14, textAlign: 'center', padding: '12px 0', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', cursor: testState === 'sending' ? 'progress' : 'pointer', opacity: testState === 'sending' ? 0.6 : 1 }}
+              >
+                {testState === 'sending' ? 'Sending…' : 'Send a test notification'}
+              </div>
+            )}
 
             <SectionLabel>Quiet hours</SectionLabel>
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
@@ -1465,7 +1523,7 @@ function ChannelsScreen({ onBack }) {
         )}
 
         {toast && (
-          <div style={{ position: 'fixed', left: 20, right: 20, bottom: 24, background: '#B4402A', color: '#FFF9F2', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, padding: '12px 16px', borderRadius: 14, textAlign: 'center', boxShadow: '0 14px 30px -12px rgba(180,64,42,.5)' }}>
+          <div role={toastTone === 'error' ? 'alert' : 'status'} style={{ position: 'fixed', left: 20, right: 20, bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))', zIndex: 70, background: toastTone === 'error' ? '#B4402A' : '#2F6B4F', color: '#FFF9F2', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, padding: '12px 16px', borderRadius: 14, textAlign: 'center', boxShadow: '0 14px 30px -12px rgba(0,0,0,.35)' }}>
             {toast}
           </div>
         )}

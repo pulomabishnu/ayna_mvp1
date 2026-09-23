@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { PushNotifications } from '@capacitor/push-notifications';
-import { registerDeviceToken } from '../utils/deviceTokenApi.js';
+import { registerDeviceToken, unregisterDeviceToken } from '../utils/deviceTokenApi.js';
 
 /**
  * Requests push permission and starts native registration once, on mount —
@@ -11,12 +11,48 @@ import { registerDeviceToken } from '../utils/deviceTokenApi.js';
  * token AND a signed-in userId both exist, sends the token to
  * /api/device-tokens so it's stored against that account.
  *
- * Registration + storage only — nothing here sends a push. That needs the
- * APNs auth key wired in server-side, a separate, later piece of work.
+ * Sending lives server-side (api/_apns.js, used by the recall sweep and
+ * /api/push-test). The OS permission prompt is NOT shown at launch — it's
+ * asked in context, when the user turns Notifications on or picks Push
+ * (enablePushNotifications below). Launch only re-registers silently when
+ * permission was already granted.
  */
 const PUSH_PROMPT_ENABLED = false;
 
-export function usePushNotifications(userId) {
+let lastToken = null;
+
+export function pushSupported() {
+  return Capacitor.getPlatform() === 'ios';
+}
+
+/**
+ * Ask for notification permission (iOS shows its prompt only the first
+ * time) and register with APNs. Resolves to 'granted' | 'denied' |
+ * 'unsupported' | 'error'. The token itself is delivered to the
+ * 'registration' listener in usePushNotifications, which stores it.
+ */
+export async function enablePushNotifications() {
+  if (!pushSupported()) return 'unsupported';
+  try {
+    let perm = await PushNotifications.checkPermissions();
+    if (perm.receive === 'prompt' || perm.receive === 'prompt-with-rationale') perm = await PushNotifications.requestPermissions();
+    if (perm.receive !== 'granted') return 'denied';
+    await PushNotifications.register();
+    return 'granted';
+  } catch (err) {
+    console.warn('[push] enable failed:', err?.message || err);
+    return 'error';
+  }
+}
+
+/** Unlink this phone from the signed-in account (call before signing out). */
+export async function unlinkPushToken() {
+  if (lastToken) await unregisterDeviceToken(lastToken);
+}
+
+export function usePushNotifications(userId, onOpenNotification) {
+  const openRef = useRef(onOpenNotification);
+  useEffect(() => { openRef.current = onOpenNotification; });
   const [token, setToken] = useState(null);
   const [status, setStatus] = useState('idle'); // idle | requesting | granted | denied | error
 
@@ -31,8 +67,12 @@ export function usePushNotifications(userId) {
     let cancelled = false;
     const regListenerPromise = PushNotifications.addListener('registration', (result) => {
       if (cancelled) return;
+      lastToken = result.value;
       setToken(result.value);
       setStatus('granted');
+    });
+    const tapListenerPromise = PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
+      try { openRef.current?.(action?.notification?.data || {}); } catch { /* ignore */ }
     });
     const errListenerPromise = PushNotifications.addListener('registrationError', (err) => {
       if (cancelled) return;
@@ -69,6 +109,7 @@ export function usePushNotifications(userId) {
       cancelled = true;
       regListenerPromise.then((handle) => handle.remove()).catch(() => {});
       errListenerPromise.then((handle) => handle.remove()).catch(() => {});
+      tapListenerPromise.then((handle) => handle.remove()).catch(() => {});
     };
   }, []);
 

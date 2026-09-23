@@ -18,7 +18,7 @@ import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } 
 import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
-import { usePushNotifications } from './hooks/usePushNotifications.js';
+import { usePushNotifications, unlinkPushToken } from './hooks/usePushNotifications.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
@@ -155,10 +155,14 @@ export default function MobileApp() {
   const { savedMap, isSaved, toggleSaved, resetSaved } = useSavedProducts(authUser);
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
   const [personalized, setPersonalized] = usePersonalizedFeed();
-  // Requests push permission and registers this device on launch (iOS only
-  // for now); stores the token against authUser once both are available.
-  // Registration only — nothing sends a push yet.
-  usePushNotifications(authUser?.id);
+  // Re-registers this phone for push when permission was already granted and
+  // stores the token against authUser. Tapping a recall notification opens
+  // that product.
+  usePushNotifications(authUser?.id, (data) => {
+    if (data?.type !== 'recall' || !data.productId) return;
+    const product = ALL_PRODUCTS.find((p) => p.id === data.productId);
+    if (product) setOverlay({ type: 'product', item: product });
+  });
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const routine = useRoutine();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
@@ -359,7 +363,9 @@ export default function MobileApp() {
     resetSaved();
     routine.resetRoutine();
     resetSession();
-    signOutSupabase();
+    // Unlink this phone first (needs the session) so it stops getting the
+    // signed-out account's alerts, then sign out either way.
+    Promise.race([unlinkPushToken(), new Promise((r) => setTimeout(r, 2500))]).finally(() => signOutSupabase());
     setScreen('landing');
   };
 

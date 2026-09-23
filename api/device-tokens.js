@@ -9,8 +9,8 @@
  * (verifyUserWithRls) for local development without a service-role key; the
  * existing RLS policies then restrict every read/write to auth.uid() = user_id.
  *
- * Registration only — nothing here sends a push. That step needs the APNs
- * auth key wired in server-side and is a separate, later piece of work.
+ * POST registers a token; DELETE unlinks it (on sign-out). Sending lives in
+ * api/_apns.js.
  */
 /* global process */
 import { createClient } from '@supabase/supabase-js';
@@ -32,12 +32,12 @@ function getAdmin() {
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(204).end();
   }
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
+  if (req.method !== 'POST' && req.method !== 'DELETE') {
+    res.setHeader('Allow', 'POST, DELETE');
     return res.status(405).json({ error: 'method_not_allowed' });
   }
 
@@ -65,6 +65,17 @@ export default async function handler(req, res) {
   const platform = body?.platform;
 
   if (!deviceToken) return res.status(400).json({ error: 'device_token_required' });
+
+  // Sign-out: unlink this phone so it stops getting this account's alerts.
+  if (req.method === 'DELETE') {
+    const { error: delError } = await db.from('device_tokens').delete().eq('user_id', user.id).eq('device_token', deviceToken);
+    if (delError) {
+      console.error('[device-tokens] delete error:', delError.message);
+      return res.status(500).json({ error: 'delete_failed' });
+    }
+    return res.status(200).json({ ok: true });
+  }
+
   if (!PLATFORMS.has(platform)) return res.status(400).json({ error: 'invalid_platform' });
 
   // Upsert on device_token (not user_id): the token identifies one physical
