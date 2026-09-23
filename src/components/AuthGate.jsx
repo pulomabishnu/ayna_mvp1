@@ -68,6 +68,30 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   const allConsented = checked.every(Boolean);
   const allowSignup = context === 'quiz';
   const isSignup = allowSignup && mode === 'signup';
+
+  // Password reset (2026-09-22 audit): there was no way to recover a
+  // forgotten password anywhere — web or app. The emailed link lands on
+  // /auth/callback, which now handles type=recovery with a new-password form.
+  const [resetting, setResetting] = useState(false);
+  const handleForgotPassword = async () => {
+    const cleanEmail = email.trim().toLowerCase();
+    setError('');
+    setSuccessMsg('');
+    if (!cleanEmail) { setError('Enter your email above, then tap "Forgot password?".'); return; }
+    if (!supabase) return;
+    setResetting(true);
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      });
+      if (resetError) throw resetError;
+      setSuccessMsg(`If an account exists for ${cleanEmail}, we sent a link to reset your password.`);
+    } catch (e) {
+      setError(e?.message || 'Could not send a reset email right now. Please try again.');
+    } finally {
+      setResetting(false);
+    }
+  };
   const referralOk = () => {
     if (!referral) return false;
     return referral !== 'Other' || Boolean(referralOther.trim());
@@ -651,6 +675,16 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
+              {!isSignup && (
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  disabled={resetting}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', fontSize: '0.85rem', cursor: resetting ? 'not-allowed' : 'pointer', alignSelf: 'flex-start', marginTop: '-0.25rem' }}
+                >
+                  {resetting ? 'Sending reset link…' : 'Forgot password?'}
+                </button>
+              )}
             </>
           )}
 

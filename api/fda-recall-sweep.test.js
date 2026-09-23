@@ -32,7 +32,7 @@ async function loadHandler() {
  * DIFFERENT expected results each time. This one resolves based on the
  * actual accumulated .eq() filters.
  */
-function makeMockAdmin({ trackedRows = [], phoneByUser = {}, recallStateByProduct = {} } = {}) {
+function makeMockAdmin({ trackedRows = [], phoneByUser = {}, recallStateByProduct = {}, prefsByUser = {} } = {}) {
   const inserted = [];
   const updated = [];
   const upserted = [];
@@ -44,6 +44,9 @@ function makeMockAdmin({ trackedRows = [], phoneByUser = {}, recallStateByProduc
       maybeSingle() {
         if (table === 'phone_numbers') {
           return Promise.resolve({ data: phoneByUser[filters.user_id] || null, error: null });
+        }
+        if (table === 'notification_preferences') {
+          return Promise.resolve({ data: prefsByUser[filters.user_id] || null, error: null });
         }
         if (table === 'product_recall_state') {
           const sig = recallStateByProduct[filters.product_id];
@@ -243,6 +246,28 @@ describe('GET /api/fda-recall?sweep=1 — real run (RECALL_SWEEP_ENABLED=1)', ()
     expect(res.body.skipped).toBe(1);
     const skipRow = globalThis.__mockAdmin.inserted.find((r) => r.table === 'recall_notifications');
     expect(skipRow.payload.status).toBe('skipped_no_phone');
+  });
+
+  it('does not text a user who turned Notifications off in the app', async () => {
+    globalThis.fetch = vi.fn().mockImplementation((url) =>
+      Promise.resolve(String(url).includes('enforcement') ? fdaOk([activeRecallRow]) : fdaNotFound())
+    );
+    globalThis.__mockAdmin = makeMockAdmin({
+      trackedRows: [
+        { user_id: 'u1', product_id: 'p-iron', product_name: 'Iron Supplement', brand: '', category: 'supplement', is_tracked: true },
+      ],
+      phoneByUser: { u1: { phone_number: '+15551234567', is_verified: true, sms_opted_out: false } },
+      prefsByUser: { u1: { notifications_enabled: false } },
+      recallStateByProduct: {},
+    });
+
+    const res = mockRes();
+    await (await loadHandler())(sweepReq({ authorization: 'Bearer test-cron-secret' }), res);
+
+    expect(twilioCreate).not.toHaveBeenCalled();
+    expect(res.body.skipped).toBe(1);
+    const skipRow = globalThis.__mockAdmin.inserted.find((r) => r.table === 'recall_notifications');
+    expect(skipRow.payload.status).toBe('skipped_opted_out');
   });
 
   it('skips a user who opted out of SMS, without calling Twilio', async () => {

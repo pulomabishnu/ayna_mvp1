@@ -36,6 +36,22 @@ export default function AuthCallback({ onAuthenticated }) {
       return;
     }
 
+    // Password reset link (web or app "Forgot password?"): establish the
+    // short-lived recovery session, then ask for a new password below.
+    if (type === 'recovery') {
+      if (!accessToken || !refreshToken) {
+        setStatus('error');
+        setErrorMsg('This reset link is invalid or has expired. Request a new one from the sign-in screen.');
+        return;
+      }
+      supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+        .then(({ error }) => {
+          if (error) { setStatus('error'); setErrorMsg(error.message); return; }
+          setStatus('recovery');
+        });
+      return;
+    }
+
     // Flush consent stored before the OAuth redirect into user metadata.
     // Awaited, retried once, and the stash is cleared ONLY after the write
     // succeeds — the old order removed it first and swallowed the failure, so a
@@ -108,6 +124,10 @@ export default function AuthCallback({ onAuthenticated }) {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  if (status === 'recovery' || status === 'recovered') {
+    return <PasswordRecoveryForm done={status === 'recovered'} onDone={() => setStatus('recovered')} />;
+  }
+
   if (status === 'confirmed') {
     return (
       <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem', padding: '2rem', textAlign: 'center', background: 'var(--color-bg, #fff)' }}>
@@ -133,5 +153,46 @@ export default function AuthCallback({ onAuthenticated }) {
     <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: 'var(--color-text-muted, #666)' }}>Signing you in…</p>
     </div>
+  );
+}
+
+function PasswordRecoveryForm({ done, onDone }) {
+  const [pw, setPw] = useState('');
+  const [pw2, setPw2] = useState('');
+  const [err, setErr] = useState('');
+  const [saving, setSaving] = useState(false);
+  const box = { minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '0.9rem', padding: '2rem', textAlign: 'center' };
+  const input = { width: '100%', maxWidth: 320, padding: '0.8rem 1rem', borderRadius: 12, border: '1px solid #d6d3d1', fontSize: '1rem', boxSizing: 'border-box' };
+  if (done) {
+    return (
+      <div style={box}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>Password updated</h2>
+        <p style={{ color: '#666', maxWidth: 360, lineHeight: 1.6, margin: 0 }}>You can now sign in to ayna with your new password, on the website or in the app.</p>
+      </div>
+    );
+  }
+  const submit = async (e) => {
+    e.preventDefault();
+    setErr('');
+    if (pw.length < 8) { setErr('Use at least 8 characters.'); return; }
+    if (pw !== pw2) { setErr('Those passwords do not match.'); return; }
+    const supabase = getSupabaseClient();
+    if (!supabase) { setErr('Could not reach ayna. Please try again.'); return; }
+    setSaving(true);
+    const { error } = await supabase.auth.updateUser({ password: pw });
+    setSaving(false);
+    if (error) { setErr(error.message || 'Could not update your password.'); return; }
+    onDone();
+  };
+  return (
+    <form onSubmit={submit} style={box}>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>Set a new password</h2>
+      <input type="password" autoComplete="new-password" placeholder="New password (8+ characters)" value={pw} onChange={(e) => setPw(e.target.value)} style={input} />
+      <input type="password" autoComplete="new-password" placeholder="Confirm new password" value={pw2} onChange={(e) => setPw2(e.target.value)} style={input} />
+      {err && <p style={{ color: '#b42318', margin: 0, fontSize: '0.9rem' }}>{err}</p>}
+      <button type="submit" disabled={saving} style={{ padding: '0.8rem 1.6rem', borderRadius: 99, border: 'none', background: '#262a52', color: '#fff', fontWeight: 600, fontSize: '1rem', cursor: saving ? 'not-allowed' : 'pointer' }}>
+        {saving ? 'Saving…' : 'Save new password'}
+      </button>
+    </form>
   );
 }
