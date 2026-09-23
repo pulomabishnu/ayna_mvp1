@@ -169,6 +169,17 @@ const AVOID_INGREDIENTS = [
   'Sensitive skin', 'Unscented', 'Other', 'No preference',
 ];
 const AVOID_GROUP = ['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived', 'Added sugar', 'Artificial sweeteners'];
+// Each option lives in exactly one plainly-worded group so it is obvious
+// what is being preferred. The "X-free" twins of the avoid list mean the
+// same thing (same PREFERENCE_MAP value), so they are only shown if an
+// older saved answer already selected them (so it can still be unticked).
+const PREFERENCE_GROUPS = [
+  { label: 'I want to avoid products with…', items: AVOID_GROUP },
+  { label: 'I prefer products that are…', items: ['Vegan', 'Cruelty-free', 'Organic', 'Unscented', 'Minimal ingredients', 'Eco-friendly', 'Reusable'] },
+  { label: 'I prefer brands that are…', items: ['Black-owned', 'Brown-owned'] },
+  { label: 'I need products suited for…', items: ['Sensitive skin', 'Pregnancy considerations'] },
+];
+const DUPLICATE_FREE_OPTIONS = ['Fragrance-free', 'Dye-free', 'Paraben-free', 'Sulfate-free', 'Latex-free'];
 const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
 const TRUST_ITEMS = ['Clinical or scientific evidence', 'Reviews and experiences from other women', 'Brand reputation or expert recommendations'];
 const STOP_REASONS = [
@@ -500,6 +511,9 @@ function requiredReady(stepId, intake) {
   if (stepId === 'allergies') return !!intake.allergyStatus && (intake.allergyStatus !== 'Yes' || intake.allergyItems.length > 0);
   if (stepId === 'medications') return !!intake.takesCurrent && (intake.takesCurrent !== 'Yes' || intake.currentMedicationItems.length > 0);
   if (stepId === 'safety') return !!intake.safetyConcern;
+  // Required: the default order is not an answer, so the user must reorder
+  // or explicitly confirm it (TrustRanker's "Keep this order").
+  if (stepId === 'trust') return intake.trustRankingTouched === true;
   return true;
 }
 
@@ -1352,7 +1366,7 @@ function ProductHistoryBuilder({ products, onChange }) {
 // fixed rect snapshot taken at pointer-down, while the other rows' *live*
 // positions (read fresh on every move) decide when to splice the array —
 // so the list itself reorders live as you drag, not just on release.
-function TrustRanker({ order, onChange, onTouch }) {
+function TrustRanker({ order, onChange, onTouch, confirmed = false }) {
   const itemRefs = useRef({});
   const [drag, setDrag] = useState(null); // { item, startClientY, top, height, y }
 
@@ -1399,6 +1413,17 @@ function TrustRanker({ order, onChange, onTouch }) {
     setDrag({ item, startClientY: e.clientY, top: rect.top, height: rect.height, y: 0 });
   };
 
+  const move = (item, dir) => {
+    const from = order.indexOf(item);
+    const to = from + dir;
+    if (from < 0 || to < 0 || to >= order.length) return;
+    const next = [...order];
+    next.splice(from, 1);
+    next.splice(to, 0, item);
+    onTouch();
+    onChange(next);
+  };
+
   return (
     <div style={{ display: 'grid', gap: 10 }}>
       {order.map((item, index) => {
@@ -1425,6 +1450,23 @@ function TrustRanker({ order, onChange, onTouch }) {
               fontFamily: "'Playfair Display',serif", fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
             }}>{index + 1}</span>
             <span style={{ flex: 1, textAlign: 'left', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.3, color: top ? SELECTED_TEXT : INK }}>{item}</span>
+            <span style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 'none' }}>
+              {[[-1, 'up', 'M6 15l6-6 6 6'], [1, 'down', 'M6 9l6 6 6-6']].map(([dir, label, d]) => {
+                const disabled = (dir < 0 && index === 0) || (dir > 0 && index === order.length - 1);
+                return (
+                  <span
+                    key={label}
+                    role="button"
+                    aria-label={`Move ${item} ${label}`}
+                    aria-disabled={disabled}
+                    onClick={() => !disabled && move(item, dir)}
+                    style={{ width: 26, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 6, cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.25 : 0.85, color: top ? SELECTED_TEXT : MUTED }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>
+                  </span>
+                );
+              })}
+            </span>
             <span
               onPointerDown={(e) => handlePointerDown(item, e)}
               aria-label={`Drag to reorder ${item}`}
@@ -1442,6 +1484,21 @@ function TrustRanker({ order, onChange, onTouch }) {
           </div>
         );
       })}
+      <div
+        role="button"
+        aria-pressed={confirmed}
+        onClick={() => !confirmed && onTouch()}
+        style={{
+          marginTop: 4, justifySelf: 'center', display: 'inline-flex', alignItems: 'center', gap: 7,
+          padding: '9px 16px', borderRadius: 99, cursor: confirmed ? 'default' : 'pointer',
+          border: '1.5px solid ' + (confirmed ? 'rgba(255,199,116,.8)' : 'rgba(255,249,242,.35)'),
+          background: confirmed ? 'rgba(255,199,116,.18)' : 'transparent',
+          color: confirmed ? '#FFC774' : '#FFF9F2',
+          fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
+        }}
+      >
+        {confirmed ? '✓ Ranking saved' : 'Keep this order'}
+      </div>
     </div>
   );
 }
@@ -1593,7 +1650,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'trustedBrands', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Any ingredients or product qualities you prefer?', subtitle: 'Things like fragrance-free, vegan, or eco-friendly. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
+      { id: 'avoidIngredients', section: 'preferences', title: 'What should your products avoid, or be?', subtitle: 'Tap anything that applies — we use these to filter and rank what we suggest. Allergies are asked separately.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
       { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', type: 'trust', optional: false },
       { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
@@ -1813,16 +1870,19 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       return (
         <>
           <SearchBar value={search} onChange={setSearch} placeholder="Search preferences..." />
-          {/* The question says "prefer", but the first options ("Fragrance",
-              "Parabens", ...) mean AVOID — shown unlabeled they read as the
-              opposite. Grouped and labeled (2026-09-22 audit). */}
           {[
-            { label: 'Avoid', items: filtered.filter((o) => AVOID_GROUP.includes(o)) },
-            { label: 'Prefer', items: filtered.filter((o) => !AVOID_GROUP.includes(o) && !['Other', 'No preference'].includes(o)) },
+            ...PREFERENCE_GROUPS.map((g) => ({
+              label: g.label,
+              items: filtered.filter((o) => g.items.includes(o)),
+            })),
+            {
+              label: 'Also selected',
+              items: filtered.filter((o) => DUPLICATE_FREE_OPTIONS.includes(o) && intake.avoidIngredients.includes(o)),
+            },
             { label: null, items: filtered.filter((o) => ['Other', 'No preference'].includes(o)) },
           ].filter((g) => g.items.length).map((g) => (
-            <div key={g.label || 'rest'} style={{ marginBottom: 12 }}>
-              {g.label && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: '#FFC774', margin: '4px 0 8px' }}>{g.label}</div>}
+            <div key={g.label || 'rest'} style={{ marginBottom: 14 }}>
+              {g.label && <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#FFC774', margin: '4px 0 8px' }}>{g.label}</div>}
               <Pills options={g.items} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} exclusiveValues={['No preference']} left />
             </div>
           ))}
@@ -1834,7 +1894,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       );
     }
     if (step.type === 'fsa') return <Pills options={FSA_HSA} selected={intake.fsaHsaAnswer ? [intake.fsaHsaAnswer] : []} onToggle={(v) => set('fsaHsaAnswer', v)} />;
-    if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
+    if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} confirmed={intake.trustRankingTouched === true} />;
     if (step.type === 'textarea') return <TextAreaField value={intake.anythingElse} onChange={(v) => set('anythingElse', v)} placeholder="Share anything else that could help us personalize your recommendations." />;
 
     return null;

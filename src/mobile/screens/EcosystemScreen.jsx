@@ -37,11 +37,14 @@ export default function EcosystemScreen({
   const gridProducts = showingArea ? selectedSeat.products : myProducts;
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
-      <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onOpenProfile={onOpenProfile} />
+    // Same purple→orange hero as the landing page and intake (2026-09-22
+    // request). The gradient is on the scroll container, so it stays put
+    // while the content scrolls over it.
+    <div style={{ flex: 1, overflowY: 'auto', padding: '0 0 40px', animation: 'ay-page .25s ease-out', background: 'var(--ayna-gradient-hero, linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%))', color: '#FFF9F2' }}>
+      <MobileHeader variant="dark" transparent activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onOpenProfile={onOpenProfile} />
 
       <div style={{ padding: '18px 20px 0' }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.3 }}>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.3, color: '#FFF9F2' }}>
           {getTimeGreeting()}, {name}
         </div>
       </div>
@@ -60,13 +63,13 @@ export default function EcosystemScreen({
 
       <div style={{ padding: '18px 20px 0' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>{gridTitle}</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(16px * var(--ayna-text-scale, 1))', color: '#FFF9F2' }}>{gridTitle}</div>
           {showingArea ? (
-            <div onClick={() => setSelectedKey(null)} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: '#A2603C', cursor: 'pointer' }}>
+            <div onClick={() => setSelectedKey(null)} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: '#FFC774', cursor: 'pointer' }}>
               Show all
             </div>
           ) : (
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: '#78716C' }}>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)' }}>
               {gridProducts.length} product{gridProducts.length === 1 ? '' : 's'}
             </div>
           )}
@@ -80,7 +83,7 @@ export default function EcosystemScreen({
 
       {relatedReads.length > 0 && (
         <div style={{ padding: '24px 20px 0' }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Reads for you</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', marginBottom: 12, color: '#FFF9F2' }}>Reads for you</div>
           {relatedReads.map((a) => (
             <ArticleCard key={a.id} article={a} onClick={() => onOpenArticle && onOpenArticle(a)} />
           ))}
@@ -97,17 +100,17 @@ export default function EcosystemScreen({
           style={{
             textAlign: 'center',
             padding: 14,
-            border: '1px solid #E1D5CE',
+            border: '1px solid rgba(255,249,242,.4)',
             borderRadius: 99,
             fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
-            color: '#78716C',
+            color: '#FFF9F2',
             cursor: 'pointer',
           }}
         >
           Retake the intake
         </div>
       </div>
-      <LegalFooter />
+      <LegalFooter variant="light" />
     </div>
   );
 }

@@ -62,6 +62,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           borderRadius: 16,
           cursor: 'pointer',
           background: 'var(--ayna-surface)',
+          color: 'var(--ayna-text)',
           border: '1px solid var(--ayna-border)',
         }}
       >
@@ -118,6 +119,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       onClick={onClick}
       style={{
         background: 'var(--ayna-surface)',
+          color: 'var(--ayna-text)',
         border: '1px solid var(--ayna-border)',
         borderRadius: 18,
         padding: 10,

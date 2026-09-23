@@ -37,6 +37,7 @@ export default function MobileHeader({
   onOpenSaved,
   onGoLanding,
   onOpenProfile,
+  transparent = false,
 }) {
   const dark = variant === 'dark';
 
@@ -47,7 +48,7 @@ export default function MobileHeader({
         paddingLeft: 20,
         paddingRight: 20,
         paddingBottom: 12,
-        background: dark ? '#242A52' : '#F3EFE9',
+        background: transparent ? 'transparent' : dark ? '#242A52' : '#F3EFE9',
         color: dark ? '#FFF9F2' : '#292524',
         position: 'relative',
         zIndex: 5,
@@ -67,7 +68,7 @@ export default function MobileHeader({
             fontFamily: "'Playfair Display',serif",
             fontSize: 'calc(25px * var(--ayna-text-scale, 1))',
             letterSpacing: 0.5,
-            cursor: dark ? 'pointer' : 'default',
+            cursor: dark && onGoLanding ? 'pointer' : 'default',
           }}
         >
           ayna

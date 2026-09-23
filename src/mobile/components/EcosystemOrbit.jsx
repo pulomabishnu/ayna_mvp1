@@ -8,7 +8,7 @@ const SCALE = 0.62;
 
 // Controlled: selection state lives in the parent (EcosystemScreen) so a
 // "Show all" affordance elsewhere on the page can clear it.
-export default function EcosystemOrbit({ products = [], name = 'You', selectedKey = null, onSelectKey, onSelect, onExploreArea }) {
+export default function EcosystemOrbit({ products = [], selectedKey = null, onSelectKey, onSelect, onExploreArea }) {
   // NOTE: expects each product to already carry an `areaKey` (computed by
   // the real resolveEcosystemProductArea, once real data is wired in) —
   // this component intentionally does not resolve areas itself.
@@ -65,7 +65,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             width: 178 * 2,
             height: 178 * 2,
             borderRadius: '50%',
-            border: '1px dashed #DCCFC6',
+            border: '1px dashed rgba(255,249,242,.32)',
           }}
         />
         <div
@@ -76,7 +76,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             width: 118 * 2,
             height: 118 * 2,
             borderRadius: '50%',
-            border: '1px solid #E7DED6',
+            border: '1px solid rgba(255,249,242,.22)',
           }}
         />
         <div
@@ -87,16 +87,17 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             width: 100,
             height: 100,
             borderRadius: '50%',
-            background: 'linear-gradient(140deg,#242A52,#4E3866 60%,#A2603C)',
+            // Same orange orb + italic "you" as the landing page (OrbHero).
+            background: 'radial-gradient(circle at 34% 28%,#FFDCA8,#FFC774 46%,#E8843C)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#FFFCF9',
-            boxShadow: '0 12px 26px rgba(36,42,82,.24)',
+            color: '#3A2547',
+            boxShadow: '0 20px 44px -12px rgba(255,150,60,.7), 0 0 0 14px rgba(255,199,116,.16)',
           }}
         >
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(21px * var(--ayna-text-scale, 1))' }}>{name}</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 'calc(24px * var(--ayna-text-scale, 1))' }}>you</div>
         </div>
 
         {seats.map((seat, i) => {
@@ -123,12 +124,12 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
                 cursor: 'pointer',
                 fontFamily: "'DM Sans',sans-serif",
                 textAlign: 'center',
-                color: '#1A1714',
-                background: seat.gap ? 'transparent' : isSelected ? '#FFC774' : '#FFFFFF',
+                color: seat.gap ? '#FFF9F2' : '#1A1714',
+                background: seat.gap ? 'rgba(255,249,242,.06)' : isSelected ? '#FFC774' : '#FFFFFF',
                 borderWidth: 1.5,
                 borderStyle: seat.gap ? 'dashed' : 'solid',
-                borderColor: seat.gap ? '#DCCFC6' : isSelected ? '#E8A94F' : '#E1D5CE',
-                boxShadow: isSelected ? '0 12px 24px rgba(232,169,79,.38)' : seat.gap ? 'none' : '0 3px 10px rgba(41,37,36,.07)',
+                borderColor: seat.gap ? 'rgba(255,249,242,.5)' : isSelected ? '#E8A94F' : 'rgba(255,255,255,.9)',
+                boxShadow: isSelected ? '0 12px 24px rgba(232,169,79,.5)' : seat.gap ? 'none' : '0 8px 20px -6px rgba(20,12,40,.35)',
                 transform: isSelected ? 'scale(1.06)' : 'none',
                 transition: 'transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s',
               }}

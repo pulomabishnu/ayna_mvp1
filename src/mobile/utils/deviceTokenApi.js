@@ -25,10 +25,19 @@ export async function registerDeviceToken(deviceToken, platform) {
   });
 
   let data;
+  let parsed = true;
   try {
     data = await res.json();
   } catch {
     data = {};
+    parsed = false;
+  }
+  // A missing route on the web host answers 200 with the HTML app shell;
+  // that is NOT a successful save.
+  if (res.ok && (!parsed || !data || typeof data !== 'object')) {
+    const err = new Error('service_unavailable');
+    err.code = 'service_unavailable';
+    throw err;
   }
   if (!res.ok) {
     const err = new Error(data?.error || `HTTP ${res.status}`);

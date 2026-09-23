@@ -40,7 +40,14 @@ export async function fetchDataExport() {
     headers: { Authorization: `Bearer ${token}` },
   });
   let data;
-  try { data = await res.json(); } catch { data = {}; }
+  let parsed = true;
+  try { data = await res.json(); } catch { data = {}; parsed = false; }
+  // A missing route on the web host answers 200 with the HTML app shell.
+  if (res.ok && (!parsed || !data || typeof data !== 'object')) {
+    const err = new Error('service_unavailable');
+    err.code = 'service_unavailable';
+    throw err;
+  }
   if (!res.ok) {
     const err = new Error(data?.error || `HTTP ${res.status}`);
     err.code = data?.error || `http_${res.status}`;
@@ -63,7 +70,14 @@ export async function requestAccountDeletion() {
   });
 
   let data;
-  try { data = await res.json(); } catch { data = {}; }
+  let parsed = true;
+  try { data = await res.json(); } catch { data = {}; parsed = false; }
+  // A missing route on the web host answers 200 with the HTML app shell.
+  if (res.ok && (!parsed || !data || typeof data !== 'object')) {
+    const err = new Error('service_unavailable');
+    err.code = 'service_unavailable';
+    throw err;
+  }
   if (!res.ok) {
     const err = new Error(data?.error || `HTTP ${res.status}`);
     err.code = data?.error || `http_${res.status}`;

@@ -18,6 +18,7 @@ export default function ArticleCard({ article, onClick }) {
         display: 'flex',
         gap: 12,
         background: '#FFFFFF',
+        color: '#1A1714',
         border: '1px solid #E1D5CE',
         borderRadius: 16,
         padding: '12px 14px',

@@ -14,7 +14,7 @@ import {
   sendPhoneVerificationCode,
   confirmPhoneVerificationCode,
 } from '../../utils/notificationPreferencesApi.js';
-import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportApi.js';
+import { requestAccountDeletion } from '../../utils/dataExportApi.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
 import { denyConsent, getStoredConsent, grantConsent } from '../../../utils/analyticsConsent.js';
@@ -629,8 +629,8 @@ function sortByRelevance(startups, quizAnswers) {
 const CLINICAL_BADGES = new Set(['Clinically Backed', 'Doctor-Founded', 'FDA-Cleared']);
 
 function matchesFilter(startup, filter) {
-  if (filter === 'women') return startup.womenFounded === true;
-  if (filter === 'preseed') return startup.stage === 'Pre-Seed';
+  if (filter === 'women') return startup.womenFounded === true || (startup.badges || []).some((b) => /women[- ]?(founded|led)/i.test(String(b)));
+  if (filter === 'preseed') return /^pre[- ]?seed$/i.test(String(startup.stage || '').trim());
   if (filter === 'clinical') return (startup.badges || []).some((b) => CLINICAL_BADGES.has(b));
   return true;
 }
@@ -643,18 +643,23 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
   const [startups, setStartups] = useState([]);
   const [loadState, setLoadState] = useState('loading');
 
+  const [reloadKey, setReloadKey] = useState(0);
+
   useEffect(() => {
     let cancelled = false;
     fetch(apiUrl('/api/startups'))
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error('bad response'))))
       .then((data) => {
         if (cancelled) return;
-        setStartups(data.startups || []);
+        if (!data || !Array.isArray(data.startups)) throw new Error('bad payload');
+        setStartups(data.startups.filter((s) => s && s.id && s.name));
         setLoadState('ready');
       })
       .catch(() => { if (!cancelled) setLoadState('error'); });
     return () => { cancelled = true; };
-  }, []);
+  }, [reloadKey]);
+
+  const reload = () => { setLoadState('loading'); setReloadKey((k) => k + 1); };
 
   const ranked = useMemo(() => sortByRelevance(startups, quizAnswers), [startups, quizAnswers]);
   const filtered = filter === 'all' ? ranked : ranked.filter((s) => matchesFilter(s, filter));
@@ -697,14 +702,18 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
             <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading startups…</div>
           )}
           {loadState === 'error' && (
-            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Couldn't load startups right now — try again shortly.</div>
+            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>
+              Couldn't load startups right now.
+              <div><div onClick={reload} role="button" style={{ display: 'inline-block', marginTop: 12, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div></div>
+            </div>
           )}
           {loadState === 'ready' && filtered.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No startups match that filter yet.</div>
+            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>{startups.length === 0 ? 'New founders are being added — check back soon.' : 'No startups match that filter yet.'}</div>
           )}
 
           {filtered.map((s) => {
-            const href = s.url || s.waitlistUrl;
+            // "Join waitlist" should land on the waitlist, "View brand" on the site.
+            const href = s.productReleased ? (s.url || s.waitlistUrl) : (s.waitlistUrl || s.url);
             const openLink = href ? () => window.open(href, '_blank', 'noopener,noreferrer') : undefined;
             return s.featured ? (
               <div key={s.id} onClick={openLink} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, overflow: 'hidden', cursor: openLink ? 'pointer' : 'default' }}>
@@ -733,12 +742,11 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
                     </div>
                   )}
                   <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-                    <div style={{ flex: 1, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: 11, borderRadius: 99, textAlign: 'center', cursor: 'pointer' }}>
-                      {s.productReleased ? 'View brand' : 'Join waitlist'}
-                    </div>
-                    <div style={{ width: 44, border: '1px solid var(--ayna-border)', borderRadius: 99, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="1.8" strokeLinecap="round" style={{ stroke: 'var(--ayna-brown)' }}><path d="M12 20s-7-4.5-7-9.4A4.1 4.1 0 0 1 12 7.6a4.1 4.1 0 0 1 7 3c0 4.9-7 9.4-7 9.4Z" /></svg>
-                    </div>
+                    {href && (
+                      <div style={{ flex: 1, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: 11, borderRadius: 99, textAlign: 'center', cursor: 'pointer' }}>
+                        {s.productReleased || !s.waitlistUrl ? 'Visit website' : 'Join waitlist'}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -934,6 +942,8 @@ const PREFERENCES_ERROR_MESSAGES = {
   load_failed: "Couldn't load your preferences. Try again shortly.",
   save_failed: "That didn't save — try again.",
   phone_not_verified: 'Verify your phone first.',
+  service_unavailable: "Settings can't be saved right now — the server is updating. Try again in a few minutes.",
+  unauthorized: 'Please sign in again to change this.',
 };
 
 function friendlyPreferencesError(code) {
@@ -1045,18 +1055,32 @@ function PreferencesScreen({
     fetchPrefs();
   };
 
-  const showToast = (message) => {
+  const [toastTone, setToastTone] = useState('error');
+  const [savingField, setSavingField] = useState('');
+  const showToast = (message, tone = 'error') => {
     setToast(message);
+    setToastTone(tone);
     setTimeout(() => setToast(''), 3500);
   };
 
+  // Optimistic flip, then adopt the server's saved row (the source of truth)
+  // or roll back with a specific message. One save per field at a time so a
+  // quick double tap can't race itself into the wrong state.
   const patchField = (apiField, value, clientField) => {
-    const previous = prefs;
+    if (savingField === clientField) return;
+    const previousValue = prefs?.[clientField];
+    setSavingField(clientField);
     setPrefs((p) => ({ ...p, [clientField]: value }));
-    patchNotificationPreferences({ [apiField]: value }).catch((e) => {
-      setPrefs(previous);
-      showToast(friendlyPreferencesError(e.code || e.message));
-    });
+    patchNotificationPreferences({ [apiField]: value })
+      .then((saved) => {
+        if (saved && typeof saved === 'object' && clientField in saved) setPrefs(saved);
+        showToast(`${value ? 'On' : 'Off'} — saved to your account.`, 'success');
+      })
+      .catch((e) => {
+        setPrefs((p) => ({ ...p, [clientField]: previousValue }));
+        showToast(friendlyPreferencesError(e.code || e.message));
+      })
+      .finally(() => setSavingField(''));
   };
 
   // Mirrors the toggle into MobileApp's app-wide `personalizeWithData` state
@@ -1064,12 +1088,17 @@ function PreferencesScreen({
   // right away everywhere, not just once this screen's own `prefs` update
   // lands) and rolls that mirror back too if the save fails.
   const handlePersonalizeToggle = () => {
+    if (savingField === 'personalize') return;
     const next = !personalizeWithData;
+    setSavingField('personalize');
     onPersonalizeWithDataChange && onPersonalizeWithDataChange(next);
-    patchNotificationPreferences({ personalize_with_data_enabled: next }).catch((e) => {
-      onPersonalizeWithDataChange && onPersonalizeWithDataChange(!next);
-      showToast(friendlyPreferencesError(e.code || e.message));
-    });
+    patchNotificationPreferences({ personalize_with_data_enabled: next })
+      .then(() => showToast(`${next ? 'On' : 'Off'} — saved to your account.`, 'success'))
+      .catch((e) => {
+        onPersonalizeWithDataChange && onPersonalizeWithDataChange(!next);
+        showToast(friendlyPreferencesError(e.code || e.message));
+      })
+      .finally(() => setSavingField(''));
   };
 
   // Best-effort mirror only, same as Night mode above — the real local
@@ -1084,7 +1113,7 @@ function PreferencesScreen({
   const handleClearHistory = () => {
     onClearAskAynaHistory && onClearAskAynaHistory();
     setClearHistoryConfirm(false);
-    showToast('Ask Ayna history cleared.');
+    showToast('Ask Ayna history cleared.', 'success');
   };
 
   const handleJoinNewsletter = () => {
@@ -1273,7 +1302,7 @@ function PreferencesScreen({
         <div style={{ marginTop: 20, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center', padding: '0 10px' }}>Ayna never sells your health data.</div>
 
         {toast && (
-          <div style={{ position: 'fixed', left: 20, right: 20, bottom: 24, background: '#B4402A', color: '#FFF9F2', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, padding: '12px 16px', borderRadius: 14, textAlign: 'center', boxShadow: '0 14px 30px -12px rgba(180,64,42,.5)' }}>
+          <div role={toastTone === 'error' ? 'alert' : 'status'} style={{ position: 'fixed', left: 20, right: 20, bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))', zIndex: 70, background: toastTone === 'error' ? '#B4402A' : '#2F6B4F', color: '#FFF9F2', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, padding: '12px 16px', borderRadius: 14, textAlign: 'center', boxShadow: '0 14px 30px -12px rgba(0,0,0,.35)' }}>
             {toast}
           </div>
         )}
@@ -1315,16 +1344,26 @@ function ChannelsScreen({ onBack }) {
   };
 
   const patchField = (apiField, value, clientField) => {
-    const previous = prefs;
+    const previousValue = prefs?.[clientField];
     setPrefs((p) => ({ ...p, [clientField]: value }));
-    patchNotificationPreferences({ [apiField]: value }).catch((e) => {
-      setPrefs(previous);
-      showToast(friendlyPreferencesError(e.code || e.message));
-    });
+    patchNotificationPreferences({ [apiField]: value })
+      .then((saved) => {
+        if (saved && typeof saved === 'object' && clientField in saved) setPrefs(saved);
+      })
+      .catch((e) => {
+        setPrefs((p) => ({ ...p, [clientField]: previousValue }));
+        showToast(friendlyPreferencesError(e.code || e.message));
+      });
   };
 
   const selectChannel = (key) => {
     if (!prefs || key === prefs.deliveryChannel) return;
+    // Push and email delivery aren't live yet — say so instead of a tap that
+    // silently does nothing.
+    if (key === 'push' || key === 'email') {
+      showToast(`${key === 'push' ? 'Push' : 'Email'} alerts are coming soon. Text message is the live channel today.`);
+      return;
+    }
     if (key === 'sms' && !prefs.phoneVerified) {
       setPhoneVerifyOpen(true);
       return;
@@ -1492,7 +1531,7 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
           <div onClick={onOpenPrivacyData} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Privacy & data</div>
-              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, what we hold, exports and deletion.</div>
+              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, what we hold, and deletion.</div>
             </div>
             <ChevronIcon />
           </div>
@@ -1534,7 +1573,7 @@ function readAnalyticsEnabled() {
   return getStoredConsent() === 'granted';
 }
 
-function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount, authUser }) {
+function PrivacyDataScreen({ onBack, onOpenDeleteAccount, authUser }) {
   const [analyticsEnabled, setAnalyticsEnabled] = useState(readAnalyticsEnabled);
   const [aiOverride, setAiOverride] = useState(null);
   const [privacyStatus, setPrivacyStatus] = useState('');
@@ -1705,9 +1744,8 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
 // Real disclosures reflecting how ayna actually works today — the third
 // parties named here (Supabase, Anthropic/OpenAI/Gemini, PostHog, Twilio,
 // Resend) are the app's actual real integrations (see .env.example), and
-// the rights described map to screens that already exist and work (Manage
-// my data / Download my data, analytics and AI permission toggles, and direct
-// in-app account deletion) rather than promises of features that do not exist.
+// the rights described map to screens that already exist and work (analytics
+// and AI permission toggles, and direct in-app account deletion) rather than promises of features that do not exist.
 //
 // This is a good-faith draft written to cover Washington's My Health My
 // Data Act's (MHMDA) required disclosures. It has NOT been reviewed by a
@@ -1845,16 +1883,38 @@ const LICENSE_GROUP_STYLES = {
   '0BSD': { tint: '#F1EDE6', ink: '#6B6257' },
 };
 
-function downloadText(content, filename) {
-  const blob = new Blob([content], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+// iOS WKWebView ignores <a download> on blob URLs (the button silently did
+// nothing in the app), so prefer the native share sheet, then the clipboard,
+// and only fall back to a blob download in desktop browsers.
+async function shareOrDownloadText(content, filename) {
+  try {
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      await navigator.share({ title: filename, text: content });
+      return 'shared';
+    }
+  } catch (e) {
+    if (e?.name === 'AbortError') return 'cancelled';
+  }
+  try {
+    if (navigator?.clipboard?.writeText) {
+      await navigator.clipboard.writeText(content);
+      return 'copied';
+    }
+  } catch { /* fall through */ }
+  try {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return 'downloaded';
+  } catch {
+    return 'failed';
+  }
 }
 
 function buildLicensesText(grouped) {
@@ -1868,6 +1928,7 @@ function buildLicensesText(grouped) {
 }
 
 function OpenSourceLicensesScreen({ onBack }) {
+  const [licenceStatus, setLicenceStatus] = useState('');
   const grouped = useMemo(() => {
     const byLicense = new Map();
     for (const pkg of OPEN_SOURCE_PACKAGES) {
@@ -1919,12 +1980,16 @@ function OpenSourceLicensesScreen({ onBack }) {
         <div style={{ marginTop: 24, background: 'var(--ayna-surface)', border: '1px dashed var(--ayna-border)', borderRadius: 24, padding: '16px 18px', textAlign: 'center' }}>
           <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>Full licence texts ship with every build.</div>
           <div
-            onClick={() => downloadText(buildLicensesText(grouped), 'ayna-open-source-licences.txt')}
+            onClick={async () => {
+              const r = await shareOrDownloadText(buildLicensesText(grouped), 'ayna-open-source-licences.txt');
+              setLicenceStatus(r === 'copied' ? 'Licences copied to your clipboard.' : r === 'failed' ? 'Could not export the licences on this device.' : r === 'downloaded' ? 'Licences downloaded.' : '');
+            }}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 10, background: '#242A52', color: '#FFFCF9', borderRadius: 99, padding: '10px 17px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, cursor: 'pointer' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFCF9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12" /><path d="M7 11l5 5 5-5" /><path d="M4 21h16" /></svg>
-            Download licences.txt
+            Share licences
           </div>
+          {licenceStatus && <div role="status" style={{ marginTop: 8, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{licenceStatus}</div>}
         </div>
         <LegalFooter />
       </div>
@@ -2128,175 +2193,6 @@ function ResearchSourcesScreen({ onBack }) {
   );
 }
 
-/* ------------------------------ Manage my data ------------------------------ */
-
-function humanizeKey(key) {
-  return String(key)
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/^./, (c) => c.toUpperCase())
-    .trim();
-}
-
-// Recursive on purpose — the health intake profile in particular nests
-// arrays of objects (productHistory, trustRanking, etc.), and this is a
-// generic "show me everything" viewer rather than a hand-built form field
-// per intake question (that's IntakeScreen's job, not this screen's).
-function formatValue(value) {
-  if (value === null || value === undefined || value === '') return '—';
-  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
-  if (Array.isArray(value)) {
-    if (!value.length) return '—';
-    return value.map((v) => formatValue(v)).join(' · ');
-  }
-  if (typeof value === 'object') {
-    const entries = Object.entries(value).filter(([, v]) => v !== null && v !== undefined && v !== '' && !(Array.isArray(v) && v.length === 0));
-    if (!entries.length) return '—';
-    return entries.map(([k, v]) => `${humanizeKey(k)}: ${formatValue(v)}`).join(', ');
-  }
-  return String(value);
-}
-
-function DataSection({ title, rows }) {
-  const visibleRows = rows.filter(([, v]) => v !== null && v !== undefined && v !== '' && !(Array.isArray(v) && v.length === 0));
-  if (!visibleRows.length) return null;
-  return (
-    <div style={{ marginBottom: 22 }}>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>{title}</div>
-      <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-        {visibleRows.map(([key, value], i) => (
-          <div key={key} style={{ display: 'flex', gap: 14, padding: '13px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)' }}>
-            <div style={{ flex: 'none', width: 120, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{humanizeKey(key)}</div>
-            <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', lineHeight: 1.5, wordBreak: 'break-word' }}>{formatValue(value)}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function downloadJson(data, filenamePrefix) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${filenamePrefix}-${new Date().toISOString().slice(0, 10)}.json`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
-
-// Real backend: GET /api/export-data, service-role-authenticated, pulling
-// live from the same tables the rest of the app writes to (phone_numbers,
-// notification_preferences, health_intakes, user_ecosystems) — nothing
-// here is placeholder or cached. Also serves "Download my data": both the
-// Privacy & data screen's two separate rows and Account information's
-// "Download a copy" row all land here now, rather than three different
-// half-built flows for the same real feature.
-function ManageDataScreen({ onBack }) {
-  const [loadState, setLoadState] = useState('loading'); // 'loading' | 'signed_out' | 'error' | 'ready'
-  const [data, setData] = useState(null);
-  const [copied, setCopied] = useState(false);
-
-  // Initial state is already 'loading', so the mount effect below doesn't
-  // need to (and per the react-hooks lint rule, shouldn't) set it again
-  // synchronously — only the retry button, which isn't running inside an
-  // effect, does that explicitly. Same pattern as PreferencesScreen above.
-  const fetchData = () => {
-    fetchDataExport()
-      .then((result) => { setData(result); setLoadState('ready'); })
-      .catch((e) => setLoadState(e instanceof NotSignedInError ? 'signed_out' : 'error'));
-  };
-
-  useEffect(() => { fetchData(); }, []);
-
-  const retry = () => {
-    setLoadState('loading');
-    fetchData();
-  };
-
-  const handleDownload = () => data && downloadJson(data, 'ayna-my-data');
-  const handleCopy = async () => {
-    if (!data) return;
-    try {
-      await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    } catch { /* clipboard unavailable in this context — download still works */ }
-  };
-
-  const hasAnyData = data && (data.phone || data.healthIntake || (data.savedProducts || []).length || data.notificationPreferences);
-
-  return (
-    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <BackHeader title="Manage my data" onBack={onBack} />
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
-        <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 20 }}>
-          Every field below is read live from your account — nothing here is cached or approximate.
-        </div>
-
-        {loadState === 'loading' && (
-          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading your data…</div>
-        )}
-
-        {loadState === 'signed_out' && (
-          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
-            Sign in to see and download your data.
-          </div>
-        )}
-
-        {loadState === 'error' && (
-          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, textAlign: 'center' }}>
-            <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load your data.</div>
-            <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
-          </div>
-        )}
-
-        {loadState === 'ready' && data && (
-          <>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 22 }}>
-              <div onClick={handleDownload} style={{ flex: 1, textAlign: 'center', padding: '13px 0', borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}>
-                Download as JSON
-              </div>
-              <div onClick={handleCopy} style={{ flex: 1, textAlign: 'center', padding: '13px 0', borderRadius: 99, border: '1px solid var(--ayna-border)', color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}>
-                {copied ? 'Copied!' : 'Copy raw data'}
-              </div>
-            </div>
-
-            <DataSection title="Account" rows={[
-              ['email', data.account?.email],
-              ['emailVerified', data.account?.emailVerified],
-              ['createdAt', data.account?.createdAt],
-              ['signInMethods', (data.account?.signInMethods || []).map((m) => m.provider)],
-            ]} />
-
-            <DataSection title="Phone" rows={[
-              ['number', data.phone?.number],
-              ['verified', data.phone?.verified],
-            ]} />
-
-            <DataSection title="Notification preferences" rows={Object.entries(data.notificationPreferences || {})} />
-
-            <DataSection title="Health intake" rows={Object.entries(data.healthIntake || {})} />
-
-            <DataSection
-              title="Saved products"
-              rows={(data.savedProducts || []).map((p, i) => [`item${i + 1}`, { name: p.product_name, brand: p.brand, category: p.category, saved: p.is_saved }])}
-            />
-
-            {!hasAnyData && (
-              <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, padding: '0 4px' }}>
-                Nothing else on file yet — this fills in as you use ayna.
-              </div>
-            )}
-          </>
-        )}
-        <LegalFooter />
-      </div>
-    </div>
-  );
-}
-
 /* --------------------------- Account information --------------------------- */
 
 function formatMemberSince(dateStr) {
@@ -2360,7 +2256,7 @@ function AccountRow({ title, sub, value, badge, badgeTone = 'neutral', onClick, 
 // either is real. Delete account opens a real in-app confirm flow
 // (DeleteAccountScreen) backed by account_deletion_requests, not an email
 // link.
-function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile, onOpenManageData, onOpenDeleteAccount }) {
+function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile, onOpenDeleteAccount }) {
   const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
   const [phone, setPhone] = useState({ loading: true, number: '', verified: false });
   // Real Supabase auth.updateUser() call, same first_name/full_name fields
@@ -3163,28 +3059,46 @@ function ContactScreen({ onBack, authUser, name: accountName }) {
 
   const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
+  // Same rules as api/contact.js. Validated on tap with a specific message —
+  // the Send button used to be silently disabled until every rule passed,
+  // which looked like a broken form.
+  const validationError = () => {
+    if (form.name.trim().length < 2) return 'Please enter your name.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return 'Please enter a valid email address.';
+    if (!CONTACT_REASONS.includes(form.reason)) return 'Please choose what we can help with.';
+    if (form.subject.trim().length < 2) return 'Please enter a subject.';
+    if (form.message.trim().length < 10) return 'Please include a little more detail in your message (at least 10 characters).';
+    return '';
+  };
+
   const submit = async () => {
     if (status === 'sending') return;
+    const invalid = validationError();
+    if (invalid) {
+      setStatus('error');
+      setError(invalid);
+      return;
+    }
     setStatus('sending');
     setError('');
     try {
       const res = await fetch(apiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, name: form.name.trim(), email: form.email.trim(), subject: form.subject.trim(), message: form.message.trim() }),
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.error || 'We could not send your message. Please try again.');
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data || data.ok === false) throw new Error(data?.error || 'We could not send your message. Please try again.');
       setStatus('sent');
-      setForm({ name: '', email: '', reason: '', subject: '', message: '' });
+      setForm((f) => ({ ...f, reason: '', subject: '', message: '' }));
     } catch (err) {
       setStatus('error');
       setError(err?.message || 'We could not send your message. Please try again.');
     }
   };
 
-  const canSend = form.name.trim().length >= 2 && form.email.trim() && form.reason && form.subject.trim().length >= 2 && form.message.trim().length >= 10;
-  const sendReady = canSend && status !== 'sending';
+  const canSend = !validationError();
+  const sendReady = status !== 'sending';
 
   const fieldStyle = { border: '1px solid #ded9e4', borderRadius: 10, background: '#fff', padding: 14, fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: '#1A1714', width: '100%', boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit' };
   const labelStyle = { fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#4a4356', marginBottom: 7 };
@@ -3223,7 +3137,7 @@ function ContactScreen({ onBack, authUser, name: accountName }) {
               {reasonOpen && (
                 <div style={{ marginTop: 6, border: '1px solid #ded9e4', borderRadius: 10, background: '#fff', overflow: 'hidden', boxShadow: '0 14px 28px -18px rgba(42,31,78,.45)' }}>
                   {CONTACT_REASONS.map((r, i) => (
-                    <div key={r} onClick={() => { setForm((f) => ({ ...f, reason: r })); setReasonOpen(false); }} style={{ padding: '12px 14px', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: '#1A1714', cursor: 'pointer', borderTop: i === 0 ? 'none' : '1px solid #f0ecf3' }}>{r}</div>
+                    <div key={r} role="option" aria-selected={form.reason === r} onClick={() => { setForm((f) => ({ ...f, reason: r })); setReasonOpen(false); if (status === 'error') { setStatus('idle'); setError(''); } }} style={{ padding: '12px 14px', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: '#1A1714', cursor: 'pointer', borderTop: i === 0 ? 'none' : '1px solid #f0ecf3' }}>{r}</div>
                   ))}
                 </div>
               )}
@@ -3239,12 +3153,12 @@ function ContactScreen({ onBack, authUser, name: accountName }) {
           </div>
 
           {status === 'sent' && (
-            <div style={{ marginTop: 16, padding: '11px 13px', borderRadius: 9, background: '#f3f6f1', color: '#435143', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
+            <div role="status" style={{ marginTop: 16, padding: '11px 13px', borderRadius: 9, background: '#f3f6f1', color: '#435143', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
               Thanks. Your message has been sent to the ayna team.
             </div>
           )}
           {status === 'error' && (
-            <div style={{ marginTop: 16, padding: '11px 13px', borderRadius: 9, background: '#fff2f0', color: '#8b342d', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
+            <div role="alert" style={{ marginTop: 16, padding: '11px 13px', borderRadius: 9, background: '#fff2f0', color: '#8b342d', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
               {error}
             </div>
           )}
@@ -3253,12 +3167,14 @@ function ContactScreen({ onBack, authUser, name: accountName }) {
             onClick={() => sendReady && submit()}
             role="button"
             aria-label="Send message"
+            aria-disabled={!sendReady}
             style={{
               marginTop: 20, textAlign: 'center', borderRadius: 99, padding: 16, fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
-              background: sendReady ? '#242A52' : '#E4DFE8',
-              color: sendReady ? '#fff' : '#A8A29E',
-              cursor: sendReady ? 'pointer' : 'not-allowed',
-              boxShadow: sendReady ? '0 14px 26px -14px rgba(36,42,82,.7)' : 'none',
+              background: '#242A52',
+              color: '#fff',
+              opacity: !sendReady ? 0.6 : canSend ? 1 : 0.82,
+              cursor: sendReady ? 'pointer' : 'progress',
+              boxShadow: canSend ? '0 14px 26px -14px rgba(36,42,82,.7)' : 'none',
             }}
           >
             {status === 'sending' ? 'Sending…' : 'Send message'}
@@ -3396,7 +3312,6 @@ export default function ProfileFlow({
         quizAnswers={quizAnswers}
         onOpenPassword={() => pushScreen('password')}
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
-        onOpenManageData={() => pushScreen('manageData')}
         onOpenDeleteAccount={() => pushScreen('deleteAccount')}
       />
     );
@@ -3406,7 +3321,6 @@ export default function ProfileFlow({
     body = (
       <PrivacyDataScreen
         onBack={goBack}
-        onOpenManageData={() => pushScreen('manageData')}
         onOpenDeleteAccount={() => pushScreen('deleteAccount')}
         authUser={authUser}
       />
@@ -3431,8 +3345,6 @@ export default function ProfileFlow({
     body = <TypefacesScreen onBack={goBack} />;
   } else if (screen === 'researchSources') {
     body = <ResearchSourcesScreen onBack={goBack} />;
-  } else if (screen === 'manageData') {
-    body = <ManageDataScreen onBack={goBack} />;
   }
 
   return (
