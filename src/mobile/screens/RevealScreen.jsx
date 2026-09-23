@@ -11,7 +11,7 @@ export default function RevealScreen({
   const caption = `${productCount} products · ${readCount} reads · ${goalCount} goal${goalCount === 1 ? '' : 's'} you named`;
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', background: 'linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%)', color: '#FFF9F2', position: 'relative', fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out' }}>
+    <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', background: 'linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%)', color: '#FFF9F2', position: 'relative', fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out' }}>
       <div
         style={{
           position: 'absolute',

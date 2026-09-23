@@ -1201,7 +1201,11 @@ function PreferencesScreen({
               <ToggleRow first title="Notifications" sub="Safety recall alerts for products you track — as a notification on this phone, or by text if you choose Text message." on={prefs.notificationsEnabled} onClick={() => {
                 const next = !prefs.notificationsEnabled;
                 patchField('notifications_enabled', next, 'notificationsEnabled');
-                if (next && pushSupported()) enablePushNotifications();
+                if (next && pushSupported()) {
+                  enablePushNotifications().then((result) => {
+                    if (result === 'denied') showToast('Saved — but notifications are off for ayna in iPhone Settings → ayna → Notifications, so alerts can only come by text.');
+                  });
+                }
               }} />
               <ToggleRow title="Updates" sub="New matches and restocks. Coming soon — we'll use this setting when it launches." on={prefs.updatesEnabled} onClick={() => patchField('updates_enabled', !prefs.updatesEnabled, 'updatesEnabled')} />
               <DrillRow title="Channels & quiet hours" sub={channelsSummary} onClick={onOpenChannels} />
@@ -1495,7 +1499,7 @@ function ChannelsScreen({ onBack }) {
 
             <SectionLabel>Quiet hours</SectionLabel>
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
-              <ToggleRow first title="Quiet hours" sub="Saved for when push alerts launch. Today's text alerts already go out once a day in the morning (8–9am ET), never overnight." on={prefs.quietHoursEnabled} onClick={() => patchField('quiet_hours_enabled', !prefs.quietHoursEnabled, 'quietHoursEnabled')} />
+              <ToggleRow first title="Quiet hours" sub="Recall alerts (push and text) already go out once a day in the morning, around 9am ET — never overnight. Your quiet hours are saved for any future alert types." on={prefs.quietHoursEnabled} onClick={() => patchField('quiet_hours_enabled', !prefs.quietHoursEnabled, 'quietHoursEnabled')} />
               {prefs.quietHoursEnabled && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '4px 0 16px' }}>
                   <label style={{ flex: 1 }}>

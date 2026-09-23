@@ -462,8 +462,7 @@ export default function MobileApp() {
       // Same real save desktop's App.jsx makes after quiz completion — was
       // never ported to mobile (a real signed-in session didn't exist here
       // yet at the time), so a mobile-only user's intake answers lived on
-      // that one device only, invisible to "Manage/Download my data" and to
-      // that user on any other device. No-ops harmlessly when signed out.
+      // that one device only, invisible to that user on any other device. No-ops harmlessly when signed out.
       const rawIntake = quizAnswers?.fullHealthIntake || quizAnswers;
       saveHealthIntakeForCurrentUser(rawIntake).catch(() => {});
       setScreen('building');

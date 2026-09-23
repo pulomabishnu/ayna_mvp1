@@ -114,7 +114,10 @@ export function usePushNotifications(userId, onOpenNotification) {
   }, []);
 
   useEffect(() => {
-    if (!token || !userId) return;
+    // Signed out: forget what was sent, so signing back in (even as the same
+    // user, whose token sign-out just unlinked) registers the phone again.
+    if (!userId) { sentRef.current = null; return; }
+    if (!token) return;
     const key = `${token}:${userId}`;
     if (sentRef.current === key) return;
     registerDeviceToken(token, 'ios')
