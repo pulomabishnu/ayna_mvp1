@@ -23,6 +23,29 @@ function firstSentence(text, max = 140) {
   return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
 
+/**
+ * First `maxSentences` sentences (paragraph breaks treated as sentence
+ * breaks too), so this compact rail card gets a short clinician note even
+ * for products with no authored doctorOpinionShort — falls back to slicing
+ * on the full doctorOpinion, which for some products runs 4-5 paragraphs
+ * and blew out this card. Flagged live by a user 2026-09-24: "way too long."
+ */
+function firstSentences(text, maxSentences = 3, maxChars = 480) {
+  const t = String(text || '').trim().replace(/\n+/g, ' ');
+  if (!t) return '';
+  const sentences = t.match(/[^.!?]+[.!?]+(\s|$)/g) || [t];
+  let out = sentences.slice(0, maxSentences).join('').trim();
+  if (!out) out = t;
+  if (out.length > maxChars) {
+    const truncated = out.slice(0, maxChars);
+    const lastSpace = truncated.lastIndexOf(' ');
+    out = `${(lastSpace > maxChars * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
+  } else if (sentences.length > maxSentences) {
+    out = `${out}…`;
+  }
+  return out;
+}
+
 export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0, hasEcosystemContext = false, isInEcosystem = false, whyItWorks = null, considerations = null }) {
   // A product can be genuinely in the user's ecosystem while still scoring no
   // quiz-match labels (e.g. it was added manually, or its tags don't map to
@@ -37,7 +60,11 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
   // Prefers a shorter, results-first version when a catalog entry has one —
   // this rail card has much less width than the ayna-summary tab's
   // full-width Clinician opinion card, which always gets the full text.
-  const clinicianNote = product.doctorOpinionShort || product.doctorOpinion || product.clinicianOpinion || null;
+  // When a product has no authored doctorOpinionShort, auto-trim the full
+  // doctorOpinion to ~3 sentences rather than dumping the whole thing here.
+  const clinicianNote = product.doctorOpinionShort
+    || firstSentences(product.doctorOpinion || product.clinicianOpinion, 3)
+    || null;
   // Backs the clinician-opinion claim with an actual link to check it against
   // — a stated claim with no source a reader can click isn't evidence, it's
   // just a bigger claim. Flagged live 2026-08-25. Skips 'scientific' links
