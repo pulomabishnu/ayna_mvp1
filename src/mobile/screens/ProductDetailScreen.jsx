@@ -33,6 +33,29 @@ function firstSentence(text, max = 140) {
   return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
 
+/**
+ * First `maxSentences` sentences, so the Evidence mode's condensed Clinician
+ * opinion card gets a short note even for products with no authored
+ * doctorOpinionShort — falls back to slicing the full doctorOpinion, which
+ * for some products runs 4-5 paragraphs and blew out this card. Flagged
+ * live by a user 2026-09-24: "way too long."
+ */
+function firstSentences(text, maxSentences = 3, maxChars = 480) {
+  const t = String(text || '').trim().replace(/\n+/g, ' ');
+  if (!t) return '';
+  const sentences = t.match(/[^.!?]+[.!?]+(\s|$)/g) || [t];
+  let out = sentences.slice(0, maxSentences).join('').trim();
+  if (!out) out = t;
+  if (out.length > maxChars) {
+    const truncated = out.slice(0, maxChars);
+    const lastSpace = truncated.lastIndexOf(' ');
+    out = `${(lastSpace > maxChars * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
+  } else if (sentences.length > maxSentences) {
+    out = `${out}…`;
+  }
+  return out;
+}
+
 function humanizeTag(tag) {
   return String(tag || '').replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
@@ -759,7 +782,7 @@ export default function ProductDetailScreen({
             {(doctorOpinionShort || doctorOpinion) && (
               <div style={CARD}>
                 <div style={EYEBROW}>Clinician opinion</div>
-                <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.62, marginTop: 10 }}>{doctorOpinionShort || doctorOpinion}</div>
+                <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.62, marginTop: 10 }}>{doctorOpinionShort || firstSentences(doctorOpinion, 3)}</div>
                 {clinicianAttribution && <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', marginTop: 11 }}>{clinicianAttribution}</div>}
                 <ChipRow chips={[...clinicianChips, ...clinicianCitationChips]} />
               </div>
