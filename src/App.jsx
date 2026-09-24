@@ -26,7 +26,7 @@ const BrandPartners = React.lazy(() => import('./components/BrandPartners'));
 const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
 const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
-import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById } from './data/products';
+import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage } from './data/products';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -474,6 +474,7 @@ function App() {
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
+  const hasStatedQuizLifeStage = useMemo(() => hasStatedLifeStage(quizResults), [quizResults]);
   const hasCompletedPersonalization = useMemo(() => {
     if (!quizResults) return false;
     if (quizResults?.personalizationCompleted === true) return true;
@@ -3214,6 +3215,7 @@ function App() {
             onToggleSaved={toggleSavedProduct}
             hasQuizFrustrations={!!(quizResults?.frustrations?.length)}
             hasHealthImport={hasHealthImport}
+            hasStatedLifeStage={hasStatedQuizLifeStage}
             quizResults={quizResults}
             healthProfile={healthProfile}
             user={user}

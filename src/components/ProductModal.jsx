@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { getAppSessionId } from '../utils/conversationId';
 import ProductEvidenceRail from './ProductEvidenceRail';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
+import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, getRecommendationExplanation, CATEGORY_LABELS } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../utils/partnerBrands';
@@ -545,6 +545,18 @@ export default function ProductModal({
     () => getProfileMatchPercentForProduct(product, quizResults, healthProfile),
     [product, quizResults, healthProfile]
   );
+  // A per-product LLM-written narrative (from ecosystem generation), when
+  // present, takes precedence over the generic engine explanation — same
+  // precedence MyEcosystem.jsx already uses for this same product shape.
+  const recommendationExplanation = useMemo(
+    () => getRecommendationExplanation(product, quizResults, healthProfile),
+    [product, quizResults, healthProfile]
+  );
+  const useLlmNarrative = product?.whyItWorks != null && String(product.whyItWorks).trim().length > 0;
+  const whyItWorks = useLlmNarrative ? String(product.whyItWorks).trim() : recommendationExplanation.whyItWorks;
+  const recommendationConsiderations = useLlmNarrative
+    ? (String(product.considerations || '').trim() || null)
+    : recommendationExplanation.considerations;
   const hasEcosystemContext = isInEcosystem || (Array.isArray(ecosystemProducts) && ecosystemProducts.length > 0);
   const matchPercent = profileMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
@@ -1470,6 +1482,10 @@ export default function ProductModal({
               matchLabels={matchLabels}
               matchPercent={matchPercent}
               aynaReviewCount={aynaReviewCount}
+              hasEcosystemContext={hasEcosystemContext}
+              isInEcosystem={isInEcosystem}
+              whyItWorks={whyItWorks}
+              considerations={recommendationConsiderations}
             />
           </div>
         )}

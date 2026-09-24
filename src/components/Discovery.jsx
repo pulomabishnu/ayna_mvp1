@@ -410,7 +410,7 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, hasStatedLifeStage = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         // initialMacroGroup (a whole care area, e.g. from "Swap" in the
         // ecosystem view) sets ONLY the broader group, leaving every
@@ -433,7 +433,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Personalization requires an actual account (quiz results / health import /
     // real recommendations all live behind login) -- never on for a logged-out
     // visitor, regardless of any of those other signals somehow being truthy.
-    const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (Boolean(recommendedProductIds?.length) || hasQuizFrustrations || hasHealthImport));
+    const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (Boolean(recommendedProductIds?.length) || hasQuizFrustrations || hasHealthImport || hasStatedLifeStage));
     const [showFilters, setShowFilters] = useState(false);
     const [priceFilter, setPriceFilter] = useState('all');
     const [ratingFilter, setRatingFilter] = useState('all');
@@ -445,11 +445,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const personalizationInitialized = useRef(false);
     useEffect(() => {
-        if (!personalizationInitialized.current && user && (recommendedProductIds?.length || hasQuizFrustrations || hasHealthImport)) {
+        if (!personalizationInitialized.current && user && (recommendedProductIds?.length || hasQuizFrustrations || hasHealthImport || hasStatedLifeStage)) {
             setPersonalizationFilter(true);
             personalizationInitialized.current = true;
         }
-    }, [recommendedProductIds, hasQuizFrustrations, hasHealthImport]);
+    }, [recommendedProductIds, hasQuizFrustrations, hasHealthImport, hasStatedLifeStage]);
     const [padFlowFilter, setPadFlowFilter] = useState(initialPadFlow || 'all');
     const [padPreferenceFilter, setPadPreferenceFilter] = useState(initialPadPreference || 'all');
     const [padUseCaseFilter, setPadUseCaseFilter] = useState(initialPadUseCase || 'all');

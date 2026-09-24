@@ -23,7 +23,17 @@ function firstSentence(text, max = 140) {
   return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
 
-export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0 }) {
+export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0, hasEcosystemContext = false, isInEcosystem = false, whyItWorks = null, considerations = null }) {
+  // A product can be genuinely in the user's ecosystem while still scoring no
+  // quiz-match labels (e.g. it was added manually, or its tags don't map to
+  // any quiz answer) — that's a real state, not "no ecosystem yet". Flagged
+  // live by a user 2026-09-24: this card told her to "build your ecosystem"
+  // on a product page that, one section up, already said "In your ecosystem".
+  const noMatchFallback = isInEcosystem
+    ? 'Already in your ecosystem'
+    : hasEcosystemContext
+      ? 'Add this to your ecosystem to see your match'
+      : 'Build your ecosystem to see your match';
   // Prefers a shorter, results-first version when a catalog entry has one —
   // this rail card has much less width than the ayna-summary tab's
   // full-width Clinician opinion card, which always gets the full text.
@@ -88,8 +98,18 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
                 ? matchLabels.slice(0, 3).map((label) => (
                     <li className="pdp-rail__reason" key={label}>{label}</li>
                   ))
-                : <li className="pdp-rail__reason">Build your ecosystem to see your match</li>}
+                : <li className="pdp-rail__reason">{noMatchFallback}</li>}
             </ul>
+        )}
+        {/* A short, connected explanation tying this specific product to the
+            user's own quiz answers/profile — not just the terse match-label
+            phrases above. Flagged live by a user 2026-09-24: "I couldn't
+            always tell why a particular product was recommended." */}
+        {whyItWorks && (
+          <div className="pdp-rail__body" style={{ marginTop: 8 }}>{whyItWorks}</div>
+        )}
+        {considerations && (
+          <div className="pdp-rail__body" style={{ marginTop: 6, fontStyle: 'italic' }}>{considerations}</div>
         )}
       </div>
 

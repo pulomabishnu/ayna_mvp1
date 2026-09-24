@@ -402,6 +402,14 @@ export const PHYSICAL_PRODUCTS = [
         clinicianAttribution: 'ayna synthesis of NIH ODS and ACOG guidance on iron supplementation.',
         doctorOpinion: 'Iron supplementation should be confirmed with bloodwork before starting. Over-supplementation can cause harm. Take with food and vitamin C to improve absorption and reduce GI side effects.',
         communityReview: 'Well-rated for effectiveness and price. Common feedback: take with food and vitamin C to reduce stomach upset, and expect darker stools.',
+        // 65 mg is a high elemental-iron dose — flagged live by a user
+        // 2026-09-24 asking for a visible "confirm with labs/clinician"
+        // message. The caution already existed in doctorOpinion/opinionAlerts
+        // above, but wasn't rendered anywhere prominent; `warnings` is.
+        warnings: [
+            'Confirm iron deficiency with bloodwork before starting — this is a high dose best guided by lab results and a clinician, not taken speculatively.',
+            'Accidental iron overdose is a leading cause of fatal poisoning in children under 6 — keep out of reach.',
+        ],
         verificationLinks: {
             scientific: { links: [
                 
@@ -440,6 +448,14 @@ export const PHYSICAL_PRODUCTS = [
         clinicianAttribution: 'ayna synthesis of Endocrine Society and NIH ODS guidance on vitamin D supplementation.',
         doctorOpinion: 'Vitamin D deficiency is widespread and often goes undetected. Confirming your level with a 25(OH)D blood test before starting high-dose supplementation is recommended.',
         communityReview: 'Highly rated. Users report improvements in mood, energy, and general wellbeing. Consistently well-reviewed for quality and value.',
+        // 5,000 IU is a high daily dose — flagged live by a user 2026-09-24
+        // asking for a visible "confirm with labs/clinician" message. The
+        // caution already existed in doctorOpinion/opinionAlerts above, but
+        // wasn't rendered anywhere prominent; `warnings` is.
+        warnings: [
+            'Confirm deficiency with a 25(OH)D blood test before starting — this is a high dose best guided by lab results and a clinician, not taken speculatively.',
+            'Do not combine with other high-dose vitamin D supplements without medical monitoring.',
+        ],
         verificationLinks: {
             scientific: { links: [
                 
@@ -605,7 +621,14 @@ export const PHYSICAL_PRODUCTS = [
         price: '$15 for 60 capsules',
         userRating: 4.5,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: 'https://www.naturemade.com/cdn/shop/files/NM2576PK001667MAGNESIUM_5A007225ccfront_1500x.png?v=1718994664',
+        // Was hotlinking a Nature Made CDN image that turned out to be a
+        // different SKU (Magnesium Extra Strength 400mg softgels) — mismatched
+        // the real product this entry describes (High Absorption Magnesium
+        // Glycinate 200mg, 60 capsules — same product productBuyUrls.js links
+        // to). Flagged live by a user 2026-09-24: "I would want the image,
+        // formulation, dosage, title, and purchase link to match before
+        // considering a purchase." Now a local photo of the correct bottle.
+        image: '/products/naturemade/magnesium-glycinate-200mg.png',
         summary: 'Magnesium glycinate for cramp relief, better sleep, and mood support. USP verified.',
         safety: {
             fdaStatus: 'USP Verified',
@@ -1685,6 +1708,21 @@ function getLifeStageLabels(intake) {
     ];
 }
 
+/**
+ * Whether the user has explicitly stated a life stage (e.g. "I am
+ * post-menopause") — a strong, standalone personalization signal. Used to
+ * decide whether Discovery should default to personalized/filtered results:
+ * a user who stated her life stage but didn't separately flag any
+ * "frustrations" (e.g. a postmenopausal user with no period-related
+ * complaints left to flag) was otherwise falling through to the unfiltered
+ * catalog by default — flagged live by a user 2026-09-24 ("still prominently
+ * showed period care, PCOS, and fertility even though my profile reflects
+ * that I'm 62 and postmenopausal").
+ */
+export function hasStatedLifeStage(quizAnswers) {
+    return getLifeStageLabels(rawIntakeFromProfile(quizAnswers)).length > 0;
+}
+
 
 const DIAGNOSIS_SPECIFIC_SIGNALS = [
     'pcos', 'pcos-management', 'endometriosis', 'fibroids', 'adenomyosis',
@@ -1952,6 +1990,15 @@ function getSafetyAssessment(product, quizAnswers) {
         category === 'menopause'
         || /\bmenopause\b|\bperimenopause\b|\bpost-menopause\b/.test(coreProductText);
 
+    // Matched on the product's own name (not the fuller coreProductText blob)
+    // — real fertility-focused products in this catalog (Proov, Inito, Glow)
+    // say so plainly in their name; no product actually carries the
+    // 'fertility' category value (that's only used by startups.js listings),
+    // so a category check alone would be a silent no-op.
+    const fertilitySpecific =
+        category === 'fertility'
+        || /\bfertility\b|\bovulation\b|\btrying to conceive\b/i.test(product?.name || '');
+
     const menstrualCollection =
         ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'liner'].includes(category)
         || productHasSignal(product, 'menstrual-collection');
@@ -1986,6 +2033,13 @@ function getSafetyAssessment(product, quizAnswers) {
         return {
             eligible: false,
             reason: 'Period products do not match your current life stage',
+        };
+    }
+
+    if (fertilitySpecific && (isMenopause || isPostMenopause)) {
+        return {
+            eligible: false,
+            reason: 'Fertility/TTC product does not match your current life stage',
         };
     }
 
