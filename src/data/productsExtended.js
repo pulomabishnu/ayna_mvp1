@@ -384,7 +384,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-ovia', name: 'Ovia Health', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'pcos', 'comfort'], price: 'Free (employer-sponsored)', whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'http://oviawellness.com/cdn/shop/files/1762267614936-generated-label-image-0.jpg?v=1762267644', summary: 'Period, fertility, and pregnancy tracker. Often free through employers. Covers full reproductive journey.',
+        id: 'd-ovia', name: 'Ovia Health', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'pcos', 'comfort'], price: 'Free (employer-sponsored)', whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', url: 'https://www.oviahealth.com/', image: '', summary: 'Period, fertility, and pregnancy tracker. Often free through employers. Covers full reproductive journey.',
         safety: {
             fdaStatus: 'Not FDA-cleared', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',
