@@ -16,6 +16,9 @@
  */
 import { createClient } from '@supabase/supabase-js';
 import { applyCatalogEvidence } from '../src/data/catalogEvidence.js';
+import { ALL_PRODUCTS } from '../src/data/products.js';
+
+const BUNDLED_BY_ID = new Map(ALL_PRODUCTS.map((p) => [String(p.id), p]));
 
 let _client = null;
 function getClient() {
@@ -61,6 +64,28 @@ export function toClientProduct(row) {
   // Provenance travels with the product so the UI can never present a
   // non-curated row with verified-clinician affordances.
   p.source = row.source || 'curated';
+
+  // PRODUCT IDENTITY SOURCE OF TRUTH (2026-09-24): product_catalog is still
+  // being migrated and can lag behind reviewed src/data fixes. A stale DB row
+  // previously reintroduced the wrong Nature Made magnesium SKU image even
+  // after the bundled catalog had been corrected. For a curated ID that also
+  // exists in the reviewed bundle, the bundle wins for identity/display facts
+  // that must stay internally consistent. DB-only enrichment (long-form
+  // evidence, clinician/community copy, etc.) remains intact.
+  if (p.source === 'curated') {
+    const reviewed = BUNDLED_BY_ID.get(String(row.id));
+    if (reviewed) {
+      const authoritativeKeys = [
+        'name', 'brand', 'category', 'type', 'summary', 'price', 'image', 'url',
+        'tags', 'healthFunctions', 'whereToBuy', 'whereToBuyInStock',
+        'requiresPrescription', 'internal',
+      ];
+      for (const key of authoritativeKeys) {
+        if (Object.prototype.hasOwnProperty.call(reviewed, key)) p[key] = reviewed[key];
+        else if (key === 'image' || key === 'url' || key === 'brand') delete p[key];
+      }
+    }
+  }
   // PRODUCT INTEGRITY (2026-09-22 audit): the DB rows skipped the guardrails
   // the bundled catalog already runs (src/data/catalogEvidence.js), so the
   // live feed — which the iOS app renders directly — showed unsourced star
