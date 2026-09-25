@@ -1,15 +1,10 @@
 /* global process */
-// Returns a product image URL for a given product name/brand/official-page
-// URL. Previously used the Serper.dev Google Image Search API — that key
-// ran out of credits ("Not enough credits" from a direct API test), and
-// every lookup silently returned empty. Replaced with two free, no-quota
-// methods tried in order against the product's official page URL:
-//   1. Shopify storefronts publicly expose /products.json — fuzzy-match the
-//      product name against it for the real per-SKU photo.
-//   2. Fall back to the page's og:image/twitter:image meta tag, rejecting
-//      anything that looks like a logo/banner/social-share asset by
-//      filename rather than risk mislabeling a brand logo as a product photo.
-// Both reuse the SSRF-safe fetch pattern in ./_ssrfSafeFetch.js.
+// Returns a product image URL only from the exact official page URL already
+// attached to the catalog item. We intentionally do NOT fuzzy-match a whole
+// storefront, supplement database, or open-web image index: a missing photo
+// is preferable to showing the wrong formulation, dosage, count, or category.
+// The exact page's og:image/twitter:image is still rejected when it looks like
+// a logo/banner/social-share asset.
 //
 // `url` is optional — the hardcoded catalog mostly doesn't have one yet, and
 // without it there's no page to resolve against, so this returns empty
@@ -69,6 +64,10 @@ function allowedOrigin(req) {
   return configured.includes(origin) ? origin : null;
 }
 
+async function resolveImageFromUrl(pageUrl, allowBrandLogo) {
+  return (await fetchOgImage(pageUrl, allowBrandLogo)) || '';
+}
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   const origin = allowedOrigin(req);
@@ -86,12 +85,8 @@ export default async function handler(req, res) {
   const allowBrandLogo = type === 'digital';
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  // Bumped v9 -> v10: the v9 brand-gate required name-overlap on TOP of a
-  // confirmed brand match, which rejected real, brand-confirmed results
-  // whenever the catalog's own generic product description didn't share
-  // enough words with the brand's actual commercial product name (e.g.
-  // "Kegel8 Pelvic Floor Exerciser" vs the real "Kegel8 Ultra 20 V2
-  // Electronic Pelvic Toner") — confirmed live, cached negative under v9.
+  // v11 invalidates older cache entries created by fuzzy/search-based image
+  // resolution. Only exact-page results are allowed under this key.
   const cacheKey = `ayna:img:v11:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
@@ -127,11 +122,7 @@ export default async function handler(req, res) {
   }
 
   if (redis) {
-    // Only pin a negative result once every resolver that COULD have found
-    // something has actually been tried — a page URL (Shopify/og:image), or
-    // Serper configured (works with no URL at all). Otherwise a product
-    // with no URL yet and no Serper key might still resolve later via a
-    // different path, so don't cache that as permanent.
+    // Only cache a negative when an exact page URL was actually checked.
     const shouldCacheNegative = Boolean(pageUrl);
     try {
       if (imageUrl || shouldCacheNegative) {
