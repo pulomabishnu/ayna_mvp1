@@ -866,7 +866,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 380,
         url: 'https://www.oviahealth.com',
-        image: 'https://oviawellness.com/cdn/shop/files/Endurance_1_46a87c26-cb00-4128-a7e4-669a59c0a19f.webp?v=1771708037&width=3840'
+        image: ''
     },
     {
         id: 's-femometry',
