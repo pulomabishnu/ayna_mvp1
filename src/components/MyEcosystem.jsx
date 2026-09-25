@@ -197,7 +197,7 @@ function EcosystemFunctionProductCard({
             return;
         }
         setTriedResolveFallback(true);
-        resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '').then((url) => {
+        resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '', product.id || '').then((url) => {
             if (url) {
                 setResolvedCardImage(url);
                 setImgError(false);
@@ -1559,7 +1559,7 @@ export default function MyEcosystem({
             while (!cancelledRef.cancelled) {
                 const item = queue.shift();
                 if (!item) return;
-                const url = await resolveProductImage(item.name, item.brand || '', item.url || '', item.type || '');
+                const url = await resolveProductImage(item.name, item.brand || '', item.url || '', item.type || '', item.id || '');
                 if (cancelledRef.cancelled) return;
                 setResolvedImages((prev) => (prev[item.id] !== undefined ? prev : { ...prev, [item.id]: url || '' }));
             }
