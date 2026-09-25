@@ -1,11 +1,10 @@
 // Resolves a real product image for products with placeholder images via /api/product-image
 // Results are cached in localStorage so the lookup only ever runs once per product.
 
-// Bumped v8 -> v9 alongside the server-side cache key: a brand-confirmed
-// match could still be wrongly rejected when the catalog's generic name
-// didn't overlap the brand's actual product name closely enough — fixed
-// server-side, but the earlier '' result would otherwise keep serving.
-const LS_KEY = 'ayna_product_images_v9';
+// Bumped v9 -> v10 after tightening the server resolver to exact-page-only.
+ // This intentionally invalidates every previously cached dynamic image,
+ // including plausible-but-wrong variants that may have been stored locally.
+const LS_KEY = 'ayna_product_images_v10';
 const memCache = new Map();
 
 function lsRead() {
