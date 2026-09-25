@@ -433,7 +433,7 @@ export const MVP_PHYSICAL = [
     clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Some women find relief with phytoestrogens; evidence is mixed. Discuss with your clinician.',
     communityReview: 'Community discussions on Amazon note improvement in brain fog and mood during perimenopause.',
-    ingredients: 'Black cohosh, soy isoflavones, magnolia bark, ginkgo biloba. See current manufacturer label for full supplement facts.'
+    ingredients: 'Black cohosh, soy isoflavones, magnolia bark, ginkgo biloba. See current manufacturer label for full supplement facts.',
     effectiveness: 'Popular OTC option; individual response varies.',
     badges: ['Menopause Support', 'Non-Hormonal'],
     verificationLinks: {
