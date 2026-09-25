@@ -1,11 +1,12 @@
 // Resolves a real product image for products with placeholder images via /api/product-image
-// Results are cached in localStorage so the lookup only ever runs once per product.
+// Only Ayna-reviewed product destinations are eligible for lookup. Results are cached
+// in localStorage so the same verified product page is not fetched repeatedly.
 
-// Bumped v8 -> v9 alongside the server-side cache key: a brand-confirmed
-// match could still be wrongly rejected when the catalog's generic name
-// didn't overlap the brand's actual product name closely enough — fixed
-// server-side, but the earlier '' result would otherwise keep serving.
-const LS_KEY = 'ayna_product_images_v9';
+import { PRODUCT_BUY_URLS, PRODUCT_BUY_DISABLED } from '../data/productBuyUrls';
+
+// v11 invalidates every browser image picked by the old fuzzy/URL-free resolver.
+// That resolver could permanently pin a wrong Google/DSLD result for a product.
+const LS_KEY = 'ayna_product_images_v11';
 const memCache = new Map();
 
 function lsRead() {
@@ -126,9 +127,19 @@ export function safeProductImageSrc(imageUrl, allowBrandLogo = false) {
   return proxyExternalImage(String(imageUrl || '').trim());
 }
 
-export async function resolveProductImage(name, brand, url, type) {
+export async function resolveProductImage(name, brand, url, type, productId = '') {
   if (!name) return '';
-  const key = `${brand || ''}|${name}`;
+
+  // PRODUCT INTEGRITY: never search the web for a catalog image by name alone.
+  // A missing image is safer than a photo of a different SKU. The only page we
+  // allow the server to inspect is Ayna's centrally reviewed exact destination.
+  // The caller-supplied `url` is intentionally ignored here because legacy DB
+  // rows often contain brand homepages or stale destinations.
+  if (productId && PRODUCT_BUY_DISABLED[productId]) return '';
+  const verifiedUrl = productId ? PRODUCT_BUY_URLS[productId] : '';
+  if (!verifiedUrl) return '';
+
+  const key = `${productId}|${type || ''}|${brand || ''}|${name}|${verifiedUrl}`;
 
   // memCache holds either a resolved string or an in-flight Promise. Storing
   // the promise BEFORE awaiting is what dedupes concurrent callers: two effects
@@ -144,8 +155,7 @@ export async function resolveProductImage(name, brand, url, type) {
 
   const inFlight = (async () => {
     try {
-      const params = new URLSearchParams({ name, brand: brand || '' });
-      if (url) params.set('url', url);
+      const params = new URLSearchParams({ name, brand: brand || '', url: verifiedUrl });
       if (type) params.set('type', type);
       const res = await fetch(`/api/product-image?${params}`, {
         signal: AbortSignal.timeout(10000),
@@ -164,7 +174,7 @@ export async function resolveProductImage(name, brand, url, type) {
       // result itself) when a page `url` was supplied — mirror that here.
       // Pinning '' from a call that had no url would permanently block a
       // later call for the same product that does have one.
-      if (resolvedUrl || url) lsWrite(key, resolvedUrl);
+      if (resolvedUrl || verifiedUrl) lsWrite(key, resolvedUrl);
       return resolvedUrl;
     } catch {
       memCache.delete(key);
