@@ -528,7 +528,7 @@ export default function ProductModal({
     let active = true;
     if (!product?.name) return () => { active = false; };
     if (!isPlaceholderProductImage(product.image, product.type === 'digital')) return () => { active = false; };
-    resolveProductImage(product.name, product.brand || '', '', product.type || '').then((url) => {
+    resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '', product.id || '').then((url) => {
       if (!active || !url) return;
       setResolvedModalImage(url);
     });
