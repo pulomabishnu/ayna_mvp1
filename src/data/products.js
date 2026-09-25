@@ -123,10 +123,11 @@ export const PHYSICAL_PRODUCTS = [
         internal: false,
         healthFunctions: ['menstrual-collection', 'leak-protection'],
         tags: ['heavy-flow', 'leaks', 'organic', 'safety-concern', 'comfort'],
-        price: '$9 for 14',
+        price: '$9.49–$14.99 (16 or 28 count)',
         userRating: 4.6,
         whereToBuy: ['Target', 'Amazon', 'Walmart'],
-        image: 'https://m.media-amazon.com/images/I/71BjZn+VbJL.jpg_BO30,255,255,255_UF750,750_SR1910,1000,0,C_QL100_.jpg',
+        // Resolve from the reviewed Rael product page; the old Amazon image showed a different pack count.
+        image: '',
         summary: '100% organic cotton top sheet, free from chlorine bleach, toxins, and fragrances.',
         safety: {
             fdaStatus: 'FDA-registered',
@@ -180,10 +181,11 @@ export const PHYSICAL_PRODUCTS = [
         healthFunctions: ['menstrual-collection', 'cramp-relief'],
         tags: ['cramps', 'discomfort', 'organic', 'comfort'],
         avoidIfSensitivity: ['essential-oils', 'fragrance'],
-        price: '$10 for 16',
+        price: '$9.99 for 20',
         userRating: 4.2,
         whereToBuy: ['Target', 'Walmart', 'Amazon'],
-        image: 'https://www.kroger.com/product/images/large/front/0085166900880',
+        // Resolve from The Honey Pot's reviewed exact page; the old Kroger barcode image was an incontinence pad.
+        image: '',
         summary: 'Plant-derived pads infused with lavender and mint herbs for cooling comfort during cramps.',
         safety: {
             fdaStatus: 'FDA-registered',
@@ -755,7 +757,8 @@ export const DIGITAL_PRODUCTS = [
         userRating: 4.6,
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
-        image: 'https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/61/f9/de/61f9deb9-a4f6-de49-96c6-84eb25541edb/Placeholder.mill/1200x630wa.jpg',
+        // App Store was returning a literal Placeholder.mill asset; use the reviewed Stardust page instead.
+        image: '',
         summary: 'Period and cycle-tracking app with privacy-focused features and optional lunar-cycle features. Privacy practices should be reviewed against the app’s current policy.',
         safety: { fdaStatus: 'N/A (Software)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Lunar sync features are highly aesthetic but some users find them less "scientific" than Clue.' },
         privacy: { dataStorage: 'See current Stardust privacy policy', sellsData: 'See current Stardust privacy policy', hipaa: 'Not presented here as a HIPAA-covered service', keyPolicy: 'Review Stardust’s current privacy and security documentation for encryption and data-access practices.' },
