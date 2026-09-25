@@ -415,24 +415,26 @@ export const MVP_PHYSICAL = [
   // ─── PERIMENOPAUSE / MENOPAUSE ────────────────────────────
   {
     id: 'p-estroven-mood',
-    name: 'Estroven Mood & Memory',
+    name: 'Estroven Menopause Relief Mood Boost',
     brand: 'Estroven',
     category: 'supplement',
     type: 'physical',
     internal: false,
     healthFunctions: ['supplement'],
     tags: ['menopause', 'discomfort', 'non-hormonal'],
-    price: '$18 for 30 caps',
+    price: 'Varies by pack size (30 or 60 caplets)',
     userRating: 4.2,
     whereToBuy: ['CVS', 'Walmart', 'Amazon'],
     image: 'https://cdn.shopify.com/s/files/1/0038/4188/4230/products/estroven-mood-boost-front-view.jpg?v=1699478289',
-    summary: 'Non-hormonal supplement with soy isoflavones, rhodiola, and folate for mood and cognitive support during menopause.',
-    safety: { fdaStatus: 'Dietary supplement', materials: 'Soy isoflavones, rhodiola', recalls: 'No recalls.', allergens: 'Soy', sideEffects: 'Generally well tolerated. Soy isoflavones may cause mild GI upset in some people; those with a history of hormone-sensitive conditions should discuss use with a clinician first.' },
+    url: 'https://estroven.com/products/menopause-relief-mood-memory-boost',
+    image: '',
+    summary: 'Non-hormonal menopause supplement marketed for mood, anxiety, hot flashes, night sweats, and memory support; current formula highlights black cohosh, soy isoflavones, magnolia bark, and ginkgo biloba.'
+    safety: { fdaStatus: 'Dietary supplement', materials: 'Black cohosh, soy isoflavones, magnolia bark, ginkgo biloba', recalls: 'No recalls.', allergens: 'Soy', sideEffects: 'Generally well tolerated. Soy isoflavones may cause mild GI upset in some people; those with a history of hormone-sensitive conditions should discuss use with a clinician first.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Some women find relief with phytoestrogens; evidence is mixed. Discuss with your clinician.',
     communityReview: 'Community discussions on Amazon note improvement in brain fog and mood during perimenopause.',
-    ingredients: 'Soy isoflavones, rhodiola rosea, folate.',
+    ingredients: 'Black cohosh, soy isoflavones, magnolia bark, ginkgo biloba. See current manufacturer label for full supplement facts.'
     effectiveness: 'Popular OTC option; individual response varies.',
     badges: ['Menopause Support', 'Non-Hormonal'],
     verificationLinks: {
