@@ -642,7 +642,7 @@ export const MENSTRUAL_PHYSICAL = [
         whereToBuy: ['Period.co'],
         url: 'https://period.co/products/the-bikini',
         image: 'https://period.co/cdn/shop/products/P1000WC_BIKINI_FRONT.jpg?v=1767890575',
-        summary: 'Organic-cotton bikini period underwear for heavy flows; the brand states one pair absorbs up to 9 tampons worth of flow.'
+        summary: 'Organic-cotton bikini period underwear for heavy flows; the brand states one pair absorbs up to 9 tampons worth of flow.',
         safety: { fdaStatus: 'N/A', materials: 'PFAS-free', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
