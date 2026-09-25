@@ -112,7 +112,7 @@ export default function ProductTileImage({ product, alt, imgStyle, imgClassName,
     if (attemptedRef.current === product.id) return;
     attemptedRef.current = product.id;
     let active = true;
-    resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '').then((url) => {
+    resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '', product.id || '').then((url) => {
       if (active && url) setResolved(url);
     });
     return () => { active = false; };
