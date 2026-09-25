@@ -924,8 +924,8 @@ export const BRAND_PRODUCTS = [
         tags: ['uti', 'safety-concern'],
         price: '$99 starter kit (or $84.15/mo subscription)',
         whereToBuy: [], // direct-to-consumer only; the url field above covers the official site link
-        url: 'https://goodkittyco.com/',
-        image: 'https://cdn.prod.website-files.com/66dc11fd6ea52df0b92e5e5c/670589c8dcbf01c1fa271073_Frame%201000001813%20(1).png',
+        url: 'https://goodkittyco.com/products/uti-biome-shield',
+        image: '',
         summary: 'A daily UTI-prevention capsule combining D-mannose, soluble cranberry PACs, vitamin D3, and zinc. Designed for people prone to recurrent UTIs who want a preventive daily routine rather than only reactive treatment.',
         safety: {
             fdaStatus: 'Dietary supplement; not FDA-evaluated for disease treatment (standard supplement disclaimer).',
