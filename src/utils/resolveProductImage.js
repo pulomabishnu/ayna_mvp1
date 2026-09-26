@@ -1,10 +1,9 @@
 // Resolves a real product image for products with placeholder images via /api/product-image
 // Results are cached in localStorage so the lookup only ever runs once per product.
 
-// Bumped v9 -> v10 after tightening the server resolver to exact-page-only.
- // This intentionally invalidates every previously cached dynamic image,
- // including plausible-but-wrong variants that may have been stored locally.
-const LS_KEY = 'ayna_product_images_v10';
+// Versioned cache with exact page/type identity and bounded persistence.
+const LS_KEY = 'ayna_product_images_v11';
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const memCache = new Map();
 
 function lsRead() {
@@ -13,9 +12,9 @@ function lsRead() {
 function lsWrite(key, url) {
   try {
     const obj = lsRead();
-    obj[key] = url;
+    obj[key] = { url, expiresAt: Date.now() + CACHE_TTL_MS };
     localStorage.setItem(LS_KEY, JSON.stringify(obj));
-  } catch {}
+  } catch { /* Storage may be unavailable in private browsing. */ }
 }
 
 // Keywords indicating a logo/icon/banner rather than an actual product
@@ -127,7 +126,9 @@ export function safeProductImageSrc(imageUrl, allowBrandLogo = false) {
 
 export async function resolveProductImage(name, brand, url, type) {
   if (!name) return '';
-  const key = `${brand || ''}|${name}`;
+  // A corrected page or product type must never reuse another variant's image.
+  if (!url) return '';
+  const key = JSON.stringify([brand || '', name, url, type === 'digital' ? 'digital' : 'physical']);
 
   // memCache holds either a resolved string or an in-flight Promise. Storing
   // the promise BEFORE awaiting is what dedupes concurrent callers: two effects
@@ -136,9 +137,10 @@ export async function resolveProductImage(name, brand, url, type) {
   if (memCache.has(key)) return memCache.get(key);
 
   const stored = lsRead();
-  if (key in stored) {
-    memCache.set(key, stored[key]);
-    return stored[key];
+  const entry = stored[key];
+  if (entry?.expiresAt > Date.now() && typeof entry.url === 'string' && entry.url) {
+    memCache.set(key, entry.url);
+    return entry.url;
   }
 
   const inFlight = (async () => {
@@ -158,12 +160,10 @@ export async function resolveProductImage(name, brand, url, type) {
       }
       const data = await res.json();
       const resolvedUrl = data?.imageUrl || '';
-      memCache.set(key, resolvedUrl);
-      // The server only attempts resolution (and only caches a negative
-      // result itself) when a page `url` was supplied — mirror that here.
-      // Pinning '' from a call that had no url would permanently block a
-      // later call for the same product that does have one.
-      if (resolvedUrl || url) lsWrite(key, resolvedUrl);
+      if (resolvedUrl) memCache.set(key, resolvedUrl);
+      else memCache.delete(key);
+      // Missing images stay retryable after a temporary origin failure.
+      if (resolvedUrl) lsWrite(key, resolvedUrl);
       return resolvedUrl;
     } catch {
       memCache.delete(key);

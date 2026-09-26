@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
-import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
 
@@ -318,7 +318,7 @@ function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#242A52', onKnob = '#F0A8
 /* 1c — returning user                                                 */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
+function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
   const name = displayNameFromUser(user) || 'there';
   const [filter, setFilter] = useState(initialCategory || 'all');
   useEffect(() => {
@@ -399,6 +399,13 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
     list = list.filter((product) => matchesLifeStage(product, lifeStageFilter));
     if (ratingFilter === '4-plus') list = list.filter((product) => (explicitRating(product) ?? 0) >= 4);
 
+    if (personalize && healthIntake) {
+      const stages = [healthIntake.lifeStage, healthIntake.lifeStageSelections].flat().filter(Boolean).join(' ');
+      list = list.filter(product => {
+        const match = getProductMatchDetailsForProduct(product, { fullHealthIntake: healthIntake });
+        return match.eligible && (!/menopaus/i.test(stages) || match.percent > 0);
+      });
+    }
     if (personalize) {
       list = [...list].sort((a, b) => {
         const score = (product) => {
@@ -412,7 +419,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
     }
 
     return list.slice(0, 8);
-  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas]);
+  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas, healthIntake]);
 
   const clearShopFilters = () => {
     setFilter('all');
@@ -928,6 +935,7 @@ export default function LiveSiteLanding({
   myProducts,
   ecosystemCount = 0,
   hasProfile = false,
+  healthIntake,
   profileCategories,
   recommendedProductIds = [],
   initialCategory = null,
@@ -935,6 +943,7 @@ export default function LiveSiteLanding({
   if (user) {
     return (
       <WelcomeBack
+        healthIntake={healthIntake}
         key={initialCategory || 'all'}
         user={user}
         myProducts={myProducts}

@@ -214,7 +214,7 @@ describe('loadEcosystemForUser', () => {
     });
     const out = await loadEcosystemForUser(sb, 'u');
     expect(Object.keys(out.myProducts)).toEqual(['p-rael-organic-pad']);
-    expect(out.myProducts['p-rael-organic-pad'].name).toBe('Rael Organic Cotton Pads');
+    expect(out.myProducts['p-rael-organic-pad'].name).toBe('Rael Large Organic Cotton Cover Pads With Wings');
   });
 
   it('falls back to the flat columns when product_data is absent', async () => {

@@ -97,3 +97,35 @@ describe('safeProductImageSrc', () => {
     expect(safeProductImageSrc(original, true)).toBe(`/api/image-proxy?url=${encodeURIComponent(original)}`);
   });
 });
+
+describe('image cache identity and recovery', () => {
+  it('allows a corrected URL to replace a previously resolved variant', async () => {
+    const { vi } = await import('vitest');
+    vi.resetModules();
+    const storage = new Map();
+    vi.stubGlobal('localStorage', { getItem: (key) => storage.get(key), setItem: (key, value) => storage.set(key, value) });
+    const fetchMock = vi.fn().mockResolvedValueOnce({ ok: true, json: async () => ({ imageUrl: 'https://brand.test/wrong.jpg' }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ imageUrl: 'https://brand.test/right.jpg' }) });
+    vi.stubGlobal('fetch', fetchMock);
+    try {
+      const { resolveProductImage } = await import('./resolveProductImage');
+      expect(await resolveProductImage('Magnesium', 'Brand', '', 'physical')).toBe('');
+      expect(await resolveProductImage('Magnesium', 'Brand', 'https://brand.test/oxide', 'physical')).toContain('wrong.jpg');
+      expect(await resolveProductImage('Magnesium', 'Brand', 'https://brand.test/glycinate', 'physical')).toContain('right.jpg');
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    } finally { vi.unstubAllGlobals(); }
+  });
+  it('does not permanently cache a missing image', async () => {
+    const { vi } = await import('vitest');
+    vi.resetModules();
+    vi.stubGlobal('localStorage', { getItem: () => null, setItem: vi.fn() });
+    const fetchMock = vi.fn().mockResolvedValueOnce({ ok: true, json: async () => ({ imageUrl: '' }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ imageUrl: 'https://brand.test/fixed.jpg' }) });
+    vi.stubGlobal('fetch', fetchMock);
+    try {
+      const { resolveProductImage } = await import('./resolveProductImage');
+      expect(await resolveProductImage('Product', 'Brand', 'https://brand.test/product')).toBe('');
+      expect(await resolveProductImage('Product', 'Brand', 'https://brand.test/product')).toContain('fixed.jpg');
+    } finally { vi.unstubAllGlobals(); }
+  });
+});

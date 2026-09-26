@@ -14,7 +14,7 @@ import {
   CATALOG_ONLY_RULES,
 } from './_catalogGrounding.js';
 import { CONCERN_CONFIG } from '../src/utils/recommendationEngine.js';
-import { isRxOnlyProduct } from '../src/data/products.js';
+import { isRxOnlyProduct, getProductMatchDetailsForProduct } from '../src/data/products.js';
 
 // Hard ceilings on client-supplied work. Without these, one request with 500
 // primaryConcerns and batchSize 500 issued 500 sequential LLM calls.
@@ -524,7 +524,16 @@ function concernConfigFor(concern) {
  * Anthropic TPM budget). Falls back to the full catalog when nothing matches,
  * so an unusual free-text concern still gets real options to choose from.
  */
-export function catalogCandidatesForConcern(catalog, concern, max = 60) {
+export function catalogCandidatesForConcern(catalog, concern, max = 60, intake = null) {
+  const profile = intake?.fullHealthIntake || intake || {};
+  const stages = [profile.lifeStage, ...(profile.lifeStageSelections || [])].filter(Boolean).join(' ');
+  const menopauseStage = /menopaus/i.test(stages);
+  if (intake) {
+    catalog = (catalog || []).filter((product) => {
+      const details = getProductMatchDetailsForProduct(product, { fullHealthIntake: { ...profile, primaryConcerns: [concern] } });
+      return details.eligible && (!menopauseStage || details.percent > 0);
+    });
+  }
   const cfg = concernConfigFor(concern);
   const words = String(concern || '').toLowerCase().replace(/\(.*?\)/g, ' ').split(/[^a-z0-9]+/)
     .filter((w) => w.length >= 3 && !CONCERN_STOPWORDS.has(w));
@@ -850,7 +859,7 @@ async function handleRequest(req, res) {
         return { failed: true, concern, reason: 'function_budget_exhausted' };
       }
       const searchHits = searchResults?.[concern] || null;
-      const catalogCandidates = catalogCandidatesForConcern(groundingCatalog, concern);
+      const catalogCandidates = catalogCandidatesForConcern(groundingCatalog, concern, 60, intake);
       const prompt = buildPromptForOneConcern(concern, intake, feedback, searchHits, catalogCandidates);
       try {
         const out = await callWithFallback(order, {
@@ -933,7 +942,9 @@ async function handleRequest(req, res) {
     const entries = Array.isArray(r.parsed?.recommendations) ? r.parsed.recommendations : [];
     // Keep only the first entry per concern; a model returning two produced
     // duplicate sections.
-    return enrichRecommendations(entries.slice(0, 1), r.concern, catalogIndex);
+    // Enforce the same eligible candidate set after model generation too.
+    const eligibleIndex = buildCatalogIndex(catalogCandidatesForConcern(groundingCatalog, r.concern, 60, intake));
+    return enrichRecommendations(entries.slice(0, 1), r.concern, eligibleIndex);
   });
 
   if (!recs.length) {

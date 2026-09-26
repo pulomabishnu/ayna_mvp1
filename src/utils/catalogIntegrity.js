@@ -1,3 +1,4 @@
+import { applyCatalogCorrections } from '../data/catalogCorrections.js';
 /**
  * PRODUCT INTEGRITY — client-side last line of defense (2026-09-22 audit).
  *
@@ -55,7 +56,7 @@ export function toCatalogProduct(product, map = catalogMap()) {
   if (!record) {
     if (product?.catalogVerified === true && product?.catalogId && product?.name) {
       const { llmGenerated: _drop, ...rest } = product;
-      return rest;
+      return applyCatalogCorrections(rest);
     }
     return null;
   }
@@ -63,7 +64,7 @@ export function toCatalogProduct(product, map = catalogMap()) {
   for (const key of PERSONAL_FIELDS) {
     if (product[key] !== undefined && product[key] !== null && product[key] !== '') out[key] = product[key];
   }
-  return out;
+  return applyCatalogCorrections(out);
 }
 
 /** Filter a { id: product } map down to catalog-backed products (ids re-keyed to catalog ids). */

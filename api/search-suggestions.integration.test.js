@@ -393,7 +393,7 @@ describe('POST /api/search-suggestions — Claude call and retry', () => {
     await handler(searchReq({ query: 'cramp relief' }), res);
     expect(res.statusCode).toBe(200);
     expect(res.body.suggestions).toHaveLength(1);
-    expect(res.body.suggestions[0].name).toBe('Rael Organic Cotton Pads');
+    expect(res.body.suggestions[0].name).toBe('Rael Large Organic Cotton Cover Pads With Wings');
   });
 
   it('recovers suggestions from a response wrapped in prose, which a naive JSON.parse rejects', async () => {
@@ -449,8 +449,8 @@ describe('POST /api/search-suggestions — product integrity (catalog only)', ()
     await handler(searchReq({ query: 'sensitive skin pads' }), res);
 
     const s = res.body.suggestions[0];
-    expect(s.name).toBe('Rael Organic Cotton Pads');
-    expect(s.price).toBe('$9 for 14');
+    expect(s.name).toBe('Rael Large Organic Cotton Cover Pads With Wings');
+    expect(s.price).toBe('Check retailer for current price (14 or 24 count)');
     expect(s.url).not.toBe('https://sketchy-affiliate-link.example/x');
     expect(s.whereToBuy.some((w) => /https?:/i.test(w))).toBe(false);
     expect(s.catalogVerified).toBe(true);
