@@ -215,18 +215,14 @@ export default function EcosystemBubbles({
   return (
     <section
       style={{
-        minHeight: 'min(100vh,720px)',
         position: 'relative',
         overflow: 'hidden',
         color: '#FFFCF9',
         fontFamily: "'DM Sans',system-ui,sans-serif",
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
         background: 'radial-gradient(ellipse 60% 55% at 78% 45%, rgba(122,78,110,.55), transparent 70%), radial-gradient(ellipse 50% 45% at 100% 100%, rgba(162,96,60,.45), transparent 70%), radial-gradient(ellipse 45% 40% at 0% 0%, rgba(36,42,82,.9), transparent 70%), linear-gradient(135deg,#262b52 0%,#33305c 40%,#48355f 70%,#6a4659 100%)',
       }}
     >
-      <div style={{ maxWidth: 1420, width: '100%', margin: '0 auto', padding: 'clamp(20px,3vw,36px) clamp(20px,5vw,64px) 8px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,420px),1fr))', gap: 'clamp(20px,3vw,40px)', alignItems: 'center' }}>
+      <div style={{ maxWidth: 1420, width: '100%', margin: '0 auto', padding: 'clamp(20px,3vw,36px) clamp(20px,5vw,64px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,420px),1fr))', gap: 'clamp(20px,3vw,40px)', alignItems: 'center' }}>
 
         <section style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
           <div style={{ font: "500 12px 'DM Mono',monospace", letterSpacing: '.2em', textTransform: 'uppercase', color: '#E39A5E' }}>Your ecosystem</div>
