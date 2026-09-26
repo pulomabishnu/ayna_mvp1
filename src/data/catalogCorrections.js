@@ -226,6 +226,9 @@ export const CATALOG_CORRECTIONS = {
     "category": "disc"
   },
   "p-magnesium-glycinate": {
+    "summary": "Nature Made magnesium glycinate, with 200 mg of magnesium per two-capsule serving. The bottle contains 60 capsules. The manufacturer describes support for normal muscle, nerve, heart and bone function.",
+    "effectiveness": "Evidence about magnesium generally does not establish that this specific product treats menstrual pain, sleep problems or mood symptoms. Benefits depend on individual needs and magnesium status.",
+    "ingredients": "Magnesium as magnesium bisglycinate: 200 mg per two-capsule serving. Check the current manufacturer label for the complete ingredient list.",
     "name": "Nature Made Magnesium Glycinate 200 mg, 60 Capsules",
     "image": "/products/naturemade/magnesium-glycinate-200mg.png",
     "price": "$21.99 for 60 capsules",
