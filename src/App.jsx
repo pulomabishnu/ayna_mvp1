@@ -1777,6 +1777,7 @@ function App() {
             myProducts={myProducts}
             ecosystemCount={ecosystemCount}
             hasProfile={!!quizResults}
+            healthIntake={quizResults?.fullHealthIntake || quizResults}
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
             initialCategory={homeCategory}

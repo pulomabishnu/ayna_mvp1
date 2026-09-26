@@ -13,8 +13,8 @@ const API_PATH = '/api/llm-recommendations';
 const DEFAULT_FETCH_TIMEOUT_MS = 75_000;
 // v3: bumped in the 2026-09-22 integrity audit so caches holding free-form
 // model products from older builds are never read back.
-const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v3';
-const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v3';
+const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v4';
+const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v4';
 
 function captureRecommendationAnalytics(event, properties) {
   try { posthog.capture(event, properties); } catch { /* analytics must never break recommendations */ }

@@ -1,3 +1,4 @@
+import { CATALOG_CORRECTIONS } from '../data/catalogCorrections';
 import React, { useState, useMemo, useEffect } from 'react';
 import { getAppSessionId } from '../utils/conversationId';
 import ProductEvidenceRail from './ProductEvidenceRail';
@@ -423,6 +424,9 @@ function isAmazonUrl(url) {
 }
 
 function getBuyUrl(product) {
+  // Reviewed destinations take precedence over stale affiliate variants.
+  const correctedUrl = CATALOG_CORRECTIONS[product?.id]?.url;
+  if (isExactBuyUrl(correctedUrl)) return correctedUrl;
   // 1. Affiliate product URL wins when Ayna has one.
   if (isExactBuyUrl(product?.affiliateUrl)) {
     return String(product.affiliateUrl).trim();
@@ -513,7 +517,8 @@ export default function ProductModal({
   const [activeTab, setActiveTab] = useState('summary');
   const [reviewInput, setReviewInput] = useState('');
   const [hoverRating, setHoverRating] = useState(0);
-  const [resolvedModalImage, setResolvedModalImage] = useState('');
+  const [resolvedModalImage, setResolvedModalImage] = useState(null);
+  const imageIdentity = JSON.stringify([product?.id, product?.name, product?.brand, product?.url, product?.type, product?.image]);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
 
@@ -528,14 +533,14 @@ export default function ProductModal({
     let active = true;
     if (!product?.name) return () => { active = false; };
     if (!isPlaceholderProductImage(product.image, product.type === 'digital')) return () => { active = false; };
-    resolveProductImage(product.name, product.brand || '', '', product.type || '').then((url) => {
+    resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '').then((url) => {
       if (!active || !url) return;
-      setResolvedModalImage(url);
+      setResolvedModalImage({ identity: imageIdentity, url });
     });
     return () => { active = false; };
-  }, [product?.id, product?.name, product?.brand, product?.image]);
+  }, [imageIdentity, product?.id, product?.name, product?.brand, product?.image, product?.url, product?.type]);
 
-  const heroImageSrc = resolvedModalImage || product?.image || '';
+  const heroImageSrc = (resolvedModalImage?.identity === imageIdentity ? resolvedModalImage.url : '') || product?.image || '';
 
   const matchLabels = useMemo(
     () => getProfileMatchLabelsForProduct(product, quizResults, healthProfile),

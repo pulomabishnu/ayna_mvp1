@@ -15,6 +15,7 @@
 // cost is per PRODUCT rather than per product-per-browser, edge caching,
 // input caps, and a request timeout on every outbound fetch.
 
+import { createHash } from 'node:crypto';
 import { rateLimit, getClientIp } from './_rateLimit.js';
 import { fetchOgImage, isLikelyNonProductImageUrl } from './_ogImageFetch.js';
 
@@ -64,8 +65,8 @@ function allowedOrigin(req) {
   return configured.includes(origin) ? origin : null;
 }
 
-async function resolveImageFromUrl(pageUrl, allowBrandLogo) {
-  return (await fetchOgImage(pageUrl, allowBrandLogo)) || '';
+async function resolveImageFromUrl(pageUrl, allowBrandLogo, name) {
+  return (await fetchOgImage(pageUrl, allowBrandLogo, name)) || '';
 }
 
 export default async function handler(req, res) {
@@ -85,16 +86,17 @@ export default async function handler(req, res) {
   const allowBrandLogo = type === 'digital';
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  // v11 invalidates older cache entries created by fuzzy/search-based image
-  // resolution. Only exact-page results are allowed under this key.
-  const cacheKey = `ayna:img:v11:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  // v12 also includes the exact source page, so corrected variants do not
+  // collide with prior photos under the same name and brand.
+  const identity = createHash('sha256').update(JSON.stringify([type, brand.toLowerCase(), name.toLowerCase(), pageUrl])).digest('hex');
+  const cacheKey = `ayna:img:v12:${identity}`;
   const redis = getRedis();
 
   if (redis) {
     try {
       const hit = await (await redis).get(cacheKey);
       if (typeof hit === 'string') {
-        res.setHeader('Cache-Control', 'public, s-maxage=2592000, stale-while-revalidate=86400');
+        res.setHeader('Cache-Control', hit ? 'public, s-maxage=86400' : 'no-store');
         return res.status(200).json({ imageUrl: hit, cached: true });
       }
     } catch (e) {
@@ -114,7 +116,7 @@ export default async function handler(req, res) {
     // If it is absent, generic, blocked, or returns a non-product asset, the
     // UI deliberately shows its honest fallback instead of guessing.
     if (pageUrl) {
-      imageUrl = await resolveImageFromUrl(pageUrl, allowBrandLogo);
+      imageUrl = await resolveImageFromUrl(pageUrl, allowBrandLogo, name);
       if (isLikelyNonProductImageUrl(imageUrl, allowBrandLogo)) imageUrl = '';
     }
   } catch (e) {
@@ -133,6 +135,6 @@ export default async function handler(req, res) {
     }
   }
 
-  res.setHeader('Cache-Control', 'public, s-maxage=2592000, stale-while-revalidate=86400');
+  res.setHeader('Cache-Control', imageUrl ? 'public, s-maxage=86400' : 'no-store');
   return res.status(200).json({ imageUrl });
 }

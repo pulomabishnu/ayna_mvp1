@@ -157,6 +157,35 @@ function extractMetaContent(html, property) {
   return m ? decodeHtmlEntities(m[1]) : null;
 }
 
+// A social preview can show another product or a site-wide campaign. For
+// physical products, use an image attached to matching Product structured data.
+export function exactProductImageFromHtml(html, expectedName) {
+  const normalize = value => String(value || '').toLowerCase().replace(/(?<=\d),(?=\d)/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+  const expected = normalize(expectedName).split(' ').filter(Boolean);
+  if (!expected.length) return null;
+  const records = [];
+  function visit(value) {
+    if (!value || typeof value !== 'object') return;
+    if (Array.isArray(value)) { value.forEach(visit); return; }
+    if ([].concat(value['@type'] || []).some(type => /(?:^|\/)Product$/.test(type))) records.push(value);
+    if (value['@graph']) visit(value['@graph']);
+    if (value.mainEntity) visit(value.mainEntity);
+  }
+  for (const match of html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    try { visit(JSON.parse(match[1])); } catch { /* Invalid schema is not evidence. */ }
+  }
+  for (const record of records) {
+    const actual = new Set(normalize(record.name).split(' '));
+    // Require all words, including formulation, dosage and count; a missing
+    // image is preferable to substituting a near match or related product.
+    if (!expected.every(word => actual.has(word))) continue;
+    const candidate = Array.isArray(record.image) ? record.image[0] : record.image;
+    const url = typeof candidate === 'string' ? candidate : candidate?.url || candidate?.contentUrl;
+    if (typeof url === 'string') return decodeHtmlEntities(url);
+  }
+  return null;
+}
+
 const MAX_REDIRECT_HOPS = 5;
 
 // A generic bot-labeled UA gets flagged by some WAFs even for a plain page
@@ -218,7 +247,7 @@ async function fetchWithSafeRedirects(url) {
  * @param {boolean} [allowBrandLogo] - see isLikelyNonProductImageUrl
  * @returns {Promise<string|null>} absolute image URL, or null if unfetchable/unsafe/none found.
  */
-export async function fetchOgImage(pageUrl, allowBrandLogo = false) {
+export async function fetchOgImage(pageUrl, allowBrandLogo = false, expectedName = null) {
   if (typeof pageUrl !== 'string' || !pageUrl.trim()) return null;
   if (!(await isSafePublicUrl(pageUrl))) return null;
 
@@ -228,8 +257,10 @@ export async function fetchOgImage(pageUrl, allowBrandLogo = false) {
     const contentType = result.res.headers.get('content-type') || '';
     if (!contentType.includes('text/html')) return null;
     const html = await readCappedText(result.res);
-    const raw = extractMetaContent(html, 'og:image') || extractMetaContent(html, 'twitter:image');
-    if (raw && raw.startsWith('http') && !isLikelyNonProductImageUrl(raw, allowBrandLogo)) {
+    const raw = expectedName && !allowBrandLogo
+      ? exactProductImageFromHtml(html, expectedName)
+      : extractMetaContent(html, 'og:image') || extractMetaContent(html, 'twitter:image');
+    if (raw && !isLikelyNonProductImageUrl(raw, allowBrandLogo)) {
       const absolute = new URL(raw, result.finalUrl).toString();
       if (
         (absolute.startsWith('https://') || absolute.startsWith('http://')) &&

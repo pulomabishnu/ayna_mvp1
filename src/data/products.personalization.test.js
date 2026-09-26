@@ -112,3 +112,25 @@ describe('personalized relevance scoring', () => {
             .toBe(getProductRelevanceScore(base, quiz, null));
     });
 });
+
+describe('postmenopausal profile regression', () => {
+    const quiz = { fullHealthIntake: {
+        age: '60+', lifeStageSelections: ['I am post-menopause'],
+        supportSelections: ['Strength and maintaining muscle', 'Bone health', 'Sleep', 'GLP-1 medication side effects and nausea'],
+        supportOtherText: 'Chronic pain / CRPS',
+    } };
+    it('does not infer intimate, bladder, hot-flash or hormone-testing needs from life stage alone', () => {
+        const ids = getPersonalizedProductIds(quiz);
+        for (const id of ['p-proov-empower', 'p-elitone', 'p-elitone-urge', 'p-kindra-lotion', 'p-oboo-woosh-warming-wand', 'p-remifemin', 'p-estroven-mood', 'p-poise-ultra-thin-moderate']) expect(ids, id).not.toContain(id);
+        expect(ids).toContain('p-creatine-womens');
+        expect(ids).toContain('p-citracal-bone-health');
+    });
+    it('does not interpret medication nausea as hormone imbalance or select high-dose nutrients for sleep', () => {
+        const ids = getPersonalizedProductIds(quiz);
+        for (const id of ['p-vitex', 'p-inositol-wholesome', 'p-flo-gummies', 'p-nature-made-iron-65mg', 'p-natures-bounty-d3-125mcg']) expect(ids, id).not.toContain(id);
+    });
+    it('excludes period and fertility trackers even from the broad recommendation tail', () => {
+        const ids = getRecommendations(quiz).map((p) => p.id);
+        for (const id of ['d-clue', 'd-stardust', 'd-glow', 'd-inito']) expect(ids, id).not.toContain(id);
+    });
+});

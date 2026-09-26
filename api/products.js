@@ -124,7 +124,7 @@ export default async function handler(req, res) {
     // live 2026-09-16 when a confirmed-correct DB fix looked like it "did
     // nothing." 300s trades a little origin load during active catalog
     // cleanup for fixes actually being visible within minutes.
-    res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400');
+    res.setHeader('Cache-Control', 'public, s-maxage=300, must-revalidate');
     return res.status(200).json({ products, count: products.length, source: 'product_catalog' });
   } catch (e) {
     console.error('[products] query failed:', e?.message);

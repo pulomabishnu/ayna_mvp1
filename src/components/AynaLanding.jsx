@@ -1,3 +1,4 @@
+import { productMatchesCareArea, selectCabinetProducts, careAreasForProfile } from '../utils/landingProducts';
 import React, { useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
@@ -12,6 +13,8 @@ const CARE_AREAS = [
   { label: 'Pelvic health', query: 'pelvic health', terms: ['pelvic', 'kegel', 'floor', 'dilator'] },
   { label: 'Pregnancy', query: 'pregnancy', terms: ['pregnancy', 'prenatal', 'maternity'] },
   { label: 'Postpartum', query: 'postpartum', terms: ['postpartum', 'nursing', 'breastfeeding', 'recovery'] },
+  { label: 'Bone health', query: 'bone health', terms: ['bone-health', 'calcium'] },
+  { label: 'Strength + muscle', query: 'strength and muscle', terms: ['muscle', 'creatine', 'protein'] },
   { label: 'Menopause', query: 'menopause', terms: ['menopause', 'perimenopause', 'hot flash', 'dryness'] },
   { label: 'Sleep + energy', query: 'sleep and energy', terms: ['sleep', 'fatigue', 'energy', 'melatonin'] },
   { label: 'Skin + hair', query: 'skin and hair', terms: ['skin', 'hair', 'acne', 'hair loss'] },
@@ -23,18 +26,6 @@ function firstName(user) {
   const meta = user?.user_metadata || {};
   const raw = meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name || '';
   return String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
-}
-
-function textFor(product) {
-  return [
-    product?.name,
-    product?.brand,
-    product?.brandName,
-    product?.category,
-    product?.summary,
-    product?.description,
-    ...(Array.isArray(product?.tags) ? product.tags : []),
-  ].filter(Boolean).join(' ').toLowerCase();
 }
 
 function uniqueProducts(products) {
@@ -137,6 +128,7 @@ function LandingFeatures({
   myProducts,
   ecosystemCount = 0,
   hasProfile = false,
+  healthIntake,
   recommendedProductIds = [],
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -155,24 +147,25 @@ function LandingFeatures({
   }, [pool]);
 
   const cabinetProducts = useMemo(() => {
-    const priority = uniqueProducts([...owned.filter(hasImage), ...recommended.filter(hasImage), ...visualPool]);
-    return [priority[0], priority[2], priority[4], priority[6]].filter(Boolean).slice(0, 4);
-  }, [owned, recommended, visualPool]);
-  const selected = cabinetProducts[selectedIndex] || cabinetProducts[0] || visualPool[0] || null;
+    return selectCabinetProducts(owned, recommended, visualPool, Boolean(user));
+  }, [owned, recommended, visualPool, user]);
+  const selected = cabinetProducts[selectedIndex] || cabinetProducts[0] || null;
 
+  const careAreas = useMemo(() => careAreasForProfile(CARE_AREAS, healthIntake), [healthIntake]);
   const visibleAreas = useMemo(() => Array.from({ length: 6 }, (_, index) => (
-    CARE_AREAS[(exploreOffset + index) % CARE_AREAS.length]
-  )), [exploreOffset]);
+    careAreas[(exploreOffset + index) % careAreas.length]
+  )), [exploreOffset, careAreas]);
 
   const categoryCards = useMemo(() => visibleAreas.map((area, index) => {
-    const matches = visualPool.filter((product) => area.terms.some((term) => textFor(product).includes(term)));
-    const source = matches.length ? matches : visualPool;
+    const matches = visualPool.filter((product) => productMatchesCareArea(product, area));
+    const physical = matches.filter(product => product.type !== 'digital');
+    const source = physical.length ? physical : matches;
     const product = source.length ? source[(seed + index * 7) % source.length] : null;
     return { ...area, product };
   }), [visibleAreas, visualPool, seed]);
 
   const refreshExplore = () => {
-    setExploreOffset((current) => (current + 6) % CARE_AREAS.length);
+    setExploreOffset((current) => (current + 6) % careAreas.length);
     setSeed((current) => (current + 137 + Math.floor(Math.random() * 997)) % 100000);
   };
 
@@ -186,7 +179,7 @@ function LandingFeatures({
         <div className="v6-cabinet-copy">
           <div className="v6-eyebrow">your health cabinet</div>
           <h2>{user ? <>hi, {name || 'there'},<br/><em>here&apos;s your ecosystem</em></> : <>your cabinet,<br/><em>made around you.</em></>}</h2>
-          <p>A small shelf of personalized picks, made around your health profile and preferences.</p>
+          <p>{owned.length ? 'Products you have added to your ecosystem.' : recommended.length ? 'Recommendations based on your health profile and preferences.' : 'Explore a sample cabinet, then build your own.'}</p>
           <button type="button" onClick={user ? onStartQuiz : () => triggerExistingSignIn(onStartQuiz)}>{user ? 'edit my preferences' : 'sign in to personalize'}</button>
           <span className="v6-scribble">less guessing,<br/>more you ♡</span>
         </div>
@@ -215,10 +208,10 @@ function LandingFeatures({
         <div className="v6-product-bubble">
           <div className="v6-bubble-product"><ProductVisual product={selected} /></div>
           <div className="v6-bubble-copy">
-            <div className="v6-eyebrow">selected for you</div>
+            <div className="v6-eyebrow">{owned.length ? 'in your ecosystem' : recommended.length ? 'recommended for you' : 'sample product'}</div>
             <h3>{selected?.name || 'your match'}</h3>
             <p>{selected?.summary || selected?.description || 'A personalized match based on your health profile and preferences.'}</p>
-            <div className="v6-bubble-tags"><span>personalized</span><span>evidence context</span></div>
+            <div className="v6-bubble-tags"><span>{owned.length ? 'your product' : recommended.length ? 'personalized' : 'example'}</span><span>evidence context</span></div>
             {personalizedUnlocked && selectedScore != null && <div className="v6-bubble-score">your ayna score · {selectedScore}/100</div>}
             <div className="v6-bubble-actions">
               <button type="button" className="primary" onClick={() => selected && onOpenProduct?.(selected)}>view product →</button>

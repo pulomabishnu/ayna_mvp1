@@ -91,3 +91,17 @@ describe('isLikelyNonProductImageUrl', () => {
     });
   });
 });
+
+describe('physical product identity verification', () => {
+  it('rejects a site-wide photo or a different magnesium formulation', async () => {
+    const { exactProductImageFromHtml } = await import('./_ogImageFetch.js');
+    const html = '<meta property="og:image" content="https://brand.test/banner.jpg"><script type="application/ld+json">{"@type":"Product","name":"Brand Magnesium Oxide 400 mg","image":"https://brand.test/oxide.jpg"}</script>';
+    expect(exactProductImageFromHtml(html, 'Brand Magnesium Glycinate 200 mg')).toBeNull();
+  });
+  it('accepts only the image belonging to the matching product record', async () => {
+    const { exactProductImageFromHtml } = await import('./_ogImageFetch.js');
+    const html = '<script type="application/ld+json">{"@graph":[{"@type":"Product","name":"Brand Magnesium Glycinate 200 mg","image":["https://brand.test/glycinate.jpg"]}]}</script>';
+    expect(exactProductImageFromHtml(html, 'Brand Magnesium Glycinate 200 mg')).toBe('https://brand.test/glycinate.jpg');
+    expect(exactProductImageFromHtml(html, 'Brand Magnesium Glycinate 400 mg')).toBeNull();
+  });
+});

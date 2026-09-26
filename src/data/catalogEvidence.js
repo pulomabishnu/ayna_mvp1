@@ -1,3 +1,4 @@
+import { applyCatalogCorrections } from './catalogCorrections.js';
 import { RESTORED_SCIENTIFIC_EVIDENCE } from './restoredScientificEvidence.js';
 // Central, reusable evidence for catalog products.
 //
@@ -454,6 +455,7 @@ function existingScientificLinks(product) {
 
 export function applyCatalogEvidence(product) {
   if (!product) return product;
+  product = applyCatalogCorrections(product);
 
   const guardedProduct = applyRatingSourceGuardrail(applyCommunitySourceGuardrail(applyEvidenceScopeGuardrail(applyRecallReviewGuardrail(applyPrivacyReviewGuardrail(applyClinicianSynthesisGuardrail(product))))));
 

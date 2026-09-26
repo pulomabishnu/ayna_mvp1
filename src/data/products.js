@@ -1638,7 +1638,7 @@ function tagsForHealthLabel(label) {
     if (/pcos|polycystic/.test(text)) add('pcos', 'pcos-management', 'hormone-balance');
     if (/endometriosis|adenomyosis/.test(text)) add('endometriosis', 'cramps', 'cramp-relief');
     if (/fibroid/.test(text)) add('heavy-flow', 'hormone-balance');
-    if (/hormone-related|hormonal|bloating|breast tenderness|nausea/.test(text)) add('hormone-balance', 'bloating');
+    if (/hormone-related|hormonal|bloating|breast tenderness/.test(text)) add('hormone-balance', 'bloating');
     if (/fertility|trying to conceive|\bttc\b|ovulation/.test(text)) add('fertility', 'cycle-tracking');
     if (/pregnan|prenatal|trimester/.test(text)) add('pregnancy');
     if (/postpartum|breastfeeding|lactation/.test(text)) add('postpartum');
@@ -1646,12 +1646,14 @@ function tagsForHealthLabel(label) {
     if (/\buti\b|urinary tract|burning with urination|urinary urgency|frequent urination/.test(text)) add('uti', 'uti-prevention');
     if (/bladder leak|incontinence/.test(text)) add('bladder-leaks', 'bladder-leak-protection');
     if (/contraception|birth control/.test(text)) add('contraception');
-    if (/sti/.test(text)) add('sexual-health', 'telehealth');
+    if (/\bsti\b|\bstd\b/.test(text)) add('sexual-health', 'telehealth');
     if (/menopause|perimenopause|post-menopause|hot flash|night sweat/.test(text)) add('menopause', 'perimenopause');
     if (/sleep|fatigue|low energy|brain fog|concentrat/.test(text)) add('sleep', 'sleep-energy');
     if (/skin|acne/.test(text)) add('skin', 'skin-hair');
     if (/hair thinning|hair loss|excess facial|excess body hair/.test(text)) add('hair', 'skin-hair');
-    if (/fitness|strength|exercise/.test(text)) add('fitness-cycle');
+    if (/fitness|strength|exercise|muscle/.test(text)) add('fitness-cycle');
+    if (/bone|osteoporo/.test(text)) add('bone-health');
+    if (/nausea/.test(text)) add('nausea');
     if (/doctor|specialist|provider|telehealth/.test(text)) add('telehealth');
 
     return [...tags];
@@ -1961,7 +1963,7 @@ function getSafetyAssessment(product, quizAnswers) {
         /perimenopause/.test(label)
     );
     const isPostMenopause = lifeStages.some((label) =>
-        /post-menopause|post menopause/.test(label)
+        /post[- ]?menopaus/.test(label)
     );
     const isMenopause = lifeStages.some((label) =>
         /\bi am in menopause\b/.test(label)
@@ -2038,7 +2040,10 @@ function getSafetyAssessment(product, quizAnswers) {
         };
     }
 
-    if (fertilitySpecific && (isMenopause || isPostMenopause)) {
+    const menstrualTracker = category === 'tracker'
+        && /period|cycle|fertility|ovulation/i.test(product?.name || '')
+        && !/menopaus/i.test(product?.name || '');
+    if ((fertilitySpecific || menstrualTracker) && (isMenopause || isPostMenopause)) {
         return {
             eligible: false,
             reason: 'Fertility/TTC product does not match your current life stage',
@@ -2747,18 +2752,27 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
     const hasPositiveGoalRelevance = Object.values(goalParts)
         .some((part) => part?.score != null && part.score > 0);
 
+    // Menopause alone does not imply specific symptoms or a need for hormone tests.
+    const menopauseStage = lifeStageLabels.some((label) => /menopaus/i.test(label));
+    const stageOnlyCare = product.type === 'digital' && product.category === 'telehealth';
     const hasPositiveProfileRelevance = [
-        profileParts.lifeStage,
+        (!menopauseStage || stageOnlyCare) ? profileParts.lifeStage : null,
         profileParts.breastfeeding,
         profileParts.postpartumTiming,
         profileParts.pregnancyTrimester,
-        profileParts.perimenopauseLastPeriod,
+        !menopauseStage ? profileParts.perimenopauseLastPeriod : null,
         profileParts.diagnoses,
         profileParts.triedBefore,
     ].some((part) => part?.score != null && part.score > 0);
 
-    const hasHealthRelevance =
-        hasPositiveGoalRelevance || hasPositiveProfileRelevance;
+    const statedNeeds = [...primaryGoalLabels, ...diagnosisLabels].join(' ');
+    const highDoseNeed = product.id === 'p-nature-made-iron-65mg'
+        ? /iron|anemi|anaemi/i.test(statedNeeds)
+        : product.id === 'p-natures-bounty-d3-125mcg'
+            ? /vitamin\s*d|d3|deficien/i.test(statedNeeds)
+            : true;
+    const hasHealthRelevance = highDoseNeed
+        && (hasPositiveGoalRelevance || hasPositiveProfileRelevance);
 
     const totalWeight = topLevel.reduce((sum, item) => sum + item.weight, 0);
 
