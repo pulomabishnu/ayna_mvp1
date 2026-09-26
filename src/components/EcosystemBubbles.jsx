@@ -215,25 +215,21 @@ export default function EcosystemBubbles({
   return (
     <section
       style={{
-        minHeight: 'min(100vh,720px)',
         position: 'relative',
         overflow: 'hidden',
         color: '#FFFCF9',
         fontFamily: "'DM Sans',system-ui,sans-serif",
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
         background: 'radial-gradient(ellipse 60% 55% at 78% 45%, rgba(122,78,110,.55), transparent 70%), radial-gradient(ellipse 50% 45% at 100% 100%, rgba(162,96,60,.45), transparent 70%), radial-gradient(ellipse 45% 40% at 0% 0%, rgba(36,42,82,.9), transparent 70%), linear-gradient(135deg,#262b52 0%,#33305c 40%,#48355f 70%,#6a4659 100%)',
       }}
     >
-      <div style={{ maxWidth: 1420, width: '100%', margin: '0 auto', padding: 'clamp(20px,3vw,36px) clamp(20px,5vw,64px) 8px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,420px),1fr))', gap: 'clamp(20px,3vw,40px)', alignItems: 'center' }}>
+      <div style={{ maxWidth: 1420, width: '100%', margin: '0 auto', padding: 'clamp(14px,2vw,24px) clamp(20px,5vw,64px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,420px),1fr))', gap: 'clamp(16px,2.5vw,32px)', alignItems: 'center' }}>
 
-        <section style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
-          <div style={{ font: "500 12px 'DM Mono',monospace", letterSpacing: '.2em', textTransform: 'uppercase', color: '#E39A5E' }}>Your ecosystem</div>
-          <h1 style={{ margin: 0, font: "500 clamp(26px,3.2vw,42px)/1.12 'Playfair Display',Georgia,serif", letterSpacing: '-.02em', color: '#FFFCF9' }}>
+        <section style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
+          <div style={{ font: "500 11px 'DM Mono',monospace", letterSpacing: '.2em', textTransform: 'uppercase', color: '#E39A5E' }}>Your ecosystem</div>
+          <h1 style={{ margin: 0, font: "500 clamp(22px,2.8vw,36px)/1.12 'Playfair Display',Georgia,serif", letterSpacing: '-.02em', color: '#FFFCF9' }}>
             hi, {name}. this is your <em style={{ fontStyle: 'italic', fontWeight: 500, color: '#F0A84B' }}>health universe.</em>
           </h1>
-          <p style={{ margin: 0, maxWidth: 540, fontSize: 14, lineHeight: 1.5, color: 'rgba(255,252,249,.78)' }}>
+          <p style={{ margin: 0, maxWidth: 540, fontSize: 13, lineHeight: 1.45, color: 'rgba(255,252,249,.78)' }}>
             Each bubble is an area of care. Tap one to see what&apos;s in it, why it was matched, and your personalized product score.
           </p>
 
@@ -301,7 +297,7 @@ export default function EcosystemBubbles({
             ref={orbitRef}
             onMouseEnter={() => { pausedRef.current = true; }}
             onMouseLeave={() => { pausedRef.current = false; }}
-            style={{ position: 'relative', width: 'min(400px,86%)', aspectRatio: '1', containerType: 'inline-size' }}
+            style={{ position: 'relative', width: 'min(320px,80%)', aspectRatio: '1', containerType: 'inline-size' }}
           >
             <div style={{ position: 'absolute', inset: '4%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(201,189,199,.10) 0%, rgba(201,189,199,.04) 45%, transparent 70%)' }} />
             <div style={{ position: 'absolute', inset: '12%', borderRadius: '50%', border: '1.5px dashed rgba(255,239,214,.22)' }} />
