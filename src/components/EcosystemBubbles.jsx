@@ -91,7 +91,7 @@ function seatPosition(index, total, phase, t, reduceMotion) {
 
 function ProductVisual({ product }) {
   return (
-    <div style={{ width: 96, height: 96, borderRadius: 24, background: '#FFFCF9', padding: 10, display: 'grid', placeItems: 'center', flex: 'none' }}>
+    <div style={{ width: 68, height: 68, borderRadius: 18, background: '#FFFCF9', padding: 8, display: 'grid', placeItems: 'center', flex: 'none' }}>
       <ProductTileImage
         product={product}
         alt={product?.name || ''}
@@ -215,27 +215,30 @@ export default function EcosystemBubbles({
   return (
     <section
       style={{
-        minHeight: '100vh',
+        minHeight: 'min(100vh,720px)',
         position: 'relative',
         overflow: 'hidden',
         color: '#FFFCF9',
         fontFamily: "'DM Sans',system-ui,sans-serif",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
         background: 'radial-gradient(ellipse 60% 55% at 78% 45%, rgba(122,78,110,.55), transparent 70%), radial-gradient(ellipse 50% 45% at 100% 100%, rgba(162,96,60,.45), transparent 70%), radial-gradient(ellipse 45% 40% at 0% 0%, rgba(36,42,82,.9), transparent 70%), linear-gradient(135deg,#262b52 0%,#33305c 40%,#48355f 70%,#6a4659 100%)',
       }}
     >
-      <div style={{ maxWidth: 1420, margin: '0 auto', padding: 'clamp(40px,6vw,88px) clamp(20px,5vw,64px) 120px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,440px),1fr))', gap: 'clamp(32px,4vw,64px)', alignItems: 'center' }}>
+      <div style={{ maxWidth: 1420, width: '100%', margin: '0 auto', padding: 'clamp(20px,3vw,36px) clamp(20px,5vw,64px) 8px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,420px),1fr))', gap: 'clamp(20px,3vw,40px)', alignItems: 'center' }}>
 
-        <section style={{ display: 'flex', flexDirection: 'column', gap: 22, minWidth: 0 }}>
+        <section style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
           <div style={{ font: "500 12px 'DM Mono',monospace", letterSpacing: '.2em', textTransform: 'uppercase', color: '#E39A5E' }}>Your ecosystem</div>
-          <h1 style={{ margin: 0, font: "500 clamp(40px,4.8vw,72px)/1.08 'Playfair Display',Georgia,serif", letterSpacing: '-.02em', color: '#FFFCF9' }}>
+          <h1 style={{ margin: 0, font: "500 clamp(26px,3.2vw,42px)/1.12 'Playfair Display',Georgia,serif", letterSpacing: '-.02em', color: '#FFFCF9' }}>
             hi, {name}. this is your <em style={{ fontStyle: 'italic', fontWeight: 500, color: '#F0A84B' }}>health universe.</em>
           </h1>
-          <p style={{ margin: 0, maxWidth: 540, fontSize: 17, lineHeight: 1.6, color: 'rgba(255,252,249,.78)' }}>
+          <p style={{ margin: 0, maxWidth: 540, fontSize: 14, lineHeight: 1.5, color: 'rgba(255,252,249,.78)' }}>
             Each bubble is an area of care. Tap one to see what&apos;s in it, why it was matched, and your personalized product score.
           </p>
 
           {selectedProduct ? (
-            <article style={{ marginTop: 10, maxWidth: 600, borderRadius: 28, padding: 18, background: 'rgba(255,252,249,.07)', border: '1px solid rgba(255,252,249,.14)', boxShadow: '0 24px 60px rgba(20,16,40,.25)', display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <article style={{ maxWidth: 600, borderRadius: 20, padding: 14, background: 'rgba(255,252,249,.07)', border: '1px solid rgba(255,252,249,.14)', boxShadow: '0 24px 60px rgba(20,16,40,.25)', display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ width: 14, height: 14, borderRadius: '50%', background: selTint, boxShadow: '0 0 0 4px rgba(255,252,249,.08)' }} />
@@ -244,47 +247,53 @@ export default function EcosystemBubbles({
                   </span>
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button type="button" onClick={previousProduct} disabled={selectedProducts.length <= 1} aria-label="Previous product" style={{ width: 36, height: 36, borderRadius: '50%', border: '1px solid rgba(255,252,249,.2)', background: 'transparent', color: '#FFFCF9', cursor: 'pointer', fontSize: 16, display: 'grid', placeItems: 'center' }}>‹</button>
-                  <button type="button" onClick={nextProduct} disabled={selectedProducts.length <= 1} aria-label="Next product" style={{ width: 36, height: 36, borderRadius: '50%', border: '1px solid rgba(255,252,249,.2)', background: 'transparent', color: '#FFFCF9', cursor: 'pointer', fontSize: 16, display: 'grid', placeItems: 'center' }}>›</button>
+                  <button type="button" onClick={previousProduct} disabled={selectedProducts.length <= 1} aria-label="Previous product" style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid rgba(255,252,249,.2)', background: 'transparent', color: '#FFFCF9', cursor: 'pointer', fontSize: 14, display: 'grid', placeItems: 'center' }}>‹</button>
+                  <button type="button" onClick={nextProduct} disabled={selectedProducts.length <= 1} aria-label="Next product" style={{ width: 30, height: 30, borderRadius: '50%', border: '1px solid rgba(255,252,249,.2)', background: 'transparent', color: '#FFFCF9', cursor: 'pointer', fontSize: 14, display: 'grid', placeItems: 'center' }}>›</button>
                 </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '96px minmax(0,1fr)', gap: 18, alignItems: 'center' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '68px minmax(0,1fr)', gap: 14, alignItems: 'center' }}>
                 <ProductVisual product={selectedProduct} />
-                <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <button
                     type="button"
                     onClick={() => onOpenProduct?.(selectedProduct)}
-                    style={{ background: 'none', border: 0, padding: 0, textAlign: 'left', cursor: 'pointer', color: '#FFFCF9', font: "500 clamp(20px,1.8vw,26px)/1.15 'Playfair Display',Georgia,serif" }}
+                    style={{ background: 'none', border: 0, padding: 0, textAlign: 'left', cursor: 'pointer', color: '#FFFCF9', font: "500 clamp(15px,1.3vw,18px)/1.2 'Playfair Display',Georgia,serif" }}
                   >
                     {selectedProduct.name}
                   </button>
-                  <div style={{ fontSize: 14, color: 'rgba(255,252,249,.7)' }}>{CATEGORY_LABELS[selectedProduct?.category] || selectedArea?.label} · matched to your saved preferences</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginTop: 4 }}>
-                    {score != null && <span style={{ font: "500 12px 'DM Mono',monospace", color: '#242A52', background: '#F0A84B', borderRadius: 999, padding: '5px 11px' }}>ayna score {score}/100</span>}
-                    <button type="button" onClick={() => setWhyOpen((v) => !v)} style={{ border: 0, background: 'transparent', color: '#FFFCF9', padding: 0, cursor: 'pointer', fontSize: 14, textDecoration: 'underline', textUnderlineOffset: 3 }}>
+                  <div style={{ fontSize: 12.5, color: 'rgba(255,252,249,.7)' }}>{CATEGORY_LABELS[selectedProduct?.category] || selectedArea?.label} · matched to your saved preferences</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginTop: 2 }}>
+                    {score != null && <span style={{ font: "500 11px 'DM Mono',monospace", color: '#242A52', background: '#F0A84B', borderRadius: 999, padding: '4px 9px' }}>ayna score {score}/100</span>}
+                    <button type="button" onClick={() => setWhyOpen((v) => !v)} style={{ border: 0, background: 'transparent', color: '#FFFCF9', padding: 0, cursor: 'pointer', fontSize: 12.5, textDecoration: 'underline', textUnderlineOffset: 3 }}>
                       {whyOpen ? 'hide why' : 'why this?'}
                     </button>
                   </div>
                 </div>
               </div>
               {whyOpen && (
-                <div style={{ borderTop: '1px solid rgba(255,252,249,.12)', paddingTop: 12, fontSize: 14, lineHeight: 1.55, color: 'rgba(255,252,249,.82)' }}>
+                <div style={{ borderTop: '1px solid rgba(255,252,249,.12)', paddingTop: 8, fontSize: 12.5, lineHeight: 1.5, color: 'rgba(255,252,249,.82)', maxHeight: 120, overflowY: 'auto' }}>
                   {whyText}
-                  {explanation?.considerations && <div style={{ marginTop: 6, fontSize: 12, color: 'rgba(255,252,249,.55)' }}>{explanation.considerations}</div>}
-                  <div style={{ marginTop: 6, fontSize: 12, color: 'rgba(255,252,249,.55)' }}>Match explanations are relevance signals, not medical advice.</div>
-                  <div style={{ display: 'flex', gap: 14, marginTop: 10 }}>
-                    <button type="button" onClick={() => onExploreArea?.(selectedArea)} style={{ border: 0, background: 'transparent', color: '#F0A84B', padding: 0, cursor: 'pointer', fontSize: 13, textDecoration: 'underline', textUnderlineOffset: 3 }}>swap</button>
-                    {onToggleProduct && <button type="button" onClick={() => onToggleProduct(selectedProduct)} style={{ border: 0, background: 'transparent', color: '#F0A84B', padding: 0, cursor: 'pointer', fontSize: 13, textDecoration: 'underline', textUnderlineOffset: 3 }}>remove</button>}
+                  {explanation?.considerations && <div style={{ marginTop: 5, fontSize: 11.5, color: 'rgba(255,252,249,.55)' }}>{explanation.considerations}</div>}
+                  <div style={{ marginTop: 5, fontSize: 11.5, color: 'rgba(255,252,249,.55)' }}>Match explanations are relevance signals, not medical advice.</div>
+                  <div style={{ display: 'flex', gap: 14, marginTop: 8 }}>
+                    <button type="button" onClick={() => onExploreArea?.(selectedArea)} style={{ border: 0, background: 'transparent', color: '#F0A84B', padding: 0, cursor: 'pointer', fontSize: 12, textDecoration: 'underline', textUnderlineOffset: 3 }}>swap</button>
+                    {onToggleProduct && <button type="button" onClick={() => onToggleProduct(selectedProduct)} style={{ border: 0, background: 'transparent', color: '#F0A84B', padding: 0, cursor: 'pointer', fontSize: 12, textDecoration: 'underline', textUnderlineOffset: 3 }}>remove</button>}
                   </div>
                 </div>
               )}
             </article>
           ) : (
-            <article style={{ marginTop: 10, maxWidth: 600, borderRadius: 28, padding: 22, background: 'rgba(255,252,249,.07)', border: '1px solid rgba(255,252,249,.14)' }}>
-              <strong style={{ font: "500 18px 'Playfair Display',Georgia,serif" }}>nothing here yet.</strong>
-              <p style={{ marginTop: 8, fontSize: 14, color: 'rgba(255,252,249,.75)' }}>Add a product and it will show up here with its match context.</p>
+            <article style={{ maxWidth: 600, borderRadius: 20, padding: 16, background: 'rgba(255,252,249,.07)', border: '1px solid rgba(255,252,249,.14)' }}>
+              <strong style={{ font: "500 16px 'Playfair Display',Georgia,serif" }}>nothing here yet.</strong>
+              <p style={{ marginTop: 6, fontSize: 13, color: 'rgba(255,252,249,.75)' }}>Add a product and it will show up here with its match context.</p>
             </article>
           )}
+
+          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+            <span><strong style={{ font: "500 16px 'Playfair Display',Georgia,serif" }}>{Object.keys(myProducts || {}).length}</strong> <small style={{ fontSize: 12, color: 'rgba(255,252,249,.6)' }}>products saved</small></span>
+            <span><strong style={{ font: "500 16px 'Playfair Display',Georgia,serif" }}>{areas.length}</strong> <small style={{ fontSize: 12, color: 'rgba(255,252,249,.6)' }}>care areas</small></span>
+            <span><strong style={{ font: "500 16px 'Playfair Display',Georgia,serif" }}>{scores.length ? Math.round(scores.reduce((sum, v) => sum + v, 0) / scores.length) : '—'}</strong> <small style={{ fontSize: 12, color: 'rgba(255,252,249,.6)' }}>average ayna score</small></span>
+          </div>
         </section>
 
         <section style={{ display: 'flex', justifyContent: 'center', minWidth: 0 }}>
@@ -292,7 +301,7 @@ export default function EcosystemBubbles({
             ref={orbitRef}
             onMouseEnter={() => { pausedRef.current = true; }}
             onMouseLeave={() => { pausedRef.current = false; }}
-            style={{ position: 'relative', width: 'min(640px,100%)', aspectRatio: '1', containerType: 'inline-size' }}
+            style={{ position: 'relative', width: 'min(400px,86%)', aspectRatio: '1', containerType: 'inline-size' }}
           >
             <div style={{ position: 'absolute', inset: '4%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(201,189,199,.10) 0%, rgba(201,189,199,.04) 45%, transparent 70%)' }} />
             <div style={{ position: 'absolute', inset: '12%', borderRadius: '50%', border: '1.5px dashed rgba(255,239,214,.22)' }} />
@@ -347,12 +356,6 @@ export default function EcosystemBubbles({
             })}
           </div>
         </section>
-      </div>
-
-      <div style={{ maxWidth: 1420, margin: '0 auto', padding: '0 clamp(20px,5vw,64px) 40px', display: 'flex', gap: 32, flexWrap: 'wrap' }}>
-        <span><strong style={{ font: "500 20px 'Playfair Display',Georgia,serif" }}>{Object.keys(myProducts || {}).length}</strong> <small style={{ color: 'rgba(255,252,249,.6)' }}>products saved</small></span>
-        <span><strong style={{ font: "500 20px 'Playfair Display',Georgia,serif" }}>{areas.length}</strong> <small style={{ color: 'rgba(255,252,249,.6)' }}>care areas</small></span>
-        <span><strong style={{ font: "500 20px 'Playfair Display',Georgia,serif" }}>{scores.length ? Math.round(scores.reduce((sum, v) => sum + v, 0) / scores.length) : '—'}</strong> <small style={{ color: 'rgba(255,252,249,.6)' }}>average ayna score</small></span>
       </div>
     </section>
   );
