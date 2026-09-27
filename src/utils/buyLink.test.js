@@ -66,4 +66,47 @@ describe('Buy Now destinations', () => {
   it('falls back to the brand page when Amazon does not carry the product for Ayna', () => {
     expect(resolveBuyUrl(byId['p-oboo-nook'])).toMatch(/^https:\/\/oboo\.love\//);
   });
+
+  // Regression coverage for a real bug found 2026-09-27: products with
+  // genuinely different models/sizes (not just cosmetic color options) were
+  // all resolving to the SAME Amazon ASIN, so choosing a different size sent
+  // the person to the wrong product. Each ASIN below was confirmed on the
+  // live Amazon listing before being added.
+  it('sends each DivaCup model to its own model-specific Amazon listing', () => {
+    const diva = byId['p-diva-cup'];
+    const byLabel = Object.fromEntries(diva.variants.map((v) => [v.label, v]));
+    expect(resolveBuyUrl(diva, byLabel['Model 0'])).toBe('https://www.amazon.com/dp/B08TLT6BF7?tag=aynahealth-20');
+    expect(resolveBuyUrl(diva, byLabel['Model 1'])).toBe('https://www.amazon.com/dp/B08TLJPR71?tag=aynahealth-20');
+    expect(resolveBuyUrl(diva, byLabel['Model 2'])).toBe('https://www.amazon.com/dp/B08TLMWZB4?tag=aynahealth-20');
+  });
+
+  it('sends each Lunette flow size to its own Amazon listing', () => {
+    const lunette = byId['p-lunette-cup'];
+    const [size1, size2] = lunette.variants;
+    expect(resolveBuyUrl(lunette, size1)).toBe('https://www.amazon.com/dp/B002MA4SI6?tag=aynahealth-20');
+    expect(resolveBuyUrl(lunette, size2)).toBe('https://www.amazon.com/dp/B0054SQ02K?tag=aynahealth-20');
+    expect(resolveBuyUrl(lunette, size1)).not.toBe(resolveBuyUrl(lunette, size2));
+  });
+
+  it('sends each OrganiCup size to its own Amazon listing', () => {
+    const cup = byId['p-organicup'];
+    const byLabel = Object.fromEntries(cup.variants.map((v) => [v.label, v]));
+    expect(resolveBuyUrl(cup, byLabel['A'])).toBe('https://www.amazon.com/dp/B071NCXFMG?tag=aynahealth-20');
+    expect(resolveBuyUrl(cup, byLabel['B'])).toBe('https://www.amazon.com/dp/B072KZM9P3?tag=aynahealth-20');
+    expect(resolveBuyUrl(cup, byLabel['Mini'])).toBe('https://www.amazon.com/dp/B07SC244TV?tag=aynahealth-20');
+  });
+
+  it('sends each Flex Cup size to its own Amazon listing', () => {
+    const cup = byId['p-flex-cup'];
+    const [size01, size02] = cup.variants;
+    expect(resolveBuyUrl(cup, size01)).toBe('https://www.amazon.com/dp/B07QD4W7RQ?tag=aynahealth-20');
+    expect(resolveBuyUrl(cup, size02)).toBe('https://www.amazon.com/dp/B07QHG6ZY8?tag=aynahealth-20');
+  });
+
+  it('sends each Saalt Disc size to its own Amazon listing', () => {
+    const disc = byId['p-saalt-disc'];
+    const [regular, small] = disc.variants;
+    expect(resolveBuyUrl(disc, regular)).toBe('https://www.amazon.com/dp/B0B13WT3KV?tag=aynahealth-20');
+    expect(resolveBuyUrl(disc, small)).toBe('https://www.amazon.com/dp/B0B13XG62P?tag=aynahealth-20');
+  });
 });
