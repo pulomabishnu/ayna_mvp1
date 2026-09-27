@@ -459,6 +459,16 @@ export const CATALOG_CORRECTIONS = {
 
 export function applyCatalogCorrections(product) {
   const correction = CATALOG_CORRECTIONS[product?.id];
-  const corrected = correction ? { ...product, ...correction } : product;
+  const corrected = correction
+    ? {
+      ...product,
+      ...correction,
+      // Keep the pre-correction name so name-keyed lookups (e.g. Amazon
+      // Associates rows) still resolve after a product is renamed.
+      ...(correction.name && product?.name && correction.name !== product.name
+        ? { originalName: product.originalName || product.name }
+        : {}),
+    }
+    : product;
   return applyProductVariants(PRODUCT_PACKAGING[product?.id] ? { ...corrected, ...PRODUCT_PACKAGING[product.id] } : corrected);
 }

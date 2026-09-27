@@ -1,6 +1,5 @@
 import { getVariantSelection } from '../utils/productVariantSelection';
 import { recordRetailerVisit } from '../utils/feedbackClient';
-import { CATALOG_CORRECTIONS } from '../data/catalogCorrections';
 import React, { useState, useMemo, useEffect } from 'react';
 import { getAppSessionId } from '../utils/conversationId';
 import ProductEvidenceRail from './ProductEvidenceRail';
@@ -13,8 +12,7 @@ import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
-import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
-import { getAmazonAffiliateUrl } from '../data/productAffiliateUrls';
+import { resolveBuyUrl, isAmazonUrl, buyGoesToAmazonListing } from '../utils/buyLink';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 import { getSafetyAlertText, buildSummarySentences } from '../utils/productSafetyAlert';
 import posthog from 'posthog-js';
@@ -375,98 +373,6 @@ function normalizePercent(value) {
   return Math.round(pct);
 }
 
-/** True for a real URL with something after the domain — not just a bare homepage. */
-function hasRealPath(url) {
-  try {
-    const u = new URL(url);
-    return u.pathname.replace(/\/+$/, '').length > 0 || u.search.length > 0;
-  } catch {
-    return false;
-  }
-}
-
-function isSearchResultsUrl(url) {
-  try {
-    const u = new URL(url);
-    const path = u.pathname.toLowerCase().replace(/\/+$/, '');
-
-    // Search/category-result routes, including Amazon /s pages.
-    if (/(^|\/)(s|search)(\/|$)/.test(path)) return true;
-
-    if (
-      u.searchParams.has('k') ||
-      u.searchParams.has('searchTerm') ||
-      u.searchParams.has('Ntt') ||
-      u.searchParams.get('tbm') === 'shop'
-    ) return true;
-
-    return false;
-  } catch {
-    return true;
-  }
-}
-
-function isExactBuyUrl(value) {
-  const url = String(value || '').trim();
-
-  return (
-    /^https?:\/\//i.test(url) &&
-    hasRealPath(url) &&
-    !isSearchResultsUrl(url)
-  );
-}
-
-/** True when a buy URL resolves to Amazon — these are Ayna's affiliate links. */
-function isAmazonUrl(url) {
-  try {
-    return /(^|\.)amazon\.[a-z.]+$/i.test(new URL(url).hostname);
-  } catch {
-    return false;
-  }
-}
-
-function getBuyUrl(product) {
-  // Reviewed destinations take precedence over stale affiliate variants.
-  const correctedUrl = CATALOG_CORRECTIONS[product?.id]?.url;
-  if (isExactBuyUrl(correctedUrl)) return correctedUrl;
-  // 1. Affiliate product URL wins when Ayna has one.
-  if (isExactBuyUrl(product?.affiliateUrl)) {
-    return String(product.affiliateUrl).trim();
-  }
-
-  // 2. Amazon Associates destination for products in Ayna's affiliate catalog.
-  const amazonAffiliateUrl = getAmazonAffiliateUrl(product?.name);
-  if (isExactBuyUrl(amazonAffiliateUrl)) {
-    return amazonAffiliateUrl;
-  }
-
-  // 3. Ayna's centrally verified exact destination.
-  const verifiedCatalogUrl = PRODUCT_BUY_URLS[product?.id];
-  if (isExactBuyUrl(verifiedCatalogUrl)) {
-    return verifiedCatalogUrl;
-  }
-
-  // 4. Explicit exact product URLs.
-  for (const candidate of [product?.productUrl, product?.buyUrl]) {
-    if (isExactBuyUrl(candidate)) return String(candidate).trim();
-  }
-
-  // 3. Existing catalog URL, but ONLY when it is a real product/service page.
-  // Bare homepages and search-result pages are rejected.
-  if (isExactBuyUrl(product?.url)) {
-    return String(product.url).trim();
-  }
-
-  // 4. Explicit retailer product URL only.
-  if (product?.whereToBuyLinks && typeof product.whereToBuyLinks === 'object') {
-    for (const value of Object.values(product.whereToBuyLinks)) {
-      if (isExactBuyUrl(value)) return String(value).trim();
-    }
-  }
-
-  return null;
-}
-
 export default function ProductModal({
   product,
   onOmit,
@@ -570,7 +476,8 @@ export default function ProductModal({
   const hasEcosystemContext = isInEcosystem || (Array.isArray(ecosystemProducts) && ecosystemProducts.length > 0);
   const matchPercent = profileMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
-  const buyUrl = choice.hasVariants ? choice.buyUrl : getBuyUrl(product);
+  const buyUrl = resolveBuyUrl(product, choice.variant);
+  const sizeChosenOnAmazon = choice.hasVariants && buyGoesToAmazonListing(product, choice.variant);
   const isAmazonBuyLink = useMemo(() => isAmazonUrl(buyUrl), [buyUrl]);
 
   const aynaData = useMemo(
@@ -844,7 +751,7 @@ export default function ProductModal({
           <option value="">Choose a size / option</option>
           {product.variants.map(variant => <option key={variant.id} value={variant.id}>{variant.label}</option>)}
         </select>
-        <small style={{ display: 'block', marginTop: '0.35rem' }}>Buy Now opens this exact option. Confirm current price and availability with the retailer.</small>
+        <small style={{ display: 'block', marginTop: '0.35rem' }}>{sizeChosenOnAmazon ? 'Buy Now opens this product on Amazon — pick the same size there. Confirm current price and availability with the retailer.' : 'Buy Now opens this exact option. Confirm current price and availability with the retailer.'}</small>
       </label>}
       <div className="pdp-actions__primary">
         {buyUrl ? (

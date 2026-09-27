@@ -192,11 +192,56 @@ const PRODUCT_NAME_ALIASES = {
   'ziggy cup menstrual disc': 'ziggy cup intimina menstrual disc',
 };
 
+export const AMAZON_ASSOCIATES_TAG = 'aynahealth-20';
+
+/** Canonical Amazon Associates product URL for an ASIN. */
+export function amazonAffiliateUrlForAsin(asin) {
+  const clean = String(asin || '').trim().toUpperCase();
+  return /^[A-Z0-9]{10}$/.test(clean) ? `https://www.amazon.com/dp/${clean}?tag=${AMAZON_ASSOCIATES_TAG}` : null;
+}
+
+/**
+ * Catalog entries whose display name was later corrected to the exact
+ * formulation/pack (catalogCorrections.js), so the name no longer matches
+ * the row above. Keyed by product id so a rename can never silently drop
+ * the affiliate link again. Only rows that are the same product are mapped.
+ */
+const AMAZON_ROW_BY_PRODUCT_ID = {
+  'p-rael-organic-pad': 'rael organic cotton pads',
+  'p-rael-liners': 'rael organic cotton liners',
+  'p-rael-tampon': 'rael organic tampons',
+  'p-rael-overnight': 'rael overnight pads',
+  'p-magnesium-glycinate': 'nature made magnesium glycinate',
+  'p-natracare-tampon': 'natracare organic tampons',
+  'p-probiotics-women': 'garden of life women s probiotics',
+  'p-zinc': 'garden of life zinc 30mg',
+  'p-thermacare': 'thermacare menstrual heat wraps',
+  'p-period-co-underwear': 'period co period underwear',
+  'p-nature-made-iron-65mg': 'nature made iron 65 mg',
+  'p-natures-bounty-d3-125mcg': 'nature s bounty vitamin d3 5000 iu',
+};
+
 export function getAmazonAffiliateUrl(productName) {
   const normalized = normalizeProductName(productName);
   const sourceName = PRODUCT_NAME_ALIASES[normalized] || normalized;
-  const asin = AMAZON_ASINS_BY_NORMALIZED_NAME[sourceName];
-  return asin ? `https://www.amazon.com/dp/${asin}?tag=aynahealth-20` : null;
+  return amazonAffiliateUrlForAsin(AMAZON_ASINS_BY_NORMALIZED_NAME[sourceName]);
+}
+
+/**
+ * Amazon Associates URL for a catalog product: an explicit id mapping first,
+ * then its current name, then any earlier catalog name it carried.
+ */
+export function getAmazonAffiliateUrlForProduct(product) {
+  const byId = AMAZON_ROW_BY_PRODUCT_ID[product?.id];
+  if (byId) {
+    const url = amazonAffiliateUrlForAsin(AMAZON_ASINS_BY_NORMALIZED_NAME[byId]);
+    if (url) return url;
+  }
+  for (const name of [product?.name, product?.variantFamilyName, product?.originalName]) {
+    const url = name ? getAmazonAffiliateUrl(name) : null;
+    if (url) return url;
+  }
+  return null;
 }
 
 export const AMAZON_AFFILIATE_PRODUCT_COUNT = AMAZON_ROWS.length;
