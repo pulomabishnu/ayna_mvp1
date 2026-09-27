@@ -1,5 +1,7 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
+vi.mock('./_feedbackStore.js', () => ({ listFeedback: vi.fn(async () => ({ results: [], nextCursor: null })) }));
 vi.mock('./_usageLimit.js', () => ({ verifyUser: vi.fn() }));
+import { listFeedback } from './_feedbackStore.js';
 import { verifyUser } from './_usageLimit.js';
 import handler from './reviews-admin.js';
 
@@ -22,10 +24,22 @@ describe('popup review administration', () => {
     const res = response();
     await handler({ method: 'GET' }, res);
     expect(res.code).toBe(200);
-    expect(res.body.results.map(r => r.userId)).toEqual(['newer', 'older']);
-    expect(res.body.results[0]).toEqual({ userId: 'newer', reviewerEmail: 'newer@example.test', rating: 4, feedback: 'Useful!', heardAboutUs: 'Instagram', submittedAt: '2026-09-20' });
+    expect(JSON.stringify(res.body)).not.toContain('example.test');
+    expect(JSON.stringify(res.body)).not.toContain('userId');
+    expect(res.body.results[0]).toEqual({ id: 'legacy-1', kind: 'survey', campaign: 'legacy', rating: 4, feedback: 'Useful!', heardAboutUs: 'Instagram', submittedAt: '2026-09-20' });
     expect(res.body.results[1].feedback).toBe('');
     expect(res.headers['Cache-Control']).toContain('no-store');
+  });
+  it('includes anonymous purchases and paginates without reading account metadata again', async () => {
+    const row = { id: 'random-response-id', kind: 'purchase', productId: 'pads', productName: 'Pads', variant: 'Overnight', answer: 'yes', submittedAt: '2026-09-26' };
+    listFeedback.mockResolvedValueOnce({ results: [row], nextCursor: 200 });
+    const res = response();
+    await handler({ method: 'GET', query: { cursor: '100' } }, res);
+    expect(res.code).toBe(200);
+    expect(res.body.results).toEqual([row]);
+    expect(res.body.nextCursor).toBe(200);
+    expect(listUsers).not.toHaveBeenCalled();
+    expect(JSON.stringify(res.body)).not.toMatch(/email|userId|phone/);
   });
   it('loads responses beyond the first user page', async () => {
     listUsers.mockResolvedValueOnce({ data: { users: Array.from({ length: 1000 }, (_, i) => ({ id: `${i}` })) } }).mockResolvedValueOnce({ data: { users: [reviewer('last', '2026-09-20')] } });

@@ -126,6 +126,9 @@ export function safeProductImageSrc(imageUrl, allowBrandLogo = false) {
 
 export async function resolveProductImage(name, brand, url, type) {
   if (!name) return '';
+  // Physical goods require a visually reviewed catalog photograph. An exact
+  // product page can still choose a lifestyle/model image as its primary asset.
+  if (type !== 'digital') return '';
   // A corrected page or product type must never reuse another variant's image.
   if (!url) return '';
   const key = JSON.stringify([brand || '', name, url, type === 'digital' ? 'digital' : 'physical']);

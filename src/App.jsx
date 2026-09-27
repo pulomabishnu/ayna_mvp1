@@ -1,3 +1,4 @@
+import FeedbackPrompts from './components/FeedbackPrompts';
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
@@ -819,7 +820,7 @@ function App() {
     } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
     } else if (pendingAction === 'login') {
-      setCurrentView('ecosystem');
+      setCurrentView('welcome', { replace: true });
     } else if (pendingAction === 'delete-account') {
       // Returning from the Google re-confirmation redirect the delete-account
       // page kicks off before it lets someone delete a Google-linked account.
@@ -3034,6 +3035,7 @@ function App() {
         {currentView === 'delete-account' && (
           <DeleteAccountPage onBack={() => setCurrentView('profile-edit')} />
         )}
+        <FeedbackPrompts key={user?.id || 'guest'} user={user} authLoading={authLoading} currentView={currentView} />
         {currentView === 'admin-reviews' && (
           <AdminReviewsPage onBack={handleBackFromStandalonePage} />
         )}
@@ -3118,6 +3120,7 @@ function App() {
             // Navigation is handled by the restored pendingAction effect so
             // Google OAuth follows the same post-login path as email/password.
             setUser(user);
+            if (!pendingActionRef.current) setCurrentView('welcome', { replace: true });
           }} />
         )}
         {currentView === 'auth-confirm' && (

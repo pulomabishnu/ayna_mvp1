@@ -171,7 +171,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
           throw error;
         }
         if (!data?.session?.user) throw new Error('Sign-in succeeded but no session was created. Please try again.');
-        setSuccessMsg('Signed in. Loading your ecosystem…');
+        setSuccessMsg('Signed in. Welcome back…');
         onAuthenticated?.(data.user || data.session.user, data.session);
       }
     } catch (err) {

@@ -99,6 +99,15 @@ describe('safeProductImageSrc', () => {
 });
 
 describe('image cache identity and recovery', () => {
+  it('never replaces missing physical packaging with an unreviewed page photo', async () => {
+    const { vi } = await import('vitest');
+    const fetchMock = vi.fn(); vi.stubGlobal('fetch', fetchMock);
+    try {
+      const { resolveProductImage } = await import('./resolveProductImage');
+      expect(await resolveProductImage('Pads', 'Brand', 'https://brand.test/pads', 'physical')).toBe('');
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally { vi.unstubAllGlobals(); }
+  });
   it('allows a corrected URL to replace a previously resolved variant', async () => {
     const { vi } = await import('vitest');
     vi.resetModules();
@@ -109,9 +118,9 @@ describe('image cache identity and recovery', () => {
     vi.stubGlobal('fetch', fetchMock);
     try {
       const { resolveProductImage } = await import('./resolveProductImage');
-      expect(await resolveProductImage('Magnesium', 'Brand', '', 'physical')).toBe('');
-      expect(await resolveProductImage('Magnesium', 'Brand', 'https://brand.test/oxide', 'physical')).toContain('wrong.jpg');
-      expect(await resolveProductImage('Magnesium', 'Brand', 'https://brand.test/glycinate', 'physical')).toContain('right.jpg');
+      expect(await resolveProductImage('App', 'Brand', '', 'digital')).toBe('');
+      expect(await resolveProductImage('App', 'Brand', 'https://brand.test/old-app', 'digital')).toContain('wrong.jpg');
+      expect(await resolveProductImage('App', 'Brand', 'https://brand.test/new-app', 'digital')).toContain('right.jpg');
       expect(fetchMock).toHaveBeenCalledTimes(2);
     } finally { vi.unstubAllGlobals(); }
   });
@@ -124,8 +133,8 @@ describe('image cache identity and recovery', () => {
     vi.stubGlobal('fetch', fetchMock);
     try {
       const { resolveProductImage } = await import('./resolveProductImage');
-      expect(await resolveProductImage('Product', 'Brand', 'https://brand.test/product')).toBe('');
-      expect(await resolveProductImage('Product', 'Brand', 'https://brand.test/product')).toContain('fixed.jpg');
+      expect(await resolveProductImage('App', 'Brand', 'https://brand.test/product', 'digital')).toBe('');
+      expect(await resolveProductImage('App', 'Brand', 'https://brand.test/product', 'digital')).toContain('fixed.jpg');
     } finally { vi.unstubAllGlobals(); }
   });
 });

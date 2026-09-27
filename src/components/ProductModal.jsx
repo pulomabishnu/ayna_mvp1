@@ -1,3 +1,5 @@
+import { getVariantSelection } from '../utils/productVariantSelection';
+import { recordRetailerVisit } from '../utils/feedbackClient';
 import { CATALOG_CORRECTIONS } from '../data/catalogCorrections';
 import React, { useState, useMemo, useEffect } from 'react';
 import { getAppSessionId } from '../utils/conversationId';
@@ -513,6 +515,9 @@ export default function ProductModal({
     posthog.capture('product_detail_view_changed', { view: next, productId: product?.id });
   };
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [selectedVariantId, setSelectedVariantId] = useState(product.defaultVariantId || '');
+  const choice = getVariantSelection(product, selectedVariantId);
+  const displayName = choice.displayName;
 
   const [activeTab, setActiveTab] = useState('summary');
   const [reviewInput, setReviewInput] = useState('');
@@ -540,7 +545,7 @@ export default function ProductModal({
     return () => { active = false; };
   }, [imageIdentity, product?.id, product?.name, product?.brand, product?.image, product?.url, product?.type]);
 
-  const heroImageSrc = (resolvedModalImage?.identity === imageIdentity ? resolvedModalImage.url : '') || product?.image || '';
+  const heroImageSrc = choice.hasVariants ? choice.image : (resolvedModalImage?.identity === imageIdentity ? resolvedModalImage.url : '') || product?.image || '';
 
   const matchLabels = useMemo(
     () => getProfileMatchLabelsForProduct(product, quizResults, healthProfile),
@@ -565,7 +570,7 @@ export default function ProductModal({
   const hasEcosystemContext = isInEcosystem || (Array.isArray(ecosystemProducts) && ecosystemProducts.length > 0);
   const matchPercent = profileMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
-  const buyUrl = useMemo(() => getBuyUrl(product), [product]);
+  const buyUrl = choice.hasVariants ? choice.buyUrl : getBuyUrl(product);
   const isAmazonBuyLink = useMemo(() => isAmazonUrl(buyUrl), [buyUrl]);
 
   const aynaData = useMemo(
@@ -833,6 +838,14 @@ export default function ProductModal({
 
   const actionButtons = (
     <div className="pdp-actions">
+      {choice.hasVariants && <label style={{ display: 'block', width: '100%', marginBottom: '0.8rem', fontSize: '0.9rem' }}>
+        Size / option
+        <select aria-label="Size / option" value={selectedVariantId} onChange={event => setSelectedVariantId(event.target.value)} style={{ display: 'block', width: '100%', padding: '0.7rem', marginTop: '0.35rem', border: '1px solid #d6d0c7', borderRadius: '8px', background: '#fff', color: '#242a52' }}>
+          <option value="">Choose a size / option</option>
+          {product.variants.map(variant => <option key={variant.id} value={variant.id}>{variant.label}</option>)}
+        </select>
+        <small style={{ display: 'block', marginTop: '0.35rem' }}>Buy Now opens this exact option. Confirm current price and availability with the retailer.</small>
+      </label>}
       <div className="pdp-actions__primary">
         {buyUrl ? (
           <a
@@ -840,13 +853,16 @@ export default function ProductModal({
             href={buyUrl}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => posthog.capture('product_buy_now_clicked', {
+            onClick={() => {
+              recordRetailerVisit(product, choice.variant);
+              posthog.capture('product_buy_now_clicked', {
               productId: product.id,
               category: product.category,
               destination: buyUrl,
               source: searchOrigin?.source,
               searchQuery: searchOrigin?.searchQuery,
-            })}
+            });
+            }}
           >
             Buy Now
           </a>
@@ -893,12 +909,13 @@ export default function ProductModal({
           <button
             type="button"
             onClick={() => setLightboxOpen(true)}
-            aria-label={`View larger photo of ${product.name}`}
+            aria-label={`View larger photo of ${displayName}`}
             style={{ all: 'unset', display: 'block', width: '100%', height: '100%', cursor: 'zoom-in' }}
           >
             <img
+              key={heroImageSrc}
               src={heroImageSrc}
-              alt={product.name}
+              alt={displayName}
               onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
               style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
             />
@@ -1099,11 +1116,11 @@ export default function ProductModal({
             <div className="pdp-head__detail">
               <div className="pdp-head__eyebrow">{eyebrow}</div>
 
-              <h2 className="pdp-head__name">{product.name}</h2>
+              <h2 className="pdp-head__name">{displayName}</h2>
 
               <div className="pdp-head__pricerow">
                 {(product.price || product.stage) && (
-                  <span className="pdp-head__price">{product.price || product.stage}</span>
+                  <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
                 )}
                 {matchPercent != null ? (
                   <span className="pdp-head__match pdp-head__match--gauge">
@@ -1461,9 +1478,9 @@ export default function ProductModal({
 
             <div className="pdp-evidence-head__info">
               <div className="pdp-head__eyebrow">{eyebrow}</div>
-              <h2 className="pdp-head__name" style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)' }}>{product.name}</h2>
+              <h2 className="pdp-head__name" style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)' }}>{displayName}</h2>
               {(product.price || product.stage) && (
-                <span className="pdp-head__price">{product.price || product.stage}</span>
+                <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
               )}
               {summarySentences[0] && (
                 <p className="pdp-evidence-head__desc">{summarySentences[0]}</p>
@@ -1497,7 +1514,7 @@ export default function ProductModal({
       </div>
 
       {lightboxOpen && heroImageSrc && (
-        <ImageLightbox src={heroImageSrc} alt={product.name} onClose={() => setLightboxOpen(false)} />
+        <ImageLightbox src={heroImageSrc} alt={displayName} onClose={() => setLightboxOpen(false)} />
       )}
     </div>
   );

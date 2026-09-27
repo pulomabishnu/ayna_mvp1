@@ -1,4 +1,5 @@
 /* global process */
+import { listFeedback } from './_feedbackStore.js';
 import { verifyUser } from './_usageLimit.js';
 
 function setPrivateResponseHeaders(res) {
@@ -40,9 +41,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const results = [];
-    // The popup stores its response in auth metadata, not user_reviews.
-    for (let page = 1; ; page += 1) {
+    const offset = Math.max(0, Math.min(1000000, Number.parseInt(req.query?.cursor || '0', 10) || 0));
+    const anonymous = await listFeedback(offset);
+    const results = [...anonymous.results];
+    // Historical replies remain in auth metadata; new replies are stored separately.
+    for (let page = 1; offset === 0; page += 1) {
       const { data, error: listError } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
       if (listError) throw listError;
       const users = data?.users || [];
@@ -51,19 +54,20 @@ export default async function handler(req, res) {
         if (!meta.satisfaction_survey_completed_at) continue;
         const rating = Number(meta.satisfaction_rating);
         results.push({
-          userId: reviewer.id,
-          reviewerEmail: reviewer.email || reviewer.phone || reviewer.id,
+          id: `legacy-${results.length}`,
+          kind: 'survey',
+          campaign: 'legacy',
           rating: Number.isInteger(rating) && rating >= 1 && rating <= 5 ? rating : null,
           feedback: typeof meta.satisfaction_feedback === 'string' ? meta.satisfaction_feedback : '',
           heardAboutUs: typeof meta.heard_about_us === 'string' ? meta.heard_about_us : '',
-          submittedAt: typeof meta.satisfaction_survey_completed_at === 'string' ? meta.satisfaction_survey_completed_at : '',
+          submittedAt: typeof meta.satisfaction_survey_completed_at === 'string' ? meta.satisfaction_survey_completed_at.slice(0, 10) : '',
         });
       }
       if (users.length < 1000) break;
     }
     results.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
 
-    return res.status(200).json({ ok: true, count: results.length, results });
+    return res.status(200).json({ ok: true, count: results.length, results, nextCursor: anonymous.nextCursor });
   } catch (e) {
     console.error('[reviews-admin] failed:', e?.message);
     return res.status(500).json({ error: 'load_failed' });

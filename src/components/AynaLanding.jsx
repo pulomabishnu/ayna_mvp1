@@ -178,7 +178,7 @@ function LandingFeatures({
       <section className={`v6-cabinet-zone${personalizedUnlocked ? '' : ' is-locked'}`}>
         <div className="v6-cabinet-copy">
           <div className="v6-eyebrow">your health cabinet</div>
-          <h2>{user ? <>hi, {name || 'there'},<br/><em>here&apos;s your ecosystem</em></> : <>your cabinet,<br/><em>made around you.</em></>}</h2>
+          <h2>{user ? <>hi, {name || 'there'},<br/><em>welcome home.</em></> : <>your cabinet,<br/><em>made around you.</em></>}</h2>
           <p>{owned.length ? 'Products you have added to your ecosystem.' : recommended.length ? 'Recommendations based on your health profile and preferences.' : 'Explore a sample cabinet, then build your own.'}</p>
           <button type="button" onClick={user ? onStartQuiz : () => triggerExistingSignIn(onStartQuiz)}>{user ? 'edit my preferences' : 'sign in to personalize'}</button>
           <span className="v6-scribble">less guessing,<br/>more you ♡</span>

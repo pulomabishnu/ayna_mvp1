@@ -128,7 +128,7 @@ export default function ProductTileImage({ product, alt, imgStyle, imgClassName,
         alt={resolvedAlt}
         loading={loading}
         className={imgClassName}
-        style={imgStyle}
+        style={allowBrandLogo ? imgStyle : { ...imgStyle, objectFit: 'contain' }}
         // A backgrounded tab can abort an in-flight/lazy image load with a
         // genuine `error` event even though the URL is completely fine —
         // one retry before actually giving up and hiding it.

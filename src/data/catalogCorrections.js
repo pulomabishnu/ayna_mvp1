@@ -1,3 +1,5 @@
+import { PRODUCT_PACKAGING } from './productPackaging.js';
+import { applyProductVariants } from './productVariants.js';
 /** Reviewed catalog corrections, 2026-09-25.
  * Applied to bundled records, database responses and saved snapshots.
  * Explicit empty images remove known incorrect imagery; never merge them away.
@@ -90,23 +92,25 @@ export const CATALOG_CORRECTIONS = {
     "category": "menopause"
   },
   "p-cora-organic-pads": {
+    "price": "See retailer for price and selected pack size",
+    "summary": "Cora period pads with an organic cotton topsheet, wings and an absorbent core. The whole pad is not made exclusively from cotton. Choose the absorbency and pack count before buying.",
     "name": "Cora Organic Pads",
-    "image": "https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_POM_Pads_Regular_1000X1000_9e847653-7318-46fb-9fdf-a714e0931031.png?v=1787080092",
-    "price": "$10 for 32",
+    "image": "/products/packaging/cora-76155164.jpg",
     "url": "https://cora.life/",
     "category": "pad"
   },
   "p-cora-organic-tampons": {
+    "price": "See retailer for price and selected pack size",
     "name": "Cora Organic Tampons",
-    "image": "https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_Applicator_Tampons_V3_1000X1000_7f00668b-f217-4371-b8a1-1c3b4ab16741.png?v=1787190945",
-    "price": "$11 for 32",
+    "image": "/products/packaging/cora-82032071.jpg",
     "url": "https://cora.life/",
     "category": "tampon"
   },
   "p-cora-overnight": {
+    "price": "See retailer for price and selected pack size",
+    "summary": "Cora period pads with an organic cotton topsheet, wings and an absorbent core. The whole pad is not made exclusively from cotton. Choose the absorbency and pack count before buying.",
     "name": "Cora Overnight Pads",
-    "image": "https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_POM_Maxi_Overnight_1000X1000_1c7cdd2e-9eab-43c1-a8dc-52b28f7052c2.png?v=1787166033",
-    "price": "$10 for 20",
+    "image": "/products/packaging/cora-76155166.jpg",
     "url": "https://cora.life/",
     "category": "pad"
   },
@@ -455,5 +459,6 @@ export const CATALOG_CORRECTIONS = {
 
 export function applyCatalogCorrections(product) {
   const correction = CATALOG_CORRECTIONS[product?.id];
-  return correction ? { ...product, ...correction } : product;
+  const corrected = correction ? { ...product, ...correction } : product;
+  return applyProductVariants(PRODUCT_PACKAGING[product?.id] ? { ...corrected, ...PRODUCT_PACKAGING[product.id] } : corrected);
 }
