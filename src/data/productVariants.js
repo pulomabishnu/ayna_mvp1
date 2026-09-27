@@ -252,13 +252,15 @@ export const PRODUCT_VARIANTS = {
         "id": "39775383093344",
         "label": "Size 01",
         "url": "https://flexfits.com/products/flex-cup?variant=39775383093344",
-        "image": "https://cdn.shopify.com/s/files/1/1097/9960/files/flex-period-cup-with-packaging-and-review.png?v=1763752341"
+        "image": "https://cdn.shopify.com/s/files/1/1097/9960/files/flex-period-cup-with-packaging-and-review.png?v=1763752341",
+        "amazonAsin": "B07QD4W7RQ"
       },
       {
         "id": "39775383126112",
         "label": "Size 02",
         "url": "https://flexfits.com/products/flex-cup?variant=39775383126112",
-        "image": "/products/packaging/target-75665024.jpg"
+        "image": "/products/packaging/target-75665024.jpg",
+        "amazonAsin": "B07QHG6ZY8"
       }
     ]
   },
@@ -534,13 +536,15 @@ export const PRODUCT_VARIANTS = {
         "id": "33056100646989",
         "label": "1. Light to medium flow",
         "url": "https://www.lunette.com/products/menstrual-cup?variant=33056100646989",
-        "image": "https://cdn.shopify.com/s/files/1/1826/3849/files/LUNETTE_Cup_Size_1_Lunette_grey_VIOLET.png?v=1784305836"
+        "image": "https://cdn.shopify.com/s/files/1/1826/3849/files/LUNETTE_Cup_Size_1_Lunette_grey_VIOLET.png?v=1784305836",
+        "amazonAsin": "B002MA4SI6"
       },
       {
         "id": "33056100679757",
         "label": "2. Medium to heavy flow",
         "url": "https://www.lunette.com/products/menstrual-cup?variant=33056100679757",
-        "image": "https://cdn.shopify.com/s/files/1/1826/3849/files/LUNETTE_Cup_Size_2_Lunette_grey_VIOLET.png?v=1784305836"
+        "image": "https://cdn.shopify.com/s/files/1/1826/3849/files/LUNETTE_Cup_Size_2_Lunette_grey_VIOLET.png?v=1784305836",
+        "amazonAsin": "B0054SQ02K"
       }
     ]
   },
@@ -915,17 +919,20 @@ export const PRODUCT_VARIANTS = {
       {
         "id": "42702906392788",
         "label": "A",
-        "url": "https://allmatters.com/en-us/products/menstrual-cup?variant=42702906392788"
+        "url": "https://allmatters.com/en-us/products/menstrual-cup?variant=42702906392788",
+        "amazonAsin": "B071NCXFMG"
       },
       {
         "id": "42702906425556",
         "label": "B",
-        "url": "https://allmatters.com/en-us/products/menstrual-cup?variant=42702906425556"
+        "url": "https://allmatters.com/en-us/products/menstrual-cup?variant=42702906425556",
+        "amazonAsin": "B072KZM9P3"
       },
       {
         "id": "42702906458324",
         "label": "Mini",
-        "url": "https://allmatters.com/en-us/products/menstrual-cup?variant=42702906458324"
+        "url": "https://allmatters.com/en-us/products/menstrual-cup?variant=42702906458324",
+        "amazonAsin": "B07SC244TV"
       }
     ]
   },
@@ -1173,13 +1180,15 @@ export const PRODUCT_VARIANTS = {
         "id": "32014576418897",
         "label": "Himalayan Pink / Small",
         "url": "https://saalt.com/products/saalt-cup?variant=32014576418897",
-        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Himalayan-Pink-Small_01.png?v=1776187271"
+        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Himalayan-Pink-Small_01.png?v=1776187271",
+        "amazonAsin": "B079DYK334"
       },
       {
         "id": "32014539620433",
         "label": "Ocean Blue / Regular",
         "url": "https://saalt.com/products/saalt-cup?variant=32014539620433",
-        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Ocean-Blue-Regular_01.png?v=1776187271"
+        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Cup-PDP-No-Bag-Ocean-Blue-Regular_01.png?v=1776187271",
+        "amazonAsin": "B079DVXSP8"
       },
       {
         "id": "32014576386129",
@@ -1198,13 +1207,15 @@ export const PRODUCT_VARIANTS = {
         "id": "39701604106321",
         "label": "Coastal Blue (Regular)",
         "url": "https://saalt.com/products/saalt-disc?variant=39701604106321",
-        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Disc-PDP-Coastal-Blue-01_01.jpg?v=1775642489"
+        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Disc-PDP-Coastal-Blue-01_01.jpg?v=1775642489",
+        "amazonAsin": "B0B13WT3KV"
       },
       {
         "id": "39701604171857",
         "label": "Sunset Coral (Small)",
         "url": "https://saalt.com/products/saalt-disc?variant=39701604171857",
-        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Disc-PDP-Sunset-Coral-01_02.jpg?v=1775642489"
+        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Disc-PDP-Sunset-Coral-01_02.jpg?v=1775642489",
+        "amazonAsin": "B0B13XG62P"
       }
     ]
   },
@@ -1436,19 +1447,22 @@ export const PRODUCT_VARIANTS = {
         "id": "40325944410193",
         "label": "Model 0",
         "url": "https://shopdiva.com/products/diva-cup-model-0?variant=40325944410193",
-        "image": "/products/packaging/diva-0.png"
+        "image": "/products/packaging/diva-0.png",
+        "amazonAsin": "B08TLT6BF7"
       },
       {
         "id": "40325946015825",
         "label": "Model 1",
         "url": "https://shopdiva.com/products/diva-cup-model-1?variant=40325946015825",
-        "image": "/products/packaging/diva-1.png"
+        "image": "/products/packaging/diva-1.png",
+        "amazonAsin": "B08TLJPR71"
       },
       {
         "id": "40325949063249",
         "label": "Model 2",
         "url": "https://shopdiva.com/products/diva-cup-model-2?variant=40325949063249",
-        "image": "/products/packaging/diva-2.png"
+        "image": "/products/packaging/diva-2.png",
+        "amazonAsin": "B08TLMWZB4"
       }
     ]
   }
