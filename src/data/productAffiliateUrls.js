@@ -38,7 +38,6 @@ Gaia Herbs Vitex Berry Chasteberry|B003VT3YP0
 Garden of Life Women's Probiotics|B00Y8MP4G6
 Garden of Life Zinc 30mg|B0098U0QC0
 Good Clean Love Bio-Match Moisturizer|B000BFL5SK
-Good Kitty UTI Biome Shield|B0G6BS41SZ
 Haakaa Silicone Breast Pump|B01F8W7CF0
 Hanes Period Underwear|B0CMDRQ4TT
 Hatch Belly Oil|B08LKDVDMB

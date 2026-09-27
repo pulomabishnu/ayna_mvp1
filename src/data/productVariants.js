@@ -195,13 +195,15 @@ export const PRODUCT_VARIANTS = {
         "id": "40105098674225",
         "label": "50 Caplets",
         "url": "https://azoproducts.com/products/azo-cranberry-caplets?variant=40105098674225",
-        "image": "https://cdn.shopify.com/s/files/1/0209/0378/8593/files/azo-cran-caps-NOct.webp?v=1788192491"
+        "image": "https://cdn.shopify.com/s/files/1/0209/0378/8593/files/azo-cran-caps-NOct.webp?v=1788192491",
+        "amazonAsin": "B0012JY42I"
       },
       {
         "id": "40115544195121",
         "label": "100 Caplets - 2pk",
         "url": "https://azoproducts.com/products/azo-cranberry-caplets?variant=40115544195121",
-        "image": "https://cdn.shopify.com/s/files/1/0209/0378/8593/files/azo-cran-caps-NOct.webp?v=1788192491"
+        "image": "https://cdn.shopify.com/s/files/1/0209/0378/8593/files/azo-cran-caps-NOct.webp?v=1788192491",
+        "amazonAsin": "B0C61VBVJC"
       }
     ]
   },
@@ -214,13 +216,15 @@ export const PRODUCT_VARIANTS = {
         "id": "41519397273783",
         "label": "Plum",
         "url": "https://dame.com/products/arc?variant=41519397273783",
-        "image": "https://cdn.shopify.com/s/files/1/1027/2873/files/arc-6-plum.png?v=1776325687"
+        "image": "https://cdn.shopify.com/s/files/1/1027/2873/files/arc-6-plum.png?v=1776325687",
+        "amazonAsin": "B0BG8WG6FG"
       },
       {
         "id": "41519634153655",
         "label": "Ice",
         "url": "https://dame.com/products/arc?variant=41519634153655",
-        "image": "https://cdn.shopify.com/s/files/1/1027/2873/files/arc-6-ice.png?v=1776325629"
+        "image": "https://cdn.shopify.com/s/files/1/1027/2873/files/arc-6-ice.png?v=1776325629",
+        "amazonAsin": "B0BG6C8KW4"
       }
     ]
   },
@@ -273,12 +277,14 @@ export const PRODUCT_VARIANTS = {
         "id": "42412049825888",
         "label": "12",
         "url": "https://flexfits.com/products/flex-disc?variant=42412049825888",
-        "image": "/products/packaging/p-flex-disc.jpg"
+        "image": "/products/packaging/p-flex-disc.jpg",
+        "amazonAsin": "B07QHS3PL8"
       },
       {
         "id": "42412049858656",
         "label": "24",
-        "url": "https://flexfits.com/products/flex-disc?variant=42412049858656"
+        "url": "https://flexfits.com/products/flex-disc?variant=42412049858656",
+        "amazonAsin": "B0FBTH6RHH"
       }
     ]
   },
@@ -338,13 +344,15 @@ export const PRODUCT_VARIANTS = {
         "id": "35171000287394",
         "label": "360 Capsules (90-Servings)",
         "url": "https://wholesomestory.com/products/myo-d-chiro-inositol?variant=35171000287394",
-        "image": "https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Myo_D360ctFrontPanelV.ARev12_25.png?v=1769496959"
+        "image": "https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Myo_D360ctFrontPanelV.ARev12_25.png?v=1769496959",
+        "amazonAsin": "B07YYLM1KZ"
       },
       {
         "id": "35171000254626",
         "label": "120 Capsules (30-Servings)",
         "url": "https://wholesomestory.com/products/myo-d-chiro-inositol?variant=35171000254626",
-        "image": "https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Myo_D120ctFrontPanelV.ARev12_25.png?v=1769496959"
+        "image": "https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Myo_D120ctFrontPanelV.ARev12_25.png?v=1769496959",
+        "amazonAsin": "B07HX2DMY8"
       }
     ]
   },
@@ -357,19 +365,22 @@ export const PRODUCT_VARIANTS = {
         "id": "28396272058440",
         "label": "100 Pads",
         "url": "https://lansinoh.com/products/stay-dry-disposable-nursing-pads?variant=28396272058440",
-        "image": "https://cdn.shopify.com/s/files/1/0054/1989/2808/files/23_ff408736-b8a9-4bf7-a7af-5edd7cf71afb.png?v=1758734582"
+        "image": "https://cdn.shopify.com/s/files/1/0054/1989/2808/files/23_ff408736-b8a9-4bf7-a7af-5edd7cf71afb.png?v=1758734582",
+        "amazonAsin": "B0070SKP1O"
       },
       {
         "id": "29251765862472",
         "label": "60 Pads",
         "url": "https://lansinoh.com/products/stay-dry-disposable-nursing-pads?variant=29251765862472",
-        "image": "https://cdn.shopify.com/s/files/1/0054/1989/2808/files/22_baef2a6a-0889-43bb-913f-9f9aa649a574.jpg?v=1758734582"
+        "image": "https://cdn.shopify.com/s/files/1/0054/1989/2808/files/22_baef2a6a-0889-43bb-913f-9f9aa649a574.jpg?v=1758734582",
+        "amazonAsin": "B09VC8TCWW"
       },
       {
         "id": "29251765829704",
         "label": "36 Pads",
         "url": "https://lansinoh.com/products/stay-dry-disposable-nursing-pads?variant=29251765829704",
-        "image": "https://cdn.shopify.com/s/files/1/0054/1989/2808/files/21.jpg?v=1758734582"
+        "image": "https://cdn.shopify.com/s/files/1/0054/1989/2808/files/21.jpg?v=1758734582",
+        "amazonAsin": "B003U3SWEA"
       }
     ]
   },
@@ -1035,12 +1046,14 @@ export const PRODUCT_VARIANTS = {
         "id": "51779703243117",
         "label": "24 Count",
         "url": "https://www.getrael.com/products/large-organic-cotton-pads?variant=51779703243117",
-        "image": "https://cdn.shopify.com/s/files/1/2246/3213/files/ORGANIC_COTTON_COVER_PADS_RAEL-LG-02_DTC__24COUNT_LARGE_PACK_FRONT_9b6b4418-69d7-478b-a992-1bb229f01085.webp?v=1755193727"
+        "image": "https://cdn.shopify.com/s/files/1/2246/3213/files/ORGANIC_COTTON_COVER_PADS_RAEL-LG-02_DTC__24COUNT_LARGE_PACK_FRONT_9b6b4418-69d7-478b-a992-1bb229f01085.webp?v=1755193727",
+        "amazonAsin": "B0771Y7YQ1"
       },
       {
         "id": "51779703275885",
         "label": "14 Count",
-        "url": "https://www.getrael.com/products/large-organic-cotton-pads?variant=51779703275885"
+        "url": "https://www.getrael.com/products/large-organic-cotton-pads?variant=51779703275885",
+        "amazonAsin": "B07X7GM5Q9"
       }
     ]
   },
@@ -1052,12 +1065,14 @@ export const PRODUCT_VARIANTS = {
       {
         "id": "42291520569438",
         "label": "Citrus",
-        "url": "https://ritual.com/products/essential-prenatal-multivitamin?variant=42291520569438"
+        "url": "https://ritual.com/products/essential-prenatal-multivitamin?variant=42291520569438",
+        "amazonAsin": "B09W363MVD"
       },
       {
         "id": "42291520602206",
         "label": "Mint",
-        "url": "https://ritual.com/products/essential-prenatal-multivitamin?variant=42291520602206"
+        "url": "https://ritual.com/products/essential-prenatal-multivitamin?variant=42291520602206",
+        "amazonAsin": "B0BFGZ8NS2"
       }
     ]
   },
@@ -1137,19 +1152,22 @@ export const PRODUCT_VARIANTS = {
         "id": "40384758382673",
         "label": "Blue Dusk",
         "url": "https://saalt.com/products/saalt-steamer?variant=40384758382673",
-        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Steamer-PDP-02-Blue-Dusk.jpg?v=1762199384"
+        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Steamer-PDP-02-Blue-Dusk.jpg?v=1762199384",
+        "amazonAsin": "B0CGX2Y8WM"
       },
       {
         "id": "40384758317137",
         "label": "Arctic Mist",
         "url": "https://saalt.com/products/saalt-steamer?variant=40384758317137",
-        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Steamer-PDP-03-Arctic-Mist.jpg?v=1725669379"
+        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Steamer-PDP-03-Arctic-Mist.jpg?v=1725669379",
+        "amazonAsin": "B0CGX1MGR8"
       },
       {
         "id": "40384758349905",
         "label": "Rose Quartz",
         "url": "https://saalt.com/products/saalt-steamer?variant=40384758349905",
-        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Steamer-PDP-01-Rose-Quartz.jpg?v=1725669379"
+        "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Steamer-PDP-01-Rose-Quartz.jpg?v=1725669379",
+        "amazonAsin": "B0CGWZRXG5"
       }
     ]
   },
@@ -1273,13 +1291,15 @@ export const PRODUCT_VARIANTS = {
         "id": "42304109576373",
         "label": "3-Pack (3 x 16 tea bags)",
         "url": "https://www.traditionalmedicinals.com/products/spearmint-tea?variant=42304109576373",
-        "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint-3pack_2000x2000_c6835c4a-c9d5-40db-bbc4-3cd33d51f7b9.jpg?v=1693261445"
+        "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint-3pack_2000x2000_c6835c4a-c9d5-40db-bbc4-3cd33d51f7b9.jpg?v=1693261445",
+        "amazonAsin": "B09CFLYXZL"
       },
       {
         "id": "42304109609141",
         "label": "6-Pack (6 x 16 tea bags)",
         "url": "https://www.traditionalmedicinals.com/products/spearmint-tea?variant=42304109609141",
-        "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint_6pack_2000x2000_5b9cef02-aabb-4c0f-af51-b744859bc98e.jpg?v=1761600246"
+        "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint_6pack_2000x2000_5b9cef02-aabb-4c0f-af51-b744859bc98e.jpg?v=1761600246",
+        "amazonAsin": "B000EJPDMC"
       }
     ]
   },
@@ -1292,13 +1312,15 @@ export const PRODUCT_VARIANTS = {
         "id": "1148173689",
         "label": "14 Count",
         "url": "https://www.veedausa.com/products/pads?variant=1148173689",
-        "image": "https://cdn.shopify.com/s/files/1/0394/7497/products/thumbnail_dae04116-e126-4d9c-9ea5-2b6e851c9620.png?v=1626101539"
+        "image": "https://cdn.shopify.com/s/files/1/0394/7497/products/thumbnail_dae04116-e126-4d9c-9ea5-2b6e851c9620.png?v=1626101539",
+        "amazonAsin": "B00ZAVDST4"
       },
       {
         "id": "8716363858019",
         "label": "42 Count",
         "url": "https://www.veedausa.com/products/pads?variant=8716363858019",
-        "image": "https://cdn.shopify.com/s/files/1/0394/7497/products/thumbnail_32c14e67-cb7f-44ef-a04d-94a38d301c4f.png?v=1626101539"
+        "image": "https://cdn.shopify.com/s/files/1/0394/7497/products/thumbnail_32c14e67-cb7f-44ef-a04d-94a38d301c4f.png?v=1626101539",
+        "amazonAsin": "B01N1ZHI2A"
       }
     ]
   },
@@ -1311,19 +1333,22 @@ export const PRODUCT_VARIANTS = {
         "id": "20669342449775",
         "label": "60 ct",
         "url": "https://www.gaiaherbs.com/collections/women/products/vitex-berry?variant=20669342449775",
-        "image": "https://cdn.shopify.com/s/files/1/0058/0252/4783/files/Gaia-Herbs-Vitex-Berry_LAE14060_201_PDP_medium_a92caced-37bf-44c9-8867-45588c4e7cb7.png?v=1771958409"
+        "image": "https://cdn.shopify.com/s/files/1/0058/0252/4783/files/Gaia-Herbs-Vitex-Berry_LAE14060_201_PDP_medium_a92caced-37bf-44c9-8867-45588c4e7cb7.png?v=1771958409",
+        "amazonAsin": "B003VT3YP0"
       },
       {
         "id": "31067684896904",
         "label": "120 ct",
         "url": "https://www.gaiaherbs.com/collections/women/products/vitex-berry?variant=31067684896904",
-        "image": "https://cdn.shopify.com/s/files/1/0058/0252/4783/files/Gaia-Herbs-Vitex-Berry_LAE14120_201_PDP_medium_e5e0d44b-3a8d-4912-abfb-f3f9b290a525.png?v=1763130236"
+        "image": "https://cdn.shopify.com/s/files/1/0058/0252/4783/files/Gaia-Herbs-Vitex-Berry_LAE14120_201_PDP_medium_e5e0d44b-3a8d-4912-abfb-f3f9b290a525.png?v=1763130236",
+        "amazonAsin": "B07YLKKSGX"
       },
       {
         "id": "41289579921544",
         "label": "180 ct",
         "url": "https://www.gaiaherbs.com/collections/women/products/vitex-berry?variant=41289579921544",
-        "image": "https://cdn.shopify.com/s/files/1/0058/0252/4783/files/Gaia-Herbs-Vitex-Berry_LAE14180_201_PDP_medium_7b5b35f5-07b8-4b4a-9527-17e17e954ba8.png?v=1763130236"
+        "image": "https://cdn.shopify.com/s/files/1/0058/0252/4783/files/Gaia-Herbs-Vitex-Berry_LAE14180_201_PDP_medium_7b5b35f5-07b8-4b4a-9527-17e17e954ba8.png?v=1763130236",
+        "amazonAsin": "B0BRTBBK5K"
       }
     ]
   },
@@ -1355,25 +1380,29 @@ export const PRODUCT_VARIANTS = {
         "id": "target-76155164",
         "label": "Regular — 32 count",
         "url": "https://www.target.com/p/-/A-76155164",
-        "image": "/products/packaging/cora-76155164.jpg"
+        "image": "/products/packaging/cora-76155164.jpg",
+        "amazonAsin": "B07XR7DVL4"
       },
       {
         "id": "target-90569336",
         "label": "Super — 30 count",
         "url": "https://www.target.com/p/-/A-90569336",
-        "image": "/products/packaging/cora-90569336.jpg"
+        "image": "/products/packaging/cora-90569336.jpg",
+        "amazonAsin": "B08288RTFX"
       },
       {
         "id": "target-76155166",
         "label": "Overnight — 28 count",
         "url": "https://www.target.com/p/-/A-76155166",
-        "image": "/products/packaging/cora-76155166.jpg"
+        "image": "/products/packaging/cora-76155166.jpg",
+        "amazonAsin": "B07XL578S2"
       },
       {
         "id": "target-93261793",
         "label": "Extra Heavy Overnight — 20 count",
         "url": "https://www.target.com/p/-/A-93261793",
-        "image": "/products/packaging/cora-93261793.jpg"
+        "image": "/products/packaging/cora-93261793.jpg",
+        "amazonAsin": "B0DH6S25DP"
       }
     ]
   },
@@ -1388,25 +1417,29 @@ export const PRODUCT_VARIANTS = {
         "id": "target-76155164",
         "label": "Regular — 32 count",
         "url": "https://www.target.com/p/-/A-76155164",
-        "image": "/products/packaging/cora-76155164.jpg"
+        "image": "/products/packaging/cora-76155164.jpg",
+        "amazonAsin": "B07XR7DVL4"
       },
       {
         "id": "target-90569336",
         "label": "Super — 30 count",
         "url": "https://www.target.com/p/-/A-90569336",
-        "image": "/products/packaging/cora-90569336.jpg"
+        "image": "/products/packaging/cora-90569336.jpg",
+        "amazonAsin": "B08288RTFX"
       },
       {
         "id": "target-76155166",
         "label": "Overnight — 28 count",
         "url": "https://www.target.com/p/-/A-76155166",
-        "image": "/products/packaging/cora-76155166.jpg"
+        "image": "/products/packaging/cora-76155166.jpg",
+        "amazonAsin": "B07XL578S2"
       },
       {
         "id": "target-93261793",
         "label": "Extra Heavy Overnight — 20 count",
         "url": "https://www.target.com/p/-/A-93261793",
-        "image": "/products/packaging/cora-93261793.jpg"
+        "image": "/products/packaging/cora-93261793.jpg",
+        "amazonAsin": "B0DH6S25DP"
       }
     ]
   },
@@ -1421,19 +1454,22 @@ export const PRODUCT_VARIANTS = {
         "id": "target-82032071",
         "label": "Regular — 32 count",
         "url": "https://www.target.com/p/-/A-82032071",
-        "image": "/products/packaging/cora-82032071.jpg"
+        "image": "/products/packaging/cora-82032071.jpg",
+        "amazonAsin": "B06XKF4RMW"
       },
       {
         "id": "target-53062312",
         "label": "Regular / Super — 32 count",
         "url": "https://www.target.com/p/-/A-53062312",
-        "image": "/products/packaging/cora-53062312.jpg"
+        "image": "/products/packaging/cora-53062312.jpg",
+        "amazonAsin": "B06ZYRXLNV"
       },
       {
         "id": "target-75665033",
         "label": "Light / Regular — 32 count",
         "url": "https://www.target.com/p/-/A-75665033",
-        "image": "/products/packaging/cora-75665033.jpg"
+        "image": "/products/packaging/cora-75665033.jpg",
+        "amazonAsin": "B0742LBKKS"
       }
     ]
   },

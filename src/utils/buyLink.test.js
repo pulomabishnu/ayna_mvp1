@@ -109,4 +109,29 @@ describe('Buy Now destinations', () => {
     expect(resolveBuyUrl(disc, regular)).toBe('https://www.amazon.com/dp/B0B13WT3KV?tag=aynahealth-20');
     expect(resolveBuyUrl(disc, small)).toBe('https://www.amazon.com/dp/B0B13XG62P?tag=aynahealth-20');
   });
+
+  it('sends each Cora pad/tampon absorbency to its own Amazon listing', () => {
+    const pads = byId['p-cora-organic-pads'];
+    const byLabel = Object.fromEntries(pads.variants.map((v) => [v.label, v]));
+    expect(resolveBuyUrl(pads, byLabel['Regular — 32 count'])).toBe('https://www.amazon.com/dp/B07XR7DVL4?tag=aynahealth-20');
+    expect(resolveBuyUrl(pads, byLabel['Super — 30 count'])).toBe('https://www.amazon.com/dp/B08288RTFX?tag=aynahealth-20');
+    expect(resolveBuyUrl(pads, byLabel['Overnight — 28 count'])).toBe('https://www.amazon.com/dp/B07XL578S2?tag=aynahealth-20');
+    expect(resolveBuyUrl(pads, byLabel['Extra Heavy Overnight — 20 count'])).toBe('https://www.amazon.com/dp/B0DH6S25DP?tag=aynahealth-20');
+
+    const tampons = byId['p-cora-organic-tampons'];
+    const tByLabel = Object.fromEntries(tampons.variants.map((v) => [v.label, v]));
+    expect(resolveBuyUrl(tampons, tByLabel['Regular — 32 count'])).toBe('https://www.amazon.com/dp/B06XKF4RMW?tag=aynahealth-20');
+    expect(resolveBuyUrl(tampons, tByLabel['Regular / Super — 32 count'])).toBe('https://www.amazon.com/dp/B06ZYRXLNV?tag=aynahealth-20');
+    expect(resolveBuyUrl(tampons, tByLabel['Light / Regular — 32 count'])).toBe('https://www.amazon.com/dp/B0742LBKKS?tag=aynahealth-20');
+  });
+
+  it('never sends Good Kitty to Amazon (no real Amazon listing exists for it)', () => {
+    // Regression: this used to be mapped to ASIN B0G6BS41SZ, which is
+    // actually a different brand's product (Uqora Flush) — a wrong-brand
+    // link, not just a wrong-size one. Confirmed 2026-09-27 that Good Kitty
+    // has no Amazon listing at all, so it must fall back to its own site.
+    const url = resolveBuyUrl(byId['p-good-kitty-uti-biome-shield']);
+    expect(isAmazonUrl(url)).toBe(false);
+    expect(url).toBe('https://goodkittyco.com/products/uti-biome-shield');
+  });
 });
