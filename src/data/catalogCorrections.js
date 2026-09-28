@@ -62,9 +62,10 @@ export const CATALOG_CORRECTIONS = {
   },
   "p-always-liners": {
     "name": "Always Liners",
-    "image": "",
+    "image": "https://m.media-amazon.com/images/I/81r2XaKrw-L._AC_SX679_.jpg",
     "price": "$6 for 42",
-    "category": "pad"
+    "category": "pad",
+    "imageVerifiedAt": "2026-09-27"
   },
   "p-bambody-underwear": {
     "name": "Bambody Absorbent Panties",
@@ -288,10 +289,11 @@ export const CATALOG_CORRECTIONS = {
   },
   "p-probiotics-women": {
     "name": "Garden of Life Dr. Formulated Probiotics Once Daily Women's Shelf-Stable 30 Capsules",
-    "image": "",
+    "image": "https://m.media-amazon.com/images/I/81JXAZDNVSL._AC_SX679_.jpg",
     "price": "$36.79 for 30 capsules",
     "url": "https://www.gardenoflife.com/dr-formulated-probiotics-once-daily-womens-shelf-stable-vegetarian-capsules",
-    "category": "supplement"
+    "category": "supplement",
+    "imageVerifiedAt": "2026-09-27"
   },
   "p-proof-period": {
     "name": "Proof Period Underwear",
@@ -340,9 +342,10 @@ export const CATALOG_CORRECTIONS = {
   },
   "p-remifemin": {
     "name": "Remifemin (Black Cohosh)",
-    "image": "",
+    "image": "https://m.media-amazon.com/images/I/61fjjqNkIWL._AC_SX679_.jpg",
     "price": "$17 for 60 tablets",
-    "category": "supplement"
+    "category": "supplement",
+    "imageVerifiedAt": "2026-09-27"
   },
   "p-seventh-gen-pad": {
     "name": "Seventh Generation Ultra Thin Pads",
@@ -352,9 +355,10 @@ export const CATALOG_CORRECTIONS = {
   },
   "p-seventh-gen-tampon": {
     "name": "Seventh Generation Organic Tampons",
-    "image": "",
+    "image": "https://m.media-amazon.com/images/I/81CXzwDsbxL._AC_SX679_.jpg",
     "price": "$8 for 18",
-    "category": "tampon"
+    "category": "tampon",
+    "imageVerifiedAt": "2026-09-27"
   },
   "p-sweetspot-buff-brighten": {
     "name": "SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads",
@@ -364,9 +368,10 @@ export const CATALOG_CORRECTIONS = {
   },
   "p-tampax-radiant": {
     "name": "Tampax Radiant Tampons",
-    "image": "",
+    "image": "https://m.media-amazon.com/images/I/61DJa38bJzL._AC_SX679_.jpg",
     "price": "$9 for 18",
-    "category": "tampon"
+    "category": "tampon",
+    "imageVerifiedAt": "2026-09-27"
   },
   "p-tena-intimates-very-light-liner": {
     "name": "TENA Intimates Very Light Liner for Women",
@@ -383,9 +388,10 @@ export const CATALOG_CORRECTIONS = {
   },
   "p-u-kotex-pad": {
     "name": "U by Kotex Clean Wear",
-    "image": "",
+    "image": "https://m.media-amazon.com/images/I/91WAESuhosL._AC_SX679_.jpg",
     "price": "$8 for 18",
-    "category": "pad"
+    "category": "pad",
+    "imageVerifiedAt": "2026-09-27"
   },
   "p-willow-pump": {
     "name": "Willow Wearable Breast Pump",
