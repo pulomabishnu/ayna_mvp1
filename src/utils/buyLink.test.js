@@ -190,4 +190,50 @@ describe('Buy Now destinations', () => {
     expect(resolveBuyUrl(disc, byLabel['Bubblegum'])).toBe('https://www.amazon.com/dp/B0GCBHWY24?tag=aynahealth-20');
     expect(resolveBuyUrl(disc, byLabel['Black'])).toBe('https://www.amazon.com/dp/B0GKBK3FS9?tag=aynahealth-20');
   });
+
+  // Regression coverage for a real bug found 2026-09-27: standardBuyUrl's
+  // fallback candidate list (product.url, product.buyUrl, whereToBuyLinks,
+  // etc.) does not filter out Amazon URLs, so a product whose name/id isn't
+  // in AMAZON_ROWS but happens to carry a raw Amazon link in one of those
+  // fields (the 8 o.b. tampon SKUs used bare `amzn.to` short links) can send
+  // a real customer to Amazon with NO affiliate tag at all — silent lost
+  // revenue that the "sends every non-partner in the Amazon catalog..." test
+  // above never catches, because it only iterates products that already
+  // resolve through getAmazonAffiliateUrlForProduct. This test instead walks
+  // every non-partner product/variant's resolved Buy Now URL and fails if
+  // ANY of them is an Amazon URL missing the tag, regardless of which code
+  // path produced it.
+  it('never sends anyone to Amazon without the affiliate tag, for any product or variant', () => {
+    for (const product of catalog) {
+      if (isPartnerBrandItem(product)) continue;
+      for (const variant of [null, ...(product.variants || [])]) {
+        const url = resolveBuyUrl(product, variant);
+        if (url && isAmazonUrl(url)) {
+          expect(url, `${product.id}${variant ? ' / ' + variant.label : ''} -> ${url}`).toContain('tag=aynahealth-20');
+        }
+      }
+    }
+  });
+
+  it('sends every o.b. tampon SKU to its own tagged Amazon listing (not a bare amzn.to short link)', () => {
+    // Regression: these used to store `amzn.to/...` short links directly.
+    // They happened to redirect to a tagged URL, but as bare short links
+    // they were invisible to static/catalog-wide checks and one hop from
+    // breaking silently if the short link ever expired or was recreated
+    // without the tag. Replaced with the real expanded, verified, tagged URL.
+    const cases = [
+      ['p-ob-original-multipack-40', 'B00NJNJ6WI'],
+      ['p-ob-original-ultra-40', 'B00NJNJGUA'],
+      ['p-ob-original-regular-40', 'B00NJNJCI6'],
+      ['p-ob-original-super-plus-40', 'B00NJNJCBI'],
+      ['p-ob-original-super-40', 'B00NF8A8YM'],
+      ['p-ob-original-multipack-80', 'B0D14X9YFR'],
+      ['p-ob-procomfort-mini-32', 'B071VD5LF7'],
+      ['p-ob-procomfort-mini-16', 'B0013CA9KK'],
+    ];
+    for (const [id, asin] of cases) {
+      const url = resolveBuyUrl(byId[id]);
+      expect(url, id).toBe(`https://www.amazon.com/dp/${asin}?tag=aynahealth-20`);
+    }
+  });
 });

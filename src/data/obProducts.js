@@ -66,14 +66,14 @@ export const OB_PRODUCTS = [
   originalEntry({
     id: 'p-ob-original-multipack-40',
     name: 'o.b. Original Tampons Multi-Pack, 40ct',
-    affiliateUrl: 'https://amzn.to/4yrMjNU',
+    affiliateUrl: 'https://www.amazon.com/dp/B00NJNJ6WI?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-multipack-r-s-s-plus',
     materials: ULTRA_MULTIPACK_MATERIALS,
   }),
   originalEntry({
     id: 'p-ob-original-ultra-40',
     name: 'o.b. Original Tampons Ultra, 40ct',
-    affiliateUrl: 'https://amzn.to/4AagB9s',
+    affiliateUrl: 'https://www.amazon.com/dp/B00NJNJGUA?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-ultra',
     tags: ['heavy-flow'],
     materials: ULTRA_MULTIPACK_MATERIALS,
@@ -81,26 +81,26 @@ export const OB_PRODUCTS = [
   originalEntry({
     id: 'p-ob-original-regular-40',
     name: 'o.b. Original Tampons Regular, 40ct',
-    affiliateUrl: 'https://amzn.to/3TrDwwz',
+    affiliateUrl: 'https://www.amazon.com/dp/B00NJNJCI6?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-regular',
   }),
   originalEntry({
     id: 'p-ob-original-super-plus-40',
     name: 'o.b. Original Tampons Super Plus, 40ct',
-    affiliateUrl: 'https://amzn.to/4y2lf80',
+    affiliateUrl: 'https://www.amazon.com/dp/B00NJNJCBI?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-super-plus',
     tags: ['heavy-flow'],
   }),
   originalEntry({
     id: 'p-ob-original-super-40',
     name: 'o.b. Original Tampons Super, 40ct',
-    affiliateUrl: 'https://amzn.to/4xowJBR',
+    affiliateUrl: 'https://www.amazon.com/dp/B00NF8A8YM?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-super',
   }),
   originalEntry({
     id: 'p-ob-original-multipack-80',
     name: 'o.b. Original Tampons Multi-Pack, 40ct (Pack of 2)',
-    affiliateUrl: 'https://amzn.to/46fTw7Q',
+    affiliateUrl: 'https://www.amazon.com/dp/B0D14X9YFR?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-multipack-r-s-s-plus',
     materials: ULTRA_MULTIPACK_MATERIALS,
   }),
@@ -116,11 +116,11 @@ export const OB_PRODUCTS = [
     price: 'See Amazon',
     whereToBuy: ['Amazon', 'o.b. Germany'],
     whereToBuyLinks: {
-      Amazon: 'https://amzn.to/4ipoYrB',
+      Amazon: 'https://www.amazon.com/dp/B071VD5LF7?tag=aynahealth-20',
       'o.b. Germany': 'https://www.ob.de/produkte/ob-procomfort/procomfort-mini',
     },
     url: 'https://www.ob.de/produkte/ob-procomfort/procomfort-mini',
-    affiliateUrl: 'https://amzn.to/4ipoYrB',
+    affiliateUrl: 'https://www.amazon.com/dp/B071VD5LF7?tag=aynahealth-20',
     summary:
       'Mini non-applicator tampon for lighter-flow days. o.b. ProComfort uses a SilkTouch surface, Dynamic Fit design, and interlocking grooves intended to make insertion/removal easier and provide leak protection.',
     safety: {
@@ -152,11 +152,11 @@ export const OB_PRODUCTS = [
     price: 'See Amazon',
     whereToBuy: ['Amazon', 'o.b. Germany'],
     whereToBuyLinks: {
-      Amazon: 'https://amzn.to/4gNI49B',
+      Amazon: 'https://www.amazon.com/dp/B0013CA9KK?tag=aynahealth-20',
       'o.b. Germany': 'https://www.ob.de/produkte/ob-procomfort/procomfort-mini',
     },
     url: 'https://www.ob.de/produkte/ob-procomfort/procomfort-mini',
-    affiliateUrl: 'https://amzn.to/4gNI49B',
+    affiliateUrl: 'https://www.amazon.com/dp/B0013CA9KK?tag=aynahealth-20',
     summary:
       'Mini non-applicator tampon for lighter-flow days. o.b. ProComfort uses a SilkTouch surface, Dynamic Fit design, and interlocking grooves intended to make insertion/removal easier and provide leak protection.',
     safety: {
