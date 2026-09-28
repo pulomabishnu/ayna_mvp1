@@ -26,7 +26,7 @@ function originalSafety(materials) {
   };
 }
 
-function originalEntry({ id, name, affiliateUrl, url, tags = [], materials = ORIGINAL_US_MATERIALS }) {
+function originalEntry({ id, name, affiliateUrl, url, tags = [], materials = ORIGINAL_US_MATERIALS, image }) {
   return {
     id,
     name,
@@ -47,6 +47,7 @@ function originalEntry({ id, name, affiliateUrl, url, tags = [], materials = ORI
     },
     url,
     affiliateUrl,
+    image,
     summary:
       'Applicator-free, fragrance-free o.b. tampon with a rounded tip, all-around expansion, and FLUID-LOCK grooves designed for leak protection. The compact non-applicator format reduces applicator waste.',
     safety: originalSafety(materials),
@@ -69,6 +70,7 @@ export const OB_PRODUCTS = [
     affiliateUrl: 'https://www.amazon.com/dp/B00NJNJ6WI?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-multipack-r-s-s-plus',
     materials: ULTRA_MULTIPACK_MATERIALS,
+    image: 'https://m.media-amazon.com/images/I/71BxkQUq5sL._AC_SX679_.jpg',
   }),
   originalEntry({
     id: 'p-ob-original-ultra-40',
@@ -77,12 +79,14 @@ export const OB_PRODUCTS = [
     url: 'https://www.ob-tampons.com/products/ob-tampons-ultra',
     tags: ['heavy-flow'],
     materials: ULTRA_MULTIPACK_MATERIALS,
+    image: 'https://m.media-amazon.com/images/I/71wO35LN11L._AC_SY300_SX300_QL70_FMwebp_.jpg',
   }),
   originalEntry({
     id: 'p-ob-original-regular-40',
     name: 'o.b. Original Tampons Regular, 40ct',
     affiliateUrl: 'https://www.amazon.com/dp/B00NJNJCI6?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-regular',
+    image: 'https://m.media-amazon.com/images/I/71OlGleVPgL._AC_SX679_.jpg',
   }),
   originalEntry({
     id: 'p-ob-original-super-plus-40',
@@ -90,12 +94,14 @@ export const OB_PRODUCTS = [
     affiliateUrl: 'https://www.amazon.com/dp/B00NJNJCBI?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-super-plus',
     tags: ['heavy-flow'],
+    image: 'https://m.media-amazon.com/images/I/71HrFyGkE5L._AC_SX679_.jpg',
   }),
   originalEntry({
     id: 'p-ob-original-super-40',
     name: 'o.b. Original Tampons Super, 40ct',
     affiliateUrl: 'https://www.amazon.com/dp/B00NF8A8YM?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-super',
+    image: 'https://m.media-amazon.com/images/I/71VFDv3R2wL._AC_SY300_SX300_QL70_FMwebp_.jpg',
   }),
   originalEntry({
     id: 'p-ob-original-multipack-80',
@@ -103,6 +109,7 @@ export const OB_PRODUCTS = [
     affiliateUrl: 'https://www.amazon.com/dp/B0D14X9YFR?tag=aynahealth-20',
     url: 'https://www.ob-tampons.com/products/ob-tampons-multipack-r-s-s-plus',
     materials: ULTRA_MULTIPACK_MATERIALS,
+    image: 'https://m.media-amazon.com/images/I/714p5CFeMhL._AC_SX679_.jpg',
   }),
   {
     id: 'p-ob-procomfort-mini-32',
@@ -121,6 +128,7 @@ export const OB_PRODUCTS = [
     },
     url: 'https://www.ob.de/produkte/ob-procomfort/procomfort-mini',
     affiliateUrl: 'https://www.amazon.com/dp/B071VD5LF7?tag=aynahealth-20',
+    image: 'https://m.media-amazon.com/images/I/71-e13ea2GL._AC_SX679_.jpg',
     summary:
       'Mini non-applicator tampon for lighter-flow days. o.b. ProComfort uses a SilkTouch surface, Dynamic Fit design, and interlocking grooves intended to make insertion/removal easier and provide leak protection.',
     safety: {
@@ -152,11 +160,12 @@ export const OB_PRODUCTS = [
     price: 'See Amazon',
     whereToBuy: ['Amazon', 'o.b. Germany'],
     whereToBuyLinks: {
-      Amazon: 'https://www.amazon.com/dp/B0013CA9KK?tag=aynahealth-20',
+      Amazon: 'https://www.amazon.com/dp/B07L7RL3X3?tag=aynahealth-20',
       'o.b. Germany': 'https://www.ob.de/produkte/ob-procomfort/procomfort-mini',
     },
     url: 'https://www.ob.de/produkte/ob-procomfort/procomfort-mini',
-    affiliateUrl: 'https://www.amazon.com/dp/B0013CA9KK?tag=aynahealth-20',
+    affiliateUrl: 'https://www.amazon.com/dp/B07L7RL3X3?tag=aynahealth-20',
+    image: 'https://m.media-amazon.com/images/I/71R9+pNQ8FL._AC_SX679_.jpg',
     summary:
       'Mini non-applicator tampon for lighter-flow days. o.b. ProComfort uses a SilkTouch surface, Dynamic Fit design, and interlocking grooves intended to make insertion/removal easier and provide leak protection.',
     safety: {

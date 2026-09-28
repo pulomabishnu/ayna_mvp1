@@ -229,7 +229,7 @@ describe('Buy Now destinations', () => {
       ['p-ob-original-super-40', 'B00NF8A8YM'],
       ['p-ob-original-multipack-80', 'B0D14X9YFR'],
       ['p-ob-procomfort-mini-32', 'B071VD5LF7'],
-      ['p-ob-procomfort-mini-16', 'B0013CA9KK'],
+      ['p-ob-procomfort-mini-16', 'B07L7RL3X3'],
     ];
     for (const [id, asin] of cases) {
       const url = resolveBuyUrl(byId[id]);

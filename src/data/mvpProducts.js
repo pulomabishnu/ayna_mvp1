@@ -454,7 +454,7 @@ export const MVP_PHYSICAL = [
     price: '$17 for 60 tablets',
     userRating: 4.3,
     whereToBuy: ['CVS', 'Walmart', 'Amazon', 'iHerb'],
-    image: '',
+    image: 'https://m.media-amazon.com/images/I/61fjjqNkIWL._AC_SX679_.jpg',
     summary: 'Standardized black cohosh for hot flashes and menopause symptoms. One of the most studied herbal options.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Black cohosh', recalls: 'No recalls.', allergens: 'Check label', sideEffects: 'Generally well tolerated short-term. Rare reports of stomach upset or headache. Black cohosh has rare case reports of liver concerns. Stop and see a clinician if you notice unusual fatigue, abdominal pain, or jaundice.' },
     clinicianOpinionSource: 'independent',

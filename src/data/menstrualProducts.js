@@ -85,7 +85,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$8 for 18',
         userRating: 4.4,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '', // caught by catalog-wide sweep — was the literal Ayna placeholder image, not a real photo
+        image: 'https://m.media-amazon.com/images/I/91WAESuhosL._AC_SX679_.jpg',
         summary: 'Flexible pad with Xpress-DRI core. Designed for active lifestyles.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Absorbent core', recalls: 'No recalls.', allergens: 'Fragrance-free' },
         clinicianOpinionSource: 'independent',
@@ -216,7 +216,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$6 for 42',
         userRating: 4.4,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '',
+        image: 'https://m.media-amazon.com/images/I/81r2XaKrw-L._AC_SX679_.jpg',
         summary: 'Thin liners for light days, spotting, or backup. Dri-Weave technology.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Dri-Weave cover', recalls: 'No recalls.', allergens: 'Fragrance-free options', opinionAlerts: 'A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS "forever chemical") indicators in several Always liner products (e.g., No Feel Protection Thin Liners at 21 ppm, Anti-Bunch Xtra Protection Liners at 15 ppm) — echoing similar PFAS concerns raised about Always pads. Always disputes any health risk and no regulatory recall has followed.' },
         clinicianOpinionSource: 'independent',
@@ -332,7 +332,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$9 for 18',
         userRating: 4.5,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '', // caught by catalog-wide sweep — was Tampax's own logo, not a product photo
+        image: 'https://m.media-amazon.com/images/I/61DJa38bJzL._AC_SX679_.jpg', // caught by catalog-wide sweep — was Tampax's own logo, not a product photo
         summary: 'Flexible braid design with LeakGuard. Smooth plastic applicator.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Cotton, plastic applicator', recalls: 'No recalls.', allergens: 'Fragrance-free', opinionAlerts: '2022 independent lab testing (Mamavation) found mixed PFAS results across the Tampax lineup — e.g. positive for organic-fluorine in Cardboard Applicator Unscented Tampons (23 ppm), non-detect in Pearl Leakguard and 100% Organic Cotton Core; this exact Radiant line was not part of that testing round. Separately, a peer-reviewed 2024 UC Berkeley study (Environment International) found measurable heavy metals, including lead and arsenic, across tampons broadly regardless of brand, which drove significant social media discussion about tampon safety.' },
         clinicianOpinionSource: 'independent',
@@ -355,7 +355,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$8 for 18',
         userRating: 4.5,
         whereToBuy: ['Target', 'Whole Foods', 'Amazon'],
-        image: '',
+        image: 'https://m.media-amazon.com/images/I/81CXzwDsbxL._AC_SX679_.jpg',
         summary: '100% organic cotton tampons. Chlorine-free, cardboard applicator.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', opinionAlerts: 'Tested clean (non-detect) for PFAS in 2022 independent lab testing (Mamavation). Separately, a peer-reviewed 2024 UC Berkeley study (Environment International) found that organic-cotton tampons as a category had higher arsenic levels than non-organic tampons, on average (even though lead was generally lower) — a nuance worth knowing given this product\'s organic positioning, and part of the broader 2024 social-media discussion about tampon safety.' },
         clinicianOpinionSource: 'independent',

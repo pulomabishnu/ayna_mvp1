@@ -81,7 +81,6 @@ Oura Ring Gen 3|B0CSRF3Y2F
 Period Nirvana Disc|B09RTMNJLH
 Period.co Period Underwear|B0BTPVSHKD
 pH-D Feminine Health Boric Acid Wash|B0FK84ZWXK
-Pink Stork Bloat Support|B07VD92KJW
 Playtex Sport Tampons|B08L4Q75QP
 Poise Incontinence Pads Moderate Absorbency|B010OW806O
 Proof Period Underwear|B09CZWML57
@@ -95,7 +94,7 @@ Ruby Love Period Underwear|B07V7TRP8H
 Saalt Menstrual Cup|B09JQ4G62Q
 Saalt Menstrual Disc|B0B13WT3KV
 Saalt Cup Steamer|B0CGX2Y8WM
-Seventh Generation Organic Tampons|B083C6BYG9
+Seventh Generation Organic Tampons|B07FL7PNQK
 Seventh Generation Ultra Thin Pads|B071HDJH7W
 Silverette Nursing Cups|B00D4MWKNQ
 Softdisc Disposable Menstrual Disc|B000X29GY6
