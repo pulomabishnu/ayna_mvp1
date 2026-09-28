@@ -553,37 +553,6 @@ export const MVP_DIGITAL = [
     verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=wisp&restrict_sr=1', text: 'Reddit r/birthcontrol: Wisp', summary: 'Community discussions on telehealth birth control.' }] } }
   },
   {
-    id: 'd-happi-pelvic',
-    name: 'Happi Pelvic Floor App',
-    brand: 'Happi',
-    category: 'pelvic-floor',
-    type: 'digital',
-    internal: false,
-    healthFunctions: ['vaginal-health'],
-    tags: ['pelvic-floor', 'leaks', 'discomfort'],
-    price: 'Free trial, then subscription',
-    userRating: 4.4,
-    whereToBuy: ['App Store', 'Google Play'],
-    platform: 'iOS, Android',
-    // happiapp.com is a HugeDomains parking listing, not this app's real site —
-    // couldn't confirm an official domain to source a real image from. Empty,
-    // not the literal /ayna_placeholder.png path — that file is Ayna's own
-    // marketing image, hardcoding it here would render OUR branding as if it
-    // were a photo of Happi's app. Empty correctly falls back to a letter avatar.
-    image: '',
-    summary: 'Pelvic floor exercise app with guided Kegels and programs. Often recommended by pelvic PTs.',
-    safety: { fdaStatus: 'N/A', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'No physical side effects. This is a training app, not a device or medication. As with any pelvic floor exercise program, working too hard too fast can cause temporary muscle soreness.' },
-    privacy: { dataStorage: 'Check app', sellsData: 'Check policy', hipaa: 'N/A', keyPolicy: 'Health data' },
-    clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-    doctorOpinion: 'App-guided pelvic floor training can improve adherence when used consistently.',
-    communityReview: 'Community discussions on App Store note simplicity and PT recommendations for home use.',
-    effectiveness: 'Structured programs for pelvic floor strength.',
-    badges: ['Pelvic Health', 'PT Recommended'],
-    recommendationWhyDetail: 'Happi guides you through pelvic floor exercises the way a physical therapist would. With timing, breathing cues, and progressive difficulty. The pelvic floor is a hammock of muscles you can\'t see or feel easily, which makes Kegels notoriously easy to do wrong (many people inadvertently bear down instead of lifting). An app with structured programs and reminders dramatically improves consistency, which is what makes pelvic floor training effective over time.',
-    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PelvicFloor/search/?q=app&restrict_sr=1', text: 'Reddit r/PelvicFloor', summary: 'Community discussions on pelvic floor apps.' }] } }
-  },
-  {
     id: 'd-hers',
     name: 'Hers',
     brand: 'Hers',

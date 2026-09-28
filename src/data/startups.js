@@ -247,7 +247,8 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 260,
         url: 'https://www.wild.ai',
-        image: ''
+        // Wild.AI's Google Play Store app icon, verified to load (512x512).
+        image: 'https://play-lh.googleusercontent.com/eSpZpjrxOFnyEeCGChJbVvKkvJAe2Mph3fZjLq3zzr2hltwXbTUEDTDoZai-mrvNo0j3xiKdmHHtkRdqGZT8drg=s512-rw'
     },
     // ─── Fertility & pregnancy ─────────────────────────────
     {
@@ -261,18 +262,14 @@ export const STARTUPS = [
         stage: 'Available, DTC',
         productReleased: true,
         spotsLeft: 400,
-        // natalist.com now 302-redirects to everlywell.com — same pattern as
-        // the Favor/Nurx entry fixed earlier today (brand acquired, catalog
-        // entry gone stale). Flagging for a content decision rather than
-        // guessing: merge into an Everlywell entry, or confirm Natalist still
-        // operates as its own storefront under Everly Health and find its
-        // real current URL.
+        // natalist.com now 302-redirects to everlywell.com (Natalist was
+        // acquired by Everly Health in 2021) but the brand still operates
+        // under that URL, so left as-is.
         url: 'https://natalist.com',
         // Was a completely unrelated wild boar stock photo (img.freepik.com)
-        // — cleared rather than guessing a replacement; falls back to the
-        // clean initial-letter placeholder until a real, verified photo is
-        // sourced.
-        image: ''
+        // — cleared, then replaced with Natalist's own logo from the PR
+        // Newswire acquisition announcement, verified to load (400x90).
+        image: 'https://mma.prnewswire.com/media/1666391/Natalist_Logo_Logo.jpg'
     },
     {
         id: 's-kindbody',
@@ -556,7 +553,8 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 420,
         url: 'https://thehoneypot.co',
-        image: ''
+        // The Honey Pot's own og:image logo asset, verified to load (208x70).
+        image: 'https://cdn.shopify.com/s/files/1/0510/5657/files/Asset_3_4b2a4423-11e7-40ce-a377-2be6ea68752e.png'
     },
     {
         id: 's-lovewellness',
@@ -634,7 +632,8 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 440,
         url: 'https://itsbodily.com',
-        image: ''
+        // Bodily's own og:image, verified to load (1200x630).
+        image: 'https://itsbodily.com/cdn/shop/files/image_17.png'
     },
     {
         id: 's-oula',
@@ -676,7 +675,8 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 370,
         url: 'https://poppyseedhealth.com',
-        image: ''
+        // Poppy Seed Health's own og:image, verified to load (1000x500).
+        image: 'https://static1.squarespace.com/static/5e31fe690dc60436b86c7f8c/t/609dd736564b372494c75eff/1620956982978/SOCIAL_SHARING_IMAGE2.png'
     },
     {
         id: 's-milkstork',
@@ -720,8 +720,12 @@ export const STARTUPS = [
         stage: 'Enterprise',
         productReleased: true,
         spotsLeft: 220,
-        url: 'https://www.cleo.com',
-        image: ''
+        // Was 'https://www.cleo.com', which resolves to an unrelated
+        // supply-chain/EDI software company, not this Cleo. Real site is
+        // hicleo.com (verified via web search).
+        url: 'https://hicleo.com',
+        // hicleo.com's own logo, verified to load (512x236).
+        image: 'https://hicleo.com/wp-content/uploads/2022/07/cropped-logo-cleo.png'
     },
     // ─── Diagnostics & biotech ─────────────────────────────
     {
@@ -838,7 +842,8 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 290,
         url: 'https://www.naturalcycles.com',
-        image: ''
+        // Natural Cycles' own og:image, verified to load (3150x2100).
+        image: 'https://www.datocms-assets.com/21281/1762899321-us-not-fertile-new-screen-rachel-hand-holding-phone.png'
     },
     {
         id: 's-clue',
@@ -852,7 +857,8 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 340,
         url: 'https://helloclue.com',
-        image: ''
+        // Clue's own og:image, verified to load (2400x1254).
+        image: 'https://images.ctfassets.net/juauvlea4rbf/2dX5DYLHtXaEbqIvVxQyRx/39c7a79e61861f9bd3a734f323168299/open_graph_about__1_.png'
     },
     {
         id: 's-ovia',
@@ -866,7 +872,9 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 380,
         url: 'https://www.oviahealth.com',
-        image: ''
+        // Reuses the same local verified asset as the existing d-ovia
+        // catalog entry (same company).
+        image: '/products/verified/d-ovia.jpg'
     },
     {
         id: 's-femometry',

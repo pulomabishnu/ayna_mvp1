@@ -13,12 +13,6 @@ export const CATALOG_CORRECTIONS = {
     "url": "https://glowing.com/",
     "category": "tracker"
   },
-  "d-happi-pelvic": {
-    "name": "Happi Pelvic Floor App",
-    "image": "",
-    "price": "Free trial, then subscription",
-    "category": "pelvic-floor"
-  },
   "d-hers": {
     "name": "Hers",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/dd/b6/45/ddb645c3-4a99-9bcc-8603-9d47b9d4d912/HersIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg",

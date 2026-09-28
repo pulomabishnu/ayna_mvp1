@@ -139,7 +139,6 @@ export const PRODUCT_BUY_DISABLED = {
   "p-uqora-control": "Outdated Uqora product name; no exact current page.",
   "p-pink-stork-bloat": "Old Pink Stork Bloat Support product no longer has an exact current page.",
   "p-intimina-kegel": "Luna Beads entry does not match Intimina's current pelvic floor products.",
-  "d-happi-pelvic": "Exact Happi Pelvic Floor app could not be verified.",
   "p-tampax-pure": "Tampax Pure Cotton is referenced by the brand but no exact current purchase page was verified.",
   "p-organyc-tampon": "No exact current Organyc Cotton Tampons purchase page verified.",
   "p-june-cup": "June Cup storefront/product availability could not be reliably verified.",

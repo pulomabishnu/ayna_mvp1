@@ -304,14 +304,6 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "justification": "PubMed peer-reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
     }
   ],
-  "d-happi-pelvic": [
-    {
-      "url": "https://pubmed.ncbi.nlm.nih.gov/26989760/",
-      "text": "Pelvic floor training",
-      "summary": "Evidence on Kegels and app-guided programs.",
-      "justification": "PubMed peer-reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
-    }
-  ],
   "d-hers": [
     {
       "url": "https://pubmed.ncbi.nlm.nih.gov/32324464/",
