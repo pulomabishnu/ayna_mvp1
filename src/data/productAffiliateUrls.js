@@ -85,13 +85,12 @@ Pink Stork Bloat Support|B07VD92KJW
 Playtex Sport Tampons|B08L4Q75QP
 Poise Incontinence Pads Moderate Absorbency|B010OW806O
 Proof Period Underwear|B09CZWML57
-Rael Organic Cotton Liners|B08B7X49FP
+Rael Organic Cotton Liners|B07258JQ9M
 Rael Organic Cotton Pads|B071VBZLPX
 Rael Organic Tampons|B083C6BYG9
 Rael Overnight Pads|B071NLD52C
 Remifemin Black Cohosh|B0CRKW8DFJ
 Ritual Prenatal Multivitamin|B09W363MVD
-Ruby Cup Menstrual|B07RHQ8W82
 Ruby Love Period Underwear|B07V7TRP8H
 Saalt Menstrual Cup|B09JQ4G62Q
 Saalt Menstrual Disc|B0B13WT3KV

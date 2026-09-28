@@ -134,4 +134,60 @@ describe('Buy Now destinations', () => {
     expect(isAmazonUrl(url)).toBe(false);
     expect(url).toBe('https://goodkittyco.com/products/uti-biome-shield');
   });
+
+  it('never sends Ruby Cup to Amazon (no real Amazon listing exists for it)', () => {
+    // Regression: this used to be mapped to ASIN B07RHQ8W82, which is
+    // actually a Saalt Soft Menstrual Cup — a wrong-brand link. Confirmed
+    // 2026-09-27 that Ruby Cup has no real Amazon listing (search results
+    // only surface "shop other stores directly" links to rubycup.com), so
+    // it must fall back to the brand's own site.
+    const url = resolveBuyUrl(byId['p-ruby-cup']);
+    expect(isAmazonUrl(url)).toBe(false);
+    expect(url).toBe('https://rubycup.com/products/menstrual-cup');
+  });
+
+  it('sends Rael liners to the correct absorbency line on Amazon, not Micro Thin', () => {
+    // Regression: this used to be mapped to ASIN B08B7X49FP, which is
+    // Rael's "Micro Thin" liners — a different, separate product line from
+    // our "Regular Unscented" liners. Fixed to the closest correct-line ASIN.
+    const url = resolveBuyUrl(byId['p-rael-liners']);
+    expect(url).toBe('https://www.amazon.com/dp/B07258JQ9M?tag=aynahealth-20');
+  });
+
+  it('sends each Belly Bandit color/size combination to its own Amazon listing', () => {
+    const bb = byId['p-belly-bandit'];
+    const byLabel = Object.fromEntries(bb.variants.map((v) => [v.label, v]));
+    expect(resolveBuyUrl(bb, byLabel['Cream / S'])).toBe('https://www.amazon.com/dp/B005XNCE12?tag=aynahealth-20');
+    expect(resolveBuyUrl(bb, byLabel['Cream / M'])).toBe('https://www.amazon.com/dp/B005XNCFKW?tag=aynahealth-20');
+    expect(resolveBuyUrl(bb, byLabel['Cream / L'])).toBe('https://www.amazon.com/dp/B005XNCH3W?tag=aynahealth-20');
+    expect(resolveBuyUrl(bb, byLabel['Cream / XL'])).toBe('https://www.amazon.com/dp/B00EO7LSS8?tag=aynahealth-20');
+    expect(resolveBuyUrl(bb, byLabel['Black / S'])).toBe('https://www.amazon.com/dp/B009EEWGVO?tag=aynahealth-20');
+    expect(resolveBuyUrl(bb, byLabel['Black / M'])).toBe('https://www.amazon.com/dp/B009EEWJSE?tag=aynahealth-20');
+    expect(resolveBuyUrl(bb, byLabel['Black / L'])).toBe('https://www.amazon.com/dp/B009EEWI7Q?tag=aynahealth-20');
+    expect(resolveBuyUrl(bb, byLabel['Black / XL'])).toBe('https://www.amazon.com/dp/B00LMIER30?tag=aynahealth-20');
+  });
+
+  it('sends each Silverette nursing cup size/O-Feel combination to its own Amazon listing', () => {
+    const sv = byId['p-silverette-cups'];
+    const byLabel = Object.fromEntries(sv.variants.map((v) => [v.label, v]));
+    expect(resolveBuyUrl(sv, byLabel['S / No O Feel'])).toBe('https://www.amazon.com/dp/B00D4MWKNQ?tag=aynahealth-20');
+    expect(resolveBuyUrl(sv, byLabel['M / No O Feel'])).toBe('https://www.amazon.com/dp/B07XGC8RBB?tag=aynahealth-20');
+    expect(resolveBuyUrl(sv, byLabel['L / No O Feel'])).toBe('https://www.amazon.com/dp/B0FTGGL64M?tag=aynahealth-20');
+  });
+
+  it('sends each Lena Cup color/size combination to its own Amazon listing', () => {
+    const lena = byId['p-lena-cup'];
+    const byLabel = Object.fromEntries(lena.variants.map((v) => [v.label, v]));
+    expect(resolveBuyUrl(lena, byLabel['Pink / Small'])).toBe('https://www.amazon.com/dp/B00YNYH8F4?tag=aynahealth-20');
+    expect(resolveBuyUrl(lena, byLabel['Purple / Large'])).toBe('https://www.amazon.com/dp/B01JWMWSII?tag=aynahealth-20');
+    expect(resolveBuyUrl(lena, byLabel['Turquoise / Small'])).toBe('https://www.amazon.com/dp/B01FV0N9BK?tag=aynahealth-20');
+    expect(resolveBuyUrl(lena, byLabel['Gray / Large'])).toBe('https://www.amazon.com/dp/B08HW1VFFZ?tag=aynahealth-20');
+  });
+
+  it('sends each Hello Disc color to its own Amazon listing', () => {
+    const disc = byId['p-hello-disc'];
+    const byLabel = Object.fromEntries(disc.variants.map((v) => [v.label, v]));
+    expect(resolveBuyUrl(disc, byLabel['Bubblegum'])).toBe('https://www.amazon.com/dp/B0GCBHWY24?tag=aynahealth-20');
+    expect(resolveBuyUrl(disc, byLabel['Black'])).toBe('https://www.amazon.com/dp/B0GKBK3FS9?tag=aynahealth-20');
+  });
 });

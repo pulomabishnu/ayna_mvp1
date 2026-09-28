@@ -8,42 +8,50 @@ export const PRODUCT_VARIANTS = {
       {
         "id": "51315890630",
         "label": "Cream / S",
-        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890630"
+        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890630",
+        "amazonAsin": "B005XNCE12"
       },
       {
         "id": "51315890694",
         "label": "Cream / M",
-        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890694"
+        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890694",
+        "amazonAsin": "B005XNCFKW"
       },
       {
         "id": "51315890758",
         "label": "Cream / L",
-        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890758"
+        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890758",
+        "amazonAsin": "B005XNCH3W"
       },
       {
         "id": "51315890822",
         "label": "Cream / XL",
-        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890822"
+        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890822",
+        "amazonAsin": "B00EO7LSS8"
       },
       {
         "id": "51315890182",
         "label": "Black / S",
-        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890182"
+        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890182",
+        "amazonAsin": "B009EEWGVO"
       },
       {
         "id": "51315890310",
         "label": "Black / M",
-        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890310"
+        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890310",
+        "amazonAsin": "B009EEWJSE"
       },
       {
         "id": "51315890374",
         "label": "Black / L",
-        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890374"
+        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890374",
+        "amazonAsin": "B009EEWI7Q"
       },
       {
         "id": "51315890502",
         "label": "Black / XL",
-        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890502"
+        "url": "https://bellybandit.com/products/upsie-belly?variant=51315890502",
+        "amazonAsin": "B00LMIER30"
       }
     ]
   },
@@ -319,18 +327,21 @@ export const PRODUCT_VARIANTS = {
         "id": "50103351836919",
         "label": "Bubblegum",
         "url": "https://helloperiod.com/products/hello-disc%E2%84%A2?variant=50103351836919",
-        "image": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/pink_hello_disc_in_hand.png?v=1783065791"
+        "image": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/pink_hello_disc_in_hand.png?v=1783065791",
+        "amazonAsin": "B0GCBHWY24"
       },
       {
         "id": "44308103102711",
         "label": "Sea Fog",
         "url": "https://helloperiod.com/products/hello-disc%E2%84%A2?variant=44308103102711",
-        "image": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/hello_period_menstrual_disc_with_loop_tabs.jpg?v=1783065980"
+        "image": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/hello_period_menstrual_disc_with_loop_tabs.jpg?v=1783065980",
+        "amazonAsin": "B09RTMNJLH"
       },
       {
         "id": "44308103135479",
         "label": "Black",
         "url": "https://helloperiod.com/products/hello-disc%E2%84%A2?variant=44308103135479",
+        "amazonAsin": "B0GKBK3FS9",
         "image": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/black_menstrual_disc_by_hello_period.jpg?v=1783065936"
       }
     ]
@@ -393,49 +404,57 @@ export const PRODUCT_VARIANTS = {
         "id": "33551045197",
         "label": "Pink / Small",
         "url": "https://lenacup.com/products/lena-cup?variant=33551045197",
-        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/WhatsApp_Image_2026-07-28_at_16.19.07_45426fb0-4c21-4d7e-a69d-d957c1563bb9.jpg?v=1785341397"
+        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/WhatsApp_Image_2026-07-28_at_16.19.07_45426fb0-4c21-4d7e-a69d-d957c1563bb9.jpg?v=1785341397",
+        "amazonAsin": "B00YNYH8F4"
       },
       {
         "id": "33551045581",
         "label": "Pink / Large",
         "url": "https://lenacup.com/products/lena-cup?variant=33551045581",
-        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/WhatsApp_Image_2026-07-28_at_16.19.08_b0d17a7f-7b28-4380-9e54-087c09939d2c.jpg?v=1785341374"
+        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/WhatsApp_Image_2026-07-28_at_16.19.08_b0d17a7f-7b28-4380-9e54-087c09939d2c.jpg?v=1785341374",
+        "amazonAsin": "B00YNYH8EK"
       },
       {
         "id": "33551045325",
         "label": "Purple / Small",
         "url": "https://lenacup.com/products/lena-cup?variant=33551045325",
-        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_PUR-S.png?v=1775990773"
+        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_PUR-S.png?v=1775990773",
+        "amazonAsin": "B01JWMWSMY"
       },
       {
         "id": "33551045773",
         "label": "Purple / Large",
         "url": "https://lenacup.com/products/lena-cup?variant=33551045773",
-        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Pur-L.png?v=1775990773"
+        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Pur-L.png?v=1775990773",
+        "amazonAsin": "B01JWMWSII"
       },
       {
         "id": "33551045517",
         "label": "Turquoise / Small",
         "url": "https://lenacup.com/products/lena-cup?variant=33551045517",
-        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Turquoise_Small_bacf0152-3456-4c0f-a26f-cd434e8341cb.jpg?v=1783007349"
+        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Turquoise_Small_bacf0152-3456-4c0f-a26f-cd434e8341cb.jpg?v=1783007349",
+        "amazonAsin": "B01FV0N9BK"
       },
       {
         "id": "33551045965",
         "label": "Turquoise / Large",
         "url": "https://lenacup.com/products/lena-cup?variant=33551045965",
-        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Turquoise_Large_52a7243c-a21f-4b64-a3df-de3810ba13ac.jpg?v=1783007318"
+        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Turquoise_Large_52a7243c-a21f-4b64-a3df-de3810ba13ac.jpg?v=1783007318",
+        "amazonAsin": "B01FW9NEGA"
       },
       {
         "id": "32308037386305",
         "label": "Gray / Small",
         "url": "https://lenacup.com/products/lena-cup?variant=32308037386305",
-        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_BLK-S_ed1c1f7f-df91-41c0-82cf-bbeec40c8078.png?v=1775990773"
+        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_BLK-S_ed1c1f7f-df91-41c0-82cf-bbeec40c8078.png?v=1775990773",
+        "amazonAsin": "B08HSLY3M6"
       },
       {
         "id": "32308038402113",
         "label": "Gray / Large",
         "url": "https://lenacup.com/products/lena-cup?variant=32308038402113",
-        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_BLK-L_f3ffc915-e8da-42df-a0d4-2d8190b60937.png?v=1775990773"
+        "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_BLK-L_f3ffc915-e8da-42df-a0d4-2d8190b60937.png?v=1775990773",
+        "amazonAsin": "B08HW1VFFZ"
       }
     ]
   },
@@ -467,7 +486,8 @@ export const PRODUCT_VARIANTS = {
         "id": "42677789524083",
         "label": "Standard",
         "url": "https://lovewellness.com/products/bye-bye-bloat?variant=42677789524083",
-        "image": "https://cdn.shopify.com/s/files/1/1288/3849/files/01_LW_PDP_BBB_Silo_d91565b2-159b-4249-8db3-633000ab49bf.jpg?v=1762521813"
+        "image": "https://cdn.shopify.com/s/files/1/1288/3849/files/01_LW_PDP_BBB_Silo_d91565b2-159b-4249-8db3-633000ab49bf.jpg?v=1762521813",
+        "amazonAsin": "B07TCQS4QJ"
       },
       {
         "id": "42677789556851",
@@ -819,7 +839,8 @@ export const PRODUCT_VARIANTS = {
         "id": "48659752354140",
         "label": "Regular / 1 Pack",
         "url": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=48659752354140",
-        "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/natracare-ultra-pads-regular-800.jpg?v=1715939406"
+        "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/natracare-ultra-pads-regular-800.jpg?v=1715939406",
+        "amazonAsin": "B000VI3LNE"
       },
       {
         "id": "49098168205660",
@@ -831,7 +852,8 @@ export const PRODUCT_VARIANTS = {
         "id": "48659752386908",
         "label": "Super / 1 Pack",
         "url": "https://shop.natracare.com/products/ultra-pads-regular-super-long-plus?variant=48659752386908",
-        "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/natracare-ultra-pads-super-800.jpg?v=1715938321"
+        "image": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/natracare-ultra-pads-super-800.jpg?v=1715938321",
+        "amazonAsin": "B000QVDLKO"
       },
       {
         "id": "49098168238428",
@@ -874,7 +896,8 @@ export const PRODUCT_VARIANTS = {
         "id": "15856471801928",
         "label": "Teal / Single",
         "url": "https://nixit.com/products/nixit-menstrual-disc?variant=15856471801928",
-        "image": "https://cdn.shopify.com/s/files/1/0015/4478/1896/files/website_-_condoms_1.png?v=1770330830"
+        "image": "https://cdn.shopify.com/s/files/1/0015/4478/1896/files/website_-_condoms_1.png?v=1770330830",
+        "amazonAsin": "B0DGW9R5XR"
       },
       {
         "id": "42370132148317",
@@ -956,25 +979,29 @@ export const PRODUCT_VARIANTS = {
         "id": "34035511984187",
         "label": "Black / XS",
         "url": "https://period.co/products/the-bikini?variant=34035511984187",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
+        "amazonAsin": "B0CLSXCD1K"
       },
       {
         "id": "34035512016955",
         "label": "Black / S",
         "url": "https://period.co/products/the-bikini?variant=34035512016955",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
+        "amazonAsin": "B0CLSTBLVN"
       },
       {
         "id": "34035512049723",
         "label": "Black / M",
         "url": "https://period.co/products/the-bikini?variant=34035512049723",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
+        "amazonAsin": "B0CLSH74KW"
       },
       {
         "id": "34035512082491",
         "label": "Black / L",
         "url": "https://period.co/products/the-bikini?variant=34035512082491",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
+        "amazonAsin": "B0CLSJDG22"
       },
       {
         "id": "34035512115259",
@@ -986,7 +1013,8 @@ export const PRODUCT_VARIANTS = {
         "id": "34035512148027",
         "label": "Black / 2X",
         "url": "https://period.co/products/the-bikini?variant=34035512148027",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
+        "amazonAsin": "B0CLSGCQHJ"
       },
       {
         "id": "34035512180795",
@@ -1246,33 +1274,39 @@ export const PRODUCT_VARIANTS = {
         "id": "40049460641897",
         "label": "S / No O Feel",
         "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=40049460641897",
-        "image": "https://cdn.shopify.com/s/files/1/0403/8465/files/Design.jpg?v=1777454452"
+        "image": "https://cdn.shopify.com/s/files/1/0403/8465/files/Design.jpg?v=1777454452",
+        "amazonAsin": "B00D4MWKNQ"
       },
       {
         "id": "40106524606569",
         "label": "S / Add O Feel",
-        "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=40106524606569"
+        "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=40106524606569",
+        "amazonAsin": "B0B4H75CJZ"
       },
       {
         "id": "40049460707433",
         "label": "M / No O Feel",
         "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=40049460707433",
-        "image": "https://cdn.shopify.com/s/files/1/0403/8465/files/Medium.jpg?v=1777454452"
+        "image": "https://cdn.shopify.com/s/files/1/0403/8465/files/Medium.jpg?v=1777454452",
+        "amazonAsin": "B07XGC8RBB"
       },
       {
         "id": "40106524704873",
         "label": "M / Add O Feel",
-        "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=40106524704873"
+        "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=40106524704873",
+        "amazonAsin": "B0B4H6GXCW"
       },
       {
         "id": "43154864472169",
         "label": "L / Add O Feel",
-        "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=43154864472169"
+        "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=43154864472169",
+        "amazonAsin": "B0GFX7239Z"
       },
       {
         "id": "43154864701545",
         "label": "L / No O Feel",
-        "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=43154864701545"
+        "url": "https://silveretteusa.com/products/silverette-nursing-cups?variant=43154864701545",
+        "amazonAsin": "B0FTGGL64M"
       }
     ]
   },
