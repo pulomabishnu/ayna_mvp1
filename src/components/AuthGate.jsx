@@ -540,6 +540,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
             <input
               type="text"
               placeholder="First name"
+              aria-label="First name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
@@ -555,6 +556,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
               <input
                 type="tel"
                 placeholder="Phone number"
+                aria-label="Phone number"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 required
@@ -571,6 +573,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
                   type="text"
                   inputMode="numeric"
                   placeholder="6-digit code"
+                  aria-label="6-digit verification code"
                   value={phoneCode}
                   onChange={(e) => setPhoneCode(e.target.value)}
                   required
@@ -596,6 +599,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
                 type="text"
                 inputMode="numeric"
                 placeholder="8-digit code"
+                aria-label="8-digit verification code"
                 value={emailCode}
                 onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
                 required
@@ -635,6 +639,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
                 <input
                   type="text"
                   placeholder="First name"
+                  aria-label="First name"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
@@ -646,6 +651,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
               <input
                 type="email"
                 placeholder="Email address"
+                aria-label="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -656,6 +662,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Password"
+                  aria-label="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required

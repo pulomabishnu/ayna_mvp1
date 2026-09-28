@@ -104,7 +104,7 @@ function clearPendingEcosystemReset(userId) {
 
 const VIEW_TO_PATH = {
   welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem',
-  discovery: '/discovery', waitlist: '/startups',
+  discovery: '/discovery', waitlist: '/startups', recommendations: '/recommendations',
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
@@ -126,7 +126,7 @@ const VIEW_TO_PATH = {
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
   quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Browse',
-  waitlist: 'Startups', articles: 'Health Library', screenings: 'Screenings',
+  waitlist: 'Startups', recommendations: 'Your Recommendations', articles: 'Health Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
   'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account',

@@ -97,9 +97,21 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                                 borderRadius: 'var(--radius-md)',
                                 borderLeft: `5px solid ${recall.severity === 'critical' ? '#EF4444' : (recall.severity === 'high' ? '#F59E0B' : '#FCD34D')}`
                             }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                                    <h4 style={{ fontWeight: '700', fontSize: '1.1rem' }}>{recall.productName}</h4>
-                                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{recall.date}</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', gap: '0.75rem' }}>
+                                    <h4 style={{ fontWeight: '700', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                        {recall.productName}
+                                        {recall.severity === 'critical' && (
+                                            <span style={{ fontSize: '0.7rem', fontWeight: '700', letterSpacing: '0.03em', textTransform: 'uppercase', color: '#991B1B', background: '#FEE2E2', border: '1px solid #EF4444', borderRadius: 'var(--radius-pill)', padding: '0.15rem 0.6rem' }}>
+                                                Critical
+                                            </span>
+                                        )}
+                                        {recall.severity === 'high' && (
+                                            <span style={{ fontSize: '0.7rem', fontWeight: '700', letterSpacing: '0.03em', textTransform: 'uppercase', color: '#92400E', background: '#FEF3C7', border: '1px solid #F59E0B', borderRadius: 'var(--radius-pill)', padding: '0.15rem 0.6rem' }}>
+                                                High
+                                            </span>
+                                        )}
+                                    </h4>
+                                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>{recall.date}</span>
                                 </div>
                                 <p style={{ fontSize: '0.95rem', marginBottom: '1rem', color: recall.severity === 'critical' ? '#991B1B' : 'var(--color-text-main)' }}>
                                     <strong>Reason:</strong> {recall.reason}
