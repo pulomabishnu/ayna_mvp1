@@ -26,9 +26,9 @@ export default function RotatingWordHeadline({
   const wordRef = useRef(null);
   const indexRef = useRef(0);
   const wordsRef = useRef(words);
-  wordsRef.current = words;
 
   useLayoutEffect(() => {
+    wordsRef.current = words;
     const el = wordRef.current;
     if (el) el.textContent = wordsRef.current[0] ?? '';
     indexRef.current = 0;

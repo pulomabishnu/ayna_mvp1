@@ -392,14 +392,14 @@ export default function Quiz({ onComplete }) {
   const handleMultiConfirm = () => {
     const selected = Array.from(multiSelections);
     const newAnswers = { ...answers, [step.id]: selected };
-    setMultiSelections(new Set());
-    setAnswers(newAnswers);
     if (step.id === 'currentUse') {
       const physical = ['Pads', 'Tampons', 'Menstrual cup', 'Menstrual disc', 'Period underwear', 'Supplements'];
       const apps = ['Flo / Clue / Stardust', 'Apple Health / Garmin / Fitbit', 'Telehealth (Wisp, Nurx, etc.)'];
       newAnswers.currentPhysical = selected.filter(o => physical.includes(o));
       newAnswers.currentApps = selected.filter(o => apps.includes(o));
     }
+    setMultiSelections(new Set());
+    setAnswers(newAnswers);
     advance(newAnswers);
   };
 

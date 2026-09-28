@@ -9,7 +9,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
         return (
             <div className="container animate-fade-in" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
                 <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                    <h2 style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>Comparison Tool</h2>
+                    <h2 style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>Product Comparison</h2>
                     <p style={{ color: 'var(--color-text-muted)', maxWidth: '520px', margin: '0 auto' }}>
                         Compare up to 3 products side-by-side: safety, ingredients, and expert opinions.
                     </p>
@@ -116,13 +116,13 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
     const canAddMore = compareList.length < 3;
 
     return (
-        <div className="container animate-fade-in" style={{ padding: 'var(--spacing-lg) var(--spacing-md)' }}>
+        <div className="container animate-fade-in" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '1rem' }}>
                 <div>
                     <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Product Comparison</h2>
                     <p style={{ color: 'var(--color-text-muted)' }}>See how they differ on safety, how well they work, and value.</p>
                 </div>
-                <button className="btn-outline" onClick={onClear} style={{ color: 'var(--color-text-muted)' }}>Clear All</button>
+                <button className="btn btn-outline" onClick={onClear} style={{ color: 'var(--color-text-muted)' }}>Clear All</button>
             </div>
             {canAddMore && (onBrowseProducts || onAddToCompare) && (
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2rem', alignItems: 'center' }}>

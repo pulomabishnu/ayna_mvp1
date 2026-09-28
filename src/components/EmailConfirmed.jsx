@@ -62,7 +62,7 @@ export default function EmailConfirmed({ onAuthenticated }) {
       <p style={{ color: 'var(--color-text-muted, #666)', maxWidth: '340px', lineHeight: 1.6, margin: 0 }}>
         This page is only for older confirmation links. New ayna signups verify with the code sent by email. Return to ayna and enter your verification code, or request a new code from the sign-in screen.
       </p>
-      {confirmedUser && <button type="button" onClick={() => onAuthenticated(confirmedUser)} style={{ border: 0, borderRadius: '10px', background: '#FF7417', color: '#fff', padding: '12px 20px', cursor: 'pointer' }}>Continue in this browser</button>}
+      {confirmedUser && <button type="button" className="btn btn-primary" onClick={() => onAuthenticated(confirmedUser)}>Continue in this browser</button>}
     </div>
   );
 }

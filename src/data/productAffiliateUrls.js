@@ -3,7 +3,6 @@
  * Product-specific affiliateUrl values still take priority over these.
  */
 const AMAZON_ROWS = `
-Aisle Period Underwear|B0BNPBCS5Z
 Always Infinity FlexFoam Size 1|B0H8VXGSWB
 Always Liners Dailies Thin|B003VD5TMM
 Always Discreet Boutique Incontinence Panty Liners|B082JG2QJL
@@ -46,7 +45,6 @@ HUM Nutrition Flatter Me|B015OVVI4Q
 Inito Fertility Monitor Starter Kit|B0FB4BCFJP
 Intimate Rose Pelvic Wand|B07HR3GL6V
 Intimate Rose Vaginal Dilators|B07BKBCFDL
-Intimina Lily Cup Size A|B079JSS8LD
 Intimina Kegel Exerciser Luna Beads|B014GMBDQ2
 Kindra Daily Vaginal Lotion|B08Y671B3S
 Knix Leakproof Underwear|B0HFTVGGSP
@@ -62,7 +60,6 @@ Love Wellness Bye Bye Bloat|B07TCQS4QJ
 Lumma Unique Menstrual Disc|B07TFHKHM4
 Lunette Menstrual Cup|B0054SQ02K
 Maude Vibe Personal Massager|B0DX2C328S
-Modibodi Period Underwear|B0BNPBCS5Z
 MysteryVibe Crescendo 2|B0GNSGQ2Q6
 Natracare Organic Tampons|B00005368L
 Natracare Ultra Pads|B000VI3LNE
@@ -78,7 +75,6 @@ OrganiCup AllMatters Menstrual Cup|B071NCXFMG
 Organyc 100% Cotton Pads|B004DGH596
 Organyc Cotton Tampons|B0061WH3GU
 Oura Ring Gen 3|B0CSRF3Y2F
-Period Nirvana Disc|B09RTMNJLH
 Period.co Period Underwear|B0BTPVSHKD
 pH-D Feminine Health Boric Acid Wash|B0FK84ZWXK
 Playtex Sport Tampons|B08L4Q75QP
@@ -95,7 +91,6 @@ Saalt Menstrual Cup|B09JQ4G62Q
 Saalt Menstrual Disc|B0B13WT3KV
 Saalt Cup Steamer|B0CGX2Y8WM
 Seventh Generation Organic Tampons|B07FL7PNQK
-Seventh Generation Ultra Thin Pads|B071HDJH7W
 Silverette Nursing Cups|B00D4MWKNQ
 Softdisc Disposable Menstrual Disc|B000X29GY6
 Stayfree Ultra Thin|B079RGVB2V
@@ -120,18 +115,15 @@ Uberlube Luxury Lubricant|B00KDHSAAM
 Uqora Control|B0DLBSVB4Q
 VIBOOS Electric Heating Pad|B0GG6HHCYM
 V-Wash Plus Intimate Hygiene Wash|B00S6KDGNE
-Veeda Natural Cotton Pads|B071HDJH7W
 Wholesome Story Myo & D-Chiro Inositol|B07HX2DMY8
 Willow Wearable Breast Pump Gen 3|B0862FCV4C
 Winx Health Early Pregnancy Tests|B0GHC6JY4X
 Winx Health Urinary Daily Defense|B0D5RKRNT6
 Winx Health UTI Fast-Acting Pain Relief|B008KPZMJG
-Winx Health UTI Test + Treat|B00854L57U
 Winx Health Vaginal Health Probiotic|B0D5FZGY8W
 Winx Health Vaginal Health Test + Treat|B09J522MNP
 Womaness Me.No.Pause. Supplement|B096H6M6GM
 Wuka Period Underwear|B0BNP9M6WV
-Ziggy Cup Intimina Menstrual Disc|B079JSS8LD
 `.trim().split('\n');
 
 function normalizeProductName(value) {
@@ -170,7 +162,6 @@ const PRODUCT_NAME_ALIASES = {
   'frida mom postpartum kit': 'frida mom postpartum recovery essentials kit',
   'hello disc': 'hello disc menstrual disc',
   'inito fertility monitor': 'inito fertility monitor starter kit',
-  'intimina lily cup': 'intimina lily cup size a',
   'maude vibe': 'maude vibe personal massager',
   'nature made iron 65 mg tablets': 'nature made iron 65 mg',
   'nature s bounty vitamin d3 5000 iu softgels': 'nature s bounty vitamin d3 5000 iu',
@@ -186,7 +177,6 @@ const PRODUCT_NAME_ALIASES = {
   'thermacare heat wraps': 'thermacare menstrual heat wraps',
   'v wash plus': 'v wash plus intimate hygiene wash',
   'willow wearable breast pump': 'willow wearable breast pump gen 3',
-  'ziggy cup menstrual disc': 'ziggy cup intimina menstrual disc',
 };
 
 export const AMAZON_ASSOCIATES_TAG = 'aynahealth-20';
