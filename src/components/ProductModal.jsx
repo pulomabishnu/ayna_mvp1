@@ -14,7 +14,6 @@ import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
 import { resolveBuyUrl, isAmazonUrl, buyGoesToAmazonListing } from '../utils/buyLink';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
-import { isTrustedScientificSource } from '../utils/trustedSources.js';
 import { getSafetyAlertText, buildSummarySentences } from '../utils/productSafetyAlert';
 import posthog from 'posthog-js';
 import { productHref } from '../utils/productRoute';
@@ -590,9 +589,7 @@ export default function ProductModal({
     for (const [key, kind] of [['scientific', 'Scientific'], ['doctor', 'Clinical']]) {
       for (const link of getVerificationLinks(product, key)) {
         const url = link?.url || link?.href;
-        // Catalog products are already filtered in applyCatalogEvidence; this
-        // also covers AI-discovered products that never pass through it.
-        if (!url || seenUrls.has(url) || !isTrustedScientificSource(url)) continue;
+        if (!url || seenUrls.has(url)) continue;
         const label = hostLabel(url);
         if (!label) continue;
         seenUrls.add(url);
@@ -615,7 +612,7 @@ export default function ProductModal({
     const seenUrls = new Set(scientificLiteratureEntries.map((e) => e.url));
     const entries = [];
     for (const c of product?.scientificCitations || []) {
-      if (!c.url || seenUrls.has(c.url) || !isTrustedScientificSource(c.url)) continue;
+      if (!c.url || seenUrls.has(c.url)) continue;
       const label = hostLabel(c.url);
       if (!label) continue;
       seenUrls.add(c.url);
@@ -642,7 +639,7 @@ export default function ProductModal({
       // showing the same shared ingredient name and text.
       const multi = (item.citations || []).length > 1;
       for (const c of item.citations || []) {
-        if (!c.url || seenUrls.has(c.url) || !isTrustedScientificSource(c.url)) continue;
+        if (!c.url || seenUrls.has(c.url)) continue;
         const label = hostLabel(c.url);
         if (!label) continue;
         seenUrls.add(c.url);

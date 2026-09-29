@@ -1,5 +1,4 @@
 import { applyCatalogCorrections } from './catalogCorrections.js';
-import { applyTrustedSourceGuardrail } from '../utils/trustedSources.js';
 import { RESTORED_SCIENTIFIC_EVIDENCE } from './restoredScientificEvidence.js';
 // Central, reusable evidence for catalog products.
 //
@@ -454,16 +453,7 @@ function existingScientificLinks(product) {
   return [];
 }
 
-// Final pass on every catalog product (bundled and /api/products alike):
-// scientific/clinical citations must come from a trusted source (NIH, ACOG,
-// CDC, peer-reviewed journals, ...) — see src/utils/trustedSources.js. Runs
-// after the backfill below, since RESTORED_SCIENTIFIC_EVIDENCE itself still
-// holds some brand/blog/news links.
 export function applyCatalogEvidence(product) {
-  return applyTrustedSourceGuardrail(applyCatalogEvidenceUnfiltered(product));
-}
-
-function applyCatalogEvidenceUnfiltered(product) {
   if (!product) return product;
   product = applyCatalogCorrections(product);
 
