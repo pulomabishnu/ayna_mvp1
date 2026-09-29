@@ -3556,4 +3556,505 @@ export const BRAND_PRODUCTS = [
         },
         isEmergingBrand: true,
     },
+    // Alubri (alubri.com) — catalog entries only, NOT yet an ayna brand
+    // partner (as of 2026-09-29). Like Liv Labs above, isEmergingBrand shows
+    // the "Brand" tag on Discovery, but the brand is deliberately left out of
+    // src/utils/partnerBrands.js's PARTNER_BRAND_ORDER and off the Brand
+    // Partnerships page until a partnership is confirmed — so Buy Now uses
+    // the standard (non-partner) route and no partner disclosure shows.
+    // Co-founded by Dr. Nicole Kerner, a board-certified, menopause-certified
+    // OB-GYN. Product facts (prices, full ingredient lists, directions, and
+    // the brand's clinical-study figures) were checked via web search of
+    // alubri.com and its Amazon / Walmart / Target / Mayo Clinic Store
+    // listings — direct fetch of alubri.com is blocked in this environment.
+    // Product photos supplied by ayna, stored under public/products/alubri/.
+    {
+        id: 'p-alubri-vaginal-moisturizing-gel',
+        name: 'Alubri Vaginal Moisturizing Gel',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'menopause', 'hormone-free'],
+        price: '$29.99 (50 mL, 8 applicators)',
+        whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Mayo Clinic Store'],
+        url: 'https://alubri.com/products/vaginal-moisturizing-gel',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/vaginal-moisturizing-gel.webp',
+        summary: 'A hormone-free internal vaginal moisturizer gel for dryness and discomfort, with up to 72 hours of hydration from a single application per the brand. It pairs hyaluronic acid (sodium hyaluronate) and lactic acid with Alubri\'s "Activated Oil Complex" (pre-activated coconut and rosehip oils), dragon fruit extract, and aloe, which the brand positions as also supporting a balanced vaginal microbiome. A 1-month supply: a 50 mL tube with 8 single-use applicators, used about twice a week.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic / personal-care vaginal moisturizer; not an FDA-cleared medical device or drug.',
+            // Full packaging ingredient list — shown in full under
+            // "Materials" on the Evidence view (see buildFactRows in
+            // ProductModal.jsx, which doesn't truncate this field).
+            materials: '50 mL (1.7 fl oz) tube with 8 single-use applicators. Ingredients: aqua (water), glucomannan, hydrolyzed Rosa canina (rosehip) fruit oil, hydrolyzed Cocos nucifera (coconut) oil, sodium hyaluronate, lactic acid, Hylocereus undatus (dragon fruit) fruit extract, Aloe barbadensis leaf juice, propanediol, xanthan gum, potassium sorbate, sodium benzoate, benzyl alcohol, benzoic acid. Fragrance-free and hormone-free.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation, burning, or an allergic reaction. Full warnings are listed below.',
+            opinionAlerts: 'The clinical figures (72-hour hydration, microbiome effects) come from studies the brand cites on its own site; ayna couldn\'t find them published as a peer-reviewed paper.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Alubri\'s own site and retailer listings, not independent clinical literature.',
+        doctorOpinion: 'Alubri says its products are co-developed by an OB/GYN: co-founder Dr. Nicole Kerner, a board-certified, menopause-certified OB-GYN with 20+ years of clinical experience, per the brand.\n\nAlubri cites an independent, third-party clinical study of 51 symptomatic menopausal women who used the gel twice a week for one month. Brand-reported results: a single application increased vaginal hydration by 64% at 72 hours, and 94% said their vagina felt moisturized, 94% hydrated, and 92% soothed.\n\nThe brand also says its Activated Oil Complex increased Lactobacillus (the "good" vaginal bacteria) and decreased Gardnerella vaginalis (associated with BV) in its studies. Those study details aren\'t published as a standalone peer-reviewed paper, so treat the microbiome claim as brand-reported.',
+        doctorOpinionShort: 'Alubri cites a third-party study of 51 menopausal women: one application raised vaginal hydration 64% at 72 hours, and 94% said they felt moisturized. Co-developed by a menopause-certified OB-GYN. These are brand-reported results, not an independently peer-reviewed study.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/vaginal-moisturizing-gel', label: 'alubri.com: where Alubri presents these results' },
+            { url: 'https://alubri.com/pages/science', label: 'alubri.com: Science (Activated Oil Complex)' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women in perimenopause and menopause with vaginal dryness or discomfort',
+            'Anyone who can\'t or doesn\'t want to use hormone therapy',
+            'Women who want a longer-lasting internal moisturizer rather than a lubricant used only during sex',
+        ],
+        // Rendered as a bulleted list on the Evidence view.
+        howToUse: {
+            intro: 'Per Alubri\'s own directions:',
+            steps: [
+                'Attach a single-use applicator to the tube and squeeze to fill to 3 grams.',
+                'Insert the applicator into the vagina and push to release the gel.',
+                'Remove the applicator and throw it away.',
+                'Use twice a week, or more often as needed. For best results, lie flat for 10 minutes afterward.',
+            ],
+            sourceUrl: 'https://alubri.com/products/vaginal-moisturizing-gel',
+            sourceLabel: 'alubri.com: Vaginal Moisturizing Gel',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'A moisturizer for dryness, not a treatment for infection. See a doctor for unusual discharge, odor, itching, or bleeding.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Contains plant oils: check Alubri\'s FAQ before using it with latex condoms.',
+            'Irritation or burning: stop and see a doctor.',
+        ],
+        communityReview: 'Alubri\'s site, Amazon, Walmart, and Target all carry customer reviews for this gel. A specific rating/review count wasn\'t independently verifiable at time of writing, since those sites block automated access.',
+        effectiveness: 'Vaginal moisturizers as a category are supported by systematic-review evidence for improving dryness versus placebo (low certainty). Alubri\'s own study reports hydration lasting up to 72 hours; no independent clinical study of this specific product was found.',
+        // Plain-text ingredient summary — kept as a string since search
+        // indexing, the interaction checker, and DoctorPrep.jsx all read it.
+        ingredients: 'Sodium hyaluronate (hyaluronic acid), lactic acid, Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit extract, aloe, glucomannan.',
+        ingredientScience: [
+            {
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'Binds large amounts of water. It draws moisture into the vaginal lining and holds it there.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                ],
+            },
+            {
+                name: 'Lactic acid',
+                text: 'The same acid healthy vaginal bacteria produce. It helps keep pH in its natural acidic range (3.8 to 4.5).',
+                citations: [
+                    { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6332693/', label: 'NIH (PMC): Vaginal pH measured in vivo — lactobacilli determine pH and lactic acid concentration' },
+                ],
+            },
+            {
+                name: 'Activated Oil Complex (coconut and rosehip oils)',
+                text: 'Alubri\'s proprietary blend: coconut- and rosehip-derived oils the brand "pre-activates" into what it calls their most bioactive forms. The brand reports it increased Lactobacillus and decreased Gardnerella in its own studies. This is a brand claim; no independent study of the complex was found.',
+                citations: [
+                    { url: 'https://alubri.com/pages/science', label: 'alubri.com: Science (brand source)' },
+                ],
+            },
+            {
+                name: 'Aloe',
+                text: 'A soothing plant gel commonly used on irritated skin.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/aloe-vera', label: 'NIH NCCIH: Aloe Vera' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/39250810/',
+                text: 'Hormonal Treatments and Vaginal Moisturizers for Genitourinary Syndrome of Menopause: A Systematic Review',
+                summary: 'A systematic review (Danan et al., Annals of Internal Medicine, 2024) of randomized trials found vaginal moisturizers may improve dryness versus placebo (low certainty of evidence). This is intervention-level evidence and does not validate a specific moisturizer product.',
+            },
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=alubri&restrict_sr=1', text: 'Reddit r/Menopause: Alubri', summary: 'Community discussions of Alubri\'s intimate-care line.' },
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G4SG1WJY', text: 'Amazon: Alubri Vaginal Moisturizing Gel reviews', summary: 'Real, current Amazon listing for this product. Amazon blocks automated access, so ratings weren\'t independently verifiable at time of writing — read them directly on the page.' },
+                    { platform: 'website', url: 'https://alubri.com/products/vaginal-moisturizing-gel', text: 'alubri.com: Customer reviews', summary: 'Alubri\'s own product page, which carries customer reviews.' },
+                    { platform: 'press', url: 'https://www.prnewswire.com/news-releases/introducing-alubri-where-science-meets-sisterhood-302695196.html', text: 'PR Newswire: Introducing Alubri', summary: 'The brand\'s launch announcement (brand-issued press release).' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-alubri-intimate-serum',
+        name: 'Alubri Intimate Serum',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'hormone-free', 'external-only'],
+        price: '$24.99 (50 mL)',
+        whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Mayo Clinic Store'],
+        url: 'https://alubri.com/products/intimate-serum',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/intimate-serum.webp',
+        summary: 'A lightweight, water-based serum for daily hydration of external intimate skin — the vulva, clitoris, labia, and vaginal opening. It pairs hyaluronic acid (sodium hyaluronate) with inulin (a prebiotic humectant), aloe, green tea, and chamomile to soothe dryness and support the skin\'s moisture barrier, and the brand says it also promotes natural moisturization and lubrication. Non-sticky, hormone-free, and fragrance-free.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic / personal-care product; not an FDA-cleared medical device or drug.',
+            materials: '50 mL (1.7 fl oz) pump bottle. Ingredients: aqua (water), betaine, inulin, sodium lactate, lactic acid, sodium hyaluronate, Aloe barbadensis leaf juice, Camellia sinensis (green tea) leaf extract, Chamomilla recutita (chamomile) flower extract, tocopherol, ethylhexylglycerin, hydroxyethylcellulose, xanthan gum, disodium phosphate, sodium phosphate, citric acid, phenoxyethanol, potassium sorbate, sodium benzoate, sodium hydroxide. Fragrance-free, hormone-free, hypoallergenic.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation or an allergic reaction. Full warnings are listed below.',
+            opinionAlerts: 'Brand states products are "not intended to diagnose, treat, cure, or prevent any disease." Clinical figures are brand-reported.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Alubri\'s own site and retailer listings, not independent clinical literature.',
+        doctorOpinion: 'Alubri says its products are co-developed by co-founder Dr. Nicole Kerner, a board-certified, menopause-certified OB-GYN, and that this serum is gynecologist- and dermatologist-tested.\n\nThe brand cites an independent, third-party clinical study of 50 women who used the serum for 2 weeks: 90% said it provides long-lasting hydration (measured at 24 hours) and 94% said their skin felt hydrated. These are self-reported, brand-published results, not an independently peer-reviewed study.',
+        doctorOpinionShort: 'Alubri cites a third-party study of 50 women over 2 weeks: 90% reported long-lasting hydration and 94% said skin felt hydrated. Brand-reported, not independently peer-reviewed.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/intimate-serum', label: 'alubri.com: where Alubri presents these results' },
+        ],
+        whoItsFor: [
+            'Women with external vulvar dryness or discomfort, including in perimenopause and menopause',
+            'Anyone wanting a light, daily, water-based moisturizer rather than a heavier balm',
+            'Women who want extra comfort during intimacy or an intimate massage',
+        ],
+        howToUse: {
+            intro: 'Per Alubri\'s own directions:',
+            steps: [
+                'With clean fingers, apply the serum over the vulva, clitoris, labia, and vaginal opening.',
+                'Use for daily hydration or for intimate massage.',
+                'Formulated for daily use, so it can be reapplied as needed.',
+            ],
+            sourceUrl: 'https://alubri.com/blogs/the-vaginavangelist-journal/how-to-use-intimate-serum',
+            sourceLabel: 'alubri.com: How to Use Intimate Serum',
+        },
+        warnings: [
+            'For external intimate skin — for internal dryness, the brand\'s Vaginal Moisturizing Gel is the internal product.',
+            'Not a treatment for infection. See a doctor for unusual discharge, odor, itching, or bleeding.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'Alubri\'s site, Amazon, and Walmart carry customer reviews for this serum. A specific rating/review count wasn\'t independently verifiable at time of writing, since those sites block automated access.',
+        effectiveness: 'Hyaluronic acid is a well-studied humectant for skin hydration; Alubri\'s own study reports hydration lasting 24 hours. No independent clinical study of this specific product was found.',
+        ingredients: 'Sodium hyaluronate (hyaluronic acid), inulin, betaine, lactic acid / sodium lactate, aloe, green tea extract, chamomile extract, vitamin E (tocopherol).',
+        ingredientScience: [
+            {
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'Binds water and holds moisture in the skin, which is why it\'s the core hydrator here.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                ],
+            },
+            {
+                name: 'Inulin',
+                text: 'A plant fiber used as a humectant; Alubri says it also acts as a prebiotic that helps promote a healthy skin microbiome. The microbiome claim is the brand\'s.',
+                citations: [
+                    { url: 'https://alubri.com/products/intimate-serum', label: 'alubri.com: Intimate Serum (brand source)' },
+                ],
+            },
+            {
+                name: 'Aloe, green tea, and chamomile',
+                text: 'Plant extracts traditionally used to calm and soothe irritated skin.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/aloe-vera', label: 'NIH NCCIH: Aloe Vera' },
+                    { url: 'https://www.nccih.nih.gov/health/green-tea', label: 'NIH NCCIH: Green Tea' },
+                    { url: 'https://www.nccih.nih.gov/health/chamomile', label: 'NIH NCCIH: Chamomile' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG notes that over-the-counter moisturizers and lubricants can help relieve dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=alubri&restrict_sr=1', text: 'Reddit r/Menopause: Alubri', summary: 'Community discussions of Alubri\'s intimate-care line.' },
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G2N2TY1K', text: 'Amazon: Alubri Intimate Serum reviews', summary: 'Real, current Amazon listing for this product. Amazon blocks automated access, so ratings weren\'t independently verifiable at time of writing — read them directly on the page.' },
+                    { platform: 'website', url: 'https://alubri.com/products/intimate-serum', text: 'alubri.com: Customer reviews', summary: 'Alubri\'s own product page, which carries customer reviews.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-alubri-calming-cream',
+        name: 'Alubri Calming Cream',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'external-only'],
+        price: '$29.99 (50 mL)',
+        whereToBuy: ['alubri.com', 'Amazon', 'Target'],
+        url: 'https://alubri.com/products/calming-cream',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/calming-cream.png',
+        summary: 'An over-the-counter anti-itch cream made for intimate skin: 0.25% hydrocortisone to temporarily relieve external feminine itching and irritation, in a skincare-style base with hyaluronic acid, lactic acid, oat, aloe, and Alubri\'s Activated Oil Complex. The brand positions it as giving the instant relief of an OTC ointment with a lighter, non-greasy feel, while supporting a balanced vaginal microbiome.',
+        safety: {
+            fdaStatus: 'An over-the-counter external analgesic drug (hydrocortisone 0.25%), sold with a Drug Facts label; not a prescription product.',
+            materials: '50 mL (1.7 fl oz) tube. Active ingredient: hydrocortisone 0.25% (external analgesic). Inactive ingredients: aqua (water), propanediol, cetearyl alcohol, isopropyl palmitate, Butyrospermum parkii (shea) butter, caprylic/capric triglycerides, dimethicone, Cocos nucifera (coconut) oil, glyceryl stearate, hydrolyzed Rosa canina (rosehip) fruit oil, hydrolyzed Cocos nucifera (coconut) oil, sodium hyaluronate, lactic acid, Avena sativa (oat) meal extract, tocopherol, Aloe barbadensis.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Hydrocortisone is a mild topical steroid. Standard OTC hydrocortisone labeling says not to use it for external feminine itching if you have a vaginal discharge, and to stop and see a doctor if symptoms last more than 7 days, or clear up and come back within a few days. Full warnings are listed below.',
+            opinionAlerts: '0.25% is a lower strength than the 1% hydrocortisone in most drugstore anti-itch creams. Clinical figures are brand-reported.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Alubri\'s own site and retailer listings, not independent clinical literature.',
+        doctorOpinion: 'Alubri says its products are co-developed by co-founder Dr. Nicole Kerner, a board-certified, menopause-certified OB-GYN.\n\nThe brand cites an independent, third-party clinical study of 53 women who used the cream for 24 hours: 94% said their skin felt soothed, 94% said it felt protected, and 89% said their skin felt transformed. These are self-reported, brand-published results.\n\nHydrocortisone itself is a well-established OTC anti-itch ingredient. Itching that keeps coming back, or comes with discharge or odor, can be a yeast infection, BV, or a skin condition such as lichen sclerosus, which a steroid cream can mask rather than treat — worth getting checked.',
+        doctorOpinionShort: 'Low-strength (0.25%) OTC hydrocortisone for external intimate itching. Alubri cites a 53-woman study where 94% said their skin felt soothed. Brand-reported; itching that recurs or comes with discharge should be checked by a doctor.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/calming-cream', label: 'alubri.com: where Alubri presents these results' },
+            { url: 'https://medlineplus.gov/druginfo/meds/a682793.html', label: 'NIH MedlinePlus: Hydrocortisone Topical' },
+        ],
+        whoItsFor: [
+            'Women with occasional external vulvar itching or irritation, for example from shaving, sweat, or friction',
+            'Anyone who finds standard drugstore hydrocortisone creams greasy or harsh on intimate skin',
+            'Not a treatment for yeast infections, BV, or other infections',
+        ],
+        howToUse: {
+            intro: 'Per Alubri\'s own directions:',
+            steps: [
+                'With clean fingers, apply a pea-size amount directly to the external vaginal area.',
+                'Add more as needed to cover the affected area with a thin layer.',
+                'Use up to 3 to 4 times a day as needed, or as directed by a healthcare provider.',
+            ],
+            sourceUrl: 'https://alubri.com/products/calming-cream',
+            sourceLabel: 'alubri.com: Calming Cream',
+        },
+        warnings: [
+            'External use only. Don\'t use it if you have a vaginal discharge — see a doctor instead.',
+            'Stop and see a doctor if symptoms last more than 7 days, or clear up and come back within a few days.',
+            'Keep away from the eyes. Don\'t use more than directed unless a doctor says to.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+        ],
+        communityReview: 'Alubri\'s site, Amazon, and Target carry customer reviews for this cream. A specific rating/review count wasn\'t independently verifiable at time of writing, since those sites block automated access.',
+        effectiveness: 'Topical hydrocortisone is an established OTC option for temporary relief of minor skin itching and inflammation; this product uses a low 0.25% strength. No independent clinical study of this specific product was found.',
+        ingredients: 'Hydrocortisone 0.25% (active); shea butter, coconut oil, Activated Oil Complex (hydrolyzed coconut and rosehip oils), sodium hyaluronate, lactic acid, oat extract, aloe, vitamin E.',
+        ingredientScience: [
+            {
+                name: 'Hydrocortisone 0.25%',
+                text: 'A mild corticosteroid that calms the skin\'s inflammatory response, easing itching, redness, and swelling. Meant for short-term use.',
+                citations: [
+                    { url: 'https://medlineplus.gov/druginfo/meds/a682793.html', label: 'NIH MedlinePlus: Hydrocortisone Topical' },
+                ],
+            },
+            {
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'Binds water to keep the skin hydrated while it recovers.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                ],
+            },
+            {
+                name: 'Aloe',
+                text: 'A soothing plant gel commonly used on irritated skin.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/aloe-vera', label: 'NIH NCCIH: Aloe Vera' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vaginitis',
+                text: 'ACOG: Vaginitis',
+                summary: 'ACOG on the common causes of vulvovaginal itching and discharge (yeast, BV, trichomoniasis) — why persistent itching is worth a proper diagnosis rather than repeated self-treatment. Clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=alubri&restrict_sr=1', text: 'Reddit r/Menopause: Alubri', summary: 'Community discussions of Alubri\'s intimate-care line.' },
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G4SDS8Z5', text: 'Amazon: Alubri Calming Cream reviews', summary: 'Real, current Amazon listing for this product. Amazon blocks automated access, so ratings weren\'t independently verifiable at time of writing — read them directly on the page.' },
+                    { platform: 'website', url: 'https://alubri.com/products/calming-cream', text: 'alubri.com: Customer reviews', summary: 'Alubri\'s own product page, which carries customer reviews.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-alubri-vulva-balm',
+        name: 'Alubri Vulva Balm',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'menopause', 'hormone-free', 'external-only'],
+        price: '$24.99 (50 g)',
+        whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Mayo Clinic Store'],
+        url: 'https://alubri.com/products/vulva-balm',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/vulva-balm.png',
+        summary: 'A non-greasy balm to instantly soothe, hydrate, and nourish the vulva. It combines hyaluronic acid (sodium hyaluronate), a peptide, and dragon fruit extract with Alubri\'s Activated Oil Complex, oat, green tea, and Tasmanian pepperberry extracts to support moisture retention and the skin barrier. Hormone-free, fragrance-free, and hypoallergenic.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic / personal-care product; not an FDA-cleared medical device or drug.',
+            materials: '50 g (1.7 oz) jar. Ingredients: aqua (water), dimethicone, isododecane, caprylic/capric triglyceride, ozokerite, propanediol, sorbitan oleate, dimethicone crosspolymer, ceresin, hydrolyzed Rosa canina (rosehip) fruit oil, hydrolyzed Cocos nucifera (coconut) oil, sodium hyaluronate, palmitoyl hexapeptide-52, Hylocereus undatus (dragon fruit) fruit extract, Tasmannia lanceolata (Tasmanian pepperberry) fruit extract, Avena sativa (oat) kernel extract, Camellia sinensis (green tea) leaf extract, Passiflora incarnata flower extract, tocopherol, alpha-glucan oligosaccharide, tocopheryl acetate, Lactobacillus ferment lysate, biosaccharide gum-4, adenosine, ethylhexylglycerin, phenoxyethanol, sodium chloride, benzyl alcohol, potassium sorbate, benzoic acid.',
+            recalls: 'No recalls found.',
+            sideEffects: 'For external vulvar use. Discontinue and see a doctor if you notice irritation or an allergic reaction. Full warnings are listed below.',
+            opinionAlerts: 'Brand states products are "not intended to diagnose, treat, cure, or prevent any disease." Clinical figures are brand-reported.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Alubri\'s own site and retailer listings, not independent clinical literature.',
+        doctorOpinion: 'Alubri says its products are co-developed by co-founder Dr. Nicole Kerner, a board-certified, menopause-certified OB-GYN, and that the balm is gynecologist- and dermatologist-tested.\n\nThe brand cites an independent, third-party clinical study of 50 women who used the balm daily for two weeks: 90% said their vulvar skin was more hydrated, 92% more conditioned, 88% more nourished and protected, 92% agreed it isn\'t greasy, and 100% said it was easy to use. These are self-reported, brand-published results, not an independently peer-reviewed study.',
+        doctorOpinionShort: 'Alubri cites a third-party study of 50 women using it daily for 2 weeks: 90% said vulvar skin was more hydrated and 92% agreed it isn\'t greasy. Brand-reported, not independently peer-reviewed.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/vulva-balm', label: 'alubri.com: where Alubri presents these results' },
+        ],
+        whoItsFor: [
+            'Women with vulvar dryness, sensitivity, or irritation, including in perimenopause and menopause',
+            'Women with friction or discomfort during daily activities',
+            'Anyone who wants a richer, longer-lasting external moisturizer than a serum, without an oily residue',
+        ],
+        howToUse: {
+            intro: 'Per Alubri\'s own directions:',
+            steps: [
+                'With clean fingers, apply the balm directly to the vulva, including the clitoris, labia, and the area around the vaginal opening.',
+                'Use daily as needed.',
+                'For extra moisture, apply after a shower while the skin is clean and slightly damp.',
+            ],
+            sourceUrl: 'https://alubri.com/products/vulva-balm',
+            sourceLabel: 'alubri.com: Vulva Balm',
+        },
+        warnings: [
+            'External use — for internal dryness, the brand\'s Vaginal Moisturizing Gel is the internal product.',
+            'Contains oils and silicones: check Alubri\'s FAQ before using it with latex condoms.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'Alubri\'s site, Amazon, and Walmart carry customer reviews for this balm. A specific rating/review count wasn\'t independently verifiable at time of writing, since those sites block automated access.',
+        effectiveness: 'Built to hydrate and protect vulvar skin with a humectant (hyaluronic acid) sealed in by a silicone-and-oil base; Alubri\'s own study reports improved hydration over two weeks. No independent clinical study of this specific product was found.',
+        ingredients: 'Sodium hyaluronate (hyaluronic acid), palmitoyl hexapeptide-52 (peptide), Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit, Tasmanian pepperberry, oat, green tea, and passionflower extracts, Lactobacillus ferment lysate, vitamin E, dimethicone.',
+        ingredientScience: [
+            {
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'Binds water and holds moisture in the skin.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                ],
+            },
+            {
+                name: 'Green tea and oat extracts',
+                text: 'Plant extracts used to calm irritated skin; green tea is also an antioxidant.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/green-tea', label: 'NIH NCCIH: Green Tea' },
+                ],
+            },
+            {
+                name: 'Vitamin E',
+                text: 'An antioxidant that helps protect and soften the skin.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin E' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG on caring for vulvar skin and relieving dryness. Clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=alubri&restrict_sr=1', text: 'Reddit r/Menopause: Alubri', summary: 'Community discussions of Alubri\'s intimate-care line.' },
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G4SHBN1T', text: 'Amazon: Alubri Vulva Balm reviews', summary: 'Real, current Amazon listing for this product. Amazon blocks automated access, so ratings weren\'t independently verifiable at time of writing — read them directly on the page.' },
+                    { platform: 'website', url: 'https://www.skinsafeproducts.com/alubri-vulva-balm-1-7-oz-50-g', text: 'SkinSAFE: Alubri Vulva Balm ingredient review', summary: 'Independent ingredient-allergen listing for this balm.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-alubri-vaginal-wellness-kit',
+        name: 'Alubri Vaginal Wellness Kit',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'menopause', 'hormone-free', 'travel-friendly'],
+        price: '$19.99 (2-week supply)',
+        whereToBuy: ['alubri.com', 'Amazon', 'Walmart'],
+        url: 'https://alubri.com/products/vaginal-wellness-kit-bag-version',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/vaginal-wellness-kit.webp',
+        summary: 'A trial-size, 2-week starter set pairing Alubri\'s two core moisturizers in a zip pouch: the Vaginal Moisturizing Gel for internal dryness (30 mL, with 4 single-use applicators) and the Intimate Serum for external vulvar hydration (28 mL). A lower-cost way to try both before buying full sizes.',
+        safety: {
+            fdaStatus: 'Both products are sold as cosmetic / personal-care products; not FDA-cleared medical devices or drugs.',
+            materials: 'Zip pouch containing 1 × 30 mL (1.0 fl oz) Vaginal Moisturizing Gel, 1 × 28 mL (0.9 fl oz) Intimate Serum, and 4 single-use applicators. Full ingredient lists are on the Alubri Vaginal Moisturizing Gel and Alubri Intimate Serum entries. Hormone-free and fragrance-free.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation, burning, or an allergic reaction. Full warnings are listed below.',
+            opinionAlerts: 'Clinical figures for each product are brand-reported (see the full-size Gel and Serum entries).',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Alubri\'s own site and retailer listings, not independent clinical literature.',
+        doctorOpinion: 'Same two formulas as Alubri\'s full-size Vaginal Moisturizing Gel and Intimate Serum, co-developed by co-founder Dr. Nicole Kerner, a board-certified, menopause-certified OB-GYN, per the brand.\n\nAlubri cites third-party studies for each: for the gel, 51 menopausal women using it twice weekly for a month, with a single application raising vaginal hydration by 64% at 72 hours; for the serum, 50 women over 2 weeks, with 90% reporting long-lasting hydration. These are brand-reported results, not independently peer-reviewed studies.',
+        doctorOpinionShort: 'A 2-week trial of Alubri\'s internal gel and external serum. The brand reports a 64% rise in vaginal hydration at 72 hours from one gel application; brand-reported, not independently peer-reviewed.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/vaginal-wellness-kit-bag-version', label: 'alubri.com: Vaginal Wellness Kit' },
+        ],
+        whoItsFor: [
+            'Women with both internal vaginal dryness and external vulvar dryness, including in perimenopause and menopause',
+            'Anyone who wants to try Alubri before committing to full sizes',
+            'Travel — the pouch is compact',
+        ],
+        howToUse: {
+            intro: 'Per Alubri\'s own directions for each product:',
+            steps: [
+                'Gel (internal): attach a single-use applicator, squeeze to fill to 3 grams, insert, and push to release. Use twice a week or as needed; lie flat for 10 minutes afterward.',
+                'Serum (external): with clean fingers, apply over the vulva, clitoris, labia, and vaginal opening, daily or as needed.',
+            ],
+            sourceUrl: 'https://alubri.com/products/vaginal-wellness-kit-bag-version',
+            sourceLabel: 'alubri.com: Vaginal Wellness Kit',
+        },
+        warnings: [
+            'Moisturizers for dryness, not treatments for infection. See a doctor for unusual discharge, odor, itching, or bleeding.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Irritation or burning: stop and see a doctor.',
+        ],
+        communityReview: 'Alubri\'s site, Amazon, and Walmart carry customer reviews for this kit. A specific rating/review count wasn\'t independently verifiable at time of writing, since those sites block automated access.',
+        effectiveness: 'Vaginal moisturizers as a category are supported by systematic-review evidence for improving dryness versus placebo (low certainty). No independent clinical study of this specific kit was found.',
+        ingredients: 'Gel: sodium hyaluronate, lactic acid, Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit extract, aloe. Serum: sodium hyaluronate, inulin, betaine, lactic acid, aloe, green tea and chamomile extracts.',
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/39250810/',
+                text: 'Hormonal Treatments and Vaginal Moisturizers for Genitourinary Syndrome of Menopause: A Systematic Review',
+                summary: 'A systematic review (Danan et al., Annals of Internal Medicine, 2024) of randomized trials found vaginal moisturizers may improve dryness versus placebo (low certainty of evidence). This is intervention-level evidence and does not validate a specific moisturizer product.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=alubri&restrict_sr=1', text: 'Reddit r/Menopause: Alubri', summary: 'Community discussions of Alubri\'s intimate-care line.' },
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G4SFS9YN', text: 'Amazon: Alubri Vaginal Wellness Kit reviews', summary: 'Real, current Amazon listing for this kit. Amazon blocks automated access, so ratings weren\'t independently verifiable at time of writing — read them directly on the page.' },
+                    { platform: 'website', url: 'https://www.walmart.com/ip/Alubri-Vaginal-Wellness-Kit/19422064842', text: 'Walmart: Alubri Vaginal Wellness Kit', summary: 'Walmart listing for this kit, with customer reviews.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
 ];
