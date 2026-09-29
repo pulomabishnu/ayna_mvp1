@@ -3566,11 +3566,14 @@ export const BRAND_PRODUCTS = [
     // /pages/faq, /pages/science, /pages/about), fetched 2026-09-29. Prices,
     // sizes, ingredient lists, directions, warnings, and clinical-study
     // figures are all as alubri.com states them; no retailer listings,
-    // press releases, or Reddit are cited. Every clinical figure is the
-    // brand's own report, labeled as such. The one exception is
-    // ingredientScience (Scientific Literature tab), which cites NIH sources
+    // press releases, or Reddit are used as sources. Every clinical figure
+    // is the brand's own report, labeled as such. Two exceptions:
+    // ingredientScience (Scientific Literature tab) cites NIH sources
     // (PubMed/PMC, NCCIH, MedlinePlus) for what each ingredient can do —
-    // ingredient-level evidence, not validation of Alubri's products.
+    // ingredient-level evidence, not validation of Alubri's products; and
+    // the Gel's community links include a Reddit thread and its Amazon
+    // listing (supplied by ayna 2026-09-29) as places to read real reviews.
+    // Both block automated access, so no rating or quote is taken from them.
     // whereToBuy is the retailer list from alubri.com's FAQ ("alubri.com and
     // select retailers including Amazon, Walmart.com, Target.com, and
     // Grove.com"); the site doesn't break that down per product. The
@@ -3639,7 +3642,7 @@ export const BRAND_PRODUCTS = [
             'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
             'Not tested for compatibility with condoms, per Alubri.',
         ],
-        communityReview: 'alubri.com doesn\'t show a star rating or review count for this gel. The only customer feedback on the site is the brand\'s own study results: 94% of participants said the fragrance-free gel smells good and 88% said it stayed put.',
+        communityReview: 'Customer reviews for this gel are on its Amazon listing, and it comes up in a Reddit r/AskONLYWomenOver30 thread about the best vaginal moisturizers women have tried (both linked below). Neither site allows automated access, so ayna hasn\'t pulled a rating or quotes from them; read them directly. alubri.com itself shows no star rating, only the brand\'s own study results: 94% of participants said the fragrance-free gel smells good and 88% said it stayed put.',
         effectiveness: 'Alubri reports a 64% increase in vaginal hydration 72 hours after one application, plus favorable microbiome changes, in its own study of 51 menopausal women. No independent study of this product is cited on alubri.com.',
         // Plain-text ingredient summary — kept as a string since search
         // indexing, the interaction checker, and DoctorPrep.jsx all read it.
@@ -3680,6 +3683,8 @@ export const BRAND_PRODUCTS = [
             scientific: { links: [] },
             community: {
                 links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/AskONLYWomenOver30/comments/1wcgjzy/best_vaginal_moisturizer_youve_tried/', text: 'Reddit r/AskONLYWomenOver30: Best vaginal moisturizer you\'ve tried?', summary: 'A community thread where women over 30 share the vaginal moisturizers they\'ve used. Reddit blocks automated access, so read the thread directly for what people say about Alubri.' },
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G4SG1WJY', text: 'Amazon: Alubri Vaginal Moisturizer, 72-Hour Hydration, Hormone-Free', summary: 'This gel\'s Amazon listing (1-month supply), with customer ratings and reviews. Amazon blocks automated access, so no rating is quoted here; read the reviews directly on the page.' },
                     { platform: 'website', url: 'https://alubri.com/products/vaginal-moisturizing-gel', text: 'alubri.com: Vaginal Moisturizing Gel', summary: 'Alubri\'s own product page, with the brand\'s study results and directions.' },
                     { platform: 'website', url: 'https://alubri.com/pages/faq', text: 'alubri.com: FAQ', summary: 'Alubri\'s answers on first-use sensations, discharge, condoms, and using the gel with vaginal estrogen.' },
                 ],
