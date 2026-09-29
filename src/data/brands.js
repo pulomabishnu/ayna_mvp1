@@ -3571,9 +3571,10 @@ export const BRAND_PRODUCTS = [
     // ingredientScience (Scientific Literature tab) cites NIH sources
     // (PubMed/PMC, NCCIH, MedlinePlus) for what each ingredient can do —
     // ingredient-level evidence, not validation of Alubri's products; and
-    // the Gel's community links include a Reddit thread and its Amazon
-    // listing (supplied by ayna 2026-09-29) as places to read real reviews.
-    // Both block automated access, so no rating or quote is taken from them.
+    // the Gel's and Serum's community links include Reddit threads and the
+    // Gel's Amazon listing (supplied by ayna 2026-09-29) as places to read
+    // real reviews. These sites block automated access, so no rating or
+    // quote is taken from them.
     // whereToBuy is the retailer list from alubri.com's FAQ ("alubri.com and
     // select retailers including Amazon, Walmart.com, Target.com, and
     // Grove.com"); the site doesn't break that down per product. The
@@ -3747,7 +3748,7 @@ export const BRAND_PRODUCTS = [
             'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
             'Not tested for compatibility with condoms, per Alubri.',
         ],
-        communityReview: 'alubri.com doesn\'t show a star rating or review count for this serum. The only customer feedback on the site is the brand\'s own study results (above).',
+        communityReview: 'There\'s a Reddit post about this serum in r/Influenster (linked below). Influenster is a product-testing community whose members often get products free to review, so weigh posts there with that in mind. Reddit blocks automated access, so ayna hasn\'t pulled quotes; read it directly. alubri.com itself shows no star rating, only the brand\'s own study results (above).',
         effectiveness: 'Alubri reports a 152% increase in vulvar hydration after one application, and high self-reported hydration after 2 weeks of use, in its own studies. No independent study of this product is cited on alubri.com.',
         ingredients: 'Sodium hyaluronate (hyaluronic acid), inulin, betaine, lactic acid / sodium lactate, aloe, green tea extract, chamomile extract, vitamin E (tocopherol).',
         // Only the key ingredients alubri.com highlights for this product
@@ -3777,6 +3778,7 @@ export const BRAND_PRODUCTS = [
             scientific: { links: [] },
             community: {
                 links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/Influenster/comments/1pnf635/alubri_intinate_serum/', text: 'Reddit r/Influenster: Alubri Intimate Serum', summary: 'A post about this serum in the Influenster community, where members often receive products free to review. Reddit blocks automated access, so read the post directly.' },
                     { platform: 'website', url: 'https://alubri.com/products/intimate-serum', text: 'alubri.com: Intimate Serum', summary: 'Alubri\'s own product page, with the brand\'s study results and directions.' },
                     { platform: 'website', url: 'https://alubri.com/pages/faq', text: 'alubri.com: FAQ', summary: 'Alubri\'s answers on sensitive skin, condoms, and how long a bottle lasts.' },
                 ],
