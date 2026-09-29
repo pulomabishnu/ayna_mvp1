@@ -3086,6 +3086,7 @@ function App() {
               onOpenProduct={handleOpenProduct}
               myProducts={myProducts}
               onAddToEcosystem={toggleMyProduct}
+              onBrowseBrand={handleViewDiscovery}
             />
           </Suspense>
         )}

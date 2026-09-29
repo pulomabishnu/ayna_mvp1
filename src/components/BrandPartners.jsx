@@ -183,7 +183,7 @@ function BrandMark({ partner }) {
   return <div className="brand-partner__wordmark">{partner.brand}</div>;
 }
 
-export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem }) {
+export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem, onBrowseBrand }) {
   return (
     <section className="brands">
       <div className="mockup-page brands__head">
@@ -208,8 +208,16 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                 <div>
                   <div className="brand-partner__name">{partner.brand}</div>
                   <p className="brand-partner__blurb">{partner.blurb}</p>
-                  <a className="brand-partner__link" href={partner.url} target="_blank" rel="noopener noreferrer">
-                    Visit {partner.brand} ↗
+                  <a
+                    className="brand-partner__link"
+                    href={`/discovery?q=${encodeURIComponent(partner.brand)}`}
+                    onClick={(e) => {
+                      if (!onBrowseBrand) return;
+                      e.preventDefault();
+                      onBrowseBrand(partner.brand);
+                    }}
+                  >
+                    Browse {partner.brand} →
                   </a>
                 </div>
               </header>
