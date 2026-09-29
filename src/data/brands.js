@@ -3644,14 +3644,18 @@ export const BRAND_PRODUCTS = [
         // Plain-text ingredient summary — kept as a string since search
         // indexing, the interaction checker, and DoctorPrep.jsx all read it.
         ingredients: 'Sodium hyaluronate (hyaluronic acid), lactic acid, Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit extract, aloe, glucomannan.',
-        // Ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
         // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
         ingredientScience: [
             {
-                name: 'Sodium hyaluronate (hyaluronic acid)',
-                text: 'Hyaluronic acid holds water in tissue. In a randomized trial of 144 postmenopausal women with vaginal dryness, a hyaluronic acid vaginal gel used every 3 days for 30 days improved dryness symptoms in 84% of women, about the same as estriol (estrogen) cream at 89%. That trial tested a different gel, so it supports the ingredient, not Alubri\'s product specifically.',
+                name: 'Coconut and rosehip oils (Activated Oil Complex)',
+                text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
                 citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23574713/', label: 'PubMed (NIH): Hyaluronic acid vaginal gel vs. estriol cream for vaginal dryness (J Sex Med, 2013)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/15724344/', label: 'PubMed (NIH): Virgin coconut oil vs. mineral oil for dry skin, randomized trial (Dermatitis, 2004)' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-inflammatory and skin barrier effects of plant oils, incl. rosehip (Int J Mol Sci, 2017)' },
                 ],
             },
             {
@@ -3663,18 +3667,10 @@ export const BRAND_PRODUCTS = [
                 ],
             },
             {
-                name: 'Coconut and rosehip oils (Activated Oil Complex)',
-                text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'Hyaluronic acid holds water in tissue. In a randomized trial of 144 postmenopausal women with vaginal dryness, a hyaluronic acid vaginal gel used every 3 days for 30 days improved dryness symptoms in 84% of women, about the same as estriol (estrogen) cream at 89%. That trial tested a different gel, so it supports the ingredient, not Alubri\'s product specifically.',
                 citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/15724344/', label: 'PubMed (NIH): Virgin coconut oil vs. mineral oil for dry skin, randomized trial (Dermatitis, 2004)' },
-                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-inflammatory and skin barrier effects of plant oils, incl. rosehip (Int J Mol Sci, 2017)' },
-                ],
-            },
-            {
-                name: 'Aloe',
-                text: 'NIH\'s National Center for Complementary and Integrative Health says aloe gel on the skin is generally well tolerated, and small studies suggest it may speed burn healing and help some skin conditions. Evidence for other uses, like eczema, is too limited to say. Burning, itching, or rash have occasionally been reported.',
-                citations: [
-                    { url: 'https://www.nccih.nih.gov/health/aloe-vera', label: 'NIH NCCIH: Aloe Vera' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23574713/', label: 'PubMed (NIH): Hyaluronic acid vaginal gel vs. estriol cream for vaginal dryness (J Sex Med, 2013)' },
                 ],
             },
         ],
@@ -3749,16 +3745,12 @@ export const BRAND_PRODUCTS = [
         communityReview: 'alubri.com doesn\'t show a star rating or review count for this serum. The only customer feedback on the site is the brand\'s own study results (above).',
         effectiveness: 'Alubri reports a 152% increase in vulvar hydration after one application, and high self-reported hydration after 2 weeks of use, in its own studies. No independent study of this product is cited on alubri.com.',
         ingredients: 'Sodium hyaluronate (hyaluronic acid), inulin, betaine, lactic acid / sodium lactate, aloe, green tea extract, chamomile extract, vitamin E (tocopherol).',
-        // Ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
         // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
         ingredientScience: [
-            {
-                name: 'Sodium hyaluronate (hyaluronic acid)',
-                text: 'In a double-blind randomized trial of 36 older adults with dry skin, a lotion with low-molecular-weight hyaluronic acid raised skin hydration more than a plain lotion after 4 weeks, with no side effects. The study was on leg skin, not vulvar skin.',
-                citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38829483/', label: 'PubMed (NIH): Topical hyaluronic acid for dry skin in older adults, randomized trial (Arch Dermatol Res, 2024)' },
-                ],
-            },
             {
                 name: 'Inulin',
                 text: 'Inulin is a plant fiber best known as a prebiotic that feeds beneficial gut bacteria when eaten; an NIH-indexed review covers how ingested prebiotics may affect distant sites, including skin. ayna found no studies of inulin applied directly to skin, so Alubri\'s skin-microbiome claim for this serum hasn\'t been tested independently.',
@@ -3767,17 +3759,10 @@ export const BRAND_PRODUCTS = [
                 ],
             },
             {
-                name: 'Aloe',
-                text: 'NIH\'s National Center for Complementary and Integrative Health says aloe gel on the skin is generally well tolerated, and small studies suggest it may speed burn healing and help some skin conditions. Evidence for other uses, like eczema, is too limited to say. Burning, itching, or rash have occasionally been reported.',
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'In a double-blind randomized trial of 36 older adults with dry skin, a lotion with low-molecular-weight hyaluronic acid raised skin hydration more than a plain lotion after 4 weeks, with no side effects. The study was on leg skin, not vulvar skin.',
                 citations: [
-                    { url: 'https://www.nccih.nih.gov/health/aloe-vera', label: 'NIH NCCIH: Aloe Vera' },
-                ],
-            },
-            {
-                name: 'Chamomile',
-                text: 'German chamomile (Chamomilla recutita, the type in this serum) has a long history of use for inflammation and wounds, and an NIH-indexed review describes the anti-inflammatory flavonoids in its flowers. Most of that evidence is lab-based or traditional use, not large clinical trials on skin.',
-                citations: [
-                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2995283/', label: 'NIH (PMC): Chamomile, a herbal medicine of the past with a bright future (Mol Med Rep, 2010)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38829483/', label: 'PubMed (NIH): Topical hyaluronic acid for dry skin in older adults, randomized trial (Arch Dermatol Res, 2024)' },
                 ],
             },
         ],
@@ -3853,16 +3838,12 @@ export const BRAND_PRODUCTS = [
         communityReview: 'alubri.com doesn\'t show a star rating or review count for this cream. The only customer feedback on the site is the brand\'s own study results: 92% said it isn\'t greasy and 100% said it was easy to use.',
         effectiveness: 'Hydrocortisone is the active ingredient for itch relief. Alubri\'s own study of 53 women reports that 94% felt soothed after one application. No independent study of this product is cited on alubri.com.',
         ingredients: 'Hydrocortisone 0.25% (active). Inactive highlights: shea butter, sodium hyaluronate (hyaluronic acid), lactic acid, oat extract, aloe, Activated Oil Complex (hydrolyzed coconut and rosehip oils), vitamin E (tocopherol).',
-        // Ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
         // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
         ingredientScience: [
-            {
-                name: 'Hydrocortisone 0.25%',
-                text: 'NIH\'s MedlinePlus describes topical hydrocortisone as a corticosteroid used to treat redness, swelling, itching, and discomfort of skin conditions. It works by activating natural substances in the skin that reduce swelling, redness, and itching.',
-                citations: [
-                    { url: 'https://medlineplus.gov/druginfo/meds/a682793.html', label: 'NIH MedlinePlus: Hydrocortisone Topical' },
-                ],
-            },
             {
                 name: 'Coconut and rosehip oils (Activated Oil Complex)',
                 text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
@@ -3872,17 +3853,17 @@ export const BRAND_PRODUCTS = [
                 ],
             },
             {
+                name: 'Hydrocortisone 0.25%',
+                text: 'NIH\'s MedlinePlus describes topical hydrocortisone as a corticosteroid used to treat redness, swelling, itching, and discomfort of skin conditions. It works by activating natural substances in the skin that reduce swelling, redness, and itching.',
+                citations: [
+                    { url: 'https://medlineplus.gov/druginfo/meds/a682793.html', label: 'NIH MedlinePlus: Hydrocortisone Topical' },
+                ],
+            },
+            {
                 name: 'Shea butter',
                 text: 'In a study of 34 children with eczema, a cream containing shea butter extract was well accepted and performed comparably to a ceramide-based product. Shea butter\'s triterpenes, tocopherols, and sterols have shown anti-inflammatory activity in lab studies.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/26314567/', label: 'PubMed (NIH): Shea butter extract cream vs. ceramide product for eczema (Hong Kong Med J, 2015)' },
-                ],
-            },
-            {
-                name: 'Oat extract',
-                text: 'Colloidal oatmeal has anti-inflammatory, anti-itch, antioxidant, and barrier-repair properties and is used to treat eczema, per an NIH-indexed review. Alubri uses an oat extract rather than colloidal oatmeal, so these findings are related but not identical.',
-                citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33026768/', label: 'PubMed (NIH): Colloidal oatmeal mechanism and clinical efficacy review (J Drugs Dermatol, 2020)' },
                 ],
             },
         ],
@@ -3957,16 +3938,12 @@ export const BRAND_PRODUCTS = [
         communityReview: 'alubri.com doesn\'t show a star rating or review count for this balm. The only customer feedback on the site is the brand\'s own study results: 92% said it isn\'t greasy and 100% said it was easy to use.',
         effectiveness: 'Alubri reports a significant drop in vulvar pH (6.3 to 6.0) after 24 hours and two weeks, plus high self-reported hydration, in its own study of 50 women. No independent study of this product is cited on alubri.com.',
         ingredients: 'Sodium hyaluronate (hyaluronic acid), palmitoyl hexapeptide-52 (peptide), Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit extract, Tasmanian pepperberry extract, oat kernel extract, green tea extract, vitamin E (tocopherol).',
-        // Ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
         // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
         ingredientScience: [
-            {
-                name: 'Sodium hyaluronate (hyaluronic acid)',
-                text: 'In a double-blind randomized trial of 36 older adults with dry skin, a lotion with low-molecular-weight hyaluronic acid raised skin hydration more than a plain lotion after 4 weeks, with no side effects. The study was on leg skin, not vulvar skin.',
-                citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38829483/', label: 'PubMed (NIH): Topical hyaluronic acid for dry skin in older adults, randomized trial (Arch Dermatol Res, 2024)' },
-                ],
-            },
             {
                 name: 'Coconut and rosehip oils (Activated Oil Complex)',
                 text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
@@ -3976,10 +3953,17 @@ export const BRAND_PRODUCTS = [
                 ],
             },
             {
-                name: 'Oat extract',
-                text: 'Colloidal oatmeal has anti-inflammatory, anti-itch, antioxidant, and barrier-repair properties and is used to treat eczema, per an NIH-indexed review. Alubri uses an oat extract rather than colloidal oatmeal, so these findings are related but not identical.',
+                name: 'Allantoin',
+                text: 'Alubri lists allantoin as a key ingredient for softening and soothing skin, but it doesn\'t appear in the balm\'s published ingredient list on alubri.com. In an NIH-indexed study in rats, a 5% allantoin lotion sped wound healing by calming inflammation and supporting new tissue growth; ayna found no human studies of allantoin for vulvar skin.',
                 citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33026768/', label: 'PubMed (NIH): Colloidal oatmeal mechanism and clinical efficacy review (J Drugs Dermatol, 2020)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/20877959/', label: 'PubMed (NIH): Wound healing profile of topical allantoin, rat study (Acta Cir Bras, 2010)' },
+                ],
+            },
+            {
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'In a double-blind randomized trial of 36 older adults with dry skin, a lotion with low-molecular-weight hyaluronic acid raised skin hydration more than a plain lotion after 4 weeks, with no side effects. The study was on leg skin, not vulvar skin.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38829483/', label: 'PubMed (NIH): Topical hyaluronic acid for dry skin in older adults, randomized trial (Arch Dermatol Res, 2024)' },
                 ],
             },
         ],
@@ -4050,24 +4034,12 @@ export const BRAND_PRODUCTS = [
         communityReview: 'alubri.com doesn\'t show a star rating or review count for this kit. The only customer feedback on the site is the brand\'s own study results for each product (above).',
         effectiveness: 'Each product\'s results come from Alubri\'s own studies (see the full-size Gel and Serum entries). No independent study of either product is cited on alubri.com.',
         ingredients: 'Gel: sodium hyaluronate, lactic acid, Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit extract, aloe. Serum: sodium hyaluronate, inulin, betaine, lactic acid, aloe, green tea, chamomile.',
-        // Ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
         // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
         ingredientScience: [
-            {
-                name: 'Sodium hyaluronate (hyaluronic acid)',
-                text: 'Hyaluronic acid holds water in tissue. In a randomized trial of 144 postmenopausal women with vaginal dryness, a hyaluronic acid vaginal gel used every 3 days for 30 days improved dryness symptoms in 84% of women, about the same as estriol (estrogen) cream at 89%. That trial tested a different gel, so it supports the ingredient, not Alubri\'s product specifically.',
-                citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23574713/', label: 'PubMed (NIH): Hyaluronic acid vaginal gel vs. estriol cream for vaginal dryness (J Sex Med, 2013)' },
-                ],
-            },
-            {
-                name: 'Lactic acid',
-                text: 'In a healthy vagina dominated by Lactobacillus, those bacteria make lactic acid, which keeps pH low (about 3.5 on average in one NIH-indexed study) and may help protect against infection. A 2021 systematic review found there isn\'t yet high-quality evidence that lactic acid products cure bacterial vaginosis or shift the vaginal microbiome, so they\'re best seen as pH support.',
-                citations: [
-                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3819307/', label: 'NIH (PMC): Vaginal pH and lactic acid when lactobacilli dominate (PLoS One, 2013)' },
-                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7877752/', label: 'NIH (PMC): Lactic acid products for bacterial vaginosis, systematic review (PLoS One, 2021)' },
-                ],
-            },
             {
                 name: 'Coconut and rosehip oils (Activated Oil Complex)',
                 text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
@@ -4162,8 +4134,11 @@ export const BRAND_PRODUCTS = [
         communityReview: 'alubri.com doesn\'t show a star rating or review count for this kit. The only customer feedback on the site is the brand\'s own study results for each product (above).',
         effectiveness: 'Each product\'s results come from Alubri\'s own studies (see the full-size Serum and Calming Cream entries). No independent study of either product is cited on alubri.com.',
         ingredients: 'Serum: sodium hyaluronate, inulin, betaine, lactic acid, aloe, green tea, chamomile. Cream: hydrocortisone 0.25% (active), shea butter, sodium hyaluronate, lactic acid, oat extract, aloe, Activated Oil Complex (hydrolyzed coconut and rosehip oils).',
-        // Ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
         // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
         ingredientScience: [
             {
                 name: 'Hydrocortisone 0.25%',
@@ -4173,31 +4148,18 @@ export const BRAND_PRODUCTS = [
                 ],
             },
             {
-                name: 'Sodium hyaluronate (hyaluronic acid)',
-                text: 'In a double-blind randomized trial of 36 older adults with dry skin, a lotion with low-molecular-weight hyaluronic acid raised skin hydration more than a plain lotion after 4 weeks, with no side effects. The study was on leg skin, not vulvar skin.',
-                citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38829483/', label: 'PubMed (NIH): Topical hyaluronic acid for dry skin in older adults, randomized trial (Arch Dermatol Res, 2024)' },
-                ],
-            },
-            {
-                name: 'Shea butter',
-                text: 'In a study of 34 children with eczema, a cream containing shea butter extract was well accepted and performed comparably to a ceramide-based product. Shea butter\'s triterpenes, tocopherols, and sterols have shown anti-inflammatory activity in lab studies.',
-                citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26314567/', label: 'PubMed (NIH): Shea butter extract cream vs. ceramide product for eczema (Hong Kong Med J, 2015)' },
-                ],
-            },
-            {
-                name: 'Oat extract',
-                text: 'Colloidal oatmeal has anti-inflammatory, anti-itch, antioxidant, and barrier-repair properties and is used to treat eczema, per an NIH-indexed review. Alubri uses an oat extract rather than colloidal oatmeal, so these findings are related but not identical.',
-                citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33026768/', label: 'PubMed (NIH): Colloidal oatmeal mechanism and clinical efficacy review (J Drugs Dermatol, 2020)' },
-                ],
-            },
-            {
                 name: 'Aloe',
                 text: 'NIH\'s National Center for Complementary and Integrative Health says aloe gel on the skin is generally well tolerated, and small studies suggest it may speed burn healing and help some skin conditions. Evidence for other uses, like eczema, is too limited to say. Burning, itching, or rash have occasionally been reported.',
                 citations: [
                     { url: 'https://www.nccih.nih.gov/health/aloe-vera', label: 'NIH NCCIH: Aloe Vera' },
+                ],
+            },
+            {
+                name: 'Coconut and rosehip oils (Activated Oil Complex)',
+                text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/15724344/', label: 'PubMed (NIH): Virgin coconut oil vs. mineral oil for dry skin, randomized trial (Dermatitis, 2004)' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-inflammatory and skin barrier effects of plant oils, incl. rosehip (Int J Mol Sci, 2017)' },
                 ],
             },
         ],

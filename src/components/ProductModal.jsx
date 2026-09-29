@@ -1009,6 +1009,14 @@ export default function ProductModal({
                   <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
                     INSIDE
                   </div>
+                  {/* Optional per-product disclosure, e.g. that these are
+                      only the brand's highlighted key ingredients rather
+                      than the full ingredient list. */}
+                  {product.ingredientScienceNote && (
+                    <p style={{ fontSize: 12, lineHeight: 1.5, color: '#8c8078', margin: '0 0 10px' }}>
+                      {product.ingredientScienceNote}
+                    </p>
+                  )}
                   <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
                     {product.ingredientScience.map((item) => (
                       <li key={item.name} style={{ fontSize: 13, lineHeight: 1.5, color: '#3f3831', marginBottom: 10 }}>
@@ -1291,6 +1299,9 @@ export default function ProductModal({
 
                 {activeTab === 'scientific' && (
                   <div className="pdp-summary-card">
+                    {ingredientCitationEntries.length > 0 && product.ingredientScienceNote && (
+                      <p className="pdp-summary-card__empty" style={{ marginTop: 0, marginBottom: 14 }}>{product.ingredientScienceNote}</p>
+                    )}
                     {(scientificLiteratureEntries.length + curatedScientificEntries.length + ingredientCitationEntries.length) > 0 ? (
                       <div className="pdp-scientific__list">
                         {[...scientificLiteratureEntries, ...curatedScientificEntries, ...ingredientCitationEntries].map((entry) => (
