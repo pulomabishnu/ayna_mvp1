@@ -43,10 +43,9 @@ import { ProductImageFallback } from './ProductTileImage';
  * pelvic-bra.myshopify.com affiliate links that redirect to the brand's real
  * storefront at mypelvicbra.shop.
  *
- * Added 2026-09-11: BUNI — confirmed brand partnership. Direct BUNI affiliate
- * link is still pending, so the partnership page uses the official brand site
- * while individual product Buy Now links currently use Ayna's Amazon
- * Associates links.
+ * Added 2026-09-11: BUNI — confirmed brand partnership. Product Buy Now links
+ * use BUNI's direct affiliate links (?ref=oxaevspm, supplied 2026-09-29);
+ * Amazon Associates links stay as a secondary retailer.
  *
  * Added 2026-09-11: LiM Method — confirmed affiliate partnership. Product and
  * brand links use the ref=Ayna_Health tracking parameter supplied by Ayna.

@@ -2426,9 +2426,10 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
-    // BUNI Body — verified against bunibody.com and the supplied Amazon
-    // Associates links (2026-09-11). BUNI is NOT an ayna brand partner;
-    // affiliateUrl is used only as the exact Amazon purchase destination.
+    // BUNI Body — verified against bunibody.com (2026-09-11). BUNI is an ayna
+    // brand partner; affiliateUrl is the direct BUNI affiliate link
+    // (?ref=oxaevspm, supplied 2026-09-29). Amazon Associates links remain as
+    // a secondary retailer.
     {
         id: 'p-buni-rejuvenate-vulva-balm',
         name: 'REJUVENATE: Vulva Balm',
@@ -2439,12 +2440,12 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['vaginal-health'],
         tags: ['discomfort', 'menopause', 'postpartum', 'hormone-free'],
         price: '$42',
-        whereToBuy: ['Amazon', 'BUNI Body'],
-        url: 'https://www.bunibody.com/products/buni-vulva-balm',
-        affiliateUrl: 'https://amzn.to/4yE7pZH',
+        whereToBuy: ['BUNI Body', 'Amazon'],
+        url: 'https://www.bunibody.com/products/buni-vulva-balm?ref=oxaevspm',
+        affiliateUrl: 'https://www.bunibody.com/products/buni-vulva-balm?ref=oxaevspm',
         whereToBuyLinks: {
             Amazon: 'https://amzn.to/4yE7pZH',
-            'BUNI Body': 'https://www.bunibody.com/products/buni-vulva-balm',
+            'BUNI Body': 'https://www.bunibody.com/products/buni-vulva-balm?ref=oxaevspm',
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-vulva-balm-product-page-main.webp?v=1776773714',
         summary: 'A hormone-free, pH-balanced external vulva moisturizer in an airless pump, formulated to relieve dryness, reduce friction and chafing, soothe itching and irritation, and help prevent ingrown hairs. BUNI positions it for menopause and perimenopause, pregnancy and postpartum, grooming, exercise, and comfort during intimacy.',
@@ -2588,12 +2589,12 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['comfort'],
         tags: ['postpartum', 'pregnancy', 'comfort'],
         price: '$25',
-        whereToBuy: ['Amazon', 'BUNI Body'],
-        url: 'https://www.bunibody.com/products/buni-nipple-balm',
-        affiliateUrl: 'https://amzn.to/4xnutuF',
+        whereToBuy: ['BUNI Body', 'Amazon'],
+        url: 'https://www.bunibody.com/products/buni-nipple-balm?ref=oxaevspm',
+        affiliateUrl: 'https://www.bunibody.com/products/buni-nipple-balm?ref=oxaevspm',
         whereToBuyLinks: {
             Amazon: 'https://amzn.to/4xnutuF',
-            'BUNI Body': 'https://www.bunibody.com/products/buni-nipple-balm',
+            'BUNI Body': 'https://www.bunibody.com/products/buni-nipple-balm?ref=oxaevspm',
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-nipple-lip-balm-product-page-main_1.webp?v=1776774214',
         summary: 'A lanolin-free balm for nipples, lips, cuticles, and other dry skin, positioned for nursing and pumping comfort as well as pregnancy and postpartum care.',
@@ -2733,12 +2734,12 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['comfort'],
         tags: ['postpartum', 'comfort'],
         price: '$35',
-        whereToBuy: ['Amazon', 'BUNI Body'],
-        url: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil',
-        affiliateUrl: 'https://amzn.to/3UOVTfk',
+        whereToBuy: ['BUNI Body', 'Amazon'],
+        url: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil?ref=oxaevspm',
+        affiliateUrl: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil?ref=oxaevspm',
         whereToBuyLinks: {
             Amazon: 'https://amzn.to/3UOVTfk',
-            'BUNI Body': 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil',
+            'BUNI Body': 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil?ref=oxaevspm',
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-transform-oil-product-page-main_6-2.webp?v=1776774797',
         summary: 'A 1.7 oz scar and body treatment oil with a rollerball applicator and included onyx gua sha tool, marketed for the appearance of scars, stretch marks, and postpartum body care.',
@@ -2880,12 +2881,12 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['comfort', 'vaginal-health'],
         tags: ['postpartum', 'pregnancy', 'menopause', 'comfort', 'hormone-free'],
         price: '$98',
-        whereToBuy: ['Amazon', 'BUNI Body'],
-        url: 'https://www.bunibody.com/products/buni-bundle',
-        affiliateUrl: 'https://amzn.to/4xSUqDt',
+        whereToBuy: ['BUNI Body', 'Amazon'],
+        url: 'https://www.bunibody.com/products/buni-bundle?ref=oxaevspm',
+        affiliateUrl: 'https://www.bunibody.com/products/buni-bundle?ref=oxaevspm',
         whereToBuyLinks: {
             Amazon: 'https://amzn.to/4xSUqDt',
-            'BUNI Body': 'https://www.bunibody.com/products/buni-bundle',
+            'BUNI Body': 'https://www.bunibody.com/products/buni-bundle?ref=oxaevspm',
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-bundle-product-page-main.webp?v=1776772005',
         summary: 'BUNI’s complete body-care set containing REJUVENATE Vulva Balm, SOOTHE Nipple and Lip Balm, TRANSFORM Scar+Body Treatment Oil, and an onyx gua sha tool.',
