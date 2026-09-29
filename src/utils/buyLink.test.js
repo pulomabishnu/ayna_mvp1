@@ -53,6 +53,17 @@ describe('Buy Now destinations', () => {
     expect(resolveBuyUrl(byId['p-buni-bundle'])).toMatch(/^https:\/\/www\.bunibody\.com\//);
   });
 
+  it('adds the BUNI ref code even when the live row still has the old Amazon link', () => {
+    const liveRow = {
+      id: 'p-buni-bundle',
+      name: 'BUNI Bundle',
+      brand: 'BUNI',
+      url: 'https://www.bunibody.com/products/buni-bundle',
+      affiliateUrl: 'https://amzn.to/4xSUqDt',
+    };
+    expect(resolveBuyUrl(liveRow)).toBe('https://www.bunibody.com/products/buni-bundle?ref=oxaevspm');
+  });
+
   it('keeps the affiliate link for products renamed by catalog corrections', () => {
     expect(resolveBuyUrl(byId['p-magnesium-glycinate'])).toBe('https://www.amazon.com/dp/B086RQVNDV?tag=aynahealth-20');
     expect(resolveBuyUrl(byId['p-rael-organic-pad'])).toBe('https://www.amazon.com/dp/B071VBZLPX?tag=aynahealth-20');
