@@ -4195,8 +4195,9 @@ export const BRAND_PRODUCTS = [
     // (sold as "VPod") and Postpartum & Menopause Comfort (sold as "VPod
     // Elite"), each as a single and a 3-pack. The V Pocket cover is sold out
     // and left out. Product facts come from hervpod.com only; the Scientific
-    // Literature tab cites a Cochrane review and ACOG for cold therapy as a
-    // category. Retailer links were supplied by VPod; Walmart listings were
+    // Literature tab and the ayna Summary's source chips cite a Cochrane
+    // review and ACOG for cold therapy as a category (verificationLinks.
+    // scientific). Retailer links were supplied by VPod; Walmart listings were
     // matched to products by their URL names, since Walmart blocks
     // automated access. Product photos supplied by ayna, stored under
     // public/products/vpod/.
@@ -4253,30 +4254,34 @@ export const BRAND_PRODUCTS = [
             'If the pod ruptures, clean the skin and throw the pod away (the gel may be slippery).',
         ],
         communityReview: 'hervpod.com shows 6 customer reviews for this pod, all 5 stars; reviewers describe instant, mess-free relief while waiting for yeast-infection treatment to work, and one wished extra covers were easier to order. These are reviews on the brand’s own site. Amazon and Walmart listings are linked below; both block automated access, so ayna hasn’t pulled their ratings.',
-        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
+        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG, linked below). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
         ingredients: 'Medical-grade silicone exterior with a gel interior (gel not disclosed). Drug-free; no active ingredients.',
-        scientificCitations: [
-            {
-                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
-                text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
-                summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
-            },
-            {
-                url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
-                text: 'ACOG: Postpartum Pain Management',
-                summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
-            },
-            {
-                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
-                text: 'ACOG: Vulvovaginal Health',
-                summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
-            },
-        ],
+        scientificCitations: [],
         verificationLinks: {
             doctor: { links: [] },
-            scientific: { links: [] },
+            // Also feeds the source chips under the ayna Summary (NIH, ACOG).
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
+                        text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
+                        summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
+                        text: 'ACOG: Postpartum Pain Management',
+                        summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                        text: 'ACOG: Vulvovaginal Health',
+                        summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
+                    },
+                ],
+            },
             community: {
                 links: [
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/tag/vpod', text: 'TikTok: #vpod', summary: 'TikTok posts tagged #vpod. The hashtag isn\'t exclusive to this brand, so some posts may be about unrelated products; TikTok blocks automated access, so ayna hasn\'t reviewed them.' },
                     { platform: 'amazon', url: 'https://www.amazon.com/dp/B0F9YXP4MR', text: 'Amazon: VPod Reusable Feminine Cooling Gel Pods, 1 Count', summary: 'This pod’s Amazon listing, with customer ratings and reviews. Amazon blocks automated access, so no rating is quoted here; read the reviews directly.' },
                     { platform: 'walmart', url: 'https://www.walmart.com/ip/Vpod-Single-Pack/17868111516', text: 'Walmart: VPod Single Pack', summary: 'This pod’s Walmart listing, with customer reviews. The site blocks automated access, so no rating is quoted here; read the reviews directly.' },
                     { platform: 'website', url: 'https://hervpod.com/products/vpod-regular-single-pack', text: 'hervpod.com: VPod Everyday Comfort Single Pack', summary: 'VPod’s own product page, which shows 6 customer reviews, all 5 stars.' },
@@ -4340,30 +4345,34 @@ export const BRAND_PRODUCTS = [
             'If the pod ruptures, clean the skin and throw the pod away (the gel may be slippery).',
         ],
         communityReview: 'Customer reviews for this 3-pack are on its Walmart listings (linked below). Walmart blocks automated access, so ayna hasn’t pulled a rating; read them directly. hervpod.com shows no reviews on this pack’s page.',
-        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
+        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG, linked below). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
         ingredients: 'Medical-grade silicone exterior with a gel interior (gel not disclosed). Drug-free; no active ingredients.',
-        scientificCitations: [
-            {
-                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
-                text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
-                summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
-            },
-            {
-                url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
-                text: 'ACOG: Postpartum Pain Management',
-                summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
-            },
-            {
-                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
-                text: 'ACOG: Vulvovaginal Health',
-                summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
-            },
-        ],
+        scientificCitations: [],
         verificationLinks: {
             doctor: { links: [] },
-            scientific: { links: [] },
+            // Also feeds the source chips under the ayna Summary (NIH, ACOG).
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
+                        text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
+                        summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
+                        text: 'ACOG: Postpartum Pain Management',
+                        summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                        text: 'ACOG: Vulvovaginal Health',
+                        summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
+                    },
+                ],
+            },
             community: {
                 links: [
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/tag/vpod', text: 'TikTok: #vpod', summary: 'TikTok posts tagged #vpod. The hashtag isn\'t exclusive to this brand, so some posts may be about unrelated products; TikTok blocks automated access, so ayna hasn\'t reviewed them.' },
                     { platform: 'walmart', url: 'https://www.walmart.com/ip/VPOD-MULTI-3CT/19585123681', text: 'Walmart: VPod Multi 3 Count', summary: 'This 3-pack’s Walmart listing, with customer reviews. The site blocks automated access, so no rating is quoted here; read the reviews directly.' },
                     { platform: 'walmart', url: 'https://www.walmart.com/ip/2-pack-VPod-Instant-Cooling-Relief-for-Vaginal-Discomfort-3-Cooling-Gel-Pods-for-Symptom-Relief/20452465708', text: 'Walmart: 2-pack of VPod 3-pod boxes (6 pods)', summary: 'A Walmart listing for two of these 3-pod boxes, with its own customer reviews. The site blocks automated access, so no rating is quoted here; read the reviews directly.' },
                     { platform: 'website', url: 'https://hervpod.com/products/vpod-regular-multipack', text: 'hervpod.com: VPod Everyday Comfort 3 Pack', summary: 'VPod’s own product page.' },
@@ -4426,30 +4435,34 @@ export const BRAND_PRODUCTS = [
             'If the pod ruptures, clean the skin and throw the pod away (the gel may be slippery).',
         ],
         communityReview: 'No customer reviews are shown on hervpod.com for this pack, and ayna didn’t find a retailer listing for the Elite single.',
-        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
+        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG, linked below). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
         ingredients: 'Medical-grade silicone exterior with a gel interior (gel not disclosed). Drug-free; no active ingredients.',
-        scientificCitations: [
-            {
-                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
-                text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
-                summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
-            },
-            {
-                url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
-                text: 'ACOG: Postpartum Pain Management',
-                summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
-            },
-            {
-                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
-                text: 'ACOG: Vulvovaginal Health',
-                summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
-            },
-        ],
+        scientificCitations: [],
         verificationLinks: {
             doctor: { links: [] },
-            scientific: { links: [] },
+            // Also feeds the source chips under the ayna Summary (NIH, ACOG).
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
+                        text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
+                        summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
+                        text: 'ACOG: Postpartum Pain Management',
+                        summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                        text: 'ACOG: Vulvovaginal Health',
+                        summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
+                    },
+                ],
+            },
             community: {
                 links: [
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/tag/vpod', text: 'TikTok: #vpod', summary: 'TikTok posts tagged #vpod. The hashtag isn\'t exclusive to this brand, so some posts may be about unrelated products; TikTok blocks automated access, so ayna hasn\'t reviewed them.' },
                     { platform: 'website', url: 'https://hervpod.com/products/vpod-elite-single-pack', text: 'hervpod.com: VPod Postpartum & Menopause Comfort Single Pack', summary: 'VPod’s own product page.' },
                 ],
             },
@@ -4510,30 +4523,34 @@ export const BRAND_PRODUCTS = [
             'If the pod ruptures, clean the skin and throw the pod away (the gel may be slippery).',
         ],
         communityReview: 'Customer reviews for this 3-pack are on its Walmart listing (linked below). Walmart blocks automated access, so ayna hasn’t pulled a rating; read them directly. hervpod.com shows no reviews on this pack’s page.',
-        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
+        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG, linked below). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
         ingredients: 'Medical-grade silicone exterior with a gel interior (gel not disclosed). Drug-free; no active ingredients.',
-        scientificCitations: [
-            {
-                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
-                text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
-                summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
-            },
-            {
-                url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
-                text: 'ACOG: Postpartum Pain Management',
-                summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
-            },
-            {
-                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
-                text: 'ACOG: Vulvovaginal Health',
-                summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
-            },
-        ],
+        scientificCitations: [],
         verificationLinks: {
             doctor: { links: [] },
-            scientific: { links: [] },
+            // Also feeds the source chips under the ayna Summary (NIH, ACOG).
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
+                        text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
+                        summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
+                        text: 'ACOG: Postpartum Pain Management',
+                        summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                        text: 'ACOG: Vulvovaginal Health',
+                        summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
+                    },
+                ],
+            },
             community: {
                 links: [
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/tag/vpod', text: 'TikTok: #vpod', summary: 'TikTok posts tagged #vpod. The hashtag isn\'t exclusive to this brand, so some posts may be about unrelated products; TikTok blocks automated access, so ayna hasn\'t reviewed them.' },
                     { platform: 'walmart', url: 'https://www.walmart.com/ip/Vpod-Elite-Multi-pack/19824372766', text: 'Walmart: VPod Elite Multi-pack', summary: 'This 3-pack’s Walmart listing, with customer reviews. The site blocks automated access, so no rating is quoted here; read the reviews directly.' },
                     { platform: 'website', url: 'https://hervpod.com/products/vpod-elite-multi-pack', text: 'hervpod.com: VPod Postpartum & Menopause Comfort 3 Pack', summary: 'VPod’s own product page.' },
                 ],
