@@ -2953,7 +2953,7 @@ export const BRAND_PRODUCTS = [
             materials: 'Water-activated powder (50 g / 1.76 oz). Cleansing comes mainly from mild synthetic surfactants: sodium cocoyl isethionate, sodium methyl cocoyl taurate, and sodium lauroyl glutamate. It also contains potassium laurate, which is a true soap. The enzyme is papain. Supporting ingredients are allantoin, glycerin, beta-glucan, and chia (Salvia hispanica) seed extract. CI 77499 is black iron oxide, a colorant. No added fragrance, essential oils, or sulfates appear in the published ingredient list.',
             recalls: 'No recalls found.',
             sideEffects: 'Papain is a protein-digesting enzyme and a known allergen: people have become sensitized to it at work and through a papain contact-lens solution. Anyone with a papaya, papain, kiwi, or fig allergy should avoid it or patch test first. Any exfoliant can cause redness or irritation if overused, especially alongside retinoids, retinol, or benzoyl peroxide. Full warnings are listed below.',
-            opinionAlerts: 'Benefit claims (refined texture, radiance, barrier support) come from kieró. No independent clinical study of the finished product was found.',
+            opinionAlerts: 'Allergy note: contains papain (papaya enzyme), a known allergen. Avoid it if you\'re allergic to papaya, kiwi, or fig, or patch test first. Benefit claims (refined texture, radiance, barrier support) come from kieró, and no independent clinical study of the finished product was found.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
@@ -3064,6 +3064,151 @@ export const BRAND_PRODUCTS = [
                         url: 'https://skinsort.com/products/kiero/refining-enzyme-cleanser',
                         text: 'Skinsort: kieró Refining Enzyme Cleanser ingredient analysis',
                         summary: 'An independent ingredient-analysis site. It lists the formula as vegan, fungal-acne safe, and free of fragrance, harsh alcohols, parabens, silicones, and sulfates. This is an ingredient screen, not user reviews.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // kieró Airy Sun Stick — verified against us.kieroskincare.com
+    // (2026-09-30). Same situation as the cleanser above: no affiliate link
+    // yet, sold out on kieró's US site at time of writing.
+    {
+        id: 'p-kiero-airy-sun-stick-spf50',
+        name: 'Airy Sun Stick SPF 50+',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'spf', 'sunscreen', 'vegan'],
+        price: '$11.99 for 20 g (0.7 oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/sun-stick-spf-50',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/sun-stick-spf-50',
+        },
+        image: 'https://us.kieroskincare.com/cdn/shop/files/kiero-_-05_a549ac4a-c417-4be1-8731-03d3c0ffddb8.jpg',
+        summary: 'A broad-spectrum SPF 50+ / PA++++ sunscreen stick with chamomile, vitamin E, and madecassoside (from centella). kieró positions it for daily UV protection with a lightweight, non-greasy finish that can be swiped on over makeup, and says it soothes and supports the skin barrier. It uses chemical (organic) UV filters, not zinc or titanium.',
+        ingredients: 'Full INCI list per kieró: Dimethicone, Synthetic Wax, Vinyl Dimethicone/Methicone Silsesquioxane Crosspolymer, Cetyl Ethylhexanoate, Octocrylene, Homosalate, Methyl Methacrylate Crosspolymer, Dibutyl Adipate, Butyloctyl Salicylate, Octisalate, Avobenzone, Pentylene Glycol, Polyglyceryl-4 Oleate, Helianthus Annuus (Sunflower) Seed Oil, Polyglyceryl-6 Oleate, Polyhydroxystearic Acid, Methylpropanediol, Persea Gratissima (Avocado) Oil, Ethylhexylglycerin, Caprylyl Glycol, Glycine Soja (Soybean) Oil, Tocopherol, Steareth-30, Lactobacillus Ferment Lysate, Butyrospermum Parkii (Shea) Butter Extract, Bixa Orellana Seed Oil, Water, Sodium Guaiazulene Sulfonate, Panthenol, Butylene Glycol, 1,2-Hexanediol, Anthemis Nobilis Flower Water, Madecassoside, Asiaticoside, Asiatic Acid, Madecassic Acid.',
+        safety: {
+            fdaStatus: 'In the US, sunscreens are regulated as over-the-counter drugs. kieró doesn\'t publish the percentage of each UV filter or say whether the product is water resistant. kieró states its products are vegan and cruelty-free; ayna did not independently verify that.',
+            materials: 'Solid silicone-and-wax stick (20 g / 0.7 oz). UV filters: avobenzone (UVA), octocrylene, homosalate, octisalate, and butyloctyl salicylate, all chemical filters with no zinc oxide or titanium dioxide. The soothing ingredients are chamomile flower water, sodium guaiazulene sulfonate (a chamomile-derived compound), madecassoside with other centella compounds, panthenol, and vitamin E. Plant oils include sunflower, avocado, soybean, shea, and annatto (Bixa orellana).',
+            recalls: 'No recalls found.',
+            sideEffects: 'Chemical UV filters can cause irritation or, rarely, allergic or photoallergic reactions; octocrylene is the most common culprit. The formula contains chamomile, so people allergic to ragweed or the daisy family should patch test first. Keep sticks away from the eyes. Full warnings are listed below.',
+            opinionAlerts: 'Safety note: a stick only reaches its labeled SPF if you apply enough, so swipe several passes over each area. It uses chemical UV filters, which FDA studies show are absorbed into the bloodstream. The FDA says that alone doesn\'t mean they\'re unsafe, and you should keep using sunscreen. Contains chamomile, so patch test if you\'re allergic to ragweed or daisies. Soothing and barrier claims come from kieró, and no independent clinical study of the finished product was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró positions this as a lightweight daily SPF 50+ / PA++++ stick. Its chamomile soothes, its vitamin E gives antioxidant defense, and its madecassoside strengthens the skin barrier, and it can be swiped over makeup, per the brand\'s own site.\n\nDaily broad-spectrum sunscreen is one of the best-supported habits in dermatology. In the Nambour randomized trial in Australia, adults assigned to daily sunscreen had about 24% less skin aging over 4.5 years. They also developed fewer squamous cell skin cancers and, in 10-year follow-up, half as many new melanomas as people who used sunscreen when they chose to. Those trials tested a basic SPF 15+ sunscreen, not this product, but the benefit comes from consistent daily use of any broad-spectrum sunscreen.\n\nThe main caveat with sticks is how much you apply. SPF is tested at 2 mg/cm², and studies show people typically apply a quarter to half of that, which cuts real-world protection roughly in proportion. Solid sticks make that easier to get wrong, so go over each area several times. The AAD also advises applying 15 minutes before going out and reapplying every two hours and after swimming or sweating. kieró doesn\'t claim water resistance, so reapply after either.\n\nThe filters here (avobenzone, octocrylene, homosalate, octisalate) are all FDA-permitted. In a 2020 FDA randomized trial published in JAMA, all of them were absorbed into the bloodstream above the level at which the FDA waives further safety testing. The FDA and the study authors stressed that absorption doesn\'t mean harm and that people should keep using sunscreen. Separately, a lab study found octocrylene can slowly break down into benzophenone as a product ages, so replace old or heat-exposed sunscreen. If either concern matters to you, a mineral (zinc oxide) sunscreen avoids both.\n\nMadecassoside has real supporting research. It is the centella compound behind many "cica" products. In a 6-month double-blind study, a cream with madecassoside and vitamin C improved skin hydration, firmness, and fine wrinkles, and lab studies show it calms UV-triggered inflammation. Vitamin E is a well-documented skin antioxidant. No independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'Daily broad-spectrum sunscreen has strong randomized-trial evidence for slowing skin aging and lowering skin-cancer risk. The catch with any stick is applying enough, so use several passes per area and reapply every two hours. It uses chemical filters, which FDA studies show are absorbed into the blood (not proven harmful; a mineral sunscreen is the alternative if that concerns you). Madecassoside and vitamin E have real supporting research. No independent clinical study of this specific product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/sun-stick-spf-50', label: 'kieroskincare.com: Airy Sun Stick SPF 50+ — ingredient list and claims' },
+            { url: 'https://www.aad.org/public/everyday-care/sun-protection/shade-clothing-sunscreen/how-to-apply-sunscreen', label: 'American Academy of Dermatology: How to apply sunscreen' },
+            { url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun', label: 'FDA: Sunscreen — how to help protect your skin from the sun' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'People who want a mess-free daily SPF they can reapply over makeup',
+            'Oily or combination skin looking for a non-greasy finish',
+            'Touch-ups on the face, ears, nose, and around the eyes during the day',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // us.kieroskincare.com/products/sun-stick-spf-50, plus AAD/FDA
+        // application guidance (marked as such).
+        howToUse: {
+            intro: 'Per kieró\'s own site: swipe the stick on as the last step of your morning routine, or over makeup, evenly covering all sun-exposed areas. Reapply through the day as needed.',
+            steps: [
+                'Go over each area several times (back and forth). A single light swipe won\'t deliver the labeled SPF.',
+                'Apply about 15 minutes before going outside (AAD).',
+                'Reapply at least every two hours, and right after swimming or sweating (AAD / FDA).',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/sun-stick-spf-50',
+            sourceLabel: 'kieroskincare.com: Airy Sun Stick SPF 50+',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Allergy to ragweed, chamomile, or the daisy family: patch test first.',
+            'For external use only. Keep it out of the eyes, and don\'t use it on broken or damaged skin.',
+            'Rash, irritation, or a reaction after sun exposure: stop using it and see a doctor. Octocrylene can cause photoallergic reactions.',
+            'Not stated as water resistant: reapply after swimming or sweating.',
+            'Children under 6 months: ask a doctor before using any sunscreen (FDA).',
+        ],
+        communityReview: 'kieró\'s US site shows 657 customer reviews, and 593 of them (90%) are five stars; the rest are four stars. Most reviews are in Spanish and praise how easily it goes on, how fast it absorbs, and its non-greasy feel, including over makeup. For example: "No es grasoso y protege muy bien tu piel del sol" ("It\'s not greasy and protects your skin from the sun really well"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        effectiveness: 'Rated SPF 50+ / PA++++ broad spectrum, but real-world protection depends on applying enough, which is harder with a stick. Daily broad-spectrum sunscreen use has randomized-trial evidence for slowing skin aging and reducing squamous cell carcinoma and melanoma. Madecassoside, panthenol, and vitamin E add soothing and antioxidant support. No independent clinical study of the finished product was found.',
+        // Per-ingredient / per-topic science, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab.
+        ingredientScience: [
+            {
+                name: 'Daily broad-spectrum sunscreen',
+                text: 'In the Nambour randomized trial, adults assigned to daily sunscreen had no detectable increase in skin aging over 4.5 years, 24% less than the comparison group. In 10-year follow-up, they had half as many new melanomas (11 vs 22), with a larger drop in invasive melanoma.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23732711/', label: 'PubMed: Sunscreen and prevention of skin aging — a randomized trial (Hughes et al., Ann Intern Med 2013)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/21135266/', label: 'PubMed: Reduced melanoma after regular sunscreen use — randomized trial follow-up (Green et al., J Clin Oncol 2011)' },
+                ],
+            },
+            {
+                name: 'How much you apply',
+                text: 'SPF is measured at 2 mg/cm². People typically apply 0.5–1 mg/cm², and actual SPF falls roughly in proportion to the amount applied. That is why you should use several passes with a stick.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/19614894/', label: 'PubMed: The influence of the amount of sunscreen applied on its sun protection factor' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/22463921/', label: 'PubMed: High-SPF sunscreens may compensate for lower user application amounts' },
+                ],
+            },
+            {
+                name: 'Chemical UV filters (avobenzone, octocrylene, homosalate, octisalate)',
+                text: 'In a 2020 FDA randomized trial, all of these filters were absorbed into the bloodstream after application, above the level at which the FDA waives further safety testing. The authors stressed that this doesn\'t mean they are unsafe and that people shouldn\'t stop using sunscreen. Separately, a lab study found benzophenone in every octocrylene-containing sunscreen tested, rising as products aged.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31961417/', label: 'PubMed: Effect of sunscreen application on plasma concentration of sunscreen active ingredients — a randomized clinical trial (JAMA 2020)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33763894/', label: 'PubMed: The presence of benzophenone in sunscreens and cosmetics containing the organic UV filter octocrylene' },
+                ],
+            },
+            {
+                name: 'Madecassoside (centella)',
+                text: 'kieró states this strengthens the skin barrier. In a 6-month randomized, double-blind study, topical madecassoside with vitamin C improved hydration, firmness, and wrinkles in photoaged skin. Lab studies show madecassoside dampens UV-triggered inflammation.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6290557/', label: 'NIH (PMC): Madecassoside inhibits melanin synthesis by blocking ultraviolet-induced inflammation' },
+                ],
+            },
+            {
+                name: 'Vitamin E',
+                text: 'kieró states this gives antioxidant defense. Vitamin E is one of skin\'s main fat-soluble antioxidants and helps protect it from oxidative and UV-related stress. It can occasionally cause contact dermatitis.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the Response of Skin to Oxidative Stress — Vitamin E as a Key Indicator' },
+                ],
+            },
+        ],
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/everyday-care/sun-protection/shade-clothing-sunscreen/how-to-apply-sunscreen',
+                text: 'American Academy of Dermatology: How to apply sunscreen',
+                summary: 'AAD guidance: use SPF 30+ broad-spectrum sunscreen, apply about 15 minutes before going out, and reapply every two hours and after swimming or sweating. This is general guidance, not product-specific validation.',
+            },
+            {
+                url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun',
+                text: 'FDA: Sunscreen — how to help protect your skin from the sun',
+                summary: 'FDA consumer guidance on broad-spectrum SPF, reapplication, and sunscreen use in infants under 6 months.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/sun-stick-spf-50',
+                        text: 'kieroskincare.com: Airy Sun Stick SPF 50+ customer reviews',
+                        summary: 'kieró\'s own product page shows 657 reviews, 90% of them five stars and the rest four stars, mostly in Spanish (see the Community summary above).',
                     },
                 ],
             },
