@@ -44,7 +44,7 @@ function FeedbackDialog({ prompt, onClose }) {
       <h2 id="feedback-title">{done ? 'Thank you!' : prompt.kind === 'purchase' ? 'Did you buy this item?' : 'How are you liking ayna?'}</h2>
       {done ? <><p>Your anonymous answer was saved.</p><button type="button" className="v6-survey-submit" onClick={onClose}>Done</button></> : <>
         <p className="v6-survey-sub">{prompt.kind === 'purchase' ? `${prompt.name}${prompt.variant ? ` — ${prompt.variant}` : ''}` : 'A quick, optional check-in.'}</p>
-        <p className="v6-survey-sub">Answers aren’t linked to your account. Please leave out personal details.</p>
+        {prompt.kind !== 'purchase' && <p className="v6-survey-sub">Answers aren’t linked to your account. Please leave out personal details.</p>}
         {prompt.kind === 'purchase' ? <div className="v6-survey-actions">
           <button type="button" className="v6-survey-submit" disabled={busy} onClick={() => submit('yes')}>Yes</button>
           <button type="button" className="v6-survey-skip" disabled={busy} onClick={() => submit('no')}>No</button>
