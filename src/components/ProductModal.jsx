@@ -232,7 +232,9 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
 // bash). Collapsed to one line by default; the warning icon/label always
 // stays visible (this is exactly the content that shouldn't be missable),
 // only the full paragraph is hidden until tapped.
-function SafetyAlert({ text }) {
+// `sources` (optional, product.safetyNoteSources): [{ url, label }] links
+// backing the note, shown under the full text once it's expanded.
+function SafetyAlert({ text, sources = [] }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div className="pdp-safety-alert">
@@ -246,7 +248,20 @@ function SafetyAlert({ text }) {
         <span className="pdp-safety-alert__chevron" aria-hidden="true">{expanded ? '▴' : '▾'}</span>
       </button>
       {expanded ? (
-        <p>{text}</p>
+        <>
+          <p>{text}</p>
+          {sources.length > 0 && (
+            <ul className="pdp-safety-alert__sources" style={{ margin: '0.5rem 0 0', paddingLeft: '1.1rem', fontSize: '0.8125rem', lineHeight: 1.5 }}>
+              {sources.map((src) => (
+                <li key={src.url}>
+                  <a href={src.url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                    {src.label || hostLabel(src.url)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       ) : (
         <p className="pdp-safety-alert__preview">{text}</p>
       )}
@@ -1049,7 +1064,7 @@ export default function ProductModal({
                 ) : null}
               </div>
 
-              {safetyAlert && <SafetyAlert text={safetyAlert} />}
+              {safetyAlert && <SafetyAlert text={safetyAlert} sources={product.safetyNoteSources || []} />}
 
               {actionButtons}
 
@@ -1403,7 +1418,7 @@ export default function ProductModal({
               {summarySentences[0] && (
                 <p className="pdp-evidence-head__desc">{summarySentences[0]}</p>
               )}
-              {safetyAlert && <SafetyAlert text={safetyAlert} />}
+              {safetyAlert && <SafetyAlert text={safetyAlert} sources={product.safetyNoteSources || []} />}
               {actionButtons}
               {factRows.length > 0 && (
                 <div className="pdp-rail__specs">
