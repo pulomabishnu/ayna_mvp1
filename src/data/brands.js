@@ -4722,4 +4722,346 @@ export const BRAND_PRODUCTS = [
         },
         isEmergingBrand: false,
     },
+    // Tampon Tribe (tampontribe.com) — catalog entries only, NOT an ayna
+    // brand partner. First batch (2026-09-30): the five products matching
+    // the photos ayna supplied (stored under public/products/tampon-tribe/).
+    // Facts are from tampontribe.com (Shopify products.json + product pages);
+    // brand-site ratings are from its review widget. Options (absorbency,
+    // counts) cost the same and share one photo, so they're listed in the
+    // price text rather than as PRODUCT_VARIANTS; Buy Now opens the product
+    // page to choose. The store also has many duplicate "-copy" listings,
+    // masks, dispensers, and giveaway items, which aren't catalog products.
+    {
+        id: 'p-tampontribe-organic-tampons',
+        name: 'Tampon Tribe Organic Tampons',
+        brand: 'Tampon Tribe',
+        category: 'tampon',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['organic', 'sustainability', 'comfort', 'heavy-flow'],
+        price: '$10.60 per box, as a monthly subscription (Regular 16, Super 14, Super Plus 12, or a mixed or heavy-flow pack)',
+        userRating: 4.6,
+        userRatingSourceUrl: 'https://tampontribe.com/products/tampons',
+        whereToBuy: ['tampontribe.com'],
+        url: 'https://tampontribe.com/products/tampons',
+        image: '/products/tampon-tribe/organic-tampons.webp',
+        summary: 'Certified organic cotton tampons with a biodegradable cardboard "twist" applicator and no plastic anywhere, including the packaging. The absorbent core is wrapped in an organic cotton "safety veil" that the brand says keeps fibers from being left behind. No rayon/viscose, perfume, dyes, or chlorine bleaching. Sold as a monthly subscription you can customize, pause, or cancel, with free U.S. delivery; the first box arrives in a reusable jute bag, refills in recycled paper.',
+        safety: {
+            fdaStatus: 'Tampons are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA clearance details.',
+            materials: '100% organic cotton absorbent core and cover (GOTS & ICEA certified, per the brand) with an organic cotton safety veil around the core; biodegradable cardboard twist applicator with a rounded tip; paper wrapper. No superabsorbents, glue, rayon/viscose, perfume, or chlorine/dioxin bleaching.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic, fragrance-free, dye-free, vegan (per the brand).',
+            sideEffects: 'Toxic shock syndrome (TSS) is rare but serious with any tampon: use the lowest absorbency you need and never wear one longer than 8 hours. Full warnings are listed below.',
+            opinionAlerts: 'Organic cotton avoids fragrance, dyes, and chlorine bleaching, but "100% cotton" isn’t automatically lower TSS risk: a 2018 lab study found cotton/rayon blend tampons grew less S. aureus than cotton-only ones. Absorbency and wear time matter most (FDA). Tampon Tribe’s organic-certification (GOTS & ICEA) and "only totally plastic-free U.S. period product" claims are the brand’s own; ayna didn’t find the certificates published on its site.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Organic cotton with no fragrance, dyes, or chlorine bleaching is a reasonable choice for people with vulvar irritation or who want fewer additives. What the evidence doesn’t support is treating "100% organic cotton" as a TSS safety upgrade: FDA’s guidance focuses on using the lowest absorbency you need and changing every 4 to 8 hours, and a 2018 lab study actually found cotton/rayon blend tampons grew less Staphylococcus aureus than cotton-only ones.\n\nTampon Tribe’s cotton "safety veil" around the core is designed to keep fibers from shedding on removal, a concern with some cotton tampons. No independent study of Tampon Tribe tampons was found.',
+        doctorOpinionShort: 'A plastic-free, organic cotton tampon with a cardboard applicator. Organic cotton cuts additives but isn’t a proven TSS-risk downgrade; FDA says to use the lowest absorbency and change every 4 to 8 hours. No study of this brand was found.',
+        whoItsFor: [
+            'People who want organic cotton tampons with no plastic, fragrance, or dyes',
+            'Anyone who wants a cardboard applicator instead of plastic',
+            'Subscription shoppers who want a customizable monthly box with free U.S. delivery',
+        ],
+        howToUse: {
+            intro: 'Per Tampon Tribe’s directions and FDA tampon guidance:',
+            steps: [
+                'Unwrap the paper wrap.',
+                'Twist the top part of the applicator in the opposite direction from the base.',
+                'Push the base up slightly so the tip of the tampon shows, then insert.',
+                'Choose the lowest absorbency that handles your flow, and change every 4 to 8 hours; never longer than 8 hours (FDA).',
+            ],
+            sourceUrl: 'https://tampontribe.com/products/tampons',
+            sourceLabel: 'tampontribe.com: Organic Tampons',
+        },
+        warnings: [
+            'Toxic shock syndrome (TSS) is rare but serious. Remove the tampon and get emergency care for sudden high fever, vomiting, diarrhea, dizziness or fainting, or a sunburn-like rash during your period (FDA).',
+            'Use only during your period, with the lowest absorbency you need.',
+            'Not a form of contraception and does not protect against STIs.',
+        ],
+        communityReview: 'On tampontribe.com, Organic Tampons average 4.6 out of 5 from 401 reviews (reviews on the brand’s own site).',
+        effectiveness: 'Absorbency comes in Regular, Super, and Super Plus. No independent lab comparison of Tampon Tribe tampons against other brands was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety', text: 'FDA: Tampon Safety Facts', summary: 'FDA advises using the lowest absorbency tampon you need, changing every 4 to 8 hours and never wearing one longer than 8 hours, and knowing the signs of toxic shock syndrome (sudden high fever, vomiting, diarrhea, fainting or dizziness, or a sunburn-like rash). FDA also notes cleared tampons are made of cotton, rayon, or blends, bleached without elemental chlorine. This is category guidance, not validation of a specific product.' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5981080/', text: 'Impact of currently marketed tampons and menstrual cups on S. aureus growth and TSST-1 production in vitro (Nonfoux et al., 2018)', summary: 'In a lab study of 11 tampon types, tampons made of a cotton/rayon mix grew less Staphylococcus aureus than cotton-only tampons. It suggests "100% cotton" isn’t automatically lower TSS risk; absorbency and wear time matter more. Lab evidence, not a study of Tampon Tribe tampons.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://tampontribe.com/products/tampons', text: 'tampontribe.com: Organic Tampons reviews', summary: 'The brand’s product page: 4.6/5 from 401 reviews as of September 30, 2026.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-organic-pads',
+        name: 'Tampon Tribe Organic Pads',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['organic', 'sustainability', 'comfort'],
+        price: '$10.60 per box of 10, as a monthly subscription (Day, Night, or 7 Day + 3 Night)',
+        userRating: 4.8,
+        userRatingSourceUrl: 'https://tampontribe.com/products/pads',
+        whereToBuy: ['tampontribe.com'],
+        url: 'https://tampontribe.com/products/pads',
+        image: '/products/tampon-tribe/organic-pads.webp',
+        summary: 'Thin, winged pads made with certified organic cotton and no plastic. Day pads are 240 mm long with 100 ml absorbency; Night pads are 290 mm with 120 ml absorbency and double wings. "Gravity" anti-leak edges help keep you dry. Individually wrapped, with a plant-based backing and a vegan biopolymer adhesive instead of glue. Sold as a monthly subscription with free U.S. delivery.',
+        safety: {
+            fdaStatus: 'Menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details.',
+            materials: '100% organic cotton top layer and absorbent core (GOTS & ICEA certified, per the brand). No superabsorbent gel, perfume, dyes, or glue; plant-based backing with a vegan biopolymer adhesive. Vegan and hypoallergenic, per the brand. Individually wrapped.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic, fragrance-free, dye-free, vegan (per the brand).',
+            sideEffects: 'None expected. Stop using if you notice irritation. Full notes are listed below.',
+            opinionAlerts: 'Without superabsorbent gel, these rely on cotton alone, so they may need changing more often on heavy days. Tampon Tribe’s organic-certification (GOTS & ICEA) and "only totally plastic-free U.S. period product" claims are the brand’s own; ayna didn’t find the certificates published on its site.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Cotton pads without fragrance, dyes, or plastic top sheets are a sensible choice for people with vulvar irritation or sensitivity to synthetic materials. ACOG’s general advice applies: change a pad at least every 4 to 8 hours, or whenever it feels full or wet. Because they skip superabsorbent gel, they may need changing more often on heavy days. No independent study of these pads was found.',
+        doctorOpinionShort: 'Organic cotton, plastic-free pads with wings. A reasonable pick for sensitive skin; change every 4 to 8 hours per ACOG. No study of this brand was found.',
+        whoItsFor: [
+            'People with vulvar irritation or sensitivity to plastic or synthetic pad materials',
+            'Anyone who wants plastic-free, organic cotton pads',
+            'Light to moderate flow (Day) and overnight use (Night)',
+        ],
+        howToUse: {
+            intro: 'Per ACOG’s general pad guidance:',
+            steps: [
+                'Peel off the backing and press the pad into your underwear, folding the wings around the edges.',
+                'Change at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable.',
+                'Wrap the used pad and put it in the trash. Tampon Tribe says the pads will biodegrade, but it doesn’t recommend flushing them.',
+            ],
+            sourceUrl: 'https://www.acog.org/womens-health/faqs/your-first-period',
+            sourceLabel: 'ACOG: Your First Period',
+        },
+        warnings: [
+            'Don’t flush; Tampon Tribe itself doesn’t recommend it.',
+            'Stop using if you notice irritation or a rash.',
+        ],
+        communityReview: 'On tampontribe.com, Organic Pads average 4.8 out of 5 from 163 reviews (reviews on the brand’s own site).',
+        effectiveness: 'Day pads hold up to 100 ml and Night pads up to 120 ml, per the brand. No independent comparison with other pads was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://tampontribe.com/products/pads', text: 'tampontribe.com: Organic Pads reviews', summary: 'The brand’s product page: 4.8/5 from 163 reviews as of September 30, 2026.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-pantyliners-bulk-buy',
+        name: 'Tampon Tribe Organic Pantyliners Bulk Buy (48)',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['organic', 'sustainability', 'comfort', 'cost'],
+        price: '$20 for 48 pantyliners (one-time purchase)',
+        whereToBuy: ['tampontribe.com'],
+        url: 'https://tampontribe.com/products/organic-pantyliners-bulk-buy',
+        image: '/products/tampon-tribe/pantyliners-bulk-buy.webp',
+        summary: 'A one-time bulk pack of 48 ultrathin organic cotton pantyliners in a jute bag. Each liner is individually wrapped in a starch film (not plastic) and uses a biodegradable polymer adhesive. No perfume, superabsorbent, or chlorine bleaching. The same liners are also sold as a subscription (24 or 48 per box).',
+        safety: {
+            fdaStatus: 'Pantyliners are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details.',
+            materials: '100% organic cotton absorbent core (GOTS certified, per the brand) with a cotton non-woven top sheet designed not to leave fibers on skin; individually wrapped in starch film; biodegradable polymer adhesive strip. Perfume-free, superabsorbent-free, no chlorine or dioxin bleaching.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic, fragrance-free, vegan (per the brand).',
+            sideEffects: 'None expected. Stop using if you notice irritation.',
+            opinionAlerts: 'For light days, discharge, or backup only; not enough for a full period. Tampon Tribe’s organic-certification (GOTS & ICEA) and "only totally plastic-free U.S. period product" claims are the brand’s own; ayna didn’t find the certificates published on its site.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Fragrance-free cotton liners are a good choice for daily discharge or light spotting, especially for people who react to scented or plastic-topped liners. Change them as they get damp. No independent study of these liners was found.',
+        doctorOpinionShort: 'Unscented organic cotton liners for light days and discharge. A sensible choice for sensitive skin; no study of this brand was found.',
+        whoItsFor: [
+            'Daily discharge, spotting, or light days',
+            'Backup with a tampon or cup',
+            'People who react to scented or plastic-topped liners',
+        ],
+        howToUse: {
+            intro: 'General guidance:',
+            steps: [
+                'Unwrap, peel off the backing, and press into your underwear.',
+                'Change whenever it feels damp, and at least every 4 to 8 hours (ACOG’s pad guidance).',
+                'Throw used liners in the trash; don’t flush.',
+            ],
+            sourceUrl: 'https://www.acog.org/womens-health/faqs/your-first-period',
+            sourceLabel: 'ACOG: Your First Period',
+        },
+        warnings: [
+            'For light flow or discharge only; use a pad or tampon for your period.',
+            'Stop using if you notice irritation.',
+        ],
+        communityReview: 'This bulk listing shows no reviews of its own. The same liners’ regular Organic Pantyliners listing averages 4.5 out of 5 from 92 reviews on tampontribe.com.',
+        effectiveness: 'Ultrathin, for light absorbency. No independent comparison with other liners was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://tampontribe.com/products/organic-pantyliners-bulk-buy', text: 'tampontribe.com: Organic Pantyliners Bulk Buy', summary: 'The brand’s bulk-buy page.' },
+                    { url: 'https://tampontribe.com/products/pantyliners', text: 'tampontribe.com: Organic Pantyliners reviews', summary: 'The same liners’ subscription listing: 4.5/5 from 92 reviews as of September 30, 2026.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-reusable-pads',
+        name: 'Tampon Tribe Reusable Pads, Organic Cotton (2-Pack)',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['organic', 'sustainability', 'reusable', 'cost'],
+        price: '$16.80 for 2 pads',
+        whereToBuy: ['tampontribe.com'],
+        url: 'https://tampontribe.com/products/reusable-pads-2-pack',
+        image: '/products/tampon-tribe/reusable-pads-2-pack.webp',
+        summary: 'Washable cloth pads made with ultra-soft certified organic cotton, sold in a 2-pack. Rated for medium flow, holding up to 3 tampons’ worth; change more often on heavy days. Three layers with odor control, a super-absorbent inner layer, "gravity" leak-guard edges, and V-shaped straps that fasten with a metal clasp behind your underwear. The brand says they’re PFAS-free, plant-based, and vegan, and offers a money-back guarantee.',
+        safety: {
+            fdaStatus: 'Reusable menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details.',
+            materials: 'Organic cotton top layer, 3-layer construction with an odor-control layer and an absorbent inner layer; V-shaped straps with a metal clasp. PFAS-free, plant-based, and vegan, per the brand.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic, per the brand.',
+            sideEffects: 'None expected with proper washing. Stop using if you notice irritation.',
+            opinionAlerts: 'The PFAS-free claim is the brand’s; ayna didn’t find independent test results. The absorbent layer’s material isn’t specified, and the site calls the product plastic-free. Tampon Tribe’s organic-certification (GOTS & ICEA) and "only totally plastic-free U.S. period product" claims are the brand’s own; ayna didn’t find the certificates published on its site.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Washable cloth pads are a reasonable, lower-waste option for light to medium flow and for people sensitive to disposable pad materials. The key is hygiene: change them as often as a disposable pad (ACOG suggests every 4 to 8 hours), and wash and fully dry them between uses. The "PFAS-free" claim is the brand’s own, without published test results. No independent study of these pads was found.',
+        doctorOpinionShort: 'Organic cotton cloth pads for medium flow. Lower waste and gentle on sensitive skin if washed and dried well between uses. PFAS-free claim is the brand’s own; no study of these pads was found.',
+        whoItsFor: [
+            'Light to medium flow, or backup',
+            'People who want to cut disposable waste',
+            'People sensitive to disposable pad materials',
+        ],
+        howToUse: {
+            intro: 'Per Tampon Tribe’s directions:',
+            steps: [
+                'Place the pad in your underwear and fasten the metal clasp behind your underwear.',
+                'Change at least every 4 to 8 hours, or sooner on heavy days (it holds about 3 tampons’ worth).',
+                'Rinse in cold water, wash with gentle soap, and hang to dry completely before reusing.',
+            ],
+            sourceUrl: 'https://tampontribe.com/products/reusable-pads-2-pack',
+            sourceLabel: 'tampontribe.com: Reusable Pads',
+        },
+        warnings: [
+            'Wash and dry completely between uses to avoid irritation and odor.',
+            'For medium flow; change more often, or pair with another product, on heavy days.',
+        ],
+        communityReview: 'No customer rating is shown for this pad on tampontribe.com. The brand offers a money-back guarantee if you’re unhappy with it.',
+        effectiveness: 'Holds up to about 3 tampons’ worth, per the brand. No independent absorbency or PFAS test was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://tampontribe.com/products/reusable-pads-2-pack', text: 'tampontribe.com: Reusable Pads (2-Pack)', summary: 'The brand’s product page, with care instructions and its money-back guarantee.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-teen-pads',
+        name: 'Tampon Tribe Organic Teen Pads',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['organic', 'sustainability', 'comfort', 'beginner-friendly'],
+        price: '$10 for 18 pads (individually boxed, or in a jute bag)',
+        whereToBuy: ['tampontribe.com'],
+        url: 'https://tampontribe.com/products/organic-teen-pads',
+        image: '/products/tampon-tribe/organic-teen-pads.webp',
+        summary: 'Smaller winged pads made for teens and tweens, sized to fit smaller bodies and underwear: 7.2 inches long with 40 ml absorbency. Made with certified organic cotton and no plastic, fragrance, or dyes, with "gravity" anti-leak edges. Individually wrapped, and available individually boxed so they’re easy to keep in a school bag.',
+        safety: {
+            fdaStatus: 'Menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details.',
+            materials: 'Certified organic cotton (per the brand). No superabsorbent gel, perfume, dyes, or glue; plant-based backing with a vegan biopolymer adhesive. Vegan and hypoallergenic, per the brand. Individually wrapped; optional individual boxes.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic, fragrance-free, dye-free, vegan (per the brand).',
+            sideEffects: 'None expected. Stop using if you notice irritation.',
+            opinionAlerts: 'At 40 ml, these are for lighter days; heavier flow may need a full-size pad. Tampon Tribe’s organic-certification (GOTS & ICEA) and "only totally plastic-free U.S. period product" claims are the brand’s own; ayna didn’t find the certificates published on its site.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Smaller, unscented cotton pads are a gentle way to start, since first periods are often irregular and lighter pads fit younger bodies better. ACOG’s advice for first periods applies: change a pad at least every 4 to 8 hours, or whenever it feels full or wet. Very heavy periods (soaking a pad every hour or two) are worth mentioning to a doctor. No independent study of these pads was found.',
+        doctorOpinionShort: 'Teen-sized, unscented organic cotton pads for lighter flow. Change every 4 to 8 hours per ACOG. No study of this brand was found.',
+        whoItsFor: [
+            'Teens and tweens starting their periods',
+            'Anyone with a smaller body or lighter flow who finds standard pads bulky',
+            'Keeping a discreet pad in a school bag',
+        ],
+        howToUse: {
+            intro: 'Per ACOG’s first-period guidance:',
+            steps: [
+                'Peel off the backing, press the pad into your underwear, and fold the wings around the edges.',
+                'Change at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable.',
+                'Wrap the used pad and put it in the trash; don’t flush.',
+            ],
+            sourceUrl: 'https://www.acog.org/womens-health/faqs/your-first-period',
+            sourceLabel: 'ACOG: Your First Period',
+        },
+        warnings: [
+            'Lighter absorbency (40 ml): switch to a larger pad on heavy days.',
+            'Stop using if you notice irritation or a rash.',
+        ],
+        communityReview: 'No customer rating is shown for the teen pads on tampontribe.com. Tampon Tribe’s regular Organic Pads average 4.8/5 from 163 reviews on its site.',
+        effectiveness: 'Holds up to 40 ml, per the brand. No independent comparison with other teen pads was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://tampontribe.com/products/organic-teen-pads', text: 'tampontribe.com: Organic Teen Pads', summary: 'The brand’s product page.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
 ];
