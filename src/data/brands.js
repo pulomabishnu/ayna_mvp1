@@ -2926,6 +2926,153 @@ export const BRAND_PRODUCTS = [
         isEmergingBrand: true,
     },
 
+    // kieró — verified against us.kieroskincare.com (2026-09-30). Not a brand
+    // partner and no affiliate link yet, so there's no affiliateUrl; Buy Now
+    // falls back to kieró's own product page (see resolveBuyUrl). Listed as
+    // sold out on kieró's US site at time of writing.
+    {
+        id: 'p-kiero-refining-enzyme-cleanser',
+        name: 'Refining Enzyme Cleanser',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'cleanser', 'exfoliation', 'vegan', 'fragrance-free'],
+        price: '$11.99 for 50 g (1.76 oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
+        },
+        image: 'https://us.kieroskincare.com/cdn/shop/files/kiero-_-05_9dcbb676-03a3-45a9-bb4e-ae5dd1708f23.jpg',
+        summary: 'A powder face cleanser that turns into a creamy foam with water, made with papaya enzymes (papain), beta-glucan, and chia seed extract. kieró positions it as a gentle daily enzyme exfoliant that removes impurities and excess oil without drying and refines skin texture. It is step 1 of kieró\'s 5-step routine, which blends Korean-beauty formulation with Latin American botanicals.',
+        ingredients: 'Full INCI list per kieró: Zea Mays (Corn) Starch, Sodium Cocoyl Isethionate, Microcrystalline Cellulose, Sodium Methyl Cocoyl Taurate, Potassium Laurate, Sodium Lauroyl Glutamate, Allantoin, Maltodextrin, Papain, Water, CI 77499, Glycerin, Salvia Hispanica Seed Extract, 1,2-Hexanediol, Butylene Glycol, Beta-Glucan, Ethylhexylglycerin.',
+        safety: {
+            fdaStatus: 'Cosmetic face cleanser; not an FDA-cleared drug or medical device. kieró states its products are vegan and cruelty-free and use EWG Green-graded ingredients; ayna did not independently verify those claims.',
+            materials: 'Water-activated powder (50 g / 1.76 oz). Cleansing comes mainly from mild synthetic surfactants: sodium cocoyl isethionate, sodium methyl cocoyl taurate, and sodium lauroyl glutamate. It also contains potassium laurate, which is a true soap. The enzyme is papain. Supporting ingredients are allantoin, glycerin, beta-glucan, and chia (Salvia hispanica) seed extract. CI 77499 is black iron oxide, a colorant. No added fragrance, essential oils, or sulfates appear in the published ingredient list.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Papain is a protein-digesting enzyme and a known allergen: people have become sensitized to it at work and through a papain contact-lens solution. Anyone with a papaya, papain, kiwi, or fig allergy should avoid it or patch test first. Any exfoliant can cause redness or irritation if overused, especially alongside retinoids, retinol, or benzoyl peroxide. Full warnings are listed below.',
+            opinionAlerts: 'Benefit claims (refined texture, radiance, barrier support) come from kieró. No independent clinical study of the finished product was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró positions this as a gentle daily enzyme cleanser. Papaya enzymes exfoliate, beta-glucan hydrates and soothes, and chia seed supports the skin barrier, and the powder foams up to remove oil and impurities without drying, per the brand\'s own site.\n\nThe cleansing base is a reasonable choice for gentleness. Its main surfactant, sodium cocoyl isethionate, has been shown in lab and human studies to be milder on the skin barrier than soap or sodium lauryl sulfate. That is the basis of "syndet" cleansers dermatologists often recommend for dry or sensitive skin. The formula does also contain potassium laurate, a true soap, so it is not entirely soap-free.\n\nPapain, the papaya enzyme, is an established exfoliant. It breaks down keratin and other skin proteins, which mimics the skin\'s natural shedding. A 2021 review found only a handful of studies on enzyme exfoliation and few clinical trials, though the results that exist are positive. A cleanser also stays on the skin for under a minute, so its exfoliating effect is likely mild. The trade-off is that papain is a recognized allergen. Studies show it can loosen the proteins that hold skin cells together and trigger sensitization through the skin. Anyone with a papaya-family allergy should be cautious.\n\nBeta-glucan has real clinical evidence. In controlled studies, topical beta-glucan improved skin hydration and reduced irritation, including in atopic dermatitis and after laser treatment. Chia seed oil improved hydration and barrier function in a small 8-week study of people with dry, itchy skin. That study used a leave-on 4% oil formula, though, not a rinse-off extract. Allantoin is a well-documented soothing and mildly keratolytic skin-protectant ingredient.\n\nThe American Academy of Dermatology advises people with dry, sensitive, or acne-prone skin to choose gentle exfoliation and to moisturize afterward. It also warns against exfoliating while using retinoids or benzoyl peroxide, or on broken or sunburned skin. No independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'A powder cleanser built on mild syndet surfactants (mainly sodium cocoyl isethionate, shown to be gentler on the skin barrier than soap) with papaya enzyme (papain) for light exfoliation. Beta-glucan, chia seed, and allantoin have real supporting research for hydration and soothing, though a rinse-off cleanser limits how much they do. Papain is a known allergen, so avoid it if you\'re allergic to papaya, kiwi, or fig. No independent clinical study of this specific product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser', label: 'kieroskincare.com: Refining Enzyme Cleanser — ingredient list and claims' },
+            { url: 'https://www.aad.org/public/everyday-care/skin-care-secrets/routine/safely-exfoliate-at-home', label: 'American Academy of Dermatology: How to safely exfoliate at home' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'People who want gentle, daily enzyme exfoliation instead of a scrub or acid',
+            'Normal, oily, or combination skin looking for a cleanser that removes excess oil without a tight, stripped feeling',
+            'People who prefer a fragrance-free, vegan formula',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // us.kieroskincare.com/products/refining-enzyme-cleanser.
+        howToUse: {
+            intro: 'Per kieró\'s own site: use daily as step 1 (cleanse) of the routine.',
+            steps: [
+                'Pour a small amount of powder into wet hands.',
+                'Rub your hands together to create a creamy lather, then gently massage it into your skin.',
+                'Rinse well and pat your face dry.',
+                'Follow with moisturizer. The AAD recommends moisturizing right after any exfoliation.',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
+            sourceLabel: 'kieroskincare.com: Refining Enzyme Cleanser',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Allergy to papaya, papain, kiwi, or fig: avoid it or patch test first. Papain is a known allergen.',
+            'Using a prescription retinoid, retinol, or benzoyl peroxide: exfoliating on top of them can worsen dryness and irritation (AAD).',
+            'Don\'t use on broken, cut, or sunburned skin.',
+            'Keep out of eyes. If you get redness, burning, or an allergic reaction, stop using it and see a doctor.',
+        ],
+        communityReview: 'kieró\'s US site shows 251 customer reviews, and 233 of them (93%) are five stars. Most reviews are in Spanish and describe skin feeling very clean, soft, and hydrated, for example: "Muy recomendable, te deja la piel suave e hidratada" ("Highly recommend, it leaves your skin soft and hydrated"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        effectiveness: 'Cleanses with mild syndet surfactants and gives light enzyme exfoliation from papain. Beta-glucan, chia seed extract, and allantoin each have independent research supporting hydration or soothing, though that research mostly tested leave-on products rather than rinse-off cleansers. No independent clinical study of the finished product was found.',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab. Matches kieró's key-ingredient claims.
+        ingredientScience: [
+            {
+                name: 'Papain (papaya enzyme)',
+                text: 'kieró states this gently exfoliates. Papain is a protease: in lab testing it broke down keratin and collagen, which mimics the skin\'s natural shedding. A 2021 review found enzyme exfoliants do work but have been studied in only a handful of papers with few clinical trials. Papain is also a known allergen. It can loosen the proteins that hold skin cells together and has sensitized people through the skin.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/34897928/', label: 'PubMed: An overview of the use of proteolytic enzymes as exfoliating agents' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/35892222/', label: 'PubMed: In vitro effect on the proteolytic activity of papain with proteins of the skin as substrate' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/25705851/', label: 'PubMed: Papain degrades tight junction proteins of human keratinocytes in vitro and sensitizes mice via the skin' },
+                ],
+            },
+            {
+                name: 'Beta-glucan',
+                text: 'kieró states this hydrates and soothes. Topical beta-glucan increased skin hydration and reduced irritation in controlled studies. These include a split-face, double-blind, vehicle-controlled trial after laser treatment and a multicentre study in mild-to-moderate atopic dermatitis.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33128496/', label: 'PubMed: Skin care regimens containing β-glucan for skin recovery after fractional laser therapy — split-face, double-blinded, vehicle-controlled study' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26654776/', label: 'PubMed: β-Glucan-based cream in supportive treatment of mild-to-moderate atopic dermatitis' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12023766/', label: 'NIH (PMC): Exploring the properties and application potential of β-glucan in skin care' },
+                ],
+            },
+            {
+                name: 'Chia seed (Salvia hispanica) extract',
+                text: 'kieró states this reinforces the skin barrier. In a small 8-week study, a topical 4% chia seed oil formula improved skin hydration and barrier function (lower transepidermal water loss) in people with dry, itchy skin, with no adverse effects. That study tested a leave-on oil, not a rinse-off extract.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/20548903/', label: 'PubMed: Effectiveness of topical chia seed oil on pruritus of end-stage renal disease patients and healthy volunteers' },
+                ],
+            },
+            {
+                name: 'Sodium cocoyl isethionate',
+                text: 'The main cleansing agent. Lab and human studies show it is milder on the skin barrier than soap or sodium lauryl sulfate. Its micelles are too large to penetrate the skin\'s outer layer as easily, which is why "syndet" cleansers are often recommended for dry or sensitive skin.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/17598025/', label: 'PubMed: Why is sodium cocoyl isethionate (SCI) mild to the skin barrier?' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8954092/', label: 'NIH (PMC): Skin cleansing without or with compromise — soaps and syndets' },
+                ],
+            },
+            {
+                name: 'Allantoin',
+                text: 'A soothing, skin-protectant ingredient with mild keratolytic (dead-skin-loosening) and moisturizing effects, and a common ingredient in moisturizers for dermatitis-prone skin.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11685320/', label: 'NIH (PMC): The role of moisturizer containing anti-inflammatory ingredients on skin hydration in mild-moderate atopic dermatitis' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/everyday-care/skin-care-secrets/routine/safely-exfoliate-at-home',
+                text: 'American Academy of Dermatology: How to safely exfoliate at home',
+                summary: 'AAD guidance: people with dry, sensitive, or acne-prone skin should choose gentle exfoliation, moisturize afterward, and avoid exfoliating on broken or sunburned skin or while using retinoids or benzoyl peroxide. This is general guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
+                        text: 'kieroskincare.com: Refining Enzyme Cleanser customer reviews',
+                        summary: 'kieró\'s own product page shows 251 reviews, 93% of them five stars, mostly in Spanish (see the Community summary above).',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://skinsort.com/products/kiero/refining-enzyme-cleanser',
+                        text: 'Skinsort: kieró Refining Enzyme Cleanser ingredient analysis',
+                        summary: 'An independent ingredient-analysis site. It lists the formula as vegan, fungal-acne safe, and free of fragrance, harsh alcohols, parabens, silicones, and sulfates. This is an ingredient screen, not user reviews.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
     // Additional My Pelvic Bra partnership products supplied 2026-09-11.
     {
         id: 'p-mypelvicbra-prolapse-chicken',
