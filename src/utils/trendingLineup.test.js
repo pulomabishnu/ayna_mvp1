@@ -59,6 +59,13 @@ describe('getWeeklyTrendingLineup', () => {
     expect(rotated).toBe(true);
   });
 
+  it('leaves beauty (skin and hair) products out', () => {
+    for (const { product } of weeks.flat()) {
+      expect(['skin', 'skincare', 'body-care', 'hair', 'haircare']).not.toContain(product.category);
+    }
+    expect(weeks.flat().map(({ product }) => product.id)).not.toContain('p-kiero-airy-sun-stick-spf50');
+  });
+
   it('only uses real, physical, non-recalled products with a photo', () => {
     for (const { product } of weeks.flat()) {
       expect(product.internal).toBeFalsy();

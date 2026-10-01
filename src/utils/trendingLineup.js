@@ -18,6 +18,14 @@ import { CATEGORY_LABELS } from '../data/products.js';
 import { isPlaceholderProductImage } from './resolveProductImage.js';
 import { hasFlaggedRecall } from './productSafetyAlert.js';
 
+// Trending is focused on women's health right now, so beauty (skin and hair)
+// products stay out of it — requested 2026-10-01. They're still on Browse.
+const BEAUTY_CATEGORIES = new Set(['skin', 'skincare', 'body-care', 'hair', 'haircare']);
+
+export function isBeautyProduct(product) {
+  return BEAUTY_CATEGORIES.has(product?.category);
+}
+
 export const TRENDING_START = new Date(2026, 9, 1); // 2026-10-01, local time
 export const TRENDING_SIZE = 8;
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -42,6 +50,7 @@ function isTrendingEligible(product) {
     product?.id
     && product?.name
     && !product.internal
+    && !isBeautyProduct(product)
     && !product.requiresPrescription
     && (product.type || 'physical') === 'physical'
     && !isPlaceholderProductImage(product.image)
