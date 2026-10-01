@@ -4748,12 +4748,12 @@ export const BRAND_PRODUCTS = [
         image: '/products/tampon-tribe/organic-tampons.webp',
         summary: 'Certified organic cotton tampons with a biodegradable cardboard "twist" applicator and no plastic anywhere, including the packaging. The absorbent core is wrapped in an organic cotton "safety veil" that the brand says keeps fibers from being left behind. No rayon/viscose, perfume, dyes, or chlorine bleaching. Sold as a monthly subscription you can customize, pause, or cancel, with free U.S. delivery; the first box arrives in a reusable jute bag, refills in recycled paper.',
         safety: {
-            fdaStatus: 'Tampons are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA clearance details.',
-            materials: '100% organic cotton absorbent core and cover (GOTS & ICEA certified, per the brand) with an organic cotton safety veil around the core; biodegradable cardboard twist applicator with a rounded tip; paper wrapper. No superabsorbents, glue, rayon/viscose, perfume, or chlorine/dioxin bleaching.',
+            fdaStatus: 'Tampons are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA clearance details. The manufacturer, Cohitech, is FDA-registered and certified to ISO 13485 (medical-device quality management).',
+            materials: '100% organic cotton absorbent core and cover (certified organic under GOTS by ICEA) with an organic cotton safety veil around the core; biodegradable cardboard twist applicator with a rounded tip; paper wrapper. No superabsorbents, glue, rayon/viscose, perfume, or chlorine/dioxin bleaching.',
             recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
-            allergens: 'Hypoallergenic, fragrance-free, dye-free, vegan (per the brand).',
+            allergens: 'Hypoallergenic (independently dermatologist-tested, per manufacturer Cohitech), fragrance-free, dye-free, and vegan.',
             sideEffects: 'Toxic shock syndrome (TSS) is rare but serious with any tampon: use the lowest absorbency you need and never wear one longer than 8 hours. Full warnings are listed below.',
-            opinionAlerts: 'Organic cotton avoids fragrance, dyes, and chlorine bleaching, but "100% cotton" isn’t automatically lower TSS risk: a 2018 lab study found cotton/rayon blend tampons grew less S. aureus than cotton-only ones. Absorbency and wear time matter most (FDA). Tampon Tribe’s organic-certification (GOTS & ICEA) and "only totally plastic-free U.S. period product" claims are the brand’s own; ayna didn’t find the certificates published on its site.',
+            opinionAlerts: 'Organic cotton avoids fragrance, dyes, and chlorine bleaching, but "100% cotton" isn’t automatically lower TSS risk: a 2018 lab study found cotton/rayon blend tampons grew less S. aureus than cotton-only ones. Absorbency and wear time matter most (FDA). Verified: the cotton is certified organic under GOTS by ICEA, through Tampon Tribe’s manufacturer Cohitech (Spain), and a June 2024 independent lab report (CALITEC LAB, Barcelona) found no pesticide residues, glyphosate, GMOs, formaldehyde, or detectable heavy metals in the organic cotton.',
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
@@ -4791,6 +4791,8 @@ export const BRAND_PRODUCTS = [
                 links: [
                     { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety', text: 'FDA: Tampon Safety Facts', summary: 'FDA advises using the lowest absorbency tampon you need, changing every 4 to 8 hours and never wearing one longer than 8 hours, and knowing the signs of toxic shock syndrome (sudden high fever, vomiting, diarrhea, fainting or dizziness, or a sunburn-like rash). FDA also notes cleared tampons are made of cotton, rayon, or blends, bleached without elemental chlorine. This is category guidance, not validation of a specific product.' },
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5981080/', text: 'Impact of currently marketed tampons and menstrual cups on S. aureus growth and TSST-1 production in vitro (Nonfoux et al., 2018)', summary: 'In a lab study of 11 tampon types, tampons made of a cotton/rayon mix grew less Staphylococcus aureus than cotton-only tampons. It suggests "100% cotton" isn’t automatically lower TSS risk; absorbency and wear time matter more. Lab evidence, not a study of Tampon Tribe tampons.' },
+                    { url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications', text: 'Tampon Tribe: Third-Party Testing and Certifications', summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. Product-specific testing of the raw cotton, not a clinical study.' },
+                    { url: 'https://www.cohitech.net/en/', text: 'Cohitech (Cotton High Tech): manufacturer certifications', summary: 'Tampon Tribe’s manufacturer, the Spanish organic cotton producer named on its lab report. Cohitech states its products are certified organic under GOTS by ICEA and by Cotton Inc., that it is FDA-registered with ISO 13485/MDSAP medical-device quality certification, and that products are dermatologically tested by independent labs as hypoallergenic and non-irritating.' },
                 ],
             },
             community: {
@@ -4818,12 +4820,12 @@ export const BRAND_PRODUCTS = [
         image: '/products/tampon-tribe/organic-pads.webp',
         summary: 'Thin, winged pads made with certified organic cotton and no plastic. Day pads are 240 mm long with 100 ml absorbency; Night pads are 290 mm with 120 ml absorbency and double wings. "Gravity" anti-leak edges help keep you dry. Individually wrapped, with a plant-based backing and a vegan biopolymer adhesive instead of glue. Sold as a monthly subscription with free U.S. delivery.',
         safety: {
-            fdaStatus: 'Menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details.',
-            materials: '100% organic cotton top layer and absorbent core (GOTS & ICEA certified, per the brand). No superabsorbent gel, perfume, dyes, or glue; plant-based backing with a vegan biopolymer adhesive. Vegan and hypoallergenic, per the brand. Individually wrapped.',
+            fdaStatus: 'Menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details. The manufacturer, Cohitech, is FDA-registered and certified to ISO 13485 (medical-device quality management).',
+            materials: '100% organic cotton top layer and absorbent core (certified organic under GOTS by ICEA). No superabsorbent gel, perfume, dyes, or glue; plant-based backing with a vegan biopolymer adhesive. Vegan and hypoallergenic. Individually wrapped.',
             recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
-            allergens: 'Hypoallergenic, fragrance-free, dye-free, vegan (per the brand).',
+            allergens: 'Hypoallergenic (independently dermatologist-tested, per manufacturer Cohitech), fragrance-free, dye-free, and vegan.',
             sideEffects: 'None expected. Stop using if you notice irritation. Full notes are listed below.',
-            opinionAlerts: 'Without superabsorbent gel, these rely on cotton alone, so they may need changing more often on heavy days. Tampon Tribe’s organic-certification (GOTS & ICEA) and "only totally plastic-free U.S. period product" claims are the brand’s own; ayna didn’t find the certificates published on its site.',
+            opinionAlerts: 'Without superabsorbent gel, these rely on cotton alone, so they may need changing more often on heavy days. Verified: the cotton is certified organic under GOTS by ICEA, through Tampon Tribe’s manufacturer Cohitech (Spain), and a June 2024 independent lab report (CALITEC LAB, Barcelona) found no pesticide residues, glyphosate, GMOs, formaldehyde, or detectable heavy metals in the organic cotton.',
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
@@ -4858,6 +4860,8 @@ export const BRAND_PRODUCTS = [
             scientific: {
                 links: [
                     { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                    { url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications', text: 'Tampon Tribe: Third-Party Testing and Certifications', summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. Product-specific testing of the raw cotton, not a clinical study.' },
+                    { url: 'https://www.cohitech.net/en/', text: 'Cohitech (Cotton High Tech): manufacturer certifications', summary: 'Tampon Tribe’s manufacturer, the Spanish organic cotton producer named on its lab report. Cohitech states its products are certified organic under GOTS by ICEA and by Cotton Inc., that it is FDA-registered with ISO 13485/MDSAP medical-device quality certification, and that products are dermatologically tested by independent labs as hypoallergenic and non-irritating.' },
                 ],
             },
             community: {
@@ -4883,12 +4887,12 @@ export const BRAND_PRODUCTS = [
         image: '/products/tampon-tribe/pantyliners-bulk-buy.webp',
         summary: 'A one-time bulk pack of 48 ultrathin organic cotton pantyliners in a jute bag. Each liner is individually wrapped in a starch film (not plastic) and uses a biodegradable polymer adhesive. No perfume, superabsorbent, or chlorine bleaching. The same liners are also sold as a subscription (24 or 48 per box).',
         safety: {
-            fdaStatus: 'Pantyliners are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details.',
-            materials: '100% organic cotton absorbent core (GOTS certified, per the brand) with a cotton non-woven top sheet designed not to leave fibers on skin; individually wrapped in starch film; biodegradable polymer adhesive strip. Perfume-free, superabsorbent-free, no chlorine or dioxin bleaching.',
+            fdaStatus: 'Pantyliners are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details. The manufacturer, Cohitech, is FDA-registered and certified to ISO 13485 (medical-device quality management).',
+            materials: '100% organic cotton absorbent core (certified organic under GOTS by ICEA) with a cotton non-woven top sheet designed not to leave fibers on skin; individually wrapped in starch film; biodegradable polymer adhesive strip. Perfume-free, superabsorbent-free, no chlorine or dioxin bleaching.',
             recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
-            allergens: 'Hypoallergenic, fragrance-free, vegan (per the brand).',
+            allergens: 'Hypoallergenic (independently dermatologist-tested, per manufacturer Cohitech), fragrance-free, and vegan.',
             sideEffects: 'None expected. Stop using if you notice irritation.',
-            opinionAlerts: 'For light days, discharge, or backup only; not enough for a full period. Tampon Tribe’s organic-certification (GOTS & ICEA) and "only totally plastic-free U.S. period product" claims are the brand’s own; ayna didn’t find the certificates published on its site.',
+            opinionAlerts: 'For light days, discharge, or backup only; not enough for a full period. Verified: the cotton is certified organic under GOTS by ICEA, through Tampon Tribe’s manufacturer Cohitech (Spain), and a June 2024 independent lab report (CALITEC LAB, Barcelona) found no pesticide residues, glyphosate, GMOs, formaldehyde, or detectable heavy metals in the organic cotton.',
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
@@ -4923,6 +4927,8 @@ export const BRAND_PRODUCTS = [
             scientific: {
                 links: [
                     { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                    { url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications', text: 'Tampon Tribe: Third-Party Testing and Certifications', summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. Product-specific testing of the raw cotton, not a clinical study.' },
+                    { url: 'https://www.cohitech.net/en/', text: 'Cohitech (Cotton High Tech): manufacturer certifications', summary: 'Tampon Tribe’s manufacturer, the Spanish organic cotton producer named on its lab report. Cohitech states its products are certified organic under GOTS by ICEA and by Cotton Inc., that it is FDA-registered with ISO 13485/MDSAP medical-device quality certification, and that products are dermatologically tested by independent labs as hypoallergenic and non-irritating.' },
                 ],
             },
             community: {
@@ -4954,7 +4960,7 @@ export const BRAND_PRODUCTS = [
             recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
             allergens: 'Hypoallergenic, per the brand.',
             sideEffects: 'None expected with proper washing. Stop using if you notice irritation.',
-            opinionAlerts: 'The PFAS-free claim is the brand’s; ayna didn’t find independent test results. The absorbent layer’s material isn’t specified, and the site calls the product plastic-free. Tampon Tribe’s organic-certification (GOTS & ICEA) and "only totally plastic-free U.S. period product" claims are the brand’s own; ayna didn’t find the certificates published on its site.',
+            opinionAlerts: 'The absorbent layer’s material isn’t specified, and the site calls the product plastic-free. Tampon Tribe publishes its GOTS/ICEA certification and third-party lab testing for its organic cotton; the PFAS-free claim specific to these reusable pads isn’t covered by that testing.',
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
@@ -4989,6 +4995,7 @@ export const BRAND_PRODUCTS = [
             scientific: {
                 links: [
                     { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                    { url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications', text: 'Tampon Tribe: Third-Party Testing and Certifications', summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. Product-specific testing of the raw cotton, not a clinical study.' },
                 ],
             },
             community: {
@@ -5014,12 +5021,12 @@ export const BRAND_PRODUCTS = [
         image: '/products/tampon-tribe/organic-teen-pads.webp',
         summary: 'Smaller winged pads made for teens and tweens, sized to fit smaller bodies and underwear: 7.2 inches long with 40 ml absorbency. Made with certified organic cotton and no plastic, fragrance, or dyes, with "gravity" anti-leak edges. Individually wrapped, and available individually boxed so they’re easy to keep in a school bag.',
         safety: {
-            fdaStatus: 'Menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details.',
-            materials: 'Certified organic cotton (per the brand). No superabsorbent gel, perfume, dyes, or glue; plant-based backing with a vegan biopolymer adhesive. Vegan and hypoallergenic, per the brand. Individually wrapped; optional individual boxes.',
+            fdaStatus: 'Menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details. The manufacturer, Cohitech, is FDA-registered and certified to ISO 13485 (medical-device quality management).',
+            materials: 'Certified organic cotton (GOTS, certified by ICEA). No superabsorbent gel, perfume, dyes, or glue; plant-based backing with a vegan biopolymer adhesive. Vegan and hypoallergenic. Individually wrapped; optional individual boxes.',
             recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
-            allergens: 'Hypoallergenic, fragrance-free, dye-free, vegan (per the brand).',
+            allergens: 'Hypoallergenic (independently dermatologist-tested, per manufacturer Cohitech), fragrance-free, dye-free, and vegan.',
             sideEffects: 'None expected. Stop using if you notice irritation.',
-            opinionAlerts: 'At 40 ml, these are for lighter days; heavier flow may need a full-size pad. Tampon Tribe’s organic-certification (GOTS & ICEA) and "only totally plastic-free U.S. period product" claims are the brand’s own; ayna didn’t find the certificates published on its site.',
+            opinionAlerts: 'At 40 ml, these are for lighter days; heavier flow may need a full-size pad. Verified: the cotton is certified organic under GOTS by ICEA, through Tampon Tribe’s manufacturer Cohitech (Spain), and a June 2024 independent lab report (CALITEC LAB, Barcelona) found no pesticide residues, glyphosate, GMOs, formaldehyde, or detectable heavy metals in the organic cotton.',
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
@@ -5054,6 +5061,8 @@ export const BRAND_PRODUCTS = [
             scientific: {
                 links: [
                     { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                    { url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications', text: 'Tampon Tribe: Third-Party Testing and Certifications', summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. Product-specific testing of the raw cotton, not a clinical study.' },
+                    { url: 'https://www.cohitech.net/en/', text: 'Cohitech (Cotton High Tech): manufacturer certifications', summary: 'Tampon Tribe’s manufacturer, the Spanish organic cotton producer named on its lab report. Cohitech states its products are certified organic under GOTS by ICEA and by Cotton Inc., that it is FDA-registered with ISO 13485/MDSAP medical-device quality certification, and that products are dermatologically tested by independent labs as hypoallergenic and non-irritating.' },
                 ],
             },
             community: {
