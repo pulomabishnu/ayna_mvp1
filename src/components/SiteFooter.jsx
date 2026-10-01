@@ -53,6 +53,7 @@ export default function SiteFooter({
 
         <FooterColumn title="Help + privacy">
           <FooterButton onClick={onViewContact}>Help & Contact</FooterButton>
+          <a className="v6-footer-link" href="/campus-resources">Campus Resources</a>
           <FooterButton onClick={onViewPrivacyPolicy}>Privacy Policy</FooterButton>
           <a className="v6-footer-link" href="/consumer-health-data.html">Consumer Health Data Privacy</a>
           <FooterButton onClick={onViewTermsOfUse}>Terms of Use</FooterButton>

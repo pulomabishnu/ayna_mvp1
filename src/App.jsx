@@ -27,6 +27,7 @@ const BrandPartners = React.lazy(() => import('./components/BrandPartners'));
 const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
 const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
+const CampusResources = React.lazy(() => import('./components/CampusResources'));
 import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage } from './data/products';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import Screenings from './components/Screenings';
@@ -115,6 +116,7 @@ const VIEW_TO_PATH = {
   'how-it-works': '/how-it-works',
   about: '/about',
   contact: '/contact',
+  'campus-resources': '/campus-resources',
   'auth-callback': '/auth/callback',
   'auth-confirm': '/auth/confirm',
   'confirmed': '/confirmed',
@@ -133,6 +135,7 @@ const VIEW_TITLES = {
   'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
+  'campus-resources': 'Campus Sexual Assault Support Resources',
   'admin-reviews': 'All Reviews',
 };
 
@@ -309,7 +312,7 @@ function App() {
   }, [setCurrentView]);
   useEffect(() => {
     const path = pathForView(currentView, productRouteId);
-    const initialUrl = currentView === 'auth-callback'
+    const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources')
       ? `${path}${window.location.search}${window.location.hash}`
       : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
@@ -1562,6 +1565,15 @@ function App() {
     const label = VIEW_TITLES[currentView];
     document.title = label ? `${label} | ayna` : base;
   }, [currentView, displayedProduct, productStillResolving]);
+
+  // Campus Resources gets its own meta description; restored on leave.
+  useEffect(() => {
+    if (currentView !== 'campus-resources') return undefined;
+    const meta = document.querySelector('meta[name="description"]');
+    const prev = meta?.getAttribute('content');
+    meta?.setAttribute('content', 'Find verified sexual assault support, advocacy, reporting, medical, and campus resources for your college or university.');
+    return () => { if (meta && prev != null) meta.setAttribute('content', prev); };
+  }, [currentView]);
 
   const handleRateProduct = (product, rating) => {
     const next = addRating(product.id, rating);
@@ -3116,6 +3128,11 @@ function App() {
         {currentView === 'contact' && (
           <Contact onBack={handleBackFromStandalonePage} />
         )}
+        {currentView === 'campus-resources' && (
+          <Suspense fallback={<ViewLoadingFallback />}>
+            <CampusResources />
+          </Suspense>
+        )}
         {currentView === 'auth-callback' && (
           <AuthCallback onAuthenticated={(user) => {
             // Navigation is handled by the restored pendingAction effect so
@@ -3372,7 +3389,7 @@ function App() {
           />
         )}
 
-        {showHealthProfileUpdateNotice && user && (
+        {showHealthProfileUpdateNotice && user && currentView !== 'campus-resources' && (
           <div
             role="dialog"
             aria-modal="true"
@@ -3551,7 +3568,7 @@ function App() {
       {/* Outside the currentView switch on purpose — the same bar on every
           view, fixed to the bottom of the viewport, so DOM order here is
           only about it never being unmounted by navigation. */}
-      <ConsentBanner />
+      {currentView !== 'campus-resources' && <ConsentBanner />}
     </div>
   );
 }
