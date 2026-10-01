@@ -75,7 +75,7 @@ function JaneDoeSection() {
     <section className="cr-case" id="jane-doe" aria-labelledby="cr-case-h">
       <p className="cr-case__tag">Advocacy and news information, separate from Cornell’s official resources</p>
       <h2 id="cr-case-h" className="cr-h2">Jane Doe case &amp; petition</h2>
-      <p className="cr-lede">This section is not a support service and is not from Cornell. It summarizes an unresolved case, with each statement attributed to its source. Allegations have not been proven.</p>
+      <p className="cr-lede">This concerns a case at Cornell University and is shown to all visitors. It is not a support service and is not from Cornell. It summarizes an unresolved case, with each statement attributed to its source. Allegations have not been proven.</p>
       <ExternalLink className="cr-btn cr-btn--primary" href={PETITION.url}>{PETITION.label}</ExternalLink>
       <p className="cr-small">{PETITION.note}</p>
 
@@ -130,7 +130,6 @@ function SchoolSection({ school }) {
         </p>
       )}
 
-      {school.id === 'cornell-university' && <JaneDoeSection />}
     </section>
   );
 }
@@ -204,6 +203,8 @@ export default function CampusResources() {
           )}
         </div>
 
+        <p className="cr-small"><a href="#jane-doe">Jane Doe case &amp; petition (Cornell)</a></p>
+
         <NationalSection />
 
         {selected && !unverified && (
@@ -212,6 +213,8 @@ export default function CampusResources() {
             <SchoolSection school={selected} />
           </>
         )}
+
+        <JaneDoeSection />
       </div>
     </div>
   );
