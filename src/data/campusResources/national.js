@@ -22,6 +22,7 @@ export const NATIONAL_RESOURCES = [
   },
   {
     id: 'ny-state-hotline',
+    onlyStates: ['NY'],
     name: 'New York State Domestic and Sexual Violence Hotline',
     category: 'national',
     description: 'Cornell lists this as a source of confidential support resources beyond those on its own list.',

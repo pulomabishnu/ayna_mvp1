@@ -30,8 +30,9 @@ function ResourceCard({ r }) {
 
       {(r.phone || r.text || r.email || r.chat || r.actions || r.website) && (
         <div className="cr-actions">
-          {r.phone && <a className="cr-btn cr-btn--primary" href={telHref(r.phone)}>Call {callLabel}</a>}
-          {r.text && <a className="cr-btn cr-btn--primary" href={`sms:${r.text.number}?&body=${encodeURIComponent(r.text.keyword)}`}>Text {r.text.keyword} to {r.text.number}</a>}
+          {r.phone && <a className="cr-btn cr-btn--primary" href={telHref(r.phone)}>Call {callLabel}{r.phoneLabel ? ` (${r.phoneLabel})` : ''}</a>}
+          {(r.extraPhones || []).map((p) => <a key={p.number} className="cr-btn cr-btn--primary" href={telHref(p.number)}>Call {p.display || p.number}{p.label ? ` (${p.label})` : ''}</a>)}
+          {r.text && <a className="cr-btn cr-btn--primary" href={r.text.keyword ? `sms:${r.text.number}?&body=${encodeURIComponent(r.text.keyword)}` : `sms:${r.text.number}`}>{r.text.keyword ? `Text ${r.text.keyword} to ${r.text.number}` : `Text ${r.text.number}`}</a>}
           {r.chat && <ExternalLink className="cr-btn" href={r.chat.url}>{r.chat.label}</ExternalLink>}
           {(r.actions || []).map((a) => <ExternalLink key={a.url} className="cr-btn" href={a.url}>{a.label}</ExternalLink>)}
           {r.email && <a className="cr-btn" href={`mailto:${r.email}`}>Email {r.email}</a>}
@@ -58,12 +59,12 @@ function CardList({ items }) {
   return <ul className="cr-list">{items.map((r) => <ResourceCard key={r.id} r={r} />)}</ul>;
 }
 
-function NationalSection() {
+function NationalSection({ school }) {
   return (
     <section className="cr-section" id="national" aria-labelledby="cr-national-h">
       <h2 id="cr-national-h" className="cr-h2">National support</h2>
       <p className="cr-lede">Available for every school, whether or not we have verified resources for yours.</p>
-      <CardList items={NATIONAL_RESOURCES} />
+      <CardList items={NATIONAL_RESOURCES.filter((r) => !r.onlyStates || (school && r.onlyStates.includes(school.state)))} />
     </section>
   );
 }
@@ -106,7 +107,7 @@ function SchoolSection({ school }) {
   return (
     <section className="cr-school" aria-labelledby="cr-school-h">
       <h2 id="cr-school-h" className="cr-h2 cr-h2--xl">{school.name}</h2>
-      <p className="cr-lede">{school.subtitle}</p>
+      <p className="cr-lede">{school.subtitle || `Sexual assault support, advocacy, reporting, and care resources for the ${school.name} community.`}</p>
       <p className="cr-small">Last verified: {formatVerified(school.lastVerified)}</p>
 
       <nav className="cr-jump" aria-label={`Jump to a section for ${school.name}`}>
@@ -205,7 +206,7 @@ export default function CampusResources() {
 
         <p className="cr-small"><a href="#jane-doe">Jane Doe case &amp; petition (Cornell)</a></p>
 
-        <NationalSection />
+        <NationalSection school={selected} />
 
         {selected && !unverified && (
           <>

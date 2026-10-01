@@ -42,6 +42,23 @@ describe('campus resources data integrity', () => {
   });
 });
 
+describe('multi-school data', () => {
+  it('school ids are unique and all phone fields are 10 digits', () => {
+    const ids = SCHOOLS.map((s) => s.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    SCHOOLS.forEach((s) => s.resources.forEach((r) => {
+      const nums = [r.phone, r.text && r.text.number, ...(r.extraPhones || []).map((p) => p.number)].filter(Boolean);
+      nums.forEach((n) => expect(String(n).replace(/\D/g, '')).toHaveLength(10));
+    }));
+  });
+  it('search does not mismatch similar names', () => {
+    expect(searchSchools('michigan state')).toEqual([]);
+    expect(searchSchools('ucla').map((s) => s.id)).toContain('ucla');
+    expect(searchSchools('michigan').map((s) => s.id)).toContain('university-of-michigan');
+    expect(searchSchools('ithaca').map((s) => s.id)).toContain('cornell-university');
+  });
+});
+
 describe('privacy', () => {
   it('CampusResources component never calls analytics', () => {
     const src = readFileSync(new URL('../../components/CampusResources.jsx', import.meta.url), 'utf8');
