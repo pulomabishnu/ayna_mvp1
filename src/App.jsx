@@ -152,7 +152,9 @@ function getInitialView() {
   // anything was wrong (found live, 2026-08-24 bug bash). The root path
   // itself is explicitly mapped in PATH_TO_VIEW, so this only ever affects
   // a genuinely unknown path, never '/'.
-  return PATH_TO_VIEW[path] || 'not-found';
+  // Tolerate a trailing slash (e.g. /campus-resources/ from a shared link).
+  const trimmed = path.length > 1 ? path.replace(/\/+$/, '') : path;
+  return PATH_TO_VIEW[path] || PATH_TO_VIEW[trimmed] || 'not-found';
 }
 
 function getInitialProductId() {
@@ -321,7 +323,7 @@ function App() {
   useEffect(() => {
     const onPop = (e) => {
       const pathProductId = parseProductIdFromPath(window.location.pathname);
-      const view = pathProductId ? 'product' : (e.state?.view || PATH_TO_VIEW[window.location.pathname] || 'not-found');
+      const view = pathProductId ? 'product' : (e.state?.view || PATH_TO_VIEW[window.location.pathname] || PATH_TO_VIEW[window.location.pathname.replace(/\/+$/, '')] || 'not-found');
       currentViewRef.current = view;
       setCurrentViewRaw(view);
       setProductRouteId(pathProductId);
