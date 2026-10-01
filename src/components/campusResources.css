@@ -62,3 +62,5 @@
 .cr-schools-list summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
 .cr-schools-list ul { list-style: none; margin: 0; padding: 0 0 8px; }
 .cr-schools-list li { padding: 2px 0; }
+.cr-case a.cr-btn,.cr-sources a.cr-btn,.cr-small a.cr-btn{text-decoration:none}
+.cr-case a.cr-btn--primary,.cr-sources a.cr-btn--primary,.cr-small a.cr-btn--primary{color:#FFFCF9}
