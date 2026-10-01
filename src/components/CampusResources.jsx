@@ -192,9 +192,14 @@ export default function CampusResources() {
             </ul>
           )}
           {!trimmed && !selected && (
-            <p className="cr-small">Schools with verified resources: {SCHOOLS.map((s, i) => (
-              <React.Fragment key={s.id}>{i > 0 && ', '}<button type="button" className="cr-link" onClick={() => pick(s.id)}>{s.name}</button></React.Fragment>
-            ))}</p>
+            <details className="cr-small cr-schools-list">
+              <summary>Schools with verified resources ({SCHOOLS.length})</summary>
+              <ul>
+                {SCHOOLS.map((s) => (
+                  <li key={s.id}><button type="button" className="cr-link" onClick={() => pick(s.id)}>{s.name}</button></li>
+                ))}
+              </ul>
+            </details>
           )}
           {unverified && (
             <div className="cr-unverified">
