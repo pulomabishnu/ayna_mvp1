@@ -3,6 +3,7 @@ import { availablePreferenceOptions, matchesProductPreference } from '../utils/p
 import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
+import { getWeeklyTrendingLineup, orderByWeeklyTrending, takeDistinctCategories } from '../utils/trendingLineup';
 
 /**
  * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
@@ -21,18 +22,6 @@ import { getVerificationLinks } from '../utils/verificationLinks';
  * Numbers below are the mockup's literal values, not the app's design tokens,
  * because the point is to reproduce those two boards.
  */
-
-/** The eight products in board 1a's Shop grid, with the mockup's own category eyebrows. */
-const SHOP_LINEUP = [
-  { id: 'p-lola-pad', label: 'PADS' },
-  { id: 'p-elvie-trainer', label: 'PELVIC FLOOR' },
-  { id: 'p-wuka-underwear', label: 'PERIOD WEAR' },
-  { id: 'p-b-complex', label: 'SUPPLEMENTS' },
-  { id: 'p-silverette-cups', label: 'POSTPARTUM' },
-  { id: 'p-neycher-vaginal-moisturizer', label: 'INTIMATE CARE' },
-  { id: 'p-lola-tampon', label: 'TAMPONS' },
-  { id: 'p-dame-arc', label: 'INTIMACY' },
-];
 
 const CHIP_SETS = [
   ['Postpartum recovery', 'Organic pads', 'Pelvic floor', 'Supplements for cramps'],
@@ -187,10 +176,6 @@ function displayNameFromUser(user) {
   if (firstFromMeta) return firstFromMeta.charAt(0).toUpperCase() + firstFromMeta.slice(1);
 
   return '';
-}
-
-function productById(id) {
-  return ALL_PRODUCTS.find((p) => p.id === id) || null;
 }
 
 /** Cream tile with the product photo, falling back to the mockup's initial-on-cream block. */
@@ -366,6 +351,8 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
 
   const availableProductTypes = useMemo(() => productTypeOptions(), []);
 
+  const weeklyLineup = useMemo(() => getWeeklyTrendingLineup(ALL_PRODUCTS), []);
+
   const shownProducts = useMemo(() => {
     let list = ALL_PRODUCTS.filter((product) => product?.id && product?.name && matchesShopFilter(product, filter));
 
@@ -406,6 +393,10 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
         return match.eligible && (!/menopaus/i.test(stages) || match.percent > 0);
       });
     }
+    // Start from this week's Trending order so the grid rotates weekly; the
+    // personalization sort below is stable, so it only lifts owned/recommended
+    // products above it.
+    list = orderByWeeklyTrending(list, weeklyLineup);
     if (personalize) {
       list = [...list].sort((a, b) => {
         const score = (product) => {
@@ -418,8 +409,10 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
       });
     }
 
-    return list.slice(0, 8);
-  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas, healthIntake]);
+    // One product per category — unless the shopper picked a single product
+    // type, where every result is the same category by definition.
+    return productTypeFilter === 'all' ? takeDistinctCategories(list, 8) : list.slice(0, 8);
+  }, [weeklyLineup, filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas, healthIntake]);
 
   const clearShopFilters = () => {
     setFilter('all');
@@ -695,12 +688,8 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
     return () => window.clearInterval(timer);
   }, [chipsPaused, reduceMotion]);
 
-  const lineup = useMemo(
-    () => SHOP_LINEUP
-      .map(({ id, label }) => ({ product: productById(id), label }))
-      .filter((x) => x.product),
-    [],
-  );
+  // Rotates weekly, one product per category — see utils/trendingLineup.js.
+  const lineup = useMemo(() => getWeeklyTrendingLineup(ALL_PRODUCTS), []);
 
   const availableShopFilters = useMemo(
     () => SHOP_FILTERS.filter((item) => item.key === 'all' || lineup.some(({ product }) => matchesShopFilter(product, item.key))),
