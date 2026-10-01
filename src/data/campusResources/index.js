@@ -43,12 +43,42 @@ import { rutgers } from './schools/rutgers';
 import { umass } from './schools/umass';
 import { bu } from './schools/bu';
 import { emory } from './schools/emory';
+import { harvard } from './schools/harvard';
+import { jhu } from './schools/jhu';
+import { notredame } from './schools/notredame';
+import { wakeforest } from './schools/wakeforest';
+import { bostoncollege } from './schools/bostoncollege';
+import { usc } from './schools/usc';
+import { ucsd } from './schools/ucsd';
+import { ucdavis } from './schools/ucdavis';
+import { ucsb } from './schools/ucsb';
+import { uci } from './schools/uci';
+import { uga } from './schools/uga';
+import { clemson } from './schools/clemson';
+import { uofsc } from './schools/uofsc';
+import { auburn } from './schools/auburn';
+import { alabama } from './schools/alabama';
+import { purdue } from './schools/purdue';
+import { uiuc } from './schools/uiuc';
+import { unl } from './schools/unl';
+import { isu } from './schools/isu';
+import { mizzou } from './schools/mizzou';
+import { utk } from './schools/utk';
+import { lsu } from './schools/lsu';
+import { virginiatech } from './schools/virginiatech';
+import { ncstate } from './schools/ncstate';
+import { pitt } from './schools/pitt';
+import { syracuse } from './schools/syracuse';
+import { uconn } from './schools/uconn';
+import { tufts } from './schools/tufts';
+import { northeastern } from './schools/northeastern';
+import { umiami } from './schools/umiami';
 import { CATEGORIES } from './categories';
 
 // To add a school: create schools/<slug>.js with verified data (same shape as
 // cornell.js) and add it here. No UI changes needed. Never add a school whose
 // facts were not read from an official source on the lastVerified date.
-export const SCHOOLS = [cornell, berkeley, brown, cuboulder, dartmouth, indiana, iowa, kentucky, michigan, osu, pennstate, stanford, ucla, utah, uva, yale, princeton, columbia, upenn, mit, duke, unc, nyu, georgetown, northwestern, uchicago, tamu, rice, tulane, vanderbilt, utaustin, uf, fsu, uwmadison, umn, msu, uwseattle, uoregon, asu, uarizona, umd, rutgers, umass, bu, emory];
+export const SCHOOLS = [cornell, berkeley, brown, cuboulder, dartmouth, indiana, iowa, kentucky, michigan, osu, pennstate, stanford, ucla, utah, uva, yale, princeton, columbia, upenn, mit, duke, unc, nyu, georgetown, northwestern, uchicago, tamu, rice, tulane, vanderbilt, utaustin, uf, fsu, uwmadison, umn, msu, uwseattle, uoregon, asu, uarizona, umd, rutgers, umass, bu, emory, harvard, jhu, notredame, wakeforest, bostoncollege, usc, ucsd, ucdavis, ucsb, uci, uga, clemson, uofsc, auburn, alabama, purdue, uiuc, unl, isu, mizzou, utk, lsu, virginiatech, ncstate, pitt, syracuse, uconn, tufts, northeastern, umiami];
 
 export function normalize(s) {
   return String(s || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();

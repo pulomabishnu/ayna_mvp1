@@ -71,3 +71,12 @@ describe('privacy', () => {
     expect(src).toMatch(/campus-resources/);
   });
 });
+
+describe('global uniqueness', () => {
+  it('resource ids and school ids are unique across all schools', () => {
+    const ids = SCHOOLS.flatMap((s) => s.resources.map((r) => r.id));
+    expect(new Set(ids).size).toBe(ids.length);
+    const sids = SCHOOLS.map((s) => s.id);
+    expect(new Set(sids).size).toBe(sids.length);
+  });
+});
