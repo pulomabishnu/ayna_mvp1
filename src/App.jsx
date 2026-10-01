@@ -555,7 +555,7 @@ function App() {
     const STATIC_VIEWS = [
       'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles',
-      'how-it-works', 'how-we-make-money',
+      'how-it-works', 'how-we-make-money', 'campus-resources',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
@@ -865,7 +865,7 @@ function App() {
     const isGoogle = user?.app_metadata?.provider === 'google'
       || (Array.isArray(user?.identities) && user.identities.some((i) => i?.provider === 'google'));
     const missingConsent = Boolean(user) && isGoogle && !user.user_metadata?.consent_given_at;
-    if (!missingConsent || authLoading || currentView === 'auth-callback') {
+    if (!missingConsent || authLoading || currentView === 'auth-callback' || currentView === 'campus-resources') {
       setConsentGateOpen(false);
       return undefined;
     }
@@ -3323,7 +3323,7 @@ function App() {
           />
         )}
 
-        {quizResults && (
+        {quizResults && currentView !== 'campus-resources' && (
           <ProfileChatbot
             profile={quizResults}
             user={user}
