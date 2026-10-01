@@ -47,14 +47,16 @@ describe('multi-school data', () => {
     const ids = SCHOOLS.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
     SCHOOLS.forEach((s) => s.resources.forEach((r) => {
-      const nums = [r.phone, r.text && r.text.number, ...(r.extraPhones || []).map((p) => p.number)].filter(Boolean);
+      const nums = [r.phone, ...(r.extraPhones || []).map((p) => p.number)].filter(Boolean);
       nums.forEach((n) => expect(String(n).replace(/\D/g, '')).toHaveLength(10));
+      if (r.text) expect(String(r.text.number).replace(/\D/g, '')).toMatch(/^(\d{5,6}|\d{10})$/);
     }));
   });
   it('search does not mismatch similar names', () => {
     expect(searchSchools('michigan state')).toEqual([]);
     expect(searchSchools('ucla').map((s) => s.id)).toContain('ucla');
     expect(searchSchools('michigan').map((s) => s.id)).toContain('university-of-michigan');
+    expect(searchSchools('evanston').map((s) => s.id)).toContain('northwestern-university');
     expect(searchSchools('ithaca').map((s) => s.id)).toContain('cornell-university');
   });
 });

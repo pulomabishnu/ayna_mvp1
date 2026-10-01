@@ -13,12 +13,27 @@ import { stanford } from './schools/stanford';
 import { ucla } from './schools/ucla';
 import { utah } from './schools/utah';
 import { uva } from './schools/uva';
+import { yale } from './schools/yale';
+import { princeton } from './schools/princeton';
+import { columbia } from './schools/columbia';
+import { upenn } from './schools/upenn';
+import { mit } from './schools/mit';
+import { duke } from './schools/duke';
+import { unc } from './schools/unc';
+import { nyu } from './schools/nyu';
+import { georgetown } from './schools/georgetown';
+import { northwestern } from './schools/northwestern';
+import { uchicago } from './schools/uchicago';
+import { tamu } from './schools/tamu';
+import { rice } from './schools/rice';
+import { tulane } from './schools/tulane';
+import { vanderbilt } from './schools/vanderbilt';
 import { CATEGORIES } from './categories';
 
 // To add a school: create schools/<slug>.js with verified data (same shape as
 // cornell.js) and add it here. No UI changes needed. Never add a school whose
 // facts were not read from an official source on the lastVerified date.
-export const SCHOOLS = [cornell, berkeley, brown, cuboulder, dartmouth, indiana, iowa, kentucky, michigan, osu, pennstate, stanford, ucla, utah, uva];
+export const SCHOOLS = [cornell, berkeley, brown, cuboulder, dartmouth, indiana, iowa, kentucky, michigan, osu, pennstate, stanford, ucla, utah, uva, yale, princeton, columbia, upenn, mit, duke, unc, nyu, georgetown, northwestern, uchicago, tamu, rice, tulane, vanderbilt];
 
 export function normalize(s) {
   return String(s || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
