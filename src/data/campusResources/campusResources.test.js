@@ -53,7 +53,7 @@ describe('multi-school data', () => {
     }));
   });
   it('search does not mismatch similar names', () => {
-    expect(searchSchools('michigan state')).toEqual([]);
+    expect(searchSchools('michigan state').map((s) => s.id)).toEqual(['michigan-state-university']);
     expect(searchSchools('ucla').map((s) => s.id)).toContain('ucla');
     expect(searchSchools('michigan').map((s) => s.id)).toContain('university-of-michigan');
     expect(searchSchools('evanston').map((s) => s.id)).toContain('northwestern-university');
