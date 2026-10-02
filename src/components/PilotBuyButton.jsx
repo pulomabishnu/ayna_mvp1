@@ -39,7 +39,7 @@ export default function PilotBuyButton({ productId }) {
   }
   return <div>
     <button className="pdp-btn pdp-btn--navy" disabled={busy} onClick={buy}>{busy ? 'Opening checkout…' : 'Buy on ayna — test'}</button>
-    <small style={{ display: 'block' }}>Test payment only · no shipment</small>
+    <small style={{ display: 'block' }}>Test payment only · a 10% ayna service fee is added at checkout</small>
     <a href="/pilot/orders">My test orders</a>
     {new URLSearchParams(window.location.search).has('pilot_cancelled') && <p>Checkout cancelled. You can try again.</p>}
     {error && <p role="alert" style={{ color: '#b42318', fontWeight: 600 }}>{error}</p>}

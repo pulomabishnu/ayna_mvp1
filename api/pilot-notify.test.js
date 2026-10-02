@@ -71,3 +71,15 @@ describe('carrier tracking links', () => {
     expect(validTracking({ carrier: 'USPS', tracking_number: '9400', tracking_url: 'https://example.com/t' }).tracking_url).toBe('https://example.com/t');
   });
 });
+
+import { serviceFeeCents } from './_pilot.js';
+describe('ayna service fee', () => {
+  it('defaults to 10% rounded to the cent, is configurable, and rejects bad values', () => {
+    expect(serviceFeeCents(800, {})).toBe(80);
+    expect(serviceFeeCents(1299, {})).toBe(130);
+    expect(serviceFeeCents(800, { PILOT_SERVICE_FEE_PERCENT: '0' })).toBe(0);
+    expect(serviceFeeCents(800, { PILOT_SERVICE_FEE_PERCENT: '15' })).toBe(120);
+    expect(() => serviceFeeCents(800, { PILOT_SERVICE_FEE_PERCENT: '100' })).toThrow();
+    expect(() => serviceFeeCents(800, { PILOT_SERVICE_FEE_PERCENT: 'ten' })).toThrow();
+  });
+});

@@ -14,6 +14,14 @@ export function pilotConfig(env = process.env) {
     admins: (env.PILOT_ADMIN_USER_IDS || '').split(',').map(s => s.trim()).filter(Boolean),
   };
 }
+// ayna service fee, as a percent of the product price (default 10%). Rounded to
+// the nearest cent. 0 turns it off. Capped at 30% to catch typos.
+export function serviceFeeCents(unitAmount, env = process.env) {
+  const raw = env.PILOT_SERVICE_FEE_PERCENT;
+  const pct = raw === undefined || raw === '' ? 10 : Number(raw);
+  if (!Number.isFinite(pct) || pct < 0 || pct > 30) throw new Error('Invalid PILOT_SERVICE_FEE_PERCENT');
+  return Math.round(unitAmount * pct / 100);
+}
 export function stripeClient() {
   if (!process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_')) throw new Error('Stripe test key required');
   return new Stripe(process.env.STRIPE_SECRET_KEY, { maxNetworkRetries: 2, timeout: 10000 });

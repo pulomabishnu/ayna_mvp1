@@ -31,6 +31,7 @@ The catalog describes the product as `$8 for 18` and routes it through an affili
 | `PILOT_STRIPE_PRICE_ID` | Active one-time USD test `price_...`, with matching metadata |
 | `PILOT_VENDOR_NAME` | Explicit test fulfillment destination label; does not establish a brand partnership |
 | `PILOT_ADMIN_USER_IDS` | Comma-separated Supabase user UUIDs; at least one required |
+| `PILOT_SERVICE_FEE_PERCENT` | Optional. ayna service fee as its own checkout line, % of product price. Default 10; 0 turns it off; max 30 |
 | `PILOT_NOTIFY_EMAILS` | Optional. Who gets the new-order email; defaults to ameera@, puloma@, eliz@aynahealth.co |
 | `STRIPE_SECRET_KEY` | Server-only `sk_test_...`; live keys rejected |
 | `STRIPE_WEBHOOK_SECRET` | Server-only `whsec_...` for the test webhook endpoint |

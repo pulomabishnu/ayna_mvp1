@@ -1,5 +1,5 @@
 /* global process */
-import { pilotConfig, stripeClient, database, checked, signedIn } from './_pilot.js';
+import { pilotConfig, stripeClient, database, checked, signedIn, serviceFeeCents } from './_pilot.js';
 import { rateLimit } from './_rateLimit.js';
 
 export default async function handler(req, res) {
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
       step = 'create_order';
       const inserted = await db.from('pilot_orders').insert({
         user_id: user.id, attempt_id: body.attemptId, product_id: product.id,
-        product_name: product.name, stripe_price_id: price.id, amount: price.unit_amount,
+        product_name: product.name, stripe_price_id: price.id, amount: price.unit_amount + serviceFeeCents(price.unit_amount),
         currency: price.currency, vendor_name: config.vendor,
       }).select('*').single();
       if (inserted.error?.code === '23505') order = checked(await db.from('pilot_orders').select('*').eq('user_id', user.id).eq('attempt_id', body.attemptId).single());
@@ -44,11 +44,21 @@ export default async function handler(req, res) {
     // Stripe only retains idempotency keys for 24h. Never reuse an older attempt.
     if (Date.now() - Date.parse(order.created_at) > 23 * 3600000) return res.status(409).json({ error: 'Checkout expired. Start a new checkout.', restart: true });
     step = 'stripe_checkout';
+    // The order total was fixed when the order was created (product + fee), so a
+    // later fee-setting change never alters an in-progress order.
+    let lineItems = null;
+    if (!order.stripe_session_id) {
+      const unit = (await stripe.prices.retrieve(order.stripe_price_id)).unit_amount;
+      const fee = order.amount - unit;
+      if (!Number.isSafeInteger(fee) || fee < 0) throw new Error('Order total does not match price');
+      lineItems = [{ price: order.stripe_price_id, quantity: 1 }];
+      if (fee > 0) lineItems.push({ quantity: 1, price_data: { currency: order.currency, unit_amount: fee, product_data: { name: 'ayna service fee', description: 'Covers sourcing, packing and shipping coordination by the ayna team.' } } });
+    }
     const session = order.stripe_session_id
       ? await stripe.checkout.sessions.retrieve(order.stripe_session_id)
       : await stripe.checkout.sessions.create({
         mode: 'payment', payment_method_types: ['card'],
-        line_items: [{ price: order.stripe_price_id, quantity: 1 }],
+        line_items: lineItems,
         client_reference_id: user.id, metadata: { ayna_order_id: order.id },
         shipping_address_collection: { allowed_countries: ['US'] },
         success_url: `${config.origin}/pilot/orders`,
