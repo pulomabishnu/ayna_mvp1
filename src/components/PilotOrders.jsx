@@ -28,8 +28,9 @@ function TrackingForm({ order, refresh }) {
     event.preventDefault(); setSaving(true); setMessage('');
     const fields = Object.fromEntries(new FormData(event.currentTarget));
     try {
-      await request('/api/pilot-orders', { method: 'PATCH', body: JSON.stringify({ ...fields, orderId: order.id }) });
-      setMessage('Tracking saved.'); await refresh();
+      const r = await request('/api/pilot-orders', { method: 'PATCH', body: JSON.stringify({ ...fields, orderId: order.id }) });
+      setMessage(!r.firstShipment ? 'Tracking updated (customer was already emailed, no new email sent).' : r.emailed ? 'Tracking saved and the customer was emailed.' : 'Tracking saved. The shipping email could not be sent — the customer can still see it on their orders page.');
+      await refresh();
     } catch (e) { setMessage(e.message); }
     finally { setSaving(false); }
   }

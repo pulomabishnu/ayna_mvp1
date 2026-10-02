@@ -91,3 +91,29 @@ export async function notifyTeam(order, session, { env = process.env, send = fet
     return r.ok;
   } catch (e) { console.error('[pilot] order notification error', e?.message); return false; }
 }
+
+// Customer "your order shipped" email. Sent once, when tracking is first saved
+// (later corrections don't re-send). Best-effort: tracking is already saved and
+// visible on /pilot/orders even if the email fails.
+export async function notifyCustomerShipped(order, tracking, email, { env = process.env, send = fetch } = {}) {
+  if (!env.RESEND_API_KEY || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || '')) return false;
+  const ordersUrl = `${pilotConfig(env).origin}/pilot/orders`;
+  const test = env.STRIPE_SECRET_KEY?.startsWith('sk_test_') ? '[TEST] ' : '';
+  const trackLine = tracking.tracking_url ? `Track it: ${tracking.tracking_url}` : '';
+  try {
+    const r = await send('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
+        to: [email],
+        reply_to: teamRecipients(env)[0],
+        subject: `${test}Your ayna order has shipped: ${order.product_name}`,
+        text: [`Good news — your ${order.product_name} is on its way.`, '', `Carrier: ${tracking.carrier}`, `Tracking number: ${tracking.tracking_number}`, trackLine, '', `See your order: ${ordersUrl}`, '', 'Questions? Just reply to this email.'].filter(l => l !== null).join('\n'),
+        html: `<div style="font-family:Arial,sans-serif;color:#1A1714;line-height:1.6"><h2>Your order has shipped</h2><p>Your <strong>${esc(order.product_name)}</strong> is on its way.</p><p>Carrier: ${esc(tracking.carrier)}<br>Tracking number: ${esc(tracking.tracking_number)}</p>${tracking.tracking_url ? `<p><a href="${esc(tracking.tracking_url)}">Track your package</a></p>` : ''}<p><a href="${esc(ordersUrl)}">View your order on ayna</a></p><p style="color:#6b6470">Questions? Just reply to this email.</p></div>`,
+      }),
+    });
+    if (!r.ok) console.error('[pilot] shipped email failed', r.status);
+    return r.ok;
+  } catch (e) { console.error('[pilot] shipped email error', e?.message); return false; }
+}
