@@ -10,7 +10,7 @@
 --    the community review).
 -- 4. ThermaCare and Inito: both were labeled "FDA-cleared". The FDA lists
 --    both as Class I devices exempt from clearance; neither has a 510(k).
--- 5. Fixes 10 products filed under the wrong category (e.g. Good Clean Love's
+-- 5. Fixes 11 products filed under the wrong category (e.g. Good Clean Love's
 --    vaginal moisturizer was under "supplement").
 
 insert into public.product_catalog (id, name, brand, category, product_type, summary, price, image, url, tags, health_functions, where_to_buy, where_to_buy_in_stock, safety, doctor_opinion, community_review, effectiveness, clinician_opinion_source, clinician_attribution, source, internal, requires_prescription, user_rating, is_active, extra)
@@ -99,6 +99,12 @@ from (values
   ('p-willow-pump', 'postpartum'),
   ('p-boppy-pillow', 'postpartum'),
   ('p-gennev-care', 'telehealth'),
-  ('d-natural-cycles', 'contraception')
+  ('d-natural-cycles', 'contraception'),
+  ('p-intimina-kegel', 'pelvic-floor-exerciser')
 ) as c(id, category)
 where p.id = c.id;
+
+-- Intimina Laselle: Intimina's own name and list price
+update public.product_catalog
+set name = 'Intimina Laselle Kegel Exercisers', price = '$37.95 (Intimina list price)'
+where id = 'p-intimina-kegel';

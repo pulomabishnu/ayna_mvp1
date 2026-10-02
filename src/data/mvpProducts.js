@@ -338,13 +338,11 @@ export const MVP_PHYSICAL = [
   // ─── PELVIC FLOOR ────────────────────────────────────────
   {
     id: 'p-intimina-kegel',
-    name: 'Intimina Kegel Exerciser (Luna Beads)',
+    name: 'Intimina Laselle Kegel Exercisers',
     brand: 'Intimina',
-    // Category is 'pelvic-floor-trainer' despite the product's own retail
-    // name saying "Exerciser" — per Ayna's taxonomy these are weighted Kegel
-    // balls, a self-training biofeedback-adjacent tool, not an FDA-cleared
-    // device that contracts the pelvic floor for you (see CATEGORY_LABELS).
-    category: 'pelvic-floor-trainer',
+    // Intimina sells these as the "Laselle Exerciser" (intimina.com/laselle),
+    // so the category matches the brand's own name (changed 2026-10-02).
+    category: 'pelvic-floor-exerciser',
     type: 'physical',
     internal: true,
     healthFunctions: ['vaginal-health'],

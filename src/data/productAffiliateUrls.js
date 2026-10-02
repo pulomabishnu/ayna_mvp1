@@ -45,7 +45,6 @@ HUM Nutrition Flatter Me|B015OVVI4Q
 Inito Fertility Monitor Starter Kit|B0FB4BCFJP
 Intimate Rose Pelvic Wand|B07HR3GL6V
 Intimate Rose Vaginal Dilators|B07BKBCFDL
-Intimina Kegel Exerciser Luna Beads|B014GMBDQ2
 Kindra Daily Vaginal Lotion|B08Y671B3S
 Knix Leakproof Underwear|B0HFTVGGSP
 Kotex Security Ultra Thin|B08HT5W7PF

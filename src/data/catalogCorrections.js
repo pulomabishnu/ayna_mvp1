@@ -183,8 +183,8 @@ export const CATALOG_CORRECTIONS = {
   "p-intimina-kegel": {
     "name": "Intimina Laselle Kegel Exercisers",
     "image": "https://assets.intimina.com/files/static/product-images/2022-04/550x550_Laselle_EN.jpg?VersionId=_8_GLEGmnwIH1maYhAsvLEeLm4Usw1Em",
-    "price": "$25",
-    "category": "pelvic-floor-trainer",
+    "price": "$37.95 (Intimina list price)",
+    "category": "pelvic-floor-exerciser",
     "url": "https://www.intimina.com/laselle"
   },
   "p-intimina-lily": {
