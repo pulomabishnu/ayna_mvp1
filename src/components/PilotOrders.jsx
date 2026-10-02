@@ -45,13 +45,14 @@ function TrackingForm({ order, refresh }) {
     <CopyButton text={formatAddress(fulfillment?.shipping)} />
     <label>Carrier<input name="carrier" required maxLength={80} defaultValue={fulfillment?.carrier || ''} /></label>
     <label>Tracking number<input name="tracking_number" required maxLength={150} defaultValue={fulfillment?.tracking_number || ''} /></label>
-    <label>Tracking link (optional HTTPS URL)<input name="tracking_url" type="url" defaultValue={fulfillment?.tracking_url || ''} /></label>
+    <label>Tracking link (optional — filled in automatically for USPS, UPS, FedEx, DHL)<input name="tracking_url" type="url" defaultValue={fulfillment?.tracking_url || ''} /></label>
     <button disabled={saving}>{saving ? 'Saving…' : 'Save tracking'}</button>
     <p role="status">{message}</p>
   </form>;
 }
 export default function PilotOrders() {
   const adminView = window.location.pathname === '/pilot/admin';
+  const focusId = new URLSearchParams(window.location.search).get('order');
   const [orders, setOrders] = useState([]);
   const [admin, setAdmin] = useState(false);
   const [error, setError] = useState('');
@@ -74,8 +75,8 @@ export default function PilotOrders() {
   }, []);
   return <main className="pilot-orders">
     <a href="/">← Back to ayna / sign in</a>
-    <h1>{adminView ? 'Orders to fulfill' : 'Your test orders'}</h1>
-    <p>Stripe test mode. No real payment or shipment.</p>
+    <h1>{adminView ? 'Orders to fulfill' : 'Your orders'}</h1>
+    <p className="pilot-orders__sub">Stripe test mode. No real payment.</p>
     {admin && <a href={adminView ? '/pilot/orders' : '/pilot/admin'}>{adminView ? 'My orders' : 'Open fulfillment inbox'}</a>}
     <button onClick={refresh}>Refresh</button>
     {error && <p role="alert">{error}</p>}
@@ -83,12 +84,27 @@ export default function PilotOrders() {
     {!loading && !error && !orders.length && <p>No {adminView ? 'paid ' : ''}test orders yet.</p>}
     {orders.map(order => {
       const fulfillment = order.pilot_fulfillments?.[0] || order.pilot_fulfillments;
-      return <article key={order.id}>
-        <h2>{order.product_name}</h2>
-        <p>Order {order.id}</p>
-        <p>{new Intl.NumberFormat('en-US', { style: 'currency', currency: order.currency }).format(order.amount / 100)}</p>
-        <p>{order.status === 'paid' ? 'Payment confirmed' : 'Payment not yet confirmed — an abandoned checkout also stays pending.'}</p>
-        {fulfillment?.status === 'shipped' ? <p>Shipped with {fulfillment.carrier} · {fulfillment.tracking_number} {fulfillment.tracking_url && <a href={fulfillment.tracking_url} target="_blank" rel="noopener noreferrer">Track shipment</a>}</p> : order.status === 'paid' && <p>Order received — we're getting it ready to ship.</p>}
+      const shipped = fulfillment?.status === 'shipped';
+      const paid = order.status === 'paid';
+      const highlighted = focusId === order.id;
+      return <article key={order.id} className={highlighted ? 'pilot-order pilot-order--focus' : 'pilot-order'}>
+        <div className="pilot-order__head">
+          <h2>{order.product_name}</h2>
+          <span className="pilot-order__price">{new Intl.NumberFormat('en-US', { style: 'currency', currency: order.currency }).format(order.amount / 100)}</span>
+        </div>
+        <ol className="pilot-progress" aria-label="Order progress">
+          <li className={paid ? 'done' : ''}>Ordered</li>
+          <li className={shipped ? 'done' : ''}>Shipped</li>
+          <li>Delivered</li>
+        </ol>
+        {!paid && <p className="pilot-order__note">Payment not yet confirmed — an abandoned checkout also stays pending.</p>}
+        {paid && !shipped && <p className="pilot-order__note">Order received — we&rsquo;re getting it ready to ship.</p>}
+        {shipped && <div className="pilot-order__tracking">
+          <p><span>Carrier</span><strong>{fulfillment.carrier}</strong></p>
+          <p><span>Tracking #</span><strong>{fulfillment.tracking_number}</strong></p>
+          {fulfillment.tracking_url && <a className="pilot-track-btn" href={fulfillment.tracking_url} target="_blank" rel="noopener noreferrer">Track shipment</a>}
+        </div>}
+        <p className="pilot-order__id">Order {order.id}</p>
         {adminView && <TrackingForm order={order} refresh={refresh} />}
       </article>;
     })}

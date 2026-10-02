@@ -46,6 +46,7 @@ describe('customer shipped email', () => {
     expect(body.text).toContain('9400 1');
     expect(body.text).toContain('https://tools.usps.com/x');
     expect(body.text).toContain('https://preview.example.com/pilot/orders');
+    expect(body.html).toContain('Track your shipment');
   });
   it('skips without a valid customer email or key, and escapes HTML', async () => {
     const send = vi.fn().mockResolvedValue({ ok: true });
@@ -54,5 +55,19 @@ describe('customer shipped email', () => {
     expect(send).not.toHaveBeenCalled();
     await notifyCustomerShipped({ product_name: 'x' }, { ...tracking, carrier: '<b>x</b>' }, 'a@b.co', { env, send });
     expect(JSON.parse(send.mock.calls[0][1].body).html).not.toContain('<b>x');
+  });
+});
+
+import { carrierTrackingUrl, validTracking } from './_pilot.js';
+describe('carrier tracking links', () => {
+  it('builds links for common carriers and leaves unknown carriers blank', () => {
+    expect(carrierTrackingUrl('USPS', '9400 1000')).toBe('https://tools.usps.com/go/TrackConfirmAction?tLabels=94001000');
+    expect(carrierTrackingUrl('UPS', '1Z9')).toContain('ups.com');
+    expect(carrierTrackingUrl('FedEx', '12')).toContain('fedex.com');
+    expect(carrierTrackingUrl('Bob\'s Couriers', '12')).toBeNull();
+  });
+  it('fills the link automatically but keeps one the admin typed', () => {
+    expect(validTracking({ carrier: 'USPS', tracking_number: '9400' }).tracking_url).toContain('usps.com');
+    expect(validTracking({ carrier: 'USPS', tracking_number: '9400', tracking_url: 'https://example.com/t' }).tracking_url).toBe('https://example.com/t');
   });
 });

@@ -27,7 +27,7 @@ export default async function handler(req, res) {
       let emailed = false;
       if (before.status !== 'shipped') {
         const order = Array.isArray(before.pilot_orders) ? before.pilot_orders[0] : before.pilot_orders;
-        emailed = await notifyCustomerShipped({ product_name: order?.product_name || 'ayna order' }, tracking, before.customer_email);
+        emailed = await notifyCustomerShipped({ id: body.orderId, product_name: order?.product_name || 'ayna order' }, tracking, before.customer_email);
       }
       return res.status(200).json({ saved: true, emailed, firstShipment: before.status !== 'shipped' });
     }

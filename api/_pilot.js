@@ -34,6 +34,18 @@ export async function signedIn(req, db) {
   const { data, error } = await db.auth.getUser(token);
   return error || data?.user?.is_anonymous ? null : data?.user;
 }
+// Public tracking pages for common US carriers, so admins only paste the number.
+export function carrierTrackingUrl(carrier, number) {
+  const n = encodeURIComponent(String(number || '').replace(/\s+/g, ''));
+  const c = String(carrier || '').toLowerCase();
+  if (!n) return null;
+  if (c.includes('usps') || c.includes('postal')) return `https://tools.usps.com/go/TrackConfirmAction?tLabels=${n}`;
+  if (c.includes('ups')) return `https://www.ups.com/track?tracknum=${n}`;
+  if (c.includes('fedex')) return `https://www.fedex.com/fedextrack/?trknbr=${n}`;
+  if (c.includes('dhl')) return `https://www.dhl.com/us-en/home/tracking/tracking-express.html?tracking-id=${n}`;
+  if (c.includes('amazon')) return `https://track.amazon.com/tracking/${n}`;
+  return null;
+}
 export function validTracking(body) {
   const carrier = String(body.carrier || '').trim();
   const number = String(body.tracking_number || '').trim();
@@ -41,7 +53,7 @@ export function validTracking(body) {
   if (!carrier || carrier.length > 80 || !number || number.length > 150) return null;
   try { if (url && (new URL(url).protocol !== 'https:' || new URL(url).username || new URL(url).password)) return null; }
   catch { return null; }
-  return { carrier, tracking_number: number, tracking_url: url || null, status: 'shipped', shipped_at: new Date().toISOString() };
+  return { carrier, tracking_number: number, tracking_url: url || carrierTrackingUrl(carrier, number), status: 'shipped', shipped_at: new Date().toISOString() };
 }
 export async function settleSession(db, session) {
   if (session.livemode !== false || session.payment_status !== 'paid' || session.mode !== 'payment') throw new Error('Invalid test payment');
@@ -95,11 +107,32 @@ export async function notifyTeam(order, session, { env = process.env, send = fet
 // Customer "your order shipped" email. Sent once, when tracking is first saved
 // (later corrections don't re-send). Best-effort: tracking is already saved and
 // visible on /pilot/orders even if the email fails.
+export function shippedEmailHtml({ productName, carrier, trackingNumber, ayanaUrl, carrierUrl, logoUrl }) {
+  const cream = '#FAF6F1', ink = '#1A1714', muted = '#8c8078', navy = '#242A52', amber = '#FFC774', border = '#E1D5CE';
+  const step = (label, done, last) => `<td align="center" style="padding:0 4px;width:33%"><div style="width:28px;height:28px;line-height:28px;border-radius:14px;margin:0 auto 6px;background:${done ? navy : '#fff'};border:2px solid ${done ? navy : border};color:${done ? '#fff' : muted};font-size:14px;font-weight:700">${done ? '&#10003;' : '&middot;'}</div><div style="font-size:12px;color:${done ? ink : muted};font-weight:${done ? 700 : 400}">${label}</div></td>${last ? '' : ''}`;
+  return `<!doctype html><html><body style="margin:0;padding:0;background:${cream}">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${cream};padding:32px 12px"><tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fff;border:1px solid ${border};border-radius:20px;font-family:Georgia,'Times New Roman',serif;color:${ink}">
+<tr><td style="padding:28px 28px 0" align="center">${logoUrl ? `<img src="${esc(logoUrl)}" width="44" height="44" alt="ayna" style="border-radius:12px;display:block">` : ''}
+<p style="margin:14px 0 0;font-family:Arial,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${muted}">Order update</p>
+<h1 style="margin:6px 0 0;font-size:28px;font-weight:400;line-height:1.25">It&rsquo;s on its way &#10024;</h1></td></tr>
+<tr><td style="padding:14px 32px 0;font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:${ink}" align="center">Your <strong>${esc(productName)}</strong> just shipped. We picked it with care &mdash; thanks for shopping with ayna.</td></tr>
+<tr><td style="padding:24px 24px 4px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:Arial,sans-serif"><tr>${step('Ordered', true)}${step('Shipped', true)}${step('Delivered', false, true)}</tr></table></td></tr>
+<tr><td style="padding:20px 28px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${cream};border-radius:14px;font-family:Arial,sans-serif;font-size:14px"><tr><td style="padding:14px 18px;color:${muted}">Carrier</td><td style="padding:14px 18px;text-align:right;font-weight:700">${esc(carrier)}</td></tr><tr><td style="padding:0 18px 14px;color:${muted}">Tracking #</td><td style="padding:0 18px 14px;text-align:right;font-weight:700;word-break:break-all">${esc(trackingNumber)}</td></tr></table></td></tr>
+<tr><td align="center" style="padding:24px 28px 8px"><a href="${esc(ayanaUrl)}" style="display:inline-block;background:${navy};color:#fff;text-decoration:none;font-family:Arial,sans-serif;font-weight:700;font-size:15px;padding:14px 28px;border-radius:999px">Track your shipment</a></td></tr>
+${carrierUrl ? `<tr><td align="center" style="padding:0 28px 4px;font-family:Arial,sans-serif;font-size:13px"><a href="${esc(carrierUrl)}" style="color:${navy}">or track directly with ${esc(carrier)}</a></td></tr>` : ''}
+<tr><td style="padding:22px 28px 28px;font-family:Arial,sans-serif;font-size:13px;line-height:1.6;color:${muted}" align="center"><div style="height:4px;width:48px;background:${amber};border-radius:2px;margin:0 auto 16px"></div>Questions about your order? Just reply to this email &mdash; a real person on the ayna team will get back to you.</td></tr>
+</table></td></tr></table></body></html>`;
+}
+
+// Customer "your order shipped" email. Sent once, when tracking is first saved
+// (later corrections don't re-send). Best-effort: tracking is already saved and
+// visible on /pilot/orders even if the email fails.
 export async function notifyCustomerShipped(order, tracking, email, { env = process.env, send = fetch } = {}) {
   if (!env.RESEND_API_KEY || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || '')) return false;
-  const ordersUrl = `${pilotConfig(env).origin}/pilot/orders`;
+  const origin = pilotConfig(env).origin;
+  const ayanaUrl = `${origin}/pilot/orders${order.id ? `?order=${encodeURIComponent(order.id)}` : ''}`;
   const test = env.STRIPE_SECRET_KEY?.startsWith('sk_test_') ? '[TEST] ' : '';
-  const trackLine = tracking.tracking_url ? `Track it: ${tracking.tracking_url}` : '';
   try {
     const r = await send('https://api.resend.com/emails', {
       method: 'POST',
@@ -108,9 +141,9 @@ export async function notifyCustomerShipped(order, tracking, email, { env = proc
         from: env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
         to: [email],
         reply_to: teamRecipients(env)[0],
-        subject: `${test}Your ayna order has shipped: ${order.product_name}`,
-        text: [`Good news — your ${order.product_name} is on its way.`, '', `Carrier: ${tracking.carrier}`, `Tracking number: ${tracking.tracking_number}`, trackLine, '', `See your order: ${ordersUrl}`, '', 'Questions? Just reply to this email.'].filter(l => l !== null).join('\n'),
-        html: `<div style="font-family:Arial,sans-serif;color:#1A1714;line-height:1.6"><h2>Your order has shipped</h2><p>Your <strong>${esc(order.product_name)}</strong> is on its way.</p><p>Carrier: ${esc(tracking.carrier)}<br>Tracking number: ${esc(tracking.tracking_number)}</p>${tracking.tracking_url ? `<p><a href="${esc(tracking.tracking_url)}">Track your package</a></p>` : ''}<p><a href="${esc(ordersUrl)}">View your order on ayna</a></p><p style="color:#6b6470">Questions? Just reply to this email.</p></div>`,
+        subject: `${test}Your ayna order is on its way ✨`,
+        text: [`It's on its way!`, '', `Your ${order.product_name} just shipped. Thanks for shopping with ayna.`, '', `Carrier: ${tracking.carrier}`, `Tracking #: ${tracking.tracking_number}`, '', `Track your shipment on ayna: ${ayanaUrl}`, tracking.tracking_url ? `Or track with ${tracking.carrier}: ${tracking.tracking_url}` : '', '', 'Questions? Just reply to this email.'].join('\n'),
+        html: shippedEmailHtml({ productName: order.product_name, carrier: tracking.carrier, trackingNumber: tracking.tracking_number, ayanaUrl, carrierUrl: tracking.tracking_url, logoUrl: env.PILOT_EMAIL_LOGO_URL || 'https://www.aynahealth.co/ayna-favicon-180.png' }),
       }),
     });
     if (!r.ok) console.error('[pilot] shipped email failed', r.status);
