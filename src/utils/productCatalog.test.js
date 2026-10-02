@@ -23,7 +23,10 @@ async function freshModule() {
   return import('./productCatalog.js');
 }
 
-describe('loadProductCatalog', () => {
+// freshModule() re-imports the whole bundled catalog (every src/data file), and
+// the first test pays that cold-import cost. Under a full parallel test run it
+// crept past the 5s default as the catalog grew, so allow more time.
+describe('loadProductCatalog', { timeout: 20_000 }, () => {
   it('serves the API catalog when available', async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
