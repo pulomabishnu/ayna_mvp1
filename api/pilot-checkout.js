@@ -4,26 +4,34 @@ import { rateLimit } from './_rateLimit.js';
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
+  let step = 'config';
   try {
     const config = pilotConfig();
     if (req.method === 'GET') return res.status(200).json({ enabled: config.enabled, productId: config.productId });
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     if (!config.enabled) return res.status(403).json({ error: 'Test checkout is not enabled.' });
     if (!config.priceId || !config.vendor || !config.admins.length || !process.env.STRIPE_WEBHOOK_SECRET) return res.status(503).json({ error: 'Pilot setup is incomplete.' });
+    step = 'supabase_config';
     const db = database();
+    step = 'auth';
     const user = await signedIn(req, db);
     if (!user) return res.status(401).json({ error: 'Please sign in to ayna before checking out.' });
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
     if (body.productId !== config.productId || !/^[0-9a-f-]{36}$/i.test(body.attemptId || '')) return res.status(400).json({ error: 'Invalid checkout request.' });
     const limit = await rateLimit(`pilot:${user.id}`, { max: 10, windowSec: 60 });
     if (!limit.ok) return res.status(429).json({ error: 'Please wait before trying again.' });
+    step = 'stripe_key';
     const stripe = stripeClient();
+    step = 'orders_table';
     // Stable per user + browser attempt, including retries after a lost response.
     let order = checked(await db.from('pilot_orders').select('*').eq('user_id', user.id).eq('attempt_id', body.attemptId).maybeSingle());
     if (!order) {
+      step = 'catalog_product';
       const product = checked(await db.from('product_catalog').select('id,name').eq('id', config.productId).single());
+      step = 'stripe_price';
       const price = await stripe.prices.retrieve(config.priceId, { expand: ['product'] });
       if (price.livemode || !price.active || price.currency !== 'usd' || price.type !== 'one_time' || !Number.isSafeInteger(price.unit_amount) || price.unit_amount <= 0 || price.product?.deleted || !price.product?.active || price.metadata?.ayna_product_id !== product.id) throw new Error('Invalid pilot price');
+      step = 'create_order';
       const inserted = await db.from('pilot_orders').insert({
         user_id: user.id, attempt_id: body.attemptId, product_id: product.id,
         product_name: product.name, stripe_price_id: price.id, amount: price.unit_amount,
@@ -35,6 +43,7 @@ export default async function handler(req, res) {
     if (order.status === 'paid') return res.status(200).json({ url: `${config.origin}/pilot/orders`, restart: true });
     // Stripe only retains idempotency keys for 24h. Never reuse an older attempt.
     if (Date.now() - Date.parse(order.created_at) > 23 * 3600000) return res.status(409).json({ error: 'Checkout expired. Start a new checkout.', restart: true });
+    step = 'stripe_checkout';
     const session = order.stripe_session_id
       ? await stripe.checkout.sessions.retrieve(order.stripe_session_id)
       : await stripe.checkout.sessions.create({
@@ -50,7 +59,9 @@ export default async function handler(req, res) {
     checked(await db.from('pilot_orders').update({ stripe_session_id: session.id }).eq('id', order.id));
     if (!session.url || session.status !== 'open') return res.status(409).json({ error: 'Checkout is complete or expired. View your orders or start again.', restart: true });
     return res.status(200).json({ url: session.url });
-  } catch {
-    return res.status(503).json({ error: 'Test checkout is unavailable. Check the pilot configuration and try again.' });
+  } catch (e) {
+    // Test pilot only: surface which setup step failed (a fixed label, no secrets).
+    console.error('[pilot-checkout] failed at', step, e?.type || e?.code || '', String(e?.message || '').slice(0, 200));
+    return res.status(503).json({ error: `Test checkout is unavailable (step: ${step}). Check the pilot configuration and try again.`, step });
   }
 }
