@@ -120,7 +120,7 @@ export const STARTUPS = [
         id: 's-oova',
         name: 'Oova',
         tagline: 'Personalized fertility tracking from urine',
-        description: 'At-home urine test that measures your actual hormone levels (LH + progesterone). Not population averages. Built for women with irregular cycles, PCOS, and thyroid conditions.',
+        description: 'At-home urine test that measures three hormones: LH, E3G (an estrogen marker), and PdG (a progesterone marker). Oova markets it for trying to conceive, perimenopause, PCOS, and cycle tracking.',
         tags: ['irregular', 'pcos', 'fertility'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
@@ -133,8 +133,8 @@ export const STARTUPS = [
     {
         id: 's-delune',
         name: 'De Lune',
-        tagline: 'Science-backed supplements for period pain',
-        description: 'Cramp Aid formula with magnesium, zinc, B vitamins, and dong quai. Clinically studied ingredients for menstrual pain. Founded by a woman who suffered debilitating cramps.',
+        tagline: 'Herbal tinctures for period symptoms',
+        description: 'Herbal remedies for the menstrual cycle. Its Cramp Aid is a liquid extract of herbs and nutrients sold for period cramps ($78 for three periods). De Lune doesn’t publish the ingredient list on its product page.',
         tags: ['cramps', 'discomfort', 'organic'],
         healthFunctions: ['cramp-relief', 'supplement'],
         category: 'supplement',
@@ -189,7 +189,7 @@ export const STARTUPS = [
         id: 's-mira',
         name: 'Mira Fertility',
         tagline: 'AI-powered home fertility monitor',
-        description: 'Measures actual hormone concentrations (LH, E3G, PdG) from urine with lab-grade accuracy. AI predicts your fertile window with 99% accuracy.',
+        description: 'At-home urine hormone monitor. Depending on the kit, it measures LH, E3G (an estrogen marker), PdG (a progesterone marker), and FSH, using fluorescent test technology Mira compares to lab methods.',
         tags: ['irregular', 'pcos', 'fertility'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
@@ -204,7 +204,7 @@ export const STARTUPS = [
         communityReview: 'Trustpilot rates Elvie 3.3/5 from 11,837 reviews (70% 5-star, 18% 1-star). Reviewers praise responsive customer-support chat. Common complaints: product quality and reliability issues. One reviewer: "They don\'t close the chat out on you if you\'re interrupted by being a mom with kids at home, the agents will actually read what was last communicated, and respond from there."',
         verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/elvie.com', text: 'Trustpilot: Elvie', summary: 'Trustpilot rates Elvie 3.3/5 from 11,837 reviews (70% 5-star, 18% 1-star). Reviewers praise responsive customer-support chat. Common complaints: product quality and reliability issues. One reviewer: "They don\'t close the chat out on you if you\'re interrupted by being a mom with kids at home, the agents will actually read what was last communicated, and respond from there."' }] } },
         tagline: 'Smart pelvic floor trainer + silent breast pump',
-        description: 'Award-winning Kegel trainer with biofeedback via app. Also makes the world\'s first silent wearable breast pump. Technology designed around women\'s bodies.',
+        description: 'Makes the Elvie Trainer, an app-connected Kegel trainer with biofeedback, and wearable breast pumps. Elvie was acquired by Willow in 2025.',
         tags: ['discomfort', 'leaks', 'pelvic-floor'],
         healthFunctions: ['vaginal-health'],
         category: 'pelvic-health',
@@ -251,26 +251,9 @@ export const STARTUPS = [
         image: 'https://play-lh.googleusercontent.com/eSpZpjrxOFnyEeCGChJbVvKkvJAe2Mph3fZjLq3zzr2hltwXbTUEDTDoZai-mrvNo0j3xiKdmHHtkRdqGZT8drg=s512-rw'
     },
     // ─── Fertility & pregnancy ─────────────────────────────
-    {
-        id: 's-natalist',
-        name: 'Natalist',
-        tagline: 'Evidence-based fertility and pregnancy products',
-        description: 'DTC brand for ovulation tests, prenatal vitamins, and pregnancy tests developed with OB-GYNs. Focus on transparency and science-backed formulations.',
-        tags: ['fertility', 'safety-concern', 'organic'],
-        healthFunctions: ['cycle-tracking'],
-        category: 'fertility',
-        stage: 'Available, DTC',
-        productReleased: true,
-        spotsLeft: 400,
-        // natalist.com now 302-redirects to everlywell.com (Natalist was
-        // acquired by Everly Health in 2021) but the brand still operates
-        // under that URL, so left as-is.
-        url: 'https://natalist.com',
-        // Was a completely unrelated wild boar stock photo (img.freepik.com)
-        // — cleared, then replaced with Natalist's own logo from the PR
-        // Newswire acquisition announcement, verified to load (400x90).
-        image: 'https://mma.prnewswire.com/media/1666391/Natalist_Logo_Logo.jpg'
-    },
+    // 's-natalist' removed 2026-10-02: Everly Health bought Natalist in 2021 and
+    // its direct-to-consumer shop closed in early 2025; natalist.com now
+    // redirects to everlywell.com.
     {
         id: 's-kindbody',
         name: 'Kindbody',
@@ -436,7 +419,7 @@ export const STARTUPS = [
         id: 's-lisahealth',
         name: 'Lisa Health',
         tagline: 'Menopause and midlife health platform',
-        description: 'Personalized menopause programs with clinicians, symptom tracking, and community. Focus on holistic care and evidence-based treatments.',
+        description: 'Makes Midday, a menopause app that uses AI and wearable data to personalize symptom tracking and guidance, developed in collaboration with Mayo Clinic.',
         tags: ['menopause', 'discomfort', 'irregular'],
         healthFunctions: ['telehealth', 'mental-health'],
         category: 'menopause',
@@ -531,14 +514,14 @@ export const STARTUPS = [
         id: 's-august',
         name: 'August',
         tagline: 'Period care you actually want to use',
-        description: 'Sustainable period products and body care. Subscription pads, tampons, and wipes with transparent ingredients and modern design.',
+        description: 'Period care brand selling organic cotton tampons, pads, and liners, plus a period cup, by subscription or one-time order, and at Target.',
         tags: ['heavy-flow', 'organic', 'sustainability'],
         healthFunctions: ['menstrual-collection'],
         category: 'period-care',
         stage: 'Available, DTC',
         productReleased: true,
         spotsLeft: 460,
-        url: 'https://august.com',
+        url: 'https://www.itsaugust.co',
         image: 'https://media.macphun.com/img/uploads/customer/blog/3654/Why_Use_a_White_Background-9096.png?q=85&w=1680'
     },
     {
@@ -570,20 +553,8 @@ export const STARTUPS = [
         url: 'https://lovewellness.com',
         image: 'http://lovewellness.com/cdn/shop/files/01_LW_DLE_Silo_a5657d39-129c-4b59-8599-dffc1b1ccfb8.jpg?v=1774346766'
     },
-    {
-        id: 's-rory',
-        name: 'Rory',
-        tagline: 'Menopause and skincare from Ro',
-        description: 'Ro’s women’s health brand. Telehealth for menopause (HRT, symptom support) and dermatology. Prescriptions and products delivered.',
-        tags: ['menopause', 'discomfort', 'privacy'],
-        healthFunctions: ['telehealth'],
-        category: 'menopause',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 280,
-        url: 'https://www.rory.com',
-        image: 'https://roryfacestuff.co/cdn/shop/files/RORY_Face_Stuff_Mother_Lovin_Trio.png?v=1759992264&width=1178'
-    },
+    // 's-rory' removed 2026-10-02: rory.com now says the domain was acquired and
+    // redirects to an unrelated company; the Rory brand is no longer operating.
     // ─── Pelvic health & diagnostics ──────────────────────
     // 's-joylux' removed 2026-10-02: Joylux is a company with several
     // products, now listed individually in src/data/brands.js
@@ -685,8 +656,8 @@ export const STARTUPS = [
         name: 'Hers',
         communityReview: 'Trustpilot rates Hers 3.3/5 from 10,329 reviews (38% 5-star, 24% 1-star). Reviewers praise easy access to medical professionals and a straightforward program. Common complaints: high subscription costs and unexpected medication price increases.',
         verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/forhers.com', text: 'Trustpilot: Hers', summary: 'Trustpilot rates Hers 3.3/5 from 10,329 reviews (38% 5-star, 24% 1-star). Reviewers praise easy access to medical professionals and a straightforward program. Common complaints: high subscription costs and unexpected medication price increases.' }] } },
-        tagline: 'Mental health and skincare from Ro',
-        description: 'Ro’s brand for women. Telehealth for anxiety, depression, and skin. Prescriptions and products delivered with ongoing support.',
+        tagline: 'Women’s telehealth from Hims & Hers',
+        description: 'The women’s brand of Hims & Hers Health, Inc. Online visits with licensed providers and prescription or over-the-counter treatments delivered, for concerns including sexual health and skin care.',
         tags: ['discomfort', 'privacy', 'mental-health'],
         healthFunctions: ['mental-health', 'telehealth'],
         category: 'mental-health',
@@ -729,34 +700,11 @@ export const STARTUPS = [
         url: 'https://dotlab.com',
         image: 'https://assets.website-files.com/5daccee8d26b0a2091d9bcf8/5f7ce4abf2008605a73e005c_Science_coolpink_cricle.png'
     },
-    {
-        id: 's-femtec',
-        name: 'FemTec Health',
-        tagline: 'At-home women’s health diagnostics',
-        description: 'At-home tests for hormones, fertility, menopause, and sexual health. Integrated with telehealth and personalized recommendations.',
-        tags: ['fertility', 'menopause', 'irregular', 'safety-concern'],
-        healthFunctions: ['cycle-tracking', 'diagnostics'],
-        category: 'diagnostics',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 350,
-        url: 'https://femtechealth.com',
-        image: ''
-    },
-    {
-        id: 's-sandstone',
-        name: 'Sandstone Diagnostics',
-        tagline: 'Menopause and hormone testing',
-        description: 'At-home hormone and menopause-related testing. Part of larger diagnostics portfolio for reproductive and metabolic health.',
-        tags: ['menopause', 'irregular', 'safety-concern'],
-        healthFunctions: ['cycle-tracking'],
-        category: 'diagnostics',
-        stage: 'Available, DTC',
-        productReleased: true,
-        spotsLeft: 420,
-        url: 'https://sandstonedx.com',
-        image: 'https://www.hbarsci.com/cdn/shop/products/tb9ankw82eblofth2xqu_aac989b6-121f-4432-831a-d13057c9555c_1024x1024.jpg?v=1748464437'
-    },
+    // 's-femtec' removed 2026-10-02: FemTec Health wound down in May 2023
+    // (assignment for the benefit of creditors; Axios, 2023-05-23).
+    // 's-sandstone' removed 2026-10-02: described as "menopause and hormone
+    // testing", but Sandstone Diagnostics' verifiable product (Trak) is an
+    // at-home sperm test, and its site didn't load to confirm anything else.
     {
         id: 's-alyce',
         name: 'Alyce Health',

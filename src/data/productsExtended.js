@@ -97,7 +97,7 @@ export const EXTENDED_PHYSICAL = [
                 aiSummary: "Public community discussions include anecdotal experiences with DivaCup sizing, firmness, insertion, removal, leakage, and comfort. These experiences vary by user and are not clinical evidence.",
                 links: [
                     { url: 'https://www.reddit.com/r/menstrualcups/search/?q=DivaCup', text: 'Reddit r/menstrualcups', summary: 'Thousands of user threads discussing sizing, firmness, and long-term durability.', justification: 'Reddit community threads offer a decade of longitudinal user feedback on product lifespan and wearability.' },
-                    { url: 'https://www.tiktok.com/tag/divacup', text: 'TikTok #DivaCup Reviews', summary: 'Over 200M views. Users share tips on insertion, removal, and maintenance for the world\'s most popular cup.', justification: 'High-volume social proof on TikTok highlights real-world maintenance and beginner learning curves.' }
+                    { url: 'https://www.tiktok.com/tag/divacup', text: 'TikTok #DivaCup Reviews', summary: 'Over 200M views. Users share tips on insertion, removal, and maintenance for the cup.', justification: 'High-volume social proof on TikTok highlights real-world maintenance and beginner learning curves.' }
                 ]
             }
         }
@@ -369,7 +369,7 @@ verificationLinks: {
 export const EXTENDED_DIGITAL = [
     // ─── MORE TRACKERS ──────────────────────────────────
     {
-        id: 'd-natural-cycles', name: 'Natural Cycles', category: 'contraception', type: 'digital', internal: false, healthFunctions: ['cycle-tracking', 'contraception'], tags: ['irregular', 'pcos', 'privacy'], price: '$100/year or $13/month', userRating: 4.6, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'https://www.datocms-assets.com/21281/1762899321-us-not-fertile-new-screen-rachel-hand-holding-phone.png?auto=format&fit=max&w=1200', summary: 'The only FDA-cleared birth control app. Uses basal body temperature to identify fertile/infertile days.',
+        id: 'd-natural-cycles', name: 'Natural Cycles', category: 'contraception', type: 'digital', internal: false, healthFunctions: ['cycle-tracking', 'contraception'], tags: ['irregular', 'pcos', 'privacy'], price: '$100/year or $13/month', userRating: 4.6, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'https://www.datocms-assets.com/21281/1762899321-us-not-fertile-new-screen-rachel-hand-holding-phone.png?auto=format&fit=max&w=1200', summary: 'The first app FDA-cleared as contraception (De Novo, 2018); Clue Birth Control was also cleared in 2021. Uses basal body temperature to identify fertile/infertile days.',
         safety: {
             fdaStatus: 'FDA-cleared (De Novo) as contraception', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A (Software). Risk of pregnancy if the method is not followed perfectly.',
@@ -378,7 +378,7 @@ export const EXTENDED_DIGITAL = [
         privacy: { dataStorage: 'EU (Sweden) servers, GDPR-compliant', sellsData: ' Does not sell data', hipaa: 'GDPR-compliant', keyPolicy: 'CE-marked medical device in EU. Data processed in Sweden.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Natural Cycles is the only app FDA-cleared as contraception. Requires daily temperature measurement. 93% typical-use effectiveness.',
+        doctorOpinion: 'Natural Cycles was the first app FDA-cleared as contraception (2018); Clue Birth Control was cleared in 2021. Requires daily temperature measurement. 93% typical-use effectiveness.',
         communityReview: 'Community discussions on Reddit r/birthcontrol note a steep learning curve but real effectiveness when used consistently; some users and clinicians remain wary since 2018 press coverage of unintended pregnancies among app users, even though it is still the only FDA-cleared contraceptive app.',
         integrations: ['Apple Health', 'Oura Ring'], badges: ['FDA Cleared', 'Privacy First'],
         verificationLinks: {
@@ -476,7 +476,7 @@ export const EXTENDED_DIGITAL = [
     },
     {
         id: 'd-ppd', name: 'Planned Parenthood Direct', category: 'telehealth', type: 'digital', internal: false, healthFunctions: ['telehealth', 'contraception', 'uti-prevention'], tags: ['cost', 'comfort', 'privacy', 'uti'], price: '$0-15/visit, sliding scale', userRating: 4.7, whereToBuy: ['ppd.plannedparenthood.org', 'App Store'], platform: 'Web, iOS',
-        image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0b/ca/49/0bca4992-624a-eb8d-e3dc-d8251c29cf82/AppIcon-1x_U007emarketing-0-6-0-85-220-0.png/512x512bb.jpg', summary: 'Birth control, UTI treatment, and STI care via app. Income-based pricing. Most trusted name in reproductive health.',
+        image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0b/ca/49/0bca4992-624a-eb8d-e3dc-d8251c29cf82/AppIcon-1x_U007emarketing-0-6-0-85-220-0.png/512x512bb.jpg', summary: 'Birth control, UTI treatment, and STI care via app. Income-based pricing.',
         safety: {
             fdaStatus: 'Licensed healthcare provider', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'Medication-specific.',
@@ -545,7 +545,7 @@ export const EXTENDED_DIGITAL = [
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Calm\'s Sleep Stories and meditation content can help with insomnia or anxiety-driven sleep issues. Clinical studies show improved sleep quality.',
         communityReview: 'Community discussions on Reddit r/Menopause note Sleep Stories helpful for perimenopausal insomnia.',
-        integrations: ['Apple Health'], effectiveness: 'Award-winning sleep and meditation content. Clinical studies show improved sleep quality.',
+        integrations: ['Apple Health'], effectiveness: 'Sleep and meditation content. Clinical studies show improved sleep quality.',
         verificationLinks: {
             doctor: { links: [
                 

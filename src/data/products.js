@@ -70,7 +70,7 @@ export const PHYSICAL_PRODUCTS = [
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
         whereToBuyInStock: { 'Amazon': true, 'Target': true, 'Walmart': true, 'CVS': true },
         image: 'https://images.ctfassets.net/o5hnyn1x0ewo/5fgLjs17hOqXoAJo2hEMQQ/5f3ad4cdbfc5e8f6df300602fd5b6512/Always-Infinity-Size-1-Regular-Pads-with-Wings_640x512.png?fm=webp',
-        summary: 'Ultra-thin FlexFoam pad that absorbs 10x its weight. Widely available and affordable.',
+        summary: 'Ultra-thin FlexFoam pad that absorbs 10x its weight, per Always. Widely available and affordable.',
         safety: {
             fdaStatus: 'FDA-registered medical device',
             materials: 'FlexFoam (polyethylene/polypropylene blend), fragrance-free options available',
@@ -221,7 +221,7 @@ export const PHYSICAL_PRODUCTS = [
                 ]
             },
             community: {
-                aiSummary: "Community data indicates a highly polarized response. Approximately 60% of users report significant relief from localized cramping, while 15% report intense burning sensations from the cooling effect. We recommend a patch test or gradual introduction.",
+                aiSummary: "Community data indicates a highly polarized response. Some users report relief from cramping, while others report a burning sensation from the cooling herbs. We recommend a patch test or gradual introduction.",
                 links: [
                     { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=honey+pot+pads&restrict_sr=1', text: 'Reddit r/periods: Honey Pot', summary: 'Threads on the cooling sensation and cramp relief; mixed experiences.' },
                     { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=honey%20pot%20pads', text: 'TikTok: Honey Pot pads', summary: 'Short-form reviews on the herbal cooling effect and wear tests.' },
@@ -348,7 +348,7 @@ export const PHYSICAL_PRODUCTS = [
         userRating: 4.6,
         whereToBuy: ['Target', 'Amazon', 'Saalt.com'],
         image: 'https://shop.periodnirvana.com/cdn/shop/files/saaltgreenproduct-regular_c9861160-2ce0-4c42-8b14-7e9bb2193b26.jpg?v=1692474680&width=1920',
-        summary: 'Medical-grade silicone cup. Holds 4x more than a tampon. Saves ~$150/year vs disposables.',
+        summary: 'Medical-grade silicone cup. Saalt says it holds 4x more than a tampon. Saves ~$150/year vs disposables.',
         safety: {
             fdaStatus: 'FDA-registered Class II medical device',
             materials: '100% medical-grade silicone, no BPA, latex, dyes, or chemicals',
@@ -401,7 +401,7 @@ export const PHYSICAL_PRODUCTS = [
             'Amazon': 'https://www.amazon.com/Nature-Made-Ferrous-Sulfate-Tablets/dp/B003PGJLRO',
         },
         image: 'https://www.naturemade.com/cdn/shop/files/NM2612PK001234IRON_150ccfront_1500x.png?v=1717195534',
-        summary: '65 mg elemental iron (325 mg ferrous sulfate) per tablet. Supports red blood cell formation and energy. 180-day supply. USP verified, #1 pharmacist recommended vitamin brand.',
+        summary: '65 mg elemental iron (325 mg ferrous sulfate) per tablet. Supports red blood cell formation and energy. 180-day supply. USP verified, Nature Made says it is the #1 pharmacist-recommended vitamin brand.',
         safety: {
             fdaStatus: 'USP Verified dietary supplement',
             materials: 'Ferrous sulfate heptahydrate, cellulose, stearic acid, silicon dioxide. No gluten, no artificial colors or flavors.',
@@ -728,7 +728,7 @@ export const DIGITAL_PRODUCTS = [
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
         image: 'https://images.ctfassets.net/juauvlea4rbf/23G4fZ83x3DYLiCj6rNH7o/9e791f0a130e8c69a19d0857e232a540/Group_2297__1_.png?w=1172&h=990&q=50&fm=png',
-        summary: 'EU-based tracker with industry-leading privacy. Accurate predictions, no ads on free tier.',
+        summary: 'EU-based tracker with a focus on privacy. Accurate predictions, no ads on free tier.',
         safety: { fdaStatus: 'CE-marked in EU (medical device certification)', materials: 'N/A (software)', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A (Software)', opinionAlerts: 'Subscription cost ($10/mo) is a common pain point compared to free trackers.' },
         privacy: { dataStorage: 'EU servers (Germany). GDPR-compliant', sellsData: ' Explicitly does NOT sell data', hipaa: 'Not HIPAA (EU-based, uses GDPR which is stricter)', keyPolicy: 'Published transparency report. Will not comply with US law enforcement requests for cycle data.' },
         clinicianOpinionSource: 'brand',
