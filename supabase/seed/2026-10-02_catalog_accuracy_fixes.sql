@@ -10,6 +10,8 @@
 --    the community review).
 -- 4. ThermaCare and Inito: both were labeled "FDA-cleared". The FDA lists
 --    both as Class I devices exempt from clearance; neither has a 510(k).
+-- 5. Fixes 10 products filed under the wrong category (e.g. Good Clean Love's
+--    vaginal moisturizer was under "supplement").
 
 insert into public.product_catalog (id, name, brand, category, product_type, summary, price, image, url, tags, health_functions, where_to_buy, where_to_buy_in_stock, safety, doctor_opinion, community_review, effectiveness, clinician_opinion_source, clinician_attribution, source, internal, requires_prescription, user_rating, is_active, extra)
 values
@@ -84,3 +86,19 @@ update public.product_catalog
 set safety = jsonb_set(safety, '{fdaStatus}', to_jsonb('FDA-listed Class I over-the-counter hormone test, which is exempt from FDA premarket clearance; no 510(k) clearance found. Verified in the FDA device registration database, 2026-10-02.'::text)),
     doctor_opinion = replace(doctor_opinion, 'FDA-cleared for home hormone monitoring.', 'It is FDA-listed as a Class I home hormone test, a category exempt from FDA clearance.')
 where id = 'd-initio';
+
+update public.product_catalog as p
+set category = c.category
+from (values
+  ('p-good-clean-love', 'intimate-care'),
+  ('p-boric-acid', 'intimate-care'),
+  ('p-azo-test', 'diagnostics'),
+  ('p-intimate-rose', 'pelvic-floor'),
+  ('p-cystex', 'medication'),
+  ('p-winx-uti-pain-relief', 'medication'),
+  ('p-willow-pump', 'postpartum'),
+  ('p-boppy-pillow', 'postpartum'),
+  ('p-gennev-care', 'telehealth'),
+  ('d-natural-cycles', 'contraception')
+) as c(id, category)
+where p.id = c.id;

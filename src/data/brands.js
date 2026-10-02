@@ -221,7 +221,7 @@ export const BRAND_PRODUCTS = [
         id: 'p-winx-uti-pain-relief',
         name: 'Winx Health UTI Fast-Acting Pain Relief',
         brand: 'Winx Health',
-        category: 'supplement',
+        category: 'medication',
         type: 'physical',
         internal: false,
         healthFunctions: ['uti-prevention'],

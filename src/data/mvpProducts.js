@@ -69,7 +69,7 @@ export const MVP_PHYSICAL = [
     id: 'p-cystex',
     name: 'Cystex Urinary Pain Relief',
     brand: 'Cystex',
-    category: 'supplement',
+    category: 'medication',
     type: 'physical',
     internal: false,
     healthFunctions: ['uti-prevention'],
