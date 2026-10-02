@@ -7,10 +7,14 @@ export default async function handler(req, res) {
   let step = 'config';
   try {
     const config = pilotConfig();
-    if (req.method === 'GET') return res.status(200).json({ enabled: config.enabled, productId: config.productId });
+    if (req.method === 'GET') {
+      if (!config.enabled) return res.status(200).json({ enabled: false, productId: config.productId });
+      const price = checked(await database().from('pilot_product_prices').select('amount,currency').eq('product_id', config.productId).maybeSingle());
+      return res.status(200).json({ enabled: Boolean(price), productId: config.productId, total: price ? price.amount + serviceFeeCents(price.amount) : null });
+    }
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     if (!config.enabled) return res.status(403).json({ error: 'Test checkout is not enabled.' });
-    if (!config.priceId || !config.vendor || !config.admins.length || !process.env.STRIPE_WEBHOOK_SECRET) return res.status(503).json({ error: 'Pilot setup is incomplete.' });
+    if (!config.vendor || !config.admins.length || !process.env.STRIPE_WEBHOOK_SECRET) return res.status(503).json({ error: 'Pilot setup is incomplete.' });
     step = 'supabase_config';
     const db = database();
     step = 'auth';
@@ -28,13 +32,13 @@ export default async function handler(req, res) {
     if (!order) {
       step = 'catalog_product';
       const product = checked(await db.from('product_catalog').select('id,name').eq('id', config.productId).single());
-      step = 'stripe_price';
-      const price = await stripe.prices.retrieve(config.priceId, { expand: ['product'] });
-      if (price.livemode || !price.active || price.currency !== 'usd' || price.type !== 'one_time' || !Number.isSafeInteger(price.unit_amount) || price.unit_amount <= 0 || price.product?.deleted || !price.product?.active || price.metadata?.ayna_product_id !== product.id) throw new Error('Invalid pilot price');
+      step = 'retailer_price';
+      const price = checked(await db.from('pilot_product_prices').select('amount,currency').eq('product_id', product.id).single());
+      if (price.currency !== 'usd' || !Number.isSafeInteger(price.amount) || price.amount < 50 || price.amount > 50000) throw new Error('Invalid pilot price');
       step = 'create_order';
       const inserted = await db.from('pilot_orders').insert({
         user_id: user.id, attempt_id: body.attemptId, product_id: product.id,
-        product_name: product.name, stripe_price_id: price.id, amount: price.unit_amount + serviceFeeCents(price.unit_amount),
+        product_name: product.name, stripe_price_id: `retailer:${price.amount}`, amount: price.amount + serviceFeeCents(price.amount),
         currency: price.currency, vendor_name: config.vendor,
       }).select('*').single();
       if (inserted.error?.code === '23505') order = checked(await db.from('pilot_orders').select('*').eq('user_id', user.id).eq('attempt_id', body.attemptId).single());
@@ -48,10 +52,13 @@ export default async function handler(req, res) {
     // later fee-setting change never alters an in-progress order.
     let lineItems = null;
     if (!order.stripe_session_id) {
-      const unit = (await stripe.prices.retrieve(order.stripe_price_id)).unit_amount;
+      const dynamic = /^retailer:(\d+)$/.exec(order.stripe_price_id);
+      const unit = dynamic ? Number(dynamic[1]) : (await stripe.prices.retrieve(order.stripe_price_id)).unit_amount;
       const fee = order.amount - unit;
       if (!Number.isSafeInteger(fee) || fee < 0) throw new Error('Order total does not match price');
-      lineItems = [{ price: order.stripe_price_id, quantity: 1 }];
+      lineItems = dynamic
+        ? [{ quantity: 1, price_data: { currency: order.currency, unit_amount: unit, product_data: { name: order.product_name } } }]
+        : [{ price: order.stripe_price_id, quantity: 1 }];
       if (fee > 0) lineItems.push({ quantity: 1, price_data: { currency: order.currency, unit_amount: fee, product_data: { name: 'ayna service fee', description: 'Covers sourcing, packing and shipping coordination by the ayna team.' } } });
     }
     const session = order.stripe_session_id

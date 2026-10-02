@@ -50,6 +50,31 @@ function TrackingForm({ order, refresh }) {
     <p role="status">{message}</p>
   </form>;
 }
+function PriceForm() {
+  const [price, setPrice] = useState(null);
+  const [message, setMessage] = useState('');
+  useEffect(() => { request('/api/pilot-orders?price=1').then(setPrice).catch(e => setMessage(e.message)); }, []);
+  async function save(event) {
+    event.preventDefault(); setMessage('');
+    const fields = Object.fromEntries(new FormData(event.currentTarget));
+    try {
+      const result = await request('/api/pilot-orders?price=1', { method: 'PUT', body: JSON.stringify(fields) });
+      setMessage(`Saved. Test customer total: $${(result.total / 100).toFixed(2)}.`);
+      setPrice(await request('/api/pilot-orders?price=1'));
+    } catch (e) { setMessage(e.message); }
+  }
+  return <section>
+    <h2>Test checkout price</h2>
+    <p>Set the retailer price for the exact pack. A 10% ayna service fee is added at checkout.</p>
+    {price && <form onSubmit={save} key={price.price?.updated_at || 'new'}>
+      <label>Retailer price ($)<input name="price" inputMode="decimal" required defaultValue={price.price ? (price.price.amount / 100).toFixed(2) : ''} /></label>
+      <label>Retailer product link<input name="retailerUrl" type="url" required defaultValue={price.price?.retailer_url || ''} /></label>
+      <button>Save test price</button>
+      {price.total != null && <p>Current customer total: ${(price.total / 100).toFixed(2)}</p>}
+    </form>}
+    <p role="status">{message}</p>
+  </section>;
+}
 export default function PilotOrders() {
   const adminView = window.location.pathname === '/pilot/admin';
   const focusId = new URLSearchParams(window.location.search).get('order');
@@ -77,6 +102,7 @@ export default function PilotOrders() {
     <a href="/">← Back to ayna / sign in</a>
     <h1>{adminView ? 'Orders to fulfill' : 'Your orders'}</h1>
     <p className="pilot-orders__sub">Stripe test mode. No real payment.</p>
+    {adminView && admin && <PriceForm />}
     {admin && <a href={adminView ? '/pilot/orders' : '/pilot/admin'}>{adminView ? 'My orders' : 'Open fulfillment inbox'}</a>}
     <button onClick={refresh}>Refresh</button>
     {error && <p role="alert">{error}</p>}

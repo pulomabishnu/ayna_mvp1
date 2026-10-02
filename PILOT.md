@@ -13,8 +13,8 @@ The catalog describes the product as `$8 for 18` and routes it through an affili
 ## Setup for a connected test
 
 1. Use an isolated test deployment and the correct Supabase project. Only an inactive project named `supabase-byzantine-feather` was visible through the connected account; its schema could not be inspected. Inspect your actual hosted schema before applying SQL. The checked-in schema was inspected and the new tables tested locally.
-2. Apply `supabase/pilot_orders.sql` after the existing `product_catalog.sql`. Confirm `product_catalog` contains `p-always-infinity` with its existing name. Do not seed the whole catalog over production just for this pilot. A missing product fails closed.
-3. In Stripe test mode, create/choose a one-time, active USD Price for the exact product variant/package being tested. Set **Price metadata** `ayna_product_id=p-always-infinity`. Choose the amount explicitly; the app does not invent a price or parse catalog text.
+2. Apply `supabase/pilot_orders.sql` after the existing `product_catalog.sql`, then apply `supabase/pilot_prices.sql`. Confirm `product_catalog` contains `p-always-infinity` with its existing name. Do not seed the whole catalog over production just for this pilot. A missing product fails closed.
+3. At `/pilot/admin`, set the retailer price and HTTPS link for the exact product pack. The $14.97 figure in the planning sheet is user-provided and needs pack and current-price confirmation. Checkout adds the configured service fee and locks the total into each order.
 4. Configure server environment variables below. Frontend Supabase settings must point to the same project as the server.
 5. Register `/api/pilot-webhook` in Stripe test mode for `checkout.session.completed` (and optionally `checkout.session.async_payment_succeeded`). Set the signing secret from that endpoint. Local Stripe CLI forwarding uses its own signing secret.
 6. Deploy to a test URL or use a Vercel-compatible local server for the API routes. Plain `npm run dev` only serves the frontend and cannot run payment routes. Set `PILOT_CHECKOUT_ENABLED=true` last.
@@ -28,7 +28,6 @@ The catalog describes the product as `$8 for 18` and routes it through an affili
 | `PILOT_CHECKOUT_ENABLED` | `false` by default; `true` enables the test button and endpoint |
 | `PILOT_PRODUCT_ID` | `p-always-infinity` (default and selected existing record) |
 | `PILOT_APP_URL` | Exact test deployment origin; local default `http://localhost:3000` |
-| `PILOT_STRIPE_PRICE_ID` | Active one-time USD test `price_...`, with matching metadata |
 | `PILOT_VENDOR_NAME` | Explicit test fulfillment destination label; does not establish a brand partnership |
 | `PILOT_ADMIN_USER_IDS` | Comma-separated Supabase user UUIDs; at least one required |
 | `PILOT_SERVICE_FEE_PERCENT` | Optional. ayna service fee as its own checkout line, % of product price. Default 10; 0 turns it off; max 30 |
@@ -43,10 +42,11 @@ No Stripe publishable key is needed for hosted Checkout. Never put secret/servic
 
 ## Schema and security
 
-- `pilot_orders`: authenticated owner, browser attempt UUID, existing product ID, immutable purchase snapshot, Stripe Price and Session IDs, pending/paid status.
+- `pilot_orders`: authenticated owner, browser attempt UUID, existing product ID, immutable purchase snapshot, price reference and Stripe Session IDs, pending/paid status.
+- `pilot_product_prices`: server-only retailer price and link set by an allowlisted admin. The public test button shows the full total before Checkout.
 - `pilot_fulfillments`: one record per paid order, vendor label, shipping/email details, tracking and administrator ID.
 - `pilot_record_payment(...)`: service-role-only, security-invoker function; locks the order, validates owner/amount/currency/session, and writes payment and fulfillment together. Repeated delivery returns without altering tracking.
-- Both tables enable RLS. Authenticated customers can only SELECT their own rows; they cannot insert or update payment/fulfillment records. Anonymous access is revoked. Admin access is enforced by a server-side UUID allowlist; user-editable metadata is not trusted.
+- All pilot tables enable RLS. Authenticated customers can only SELECT their own orders and fulfillment; they cannot read the pricing settings or insert/update payment/fulfillment records. Anonymous access is revoked. Admin access is enforced by a server-side UUID allowlist; user-editable metadata is not trusted.
 - A browser redirect never marks an order paid. Webhooks verify the raw-body signature, reject live events, and return an error on database failure so Stripe retries.
 - Retries reuse the existing Stripe Session. Attempts older than 23 hours require a new attempt rather than reusing an expired Stripe idempotency key.
 

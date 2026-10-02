@@ -22,6 +22,20 @@ export function serviceFeeCents(unitAmount, env = process.env) {
   if (!Number.isFinite(pct) || pct < 0 || pct > 30) throw new Error('Invalid PILOT_SERVICE_FEE_PERCENT');
   return Math.round(unitAmount * pct / 100);
 }
+export function parsePriceInput(value) {
+  const match = String(value ?? '').trim().replace(/^\$/, '').match(/^(\d{1,3})(?:\.(\d{1,2}))?$/);
+  if (!match) return null;
+  const cents = Number(match[1]) * 100 + Number((match[2] || '0').padEnd(2, '0'));
+  return cents >= 50 && cents <= 50000 ? cents : null;
+}
+export function cleanRetailerUrl(value) {
+  try {
+    const url = new URL(String(value || '').trim());
+    if (url.protocol !== 'https:' || url.username || url.password) return null;
+    if (/(^|\.)amazon\./i.test(url.hostname)) for (const key of ['tag', 'linkCode', 'ref_']) url.searchParams.delete(key);
+    return url.toString().length <= 500 ? url.toString() : null;
+  } catch { return null; }
+}
 export function stripeClient() {
   if (!process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_')) throw new Error('Stripe test key required');
   return new Stripe(process.env.STRIPE_SECRET_KEY, { maxNetworkRetries: 2, timeout: 10000 });

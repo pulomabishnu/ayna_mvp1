@@ -4,13 +4,14 @@ import AuthGate from './AuthGate';
 
 export default function PilotBuyButton({ productId }) {
   const [enabled, setEnabled] = useState(false);
+  const [total, setTotal] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [showAuth, setShowAuth] = useState(false);
   useEffect(() => {
     let active = true;
     fetch('/api/pilot-checkout').then(r => r.json()).then(c => {
-      if (active) setEnabled(c.enabled && c.productId === productId);
+      if (active) { setEnabled(c.enabled && c.productId === productId); setTotal(c.total); }
     }).catch(() => {});
     return () => { active = false; };
   }, [productId]);
@@ -39,7 +40,9 @@ export default function PilotBuyButton({ productId }) {
   }
   return <div>
     <button className="pdp-btn pdp-btn--navy" disabled={busy} onClick={buy}>{busy ? 'Opening checkout…' : 'Buy on ayna — test'}</button>
-    <small style={{ display: 'block' }}>Test payment only · a 10% ayna service fee is added at checkout</small>
+    {total != null && <small style={{ display: 'block' }}>Test total: ${(total / 100).toFixed(2)} including ayna service fee</small>}
+    <small style={{ display: 'block' }}>The catalog price may describe a different pack; this test total is the checkout price.</small>
+    <small style={{ display: 'block' }}>Test payment only · no real payment or shipment</small>
     <a href="/pilot/orders">My test orders</a>
     {new URLSearchParams(window.location.search).has('pilot_cancelled') && <p>Checkout cancelled. You can try again.</p>}
     {error && <p role="alert" style={{ color: '#b42318', fontWeight: 600 }}>{error}</p>}
