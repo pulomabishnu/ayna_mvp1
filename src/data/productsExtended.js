@@ -164,8 +164,7 @@ export const EXTENDED_PHYSICAL = [
             ] },
             scientific: { links: [
                 { url: 'https://journals.lww.com/stdjournal/fulltext/2011/05000/the_use_of_boric_acid_for_recurrent_bacterial.10.aspx', text: 'Clinical Study on Boric Acid', summary: 'Published literature evaluating boric acid in recurrent vaginal conditions; category-level evidence rather than validation of this specific product.' },
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/24433504/', text: 'Boric Acid Literature', summary: 'Published literature relevant to vaginal boric-acid use; this does not validate this specific product.' }
-            ] },
+                ] },
             community: { links: [
                 { url: 'https://www.reddit.com/r/WomensHealth/search/?q=boric+acid', text: 'Reddit r/WomensHealth', summary: 'Anecdotal community discussions about boric acid use for recurrent vaginal symptoms; experiences are not clinical evidence and outcomes vary.' },
                 { url: 'https://www.tiktok.com/tag/boricacid', text: 'TikTok #BoricAcid', summary: 'Public short-form videos include anecdotal boric-acid experiences and usage discussions; these posts are not clinical evidence.' }
@@ -309,8 +308,7 @@ verificationLinks: {
                 
             ] },
             scientific: { links: [
-                { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4334080/', text: 'Study on Pelvic Biofeedback', summary: 'Research indicating that visual biofeedback significantly improves the acquisition of correct pelvic floor muscle contractions.' }
-            ] },
+                ] },
             community: { links: [
                 { url: 'https://www.instagram.com/elvie/', text: 'Elvie Instagram Community', summary: 'Real users share their "squeeze" streaks and improvements in bladder control after consistent trainer use.' },
                 { url: 'https://www.facebook.com/groups/pelvicfloorfriendly/', text: 'Pelvic Floor Support Group', summary: 'Community discussion on integrating the Elvie trainer into a holistic pelvic health routine.' }
@@ -491,7 +489,7 @@ export const EXTENDED_DIGITAL = [
         communityReview: 'Community discussions on Reddit r/birthcontrol note affordable access, sliding scale pricing, and non-judgmental care.',
         integrations: [], effectiveness: 'Affordable access to BC, UTI treatment, emergency contraception. Sliding scale pricing.',
         verificationLinks: {
-            scientific: { links: [{ url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6682703/', text: 'Study on Telemedicine for Contraception', summary: 'Evidence suggesting that apps like PP Direct significantly increase contraceptive access for underserved populations.' }] },
+            scientific: { links: [] },
             community: { links: [{ url: 'https://www.reddit.com/r/birthcontrol/search/?q=Planned%20Parenthood%20Direct', text: 'Reddit BC Discussions', summary: 'Users consistently recommend this app for its speed and reliable access to birth control when clinics are far away.' }] }
         }
     },

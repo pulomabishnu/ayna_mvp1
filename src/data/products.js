@@ -823,7 +823,7 @@ export const DIGITAL_PRODUCTS = [
                 { url: 'https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health', text: 'NAMS – Menopause FAQs', summary: 'Clinical guidance on menopause and perimenopause care.' }
             ] },
             scientific: { links: [
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/24569618/', text: 'Hot Flash Symptom Diary Reliability', summary: 'Research supports structured symptom diaries for measuring menopausal hot-flash frequency and severity. This evidence supports symptom tracking generally and is not specific to Balance.' },
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/24569618/', text: 'Diary of hot flashes reported upon occurrence: results of a randomized double-blind study of raloxifene, placebo, and paroxetine (Menopause, 2014)', summary: 'Research supports structured symptom diaries for measuring menopausal hot-flash frequency and severity. This evidence supports symptom tracking generally and is not specific to Balance.' },
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/40526898/', text: 'Digital Menopause Intervention Randomized Trial', summary: 'A randomized trial found potential benefits from a menopause-focused digital intervention. The study evaluated a different app and does not establish effectiveness of Balance itself.' }
             ] },
             community: { links: [
