@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import AuthGate from './AuthGate';
 
 export default function PilotBuyButton({ productId }) {
   const [enabled, setEnabled] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [showAuth, setShowAuth] = useState(false);
   useEffect(() => {
     let active = true;
     fetch('/api/pilot-checkout').then(r => r.json()).then(c => {
@@ -18,7 +20,9 @@ export default function PilotBuyButton({ productId }) {
     try {
       const client = getSupabaseClient();
       const session = client && (await client.auth.getSession()).data?.session;
-      if (!session) throw new Error('Please sign in to ayna, then return to this product to buy.');
+      // Signed out (preview domains don't share the aynahealth.co login): open the
+      // sign-in modal instead of failing quietly; checkout resumes after sign-in.
+      if (!session) { setShowAuth(true); return; }
       const key = `ayna-pilot-attempt:${session.user.id}:${productId}`;
       const attemptId = sessionStorage.getItem(key) || crypto.randomUUID();
       sessionStorage.setItem(key, attemptId);
@@ -38,6 +42,7 @@ export default function PilotBuyButton({ productId }) {
     <small style={{ display: 'block' }}>Test payment only · no shipment</small>
     <a href="/pilot/orders">My test orders</a>
     {new URLSearchParams(window.location.search).has('pilot_cancelled') && <p>Checkout cancelled. You can try again.</p>}
-    {error && <p role="alert">{error}</p>}
+    {error && <p role="alert" style={{ color: '#b42318', fontWeight: 600 }}>{error}</p>}
+    {showAuth && <AuthGate isModal context="login" onSkip={() => setShowAuth(false)} onAuthenticated={(u, session) => { if (!u || !session) return; setShowAuth(false); buy(); }} />}
   </div>;
 }
