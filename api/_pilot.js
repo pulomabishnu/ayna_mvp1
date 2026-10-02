@@ -12,6 +12,7 @@ export function pilotConfig(env = process.env) {
     vendor: env.PILOT_VENDOR_NAME,
     origin: origin.origin,
     admins: (env.PILOT_ADMIN_USER_IDS || '').split(',').map(s => s.trim()).filter(Boolean),
+    serviceFeePercent: env.PILOT_SERVICE_FEE_PERCENT === undefined || env.PILOT_SERVICE_FEE_PERCENT === '' ? 10 : Number(env.PILOT_SERVICE_FEE_PERCENT),
   };
 }
 // ayna service fee, as a percent of the product price (default 10%). Rounded to
@@ -35,6 +36,16 @@ export function cleanRetailerUrl(value) {
     if (/(^|\.)amazon\./i.test(url.hostname)) for (const key of ['tag', 'linkCode', 'ref_']) url.searchParams.delete(key);
     return url.toString().length <= 500 ? url.toString() : null;
   } catch { return null; }
+}
+export function purchasableProduct(product) {
+  return product?.is_active === true && product.product_type === 'physical'
+    && product.requires_prescription !== true && product.category !== 'telehealth';
+}
+export function selectedPilotVariant(product, variantId = '') {
+  const variants = Array.isArray(product?.extra?.variants) ? product.extra.variants : [];
+  if (!variants.length) return variantId === '' ? { id: '', label: null } : null;
+  const match = variants.find(v => String(v.id) === variantId);
+  return match && typeof match.label === 'string' ? { id: variantId, label: match.label } : null;
 }
 export function stripeClient() {
   if (!process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_')) throw new Error('Stripe test key required');

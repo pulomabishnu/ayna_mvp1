@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Readable } from 'node:stream';
 import Stripe from 'stripe';
-import { pilotConfig, stripeClient, validTracking, settleSession, parsePriceInput, cleanRetailerUrl, serviceFeeCents } from './_pilot.js';
+import { pilotConfig, stripeClient, validTracking, settleSession, parsePriceInput, cleanRetailerUrl, serviceFeeCents, purchasableProduct, selectedPilotVariant } from './_pilot.js';
 import webhook from './pilot-webhook.js';
 
 function response() {
@@ -15,6 +15,14 @@ describe('pilot guardrails', () => {
     expect(serviceFeeCents(1497)).toBe(150);
     expect(parsePriceInput('14.979')).toBeNull();
     expect(cleanRetailerUrl('https://www.amazon.com/dp/TEST?tag=aynahealth-20&x=1')).toBe('https://www.amazon.com/dp/TEST?x=1');
+  });
+  it('only accepts shippable physical products and a real selected option', () => {
+    const product = { product_type: 'physical', category: 'pad', is_active: true, requires_prescription: false, extra: { variants: [{ id: 'size-1', label: 'Size 1' }] } };
+    expect(purchasableProduct(product)).toBe(true);
+    expect(selectedPilotVariant(product, '')).toBeNull();
+    expect(selectedPilotVariant(product, 'size-1')).toEqual({ id: 'size-1', label: 'Size 1' });
+    expect(purchasableProduct({ ...product, product_type: 'digital' })).toBe(false);
+    expect(purchasableProduct({ ...product, requires_prescription: true })).toBe(false);
   });
   it('defaults off and targets the actual Always catalog id', () => {
     expect(pilotConfig({}).enabled).toBe(false);

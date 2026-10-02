@@ -1,5 +1,5 @@
 /* global process */
-import { pilotConfig, stripeClient, database, checked, signedIn, serviceFeeCents } from './_pilot.js';
+import { pilotConfig, stripeClient, database, checked, signedIn, serviceFeeCents, purchasableProduct, selectedPilotVariant } from './_pilot.js';
 import { rateLimit } from './_rateLimit.js';
 
 export default async function handler(req, res) {
@@ -8,9 +8,14 @@ export default async function handler(req, res) {
   try {
     const config = pilotConfig();
     if (req.method === 'GET') {
-      if (!config.enabled) return res.status(200).json({ enabled: false, productId: config.productId });
-      const price = checked(await database().from('pilot_product_prices').select('amount,currency').eq('product_id', config.productId).maybeSingle());
-      return res.status(200).json({ enabled: Boolean(price), productId: config.productId, total: price ? price.amount + serviceFeeCents(price.amount) : null });
+      const productId = String(req.query?.productId || config.productId);
+      const variantId = String(req.query?.variantId || '');
+      if (!config.enabled || !/^[a-z0-9][a-z0-9._-]{1,100}$/i.test(productId) || variantId.length > 100) return res.status(200).json({ enabled: false, productId });
+      const db = database();
+      const product = checked(await db.from('product_catalog').select('id,category,product_type,requires_prescription,is_active,extra').eq('id', productId).maybeSingle());
+      if (!purchasableProduct(product) || !selectedPilotVariant(product, variantId)) return res.status(200).json({ enabled: false, productId });
+      const price = checked(await db.from('pilot_product_prices').select('amount,currency').eq('product_id', productId).eq('variant_id', variantId).maybeSingle());
+      return res.status(200).json({ enabled: Boolean(price), productId, variantId, total: price ? price.amount + serviceFeeCents(price.amount) : null });
     }
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     if (!config.enabled) return res.status(403).json({ error: 'Test checkout is not enabled.' });
@@ -21,7 +26,7 @@ export default async function handler(req, res) {
     const user = await signedIn(req, db);
     if (!user) return res.status(401).json({ error: 'Please sign in to ayna before checking out.' });
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
-    if (body.productId !== config.productId || !/^[0-9a-f-]{36}$/i.test(body.attemptId || '')) return res.status(400).json({ error: 'Invalid checkout request.' });
+    if (!/^[a-z0-9][a-z0-9._-]{1,100}$/i.test(body.productId || '') || String(body.variantId || '').length > 100 || !/^[0-9a-f-]{36}$/i.test(body.attemptId || '')) return res.status(400).json({ error: 'Invalid checkout request.' });
     const limit = await rateLimit(`pilot:${user.id}`, { max: 10, windowSec: 60 });
     if (!limit.ok) return res.status(429).json({ error: 'Please wait before trying again.' });
     step = 'stripe_key';
@@ -29,16 +34,21 @@ export default async function handler(req, res) {
     step = 'orders_table';
     // Stable per user + browser attempt, including retries after a lost response.
     let order = checked(await db.from('pilot_orders').select('*').eq('user_id', user.id).eq('attempt_id', body.attemptId).maybeSingle());
+    if (order && (order.product_id !== body.productId || String(order.variant_id || '') !== String(body.variantId || ''))) return res.status(409).json({ error: 'This checkout attempt belongs to another item. Start again.', restart: true });
     if (!order) {
       step = 'catalog_product';
-      const product = checked(await db.from('product_catalog').select('id,name').eq('id', config.productId).single());
+      const product = checked(await db.from('product_catalog').select('id,name,category,product_type,requires_prescription,is_active,extra').eq('id', body.productId).maybeSingle());
+      const variant = selectedPilotVariant(product, String(body.variantId || ''));
+      if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for ayna checkout.' });
       step = 'retailer_price';
-      const price = checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url').eq('product_id', product.id).single());
+      const price = checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url').eq('product_id', product.id).eq('variant_id', variant.id).single());
       if (price.currency !== 'usd' || !Number.isSafeInteger(price.amount) || price.amount < 50 || price.amount > 50000) throw new Error('Invalid pilot price');
       step = 'create_order';
       const inserted = await db.from('pilot_orders').insert({
         user_id: user.id, attempt_id: body.attemptId, product_id: product.id,
-        product_name: product.name, stripe_price_id: `retailer:${price.amount}`, amount: price.amount + serviceFeeCents(price.amount),
+        product_name: variant.label ? `${product.name} — ${variant.label}` : product.name,
+        variant_id: variant.id, variant_label: variant.label,
+        stripe_price_id: `retailer:${price.amount}`, amount: price.amount + serviceFeeCents(price.amount),
         currency: price.currency, vendor_name: config.vendor, retailer_url: price.retailer_url,
       }).select('*').single();
       if (inserted.error?.code === '23505') order = checked(await db.from('pilot_orders').select('*').eq('user_id', user.id).eq('attempt_id', body.attemptId).single());
@@ -69,7 +79,7 @@ export default async function handler(req, res) {
         client_reference_id: user.id, metadata: { ayna_order_id: order.id },
         shipping_address_collection: { allowed_countries: ['US'] },
         success_url: `${config.origin}/pilot/orders`,
-        cancel_url: `${config.origin}/product/always-infinity-flexfoam?pilot_cancelled=1`,
+        cancel_url: `${config.origin}/pilot/orders?pilot_cancelled=1`,
         custom_text: { submit: { message: 'Test order only. No real payment or shipment.' } },
       }, { idempotencyKey: `ayna-pilot-${order.id}` });
     if (session.livemode) throw new Error('Live checkout refused');

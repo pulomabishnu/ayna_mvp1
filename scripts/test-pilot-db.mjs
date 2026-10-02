@@ -17,6 +17,8 @@ await assert.rejects(db.query(`select pilot_record_payment($1,'cs_test',900,'usd
 assert.equal((await db.query('select status from pilot_orders')).rows[0].status,'pending');
 await db.exec('set role service_role');
 await db.query(`insert into pilot_product_prices(product_id,amount,retailer_url) values ('p-always-infinity',1497,'https://www.amazon.com/dp/TEST')`);
+await db.query(`insert into pilot_product_prices(product_id,variant_id,variant_label,amount,retailer_url) values ('p-always-infinity','size-1','Size 1',1597,'https://www.amazon.com/dp/TEST2')`);
+assert.equal((await db.query('select count(*)::int n from pilot_product_prices')).rows[0].n,2);
 await db.query(pay,[id,user]);
 await db.query(`update pilot_fulfillments set tracking_number='123',status='shipped' where order_id=$1`,[id]);
 await db.query(pay,[id,user]);

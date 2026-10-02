@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
+import { ALL_PRODUCTS } from '../data/products';
 import './PilotOrders.css';
 
 async function request(path, options = {}) {
@@ -52,22 +53,38 @@ function TrackingForm({ order, refresh }) {
   </form>;
 }
 function PriceForm() {
+  const products = ALL_PRODUCTS.filter(item => item.type === 'physical' && !item.requiresPrescription && item.category !== 'telehealth');
+  const [productId, setProductId] = useState('p-always-infinity');
+  const [variantId, setVariantId] = useState('');
+  const product = products.find(item => item.id === productId);
   const [price, setPrice] = useState(null);
   const [message, setMessage] = useState('');
-  useEffect(() => { request('/api/pilot-orders?price=1').then(setPrice).catch(e => setMessage(e.message)); }, []);
+  useEffect(() => {
+    let active = true;
+    request(`/api/pilot-orders?price=1&productId=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`)
+      .then(data => { if (active) { setPrice(data); setMessage(''); } })
+      .catch(e => { if (active) { setPrice(null); setMessage(e.message); } });
+    return () => { active = false; };
+  }, [productId, variantId]);
   async function save(event) {
     event.preventDefault(); setMessage('');
     const fields = Object.fromEntries(new FormData(event.currentTarget));
     try {
-      const result = await request('/api/pilot-orders?price=1', { method: 'PUT', body: JSON.stringify(fields) });
+      const result = await request('/api/pilot-orders?price=1', { method: 'PUT', body: JSON.stringify({ ...fields, productId, variantId }) });
       setMessage(`Saved. Test customer total: $${(result.total / 100).toFixed(2)}.`);
-      setPrice(await request('/api/pilot-orders?price=1'));
+      setPrice(await request(`/api/pilot-orders?price=1&productId=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`));
     } catch (e) { setMessage(e.message); }
   }
   return <section>
     <h2>Test checkout price</h2>
-    <p>Set the retailer price for the exact pack. A 10% ayna service fee is added at checkout.</p>
-    {price && <form onSubmit={save} key={price.price?.updated_at || 'new'}>
+    <p>Set the retailer price for the exact pack. A {price?.serviceFeePercent ?? 10}% ayna service fee is added at checkout.</p>
+    <label>Product<select value={productId} onChange={e => { const next = products.find(item => item.id === e.target.value); setProductId(e.target.value); setVariantId(next?.defaultVariantId || next?.variants?.[0]?.id || ''); }}>
+      {products.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+    </select></label>
+    {product?.variants?.length > 0 && <label>Size / option<select value={variantId} onChange={e => setVariantId(e.target.value)}>
+      {product.variants.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
+    </select></label>}
+    {price && <form onSubmit={save} key={`${productId}:${variantId}:${price.price?.updated_at || 'new'}`}>
       <label>Retailer price ($)<input name="price" inputMode="decimal" required defaultValue={price.price ? (price.price.amount / 100).toFixed(2) : ''} /></label>
       <label>Retailer product link<input name="retailerUrl" type="url" required defaultValue={price.price?.retailer_url || ''} /></label>
       <button>Save test price</button>

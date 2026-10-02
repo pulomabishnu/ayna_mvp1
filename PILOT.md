@@ -1,10 +1,10 @@
-# One-product Buy on ayna test pilot
+# Manual fulfillment checkout pilot
 
-Implemented for the existing Always Infinity FlexFoam record, `p-always-infinity`, at `/product/always-infinity-flexfoam`.
+The first item tested was Always Infinity FlexFoam, `p-always-infinity`. Any active, non-prescription physical catalog product can be configured by an admin with an exact retailer price and link. Products with variants need a separate price and link for each option. Digital products, services, and items without a configured price retain their retailer path.
 
 ## What is implemented
 
-The existing React 19 / Vite web app uses Vercel API routes and Supabase authentication. The pilot adds a clearly labeled test buy button beside the existing retail link. Signed-in customers go to Stripe hosted Checkout, quantity one, card payment, US shipping address. A verified Stripe webhook atomically marks the order paid and creates a vendor fulfillment inbox record. `/pilot/admin` lets an allowlisted administrator record carrier, tracking number, and optional HTTPS tracking link. `/pilot/orders` shows the customer's own orders and refreshes every ten seconds.
+The existing React 19 / Vite web app uses Vercel API routes and Supabase authentication. Configured physical products show a **Buy now** button for ayna checkout and label the external link **View retailer**. Signed-in customers go to Stripe hosted Checkout, quantity one, card payment, US shipping address. A verified Stripe webhook atomically marks the order paid and creates a vendor fulfillment inbox record. `/pilot/admin` lets an allowlisted administrator record carrier, tracking number, and optional HTTPS tracking link. `/pilot/orders` shows the customer's own orders and refreshes every ten seconds.
 
 **Fulfillment is manual.** When an order is paid, the team gets an email (via the existing `RESEND_API_KEY`; recipients from `PILOT_NOTIFY_EMAILS`, default the three founders) with the product, amount, city/state and a link to `/pilot/admin`. The inbox shows the full shipping address with a copy button and the configured retailer item link. A team member buys the item, ships it to the customer's address, and enters the optional retailer order number, carrier and tracking. The customer sees tracking on `/pilot/orders` and gets Claude's one-time "your order shipped" email with the carrier, tracking number and tracking link. Later tracking corrections update the page but do not re-send the email. The email is best-effort; the inbox is the durable record. No native iOS project was found or changed; this implementation is the existing web flow. There are no marketplace transfers, multi-brand carts, catalog changes, or changes to recommendation behavior.
 
@@ -14,7 +14,7 @@ The catalog describes the product as `$8 for 18` and routes it through an affili
 
 1. Use an isolated test deployment and the correct Supabase project. Only an inactive project named `supabase-byzantine-feather` was visible through the connected account; its schema could not be inspected. Inspect your actual hosted schema before applying SQL. The checked-in schema was inspected and the new tables tested locally.
 2. Apply `supabase/pilot_orders.sql` after the existing `product_catalog.sql`, then apply `supabase/pilot_prices.sql`. Confirm `product_catalog` contains `p-always-infinity` with its existing name. Do not seed the whole catalog over production just for this pilot. A missing product fails closed.
-3. At `/pilot/admin`, set the retailer price and HTTPS link for the exact product pack. The $14.97 figure in the planning sheet is user-provided and needs pack and current-price confirmation. Checkout adds the configured service fee and locks the total into each order.
+3. At `/pilot/admin`, select a product and option, then set the retailer price and HTTPS link for that exact pack. Repeat for each item you want to sell through ayna. The $14.97 figure in the planning sheet is user-provided and needs pack and current-price confirmation. Checkout adds the configured service fee and locks the total into each order.
 4. Configure server environment variables below. Frontend Supabase settings must point to the same project as the server.
 5. Register `/api/pilot-webhook` in Stripe test mode for `checkout.session.completed` (and optionally `checkout.session.async_payment_succeeded`). Set the signing secret from that endpoint. Local Stripe CLI forwarding uses its own signing secret.
 6. Deploy to a test URL or use a Vercel-compatible local server for the API routes. Plain `npm run dev` only serves the frontend and cannot run payment routes. Set `PILOT_CHECKOUT_ENABLED=true` last.
@@ -26,7 +26,7 @@ The catalog describes the product as `$8 for 18` and routes it through an affili
 | Variable | Value/purpose |
 |---|---|
 | `PILOT_CHECKOUT_ENABLED` | `false` by default; `true` enables the test button and endpoint |
-| `PILOT_PRODUCT_ID` | `p-always-infinity` (default and selected existing record) |
+| `PILOT_PRODUCT_ID` | `p-always-infinity` (legacy default for requests without a product ID) |
 | `PILOT_APP_URL` | Exact test deployment origin; local default `http://localhost:3000` |
 | `PILOT_VENDOR_NAME` | Explicit test fulfillment destination label; does not establish a brand partnership |
 | `PILOT_ADMIN_USER_IDS` | Comma-separated Supabase user UUIDs; at least one required |
@@ -73,7 +73,7 @@ Reproduce with `npx vitest run api/pilot.test.js api/pilot-access.test.js src/co
 
 Browser checks confirmed the existing Always page and signed-out order page render without uncaught browser errors. A mocked enablement response also verified the test buy button appears for the selected product. The actual Stripe checkout, signed-in customer/admin interaction, and hosted Supabase webhook flow remain unverified because no matching database/Stripe test credentials were available. No hosted database was changed, no deployment was published and no real order was placed.
 
-Pending includes cancelled/abandoned checkouts; this pilot does not implement expiration/refund lifecycle reconciliation. Refunds in the Stripe dashboard are not yet reflected in order status. The admin inbox shows the most recent 50 paid orders, sufficient for the one-product pilot. Shipping charges/tax are not calculated in this test implementation.
+Pending includes cancelled/abandoned checkouts; this pilot does not implement expiration/refund lifecycle reconciliation. Refunds in the Stripe dashboard are not yet reflected in order status. The admin inbox shows the most recent 50 paid orders. Shipping charges/tax are not calculated in this test implementation.
 
 ## Before a real order
 

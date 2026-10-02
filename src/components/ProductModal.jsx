@@ -423,6 +423,7 @@ export default function ProductModal({
   };
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [selectedVariantId, setSelectedVariantId] = useState(product.defaultVariantId || '');
+  const [pilotAvailable, setPilotAvailable] = useState(false);
   const choice = getVariantSelection(product, selectedVariantId);
   const displayName = choice.displayName;
 
@@ -752,10 +753,10 @@ export default function ProductModal({
           <option value="">Choose a size / option</option>
           {product.variants.map(variant => <option key={variant.id} value={variant.id}>{variant.label}</option>)}
         </select>
-        <small style={{ display: 'block', marginTop: '0.35rem' }}>{sizeChosenOnAmazon ? 'Buy Now opens this product on Amazon — pick the same size there. Confirm current price and availability with the retailer.' : 'Buy Now opens this exact option. Confirm current price and availability with the retailer.'}</small>
+        <small style={{ display: 'block', marginTop: '0.35rem' }}>{pilotAvailable ? 'The ayna checkout uses the selected option.' : sizeChosenOnAmazon ? 'Buy Now opens this product on Amazon — pick the same size there. Confirm current price and availability with the retailer.' : 'Buy Now opens this exact option. Confirm current price and availability with the retailer.'}</small>
       </label>}
       <div className="pdp-actions__primary">
-        <PilotBuyButton productId={product.id} />
+        {product.type === 'physical' && !product.requiresPrescription && product.category !== 'telehealth' && <PilotBuyButton productId={product.id} variantId={choice.hasVariants ? selectedVariantId : ''} onAvailabilityChange={setPilotAvailable} />}
         {buyUrl ? (
           <a
             className="pdp-btn pdp-btn--navy pdp-btn--buy"
@@ -773,7 +774,7 @@ export default function ProductModal({
             });
             }}
           >
-            Buy Now
+            {pilotAvailable ? 'View retailer' : 'Buy Now'}
           </a>
         ) : (
           <button type="button" className="pdp-btn pdp-btn--navy pdp-btn--buy" disabled>

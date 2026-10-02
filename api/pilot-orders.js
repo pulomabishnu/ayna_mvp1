@@ -1,4 +1,4 @@
-import { pilotConfig, database, checked, signedIn, validTracking, notifyCustomerShipped, parsePriceInput, cleanRetailerUrl, serviceFeeCents } from './_pilot.js';
+import { pilotConfig, database, checked, signedIn, validTracking, notifyCustomerShipped, parsePriceInput, cleanRetailerUrl, serviceFeeCents, purchasableProduct, selectedPilotVariant } from './_pilot.js';
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   try {
@@ -8,17 +8,24 @@ export default async function handler(req, res) {
     const admin = config.admins.includes(user.id);
     if (req.query?.price === '1') {
       if (!admin) return res.status(403).json({ error: 'Admin access required.' });
+      const body = req.method === 'PUT' ? (typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {}) : req.query || {};
+      const productId = String(body.productId || config.productId);
+      const variantId = String(body.variantId || '');
+      if (!/^[a-z0-9][a-z0-9._-]{1,100}$/i.test(productId) || variantId.length > 100) return res.status(400).json({ error: 'Invalid product or option.' });
+      const product = checked(await db.from('product_catalog').select('id,category,product_type,requires_prescription,is_active,extra').eq('id', productId).maybeSingle());
+      if (!product) return res.status(404).json({ error: 'This product is not in the checkout catalog yet.' });
+      const variant = selectedPilotVariant(product, variantId);
+      if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for manual fulfillment.' });
       if (req.method === 'GET') {
-        const price = checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url,updated_at').eq('product_id', config.productId).maybeSingle());
-        return res.status(200).json({ price, total: price ? price.amount + serviceFeeCents(price.amount) : null });
+        const price = checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url,updated_at').eq('product_id', productId).eq('variant_id', variantId).maybeSingle());
+        return res.status(200).json({ price, serviceFeePercent: config.serviceFeePercent, total: price ? price.amount + serviceFeeCents(price.amount) : null });
       }
       if (req.method !== 'PUT') return res.status(405).end();
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
       const amount = parsePriceInput(body.price);
       const retailerUrl = cleanRetailerUrl(body.retailerUrl);
       if (!amount || !retailerUrl) return res.status(400).json({ error: 'Enter a price from $0.50 to $500 and an HTTPS retailer link.' });
       serviceFeeCents(amount);
-      checked(await db.from('pilot_product_prices').upsert({ product_id: config.productId, amount, currency: 'usd', retailer_url: retailerUrl, updated_at: new Date().toISOString(), updated_by: user.id }, { onConflict: 'product_id' }));
+      checked(await db.from('pilot_product_prices').upsert({ product_id: productId, variant_id: variantId, variant_label: variant.label, amount, currency: 'usd', retailer_url: retailerUrl, updated_at: new Date().toISOString(), updated_by: user.id }, { onConflict: 'product_id,variant_id' }));
       return res.status(200).json({ saved: true, total: amount + serviceFeeCents(amount) });
     }
     if (req.method === 'GET') {
