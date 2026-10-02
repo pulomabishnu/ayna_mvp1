@@ -6,7 +6,7 @@ Implemented for the existing Always Infinity FlexFoam record, `p-always-infinity
 
 The existing React 19 / Vite web app uses Vercel API routes and Supabase authentication. The pilot adds a clearly labeled test buy button beside the existing retail link. Signed-in customers go to Stripe hosted Checkout, quantity one, card payment, US shipping address. A verified Stripe webhook atomically marks the order paid and creates a vendor fulfillment inbox record. `/pilot/admin` lets an allowlisted administrator record carrier, tracking number, and optional HTTPS tracking link. `/pilot/orders` shows the customer's own orders and refreshes every ten seconds.
 
-No emails are sent. The durable fulfillment inbox is the admin-visible notification. No native iOS project was found or changed; this implementation is the existing web flow. There are no marketplace transfers, multi-brand carts, catalog changes, or changes to recommendation behavior.
+**Fulfillment is manual.** When an order is paid, the team gets an email (via the existing `RESEND_API_KEY`; recipients from `PILOT_NOTIFY_EMAILS`, default the three founders) with the product, amount, city/state and a link to `/pilot/admin`. The inbox shows the full shipping address with a copy button, a retailer link and an Amazon search link. A team member buys the item, ships it to the customer's address, and enters carrier + tracking; the customer sees it on `/pilot/orders`. The email is best-effort and sent once per order; the inbox is the durable record. No native iOS project was found or changed; this implementation is the existing web flow. There are no marketplace transfers, multi-brand carts, catalog changes, or changes to recommendation behavior.
 
 The catalog describes the product as `$8 for 18` and routes it through an affiliate link. This is display text, not an authoritative checkout price. No direct Always fulfillment agreement was found. The test price and fulfillment destination must be configured explicitly. This code rejects live Stripe keys and live webhook events; enabling the feature does not permit real payments.
 
@@ -31,6 +31,7 @@ The catalog describes the product as `$8 for 18` and routes it through an affili
 | `PILOT_STRIPE_PRICE_ID` | Active one-time USD test `price_...`, with matching metadata |
 | `PILOT_VENDOR_NAME` | Explicit test fulfillment destination label; does not establish a brand partnership |
 | `PILOT_ADMIN_USER_IDS` | Comma-separated Supabase user UUIDs; at least one required |
+| `PILOT_NOTIFY_EMAILS` | Optional. Who gets the new-order email; defaults to ameera@, puloma@, eliz@aynahealth.co |
 | `STRIPE_SECRET_KEY` | Server-only `sk_test_...`; live keys rejected |
 | `STRIPE_WEBHOOK_SECRET` | Server-only `whsec_...` for the test webhook endpoint |
 | `SUPABASE_URL` | Existing server Supabase URL |

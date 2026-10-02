@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
 import './PilotOrders.css';
 
 async function request(path, options = {}) {
@@ -10,6 +11,14 @@ async function request(path, options = {}) {
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Request failed.');
   return data;
+}
+function formatAddress(shipping) {
+  const a = shipping?.address || {};
+  return [shipping?.name, a.line1, a.line2, [a.city, a.state, a.postal_code].filter(Boolean).join(' '), a.country].filter(Boolean).join('\n');
+}
+function CopyButton({ text }) {
+  const [done, setDone] = useState(false);
+  return <button type="button" onClick={async () => { try { await navigator.clipboard.writeText(text); setDone(true); setTimeout(() => setDone(false), 1500); } catch { /* clipboard blocked; address is selectable */ } }}>{done ? 'Copied' : 'Copy address'}</button>;
 }
 function TrackingForm({ order, refresh }) {
   const [message, setMessage] = useState('');
@@ -25,9 +34,14 @@ function TrackingForm({ order, refresh }) {
     finally { setSaving(false); }
   }
   return <form onSubmit={save}>
-    <p>Vendor: {fulfillment?.vendor_name}</p>
-    <p>{fulfillment?.customer_email}</p>
-    <pre>{JSON.stringify(fulfillment?.shipping, null, 2)}</pre>
+    {fulfillment?.status !== 'shipped' && <ol className="pilot-steps">
+      <li>Buy it: {PRODUCT_BUY_URLS[order.product_id] && <><a href={PRODUCT_BUY_URLS[order.product_id]} target="_blank" rel="noopener noreferrer">retailer page</a> · </>}<a href={`https://www.amazon.com/s?k=${encodeURIComponent(order.product_name)}`} target="_blank" rel="noopener noreferrer">search Amazon</a></li>
+      <li>Ship it to the address below (use it as the delivery address at checkout).</li>
+      <li>Paste the carrier + tracking number here and save — the customer sees it right away.</li>
+    </ol>}
+    <p>Fulfilled by: {fulfillment?.vendor_name} · Customer email: {fulfillment?.customer_email || '—'}</p>
+    <pre className="pilot-address">{formatAddress(fulfillment?.shipping) || 'No shipping address recorded'}</pre>
+    <CopyButton text={formatAddress(fulfillment?.shipping)} />
     <label>Carrier<input name="carrier" required maxLength={80} defaultValue={fulfillment?.carrier || ''} /></label>
     <label>Tracking number<input name="tracking_number" required maxLength={150} defaultValue={fulfillment?.tracking_number || ''} /></label>
     <label>Tracking link (optional HTTPS URL)<input name="tracking_url" type="url" defaultValue={fulfillment?.tracking_url || ''} /></label>
@@ -59,7 +73,7 @@ export default function PilotOrders() {
   }, []);
   return <main className="pilot-orders">
     <a href="/">← Back to ayna / sign in</a>
-    <h1>{adminView ? 'Test fulfillment inbox' : 'Your test orders'}</h1>
+    <h1>{adminView ? 'Orders to fulfill' : 'Your test orders'}</h1>
     <p>Stripe test mode. No real payment or shipment.</p>
     {admin && <a href={adminView ? '/pilot/orders' : '/pilot/admin'}>{adminView ? 'My orders' : 'Open fulfillment inbox'}</a>}
     <button onClick={refresh}>Refresh</button>
@@ -73,7 +87,7 @@ export default function PilotOrders() {
         <p>Order {order.id}</p>
         <p>{new Intl.NumberFormat('en-US', { style: 'currency', currency: order.currency }).format(order.amount / 100)}</p>
         <p>{order.status === 'paid' ? 'Payment confirmed' : 'Payment not yet confirmed — an abandoned checkout also stays pending.'}</p>
-        {fulfillment?.status === 'shipped' ? <p>Shipped with {fulfillment.carrier} · {fulfillment.tracking_number} {fulfillment.tracking_url && <a href={fulfillment.tracking_url} target="_blank" rel="noopener noreferrer">Track shipment</a>}</p> : order.status === 'paid' && <p>Awaiting test fulfillment.</p>}
+        {fulfillment?.status === 'shipped' ? <p>Shipped with {fulfillment.carrier} · {fulfillment.tracking_number} {fulfillment.tracking_url && <a href={fulfillment.tracking_url} target="_blank" rel="noopener noreferrer">Track shipment</a>}</p> : order.status === 'paid' && <p>Order received — we're getting it ready to ship.</p>}
         {adminView && <TrackingForm order={order} refresh={refresh} />}
       </article>;
     })}

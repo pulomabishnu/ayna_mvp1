@@ -1,5 +1,5 @@
 /* global process, Buffer */
-import { stripeClient, database, settleSession } from './_pilot.js';
+import { stripeClient, database, settleSession, checked, notifyTeam } from './_pilot.js';
 export const config = { api: { bodyParser: false } };
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -16,7 +16,12 @@ export default async function handler(req, res) {
   if (event.livemode) return res.status(400).json({ error: 'Live events refused' });
   try {
     if (['checkout.session.completed', 'checkout.session.async_payment_succeeded'].includes(event.type) && event.data.object.payment_status === 'paid') {
-      await settleSession(database(), event.data.object);
+      const db = database(); const session = event.data.object;
+      const orderId = session.metadata?.ayna_order_id;
+      const before = orderId ? checked(await db.from('pilot_orders').select('status,product_name,amount,currency').eq('id', orderId).maybeSingle()) : null;
+      await settleSession(db, session);
+      // Notify only on the first transition to paid, not on Stripe retries/replays.
+      if (before && before.status !== 'paid') await notifyTeam(before, session);
     }
     return res.status(200).json({ received: true });
   } catch { return res.status(500).json({ error: 'Order recording failed; retry webhook' }); }

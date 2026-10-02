@@ -55,3 +55,39 @@ export async function settleSession(db, session) {
     p_email: session.customer_details?.email || null,
   }));
 }
+
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
+export function teamRecipients(env = process.env) {
+  const list = (env.PILOT_NOTIFY_EMAILS || 'ameera@aynahealth.co,puloma@aynahealth.co,eliz@aynahealth.co')
+    .split(',').map(s => s.trim()).filter(s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s));
+  return list.slice(0, 10);
+}
+// Manual fulfillment: a paid order emails the team so someone buys and ships it.
+// Best-effort only — the /pilot/admin inbox is the durable record, so an email
+// failure never fails the webhook. Only city/state go in the email; the full
+// address stays behind the admin sign-in.
+export async function notifyTeam(order, session, { env = process.env, send = fetch } = {}) {
+  if (!env.RESEND_API_KEY) { console.warn('[pilot] RESEND_API_KEY not set; order notification skipped'); return false; }
+  const to = teamRecipients(env);
+  if (!to.length) return false;
+  const ship = session.collected_information?.shipping_details || session.shipping_details || {};
+  const where = [ship.address?.city, ship.address?.state].filter(Boolean).join(', ') || 'see inbox';
+  const amount = new Intl.NumberFormat('en-US', { style: 'currency', currency: order.currency }).format(order.amount / 100);
+  const inbox = `${pilotConfig(env).origin}/pilot/admin`;
+  const test = session.livemode === false ? '[TEST] ' : '';
+  try {
+    const r = await send('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
+        to,
+        subject: `${test}New ayna order to fulfill: ${order.product_name} (${amount})`,
+        text: [`New paid order — someone needs to buy and ship it.`, '', `Product: ${order.product_name}`, `Paid: ${amount}`, `Ship to: ${ship.name || 'customer'} — ${where}`, '', `Full address + buy link: ${inbox}`, `When shipped, enter the tracking number there.`].join('\n'),
+        html: `<div style="font-family:Arial,sans-serif;color:#1A1714;line-height:1.6"><h2>New paid order to fulfill</h2><p><strong>${esc(order.product_name)}</strong> · ${esc(amount)}</p><p>Ship to: ${esc(ship.name || 'customer')} — ${esc(where)}</p><p><a href="${esc(inbox)}">Open the fulfillment inbox</a> for the full address and buy link. Enter tracking there once it ships.</p></div>`,
+      }),
+    });
+    if (!r.ok) console.error('[pilot] order notification failed', r.status);
+    return r.ok;
+  } catch (e) { console.error('[pilot] order notification error', e?.message); return false; }
+}

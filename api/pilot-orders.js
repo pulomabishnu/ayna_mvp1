@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       const adminView = req.query?.admin === '1';
       if (adminView && !admin) return res.status(403).json({ error: 'Admin access required.' });
-      let query = db.from('pilot_orders').select('id,product_name,amount,currency,status,created_at,pilot_fulfillments(*)').order('created_at', { ascending: false }).limit(50);
+      let query = db.from('pilot_orders').select('id,product_id,product_name,amount,currency,status,created_at,pilot_fulfillments(*)').order('created_at', { ascending: false }).limit(50);
       if (!adminView) query = query.eq('user_id', user.id);
       else query = query.eq('status', 'paid');
       return res.status(200).json({ orders: checked(await query), admin });
