@@ -36,13 +36,14 @@ function TrackingForm({ order, refresh }) {
   }
   return <form onSubmit={save}>
     {fulfillment?.status !== 'shipped' && <ol className="pilot-steps">
-      <li>Buy it: {PRODUCT_BUY_URLS[order.product_id] && <><a href={PRODUCT_BUY_URLS[order.product_id]} target="_blank" rel="noopener noreferrer">retailer page</a> · </>}<a href={`https://www.amazon.com/s?k=${encodeURIComponent(order.product_name)}`} target="_blank" rel="noopener noreferrer">search Amazon</a></li>
+      <li>Buy it: {order.retailer_url ? <><a href={order.retailer_url} target="_blank" rel="noopener noreferrer">configured retailer item</a> · </> : PRODUCT_BUY_URLS[order.product_id] && <><a href={PRODUCT_BUY_URLS[order.product_id]} target="_blank" rel="noopener noreferrer">retailer page</a> · </>}<a href={`https://www.amazon.com/s?k=${encodeURIComponent(order.product_name)}`} target="_blank" rel="noopener noreferrer">search Amazon</a></li>
       <li>Ship it to the address below (use it as the delivery address at checkout).</li>
-      <li>Paste the carrier + tracking number here and save — the customer sees it right away.</li>
+      <li>Enter the retailer order number, carrier and tracking number here. Saving tracking emails the customer.</li>
     </ol>}
     <p>Fulfilled by: {fulfillment?.vendor_name} · Customer email: {fulfillment?.customer_email || '—'}</p>
     <pre className="pilot-address">{formatAddress(fulfillment?.shipping) || 'No shipping address recorded'}</pre>
     <CopyButton text={formatAddress(fulfillment?.shipping)} />
+    <label>Retailer order number (optional)<input name="retailer_order_number" maxLength={100} defaultValue={fulfillment?.retailer_order_number || ''} /></label>
     <label>Carrier<input name="carrier" required maxLength={80} defaultValue={fulfillment?.carrier || ''} /></label>
     <label>Tracking number<input name="tracking_number" required maxLength={150} defaultValue={fulfillment?.tracking_number || ''} /></label>
     <label>Tracking link (optional — filled in automatically for USPS, UPS, FedEx, DHL)<input name="tracking_url" type="url" defaultValue={fulfillment?.tracking_url || ''} /></label>

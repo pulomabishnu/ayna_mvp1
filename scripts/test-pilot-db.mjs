@@ -8,6 +8,7 @@ await db.exec(await readFile(root+'/supabase/pilot_orders.sql','utf8'));
 await db.exec(await readFile(root+'/supabase/pilot_orders.sql','utf8'));
 await db.exec(await readFile(root+'/supabase/pilot_prices.sql','utf8'));
 await db.exec(await readFile(root+'/supabase/pilot_prices.sql','utf8'));
+assert.equal((await db.query(`select count(*)::int n from information_schema.columns where table_schema='public' and table_name='pilot_fulfillments' and column_name='retailer_order_number'`)).rows[0].n,1);
 const user='00000000-0000-4000-8000-000000000001';
 const inserted=await db.query(`insert into pilot_orders(user_id,attempt_id,product_id,product_name,stripe_price_id,amount,currency,vendor_name) values ($1,gen_random_uuid(),'p-always-infinity','Always Infinity FlexFoam','price_test',800,'usd','TEST ONLY') returning id`,[user]);
 const id=inserted.rows[0].id;

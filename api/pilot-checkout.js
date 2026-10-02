@@ -33,13 +33,13 @@ export default async function handler(req, res) {
       step = 'catalog_product';
       const product = checked(await db.from('product_catalog').select('id,name').eq('id', config.productId).single());
       step = 'retailer_price';
-      const price = checked(await db.from('pilot_product_prices').select('amount,currency').eq('product_id', product.id).single());
+      const price = checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url').eq('product_id', product.id).single());
       if (price.currency !== 'usd' || !Number.isSafeInteger(price.amount) || price.amount < 50 || price.amount > 50000) throw new Error('Invalid pilot price');
       step = 'create_order';
       const inserted = await db.from('pilot_orders').insert({
         user_id: user.id, attempt_id: body.attemptId, product_id: product.id,
         product_name: product.name, stripe_price_id: `retailer:${price.amount}`, amount: price.amount + serviceFeeCents(price.amount),
-        currency: price.currency, vendor_name: config.vendor,
+        currency: price.currency, vendor_name: config.vendor, retailer_url: price.retailer_url,
       }).select('*').single();
       if (inserted.error?.code === '23505') order = checked(await db.from('pilot_orders').select('*').eq('user_id', user.id).eq('attempt_id', body.attemptId).single());
       else order = checked(inserted);

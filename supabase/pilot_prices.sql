@@ -10,3 +10,5 @@ create table if not exists public.pilot_product_prices (
 alter table public.pilot_product_prices enable row level security;
 revoke all on public.pilot_product_prices from public, anon, authenticated;
 grant all on public.pilot_product_prices to service_role;
+alter table public.pilot_orders add column if not exists retailer_url text;
+alter table public.pilot_fulfillments add column if not exists retailer_order_number text;
