@@ -1,3 +1,4 @@
+import PilotBuyButton from './PilotBuyButton';
 import { getVariantSelection } from '../utils/productVariantSelection';
 import { recordRetailerVisit } from '../utils/feedbackClient';
 import React, { useState, useMemo, useEffect } from 'react';
@@ -754,6 +755,7 @@ export default function ProductModal({
         <small style={{ display: 'block', marginTop: '0.35rem' }}>{sizeChosenOnAmazon ? 'Buy Now opens this product on Amazon — pick the same size there. Confirm current price and availability with the retailer.' : 'Buy Now opens this exact option. Confirm current price and availability with the retailer.'}</small>
       </label>}
       <div className="pdp-actions__primary">
+        <PilotBuyButton productId={product.id} />
         {buyUrl ? (
           <a
             className="pdp-btn pdp-btn--navy pdp-btn--buy"
