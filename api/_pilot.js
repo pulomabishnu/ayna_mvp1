@@ -115,7 +115,7 @@ export function shippedEmailHtml({ productName, carrier, trackingNumber, ayanaUr
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fff;border:1px solid ${border};border-radius:20px;font-family:Georgia,'Times New Roman',serif;color:${ink}">
 <tr><td style="padding:28px 28px 0" align="center">${logoUrl ? `<img src="${esc(logoUrl)}" width="44" height="44" alt="ayna" style="border-radius:12px;display:block">` : ''}
 <p style="margin:14px 0 0;font-family:Arial,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${muted}">Order update</p>
-<h1 style="margin:6px 0 0;font-size:28px;font-weight:400;line-height:1.25">It&rsquo;s on its way &#10024;</h1></td></tr>
+<h1 style="margin:6px 0 0;font-size:28px;font-weight:400;line-height:1.25">It&rsquo;s on its way</h1></td></tr>
 <tr><td style="padding:14px 32px 0;font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:${ink}" align="center">Your <strong>${esc(productName)}</strong> just shipped. We picked it with care &mdash; thanks for shopping with ayna.</td></tr>
 <tr><td style="padding:24px 24px 4px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:Arial,sans-serif"><tr>${step('Ordered', true)}${step('Shipped', true)}${step('Delivered', false, true)}</tr></table></td></tr>
 <tr><td style="padding:20px 28px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${cream};border-radius:14px;font-family:Arial,sans-serif;font-size:14px"><tr><td style="padding:14px 18px;color:${muted}">Carrier</td><td style="padding:14px 18px;text-align:right;font-weight:700">${esc(carrier)}</td></tr><tr><td style="padding:0 18px 14px;color:${muted}">Tracking #</td><td style="padding:0 18px 14px;text-align:right;font-weight:700;word-break:break-all">${esc(trackingNumber)}</td></tr></table></td></tr>
@@ -141,7 +141,7 @@ export async function notifyCustomerShipped(order, tracking, email, { env = proc
         from: env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
         to: [email],
         reply_to: teamRecipients(env)[0],
-        subject: `${test}Your ayna order is on its way ✨`,
+        subject: `${test}Your ayna order is on its way`,
         text: [`It's on its way!`, '', `Your ${order.product_name} just shipped. Thanks for shopping with ayna.`, '', `Carrier: ${tracking.carrier}`, `Tracking #: ${tracking.tracking_number}`, '', `Track your shipment on ayna: ${ayanaUrl}`, tracking.tracking_url ? `Or track with ${tracking.carrier}: ${tracking.tracking_url}` : '', '', 'Questions? Just reply to this email.'].join('\n'),
         html: shippedEmailHtml({ productName: order.product_name, carrier: tracking.carrier, trackingNumber: tracking.tracking_number, ayanaUrl, carrierUrl: tracking.tracking_url, logoUrl: env.PILOT_EMAIL_LOGO_URL || 'https://www.aynahealth.co/ayna-favicon-180.png' }),
       }),
