@@ -1,3 +1,4 @@
+import PilotBuyButton from './PilotBuyButton';
 import React, { useState, useMemo, useEffect } from 'react';
 import ProductEvidenceRail from './ProductEvidenceRail';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
@@ -759,6 +760,7 @@ export default function ProductModal({
   const actionButtons = (
     <div className="pdp-actions">
       <div className="pdp-actions__primary">
+        <PilotBuyButton productId={product.id} />
         {buyUrl ? (
           <a
             className="pdp-btn pdp-btn--navy pdp-btn--buy"
