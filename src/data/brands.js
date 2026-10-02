@@ -2926,7 +2926,10 @@ export const BRAND_PRODUCTS = [
         isEmergingBrand: true,
     },
 
-    // kieró — verified against us.kieroskincare.com (2026-09-30). Not a brand
+    // kieró — verified against us.kieroskincare.com (2026-09-30). Every
+    // science claim below was re-checked against the cited abstract (NCBI
+    // E-utilities) on 2026-10-02; study size and design are stated wherever
+    // they limit what the finding shows. Not a brand
     // partner and no affiliate link yet, so there's no affiliateUrl; Buy Now
     // falls back to kieró's own product page (see resolveBuyUrl). Listed as
     // sold out on kieró's US site at time of writing.
@@ -2952,13 +2955,13 @@ export const BRAND_PRODUCTS = [
             fdaStatus: 'Cosmetic face cleanser; not an FDA-cleared drug or medical device. kieró states its products are vegan and cruelty-free and use EWG Green-graded ingredients; ayna did not independently verify those claims.',
             materials: 'Water-activated powder (50 g / 1.76 oz). Cleansing comes mainly from mild synthetic surfactants: sodium cocoyl isethionate, sodium methyl cocoyl taurate, and sodium lauroyl glutamate. It also contains potassium laurate, which is a true soap. The enzyme is papain. Supporting ingredients are allantoin, glycerin, beta-glucan, and chia (Salvia hispanica) seed extract. CI 77499 is black iron oxide, a colorant. No added fragrance, essential oils, or sulfates appear in the published ingredient list.',
             recalls: 'No recalls found.',
-            sideEffects: 'Papain is a protein-digesting enzyme and a known allergen: people have become sensitized to it at work and through a papain contact-lens solution. Anyone with a papaya, papain, kiwi, or fig allergy should avoid it or patch test first. Any exfoliant can cause redness or irritation if overused, especially alongside retinoids, retinol, or benzoyl peroxide. Full warnings are listed below.',
+            sideEffects: 'Papain is a protein-digesting enzyme and a documented allergen. Published cases include workers who became allergic by breathing it in and a person who reacted to papain in a contact-lens solution; one case report also links papain allergy to kiwi and fig allergy. Anyone allergic to papaya, papain, kiwi, or fig should avoid it or patch test first. The AAD warns that exfoliating while using retinoids or benzoyl peroxide can worsen dryness. Full warnings are listed below.',
             opinionAlerts: 'Allergy note: contains papain (papaya enzyme), a known allergen. Avoid it if you\'re allergic to papaya, kiwi, or fig, or patch test first. Benefit claims (refined texture, radiance, barrier support) come from kieró, and no independent clinical study of the finished product was found.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'kieró positions this as a gentle daily enzyme cleanser. Papaya enzymes exfoliate, beta-glucan hydrates and soothes, and chia seed supports the skin barrier, and the powder foams up to remove oil and impurities without drying, per the brand\'s own site.\n\nThe cleansing base is a reasonable choice for gentleness. Its main surfactant, sodium cocoyl isethionate, has been shown in lab and human studies to be milder on the skin barrier than soap or sodium lauryl sulfate. That is the basis of "syndet" cleansers dermatologists often recommend for dry or sensitive skin. The formula does also contain potassium laurate, a true soap, so it is not entirely soap-free.\n\nPapain, the papaya enzyme, is an established exfoliant. It breaks down keratin and other skin proteins, which mimics the skin\'s natural shedding. A 2021 review found only a handful of studies on enzyme exfoliation and few clinical trials, though the results that exist are positive. A cleanser also stays on the skin for under a minute, so its exfoliating effect is likely mild. The trade-off is that papain is a recognized allergen. Studies show it can loosen the proteins that hold skin cells together and trigger sensitization through the skin. Anyone with a papaya-family allergy should be cautious.\n\nBeta-glucan has real clinical evidence. In controlled studies, topical beta-glucan improved skin hydration and reduced irritation, including in atopic dermatitis and after laser treatment. Chia seed oil improved hydration and barrier function in a small 8-week study of people with dry, itchy skin. That study used a leave-on 4% oil formula, though, not a rinse-off extract. Allantoin is a well-documented soothing and mildly keratolytic skin-protectant ingredient.\n\nThe American Academy of Dermatology advises people with dry, sensitive, or acne-prone skin to choose gentle exfoliation and to moisturize afterward. It also warns against exfoliating while using retinoids or benzoyl peroxide, or on broken or sunburned skin. No independent clinical study of this specific product was found.',
-        doctorOpinionShort: 'A powder cleanser built on mild syndet surfactants (mainly sodium cocoyl isethionate, shown to be gentler on the skin barrier than soap) with papaya enzyme (papain) for light exfoliation. Beta-glucan, chia seed, and allantoin have real supporting research for hydration and soothing, though a rinse-off cleanser limits how much they do. Papain is a known allergen, so avoid it if you\'re allergic to papaya, kiwi, or fig. No independent clinical study of this specific product was found.',
+        doctorOpinion: 'kieró says the papaya enzymes gently exfoliate, beta-glucan hydrates and soothes, and chia seed reinforces the skin barrier, and that the powder foams up to remove oil and impurities without drying. No independent study of this product was found, so what follows is what the research says about its main ingredients.\n\nThe main cleansing agent, sodium cocoyl isethionate, is the basis of "syndet" (synthetic detergent) cleansers. Reviews describe syndets as gentler on the skin barrier than soap, and lab work explains why: its micelles are too large to slip into the skin\'s outer layer. The formula also contains potassium laurate, which is a true soap, so it isn\'t entirely soap-free.\n\nPapain breaks down keratin and other skin proteins in lab tests, which is how enzyme exfoliants work. The evidence is thin, though. A review found only 11 published studies on enzyme exfoliation, with few clinical trials, and concluded that more robust studies are needed before it can be recommended as safe. The lab test took hours to break down skin proteins, and a cleanser is rinsed off within a minute, so any exfoliation is likely mild. Papain is also a documented allergen, mostly in workers who breathe it in. In human skin cells and in mice, it weakened the skin barrier and caused sensitization through the skin.\n\nThe supporting ingredients have early evidence, all from leave-on products rather than cleansers. For beta-glucan, a 20-patient split-face trial after laser treatment found that a beta-glucan skin-care regimen improved hydration and redness compared with a placebo cream, and an open-label eczema study of 105 patients found less itch and milder flare-ups. For chia seed oil, a 4% chia oil cream improved hydration and barrier function in an 8-week study of just 10 people, with no control group. Allantoin is recognized by the FDA as an over-the-counter skin protectant at 0.5–2%, but kieró doesn\'t list its concentration.\n\nThe American Academy of Dermatology advises gentle exfoliation for dry or sensitive skin, moisturizing afterward, and not exfoliating while using retinoids or benzoyl peroxide or on broken or sunburned skin.',
+        doctorOpinionShort: 'A powder cleanser built on syndet surfactants, which are gentler on the skin barrier than soap, with papaya enzyme (papain) for exfoliation. Evidence for enzyme exfoliation is thin, and the beta-glucan and chia research comes from small studies of leave-on products, not rinse-off cleansers. Papain is a documented allergen, so avoid it if you\'re allergic to papaya, kiwi, or fig. No independent study of this product was found.',
         // Kept out of verificationLinks so it doesn't pool with the
         // Scientific literature tab's citation list.
         doctorOpinionCitations: [
@@ -2992,23 +2995,24 @@ export const BRAND_PRODUCTS = [
             'Keep out of eyes. If you get redness, burning, or an allergic reaction, stop using it and see a doctor.',
         ],
         communityReview: 'kieró\'s US site shows 251 customer reviews, and 233 of them (93%) are five stars. Most reviews are in Spanish and describe skin feeling very clean, soft, and hydrated, for example: "Muy recomendable, te deja la piel suave e hidratada" ("Highly recommend, it leaves your skin soft and hydrated"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
-        effectiveness: 'Cleanses with mild syndet surfactants and gives light enzyme exfoliation from papain. Beta-glucan, chia seed extract, and allantoin each have independent research supporting hydration or soothing, though that research mostly tested leave-on products rather than rinse-off cleansers. No independent clinical study of the finished product was found.',
+        effectiveness: 'Cleanses with mild syndet surfactants. Papain may add light exfoliation, but enzyme exfoliation has few clinical trials and a cleanser is rinsed off quickly. Evidence for beta-glucan and chia comes from small studies of leave-on products. No independent study of the finished product was found.',
         // Per-ingredient science claims, each paired with a credible
         // source (NIH-hosted or PubMed). Rendered on the Scientific
         // literature tab. Matches kieró's key-ingredient claims.
         ingredientScience: [
             {
                 name: 'Papain (papaya enzyme)',
-                text: 'kieró states this gently exfoliates. Papain is a protease: in lab testing it broke down keratin and collagen, which mimics the skin\'s natural shedding. A 2021 review found enzyme exfoliants do work but have been studied in only a handful of papers with few clinical trials. Papain is also a known allergen. It can loosen the proteins that hold skin cells together and has sensitized people through the skin.',
+                text: 'kieró states this gently exfoliates. In a lab study, papain broke down keratin and collagen, and on pig skin it had an exfoliating effect, though breakdown took hours. A review (J Cosmet Dermatol, 2022) found only 11 studies on enzyme exfoliation, few of them clinical trials. It concluded that more robust studies are needed before enzyme exfoliation can be recommended as safe. Papain is also an allergen. In human skin cells and in mice it weakened the skin barrier and caused sensitization through the skin. In people, papain allergy is mostly documented in workers who breathe it in, and one case report links it to kiwi and fig allergy.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/34897928/', label: 'PubMed: An overview of the use of proteolytic enzymes as exfoliating agents' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/35892222/', label: 'PubMed: In vitro effect on the proteolytic activity of papain with proteins of the skin as substrate' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/25705851/', label: 'PubMed: Papain degrades tight junction proteins of human keratinocytes in vitro and sensitizes mice via the skin' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26739411/', label: 'PubMed: Papain-induced occupational asthma with kiwi and fig allergy — case report and review of 13 cases' },
                 ],
             },
             {
                 name: 'Beta-glucan',
-                text: 'kieró states this hydrates and soothes. Topical beta-glucan increased skin hydration and reduced irritation in controlled studies. These include a split-face, double-blind, vehicle-controlled trial after laser treatment and a multicentre study in mild-to-moderate atopic dermatitis.',
+                text: 'kieró states this hydrates and soothes. In a split-face, double-blind trial of 20 patients after laser treatment, a beta-glucan skin-care regimen improved hydration and redness compared with a placebo cream. In an open-label study (no blinding or separate control group) of 105 people with mild-to-moderate eczema, a beta-glucan cream reduced itch and eczema severity on the treated side. Both tested leave-on products, not a rinse-off cleanser.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/33128496/', label: 'PubMed: Skin care regimens containing β-glucan for skin recovery after fractional laser therapy — split-face, double-blinded, vehicle-controlled study' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/26654776/', label: 'PubMed: β-Glucan-based cream in supportive treatment of mild-to-moderate atopic dermatitis' },
@@ -3017,14 +3021,14 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Chia seed (Salvia hispanica) extract',
-                text: 'kieró states this reinforces the skin barrier. In a small 8-week study, a topical 4% chia seed oil formula improved skin hydration and barrier function (lower transepidermal water loss) in people with dry, itchy skin, with no adverse effects. That study tested a leave-on oil, not a rinse-off extract.',
+                text: 'kieró states this reinforces the skin barrier. In an 8-week study of 10 people with dry, itchy skin and no control group, a cream with 4% chia seed oil improved skin hydration and barrier function, with no side effects reported. The study was run by a company that makes skin products, and it tested a leave-on oil, not a rinse-off extract.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/20548903/', label: 'PubMed: Effectiveness of topical chia seed oil on pruritus of end-stage renal disease patients and healthy volunteers' },
                 ],
             },
             {
                 name: 'Sodium cocoyl isethionate',
-                text: 'The main cleansing agent. Lab and human studies show it is milder on the skin barrier than soap or sodium lauryl sulfate. Its micelles are too large to penetrate the skin\'s outer layer as easily, which is why "syndet" cleansers are often recommended for dry or sensitive skin.',
+                text: 'The main cleansing agent. Lab research found its micelles are too large to get into the skin\'s outer layer, which explains why it is milder than soap or sodium lauryl sulfate. A 2022 review concludes that syndet cleansers like this preserve the skin barrier better than soap.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/17598025/', label: 'PubMed: Why is sodium cocoyl isethionate (SCI) mild to the skin barrier?' },
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8954092/', label: 'NIH (PMC): Skin cleansing without or with compromise — soaps and syndets' },
@@ -3032,9 +3036,9 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Allantoin',
-                text: 'A soothing, skin-protectant ingredient with mild keratolytic (dead-skin-loosening) and moisturizing effects, and a common ingredient in moisturizers for dermatitis-prone skin.',
+                text: 'The FDA recognizes allantoin as an over-the-counter skin-protectant ingredient at 0.5–2%. kieró doesn\'t list how much this cleanser contains, and in a rinse-off product little stays on the skin.',
                 citations: [
-                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11685320/', label: 'NIH (PMC): The role of moisturizer containing anti-inflammatory ingredients on skin hydration in mild-moderate atopic dermatitis' },
+                    { url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-347/subpart-B/section-347.10', label: 'FDA (21 CFR 347.10): Skin protectant active ingredients — allantoin, 0.5 to 2 percent' },
                 ],
             },
         ],
@@ -3058,12 +3062,6 @@ export const BRAND_PRODUCTS = [
                         url: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
                         text: 'kieroskincare.com: Refining Enzyme Cleanser customer reviews',
                         summary: 'kieró\'s own product page shows 251 reviews, 93% of them five stars, mostly in Spanish (see the Community summary above).',
-                    },
-                    {
-                        platform: 'website',
-                        url: 'https://skinsort.com/products/kiero/refining-enzyme-cleanser',
-                        text: 'Skinsort: kieró Refining Enzyme Cleanser ingredient analysis',
-                        summary: 'An independent ingredient-analysis site. It lists the formula as vegan, fungal-acne safe, and free of fragrance, harsh alcohols, parabens, silicones, and sulfates. This is an ingredient screen, not user reviews.',
                     },
                 ],
             },
@@ -3095,15 +3093,15 @@ export const BRAND_PRODUCTS = [
         ingredients: 'Full INCI list per kieró: Dimethicone, Synthetic Wax, Vinyl Dimethicone/Methicone Silsesquioxane Crosspolymer, Cetyl Ethylhexanoate, Octocrylene, Homosalate, Methyl Methacrylate Crosspolymer, Dibutyl Adipate, Butyloctyl Salicylate, Octisalate, Avobenzone, Pentylene Glycol, Polyglyceryl-4 Oleate, Helianthus Annuus (Sunflower) Seed Oil, Polyglyceryl-6 Oleate, Polyhydroxystearic Acid, Methylpropanediol, Persea Gratissima (Avocado) Oil, Ethylhexylglycerin, Caprylyl Glycol, Glycine Soja (Soybean) Oil, Tocopherol, Steareth-30, Lactobacillus Ferment Lysate, Butyrospermum Parkii (Shea) Butter Extract, Bixa Orellana Seed Oil, Water, Sodium Guaiazulene Sulfonate, Panthenol, Butylene Glycol, 1,2-Hexanediol, Anthemis Nobilis Flower Water, Madecassoside, Asiaticoside, Asiatic Acid, Madecassic Acid.',
         safety: {
             fdaStatus: 'In the US, sunscreens are regulated as over-the-counter drugs. kieró doesn\'t publish the percentage of each UV filter or say whether the product is water resistant. kieró states its products are vegan and cruelty-free; ayna did not independently verify that.',
-            materials: 'Solid silicone-and-wax stick (20 g / 0.7 oz). UV filters: avobenzone (UVA), octocrylene, homosalate, octisalate, and butyloctyl salicylate, all chemical filters with no zinc oxide or titanium dioxide. The soothing ingredients are chamomile flower water, sodium guaiazulene sulfonate (a chamomile-derived compound), madecassoside with other centella compounds, panthenol, and vitamin E. Plant oils include sunflower, avocado, soybean, shea, and annatto (Bixa orellana).',
+            materials: 'Solid silicone-and-wax stick (20 g / 0.7 oz). UV filters: avobenzone (UVA), octocrylene, homosalate, octisalate, and butyloctyl salicylate, all chemical filters with no zinc oxide or titanium dioxide. The soothing ingredients are Roman chamomile flower water, sodium guaiazulene sulfonate (an azulene compound related to chamomile\'s blue oil), madecassoside with other centella compounds, panthenol, and vitamin E. Plant oils include sunflower, avocado, soybean, shea, and annatto (Bixa orellana).',
             recalls: 'No recalls found.',
-            sideEffects: 'Chemical UV filters can cause irritation or, rarely, allergic or photoallergic reactions; octocrylene is the most common culprit. The formula contains chamomile, so people allergic to ragweed or the daisy family should patch test first. Keep sticks away from the eyes. Full warnings are listed below.',
-            opinionAlerts: 'Safety note: a stick only reaches its labeled SPF if you apply enough, so swipe several passes over each area. It uses chemical UV filters, which FDA studies show are absorbed into the bloodstream. The FDA says that alone doesn\'t mean they\'re unsafe, and you should keep using sunscreen. Contains chamomile, so patch test if you\'re allergic to ragweed or daisies. Soothing and barrier claims come from kieró, and no independent clinical study of the finished product was found.',
+            sideEffects: 'Octocrylene can cause photoallergic reactions (a rash after sun exposure), notably in people who have reacted to ketoprofen, an anti-inflammatory gel. The formula contains Roman chamomile, a daisy-family (Asteraceae) plant; this family is a known contact allergen and cross-reacts with ragweed, so people with those allergies should patch test first. Full warnings are listed below.',
+            opinionAlerts: 'Safety note: sunscreen only reaches its labeled SPF when applied generously, and most people apply far less, so go over each area several times. Its chemical UV filters were absorbed into the bloodstream in an FDA study; the FDA researchers said that doesn\'t mean people should stop using sunscreen. Contains Roman chamomile, so patch test if you\'re allergic to ragweed or daisies. Soothing and barrier claims come from kieró, and no independent study of the finished product was found.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'kieró positions this as a lightweight daily SPF 50+ / PA++++ stick. Its chamomile soothes, its vitamin E gives antioxidant defense, and its madecassoside strengthens the skin barrier, and it can be swiped over makeup, per the brand\'s own site.\n\nDaily broad-spectrum sunscreen is one of the best-supported habits in dermatology. In the Nambour randomized trial in Australia, adults assigned to daily sunscreen had about 24% less skin aging over 4.5 years. They also developed fewer squamous cell skin cancers and, in 10-year follow-up, half as many new melanomas as people who used sunscreen when they chose to. Those trials tested a basic SPF 15+ sunscreen, not this product, but the benefit comes from consistent daily use of any broad-spectrum sunscreen.\n\nThe main caveat with sticks is how much you apply. SPF is tested at 2 mg/cm², and studies show people typically apply a quarter to half of that, which cuts real-world protection roughly in proportion. Solid sticks make that easier to get wrong, so go over each area several times. The AAD also advises applying 15 minutes before going out and reapplying every two hours and after swimming or sweating. kieró doesn\'t claim water resistance, so reapply after either.\n\nThe filters here (avobenzone, octocrylene, homosalate, octisalate) are all FDA-permitted. In a 2020 FDA randomized trial published in JAMA, all of them were absorbed into the bloodstream above the level at which the FDA waives further safety testing. The FDA and the study authors stressed that absorption doesn\'t mean harm and that people should keep using sunscreen. Separately, a lab study found octocrylene can slowly break down into benzophenone as a product ages, so replace old or heat-exposed sunscreen. If either concern matters to you, a mineral (zinc oxide) sunscreen avoids both.\n\nMadecassoside has real supporting research. It is the centella compound behind many "cica" products. In a 6-month double-blind study, a cream with madecassoside and vitamin C improved skin hydration, firmness, and fine wrinkles, and lab studies show it calms UV-triggered inflammation. Vitamin E is a well-documented skin antioxidant. No independent clinical study of this specific product was found.',
-        doctorOpinionShort: 'Daily broad-spectrum sunscreen has strong randomized-trial evidence for slowing skin aging and lowering skin-cancer risk. The catch with any stick is applying enough, so use several passes per area and reapply every two hours. It uses chemical filters, which FDA studies show are absorbed into the blood (not proven harmful; a mineral sunscreen is the alternative if that concerns you). Madecassoside and vitamin E have real supporting research. No independent clinical study of this specific product was found.',
+        doctorOpinion: 'kieró says the chamomile soothes, the vitamin E gives antioxidant defense, and the madecassoside strengthens the skin barrier, and that the stick can be swiped on over makeup. No independent study of this product was found, so what follows is what the research says about daily sunscreen and its ingredients.\n\nThe strongest evidence is for daily sunscreen use itself, from a randomized trial of 1,621 adults in Nambour, Australia, using an SPF 15+ sunscreen. People assigned to daily use had 24% less skin aging over 4.5 years than people who used sunscreen when they chose to. They also had about 39% fewer squamous cell carcinoma tumors, though the share of people who got one didn\'t differ significantly, and there was no effect on basal cell carcinoma. Ten years later, the daily group had 11 new melanomas versus 22, a difference just short of statistical significance overall, though the drop in invasive melanoma (3 vs 11) was significant.\n\nHow much you apply matters. SPF is tested at 2 mg/cm², while consumers typically apply 0.5–1 mg/cm², and lab studies show actual SPF drops steeply at those amounts. One study found SPF 30–50 products may not give enough protection at typical consumer amounts. The AAD and FDA advise applying 15 minutes before sun exposure and reapplying at least every two hours, and more often when swimming or sweating. kieró doesn\'t claim water resistance.\n\nThe UV filters in this stick (avobenzone, octocrylene, homosalate, octisalate) were all absorbed into the bloodstream in a 2020 FDA randomized trial of 48 people. Levels were above the point at which the FDA can waive further safety testing, and the FDA researchers said this does not mean people should stop using sunscreen. A separate lab study found benzophenone, which it calls a possible human carcinogen, in all 28 octocrylene-containing products tested, increasing with age and heat. People who want to avoid these filters can choose a mineral (zinc oxide) sunscreen.\n\nFor the soothing ingredients, a 6-month double-blind study of 20 women found that a cream combining 5% vitamin C with 0.1% madecassoside improved wrinkles, firmness, and hydration. Because the two were combined, the result can\'t be credited to madecassoside alone. In a separate study, madecassoside reduced UV-triggered inflammation in skin cells and reduced UV tanning on human skin over 8 weeks. Vitamin E is the main antioxidant naturally found in skin.',
+        doctorOpinionShort: 'Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a large randomized trial, with a likely drop in invasive melanoma. Protection depends on applying enough, so go over each area several times and reapply every two hours. Its chemical filters are absorbed into the blood; the FDA researchers said that doesn\'t mean people should stop using sunscreen, and mineral sunscreen is an alternative. No independent study of this product was found.',
         // Kept out of verificationLinks so it doesn't pool with the
         // Scientific literature tab's citation list.
         doctorOpinionCitations: [
@@ -3132,29 +3130,30 @@ export const BRAND_PRODUCTS = [
         },
         // Rendered as a red warning box on the Evidence view.
         warnings: [
-            'Allergy to ragweed, chamomile, or the daisy family: patch test first.',
-            'For external use only. Keep it out of the eyes, and don\'t use it on broken or damaged skin.',
-            'Rash, irritation, or a reaction after sun exposure: stop using it and see a doctor. Octocrylene can cause photoallergic reactions.',
+            'Allergy to ragweed, chamomile, or other daisy-family plants: patch test first.',
+            'Have you reacted to ketoprofen (an anti-inflammatory gel)? Octocrylene can cause photoallergic reactions in people sensitized to it.',
+            'Rash or irritation, especially after sun exposure: stop using it and see a doctor.',
             'Not stated as water resistant: reapply after swimming or sweating.',
-            'Children under 6 months: ask a doctor before using any sunscreen (FDA).',
+            'Infants under 6 months: the FDA doesn\'t recommend sunscreen; keep them out of the sun instead.',
         ],
         communityReview: 'kieró\'s US site shows 657 customer reviews, and 593 of them (90%) are five stars; the rest are four stars. Most reviews are in Spanish and praise how easily it goes on, how fast it absorbs, and its non-greasy feel, including over makeup. For example: "No es grasoso y protege muy bien tu piel del sol" ("It\'s not greasy and protects your skin from the sun really well"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
-        effectiveness: 'Rated SPF 50+ / PA++++ broad spectrum, but real-world protection depends on applying enough, which is harder with a stick. Daily broad-spectrum sunscreen use has randomized-trial evidence for slowing skin aging and reducing squamous cell carcinoma and melanoma. Madecassoside, panthenol, and vitamin E add soothing and antioxidant support. No independent clinical study of the finished product was found.',
+        effectiveness: 'Labeled SPF 50+ / PA++++ broad spectrum, but real-world protection depends on how much you apply. Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a randomized trial. No independent study of the finished product was found.',
         // Per-ingredient / per-topic science, each paired with a credible
         // source (NIH-hosted or PubMed). Rendered on the Scientific
         // literature tab.
         ingredientScience: [
             {
                 name: 'Daily broad-spectrum sunscreen',
-                text: 'In the Nambour randomized trial, adults assigned to daily sunscreen had no detectable increase in skin aging over 4.5 years, 24% less than the comparison group. In 10-year follow-up, they had half as many new melanomas (11 vs 22), with a larger drop in invasive melanoma.',
+                text: 'In the Nambour randomized trial (1,621 adults, SPF 15+), people assigned to daily sunscreen showed no detectable increase in skin aging over 4.5 years, 24% less aging than the discretionary-use group. They had 39% fewer squamous cell carcinoma tumors, though the share of people who got one didn\'t differ significantly, and there was no effect on basal cell carcinoma. Ten years later, the daily group had 11 new melanomas vs 22; that overall difference was just short of statistical significance (p = 0.051), while the drop in invasive melanoma (3 vs 11) was significant.',
                 citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/10475183/', label: 'PubMed: Daily sunscreen application in prevention of basal-cell and squamous-cell carcinomas — a randomised controlled trial (Green et al., Lancet 1999)' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/23732711/', label: 'PubMed: Sunscreen and prevention of skin aging — a randomized trial (Hughes et al., Ann Intern Med 2013)' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/21135266/', label: 'PubMed: Reduced melanoma after regular sunscreen use — randomized trial follow-up (Green et al., J Clin Oncol 2011)' },
                 ],
             },
             {
                 name: 'How much you apply',
-                text: 'SPF is measured at 2 mg/cm². People typically apply 0.5–1 mg/cm², and actual SPF falls roughly in proportion to the amount applied. That is why you should use several passes with a stick.',
+                text: 'SPF is measured at 2 mg/cm², but consumers typically apply 0.5–1 mg/cm². Lab studies on volunteers found actual SPF falls significantly at lower amounts. One found SPF 30–50 products may not give enough protection at typical consumer amounts.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/19614894/', label: 'PubMed: The influence of the amount of sunscreen applied on its sun protection factor' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/22463921/', label: 'PubMed: High-SPF sunscreens may compensate for lower user application amounts' },
@@ -3162,7 +3161,7 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Chemical UV filters (avobenzone, octocrylene, homosalate, octisalate)',
-                text: 'In a 2020 FDA randomized trial, all of these filters were absorbed into the bloodstream after application, above the level at which the FDA waives further safety testing. The authors stressed that this doesn\'t mean they are unsafe and that people shouldn\'t stop using sunscreen. Separately, a lab study found benzophenone in every octocrylene-containing sunscreen tested, rising as products aged.',
+                text: 'In a 2020 FDA randomized trial of 48 people, all of these filters were absorbed into the bloodstream after a single application, above the level at which the FDA can waive further safety testing. The researchers concluded this does not mean people should stop using sunscreen. A separate lab study found benzophenone, a possible human carcinogen, in all 28 octocrylene-containing products tested. Levels rose with time and heat.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/31961417/', label: 'PubMed: Effect of sunscreen application on plasma concentration of sunscreen active ingredients — a randomized clinical trial (JAMA 2020)' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/33763894/', label: 'PubMed: The presence of benzophenone in sunscreens and cosmetics containing the organic UV filter octocrylene' },
@@ -3170,15 +3169,22 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Madecassoside (centella)',
-                text: 'kieró states this strengthens the skin barrier. In a 6-month randomized, double-blind study, topical madecassoside with vitamin C improved hydration, firmness, and wrinkles in photoaged skin. Lab studies show madecassoside dampens UV-triggered inflammation.',
+                text: 'kieró states this strengthens the skin barrier. No study testing madecassoside alone for barrier strength was found. In a 6-month double-blind study of 20 women, a cream combining 5% vitamin C with 0.1% madecassoside improved wrinkles, firmness, and hydration, but the result can\'t be credited to madecassoside alone. In another study, madecassoside reduced UV-triggered inflammation in skin cells and reduced UV tanning on human skin over 8 weeks.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin' },
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6290557/', label: 'NIH (PMC): Madecassoside inhibits melanin synthesis by blocking ultraviolet-induced inflammation' },
                 ],
             },
             {
+                name: 'Roman chamomile',
+                text: 'kieró states this soothes sensitive skin. No study of chamomile flower water for soothing was found. Chamomile is in the daisy (Asteraceae) family, whose compounds are known skin sensitizers that can cross-react with ragweed.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11847717/', label: 'NIH (PMC): Allergic potential of medicinal plants from the Asteraceae family (2025 review)' },
+                ],
+            },
+            {
                 name: 'Vitamin E',
-                text: 'kieró states this gives antioxidant defense. Vitamin E is one of skin\'s main fat-soluble antioxidants and helps protect it from oxidative and UV-related stress. It can occasionally cause contact dermatitis.',
+                text: 'kieró states this gives antioxidant defense. Vitamin E is the main antioxidant naturally found in human skin, and UV exposure depletes it.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the Response of Skin to Oxidative Stress — Vitamin E as a Key Indicator' },
                 ],
@@ -3196,7 +3202,7 @@ export const BRAND_PRODUCTS = [
             {
                 url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun',
                 text: 'FDA: Sunscreen — how to help protect your skin from the sun',
-                summary: 'FDA consumer guidance on broad-spectrum SPF, reapplication, and sunscreen use in infants under 6 months.',
+                summary: 'FDA guidance: use broad-spectrum SPF 15+, apply 15 minutes before sun exposure, reapply at least every two hours, and keep infants under 6 months out of the sun rather than using sunscreen.',
             },
         ],
         verificationLinks: {
@@ -3480,7 +3486,7 @@ export const BRAND_PRODUCTS = [
         image: 'https://sootheher.com/assets/elaris-butterfly-hero-DnUO3OIN.webp',
         summary: 'A discreet, wearable TENS (transcutaneous electrical nerve stimulation) device for menstrual cramps. A butterfly-shaped gel pad worn on the lower abdomen sends adjustable electrical pulses meant to block pain signals, prompt endorphin release, and relax uterine muscles — worn under clothing, drug-free.',
         safety: {
-            fdaStatus: 'FDA-cleared, per the brand.',
+            fdaStatus: 'SootheHer says the Elaris Pod is FDA-cleared. ayna could not find it in the FDA\'s 510(k) or device-listing databases under the SootheHer or Elaris name (checked 2026-10-02). TENS devices are sometimes cleared under the manufacturer\'s name, so the clearance has not been confirmed either way.',
             materials: 'Device, reusable butterfly and circular gel pads, connecting wire, USB-C charging cable, user manual, per the brand.',
             recalls: 'No recalls found.',
             sideEffects: 'Brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition — consult a clinician first if any of these apply.',

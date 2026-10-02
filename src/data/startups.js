@@ -422,7 +422,7 @@ export const STARTUPS = [
         id: 's-embr',
         name: 'Embr Labs',
         tagline: 'Wearable cooling for hot flashes',
-        description: 'Ember Wave bracelet uses thermal technology to cool the wrist and reduce hot flash intensity. FDA-cleared, drug-free relief for menopause symptoms.',
+        description: 'Embr Wave is a wrist-worn device that uses thermal (cooling and warming) technology, marketed to ease how hot flashes feel. It is drug-free. It is not FDA-cleared; no FDA clearance or device listing was found (checked 2026-10-02).',
         tags: ['menopause', 'discomfort', 'comfort'],
         healthFunctions: [],
         category: 'menopause',
@@ -589,9 +589,12 @@ export const STARTUPS = [
         id: 's-joylux',
         name: 'Joylux',
         communityReview: 'Trustpilot rates Joylux 3.9/5 from 147 reviews (65% 5-star, 17% 1-star). Reviewers praise effectiveness for menopause symptoms. Common complaints: device charging and durability issues. One reviewer: "It has been a total game changer. Going through perimenopause has been awful... I have seen results in 1-2 weeks with dryness and uncomfortability."',
-        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/joylux.com', text: 'Trustpilot: Joylux', summary: 'Trustpilot rates Joylux 3.9/5 from 147 reviews (65% 5-star, 17% 1-star). Reviewers praise effectiveness for menopause symptoms. Common complaints: device charging and durability issues. One reviewer: "It has been a total game changer. Going through perimenopause has been awful... I have seen results in 1-2 weeks with dryness and uncomfortability."' }] } },
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://joylux.com/blogs/faq/are-vfit-or-vfit-plus-products-fda-approved', text: 'Joylux FAQ: Are vFit or vFit PLUS products FDA approved?', summary: 'Joylux states the FDA designated vFit and vFit PLUS as low-risk general wellness devices in December 2017. That is not an FDA clearance or approval.' }, { url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K242958', text: 'FDA 510(k) K242958: Joylux Intimacy Gel', summary: 'Cleared March 20, 2025 as a personal lubricant (Class II). This clearance covers the gel only, not vFit.' }, { url: 'https://pubmed.ncbi.nlm.nih.gov/32129169/', text: 'J Sex Med (2020): Radiofrequency devices for genito-urinary indications, citing the FDA warning of July 30, 2018', summary: 'Documents the FDA\'s July 30, 2018 safety warning on energy-based devices marketed for vaginal "rejuvenation" and for vaginal symptoms of menopause, urinary incontinence, and sexual function. (The original FDA page has since been removed from fda.gov.)' }] }, community: { links: [{ url: 'https://www.trustpilot.com/review/joylux.com', text: 'Trustpilot: Joylux', summary: 'Trustpilot rates Joylux 3.9/5 from 147 reviews (65% 5-star, 17% 1-star). Reviewers praise effectiveness for menopause symptoms. Common complaints: device charging and durability issues. One reviewer: "It has been a total game changer. Going through perimenopause has been awful... I have seen results in 1-2 weeks with dryness and uncomfortability."' }] } },
         tagline: 'Vaginal health and wellness devices',
-        description: 'vFit and other FDA-cleared devices for vaginal rejuvenation, dryness, and pelvic floor. At-home, clinically studied treatments.',
+        // Corrected 2026-10-02 after an outside review: vFit is NOT FDA-cleared.
+        // Verified against Joylux's own FAQ, the FDA 510(k) database, and the
+        // FDA's 2018 safety communication (links in verificationLinks below).
+        description: 'Joylux makes vFit, an at-home device that uses low-level red light, gentle heat, and sonic vibration, marketed for intimate wellness (moisture, sensation, and comfort). The FDA classified vFit as a low-risk general wellness device in 2017. That means it is not FDA-cleared or approved and can\'t be marketed to treat dryness, pelvic floor problems, or any other condition. No device is FDA-cleared for "vaginal rejuvenation," and the FDA has warned against energy-based devices sold for it. Joylux also sells vaginal moisturizers and gels; its Intimacy Gel was FDA-cleared in 2025 as a personal lubricant.',
         tags: ['discomfort', 'pelvic-floor', 'menopause'],
         healthFunctions: ['vaginal-health'],
         category: 'pelvic-health',
@@ -754,7 +757,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 350,
         url: 'https://femtechealth.com',
-        image: 'http://joylux.com/cdn/shop/articles/femtech-leader-joylux-closes-on-oversubscribed-13m-series-a-round-to-expand-menopause-platform-686703.jpg?v=1667362254'
+        image: ''
     },
     {
         id: 's-sandstone',
