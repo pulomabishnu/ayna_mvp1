@@ -69,6 +69,7 @@ export function isAmazonUrl(value) {
 const PARTNER_REF_PARAMS = [
   { pattern: /\blim method\b/, hosts: ['limmethod.com'], param: 'ref', value: 'Ayna_Health' },
   { pattern: /\belitone\b/, hosts: ['elitone.com'], param: 'af', value: 'aynahealth' },
+  { pattern: /\bbuni\b/, hosts: ['bunibody.com'], param: 'ref', value: 'oxaevspm' },
 ];
 
 function withPartnerRef(product, url) {

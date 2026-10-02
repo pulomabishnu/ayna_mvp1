@@ -43,10 +43,9 @@ import { ProductImageFallback } from './ProductTileImage';
  * pelvic-bra.myshopify.com affiliate links that redirect to the brand's real
  * storefront at mypelvicbra.shop.
  *
- * Added 2026-09-11: BUNI — confirmed brand partnership. Direct BUNI affiliate
- * link is still pending, so the partnership page uses the official brand site
- * while individual product Buy Now links currently use Ayna's Amazon
- * Associates links.
+ * Added 2026-09-11: BUNI — confirmed brand partnership. Product Buy Now links
+ * use BUNI's direct affiliate links (?ref=oxaevspm, supplied 2026-09-29);
+ * Amazon Associates links stay as a secondary retailer.
  *
  * Added 2026-09-11: LiM Method — confirmed affiliate partnership. Product and
  * brand links use the ref=Ayna_Health tracking parameter supplied by Ayna.
@@ -183,7 +182,7 @@ function BrandMark({ partner }) {
   return <div className="brand-partner__wordmark">{partner.brand}</div>;
 }
 
-export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem }) {
+export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem, onBrowseBrand }) {
   return (
     <section className="brands">
       <div className="mockup-page brands__head">
@@ -208,8 +207,16 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                 <div>
                   <div className="brand-partner__name">{partner.brand}</div>
                   <p className="brand-partner__blurb">{partner.blurb}</p>
-                  <a className="brand-partner__link" href={partner.url} target="_blank" rel="noopener noreferrer">
-                    Visit {partner.brand} ↗
+                  <a
+                    className="brand-partner__link"
+                    href={`/discovery?q=${encodeURIComponent(partner.brand)}`}
+                    onClick={(e) => {
+                      if (!onBrowseBrand) return;
+                      e.preventDefault();
+                      onBrowseBrand(partner.brand);
+                    }}
+                  >
+                    Browse {partner.brand} →
                   </a>
                 </div>
               </header>

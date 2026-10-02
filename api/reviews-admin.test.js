@@ -48,6 +48,20 @@ describe('popup review administration', () => {
     expect(listUsers).toHaveBeenLastCalledWith({ page: 2, perPage: 1000 });
     expect(res.body.count).toBe(1);
   });
+  it('leaves team/test accounts out of results and counts, ignoring case and whitespace', async () => {
+    const team = (email, date) => ({ ...reviewer('team', date, 'internal'), email });
+    listUsers.mockResolvedValue({ data: { users: [
+      team('  AO369@Cornell.EDU ', '2026-09-21'),
+      team('Puloma@AynaHealth.co', '2026-09-22'),
+      team('eliz@aynahealth.co', '2026-09-23'),
+      reviewer('real', '2026-09-20', 'Real user'),
+    ] } });
+    const res = response();
+    await handler({ method: 'GET' }, res);
+    expect(res.code).toBe(200);
+    expect(res.body.count).toBe(1);
+    expect(res.body.results.map(r => r.feedback)).toEqual(['Real user']);
+  });
   it('rejects non-admins before loading private feedback', async () => {
     vi.stubEnv('ADMIN_EMAILS', 'someoneelse@example.test');
     const res = response();

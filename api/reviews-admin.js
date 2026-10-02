@@ -21,6 +21,27 @@ function isAdminEmail(email) {
   return allow.includes(String(email).trim().toLowerCase());
 }
 
+// Team/test accounts whose reviews are hidden from this admin page and left
+// out of every count it shows. Read-time filter only: the stored reviews are
+// never deleted or modified. Matched case-insensitively after trimming.
+const EXCLUDED_REVIEWER_EMAILS = new Set([
+  'eliz@aynahealth.co',
+  'elizcelik2003@gmail.com',
+  'puloma@aynahealth.co',
+  'pulomacornell@gmail.com',
+  'pulomabackup@gmail.com',
+  'pb472@cornell.edu',
+  'lalaloops99@gmail.com',
+  'o.ameera24@gmail.com',
+  'ao369@cornell.edu',
+  'ameera@aynahealth.co',
+]);
+
+function isExcludedReviewer(email) {
+  if (typeof email !== 'string') return false;
+  return EXCLUDED_REVIEWER_EMAILS.has(email.trim().toLowerCase());
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
@@ -52,6 +73,7 @@ export default async function handler(req, res) {
       for (const reviewer of users) {
         const meta = reviewer.user_metadata || {};
         if (!meta.satisfaction_survey_completed_at) continue;
+        if (isExcludedReviewer(reviewer.email)) continue;
         const rating = Number(meta.satisfaction_rating);
         results.push({
           id: `legacy-${results.length}`,

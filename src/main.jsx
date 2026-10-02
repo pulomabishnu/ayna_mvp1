@@ -121,6 +121,10 @@ function sanitizePosthogEvent(event) {
   // at sign-in so any earlier anonymous events from a brand-new browser can be
   // excluded by the internal-user filter after identity merge.
   if (hasInternalBrowserMarker()) return null;
+  // Campus Resources (sexual-assault support directory): never send ANY event
+  // from this page. A pageview or click there would reveal that a specific
+  // visitor looked for these resources.
+  if (typeof window !== 'undefined' && /^\/campus-resources(\/|$)/.test(window.location.pathname)) return null;
   if (!event?.properties) return event;
   return { ...event, properties: sanitizeAnalyticsObject(event.properties) };
 }

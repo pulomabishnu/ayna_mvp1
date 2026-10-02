@@ -13,6 +13,7 @@ const PAGE_BY_PATH = new Map([
   ['/how-it-works', 'how-it-works'],
   ['/about', 'about'],
   ['/contact', 'contact'],
+  ['/campus-resources', 'campus-resources'],
   ['/library', 'library'],
   ['/screenings', 'screenings'],
   ['/appointment-prep', 'appointment-prep'],

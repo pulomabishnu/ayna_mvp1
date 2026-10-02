@@ -3,6 +3,8 @@ import { availablePreferenceOptions, matchesProductPreference } from '../utils/p
 import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
+import { getWeeklyTrendingLineup, isBeautyProduct, orderByWeeklyTrending, takeDistinctCategories } from '../utils/trendingLineup';
+import { isPartnerBrandItem } from '../utils/partnerBrands';
 
 /**
  * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
@@ -21,18 +23,6 @@ import { getVerificationLinks } from '../utils/verificationLinks';
  * Numbers below are the mockup's literal values, not the app's design tokens,
  * because the point is to reproduce those two boards.
  */
-
-/** The eight products in board 1a's Shop grid, with the mockup's own category eyebrows. */
-const SHOP_LINEUP = [
-  { id: 'p-lola-pad', label: 'PADS' },
-  { id: 'p-elvie-trainer', label: 'PELVIC FLOOR' },
-  { id: 'p-wuka-underwear', label: 'PERIOD WEAR' },
-  { id: 'p-b-complex', label: 'SUPPLEMENTS' },
-  { id: 'p-silverette-cups', label: 'POSTPARTUM' },
-  { id: 'p-neycher-vaginal-moisturizer', label: 'INTIMATE CARE' },
-  { id: 'p-lola-tampon', label: 'TAMPONS' },
-  { id: 'p-dame-arc', label: 'INTIMACY' },
-];
 
 const CHIP_SETS = [
   ['Postpartum recovery', 'Organic pads', 'Pelvic floor', 'Supplements for cramps'],
@@ -189,10 +179,6 @@ function displayNameFromUser(user) {
   return '';
 }
 
-function productById(id) {
-  return ALL_PRODUCTS.find((p) => p.id === id) || null;
-}
-
 /** Cream tile with the product photo, falling back to the mockup's initial-on-cream block. */
 function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }) {
   return (
@@ -224,19 +210,31 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
         letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />}
       />
 
-      {badge && (
-        <span style={{
-          position: 'relative',
-          font: "500 9px 'DM Mono', monospace",
-          letterSpacing: '0.08em',
-          background: 'rgba(255,255,255,0.9)',
-          padding: '5px 9px',
-          borderRadius: '999px',
-          color: '#B4732A',
-        }}>
-          {badge}
-        </span>
-      )}
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
+        {/* Same partner tag as the Browse cards (class, text, and tooltip). */}
+        {isPartnerBrandItem(product) && (
+          <span
+            className="ayna-browse-card__affiliate"
+            style={{ position: 'static' }}
+            title="Commercial brand partner. Partnership does not change your personalized match score."
+            aria-label="ayna Favorite, a commercial brand partner"
+          >
+            ayna Favorite
+          </span>
+        )}
+        {badge && (
+          <span style={{
+            font: "500 9px 'DM Mono', monospace",
+            letterSpacing: '0.08em',
+            background: 'rgba(255,255,255,0.9)',
+            padding: '5px 9px',
+            borderRadius: '999px',
+            color: '#B4732A',
+          }}>
+            {badge}
+          </span>
+        )}
+      </div>
       {showHeart && (
         <span aria-hidden className="ayna-landing-heart"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" /></svg></span>
       )}
@@ -366,6 +364,8 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
 
   const availableProductTypes = useMemo(() => productTypeOptions(), []);
 
+  const weeklyLineup = useMemo(() => getWeeklyTrendingLineup(ALL_PRODUCTS), []);
+
   const shownProducts = useMemo(() => {
     let list = ALL_PRODUCTS.filter((product) => product?.id && product?.name && matchesShopFilter(product, filter));
 
@@ -406,6 +406,13 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
         return match.eligible && (!/menopaus/i.test(stages) || match.percent > 0);
       });
     }
+    // Start from this week's Trending order so the grid rotates weekly; the
+    // personalization sort below is stable, so it only lifts owned/recommended
+    // products above it.
+    // Beauty products only show up here when the shopper asks for them (the
+    // Skin/Hair chips or a product-type filter) — see isBeautyProduct.
+    if (filter === 'all' && productTypeFilter === 'all') list = list.filter((product) => !isBeautyProduct(product));
+    list = orderByWeeklyTrending(list, weeklyLineup);
     if (personalize) {
       list = [...list].sort((a, b) => {
         const score = (product) => {
@@ -418,8 +425,10 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
       });
     }
 
-    return list.slice(0, 8);
-  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas, healthIntake]);
+    // One product per category — unless the shopper picked a single product
+    // type, where every result is the same category by definition.
+    return productTypeFilter === 'all' ? takeDistinctCategories(list, 8) : list.slice(0, 8);
+  }, [weeklyLineup, filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas, healthIntake]);
 
   const clearShopFilters = () => {
     setFilter('all');
@@ -695,12 +704,8 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
     return () => window.clearInterval(timer);
   }, [chipsPaused, reduceMotion]);
 
-  const lineup = useMemo(
-    () => SHOP_LINEUP
-      .map(({ id, label }) => ({ product: productById(id), label }))
-      .filter((x) => x.product),
-    [],
-  );
+  // Rotates weekly, one product per category — see utils/trendingLineup.js.
+  const lineup = useMemo(() => getWeeklyTrendingLineup(ALL_PRODUCTS), []);
 
   const availableShopFilters = useMemo(
     () => SHOP_FILTERS.filter((item) => item.key === 'all' || lineup.some(({ product }) => matchesShopFilter(product, item.key))),
