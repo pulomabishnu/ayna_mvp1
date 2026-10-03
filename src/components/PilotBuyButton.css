@@ -6,6 +6,10 @@
   max-width: 320px;
 }
 
+.pdp-actions__primary .pdp-btn--buy {
+  align-self: flex-start;
+}
+
 .pilot-purchase__details {
   display: flex;
   flex-direction: column;

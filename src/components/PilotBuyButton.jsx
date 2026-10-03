@@ -59,7 +59,7 @@ export default function PilotBuyButton({ productId, variantId = '', needsVariant
   return <div className="pilot-purchase">
     <button className="pdp-btn pdp-btn--navy" disabled={busy || requested || (needsVariant && !variantId) || (!enabled && !requestable)} onClick={buy}>{busy ? 'One moment…' : needsVariant && !variantId ? 'Choose a size' : 'Buy now'}</button>
     <div className="pilot-purchase__details">
-      {variantLabel && <span className="pilot-purchase__variant">{variantLabel}</span>}
+      {variantLabel && <span className="pilot-purchase__variant">Checkout pack: {variantLabel}</span>}
       {total != null && <span className="pilot-purchase__total">${(total / 100).toFixed(2)} total <span>including service fee</span></span>}
       {requestable && !requested && <span>We’ll confirm the price before you pay.</span>}
       {requested && <span role="status">Request received. No payment was taken. We’ll email you when checkout is ready.</span>}
