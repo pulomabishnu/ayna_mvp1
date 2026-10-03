@@ -13,7 +13,7 @@ import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
-import { resolveBuyUrl, isAmazonUrl, buyGoesToAmazonListing } from '../utils/buyLink';
+import { resolveBuyUrl, isAmazonUrl } from '../utils/buyLink';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 import { getSafetyAlertText, buildSummarySentences } from '../utils/productSafetyAlert';
 import posthog from 'posthog-js';
@@ -482,7 +482,7 @@ export default function ProductModal({
   const matchPercent = profileMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
   const buyUrl = resolveBuyUrl(product, choice.variant);
-  const sizeChosenOnAmazon = choice.hasVariants && buyGoesToAmazonListing(product, choice.variant);
+  const aynaPhysical = product.type === 'physical' && !product.requiresPrescription && product.category !== 'telehealth';
   const isAmazonBuyLink = useMemo(() => isAmazonUrl(buyUrl), [buyUrl]);
 
   const aynaData = useMemo(
@@ -756,11 +756,11 @@ export default function ProductModal({
           <option value="">Choose a size / option</option>
           {product.variants.map(variant => <option key={variant.id} value={variant.id}>{variant.label}</option>)}
         </select>
-        <small style={{ display: 'block', marginTop: '0.35rem' }}>{pilotAvailable ? 'Ayna uses the selected option.' : sizeChosenOnAmazon ? 'Choose a size before checking out with Ayna. The retailer link may ask you to select it again.' : 'Choose a size before checking out with Ayna.'}</small>
+        <small style={{ display: 'block', marginTop: '0.35rem' }}>Choose a size before checking out with Ayna.</small>
       </label>}
       <div className="pdp-actions__primary">
-        {product.type === 'physical' && !product.requiresPrescription && product.category !== 'telehealth' && <PilotBuyButton productId={product.id} variantId={choice.hasVariants ? selectedVariantId : ''} needsVariant={choice.hasVariants} onAvailabilityChange={setPilotAvailable} />}
-        {buyUrl ? (
+        {aynaPhysical && <PilotBuyButton productId={product.id} variantId={choice.hasVariants ? selectedVariantId : ''} needsVariant={choice.hasVariants} onAvailabilityChange={setPilotAvailable} />}
+        {!aynaPhysical && (buyUrl ? (
           <a
             className="pdp-btn pdp-btn--navy pdp-btn--buy"
             href={buyUrl}
@@ -783,7 +783,7 @@ export default function ProductModal({
           <button type="button" className="pdp-btn pdp-btn--navy pdp-btn--buy" disabled>
             {product.type === 'physical' ? 'Retailer link unavailable' : 'Buy Now'}
           </button>
-        )}
+        ))}
         {onToggleSaved && (
           <button
             type="button"
@@ -847,7 +847,7 @@ export default function ProductModal({
           </span>
         </p>
       )}
-      {isAmazonBuyLink && !isPartnerBrandItem(product) && (
+      {!aynaPhysical && isAmazonBuyLink && !isPartnerBrandItem(product) && (
         <p className="pdp-partner-disclosure pdp-amazon-disclosure">
           <span className="pdp-partner-note">
             ayna receives a commission on purchases. We have no direct partnership with this brand.
