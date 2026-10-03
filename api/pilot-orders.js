@@ -6,6 +6,12 @@ export default async function handler(req, res) {
     if (!user) return res.status(401).json({ error: 'Sign in to ayna to see orders.' });
     const config = pilotConfig();
     const admin = config.admins.includes(user.id);
+    if (req.query?.prices === '1') {
+      if (!admin) return res.status(403).json({ error: 'Admin access required.' });
+      if (req.method !== 'GET') return res.status(405).end();
+      const prices = checked(await db.from('pilot_product_prices').select('product_id,variant_id,amount,retailer_url,updated_at').order('product_id', { ascending: true }).limit(1000));
+      return res.status(200).json({ prices });
+    }
     if (req.query?.price === '1') {
       if (!admin) return res.status(403).json({ error: 'Admin access required.' });
       const body = req.method === 'PUT' ? (typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {}) : req.query || {};

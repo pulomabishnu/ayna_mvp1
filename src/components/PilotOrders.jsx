@@ -54,7 +54,9 @@ function TrackingForm({ order, refresh }) {
 }
 function PriceForm() {
   const [products, setProducts] = useState([]);
+  const [configured, setConfigured] = useState([]);
   const [filter, setFilter] = useState('');
+  const [missingOnly, setMissingOnly] = useState(false);
   const [productId, setProductId] = useState('p-always-infinity');
   const [variantId, setVariantId] = useState('');
   const product = products.find(item => item.id === productId);
@@ -69,6 +71,16 @@ function PriceForm() {
   }, []);
   useEffect(() => {
     let active = true;
+    request('/api/pilot-orders?prices=1').then(data => { if (active) setConfigured(data.prices || []); }).catch(e => { if (active) setMessage(e.message); });
+    return () => { active = false; };
+  }, []);
+  const options = products.flatMap(item => item.variants?.length
+    ? item.variants.map(variant => ({ productId: item.id, variantId: variant.id, name: `${item.name} — ${variant.label}` }))
+    : [{ productId: item.id, variantId: '', name: item.name }]);
+  const configuredKeys = new Set(configured.map(item => `${item.product_id}:${item.variant_id}`));
+  const missingCount = options.filter(item => !configuredKeys.has(`${item.productId}:${item.variantId}`)).length;
+  useEffect(() => {
+    let active = true;
     request(`/api/pilot-orders?price=1&productId=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`)
       .then(data => { if (active) { setPrice(data); setMessage(''); } })
       .catch(e => { if (active) { setPrice(null); setMessage(e.message); } });
@@ -81,14 +93,17 @@ function PriceForm() {
       const result = await request('/api/pilot-orders?price=1', { method: 'PUT', body: JSON.stringify({ ...fields, productId, variantId }) });
       setMessage(`Saved. Test customer total: $${(result.total / 100).toFixed(2)}.`);
       setPrice(await request(`/api/pilot-orders?price=1&productId=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`));
+      setConfigured((await request('/api/pilot-orders?prices=1')).prices || []);
     } catch (e) { setMessage(e.message); }
   }
   return <section>
     <h2>Test checkout price</h2>
     <p>Set the retailer price for the exact pack. A {price?.serviceFeePercent ?? 10}% ayna service fee is added at checkout.</p>
+    <p>{configuredKeys.size} of {options.length} product and size choices configured; {missingCount} still need a verified price and retailer link.</p>
+    <label><input type="checkbox" checked={missingOnly} onChange={e => setMissingOnly(e.target.checked)} /> Show only choices needing a price</label>
     <label>Find product<input value={filter} onChange={e => setFilter(e.target.value)} placeholder="Search name or product ID" /></label>
     <label>Product<select value={productId} onChange={e => { const next = products.find(item => item.id === e.target.value); setProductId(e.target.value); setVariantId(next?.defaultVariantId || next?.variants?.[0]?.id || ''); }}>
-      {products.filter(item => item.id === productId || `${item.name} ${item.id}`.toLowerCase().includes(filter.toLowerCase())).map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+      {products.filter(item => item.id === productId || (!missingOnly || options.some(option => option.productId === item.id && !configuredKeys.has(`${option.productId}:${option.variantId}`))) && `${item.name} ${item.id}`.toLowerCase().includes(filter.toLowerCase())).map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
     </select></label>
     {product?.variants?.length > 0 && <label>Size / option<select value={variantId} onChange={e => setVariantId(e.target.value)}>
       {product.variants.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
