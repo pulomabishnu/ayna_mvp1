@@ -1029,7 +1029,7 @@ export default function ProductModal({
               <h2 className="pdp-head__name">{displayName}</h2>
 
               <div className="pdp-head__pricerow">
-                {(product.price || product.stage) && (
+                {(product.price || product.stage) && !pilotAvailable && (
                   <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
                 )}
                 {matchPercent != null ? (
@@ -1389,7 +1389,7 @@ export default function ProductModal({
             <div className="pdp-evidence-head__info">
               <div className="pdp-head__eyebrow">{eyebrow}</div>
               <h2 className="pdp-head__name" style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)' }}>{displayName}</h2>
-              {(product.price || product.stage) && (
+              {(product.price || product.stage) && !pilotAvailable && (
                 <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
               )}
               {summarySentences[0] && (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import AuthGate from './AuthGate';
+import './PilotBuyButton.css';
 
 export default function PilotBuyButton({ productId, variantId = '', onAvailabilityChange }) {
   const [enabled, setEnabled] = useState(false);
@@ -41,13 +42,14 @@ export default function PilotBuyButton({ productId, variantId = '', onAvailabili
     } catch (e) { setError(e.message || 'Unable to start checkout.'); }
     finally { setBusy(false); }
   }
-  return <div>
+  return <div className="pilot-purchase">
     <button className="pdp-btn pdp-btn--navy" disabled={busy} onClick={buy}>{busy ? 'Opening checkout…' : 'Buy now'}</button>
-    {variantLabel && <small style={{ display: 'block' }}>Checkout item: {variantLabel}</small>}
-    {total != null && <small style={{ display: 'block' }}>Test total: ${(total / 100).toFixed(2)} including ayna service fee</small>}
-    <small style={{ display: 'block' }}>The catalog price may describe a different pack; this test total is the checkout price.</small>
-    <small style={{ display: 'block' }}>Test payment only · no real payment or shipment</small>
-    <a href="/pilot/orders">My test orders</a>
+    <div className="pilot-purchase__details">
+      {variantLabel && <span className="pilot-purchase__variant">{variantLabel}</span>}
+      {total != null && <span className="pilot-purchase__total">${(total / 100).toFixed(2)} total <span>including service fee</span></span>}
+      <span className="pilot-purchase__test">Test checkout · no real charge</span>
+      <a href="/pilot/orders">My test orders</a>
+    </div>
     {new URLSearchParams(window.location.search).has('pilot_cancelled') && <p>Checkout cancelled. You can try again.</p>}
     {error && <p role="alert" style={{ color: '#b42318', fontWeight: 600 }}>{error}</p>}
     {showAuth && <AuthGate isModal context="login" onSkip={() => setShowAuth(false)} onAuthenticated={(u, session) => { if (!u || !session) return; setShowAuth(false); buy(); }} />}
