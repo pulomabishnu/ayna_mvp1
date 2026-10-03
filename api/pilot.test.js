@@ -23,6 +23,13 @@ describe('pilot guardrails', () => {
     expect(selectedPilotVariant(product, 'size-1')).toEqual({ id: 'size-1', label: 'Size 1' });
     expect(purchasableProduct({ ...product, product_type: 'digital' })).toBe(false);
     expect(purchasableProduct({ ...product, requires_prescription: true })).toBe(false);
+    expect(purchasableProduct({ ...product, source: 'discovered', review_status: 'approved' })).toBe(false);
+  });
+  it('uses the verified size list shown by the website when the database has no variants', () => {
+    const product = { id: 'p-cora-organic-pads', extra: {} };
+    expect(selectedPilotVariant(product, '')).toBeNull();
+    expect(selectedPilotVariant(product, 'target-76155164')).toEqual({ id: 'target-76155164', label: 'Regular — 32 count' });
+    expect(selectedPilotVariant(product, 'made-up')).toBeNull();
   });
   it('defaults off and targets the actual Always catalog id', () => {
     expect(pilotConfig({}).enabled).toBe(false);

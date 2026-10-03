@@ -12,7 +12,7 @@ export default async function handler(req, res) {
       const variantId = String(req.query?.variantId || '');
       if (!config.enabled || !/^[a-z0-9][a-z0-9._-]{1,100}$/i.test(productId) || variantId.length > 100) return res.status(200).json({ enabled: false, productId });
       const db = database();
-      const product = checked(await db.from('product_catalog').select('id,category,product_type,requires_prescription,is_active,extra').eq('id', productId).maybeSingle());
+      const product = checked(await db.from('product_catalog').select('id,category,product_type,requires_prescription,is_active,source,review_status,discovery_meta,extra').eq('id', productId).maybeSingle());
       if (!purchasableProduct(product) || !selectedPilotVariant(product, variantId)) return res.status(200).json({ enabled: false, productId });
       const price = checked(await db.from('pilot_product_prices').select('amount,currency,variant_label').eq('product_id', productId).eq('variant_id', variantId).maybeSingle());
       return res.status(200).json({ enabled: Boolean(price), productId, variantId, variantLabel: price?.variant_label || null, total: price ? price.amount + serviceFeeCents(price.amount) : null });
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     if (order && (order.product_id !== body.productId || String(order.variant_id || '') !== String(body.variantId || ''))) return res.status(409).json({ error: 'This checkout attempt belongs to another item. Start again.', restart: true });
     if (!order) {
       step = 'catalog_product';
-      const product = checked(await db.from('product_catalog').select('id,name,category,product_type,requires_prescription,is_active,extra').eq('id', body.productId).maybeSingle());
+      const product = checked(await db.from('product_catalog').select('id,name,category,product_type,requires_prescription,is_active,source,review_status,discovery_meta,extra').eq('id', body.productId).maybeSingle());
       const variant = selectedPilotVariant(product, String(body.variantId || ''));
       if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for ayna checkout.' });
       step = 'retailer_price';

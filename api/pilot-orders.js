@@ -12,7 +12,7 @@ export default async function handler(req, res) {
       const productId = String(body.productId || config.productId);
       const variantId = String(body.variantId || '');
       if (!/^[a-z0-9][a-z0-9._-]{1,100}$/i.test(productId) || variantId.length > 100) return res.status(400).json({ error: 'Invalid product or option.' });
-      const product = checked(await db.from('product_catalog').select('id,category,product_type,requires_prescription,is_active,extra').eq('id', productId).maybeSingle());
+      const product = checked(await db.from('product_catalog').select('id,category,product_type,requires_prescription,is_active,source,review_status,discovery_meta,extra').eq('id', productId).maybeSingle());
       if (!product) return res.status(404).json({ error: 'This product is not in the checkout catalog yet.' });
       const variant = selectedPilotVariant(product, variantId);
       if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for manual fulfillment.' });

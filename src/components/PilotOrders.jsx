@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
-import { ALL_PRODUCTS } from '../data/products';
+import { loadProductCatalog } from '../utils/productCatalog';
 import './PilotOrders.css';
 
 async function request(path, options = {}) {
@@ -53,12 +53,20 @@ function TrackingForm({ order, refresh }) {
   </form>;
 }
 function PriceForm() {
-  const products = ALL_PRODUCTS.filter(item => item.type === 'physical' && !item.requiresPrescription && item.category !== 'telehealth');
+  const [products, setProducts] = useState([]);
+  const [filter, setFilter] = useState('');
   const [productId, setProductId] = useState('p-always-infinity');
   const [variantId, setVariantId] = useState('');
   const product = products.find(item => item.id === productId);
   const [price, setPrice] = useState(null);
   const [message, setMessage] = useState('');
+  useEffect(() => {
+    let active = true;
+    loadProductCatalog().then(({ products: catalog }) => {
+      if (active) setProducts(catalog.filter(item => item.type === 'physical' && !item.requiresPrescription && item.category !== 'telehealth'));
+    }).catch(e => { if (active) setMessage(e.message); });
+    return () => { active = false; };
+  }, []);
   useEffect(() => {
     let active = true;
     request(`/api/pilot-orders?price=1&productId=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`)
@@ -78,8 +86,9 @@ function PriceForm() {
   return <section>
     <h2>Test checkout price</h2>
     <p>Set the retailer price for the exact pack. A {price?.serviceFeePercent ?? 10}% ayna service fee is added at checkout.</p>
+    <label>Find product<input value={filter} onChange={e => setFilter(e.target.value)} placeholder="Search name or product ID" /></label>
     <label>Product<select value={productId} onChange={e => { const next = products.find(item => item.id === e.target.value); setProductId(e.target.value); setVariantId(next?.defaultVariantId || next?.variants?.[0]?.id || ''); }}>
-      {products.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+      {products.filter(item => item.id === productId || `${item.name} ${item.id}`.toLowerCase().includes(filter.toLowerCase())).map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
     </select></label>
     {product?.variants?.length > 0 && <label>Size / option<select value={variantId} onChange={e => setVariantId(e.target.value)}>
       {product.variants.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}

@@ -1,6 +1,7 @@
 /* global process */
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { PRODUCT_VARIANTS } from '../src/data/productVariants.js';
 
 export function pilotConfig(env = process.env) {
   const origin = new URL(env.PILOT_APP_URL || 'http://localhost:3000');
@@ -39,10 +40,13 @@ export function cleanRetailerUrl(value) {
 }
 export function purchasableProduct(product) {
   return product?.is_active === true && product.product_type === 'physical'
-    && product.requires_prescription !== true && product.category !== 'telehealth';
+    && product.requires_prescription !== true && product.category !== 'telehealth'
+    && ((product.source || 'curated') !== 'discovered'
+      || (product.review_status === 'approved' && Boolean(product.discovery_meta?.humanReviewedAt)));
 }
 export function selectedPilotVariant(product, variantId = '') {
-  const variants = Array.isArray(product?.extra?.variants) ? product.extra.variants : [];
+  const verified = PRODUCT_VARIANTS[product?.id]?.variants;
+  const variants = Array.isArray(verified) ? verified : Array.isArray(product?.extra?.variants) ? product.extra.variants : [];
   if (!variants.length) return variantId === '' ? { id: '', label: null } : null;
   const match = variants.find(v => String(v.id) === variantId);
   return match && typeof match.label === 'string' ? { id: variantId, label: match.label } : null;
