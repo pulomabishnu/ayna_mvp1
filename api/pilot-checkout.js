@@ -14,8 +14,8 @@ export default async function handler(req, res) {
       const db = database();
       const product = checked(await db.from('product_catalog').select('id,category,product_type,requires_prescription,is_active,extra').eq('id', productId).maybeSingle());
       if (!purchasableProduct(product) || !selectedPilotVariant(product, variantId)) return res.status(200).json({ enabled: false, productId });
-      const price = checked(await db.from('pilot_product_prices').select('amount,currency').eq('product_id', productId).eq('variant_id', variantId).maybeSingle());
-      return res.status(200).json({ enabled: Boolean(price), productId, variantId, total: price ? price.amount + serviceFeeCents(price.amount) : null });
+      const price = checked(await db.from('pilot_product_prices').select('amount,currency,variant_label').eq('product_id', productId).eq('variant_id', variantId).maybeSingle());
+      return res.status(200).json({ enabled: Boolean(price), productId, variantId, variantLabel: price?.variant_label || null, total: price ? price.amount + serviceFeeCents(price.amount) : null });
     }
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     if (!config.enabled) return res.status(403).json({ error: 'Test checkout is not enabled.' });
@@ -41,13 +41,13 @@ export default async function handler(req, res) {
       const variant = selectedPilotVariant(product, String(body.variantId || ''));
       if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for ayna checkout.' });
       step = 'retailer_price';
-      const price = checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url').eq('product_id', product.id).eq('variant_id', variant.id).single());
+      const price = checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url,variant_label').eq('product_id', product.id).eq('variant_id', variant.id).single());
       if (price.currency !== 'usd' || !Number.isSafeInteger(price.amount) || price.amount < 50 || price.amount > 50000) throw new Error('Invalid pilot price');
       step = 'create_order';
       const inserted = await db.from('pilot_orders').insert({
         user_id: user.id, attempt_id: body.attemptId, product_id: product.id,
-        product_name: variant.label ? `${product.name} — ${variant.label}` : product.name,
-        variant_id: variant.id, variant_label: variant.label,
+        product_name: price.variant_label || variant.label ? `${product.name} — ${price.variant_label || variant.label}` : product.name,
+        variant_id: variant.id, variant_label: price.variant_label || variant.label,
         stripe_price_id: `retailer:${price.amount}`, amount: price.amount + serviceFeeCents(price.amount),
         currency: price.currency, vendor_name: config.vendor, retailer_url: price.retailer_url,
       }).select('*').single();

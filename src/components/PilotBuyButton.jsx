@@ -5,15 +5,16 @@ import AuthGate from './AuthGate';
 export default function PilotBuyButton({ productId, variantId = '', onAvailabilityChange }) {
   const [enabled, setEnabled] = useState(false);
   const [total, setTotal] = useState(null);
+  const [variantLabel, setVariantLabel] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [showAuth, setShowAuth] = useState(false);
   useEffect(() => {
     let active = true;
-    setEnabled(false); setTotal(null);
+    setEnabled(false); setTotal(null); setVariantLabel(null);
     onAvailabilityChange?.(false);
     fetch(`/api/pilot-checkout?productId=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`).then(r => r.json()).then(c => {
-      if (active) { const available = c.enabled && c.productId === productId && c.variantId === variantId; setEnabled(available); onAvailabilityChange?.(available); setTotal(c.total); }
+      if (active) { const available = c.enabled && c.productId === productId && c.variantId === variantId; setEnabled(available); onAvailabilityChange?.(available); setTotal(c.total); setVariantLabel(c.variantLabel || null); }
     }).catch(() => {});
     return () => { active = false; };
   }, [productId, variantId, onAvailabilityChange]);
@@ -42,6 +43,7 @@ export default function PilotBuyButton({ productId, variantId = '', onAvailabili
   }
   return <div>
     <button className="pdp-btn pdp-btn--navy" disabled={busy} onClick={buy}>{busy ? 'Opening checkout…' : 'Buy now'}</button>
+    {variantLabel && <small style={{ display: 'block' }}>Checkout item: {variantLabel}</small>}
     {total != null && <small style={{ display: 'block' }}>Test total: ${(total / 100).toFixed(2)} including ayna service fee</small>}
     <small style={{ display: 'block' }}>The catalog price may describe a different pack; this test total is the checkout price.</small>
     <small style={{ display: 'block' }}>Test payment only · no real payment or shipment</small>
