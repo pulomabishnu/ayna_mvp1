@@ -3,8 +3,10 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 import AuthGate from './AuthGate';
 import './PilotBuyButton.css';
 
-export default function PilotBuyButton({ productId, variantId = '', onAvailabilityChange }) {
+export default function PilotBuyButton({ productId, variantId = '', needsVariant = false, onAvailabilityChange }) {
   const [enabled, setEnabled] = useState(false);
+  const [requestable, setRequestable] = useState(false);
+  const [requested, setRequested] = useState(false);
   const [total, setTotal] = useState(null);
   const [variantLabel, setVariantLabel] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -12,14 +14,15 @@ export default function PilotBuyButton({ productId, variantId = '', onAvailabili
   const [showAuth, setShowAuth] = useState(false);
   useEffect(() => {
     let active = true;
-    setEnabled(false); setTotal(null); setVariantLabel(null);
+    setEnabled(false); setRequestable(false); setRequested(false); setTotal(null); setVariantLabel(null);
     onAvailabilityChange?.(false);
+    if (needsVariant && !variantId) return () => { active = false; };
     fetch(`/api/pilot-checkout?productId=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`).then(r => r.json()).then(c => {
-      if (active) { const available = c.enabled && c.productId === productId && c.variantId === variantId; setEnabled(available); onAvailabilityChange?.(available); setTotal(c.total); setVariantLabel(c.variantLabel || null); }
+      if (active) { const matches = c.productId === productId && c.variantId === variantId; const available = matches && (c.enabled || c.requestable); setEnabled(matches && c.enabled); setRequestable(matches && c.requestable); onAvailabilityChange?.(available); setTotal(c.total); setVariantLabel(c.variantLabel || null); }
     }).catch(() => {});
     return () => { active = false; };
-  }, [productId, variantId, onAvailabilityChange]);
-  if (!enabled) return null;
+  }, [productId, variantId, needsVariant, onAvailabilityChange]);
+  if (!enabled && !requestable && !(needsVariant && !variantId)) return null;
   async function buy() {
     setBusy(true); setError('');
     try {
@@ -28,6 +31,17 @@ export default function PilotBuyButton({ productId, variantId = '', onAvailabili
       // Signed out (preview domains don't share the aynahealth.co login): open the
       // sign-in modal instead of failing quietly; checkout resumes after sign-in.
       if (!session) { setShowAuth(true); return; }
+      if (requestable) {
+        const res = await fetch('/api/pilot-request', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+          body: JSON.stringify({ productId, variantId }),
+        });
+        const data = await res.json();
+        if (data.checkoutAvailable) { setRequestable(false); setEnabled(true); throw new Error('The test price is ready. Click Buy now again to review it.'); }
+        if (!res.ok) throw new Error(data.error);
+        setRequested(true);
+        return;
+      }
       const key = `ayna-pilot-attempt:${session.user.id}:${productId}:${variantId}`;
       const attemptId = sessionStorage.getItem(key) || crypto.randomUUID();
       sessionStorage.setItem(key, attemptId);
@@ -43,10 +57,12 @@ export default function PilotBuyButton({ productId, variantId = '', onAvailabili
     finally { setBusy(false); }
   }
   return <div className="pilot-purchase">
-    <button className="pdp-btn pdp-btn--navy" disabled={busy} onClick={buy}>{busy ? 'Opening checkout…' : 'Buy now'}</button>
+    <button className="pdp-btn pdp-btn--navy" disabled={busy || requested || (needsVariant && !variantId) || (!enabled && !requestable)} onClick={buy}>{busy ? 'One moment…' : needsVariant && !variantId ? 'Choose a size' : 'Buy now'}</button>
     <div className="pilot-purchase__details">
       {variantLabel && <span className="pilot-purchase__variant">{variantLabel}</span>}
       {total != null && <span className="pilot-purchase__total">${(total / 100).toFixed(2)} total <span>including service fee</span></span>}
+      {requestable && !requested && <span>We’ll confirm the price before you pay.</span>}
+      {requested && <span role="status">Request received. No payment was taken. We’ll email you when checkout is ready.</span>}
       <span className="pilot-purchase__test">Test checkout · no real charge</span>
       <a href="/pilot/orders">My test orders</a>
     </div>

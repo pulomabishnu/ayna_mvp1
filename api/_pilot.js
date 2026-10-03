@@ -4,7 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 import { PRODUCT_VARIANTS } from '../src/data/productVariants.js';
 
 export function pilotConfig(env = process.env) {
-  const origin = new URL(env.PILOT_APP_URL || 'http://localhost:3000');
+  const previewOrigin = env.VERCEL_ENV === 'preview' && env.VERCEL_URL ? `https://${env.VERCEL_URL}` : null;
+  const origin = new URL(previewOrigin || env.PILOT_APP_URL || 'http://localhost:3000');
   if (origin.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(origin.hostname)) throw new Error('Invalid pilot origin');
   return {
     enabled: env.PILOT_CHECKOUT_ENABLED === 'true',

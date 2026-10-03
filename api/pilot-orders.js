@@ -1,4 +1,6 @@
+/* global process */
 import { pilotConfig, database, checked, signedIn, validTracking, notifyCustomerShipped, parsePriceInput, cleanRetailerUrl, serviceFeeCents, purchasableProduct, selectedPilotVariant } from './_pilot.js';
+import { productHref } from '../src/utils/productRoute.js';
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   try {
@@ -6,6 +8,39 @@ export default async function handler(req, res) {
     if (!user) return res.status(401).json({ error: 'Sign in to ayna to see orders.' });
     const config = pilotConfig();
     const admin = config.admins.includes(user.id);
+    if (req.query?.requests === '1') {
+      if (req.method === 'GET') {
+        let query = db.from('pilot_requests').select('id,user_id,product_id,product_name,variant_id,variant_label,customer_email,status,created_at,quoted_at').order('created_at', { ascending: false }).limit(200);
+        if (!admin) query = query.eq('user_id', user.id);
+        return res.status(200).json({ requests: checked(await query) });
+      }
+      if (req.method !== 'PATCH' || !admin) return res.status(admin ? 405 : 403).json({ error: admin ? 'Method not allowed.' : 'Admin access required.' });
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+      if (!/^[0-9a-f-]{36}$/i.test(body.requestId || '')) return res.status(400).json({ error: 'Invalid request.' });
+      const item = checked(await db.from('pilot_requests').select('id,product_id,product_name,variant_id,customer_email,status').eq('id', body.requestId).maybeSingle());
+      if (!item) return res.status(404).json({ error: 'Request not found.' });
+      const price = checked(await db.from('pilot_product_prices').select('amount').eq('product_id', item.product_id).eq('variant_id', item.variant_id).maybeSingle());
+      if (!price) return res.status(409).json({ error: 'Set the exact product and size price first.' });
+      const changed = item.status !== 'quoted' && checked(await db.from('pilot_requests').update({ status: 'quoted', quoted_at: new Date().toISOString() }).eq('id', item.id).eq('status', 'requested').select('id').maybeSingle());
+      let emailed = false;
+      if (changed && process.env.RESEND_API_KEY && item.customer_email) {
+        const link = `${config.origin}${productHref(item.product_id)}${item.variant_id ? `?variantId=${encodeURIComponent(item.variant_id)}` : ''}`;
+        try {
+          const sent = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              from: process.env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
+              to: [item.customer_email],
+              subject: `[TEST] Your Ayna checkout is ready: ${item.product_name}`,
+              text: `The test checkout price is ready for ${item.product_name}. Review the total and pay only if you want to continue: ${link}\n\nNo payment has been collected for your request. This is a test checkout only.`,
+            }),
+          });
+          emailed = sent.ok;
+        } catch (error) { console.error('[pilot] quote email failed', error?.message); }
+      }
+      return res.status(200).json({ quoted: true, emailed });
+    }
     if (req.query?.prices === '1') {
       if (!admin) return res.status(403).json({ error: 'Admin access required.' });
       if (req.method !== 'GET') return res.status(405).end();

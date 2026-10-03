@@ -34,6 +34,7 @@ describe('pilot guardrails', () => {
   it('defaults off and targets the actual Always catalog id', () => {
     expect(pilotConfig({}).enabled).toBe(false);
     expect(pilotConfig({}).productId).toBe('p-always-infinity');
+    expect(pilotConfig({ VERCEL_ENV: 'preview', VERCEL_URL: 'preview.example.com', PILOT_APP_URL: 'https://old.example.com' }).origin).toBe('https://preview.example.com');
   });
   it('refuses live Stripe credentials', () => {
     vi.stubEnv('STRIPE_SECRET_KEY', 'sk_live_example');

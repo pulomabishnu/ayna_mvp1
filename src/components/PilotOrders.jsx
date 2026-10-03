@@ -121,13 +121,17 @@ export default function PilotOrders() {
   const adminView = window.location.pathname === '/pilot/admin';
   const focusId = new URLSearchParams(window.location.search).get('order');
   const [orders, setOrders] = useState([]);
+  const [requests, setRequests] = useState([]);
   const [admin, setAdmin] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   async function refresh() {
     try {
-      const data = await request(`/api/pilot-orders${adminView ? '?admin=1' : ''}`);
-      setOrders(data.orders); setAdmin(data.admin); setError('');
+      const [data, pending] = await Promise.all([
+        request(`/api/pilot-orders${adminView ? '?admin=1' : ''}`),
+        request('/api/pilot-orders?requests=1'),
+      ]);
+      setOrders(data.orders); setRequests(pending.requests || []); setAdmin(data.admin); setError('');
     } catch (e) { setError(e.message); }
     finally { setLoading(false); }
   }
@@ -149,7 +153,21 @@ export default function PilotOrders() {
     <button onClick={refresh}>Refresh</button>
     {error && <p role="alert">{error}</p>}
     {loading && <p>Loading orders…</p>}
-    {!loading && !error && !orders.length && <p>No {adminView ? 'paid ' : ''}test orders yet.</p>}
+    {requests.length > 0 && <section>
+      <h2>{adminView ? 'Price requests' : 'Your price requests'}</h2>
+      {requests.map(item => <article key={item.id} className="pilot-order">
+        <h3>{item.product_name}</h3>
+        <p>{item.status === 'quoted' ? 'Checkout price is ready.' : 'Price confirmation pending. No payment taken.'}</p>
+        {adminView ? <>
+          <p>Customer: {item.customer_email || 'See Ayna account'}</p>
+          <button type="button" disabled={item.status === 'quoted'} onClick={async () => {
+            try { await request('/api/pilot-orders?requests=1', { method: 'PATCH', body: JSON.stringify({ requestId: item.id }) }); await refresh(); }
+            catch (e) { setError(e.message); }
+          }}>{item.status === 'quoted' ? 'Checkout link sent' : 'Send checkout link'}</button>
+        </> : item.status === 'quoted' && <a href={`/product/${encodeURIComponent(item.product_id)}${item.variant_id ? `?variantId=${encodeURIComponent(item.variant_id)}` : ''}`}>Review price and buy now</a>}
+      </article>)}
+    </section>}
+    {!loading && !error && !orders.length && !requests.length && <p>No {adminView ? 'paid ' : ''}test orders yet.</p>}
     {orders.map(order => {
       const fulfillment = order.pilot_fulfillments?.[0] || order.pilot_fulfillments;
       const shipped = fulfillment?.status === 'shipped';

@@ -422,7 +422,10 @@ export default function ProductModal({
     posthog.capture('product_detail_view_changed', { view: next, productId: product?.id });
   };
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [selectedVariantId, setSelectedVariantId] = useState(product.defaultVariantId || '');
+  const [selectedVariantId, setSelectedVariantId] = useState(() => {
+    const fromLink = new URLSearchParams(window.location.search).get('variantId');
+    return product.variants?.some(option => option.id === fromLink) ? fromLink : product.defaultVariantId || '';
+  });
   const [pilotAvailable, setPilotAvailable] = useState(false);
   const choice = getVariantSelection(product, selectedVariantId);
   const displayName = choice.displayName;
@@ -753,10 +756,10 @@ export default function ProductModal({
           <option value="">Choose a size / option</option>
           {product.variants.map(variant => <option key={variant.id} value={variant.id}>{variant.label}</option>)}
         </select>
-        <small style={{ display: 'block', marginTop: '0.35rem' }}>{pilotAvailable ? 'The ayna checkout uses the selected option.' : sizeChosenOnAmazon ? 'Buy Now opens this product on Amazon — pick the same size there. Confirm current price and availability with the retailer.' : 'Buy Now opens this exact option. Confirm current price and availability with the retailer.'}</small>
+        <small style={{ display: 'block', marginTop: '0.35rem' }}>{pilotAvailable ? 'Ayna uses the selected option.' : sizeChosenOnAmazon ? 'Choose a size before checking out with Ayna. The retailer link may ask you to select it again.' : 'Choose a size before checking out with Ayna.'}</small>
       </label>}
       <div className="pdp-actions__primary">
-        {product.type === 'physical' && !product.requiresPrescription && product.category !== 'telehealth' && <PilotBuyButton productId={product.id} variantId={choice.hasVariants ? selectedVariantId : ''} onAvailabilityChange={setPilotAvailable} />}
+        {product.type === 'physical' && !product.requiresPrescription && product.category !== 'telehealth' && <PilotBuyButton productId={product.id} variantId={choice.hasVariants ? selectedVariantId : ''} needsVariant={choice.hasVariants} onAvailabilityChange={setPilotAvailable} />}
         {buyUrl ? (
           <a
             className="pdp-btn pdp-btn--navy pdp-btn--buy"
@@ -774,11 +777,11 @@ export default function ProductModal({
             });
             }}
           >
-            {pilotAvailable ? 'View retailer' : 'Buy Now'}
+            {product.type === 'physical' ? 'View retailer' : 'Buy Now'}
           </a>
         ) : (
           <button type="button" className="pdp-btn pdp-btn--navy pdp-btn--buy" disabled>
-            Buy Now
+            {product.type === 'physical' ? 'Retailer link unavailable' : 'Buy Now'}
           </button>
         )}
         {onToggleSaved && (

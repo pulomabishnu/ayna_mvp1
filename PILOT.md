@@ -1,10 +1,12 @@
 # Manual fulfillment checkout pilot
 
-The first item tested was Always Infinity FlexFoam, `p-always-infinity`. Any active, non-prescription physical catalog product can be configured by an admin with an exact retailer price and link. Products with variants need a separate price and link for each option. Digital products, services, and items without a configured price retain their retailer path.
+The first item tested was Always Infinity FlexFoam, `p-always-infinity`. Every published, active, non-prescription physical catalog product has an Ayna **Buy now** path. Digital products and services keep their app or website links. Products with verified sizes or packs keep the selected option throughout the request, price, and paid order.
 
 ## What is implemented
 
-The existing React 19 / Vite web app uses Vercel API routes and Supabase authentication. Configured physical products show a **Buy now** button for ayna checkout and label the external link **View retailer**. Signed-in customers go to Stripe hosted Checkout, quantity one, card payment, US shipping address. A verified Stripe webhook atomically marks the order paid and creates a vendor fulfillment inbox record. `/pilot/admin` lets an allowlisted administrator record carrier, tracking number, and optional HTTPS tracking link. `/pilot/orders` shows the customer's own orders and refreshes every ten seconds.
+The existing React 19 / Vite web app uses Vercel API routes and Supabase authentication. Physical products show **Buy now** and label the external link **View retailer**. When the exact option has a confirmed retailer price and link, signed-in customers go to Stripe hosted Checkout, quantity one, card payment, US shipping address. A verified Stripe webhook atomically marks the order paid and creates a vendor fulfillment inbox record. `/pilot/admin` lets an allowlisted administrator record carrier, tracking number, and optional HTTPS tracking link. `/pilot/orders` shows the customer's own orders and refreshes every ten seconds.
+
+When the price is not yet confirmed, **Buy now** creates an order request for that exact option. The page clearly says no payment was taken. The team is notified by email and sees a durable request in `/pilot/admin`. An admin sets the exact price and retailer link, then clicks **Send checkout link**. The customer can review the total and choose to pay. A request never creates a paid order or fulfillment record by itself.
 
 **Fulfillment is manual.** When an order is paid, the team gets an email (via the existing `RESEND_API_KEY`; recipients from `PILOT_NOTIFY_EMAILS`, default the three founders) with the product, amount, city/state and a link to `/pilot/admin`. The inbox shows the full shipping address with a copy button and the configured retailer item link. A team member buys the item, ships it to the customer's address, and enters the optional retailer order number, carrier and tracking. The customer sees tracking on `/pilot/orders` and gets Claude's one-time "your order shipped" email with the carrier, tracking number and tracking link. Later tracking corrections update the page but do not re-send the email. The email is best-effort; the inbox is the durable record. No native iOS project was found or changed; this implementation is the existing web flow. There are no marketplace transfers, multi-brand carts, catalog changes, or changes to recommendation behavior.
 
@@ -12,9 +14,9 @@ The catalog describes the product as `$8 for 18` and routes it through an affili
 
 ## Setup for a connected test
 
-1. Use an isolated test deployment and the correct Supabase project. Only an inactive project named `supabase-byzantine-feather` was visible through the connected account; its schema could not be inspected. Inspect your actual hosted schema before applying SQL. The checked-in schema was inspected and the new tables tested locally.
-2. Apply `supabase/pilot_orders.sql` after the existing `product_catalog.sql`, then apply `supabase/pilot_prices.sql`. Confirm `product_catalog` contains `p-always-infinity` with its existing name. Do not seed the whole catalog over production just for this pilot. A missing product fails closed.
-3. At `/pilot/admin`, select a product and option, then set the retailer price and HTTPS link for that exact pack. Repeat for each item you want to sell through ayna. The $14.97 figure in the planning sheet is user-provided and needs pack and current-price confirmation. Checkout adds the configured service fee and locks the total into each order.
+1. Use a test deployment and the correct Supabase project. The active Ayna project was inspected before applying the pilot tables; the connected Supabase plugin showed a different inactive project.
+2. Apply `supabase/pilot_orders.sql` after `product_catalog.sql`, then `supabase/pilot_prices.sql` and `supabase/pilot_requests.sql`. Confirm the existing catalog is present. Do not seed the whole catalog over production just for this pilot. A missing product fails closed.
+3. At `/pilot/admin`, select a product and option, then set the retailer price and HTTPS link for that exact pack. Repeat for each item to offer immediate paid checkout. Unpriced options still accept requests, without charging. Checkout adds the configured service fee and locks the total into each paid order.
 4. Configure server environment variables below. Frontend Supabase settings must point to the same project as the server.
 5. Register `/api/pilot-webhook` in Stripe test mode for `checkout.session.completed` (and optionally `checkout.session.async_payment_succeeded`). Set the signing secret from that endpoint. Local Stripe CLI forwarding uses its own signing secret.
 6. Deploy to a test URL or use a Vercel-compatible local server for the API routes. Plain `npm run dev` only serves the frontend and cannot run payment routes. Set `PILOT_CHECKOUT_ENABLED=true` last.
@@ -67,11 +69,11 @@ Pre-existing edits in App, AuthGate, MyEcosystem and recommendationEngine were p
 
 ## Verification and remaining limits
 
-Passed: production build; 20 focused tests including existing product safety tests; lint for the new API/UI files; catalog export check (189 products, no duplicate IDs or lossy conversions); actual PostgreSQL-WASM schema/transaction/RLS tests using PGlite. Database tests cover repeat schema apply, mismatched payment rollback, duplicate webhook handling, retained tracking, owner access, cross-user isolation, and refused client writes/RPC calls.
+Passed: production build; focused payment and request tests; lint for the new API/UI files; catalog export check; actual PostgreSQL-WASM schema/transaction/RLS tests using PGlite. Database tests cover repeat schema apply, mismatched payment rollback, duplicate webhook handling, retained tracking, owner access, cross-user isolation, and refused client writes/RPC calls.
 
 Reproduce with `npx vitest run api/pilot.test.js api/pilot-access.test.js src/components/ProductModal.safetyAlert.test.js`, `node scripts/test-pilot-db.mjs`, `npm run build`, and `npm run catalog:check` after installing dependencies.
 
-Browser checks confirmed the existing Always page and signed-out order page render without uncaught browser errors. A mocked enablement response also verified the test buy button appears for the selected product. The actual Stripe checkout, signed-in customer/admin interaction, and hosted Supabase webhook flow remain unverified because no matching database/Stripe test credentials were available. No hosted database was changed, no deployment was published and no real order was placed.
+The active hosted Ayna database has the pilot pricing and request tables. The Vercel preview returns the confirmed Always test total. A signed-in customer payment, webhook, admin fulfillment, request email, and customer tracking email still need an end-to-end test. The production website has not been published with this branch, and no real order was placed.
 
 Pending includes cancelled/abandoned checkouts; this pilot does not implement expiration/refund lifecycle reconciliation. Refunds in the Stripe dashboard are not yet reflected in order status. The admin inbox shows the most recent 50 paid orders. Shipping charges/tax are not calculated in this test implementation.
 
