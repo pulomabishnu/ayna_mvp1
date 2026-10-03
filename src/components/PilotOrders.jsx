@@ -160,10 +160,14 @@ export default function PilotOrders() {
         <p>{item.status === 'quoted' ? 'Checkout price is ready.' : 'Price confirmation pending. No payment taken.'}</p>
         {adminView ? <>
           <p>Customer: {item.customer_email || 'See Ayna account'}</p>
-          <button type="button" disabled={item.status === 'quoted'} onClick={async () => {
-            try { await request('/api/pilot-orders?requests=1', { method: 'PATCH', body: JSON.stringify({ requestId: item.id }) }); await refresh(); }
+          <button type="button" onClick={async () => {
+            try {
+              const result = await request('/api/pilot-orders?requests=1', { method: 'PATCH', body: JSON.stringify({ requestId: item.id }) });
+              await refresh();
+              if (!result.emailed) setError('Price is ready, but the email was not sent. Ask the customer to open their Ayna orders page.');
+            }
             catch (e) { setError(e.message); }
-          }}>{item.status === 'quoted' ? 'Checkout link sent' : 'Send checkout link'}</button>
+          }}>{item.status === 'quoted' ? 'Resend checkout link' : 'Send checkout link'}</button>
         </> : item.status === 'quoted' && <a href={`/product/${encodeURIComponent(item.product_id)}${item.variant_id ? `?variantId=${encodeURIComponent(item.variant_id)}` : ''}`}>Review price and buy now</a>}
       </article>)}
     </section>}

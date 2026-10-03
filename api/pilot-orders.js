@@ -23,7 +23,7 @@ export default async function handler(req, res) {
       if (!price) return res.status(409).json({ error: 'Set the exact product and size price first.' });
       const changed = item.status !== 'quoted' && checked(await db.from('pilot_requests').update({ status: 'quoted', quoted_at: new Date().toISOString() }).eq('id', item.id).eq('status', 'requested').select('id').maybeSingle());
       let emailed = false;
-      if (changed && process.env.RESEND_API_KEY && item.customer_email) {
+      if ((changed || item.status === 'quoted') && process.env.RESEND_API_KEY && item.customer_email) {
         const link = `${config.origin}${productHref(item.product_id)}${item.variant_id ? `?variantId=${encodeURIComponent(item.variant_id)}` : ''}`;
         try {
           const sent = await fetch('https://api.resend.com/emails', {

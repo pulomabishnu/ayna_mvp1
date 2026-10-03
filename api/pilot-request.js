@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     const record = checked(inserted);
     if (process.env.RESEND_API_KEY && teamRecipients().length) {
       try {
-        await fetch('https://api.resend.com/emails', {
+        const sent = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -39,6 +39,7 @@ export default async function handler(req, res) {
             text: `A customer requested ${productName}. No payment was collected. Confirm the exact retailer price and link in ${pilotConfig().origin}/pilot/admin, then send the checkout link from the request inbox.`,
           }),
         });
+        if (!sent.ok) console.error('[pilot] request email failed', sent.status);
       } catch (error) { console.error('[pilot] request email failed', error?.message); }
     }
     return res.status(200).json({ requested: true, id: record.id, status: record.status });
