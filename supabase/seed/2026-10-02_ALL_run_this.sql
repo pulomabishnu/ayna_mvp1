@@ -73,7 +73,8 @@ on conflict (id) do update set
     requires_prescription = excluded.requires_prescription,
     user_rating = excluded.user_rating,
     is_active = excluded.is_active,
-    extra = excluded.extra;
+    extra = excluded.extra
+where public.product_catalog.id = excluded.id;
 
 update public.product_catalog
 set safety = safety - 'opinionAlerts'
