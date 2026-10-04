@@ -76,11 +76,15 @@ export function selectedPilotVariant(product, variantId = '') {
 }
 // Preserve the previously configured 60-count price while moving Always to
 // explicit size IDs. A price for any other size must be entered separately.
+export function legacyPriceVariantId(productId, variantId) {
+  return productId === 'p-always-infinity' && variantId === 'target-94912100' ? '' : null;
+}
 export async function pilotVariantPrice(db, productId, variantId, columns = 'amount,currency,retailer_url,variant_label') {
   const read = async (id) => checked(await db.from('pilot_product_prices').select(columns).eq('product_id', productId).eq('variant_id', id).maybeSingle());
   const exact = await read(variantId);
-  if (exact || productId !== 'p-always-infinity' || variantId !== 'target-94912100') return exact;
-  return read('');
+  const legacy = legacyPriceVariantId(productId, variantId);
+  if (exact || legacy === null) return exact;
+  return read(legacy);
 }
 export function stripeClient() {
   const mode = pilotConfig().paymentMode;
@@ -137,85 +141,35 @@ export async function settleSession(db, session) {
   }));
 }
 
-const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
+export const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
 export function teamRecipients(env = process.env) {
   const list = (env.PILOT_NOTIFY_EMAILS || 'ameera@aynahealth.co,puloma@aynahealth.co,eliz@aynahealth.co')
     .split(',').map(s => s.trim()).filter(s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s));
   return list.slice(0, 10);
 }
-// Manual fulfillment: a paid order emails the team so someone buys and ships it.
-// Best-effort only — the /pilot/admin inbox is the durable record, so an email
-// failure never fails the webhook. Only city/state go in the email; the full
-// address stays behind the admin sign-in.
-export async function notifyTeam(order, session, { env = process.env, send = fetch } = {}) {
-  if (!env.RESEND_API_KEY) { console.warn('[pilot] RESEND_API_KEY not set; order notification skipped'); return false; }
-  const to = teamRecipients(env);
-  if (!to.length) return false;
-  const ship = session.collected_information?.shipping_details || session.shipping_details || {};
-  const where = [ship.address?.city, ship.address?.state].filter(Boolean).join(', ') || 'see inbox';
-  const amount = new Intl.NumberFormat('en-US', { style: 'currency', currency: order.currency }).format(order.amount / 100);
-  const inbox = `${pilotConfig(env).origin}/pilot/admin`;
-  const test = session.livemode === false ? '[TEST] ' : '';
-  try {
-    const r = await send('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
-        to,
-        subject: `${test}New ayna order to fulfill: ${order.product_name} (${amount})`,
-        text: [`New paid order — someone needs to buy and ship it.`, '', `Product: ${order.product_name}`, `Paid: ${amount}`, `Ship to: ${ship.name || 'customer'} — ${where}`, '', `Full address + buy link: ${inbox}`, `When shipped, enter the tracking number there.`].join('\n'),
-        html: `<div style="font-family:Arial,sans-serif;color:#1A1714;line-height:1.6"><h2>New paid order to fulfill</h2><p><strong>${esc(order.product_name)}</strong> · ${esc(amount)}</p><p>Ship to: ${esc(ship.name || 'customer')} — ${esc(where)}</p><p><a href="${esc(inbox)}">Open the fulfillment inbox</a> for the full address and buy link. Enter tracking there once it ships.</p></div>`,
-      }),
-    });
-    if (!r.ok) console.error('[pilot] order notification failed', r.status);
-    return r.ok;
-  } catch (e) { console.error('[pilot] order notification error', e?.message); return false; }
-}
 
-// Customer "your order shipped" email. Sent once, when tracking is first saved
-// (later corrections don't re-send). Best-effort: tracking is already saved and
-// visible on /pilot/orders even if the email fails.
-export function shippedEmailHtml({ productName, carrier, trackingNumber, ayanaUrl, carrierUrl, logoUrl }) {
-  const cream = '#FAF6F1', ink = '#1A1714', muted = '#8c8078', navy = '#242A52', amber = '#FFC774', border = '#E1D5CE';
-  const step = (label, done, last) => `<td align="center" style="padding:0 4px;width:33%"><div style="width:28px;height:28px;line-height:28px;border-radius:14px;margin:0 auto 6px;background:${done ? navy : '#fff'};border:2px solid ${done ? navy : border};color:${done ? '#fff' : muted};font-size:14px;font-weight:700">${done ? '&#10003;' : '&middot;'}</div><div style="font-size:12px;color:${done ? ink : muted};font-weight:${done ? 700 : 400}">${label}</div></td>${last ? '' : ''}`;
-  return `<!doctype html><html><body style="margin:0;padding:0;background:${cream}">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${cream};padding:32px 12px"><tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fff;border:1px solid ${border};border-radius:20px;font-family:Georgia,'Times New Roman',serif;color:${ink}">
-<tr><td style="padding:28px 28px 0" align="center">${logoUrl ? `<img src="${esc(logoUrl)}" width="44" height="44" alt="ayna" style="border-radius:12px;display:block">` : ''}
-<p style="margin:14px 0 0;font-family:Arial,sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${muted}">Order update</p>
-<h1 style="margin:6px 0 0;font-size:28px;font-weight:400;line-height:1.25">It&rsquo;s on its way</h1></td></tr>
-<tr><td style="padding:14px 32px 0;font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:${ink}" align="center">Your <strong>${esc(productName)}</strong> just shipped. We picked it with care &mdash; thanks for shopping with ayna.</td></tr>
-<tr><td style="padding:24px 24px 4px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-family:Arial,sans-serif"><tr>${step('Ordered', true)}${step('Shipped', true)}${step('Delivered', false, true)}</tr></table></td></tr>
-<tr><td style="padding:20px 28px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${cream};border-radius:14px;font-family:Arial,sans-serif;font-size:14px"><tr><td style="padding:14px 18px;color:${muted}">Carrier</td><td style="padding:14px 18px;text-align:right;font-weight:700">${esc(carrier)}</td></tr><tr><td style="padding:0 18px 14px;color:${muted}">Tracking #</td><td style="padding:0 18px 14px;text-align:right;font-weight:700;word-break:break-all">${esc(trackingNumber)}</td></tr></table></td></tr>
-<tr><td align="center" style="padding:24px 28px 8px"><a href="${esc(ayanaUrl)}" style="display:inline-block;background:${navy};color:#fff;text-decoration:none;font-family:Arial,sans-serif;font-weight:700;font-size:15px;padding:14px 28px;border-radius:999px">Track your shipment</a></td></tr>
-${carrierUrl ? `<tr><td align="center" style="padding:0 28px 4px;font-family:Arial,sans-serif;font-size:13px"><a href="${esc(carrierUrl)}" style="color:${navy}">or track directly with ${esc(carrier)}</a></td></tr>` : ''}
-<tr><td style="padding:22px 28px 28px;font-family:Arial,sans-serif;font-size:13px;line-height:1.6;color:${muted}" align="center"><div style="height:4px;width:48px;background:${amber};border-radius:2px;margin:0 auto 16px"></div>Questions about your order? Just reply to this email &mdash; a real person on the ayna team will get back to you.</td></tr>
-</table></td></tr></table></body></html>`;
-}
-
-// Customer "your order shipped" email. Sent once, when tracking is first saved
-// (later corrections don't re-send). Best-effort: tracking is already saved and
-// visible on /pilot/orders even if the email fails.
-export async function notifyCustomerShipped(order, tracking, email, { env = process.env, send = fetch } = {}) {
-  if (!env.RESEND_API_KEY || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || '')) return false;
-  const origin = pilotConfig(env).origin;
-  const ayanaUrl = `${origin}/pilot/orders${order.id ? `?order=${encodeURIComponent(order.id)}` : ''}`;
-  const test = env.STRIPE_SECRET_KEY?.startsWith('sk_test_') ? '[TEST] ' : '';
-  try {
-    const r = await send('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
-        to: [email],
-        reply_to: teamRecipients(env)[0],
-        subject: `${test}Your ayna order is on its way`,
-        text: [`It's on its way!`, '', `Your ${order.product_name} just shipped. Thanks for shopping with ayna.`, '', `Carrier: ${tracking.carrier}`, `Tracking #: ${tracking.tracking_number}`, '', `Track your shipment on ayna: ${ayanaUrl}`, tracking.tracking_url ? `Or track with ${tracking.carrier}: ${tracking.tracking_url}` : '', '', 'Questions? Just reply to this email.'].join('\n'),
-        html: shippedEmailHtml({ productName: order.product_name, carrier: tracking.carrier, trackingNumber: tracking.tracking_number, ayanaUrl, carrierUrl: tracking.tracking_url, logoUrl: env.PILOT_EMAIL_LOGO_URL || 'https://www.aynahealth.co/ayna-favicon-180.png' }),
-      }),
-    });
-    if (!r.ok) console.error('[pilot] shipped email failed', r.status);
-    return r.ok;
-  } catch (e) { console.error('[pilot] shipped email error', e?.message); return false; }
+export const ITEM_STATUSES = ['needs_purchase', 'purchased', 'processing', 'shipped', 'delivered', 'issue', 'refunded'];
+// Validates one item's fulfillment form. Tracking is optional (an item can ship
+// before its number is known), but anything entered must be well-formed, and a
+// tracking link must be HTTPS.
+export function validItemUpdate(input, now = new Date()) {
+  const text = (v, max) => { const s = String(v ?? '').trim(); return s.length <= max ? s : null; };
+  const status = String(input?.item_status ?? '');
+  if (!ITEM_STATUSES.includes(status)) return null;
+  const carrier = text(input.carrier, 80), number = text(input.tracking_number, 150), retailer = text(input.retailer_name, 100);
+  const retailerOrder = text(input.retailer_order_number, 100), notes = text(input.internal_notes, 2000);
+  if ([carrier, number, retailer, retailerOrder, notes].includes(null)) return null;
+  let url = text(input.tracking_url, 500);
+  if (url === null) return null;
+  if (url) { try { const u = new URL(url); if (u.protocol !== 'https:' || u.username || u.password) return null; } catch { return null; } }
+  let cost = null;
+  if (String(input.actual_cost ?? '').trim() !== '') { cost = parsePriceInput(input.actual_cost); if (cost === null) return null; }
+  const eta = String(input.estimated_delivery ?? '').trim();
+  if (eta && (!/^\d{4}-\d{2}-\d{2}$/.test(eta) || Number.isNaN(Date.parse(eta)))) return null;
+  if (!url && carrier && number) url = carrierTrackingUrl(carrier, number);
+  return {
+    item_status: status, retailer_name: retailer || null, retailer_order_number: retailerOrder || null,
+    actual_cost_cents: cost, carrier: carrier || null, tracking_number: number || null, tracking_url: url || null,
+    estimated_delivery: eta || null, internal_notes: notes || null, updated_at: now.toISOString(),
+  };
 }

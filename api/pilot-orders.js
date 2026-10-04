@@ -1,5 +1,6 @@
 /* global process */
-import { pilotConfig, database, checked, signedIn, validTracking, notifyCustomerShipped, parsePriceInput, cleanRetailerUrl, serviceFeeCents, checkoutTotalCents, purchasableProduct, selectedPilotVariant, pilotVariantPrice } from './_pilot.js';
+import { pilotConfig, database, checked, signedIn, validItemUpdate, parsePriceInput, cleanRetailerUrl, serviceFeeCents, checkoutTotalCents, purchasableProduct, selectedPilotVariant, pilotVariantPrice } from './_pilot.js';
+import { notifyCustomerUpdate, sendOrderEmails } from './_pilotMail.js';
 import { productHref } from '../src/utils/productRoute.js';
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -72,31 +73,74 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       const adminView = req.query?.admin === '1';
       if (adminView && !admin) return res.status(403).json({ error: 'Admin access required.' });
-      let query = db.from('pilot_orders').select('id,product_id,product_name,retailer_url,amount,currency,status,created_at,pilot_fulfillments(*)').order('created_at', { ascending: false }).limit(50);
+      let query = db.from('pilot_orders').select('id,order_number,product_name,amount,currency,status,created_at,subtotal_cents,service_fee_cents,processing_cents,pilot_fulfillments(status,shipping,customer_email,team_notified_at,customer_confirmed_at,customer_notified_at),pilot_order_items(*)').order('created_at', { ascending: false }).limit(50);
       if (!adminView) query = query.eq('user_id', user.id);
       else query = query.eq('status', 'paid');
-      return res.status(200).json({ orders: checked(await query), admin, paymentMode: config.paymentMode });
+      const orders = checked(await query).map(order => orderView(order, adminView));
+      return res.status(200).json({ orders, admin, paymentMode: config.paymentMode });
     }
     if (req.method === 'PATCH') {
       if (!admin) return res.status(403).json({ error: 'Admin access required.' });
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
-      const tracking = validTracking(body);
-      if (!tracking || !/^[0-9a-f-]{36}$/i.test(body.orderId || '')) return res.status(400).json({ error: 'Enter a carrier, tracking number and optional HTTPS tracking link.' });
-      const retailerOrderNumber = String(body.retailer_order_number || '').trim();
-      if (retailerOrderNumber.length > 100) return res.status(400).json({ error: 'Retailer order number is too long.' });
-      const before = checked(await db.from('pilot_fulfillments').select('status,customer_email,shipped_at,pilot_orders(product_name)').eq('order_id', body.orderId).maybeSingle());
-      if (!before) return res.status(404).json({ error: 'Paid order not found.' });
-      // Keep the original ship date when correcting tracking later.
-      const update = { ...tracking, retailer_order_number: retailerOrderNumber || null, updated_by: user.id, ...(before.status === 'shipped' && before.shipped_at ? { shipped_at: before.shipped_at } : {}) };
-      const record = checked(await db.from('pilot_fulfillments').update(update).eq('order_id', body.orderId).select('order_id').maybeSingle());
-      if (!record) return res.status(404).json({ error: 'Paid order not found.' });
-      let emailed = false;
-      if (before.status !== 'shipped') {
-        const order = Array.isArray(before.pilot_orders) ? before.pilot_orders[0] : before.pilot_orders;
-        emailed = await notifyCustomerShipped({ id: body.orderId, product_name: order?.product_name || 'ayna order' }, tracking, before.customer_email);
+      if (!/^[0-9a-f-]{36}$/i.test(body.orderId || '')) return res.status(400).json({ error: 'Invalid order.' });
+      const order = checked(await db.from('pilot_orders').select('id,order_number,amount,currency,status,subtotal_cents,service_fee_cents,processing_cents,pilot_fulfillments(status,shipping,customer_email,shipped_at,customer_notified_at)').eq('id', body.orderId).eq('status', 'paid').maybeSingle());
+      const fulfillment = order && (Array.isArray(order.pilot_fulfillments) ? order.pilot_fulfillments[0] : order.pilot_fulfillments);
+      if (!order || !fulfillment) return res.status(404).json({ error: 'Paid order not found.' });
+      // Retry an order email that failed. The order itself is already saved.
+      if (body.action === 'resend_team' || body.action === 'resend_customer') {
+        const sent = await sendOrderEmails(db, order.id, null, { only: body.action === 'resend_team' ? 'team' : 'customer' });
+        return res.status(200).json({ saved: true, emailed: Object.values(sent).some(Boolean) });
       }
-      return res.status(200).json({ saved: true, emailed, firstShipment: before.status !== 'shipped' });
+      const existing = checked(await db.from('pilot_order_items').select('*').eq('order_id', order.id).order('line_no', { ascending: true }));
+      const byId = new Map(existing.map(item => [item.id, item]));
+      const updates = [];
+      for (const input of Array.isArray(body.items) ? body.items : []) {
+        const current = byId.get(input?.id);
+        const fields = current && validItemUpdate(input);
+        if (!fields) return res.status(400).json({ error: `Check the details for ${current ? current.product_name : 'an item'}: use https tracking links, valid dates and amounts.` });
+        const bought = ['purchased', 'processing', 'shipped', 'delivered'].includes(fields.item_status);
+        updates.push({ id: current.id, fields: {
+          ...fields, updated_by: user.id,
+          // Keep the original dates when details are corrected later.
+          purchased_at: current.purchased_at || (bought ? new Date().toISOString() : null),
+          shipped_at: current.shipped_at || (['shipped', 'delivered'].includes(fields.item_status) ? new Date().toISOString() : null),
+        } });
+      }
+      for (const { id, fields } of updates) checked(await db.from('pilot_order_items').update(fields).eq('id', id).eq('order_id', order.id).select('id').single());
+      const fresh = checked(await db.from('pilot_order_items').select('*').eq('order_id', order.id).order('line_no', { ascending: true }));
+      // Order-level status is derived: shipped only once every item has shipped.
+      const allShipped = fresh.length > 0 && fresh.every(item => ['shipped', 'delivered'].includes(item.item_status));
+      checked(await db.from('pilot_fulfillments').update({ status: allShipped ? 'shipped' : 'awaiting_fulfillment', updated_by: user.id, ...(allShipped ? { shipped_at: fulfillment.shipped_at || new Date().toISOString() } : {}) }).eq('order_id', order.id).select('order_id').single());
+      let emailed = false; let duplicate = false;
+      if (body.notify === true) {
+        // Guard against a double click or repeated submit sending the same update twice.
+        duplicate = Boolean(fulfillment.customer_notified_at) && Date.now() - Date.parse(fulfillment.customer_notified_at) < 60000;
+        if (!duplicate) {
+          emailed = await notifyCustomerUpdate(order, fresh, fulfillment.shipping, fulfillment.customer_email);
+          if (emailed) checked(await db.from('pilot_fulfillments').update({ customer_notified_at: new Date().toISOString() }).eq('order_id', order.id).select('order_id').single());
+        }
+      }
+      return res.status(200).json({ saved: true, emailed, duplicate, notified: body.notify === true });
     }
     return res.status(405).end();
   } catch { return res.status(503).json({ error: 'Orders unavailable. Please try again.' }); }
+}
+
+// Customers get only customer-safe fields. The retailer link, what the team paid,
+// retailer order numbers and internal notes are returned to admins only.
+function orderView(order, admin) {
+  const fulfillment = Array.isArray(order.pilot_fulfillments) ? order.pilot_fulfillments[0] : order.pilot_fulfillments;
+  const items = [...(order.pilot_order_items || [])].sort((a, b) => a.line_no - b.line_no).map(item => ({
+    id: item.id, line_no: item.line_no, product_id: item.product_id, product_name: item.product_name, variant_label: item.variant_label,
+    quantity: item.quantity, customer_unit_cents: item.customer_unit_cents, customer_line_cents: item.customer_line_cents,
+    item_status: item.item_status, carrier: item.carrier, tracking_number: item.tracking_number, tracking_url: item.tracking_url,
+    estimated_delivery: item.estimated_delivery, shipped_at: item.shipped_at,
+    ...(admin ? { variant_id: item.variant_id, retailer_url: item.retailer_url, retailer_unit_cents: item.retailer_unit_cents, retailer_name: item.retailer_name, retailer_order_number: item.retailer_order_number, actual_cost_cents: item.actual_cost_cents, internal_notes: item.internal_notes } : {}),
+  }));
+  return {
+    id: order.id, order_number: order.order_number, product_name: order.product_name, amount: order.amount, currency: order.currency,
+    status: order.status, created_at: order.created_at, subtotal_cents: order.subtotal_cents, service_fee_cents: order.service_fee_cents, processing_cents: order.processing_cents,
+    fulfillment: fulfillment ? { status: fulfillment.status, shipping: fulfillment.shipping, ...(admin ? { customer_email: fulfillment.customer_email, team_notified_at: fulfillment.team_notified_at, customer_confirmed_at: fulfillment.customer_confirmed_at, customer_notified_at: fulfillment.customer_notified_at } : {}) } : null,
+    items,
+  };
 }

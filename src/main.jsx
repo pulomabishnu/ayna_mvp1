@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import PilotOrders from './components/PilotOrders.jsx';
+import PilotCart from './components/PilotCart.jsx';
 import './index.css';
 import posthog from 'posthog-js';
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal';
@@ -255,7 +256,7 @@ class ErrorBoundary extends React.Component {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
-      {['/pilot/orders', '/pilot/admin'].includes(window.location.pathname) ? <PilotOrders /> : <App />}
+      {window.location.pathname === '/pilot/cart' ? <PilotCart /> : ['/pilot/orders', '/pilot/admin'].includes(window.location.pathname) ? <PilotOrders /> : <App />}
     </ErrorBoundary>
   </React.StrictMode>
 );

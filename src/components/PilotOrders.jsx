@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
-import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
 import { loadProductCatalog } from '../utils/productCatalog';
+import { clearCart } from '../utils/pilotCart';
 import './PilotOrders.css';
 
 async function request(path, options = {}) {
@@ -21,34 +21,70 @@ function CopyButton({ text }) {
   const [done, setDone] = useState(false);
   return <button type="button" onClick={async () => { try { await navigator.clipboard.writeText(text); setDone(true); setTimeout(() => setDone(false), 1500); } catch { /* clipboard blocked; address is selectable */ } }}>{done ? 'Copied' : 'Copy address'}</button>;
 }
-function TrackingForm({ order, refresh }) {
+const STATUS_OPTIONS = [['needs_purchase', 'Needs purchase'], ['purchased', 'Purchased'], ['processing', 'Processing'], ['shipped', 'Shipped'], ['delivered', 'Delivered'], ['issue', 'Issue'], ['refunded', 'Refunded']];
+const STATUS_LABEL = { needs_purchase: 'Processing', purchased: 'Processing', processing: 'Processing', shipped: 'Shipped', delivered: 'Delivered', issue: 'Being looked into', refunded: 'Refunded' };
+const money = (cents, currency = 'usd') => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format((cents || 0) / 100);
+const orderLabel = order => (order.order_number ? `AYNA-${order.order_number}` : `AYNA-${String(order.id).slice(0, 8).toUpperCase()}`);
+const itemTitle = item => (item.variant_label ? `${item.product_name} — ${item.variant_label}` : item.product_name);
+const isShipped = item => ['shipped', 'delivered'].includes(item.item_status);
+const draftFrom = item => ({
+  item_status: item.item_status, retailer_name: item.retailer_name || '', retailer_order_number: item.retailer_order_number || '',
+  actual_cost: item.actual_cost_cents != null ? (item.actual_cost_cents / 100).toFixed(2) : '', carrier: item.carrier || '',
+  tracking_number: item.tracking_number || '', tracking_url: item.tracking_url || '', estimated_delivery: item.estimated_delivery || '', internal_notes: item.internal_notes || '',
+});
+// One form per item: different items are bought, shipped and tracked separately.
+function FulfillmentForm({ order, refresh }) {
+  const fulfillment = order.fulfillment;
+  const [drafts, setDrafts] = useState(() => Object.fromEntries(order.items.map(item => [item.id, draftFrom(item)])));
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState(false);
-  const fulfillment = order.pilot_fulfillments?.[0] || order.pilot_fulfillments;
-  async function save(event) {
-    event.preventDefault(); setSaving(true); setMessage('');
-    const fields = Object.fromEntries(new FormData(event.currentTarget));
+  const change = (id, field, value) => setDrafts(d => ({ ...d, [id]: { ...d[id], [field]: value } }));
+  const payload = () => order.items.map(item => ({ id: item.id, ...drafts[item.id] }));
+  async function submit(notify) {
+    setMessage('');
+    if (notify) {
+      const lines = order.items.map(item => { const d = drafts[item.id]; const shipped = isShipped(d); return `• ${itemTitle(item)} × ${item.quantity}: ${STATUS_LABEL[d.item_status]}${shipped ? (d.tracking_number ? ` (${d.carrier || 'carrier'} ${d.tracking_number})` : ' — NO TRACKING NUMBER YET') : ''}`; });
+      const unshipped = order.items.filter(item => !isShipped(drafts[item.id])).length;
+      const ok = window.confirm(`Email ${fulfillment?.shipping?.name || 'the customer'} (${fulfillment?.customer_email || 'no email on file'}) about order ${orderLabel(order)}?\n\n${lines.join('\n')}\n\n${unshipped ? `${unshipped} item(s) will be described as still processing.\n` : ''}Internal notes and purchase costs are never shown to the customer.`);
+      if (!ok) return;
+    }
+    setSaving(true);
     try {
-      const r = await request('/api/pilot-orders', { method: 'PATCH', body: JSON.stringify({ ...fields, orderId: order.id }) });
-      setMessage(!r.firstShipment ? 'Tracking updated (customer was already emailed, no new email sent).' : r.emailed ? 'Tracking saved and the customer was emailed.' : 'Tracking saved. The shipping email could not be sent — the customer can still see it on their orders page.');
+      const r = await request('/api/pilot-orders', { method: 'PATCH', body: JSON.stringify({ orderId: order.id, items: payload(), notify }) });
+      setMessage(!notify ? 'Saved. The customer was not emailed.' : r.duplicate ? 'Saved. The customer was already emailed a moment ago, so no second email was sent.' : r.emailed ? 'Saved and the customer was emailed.' : 'Saved, but the customer email could not be sent. Their order page is up to date.');
       await refresh();
     } catch (e) { setMessage(e.message); }
     finally { setSaving(false); }
   }
-  return <form onSubmit={save}>
-    {fulfillment?.status !== 'shipped' && <ol className="pilot-steps">
-      <li>Buy it: {order.retailer_url ? <><a href={order.retailer_url} target="_blank" rel="noopener noreferrer">configured retailer item</a> · </> : PRODUCT_BUY_URLS[order.product_id] && <><a href={PRODUCT_BUY_URLS[order.product_id]} target="_blank" rel="noopener noreferrer">retailer page</a> · </>}<a href={`https://www.amazon.com/s?k=${encodeURIComponent(order.product_name)}`} target="_blank" rel="noopener noreferrer">search Amazon</a></li>
-      <li>Ship it to the address below (use it as the delivery address at checkout).</li>
-      <li>Enter the retailer order number, carrier and tracking number here. Saving tracking emails the customer.</li>
-    </ol>}
-    <p>Fulfilled by: {fulfillment?.vendor_name} · Customer email: {fulfillment?.customer_email || '—'}</p>
+  async function resend(action) {
+    setMessage('');
+    try { const r = await request('/api/pilot-orders', { method: 'PATCH', body: JSON.stringify({ orderId: order.id, action }) }); setMessage(r.emailed ? 'Email sent.' : 'The email could not be sent. Try again.'); await refresh(); }
+    catch (e) { setMessage(e.message); }
+  }
+  return <form onSubmit={event => { event.preventDefault(); submit(false); }}>
+    <p>Customer email: {fulfillment?.customer_email || '—'}</p>
+    <p className="pilot-order__emails">Team email: {fulfillment?.team_notified_at ? 'sent' : <><strong>not sent</strong> <button type="button" onClick={() => resend('resend_team')}>Resend</button></>} · Customer confirmation: {fulfillment?.customer_confirmed_at ? 'sent' : <><strong>not sent</strong> <button type="button" onClick={() => resend('resend_customer')}>Resend</button></>}</p>
+    <p>Ship every item to:</p>
     <pre className="pilot-address">{formatAddress(fulfillment?.shipping) || 'No shipping address recorded'}</pre>
     <CopyButton text={formatAddress(fulfillment?.shipping)} />
-    <label>Retailer order number (optional)<input name="retailer_order_number" maxLength={100} defaultValue={fulfillment?.retailer_order_number || ''} /></label>
-    <label>Carrier<input name="carrier" required maxLength={80} defaultValue={fulfillment?.carrier || ''} /></label>
-    <label>Tracking number<input name="tracking_number" required maxLength={150} defaultValue={fulfillment?.tracking_number || ''} /></label>
-    <label>Tracking link (optional — filled in automatically for USPS, UPS, FedEx, DHL)<input name="tracking_url" type="url" defaultValue={fulfillment?.tracking_url || ''} /></label>
-    <button disabled={saving}>{saving ? 'Saving…' : 'Save tracking'}</button>
+    {order.items.map(item => {
+      const d = drafts[item.id];
+      return <fieldset key={item.id} className="pilot-item">
+        <legend>{itemTitle(item)} × {item.quantity}</legend>
+        <p>Buy: {item.retailer_url ? <a href={item.retailer_url} target="_blank" rel="noopener noreferrer">exact retailer listing</a> : <strong>no retailer link saved</strong>} · expected {money(item.retailer_unit_cents)} each ({money(item.retailer_unit_cents * item.quantity)}) · customer paid {money(item.customer_line_cents)}</p>
+        <label>Status<select value={d.item_status} onChange={e => change(item.id, 'item_status', e.target.value)}>{STATUS_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+        <label>Purchased from<input value={d.retailer_name} maxLength={100} onChange={e => change(item.id, 'retailer_name', e.target.value)} /></label>
+        <label>Retailer order number<input value={d.retailer_order_number} maxLength={100} onChange={e => change(item.id, 'retailer_order_number', e.target.value)} /></label>
+        <label>Actual price paid ($, internal)<input inputMode="decimal" value={d.actual_cost} onChange={e => change(item.id, 'actual_cost', e.target.value)} /></label>
+        <label>Carrier<input value={d.carrier} maxLength={80} onChange={e => change(item.id, 'carrier', e.target.value)} /></label>
+        <label>Tracking number<input value={d.tracking_number} maxLength={150} onChange={e => change(item.id, 'tracking_number', e.target.value)} /></label>
+        <label>Tracking link (optional — filled in automatically for USPS, UPS, FedEx, DHL)<input type="url" value={d.tracking_url} onChange={e => change(item.id, 'tracking_url', e.target.value)} /></label>
+        <label>Estimated delivery<input type="date" value={d.estimated_delivery} onChange={e => change(item.id, 'estimated_delivery', e.target.value)} /></label>
+        <label>Internal notes (never shown to the customer)<input value={d.internal_notes} maxLength={2000} onChange={e => change(item.id, 'internal_notes', e.target.value)} /></label>
+      </fieldset>;
+    })}
+    <button disabled={saving}>{saving ? 'Saving…' : 'Save progress'}</button>
+    <button type="button" disabled={saving} onClick={() => submit(true)}>Complete / send customer update…</button>
     <p role="status">{message}</p>
   </form>;
 }
@@ -121,6 +157,8 @@ function PriceForm() {
 export default function PilotOrders() {
   const adminView = window.location.pathname === '/pilot/admin';
   const focusId = new URLSearchParams(window.location.search).get('order');
+  const returnedPaid = new URLSearchParams(window.location.search).get('paid') === '1';
+  useEffect(() => { if (returnedPaid) clearCart(); }, [returnedPaid]);
   const [orders, setOrders] = useState([]);
   const [requests, setRequests] = useState([]);
   const [admin, setAdmin] = useState(false);
@@ -175,29 +213,46 @@ export default function PilotOrders() {
     </section>}
     {!loading && !error && !orders.length && !requests.length && <p>No {adminView ? 'paid ' : ''}{paymentMode === 'test' ? 'test ' : ''}orders yet.</p>}
     {orders.map(order => {
-      const fulfillment = order.pilot_fulfillments?.[0] || order.pilot_fulfillments;
-      const shipped = fulfillment?.status === 'shipped';
       const paid = order.status === 'paid';
+      const items = order.items || [];
+      const shippedCount = items.filter(isShipped).length;
+      const allShipped = items.length > 0 && shippedCount === items.length;
+      const allDelivered = items.length > 0 && items.every(item => item.item_status === 'delivered');
       const highlighted = focusId === order.id;
       return <article key={order.id} className={highlighted ? 'pilot-order pilot-order--focus' : 'pilot-order'}>
         <div className="pilot-order__head">
-          <h2>{order.product_name}</h2>
-          <span className="pilot-order__price">{new Intl.NumberFormat('en-US', { style: 'currency', currency: order.currency }).format(order.amount / 100)}</span>
+          <h2>Order {orderLabel(order)}</h2>
+          <span className="pilot-order__price">{money(order.amount, order.currency)}</span>
         </div>
         <ol className="pilot-progress" aria-label="Order progress">
           <li className={paid ? 'done' : ''}>Ordered</li>
-          <li className={shipped ? 'done' : ''}>Shipped</li>
-          <li>Delivered</li>
+          <li className={allShipped ? 'done' : ''}>Shipped{shippedCount > 0 && !allShipped ? ` (${shippedCount} of ${items.length})` : ''}</li>
+          <li className={allDelivered ? 'done' : ''}>Delivered</li>
         </ol>
         {!paid && <p className="pilot-order__note">Payment not yet confirmed — an abandoned checkout also stays pending.</p>}
-        {paid && !shipped && <p className="pilot-order__note">Order received — we&rsquo;re getting it ready to ship.</p>}
-        {shipped && <div className="pilot-order__tracking">
-          <p><span>Carrier</span><strong>{fulfillment.carrier}</strong></p>
-          <p><span>Tracking #</span><strong>{fulfillment.tracking_number}</strong></p>
-          {fulfillment.tracking_url && <a className="pilot-track-btn" href={fulfillment.tracking_url} target="_blank" rel="noopener noreferrer">Track shipment</a>}
-        </div>}
+        {paid && shippedCount === 0 && <p className="pilot-order__note">Order received — we&rsquo;re getting it ready to ship.</p>}
+        {paid && shippedCount > 0 && !allShipped && <p className="pilot-order__note">Part of your order has shipped. The rest is still being prepared — each item is listed below.</p>}
+        <ul className="pilot-order__items">
+          {items.map(item => <li key={item.id}>
+            <div className="pilot-order__itemhead"><strong>{item.product_name}</strong><span>{money(item.customer_line_cents, order.currency)}</span></div>
+            <p className="pilot-order__itemmeta">{[item.variant_label, `Qty ${item.quantity}`].filter(Boolean).join(' · ')}</p>
+            <p className="pilot-order__itemstatus">{STATUS_LABEL[item.item_status] || 'Processing'}{item.estimated_delivery && !['delivered', 'refunded'].includes(item.item_status) ? ` · estimated ${item.estimated_delivery}` : ''}</p>
+            {isShipped(item) && <div className="pilot-order__tracking">
+              {item.carrier && <p><span>Carrier</span><strong>{item.carrier}</strong></p>}
+              {item.tracking_number ? <p><span>Tracking #</span><strong>{item.tracking_number}</strong></p> : <p><span>Tracking</span><strong>Coming soon</strong></p>}
+              {item.tracking_url && <a className="pilot-track-btn" href={item.tracking_url} target="_blank" rel="noopener noreferrer">Track shipment</a>}
+            </div>}
+          </li>)}
+        </ul>
+        {order.subtotal_cents != null && <dl className="pilot-order__breakdown">
+          <div><dt>Items</dt><dd>{money(order.subtotal_cents, order.currency)}</dd></div>
+          <div><dt>ayna service fee</dt><dd>{money(order.service_fee_cents, order.currency)}</dd></div>
+          <div><dt>Payment processing</dt><dd>{money(order.processing_cents, order.currency)}</dd></div>
+          <div><dt><strong>Total paid</strong></dt><dd><strong>{money(order.amount, order.currency)}</strong></dd></div>
+        </dl>}
+        {order.fulfillment?.shipping?.address && !adminView && <p className="pilot-order__ship">Shipping to: {[order.fulfillment.shipping.name, order.fulfillment.shipping.address.line1, order.fulfillment.shipping.address.city, order.fulfillment.shipping.address.state].filter(Boolean).join(', ')}</p>}
         <p className="pilot-order__id">Order {order.id}</p>
-        {adminView && <TrackingForm order={order} refresh={refresh} />}
+        {adminView && <FulfillmentForm order={order} refresh={refresh} />}
       </article>;
     })}
   </main>;

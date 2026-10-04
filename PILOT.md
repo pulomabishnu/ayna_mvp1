@@ -86,3 +86,15 @@ Pending includes cancelled/abandoned checkouts; this pilot does not implement ex
 First complete the connected test above. Then confirm each exact SKU/pack, inventory, shipping cost, tax handling, returns and customer support. Add refund/cancellation reconciliation and production rate limiting before enabling live mode. Live mode requires `PILOT_PAYMENT_MODE=live`, `PILOT_LIVE_ENABLED=true`, a production Vercel deployment with a custom HTTPS `PILOT_APP_URL`, and live Stripe secret and webhook credentials. Products without a confirmed admin price remain requestable but cannot enter payment until the exact price and link are saved. A live key alone fails. Agree a real fulfillment destination before any vendor notification or real shipment.
 
 Implementation references: [Stripe webhook signature verification](https://docs.stripe.com/webhooks/signature), [Supabase row-level security](https://supabase.com/docs/guides/database/postgres/row-level-security).
+
+
+## Cart, quantity and per-item fulfillment (added 2026-10-04)
+
+Apply `supabase/pilot_cart.sql` (after the other pilot SQL files) before deploying this code. It is idempotent: it adds `pilot_order_items`, order numbers (`AYNA-1001`...), the fee/processing breakdown on orders, backfills earlier single-product orders as one item each, and adds `pilot_create_order` (atomic order + items).
+
+- Product page: quantity stepper, **Add to cart** and **Buy now**. Both send only product ID, option ID and quantity; the server prices every line (`api/_pilotCart.js`). An option without its own confirmed price cannot be added or charged.
+- Cart (`/pilot/cart`, stored in the browser, no prices): each option is its own line; one Stripe payment for the whole cart.
+- Total = item price x quantity + ayna fee (10% of item price) + processing (covers Stripe 2.9% + 30c once per payment); tax, when Stripe Tax is on, is inside that fixed total. **Retailer shipping is not modeled yet**: nothing is added for it and nothing is guessed.
+- Each order item stores a snapshot (names, option, quantity, retailer link, retailer price, customer price) and its own status, retailer order number, actual cost, carrier, tracking, notes. Customers can only read the customer-safe columns (column-level grants), never retailer link/cost/notes.
+- Emails (Resend, best-effort; DB is the source of truth): team email on payment (full address, every item with exact retailer link), customer "order received", and a customer update sent only when an admin presses **Complete / send customer update** and confirms. The inbox shows which emails still need a resend.
+- Admin: `/pilot/admin?order=<id>` (sign-in + `PILOT_ADMIN_USER_IDS` required).
