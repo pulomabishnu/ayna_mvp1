@@ -10,6 +10,7 @@ export default function PilotBuyButton({ productId, variantId = '', needsVariant
   const [total, setTotal] = useState(null);
   const [variantLabel, setVariantLabel] = useState(null);
   const [paymentMode, setPaymentMode] = useState('test');
+  const [taxIncluded, setTaxIncluded] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [showAuth, setShowAuth] = useState(false);
@@ -19,7 +20,7 @@ export default function PilotBuyButton({ productId, variantId = '', needsVariant
     onAvailabilityChange?.(false);
     if (needsVariant && !variantId) return () => { active = false; };
     fetch(`/api/pilot-checkout?productId=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`).then(r => r.json()).then(c => {
-      if (active) { const matches = c.productId === productId && c.variantId === variantId; const available = matches && (c.enabled || c.requestable); setEnabled(matches && c.enabled); setRequestable(matches && c.requestable); setPaymentMode(c.paymentMode === 'live' ? 'live' : 'test'); onAvailabilityChange?.(available); setTotal(c.total); setVariantLabel(c.variantLabel || null); }
+      if (active) { const matches = c.productId === productId && c.variantId === variantId; const available = matches && (c.enabled || c.requestable); setEnabled(matches && c.enabled); setRequestable(matches && c.requestable); setPaymentMode(c.paymentMode === 'live' ? 'live' : 'test'); setTaxIncluded(c.taxIncluded === true); onAvailabilityChange?.(available); setTotal(c.total); setVariantLabel(c.variantLabel || null); }
     }).catch(() => {});
     return () => { active = false; };
   }, [productId, variantId, needsVariant, onAvailabilityChange]);
@@ -61,7 +62,7 @@ export default function PilotBuyButton({ productId, variantId = '', needsVariant
     <button className="pdp-btn pdp-btn--navy" disabled={busy || requested || (needsVariant && !variantId) || (!enabled && !requestable)} onClick={buy}>{busy ? 'One moment…' : needsVariant && !variantId ? 'Choose a size' : 'Buy now'}</button>
     <div className="pilot-purchase__details">
       {variantLabel && <span className="pilot-purchase__variant">Checkout pack: {variantLabel}</span>}
-      {total != null && <span className="pilot-purchase__total">${(total / 100).toFixed(2)} total <span>including service fee</span></span>}
+      {total != null && <span className="pilot-purchase__total">${(total / 100).toFixed(2)} total <span>including Ayna and processing fees{taxIncluded ? ' and applicable tax' : ''}</span></span>}
       {requestable && !requested && <span>We’ll confirm the price before you pay.</span>}
       {requested && <span role="status">Request received. No payment was taken. We’ll email you when checkout is ready.</span>}
       {paymentMode === 'test' && <span className="pilot-purchase__test">Test checkout · no real charge</span>}

@@ -12,6 +12,8 @@ When the price is not yet confirmed, **Buy now** creates an order request for th
 
 For a physical product with no size or pack options, a catalog price containing only one dollar amount (such as `$98`) can supply the checkout item price. Checkout adds the 10% service fee. A confirmed price entered by an administrator always takes priority. Ranges, descriptions such as `$8 for 18`, and products with options still need a confirmed price for the exact item. The existing Always price remains unchanged. No direct Always fulfillment agreement was found. Live Stripe mode is separately gated and remains off until the production setup is complete.
 
+The customer total now includes Ayna's fee and enough to cover Stripe's standard US online-card processing fee (2.9% + 30¢). When `PILOT_STRIPE_TAX_ENABLED=true`, Stripe Tax calculates any applicable tax from the customer's shipping address **within** that fixed total, and shows the tax allocation in hosted Checkout before payment. Stripe Tax settings, registrations, and product classifications must be configured in the Stripe account; enabling the flag alone does not establish a tax obligation or registration. Amazon tax or non-Prime shipping paid by the fulfillment team is not knowable from a search result and reduces Ayna's actual margin; the customer is never charged later for it. Live checkout only uses prices and exact retailer links saved by an administrator; catalog display prices remain a test-mode fallback until an item is reviewed.
+
 ## Setup for a connected test
 
 1. Use a test deployment and the correct Supabase project. The active Ayna project was inspected before applying the pilot tables; the connected Supabase plugin showed a different inactive project.
@@ -30,6 +32,7 @@ For a physical product with no size or pack options, a catalog price containing 
 | `PILOT_CHECKOUT_ENABLED` | `false` by default; `true` enables the test button and endpoint |
 | `PILOT_PAYMENT_MODE` | `test` by default; `live` requires a separate production switch and live Stripe credentials |
 | `PILOT_LIVE_ENABLED` | `false` by default; must be `true` for live mode on a production deployment with a custom HTTPS origin |
+| `PILOT_STRIPE_TAX_ENABLED` | `false` by default; live mode requires `true` and configured Stripe Tax settings/registrations. Tax is included in the fixed customer total |
 | `PILOT_PRODUCT_ID` | `p-always-infinity` (legacy default for requests without a product ID) |
 | `PILOT_APP_URL` | Exact test deployment origin; local default `http://localhost:3000` |
 | `PILOT_VENDOR_NAME` | Explicit test fulfillment destination label; does not establish a brand partnership |

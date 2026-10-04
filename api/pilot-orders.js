@@ -1,5 +1,5 @@
 /* global process */
-import { pilotConfig, database, checked, signedIn, validTracking, notifyCustomerShipped, parsePriceInput, cleanRetailerUrl, serviceFeeCents, purchasableProduct, selectedPilotVariant } from './_pilot.js';
+import { pilotConfig, database, checked, signedIn, validTracking, notifyCustomerShipped, parsePriceInput, cleanRetailerUrl, serviceFeeCents, checkoutTotalCents, purchasableProduct, selectedPilotVariant } from './_pilot.js';
 import { productHref } from '../src/utils/productRoute.js';
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for manual fulfillment.' });
       if (req.method === 'GET') {
         const price = checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url,updated_at').eq('product_id', productId).eq('variant_id', variantId).maybeSingle());
-        return res.status(200).json({ price, serviceFeePercent: config.serviceFeePercent, total: price ? price.amount + serviceFeeCents(price.amount) : null });
+        return res.status(200).json({ price, serviceFeePercent: config.serviceFeePercent, paymentMode: config.paymentMode, taxIncluded: config.taxIncluded, total: price ? checkoutTotalCents(price.amount) : null });
       }
       if (req.method !== 'PUT') return res.status(405).end();
       const amount = parsePriceInput(body.price);
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
       if (!amount || !retailerUrl) return res.status(400).json({ error: 'Enter a price from $0.50 to $500 and an HTTPS retailer link.' });
       serviceFeeCents(amount);
       checked(await db.from('pilot_product_prices').upsert({ product_id: productId, variant_id: variantId, variant_label: variant.label, amount, currency: 'usd', retailer_url: retailerUrl, updated_at: new Date().toISOString(), updated_by: user.id }, { onConflict: 'product_id,variant_id' }));
-      return res.status(200).json({ saved: true, total: amount + serviceFeeCents(amount) });
+      return res.status(200).json({ saved: true, total: checkoutTotalCents(amount) });
     }
     if (req.method === 'GET') {
       const adminView = req.query?.admin === '1';

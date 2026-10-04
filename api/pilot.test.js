@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Readable } from 'node:stream';
 import Stripe from 'stripe';
-import { pilotConfig, stripeClient, validTracking, settleSession, parsePriceInput, cleanRetailerUrl, serviceFeeCents, purchasableProduct, selectedPilotVariant, checkoutPrice } from './_pilot.js';
+import { pilotConfig, stripeClient, validTracking, settleSession, parsePriceInput, cleanRetailerUrl, serviceFeeCents, checkoutTotalCents, purchasableProduct, selectedPilotVariant, checkoutPrice } from './_pilot.js';
 import webhook from './pilot-webhook.js';
 
 function response() {
@@ -17,6 +17,7 @@ describe('pilot guardrails', () => {
     expect(checkoutPrice({ ...product, price: '$8 for 18' }, single, null)).toBeNull();
     expect(checkoutPrice({ ...product, price: '$8-$12' }, single, null)).toBeNull();
     expect(checkoutPrice(product, { id: 'large', label: 'Large' }, null)).toBeNull();
+    expect(checkoutPrice(product, single, null, { allowCatalogFallback: false })).toBeNull();
     const confirmed = { amount: 1497, currency: 'usd', variant_label: null };
     expect(checkoutPrice({ ...product, price: '$8 for 18' }, single, confirmed)).toBe(confirmed);
   });
@@ -25,6 +26,9 @@ describe('pilot guardrails', () => {
     expect(serviceFeeCents(1497)).toBe(150);
     expect(parsePriceInput('14.979')).toBeNull();
     expect(cleanRetailerUrl('https://www.amazon.com/dp/TEST?tag=aynahealth-20&x=1')).toBe('https://www.amazon.com/dp/TEST?x=1');
+    expect(checkoutTotalCents(1497, {})).toBe(1727);
+    expect(checkoutTotalCents(1899, {})).toBe(2182);
+    expect(2182 - Math.round(2182 * 0.029) - 30 - 1899).toBe(190);
   });
   it('only accepts shippable physical products and a real selected option', () => {
     const product = { product_type: 'physical', category: 'pad', is_active: true, requires_prescription: false, extra: { variants: [{ id: 'size-1', label: 'Size 1' }] } };
@@ -51,9 +55,10 @@ describe('pilot guardrails', () => {
     expect(stripeClient).toThrow('test key');
   });
   it('only permits live mode with an explicit production origin and switch', () => {
-    const live = { PILOT_PAYMENT_MODE: 'live', PILOT_LIVE_ENABLED: 'true', VERCEL_ENV: 'production', PILOT_APP_URL: 'https://www.aynahealth.co' };
+    const live = { PILOT_PAYMENT_MODE: 'live', PILOT_LIVE_ENABLED: 'true', PILOT_STRIPE_TAX_ENABLED: 'true', VERCEL_ENV: 'production', PILOT_APP_URL: 'https://www.aynahealth.co' };
     expect(pilotConfig(live).paymentMode).toBe('live');
     expect(() => pilotConfig({ ...live, PILOT_LIVE_ENABLED: 'false' })).toThrow();
+    expect(() => pilotConfig({ ...live, PILOT_STRIPE_TAX_ENABLED: 'false' })).toThrow();
     expect(() => pilotConfig({ ...live, VERCEL_ENV: 'preview' })).toThrow();
     expect(() => pilotConfig({ ...live, PILOT_APP_URL: 'https://preview.vercel.app' })).toThrow();
     for (const [key, value] of Object.entries(live)) vi.stubEnv(key, value);

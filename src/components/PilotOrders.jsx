@@ -91,14 +91,14 @@ function PriceForm() {
     const fields = Object.fromEntries(new FormData(event.currentTarget));
     try {
       const result = await request('/api/pilot-orders?price=1', { method: 'PUT', body: JSON.stringify({ ...fields, productId, variantId }) });
-      setMessage(`Saved. Test customer total: $${(result.total / 100).toFixed(2)}.`);
+      setMessage(`Saved. Customer total: $${(result.total / 100).toFixed(2)}.`);
       setPrice(await request(`/api/pilot-orders?price=1&productId=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`));
       setConfigured((await request('/api/pilot-orders?prices=1')).prices || []);
     } catch (e) { setMessage(e.message); }
   }
   return <section>
-    <h2>Test checkout price</h2>
-    <p>Set the retailer price for the exact pack. A {price?.serviceFeePercent ?? 10}% ayna service fee is added at checkout.</p>
+    <h2>Checkout price</h2>
+    <p>Set the retailer price for the exact pack. The customer total includes Ayna's {price?.serviceFeePercent ?? 10}% fee and payment processing{price?.taxIncluded ? ', with applicable Stripe tax included' : ''}.</p>
     <p>{configuredKeys.size} of {options.length} product and size choices configured; {missingCount} still need a verified price and retailer link.</p>
     <label><input type="checkbox" checked={missingOnly} onChange={e => setMissingOnly(e.target.checked)} /> Show only choices needing a price</label>
     <label>Find product<input value={filter} onChange={e => setFilter(e.target.value)} placeholder="Search name or product ID" /></label>
@@ -111,7 +111,7 @@ function PriceForm() {
     {price && <form onSubmit={save} key={`${productId}:${variantId}:${price.price?.updated_at || 'new'}`}>
       <label>Retailer price ($)<input name="price" inputMode="decimal" required defaultValue={price.price ? (price.price.amount / 100).toFixed(2) : ''} /></label>
       <label>Retailer product link<input name="retailerUrl" type="url" required defaultValue={price.price?.retailer_url || ''} /></label>
-      <button>Save test price</button>
+      <button>Save price</button>
       {price.total != null && <p>Current customer total: ${(price.total / 100).toFixed(2)}</p>}
     </form>}
     <p role="status">{message}</p>

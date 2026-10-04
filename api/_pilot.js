@@ -9,7 +9,7 @@ export function pilotConfig(env = process.env) {
   if (origin.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(origin.hostname)) throw new Error('Invalid pilot origin');
   const paymentMode = env.PILOT_PAYMENT_MODE || 'test';
   if (!['test', 'live'].includes(paymentMode)) throw new Error('Invalid pilot payment mode');
-  if (paymentMode === 'live' && (env.PILOT_LIVE_ENABLED !== 'true' || env.VERCEL_ENV !== 'production' || origin.protocol !== 'https:' || origin.hostname.endsWith('.vercel.app'))) throw new Error('Live checkout requires an explicit production configuration');
+  if (paymentMode === 'live' && (env.PILOT_LIVE_ENABLED !== 'true' || env.PILOT_STRIPE_TAX_ENABLED !== 'true' || env.VERCEL_ENV !== 'production' || origin.protocol !== 'https:' || origin.hostname.endsWith('.vercel.app'))) throw new Error('Live checkout requires an explicit production and tax configuration');
   return {
     enabled: env.PILOT_CHECKOUT_ENABLED === 'true',
     productId: env.PILOT_PRODUCT_ID || 'p-always-infinity',
@@ -18,6 +18,7 @@ export function pilotConfig(env = process.env) {
     origin: origin.origin,
     admins: (env.PILOT_ADMIN_USER_IDS || '').split(',').map(s => s.trim()).filter(Boolean),
     serviceFeePercent: env.PILOT_SERVICE_FEE_PERCENT === undefined || env.PILOT_SERVICE_FEE_PERCENT === '' ? 10 : Number(env.PILOT_SERVICE_FEE_PERCENT),
+    taxIncluded: env.PILOT_STRIPE_TAX_ENABLED === 'true',
     paymentMode,
   };
 }
@@ -29,14 +30,24 @@ export function serviceFeeCents(unitAmount, env = process.env) {
   if (!Number.isFinite(pct) || pct < 0 || pct > 30) throw new Error('Invalid PILOT_SERVICE_FEE_PERCENT');
   return Math.round(unitAmount * pct / 100);
 }
+// Charge enough to leave the item price plus Ayna's fee after Stripe's
+// standard US online-card fee. The customer amount is fixed before payment;
+// different card fee schedules affect Ayna's margin, never the customer total.
+export function checkoutTotalCents(unitAmount, env = process.env) {
+  const base = unitAmount + serviceFeeCents(unitAmount, env);
+  let total = base + 30;
+  while (total - Math.round(total * 0.029) - 30 < base) total++;
+  return total;
+}
 export function parsePriceInput(value) {
   const match = String(value ?? '').trim().replace(/^\$/, '').match(/^(\d{1,3})(?:\.(\d{1,2}))?$/);
   if (!match) return null;
   const cents = Number(match[1]) * 100 + Number((match[2] || '0').padEnd(2, '0'));
   return cents >= 50 && cents <= 50000 ? cents : null;
 }
-export function checkoutPrice(product, variant, configuredPrice) {
+export function checkoutPrice(product, variant, configuredPrice, { allowCatalogFallback = true } = {}) {
   if (configuredPrice) return configuredPrice;
+  if (!allowCatalogFallback) return null;
   // A displayed range, pack description, or option-dependent amount is not a price.
   if (!variant || variant.id !== '') return null;
   const amount = parsePriceInput(product?.price);
