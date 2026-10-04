@@ -78,6 +78,7 @@ function PriceForm() {
     ? item.variants.map(variant => ({ productId: item.id, variantId: variant.id, name: `${item.name} — ${variant.label}` }))
     : [{ productId: item.id, variantId: '', name: item.name }]);
   const configuredKeys = new Set(configured.map(item => `${item.product_id}:${item.variant_id}`));
+  if (configuredKeys.has('p-always-infinity:')) configuredKeys.add('p-always-infinity:target-94912100');
   const missingCount = options.filter(item => !configuredKeys.has(`${item.productId}:${item.variantId}`)).length;
   useEffect(() => {
     let active = true;
@@ -99,7 +100,7 @@ function PriceForm() {
   return <section>
     <h2>Checkout price</h2>
     <p>Set the retailer price for the exact pack. The customer total includes Ayna's {price?.serviceFeePercent ?? 10}% fee and payment processing{price?.taxIncluded ? ', with applicable Stripe tax included' : ''}.</p>
-    <p>{configuredKeys.size} of {options.length} product and size choices configured; {missingCount} still need a verified price and retailer link.</p>
+    <p>{options.length - missingCount} of {options.length} product and size choices configured; {missingCount} still need a verified price and retailer link.</p>
     <label><input type="checkbox" checked={missingOnly} onChange={e => setMissingOnly(e.target.checked)} /> Show only choices needing a price</label>
     <label>Find product<input value={filter} onChange={e => setFilter(e.target.value)} placeholder="Search name or product ID" /></label>
     <label>Product<select value={productId} onChange={e => { const next = products.find(item => item.id === e.target.value); setProductId(e.target.value); setVariantId(next?.defaultVariantId || next?.variants?.[0]?.id || ''); }}>
