@@ -1,6 +1,5 @@
 import PilotBuyButton from './PilotBuyButton';
 import { getVariantSelection } from '../utils/productVariantSelection';
-import { recordRetailerVisit } from '../utils/feedbackClient';
 import React, { useState, useMemo, useEffect } from 'react';
 import { getAppSessionId } from '../utils/conversationId';
 import ProductEvidenceRail from './ProductEvidenceRail';
@@ -767,7 +766,6 @@ export default function ProductModal({
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => {
-              recordRetailerVisit(product, choice.variant);
               posthog.capture('product_buy_now_clicked', {
               productId: product.id,
               category: product.category,
