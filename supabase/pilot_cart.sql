@@ -122,3 +122,6 @@ end;
 $$;
 revoke all on function public.pilot_create_order(uuid,uuid,text,text,text,text,integer,integer,integer,integer,jsonb) from public, anon, authenticated;
 grant execute on function public.pilot_create_order(uuid,uuid,text,text,text,text,integer,integer,integer,integer,jsonb) to service_role;
+
+-- Make the new function and tables visible to the API immediately.
+notify pgrst, 'reload schema';

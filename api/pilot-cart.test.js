@@ -271,6 +271,18 @@ describe('creating a checkout', () => {
     expect(create).not.toHaveBeenCalled();
     expect(tables.pilot_orders).toHaveLength(0);
   });
+  it('says the cart database update is missing, instead of a vague error, when pilot_create_order does not exist', async () => {
+    mocks.db = fakeDb(tables, { pilot_create_order: async () => ({ data: null, error: { code: 'PGRST202', message: 'Could not find the function public.pilot_create_order in the schema cache' } }) });
+    const r = res(); await checkout({ method: 'POST', headers: {}, body: cartBody() }, r);
+    expect(r.code).toBe(503);
+    expect(r.body.error).toMatch(/pilot_cart\.sql/);
+    expect(create).not.toHaveBeenCalled();
+    // Any other database failure keeps the generic message and leaks nothing.
+    mocks.db = fakeDb(tables, { pilot_create_order: async () => ({ data: null, error: { code: '23505', message: 'secret internal detail' } }) });
+    const generic = res(); await checkout({ method: 'POST', headers: {}, body: cartBody() }, generic);
+    expect(generic.code).toBe(503);
+    expect(JSON.stringify(generic.body)).not.toContain('secret internal detail');
+  });
   it('refuses unavailable items and bad requests', async () => {
     let r = res(); await checkout({ method: 'POST', headers: {}, body: cartBody({ items: [{ productId: 'p-digital', quantity: 1 }] }) }, r);
     expect(r.code).toBe(409);

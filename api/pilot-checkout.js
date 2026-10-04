@@ -79,6 +79,12 @@ export default async function handler(req, res) {
       });
       if (created.error) {
         if (/cart mismatch/.test(created.error.message || '')) return res.status(409).json({ error: 'This checkout attempt belongs to a different cart. Start again.', restart: true });
+        // Log the database's reason (visible in Vercel logs, never sent to the browser).
+        console.error('[pilot-checkout] pilot_create_order failed', created.error.code || '', String(created.error.message || '').slice(0, 200));
+        // A missing function/table means supabase/pilot_cart.sql has not been applied to this database.
+        if (['PGRST202', '42883', '42P01', 'PGRST205'].includes(created.error.code) || /pilot_create_order|pilot_order_items|schema cache/i.test(created.error.message || '')) {
+          return res.status(503).json({ error: 'Checkout setup is incomplete: the cart database update (supabase/pilot_cart.sql) has not been applied to this environment.', step });
+        }
         throw new Error('Pilot database operation failed');
       }
       order = checked(await db.from('pilot_orders').select('*').eq('id', created.data).single());
