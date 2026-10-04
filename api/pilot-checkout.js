@@ -1,5 +1,5 @@
 /* global process */
-import { pilotConfig, stripeClient, database, checked, signedIn, checkoutTotalCents, purchasableProduct, selectedPilotVariant, checkoutPrice } from './_pilot.js';
+import { pilotConfig, stripeClient, database, checked, signedIn, checkoutTotalCents, purchasableProduct, selectedPilotVariant, checkoutPrice, pilotVariantPrice } from './_pilot.js';
 import { rateLimit } from './_rateLimit.js';
 
 export default async function handler(req, res) {
@@ -15,8 +15,8 @@ export default async function handler(req, res) {
       const product = checked(await db.from('product_catalog').select('id,price,url,category,product_type,requires_prescription,is_active,source,review_status,discovery_meta,extra').eq('id', productId).maybeSingle());
       const variant = selectedPilotVariant(product, variantId);
       if (!purchasableProduct(product) || !variant) return res.status(200).json({ enabled: false, productId });
-      const price = checkoutPrice(product, variant, checked(await db.from('pilot_product_prices').select('amount,currency,variant_label').eq('product_id', productId).eq('variant_id', variantId).maybeSingle()), { allowCatalogFallback: config.paymentMode === 'test' });
-      return res.status(200).json({ enabled: Boolean(price), requestable: config.paymentMode === 'test' && !price, paymentMode: config.paymentMode, taxIncluded: config.taxIncluded, productId, variantId, variantLabel: price?.variant_label || variant.label, total: price ? checkoutTotalCents(price.amount) : null });
+      const price = checkoutPrice(product, variant, await pilotVariantPrice(db, productId, variantId), { allowCatalogFallback: config.paymentMode === 'test' });
+      return res.status(200).json({ enabled: Boolean(price), requestable: config.paymentMode === 'test' && !price, paymentMode: config.paymentMode, taxIncluded: config.taxIncluded, productId, variantId, variantLabel: variant.label, total: price ? checkoutTotalCents(price.amount) : null });
     }
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     if (!config.enabled) return res.status(403).json({ error: 'Checkout is not enabled.' });
@@ -42,14 +42,14 @@ export default async function handler(req, res) {
       const variant = selectedPilotVariant(product, String(body.variantId || ''));
       if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for ayna checkout.' });
       step = 'retailer_price';
-      const price = checkoutPrice(product, variant, checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url,variant_label').eq('product_id', product.id).eq('variant_id', variant.id).maybeSingle()), { allowCatalogFallback: config.paymentMode === 'test' });
+      const price = checkoutPrice(product, variant, await pilotVariantPrice(db, product.id, variant.id), { allowCatalogFallback: config.paymentMode === 'test' });
       if (!price) return res.status(409).json({ error: 'The price for this item needs to be confirmed before checkout.' });
       if (price.currency !== 'usd' || !Number.isSafeInteger(price.amount) || price.amount < 50 || price.amount > 50000) throw new Error('Invalid pilot price');
       step = 'create_order';
       const inserted = await db.from('pilot_orders').insert({
         user_id: user.id, attempt_id: body.attemptId, product_id: product.id,
-        product_name: price.variant_label || variant.label ? `${product.name} — ${price.variant_label || variant.label}` : product.name,
-        variant_id: variant.id, variant_label: price.variant_label || variant.label,
+        product_name: variant.label ? `${product.name} — ${variant.label}` : product.name,
+        variant_id: variant.id, variant_label: variant.label,
         stripe_price_id: `retailer:${price.amount}`, amount: checkoutTotalCents(price.amount),
         currency: price.currency, vendor_name: config.vendor, retailer_url: price.retailer_url,
       }).select('*').single();

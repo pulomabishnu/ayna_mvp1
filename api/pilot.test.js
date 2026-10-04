@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Readable } from 'node:stream';
 import Stripe from 'stripe';
-import { pilotConfig, stripeClient, validTracking, settleSession, parsePriceInput, cleanRetailerUrl, serviceFeeCents, checkoutTotalCents, purchasableProduct, selectedPilotVariant, checkoutPrice } from './_pilot.js';
+import { pilotConfig, stripeClient, validTracking, settleSession, parsePriceInput, cleanRetailerUrl, serviceFeeCents, checkoutTotalCents, purchasableProduct, selectedPilotVariant, checkoutPrice, pilotVariantPrice } from './_pilot.js';
 import webhook from './pilot-webhook.js';
 
 function response() {
@@ -44,6 +44,14 @@ describe('pilot guardrails', () => {
     expect(selectedPilotVariant(product, '')).toBeNull();
     expect(selectedPilotVariant(product, 'target-76155164')).toEqual({ id: 'target-76155164', label: 'Regular — 32 count' });
     expect(selectedPilotVariant(product, 'made-up')).toBeNull();
+  });
+  it('keeps the existing Always price on Size 1 only', async () => {
+    const rows = { '': { amount: 1497, currency: 'usd' }, 'target-15055449': { amount: 1999, currency: 'usd' } };
+    const db = { from: () => ({ select: () => ({ eq: () => ({ eq: (_, id) => ({ maybeSingle: async () => ({ data: rows[id] || null, error: null }) }) }) }) }) };
+    expect(selectedPilotVariant({ id: 'p-always-infinity' }, 'target-94912100')?.label).toContain('60 count');
+    expect((await pilotVariantPrice(db, 'p-always-infinity', 'target-94912100'))?.amount).toBe(1497);
+    expect((await pilotVariantPrice(db, 'p-always-infinity', 'target-15055449'))?.amount).toBe(1999);
+    expect(await pilotVariantPrice(db, 'p-always-infinity', 'target-51693821')).toBeNull();
   });
   it('defaults off and targets the actual Always catalog id', () => {
     expect(pilotConfig({}).enabled).toBe(false);

@@ -1,5 +1,5 @@
 /* global process */
-import { pilotConfig, database, checked, signedIn, validTracking, notifyCustomerShipped, parsePriceInput, cleanRetailerUrl, serviceFeeCents, checkoutTotalCents, purchasableProduct, selectedPilotVariant } from './_pilot.js';
+import { pilotConfig, database, checked, signedIn, validTracking, notifyCustomerShipped, parsePriceInput, cleanRetailerUrl, serviceFeeCents, checkoutTotalCents, purchasableProduct, selectedPilotVariant, pilotVariantPrice } from './_pilot.js';
 import { productHref } from '../src/utils/productRoute.js';
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       if (!/^[0-9a-f-]{36}$/i.test(body.requestId || '')) return res.status(400).json({ error: 'Invalid request.' });
       const item = checked(await db.from('pilot_requests').select('id,product_id,product_name,variant_id,customer_email,status').eq('id', body.requestId).maybeSingle());
       if (!item) return res.status(404).json({ error: 'Request not found.' });
-      const price = checked(await db.from('pilot_product_prices').select('amount').eq('product_id', item.product_id).eq('variant_id', item.variant_id).maybeSingle());
+      const price = await pilotVariantPrice(db, item.product_id, item.variant_id, 'amount');
       if (!price) return res.status(409).json({ error: 'Set the exact product and size price first.' });
       const changed = item.status !== 'quoted' && checked(await db.from('pilot_requests').update({ status: 'quoted', quoted_at: new Date().toISOString() }).eq('id', item.id).eq('status', 'requested').select('id').maybeSingle());
       let emailed = false;
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
       const variant = selectedPilotVariant(product, variantId);
       if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for manual fulfillment.' });
       if (req.method === 'GET') {
-        const price = checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url,updated_at').eq('product_id', productId).eq('variant_id', variantId).maybeSingle());
+        const price = await pilotVariantPrice(db, productId, variantId, 'amount,currency,retailer_url,updated_at');
         return res.status(200).json({ price, serviceFeePercent: config.serviceFeePercent, paymentMode: config.paymentMode, taxIncluded: config.taxIncluded, total: price ? checkoutTotalCents(price.amount) : null });
       }
       if (req.method !== 'PUT') return res.status(405).end();

@@ -1,5 +1,17 @@
 // Verified manufacturer/retailer options. Never construct a size link from guessed labels.
 export const PRODUCT_VARIANTS = {
+  "p-always-infinity": {
+    "sourceUrl": "https://www.target.com/p/-/A-94912100",
+    "verifiedAt": "2026-10-04",
+    "familyName": "Always Infinity FlexFoam",
+    "variants": [
+      { "id": "target-94912100", "label": "Size 1 Regular, unscented, 60 count", "url": "https://www.target.com/p/-/A-94912100" },
+      { "id": "target-15055449", "label": "Size 2 Super, unscented, 46 count", "url": "https://www.target.com/p/-/A-15055449" },
+      { "id": "target-51693821", "label": "Size 3 Extra Heavy, unscented, 28 count", "url": "https://www.target.com/p/-/A-51693821" },
+      { "id": "target-76155411", "label": "Size 4 Overnight, unscented, 26 count", "url": "https://www.target.com/p/-/A-76155411" },
+      { "id": "target-94287170", "label": "Size 5 Extra Heavy Overnight, unscented, 40 count", "url": "https://www.target.com/p/-/A-94287170" }
+    ]
+  },
   "p-belly-bandit": {
     "sourceUrl": "https://bellybandit.com/products/upsie-belly",
     "verifiedAt": "2026-09-26",

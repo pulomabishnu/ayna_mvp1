@@ -74,6 +74,14 @@ export function selectedPilotVariant(product, variantId = '') {
   const match = variants.find(v => String(v.id) === variantId);
   return match && typeof match.label === 'string' ? { id: variantId, label: match.label } : null;
 }
+// Preserve the previously configured 60-count price while moving Always to
+// explicit size IDs. A price for any other size must be entered separately.
+export async function pilotVariantPrice(db, productId, variantId, columns = 'amount,currency,retailer_url,variant_label') {
+  const read = async (id) => checked(await db.from('pilot_product_prices').select(columns).eq('product_id', productId).eq('variant_id', id).maybeSingle());
+  const exact = await read(variantId);
+  if (exact || productId !== 'p-always-infinity' || variantId !== 'target-94912100') return exact;
+  return read('');
+}
 export function stripeClient() {
   const mode = pilotConfig().paymentMode;
   if (!process.env.STRIPE_SECRET_KEY?.startsWith(`sk_${mode}_`)) throw new Error(`Stripe ${mode} key required`);
