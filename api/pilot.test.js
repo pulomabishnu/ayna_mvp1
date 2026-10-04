@@ -3,6 +3,7 @@ import { Readable } from 'node:stream';
 import Stripe from 'stripe';
 import { pilotConfig, stripeClient, validTracking, settleSession, parsePriceInput, cleanRetailerUrl, serviceFeeCents, checkoutTotalCents, purchasableProduct, selectedPilotVariant, checkoutPrice, pilotVariantPrice } from './_pilot.js';
 import webhook from './pilot-webhook.js';
+import { ALL_PRODUCTS } from '../src/data/products.js';
 
 function response() {
   const res = { code: 200, body: null, setHeader() {}, status(n) { this.code = n; return this; }, json(b) { this.body = b; return this; }, end() { return this; } };
@@ -10,6 +11,15 @@ function response() {
 }
 beforeEach(() => { vi.unstubAllEnvs(); });
 describe('pilot guardrails', () => {
+  it('recognizes every physical product and exact option in the bundled site', () => {
+    const physical = ALL_PRODUCTS.filter(p => p.type === 'physical' && !p.requiresPrescription && p.category !== 'telehealth');
+    const choices = physical.flatMap(p => p.variants?.length ? p.variants.map(v => ({ product: p, id: v.id })) : [{ product: p, id: '' }]);
+    expect(physical).toHaveLength(186);
+    expect(choices).toHaveLength(351);
+    for (const { product, id } of choices) {
+      expect(selectedPilotVariant({ id: product.id, extra: { variants: product.variants } }, id), `${product.id}:${id}`).not.toBeNull();
+    }
+  });
   it('uses an exact catalog price only for products without options, while preserving confirmed prices', () => {
     const product = { price: '$98', url: 'https://www.amazon.com/dp/TEST?tag=aynahealth-20' };
     const single = { id: '', label: null };
