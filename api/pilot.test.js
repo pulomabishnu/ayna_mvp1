@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Readable } from 'node:stream';
 import Stripe from 'stripe';
-import { pilotConfig, stripeClient, validTracking, settleSession, parsePriceInput, cleanRetailerUrl, serviceFeeCents, purchasableProduct, selectedPilotVariant } from './_pilot.js';
+import { pilotConfig, stripeClient, validTracking, settleSession, parsePriceInput, cleanRetailerUrl, serviceFeeCents, purchasableProduct, selectedPilotVariant, checkoutPrice } from './_pilot.js';
 import webhook from './pilot-webhook.js';
 
 function response() {
@@ -10,6 +10,16 @@ function response() {
 }
 beforeEach(() => { vi.unstubAllEnvs(); });
 describe('pilot guardrails', () => {
+  it('uses an exact catalog price only for products without options, while preserving confirmed prices', () => {
+    const product = { price: '$98', url: 'https://www.amazon.com/dp/TEST?tag=aynahealth-20' };
+    const single = { id: '', label: null };
+    expect(checkoutPrice(product, single, null)).toEqual({ amount: 9800, currency: 'usd', retailer_url: 'https://www.amazon.com/dp/TEST', variant_label: null });
+    expect(checkoutPrice({ ...product, price: '$8 for 18' }, single, null)).toBeNull();
+    expect(checkoutPrice({ ...product, price: '$8-$12' }, single, null)).toBeNull();
+    expect(checkoutPrice(product, { id: 'large', label: 'Large' }, null)).toBeNull();
+    const confirmed = { amount: 1497, currency: 'usd', variant_label: null };
+    expect(checkoutPrice({ ...product, price: '$8 for 18' }, single, confirmed)).toBe(confirmed);
+  });
   it('sets the $14.97 test price and removes affiliate tags from a retailer link', () => {
     expect(parsePriceInput('$14.97')).toBe(1497);
     expect(serviceFeeCents(1497)).toBe(150);

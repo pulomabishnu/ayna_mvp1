@@ -1,5 +1,5 @@
 /* global process */
-import { pilotConfig, stripeClient, database, checked, signedIn, serviceFeeCents, purchasableProduct, selectedPilotVariant } from './_pilot.js';
+import { pilotConfig, stripeClient, database, checked, signedIn, serviceFeeCents, purchasableProduct, selectedPilotVariant, checkoutPrice } from './_pilot.js';
 import { rateLimit } from './_rateLimit.js';
 
 export default async function handler(req, res) {
@@ -12,14 +12,14 @@ export default async function handler(req, res) {
       const variantId = String(req.query?.variantId || '');
       if (!config.enabled || !/^[a-z0-9][a-z0-9._-]{1,100}$/i.test(productId) || variantId.length > 100) return res.status(200).json({ enabled: false, productId });
       const db = database();
-      const product = checked(await db.from('product_catalog').select('id,category,product_type,requires_prescription,is_active,source,review_status,discovery_meta,extra').eq('id', productId).maybeSingle());
+      const product = checked(await db.from('product_catalog').select('id,price,url,category,product_type,requires_prescription,is_active,source,review_status,discovery_meta,extra').eq('id', productId).maybeSingle());
       const variant = selectedPilotVariant(product, variantId);
       if (!purchasableProduct(product) || !variant) return res.status(200).json({ enabled: false, productId });
-      const price = checked(await db.from('pilot_product_prices').select('amount,currency,variant_label').eq('product_id', productId).eq('variant_id', variantId).maybeSingle());
+      const price = checkoutPrice(product, variant, checked(await db.from('pilot_product_prices').select('amount,currency,variant_label').eq('product_id', productId).eq('variant_id', variantId).maybeSingle()));
       return res.status(200).json({ enabled: Boolean(price), requestable: config.paymentMode === 'test' && !price, paymentMode: config.paymentMode, productId, variantId, variantLabel: price?.variant_label || variant.label, total: price ? price.amount + serviceFeeCents(price.amount) : null });
     }
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-    if (!config.enabled) return res.status(403).json({ error: 'Test checkout is not enabled.' });
+    if (!config.enabled) return res.status(403).json({ error: 'Checkout is not enabled.' });
     if (!config.vendor || !config.admins.length || !process.env.STRIPE_WEBHOOK_SECRET) return res.status(503).json({ error: 'Pilot setup is incomplete.' });
     step = 'supabase_config';
     const db = database();
@@ -38,11 +38,12 @@ export default async function handler(req, res) {
     if (order && (order.product_id !== body.productId || String(order.variant_id || '') !== String(body.variantId || ''))) return res.status(409).json({ error: 'This checkout attempt belongs to another item. Start again.', restart: true });
     if (!order) {
       step = 'catalog_product';
-      const product = checked(await db.from('product_catalog').select('id,name,category,product_type,requires_prescription,is_active,source,review_status,discovery_meta,extra').eq('id', body.productId).maybeSingle());
+      const product = checked(await db.from('product_catalog').select('id,name,price,url,category,product_type,requires_prescription,is_active,source,review_status,discovery_meta,extra').eq('id', body.productId).maybeSingle());
       const variant = selectedPilotVariant(product, String(body.variantId || ''));
       if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for ayna checkout.' });
       step = 'retailer_price';
-      const price = checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url,variant_label').eq('product_id', product.id).eq('variant_id', variant.id).single());
+      const price = checkoutPrice(product, variant, checked(await db.from('pilot_product_prices').select('amount,currency,retailer_url,variant_label').eq('product_id', product.id).eq('variant_id', variant.id).maybeSingle()));
+      if (!price) return res.status(409).json({ error: 'The price for this item needs to be confirmed before checkout.' });
       if (price.currency !== 'usd' || !Number.isSafeInteger(price.amount) || price.amount < 50 || price.amount > 50000) throw new Error('Invalid pilot price');
       step = 'create_order';
       const inserted = await db.from('pilot_orders').insert({
@@ -88,8 +89,7 @@ export default async function handler(req, res) {
     if (!session.url || session.status !== 'open') return res.status(409).json({ error: 'Checkout is complete or expired. View your orders or start again.', restart: true });
     return res.status(200).json({ url: session.url });
   } catch (e) {
-    // Test pilot only: surface which setup step failed (a fixed label, no secrets).
     console.error('[pilot-checkout] failed at', step, e?.type || e?.code || '', String(e?.message || '').slice(0, 200));
-    return res.status(503).json({ error: `Test checkout is unavailable (step: ${step}). Check the pilot configuration and try again.`, step });
+    return res.status(503).json({ error: `Checkout is unavailable (step: ${step}). Please try again.`, step });
   }
 }

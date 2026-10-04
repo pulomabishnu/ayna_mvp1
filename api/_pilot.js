@@ -35,6 +35,13 @@ export function parsePriceInput(value) {
   const cents = Number(match[1]) * 100 + Number((match[2] || '0').padEnd(2, '0'));
   return cents >= 50 && cents <= 50000 ? cents : null;
 }
+export function checkoutPrice(product, variant, configuredPrice) {
+  if (configuredPrice) return configuredPrice;
+  // A displayed range, pack description, or option-dependent amount is not a price.
+  if (!variant || variant.id !== '') return null;
+  const amount = parsePriceInput(product?.price);
+  return amount === null ? null : { amount, currency: 'usd', retailer_url: cleanRetailerUrl(product?.url), variant_label: null };
+}
 export function cleanRetailerUrl(value) {
   try {
     const url = new URL(String(value || '').trim());
