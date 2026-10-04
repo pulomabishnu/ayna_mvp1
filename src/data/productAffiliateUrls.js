@@ -1,6 +1,12 @@
 /**
  * Amazon Associates links supplied for ayna catalog products.
  * Product-specific affiliateUrl values still take priority over these.
+ *
+ * 2026-10-04: removed ten rows whose Amazon listing was a different brand's
+ * product (checked against each listing's brand store and title), e.g. Tampax
+ * Pure Cotton -> Always pads, Wuka and Dear Kate -> Bambody, Snoogle ->
+ * Momcozy, FemmyCycle -> Merula. Those products now fall back to the brand's
+ * own page until a correct Amazon link is supplied.
  */
 const AMAZON_ROWS = `
 Always Infinity FlexFoam Size 1|B0H8VXGSWB
@@ -21,14 +27,11 @@ Cora Organic Cotton Pads|B07XR7DVL4
 Cora Organic Cotton Tampons|B06ZYRXLNV
 Cystex Urinary Pain Relief|B07GTJQ3JJ
 Dame Arc G-Spot Vibrator|B0BG8WG6FG
-Dear Kate Period Underwear|B0BNPB6Q4F
 Depend Silhouette Incontinence Underwear|B09P1RYJCG
 DivaCup Model 1|B08TLJPR71
 Ecoblossom Menstrual Cup Small Large|B086JBZW48
-Eight Sleep Pod 4|B081V5MV2K
 Elvie Pelvic Floor Trainer|B018IFNSX4
 Estroven Mood & Memory|B0091CG65G
-FemmyCycle Menstrual Cup|B08496NK3Q
 Flex Cup Menstrual|B07QD4W7RQ
 Flex Disc Disposable|B0FBTH6RHH
 Flo PMS Gummy Vitamins|B0D5JVK842
@@ -50,7 +53,6 @@ Knix Leakproof Underwear|B0HFTVGGSP
 Kotex Security Ultra Thin|B08HT5W7PF
 L. Organic Cotton Pads|B0DX2J1NFW
 Lansinoh Stay Dry Nursing Pads|B0070SKP1O
-Leachco Snoogle Maternity Pillow|B09V4C1GDF
 LELO SONA Cruise|B075GLSQQH
 Lena Menstrual Cup|B01JXA3JNW
 LOLA Organic Cotton Pads|B0DG3L77RZ
@@ -58,7 +60,6 @@ LOLA Organic Tampons|B0D5NXK8RR
 Love Wellness Bye Bye Bloat|B07TCQS4QJ
 Lumma Unique Menstrual Disc|B07TFHKHM4
 Lunette Menstrual Cup|B0054SQ02K
-Maude Vibe Personal Massager|B0DX2C328S
 MysteryVibe Crescendo 2|B0GNSGQ2Q6
 Natracare Organic Tampons|B00005368L
 Natracare Ultra Pads|B000VI3LNE
@@ -85,7 +86,6 @@ Rael Organic Tampons|B083C6BYG9
 Rael Overnight Pads|B071NLD52C
 Remifemin Black Cohosh|B0CRKW8DFJ
 Ritual Prenatal Multivitamin|B09W363MVD
-Ruby Love Period Underwear|B07V7TRP8H
 Saalt Menstrual Cup|B09JQ4G62Q
 Saalt Menstrual Disc|B0B13WT3KV
 Saalt Cup Steamer|B0CGX2Y8WM
@@ -93,9 +93,6 @@ Seventh Generation Organic Tampons|B07FL7PNQK
 Silverette Nursing Cups|B00D4MWKNQ
 Softdisc Disposable Menstrual Disc|B000X29GY6
 Stayfree Ultra Thin|B079RGVB2V
-SweetSpot Labs Buff & Brighten AHA BHA Exfoliating Pads|B0FWD26RJ4
-SweetSpot Labs Wipes|B078JGFMNP
-Tampax Pure Cotton|B084RZTTVW
 Tampax Radiant Tampons|B0B33HDMQ3
 TENA Intimates Very Light Liner|B08W21JZJ8
 The Honey Pot Boric Acid Suppositories|B08DDJGZRT
@@ -122,7 +119,6 @@ Winx Health UTI Fast-Acting Pain Relief|B008KPZMJG
 Winx Health Vaginal Health Probiotic|B0D5FZGY8W
 Winx Health Vaginal Health Test + Treat|B09J522MNP
 Womaness Me.No.Pause. Supplement|B096H6M6GM
-Wuka Period Underwear|B0BNP9M6WV
 `.trim().split('\n');
 
 function normalizeProductName(value) {
