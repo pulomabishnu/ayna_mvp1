@@ -519,7 +519,7 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Lactic acid',
-                text: 'The same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (3.8 to 4.5).',
+                text: 'The same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (about 3.8 on average in the cited study).',
                 citations: [
                     { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6332693/', label: 'NIH (PMC): Vaginal pH measured in vivo — lactobacilli determine pH and lactic acid concentration' },
                 ],
@@ -1450,7 +1450,7 @@ export const BRAND_PRODUCTS = [
             {
                 url: 'https://pubmed.ncbi.nlm.nih.gov/25408383/',
                 text: 'PubMed: Pelvic floor muscle training for urinary incontinence in women — a Cochrane systematic review',
-                summary: '31 trials, 1,817 women. Found PFMT can cure or improve stress and other types of urinary incontinence — general evidence for the training approach, not this specific program.',
+                summary: '21 trials, 1,281 women. Found PFMT is associated with cure or improvement of stress and other types of urinary incontinence — general evidence for the training approach, not this specific program.',
             },
             {
                 url: 'https://pubmed.ncbi.nlm.nih.gov/26407564/',
@@ -4090,7 +4090,7 @@ export const BRAND_PRODUCTS = [
                 // as two separate entries for the same study.
                 url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/',
                 text: 'Virgin Coconut Oil in Paste Form as Treatment for Dyspareunia and Vaginal Dryness in Patients With and Without Rheumatic Autoimmune Diseases: An Efficacy and Safety Assessment Pilot Study',
-                summary: 'A 2023 pilot study (Cureus) followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months — 83% reported improved dryness and 87% reported improved moisture duration. Real clinical outcomes, but not placebo-controlled and not a study of this specific product.',
+                summary: 'A 2023 pilot survey study (Cureus) of 53 women who used a virgin coconut oil paste for vaginal dryness and painful sex found dryness decreased by 55% and 66% in its two groups (women without and with rheumatic autoimmune disease), with no side effects reported. It was a survey without a control group, and it didn\'t test this product.',
             },
         ],
         verificationLinks: {
@@ -4390,7 +4390,7 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Lactic acid',
-                text: 'In a healthy vagina dominated by Lactobacillus, those bacteria make lactic acid, which keeps pH low (about 3.5 on average in one NIH-indexed study) and may help protect against infection. A 2021 systematic review found there isn\'t yet high-quality evidence that lactic acid products cure bacterial vaginosis or shift the vaginal microbiome, so they\'re best seen as pH support.',
+                text: 'In a healthy vagina dominated by Lactobacillus, those bacteria make lactic acid, which keeps vaginal pH low and may help protect against infection. A 2021 systematic review found there isn\'t yet high-quality evidence that lactic acid products cure bacterial vaginosis or shift the vaginal microbiome, so they\'re best seen as pH support.',
                 citations: [
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3819307/', label: 'NIH (PMC): Vaginal pH and lactic acid when lactobacilli dominate (PLoS One, 2013)' },
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7877752/', label: 'NIH (PMC): Lactic acid products for bacterial vaginosis, systematic review (PLoS One, 2021)' },

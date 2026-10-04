@@ -68,38 +68,8 @@ export const STARTUPS = [
         url: 'https://www.allarahealth.com',
         image: 'https://shop.allarahealth.com/cdn/shop/files/AntiInflamm_Reg_442362ee-3292-4b49-8ed8-b41871dc24f7.png?v=1764652085'
     },
-    {
-        id: 's-evernow',
-        name: 'Evernow',
-        communityReview: 'Trustpilot rates Evernow 2.0/5 from 15 reviews (80% 1-star, 20% 2-star). Reviewers praise provider quality and easy insurance/booking. Common complaints: billing surprises and prescription delays. One reviewer: "The provider I had was thorough, responsive, and high quality." Small sample.',
-        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/evernow.com', text: 'Trustpilot: Evernow', summary: 'Trustpilot rates Evernow 2.0/5 from 15 reviews (80% 1-star, 20% 2-star). Reviewers praise provider quality and easy insurance/booking. Common complaints: billing surprises and prescription delays. One reviewer: "The provider I had was thorough, responsive, and high quality." Small sample.' }] } },
-        tagline: 'Menopause treatment. Personalized HRT delivered',
-        description: 'Board-certified menopause specialists prescribe personalized hormone replacement therapy with ongoing support. Prescription meds delivered to your door.',
-        tags: ['discomfort', 'menopause', 'sustainability'],
-        healthFunctions: ['telehealth'],
-        category: 'menopause',
-        stage: 'Live in all 50 states',
-        productReleased: true,
-        spotsLeft: 200,
-        url: 'https://www.evernow.com',
-        image: 'https://cdn.prod.website-files.com/62039cc91acccd69bbc3274f/688160514b07e4e99ece9b1d_hair%20foam-hero.webp'
-    },
-    {
-        id: 's-midi',
-        name: 'Midi Health',
-        communityReview: 'Trustpilot rates Midi Health 4.0/5 from 1,658 reviews (74% 5-star, 17% 1-star). Reviewers praise attentive staff who listen and an easy booking platform. Common complaints: hard to reach a human for billing and prescription delays. One reviewer: "They made me feel truly heard, valued, and understood."',
-        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/joinmidi.com', text: 'Trustpilot: Midi Health', summary: 'Trustpilot rates Midi Health 4.0/5 from 1,658 reviews (74% 5-star, 17% 1-star). Reviewers praise attentive staff who listen and an easy booking platform. Common complaints: hard to reach a human for billing and prescription delays. One reviewer: "They made me feel truly heard, valued, and understood."' }] } },
-        tagline: 'Midlife women\'s health. Perimenopause to post-menopause',
-        description: 'Virtual clinic specializing in the 20+ symptoms of perimenopause and menopause. Clinicians trained specifically in midlife hormonal care.',
-        tags: ['discomfort', 'irregular', 'menopause', 'heavy-flow'],
-        healthFunctions: ['telehealth'],
-        category: 'menopause',
-        stage: 'Insurance-covered in many states',
-        productReleased: true,
-        spotsLeft: 380,
-        url: 'https://www.joinmidi.com',
-        image: 'https://images.prismic.io/joinmidi-marketing/Z7z_GJ7c43Q3gKMS_DHEA-cream.png?auto=format,compress'
-    },
+    // 's-evernow' removed 2026-10-04: duplicated d-evernow on Browse.
+    // 's-midi' removed 2026-10-04: duplicated d-midi-health on Browse.
     {
         id: 's-hertility',
         name: 'Hertility',
@@ -198,43 +168,8 @@ export const STARTUPS = [
         url: 'https://www.miracare.com',
         image: 'https://shop.miracare.com/cdn/shop/products/mira00956-plus_5d9965da-80d4-42af-ac33-1b0167e26005.jpg?v=1685519249&width=1920'
     },
-    {
-        id: 's-elvie',
-        name: 'Elvie',
-        communityReview: 'Trustpilot rates Elvie 3.3/5 from 11,837 reviews (70% 5-star, 18% 1-star). Reviewers praise responsive customer-support chat. Common complaints: product quality and reliability issues. One reviewer: "They don\'t close the chat out on you if you\'re interrupted by being a mom with kids at home, the agents will actually read what was last communicated, and respond from there."',
-        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/elvie.com', text: 'Trustpilot: Elvie', summary: 'Trustpilot rates Elvie 3.3/5 from 11,837 reviews (70% 5-star, 18% 1-star). Reviewers praise responsive customer-support chat. Common complaints: product quality and reliability issues. One reviewer: "They don\'t close the chat out on you if you\'re interrupted by being a mom with kids at home, the agents will actually read what was last communicated, and respond from there."' }] } },
-        tagline: 'Smart pelvic floor trainer + silent breast pump',
-        description: 'Makes the Elvie Trainer, an app-connected Kegel trainer with biofeedback, and wearable breast pumps. Elvie was acquired by Willow in 2025.',
-        tags: ['discomfort', 'leaks', 'pelvic-floor'],
-        healthFunctions: ['vaginal-health'],
-        category: 'pelvic-health',
-        stage: 'Available, established',
-        productReleased: true,
-        spotsLeft: 100,
-        url: 'https://www.elvie.com',
-        image: 'https://thebreastfeedingshop.com/wp-content/uploads/2021/05/616uFLoLPrL._SL1500_.jpg'
-    },
-    {
-        id: 's-wisp',
-        name: 'Wisp',
-        communityReview: 'Trustpilot rates Wisp 4.1/5 from 11,498 reviews (84% 5-star, 10% 1-star). Reviewers praise fast, convenient online process with quick prescription delivery to a local pharmacy. Common complaints: slow or inconsistent customer-service replies. One reviewer: "Service was super fast and easy. My prescription was ready to pick up at my local pharmacy within an hour."',
-        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/hellowisp.com', text: 'Trustpilot: Wisp', summary: 'Trustpilot rates Wisp 4.1/5 from 11,498 reviews (84% 5-star, 10% 1-star). Reviewers praise fast, convenient online process with quick prescription delivery to a local pharmacy. Common complaints: slow or inconsistent customer-service replies. One reviewer: "Service was super fast and easy. My prescription was ready to pick up at my local pharmacy within an hour."' }] } },
-        tagline: 'UTI treatment & birth control. Same-day delivery',
-        description: 'Get UTI antibiotics or birth control prescribed online and delivered to your door. Same-day or next-day options in many areas. No in-person visit needed.',
-        tags: ['uti', 'contraception', 'privacy', 'comfort'],
-        healthFunctions: ['uti-prevention', 'telehealth', 'contraception'],
-        category: 'telehealth',
-        stage: 'Available in most US states',
-        productReleased: true,
-        spotsLeft: 500,
-        url: 'https://hellowisp.com',
-        // Was a mismatched third-party trade-press photo of a DIFFERENT
-        // startup's product (Qvin's Q-Pad, from clpmag.com) — verified
-        // replacement is Wisp's own hero image, fetched live from
-        // hellowisp.com and confirmed to return a real image (200,
-        // image/jpeg) before use.
-        image: 'https://cms.hellowisp.io/uploads/Desk_Hero_3200x1200x_e4eae71989.jpg'
-    },
+    // 's-elvie' removed 2026-10-04: duplicated p-elvie-trainer on Browse.
+    // 's-wisp' removed 2026-10-04: duplicated d-wisp-bc on Browse.
     {
         id: 's-wildai',
         name: 'Wild.AI',
@@ -387,20 +322,7 @@ export const STARTUPS = [
         url: 'https://elektrahealth.com',
         image: 'https://i.vimeocdn.com/video/1607189844-00be211e412cac07e4a7b79a46d3d66f346dbb1cadecc1124a10eccd97821b1e-d?f=webp'
     },
-    {
-        id: 's-gennev',
-        name: 'Gennev',
-        tagline: 'Menopause telehealth and support',
-        description: 'On-demand menopause care with OB-GYNs and health coaches. Symptom management, HRT, and lifestyle support for perimenopause and menopause.',
-        tags: ['menopause', 'discomfort', 'sustainability'],
-        healthFunctions: ['telehealth'],
-        category: 'menopause',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 330,
-        url: 'https://gennev.com',
-        image: 'https://gennev.com/wp-content/uploads/2025/05/65e626b823c2e022a3cbd26d_62689486b8427a092ac2f085_yWfe6jrySnOSp2ANHeFm.png'
-    },
+    // 's-gennev' removed 2026-10-04: duplicated p-gennev-care on Browse.
     {
         id: 's-embr',
         name: 'Embr Labs',
@@ -458,27 +380,7 @@ export const STARTUPS = [
         image: 'https://www.peppyforall.com/cdn/shop/files/1_4.jpg?v=1700559327&width=510'
     },
     // ─── Contraception & sexual health ────────────────────
-    {
-        id: 's-nurx',
-        name: 'Nurx',
-        communityReview: 'Trustpilot rates Nurx 4.0/5 from 1,824 reviews (51% 5-star, 39% 1-star). Reviewers praise convenient, affordable at-home access to prescriptions. Common complaints: unexpected charges, hidden fees and slow customer service. One reviewer: "Getting birth control has never been easier! Especially if you don\'t have insurance. Nurx is extremely affordable and delivered right to my door."',
-        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/nurx.com', text: 'Trustpilot: Nurx', summary: 'Trustpilot rates Nurx 4.0/5 from 1,824 reviews (51% 5-star, 39% 1-star). Reviewers praise convenient, affordable at-home access to prescriptions. Common complaints: unexpected charges, hidden fees and slow customer service. One reviewer: "Getting birth control has never been easier! Especially if you don\'t have insurance. Nurx is extremely affordable and delivered right to my door."' }] } },
-        tagline: 'Birth control and STI testing online',
-        description: 'Get birth control, emergency contraception, and STI testing prescribed online and delivered. Available in most US states with flexible pricing.',
-        tags: ['contraception', 'privacy', 'comfort'],
-        healthFunctions: ['telehealth', 'contraception'],
-        category: 'telehealth',
-        stage: 'Available in most US states',
-        productReleased: true,
-        spotsLeft: 480,
-        url: 'https://www.nurx.com',
-        // Was a single unrelated SKU from Nurx's own catalog (a hair-regrowth
-        // product bottle, RegrowRX — reads like a lipstick tube in a small
-        // card, not representative of the birth-control service this entry
-        // is about). Verified replacement is Nurx's own homepage hero image,
-        // fetched live and confirmed to return a real image (200, image/png).
-        image: 'https://nurx-www.imgix.net/wp-content/uploads/2024/12/31130006/HeroStaticHomepage-Desktop-1920x640-1.png'
-    },
+    // 's-nurx' removed 2026-10-04: duplicated d-nurx-bc on Browse.
     {
         id: 's-pandia',
         name: 'Pandia Health',
@@ -539,20 +441,7 @@ export const STARTUPS = [
         // The Honey Pot's own og:image logo asset, verified to load (208x70).
         image: 'https://cdn.shopify.com/s/files/1/0510/5657/files/Asset_3_4b2a4423-11e7-40ce-a377-2be6ea68752e.png'
     },
-    {
-        id: 's-lovewellness',
-        name: 'Love Wellness',
-        tagline: 'Clean wellness and feminine care by women',
-        description: 'Supplements, probiotics, and feminine care for bladder, vaginal, and gut health. OB-GYN developed formulas and transparent ingredients.',
-        tags: ['uti', 'discomfort', 'organic', 'vaginal-health'],
-        healthFunctions: ['vaginal-health', 'supplement'],
-        category: 'intimate-care',
-        stage: 'Available, DTC and retail',
-        productReleased: true,
-        spotsLeft: 390,
-        url: 'https://lovewellness.com',
-        image: 'http://lovewellness.com/cdn/shop/files/01_LW_DLE_Silo_a5657d39-129c-4b59-8599-dffc1b1ccfb8.jpg?v=1774346766'
-    },
+    // 's-lovewellness' removed 2026-10-04: duplicated Love Wellness products (p-love-wellness-*) on Browse.
     // 's-rory' removed 2026-10-02: rory.com now says the domain was acquired and
     // redirects to an unrelated company; the Rory brand is no longer operating.
     // ─── Pelvic health & diagnostics ──────────────────────
@@ -578,21 +467,7 @@ export const STARTUPS = [
         image: 'https://kegg.tech/cdn/shop/files/kegg_3.webp?v=1745860535&width=1200'
     },
     // ─── Pregnancy & postpartum ───────────────────────────
-    {
-        id: 's-bodily',
-        name: 'Bodily',
-        tagline: 'Postpartum and nursing essentials',
-        description: 'Evidence-based postpartum recovery kits, nursing wear, and education. Designed with OB-GYNs and doulas for the fourth trimester.',
-        tags: ['discomfort', 'comfort', 'postpartum'],
-        healthFunctions: ['vaginal-health'],
-        category: 'postpartum',
-        stage: 'Available, DTC',
-        productReleased: true,
-        spotsLeft: 440,
-        url: 'https://itsbodily.com',
-        // Bodily's own og:image, verified to load (1200x630).
-        image: 'https://itsbodily.com/cdn/shop/files/image_17.png'
-    },
+    // 's-bodily' removed 2026-10-04: duplicated p-bodily-kit on Browse.
     {
         id: 's-oula',
         name: 'Oula',
@@ -651,22 +526,7 @@ export const STARTUPS = [
         image: 'https://go.milkstork.com/hs-fs/hubfs/for-parent-page-01-2.png?width=1200&height=900&name=for-parent-page-01-2.png'
     },
     // ─── Mental health & wellness ─────────────────────────
-    {
-        id: 's-hers',
-        name: 'Hers',
-        communityReview: 'Trustpilot rates Hers 3.3/5 from 10,329 reviews (38% 5-star, 24% 1-star). Reviewers praise easy access to medical professionals and a straightforward program. Common complaints: high subscription costs and unexpected medication price increases.',
-        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/forhers.com', text: 'Trustpilot: Hers', summary: 'Trustpilot rates Hers 3.3/5 from 10,329 reviews (38% 5-star, 24% 1-star). Reviewers praise easy access to medical professionals and a straightforward program. Common complaints: high subscription costs and unexpected medication price increases.' }] } },
-        tagline: 'Women’s telehealth from Hims & Hers',
-        description: 'The women’s brand of Hims & Hers Health, Inc. Online visits with licensed providers and prescription or over-the-counter treatments delivered, for concerns including sexual health and skin care.',
-        tags: ['discomfort', 'privacy', 'mental-health'],
-        healthFunctions: ['mental-health', 'telehealth'],
-        category: 'mental-health',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 400,
-        url: 'https://www.forhers.com',
-        image: 'https://www.forhers.com/forhims/image/upload/w_440,q_auto:good:sensitive,fl_lossy,c_scale,f_auto,dpr_1.0/Hers-pdp-hair-shampoo-conditioner-5050-01-d-2x'
-    },
+    // 's-hers' removed 2026-10-04: duplicated d-hers on Browse.
     {
         id: 's-cleo',
         name: 'Cleo',
