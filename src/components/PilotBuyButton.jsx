@@ -9,6 +9,7 @@ export default function PilotBuyButton({ productId, variantId = '', needsVariant
   const [requested, setRequested] = useState(false);
   const [total, setTotal] = useState(null);
   const [variantLabel, setVariantLabel] = useState(null);
+  const [paymentMode, setPaymentMode] = useState('test');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [showAuth, setShowAuth] = useState(false);
@@ -18,7 +19,7 @@ export default function PilotBuyButton({ productId, variantId = '', needsVariant
     onAvailabilityChange?.(false);
     if (needsVariant && !variantId) return () => { active = false; };
     fetch(`/api/pilot-checkout?productId=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`).then(r => r.json()).then(c => {
-      if (active) { const matches = c.productId === productId && c.variantId === variantId; const available = matches && (c.enabled || c.requestable); setEnabled(matches && c.enabled); setRequestable(matches && c.requestable); onAvailabilityChange?.(available); setTotal(c.total); setVariantLabel(c.variantLabel || null); }
+      if (active) { const matches = c.productId === productId && c.variantId === variantId; const available = matches && (c.enabled || c.requestable); setEnabled(matches && c.enabled); setRequestable(matches && c.requestable); setPaymentMode(c.paymentMode === 'live' ? 'live' : 'test'); onAvailabilityChange?.(available); setTotal(c.total); setVariantLabel(c.variantLabel || null); }
     }).catch(() => {});
     return () => { active = false; };
   }, [productId, variantId, needsVariant, onAvailabilityChange]);
@@ -63,8 +64,8 @@ export default function PilotBuyButton({ productId, variantId = '', needsVariant
       {total != null && <span className="pilot-purchase__total">${(total / 100).toFixed(2)} total <span>including service fee</span></span>}
       {requestable && !requested && <span>We’ll confirm the price before you pay.</span>}
       {requested && <span role="status">Request received. No payment was taken. We’ll email you when checkout is ready.</span>}
-      <span className="pilot-purchase__test">Test checkout · no real charge</span>
-      <a href="/pilot/orders">My test orders</a>
+      {paymentMode === 'test' && <span className="pilot-purchase__test">Test checkout · no real charge</span>}
+      <a href="/pilot/orders">My {paymentMode === 'test' ? 'test ' : ''}orders</a>
     </div>
     {new URLSearchParams(window.location.search).has('pilot_cancelled') && <p>Checkout cancelled. You can try again.</p>}
     {error && <p role="alert" style={{ color: '#b42318', fontWeight: 600 }}>{error}</p>}

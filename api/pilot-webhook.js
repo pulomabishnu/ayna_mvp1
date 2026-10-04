@@ -1,5 +1,5 @@
 /* global process, Buffer */
-import { stripeClient, database, settleSession, checked, notifyTeam } from './_pilot.js';
+import { pilotConfig, stripeClient, database, settleSession, checked, notifyTeam } from './_pilot.js';
 export const config = { api: { bodyParser: false } };
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     }
     event = stripeClient().webhooks.constructEvent(Buffer.concat(chunks), req.headers['stripe-signature'], process.env.STRIPE_WEBHOOK_SECRET);
   } catch { return res.status(400).json({ error: 'Invalid webhook signature or configuration' }); }
-  if (event.livemode) return res.status(400).json({ error: 'Live events refused' });
+  if (event.livemode !== (pilotConfig().paymentMode === 'live')) return res.status(400).json({ error: 'Payment mode mismatch' });
   try {
     if (['checkout.session.completed', 'checkout.session.async_payment_succeeded'].includes(event.type) && event.data.object.payment_status === 'paid') {
       const db = database(); const session = event.data.object;

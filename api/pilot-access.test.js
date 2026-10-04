@@ -1,5 +1,5 @@
 import { it, expect, vi, beforeEach } from 'vitest';
-const mocks = vi.hoisted(() => ({ db: {}, user: null, config: { enabled: true, productId: 'p-always-infinity', priceId: 'price_test', vendor: 'TEST', admins: ['admin'], origin: 'https://test.example.com' }, stripe: {} }));
+const mocks = vi.hoisted(() => ({ db: {}, user: null, config: { enabled: true, productId: 'p-always-infinity', priceId: 'price_test', vendor: 'TEST', admins: ['admin'], origin: 'https://test.example.com', paymentMode: 'test' }, stripe: {} }));
 vi.mock('./_pilot.js', async () => ({ ...(await vi.importActual('./_pilot.js')), database: () => mocks.db, signedIn: async () => mocks.user, pilotConfig: () => mocks.config, stripeClient: () => mocks.stripe }));
 vi.mock('./_rateLimit.js', () => ({ rateLimit: async () => ({ ok: true }) }));
 import orders from './pilot-orders.js';

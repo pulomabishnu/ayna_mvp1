@@ -40,6 +40,18 @@ describe('pilot guardrails', () => {
     vi.stubEnv('STRIPE_SECRET_KEY', 'sk_live_example');
     expect(stripeClient).toThrow('test key');
   });
+  it('only permits live mode with an explicit production origin and switch', () => {
+    const live = { PILOT_PAYMENT_MODE: 'live', PILOT_LIVE_ENABLED: 'true', VERCEL_ENV: 'production', PILOT_APP_URL: 'https://www.aynahealth.co' };
+    expect(pilotConfig(live).paymentMode).toBe('live');
+    expect(() => pilotConfig({ ...live, PILOT_LIVE_ENABLED: 'false' })).toThrow();
+    expect(() => pilotConfig({ ...live, VERCEL_ENV: 'preview' })).toThrow();
+    expect(() => pilotConfig({ ...live, PILOT_APP_URL: 'https://preview.vercel.app' })).toThrow();
+    for (const [key, value] of Object.entries(live)) vi.stubEnv(key, value);
+    vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_example');
+    expect(stripeClient).toThrow('live key');
+    vi.stubEnv('STRIPE_SECRET_KEY', 'sk_live_example');
+    expect(stripeClient).not.toThrow();
+  });
   it('rejects executable tracking links and incomplete tracking', () => {
     expect(validTracking({ carrier: 'UPS', tracking_number: '123', tracking_url: 'javascript:alert(1)' })).toBeNull();
     expect(validTracking({ carrier: 'UPS' })).toBeNull();

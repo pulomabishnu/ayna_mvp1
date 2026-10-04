@@ -7,6 +7,9 @@ export function pilotConfig(env = process.env) {
   const previewOrigin = env.VERCEL_ENV === 'preview' && env.VERCEL_URL ? `https://${env.VERCEL_URL}` : null;
   const origin = new URL(previewOrigin || env.PILOT_APP_URL || 'http://localhost:3000');
   if (origin.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(origin.hostname)) throw new Error('Invalid pilot origin');
+  const paymentMode = env.PILOT_PAYMENT_MODE || 'test';
+  if (!['test', 'live'].includes(paymentMode)) throw new Error('Invalid pilot payment mode');
+  if (paymentMode === 'live' && (env.PILOT_LIVE_ENABLED !== 'true' || env.VERCEL_ENV !== 'production' || origin.protocol !== 'https:' || origin.hostname.endsWith('.vercel.app'))) throw new Error('Live checkout requires an explicit production configuration');
   return {
     enabled: env.PILOT_CHECKOUT_ENABLED === 'true',
     productId: env.PILOT_PRODUCT_ID || 'p-always-infinity',
@@ -15,6 +18,7 @@ export function pilotConfig(env = process.env) {
     origin: origin.origin,
     admins: (env.PILOT_ADMIN_USER_IDS || '').split(',').map(s => s.trim()).filter(Boolean),
     serviceFeePercent: env.PILOT_SERVICE_FEE_PERCENT === undefined || env.PILOT_SERVICE_FEE_PERCENT === '' ? 10 : Number(env.PILOT_SERVICE_FEE_PERCENT),
+    paymentMode,
   };
 }
 // ayna service fee, as a percent of the product price (default 10%). Rounded to
@@ -53,7 +57,8 @@ export function selectedPilotVariant(product, variantId = '') {
   return match && typeof match.label === 'string' ? { id: variantId, label: match.label } : null;
 }
 export function stripeClient() {
-  if (!process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_')) throw new Error('Stripe test key required');
+  const mode = pilotConfig().paymentMode;
+  if (!process.env.STRIPE_SECRET_KEY?.startsWith(`sk_${mode}_`)) throw new Error(`Stripe ${mode} key required`);
   return new Stripe(process.env.STRIPE_SECRET_KEY, { maxNetworkRetries: 2, timeout: 10000 });
 }
 export function database() {
@@ -94,7 +99,7 @@ export function validTracking(body) {
   return { carrier, tracking_number: number, tracking_url: url || carrierTrackingUrl(carrier, number), status: 'shipped', shipped_at: new Date().toISOString() };
 }
 export async function settleSession(db, session) {
-  if (session.livemode !== false || session.payment_status !== 'paid' || session.mode !== 'payment') throw new Error('Invalid test payment');
+  if (session.livemode !== (pilotConfig().paymentMode === 'live') || session.payment_status !== 'paid' || session.mode !== 'payment') throw new Error('Invalid payment');
   const orderId = session.metadata?.ayna_order_id;
   if (!orderId) return;
   checked(await db.rpc('pilot_record_payment', {

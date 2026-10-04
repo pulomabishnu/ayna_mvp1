@@ -10,7 +10,7 @@ When the price is not yet confirmed, **Buy now** creates an order request for th
 
 **Fulfillment is manual.** When an order is paid, the team gets an email (via the existing `RESEND_API_KEY`; recipients from `PILOT_NOTIFY_EMAILS`, default the three founders) with the product, amount, city/state and a link to `/pilot/admin`. The inbox shows the full shipping address with a copy button and the configured retailer item link. A team member buys the item, ships it to the customer's address, and enters the optional retailer order number, carrier and tracking. The customer sees tracking on `/pilot/orders` and gets Claude's one-time "your order shipped" email with the carrier, tracking number and tracking link. Later tracking corrections update the page but do not re-send the email. The email is best-effort; the inbox is the durable record. No native iOS project was found or changed; this implementation is the existing web flow. There are no marketplace transfers, multi-brand carts, catalog changes, or changes to recommendation behavior.
 
-The catalog describes the product as `$8 for 18` and routes it through an affiliate link. This is display text, not an authoritative checkout price. No direct Always fulfillment agreement was found. The test price and fulfillment destination must be configured explicitly. This code rejects live Stripe keys and live webhook events; enabling the feature does not permit real payments.
+The catalog describes the product as `$8 for 18` and routes it through an affiliate link. This is display text, not an authoritative checkout price. No direct Always fulfillment agreement was found. Checkout prices and fulfillment destinations must be configured explicitly. Live Stripe mode is separately gated and remains off until the production setup is complete.
 
 ## Setup for a connected test
 
@@ -28,6 +28,8 @@ The catalog describes the product as `$8 for 18` and routes it through an affili
 | Variable | Value/purpose |
 |---|---|
 | `PILOT_CHECKOUT_ENABLED` | `false` by default; `true` enables the test button and endpoint |
+| `PILOT_PAYMENT_MODE` | `test` by default; `live` requires a separate production switch and live Stripe credentials |
+| `PILOT_LIVE_ENABLED` | `false` by default; must be `true` for live mode on a production deployment with a custom HTTPS origin |
 | `PILOT_PRODUCT_ID` | `p-always-infinity` (legacy default for requests without a product ID) |
 | `PILOT_APP_URL` | Exact test deployment origin; local default `http://localhost:3000` |
 | `PILOT_VENDOR_NAME` | Explicit test fulfillment destination label; does not establish a brand partnership |
@@ -79,6 +81,6 @@ Pending includes cancelled/abandoned checkouts; this pilot does not implement ex
 
 ## Before a real order
 
-First complete the connected test above. Then confirm a direct fulfillment arrangement (or choose an existing contracted partner), exact SKU/pack, authoritative price, inventory, shipping cost, tax handling, returns and customer support. Add refund/cancellation reconciliation and production rate limiting, then deliberately implement/review live-mode support. Swapping in a live key will currently fail by design. Agree a real fulfillment destination before any vendor notification or real shipment.
+First complete the connected test above. Then confirm each exact SKU/pack, authoritative price, inventory, shipping cost, tax handling, returns and customer support. Add refund/cancellation reconciliation and production rate limiting before enabling live mode. Live mode requires `PILOT_PAYMENT_MODE=live`, `PILOT_LIVE_ENABLED=true`, a production Vercel deployment with a custom HTTPS `PILOT_APP_URL`, live Stripe secret and webhook credentials, and configured prices for every item to sell. A live key alone fails. Agree a real fulfillment destination before any vendor notification or real shipment.
 
 Implementation references: [Stripe webhook signature verification](https://docs.stripe.com/webhooks/signature), [Supabase row-level security](https://supabase.com/docs/guides/database/postgres/row-level-security).

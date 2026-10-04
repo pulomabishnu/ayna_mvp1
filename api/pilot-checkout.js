@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       const variant = selectedPilotVariant(product, variantId);
       if (!purchasableProduct(product) || !variant) return res.status(200).json({ enabled: false, productId });
       const price = checked(await db.from('pilot_product_prices').select('amount,currency,variant_label').eq('product_id', productId).eq('variant_id', variantId).maybeSingle());
-      return res.status(200).json({ enabled: Boolean(price), requestable: !price, productId, variantId, variantLabel: price?.variant_label || variant.label, total: price ? price.amount + serviceFeeCents(price.amount) : null });
+      return res.status(200).json({ enabled: Boolean(price), requestable: config.paymentMode === 'test' && !price, paymentMode: config.paymentMode, productId, variantId, variantLabel: price?.variant_label || variant.label, total: price ? price.amount + serviceFeeCents(price.amount) : null });
     }
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     if (!config.enabled) return res.status(403).json({ error: 'Test checkout is not enabled.' });
@@ -81,9 +81,9 @@ export default async function handler(req, res) {
         shipping_address_collection: { allowed_countries: ['US'] },
         success_url: `${config.origin}/pilot/orders`,
         cancel_url: `${config.origin}/pilot/orders?pilot_cancelled=1`,
-        custom_text: { submit: { message: 'Test order only. No real payment or shipment.' } },
+        ...(config.paymentMode === 'test' ? { custom_text: { submit: { message: 'Test order only. No real payment or shipment.' } } } : {}),
       }, { idempotencyKey: `ayna-pilot-${order.id}` });
-    if (session.livemode) throw new Error('Live checkout refused');
+    if (session.livemode !== (config.paymentMode === 'live')) throw new Error('Checkout mode mismatch');
     checked(await db.from('pilot_orders').update({ stripe_session_id: session.id }).eq('id', order.id));
     if (!session.url || session.status !== 'open') return res.status(409).json({ error: 'Checkout is complete or expired. View your orders or start again.', restart: true });
     return res.status(200).json({ url: session.url });
