@@ -1414,29 +1414,25 @@ export const PRODUCT_VARIANTS = {
         "id": "target-76155164",
         "label": "Regular — 32 count",
         "url": "https://www.target.com/p/-/A-76155164",
-        "image": "/products/packaging/cora-76155164.jpg",
-        "amazonAsin": "B07XR7DVL4"
+        "image": "/products/packaging/cora-76155164.jpg"
       },
       {
         "id": "target-90569336",
         "label": "Super — 30 count",
         "url": "https://www.target.com/p/-/A-90569336",
-        "image": "/products/packaging/cora-90569336.jpg",
-        "amazonAsin": "B08288RTFX"
+        "image": "/products/packaging/cora-90569336.jpg"
       },
       {
         "id": "target-76155166",
         "label": "Overnight — 28 count",
         "url": "https://www.target.com/p/-/A-76155166",
-        "image": "/products/packaging/cora-76155166.jpg",
-        "amazonAsin": "B07XL578S2"
+        "image": "/products/packaging/cora-76155166.jpg"
       },
       {
         "id": "target-93261793",
         "label": "Extra Heavy Overnight — 20 count",
         "url": "https://www.target.com/p/-/A-93261793",
-        "image": "/products/packaging/cora-93261793.jpg",
-        "amazonAsin": "B0DH6S25DP"
+        "image": "/products/packaging/cora-93261793.jpg"
       }
     ]
   },
@@ -1451,29 +1447,25 @@ export const PRODUCT_VARIANTS = {
         "id": "target-76155164",
         "label": "Regular — 32 count",
         "url": "https://www.target.com/p/-/A-76155164",
-        "image": "/products/packaging/cora-76155164.jpg",
-        "amazonAsin": "B07XR7DVL4"
+        "image": "/products/packaging/cora-76155164.jpg"
       },
       {
         "id": "target-90569336",
         "label": "Super — 30 count",
         "url": "https://www.target.com/p/-/A-90569336",
-        "image": "/products/packaging/cora-90569336.jpg",
-        "amazonAsin": "B08288RTFX"
+        "image": "/products/packaging/cora-90569336.jpg"
       },
       {
         "id": "target-76155166",
         "label": "Overnight — 28 count",
         "url": "https://www.target.com/p/-/A-76155166",
-        "image": "/products/packaging/cora-76155166.jpg",
-        "amazonAsin": "B07XL578S2"
+        "image": "/products/packaging/cora-76155166.jpg"
       },
       {
         "id": "target-93261793",
         "label": "Extra Heavy Overnight — 20 count",
         "url": "https://www.target.com/p/-/A-93261793",
-        "image": "/products/packaging/cora-93261793.jpg",
-        "amazonAsin": "B0DH6S25DP"
+        "image": "/products/packaging/cora-93261793.jpg"
       }
     ]
   },
