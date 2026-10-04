@@ -63,7 +63,7 @@ export default function PilotBuyButton({ productId, variantId = '', needsVariant
     <div className="pilot-purchase__details">
       {variantLabel && <span className="pilot-purchase__variant">Checkout pack: {variantLabel}</span>}
       {total != null && <span className="pilot-purchase__total">${(total / 100).toFixed(2)} total <span>including Ayna and processing fees{taxIncluded ? ' and applicable tax' : ''}</span></span>}
-      {requestable && !requested && <span>We’ll confirm the price before you pay.</span>}
+      {requestable && !requested && <span>We’ll confirm this exact option’s price and email you a checkout link. No payment is taken yet.</span>}
       {requested && <span role="status">Request received. No payment was taken. We’ll email you when checkout is ready.</span>}
       {paymentMode === 'test' && <span className="pilot-purchase__test">Test checkout · no real charge</span>}
       <a href="/pilot/orders">My {paymentMode === 'test' ? 'test ' : ''}orders</a>

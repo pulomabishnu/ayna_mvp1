@@ -1033,7 +1033,7 @@ export default function ProductModal({
 
               <div className="pdp-head__pricerow">
                 {(product.price || product.stage) && !pilotAvailable && (
-                  <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
+                  <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{aynaPhysical ? 'Price being confirmed' : choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
                 )}
                 {matchPercent != null ? (
                   <span className="pdp-head__match pdp-head__match--gauge">
@@ -1393,7 +1393,7 @@ export default function ProductModal({
               <div className="pdp-head__eyebrow">{eyebrow}</div>
               <h2 className="pdp-head__name" style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)' }}>{displayName}</h2>
               {(product.price || product.stage) && !pilotAvailable && (
-                <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
+                <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{aynaPhysical ? 'Price being confirmed' : choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
               )}
               {summarySentences[0] && (
                 <p className="pdp-evidence-head__desc">{summarySentences[0]}</p>

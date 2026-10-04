@@ -58,7 +58,7 @@ function PriceForm() {
   const [filter, setFilter] = useState('');
   const [missingOnly, setMissingOnly] = useState(false);
   const [productId, setProductId] = useState('p-always-infinity');
-  const [variantId, setVariantId] = useState('');
+  const [variantId, setVariantId] = useState('target-94912100');
   const product = products.find(item => item.id === productId);
   const [price, setPrice] = useState(null);
   const [message, setMessage] = useState('');
@@ -123,6 +123,7 @@ export default function PilotOrders() {
   const [orders, setOrders] = useState([]);
   const [requests, setRequests] = useState([]);
   const [admin, setAdmin] = useState(false);
+  const [paymentMode, setPaymentMode] = useState('test');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   async function refresh() {
@@ -131,7 +132,7 @@ export default function PilotOrders() {
         request(`/api/pilot-orders${adminView ? '?admin=1' : ''}`),
         request('/api/pilot-orders?requests=1'),
       ]);
-      setOrders(data.orders); setRequests(pending.requests || []); setAdmin(data.admin); setError('');
+      setOrders(data.orders); setRequests(pending.requests || []); setAdmin(data.admin); setPaymentMode(data.paymentMode || 'test'); setError('');
     } catch (e) { setError(e.message); }
     finally { setLoading(false); }
   }
@@ -147,7 +148,7 @@ export default function PilotOrders() {
   return <main className="pilot-orders">
     <a href="/">← Back to ayna / sign in</a>
     <h1>{adminView ? 'Orders to fulfill' : 'Your orders'}</h1>
-    <p className="pilot-orders__sub">Stripe test mode. No real payment.</p>
+    {paymentMode === 'test' && <p className="pilot-orders__sub">Stripe test mode. No real payment.</p>}
     {adminView && admin && <PriceForm />}
     {admin && <a href={adminView ? '/pilot/orders' : '/pilot/admin'}>{adminView ? 'My orders' : 'Open fulfillment inbox'}</a>}
     <button onClick={refresh}>Refresh</button>
@@ -171,7 +172,7 @@ export default function PilotOrders() {
         </> : item.status === 'quoted' && <a href={`/product/${encodeURIComponent(item.product_id)}${item.variant_id ? `?variantId=${encodeURIComponent(item.variant_id)}` : ''}`}>Review price and buy now</a>}
       </article>)}
     </section>}
-    {!loading && !error && !orders.length && !requests.length && <p>No {adminView ? 'paid ' : ''}test orders yet.</p>}
+    {!loading && !error && !orders.length && !requests.length && <p>No {adminView ? 'paid ' : ''}{paymentMode === 'test' ? 'test ' : ''}orders yet.</p>}
     {orders.map(order => {
       const fulfillment = order.pilot_fulfillments?.[0] || order.pilot_fulfillments;
       const shipped = fulfillment?.status === 'shipped';

@@ -7,7 +7,15 @@ import checkout from './pilot-checkout.js';
 import orderRequest from './pilot-request.js';
 function res() { return { code: 200, setHeader() {}, status(code) { this.code=code; return this; }, json(body) { this.body=body; return this; }, end() { return this; } }; }
 function query(result) { const q={}; for (const method of ['select','eq','order','limit','insert','update']) q[method]=vi.fn(()=>q); q.then=(resolve)=>Promise.resolve(result).then(resolve); q.maybeSingle=q.single=vi.fn(async()=>result); return q; }
-beforeEach(()=> { mocks.user=null; mocks.config.enabled=true; mocks.config.taxIncluded=false; vi.stubEnv('STRIPE_WEBHOOK_SECRET','whsec_test'); vi.stubEnv('RESEND_API_KEY',''); });
+beforeEach(()=> { mocks.user=null; mocks.config.enabled=true; mocks.config.taxIncluded=false; mocks.config.paymentMode='test'; vi.stubEnv('STRIPE_WEBHOOK_SECRET','whsec_test'); vi.stubEnv('RESEND_API_KEY',''); });
+it('keeps an unpriced physical option requestable in live mode without charging it', async()=> {
+  mocks.config.paymentMode='live';
+  const productQuery=query({data:{id:'p-pad',name:'Pad',product_type:'physical',category:'pad',is_active:true,requires_prescription:false,extra:{variants:[{id:'size-1',label:'Size 1'}]}},error:null});
+  const empty=query({data:null,error:null});
+  mocks.db={from:table=>({product_catalog:productQuery,pilot_product_prices:empty})[table]};
+  const r=res(); await checkout({method:'GET',query:{productId:'p-pad',variantId:'size-1'}},r);
+  expect(r.body).toMatchObject({enabled:false,requestable:true,paymentMode:'live',variantId:'size-1',total:null});
+});
 it('lets a signed-in customer request an exact size without charging', async()=> {
   mocks.user={id:'customer',email:'customer@example.com'};
   const productQuery=query({data:{id:'p-pad',name:'Pad',product_type:'physical',category:'pad',is_active:true,requires_prescription:false,extra:{variants:[{id:'size-1',label:'Size 1'}]}},error:null});

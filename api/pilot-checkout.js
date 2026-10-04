@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       const variant = selectedPilotVariant(product, variantId);
       if (!purchasableProduct(product) || !variant) return res.status(200).json({ enabled: false, productId });
       const price = checkoutPrice(product, variant, await pilotVariantPrice(db, productId, variantId), { allowCatalogFallback: config.paymentMode === 'test' });
-      return res.status(200).json({ enabled: Boolean(price), requestable: config.paymentMode === 'test' && !price, paymentMode: config.paymentMode, taxIncluded: config.taxIncluded, productId, variantId, variantLabel: variant.label, total: price ? checkoutTotalCents(price.amount) : null });
+      return res.status(200).json({ enabled: Boolean(price), requestable: !price, paymentMode: config.paymentMode, taxIncluded: config.taxIncluded, productId, variantId, variantLabel: variant.label, total: price ? checkoutTotalCents(price.amount) : null });
     }
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     if (!config.enabled) return res.status(403).json({ error: 'Checkout is not enabled.' });

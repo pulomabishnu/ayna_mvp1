@@ -32,8 +32,8 @@ export default async function handler(req, res) {
             body: JSON.stringify({
               from: process.env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
               to: [item.customer_email],
-              subject: `[TEST] Your Ayna checkout is ready: ${item.product_name}`,
-              text: `The test checkout price is ready for ${item.product_name}. Review the total and pay only if you want to continue: ${link}\n\nNo payment has been collected for your request. This is a test checkout only.`,
+              subject: `${config.paymentMode === 'test' ? '[TEST] ' : ''}Your Ayna checkout is ready: ${item.product_name}`,
+              text: `The checkout price is ready for ${item.product_name}. Review the total and pay only if you want to continue: ${link}\n\nNo payment has been collected for your request.${config.paymentMode === 'test' ? ' This is a test checkout only.' : ''}`,
             }),
           });
           emailed = sent.ok;
@@ -75,7 +75,7 @@ export default async function handler(req, res) {
       let query = db.from('pilot_orders').select('id,product_id,product_name,retailer_url,amount,currency,status,created_at,pilot_fulfillments(*)').order('created_at', { ascending: false }).limit(50);
       if (!adminView) query = query.eq('user_id', user.id);
       else query = query.eq('status', 'paid');
-      return res.status(200).json({ orders: checked(await query), admin });
+      return res.status(200).json({ orders: checked(await query), admin, paymentMode: config.paymentMode });
     }
     if (req.method === 'PATCH') {
       if (!admin) return res.status(403).json({ error: 'Admin access required.' });
