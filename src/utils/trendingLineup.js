@@ -13,6 +13,11 @@
  * weeks always shows a different product. Areas with fewer than two eligible
  * products sit out, since they'd show the same product every time.
  *
+ * One slot every week goes to a vaginal moisturizer or glide (requested
+ * 2026-10-04; the catalog has many), rotating through them week by week. Those
+ * products are their own area, so they don't also compete for the Intimate
+ * Care or Menopause slot.
+ *
  * Adding products or categories to the catalog reshuffles future weeks; that's
  * fine — the guarantees above still hold for whatever the catalog is.
  */
@@ -47,12 +52,27 @@ export function trendingCategoryLabel(product) {
   return String(CATEGORY_LABELS[raw] || raw).replace(/^[^\w]+\s*/, '');
 }
 
+// Internal vaginal moisturizers and glides, matched by product name: e.g.
+// gina Vaginal Moisturizing Glides, Alubri Vaginal Moisturizing Gel, Neycher
+// Vaginal Moisturizer, Oboo Loob Daily Moisturizer, Joylux JUICY LIKE A PEACH
+// Vaginal Gel and reliefHER Vaginal Hydration Melts, Good Clean Love Bio-Match
+// Moisturizer, Kindra Daily Vaginal Lotion. External vulva balms and serums
+// stay in Intimate Care; plain lubricants stay in Sexual Wellness.
+const MOISTURIZER_NAME = /vaginal moisturi[sz]|moisturi[sz]ing (glides?|gel)|vaginal gel|hydration melts|bio-match moisturi[sz]er|vaginal lotion|loob .*moisturi[sz]er/i;
+export const MOISTURIZER_AREA = 'Vaginal Moisturizers';
+
+export function isVaginalMoisturizer(product) {
+  return MOISTURIZER_NAME.test(String(product?.name || ''));
+}
+
 /**
- * The care area a product belongs to: the first Browse filter group whose
- * categories include the product's category, or the category's own label for
- * categories no group covers (e.g. Supplements).
+ * The care area a product belongs to: vaginal moisturizers and glides first,
+ * then the first Browse filter group whose categories include the product's
+ * category, or the category's own label for categories no group covers (e.g.
+ * Supplements).
  */
 export function trendingAreaLabel(product) {
+  if (isVaginalMoisturizer(product)) return MOISTURIZER_AREA;
   const group = MACRO_GROUPS.find((g) => g.id !== 'all' && g.categories.includes(product?.category));
   return group ? group.label : trendingCategoryLabel(product);
 }
@@ -103,25 +123,36 @@ export function getWeeklyTrendingLineup(products, now = new Date()) {
     if (!byArea.has(area)) byArea.set(area, []);
     byArea.get(area).push(product);
   });
-  for (const [area, list] of byArea) if (list.length < 2) byArea.delete(area);
-
-  const areas = seededShuffle([...byArea.keys()].sort(), SHUFFLE_SEED);
-  const count = areas.length;
-  if (!count) return [];
-  const slots = Math.min(TRENDING_SIZE, count);
+  const poolOf = (area) => seededShuffle(
+    byArea.get(area).sort((a, b) => String(a.id).localeCompare(String(b.id))),
+    SHUFFLE_SEED + area.length,
+  );
   const week = trendingWeekIndex(now);
 
-  return Array.from({ length: slots }, (_, slot) => {
+  // The weekly moisturizer slot, rotating through every moisturizer in turn.
+  let pinned = null;
+  if (byArea.has(MOISTURIZER_AREA)) {
+    const pool = poolOf(MOISTURIZER_AREA);
+    pinned = { product: pool[week % pool.length], label: 'VAGINAL MOISTURIZER' };
+    byArea.delete(MOISTURIZER_AREA);
+  }
+
+  for (const [area, list] of byArea) if (list.length < 2) byArea.delete(area);
+  const areas = seededShuffle([...byArea.keys()].sort(), SHUFFLE_SEED);
+  const count = areas.length;
+  const slots = Math.min(TRENDING_SIZE - (pinned ? 1 : 0), count);
+
+  const lineup = Array.from({ length: slots }, (_, slot) => {
     const position = week * slots + slot;
     const area = areas[position % count];
-    const pool = seededShuffle(
-      byArea.get(area).sort((a, b) => String(a.id).localeCompare(String(b.id))),
-      SHUFFLE_SEED + area.length,
-    );
+    const pool = poolOf(area);
     const lap = Math.floor(position / count);
     const product = pool[lap % pool.length];
     return { product, label: trendingCategoryLabel(product).toUpperCase() };
   });
+  // Move the moisturizer to a different spot each week rather than always first.
+  if (pinned) lineup.splice(week % (lineup.length + 1), 0, pinned);
+  return lineup;
 }
 
 /**

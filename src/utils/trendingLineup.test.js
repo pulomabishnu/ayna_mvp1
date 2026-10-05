@@ -5,6 +5,7 @@ import {
   getWeeklyTrendingLineup,
   orderByWeeklyTrending,
   takeDistinctCategories,
+  isVaginalMoisturizer,
   trendingAreaLabel,
   trendingCategoryLabel,
   trendingWeekIndex,
@@ -58,6 +59,19 @@ describe('getWeeklyTrendingLineup', () => {
       }
     }
     expect(rotated).toBe(true);
+  });
+
+  it('shows exactly one vaginal moisturizer or glide a week, a different one each week', () => {
+    const picks = weeks.map((lineup) => lineup.filter(({ product }) => isVaginalMoisturizer(product)));
+    for (const p of picks) expect(p).toHaveLength(1);
+    for (let w = 1; w < picks.length; w += 1) expect(picks[w][0].product.id).not.toBe(picks[w - 1][0].product.id);
+  });
+
+  it('counts internal moisturizers and glides, not vulva balms or plain lubricants', () => {
+    expect(isVaginalMoisturizer({ name: 'gina Vaginal Moisturizing Glides' })).toBe(true);
+    expect(isVaginalMoisturizer({ name: 'Alubri Vaginal Moisturizing Gel' })).toBe(true);
+    expect(isVaginalMoisturizer({ name: 'REJUVENATE: Vulva Balm' })).toBe(false);
+    expect(isVaginalMoisturizer({ name: 'Uberlube Luxury Lubricant' })).toBe(false);
   });
 
   it('shows at most one period product a week', () => {
