@@ -1,131 +1,19 @@
 const HeartIcon = ({ stroke }) => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M12 20s-7-4.5-7-9.4A4.1 4.1 0 0 1 12 7.6a4.1 4.1 0 0 1 7 3c0 4.9-7 9.4-7 9.4Z" />
   </svg>
 );
 
-function Tab({ label, active, dark, onClick }) {
-  return (
-    <div
-      onClick={onClick}
-      style={{
-        flex: 1,
-        textAlign: 'center',
-        padding: '9px 0',
-        borderRadius: 99,
-        cursor: 'pointer',
-        fontFamily: "'DM Sans',sans-serif",
-        fontWeight: 600,
-        fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
-        background: active ? (dark ? '#FFF9F2' : '#FFFCF9') : 'transparent',
-        color: active ? '#292524' : dark ? 'rgba(255,249,242,.7)' : '#78716C',
-        boxShadow: active && !dark ? '0 1px 3px rgba(41,37,36,.10)' : active && dark ? '0 1px 3px rgba(0,0,0,.18)' : 'none',
-        transition: 'background .18s',
-      }}
-    >
-      {label}
-    </div>
-  );
-}
-
-export default function MobileHeader({
-  variant = 'light',
-  initial = 'A',
-  activeTab = 'browse',
-  onGoBrowse,
-  onGoEco,
-  onGoCommunity,
-  onOpenSaved,
-  onGoLanding,
-  onOpenProfile,
-}) {
+export default function MobileHeader({ variant = 'light', onOpenSaved }) {
   const dark = variant === 'dark';
-
-  return (
-    <div
-      style={{
-        paddingTop: 'max(20px, env(safe-area-inset-top))',
-        paddingLeft: 20,
-        paddingRight: 20,
-        paddingBottom: 12,
-        background: dark ? '#242A52' : '#F3EFE9',
-        color: dark ? '#FFF9F2' : '#292524',
-        position: 'relative',
-        zIndex: 5,
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 14,
-        }}
-      >
-        <div
-          onClick={dark ? onGoLanding : undefined}
-          style={{
-            fontFamily: "'Playfair Display',serif",
-            fontSize: 'calc(25px * var(--ayna-text-scale, 1))',
-            letterSpacing: 0.5,
-            cursor: dark ? 'pointer' : 'default',
-          }}
-        >
-          ayna
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <div
-            onClick={onOpenSaved}
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 99,
-              border: dark ? '1px solid rgba(255,255,255,.28)' : '1px solid #E1D5CE',
-              background: dark ? 'rgba(255,249,242,.12)' : '#FFFCF9',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-            }}
-          >
-            <HeartIcon stroke={dark ? '#FFC774' : '#A2603C'} />
-          </div>
-          <div
-            onClick={onOpenProfile}
-            role="button"
-            aria-label="Open profile"
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 99,
-              border: dark ? '1px solid rgba(255,255,255,.28)' : '1px solid #E1D5CE',
-              background: dark ? 'rgba(255,249,242,.12)' : '#FFFCF9',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 'calc(11px * var(--ayna-text-scale, 1))',
-              color: dark ? '#FFF9F2' : '#78716C',
-              cursor: 'pointer',
-            }}
-          >
-            {initial}
-          </div>
-        </div>
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          background: dark ? 'rgba(255,249,242,.14)' : '#EAE3DA',
-          borderRadius: 99,
-          padding: 3,
-          gap: 2,
-        }}
-      >
-        <Tab label="Browse" active={activeTab === 'browse'} dark={dark} onClick={onGoBrowse} />
-        <Tab label="Community" active={activeTab === 'community'} dark={dark} onClick={onGoCommunity} />
-        <Tab label="My Ecosystem" active={activeTab === 'eco'} dark={dark} onClick={onGoEco} />
-      </div>
-    </div>
-  );
+  return <header style={{
+    padding: 'max(20px, env(safe-area-inset-top)) 20px 12px',
+    background: dark ? '#242A52' : 'var(--ayna-bg)',
+    color: dark ? '#FFF9F2' : 'var(--ayna-text)',
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    position: 'relative', zIndex: 5,
+  }}>
+    <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', letterSpacing: .5 }}>ayna</span>
+    {onOpenSaved && <button type="button" onClick={onOpenSaved} aria-label="Saved products" style={{ width: 36, height: 36, borderRadius: 99, border: dark ? '1px solid rgba(255,255,255,.28)' : '1px solid var(--ayna-border)', background: dark ? 'rgba(255,249,242,.12)' : 'var(--ayna-surface)', display: 'grid', placeItems: 'center' }}><HeartIcon stroke={dark ? '#FFC774' : '#A2603C'} /></button>}
+  </header>;
 }

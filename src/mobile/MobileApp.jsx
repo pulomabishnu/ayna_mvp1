@@ -19,6 +19,7 @@ import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAu
 import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import AskAynaChip from './components/AskAynaChip.jsx';
+import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
 import ProfileFlow from './screens/profile/ProfileFlow.jsx';
 
@@ -471,6 +472,12 @@ export default function MobileApp() {
     hasEcosystem,
   };
 
+  const showTabBar = !['quiz', 'building', 'reveal', 'signin', 'checkin'].includes(screen) && (!overlay || overlay.type === 'profile');
+  const activeTab = overlay?.type === 'profile' ? 'profile'
+    : screen === 'browse' ? 'search'
+      : screen === 'community' ? 'community'
+        : ['landing', 'eco', 'ecointro'].includes(screen) ? 'home' : null;
+
   return (
     <div className="ayna-mobile" data-theme={resolvedTheme} style={{ '--ayna-text-scale': textScale }}>
       <Screen
@@ -507,6 +514,13 @@ export default function MobileApp() {
           { label: 'Pillars', value: topAreaLabels.length },
         ]}
       />
+      {showTabBar && <MobileTabBar
+        active={activeTab}
+        onHome={() => { setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'landing'); }}
+        onSearch={() => { setOverlay(null); setScreen('browse'); }}
+        onCommunity={() => { setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
+        onProfile={() => setOverlay({ type: 'profile' })}
+      />}
       {overlay?.type === 'product' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
           <ProductDetailScreen
@@ -573,7 +587,7 @@ export default function MobileApp() {
           onOpenMonthlyCheckin={() => setScreen('checkin')}
         />
       )}
-      {!askAynaOpen && (
+      {!askAynaOpen && !overlay && !['landing', 'signin', 'quiz', 'building', 'reveal'].includes(screen) && (
         <AskAynaChip
           onClick={() => setAskAynaOpen(true)}
           viewKey={overlay ? `${overlay.type}:${overlay.item?.id || ''}` : screen}

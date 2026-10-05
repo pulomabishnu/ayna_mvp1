@@ -2,6 +2,7 @@
    Scoped under .ayna-mobile so nothing here can affect the existing website. */
 
 .ayna-mobile {
+  --ayna-bottom-nav-height: calc(55px + max(8px, env(safe-area-inset-bottom)));
   --ayna-bg: #F3EFE9;
   --ayna-bg-alt: #FAF6F1;
   --ayna-surface: #FFFCF9;
@@ -161,3 +162,33 @@
 .ay-pdp-rail::-webkit-scrollbar {
   display: none;
 }
+
+/* App-wide navigation: one quiet, familiar bottom row on primary screens. */
+.ayna-mobile .ayna-bottom-nav {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  padding: 7px 8px max(8px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--ayna-border);
+  background: var(--ayna-surface);
+  z-index: 70;
+}
+.ayna-mobile .ayna-bottom-nav button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+  min-height: 48px;
+  border: 0;
+  padding: 2px 0;
+  background: transparent;
+  color: var(--ayna-text-muted);
+  font: 600 10px 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+.ayna-mobile .ayna-bottom-nav button.is-active { color: var(--ayna-heading); }
+.ayna-mobile .ayna-bottom-nav svg { width: 22px; height: 22px; }
+.ayna-mobile .ayna-bottom-nav button.is-active svg { stroke-width: 2.25; }

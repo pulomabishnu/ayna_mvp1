@@ -13,7 +13,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onGoCommunity }) 
         flexDirection: 'column',
         color: '#FFF9F2',
         animation: 'ay-page .25s ease-out',
-        minHeight: '100vh',
+        minHeight: 0,
       }}
     >
       <div

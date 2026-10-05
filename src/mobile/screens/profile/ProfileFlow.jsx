@@ -3366,7 +3366,7 @@ export default function ProfileFlow({
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 55, background: 'var(--ayna-bg)', display: 'flex' }}>
+    <div style={{ position: 'fixed', inset: 0, bottom: 'var(--ayna-bottom-nav-height)', zIndex: 55, background: 'var(--ayna-bg)', display: 'flex' }}>
       {/* Keyed on `screen` so each push/pop within this overlay (hub -> Shopper
           Profile -> Preferences -> Settings, etc.) remounts this wrapper and
           replays the entrance animation — without the key, only the overlay's
