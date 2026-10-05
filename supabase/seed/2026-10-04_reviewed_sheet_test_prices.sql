@@ -16,5 +16,10 @@ insert into public.pilot_product_prices (product_id,variant_id,variant_label,amo
   -- Source row 205: OrganiCup Menstrual Cup by AllMatters - Size B - Superior to Pads & Tampons - Voted Best Menstrual Cup by Reviewed - Made in Germany - Soft and Flexible
   ('p-organicup','42702906425556','B',2767,'usd','https://www.amazon.com/dp/B072KZM9P3',false),
   -- Source row 209: Flex Cup Starter Kit (Full Fit - Size 02) | Reusable Menstrual Cup + 2 Free Menstrual Discs | Pull-Tab for Easy Removal | Tampon + Pad Alternative | Lasts up to 10 Years | Capacity
-  ('p-flex-cup','39775383126112','Size 02',2849,'usd','https://www.amazon.com/dp/B07QHG6ZY8',false)
+  ('p-flex-cup','39775383126112','Size 02',2849,'usd','https://www.amazon.com/dp/B07QHG6ZY8',false),
+  -- Source rows 76-78: the sheet's 60/120 labels were reversed. Match the
+  -- Amazon title and the catalog's ASIN for each actual capsule count.
+  ('p-vitex','20669342449775','60 ct',1979,'usd','https://www.amazon.com/dp/B003VT3YP0',false),
+  ('p-vitex','31067684896904','120 ct',3869,'usd','https://www.amazon.com/dp/B07YLKKSGX',false),
+  ('p-vitex','41289579921544','180 ct',4724,'usd','https://www.amazon.com/dp/B0BRTBBK5K',false)
 on conflict (product_id,variant_id) do nothing;

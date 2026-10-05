@@ -93,7 +93,7 @@ export default function PilotCart() {
           return <li key={lineKey(line)} className={unavailable ? 'pilot-cart__line pilot-cart__line--problem' : 'pilot-cart__line'}>
             <CartImage src={product?.image} />
             <div className="pilot-cart__info">
-              <a href={`${productHref(line.productId)}${line.variantId ? `?variantId=${encodeURIComponent(line.variantId)}` : ''}`}><strong>{name}</strong></a>
+              <a href={`${productHref(product || line.productId)}${line.variantId ? `?variantId=${encodeURIComponent(line.variantId)}` : ''}`}><strong>{name}</strong></a>
               {priced?.variantLabel && <span className="pilot-cart__variant">{priced.variantLabel}</span>}
               {priced?.available && <span className="pilot-cart__unit">{money(priced.unitCents)} each</span>}
               {unavailable && <span role="alert" className="pilot-cart__problem">{REASONS[priced.reason] || REASONS.unavailable}</span>}
