@@ -3,7 +3,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroup
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct, findConfidentProductMatch } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
-import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands';
+import { isPartnerBrandItem, getPartnerBrandRank, isPrelaunchPartnerItem, getPartnerBadgeLabel } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
 import useStaticPlaceholder from '../utils/useStaticPlaceholder';
@@ -1572,7 +1572,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             >
                                 <div className="ayna-discover-card__tile">
                                     {isPartnerBrandItem(item) && (
-                                        <span className="ayna-browse-card__affiliate">ayna Favorite</span>
+                                        <span
+                                            className={`ayna-browse-card__affiliate${isPrelaunchPartnerItem(item) ? ' ayna-browse-card__affiliate--prelaunch' : ''}`}
+                                            title={isPrelaunchPartnerItem(item) ? 'Pre-launch brand partner. Join the waitlist; ayna earns no commission.' : undefined}
+                                        >
+                                            {getPartnerBadgeLabel(item)}
+                                        </span>
                                     )}
                                     {cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
                                         <>

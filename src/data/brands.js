@@ -5372,4 +5372,58 @@ export const BRAND_PRODUCTS = [
         },
         isEmergingBrand: false,
     },
+
+    // Rèsa brand partnership (2026-10-05) — PRE-LAUNCH. Rèsa hasn't shipped
+    // yet: the only thing a user can do today is reserve a spot on the
+    // waitlist with a $9.90 early deposit. `prelaunch: true` drives the
+    // distinct "ayna Favorite · Waitlist" badge, the waitlist CTA, and the
+    // no-commission partner disclosure (see src/utils/partnerBrands.js).
+    // ayna earns NO commission on the deposit — the partnership is groundwork
+    // for the future wearable dashboard. affiliateUrl is the UTM-tagged
+    // shop link Rèsa supplied so referrals are trackable on their side.
+    // Facts below come from resa-labs.com, shop.resa-labs.com and Rèsa's
+    // 2026 product-intro deck, checked 2026-10-05; nothing is independently
+    // verified because there is no shipped device to verify yet.
+    {
+        id: 'p-resa-rhythm-bracelet',
+        name: 'Rèsa Rhythm Bracelet',
+        brand: 'Rèsa',
+        category: 'tracker',
+        type: 'physical',
+        internal: false,
+        prelaunch: true,
+        waitlistCtaLabel: 'Join waitlist · $9.90 deposit',
+        healthFunctions: ['cycle-tracking', 'fitness-cycle'],
+        tags: ['resa', 'wearable', 'jewelry', 'waitlist', 'pre-launch', 'sleep', 'stress', 'hrv', 'cycle', 'irregular', 'privacy'],
+        price: '$9.90 waitlist deposit',
+        whereToBuy: [], // pre-launch, direct-to-consumer reservation only
+        url: 'https://www.resa-labs.com/',
+        affiliateUrl: 'https://shop.resa-labs.com/?utm_source=ayna_partner&utm_medium=referral&utm_campaign=market_test',
+        image: 'https://shop.resa-labs.com/bracelet-jewelry.png',
+        summary: 'Pre-launch: join the waitlist with a $9.90 early deposit. Rèsa is an 18K gold-plated bracelet that doubles as a wellness wearable built for female physiology. It continuously tracks heart-rate variability, resting heart rate, skin temperature, sleep, respiration and activity, combines that with your cycle information, and reads it against your personal baseline to make sense of three rhythms at once: hormonal, circadian and stress. Instead of scores, the Rèsa app gives one plain-language read and one suggestion for the day, then checks in on whether it helped.',
+        safety: {
+            fdaStatus: 'Consumer wellness wearable, not a medical device; not FDA-cleared, and not intended to diagnose or treat any condition.',
+            materials: '18K gold-plated bracelet, about 15g, 100% waterproof, roughly 7 days of battery per charge, per the brand.',
+            recalls: 'Not yet released — no recalls.',
+            sideEffects: 'None expected from wearing it. As with any metal jewelry, people with plating or metal sensitivities should check final material details at launch.',
+            opinionAlerts: 'Pre-launch product: specs, price and ship date can change before release. Reserving now means a $9.90 deposit, and the brand advertises 40% off plus launch perks for reservers. ayna earns no commission on the deposit.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: "Sourced from Rèsa's own site and product-intro materials, not independent clinical literature.",
+        doctorOpinion: 'HRV, resting heart rate, skin temperature and sleep are well-established wearable signals, and skin and wrist temperature in particular track the post-ovulation temperature shift across the menstrual cycle. Rèsa\'s pitch is interpreting those signals together, against your own baseline, instead of one metric at a time. The device has not launched, so there is no published validation of its accuracy or of its hormone-trend ("Hormone Rhythm") estimates yet. Its scientific advisory board includes Prof. Tory Eisenlohr-Moul (hormone, mood and autonomic research), Prof. Sarah E. Hill (Texas Christian University, reproductive hormone neuroscience) and Dr. Daniela Avila-Varela (Universitat Pompeu Fabra, menstrual-cycle brain dynamics), per the brand.',
+        doctorOpinionShort: 'A promising idea built on established wearable signals, but pre-launch, so its accuracy and hormone-trend estimates are not yet validated.',
+        whoItsFor: [
+            'People who want wearable insight into how their cycle, sleep and stress interact, without wearing something that looks like a fitness tracker',
+            'Early adopters comfortable reserving a product before it ships',
+            'Not a substitute for clinical cycle, fertility or hormone testing',
+        ],
+        warnings: [
+            'Pre-launch: specs, final price and ship date are not final.',
+            'Wellness insights only. It is not contraception and does not diagnose hormonal conditions.',
+        ],
+        effectiveness: 'Not yet released; no independent accuracy data exists. Built on signals (HRV, resting heart rate, skin temperature, sleep) that are well established in wearables generally.',
+        integrations: [],
+        badges: ['Pre-launch', 'Waitlist', 'Female-Founded'],
+        isEmergingBrand: true,
+    },
 ];

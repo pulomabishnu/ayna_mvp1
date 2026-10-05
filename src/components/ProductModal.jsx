@@ -7,7 +7,7 @@ import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, getRecommendationExplanation, CATEGORY_LABELS } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
-import { isPartnerBrandItem, getPartnerDisclosureText } from '../utils/partnerBrands';
+import { isPartnerBrandItem, isPrelaunchPartnerItem, getPartnerDisclosureText } from '../utils/partnerBrands';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
@@ -786,7 +786,7 @@ export default function ProductModal({
             });
             }}
           >
-            Buy Now
+            {isPrelaunchPartnerItem(product) ? (product.waitlistCtaLabel || 'Join the waitlist') : 'Buy Now'}
           </a>
         ) : (
           <button type="button" className="pdp-btn pdp-btn--navy pdp-btn--buy" disabled>
@@ -848,8 +848,11 @@ export default function ProductModal({
       </div>
       {isPartnerBrandItem(product) && (
         <p className="pdp-partner-disclosure">
-          <span className="pdp-head__badge" title="ayna has a partnership with this brand. It does not affect your recommendation.">
-            ayna Partner
+          <span
+            className={`pdp-head__badge${isPrelaunchPartnerItem(product) ? ' pdp-head__badge--prelaunch' : ''}`}
+            title="ayna has a partnership with this brand. It does not affect your recommendation."
+          >
+            {isPrelaunchPartnerItem(product) ? 'ayna Partner · Pre-launch waitlist' : 'ayna Partner'}
           </span>{' '}
           <span className="pdp-partner-note">
             {getPartnerDisclosureText(product)}

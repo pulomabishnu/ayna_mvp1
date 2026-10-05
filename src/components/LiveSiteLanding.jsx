@@ -4,7 +4,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from 
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { getWeeklyTrendingLineup, isBeautyProduct, orderByWeeklyTrending, takeDistinctCategories } from '../utils/trendingLineup';
-import { isPartnerBrandItem } from '../utils/partnerBrands';
+import { isPartnerBrandItem, isPrelaunchPartnerItem, getPartnerBadgeLabel } from '../utils/partnerBrands';
 
 /**
  * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
@@ -214,12 +214,16 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
         {/* Same partner tag as the Browse cards (class, text, and tooltip). */}
         {isPartnerBrandItem(product) && (
           <span
-            className="ayna-browse-card__affiliate"
+            className={`ayna-browse-card__affiliate${isPrelaunchPartnerItem(product) ? ' ayna-browse-card__affiliate--prelaunch' : ''}`}
             style={{ position: 'static' }}
-            title="Commercial brand partner. Partnership does not change your personalized match score."
-            aria-label="ayna Favorite, a commercial brand partner"
+            title={isPrelaunchPartnerItem(product)
+              ? 'Pre-launch brand partner. Join the waitlist; ayna earns no commission.'
+              : 'Commercial brand partner. Partnership does not change your personalized match score.'}
+            aria-label={isPrelaunchPartnerItem(product)
+              ? 'ayna Favorite, a pre-launch brand partner with a waitlist'
+              : 'ayna Favorite, a commercial brand partner'}
           >
-            ayna Favorite
+            {getPartnerBadgeLabel(product)}
           </span>
         )}
         {badge && (

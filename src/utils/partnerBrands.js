@@ -30,7 +30,31 @@ export const PARTNER_BRAND_ORDER = [
   // Confirmed partners not given an explicit rank in the 2026-09-16 order —
   // sort after everything above.
   /\blim method\b/,
+  // Rèsa (2026-10-05) — pre-launch; see PRELAUNCH_PARTNER_PATTERNS below.
+  /\br[eè]sa\b/,
 ];
+
+/**
+ * Partners whose product hasn't launched yet. Users can only join a waitlist
+ * (Rèsa: a $9.90 early deposit), so these get a visually distinct
+ * "ayna Favorite · Waitlist" badge and a no-commission disclosure. A catalog
+ * entry can also opt in with `prelaunch: true`.
+ */
+export const PRELAUNCH_PARTNER_PATTERNS = [
+  /\br[eè]sa\b/,
+];
+
+export function isPrelaunchPartnerItem(item) {
+  if (!isPartnerBrandItem(item)) return false;
+  if (item?.prelaunch) return true;
+  const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
+  return PRELAUNCH_PARTNER_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+/** Browse badge text for a partner item. */
+export function getPartnerBadgeLabel(item) {
+  return isPrelaunchPartnerItem(item) ? 'ayna Favorite · Waitlist' : 'ayna Favorite';
+}
 
 export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
@@ -50,6 +74,9 @@ export function getPartnerBrandRank(item) {
 const PARTNER_DISCLOSURE =
   'ayna has chosen to commercially partner with this brand after personally reviewing them, and ayna may earn a commission if you buy through their link. ayna Partners appear at the top of the Browse page only if you have personalization turned off. Partners do not and cannot influence which products ayna honestly curates for you.';
 
-export function getPartnerDisclosureText() {
-  return PARTNER_DISCLOSURE;
+const PRELAUNCH_PARTNER_DISCLOSURE =
+  'This brand is pre-launch, so this is a waitlist, not a purchase: the link takes you to reserve a spot with an early deposit. ayna has partnered with this brand after personally reviewing them, and ayna does not earn a commission on the deposit. Partners do not and cannot influence which products ayna honestly curates for you.';
+
+export function getPartnerDisclosureText(item) {
+  return isPrelaunchPartnerItem(item) ? PRELAUNCH_PARTNER_DISCLOSURE : PARTNER_DISCLOSURE;
 }

@@ -70,6 +70,8 @@ function syncExpandedState(input) {
 
 function normalizePartnerLabels() {
   document.querySelectorAll('.ayna-browse-card__affiliate').forEach((badge) => {
+    // Pre-launch partners (Rèsa) carry their own "· Waitlist" label and tooltip.
+    if (badge.classList.contains('ayna-browse-card__affiliate--prelaunch')) return;
     if (/ayna favorite/i.test(clean(badge.textContent))) {
       badge.textContent = 'ayna Favorite';
       badge.setAttribute('title', 'Commercial brand partner. Partnership does not change your personalized match score.');

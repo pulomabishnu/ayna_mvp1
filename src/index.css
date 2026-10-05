@@ -5659,3 +5659,185 @@ textarea {
     flex: 1;
   }
 }
+
+/* ── Rèsa: pre-launch partner (2026-10-05) ─────────────────────────────
+   Rose-gold, dashed treatment so a waitlist-only partner never reads the
+   same as a shippable "ayna Favorite" (solid plum). Selectors repeat the
+   modifier class to out-rank the !important badge rules in the v6 sheets. */
+.ayna-browse-card__affiliate.ayna-browse-card__affiliate--prelaunch.ayna-browse-card__affiliate--prelaunch.ayna-browse-card__affiliate--prelaunch {
+  background: #F6E7E3 !important;
+  color: #7A443F !important;
+  border: 1px dashed #B98D89 !important;
+}
+
+.pdp-head__badge.pdp-head__badge--prelaunch {
+  background: #F6E7E3;
+  color: #7A443F;
+  border: 1px dashed #B98D89;
+}
+
+.brand-partner--prelaunch {
+  background: linear-gradient(160deg, #FBF4F1, #F7F4EE);
+  border: 1px dashed #B98D89;
+}
+
+.brand-partner--prelaunch .brand-partner__logo {
+  background: #fff;
+}
+
+.brand-partner__prelaunch-tag {
+  display: inline-block;
+  margin-left: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #F6E7E3;
+  border: 1px dashed #B98D89;
+  color: #7A443F;
+  font: 600 11px/1.3 'DM Sans', sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.brand-partner__waitlist-note {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #7A443F;
+  max-width: 560px;
+  margin: 10px 0 0;
+}
+
+.brand-partner__waitlist-cta,
+.resa-modal__cta {
+  display: inline-block;
+  margin: 14px 16px 0 0;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #7A443F;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.brand-partner__waitlist-cta:hover,
+.resa-modal__cta:hover {
+  background: #5f332f;
+  color: #fff;
+}
+
+.eco2-sync-chip--resa {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px dashed #B98D89;
+  border-radius: var(--radius-pill);
+  background: #F6E7E3;
+  color: #7A443F;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.eco2-sync-chip--resa:hover,
+.eco2-sync-chip--resa:focus-visible {
+  background: #EFD6D0;
+}
+
+.eco2-sync-chip__soon {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.resa-modal {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 2rem;
+  max-width: 520px;
+  width: 100%;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  position: relative;
+  color: var(--color-text-main);
+}
+
+.resa-modal__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+  line-height: 1;
+  padding: 0.25rem;
+}
+
+.resa-modal__tag {
+  display: inline-block;
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: #F6E7E3;
+  border: 1px dashed #B98D89;
+  color: #7A443F;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.resa-modal__logo {
+  display: block;
+  height: 34px;
+  width: auto;
+  margin: 1.1rem 0 0.4rem;
+}
+
+.resa-modal__title {
+  font-size: 1.5rem;
+  margin: 0 0 0.6rem;
+}
+
+.resa-modal__lede,
+.resa-modal__body {
+  font-size: 0.93rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin: 0 0 0.75rem;
+}
+
+.resa-modal__features {
+  margin: 0 0 0.9rem;
+  padding-left: 1.1rem;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.resa-modal__note {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #7A443F;
+  background: #FBF4F1;
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  margin: 0;
+}
+
+.resa-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.resa-modal__secondary {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  color: #7A443F;
+}
+
+html[data-v6-site-theme='dark'] .resa-modal__logo {
+  filter: invert(1);
+}

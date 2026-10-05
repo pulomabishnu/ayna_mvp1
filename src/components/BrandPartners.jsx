@@ -3,6 +3,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
+import { RESA_BLURB, RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_NOTE, RESA_WAITLIST_URL } from '../data/resaPartnership';
 
 /**
  * Brands — the partnership page.
@@ -59,9 +60,28 @@ import { ProductImageFallback } from './ProductTileImage';
  * three, so `url` goes to the official brand site; same no-logo-yet
  * situation as most brands above — falls back to the text wordmark until
  * a file lands at the paths below.
+ *
+ * Added 2026-10-05: Rèsa — confirmed brand partnership, PRE-LAUNCH. Rèsa
+ * hasn't shipped; users can only join the waitlist with a $9.90 early
+ * deposit, and ayna earns no commission on it (the partnership is
+ * groundwork for the future wearable dashboard). `prelaunch: true` gives the
+ * card a distinct waitlist highlight and a "Join the waitlist" CTA pointing
+ * at `waitlistUrl`, the UTM-tagged link Rèsa supplied so referrals are
+ * trackable. Shared copy lives in src/data/resaPartnership.js. Logo saved
+ * from resa-labs.com at public/brands/resa.png.
  */
 
 const PARTNERS = [
+  {
+    brand: 'Rèsa',
+    logo: '/brands/resa.png',
+    url: RESA_SITE_URL,
+    prelaunch: true,
+    waitlistUrl: RESA_WAITLIST_URL,
+    waitlistCta: RESA_WAITLIST_CTA,
+    blurb: RESA_BLURB,
+    waitlistNote: RESA_WAITLIST_NOTE,
+  },
   {
     brand: 'Neycher',
     /** Drop a file at public/brands/neycher.png and it replaces the wordmark. */
@@ -201,12 +221,26 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
         {PARTNERS.map((partner) => {
           const products = ALL_PRODUCTS.filter((p) => p.brand === partner.brand);
           return (
-            <article key={partner.brand} className="brand-partner">
+            <article key={partner.brand} className={`brand-partner${partner.prelaunch ? ' brand-partner--prelaunch' : ''}`}>
               <header className="brand-partner__head">
                 <BrandMark partner={partner} />
                 <div>
-                  <div className="brand-partner__name">{partner.brand}</div>
+                  <div className="brand-partner__name">
+                    {partner.brand}
+                    {partner.prelaunch && <span className="brand-partner__prelaunch-tag">Pre-launch · Waitlist</span>}
+                  </div>
                   <p className="brand-partner__blurb">{partner.blurb}</p>
+                  {partner.waitlistNote && <p className="brand-partner__waitlist-note">{partner.waitlistNote}</p>}
+                  {partner.waitlistUrl && (
+                    <a
+                      className="brand-partner__waitlist-cta"
+                      href={partner.waitlistUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {partner.waitlistCta || 'Join the waitlist'} →
+                    </a>
+                  )}
                   <a
                     className="brand-partner__link"
                     href={`/discovery?q=${encodeURIComponent(partner.brand)}`}

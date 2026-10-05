@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
+import ResaPartnershipModal from './ResaPartnershipModal';
 import {
     ALL_PRODUCTS,
     getEcosystemAlternatives,
@@ -945,6 +946,7 @@ export default function MyEcosystem({
     const [showMoreTools, setShowMoreTools] = useState(false);
     const careNearYouDetailsRef = useRef(null);
     const [showSyncPaywall, setShowSyncPaywall] = useState(false);
+    const [showResaPartnership, setShowResaPartnership] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [ecosystemCompareOpen, setEcosystemCompareOpen] = useState({});
     const [ecosystemAltMiniKey, setEcosystemAltMiniKey] = useState('');
@@ -1977,6 +1979,20 @@ export default function MyEcosystem({
                                                 {isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· coming soon</span>}
                                             </button>
                                         ))}
+                                        {/* Rèsa: pre-launch partner, not syncable yet. Opens the
+                                            partnership explainer for everyone, Premium or not. */}
+                                        <button
+                                            type="button"
+                                            className="eco2-sync-chip--resa"
+                                            onClick={() => {
+                                                posthog.capture('resa_sync_chip_clicked');
+                                                setShowResaPartnership(true);
+                                            }}
+                                            title="Rèsa, an ayna partner. Coming soon. Read about the partnership"
+                                        >
+                                            <span>Rèsa</span>
+                                            <span className="eco2-sync-chip__soon">· Partner · coming soon</span>
+                                        </button>
                                     </div>
                                     <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem', opacity: 0.6, cursor: 'default' }} disabled>
                                         Coming soon
@@ -2117,6 +2133,9 @@ export default function MyEcosystem({
                 onClose={() => setShowSyncPaywall(false)}
                 featureName="wearable and health app syncing"
             />
+        )}
+        {showResaPartnership && (
+            <ResaPartnershipModal onClose={() => setShowResaPartnership(false)} />
         )}
         </>
     );
