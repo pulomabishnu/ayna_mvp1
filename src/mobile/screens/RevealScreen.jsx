@@ -6,12 +6,14 @@ export default function RevealScreen({
   readCount = 0,
   goalCount = 0,
   onContinue,
+  onBack,
 }) {
   const [orbit1, orbit2, orbit3] = topAreas;
   const caption = `${productCount} products · ${readCount} reads · ${goalCount} goal${goalCount === 1 ? '' : 's'} you named`;
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', background: 'linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%)', color: '#FFF9F2', position: 'relative', fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out' }}>
+      <button type="button" onClick={onBack} style={{ position: 'relative', zIndex: 1, margin: 'max(20px, env(safe-area-inset-top)) 24px 0', border: '1px solid rgba(255,255,255,.35)', borderRadius: 99, padding: '10px 15px', background: 'rgba(255,255,255,.08)', color: '#fff', fontSize: 14 }}>← Back</button>
       <div
         style={{
           position: 'absolute',

@@ -192,3 +192,28 @@
 .ayna-mobile .ayna-bottom-nav button.is-active { color: var(--ayna-heading); }
 .ayna-mobile .ayna-bottom-nav svg { width: 22px; height: 22px; }
 .ayna-mobile .ayna-bottom-nav button.is-active svg { stroke-width: 2.25; }
+.ayna-profile-auth-backdrop {
+  position: fixed;
+  inset: 0 0 64px;
+  z-index: 39;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(21, 22, 43, .58);
+}
+.ayna-profile-auth-sheet {
+  position: relative;
+  width: 100%;
+  padding: 30px 24px max(28px, env(safe-area-inset-bottom));
+  border-radius: 26px 26px 0 0;
+  background: #fffaf3;
+  color: #242a52;
+  box-shadow: 0 -12px 40px rgba(20, 20, 40, .2);
+  font-family: 'DM Sans', sans-serif;
+}
+.ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #242a52; font-size: 28px; cursor: pointer; }
+.ayna-profile-auth-eyebrow { color: #9a5c36; font-size: 11px; font-weight: 700; letter-spacing: .16em; }
+.ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 29px/1.15 'Playfair Display', serif; }
+.ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
+.ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 15px 'DM Sans', sans-serif; cursor: pointer; }
+.ayna-profile-auth-primary { border: 0; background: #ffc774; color: #231a12; }
+.ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #242a52; background: transparent; color: #242a52; }

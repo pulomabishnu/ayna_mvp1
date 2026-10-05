@@ -149,6 +149,7 @@ function AppleButton({ onClick, disabled }) {
 
 export default function SigninScreen({
   stats = DEFAULT_STATS,
+  initialMode = 'signup',
   authUser,
   onSignUp,
   onSignIn,
@@ -156,8 +157,10 @@ export default function SigninScreen({
   onAppleSignIn,
   onResendConfirmation,
   onAuthenticated,
+  onAuthBack,
+  onStartEcosystem,
 }) {
-  const [mode, setMode] = useState('signup'); // 'signup' | 'signin' | 'check-email'
+  const [mode, setMode] = useState(initialMode); // 'signup' | 'signin' | 'check-email'
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -298,6 +301,9 @@ export default function SigninScreen({
         animation: 'ay-page .25s ease-out',
       }}
     >
+      <button type="button" onClick={onAuthBack} style={{ alignSelf: 'flex-start', border: '1px solid rgba(255,255,255,.35)', background: 'rgba(255,255,255,.08)', color: '#FFFCF9', borderRadius: 99, padding: '10px 15px', marginBottom: 20, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
+        ← Back
+      </button>
       {mode === 'check-email' ? (
         <>
           <div style={{ flex: 1 }} />
@@ -390,7 +396,7 @@ export default function SigninScreen({
           </div>
 
           <div
-            onClick={() => { setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); }}
+            onClick={() => { if (mode === 'signin' && onStartEcosystem) onStartEcosystem(); else setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); }}
             style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'rgba(255,252,249,.72)', marginTop: 16, cursor: 'pointer' }}
           >
             {mode === 'signup' ? 'Already have an account? Sign in' : "New here? Create an account"}

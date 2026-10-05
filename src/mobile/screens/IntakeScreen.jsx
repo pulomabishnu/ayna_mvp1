@@ -804,17 +804,10 @@ function isMinorAge(value) {
   return Number.isFinite(n) && n < MINOR_AGE_LIMIT;
 }
 
-// A direct numeric age, per product request — replaces the earlier
-// month/year birthday picker. Simpler and one tap faster, at the cost of
-// going stale over time (a typed age isn't recomputed later the way a
-// birth year would be), which is an accepted tradeoff here.
+// A native age picker keeps the first intake step easy to complete without
+// opening the keyboard. Age is optional, but under-18 selections remain gated.
 function AgeCard({ value, onChange, underage, onOpenGate }) {
   const hasValue = value !== '' && value !== null && value !== undefined;
-  const step = (delta) => {
-    const current = Number(value) || 0;
-    const next = Math.min(120, Math.max(0, current + delta));
-    onChange(String(next));
-  };
 
   return (
     <div style={{ background: CARD_BG, borderRadius: 24, padding: 20, boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
@@ -828,44 +821,28 @@ function AgeCard({ value, onChange, underage, onOpenGate }) {
         }}
       >
         <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: MUTED }}>Your age</div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, marginTop: 10 }}>
-          <div
-            onClick={() => step(-1)}
-            style={{ width: 38, height: 38, borderRadius: 99, border: '1px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 'calc(18px * var(--ayna-text-scale, 1))', color: NAVY, background: '#fff' }}
-          >
-            −
-          </div>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={0}
-            max={120}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+          <select
+            aria-label="Your age"
             value={value}
-            onChange={(e) => {
-              const digits = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
-              onChange(digits);
-            }}
-            placeholder="··"
+            onChange={(e) => onChange(e.target.value)}
             style={{
-              width: 74,
+              width: 150,
               textAlign: 'center',
               border: 'none',
               outline: 'none',
               background: 'transparent',
               fontFamily: "'Playfair Display',serif",
-              fontSize: 'calc(30px * var(--ayna-text-scale, 1))',
+              fontSize: 'calc(24px * var(--ayna-text-scale, 1))',
               color: underage ? WARNING_BORDER : hasValue ? NAVY : MUTED,
             }}
-          />
-          <div
-            onClick={() => step(1)}
-            style={{ width: 38, height: 38, borderRadius: 99, border: '1px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 'calc(18px * var(--ayna-text-scale, 1))', color: NAVY, background: '#fff' }}
           >
-            +
-          </div>
+            <option value="">Select age</option>
+            {Array.from({ length: 103 }, (_, index) => index + 18).map((age) => <option key={age} value={age}>{age}</option>)}
+          </select>
         </div>
         <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: underage ? WARNING_BODY : BODY_TEXT, marginTop: 8 }}>
-          {hasValue ? (underage ? "That's under our age requirement" : 'Tap the number to type it directly') : 'Type your age, or use the − and +'}
+          {underage ? "That's under our age requirement" : 'Choose your age from the list'}
         </div>
       </div>
 

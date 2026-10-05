@@ -407,6 +407,7 @@ export default function BrowseScreen({
         onGoCommunity={onGoCommunity}
         onToggleTheme={onToggleTheme}
         onOpenProfile={onOpenProfile}
+        onBack={onGoEco}
       />
 
       <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />

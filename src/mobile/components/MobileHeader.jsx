@@ -4,7 +4,7 @@ const HeartIcon = ({ stroke }) => (
   </svg>
 );
 
-export default function MobileHeader({ variant = 'light', onOpenSaved }) {
+export default function MobileHeader({ variant = 'light', onOpenSaved, onBack }) {
   const dark = variant === 'dark';
   return <header style={{
     padding: 'max(20px, env(safe-area-inset-top)) 20px 12px',
@@ -13,7 +13,10 @@ export default function MobileHeader({ variant = 'light', onOpenSaved }) {
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     position: 'relative', zIndex: 5,
   }}>
-    <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', letterSpacing: .5 }}>ayna</span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      {onBack && <button type="button" onClick={onBack} aria-label="Back" style={{ width: 36, height: 36, borderRadius: 99, border: dark ? '1px solid rgba(255,255,255,.28)' : '1px solid var(--ayna-border)', background: dark ? 'rgba(255,249,242,.12)' : 'var(--ayna-surface)', color: dark ? '#FFF9F2' : 'var(--ayna-text)', fontSize: 20, cursor: 'pointer' }}>‹</button>}
+      <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', letterSpacing: .5 }}>ayna</span>
+    </div>
     {onOpenSaved && <button type="button" onClick={onOpenSaved} aria-label="Saved products" style={{ width: 36, height: 36, borderRadius: 99, border: dark ? '1px solid rgba(255,255,255,.28)' : '1px solid var(--ayna-border)', background: dark ? 'rgba(255,249,242,.12)' : 'var(--ayna-surface)', display: 'grid', placeItems: 'center' }}><HeartIcon stroke={dark ? '#FFC774' : '#A2603C'} /></button>}
   </header>;
 }

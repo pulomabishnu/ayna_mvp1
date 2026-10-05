@@ -1,6 +1,6 @@
 import OrbHero from '../components/OrbHero.jsx';
 
-export default function LandingScreen({ onStartQuiz, onBrowse, onGoCommunity }) {
+export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, authUser }) {
   return (
     <div
       style={{
@@ -155,9 +155,9 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onGoCommunity }) 
         >
           Browse everything
         </div>
-        <button type="button" onClick={onGoCommunity} style={{ border: 0, background: 'transparent', color: '#FFF9F2', padding: 8, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
-          Explore community
-        </button>
+        {!authUser && <button type="button" onClick={onAlreadyHaveAccount} style={{ border: 0, background: 'transparent', color: '#FFF9F2', padding: 8, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
+          I already have an account
+        </button>}
       </div>
     </div>
   );

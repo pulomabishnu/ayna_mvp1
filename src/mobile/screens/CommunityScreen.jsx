@@ -235,9 +235,9 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
     <div className="am-actions"><button type="button" onClick={() => togglePost(post, 'helpful')}>{post.kind === 'post' ? '♡' : 'Helpful'} {post.helpful_count || ''}</button><button type="button" onClick={() => openPost(post)}>Reply {post.comment_count || ''}</button><button type="button" onClick={() => togglePost(post, 'save')}>{post.viewer_saved ? 'Saved' : 'Save'}</button>{!post.is_mine && <button type="button" aria-label="Report post" onClick={() => setReportPost(post)}>⋯</button>}</div>
   </article>;
 
-  if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><p className="am-empty">Community is unavailable right now.</p></div>;
+  if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onBack={onGoEco} onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><p className="am-empty">Community is unavailable right now.</p></div>;
   return <div className="am-screen">
-    <MobileHeader activeTab="community" initial={headerInitial} onGoBrowse={onGoBrowse} onGoEco={onGoEco} onGoCommunity={() => {}} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
+    <MobileHeader activeTab="community" initial={headerInitial} onBack={onGoEco} onGoBrowse={onGoBrowse} onGoEco={onGoEco} onGoCommunity={() => {}} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
     <div className="am-scroll">
       <div className="am-top"><div><small>THE AYNA COMMUNITY</small><h1>{page ? (page.type === 'notifications' ? 'Notifications' : page.type === 'playlist' ? 'Playlist' : page.type === 'profile' ? 'Profile' : 'Conversation') : 'Community'}</h1></div><div className="am-top-actions"><button type="button" onClick={openNotifications} aria-label="Notifications">♧</button><button type="button" onClick={() => { closePage(); setCompose('post'); }} aria-label="Create">＋</button></div></div>
       {error && <p className="am-error" role="alert">{error}</p>}{notice && <p className="am-notice" role="status">{notice}</p>}

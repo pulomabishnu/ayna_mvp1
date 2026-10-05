@@ -7,7 +7,7 @@ const DEFAULT_STATUSES = [
   'arranging your pillars',
 ];
 
-export default function BuildingScreen({ onFinish, statuses = DEFAULT_STATUSES, headline = 'Reading your answers' }) {
+export default function BuildingScreen({ onFinish, onBack, statuses = DEFAULT_STATUSES, headline = 'Reading your answers' }) {
   const [statusIndex, setStatusIndex] = useState(0);
 
   useEffect(() => {
@@ -36,6 +36,7 @@ export default function BuildingScreen({ onFinish, statuses = DEFAULT_STATUSES, 
         animation: 'ay-page .25s ease-out',
       }}
     >
+      <button type="button" onClick={onBack} style={{ position: 'absolute', top: 'max(20px, env(safe-area-inset-top))', left: 24, border: '1px solid rgba(255,255,255,.35)', borderRadius: 99, padding: '10px 15px', background: 'rgba(255,255,255,.08)', color: '#fff', fontSize: 14 }}>← Back</button>
       <div style={{ position: 'relative', width: 150, height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 34 }}>
         <div style={{ position: 'absolute', inset: 0, borderRadius: 99, border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 2.6s ease-out infinite' }} />
         <div style={{ position: 'absolute', inset: 0, borderRadius: 99, border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 2.6s ease-out infinite 1.3s' }} />
