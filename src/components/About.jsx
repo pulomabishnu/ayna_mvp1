@@ -16,9 +16,10 @@ const TEAM_PHOTO = '/about/team.jpg';
 
 const FOUNDERS = [
   // linkedin: paste the profile URL to show the "LinkedIn ↗" link.
-  { name: 'Puloma Bishnu', role: 'Co-founder', photo: '/about/puloma.jpg', linkedin: '' },
-  { name: 'Eliz Celik', role: 'Co-founder', photo: '/about/eliz.jpg', linkedin: '' },
-  { name: 'Ameera Omar', role: 'Co-founder', photo: '/about/ameera.jpg', linkedin: '' },
+  // position: which part of the photo stays in frame in the 4:3 crop.
+  { name: 'Puloma Bishnu', role: 'Co-founder', photo: '/about/puloma.jpg', position: '50% 22%', linkedin: '' },
+  { name: 'Eliz Celik', role: 'Co-founder', photo: '/about/eliz.jpg', position: '50% 38%', linkedin: '' },
+  { name: 'Ameera Omar', role: 'Co-founder', photo: '/about/ameera.jpg', position: '50% 50%', linkedin: '' },
 ];
 
 const HELPS = [
@@ -79,12 +80,12 @@ function initials(name) {
 }
 
 /** Image with a dashed placeholder until the file exists. */
-function PhotoSlot({ src, alt, label, className }) {
+function PhotoSlot({ src, alt, label, className, position }) {
   const [failed, setFailed] = React.useState(false);
   if (src && !failed) {
     return (
       <div className={`ab-photo ${className || ''}`}>
-        <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />
+        <img src={src} alt={alt} loading="lazy" style={position ? { objectPosition: position } : undefined} onError={() => setFailed(true)} />
       </div>
     );
   }
@@ -154,7 +155,7 @@ export default function About({ onExplore, onStart }) {
               understand the information behind them and find options that reflect their individual needs.
             </p>
           </div>
-          <PhotoSlot src={TEAM_PHOTO} alt="The ayna founding team" label="Team photo" className="ab-photo--team" />
+          <PhotoSlot src={TEAM_PHOTO} alt="The ayna founding team" label="Team photo" className="ab-photo--team" position="50% 70%" />
         </section>
 
         <section className="ab-mirror">
@@ -189,7 +190,7 @@ export default function About({ onExplore, onStart }) {
           <div className="ab-grid3">
             {FOUNDERS.map((f) => (
               <div key={f.name} className="ab-card ab-founder">
-                <PhotoSlot src={f.photo} alt={f.name} label={`${f.name.split(' ')[0]} portrait`} className="ab-photo--portrait" />
+                <PhotoSlot src={f.photo} alt={f.name} label={`${f.name.split(' ')[0]} portrait`} className="ab-photo--portrait" position={f.position} />
                 <h3 className="ab-h3">{f.name}</h3>
                 <div className="ab-founder__role">{f.role}</div>
                 {f.linkedin && (
