@@ -3125,7 +3125,7 @@ function App() {
           />
         )}
         {currentView === 'about' && (
-          <About onBack={handleBackFromStandalonePage} onViewSources={handleViewArticles} />
+          <About onExplore={() => handleViewDiscovery()} onStart={handleStartQuiz} />
         )}
         {currentView === 'contact' && (
           <Contact onBack={handleBackFromStandalonePage} />
