@@ -26,6 +26,7 @@ async function optionalUser(admin, req) {
   try {
     const { data, error } = await admin.auth.getUser(token);
     if (error) return null;
+    if (data?.user?.is_anonymous) return null; // guest session, not an account
     return data?.user || null;
   } catch {
     return null;
