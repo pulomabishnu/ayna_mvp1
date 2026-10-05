@@ -5399,7 +5399,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [], // pre-launch, direct-to-consumer reservation only
         url: 'https://www.resa-labs.com/',
         affiliateUrl: 'https://shop.resa-labs.com/?utm_source=ayna_partner&utm_medium=referral&utm_campaign=market_test',
-        image: 'https://shop.resa-labs.com/bracelet-jewelry.png',
+        image: '/products/resa/rhythm-bracelet.webp', // supplied by ayna 2026-10-05
         summary: 'Pre-launch: join the waitlist with a $9.90 early deposit. Rèsa is an 18K gold-plated bracelet that doubles as a wellness wearable built for female physiology. It continuously tracks heart-rate variability, resting heart rate, skin temperature, sleep, respiration and activity, combines that with your cycle information, and reads it against your personal baseline to make sense of three rhythms at once: hormonal, circadian and stress. Instead of scores, the Rèsa app gives one plain-language read and one suggestion for the day, then checks in on whether it helped.',
         safety: {
             fdaStatus: 'Consumer wellness wearable, not a medical device; not FDA-cleared, and not intended to diagnose or treat any condition.',
