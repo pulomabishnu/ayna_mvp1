@@ -570,7 +570,10 @@ export default function ProductDetailScreen({
               </svg>
             </div>
             {partnerOpen && (
-              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.6, marginTop: 8 }}>{partnerDisclosure}</div>
+              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.6, marginTop: 8 }}>
+                {partnerDisclosure}
+                <a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer" style={{ display: 'block', color: 'var(--ayna-accent-dark)', fontWeight: 600, marginTop: 6 }}>Read about our brand partnerships →</a>
+              </div>
             )}
           </div>
         )}

@@ -2983,7 +2983,7 @@ function AdvisorAvatar({ advisor }) {
   );
 }
 
-function AboutAynaScreen({ onBack }) {
+export function AboutAynaScreen({ onBack }) {
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <div style={{ background: 'linear-gradient(165deg,#4A3663,#332748 62%,#2C2340)', paddingBottom: 30 }}>

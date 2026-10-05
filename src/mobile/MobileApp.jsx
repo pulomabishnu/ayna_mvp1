@@ -21,7 +21,7 @@ import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import AskAynaChip from './components/AskAynaChip.jsx';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
-import ProfileFlow from './screens/profile/ProfileFlow.jsx';
+import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx';
 
 import LandingScreen from './screens/LandingScreen.jsx';
 import BrowseScreen from './screens/BrowseScreen.jsx';
@@ -425,6 +425,7 @@ export default function MobileApp() {
     onOpenProfile: openProfile,
     onRequireAuth: () => openAuth('signup'),
     onAlreadyHaveAccount: () => openAuth('signin'),
+    onAboutAyna: () => setOverlay({ type: 'about' }),
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
     onAskAyna: () => setAskAynaOpen(true),
     onBack: () => setScreen(['quiz', 'ecointro'].includes(screen) ? (hasEcosystem ? 'eco' : 'landing') : ['building', 'reveal'].includes(screen) ? 'quiz' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing'),
@@ -551,6 +552,7 @@ export default function MobileApp() {
           </section>
         </div>
       )}
+      {overlay?.type === 'about' && <div style={{ position: 'fixed', inset: 0, zIndex: 80, background: 'var(--ayna-surface)', display: 'flex' }}><AboutAynaScreen onBack={() => setOverlay(null)} /></div>}
       {overlay?.type === 'product' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
           <ProductDetailScreen
