@@ -4,6 +4,17 @@ import { PRODUCT_VARIANTS } from '../data/productVariants.js';
 import { getVariantSelection } from './productVariantSelection.js';
 import { existsSync } from 'node:fs';
 describe('exact variant purchase selection', () => {
+  it('shows the five distinct Always sizes and pack counts', () => {
+    const product = ALL_PRODUCTS.find(p => p.id === 'p-always-infinity');
+    expect(product.variants.map(v => v.label)).toEqual([
+      'Size 1 Regular, unscented, 60 count',
+      'Size 2 Super, unscented, 46 count',
+      'Size 3 Extra Heavy, unscented, 28 count',
+      'Size 4 Overnight, unscented, 26 count',
+      'Size 5 Extra Heavy Overnight, unscented, 40 count',
+    ]);
+    expect(getVariantSelection(product, 'target-51693821').buyUrl).toBe('https://www.target.com/p/-/A-51693821');
+  });
   it('switches all four Cora pad boxes and destinations together', () => {
     const product = ALL_PRODUCTS.find(p => p.id === 'p-cora-organic-pads');
     expect(product.variants).toHaveLength(4);

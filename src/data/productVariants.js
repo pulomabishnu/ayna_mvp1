@@ -1,5 +1,17 @@
 // Verified manufacturer/retailer options. Never construct a size link from guessed labels.
 export const PRODUCT_VARIANTS = {
+  "p-always-infinity": {
+    "sourceUrl": "https://www.target.com/p/-/A-94912100",
+    "verifiedAt": "2026-10-04",
+    "familyName": "Always Infinity FlexFoam",
+    "variants": [
+      { "id": "target-94912100", "label": "Size 1 Regular, unscented, 60 count", "url": "https://www.target.com/p/-/A-94912100" },
+      { "id": "target-15055449", "label": "Size 2 Super, unscented, 46 count", "url": "https://www.target.com/p/-/A-15055449" },
+      { "id": "target-51693821", "label": "Size 3 Extra Heavy, unscented, 28 count", "url": "https://www.target.com/p/-/A-51693821" },
+      { "id": "target-76155411", "label": "Size 4 Overnight, unscented, 26 count", "url": "https://www.target.com/p/-/A-76155411" },
+      { "id": "target-94287170", "label": "Size 5 Extra Heavy Overnight, unscented, 40 count", "url": "https://www.target.com/p/-/A-94287170" }
+    ]
+  },
   "p-belly-bandit": {
     "sourceUrl": "https://bellybandit.com/products/upsie-belly",
     "verifiedAt": "2026-09-26",
@@ -1414,29 +1426,25 @@ export const PRODUCT_VARIANTS = {
         "id": "target-76155164",
         "label": "Regular — 32 count",
         "url": "https://www.target.com/p/-/A-76155164",
-        "image": "/products/packaging/cora-76155164.jpg",
-        "amazonAsin": "B07XR7DVL4"
+        "image": "/products/packaging/cora-76155164.jpg"
       },
       {
         "id": "target-90569336",
         "label": "Super — 30 count",
         "url": "https://www.target.com/p/-/A-90569336",
-        "image": "/products/packaging/cora-90569336.jpg",
-        "amazonAsin": "B08288RTFX"
+        "image": "/products/packaging/cora-90569336.jpg"
       },
       {
         "id": "target-76155166",
         "label": "Overnight — 28 count",
         "url": "https://www.target.com/p/-/A-76155166",
-        "image": "/products/packaging/cora-76155166.jpg",
-        "amazonAsin": "B07XL578S2"
+        "image": "/products/packaging/cora-76155166.jpg"
       },
       {
         "id": "target-93261793",
         "label": "Extra Heavy Overnight — 20 count",
         "url": "https://www.target.com/p/-/A-93261793",
-        "image": "/products/packaging/cora-93261793.jpg",
-        "amazonAsin": "B0DH6S25DP"
+        "image": "/products/packaging/cora-93261793.jpg"
       }
     ]
   },
@@ -1451,29 +1459,25 @@ export const PRODUCT_VARIANTS = {
         "id": "target-76155164",
         "label": "Regular — 32 count",
         "url": "https://www.target.com/p/-/A-76155164",
-        "image": "/products/packaging/cora-76155164.jpg",
-        "amazonAsin": "B07XR7DVL4"
+        "image": "/products/packaging/cora-76155164.jpg"
       },
       {
         "id": "target-90569336",
         "label": "Super — 30 count",
         "url": "https://www.target.com/p/-/A-90569336",
-        "image": "/products/packaging/cora-90569336.jpg",
-        "amazonAsin": "B08288RTFX"
+        "image": "/products/packaging/cora-90569336.jpg"
       },
       {
         "id": "target-76155166",
         "label": "Overnight — 28 count",
         "url": "https://www.target.com/p/-/A-76155166",
-        "image": "/products/packaging/cora-76155166.jpg",
-        "amazonAsin": "B07XL578S2"
+        "image": "/products/packaging/cora-76155166.jpg"
       },
       {
         "id": "target-93261793",
         "label": "Extra Heavy Overnight — 20 count",
         "url": "https://www.target.com/p/-/A-93261793",
-        "image": "/products/packaging/cora-93261793.jpg",
-        "amazonAsin": "B0DH6S25DP"
+        "image": "/products/packaging/cora-93261793.jpg"
       }
     ]
   },

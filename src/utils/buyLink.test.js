@@ -16,6 +16,7 @@ describe('Buy Now destinations', () => {
     for (const product of onAmazon) {
       const options = [null, ...(product.variants || [])];
       for (const variant of options) {
+        if (variant && ['p-cora-organic-pads', 'p-cora-overnight'].includes(product.id)) continue;
         const url = resolveBuyUrl(product, variant);
         expect(url, product.id).toMatch(/^https:\/\/www\.amazon\.com\/dp\/[A-Z0-9]{10}\?tag=aynahealth-20$/);
       }
@@ -121,13 +122,15 @@ describe('Buy Now destinations', () => {
     expect(resolveBuyUrl(disc, small)).toBe('https://www.amazon.com/dp/B0B13XG62P?tag=aynahealth-20');
   });
 
-  it('sends each Cora pad/tampon absorbency to its own Amazon listing', () => {
+  it('uses exact retailer pages for Cora pad packs with unverified Amazon IDs', () => {
     const pads = byId['p-cora-organic-pads'];
     const byLabel = Object.fromEntries(pads.variants.map((v) => [v.label, v]));
-    expect(resolveBuyUrl(pads, byLabel['Regular — 32 count'])).toBe('https://www.amazon.com/dp/B07XR7DVL4?tag=aynahealth-20');
-    expect(resolveBuyUrl(pads, byLabel['Super — 30 count'])).toBe('https://www.amazon.com/dp/B08288RTFX?tag=aynahealth-20');
-    expect(resolveBuyUrl(pads, byLabel['Overnight — 28 count'])).toBe('https://www.amazon.com/dp/B07XL578S2?tag=aynahealth-20');
-    expect(resolveBuyUrl(pads, byLabel['Extra Heavy Overnight — 20 count'])).toBe('https://www.amazon.com/dp/B0DH6S25DP?tag=aynahealth-20');
+    expect(resolveBuyUrl(pads, byLabel['Regular — 32 count'])).toBe('https://www.target.com/p/-/A-76155164');
+    expect(resolveBuyUrl(pads, byLabel['Super — 30 count'])).toBe('https://www.target.com/p/-/A-90569336');
+    expect(resolveBuyUrl(pads, byLabel['Overnight — 28 count'])).toBe('https://www.target.com/p/-/A-76155166');
+    expect(resolveBuyUrl(pads, byLabel['Extra Heavy Overnight — 20 count'])).toBe('https://www.target.com/p/-/A-93261793');
+    const overnight = byId['p-cora-overnight'];
+    expect(resolveBuyUrl(overnight, overnight.variants[2])).toBe('https://www.target.com/p/-/A-76155166');
 
     const tampons = byId['p-cora-organic-tampons'];
     const tByLabel = Object.fromEntries(tampons.variants.map((v) => [v.label, v]));

@@ -1,5 +1,5 @@
+import PilotBuyButton from './PilotBuyButton';
 import { getVariantSelection } from '../utils/productVariantSelection';
-import { recordRetailerVisit } from '../utils/feedbackClient';
 import React, { useState, useMemo, useEffect } from 'react';
 import { getAppSessionId } from '../utils/conversationId';
 import ProductEvidenceRail from './ProductEvidenceRail';
@@ -12,7 +12,7 @@ import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
-import { resolveBuyUrl, isAmazonUrl, buyGoesToAmazonListing } from '../utils/buyLink';
+import { resolveBuyUrl, isAmazonUrl } from '../utils/buyLink';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 import { getSafetyAlertText, buildSummarySentences } from '../utils/productSafetyAlert';
 import posthog from 'posthog-js';
@@ -436,7 +436,11 @@ export default function ProductModal({
     posthog.capture('product_detail_view_changed', { view: next, productId: product?.id });
   };
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [selectedVariantId, setSelectedVariantId] = useState(product.defaultVariantId || '');
+  const [selectedVariantId, setSelectedVariantId] = useState(() => {
+    const fromLink = new URLSearchParams(window.location.search).get('variantId');
+    return product.variants?.some(option => option.id === fromLink) ? fromLink : product.defaultVariantId || '';
+  });
+  const [pilotAvailable, setPilotAvailable] = useState(false);
   const choice = getVariantSelection(product, selectedVariantId);
   const displayName = choice.displayName;
 
@@ -466,7 +470,7 @@ export default function ProductModal({
     return () => { active = false; };
   }, [imageIdentity, product?.id, product?.name, product?.brand, product?.image, product?.url, product?.type]);
 
-  const heroImageSrc = choice.hasVariants ? choice.image : (resolvedModalImage?.identity === imageIdentity ? resolvedModalImage.url : '') || product?.image || '';
+  const heroImageSrc = (choice.hasVariants ? choice.image : '') || (resolvedModalImage?.identity === imageIdentity ? resolvedModalImage.url : '') || product?.image || '';
 
   const matchLabels = useMemo(
     () => getProfileMatchLabelsForProduct(product, quizResults, healthProfile),
@@ -492,7 +496,7 @@ export default function ProductModal({
   const matchPercent = profileMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
   const buyUrl = resolveBuyUrl(product, choice.variant);
-  const sizeChosenOnAmazon = choice.hasVariants && buyGoesToAmazonListing(product, choice.variant);
+  const aynaPhysical = product.type === 'physical' && !product.requiresPrescription && product.category !== 'telehealth';
   const isAmazonBuyLink = useMemo(() => isAmazonUrl(buyUrl), [buyUrl]);
 
   const aynaData = useMemo(
@@ -766,17 +770,17 @@ export default function ProductModal({
           <option value="">Choose a size / option</option>
           {product.variants.map(variant => <option key={variant.id} value={variant.id}>{variant.label}</option>)}
         </select>
-        <small style={{ display: 'block', marginTop: '0.35rem' }}>{sizeChosenOnAmazon ? 'Buy Now opens this product on Amazon — pick the same size there. Confirm current price and availability with the retailer.' : 'Buy Now opens this exact option. Confirm current price and availability with the retailer.'}</small>
+        <small style={{ display: 'block', marginTop: '0.35rem' }}>Choose a size before checking out with Ayna.</small>
       </label>}
       <div className="pdp-actions__primary">
-        {buyUrl ? (
+        {aynaPhysical && <PilotBuyButton productId={product.id} variantId={choice.hasVariants ? selectedVariantId : ''} needsVariant={choice.hasVariants} onAvailabilityChange={setPilotAvailable} />}
+        {!aynaPhysical && (buyUrl ? (
           <a
             className="pdp-btn pdp-btn--navy pdp-btn--buy"
             href={buyUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => {
-              recordRetailerVisit(product, choice.variant);
               posthog.capture('product_buy_now_clicked', {
               productId: product.id,
               category: product.category,
@@ -786,13 +790,13 @@ export default function ProductModal({
             });
             }}
           >
-            Buy Now
+            {product.type === 'physical' ? 'View retailer' : 'Buy Now'}
           </a>
         ) : (
           <button type="button" className="pdp-btn pdp-btn--navy pdp-btn--buy" disabled>
-            Buy Now
+            {product.type === 'physical' ? 'Retailer link unavailable' : 'Buy Now'}
           </button>
-        )}
+        ))}
         {onToggleSaved && (
           <button
             type="button"
@@ -856,7 +860,7 @@ export default function ProductModal({
           </span>
         </p>
       )}
-      {isAmazonBuyLink && !isPartnerBrandItem(product) && (
+      {!aynaPhysical && isAmazonBuyLink && !isPartnerBrandItem(product) && (
         <p className="pdp-partner-disclosure pdp-amazon-disclosure">
           <span className="pdp-partner-note">
             ayna receives a commission on purchases. We have no direct partnership with this brand.
@@ -1049,8 +1053,8 @@ export default function ProductModal({
               <h2 className="pdp-head__name">{displayName}</h2>
 
               <div className="pdp-head__pricerow">
-                {(product.price || product.stage) && (
-                  <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
+                {(product.price || product.stage) && !pilotAvailable && (
+                  <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{aynaPhysical ? 'Price being confirmed' : choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
                 )}
                 {matchPercent != null ? (
                   <span className="pdp-head__match pdp-head__match--gauge">
@@ -1412,8 +1416,8 @@ export default function ProductModal({
             <div className="pdp-evidence-head__info">
               <div className="pdp-head__eyebrow">{eyebrow}</div>
               <h2 className="pdp-head__name" style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)' }}>{displayName}</h2>
-              {(product.price || product.stage) && (
-                <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
+              {(product.price || product.stage) && !pilotAvailable && (
+                <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{aynaPhysical ? 'Price being confirmed' : choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
               )}
               {summarySentences[0] && (
                 <p className="pdp-evidence-head__desc">{summarySentences[0]}</p>

@@ -129,6 +129,9 @@ function standardBuyUrl(product, variant) {
   //    known, otherwise the product's listing (sizes are chosen on Amazon).
   const variantAmazon = amazonAffiliateUrlForAsin(variant?.amazonAsin);
   if (variantAmazon) return variantAmazon;
+  // Keep the selected pack when its Amazon ASIN is unverified. A generic
+  // product Amazon listing may point to a different size or count.
+  if (['p-cora-organic-pads', 'p-cora-overnight'].includes(product?.id) && isExactBuyUrl(variant?.url)) return String(variant.url).trim();
   const amazon = getAmazonAffiliateUrlForProduct(product);
   if (amazon) return amazon;
   if (isExactBuyUrl(product?.affiliateUrl) && isAmazonUrl(product.affiliateUrl)) {
