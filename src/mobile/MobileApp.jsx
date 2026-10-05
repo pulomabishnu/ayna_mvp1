@@ -35,6 +35,7 @@ import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
+import CommunityScreen from './screens/CommunityScreen.jsx';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -59,6 +60,7 @@ const SCREENS = {
   signin: SigninScreen,
   eco: EcosystemScreen,
   saved: SavedScreen,
+  community: CommunityScreen,
   checkin: MonthlyCheckinScreen,
 };
 
@@ -161,6 +163,7 @@ export default function MobileApp() {
   // scroll pagination) is exactly as the user left it, not reset to a
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
+  const [communitySeed, setCommunitySeed] = useState(null);
   const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
 
   // Backend-only state used to keep mobile ecosystem writes consistent with
@@ -398,12 +401,14 @@ export default function MobileApp() {
     onStartQuiz: () => { setEditingHealthProfile(false); setScreen('quiz'); },
     onOpenMonthlyCheckin: () => setScreen('checkin'),
     onBrowse: () => setScreen('browse'),
+    onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
     onOpenSaved: () => setScreen('saved'),
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
     onGoLanding: () => setScreen('landing'),
     onOpenProduct: (p) => setOverlay({ type: 'product', item: p }),
     onOpenArticle: (a) => setOverlay({ type: 'article', item: a }),
     onOpenProfile: () => setOverlay({ type: 'profile' }),
+    onRequireAuth: () => { setOverlay(null); setScreen('signin'); },
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
     onAskAyna: () => setAskAynaOpen(true),
     onBack: () => setScreen('browse'),
@@ -469,7 +474,12 @@ export default function MobileApp() {
   return (
     <div className="ayna-mobile" data-theme={resolvedTheme} style={{ '--ayna-text-scale': textScale }}>
       <Screen
+        key={screen === 'community' ? communitySeed?.token || 'community' : screen}
         {...nav}
+        seedKind={communitySeed?.kind}
+        seedProductId={communitySeed?.productId}
+        onGoBrowse={() => setScreen('browse')}
+        onGoEco={() => setScreen(hasEcosystem ? 'eco' : 'ecointro')}
         theme={theme}
         onToggleTheme={setThemeMode}
         personalized={personalized}
@@ -506,6 +516,11 @@ export default function MobileApp() {
             onToggleSaved={() => toggleSaved(overlay.item)}
             isInEcosystem={myProducts.some((p) => p.id === overlay.item?.id)}
             onAddToEcosystem={() => handleAddToEcosystem(overlay.item)}
+            onCommunityAction={(kind) => {
+              setCommunitySeed({ kind, productId: overlay.item?.id, token: Date.now() });
+              setOverlay(null);
+              setScreen('community');
+            }}
             quizAnswers={effectiveQuizAnswers}
             ecosystemProducts={myProducts}
             theme={theme}

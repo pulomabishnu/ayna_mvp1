@@ -100,9 +100,9 @@ function apiDevProxy(routes, env) {
 }
 
 // https://vite.dev/config/
-export default defineConfig(async ({ mode }) => {
+export default defineConfig(async ({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const port = await pickAllowedPort()
+  const port = command === 'serve' ? await pickAllowedPort() : 5173
   return {
     base: '/',
     plugins: [react(), apiDevProxy(LOCAL_API_ROUTES, env)],

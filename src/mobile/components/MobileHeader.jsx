@@ -34,6 +34,7 @@ export default function MobileHeader({
   activeTab = 'browse',
   onGoBrowse,
   onGoEco,
+  onGoCommunity,
   onOpenSaved,
   onGoLanding,
   onOpenProfile,
@@ -122,6 +123,7 @@ export default function MobileHeader({
         }}
       >
         <Tab label="Browse" active={activeTab === 'browse'} dark={dark} onClick={onGoBrowse} />
+        <Tab label="Community" active={activeTab === 'community'} dark={dark} onClick={onGoCommunity} />
         <Tab label="My Ecosystem" active={activeTab === 'eco'} dark={dark} onClick={onGoEco} />
       </div>
     </div>

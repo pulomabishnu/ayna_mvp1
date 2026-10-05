@@ -253,6 +253,7 @@ export default function BrowseScreen({
   onOpenArticle,
   onOpenSaved,
   onGoEco,
+  onGoCommunity,
   onStartQuiz,
   hasEcosystem = false,
   quizAnswers = null,
@@ -403,6 +404,7 @@ export default function BrowseScreen({
         initial={headerInitial}
         onOpenSaved={onOpenSaved}
         onGoEco={onGoEco}
+        onGoCommunity={onGoCommunity}
         onToggleTheme={onToggleTheme}
         onOpenProfile={onOpenProfile}
       />

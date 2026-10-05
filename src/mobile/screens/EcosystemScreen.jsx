@@ -23,6 +23,7 @@ export default function EcosystemScreen({
   onOpenArticle,
   onOpenSaved,
   onBrowse,
+  onGoCommunity,
   onRetake,
   onOpenMonthlyCheckin,
   onOpenProfile,
@@ -38,7 +39,7 @@ export default function EcosystemScreen({
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
-      <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onOpenProfile={onOpenProfile} />
+      <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
 
       <div style={{ padding: '18px 20px 0' }}>
         <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.3 }}>

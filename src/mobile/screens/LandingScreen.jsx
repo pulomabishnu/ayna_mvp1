@@ -1,6 +1,6 @@
 import OrbHero from '../components/OrbHero.jsx';
 
-export default function LandingScreen({ onStartQuiz, onBrowse }) {
+export default function LandingScreen({ onStartQuiz, onBrowse, onGoCommunity }) {
   return (
     <div
       style={{
@@ -155,6 +155,9 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
         >
           Browse everything
         </div>
+        <button type="button" onClick={onGoCommunity} style={{ border: 0, background: 'transparent', color: '#FFF9F2', padding: 8, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
+          Explore community
+        </button>
       </div>
     </div>
   );
