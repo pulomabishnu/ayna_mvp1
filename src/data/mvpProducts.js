@@ -69,7 +69,7 @@ export const MVP_PHYSICAL = [
     id: 'p-cystex',
     name: 'Cystex Urinary Pain Relief',
     brand: 'Cystex',
-    category: 'supplement',
+    category: 'medication',
     type: 'physical',
     internal: false,
     healthFunctions: ['uti-prevention'],
@@ -338,13 +338,11 @@ export const MVP_PHYSICAL = [
   // ─── PELVIC FLOOR ────────────────────────────────────────
   {
     id: 'p-intimina-kegel',
-    name: 'Intimina Kegel Exerciser (Luna Beads)',
+    name: 'Intimina Laselle Kegel Exercisers',
     brand: 'Intimina',
-    // Category is 'pelvic-floor-trainer' despite the product's own retail
-    // name saying "Exerciser" — per Ayna's taxonomy these are weighted Kegel
-    // balls, a self-training biofeedback-adjacent tool, not an FDA-cleared
-    // device that contracts the pelvic floor for you (see CATEGORY_LABELS).
-    category: 'pelvic-floor-trainer',
+    // Intimina sells these as the "Laselle Exerciser" (intimina.com/laselle),
+    // so the category matches the brand's own name (changed 2026-10-02).
+    category: 'pelvic-floor-exerciser',
     type: 'physical',
     internal: true,
     healthFunctions: ['vaginal-health'],
@@ -566,12 +564,12 @@ export const MVP_DIGITAL = [
     whereToBuy: ['forhers.com'],
     platform: 'Web, iOS, Android',
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/dd/b6/45/ddb645c3-4a99-9bcc-8603-9d47b9d4d912/HersIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg',
-    summary: 'Ro\'s brand for women. Telehealth for anxiety, depression, and skin. Prescriptions and products delivered with ongoing support.',
+    summary: 'The women\'s brand of Hims & Hers Health, Inc. Online visits with licensed providers and prescription or over-the-counter treatments delivered, for concerns including sexual health, skin care, and mental health.',
     safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Hers is a telehealth service rather than a medication. Risks and side effects depend on the specific medication or treatment prescribed and should be reviewed with the prescribing clinician.' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for Rx', keyPolicy: 'Telehealth and prescription service' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-    doctorOpinion: 'Telehealth improves access to mental health and dermatology. Same clinical standards as in-person care.',
+    doctorOpinion: 'A telehealth service: licensed providers can prescribe after an online visit. Whether it suits you depends on the condition; some concerns need an in-person exam.',
     communityReview: 'Community discussions on Reddit note convenience and discrete access to medication.',
     effectiveness: 'Licensed clinicians; prescriptions same as in-person.',
     badges: ['Telehealth', 'Mental Health'],

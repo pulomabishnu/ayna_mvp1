@@ -3,7 +3,7 @@ import { availablePreferenceOptions, matchesProductPreference } from '../utils/p
 import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
-import { getWeeklyTrendingLineup, isBeautyProduct, orderByWeeklyTrending, takeDistinctCategories } from '../utils/trendingLineup';
+import { getWeeklyTrendingLineup, isBeautyProduct, orderByWeeklyTrending, takeDistinctCategories, trendingAreaLabel } from '../utils/trendingLineup';
 import { isPartnerBrandItem, isPrelaunchPartnerItem, getPartnerBadgeLabel } from '../utils/partnerBrands';
 
 /**
@@ -429,9 +429,11 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
       });
     }
 
-    // One product per category — unless the shopper picked a single product
-    // type, where every result is the same category by definition.
-    return productTypeFilter === 'all' ? takeDistinctCategories(list, 8) : list.slice(0, 8);
+    // Unfiltered: one product per care area, so no area (e.g. Period) crowds
+    // the grid. With a care-area chip on: one per category within it. With a
+    // single product type picked, every result is that category by definition.
+    if (productTypeFilter !== 'all') return list.slice(0, 8);
+    return filter === 'all' ? takeDistinctCategories(list, 8, trendingAreaLabel) : takeDistinctCategories(list, 8);
   }, [weeklyLineup, filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas, healthIntake]);
 
   const clearShopFilters = () => {

@@ -154,7 +154,7 @@ export const CATALOG_CORRECTIONS = {
     "image": "https://gennev.com/wp-content/uploads/2025/05/asset-content-home-hero-face.jpg",
     "price": "$199/consult",
     "url": "https://gennev.com/",
-    "category": "menopause"
+    "category": "telehealth"
   },
   "p-good-kitty-uti-biome-shield": {
     "name": "Good Kitty UTI Biome Shield",
@@ -183,8 +183,8 @@ export const CATALOG_CORRECTIONS = {
   "p-intimina-kegel": {
     "name": "Intimina Laselle Kegel Exercisers",
     "image": "https://assets.intimina.com/files/static/product-images/2022-04/550x550_Laselle_EN.jpg?VersionId=_8_GLEGmnwIH1maYhAsvLEeLm4Usw1Em",
-    "price": "$25",
-    "category": "pelvic-floor-trainer",
+    "price": "$37.95 (Intimina list price)",
+    "category": "pelvic-floor-exerciser",
     "url": "https://www.intimina.com/laselle"
   },
   "p-intimina-lily": {
@@ -391,7 +391,7 @@ export const CATALOG_CORRECTIONS = {
     "name": "Willow Wearable Breast Pump",
     "image": "https://m.media-amazon.com/images/I/61iiLEkgAtL._AC_UL1500_.jpg",
     "price": "$499",
-    "category": "pregnancy"
+    "category": "postpartum"
   },
   "p-wuka-underwear": {
     "name": "Wuka Period Underwear",

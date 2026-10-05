@@ -61,7 +61,7 @@ export const CATEGORIES = [
   // trainer/exerciser distinction spelled out in buildDiscoveryPrompt below
   // and the isGenericName() backstop.
   { category: 'pelvic-floor-trainer', label: 'pelvic floor trainers (biofeedback-only Kegel devices)' },
-  { category: 'pelvic-floor-exerciser', label: 'pelvic floor exercisers (FDA-cleared Class II stimulation devices)' },
+  { category: 'pelvic-floor-exerciser', label: 'pelvic floor exercisers (weighted Kegel balls/cones, or FDA-cleared Class II stimulation devices)' },
   { category: 'postpartum', label: 'postpartum recovery products' },
   { category: 'pregnancy', label: 'pregnancy support products' },
   { category: 'menopause', label: 'menopause and perimenopause products' },
@@ -220,7 +220,7 @@ QUALITY BAR — only include a product if it plausibly has: majority positive re
 NAME — "name" must be the specific product line or SKU a shopper would see on the package or product page (e.g. "Lily Cup Compact", "Kegel8 Ultra 20"), never a generic category description like "Pelvic Floor Trainer" or "Menstrual Cup" — that belongs in "category", not "name". If you can't name the specific product, don't include it.
 ${
   category === 'pelvic-floor-trainer' || category === 'pelvic-floor-exerciser'
-    ? `\nPELVIC FLOOR DEVICES — use "pelvic-floor-trainer" ONLY for biofeedback/self-training devices not FDA-cleared to activate anything themselves (e.g. Elvie, Perifit, weighted Kegel balls/cones — the user does the contracting). Use "pelvic-floor-exerciser" ONLY for FDA-cleared Class II devices that electrically stimulate and contract the pelvic floor FOR the user (e.g. Emsella, INNOVO, Yarlap, Elitone — never Elitone URGE, which calms an overactive bladder rather than exercising the pelvic floor). Never call a stimulation device a "trainer," and never call a biofeedback-only device an "exerciser." This run is scoped to "${category}" — only suggest products of that specific kind, not the other one.\n`
+    ? `\nPELVIC FLOOR DEVICES — use "pelvic-floor-trainer" ONLY for biofeedback devices that guide the user's own contractions, usually through an app (e.g. Elvie, Perifit). Use "pelvic-floor-exerciser" for weighted Kegel balls or cones the user exercises with (e.g. Intimina Laselle, which Intimina itself calls an "Exerciser"), and for FDA-cleared Class II devices that electrically stimulate and contract the pelvic floor FOR the user (e.g. Emsella, INNOVO, Yarlap, Elitone — never Elitone URGE, which calms an overactive bladder rather than exercising the pelvic floor). Never call a stimulation device or weighted Kegel balls a "trainer," and never call a biofeedback device an "exerciser." This run is scoped to "${category}" — only suggest products of that specific kind, not the other one.\n`
     : ''
 }
 TASK: Suggest up to ${MAX_CANDIDATES_PER_RUN} real, currently-sold products in this category that are NOT in the exclusion list above. Fewer is fine if you're not confident about more — never pad the list with a guess.

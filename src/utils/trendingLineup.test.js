@@ -5,6 +5,8 @@ import {
   getWeeklyTrendingLineup,
   orderByWeeklyTrending,
   takeDistinctCategories,
+  isVaginalMoisturizer,
+  trendingAreaLabel,
   trendingCategoryLabel,
   trendingWeekIndex,
 } from './trendingLineup.js';
@@ -26,11 +28,11 @@ describe('getWeeklyTrendingLineup', () => {
   // A year of weeks, checked against the real catalog.
   const weeks = Array.from({ length: 52 }, (_, w) => getWeeklyTrendingLineup(ALL_PRODUCTS, day(2026, 10, 1 + w * 7)));
 
-  it('fills every slot, with no repeated product or category within a week', () => {
+  it('fills every slot, with no repeated product or care area within a week', () => {
     for (const lineup of weeks) {
       expect(lineup).toHaveLength(TRENDING_SIZE);
       expect(new Set(ids(lineup)).size).toBe(TRENDING_SIZE);
-      expect(new Set(lineup.map(({ product }) => trendingCategoryLabel(product))).size).toBe(TRENDING_SIZE);
+      expect(new Set(lineup.map(({ product }) => trendingAreaLabel(product))).size).toBe(TRENDING_SIZE);
     }
   });
 
@@ -46,17 +48,36 @@ describe('getWeeklyTrendingLineup', () => {
       .toEqual(ids(getWeeklyTrendingLineup(ALL_PRODUCTS, day(2026, 10, 7))));
   });
 
-  it('shows a category\'s next product when that category comes back around', () => {
+  it('shows an area\'s next product when that area comes back around', () => {
     const seen = new Map();
     let rotated = false;
     for (const lineup of weeks) {
       for (const { product } of lineup) {
-        const label = trendingCategoryLabel(product);
+        const label = trendingAreaLabel(product);
         if (seen.has(label) && seen.get(label) !== product.id) rotated = true;
         seen.set(label, product.id);
       }
     }
     expect(rotated).toBe(true);
+  });
+
+  it('shows exactly one vaginal moisturizer or glide a week, a different one each week', () => {
+    const picks = weeks.map((lineup) => lineup.filter(({ product }) => isVaginalMoisturizer(product)));
+    for (const p of picks) expect(p).toHaveLength(1);
+    for (let w = 1; w < picks.length; w += 1) expect(picks[w][0].product.id).not.toBe(picks[w - 1][0].product.id);
+  });
+
+  it('counts internal moisturizers and glides, not vulva balms or plain lubricants', () => {
+    expect(isVaginalMoisturizer({ name: 'gina Vaginal Moisturizing Glides' })).toBe(true);
+    expect(isVaginalMoisturizer({ name: 'Alubri Vaginal Moisturizing Gel' })).toBe(true);
+    expect(isVaginalMoisturizer({ name: 'REJUVENATE: Vulva Balm' })).toBe(false);
+    expect(isVaginalMoisturizer({ name: 'Uberlube Luxury Lubricant' })).toBe(false);
+  });
+
+  it('shows at most one period product a week', () => {
+    for (const lineup of weeks) {
+      expect(lineup.filter(({ product }) => trendingAreaLabel(product) === 'Period').length).toBeLessThanOrEqual(1);
+    }
   });
 
   it('leaves beauty (skin and hair) products out', () => {

@@ -221,7 +221,7 @@ export const BRAND_PRODUCTS = [
         id: 'p-winx-uti-pain-relief',
         name: 'Winx Health UTI Fast-Acting Pain Relief',
         brand: 'Winx Health',
-        category: 'supplement',
+        category: 'medication',
         type: 'physical',
         internal: false,
         healthFunctions: ['uti-prevention'],
@@ -519,7 +519,7 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Lactic acid',
-                text: 'The same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (3.8 to 4.5).',
+                text: 'The same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (about 3.8 on average in the cited study).',
                 citations: [
                     { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6332693/', label: 'NIH (PMC): Vaginal pH measured in vivo — lactobacilli determine pH and lactic acid concentration' },
                 ],
@@ -1450,7 +1450,7 @@ export const BRAND_PRODUCTS = [
             {
                 url: 'https://pubmed.ncbi.nlm.nih.gov/25408383/',
                 text: 'PubMed: Pelvic floor muscle training for urinary incontinence in women — a Cochrane systematic review',
-                summary: '31 trials, 1,817 women. Found PFMT can cure or improve stress and other types of urinary incontinence — general evidence for the training approach, not this specific program.',
+                summary: '21 trials, 1,281 women. Found PFMT is associated with cure or improvement of stress and other types of urinary incontinence — general evidence for the training approach, not this specific program.',
             },
             {
                 url: 'https://pubmed.ncbi.nlm.nih.gov/26407564/',
@@ -2926,7 +2926,10 @@ export const BRAND_PRODUCTS = [
         isEmergingBrand: true,
     },
 
-    // kieró — verified against us.kieroskincare.com (2026-09-30). Not a brand
+    // kieró — verified against us.kieroskincare.com (2026-09-30). Every
+    // science claim below was re-checked against the cited abstract (NCBI
+    // E-utilities) on 2026-10-02; study size and design are stated wherever
+    // they limit what the finding shows. Not a brand
     // partner and no affiliate link yet, so there's no affiliateUrl; Buy Now
     // falls back to kieró's own product page (see resolveBuyUrl). Listed as
     // sold out on kieró's US site at time of writing.
@@ -2952,13 +2955,13 @@ export const BRAND_PRODUCTS = [
             fdaStatus: 'Cosmetic face cleanser; not an FDA-cleared drug or medical device. kieró states its products are vegan and cruelty-free and use EWG Green-graded ingredients; ayna did not independently verify those claims.',
             materials: 'Water-activated powder (50 g / 1.76 oz). Cleansing comes mainly from mild synthetic surfactants: sodium cocoyl isethionate, sodium methyl cocoyl taurate, and sodium lauroyl glutamate. It also contains potassium laurate, which is a true soap. The enzyme is papain. Supporting ingredients are allantoin, glycerin, beta-glucan, and chia (Salvia hispanica) seed extract. CI 77499 is black iron oxide, a colorant. No added fragrance, essential oils, or sulfates appear in the published ingredient list.',
             recalls: 'No recalls found.',
-            sideEffects: 'Papain is a protein-digesting enzyme and a known allergen: people have become sensitized to it at work and through a papain contact-lens solution. Anyone with a papaya, papain, kiwi, or fig allergy should avoid it or patch test first. Any exfoliant can cause redness or irritation if overused, especially alongside retinoids, retinol, or benzoyl peroxide. Full warnings are listed below.',
+            sideEffects: 'Papain is a protein-digesting enzyme and a documented allergen. Published cases include workers who became allergic by breathing it in and a person who reacted to papain in a contact-lens solution; one case report also links papain allergy to kiwi and fig allergy. Anyone allergic to papaya, papain, kiwi, or fig should avoid it or patch test first. The AAD warns that exfoliating while using retinoids or benzoyl peroxide can worsen dryness. Full warnings are listed below.',
             opinionAlerts: 'Allergy note: contains papain (papaya enzyme), a known allergen. Avoid it if you\'re allergic to papaya, kiwi, or fig, or patch test first. Benefit claims (refined texture, radiance, barrier support) come from kieró, and no independent clinical study of the finished product was found.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'kieró positions this as a gentle daily enzyme cleanser. Papaya enzymes exfoliate, beta-glucan hydrates and soothes, and chia seed supports the skin barrier, and the powder foams up to remove oil and impurities without drying, per the brand\'s own site.\n\nThe cleansing base is a reasonable choice for gentleness. Its main surfactant, sodium cocoyl isethionate, has been shown in lab and human studies to be milder on the skin barrier than soap or sodium lauryl sulfate. That is the basis of "syndet" cleansers dermatologists often recommend for dry or sensitive skin. The formula does also contain potassium laurate, a true soap, so it is not entirely soap-free.\n\nPapain, the papaya enzyme, is an established exfoliant. It breaks down keratin and other skin proteins, which mimics the skin\'s natural shedding. A 2021 review found only a handful of studies on enzyme exfoliation and few clinical trials, though the results that exist are positive. A cleanser also stays on the skin for under a minute, so its exfoliating effect is likely mild. The trade-off is that papain is a recognized allergen. Studies show it can loosen the proteins that hold skin cells together and trigger sensitization through the skin. Anyone with a papaya-family allergy should be cautious.\n\nBeta-glucan has real clinical evidence. In controlled studies, topical beta-glucan improved skin hydration and reduced irritation, including in atopic dermatitis and after laser treatment. Chia seed oil improved hydration and barrier function in a small 8-week study of people with dry, itchy skin. That study used a leave-on 4% oil formula, though, not a rinse-off extract. Allantoin is a well-documented soothing and mildly keratolytic skin-protectant ingredient.\n\nThe American Academy of Dermatology advises people with dry, sensitive, or acne-prone skin to choose gentle exfoliation and to moisturize afterward. It also warns against exfoliating while using retinoids or benzoyl peroxide, or on broken or sunburned skin. No independent clinical study of this specific product was found.',
-        doctorOpinionShort: 'A powder cleanser built on mild syndet surfactants (mainly sodium cocoyl isethionate, shown to be gentler on the skin barrier than soap) with papaya enzyme (papain) for light exfoliation. Beta-glucan, chia seed, and allantoin have real supporting research for hydration and soothing, though a rinse-off cleanser limits how much they do. Papain is a known allergen, so avoid it if you\'re allergic to papaya, kiwi, or fig. No independent clinical study of this specific product was found.',
+        doctorOpinion: 'kieró says the papaya enzymes gently exfoliate, beta-glucan hydrates and soothes, and chia seed reinforces the skin barrier, and that the powder foams up to remove oil and impurities without drying. No independent study of this product was found, so what follows is what the research says about its main ingredients.\n\nThe main cleansing agent, sodium cocoyl isethionate, is the basis of "syndet" (synthetic detergent) cleansers. Reviews describe syndets as gentler on the skin barrier than soap, and lab work explains why: its micelles are too large to slip into the skin\'s outer layer. The formula also contains potassium laurate, which is a true soap, so it isn\'t entirely soap-free.\n\nPapain breaks down keratin and other skin proteins in lab tests, which is how enzyme exfoliants work. The evidence is thin, though. A review found only 11 published studies on enzyme exfoliation, with few clinical trials, and concluded that more robust studies are needed before it can be recommended as safe. The lab test took hours to break down skin proteins, and a cleanser is rinsed off within a minute, so any exfoliation is likely mild. Papain is also a documented allergen, mostly in workers who breathe it in. In human skin cells and in mice, it weakened the skin barrier and caused sensitization through the skin.\n\nThe supporting ingredients have early evidence, all from leave-on products rather than cleansers. For beta-glucan, a 20-patient split-face trial after laser treatment found that a beta-glucan skin-care regimen improved hydration and redness compared with a placebo cream, and an open-label eczema study of 105 patients found less itch and milder flare-ups. For chia seed oil, a 4% chia oil cream improved hydration and barrier function in an 8-week study of just 10 people, with no control group. Allantoin is recognized by the FDA as an over-the-counter skin protectant at 0.5–2%, but kieró doesn\'t list its concentration.\n\nThe American Academy of Dermatology advises gentle exfoliation for dry or sensitive skin, moisturizing afterward, and not exfoliating while using retinoids or benzoyl peroxide or on broken or sunburned skin.',
+        doctorOpinionShort: 'A powder cleanser built on syndet surfactants, which are gentler on the skin barrier than soap, with papaya enzyme (papain) for exfoliation. Evidence for enzyme exfoliation is thin, and the beta-glucan and chia research comes from small studies of leave-on products, not rinse-off cleansers. Papain is a documented allergen, so avoid it if you\'re allergic to papaya, kiwi, or fig. No independent study of this product was found.',
         // Kept out of verificationLinks so it doesn't pool with the
         // Scientific literature tab's citation list.
         doctorOpinionCitations: [
@@ -2992,23 +2995,24 @@ export const BRAND_PRODUCTS = [
             'Keep out of eyes. If you get redness, burning, or an allergic reaction, stop using it and see a doctor.',
         ],
         communityReview: 'kieró\'s US site shows 251 customer reviews, and 233 of them (93%) are five stars. Most reviews are in Spanish and describe skin feeling very clean, soft, and hydrated, for example: "Muy recomendable, te deja la piel suave e hidratada" ("Highly recommend, it leaves your skin soft and hydrated"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
-        effectiveness: 'Cleanses with mild syndet surfactants and gives light enzyme exfoliation from papain. Beta-glucan, chia seed extract, and allantoin each have independent research supporting hydration or soothing, though that research mostly tested leave-on products rather than rinse-off cleansers. No independent clinical study of the finished product was found.',
+        effectiveness: 'Cleanses with mild syndet surfactants. Papain may add light exfoliation, but enzyme exfoliation has few clinical trials and a cleanser is rinsed off quickly. Evidence for beta-glucan and chia comes from small studies of leave-on products. No independent study of the finished product was found.',
         // Per-ingredient science claims, each paired with a credible
         // source (NIH-hosted or PubMed). Rendered on the Scientific
         // literature tab. Matches kieró's key-ingredient claims.
         ingredientScience: [
             {
                 name: 'Papain (papaya enzyme)',
-                text: 'kieró states this gently exfoliates. Papain is a protease: in lab testing it broke down keratin and collagen, which mimics the skin\'s natural shedding. A 2021 review found enzyme exfoliants do work but have been studied in only a handful of papers with few clinical trials. Papain is also a known allergen. It can loosen the proteins that hold skin cells together and has sensitized people through the skin.',
+                text: 'kieró states this gently exfoliates. In a lab study, papain broke down keratin and collagen, and on pig skin it had an exfoliating effect, though breakdown took hours. A review (J Cosmet Dermatol, 2022) found only 11 studies on enzyme exfoliation, few of them clinical trials. It concluded that more robust studies are needed before enzyme exfoliation can be recommended as safe. Papain is also an allergen. In human skin cells and in mice it weakened the skin barrier and caused sensitization through the skin. In people, papain allergy is mostly documented in workers who breathe it in, and one case report links it to kiwi and fig allergy.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/34897928/', label: 'PubMed: An overview of the use of proteolytic enzymes as exfoliating agents' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/35892222/', label: 'PubMed: In vitro effect on the proteolytic activity of papain with proteins of the skin as substrate' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/25705851/', label: 'PubMed: Papain degrades tight junction proteins of human keratinocytes in vitro and sensitizes mice via the skin' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26739411/', label: 'PubMed: Papain-induced occupational asthma with kiwi and fig allergy — case report and review of 13 cases' },
                 ],
             },
             {
                 name: 'Beta-glucan',
-                text: 'kieró states this hydrates and soothes. Topical beta-glucan increased skin hydration and reduced irritation in controlled studies. These include a split-face, double-blind, vehicle-controlled trial after laser treatment and a multicentre study in mild-to-moderate atopic dermatitis.',
+                text: 'kieró states this hydrates and soothes. In a split-face, double-blind trial of 20 patients after laser treatment, a beta-glucan skin-care regimen improved hydration and redness compared with a placebo cream. In an open-label study (no blinding or separate control group) of 105 people with mild-to-moderate eczema, a beta-glucan cream reduced itch and eczema severity on the treated side. Both tested leave-on products, not a rinse-off cleanser.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/33128496/', label: 'PubMed: Skin care regimens containing β-glucan for skin recovery after fractional laser therapy — split-face, double-blinded, vehicle-controlled study' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/26654776/', label: 'PubMed: β-Glucan-based cream in supportive treatment of mild-to-moderate atopic dermatitis' },
@@ -3017,14 +3021,14 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Chia seed (Salvia hispanica) extract',
-                text: 'kieró states this reinforces the skin barrier. In a small 8-week study, a topical 4% chia seed oil formula improved skin hydration and barrier function (lower transepidermal water loss) in people with dry, itchy skin, with no adverse effects. That study tested a leave-on oil, not a rinse-off extract.',
+                text: 'kieró states this reinforces the skin barrier. In an 8-week study of 10 people with dry, itchy skin and no control group, a cream with 4% chia seed oil improved skin hydration and barrier function, with no side effects reported. The study was run by a company that makes skin products, and it tested a leave-on oil, not a rinse-off extract.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/20548903/', label: 'PubMed: Effectiveness of topical chia seed oil on pruritus of end-stage renal disease patients and healthy volunteers' },
                 ],
             },
             {
                 name: 'Sodium cocoyl isethionate',
-                text: 'The main cleansing agent. Lab and human studies show it is milder on the skin barrier than soap or sodium lauryl sulfate. Its micelles are too large to penetrate the skin\'s outer layer as easily, which is why "syndet" cleansers are often recommended for dry or sensitive skin.',
+                text: 'The main cleansing agent. Lab research found its micelles are too large to get into the skin\'s outer layer, which explains why it is milder than soap or sodium lauryl sulfate. A 2022 review concludes that syndet cleansers like this preserve the skin barrier better than soap.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/17598025/', label: 'PubMed: Why is sodium cocoyl isethionate (SCI) mild to the skin barrier?' },
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8954092/', label: 'NIH (PMC): Skin cleansing without or with compromise — soaps and syndets' },
@@ -3032,9 +3036,9 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Allantoin',
-                text: 'A soothing, skin-protectant ingredient with mild keratolytic (dead-skin-loosening) and moisturizing effects, and a common ingredient in moisturizers for dermatitis-prone skin.',
+                text: 'The FDA recognizes allantoin as an over-the-counter skin-protectant ingredient at 0.5–2%. kieró doesn\'t list how much this cleanser contains, and in a rinse-off product little stays on the skin.',
                 citations: [
-                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11685320/', label: 'NIH (PMC): The role of moisturizer containing anti-inflammatory ingredients on skin hydration in mild-moderate atopic dermatitis' },
+                    { url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-347/subpart-B/section-347.10', label: 'FDA (21 CFR 347.10): Skin protectant active ingredients — allantoin, 0.5 to 2 percent' },
                 ],
             },
         ],
@@ -3058,12 +3062,6 @@ export const BRAND_PRODUCTS = [
                         url: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
                         text: 'kieroskincare.com: Refining Enzyme Cleanser customer reviews',
                         summary: 'kieró\'s own product page shows 251 reviews, 93% of them five stars, mostly in Spanish (see the Community summary above).',
-                    },
-                    {
-                        platform: 'website',
-                        url: 'https://skinsort.com/products/kiero/refining-enzyme-cleanser',
-                        text: 'Skinsort: kieró Refining Enzyme Cleanser ingredient analysis',
-                        summary: 'An independent ingredient-analysis site. It lists the formula as vegan, fungal-acne safe, and free of fragrance, harsh alcohols, parabens, silicones, and sulfates. This is an ingredient screen, not user reviews.',
                     },
                 ],
             },
@@ -3095,15 +3093,15 @@ export const BRAND_PRODUCTS = [
         ingredients: 'Full INCI list per kieró: Dimethicone, Synthetic Wax, Vinyl Dimethicone/Methicone Silsesquioxane Crosspolymer, Cetyl Ethylhexanoate, Octocrylene, Homosalate, Methyl Methacrylate Crosspolymer, Dibutyl Adipate, Butyloctyl Salicylate, Octisalate, Avobenzone, Pentylene Glycol, Polyglyceryl-4 Oleate, Helianthus Annuus (Sunflower) Seed Oil, Polyglyceryl-6 Oleate, Polyhydroxystearic Acid, Methylpropanediol, Persea Gratissima (Avocado) Oil, Ethylhexylglycerin, Caprylyl Glycol, Glycine Soja (Soybean) Oil, Tocopherol, Steareth-30, Lactobacillus Ferment Lysate, Butyrospermum Parkii (Shea) Butter Extract, Bixa Orellana Seed Oil, Water, Sodium Guaiazulene Sulfonate, Panthenol, Butylene Glycol, 1,2-Hexanediol, Anthemis Nobilis Flower Water, Madecassoside, Asiaticoside, Asiatic Acid, Madecassic Acid.',
         safety: {
             fdaStatus: 'In the US, sunscreens are regulated as over-the-counter drugs. kieró doesn\'t publish the percentage of each UV filter or say whether the product is water resistant. kieró states its products are vegan and cruelty-free; ayna did not independently verify that.',
-            materials: 'Solid silicone-and-wax stick (20 g / 0.7 oz). UV filters: avobenzone (UVA), octocrylene, homosalate, octisalate, and butyloctyl salicylate, all chemical filters with no zinc oxide or titanium dioxide. The soothing ingredients are chamomile flower water, sodium guaiazulene sulfonate (a chamomile-derived compound), madecassoside with other centella compounds, panthenol, and vitamin E. Plant oils include sunflower, avocado, soybean, shea, and annatto (Bixa orellana).',
+            materials: 'Solid silicone-and-wax stick (20 g / 0.7 oz). UV filters: avobenzone (UVA), octocrylene, homosalate, octisalate, and butyloctyl salicylate, all chemical filters with no zinc oxide or titanium dioxide. The soothing ingredients are Roman chamomile flower water, sodium guaiazulene sulfonate (an azulene compound related to chamomile\'s blue oil), madecassoside with other centella compounds, panthenol, and vitamin E. Plant oils include sunflower, avocado, soybean, shea, and annatto (Bixa orellana).',
             recalls: 'No recalls found.',
-            sideEffects: 'Chemical UV filters can cause irritation or, rarely, allergic or photoallergic reactions; octocrylene is the most common culprit. The formula contains chamomile, so people allergic to ragweed or the daisy family should patch test first. Keep sticks away from the eyes. Full warnings are listed below.',
-            opinionAlerts: 'Safety note: a stick only reaches its labeled SPF if you apply enough, so swipe several passes over each area. It uses chemical UV filters, which FDA studies show are absorbed into the bloodstream. The FDA says that alone doesn\'t mean they\'re unsafe, and you should keep using sunscreen. Contains chamomile, so patch test if you\'re allergic to ragweed or daisies. Soothing and barrier claims come from kieró, and no independent clinical study of the finished product was found.',
+            sideEffects: 'Octocrylene can cause photoallergic reactions (a rash after sun exposure), notably in people who have reacted to ketoprofen, an anti-inflammatory gel. The formula contains Roman chamomile, a daisy-family (Asteraceae) plant; this family is a known contact allergen and cross-reacts with ragweed, so people with those allergies should patch test first. Full warnings are listed below.',
+            opinionAlerts: 'Safety note: sunscreen only reaches its labeled SPF when applied generously, and most people apply far less, so go over each area several times. Its chemical UV filters were absorbed into the bloodstream in an FDA study; the FDA researchers said that doesn\'t mean people should stop using sunscreen. Contains Roman chamomile, so patch test if you\'re allergic to ragweed or daisies. Soothing and barrier claims come from kieró, and no independent study of the finished product was found.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'kieró positions this as a lightweight daily SPF 50+ / PA++++ stick. Its chamomile soothes, its vitamin E gives antioxidant defense, and its madecassoside strengthens the skin barrier, and it can be swiped over makeup, per the brand\'s own site.\n\nDaily broad-spectrum sunscreen is one of the best-supported habits in dermatology. In the Nambour randomized trial in Australia, adults assigned to daily sunscreen had about 24% less skin aging over 4.5 years. They also developed fewer squamous cell skin cancers and, in 10-year follow-up, half as many new melanomas as people who used sunscreen when they chose to. Those trials tested a basic SPF 15+ sunscreen, not this product, but the benefit comes from consistent daily use of any broad-spectrum sunscreen.\n\nThe main caveat with sticks is how much you apply. SPF is tested at 2 mg/cm², and studies show people typically apply a quarter to half of that, which cuts real-world protection roughly in proportion. Solid sticks make that easier to get wrong, so go over each area several times. The AAD also advises applying 15 minutes before going out and reapplying every two hours and after swimming or sweating. kieró doesn\'t claim water resistance, so reapply after either.\n\nThe filters here (avobenzone, octocrylene, homosalate, octisalate) are all FDA-permitted. In a 2020 FDA randomized trial published in JAMA, all of them were absorbed into the bloodstream above the level at which the FDA waives further safety testing. The FDA and the study authors stressed that absorption doesn\'t mean harm and that people should keep using sunscreen. Separately, a lab study found octocrylene can slowly break down into benzophenone as a product ages, so replace old or heat-exposed sunscreen. If either concern matters to you, a mineral (zinc oxide) sunscreen avoids both.\n\nMadecassoside has real supporting research. It is the centella compound behind many "cica" products. In a 6-month double-blind study, a cream with madecassoside and vitamin C improved skin hydration, firmness, and fine wrinkles, and lab studies show it calms UV-triggered inflammation. Vitamin E is a well-documented skin antioxidant. No independent clinical study of this specific product was found.',
-        doctorOpinionShort: 'Daily broad-spectrum sunscreen has strong randomized-trial evidence for slowing skin aging and lowering skin-cancer risk. The catch with any stick is applying enough, so use several passes per area and reapply every two hours. It uses chemical filters, which FDA studies show are absorbed into the blood (not proven harmful; a mineral sunscreen is the alternative if that concerns you). Madecassoside and vitamin E have real supporting research. No independent clinical study of this specific product was found.',
+        doctorOpinion: 'kieró says the chamomile soothes, the vitamin E gives antioxidant defense, and the madecassoside strengthens the skin barrier, and that the stick can be swiped on over makeup. No independent study of this product was found, so what follows is what the research says about daily sunscreen and its ingredients.\n\nThe strongest evidence is for daily sunscreen use itself, from a randomized trial of 1,621 adults in Nambour, Australia, using an SPF 15+ sunscreen. People assigned to daily use had 24% less skin aging over 4.5 years than people who used sunscreen when they chose to. They also had about 39% fewer squamous cell carcinoma tumors, though the share of people who got one didn\'t differ significantly, and there was no effect on basal cell carcinoma. Ten years later, the daily group had 11 new melanomas versus 22, a difference just short of statistical significance overall, though the drop in invasive melanoma (3 vs 11) was significant.\n\nHow much you apply matters. SPF is tested at 2 mg/cm², while consumers typically apply 0.5–1 mg/cm², and lab studies show actual SPF drops steeply at those amounts. One study found SPF 30–50 products may not give enough protection at typical consumer amounts. The AAD and FDA advise applying 15 minutes before sun exposure and reapplying at least every two hours, and more often when swimming or sweating. kieró doesn\'t claim water resistance.\n\nThe UV filters in this stick (avobenzone, octocrylene, homosalate, octisalate) were all absorbed into the bloodstream in a 2020 FDA randomized trial of 48 people. Levels were above the point at which the FDA can waive further safety testing, and the FDA researchers said this does not mean people should stop using sunscreen. A separate lab study found benzophenone, which it calls a possible human carcinogen, in all 28 octocrylene-containing products tested, increasing with age and heat. People who want to avoid these filters can choose a mineral (zinc oxide) sunscreen.\n\nFor the soothing ingredients, a 6-month double-blind study of 20 women found that a cream combining 5% vitamin C with 0.1% madecassoside improved wrinkles, firmness, and hydration. Because the two were combined, the result can\'t be credited to madecassoside alone. In a separate study, madecassoside reduced UV-triggered inflammation in skin cells and reduced UV tanning on human skin over 8 weeks. Vitamin E is the main antioxidant naturally found in skin.',
+        doctorOpinionShort: 'Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a large randomized trial, with a likely drop in invasive melanoma. Protection depends on applying enough, so go over each area several times and reapply every two hours. Its chemical filters are absorbed into the blood; the FDA researchers said that doesn\'t mean people should stop using sunscreen, and mineral sunscreen is an alternative. No independent study of this product was found.',
         // Kept out of verificationLinks so it doesn't pool with the
         // Scientific literature tab's citation list.
         doctorOpinionCitations: [
@@ -3132,29 +3130,30 @@ export const BRAND_PRODUCTS = [
         },
         // Rendered as a red warning box on the Evidence view.
         warnings: [
-            'Allergy to ragweed, chamomile, or the daisy family: patch test first.',
-            'For external use only. Keep it out of the eyes, and don\'t use it on broken or damaged skin.',
-            'Rash, irritation, or a reaction after sun exposure: stop using it and see a doctor. Octocrylene can cause photoallergic reactions.',
+            'Allergy to ragweed, chamomile, or other daisy-family plants: patch test first.',
+            'Have you reacted to ketoprofen (an anti-inflammatory gel)? Octocrylene can cause photoallergic reactions in people sensitized to it.',
+            'Rash or irritation, especially after sun exposure: stop using it and see a doctor.',
             'Not stated as water resistant: reapply after swimming or sweating.',
-            'Children under 6 months: ask a doctor before using any sunscreen (FDA).',
+            'Infants under 6 months: the FDA doesn\'t recommend sunscreen; keep them out of the sun instead.',
         ],
         communityReview: 'kieró\'s US site shows 657 customer reviews, and 593 of them (90%) are five stars; the rest are four stars. Most reviews are in Spanish and praise how easily it goes on, how fast it absorbs, and its non-greasy feel, including over makeup. For example: "No es grasoso y protege muy bien tu piel del sol" ("It\'s not greasy and protects your skin from the sun really well"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
-        effectiveness: 'Rated SPF 50+ / PA++++ broad spectrum, but real-world protection depends on applying enough, which is harder with a stick. Daily broad-spectrum sunscreen use has randomized-trial evidence for slowing skin aging and reducing squamous cell carcinoma and melanoma. Madecassoside, panthenol, and vitamin E add soothing and antioxidant support. No independent clinical study of the finished product was found.',
+        effectiveness: 'Labeled SPF 50+ / PA++++ broad spectrum, but real-world protection depends on how much you apply. Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a randomized trial. No independent study of the finished product was found.',
         // Per-ingredient / per-topic science, each paired with a credible
         // source (NIH-hosted or PubMed). Rendered on the Scientific
         // literature tab.
         ingredientScience: [
             {
                 name: 'Daily broad-spectrum sunscreen',
-                text: 'In the Nambour randomized trial, adults assigned to daily sunscreen had no detectable increase in skin aging over 4.5 years, 24% less than the comparison group. In 10-year follow-up, they had half as many new melanomas (11 vs 22), with a larger drop in invasive melanoma.',
+                text: 'In the Nambour randomized trial (1,621 adults, SPF 15+), people assigned to daily sunscreen showed no detectable increase in skin aging over 4.5 years, 24% less aging than the discretionary-use group. They had 39% fewer squamous cell carcinoma tumors, though the share of people who got one didn\'t differ significantly, and there was no effect on basal cell carcinoma. Ten years later, the daily group had 11 new melanomas vs 22; that overall difference was just short of statistical significance (p = 0.051), while the drop in invasive melanoma (3 vs 11) was significant.',
                 citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/10475183/', label: 'PubMed: Daily sunscreen application in prevention of basal-cell and squamous-cell carcinomas — a randomised controlled trial (Green et al., Lancet 1999)' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/23732711/', label: 'PubMed: Sunscreen and prevention of skin aging — a randomized trial (Hughes et al., Ann Intern Med 2013)' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/21135266/', label: 'PubMed: Reduced melanoma after regular sunscreen use — randomized trial follow-up (Green et al., J Clin Oncol 2011)' },
                 ],
             },
             {
                 name: 'How much you apply',
-                text: 'SPF is measured at 2 mg/cm². People typically apply 0.5–1 mg/cm², and actual SPF falls roughly in proportion to the amount applied. That is why you should use several passes with a stick.',
+                text: 'SPF is measured at 2 mg/cm², but consumers typically apply 0.5–1 mg/cm². Lab studies on volunteers found actual SPF falls significantly at lower amounts. One found SPF 30–50 products may not give enough protection at typical consumer amounts.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/19614894/', label: 'PubMed: The influence of the amount of sunscreen applied on its sun protection factor' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/22463921/', label: 'PubMed: High-SPF sunscreens may compensate for lower user application amounts' },
@@ -3162,7 +3161,7 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Chemical UV filters (avobenzone, octocrylene, homosalate, octisalate)',
-                text: 'In a 2020 FDA randomized trial, all of these filters were absorbed into the bloodstream after application, above the level at which the FDA waives further safety testing. The authors stressed that this doesn\'t mean they are unsafe and that people shouldn\'t stop using sunscreen. Separately, a lab study found benzophenone in every octocrylene-containing sunscreen tested, rising as products aged.',
+                text: 'In a 2020 FDA randomized trial of 48 people, all of these filters were absorbed into the bloodstream after a single application, above the level at which the FDA can waive further safety testing. The researchers concluded this does not mean people should stop using sunscreen. A separate lab study found benzophenone, a possible human carcinogen, in all 28 octocrylene-containing products tested. Levels rose with time and heat.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/31961417/', label: 'PubMed: Effect of sunscreen application on plasma concentration of sunscreen active ingredients — a randomized clinical trial (JAMA 2020)' },
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/33763894/', label: 'PubMed: The presence of benzophenone in sunscreens and cosmetics containing the organic UV filter octocrylene' },
@@ -3170,15 +3169,22 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Madecassoside (centella)',
-                text: 'kieró states this strengthens the skin barrier. In a 6-month randomized, double-blind study, topical madecassoside with vitamin C improved hydration, firmness, and wrinkles in photoaged skin. Lab studies show madecassoside dampens UV-triggered inflammation.',
+                text: 'kieró states this strengthens the skin barrier. No study testing madecassoside alone for barrier strength was found. In a 6-month double-blind study of 20 women, a cream combining 5% vitamin C with 0.1% madecassoside improved wrinkles, firmness, and hydration, but the result can\'t be credited to madecassoside alone. In another study, madecassoside reduced UV-triggered inflammation in skin cells and reduced UV tanning on human skin over 8 weeks.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin' },
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6290557/', label: 'NIH (PMC): Madecassoside inhibits melanin synthesis by blocking ultraviolet-induced inflammation' },
                 ],
             },
             {
+                name: 'Roman chamomile',
+                text: 'kieró states this soothes sensitive skin. No study of chamomile flower water for soothing was found. Chamomile is in the daisy (Asteraceae) family, whose compounds are known skin sensitizers that can cross-react with ragweed.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11847717/', label: 'NIH (PMC): Allergic potential of medicinal plants from the Asteraceae family (2025 review)' },
+                ],
+            },
+            {
                 name: 'Vitamin E',
-                text: 'kieró states this gives antioxidant defense. Vitamin E is one of skin\'s main fat-soluble antioxidants and helps protect it from oxidative and UV-related stress. It can occasionally cause contact dermatitis.',
+                text: 'kieró states this gives antioxidant defense. Vitamin E is the main antioxidant naturally found in human skin, and UV exposure depletes it.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the Response of Skin to Oxidative Stress — Vitamin E as a Key Indicator' },
                 ],
@@ -3196,7 +3202,7 @@ export const BRAND_PRODUCTS = [
             {
                 url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun',
                 text: 'FDA: Sunscreen — how to help protect your skin from the sun',
-                summary: 'FDA consumer guidance on broad-spectrum SPF, reapplication, and sunscreen use in infants under 6 months.',
+                summary: 'FDA guidance: use broad-spectrum SPF 15+, apply 15 minutes before sun exposure, reapply at least every two hours, and keep infants under 6 months out of the sun rather than using sunscreen.',
             },
         ],
         verificationLinks: {
@@ -3213,6 +3219,433 @@ export const BRAND_PRODUCTS = [
                 ],
             },
         },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // Joylux — the company, split into its individual products (2026-10-02).
+    // Replaces the single 's-joylux' startup entry, which described the whole
+    // company as "FDA-cleared devices for vaginal rejuvenation" (false).
+    // Sources: each product's page on joylux.com (product data via
+    // joylux.com/products.json), the FDA 510(k) and device registration
+    // databases (openFDA), and the two PubMed papers Joylux cites (abstracts
+    // read via NCBI E-utilities). Bundles, color variants, refills, and
+    // accessories (Photonic Gel, Photonic Wipes, chargers) are left out.
+    // Not a brand partner; no affiliate links.
+    {
+        id: 'p-joylux-vfit',
+        name: 'vFit® Device',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['menopause', 'discomfort'],
+        price: '$395',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/vfit',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/vfit' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/vfit-plus-upgraded-device-259789.jpg?v=1745343867',
+        summary: 'An at-home intimate wellness device that you insert into the vagina. It combines red light (six 662 nm LEDs), gentle heat, and vibration in sessions of 6 to 10 minutes. Joylux markets it to midlife women for more natural lubrication, sensation, and confidence, and says it supports pelvic floor strength.',
+        safety: {
+            fdaStatus: 'Not FDA-cleared or approved. Joylux says the FDA designated vFit a "low-risk general wellness device" in 2017. That category isn\'t reviewed for safety or effectiveness and can\'t claim to treat any condition, including dryness, incontinence, or pelvic floor problems.',
+            materials: 'Rechargeable insertable device with six 662 nm red LEDs, heat, and vibration modes. Comes with a USB charging cable and power cube, a storage pouch, and a user guide, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'In the Joylux-funded 2017 study, 2 of 55 women (3.6%) had an adverse event: one urinary tract infection and one case of discomfort from too much warmth. Joylux\'s product page lists no contraindications, so check with your doctor first if you are pregnant, have an IUD or implanted device, or have a vaginal infection or unexplained bleeding.',
+            opinionAlerts: 'This is a general wellness device, not an FDA-cleared treatment. The only published study was funded by Joylux, run by its consultants, and had no control group.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s. The study it cites was funded by Joylux and written by Joylux consultants, one of whom is Joylux\'s chief medical officer.',
+        doctorOpinion: 'Joylux says vFit is Ob-Gyn designed, supports pelvic floor strength, and that users report more natural lubrication, more sensation, and more confidence.\n\nThe main published evidence, which Joylux cites, is a 2017 study in the International Urogynecology Journal of "multimodal vaginal toning" therapy. 55 women with stress urinary incontinence after childbirth did 24 ten-minute sessions at home over 50 days. Among the 48 who finished, leakage on a pad test and symptom and quality-of-life scores improved substantially. The study had no control group, so it can\'t separate the device\'s effect from placebo or the passage of time. Joylux funded it, and both authors were Joylux consultants.\n\nA 2019 review co-written by Joylux\'s chief medical officer argued that red-light therapy (photobiomodulation) is a plausible approach for vaginal symptoms of menopause, calling the evidence preliminary. It was not a trial of vFit.\n\nThe FDA classes vFit as a general wellness product, so it hasn\'t been reviewed as a treatment. For bothersome dryness, pain with sex, or bladder leaks, talk to a doctor or a pelvic floor physical therapist.',
+        doctorOpinionShort: 'A red-light, heat, and vibration device sold for intimate wellness. It is an FDA "general wellness" product, not FDA-cleared. One Joylux-funded study with no control group reported less leakage in 48 women with postpartum stress incontinence.',
+        doctorOpinionCitations: [
+            { url: 'https://joylux.com/blogs/faq/are-vfit-or-vfit-plus-products-fda-approved', label: 'Joylux FAQ: Are vFit or vFit PLUS products FDA approved?' },
+        ],
+        whoItsFor: [
+            'Midlife women curious about an at-home, drug-free wellness device for intimate comfort, who understand it is not an FDA-cleared treatment',
+        ],
+        howToUse: {
+            intro: 'Per Joylux\'s product page:',
+            steps: [
+                'Use every other day, starting with 6-minute sessions and working up to 8, then 10 minutes.',
+                'For the first 60 days use it 3 times a week, then 1 to 2 times a week to maintain.',
+                'Joylux recommends a clear, water-based gel to help with insertion.',
+            ],
+            sourceUrl: 'https://joylux.com/products/vfit',
+            sourceLabel: 'joylux.com: vFit Device',
+        },
+        warnings: [
+            'Not an FDA-cleared treatment for dryness, incontinence, or pelvic floor problems.',
+            'Joylux lists no contraindications on the product page. Check with a doctor first if you are pregnant, have an IUD or implanted device, have a vaginal infection, or have unexplained bleeding.',
+            'Stop if it causes pain, burning, or too much warmth.',
+        ],
+        ingredientScience: [
+            {
+                name: 'The study behind vFit',
+                text: 'A 2017 single-group study (no control group) of 55 women with postpartum stress urinary incontinence. They did 24 ten-minute home sessions over 50 days. Of the 38 who had measurable leakage at the start, 84% had more than 50% less leakage on a pad test, and among the 48 who finished, symptom and quality-of-life scores improved. Joylux funded the study, and both authors were Joylux consultants.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28035444/', label: 'PubMed: Multimodal vaginal toning for bladder symptoms and quality of life in stress urinary incontinence (Int Urogynecol J, 2017)' },
+                ],
+            },
+            {
+                name: 'Red light (photobiomodulation)',
+                text: 'A 2019 review argued red-light therapy may help vaginal symptoms of menopause, calling the evidence preliminary. Its authors include Joylux\'s chief medical officer and a Joylux consultant. It is a review, not a trial of vFit.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31210575/', label: 'PubMed: The rationale for photobiomodulation therapy of vaginal tissue for genitourinary syndrome of menopause (2019 review)' },
+                ],
+            },
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-vfit-plus',
+        name: 'vFit® PLUS',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['menopause', 'discomfort'],
+        price: '$494',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/vfit-plus',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/vfit-plus' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/vfit-plus-upgraded-device-259789.jpg?v=1745343867',
+        summary: 'The same red-light, heat, and vibration intimate wellness device as vFit, with the PLUS upgrade included: brighter LEDs, a 12-minute session option, and 4 more vibration modes, per Joylux.',
+        safety: {
+            fdaStatus: 'Not FDA-cleared or approved. Joylux says the FDA designated vFit and vFit PLUS "low-risk general wellness devices" in 2017. That category isn\'t reviewed for safety or effectiveness and can\'t claim to treat any condition.',
+            materials: 'Rechargeable insertable device with red LEDs, heat, and vibration, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Same device as vFit with stronger settings. See the vFit entry: in the Joylux-funded study, 2 of 55 women had an adverse event (one urinary tract infection, one too much warmth).',
+            opinionAlerts: 'This is a general wellness device, not an FDA-cleared treatment. The only published study was funded by Joylux and had no control group.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'vFit PLUS is the vFit device with brighter LEDs, a longer session option, and more vibration modes. No study comparing PLUS with the standard vFit was found. The evidence is the same as for vFit: one Joylux-funded study of 55 women with postpartum stress incontinence, with no control group. See the vFit entry for details.',
+        doctorOpinionShort: 'vFit with stronger settings. An FDA "general wellness" product, not FDA-cleared. No study compares it with the standard vFit.',
+        doctorOpinionCitations: [
+            { url: 'https://joylux.com/blogs/faq/are-vfit-or-vfit-plus-products-fda-approved', label: 'Joylux FAQ: Are vFit or vFit PLUS products FDA approved?' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28035444/', label: 'PubMed: Multimodal vaginal toning for bladder symptoms and quality of life in stress urinary incontinence (Int Urogynecol J, 2017)' },
+        ],
+        warnings: [
+            'Not an FDA-cleared treatment for dryness, incontinence, or pelvic floor problems.',
+            'Check with a doctor first if you are pregnant, have an IUD or implanted device, have a vaginal infection, or have unexplained bleeding.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-juicy-like-a-peach',
+        name: 'JUICY LIKE A PEACH® Vaginal Gel',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'sexual-health'],
+        tags: ['menopause', 'discomfort', 'hormone-free'],
+        price: '$59 for 30 applications',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/juicy-like-a-peach',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/juicy-like-a-peach' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/juicy-like-a-peach-3736266.jpg?v=1781733740',
+        summary: 'A hormone-free vaginal gel (pH 3.8) applied inside the vagina once a day with an applicator. Joylux markets it for menopausal dryness and pain during sex, saying it forms a moisture barrier on vaginal tissue.',
+        ingredients: 'Purified water, hypromellose, benzoic acid, lactic acid, sodium hydroxide, per Joylux.',
+        safety: {
+            fdaStatus: 'FDA-cleared as a personal lubricant (Class II). Joylux\'s FDA listing for this gel cites 510(k) K200098, a clearance held by Peptonic Medical for its VagiVital Aktivgel. A personal-lubricant clearance covers lubrication and moisture; it is not an FDA approval to treat menopause.',
+            materials: '36 g tube with an applicator, 30 pre-measured 1 mL doses, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per Joylux: possible mild, short-lived itching, irritation, burning, or discharge; rarely severe irritation or urinary tract infection. Stop and see a doctor if symptoms persist.',
+            opinionAlerts: 'Not compatible with natural rubber latex or polyurethane condoms, per Joylux. It is only compatible with polyisoprene condoms.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; regulatory status verified in the FDA 510(k) and registration databases.',
+        doctorOpinion: 'Joylux says the gel relieves vaginal dryness and pain during sex and that comfort builds with daily use. It calls the product "clinically studied," but its page doesn\'t name or link a study, and ayna didn\'t find one for this product. Its FDA clearance is as a personal lubricant. If dryness or pain persists, talk to a doctor.',
+        doctorOpinionShort: 'A hormone-free vaginal gel, FDA-cleared as a personal lubricant. Joylux markets it for menopausal dryness and pain with sex but doesn\'t cite a study. Not compatible with latex condoms.',
+        doctorOpinionCitations: [
+            { url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K200098', label: 'FDA 510(k) K200098: VagiVital Aktivgel (Peptonic Medical), personal lubricant, cleared 2020' },
+        ],
+        howToUse: {
+            intro: 'Per Joylux\'s product page:',
+            steps: [
+                'Use once a day, preferably before bed.',
+                'Attach the applicator, fill it to 1 mL, insert gently, and press the plunger.',
+                'Rinse the applicator with warm water and antibacterial soap after each use.',
+            ],
+            sourceUrl: 'https://joylux.com/products/juicy-like-a-peach',
+            sourceLabel: 'joylux.com: JUICY LIKE A PEACH',
+        },
+        warnings: [
+            'Not compatible with natural rubber latex or polyurethane condoms.',
+            'Stop and see a doctor if itching, burning, or irritation persists.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-lets-spin',
+        name: 'LET\'S SPIN® Intimacy Gel',
+        brand: 'Joylux',
+        category: 'sex-tech',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sexual-health', 'vaginal-health'],
+        tags: ['menopause', 'discomfort', 'hormone-free'],
+        price: '$45 for 60 mL',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/lets-spin-intimacy-gel',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/lets-spin-intimacy-gel' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/lets-spin-intimacy-gel-422294.jpg?v=1727172815',
+        summary: 'A water-based intimacy gel with hyaluronic acid and aloe, made with Respin (Halle Berry\'s brand). Joylux markets it to moisturize, supplement natural lubrication, and make sex more comfortable when dryness or hormonal changes get in the way.',
+        ingredients: 'Water (Aqua), Sodium Hyaluronate, Propanediol, Hydroxyethylcellulose, Xanthan Gum, Sodium Hydroxide, Sodium Benzoate, Potassium Sorbate, Citric Acid, Aloe Vera 200X Powder, Gluconolactone, per Joylux.',
+        safety: {
+            fdaStatus: 'FDA-cleared as a personal lubricant (Class II): 510(k) K242958, "Joylux Intimacy Gel," cleared March 20, 2025. Joylux\'s FDA listing names it as LET\'S SPIN.',
+            materials: '60 mL pump bottle (a mini tube is also sold), pH 4.0–5.0, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Stop if irritation develops.',
+            opinionAlerts: 'Compatible with natural rubber latex and polyisoprene condoms, but not polyurethane condoms, per Joylux.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; regulatory status verified in the FDA 510(k) database.',
+        doctorOpinion: 'This is an FDA-cleared, water-based personal lubricant. Joylux also calls it "clinically proven," but its page doesn\'t name or link a study.',
+        doctorOpinionShort: 'A water-based lubricant with hyaluronic acid and aloe, FDA-cleared as a personal lubricant (K242958). Latex-condom compatible.',
+        doctorOpinionCitations: [
+            { url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K242958', label: 'FDA 510(k) K242958: Joylux Intimacy Gel (PG3100), personal lubricant, cleared 2025' },
+        ],
+        howToUse: {
+            intro: 'Per Joylux\'s product page: apply as much as you like to intimate areas and reapply as often as needed. Store at room temperature.',
+            steps: [],
+            sourceUrl: 'https://joylux.com/products/lets-spin-intimacy-gel',
+            sourceLabel: 'joylux.com: LET\'S SPIN Intimacy Gel',
+        },
+        warnings: [
+            'Not compatible with polyurethane condoms.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-reliefher',
+        name: 'reliefHER™ Vaginal Hydration Melts',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['menopause', 'discomfort', 'hormone-free'],
+        price: '$49 for 10 melts',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/reliefher',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/reliefher' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/reliefHER_10pack_HERO.jpg?v=1782326170',
+        summary: 'Non-hormonal vaginal melts made with coconut oil, cocoa butter, vitamin E, and hyaluronic acid (15 mg per melt, per Joylux). You insert one at bedtime every 2 to 3 days for vaginal hydration.',
+        ingredients: 'Coconut Oil, Vitamin E, Hyaluronic Acid, Silica, Cocoa Butter, per Joylux.',
+        safety: {
+            fdaStatus: 'Not listed with the FDA as a medical device (checked 2026-10-02); sold as a personal-care product.',
+            materials: 'Solid melts that dissolve at body temperature. Store somewhere cool.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per Joylux: stop if irritation develops. Check with a doctor first if you have a vaginal infection, unusual bleeding, a recent procedure or childbirth, open sores, or an allergy to any ingredient.',
+            opinionAlerts: 'Contains coconut oil and cocoa butter. The CDC warns that oil-based products can cause condoms to break, and Joylux\'s page doesn\'t address condom compatibility.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Joylux describes these as hyaluronic-acid melts for vaginal hydration, "backed by science," but doesn\'t name or link a study for this product, and ayna didn\'t find one.',
+        doctorOpinionShort: 'Oil-based vaginal melts with hyaluronic acid. Not an FDA-listed medical device. No product-specific study found.',
+        doctorOpinionCitations: [
+            { url: 'https://www.cdc.gov/condom-use/resources/external.html', label: 'CDC: How to use an external condom (oil-based products can cause condoms to break)' },
+        ],
+        howToUse: {
+            intro: 'Per Joylux\'s product page:',
+            steps: [
+                'Wash your hands, then insert 1 melt into the vagina, as deep as is comfortable, preferably at bedtime.',
+                'Use every 2 to 3 days, or as needed.',
+                'Store in a cool place; a chilled melt stays firm.',
+            ],
+            sourceUrl: 'https://joylux.com/products/reliefher',
+            sourceLabel: 'joylux.com: reliefHER Vaginal Hydration Melts',
+        },
+        warnings: [
+            'Vaginal infection, unusual bleeding, recent procedure or childbirth, or open sores: check with a doctor first.',
+            'Contains oils; the CDC warns oil-based products can cause condoms to break.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-revitalizher',
+        name: 'revitalizHER™ Hydrating Serum',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['menopause', 'discomfort'],
+        price: '$49 for 30 mL',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/revitalizher',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/revitalizher' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/revitalizher-hydrating-serum-987054.jpg?v=1742591593',
+        summary: 'An oil-based serum for the external vulva, made with coconut, sea buckthorn, and jojoba oils plus beeswax, vitamin E, vitamin C, and mandarin orange peel oil. Joylux markets it to shield against dryness.',
+        ingredients: 'Caprylic/Capric Triglyceride, Cocos Nucifera (Coconut) Oil, Hippophae Rhamnoides (Sea Buckthorn) Oil, Beeswax, Simmondsia Chinensis (Jojoba) Oil, Tocopherol (Vitamin E), Tetrahexyldecyl Ascorbate (Vitamin C), Citrus Nobilis (Mandarin Orange) Peel Oil, per Joylux.',
+        safety: {
+            fdaStatus: 'Not listed with the FDA as a medical device (checked 2026-10-02); sold as a cosmetic.',
+            materials: '30 mL serum.',
+            recalls: 'No recalls found.',
+            sideEffects: 'For external use on the vulva only. Do not use internally, per Joylux. It contains mandarin orange peel oil.',
+            opinionAlerts: 'External use only, per Joylux.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'An oil-based external moisturizer. Joylux doesn\'t cite a study for this product, and ayna didn\'t find one.',
+        doctorOpinionShort: 'An external vulvar oil serum. Cosmetic, not FDA-listed. No product-specific study found.',
+        howToUse: {
+            intro: 'Per Joylux\'s product page: after cleansing, pat dry and apply to the external vulva. Don\'t rinse. Don\'t use internally.',
+            steps: [],
+            sourceUrl: 'https://joylux.com/products/revitalizher',
+            sourceLabel: 'joylux.com: revitalizHER Hydrating Serum',
+        },
+        warnings: [
+            'External use only.',
+            'Stop if it stings or irritates.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-shebar',
+        name: 'SHEbar® Intimate Cleansing Bar',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['comfort'],
+        price: '$13 for 3.2 oz',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/shebar',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/shebar' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/SHEbar_Packshot_2.jpg?v=1778785371',
+        summary: 'A soap-free cleansing bar for intimate areas (pH about 4.5, per Joylux) with coconut, argan, and avocado oils. It contains added fragrance.',
+        ingredients: 'Sodium Cocoyl Isethionate, Hydrogenated Vegetable Oil, Polyglyceryl-4 Laurate, Water, Glycerin, Fragrance, Titanium Dioxide (CI 77891), Cocos Nucifera (Coconut) Oil, Argania Spinosa Kernel Oil, Persea Gratissima (Avocado) Oil, Tetrasodium Glutamate Diacetate, per Joylux.',
+        safety: {
+            fdaStatus: 'Cosmetic cleanser; not an FDA-regulated medical device.',
+            materials: '3.2 oz (90.7 g) bar.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Contains added fragrance. Stop if it causes itching or burning.',
+            opinionAlerts: 'Contains added fragrance.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'A soap-free bar built on sodium cocoyl isethionate, a syndet surfactant; reviews describe syndets as gentler on the skin barrier than soap. It does contain added fragrance. Joylux doesn\'t cite a study for this product.',
+        doctorOpinionShort: 'A mild, soap-free bar, but it contains added fragrance.',
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8954092/', label: 'NIH (PMC): Skin cleansing without or with compromise — soaps and syndets (2022 review)' },
+        ],
+        warnings: [
+            'Contains fragrance; stop if it causes itching or burning.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-ilyeo-body',
+        name: 'ILYEO™ body',
+        brand: 'Joylux',
+        category: 'pain-relief',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['comfort'],
+        tags: ['menopause', 'discomfort'],
+        price: '$199',
+        fsaHsaEligible: true,
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/ilyeo-body',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/ilyeo-body' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/ilyeo-body-8041504.jpg?v=1789522687',
+        summary: 'A flexible, cordless silicone wrap that combines red light, heat, and vibration for muscle and joint pain. Joylux markets it to midlife women; it is used for 10-minute sessions on areas like the shoulders or knees. Listed as a pre-order shipping the week of October 5 at time of writing.',
+        safety: {
+            fdaStatus: 'FDA-registered Class II therapeutic infrared heating lamp, exempt from 510(k) premarket review. Verified in the FDA device registration database (2026-10-02); Joylux\'s page says the same.',
+            materials: 'Flexible medical-grade silicone wrap with red light, heat, and vibration, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per Joylux: don\'t use if you take medications or products that increase light sensitivity, have impaired sensation in the area, or have active skin cancer or suspicious lesions. Ask your doctor first if you are pregnant or have a history of skin cancer. On darker skin tones, start with 2-minute sessions and work up to 10.',
+            opinionAlerts: 'Exempt devices like this aren\'t reviewed by the FDA for effectiveness. Joylux calls it "clinically proven" but doesn\'t name a study.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; regulatory status verified in the FDA registration database.',
+        doctorOpinion: 'Joylux says ILYEO body is indicated for temporary relief of minor muscle and joint pain, arthritis pain and stiffness, and muscle spasms, and to temporarily increase local blood circulation. It is registered with the FDA but exempt from premarket review, so the FDA hasn\'t evaluated its effectiveness. Joylux calls it "clinically proven" without naming a study, and ayna didn\'t find one for this device.',
+        doctorOpinionShort: 'A red-light, heat, and vibration wrap for minor muscle and joint pain. FDA-registered Class II and exempt from review; no product-specific study found.',
+        howToUse: {
+            intro: 'Per Joylux\'s product page: 10-minute sessions, daily or as needed, following the protocol in the ILYEO app for the area being treated.',
+            steps: [
+                'On darker skin tones, start with 2-minute sessions and gradually increase to 10.',
+            ],
+            sourceUrl: 'https://joylux.com/products/ilyeo-body',
+            sourceLabel: 'joylux.com: ILYEO body',
+        },
+        warnings: [
+            'Don\'t use if you take light-sensitizing medications or products, have impaired sensation in the area, or have active skin cancer or suspicious lesions.',
+            'Pregnant, or a history of skin cancer: ask your doctor first.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-coldher',
+        name: 'coldHER™ Cooling Bra Inserts',
+        brand: 'Joylux',
+        category: 'menopause',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['perimenopause'],
+        tags: ['menopause', 'comfort'],
+        price: '$21 for 2 pads',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/coldher',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/coldher' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/coldher-cooling-bra-inserts-9258458.jpg?v=1753846926',
+        summary: 'Reusable cooling pads made with phase-change material, which absorbs body heat as it melts. You tuck them into your bra for hot flashes, breast or nipple soreness, or cooling down after exercise. They re-harden at room temperature in about 30 minutes, or faster in the fridge.',
+        safety: {
+            fdaStatus: 'FDA-registered Class I reusable hot/cold pack, exempt from premarket review (verified in the FDA device registration database, 2026-10-02). Joylux sells it as a general wellness product.',
+            materials: 'Two pads of phase-change material, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Stop if your skin becomes irritated. Wipe clean with a damp cloth and mild soap.',
+            opinionAlerts: 'Gives temporary cooling comfort; it doesn\'t treat the cause of hot flashes.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; regulatory status verified in the FDA registration database.',
+        doctorOpinion: 'A simple reusable cooling pad for temporary comfort during hot flashes or breast soreness. If hot flashes are frequent or disrupt your sleep, talk to a doctor about treatments that reduce them.',
+        doctorOpinionShort: 'Reusable cooling pads for temporary relief during hot flashes or breast soreness. FDA-registered Class I.',
+        howToUse: {
+            intro: 'Per Joylux\'s product page:',
+            steps: [
+                'Tuck the pads into your bra strap with the cooling material against your skin, at the top of the breasts, under the arms, or wherever you need it.',
+                'For nipple soreness, place a pad directly over the nipple.',
+                'Re-cool at room temperature (about 30 minutes) or in the fridge.',
+            ],
+            sourceUrl: 'https://joylux.com/products/coldher',
+            sourceLabel: 'joylux.com: coldHER Cooling Bra Inserts',
+        },
+        warnings: [
+            'Stop if your skin becomes irritated.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -3480,7 +3913,7 @@ export const BRAND_PRODUCTS = [
         image: 'https://sootheher.com/assets/elaris-butterfly-hero-DnUO3OIN.webp',
         summary: 'A discreet, wearable TENS (transcutaneous electrical nerve stimulation) device for menstrual cramps. A butterfly-shaped gel pad worn on the lower abdomen sends adjustable electrical pulses meant to block pain signals, prompt endorphin release, and relax uterine muscles — worn under clothing, drug-free.',
         safety: {
-            fdaStatus: 'FDA-cleared, per the brand.',
+            fdaStatus: 'SootheHer says the Elaris Pod is FDA-cleared. ayna could not find it in the FDA\'s 510(k) or device-listing databases under the SootheHer or Elaris name (checked 2026-10-02). TENS devices are sometimes cleared under the manufacturer\'s name, so the clearance has not been confirmed either way.',
             materials: 'Device, reusable butterfly and circular gel pads, connecting wire, USB-C charging cable, user manual, per the brand.',
             recalls: 'No recalls found.',
             sideEffects: 'Brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition — consult a clinician first if any of these apply.',
@@ -3660,7 +4093,7 @@ export const BRAND_PRODUCTS = [
                 // as two separate entries for the same study.
                 url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/',
                 text: 'Virgin Coconut Oil in Paste Form as Treatment for Dyspareunia and Vaginal Dryness in Patients With and Without Rheumatic Autoimmune Diseases: An Efficacy and Safety Assessment Pilot Study',
-                summary: 'A 2023 pilot study (Cureus) followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months — 83% reported improved dryness and 87% reported improved moisture duration. Real clinical outcomes, but not placebo-controlled and not a study of this specific product.',
+                summary: 'A 2023 pilot survey study (Cureus) of 53 women who used a virgin coconut oil paste for vaginal dryness and painful sex found dryness decreased by 55% and 66% in its two groups (women without and with rheumatic autoimmune disease), with no side effects reported. It was a survey without a control group, and it didn\'t test this product.',
             },
         ],
         verificationLinks: {
@@ -3960,7 +4393,7 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Lactic acid',
-                text: 'In a healthy vagina dominated by Lactobacillus, those bacteria make lactic acid, which keeps pH low (about 3.5 on average in one NIH-indexed study) and may help protect against infection. A 2021 systematic review found there isn\'t yet high-quality evidence that lactic acid products cure bacterial vaginosis or shift the vaginal microbiome, so they\'re best seen as pH support.',
+                text: 'In a healthy vagina dominated by Lactobacillus, those bacteria make lactic acid, which keeps vaginal pH low and may help protect against infection. A 2021 systematic review found there isn\'t yet high-quality evidence that lactic acid products cure bacterial vaginosis or shift the vaginal microbiome, so they\'re best seen as pH support.',
                 citations: [
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3819307/', label: 'NIH (PMC): Vaginal pH and lactic acid when lactobacilli dominate (PLoS One, 2013)' },
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7877752/', label: 'NIH (PMC): Lactic acid products for bacterial vaginosis, systematic review (PLoS One, 2021)' },
