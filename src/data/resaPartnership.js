@@ -17,6 +17,10 @@ export const RESA_SITE_URL = 'https://www.resa-labs.com/';
 
 export const RESA_WAITLIST_CTA = 'Join the waitlist · $9.90 deposit';
 
+/** Short blurb for the Partnerships page, matching the other partners' length. */
+export const RESA_PARTNER_BLURB =
+  'A pre-launch wellness wearable worn as gold-plated jewelry. It reads HRV, heart rate, skin temperature and sleep alongside your cycle to explain your energy, mood and focus each day.';
+
 export const RESA_BLURB =
   'A wellness wearable worn as 18K gold-plated jewelry. Rèsa reads HRV, resting heart rate, skin temperature, sleep, respiration and activity alongside your cycle to explain how your hormonal, circadian and stress rhythms shape your energy, mood and focus each day, then suggests one thing to do about it.';
 

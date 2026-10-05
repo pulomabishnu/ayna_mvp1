@@ -3,7 +3,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
-import { RESA_BLURB, RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_NOTE, RESA_WAITLIST_URL } from '../data/resaPartnership';
+import { RESA_PARTNER_BLURB, RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/resaPartnership';
 
 /**
  * Brands — the partnership page.
@@ -72,16 +72,6 @@ import { RESA_BLURB, RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_NOTE, RESA_
  */
 
 const PARTNERS = [
-  {
-    brand: 'Rèsa',
-    logo: '/brands/resa.png',
-    url: RESA_SITE_URL,
-    prelaunch: true,
-    waitlistUrl: RESA_WAITLIST_URL,
-    waitlistCta: RESA_WAITLIST_CTA,
-    blurb: RESA_BLURB,
-    waitlistNote: RESA_WAITLIST_NOTE,
-  },
   {
     brand: 'Neycher',
     /** Drop a file at public/brands/neycher.png and it replaces the wordmark. */
@@ -178,6 +168,17 @@ const PARTNERS = [
     url: 'https://getgina.com/',
     blurb:
       'Hormone-free vaginal moisturizing glides and applicator refills for intimate comfort.',
+  },
+  {
+    // Last on purpose (2026-10-05): pre-launch, so it sits after the shipping
+    // partners but keeps its highlighted waitlist card.
+    brand: 'Rèsa',
+    logo: '/brands/resa.png',
+    url: RESA_SITE_URL,
+    prelaunch: true,
+    waitlistUrl: RESA_WAITLIST_URL,
+    waitlistCta: RESA_WAITLIST_CTA,
+    blurb: RESA_PARTNER_BLURB,
   },
 ];
 
