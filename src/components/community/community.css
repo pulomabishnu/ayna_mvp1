@@ -8,19 +8,20 @@
 .cm-sheet-backdrop,
 .cm-pdp-actions,
 .cm-toast {
+  /* Shared site tokens (index.css) first, so one change restyles every page. */
   --cm-ink: var(--color-navy, #242A52);
-  --cm-text: #29252F;
-  --cm-muted: #8C8492;
+  --cm-text: var(--color-text-main, #29252F);
+  --cm-muted: var(--color-text-muted, #8C8492);
   --cm-faint: #B9B1BC;
   --cm-line: rgba(36, 42, 82, .07);
-  --cm-surface: #FFFFFF;
+  --cm-surface: var(--color-surface, #FFFFFF);
   --cm-soft: #F7F2EC;
   --cm-softer: #FBF8F4;
   --cm-lilac: #EFE9F5;
   --cm-amber-soft: #FFF1DC;
   --cm-green: #2F6B4F;
   --cm-green-soft: #E7F2EC;
-  --cm-r: 22px;
+  --cm-r: var(--radius-lg, 22px);
   --cm-shadow: 0 0 0 1px rgba(36, 42, 82, .05);
   --cm-shadow-lift: 0 0 0 1px rgba(36, 42, 82, .07), 0 6px 18px -10px rgba(36, 42, 82, .18);
   /* soft tints only — nothing loud */
@@ -509,3 +510,32 @@ span.cm-author__name { cursor: default; }
 
 .cm-match__lock { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; display: block; margin: 0 auto 1px; }
 .cm-reply__as { font-size: .76rem; color: var(--cm-muted); }
+
+/* ── Product search (same feel as Browse) + # suggestions ─────────────── */
+.cm-picker { position: relative; }
+.cm-picker__field { display: flex; align-items: center; gap: .5rem; padding: 0 .9rem; min-height: 46px; border-radius: 999px; background: var(--cm-surface); border: 1px solid var(--cm-line); transition: border-color .15s, box-shadow .15s; }
+.cm-picker__field.is-focused { border-color: var(--cm-ink); box-shadow: 0 0 0 3px rgba(36, 42, 82, .08); }
+.cm-picker__field > svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--cm-muted); stroke-width: 1.8; stroke-linecap: round; }
+.cm-picker__input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: 500 .95rem var(--font-body); color: var(--cm-text); padding: .6rem 0; }
+.cm-picker__input::placeholder { color: var(--cm-faint); }
+.cm-picker__clear { border: 0; background: var(--cm-soft); color: var(--cm-muted); width: 22px; height: 22px; border-radius: 50%; cursor: pointer; line-height: 1; font-size: .95rem; }
+.cm-picker__panel { border-radius: 18px; background: #fff; box-shadow: var(--cm-shadow-lift); padding: .35rem; }
+.cm-picker__panel .cm-picker__results { box-shadow: none; padding: 0; max-height: 320px; }
+.cm-picker__label { margin: .35rem .55rem .2rem; font: 600 .68rem var(--font-body); letter-spacing: .07em; text-transform: uppercase; color: var(--cm-muted); }
+.cm-picker__results button.is-active { background: var(--cm-softer); }
+.cm-picker__tile { width: 46px; height: 46px; }
+.cm-picker__text em { font-style: normal; font-weight: 500; font-size: .7rem; color: var(--cm-muted); }
+.cm-picker__check { color: var(--cm-green); font-weight: 700; margin-left: .2rem; }
+.cm-chip-selected--product { padding-left: .3rem; }
+.cm-chip-selected__tile { width: 22px; height: 22px; border-radius: 6px; overflow: hidden; background: #fff; display: inline-grid; place-items: center; }
+
+.cm-hashtag-field { position: relative; }
+.cm-hashtag-menu { position: absolute; left: .5rem; right: .5rem; z-index: 5; list-style: none; margin: .2rem 0 0; padding: .3rem; border-radius: 16px; background: #fff; box-shadow: var(--cm-shadow-lift); }
+.cm-hashtag-menu button { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; padding: .5rem .65rem; border: 0; border-radius: 10px; background: none; cursor: pointer; font: 600 .88rem var(--font-body); color: var(--cm-ink); text-align: left; }
+.cm-hashtag-menu button small { font-weight: 500; color: var(--cm-muted); font-size: .74rem; }
+.cm-hashtag-menu button.is-active, .cm-hashtag-menu button:hover { background: var(--cm-softer); }
+.cm-hashtag-hint { margin: .25rem .2rem 0; font-size: .74rem; color: var(--cm-faint); }
+.cm-hashtag { color: var(--color-plum, #4E3866); font-weight: 600; border: 0; background: none; padding: 0; font: inherit; cursor: pointer; }
+.cm-hashtag:hover { text-decoration: underline; }
+button.cm-tag { border: 0; background: none; padding: 0; cursor: pointer; font-family: inherit; }
+button.cm-tag:hover { opacity: 1; text-decoration: underline; }

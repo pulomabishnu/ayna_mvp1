@@ -8,6 +8,8 @@
  * reviewsStore.js / ecosystemStore.js) and throw on error.
  */
 
+import { topicForHashtag } from './topics';
+
 export const PAGE_SIZE = 20;
 
 const FRIENDLY_ERRORS = {
@@ -433,11 +435,15 @@ export async function searchCommunity(supabase, rawQuery, limit = 8) {
   const q = sanitizeSearch(rawQuery);
   if (q.length < 2) return { people: [], posts: [], playlists: [] };
   const like = `%${q}%`;
+  // "#pcos" also finds posts tagged with the PCOS topic, not just the text.
+  const topicKey = String(rawQuery || '').trim().startsWith('#') ? topicForHashtag(rawQuery) : null;
   const [people, posts, playlists] = await Promise.all([
     supabase.from('community_profiles').select('user_id, username, display_name, avatar_url, bio')
       .or(`username.ilike.${like},display_name.ilike.${like}`).limit(limit),
-    supabase.from('community_feed_posts').select('*').ilike('body', like)
-      .order('created_at', { ascending: false }).limit(limit * 2),
+    (topicKey
+      ? supabase.from('community_feed_posts').select('*').or(`topics.cs.{${topicKey}},body.ilike.${like}`)
+      : supabase.from('community_feed_posts').select('*').ilike('body', like)
+    ).order('created_at', { ascending: false }).limit(limit * 2),
     supabase.from('community_feed_playlists').select('*').eq('visibility', 'public').ilike('title', like)
       .order('save_count', { ascending: false }).limit(limit),
   ]);

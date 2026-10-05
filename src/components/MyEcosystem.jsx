@@ -939,6 +939,8 @@ export default function MyEcosystem({
     user = null,
     userSession = null,
     isPremium = false,
+    progressSlot = null,
+    hubLinks = [],
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
     useEscapeToClose(showAddModal, () => setShowAddModal(false));
@@ -1821,6 +1823,7 @@ export default function MyEcosystem({
 
                 <div className="eco2-body">
                     <aside className="eco2-sidebar">
+                        {progressSlot}
                         <div className="eco2-sidebar__card">
                             <p className="eco2-sidebar__eyebrow">Your ecosystem</p>
                             {llmLoading ? (
@@ -1881,13 +1884,20 @@ export default function MyEcosystem({
                         </div>
 
                         <div className="eco2-sidebar__card">
-                            <p className="eco2-sidebar__eyebrow">Tools</p>
+                            <p className="eco2-sidebar__eyebrow">My ayna</p>
                             {typeof onEditHealthProfile === 'function' && (
                                 <button type="button" className="eco2-tool-row" onClick={onEditHealthProfile}>Update profile<span>›</span></button>
                             )}
                             {typeof onOpenDoctorPrep === 'function' && (
                                 <button type="button" className="eco2-tool-row" onClick={onOpenDoctorPrep}>Doctor prep<span>›</span></button>
                             )}
+                            {hubLinks.map((link) => (
+                                <button key={link.label} type="button" className="eco2-tool-row" onClick={link.onClick}>
+                                    {link.label}
+                                    {link.badge ? <em className="eco2-tool-row__badge">{link.badge}</em> : null}
+                                    <span>›</span>
+                                </button>
+                            ))}
                             <button type="button" className="eco2-tool-row" onClick={() => setShowMoreTools(true)}>More tools<span>›</span></button>
                         </div>
                     </aside>

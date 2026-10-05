@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useCommunity } from './CommunityContext';
 import { Sheet, Stars, Toggle, UserAvatar } from './CommunityUI';
 import ProductPicker from './ProductPicker';
-import { COMMUNITY_TOPICS, suggestTopicsForProducts } from '../../utils/community/topics';
+import HashtagTextarea from './HashtagTextarea';
+import { COMMUNITY_TOPICS, suggestTopicsForProducts, extractHashtagTopics } from '../../utils/community/topics';
 import * as store from '../../utils/community/communityStore';
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS } from '../../utils/community/imageUpload';
 import { trackCommunity } from '../../utils/community/analytics';
@@ -119,7 +120,8 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
       const post = await store.createPost(supabase, actorId, {
         kind,
         body,
-        topics,
+        // Topics picked from chips plus any known #hashtags typed in the text.
+        topics: [...new Set([...topics, ...extractHashtagTopics(body)])].slice(0, 5),
         isAnonymous: anonymous,
         productId: reviewProductId,
         rating: kind === 'review' ? rating : null,
@@ -201,18 +203,20 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
             </>
           )}
 
-          <label className="cm-field">
-            <span className="sr-only">Text</span>
-            <textarea
+          <div className="cm-field">
+            <HashtagTextarea
               className="cm-input cm-input--body"
               rows={kind === 'review' ? 4 : 5}
               maxLength={5000}
               value={body}
-              onChange={(e) => setBody(e.target.value)}
+              onChange={setBody}
+              onPickTopic={(key) => setTopics((prev) => (prev.includes(key) || prev.length >= 5 ? prev : [...prev, key]))}
               placeholder={PLACEHOLDERS[kind]}
+              aria-label="Text"
               autoFocus={kind !== 'review'}
             />
-          </label>
+            <p className="cm-hashtag-hint">type # to tag a topic</p>
+          </div>
 
           {previews.length > 0 && (
             <div className="cm-photo-strip">

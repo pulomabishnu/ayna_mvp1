@@ -31,6 +31,8 @@ const Articles = React.lazy(() => import('./components/Articles'));
 const CampusResources = React.lazy(() => import('./components/CampusResources'));
 const Community = React.lazy(() => import('./components/community/Community'));
 const CommunityProductActions = React.lazy(() => import('./components/community/CommunityProductActions'));
+import ProfileProgress from './components/ProfileProgress';
+import CommunityPeek from './components/CommunityPeek';
 import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage } from './data/products';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import Screenings from './components/Screenings';
@@ -66,7 +68,8 @@ import { productHref, productRouteKey, parseProductIdFromPath } from './utils/pr
 import { isCommunityPath } from './utils/community/route';
 import { countUnreadNotifications } from './utils/community/communityStore';
 
-const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
+// Everything personal lives under the "My ayna" tab.
+const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'tracked', 'screenings', 'articles', 'doctor-prep', 'profile-edit', 'phone-verify'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
 const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about'];
 
@@ -135,7 +138,7 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view — 'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Browse',
+  quiz: 'Health Quiz', ecosystem: 'My ayna', discovery: 'Browse',
   waitlist: 'Startups', recommendations: 'Your Recommendations', articles: 'Health Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
@@ -1081,6 +1084,15 @@ function App() {
   const handleStartQuiz = () => setCurrentView('quiz');
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
   const handleOpenPhoneVerification = () => setCurrentView('phone-verify');
+  // Profile-completion checklist → the place each step is done.
+  const handleCompletionAction = (key) => {
+    if (key === 'account') { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }
+    else if (key === 'quiz') handleStartQuiz();
+    else if (key === 'ecosystem') handleViewDiscovery('');
+    else if (key === 'community') handleViewCommunity('/community/me');
+    else if (key === 'phone') handleOpenPhoneVerification();
+    else if (key === 'contribute') handleViewCommunity('/community');
+  };
   const handleOpenDeleteAccount = () => setCurrentView('delete-account');
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
@@ -1704,17 +1716,15 @@ function App() {
               Ecosystem · Browse. Brands / My Health Library / About Us are real
               routes still, just relocated to the footer's secondary nav. */}
           <div className="app-nav__links desktop-only">
+            {/* Same four destinations as the phone tab bar, in the same order. */}
             <button
-              className={`app-nav__tab ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`}
-              onClick={() => handleViewEcosystem()}
+              className={`app-nav__tab ${(currentView === 'welcome' || currentView === 'hero') ? 'app-nav__tab--active' : ''}`}
+              onClick={navigateHome}
             >
-              My Ecosystem
-              {ecosystemCount > 0 && (
-                <span className="nav-ecosystem__pill" style={{ marginLeft: '0.4rem' }}>{ecosystemCount}</span>
-              )}
+              Home
             </button>
             <button
-              className={`app-nav__tab ${(currentView === 'discovery' || currentView === 'hero') ? 'app-nav__tab--active' : ''}`}
+              className={`app-nav__tab ${currentView === 'discovery' ? 'app-nav__tab--active' : ''}`}
               onClick={() => handleViewDiscovery('')}
             >
               Browse
@@ -1725,6 +1735,15 @@ function App() {
             >
               Community
               {communityUnread > 0 && <span className="app-nav__unread-dot" aria-label={`${communityUnread} new`} />}
+            </button>
+            <button
+              className={`app-nav__tab ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`}
+              onClick={() => handleViewEcosystem()}
+            >
+              My ayna
+              {ecosystemCount > 0 && (
+                <span className="nav-ecosystem__pill" style={{ marginLeft: '0.4rem' }}>{ecosystemCount}</span>
+              )}
             </button>
           </div>
 
@@ -1833,12 +1852,13 @@ function App() {
         {/* Mobile drawer */}
         {mobileMenuOpen && (
           <div className="mobile-nav-drawer" onClick={() => setMobileMenuOpen(false)}>
-            <button className="mobile-drawer-item" onClick={() => { handleViewEcosystem(); setMobileMenuOpen(false); }}>
-              My Ecosystem {ecosystemCount > 0 && <span className="nav-ecosystem__pill">{ecosystemCount}</span>}
-            </button>
+            <button className="mobile-drawer-item" onClick={() => { navigateHome(); setMobileMenuOpen(false); }}>Home</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewDiscovery(''); setMobileMenuOpen(false); }}>Browse</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewCommunity(); setMobileMenuOpen(false); }}>
               Community {communityUnread > 0 && <span className="nav-ecosystem__pill">{communityUnread}</span>}
+            </button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewEcosystem(); setMobileMenuOpen(false); }}>
+              My ayna {ecosystemCount > 0 && <span className="nav-ecosystem__pill">{ecosystemCount}</span>}
             </button>
             <button className="mobile-drawer-item" onClick={() => { handleViewWishlist(); setMobileMenuOpen(false); }}>
               Wishlist {Object.keys(savedProducts || {}).length > 0 ? `(${Object.keys(savedProducts || {}).length})` : ''}
@@ -1870,6 +1890,16 @@ function App() {
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
             initialCategory={homeCategory}
+            heroSlot={user ? (
+              <ProfileProgress
+                variant="hero"
+                user={user}
+                quizDone={hasCompletedPersonalization}
+                ecosystemCount={ecosystemCount}
+                onAction={handleCompletionAction}
+              />
+            ) : null}
+            footerSlot={<CommunityPeek onOpenCommunity={handleViewCommunity} />}
           />
         )}
         {currentView === 'quiz' && (
@@ -3255,6 +3285,21 @@ function App() {
             onBuildEcosystem={handleStartQuiz}
             onEditHealthProfile={handleOpenHealthProfileEditor}
             onOpenPhoneVerify={handleOpenPhoneVerification}
+            progressSlot={user ? (
+              <ProfileProgress
+                user={user}
+                quizDone={hasCompletedPersonalization}
+                ecosystemCount={ecosystemCount}
+                onAction={handleCompletionAction}
+              />
+            ) : null}
+            hubLinks={[
+              { label: 'Community profile', onClick: () => handleViewCommunity('/community/me') },
+              { label: 'Tracked products', onClick: () => setCurrentView('tracked') },
+              { label: 'Recalls', onClick: () => setCurrentView('recalls') },
+              { label: 'Screenings', onClick: () => setCurrentView('screenings') },
+              { label: 'Health library', onClick: () => setCurrentView('articles') },
+            ]}
             quizResults={quizResults}
             healthProfile={healthProfile}
             userZipCode={userZipCode}

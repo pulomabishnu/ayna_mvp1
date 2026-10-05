@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCommunity, relativeTime, shareLink } from './CommunityContext';
-import { UserAvatar, Stars, CommunityProductPreview, ClampedText, OverflowMenu } from './CommunityUI';
-import { topicLabel } from '../../utils/community/topics';
+import { UserAvatar, Stars, CommunityProductPreview, ClampedText, OverflowMenu, RichText } from './CommunityUI';
+import { topicLabel, extractHashtagTopics } from '../../utils/community/topics';
 import { postProductIds } from '../../utils/community/ranking';
 import { communityHref } from '../../utils/community/route';
 import * as store from '../../utils/community/communityStore';
@@ -71,6 +71,7 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
     else navigate({ name: 'post', id: post.id });
   };
 
+  const openTag = (part) => navigate({ name: 'search', q: part.tag });
   const isLike = post.kind === 'post'; // discussions get "like"; questions/reviews get "helpful"
   const toggle = async (field, fn) => {
     const reason = field === 'viewer_saved' ? 'save posts' : isLike ? 'like posts' : 'mark posts helpful';
@@ -123,7 +124,9 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
     },
   ];
 
-  const visibleTopics = (post.topics || []).slice(0, 3);
+  // Topics already written as #hashtags in the text aren't repeated below it.
+  const inlineTopics = extractHashtagTopics(post.body);
+  const visibleTopics = (post.topics || []).filter((t) => !inlineTopics.includes(t)).slice(0, 3);
   const icon = {
     helpful: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 21V10l4.5-7c1.4 0 2.3 1.2 2 2.6L12.8 10H19a2 2 0 0 1 2 2.3l-1.2 6.8a2 2 0 0 1-2 1.7H7Zm0 0H4V10h3" /></svg>,
     like: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg>,
@@ -156,8 +159,8 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
       )}
 
       {expanded
-        ? <p className={`cm-text${post.kind === 'question' ? ' cm-text--question' : ''}`}>{post.body}</p>
-        : <ClampedText text={post.body} lines={4} className={post.kind === 'question' ? 'cm-text--question-wrap' : ''} />}
+        ? <p className={`cm-text${post.kind === 'question' ? ' cm-text--question' : ''}`}><RichText text={post.body} onTag={openTag} /></p>
+        : <ClampedText text={post.body} lines={4} className={post.kind === 'question' ? 'cm-text--question-wrap' : ''} onTag={openTag} />}
 
       <PostMedia media={post.media} legacyUrl={post.photo_url} />
 
@@ -178,7 +181,11 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
       <div className="cm-post__foot" onClick={(e) => e.stopPropagation()}>
         {expanded && visibleTopics.length > 0 && (
           <div className="cm-tags">
-            {visibleTopics.map((t) => <span key={t} className="cm-tag" title={topicLabel(t)}>#{t.replace(/-/g, '')}</span>)}
+            {visibleTopics.map((t) => (
+              <button key={t} type="button" className="cm-tag" title={topicLabel(t)} onClick={() => openTag({ tag: `#${t.replace(/-/g, '')}`, key: t })}>
+                #{t.replace(/-/g, '')}
+              </button>
+            ))}
           </div>
         )}
         <div className="cm-actions">

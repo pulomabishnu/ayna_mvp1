@@ -183,3 +183,26 @@ describe('username lists stay in sync with the database', async () => {
     expect([...RESERVED_USERNAMES].sort()).toEqual(fromSql);
   });
 });
+
+import { hashtagFor, topicForHashtag, suggestHashtags, extractHashtagTopics, splitHashtags } from './topics';
+
+describe('hashtags', () => {
+  it('maps tags to topics via key, label and aliases', () => {
+    expect(hashtagFor('cycle-tracking')).toBe('#cycletracking');
+    expect(topicForHashtag('#cycletracking')).toBe('cycle-tracking');
+    expect(topicForHashtag('#BirthControl')).toBe('contraception');
+    expect(topicForHashtag('#endo')).toBe('endometriosis');
+    expect(topicForHashtag('#notatopic')).toBeNull();
+  });
+  it('suggests by prefix first', () => {
+    const s = suggestHashtags('pe');
+    expect(s[0].key).toBe('periods');
+    expect(s.map((x) => x.key)).toContain('pelvic-floor');
+    expect(suggestHashtags('').length).toBe(6);
+  });
+  it('extracts known topics and splits for rendering', () => {
+    expect(extractHashtagTopics('love this #PCOS hack #sleep #random and email a#b')).toEqual(['pcos', 'sleep']);
+    const parts = splitHashtags('hi #pcos friends');
+    expect(parts).toEqual(['hi ', { tag: '#pcos', key: 'pcos' }, ' friends']);
+  });
+});

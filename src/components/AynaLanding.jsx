@@ -248,9 +248,10 @@ function LandingFeatures({
   );
 }
 
-export default function AynaLanding(props) {
+export default function AynaLanding({ heroSlot = null, footerSlot = null, ...props }) {
   return <>
-    <LiveSiteLanding {...props} />
+    <LiveSiteLanding {...props} heroSlot={heroSlot} />
     <LandingFeatures {...props} />
+    {footerSlot}
   </>;
 }

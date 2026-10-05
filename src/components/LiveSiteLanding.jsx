@@ -316,7 +316,7 @@ function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#242A52', onKnob = '#F0A8
 /* 1c — returning user                                                 */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
+function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null, heroSlot = null }) {
   const name = displayNameFromUser(user) || 'there';
   const [filter, setFilter] = useState(initialCategory || 'all');
   useEffect(() => {
@@ -484,6 +484,7 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
                 Browse
               </button>
             </div>
+            {heroSlot}
           </div>
 
           <button type="button" className="ayna-landing-ecocard" onClick={onViewEcosystem}>
@@ -946,6 +947,7 @@ export default function LiveSiteLanding({
   profileCategories,
   recommendedProductIds = [],
   initialCategory = null,
+  heroSlot = null,
 }) {
   if (user) {
     return (
@@ -961,6 +963,7 @@ export default function LiveSiteLanding({
         onViewEcosystem={onViewEcosystem}
         onOpenProduct={onOpenProduct}
         initialCategory={initialCategory}
+        heroSlot={heroSlot}
       />
     );
   }

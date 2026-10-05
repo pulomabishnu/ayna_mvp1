@@ -4,6 +4,7 @@ import { useEscapeToClose } from '../../utils/useEscapeToClose';
 import { useCommunity } from './CommunityContext';
 import { hueIndex } from '../../utils/community/hue';
 import { publicMediaUrl } from '../../utils/community/imageUpload';
+import { splitHashtags } from '../../utils/community/topics';
 
 function initials(name) {
   const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
@@ -163,12 +164,22 @@ export function FeedSkeleton({ count = 3 }) {
 }
 
 /** Long text, clamped with "Read more". */
-export function ClampedText({ text, lines = 5, className = '' }) {
+/** Post text with #hashtags highlighted; known topics open a search for that tag. */
+export function RichText({ text, onTag }) {
+  return splitHashtags(text).map((part, i) => (
+    typeof part === 'string' ? <React.Fragment key={i}>{part}</React.Fragment>
+      : part.key && onTag
+        ? <button key={i} type="button" className="cm-hashtag" onClick={(e) => { e.stopPropagation(); onTag(part); }}>{part.tag}</button>
+        : <span key={i} className="cm-hashtag cm-hashtag--plain">{part.tag}</span>
+  ));
+}
+
+export function ClampedText({ text, lines = 5, className = '', onTag }) {
   const [open, setOpen] = useState(false);
   const long = String(text || '').length > 320 || String(text || '').split('\n').length > lines;
   return (
     <div className={className}>
-      <p className={`cm-text${!open && long ? ' cm-text--clamped' : ''}`} style={{ '--cm-lines': lines }}>{text}</p>
+      <p className={`cm-text${!open && long ? ' cm-text--clamped' : ''}`} style={{ '--cm-lines': lines }}><RichText text={text} onTag={onTag} /></p>
       {long && (
         <button type="button" className="cm-link" onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}>
           {open ? 'Show less' : 'Read more'}
