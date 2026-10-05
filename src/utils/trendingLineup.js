@@ -1,20 +1,22 @@
 /**
  * "Trending on ayna" weekly rotation (requested 2026-10-01).
  *
- * The lineup changes once a week, starting 2026-10-01, and never shows two
- * products from the same category (or the same product twice). It's fully
- * deterministic — every visitor sees the same lineup on the same day, with no
- * server state — by walking a fixed, shuffled category order 8 slots at a
- * time: week 0 gets categories 1–8, week 1 gets 9–16, and so on, wrapping
- * around. Each time a category comes back around it shows its next product,
- * so the same product doesn't reappear until its category has cycled through
- * everything it has. With 16+ eligible categories, back-to-back weeks share
- * no category at all.
+ * The lineup changes once a week, starting 2026-10-01, and shows one product
+ * per care area — the same areas as the Browse filters (Period, Intimate Care,
+ * Pelvic, Menopause, ...). Areas used to be raw categories, which let period
+ * products fill most of the grid, since pads, tampons, cups, discs, period
+ * underwear, cup steamers, and cramp relief are each their own category
+ * (changed 2026-10-04). It's fully deterministic — every visitor sees the same
+ * lineup on the same day, with no server state — by walking a fixed, shuffled
+ * area order 8 slots at a time, wrapping around. Each time an area comes back
+ * around it shows its next product, so an area that appears in back-to-back
+ * weeks always shows a different product. Areas with fewer than two eligible
+ * products sit out, since they'd show the same product every time.
  *
  * Adding products or categories to the catalog reshuffles future weeks; that's
  * fine — the guarantees above still hold for whatever the catalog is.
  */
-import { CATEGORY_LABELS } from '../data/products.js';
+import { CATEGORY_LABELS, MACRO_GROUPS } from '../data/products.js';
 import { isPlaceholderProductImage } from './resolveProductImage.js';
 import { hasFlaggedRecall } from './productSafetyAlert.js';
 
@@ -43,6 +45,16 @@ export function trendingWeekIndex(now = new Date()) {
 export function trendingCategoryLabel(product) {
   const raw = product?.category || 'other';
   return String(CATEGORY_LABELS[raw] || raw).replace(/^[^\w]+\s*/, '');
+}
+
+/**
+ * The care area a product belongs to: the first Browse filter group whose
+ * categories include the product's category, or the category's own label for
+ * categories no group covers (e.g. Supplements).
+ */
+export function trendingAreaLabel(product) {
+  const group = MACRO_GROUPS.find((g) => g.id !== 'all' && g.categories.includes(product?.category));
+  return group ? group.label : trendingCategoryLabel(product);
 }
 
 function isTrendingEligible(product) {
@@ -81,32 +93,34 @@ function seededShuffle(items, seed) {
 
 /**
  * @returns {{ product: object, label: string }[]} this week's lineup — up to
- *   TRENDING_SIZE products, each from a different category. `label` is the
- *   uppercase category eyebrow shown on the tile.
+ *   TRENDING_SIZE products, each from a different care area. `label` is the
+ *   uppercase category eyebrow shown on the tile (e.g. PADS).
  */
 export function getWeeklyTrendingLineup(products, now = new Date()) {
-  const byCategory = new Map();
+  const byArea = new Map();
   products.filter(isTrendingEligible).forEach((product) => {
-    const label = trendingCategoryLabel(product);
-    if (!byCategory.has(label)) byCategory.set(label, []);
-    byCategory.get(label).push(product);
+    const area = trendingAreaLabel(product);
+    if (!byArea.has(area)) byArea.set(area, []);
+    byArea.get(area).push(product);
   });
+  for (const [area, list] of byArea) if (list.length < 2) byArea.delete(area);
 
-  const categories = seededShuffle([...byCategory.keys()].sort(), SHUFFLE_SEED);
-  const count = categories.length;
+  const areas = seededShuffle([...byArea.keys()].sort(), SHUFFLE_SEED);
+  const count = areas.length;
   if (!count) return [];
   const slots = Math.min(TRENDING_SIZE, count);
   const week = trendingWeekIndex(now);
 
   return Array.from({ length: slots }, (_, slot) => {
     const position = week * slots + slot;
-    const label = categories[position % count];
+    const area = areas[position % count];
     const pool = seededShuffle(
-      byCategory.get(label).sort((a, b) => String(a.id).localeCompare(String(b.id))),
-      SHUFFLE_SEED + label.length,
+      byArea.get(area).sort((a, b) => String(a.id).localeCompare(String(b.id))),
+      SHUFFLE_SEED + area.length,
     );
     const lap = Math.floor(position / count);
-    return { product: pool[lap % pool.length], label: label.toUpperCase() };
+    const product = pool[lap % pool.length];
+    return { product, label: trendingCategoryLabel(product).toUpperCase() };
   });
 }
 
@@ -127,14 +141,18 @@ export function orderByWeeklyTrending(list, lineup, now = new Date()) {
   return [...first, ...rest];
 }
 
-/** First `limit` products from `list`, skipping any product or category already taken. */
-export function takeDistinctCategories(list, limit = TRENDING_SIZE) {
+/**
+ * First `limit` products from `list`, skipping any product already taken and
+ * any group already taken. `groupOf` defaults to the shopper-facing category;
+ * pass trendingAreaLabel for one product per care area.
+ */
+export function takeDistinctCategories(list, limit = TRENDING_SIZE, groupOf = trendingCategoryLabel) {
   const seenIds = new Set();
   const seenCategories = new Set();
   const out = [];
   for (const product of list) {
     if (out.length >= limit) break;
-    const category = trendingCategoryLabel(product);
+    const category = groupOf(product);
     if (seenIds.has(product.id) || seenCategories.has(category)) continue;
     seenIds.add(product.id);
     seenCategories.add(category);
