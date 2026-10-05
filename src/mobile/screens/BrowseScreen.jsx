@@ -188,7 +188,7 @@ function PixelateGrid({ count = 6 }) {
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch }) {
+function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
@@ -225,7 +225,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
         }
       >
         {visibleProducts.map((p) => (
-          <ProductCard key={p.id} product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
+          <ProductCard key={p.id} product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
         ))}
         {loadingMore && !isList && (
           <>
@@ -383,6 +383,15 @@ export default function BrowseScreen({
   }, [searchTermRaw, searchScored.length, activeGroup]);
 
   const articlesById = new Map(articles.map((a) => [a.id, a]));
+  const matchingReads = searchTermRaw.length >= 2 ? articles
+    .map((article) => {
+      const title = String(article.title || '').toLowerCase();
+      const details = `${(article.tags || []).join(' ')} ${article.teaser || ''}`.toLowerCase();
+      return { article, score: title.includes(searchTerm) ? 2 : details.includes(searchTerm) ? 1 : 0 };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(({ article }) => article) : [];
   const rows = ARTICLE_CATEGORIES.map((cat) => ({
     ...cat,
     items: cat.articleIds.map((id) => articlesById.get(id)).filter(Boolean),
@@ -442,7 +451,7 @@ export default function BrowseScreen({
       {mode === 'products' ? (
         <>
           {filtered.length > 0 ? (
-            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
+            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
               <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
@@ -455,7 +464,7 @@ export default function BrowseScreen({
               <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Not in our catalog yet — found via AI search
               </div>
-              <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
+              <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
             </>
           ) : (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
@@ -474,7 +483,20 @@ export default function BrowseScreen({
           >
             ALL OTC · NOT A DIAGNOSIS
           </div>
+          {matchingReads.length > 0 && <section style={{ marginTop: 25 }} aria-label="Related reads">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '0 20px 12px' }}>
+              <strong style={{ fontSize: 18, color: 'var(--ayna-text)' }}>Learn about this</strong>
+              <button type="button" onClick={() => setMode('reads')} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontWeight: 600 }}>See reads →</button>
+            </div>
+            <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 6px' }}>
+              {matchingReads.slice(0, 4).map((article) => <LibraryCard key={article.id} article={article} onClick={() => onOpenArticle?.(article)} />)}
+            </div>
+          </section>}
         </>
+      ) : searchTermRaw.length >= 2 ? (
+        matchingReads.length > 0 ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }}>
+          {matchingReads.map((article) => <LibraryCard key={article.id} article={article} fullWidth onClick={() => onOpenArticle?.(article)} />)}
+        </div> : <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)' }}>No reads match this search.</div>
       ) : personalized && hasProfile ? (
         recommendedReads.length === 0 ? (
           <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>

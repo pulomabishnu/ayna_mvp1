@@ -565,6 +565,7 @@ export default function MobileApp() {
               setOverlay(null);
               setScreen('community');
             }}
+            onStartQuiz={() => { setOverlay(null); setEditingHealthProfile(false); setScreen('quiz'); }}
             quizAnswers={effectiveQuizAnswers}
             ecosystemProducts={myProducts}
             theme={theme}

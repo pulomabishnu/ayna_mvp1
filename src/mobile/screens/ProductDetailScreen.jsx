@@ -293,6 +293,7 @@ export default function ProductDetailScreen({
   isInEcosystem = false,
   onAddToEcosystem,
   onCommunityAction,
+  onStartQuiz,
   whyMatched,
   reads = [],
   quizAnswers = null,
@@ -301,6 +302,7 @@ export default function ProductDetailScreen({
   const [mode, setMode] = useState('summary'); // 'summary' | 'evidence'
   const [activeTab, setActiveTab] = useState('summary');
   const [partnerOpen, setPartnerOpen] = useState(false);
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
   // only holds one layer) so "back" from here returns to this product
@@ -318,6 +320,7 @@ export default function ProductDetailScreen({
     setMode('summary');
     setActiveTab('summary');
     setPartnerOpen(false);
+    setSummaryExpanded(false);
   }
 
   if (!product) {
@@ -551,6 +554,7 @@ export default function ProductDetailScreen({
                 </div>
               </div>
             )}
+            {matchPercent == null && <button type="button" onClick={onStartQuiz} style={{ position: 'absolute', right: 12, bottom: 12, border: 0, borderRadius: 99, background: '#fff9f2', color: '#5c3b2c', padding: '9px 13px', fontWeight: 600 }}>🔒 Build to see your match</button>}
           </div>
         </div>
 
@@ -635,7 +639,10 @@ export default function ProductDetailScreen({
                   </div>
                 )}
                 {summary ? (
-                  <div style={{ fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: sourceCountTotal > 0 ? 12 : 0 }}>{summary}</div>
+                  <>
+                    <div style={{ fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: sourceCountTotal > 0 ? 12 : 0, ...(!summaryExpanded && String(summary).length > 320 ? { display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' } : {}) }}>{summary}</div>
+                    {String(summary).length > 320 && <button type="button" onClick={() => setSummaryExpanded((value) => !value)} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', padding: '8px 0 0', fontWeight: 600 }}>{summaryExpanded ? 'Show less' : 'Read full summary'}</button>}
+                  </>
                 ) : (
                   <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>No summary yet.</div>
                 )}

@@ -626,12 +626,11 @@ function ChoiceGrid({ items, selected = [], onToggle, icons }) {
 
 // Chip spec (design pattern C1/G1) — flex-wrapped pills, not vertical rows.
 // Used both flat (conditions) and grouped under a label (SearchableGroups).
-function RowChoiceList({ items, selected = [], onToggle, exclusiveValues = [] }) {
+function RowChoiceList({ items, selected = [], onToggle }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
       {items.map((item) => {
         const on = selected.includes(item);
-        const exclusive = exclusiveValues.includes(item);
         return (
           <div
             key={item}
@@ -640,8 +639,8 @@ function RowChoiceList({ items, selected = [], onToggle, exclusiveValues = [] })
               cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
               fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1, padding: '10px 14px', borderRadius: 99,
               fontWeight: on ? 600 : 500,
-              background: on ? ACCENT_BG : (exclusive ? PANEL_BG : CARD_BG),
-              color: on ? SELECTED_TEXT : (exclusive ? MUTED : INK),
+              background: on ? ACCENT_BG : CARD_BG,
+              color: on ? SELECTED_TEXT : INK,
               border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
               boxShadow: on ? '0 2px 8px rgba(232,169,79,.22)' : 'none',
             }}
@@ -1167,6 +1166,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
 // Pattern C1: search bar + grouped chips, each group header showing a live
 // "n/m" selected count.
 function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
+  const [openGroups, setOpenGroups] = useState([]);
   const q = search.trim().toLowerCase();
   const visible = groups
     .map((group) => ({ ...group, items: group.items.filter((item) => !q || item.toLowerCase().includes(q) || group.label.toLowerCase().includes(q)) }))
@@ -1178,13 +1178,14 @@ function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
         {visible.map((group) => {
           const count = group.items.filter((item) => selected.includes(item)).length;
           return (
-            <div key={group.label} style={{ marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 11 }}>
+            <div key={group.label} style={{ marginBottom: 9, border: '1px solid rgba(255,249,242,.25)', borderRadius: 14, padding: '12px 14px' }}>
+              <button type="button" aria-expanded={!!q || openGroups.includes(group.label)} onClick={() => setOpenGroups((current) => current.includes(group.label) ? current.filter((label) => label !== group.label) : [...current, group.label])} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, border: 0, background: 'transparent', padding: 0, textAlign: 'left', cursor: 'pointer' }}>
                 <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#FFF9F2' }}>{group.label}</span>
                 <span style={{ flex: 1, height: 1, background: 'rgba(255,249,242,.24)' }} />
                 <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', color: count > 0 ? '#FFC774' : 'rgba(255,249,242,.55)' }}>{count}/{group.items.length}</span>
-              </div>
-              <RowChoiceList items={group.items} selected={selected} onToggle={onToggle} />
+                <span style={{ color: '#FFF9F2', fontSize: 17 }}>{q || openGroups.includes(group.label) ? '−' : '+'}</span>
+              </button>
+              {(q || openGroups.includes(group.label)) && <div style={{ marginTop: 12 }}><RowChoiceList items={group.items} selected={selected} onToggle={onToggle} /></div>}
             </div>
           );
         })}
