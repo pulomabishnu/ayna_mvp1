@@ -1884,7 +1884,7 @@ export default function MyEcosystem({
                         </div>
 
                         <div className="eco2-sidebar__card">
-                            <p className="eco2-sidebar__eyebrow">My ayna</p>
+                            <p className="eco2-sidebar__eyebrow">Tools</p>
                             {typeof onEditHealthProfile === 'function' && (
                                 <button type="button" className="eco2-tool-row" onClick={onEditHealthProfile}>Update profile<span>›</span></button>
                             )}

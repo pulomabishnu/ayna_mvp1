@@ -50,8 +50,8 @@ function useCompletionSignals(user) {
 }
 
 /**
- * "Your ayna is N% complete" with a checklist of next steps.
- *   variant="card"  full checklist (My ayna)
+ * "your profile is N% complete" with a checklist of next steps.
+ *   variant="card"  full checklist (My Ecosystem)
  *   variant="strip" ring + the single next step; hidden at 100%
  *   variant="hero"  same, styled for the dark home hero
  */
@@ -70,7 +70,7 @@ export default function ProfileProgress({ user, quizDone, ecosystemCount = 0, va
       <section className={`pp-strip${variant === 'hero' ? ' pp-strip--hero' : ''}`} aria-label="Profile progress">
         <ProgressRing percent={percent} size={56} stroke={5} />
         <div className="pp-strip__text">
-          <span className="pp-eyebrow">your ayna is {percent}% set up</span>
+          <span className="pp-eyebrow">your profile is {percent}% set up</span>
           <strong>{next.label}</strong>
           <small>{next.hint}</small>
         </div>
@@ -87,7 +87,7 @@ export default function ProfileProgress({ user, quizDone, ecosystemCount = 0, va
       <div className="pp-panel__head">
         <ProgressRing percent={percent} size={68} stroke={6} />
         <div>
-          <span className="pp-eyebrow">your ayna</span>
+          <span className="pp-eyebrow">your profile</span>
           <h3>{percent === 100 ? 'all set ✦' : `${percent}% complete`}</h3>
           <small>{percent === 100 ? 'your matches are as sharp as they get.' : 'each step makes your matches sharper.'}</small>
         </div>

@@ -68,7 +68,7 @@ import { productHref, productRouteKey, parseProductIdFromPath } from './utils/pr
 import { isCommunityPath } from './utils/community/route';
 import { countUnreadNotifications } from './utils/community/communityStore';
 
-// Everything personal lives under the "My ayna" tab.
+// Everything personal lives under the "My Ecosystem" tab.
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'tracked', 'screenings', 'articles', 'doctor-prep', 'profile-edit', 'phone-verify'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
 const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about'];
@@ -138,7 +138,7 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view — 'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Health Quiz', ecosystem: 'My ayna', discovery: 'Browse',
+  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Browse',
   waitlist: 'Startups', recommendations: 'Your Recommendations', articles: 'Health Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
@@ -1740,7 +1740,7 @@ function App() {
               className={`app-nav__tab ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`}
               onClick={() => handleViewEcosystem()}
             >
-              My ayna
+              My Ecosystem
               {ecosystemCount > 0 && (
                 <span className="nav-ecosystem__pill" style={{ marginLeft: '0.4rem' }}>{ecosystemCount}</span>
               )}
@@ -1858,7 +1858,7 @@ function App() {
               Community {communityUnread > 0 && <span className="nav-ecosystem__pill">{communityUnread}</span>}
             </button>
             <button className="mobile-drawer-item" onClick={() => { handleViewEcosystem(); setMobileMenuOpen(false); }}>
-              My ayna {ecosystemCount > 0 && <span className="nav-ecosystem__pill">{ecosystemCount}</span>}
+              My Ecosystem {ecosystemCount > 0 && <span className="nav-ecosystem__pill">{ecosystemCount}</span>}
             </button>
             <button className="mobile-drawer-item" onClick={() => { handleViewWishlist(); setMobileMenuOpen(false); }}>
               Wishlist {Object.keys(savedProducts || {}).length > 0 ? `(${Object.keys(savedProducts || {}).length})` : ''}

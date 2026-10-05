@@ -1,5 +1,5 @@
 /**
- * "Your ayna is N% complete" — a checklist of the steps that actually make
+ * "your profile is N% complete" — a checklist of the steps that actually make
  * ayna better for you. Pure function so it's testable; the component gathers
  * the inputs. Weights sum to 100. Partial credit only for the ecosystem
  * (n of 3 products) so the ring moves as people add things.
