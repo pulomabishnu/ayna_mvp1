@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       const quantity = Number(req.query?.quantity || 1);
       const items = normalizeCartItems([{ productId, variantId, quantity }]);
       if (!config.enabled || !items) return res.status(200).json({ enabled: false, productId, variantId });
-      const quote = await buildCartQuote(database(), items, { allowCatalogFallback: fallback });
+      const quote = await buildCartQuote(database(), items, { allowCatalogFallback: fallback, allowUnapproved: fallback });
       const line = quote.lines[0];
       if (line.reason === 'unavailable') return res.status(200).json({ enabled: false, productId, variantId });
       return res.status(200).json({
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
       if (!items) return res.status(400).json({ error: 'Invalid cart.' });
       const limit = await rateLimit(`pilot-quote:${clientIp(req)}`, { max: 60, windowSec: 60 });
       if (!limit.ok) return res.status(429).json({ error: 'Please wait before trying again.' });
-      return res.status(200).json(publicQuote(await buildCartQuote(database(), items, { allowCatalogFallback: fallback }), config));
+      return res.status(200).json(publicQuote(await buildCartQuote(database(), items, { allowCatalogFallback: fallback, allowUnapproved: fallback }), config));
     }
 
     if (!config.vendor || !config.admins.length || !process.env.STRIPE_WEBHOOK_SECRET) return res.status(503).json({ error: 'Pilot setup is incomplete.' });
@@ -63,7 +63,7 @@ export default async function handler(req, res) {
     if (order && order.cart_key !== key) return res.status(409).json({ error: 'This checkout attempt belongs to a different cart. Start again.', restart: true });
     if (!order) {
       step = 'price_cart';
-      const quote = await buildCartQuote(db, items, { allowCatalogFallback: fallback });
+      const quote = await buildCartQuote(db, items, { allowCatalogFallback: fallback, allowUnapproved: fallback });
       if (!quote.ready) {
         const message = quote.error === 'cart_too_large' ? 'This cart is too large for one order. Remove an item or reduce a quantity.'
           : quote.lines.some(l => l.reason === 'unavailable') ? 'An item in your cart is no longer available for ayna checkout.'
@@ -109,7 +109,7 @@ export default async function handler(req, res) {
         client_reference_id: user.id, metadata: { ayna_order_id: order.id, ayna_order_number: String(order.order_number) },
         shipping_address_collection: { allowed_countries: ['US'] },
         ...(config.taxIncluded ? { automatic_tax: { enabled: true } } : {}),
-        success_url: `${config.origin}/pilot/orders?paid=1&order=${order.id}`,
+        success_url: `${config.origin}/pilot/orders?paid=1&order=${order.id}${body.source === 'cart' ? '&source=cart' : ''}`,
         cancel_url: body.source === 'cart' ? `${config.origin}/pilot/cart?pilot_cancelled=1` : `${config.origin}/pilot/orders?pilot_cancelled=1`,
         ...(config.paymentMode === 'test' ? { custom_text: { submit: { message: 'Test order only. No real payment or shipment.' } } } : {}),
       }, { idempotencyKey: `ayna-pilot-${order.id}` });

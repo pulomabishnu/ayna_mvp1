@@ -96,5 +96,11 @@ Apply `supabase/pilot_cart.sql` (after the other pilot SQL files) before deployi
 - Cart (`/pilot/cart`, stored in the browser, no prices): each option is its own line; one Stripe payment for the whole cart.
 - Total = item price x quantity + ayna fee (10% of item price) + processing (covers Stripe 2.9% + 30c once per payment); tax, when Stripe Tax is on, is inside that fixed total. **Retailer shipping is not modeled yet**: nothing is added for it and nothing is guessed.
 - Each order item stores a snapshot (names, option, quantity, retailer link, retailer price, customer price) and its own status, retailer order number, actual cost, carrier, tracking, notes. Customers can only read the customer-safe columns (column-level grants), never retailer link/cost/notes.
+
+## Price review gate (2026-10-04)
+
+Apply `supabase/pilot_price_approval.sql` after `pilot_prices.sql`. It adds `live_approved`, which defaults to false. Test checkout can use entered prices; live checkout requires an administrator to check the exact product, size/pack, retailer link and price in `/pilot/admin` and explicitly approve that row. Changing a price or link through the admin form resets approval unless the box is checked again. A product with no approved price remains requestable and cannot be charged in live mode.
+
+Eight exact item/option matches from the user's sheet are recorded in `supabase/seed/2026-10-04_reviewed_sheet_test_prices.sql` as test prices only. The hosted database has these eight plus the legacy Always Size 1 price; all nine have `live_approved=false`. The other sheet rows require review because some search results have a different brand, size, count or product. Do not bulk import them or mark any imported price live approved without verifying the exact listing and current price.
 - Emails (Resend, best-effort; DB is the source of truth): team email on payment (full address, every item with exact retailer link), customer "order received", and a customer update sent only when an admin presses **Complete / send customer update** and confirms. The inbox shows which emails still need a resend.
 - Admin: `/pilot/admin?order=<id>` (sign-in + `PILOT_ADMIN_USER_IDS` required).

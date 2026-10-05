@@ -20,8 +20,8 @@ export default async function handler(req, res) {
     const product = checked(await db.from('product_catalog').select('id,name,category,product_type,requires_prescription,is_active,source,review_status,discovery_meta,extra').eq('id', productId).maybeSingle());
     const variant = selectedPilotVariant(product, variantId);
     if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for Ayna checkout.' });
-    const price = await pilotVariantPrice(db, productId, variantId, 'amount');
-    if (price) return res.status(409).json({ error: 'A checkout price is now available. Please try Buy now again.', checkoutAvailable: true });
+    const price = await pilotVariantPrice(db, productId, variantId, 'amount,live_approved');
+    if (price && (config.paymentMode === 'test' || price.live_approved === true)) return res.status(409).json({ error: 'A checkout price is now available. Please try Buy now again.', checkoutAvailable: true });
     const productName = variant.label ? `${product.name} — ${variant.label}` : product.name;
     const existing = checked(await db.from('pilot_requests').select('id,status').eq('user_id', user.id).eq('product_id', productId).eq('variant_id', variantId).maybeSingle());
     if (existing) return res.status(200).json({ requested: true, id: existing.id, status: existing.status });

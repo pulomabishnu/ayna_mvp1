@@ -30,6 +30,8 @@ describe('pilot guardrails', () => {
     expect(checkoutPrice(product, single, null, { allowCatalogFallback: false })).toBeNull();
     const confirmed = { amount: 1497, currency: 'usd', variant_label: null };
     expect(checkoutPrice({ ...product, price: '$8 for 18' }, single, confirmed)).toBe(confirmed);
+    expect(checkoutPrice(product, single, confirmed, { allowCatalogFallback: false, allowUnapproved: false })).toBeNull();
+    expect(checkoutPrice(product, single, { ...confirmed, live_approved: true }, { allowCatalogFallback: false, allowUnapproved: false })).toMatchObject({ amount: 1497 });
   });
   it('sets the $14.97 test price and removes affiliate tags from a retailer link', () => {
     expect(parsePriceInput('$14.97')).toBe(1497);

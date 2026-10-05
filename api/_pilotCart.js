@@ -57,10 +57,10 @@ export function cartTotals(lines, env = process.env) {
 // Resolve every line against the catalog and the price table. A line is `available`
 // only with an exact, confirmed price; otherwise it carries a reason and the whole
 // cart is not `ready`.
-export async function buildCartQuote(db, items, { allowCatalogFallback = false, env = process.env } = {}) {
+export async function buildCartQuote(db, items, { allowCatalogFallback = false, allowUnapproved = true, env = process.env } = {}) {
   const ids = [...new Set(items.map(i => i.productId))];
   const products = checked(await db.from('product_catalog').select('id,name,price,url,category,product_type,requires_prescription,is_active,source,review_status,discovery_meta,extra').in('id', ids)) || [];
-  const prices = checked(await db.from('pilot_product_prices').select('product_id,variant_id,variant_label,amount,currency,retailer_url').in('product_id', ids)) || [];
+  const prices = checked(await db.from('pilot_product_prices').select('product_id,variant_id,variant_label,amount,currency,retailer_url,live_approved').in('product_id', ids)) || [];
   const productById = new Map(products.map(p => [p.id, p]));
   const priceByOption = new Map(prices.map(p => [`${p.product_id}\u0000${p.variant_id}`, p]));
   const lines = items.map(item => {
@@ -71,7 +71,7 @@ export async function buildCartQuote(db, items, { allowCatalogFallback = false, 
     const legacyId = legacyPriceVariantId(item.productId, item.variantId);
     const configured = priceByOption.get(`${item.productId}\u0000${item.variantId}`)
       || (legacyId === null ? null : priceByOption.get(`${item.productId}\u0000${legacyId}`)) || null;
-    const price = checkoutPrice(product, variant, configured, { allowCatalogFallback });
+    const price = checkoutPrice(product, variant, configured, { allowCatalogFallback, allowUnapproved });
     if (!price) return { ...base, available: false, reason: 'price_needed' };
     if (price.currency !== 'usd' || !Number.isSafeInteger(price.amount) || price.amount < 50 || price.amount > 50000) return { ...base, available: false, reason: 'invalid_price' };
     return { ...base, available: true, unit: price.amount, retailerUrl: price.retailer_url || null };

@@ -167,6 +167,17 @@ describe('cart totals', () => {
 
 // ---- checkout API --------------------------------------------------------------
 describe('cart quote', () => {
+  it('requires explicit approval of each configured price in live mode', async () => {
+    mocks.config.paymentMode = 'live';
+    const item = { productId: 'p-always-infinity', variantId: ALWAYS_S1, quantity: 1 };
+    const unapproved = res();
+    await checkout({ method: 'POST', headers: {}, body: { action: 'quote', items: [item] } }, unapproved);
+    expect(unapproved.body.ready).toBe(false);
+    tables.pilot_product_prices[0].live_approved = true;
+    const approved = res();
+    await checkout({ method: 'POST', headers: {}, body: { action: 'quote', items: [item] } }, approved);
+    expect(approved.body.ready).toBe(true);
+  });
   it('prices each size on its own, multiplies by quantity, and never exposes the retailer link', async () => {
     mocks.user = null;
     const r = res();

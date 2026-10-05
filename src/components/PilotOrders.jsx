@@ -136,7 +136,7 @@ function PriceForm() {
   return <section>
     <h2>Checkout price</h2>
     <p>Set the retailer price for the exact pack. The customer total includes Ayna's {price?.serviceFeePercent ?? 10}% fee and payment processing{price?.taxIncluded ? ', with applicable Stripe tax included' : ''}.</p>
-    <p>{options.length - missingCount} of {options.length} product and size choices configured; {missingCount} still need a verified price and retailer link.</p>
+    <p>{options.length - missingCount} of {options.length} product and size choices have a price entered; {missingCount} still need an exact price and retailer link. Live checkout also requires approval of each row.</p>
     <label><input type="checkbox" checked={missingOnly} onChange={e => setMissingOnly(e.target.checked)} /> Show only choices needing a price</label>
     <label>Find product<input value={filter} onChange={e => setFilter(e.target.value)} placeholder="Search name or product ID" /></label>
     <label>Product<select value={productId} onChange={e => { const next = products.find(item => item.id === e.target.value); setProductId(e.target.value); setVariantId(next?.defaultVariantId || next?.variants?.[0]?.id || ''); }}>
@@ -148,6 +148,7 @@ function PriceForm() {
     {price && <form onSubmit={save} key={`${productId}:${variantId}:${price.price?.updated_at || 'new'}`}>
       <label>Retailer price ($)<input name="price" inputMode="decimal" required defaultValue={price.price ? (price.price.amount / 100).toFixed(2) : ''} /></label>
       <label>Retailer product link<input name="retailerUrl" type="url" required defaultValue={price.price?.retailer_url || ''} /></label>
+      <label><input name="approveLive" type="checkbox" defaultChecked={price.price?.live_approved === true} /> I verified this exact item, size, retailer link and price for live checkout</label>
       <button>Save price</button>
       {price.total != null && <p>Current customer total: ${(price.total / 100).toFixed(2)}</p>}
     </form>}
@@ -158,7 +159,7 @@ export default function PilotOrders() {
   const adminView = window.location.pathname === '/pilot/admin';
   const focusId = new URLSearchParams(window.location.search).get('order');
   const returnedPaid = new URLSearchParams(window.location.search).get('paid') === '1';
-  useEffect(() => { if (returnedPaid) clearCart(); }, [returnedPaid]);
+  const returnedCart = new URLSearchParams(window.location.search).get('source') === 'cart';
   const [orders, setOrders] = useState([]);
   const [requests, setRequests] = useState([]);
   const [admin, setAdmin] = useState(false);
@@ -171,6 +172,7 @@ export default function PilotOrders() {
         request(`/api/pilot-orders${adminView ? '?admin=1' : ''}`),
         request('/api/pilot-orders?requests=1'),
       ]);
+      if (returnedPaid && returnedCart && data.orders.some(order => order.id === focusId && order.status === 'paid')) clearCart();
       setOrders(data.orders); setRequests(pending.requests || []); setAdmin(data.admin); setPaymentMode(data.paymentMode || 'test'); setError('');
     } catch (e) { setError(e.message); }
     finally { setLoading(false); }

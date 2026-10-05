@@ -20,8 +20,8 @@ export default async function handler(req, res) {
       if (!/^[0-9a-f-]{36}$/i.test(body.requestId || '')) return res.status(400).json({ error: 'Invalid request.' });
       const item = checked(await db.from('pilot_requests').select('id,product_id,product_name,variant_id,customer_email,status').eq('id', body.requestId).maybeSingle());
       if (!item) return res.status(404).json({ error: 'Request not found.' });
-      const price = await pilotVariantPrice(db, item.product_id, item.variant_id, 'amount');
-      if (!price) return res.status(409).json({ error: 'Set the exact product and size price first.' });
+      const price = await pilotVariantPrice(db, item.product_id, item.variant_id, 'amount,live_approved');
+      if (!price || (config.paymentMode === 'live' && price.live_approved !== true)) return res.status(409).json({ error: 'Verify and approve the exact product and size price first.' });
       const changed = item.status !== 'quoted' && checked(await db.from('pilot_requests').update({ status: 'quoted', quoted_at: new Date().toISOString() }).eq('id', item.id).eq('status', 'requested').select('id').maybeSingle());
       let emailed = false;
       if ((changed || item.status === 'quoted') && process.env.RESEND_API_KEY && item.customer_email) {
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     if (req.query?.prices === '1') {
       if (!admin) return res.status(403).json({ error: 'Admin access required.' });
       if (req.method !== 'GET') return res.status(405).end();
-      const prices = checked(await db.from('pilot_product_prices').select('product_id,variant_id,amount,retailer_url,updated_at').order('product_id', { ascending: true }).limit(1000));
+      const prices = checked(await db.from('pilot_product_prices').select('product_id,variant_id,amount,retailer_url,live_approved,updated_at').order('product_id', { ascending: true }).limit(1000));
       return res.status(200).json({ prices });
     }
     if (req.query?.price === '1') {
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       const variant = selectedPilotVariant(product, variantId);
       if (!purchasableProduct(product) || !variant) return res.status(400).json({ error: 'This item is not available for manual fulfillment.' });
       if (req.method === 'GET') {
-        const price = await pilotVariantPrice(db, productId, variantId, 'amount,currency,retailer_url,updated_at');
+        const price = await pilotVariantPrice(db, productId, variantId, 'amount,currency,retailer_url,live_approved,updated_at');
         return res.status(200).json({ price, serviceFeePercent: config.serviceFeePercent, paymentMode: config.paymentMode, taxIncluded: config.taxIncluded, total: price ? checkoutTotalCents(price.amount) : null });
       }
       if (req.method !== 'PUT') return res.status(405).end();
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
       const retailerUrl = cleanRetailerUrl(body.retailerUrl);
       if (!amount || !retailerUrl) return res.status(400).json({ error: 'Enter a price from $0.50 to $500 and an HTTPS retailer link.' });
       serviceFeeCents(amount);
-      checked(await db.from('pilot_product_prices').upsert({ product_id: productId, variant_id: variantId, variant_label: variant.label, amount, currency: 'usd', retailer_url: retailerUrl, updated_at: new Date().toISOString(), updated_by: user.id }, { onConflict: 'product_id,variant_id' }));
+      checked(await db.from('pilot_product_prices').upsert({ product_id: productId, variant_id: variantId, variant_label: variant.label, amount, currency: 'usd', retailer_url: retailerUrl, live_approved: body.approveLive === true || body.approveLive === 'on', updated_at: new Date().toISOString(), updated_by: user.id }, { onConflict: 'product_id,variant_id' }));
       return res.status(200).json({ saved: true, total: checkoutTotalCents(amount) });
     }
     if (req.method === 'GET') {

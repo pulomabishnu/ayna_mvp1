@@ -45,8 +45,8 @@ export function parsePriceInput(value) {
   const cents = Number(match[1]) * 100 + Number((match[2] || '0').padEnd(2, '0'));
   return cents >= 50 && cents <= 50000 ? cents : null;
 }
-export function checkoutPrice(product, variant, configuredPrice, { allowCatalogFallback = true } = {}) {
-  if (configuredPrice) return configuredPrice;
+export function checkoutPrice(product, variant, configuredPrice, { allowCatalogFallback = true, allowUnapproved = true } = {}) {
+  if (configuredPrice && (allowUnapproved || configuredPrice.live_approved === true)) return configuredPrice;
   if (!allowCatalogFallback) return null;
   // A displayed range, pack description, or option-dependent amount is not a price.
   if (!variant || variant.id !== '') return null;
@@ -79,7 +79,7 @@ export function selectedPilotVariant(product, variantId = '') {
 export function legacyPriceVariantId(productId, variantId) {
   return productId === 'p-always-infinity' && variantId === 'target-94912100' ? '' : null;
 }
-export async function pilotVariantPrice(db, productId, variantId, columns = 'amount,currency,retailer_url,variant_label') {
+export async function pilotVariantPrice(db, productId, variantId, columns = 'amount,currency,retailer_url,variant_label,live_approved') {
   const read = async (id) => checked(await db.from('pilot_product_prices').select(columns).eq('product_id', productId).eq('variant_id', id).maybeSingle());
   const exact = await read(variantId);
   const legacy = legacyPriceVariantId(productId, variantId);
