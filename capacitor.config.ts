@@ -23,6 +23,9 @@ const config: CapacitorConfig = {
   server: {
     url: appUrl,
     cleartext: false,
+    // Vercel previews sit behind Vercel's login (vercel.com). Without this,
+    // Capacitor sends that redirect to Safari and the app stays blank.
+    allowNavigation: ['vercel.com', '*.vercel.com', '*.vercel.app', 'aynahealth.co', '*.aynahealth.co'],
   },
   ios: {
     contentInset: 'automatic',
