@@ -5429,7 +5429,7 @@ export const BRAND_PRODUCTS = [
         // premise, not the accuracy of the (unreleased) Rèsa device itself.
         scientificCitations: [
             {
-                url: 'https://www.nature.com/articles/s41562-020-01046-9',
+                url: 'https://pubmed.ncbi.nlm.nih.gov/33526880/',
                 text: 'Pierson et al. Daily, weekly, seasonal and menstrual cycles in women\'s mood, behaviour and vital signs. Nature Human Behaviour (2021)',
                 summary: 'Analyzed 241 million observations from 3.3 million women in 109 countries using the Clue period-tracking app. Of the daily, weekly, seasonal and menstrual cycles, the menstrual cycle had the largest effect on most measures of mood, behaviour and vital signs, while sleep and exercise stayed more constant.',
             },
