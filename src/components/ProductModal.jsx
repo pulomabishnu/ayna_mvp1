@@ -455,7 +455,7 @@ export default function ProductModal({
     return () => { active = false; };
   }, [imageIdentity, product?.id, product?.name, product?.brand, product?.image, product?.url, product?.type]);
 
-  const heroImageSrc = choice.hasVariants ? choice.image : (resolvedModalImage?.identity === imageIdentity ? resolvedModalImage.url : '') || product?.image || '';
+  const heroImageSrc = (choice.hasVariants ? choice.image : '') || (resolvedModalImage?.identity === imageIdentity ? resolvedModalImage.url : '') || product?.image || '';
 
   const matchLabels = useMemo(
     () => getProfileMatchLabelsForProduct(product, quizResults, healthProfile),
