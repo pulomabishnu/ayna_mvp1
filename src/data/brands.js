@@ -3583,6 +3583,9 @@ export const BRAND_PRODUCTS = [
         clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
         doctorOpinion: 'gina positions its coconut-oil glides as pure, simple, and effective — developed without hormones or harsh additives, non-irritating, non-toxic, pH-neutral, cruelty-free, pre-portioned for single use, and clinician-informed — per the brand\'s own site.\n\nThere\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration) — though it wasn\'t placebo-controlled and didn\'t test this specific product.\n\nNo independent clinical study of this specific product was found.',
         doctorOpinionShort: 'A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness over 6 months reported real improvement, though it wasn\'t placebo-controlled. No independent clinical study of this specific product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/', label: 'Cureus (2023): Virgin coconut oil for dyspareunia and vaginal dryness — pilot study, 53 women', chipLabel: 'Read the 2023 study (NIH) →' },
+        ],
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
             'Women with vaginal dryness or irritation at any life stage — perimenopause, menopause, postpartum, or day to day',
@@ -5400,13 +5403,12 @@ export const BRAND_PRODUCTS = [
         url: 'https://www.resa-labs.com/',
         affiliateUrl: 'https://shop.resa-labs.com/?utm_source=ayna_partner&utm_medium=referral&utm_campaign=market_test',
         image: '/products/resa/rhythm-bracelet.webp', // supplied by ayna 2026-10-05
-        summary: 'Pre-launch: join the waitlist with a $9.90 early deposit. Rèsa is an 18K gold-plated bracelet that doubles as a wellness wearable built for female physiology. It continuously tracks heart-rate variability, resting heart rate, skin temperature, sleep, respiration and activity, combines that with your cycle information, and reads it against your personal baseline to make sense of three rhythms at once: hormonal, circadian and stress. Instead of scores, the Rèsa app gives one plain-language read and one suggestion for the day, then checks in on whether it helped.',
+        summary: 'Rèsa is an 18K gold-plated bracelet that doubles as a wellness wearable built for female physiology. It continuously tracks heart-rate variability, resting heart rate, skin temperature, sleep, respiration and activity, combines that with your cycle information, and reads it against your personal baseline to make sense of three rhythms at once: hormonal, circadian and stress. Instead of scores, the Rèsa app gives one plain-language read and one suggestion for the day, then checks in on whether it helped.',
         safety: {
             fdaStatus: 'Consumer wellness wearable, not a medical device; not FDA-cleared, and not intended to diagnose or treat any condition.',
             materials: '18K gold-plated bracelet, about 15g, 100% waterproof, roughly 7 days of battery per charge, per the brand.',
             recalls: 'Not yet released — no recalls.',
             sideEffects: 'None expected from wearing it. As with any metal jewelry, people with plating or metal sensitivities should check final material details at launch.',
-            opinionAlerts: 'Pre-launch product: specs, price and ship date can change before release. Reserving now means a $9.90 deposit, and the brand advertises 40% off plus launch perks for reservers. ayna earns no commission on the deposit.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: "Sourced from Rèsa's own site and product-intro materials, not independent clinical literature.",
@@ -5421,7 +5423,6 @@ export const BRAND_PRODUCTS = [
             'Pre-launch: specs, final price and ship date are not final.',
             'Wellness insights only. It is not contraception and does not diagnose hormonal conditions.',
         ],
-        effectiveness: 'Not yet released; no independent accuracy data exists. Built on signals (HRV, resting heart rate, skin temperature, sleep) that are well established in wearables generally.',
         integrations: [],
         badges: ['Pre-launch', 'Waitlist', 'Female-Founded'],
         isEmergingBrand: true,

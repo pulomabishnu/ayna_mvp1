@@ -1174,7 +1174,7 @@ export default function ProductModal({
                                 rel="noopener noreferrer"
                                 title={c.label}
                               >
-                                {hostLabel(c.url) || c.label}
+                                {c.chipLabel || hostLabel(c.url) || c.label}
                               </a>
                             ))}
                           </div>
