@@ -7,7 +7,7 @@ import { communityHref } from '../../utils/community/route';
 import * as store from '../../utils/community/communityStore';
 import { trackCommunity } from '../../utils/community/analytics';
 
-const KIND_LABEL = { question: 'Question', review: 'Review', post: 'Post' };
+const KIND_LABEL = { question: 'question', review: 'review', post: 'post' };
 
 export function AuthorLine({ item, time }) {
   const { navigate } = useCommunity();
@@ -26,10 +26,10 @@ export function AuthorLine({ item, time }) {
   return (
     <div className="cm-author">
       {anonymous ? (
-        <span className="cm-author__avatar"><UserAvatar name={name} anonymous /></span>
+        <span className="cm-author__avatar"><UserAvatar name={name} anonymous size={34} /></span>
       ) : (
         <button type="button" className="cm-author__avatar" onClick={openProfile} aria-label={`${name}'s profile`}>
-          <UserAvatar name={name} url={item.author_avatar_url} />
+          <UserAvatar name={name} url={item.author_avatar_url} size={34} />
         </button>
       )}
       <div className="cm-author__text">
@@ -38,9 +38,7 @@ export function AuthorLine({ item, time }) {
         ) : (
           <button type="button" className="cm-author__name" onClick={openProfile}>{name}{badges}</button>
         )}
-        <span className="cm-author__meta">
-          {!anonymous && item.author_username ? `@${item.author_username} · ` : ''}{relativeTime(time || item.created_at)}{item.edited_at ? ' · edited' : ''}
-        </span>
+        <span className="cm-author__meta">{relativeTime(time || item.created_at)}{item.edited_at ? ' · edited' : ''}</span>
       </div>
     </div>
   );
@@ -99,6 +97,14 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
     },
   ];
 
+  const visibleTopics = (post.topics || []).slice(0, 3);
+  const icon = {
+    helpful: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 21V10l4.5-7c1.4 0 2.3 1.2 2 2.6L12.8 10H19a2 2 0 0 1 2 2.3l-1.2 6.8a2 2 0 0 1-2 1.7H7Zm0 0H4V10h3" /></svg>,
+    comment: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.1A8 8 0 1 1 20 12Z" /></svg>,
+    save: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z" /></svg>,
+    share: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" /></svg>,
+  };
+
   return (
     <article
       className={`cm-post cm-post--${post.kind}${expanded ? ' cm-post--expanded' : ''}`}
@@ -110,23 +116,21 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
     >
       <div className="cm-post__head">
         <AuthorLine item={post} />
-        <span className="cm-post__kind">{KIND_LABEL[post.kind]}</span>
+        <span className={`cm-kind cm-kind--${post.kind}`}>{KIND_LABEL[post.kind]}</span>
         <OverflowMenu items={menu} />
       </div>
 
       {post.kind === 'review' && (
-        <div className="cm-review">
-          <div className="cm-review__rating">
-            <Stars value={post.rating} />
-            {post.would_recommend === true && <span className="cm-review__rec">Would recommend</span>}
-            {post.would_recommend === false && <span className="cm-review__rec cm-review__rec--no">Wouldn’t recommend</span>}
-          </div>
+        <div className="cm-review__rating">
+          <Stars value={post.rating} />
+          {post.would_recommend === true && <span className="cm-rec-pill">would rec ✓</span>}
+          {post.would_recommend === false && <span className="cm-rec-pill cm-rec-pill--no">wouldn’t rec</span>}
         </div>
       )}
 
       {expanded
         ? <p className={`cm-text${post.kind === 'question' ? ' cm-text--question' : ''}`}>{post.body}</p>
-        : <ClampedText text={post.body} className={post.kind === 'question' ? 'cm-text--question-wrap' : ''} />}
+        : <ClampedText text={post.body} lines={4} className={post.kind === 'question' ? 'cm-text--question-wrap' : ''} />}
 
       {post.photo_url && (
         <img className="cm-post__photo" src={post.photo_url} alt="" loading="lazy" decoding="async" />
@@ -137,62 +141,61 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
           {post.kind === 'review' && post.product_id && (
             <CommunityProductPreview productId={post.product_id} onOpened={() => trackCommunity('community_product_opened', { source: 'review' })} />
           )}
-          {(expanded ? taggedOnly : taggedOnly.slice(0, 2)).map((id) => (
+          {(expanded ? taggedOnly : taggedOnly.slice(0, 1)).map((id) => (
             <CommunityProductPreview key={id} productId={id} onOpened={() => trackCommunity('community_product_opened', { source: post.kind })} />
           ))}
-          {!expanded && taggedOnly.length > 2 && (
-            <button type="button" className="cm-link" onClick={openThread}>+{taggedOnly.length - 2} more</button>
+          {!expanded && taggedOnly.length > 1 && (
+            <button type="button" className="cm-more" onClick={openThread}>+{taggedOnly.length - 1} more product{taggedOnly.length > 2 ? 's' : ''}</button>
           )}
         </div>
       )}
 
-      {post.topics?.length > 0 && (
-        <div className="cm-topics">
-          {post.topics.map((t) => <span key={t} className="cm-topic">{topicLabel(t)}</span>)}
-        </div>
-      )}
-
-      <div className="cm-actions" onClick={(e) => e.stopPropagation()}>
-        {post.is_mine ? (
-          <span className="cm-action cm-action--static">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 21V10l4.5-7c1.4 0 2.3 1.2 2 2.6L12.8 10H19a2 2 0 0 1 2 2.3l-1.2 6.8a2 2 0 0 1-2 1.7H7Zm0 0H4V10h3" /></svg>
-            <span>{post.helpful_count ? `${post.helpful_count} found this helpful` : 'Helpful'}</span>
-          </span>
-        ) : (
+      <div className="cm-post__foot" onClick={(e) => e.stopPropagation()}>
+        {visibleTopics.length > 0 && (
+          <div className="cm-tags">
+            {visibleTopics.map((t) => <span key={t} className="cm-tag" title={topicLabel(t)}>#{t.replace(/-/g, '')}</span>)}
+          </div>
+        )}
+        <div className="cm-actions">
+          {post.is_mine ? (
+            <span className="cm-action cm-action--static" title="helpful votes">
+              {icon.helpful}<span>{post.helpful_count || ''}</span>
+            </span>
+          ) : (
+            <button
+              type="button"
+              className={`cm-action${post.viewer_found_helpful ? ' is-on' : ''}`}
+              aria-pressed={!!post.viewer_found_helpful}
+              aria-label={`Helpful${post.helpful_count ? ` (${post.helpful_count})` : ''}`}
+              onClick={() => toggle('viewer_found_helpful', (on) => store.setHelpful(supabase, user.id, { postId: post.id }, on))}
+            >
+              {icon.helpful}<span>{post.helpful_count || ''}</span>
+            </button>
+          )}
+          <button type="button" className="cm-action" aria-label={`${post.kind === 'question' ? 'Answers' : 'Comments'}${post.comment_count ? ` (${post.comment_count})` : ''}`} onClick={openThread}>
+            {icon.comment}<span>{post.comment_count || ''}</span>
+          </button>
           <button
             type="button"
-            className={`cm-action${post.viewer_found_helpful ? ' is-on' : ''}`}
-            aria-pressed={!!post.viewer_found_helpful}
-            onClick={() => toggle('viewer_found_helpful', (on) => store.setHelpful(supabase, user.id, { postId: post.id }, on))}
+            className={`cm-action${post.viewer_saved ? ' is-on' : ''}`}
+            aria-pressed={!!post.viewer_saved}
+            aria-label={post.viewer_saved ? 'Saved' : 'Save'}
+            onClick={() => toggle('viewer_saved', (on) => store.setSaved(supabase, user.id, post.id, on))}
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 21V10l4.5-7c1.4 0 2.3 1.2 2 2.6L12.8 10H19a2 2 0 0 1 2 2.3l-1.2 6.8a2 2 0 0 1-2 1.7H7Zm0 0H4V10h3" /></svg>
-            <span>Helpful{post.helpful_count ? ` · ${post.helpful_count}` : ''}</span>
+            {icon.save}
           </button>
-        )}
-        <button type="button" className="cm-action" onClick={openThread}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.1A8 8 0 1 1 20 12Z" /></svg>
-          <span>{post.kind === 'question' ? 'Answer' : 'Comment'}{post.comment_count ? ` · ${post.comment_count}` : ''}</span>
-        </button>
-        <button
-          type="button"
-          className={`cm-action${post.viewer_saved ? ' is-on' : ''}`}
-          aria-pressed={!!post.viewer_saved}
-          aria-label={post.viewer_saved ? 'Saved' : 'Save'}
-          onClick={() => toggle('viewer_saved', (on) => store.setSaved(supabase, user.id, post.id, on))}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z" /></svg>
-        </button>
-        <button
-          type="button"
-          className="cm-action"
-          aria-label="Share"
-          onClick={async () => {
-            const r = await shareLink(communityHref({ name: 'post', id: post.id }), 'ayna community');
-            if (r === 'copied') toast('Link copied');
-          }}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" /></svg>
-        </button>
+          <button
+            type="button"
+            className="cm-action"
+            aria-label="Share"
+            onClick={async () => {
+              const r = await shareLink(communityHref({ name: 'post', id: post.id }), 'ayna community');
+              if (r === 'copied') toast('link copied ✓');
+            }}
+          >
+            {icon.share}
+          </button>
+        </div>
       </div>
     </article>
   );

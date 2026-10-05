@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCommunity, shareLink } from './CommunityContext';
 import { CommunityProductPreview, EmptyState, FeedSkeleton, OverflowMenu, Sheet, Toggle, UserAvatar } from './CommunityUI';
+import { hueIndex } from '../../utils/community/hue';
 import ProductTileImage from '../ProductTileImage';
 import ProductPicker from './ProductPicker';
 import * as store from '../../utils/community/communityStore';
@@ -12,9 +13,9 @@ import { averageMatch } from '../../utils/community/ranking';
 function Cover({ playlist, size = 'md' }) {
   const { productsById } = useCommunity();
   if (playlist.cover_url) return <img className={`cm-cover cm-cover--${size}`} src={playlist.cover_url} alt="" loading="lazy" />;
-  const products = (playlist.preview_product_ids || []).map((id) => productsById.get(id)).filter(Boolean).slice(0, 4);
+  const products = (playlist.preview_product_ids || []).map((id) => productsById.get(id)).filter(Boolean).slice(0, 3);
   return (
-    <div className={`cm-cover cm-cover--${size} cm-cover--grid cm-cover--n${Math.max(1, products.length)}`} aria-hidden="true">
+    <div className={`cm-cover cm-cover--${size} cm-cover--g${hueIndex(playlist.id)} cm-cover--n${products.length}`} aria-hidden="true">
       {products.length === 0 && <span className="cm-cover__empty">ayna</span>}
       {products.map((p) => (
         <span key={p.id} className="cm-cover__cell"><ProductTileImage product={p} alt="" imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }} /></span>
@@ -32,17 +33,17 @@ export function PlaylistCard({ playlist, layout = 'tile' }) {
       <span className="cm-plist__text">
         <span className="cm-plist__title">{playlist.title}</span>
         <span className="cm-plist__meta">
-          {playlist.is_mine ? 'You' : playlist.owner_display_name} · {playlist.item_count} item{playlist.item_count === 1 ? '' : 's'}
-          {playlist.visibility === 'private' ? ' · Private' : ''}
+          {playlist.is_mine ? 'you' : playlist.owner_display_name?.toLowerCase()} · {playlist.item_count}
+          {playlist.visibility === 'private' ? ' · 🔒' : ''}
         </span>
-        {avg != null && <span className="cm-plist__match">{avg}% avg match for you</span>}
+        {avg != null && avg >= 50 && <span className="cm-plist__match">{avg}% for you</span>}
       </span>
     </button>
   );
 }
 
 function Shelf({ title, items, emptyText, action }) {
-  if (!items) return null;
+  if (!items || (items.length === 0 && !emptyText)) return null;
   return (
     <section className="cm-shelf">
       <div className="cm-shelf__head">
@@ -107,29 +108,29 @@ export function PlaylistDiscovery({ friendIds, onCreate }) {
   return (
     <div className="cm-playlists">
       <Shelf
-        title="Your playlists"
+        title="your playlists"
         items={data.mine}
         emptyText=""
-        action={<button type="button" className="cm-link" onClick={onCreate}>+ New playlist</button>}
+        action={<button type="button" className="cm-link" onClick={onCreate}>+ new</button>}
       />
       {data.mine.length === 0 && (
         <button type="button" className="cm-create-first" onClick={onCreate}>
-          <span>Create your first playlist</span>
-          <small>Collect the products that actually helped — period kit, PCOS essentials, anything.</small>
+          <span className="cm-create-first__plus" aria-hidden="true">+</span>
+          <span className="cm-create-first__text"><strong>make your first playlist</strong><small>your period kit, pcos essentials, gut girl staples — anything.</small></span>
         </button>
       )}
-      {forYou && forYou.length > 0 && <Shelf title="For you" items={forYou} />}
-      <Shelf title="From friends" items={data.friends} emptyText={friendIds.length ? 'Your friends haven’t shared playlists yet.' : null} />
-      {!nothingPublic && <Shelf title="Popular" items={data.popular.filter((p) => !p.is_mine)} />}
-      {!nothingPublic && <Shelf title="Recently added" items={recentOthers.slice(0, 12)} />}
-      {data.saved.length > 0 && <Shelf title="Saved" items={data.saved} />}
-      {nothingPublic && <p className="cm-hint">No public playlists yet. Yours could be the first.</p>}
+      {forYou && forYou.length > 0 && <Shelf title="made for you ✦" items={forYou} />}
+      <Shelf title="from friends" items={data.friends} emptyText={friendIds.length ? 'nothing from friends yet' : null} />
+      {!nothingPublic && <Shelf title="trending" items={data.popular.filter((p) => !p.is_mine)} />}
+      {!nothingPublic && <Shelf title="fresh" items={recentOthers.slice(0, 12)} />}
+      {data.saved.length > 0 && <Shelf title="saved" items={data.saved} />}
+      {nothingPublic && <p className="cm-hint">no public playlists yet — yours could be the first.</p>}
     </div>
   );
 }
 
 export function PlaylistPage({ playlistId }) {
-  const { supabase, user, navigate, matchFor, toast, requireProfile, openReport, hasProfile, onAddToEcosystem, isInEcosystem, productsById } = useCommunity();
+  const { supabase, user, navigate, matchFor, toast, requireProfile, openReport, hasProfile, onAddToEcosystem, isInEcosystem, productsById, startQuiz } = useCommunity();
   const [playlist, setPlaylist] = useState(null);
   const [items, setItems] = useState([]);
   const [state, setState] = useState('loading');
@@ -203,10 +204,10 @@ export function PlaylistPage({ playlistId }) {
 
   return (
     <div className="cm-playlist-page">
-      <header className="cm-playlist-hero">
+      <header className={`cm-playlist-hero cm-cover--g${hueIndex(playlist.id)}`}>
         <Cover playlist={{ ...playlist, preview_product_ids: items.map((i) => i.product_id) }} size="lg" />
         <div className="cm-playlist-hero__text">
-          <p className="ayna-browse__eyebrow">{playlist.visibility === 'private' ? 'Private playlist' : 'Playlist'}</p>
+          <p className="cm-playlist-hero__eyebrow">{playlist.visibility === 'private' ? 'private playlist 🔒' : 'playlist'}</p>
           <h2>{playlist.title}</h2>
           {playlist.description && <p className="cm-playlist-hero__desc">{playlist.description}</p>}
           <button
@@ -215,45 +216,50 @@ export function PlaylistPage({ playlistId }) {
             onClick={() => playlist.owner_username && navigate({ name: 'profile', username: playlist.owner_username })}
           >
             <UserAvatar name={playlist.owner_display_name} url={playlist.owner_avatar_url} size={22} />
-            <span>{playlist.is_mine ? 'You' : playlist.owner_display_name}</span>
+            <span>{playlist.is_mine ? 'you' : playlist.owner_display_name}</span>
             <span className="cm-dot">·</span>
-            <span>{items.length} item{items.length === 1 ? '' : 's'}</span>
-            {playlist.save_count > 0 && <><span className="cm-dot">·</span><span>{playlist.save_count} saved</span></>}
+            <span>{items.length} product{items.length === 1 ? '' : 's'}</span>
+            {playlist.save_count > 0 && <><span className="cm-dot">·</span><span>{playlist.save_count} saves</span></>}
           </button>
-          <div className="cm-playlist-hero__actions">
+        </div>
+      </header>
+          <div className="cm-playlist-actions">
             {!playlist.is_mine && (
-              <button type="button" className={`pdp-btn ${playlist.viewer_saved ? 'pdp-btn--outline-on' : 'pdp-btn--outline'} cm-btn-pill`} aria-pressed={!!playlist.viewer_saved} onClick={toggleSave}>
-                {playlist.viewer_saved ? 'Saved' : 'Save playlist'}
+              <button type="button" className={`cm-pill-btn${playlist.viewer_saved ? ' is-on' : ' cm-pill-btn--primary'}`} aria-pressed={!!playlist.viewer_saved} onClick={toggleSave}>
+                {playlist.viewer_saved ? 'saved ✓' : 'save playlist'}
               </button>
             )}
             {playlist.is_mine && (
-              <button type="button" className="pdp-btn pdp-btn--outline cm-btn-pill" onClick={() => setAdding(true)}>Add products</button>
+              <button type="button" className="cm-pill-btn cm-pill-btn--primary" onClick={() => setAdding(true)}>+ add products</button>
             )}
             {playlist.visibility === 'public' && (
               <button
                 type="button"
-                className="pdp-btn pdp-btn--outline cm-btn-pill"
-                onClick={async () => { const r = await shareLink(communityHref({ name: 'playlist', id: playlist.id }), playlist.title); if (r === 'copied') toast('Link copied'); }}
+                className="cm-pill-btn"
+                onClick={async () => { const r = await shareLink(communityHref({ name: 'playlist', id: playlist.id }), playlist.title); if (r === 'copied') toast('link copied ✓'); }}
               >
-                Share
+                share
               </button>
             )}
             <OverflowMenu items={menu} />
           </div>
-        </div>
-      </header>
 
       <div className="cm-playlist-personal">
         {hasProfile ? (
           <p>
-            Matches below are for <strong>you</strong>, from your own ayna profile{avg != null ? <> — <strong>{avg}%</strong> average</> : null}.
-            {!playlist.is_mine && ' The creator never sees them.'}
+            <span className="cm-spark" aria-hidden="true">✦</span>
+            matches are personalized to <strong>you</strong>{avg != null ? <> · <strong>{avg}%</strong> avg</> : null}
           </p>
         ) : (
-          <p>Take the ayna quiz to see how each product here matches <strong>you</strong>.</p>
+          <p>
+            <span className="cm-spark" aria-hidden="true">✦</span>
+            <button type="button" className="cm-link cm-link--strong" onClick={startQuiz}>take the quiz</button> to see your match for each one
+          </p>
         )}
         {items.length > 1 && hasProfile && (
-          <Toggle checked={sortByMatch} onChange={setSortByMatch} label="Best match first" />
+          <button type="button" className={`cm-chip-toggle${sortByMatch ? ' is-on' : ''}`} aria-pressed={sortByMatch} onClick={() => setSortByMatch((v) => !v)}>
+            best match first
+          </button>
         )}
       </div>
 
@@ -270,7 +276,7 @@ export function PlaylistPage({ playlistId }) {
                 onOpened={() => trackCommunity('playlist_product_opened', { source: playlist.is_mine ? 'own' : 'other' })}
                 actions={
                   playlist.is_mine ? (
-                    <button type="button" className="cm-link cm-link--muted" onClick={() => remove(item.product_id)}>Remove</button>
+                    <button type="button" className="cm-icon-btn cm-remove" aria-label="Remove from playlist" onClick={() => remove(item.product_id)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17" /></svg></button>
                   ) : onAddToEcosystem ? (
                     <button
                       type="button"

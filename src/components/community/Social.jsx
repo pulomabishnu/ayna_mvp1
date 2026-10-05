@@ -299,7 +299,7 @@ export function NotificationsPage({ onSeen }) {
   if (items === null) return <FeedSkeleton count={3} />;
   return (
     <div className="cm-notifications">
-      <h2 className="cm-page-title">Notifications</h2>
+      <h2 className="cm-page-title">notifications</h2>
       {items.length === 0 ? (
         <EmptyState title="Nothing yet">Replies, follows and recommendations will show up here.</EmptyState>
       ) : (

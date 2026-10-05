@@ -28,7 +28,7 @@ export function FollowButton({ targetId, compact = false, onChanged }) {
   };
   return (
     <button type="button" className={`cm-follow${following ? ' is-on' : ''}${compact ? ' cm-follow--sm' : ''}`} aria-pressed={following} onClick={toggle} disabled={busy}>
-      {following ? 'Following' : 'Follow'}
+      {following ? 'following' : 'follow'}
     </button>
   );
 }
@@ -58,20 +58,20 @@ export function FriendButton({ targetId, onChanged }) {
     return (
       <button type="button" className="cm-follow is-on" disabled={busy}
         onClick={() => { if (window.confirm('Remove this friend?')) run(() => store.removeFriendship(supabase, row.id)); }}>
-        Friends
+        friends ✓
       </button>
     );
   }
   if (state === 'requested') {
-    return <button type="button" className="cm-follow is-pending" disabled={busy} onClick={() => run(() => store.removeFriendship(supabase, row.id), 'Request cancelled')}>Requested</button>;
+    return <button type="button" className="cm-follow is-pending" disabled={busy} onClick={() => run(() => store.removeFriendship(supabase, row.id), 'Request cancelled')}>requested</button>;
   }
   if (state === 'incoming') {
-    return <button type="button" className="cm-follow cm-follow--accent" disabled={busy} onClick={() => run(() => store.acceptFriendRequest(supabase, row.id), 'You’re friends now')}>Accept friend</button>;
+    return <button type="button" className="cm-follow cm-follow--accent" disabled={busy} onClick={() => run(() => store.acceptFriendRequest(supabase, row.id), 'You’re friends now')}>accept friend</button>;
   }
   return (
     <button type="button" className="cm-follow" disabled={busy}
       onClick={() => run(async () => { await store.sendFriendRequest(supabase, user.id, targetId); trackCommunity('friend_request_sent', {}); }, 'Friend request sent')}>
-      Add friend
+      + add friend
     </button>
   );
 }
@@ -80,34 +80,32 @@ function ProfileHeader({ profile, stats, isMe, onEdit, onStatsChanged }) {
   const { openReport, confirmBlock } = useCommunity();
   return (
     <header className="cm-profile-head">
-      <UserAvatar name={profile.display_name} url={profile.avatar_url} size={72} />
-      <div className="cm-profile-head__text">
-        <h2>{profile.display_name}</h2>
-        <p className="cm-profile-head__username">@{profile.username}</p>
-        {profile.bio && <p className="cm-profile-head__bio">{profile.bio}</p>}
-        <div className="cm-profile-head__counts">
-          <span><strong>{stats?.friends ?? '–'}</strong> Friends</span>
-          <span><strong>{stats?.followers ?? '–'}</strong> Followers</span>
-          <span><strong>{stats?.following ?? '–'}</strong> Following</span>
-        </div>
-        <div className="cm-profile-head__actions">
-          {isMe ? (
-            <button type="button" className="cm-follow" onClick={onEdit}>Edit profile</button>
-          ) : (
-            <>
-              <FollowButton targetId={profile.user_id} onChanged={onStatsChanged} />
-              <FriendButton targetId={profile.user_id} onChanged={onStatsChanged} />
-              <OverflowMenu
-                items={[
-                  { label: 'Report user', onClick: () => openReport({ targetType: 'user', reportedUserId: profile.user_id }) },
-                  { label: `Block ${profile.display_name}`, danger: true, onClick: () => confirmBlock({ userId: profile.user_id, name: profile.display_name }) },
-                ]}
-              />
-            </>
-          )}
-        </div>
-        {isMe && <p className="cm-hint cm-profile-head__privacy">Your health profile is never shown here. Only what you post is public.</p>}
+      <UserAvatar name={profile.display_name} url={profile.avatar_url} size={84} />
+      <h2>{profile.display_name}</h2>
+      <p className="cm-profile-head__username">@{profile.username}</p>
+      {profile.bio && <p className="cm-profile-head__bio">{profile.bio}</p>}
+      <div className="cm-stats">
+        <span><strong>{stats?.friends ?? '–'}</strong>friends</span>
+        <span><strong>{stats?.followers ?? '–'}</strong>followers</span>
+        <span><strong>{stats?.following ?? '–'}</strong>following</span>
       </div>
+      <div className="cm-profile-head__actions">
+        {isMe ? (
+          <button type="button" className="cm-follow" onClick={onEdit}>edit profile</button>
+        ) : (
+          <>
+            <FollowButton targetId={profile.user_id} onChanged={onStatsChanged} />
+            <FriendButton targetId={profile.user_id} onChanged={onStatsChanged} />
+            <OverflowMenu
+              items={[
+                { label: 'Report user', onClick: () => openReport({ targetType: 'user', reportedUserId: profile.user_id }) },
+                { label: `Block ${profile.display_name}`, danger: true, onClick: () => confirmBlock({ userId: profile.user_id, name: profile.display_name }) },
+              ]}
+            />
+          </>
+        )}
+      </div>
+      {isMe && <p className="cm-hint cm-profile-head__privacy">🔒 your health profile is never shown here — only what you post.</p>}
     </header>
   );
 }
@@ -210,10 +208,10 @@ export default function Profile({ username, onEditProfile }) {
         onEdit={onEditProfile}
         onStatsChanged={() => store.getProfileStats(supabase, profile.user_id).then(setStats).catch(() => {})}
       />
-      <div className="ayna-browse__categories cm-subtabs" role="tablist" aria-label="Profile sections">
+      <div className="cm-tabs cm-tabs--profile" role="tablist" aria-label="Profile sections">
         {tabs.map((t) => (
           <button key={t.key} type="button" role="tab" aria-selected={tab === t.key} className={tab === t.key ? 'is-active' : ''} onClick={() => setTab(t.key)}>
-            {t.label}
+            {t.label.toLowerCase()}
           </button>
         ))}
       </div>

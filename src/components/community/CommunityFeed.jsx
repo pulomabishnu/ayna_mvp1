@@ -8,24 +8,24 @@ import { rankForYou } from '../../utils/community/ranking';
 import { trackCommunity } from '../../utils/community/analytics';
 
 const REVIEW_SORTS = [
-  { key: 'for-you', label: 'For you' },
-  { key: 'friends', label: 'Friends' },
-  { key: 'recent', label: 'Recent' },
-  { key: 'helpful', label: 'Helpful' },
+  { key: 'for-you', label: 'for you' },
+  { key: 'friends', label: 'friends' },
+  { key: 'recent', label: 'newest' },
+  { key: 'helpful', label: 'most helpful' },
 ];
 
 const FEED_FILTERS = [
-  { key: 'for-you', label: 'For You' },
-  { key: 'following', label: 'Following' },
-  { key: 'questions', label: 'Questions' },
-  { key: 'reviews', label: 'Reviews' },
-  { key: 'playlists', label: 'Playlists' },
+  { key: 'for-you', label: 'for you' },
+  { key: 'following', label: 'following' },
+  { key: 'questions', label: 'q&a' },
+  { key: 'reviews', label: 'reviews' },
+  { key: 'playlists', label: 'playlists' },
 ];
 
 /** Same chip row styling Browse uses for its categories. */
 export function CommunityFilters({ value, onChange, options = FEED_FILTERS, label = 'Community filters', small = false }) {
   return (
-    <div className={`ayna-browse__categories cm-filters${small ? ' cm-filters--small' : ''}`} role="tablist" aria-label={label}>
+    <div className={small ? 'cm-subfilters' : 'cm-tabs'} role="tablist" aria-label={label}>
       {options.map((o) => (
         <button key={o.key} type="button" role="tab" aria-selected={value === o.key} className={value === o.key ? 'is-active' : ''} onClick={() => onChange(o.key)}>
           {o.label}
@@ -137,8 +137,9 @@ export default function CommunityFeed({ tab, productFilter, onTabChange, onCompo
 
       {tab !== 'playlists' && !productFilter && (
         <button type="button" className="cm-prompt" onClick={() => onCompose(tab === 'reviews' ? 'review' : 'question')}>
-          <UserAvatar name={ctx.me?.display_name || ''} url={ctx.me?.avatar_url} size={32} />
-          <span>{tab === 'reviews' ? 'Review a product you’ve tried' : 'Ask a question or share what helped'}</span>
+          <UserAvatar name={ctx.me?.display_name || ''} url={ctx.me?.avatar_url} size={34} />
+          <span>{tab === 'reviews' ? 'tried something? rate it' : 'what’s on your mind?'}</span>
+          <span className="cm-prompt__cta">{tab === 'reviews' ? 'review' : 'ask'}</span>
         </button>
       )}
 

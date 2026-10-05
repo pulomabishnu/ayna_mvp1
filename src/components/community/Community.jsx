@@ -153,13 +153,13 @@ export default function Community(props) {
         <header className="cm-header">
           {isFeed ? (
             <div className="cm-header__title">
-              <p className="ayna-browse__eyebrow">ayna community</p>
-              <h2>Community</h2>
+              <h2>community</h2>
+              <p>what’s actually working, from people like you</p>
             </div>
           ) : (
             <button type="button" className="cm-back" onClick={() => (window.history.length > 1 ? window.history.back() : navigate({ name: 'feed' }))}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
-              Community
+              back
             </button>
           )}
           <div className="cm-header__actions">
@@ -170,13 +170,13 @@ export default function Community(props) {
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16Zm4 4a2 2 0 0 0 4 0" /></svg>
               {unread > 0 && <span className="cm-bell__count">{unread > 9 ? '9+' : unread}</span>}
             </button>
+            <span className="cm-header__sep" aria-hidden="true" />
             <button type="button" className="cm-me" aria-label="Your community profile" onClick={() => (ctx.me ? navigate({ name: 'profile', username: ctx.me.username }) : ctx.requireProfile())}>
               <UserAvatar name={ctx.me?.display_name || ''} url={ctx.me?.avatar_url} size={32} />
             </button>
-            <button type="button" className="cm-icon-btn cm-create-icon" aria-label="Create post" onClick={() => openComposer('question')}>
+            <button type="button" className="cm-create-icon" aria-label="Create post" onClick={() => openComposer('question')}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
             </button>
-            <button type="button" className="btn btn-navy cm-create" onClick={() => openComposer('question')}>Create post</button>
           </div>
         </header>
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import MatchGauge from '../MatchGauge';
 import ProductTileImage from '../ProductTileImage';
 import { useEscapeToClose } from '../../utils/useEscapeToClose';
 import { useCommunity } from './CommunityContext';
+import { hueIndex } from '../../utils/community/hue';
 
 function initials(name) {
   const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
@@ -21,7 +21,7 @@ export function UserAvatar({ name, url, anonymous = false, size = 36 }) {
     );
   }
   if (url) return <img className="cm-avatar" src={url} alt="" style={style} loading="lazy" />;
-  return <span className="cm-avatar" style={style} aria-hidden="true">{initials(name) || 'a'}</span>;
+  return <span className={`cm-avatar cm-avatar--g${hueIndex(name)}`} style={style} aria-hidden="true">{initials(name) || 'a'}</span>;
 }
 
 export function Stars({ value, onChange, size = 'sm', label = 'Rating' }) {
@@ -52,14 +52,14 @@ export function Stars({ value, onChange, size = 'sm', label = 'Rating' }) {
  * up in Community: image, brand, name, the VIEWER's own % match, View.
  */
 export function CommunityProductPreview({ productId, product: given, variant = 'compact', note, actions, onOpened }) {
-  const { productsById, matchFor, openProduct, hasProfile, startQuiz } = useCommunity();
+  const { productsById, matchFor, openProduct, hasProfile } = useCommunity();
   const product = given || productsById.get(productId);
   if (!product) return null;
   const pct = matchFor(product);
   const open = () => { onOpened?.(); openProduct(product); };
   return (
     <div className={`cm-product cm-product--${variant}`}>
-      <button type="button" className="cm-product__main" onClick={open} aria-label={`View ${product.name}`}>
+      <button type="button" className="cm-product__main" onClick={open} aria-label={`View ${product.name}${pct != null ? `, ${pct}% match for you` : ''}`}>
         <span className="cm-product__tile">
           <ProductTileImage product={product} alt="" imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </span>
@@ -67,23 +67,20 @@ export function CommunityProductPreview({ productId, product: given, variant = '
           {product.brand && <span className="cm-product__brand">{product.brand}</span>}
           <span className="cm-product__name">{product.name}</span>
           {note && <span className="cm-product__note">“{note}”</span>}
-          {pct != null ? (
-            <span className="cm-product__match">
-              <MatchGauge percent={pct} size={variant === 'row' ? 30 : 24} />
-              <span><strong>{pct}% match</strong> for you</span>
-            </span>
-          ) : !hasProfile ? (
-            <span className="cm-product__match cm-product__match--muted">See your match</span>
-          ) : null}
         </span>
-      </button>
-      <div className="cm-product__side">
-        {pct == null && !hasProfile && variant === 'row' && (
-          <button type="button" className="cm-link" onClick={startQuiz}>Take the quiz</button>
+        {pct != null ? (
+          <span className={`cm-match${pct >= 75 ? ' cm-match--high' : pct < 40 ? ' cm-match--low' : ''}`}>
+            <strong>{pct}%</strong>
+            <small>for you</small>
+          </span>
+        ) : !hasProfile ? (
+          <span className="cm-match cm-match--empty"><small>see your<br />match</small></span>
+        ) : null}
+        {!actions && (
+          <svg className="cm-product__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
         )}
-        {actions}
-        <button type="button" className="cm-product__view" onClick={open}>View</button>
-      </div>
+      </button>
+      {actions && <div className="cm-product__side">{actions}</div>}
     </div>
   );
 }

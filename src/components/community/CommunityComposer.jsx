@@ -15,9 +15,9 @@ const KINDS = [
 ];
 
 const PLACEHOLDERS = {
-  question: 'What do you want to ask? e.g. “Has anything actually helped with hormonal acne?”',
-  review: 'How did it work for you?',
-  post: 'Share something with the community',
+  question: 'ask anything — e.g. “has anything actually helped your hormonal acne?”',
+  review: 'how did it go? the good, the bad, the honest',
+  post: 'share a tip, a win, a rant…',
 };
 
 export default function CommunityComposer({ initialKind = 'question', initialProductId = null, onClose, onCreated }) {
@@ -97,13 +97,13 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
     <div className="cm-composer__foot">
       {error && <p className="cm-error" role="alert">{error}</p>}
       <button type="button" className="btn btn-navy cm-btn-block" disabled={!canSubmit || saving} onClick={submit}>
-        {saving ? 'Posting…' : kind === 'playlist' ? 'Create playlist' : kind === 'question' ? 'Ask' : 'Post'}
+        {saving ? 'posting…' : kind === 'playlist' ? 'create playlist' : kind === 'question' ? 'ask the community' : kind === 'review' ? 'post review' : 'post'}
       </button>
     </div>
   );
 
   return (
-    <Sheet title="Create" onClose={onClose} footer={footer}>
+    <Sheet title="new post" onClose={onClose} footer={footer}>
       <div className="cm-segmented" role="tablist" aria-label="What are you creating?">
         {KINDS.map((k) => (
           <button key={k.key} type="button" role="tab" aria-selected={kind === k.key} className={kind === k.key ? 'is-active' : ''} onClick={() => setKind(k.key)}>
@@ -116,7 +116,7 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
         <div className="cm-form">
           <label className="cm-field">
             <span>Name</span>
-            <input className="cm-input" value={playlistTitle} maxLength={80} onChange={(e) => setPlaylistTitle(e.target.value)} placeholder="e.g. travel period kit" />
+            <input className="cm-input" value={playlistTitle} maxLength={80} onChange={(e) => setPlaylistTitle(e.target.value)} placeholder="e.g. travel period kit ✈️" />
           </label>
           <label className="cm-field">
             <span>Description <em>optional</em></span>
@@ -124,10 +124,10 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
           </label>
           <div className="cm-field">
             <span>Products</span>
-            <ProductPicker selected={productIds} onToggle={toggleProduct} max={50} placeholder="Add ayna products" />
+            <ProductPicker selected={productIds} onToggle={toggleProduct} max={50} placeholder="add ayna products" />
           </div>
           <Toggle checked={playlistPublic} onChange={setPlaylistPublic} label="Public" hint="Anyone on ayna can find it. Turn off to keep it to yourself." />
-          <p className="cm-hint">Everyone who opens your playlist sees each product’s match for <em>them</em>, not you.</p>
+          <p className="cm-hint">✦ anyone who opens it sees each product’s match for <em>them</em> — not yours.</p>
         </div>
       ) : (
         <div className="cm-form">
