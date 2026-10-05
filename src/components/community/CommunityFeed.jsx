@@ -81,7 +81,7 @@ export default function CommunityFeed({ tab, productFilter, onTabChange, onCompo
   const ctx = useCommunity();
   const { supabase, social, matchFor, interest, ownedProductIds, user, productsById } = ctx;
   const [reviewSort, setReviewSort] = useState('for-you');
-  const friendIds = useMemo(() => store.friendIdsFrom(social.friendships, user.id), [social.friendships, user.id]);
+  const friendIds = useMemo(() => store.friendIdsFrom(social.friendships, user?.id), [social.friendships, user?.id]);
   const followingList = useMemo(() => [...new Set([...social.followingIds, ...friendIds])], [social.followingIds, friendIds]);
 
   const signals = useMemo(() => ({
@@ -136,10 +136,10 @@ export default function CommunityFeed({ tab, productFilter, onTabChange, onCompo
       <CommunityFilters value={tab} onChange={onTabChange} />
 
       {tab !== 'playlists' && !productFilter && (
-        <button type="button" className="cm-prompt" onClick={() => onCompose(tab === 'reviews' ? 'review' : 'question')}>
-          <UserAvatar name={ctx.me?.display_name || ''} url={ctx.me?.avatar_url} size={34} />
+        <button type="button" className="cm-prompt" onClick={() => onCompose(tab === 'reviews' ? 'review' : tab === 'questions' ? 'question' : 'post')}>
+          {user ? <UserAvatar name={ctx.me?.display_name || ''} url={ctx.me?.avatar_url} size={34} /> : <UserAvatar anonymous size={34} />}
           <span>{tab === 'reviews' ? 'tried something? rate it' : 'what’s on your mind?'}</span>
-          <span className="cm-prompt__cta">{tab === 'reviews' ? 'review' : 'ask'}</span>
+          <span className="cm-prompt__cta">{tab === 'reviews' ? 'review' : tab === 'questions' ? 'ask' : 'post'}</span>
         </button>
       )}
 
@@ -164,7 +164,14 @@ export default function CommunityFeed({ tab, productFilter, onTabChange, onCompo
           Check your connection.
         </EmptyState>
       ) : posts.length === 0 ? (
-        tab === 'following' && followingList.length === 0 ? (
+        tab === 'following' && !user ? (
+          <EmptyState
+            title="Follow people you trust"
+            action={<button type="button" className="btn btn-navy" onClick={() => ctx.requireAccount('follow people')}>Create an account</button>}
+          >
+            With an account, posts from people you follow and your friends show up here.
+          </EmptyState>
+        ) : tab === 'following' && followingList.length === 0 ? (
           <EmptyState title="Follow people to see their reviews, questions, and playlists here." />
         ) : tab === 'reviews' && reviewSort === 'friends' && friendIds.length === 0 ? (
           <EmptyState title="Add friends to see what they’re using." />

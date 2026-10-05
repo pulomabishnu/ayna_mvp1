@@ -136,3 +136,50 @@ describe('community topics', () => {
     expect(getProfileInterestSignals(null).hasProfile).toBe(false);
   });
 });
+
+import { usernameProblem, normalizeUsernameInput, suggestUsername } from './username';
+
+describe('usernames (mirror of community_username_problem)', () => {
+  it('accepts ordinary handles', () => {
+    for (const u of ['ameera', 'periodgirl', 'wellnesswithmaya', 'jo.b', 'sam_22']) expect(usernameProblem(u)).toBeNull();
+  });
+  it('rejects bad format', () => {
+    for (const u of ['ab', '_lead', 'trail.', 'a..b', 'Upper', 'has space', 'x'.repeat(25)]) expect(usernameProblem(u)).toBe('format');
+  });
+  it('blocks ayna/staff impersonation', () => {
+    for (const u of ['ayna', 'ayna_official', 'aynacare', 'support', 'site.admin', 'the_moderator', 'verifiedjo']) expect(usernameProblem(u)).toBe('reserved');
+  });
+  it('blocks clinician impersonation', () => {
+    for (const u of ['dr_sarah', 'doc.kim', 'sarah_md', 'nurse.jo', 'best_obgyn', 'gynecologist1']) expect(['clinician', 'reserved']).toContain(usernameProblem(u));
+  });
+  it('blocks abuse', () => {
+    expect(usernameProblem('xfuckx')).toBe('abuse');
+  });
+  it('normalizes input and suggests valid names', () => {
+    expect(normalizeUsernameInput('  Hello World!! ')).toBe('helloworld');
+    for (let i = 0; i < 20; i += 1) expect(usernameProblem(suggestUsername('Dr. Admin'))).toBeNull();
+  });
+});
+
+describe('publicMediaUrl', async () => {
+  const { publicMediaUrl } = await import('./imageUpload');
+  it('passes through full URLs and null', () => {
+    expect(publicMediaUrl(null)).toBeNull();
+    expect(publicMediaUrl('https://x.test/a.jpg')).toBe('https://x.test/a.jpg');
+  });
+  it('builds a bucket URL from a path without leaking anything else', () => {
+    const url = publicMediaUrl('posts/0f0e0d0c-0b0a-4908-8706-050403020100.jpg');
+    if (url) expect(url).toMatch(/\/storage\/v1\/object\/public\/community-media\/posts\/0f0e0d0c-0b0a-4908-8706-050403020100\.jpg$/);
+  });
+});
+
+describe('username lists stay in sync with the database', async () => {
+  const { readFileSync } = await import('node:fs');
+  const { RESERVED_USERNAMES } = await import('./username');
+  it('reserved list matches community_username_problem', () => {
+    const sql = readFileSync(new URL('../../../supabase/community.sql', import.meta.url), 'utf8');
+    const block = sql.match(/if u = any \(array\[([\s\S]*?)\]\)/)[1];
+    const fromSql = [...block.matchAll(/'([^']+)'/g)].map((m) => m[1]).sort();
+    expect([...RESERVED_USERNAMES].sort()).toEqual(fromSql);
+  });
+});

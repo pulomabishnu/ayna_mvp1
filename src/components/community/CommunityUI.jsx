@@ -3,6 +3,7 @@ import ProductTileImage from '../ProductTileImage';
 import { useEscapeToClose } from '../../utils/useEscapeToClose';
 import { useCommunity } from './CommunityContext';
 import { hueIndex } from '../../utils/community/hue';
+import { publicMediaUrl } from '../../utils/community/imageUpload';
 
 function initials(name) {
   const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
@@ -12,6 +13,8 @@ function initials(name) {
 }
 
 export function UserAvatar({ name, url, anonymous = false, size = 36 }) {
+  // A replaced/removed photo can 404 in lists loaded earlier: fall back to initials.
+  const [failedSrc, setFailedSrc] = useState(null);
   const style = { width: size, height: size, fontSize: Math.max(10, Math.round(size * 0.36)) };
   if (anonymous) {
     return (
@@ -20,7 +23,8 @@ export function UserAvatar({ name, url, anonymous = false, size = 36 }) {
       </span>
     );
   }
-  if (url) return <img className="cm-avatar" src={url} alt="" style={style} loading="lazy" />;
+  const src = publicMediaUrl(url);
+  if (src && src !== failedSrc) return <img className="cm-avatar" src={src} alt="" style={style} loading="lazy" onError={() => setFailedSrc(src)} />;
   return <span className={`cm-avatar cm-avatar--g${hueIndex(name)}`} style={style} aria-hidden="true">{initials(name) || 'a'}</span>;
 }
 
@@ -52,7 +56,7 @@ export function Stars({ value, onChange, size = 'sm', label = 'Rating' }) {
  * up in Community: image, brand, name, the VIEWER's own % match, View.
  */
 export function CommunityProductPreview({ productId, product: given, variant = 'compact', note, actions, onOpened }) {
-  const { productsById, matchFor, openProduct, hasProfile } = useCommunity();
+  const { productsById, matchFor, openProduct, hasProfile, user } = useCommunity();
   const product = given || productsById.get(productId);
   if (!product) return null;
   const pct = matchFor(product);
@@ -74,7 +78,10 @@ export function CommunityProductPreview({ productId, product: given, variant = '
             <small>for you</small>
           </span>
         ) : !hasProfile ? (
-          <span className="cm-match cm-match--empty"><small>see your<br />match</small></span>
+          <span className="cm-match cm-match--empty">
+            {!user && <svg className="cm-match__lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>}
+            <small>see your<br />match</small>
+          </span>
         ) : null}
         {!actions && (
           <svg className="cm-product__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>

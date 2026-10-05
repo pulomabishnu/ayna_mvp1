@@ -6,8 +6,23 @@ import { postProductIds } from '../../utils/community/ranking';
 import { communityHref } from '../../utils/community/route';
 import * as store from '../../utils/community/communityStore';
 import { trackCommunity } from '../../utils/community/analytics';
+import { publicMediaUrl } from '../../utils/community/imageUpload';
 
-const KIND_LABEL = { question: 'question', review: 'review', post: 'post' };
+const KIND_LABEL = { question: 'question', review: 'review', post: 'discussion' };
+
+/** Photos: one full-width, or a tidy grid of 2–4. Paths only — no author info. */
+export function PostMedia({ media, legacyUrl }) {
+  const items = (Array.isArray(media) ? media : []).map((m) => ({ ...m, src: publicMediaUrl(m.path) })).filter((m) => m.src);
+  if (!items.length && legacyUrl) items.push({ src: legacyUrl });
+  if (!items.length) return null;
+  return (
+    <div className={`cm-media cm-media--${Math.min(items.length, 4)}`}>
+      {items.slice(0, 4).map((m) => (
+        <img key={m.src} src={m.src} alt="" loading="lazy" decoding="async" width={m.width || undefined} height={m.height || undefined} />
+      ))}
+    </div>
+  );
+}
 
 export function AuthorLine({ item, time }) {
   const { navigate } = useCommunity();
@@ -56,8 +71,10 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
     else navigate({ name: 'post', id: post.id });
   };
 
+  const isLike = post.kind === 'post'; // discussions get "like"; questions/reviews get "helpful"
   const toggle = async (field, fn) => {
-    if (!requireProfile()) return;
+    const reason = field === 'viewer_saved' ? 'save posts' : isLike ? 'like posts' : 'mark posts helpful';
+    if (!requireProfile(null, reason)) return;
     if (busy) return;
     const next = !post[field];
     const countField = field === 'viewer_found_helpful' ? 'helpful_count' : null;
@@ -80,6 +97,7 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
       danger: true,
       onClick: async () => {
         if (!window.confirm('Delete this post? This can’t be undone.')) return;
+        // supabase is the client that owns it: the account client, or this device's guest session.
         try { await store.deletePost(supabase, post.id); onRemove?.(post); toast('Post deleted'); } catch (e) { toast(store.friendlyError(e)); }
       },
     },
@@ -94,6 +112,7 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
     !post.is_mine && {
       label: 'Hide post',
       onClick: async () => {
+        if (!requireProfile(null, 'hide posts')) return;
         try { await store.hidePost(supabase, user.id, post.id); onRemove?.(post); toast('Hidden from your feed'); } catch (e) { toast(store.friendlyError(e)); }
       },
     },
@@ -107,6 +126,7 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
   const visibleTopics = (post.topics || []).slice(0, 3);
   const icon = {
     helpful: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 21V10l4.5-7c1.4 0 2.3 1.2 2 2.6L12.8 10H19a2 2 0 0 1 2 2.3l-1.2 6.8a2 2 0 0 1-2 1.7H7Zm0 0H4V10h3" /></svg>,
+    like: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg>,
     comment: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.1A8 8 0 1 1 20 12Z" /></svg>,
     save: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z" /></svg>,
     share: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" /></svg>,
@@ -139,9 +159,7 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
         ? <p className={`cm-text${post.kind === 'question' ? ' cm-text--question' : ''}`}>{post.body}</p>
         : <ClampedText text={post.body} lines={4} className={post.kind === 'question' ? 'cm-text--question-wrap' : ''} />}
 
-      {post.photo_url && (
-        <img className="cm-post__photo" src={post.photo_url} alt="" loading="lazy" decoding="async" />
-      )}
+      <PostMedia media={post.media} legacyUrl={post.photo_url} />
 
       {productIds.length > 0 && (
         <div className="cm-post__products" onClick={(e) => e.stopPropagation()}>
@@ -165,18 +183,18 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
         )}
         <div className="cm-actions">
           {post.is_mine ? (
-            <span className="cm-action cm-action--static" title="helpful votes">
-              {icon.helpful}<span>{post.helpful_count || ''}</span>
+            <span className="cm-action cm-action--static" title={isLike ? "likes" : "helpful votes"}>
+              {isLike ? icon.like : icon.helpful}<span>{post.helpful_count || ''}</span>
             </span>
           ) : (
             <button
               type="button"
               className={`cm-action${post.viewer_found_helpful ? ' is-on' : ''}`}
               aria-pressed={!!post.viewer_found_helpful}
-              aria-label={`Helpful${post.helpful_count ? ` (${post.helpful_count})` : ''}`}
+              aria-label={`${isLike ? 'Like' : 'Helpful'}${post.helpful_count ? ` (${post.helpful_count})` : ''}`}
               onClick={() => toggle('viewer_found_helpful', (on) => store.setHelpful(supabase, user.id, { postId: post.id }, on))}
             >
-              {icon.helpful}<span>{post.helpful_count || ''}</span>
+              {isLike ? icon.like : icon.helpful}<span>{post.helpful_count || ''}</span>
             </button>
           )}
           <button type="button" className="cm-action" aria-label={`${post.kind === 'question' ? 'Answers' : 'Comments'}${post.comment_count ? ` (${post.comment_count})` : ''}`} onClick={openThread}>

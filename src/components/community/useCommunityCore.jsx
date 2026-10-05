@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getSupabaseClient } from '../../utils/supabaseClient';
+import { getGuestClient, getGuestId, ensureGuestSession } from '../../utils/community/guestClient';
+import { trackCommunity } from '../../utils/community/analytics';
 import { getProfileInterestSignals } from '../../data/products';
 import { useCatalogById, useViewerMatch } from './CommunityContext';
 import { ProfileSetupSheet, ReportSheet } from './Social';
@@ -24,7 +26,13 @@ export function useCommunityCore({
   user, quizResults, healthProfile, myProducts = {}, savedProducts = {},
   onOpenProduct, onAddToEcosystem, onRequireAuth, onStartQuiz, navigate, lazy = false,
 }) {
-  const supabase = useMemo(() => getSupabaseClient(), []);
+  // Accounts use the app's client; everyone else uses the guest client, which
+  // is keyless (anon) until a guest first posts — see guestClient.js.
+  const mainClient = useMemo(() => getSupabaseClient(), []);
+  const guestClient = useMemo(() => (mainClient ? getGuestClient() : null), [mainClient]);
+  const supabase = user ? mainClient : guestClient;
+  const [guestId, setGuestId] = useState(null);
+  const [nudge, setNudge] = useState(null); // { reason }
   const productsById = useCatalogById();
   const matchFor = useViewerMatch(quizResults, healthProfile, productsById);
   // undefined = not loaded yet, null = no community profile yet. Keyed by user
@@ -71,6 +79,14 @@ export function useCommunityCore({
   // eslint-disable-next-line react-hooks/exhaustive-deps -- reload per account, not per auth-object identity
   }, [active, supabase, user?.id]);
 
+  // A returning guest on this device: recognise their own anonymous posts.
+  useEffect(() => {
+    if (user || !guestClient) return undefined;
+    let alive = true;
+    getGuestId().then((id) => { if (alive) setGuestId(id); });
+    return () => { alive = false; };
+  }, [user, guestClient]);
+
   const setFollowing = useCallback((id, on) => {
     setFollowingIds((prev) => {
       const next = new Set(prev);
@@ -79,10 +95,22 @@ export function useCommunityCore({
     });
   }, []);
 
-  /** Gate for every write: signed in, and has picked a community name. */
+  /** Account-only actions for guests: a gentle "this needs an account" sheet. */
+  const requireAccount = useCallback((reason) => {
+    if (user) return true;
+    setNudge({ reason: reason || null });
+    trackCommunity('community_account_nudge_shown', { source: reason ? 'action' : 'generic' });
+    return false;
+  }, [user]);
+
+  /**
+   * Gate for account-only writes (like, save, follow, friend, playlist,
+   * review…): signed in, and has picked a community name. Guests get the
+   * account nudge instead of a login wall.
+   */
   const pendingRef = useRef(null);
-  const requireProfile = useCallback((onDone) => {
-    if (!user) { onRequireAuth?.(); return false; }
+  const requireProfile = useCallback((onDone, reason) => {
+    if (!user) { requireAccount(reason); return false; }
     if (me) return true;
     if (me === undefined) {
       // Still loading (or not loaded yet in lazy mode): finish the action
@@ -93,7 +121,7 @@ export function useCommunityCore({
     }
     setProfileSheet({ onDone });
     return false;
-  }, [user, me, active, onRequireAuth]);
+  }, [user, me, active, requireAccount]);
 
   useEffect(() => {
     if (me === undefined || !pendingRef.current) return;
@@ -103,11 +131,28 @@ export function useCommunityCore({
     else setProfileSheet({ onDone: done });
   }, [me]);
 
+  /**
+   * Who is writing a guest-allowed action (post, comment, report)?
+   * Accounts: their user id (profile required). Guests: the guest session,
+   * created on first use. Resolves null if the action is waiting on the
+   * profile sheet; throws a friendly error if guest posting is unavailable.
+   */
+  const resolveActor = useCallback(async () => {
+    if (user) return requireProfile() ? user.id : null;
+    const id = await ensureGuestSession();
+    setGuestId(id);
+    return id;
+  }, [user, requireProfile]);
+
   const social = useMemo(() => ({ followingIds, friendships, setFollowing, refreshFriendships }), [followingIds, friendships, setFollowing, refreshFriendships]);
 
   const value = useMemo(() => ({
     supabase,
     user,
+    isGuest: !user,
+    actorId: user ? user.id : guestId,
+    resolveActor,
+    requireAccount,
     me,
     setMe,
     productsById,
@@ -123,11 +168,13 @@ export function useCommunityCore({
     startQuiz: () => onStartQuiz?.(),
     onAddToEcosystem,
     isInEcosystem: (id) => Boolean(myProducts?.[id]),
-    openReport: (target) => { if (requireProfile(() => setReportTarget(target))) setReportTarget(target); },
-    confirmBlock: (target) => { if (requireProfile(() => setBlockTarget(target))) setBlockTarget(target); },
+    openReport: (target) => {
+      if (!user || requireProfile(() => setReportTarget(target))) setReportTarget(target);
+    },
+    confirmBlock: (target) => { if (requireProfile(() => setBlockTarget(target), 'block people')) setBlockTarget(target); },
     editProfile: () => setProfileSheet({ editing: true }),
     activate: () => setActive(true),
-  }), [supabase, user, me, setMe, productsById, matchFor, hasProfile, interest, ownedProductIds, social, toast, navigate, requireProfile, onOpenProduct, onStartQuiz, onAddToEcosystem, myProducts]);
+  }), [supabase, user, guestId, resolveActor, requireAccount, me, setMe, productsById, matchFor, hasProfile, interest, ownedProductIds, social, toast, navigate, requireProfile, onOpenProduct, onStartQuiz, onAddToEcosystem, myProducts]);
 
   const overlays = (
     <>
@@ -138,6 +185,30 @@ export function useCommunityCore({
           onClose={() => setProfileSheet(null)}
           onSaved={(profile) => { const done = profileSheet.onDone; setMe(profile); setProfileSheet(null); done?.(profile); }}
         />
+      )}
+      {nudge && (
+        <Sheet
+          title="Join ayna"
+          onClose={() => setNudge(null)}
+          footer={(
+            <div className="cm-nudge__actions">
+              <button
+                type="button"
+                className="btn btn-navy cm-btn-block"
+                onClick={() => { setNudge(null); trackCommunity('community_account_nudge_clicked', {}); onRequireAuth?.(); }}
+              >
+                Log in or sign up
+              </button>
+              <button type="button" className="cm-link" onClick={() => setNudge(null)}>Not now</button>
+            </div>
+          )}
+        >
+          <div className="cm-nudge">
+            {nudge.reason && <p className="cm-nudge__reason">You’ll need an account to {nudge.reason}.</p>}
+            <p className="cm-text">Create an account to personalize your feed, connect with friends, save posts, and see your product matches.</p>
+            <p className="cm-hint">You can keep browsing and posting anonymously without one.</p>
+          </div>
+        </Sheet>
       )}
       {reportTarget && <ReportSheet target={reportTarget} onClose={() => setReportTarget(null)} />}
       {blockTarget && (

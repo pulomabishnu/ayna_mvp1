@@ -153,6 +153,25 @@ blocks. `_community_behaviour_test.sql` runs in `scripts/test-migrations.sh`.
   column-level UPDATE grants leave them out, so a client can't inflate them.
 - **Reports** land in `community_reports` (status `open`) for a future admin
   view; read them with the service role.
+- **Guests browse and post without an account.** The feed views, profiles and
+  public playlists are readable by `anon`. A guest who posts gets a Supabase
+  *anonymous sign-in* (real `auth.uid()`, JWT `is_anonymous: true`), so
+  ownership, rate limits (5 posts / 20 comments an hour) and RLS work as for
+  accounts. Restrictive policies keep guests to anonymous discussions,
+  questions and comments, photos on them, and reports — no profile, votes,
+  saves, follows, friends, blocks, playlists, reviews or notifications.
+  **Enable it in the dashboard: Authentication → Sign In / Providers → "Allow
+  anonymous sign-ins"** (guest posting shows "log in to post" until you do).
+  Before a public launch, turn on CAPTCHA for sign-ups and schedule a purge of
+  old anonymous users.
+- **Usernames** are lowercase (so unique case-insensitively), and
+  `community_username_problem()` blocks reserved names, ayna/staff/clinician
+  impersonation and a short abuse list, with a 30-day change cooldown.
+  `src/utils/community/username.js` mirrors it; a unit test keeps the lists in sync.
+- **Photos** are stored as paths, never URLs: `community_post_media.storage_path`
+  (`posts/<random uuid>.jpg`, no user id) and `community_profiles.avatar_url`
+  (`avatars/<own uid>/<uuid>.jpg`). The insert trigger checks the uploader owns
+  the storage object.
 
 ## Two deliberate security decisions
 

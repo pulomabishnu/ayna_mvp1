@@ -17,6 +17,15 @@ const FRIENDLY_ERRORS = {
   community_playlist_full: 'Playlists can hold up to 50 products.',
   community_blocked: "You can't do that with this person.",
   community_friend_request_not_addressee: 'Only the person you asked can accept.',
+  community_username_reserved: 'That username is reserved. Try another.',
+  community_username_clinician: "Usernames can't suggest you're a doctor or clinician.",
+  community_username_abuse: "That username isn't allowed.",
+  community_username_format: 'Use 3–24 letters, numbers, dots or underscores (not at the start or end).',
+  community_username_cooldown: 'You can change your username once every 30 days.',
+  community_display_name_reserved: "Display names can't suggest you're ayna staff.",
+  community_media_full: 'You can add up to 4 photos.',
+  community_media_not_found: "That photo didn't finish uploading. Try again.",
+  community_guest_unavailable: "Posting without an account isn't available right now. Log in to post.",
 };
 
 export function friendlyError(error) {
@@ -46,14 +55,16 @@ export async function getMyCommunityProfile(supabase, userId) {
   return check(await supabase.from('community_profiles').select('*').eq('user_id', userId).maybeSingle());
 }
 
-export async function upsertCommunityProfile(supabase, userId, { username, displayName, bio, avatarUrl }) {
+export async function upsertCommunityProfile(supabase, userId, { username, displayName, bio, avatarUrl, publicInterests }) {
   const row = {
     user_id: userId,
     username: String(username || '').trim().toLowerCase(),
     display_name: String(displayName || '').trim(),
     bio: bio ? String(bio).trim() : null,
+    // A storage path (avatars/<uid>/<uuid>.jpg), never a full URL — see community.sql.
     avatar_url: avatarUrl || null,
   };
+  if (Array.isArray(publicInterests)) row.public_interests = [...new Set(publicInterests)].slice(0, 8);
   // Insert or update explicitly: an upsert would need UPDATE on user_id, which
   // authenticated deliberately doesn't have.
   const existing = check(await supabase.from('community_profiles').select('user_id').eq('user_id', userId).maybeSingle());
@@ -62,6 +73,10 @@ export async function upsertCommunityProfile(supabase, userId, { username, displ
     return check(await supabase.from('community_profiles').update(patch).eq('user_id', userId).select('*').single());
   }
   return check(await supabase.from('community_profiles').insert(row).select('*').single());
+}
+
+export async function setAvatarPath(supabase, userId, path) {
+  return check(await supabase.from('community_profiles').update({ avatar_url: path || null }).eq('user_id', userId).select('*').single());
 }
 
 export async function isUsernameTaken(supabase, username, exceptUserId) {
@@ -131,7 +146,7 @@ export async function getFeedPost(supabase, postId) {
   return check(await supabase.from('community_feed_posts').select('*').eq('id', postId).maybeSingle());
 }
 
-export async function createPost(supabase, userId, { kind, body, topics = [], isAnonymous = false, productId = null, rating = null, wouldRecommend = null, photoUrl = null, taggedProductIds = [] }) {
+export async function createPost(supabase, userId, { kind, body, topics = [], isAnonymous = false, productId = null, rating = null, wouldRecommend = null, photoUrl = null, taggedProductIds = [], media = [] }) {
   const row = {
     author_id: userId,
     kind,
@@ -152,6 +167,16 @@ export async function createPost(supabase, userId, { kind, body, topics = [], is
       .insert(tags.map((product_id, position) => ({ post_id: post.id, product_id, position })));
     if (error) {
       // Don't leave a half-written post behind.
+      await supabase.from('community_posts').delete().eq('id', post.id);
+      throw error;
+    }
+  }
+  const photos = (media || []).filter((m) => m?.path).slice(0, 4);
+  if (photos.length) {
+    const { error } = await supabase.from('community_post_media').insert(photos.map((m, position) => ({
+      post_id: post.id, storage_path: m.path, width: m.width || null, height: m.height || null, position,
+    })));
+    if (error) {
       await supabase.from('community_posts').delete().eq('id', post.id);
       throw error;
     }

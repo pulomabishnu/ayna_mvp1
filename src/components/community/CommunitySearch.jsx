@@ -55,7 +55,7 @@ export default function CommunitySearch({ initialQuery = '', onQueryChange }) {
                   <UserAvatar name={p.display_name} url={p.avatar_url} size={40} />
                   <span>{p.display_name}<small>@{p.username}</small></span>
                 </button>
-                {p.user_id !== user.id && <FollowButton targetId={p.user_id} compact />}
+                {p.user_id !== user?.id && <FollowButton targetId={p.user_id} compact />}
               </li>
             ))}
           </ul>

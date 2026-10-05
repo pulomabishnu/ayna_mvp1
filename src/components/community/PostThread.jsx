@@ -6,10 +6,11 @@ import ProductPicker from './ProductPicker';
 import * as store from '../../utils/community/communityStore';
 import { trackCommunity } from '../../utils/community/analytics';
 
-function CommentItem({ comment, onReply, onChange, onRemove }) {
+function CommentItem({ comment, reaction = 'helpful', onReply, onChange, onRemove }) {
   const { supabase, user, requireProfile, toast, openReport, confirmBlock } = useCommunity();
+  const isLike = reaction === 'like';
   const toggleHelpful = async () => {
-    if (!requireProfile() || comment.is_mine) return;
+    if (comment.is_mine || !requireProfile(null, isLike ? 'like comments' : 'mark answers helpful')) return;
     const next = !comment.viewer_found_helpful;
     onChange({ ...comment, viewer_found_helpful: next, helpful_count: Math.max(0, comment.helpful_count + (next ? 1 : -1)) });
     try {
@@ -47,10 +48,12 @@ function CommentItem({ comment, onReply, onChange, onRemove }) {
       )}
       <div className="cm-actions cm-actions--small">
         {comment.is_mine ? (
-          <span className="cm-action cm-action--static"><span>{comment.helpful_count ? `${comment.helpful_count} found this helpful` : 'Your reply'}</span></span>
+          <span className="cm-action cm-action--static">
+            <span>{comment.helpful_count ? (isLike ? `${comment.helpful_count} like${comment.helpful_count > 1 ? 's' : ''}` : `${comment.helpful_count} found this helpful`) : 'Your reply'}</span>
+          </span>
         ) : (
           <button type="button" className={`cm-action${comment.viewer_found_helpful ? ' is-on' : ''}`} aria-pressed={!!comment.viewer_found_helpful} onClick={toggleHelpful}>
-            <span>Helpful{comment.helpful_count ? ` · ${comment.helpful_count}` : ''}</span>
+            <span>{isLike ? (comment.viewer_found_helpful ? 'Liked' : 'Like') : 'Helpful'}{comment.helpful_count ? ` · ${comment.helpful_count}` : ''}</span>
           </button>
         )}
         {onReply && <button type="button" className="cm-action" onClick={() => onReply(comment)}><span>Reply</span></button>}
@@ -60,21 +63,24 @@ function CommentItem({ comment, onReply, onChange, onRemove }) {
 }
 
 function ReplyBox({ post, replyTo, onCancelReply, onPosted }) {
-  const { supabase, user, requireProfile, toast } = useCommunity();
+  const { supabase, user, isGuest, resolveActor, toast } = useCommunity();
   const [body, setBody] = useState('');
   const [productId, setProductId] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
   // Answering in your own anonymous thread defaults to anonymous, so a reply
   // can't accidentally put your name next to an anonymous question.
-  const [anonymous, setAnonymous] = useState(Boolean(post.is_mine && post.is_anonymous));
+  const [anonymousChoice, setAnonymous] = useState(Boolean(post.is_mine && post.is_anonymous));
+  const anonymous = isGuest || anonymousChoice; // guests always reply as Anonymous
   const [saving, setSaving] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
-    if (!requireProfile() || !body.trim() || saving) return;
+    if (!body.trim() || saving) return;
     setSaving(true);
     try {
-      await store.createComment(supabase, user.id, { postId: post.id, parentId: replyTo?.id || null, body, productId, isAnonymous: anonymous });
+      const actorId = await resolveActor();
+      if (!actorId) return;
+      await store.createComment(supabase, actorId, { postId: post.id, parentId: replyTo?.id || null, body, productId, isAnonymous: anonymous });
       trackCommunity('community_comment_created', { kind: post.kind, has_product: Boolean(productId), is_anonymous: anonymous });
       setBody('');
       setProductId(null);
@@ -111,7 +117,7 @@ function ReplyBox({ post, replyTo, onCancelReply, onPosted }) {
         <button type="button" className={`cm-chip-btn${showPicker || productId ? ' is-on' : ''}`} onClick={() => setShowPicker((v) => !v)}>
           {productId ? '1 product' : 'Add product'}
         </button>
-        <Toggle checked={anonymous} onChange={setAnonymous} label="Anonymous" />
+        {user ? <Toggle checked={anonymous} onChange={setAnonymous} label="Anonymous" /> : <span className="cm-reply__as">replying as Anonymous</span>}
         <button type="submit" className="btn btn-navy cm-btn-sm" disabled={!body.trim() || saving}>{saving ? '…' : 'Reply'}</button>
       </div>
     </form>
@@ -171,11 +177,11 @@ export default function PostThread({ postId }) {
         {topLevel.length === 0 && <p className="cm-hint">{post.kind === 'question' ? 'No answers yet. Know something that helped?' : 'No comments yet.'}</p>}
         {topLevel.map((c) => (
           <div key={c.id} className="cm-comment-group">
-            <CommentItem comment={c} onReply={setReplyTo} onChange={updateComment} onRemove={removeComment} />
+            <CommentItem comment={c} reaction={post.kind === 'post' ? 'like' : 'helpful'} onReply={setReplyTo} onChange={updateComment} onRemove={removeComment} />
             {(repliesByParent.get(c.id) || []).length > 0 && (
               <div className="cm-replies">
                 {repliesByParent.get(c.id).map((r) => (
-                  <CommentItem key={r.id} comment={r} onReply={() => setReplyTo(c)} onChange={updateComment} onRemove={removeComment} />
+                  <CommentItem key={r.id} comment={r} reaction={post.kind === 'post' ? 'like' : 'helpful'} onReply={() => setReplyTo(c)} onChange={updateComment} onRemove={removeComment} />
                 ))}
               </div>
             )}

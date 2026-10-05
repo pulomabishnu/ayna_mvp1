@@ -4,6 +4,8 @@
 -- scripts/test-migrations.sh (a bare Postgres has no storage schema). Apply
 -- after community.sql. Idempotent.
 --
+-- Guests (Supabase anonymous sign-ins) may upload post photos only.
+--
 -- Paths:
 --   posts/<random uuid>.jpg     — post/review photos. Deliberately NOT under a
 --                                 user-id folder: an anonymous post's photo URL
@@ -30,9 +32,16 @@ create policy community_media_insert on storage.objects for insert to authentica
   with check (
     bucket_id = 'community-media'
     and (
-      (storage.foldername(name))[1] in ('posts', 'covers')
-      or ((storage.foldername(name))[1] = 'avatars' and (storage.foldername(name))[2] = auth.uid()::text)
+      -- Post photos: accounts and guests (guest posts can carry photos).
+      (storage.foldername(name))[1] = 'posts'
+      -- Covers and avatars belong to a social profile: accounts only.
+      or (not public.community_is_guest() and (
+            (storage.foldername(name))[1] = 'covers'
+            or ((storage.foldername(name))[1] = 'avatars' and (storage.foldername(name))[2] = auth.uid()::text)
+         ))
     )
+    -- One flat level: posts/<uuid>.jpg, covers/<uuid>.jpg, avatars/<uid>/<uuid>.jpg.
+    and name ~ '^(posts|covers)/[0-9a-f-]{36}\.(jpg|jpeg|webp|png)$|^avatars/[0-9a-f-]{36}/[0-9a-f-]{36}\.(jpg|jpeg|webp|png)$'
   );
 
 drop policy if exists community_media_delete_own on storage.objects;

@@ -1,36 +1,61 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useCommunity } from './CommunityContext';
-import { Sheet, Stars, Toggle } from './CommunityUI';
+import { Sheet, Stars, Toggle, UserAvatar } from './CommunityUI';
 import ProductPicker from './ProductPicker';
 import { COMMUNITY_TOPICS, suggestTopicsForProducts } from '../../utils/community/topics';
 import * as store from '../../utils/community/communityStore';
-import { uploadCommunityImage } from '../../utils/community/imageUpload';
+import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS } from '../../utils/community/imageUpload';
 import { trackCommunity } from '../../utils/community/analytics';
 
-const KINDS = [
-  { key: 'question', label: 'Question' },
-  { key: 'review', label: 'Review' },
-  { key: 'post', label: 'Post' },
-  { key: 'playlist', label: 'Playlist' },
-];
+const TITLES = {
+  post: 'start a discussion',
+  question: 'ask a question',
+  review: 'review a product',
+  playlist: 'new playlist',
+};
+
+/** Who the post is from. Accounts choose; guests are always Anonymous. */
+function PostAs({ me, anonymous, onChange }) {
+  return (
+    <div className="cm-postas" role="radiogroup" aria-label="Post as">
+      <span className="cm-postas__label">post as</span>
+      <button type="button" role="radio" aria-checked={!anonymous} className={!anonymous ? 'is-on' : ''} onClick={() => onChange(false)}>
+        <UserAvatar name={me?.display_name} url={me?.avatar_url} size={28} />
+        <span className="cm-postas__who">
+          <strong>{me?.display_name}</strong>
+          <small>@{me?.username}</small>
+        </span>
+      </button>
+      <button type="button" role="radio" aria-checked={anonymous} className={anonymous ? 'is-on' : ''} onClick={() => onChange(true)}>
+        <UserAvatar anonymous size={28} />
+        <span className="cm-postas__who">
+          <strong>Anonymous</strong>
+          <small>no name or profile shown</small>
+        </span>
+      </button>
+    </div>
+  );
+}
 
 const PLACEHOLDERS = {
   question: 'ask anything — e.g. “has anything actually helped your hormonal acne?”',
   review: 'how did it go? the good, the bad, the honest',
-  post: 'share a tip, a win, a rant…',
+  post: 'share a tip, a win, a rant, a thought…',
 };
 
 export default function CommunityComposer({ initialKind = 'question', initialProductId = null, onClose, onCreated }) {
-  const { supabase, user, productsById } = useCommunity();
-  const [kind, setKind] = useState(initialKind);
+  const { supabase, user, me, isGuest, resolveActor, productsById } = useCommunity();
+  const kind = initialKind;
   const [body, setBody] = useState('');
   const [topics, setTopics] = useState([]);
   const [productIds, setProductIds] = useState(initialProductId && initialKind !== 'review' ? [initialProductId] : []);
   const [reviewProductId, setReviewProductId] = useState(initialKind === 'review' ? initialProductId : null);
   const [rating, setRating] = useState(0);
   const [wouldRecommend, setWouldRecommend] = useState(null);
-  const [anonymous, setAnonymous] = useState(false);
-  const [photo, setPhoto] = useState(null);
+  const [anonymousChoice, setAnonymous] = useState(false);
+  const anonymous = isGuest || anonymousChoice;
+  const [photos, setPhotos] = useState([]); // File[]
+  const [progress, setProgress] = useState('');
   const [showProducts, setShowProducts] = useState(Boolean(initialProductId && initialKind !== 'review'));
   const [showTopics, setShowTopics] = useState(false);
   const [playlistTitle, setPlaylistTitle] = useState('');
@@ -40,7 +65,20 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
   const [error, setError] = useState('');
   const fileRef = useRef(null);
 
-  const photoPreview = useMemo(() => (photo ? URL.createObjectURL(photo) : null), [photo]);
+  const previews = useMemo(() => photos.map((f) => URL.createObjectURL(f)), [photos]);
+  useEffect(() => () => previews.forEach((u) => URL.revokeObjectURL(u)), [previews]);
+
+  const addPhotos = (files) => {
+    const list = [...(files || [])];
+    try {
+      list.forEach(checkImageFile);
+      setPhotos((prev) => [...prev, ...list].slice(0, MAX_POST_PHOTOS));
+      if (photos.length + list.length > MAX_POST_PHOTOS) setError(`Up to ${MAX_POST_PHOTOS} photos per post.`);
+      else setError('');
+    } catch (e) {
+      setError(e.message);
+    }
+  };
 
   const suggestedTopics = useMemo(() => {
     const products = [...productIds, reviewProductId].filter(Boolean).map((id) => productsById.get(id));
@@ -58,8 +96,10 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
     if (!canSubmit || saving) return;
     setSaving(true);
     setError('');
+    const media = [];
     try {
       if (kind === 'playlist') {
+        if (!user) return;
         const playlist = await store.createPlaylist(supabase, user.id, {
           title: playlistTitle, description: playlistDescription, visibility: playlistPublic ? 'public' : 'private',
         });
@@ -68,9 +108,15 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
         onCreated?.({ type: 'playlist', id: playlist.id });
         return;
       }
-      let photoUrl = null;
-      if (photo) photoUrl = await uploadCommunityImage(supabase, photo, { folder: 'posts' });
-      const post = await store.createPost(supabase, user.id, {
+      // Guests: the anonymous guest session is created here, on first post.
+      const actorId = await resolveActor();
+      if (!actorId) return;
+      for (let i = 0; i < photos.length; i += 1) {
+        setProgress(photos.length > 1 ? `uploading photo ${i + 1} of ${photos.length}…` : 'uploading photo…');
+        media.push(await uploadCommunityImage(supabase, photos[i], { folder: 'posts' }));
+      }
+      setProgress('');
+      const post = await store.createPost(supabase, actorId, {
         kind,
         body,
         topics,
@@ -78,18 +124,22 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
         productId: reviewProductId,
         rating: kind === 'review' ? rating : null,
         wouldRecommend: kind === 'review' ? wouldRecommend : null,
-        photoUrl,
         taggedProductIds: productIds,
+        media,
       });
-      const props = { kind, has_product: Boolean(reviewProductId || productIds.length), has_photo: Boolean(photoUrl), is_anonymous: anonymous };
+      const props = { kind, has_product: Boolean(reviewProductId || productIds.length), has_photo: media.length > 0, is_anonymous: anonymous, item_count: media.length };
       trackCommunity('community_post_created', props);
+      if (anonymous) trackCommunity('community_anonymous_post_created', props);
+      if (isGuest) trackCommunity('community_guest_post_created', props);
       if (kind === 'question') trackCommunity('community_question_created', props);
       if (kind === 'review') trackCommunity('community_review_created', props);
       onCreated?.({ type: 'post', id: post.id });
     } catch (e) {
+      media.forEach((m) => deleteCommunityImage(supabase, m.path)); // don't orphan uploads
       setError(e?.message && !e.code && /photo|image/i.test(e.message) ? e.message : store.friendlyError(e));
     } finally {
       setSaving(false);
+      setProgress('');
     }
   };
 
@@ -97,20 +147,13 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
     <div className="cm-composer__foot">
       {error && <p className="cm-error" role="alert">{error}</p>}
       <button type="button" className="btn btn-navy cm-btn-block" disabled={!canSubmit || saving} onClick={submit}>
-        {saving ? 'posting…' : kind === 'playlist' ? 'create playlist' : kind === 'question' ? 'ask the community' : kind === 'review' ? 'post review' : 'post'}
+        {saving ? (progress || 'posting…') : kind === 'playlist' ? 'create playlist' : kind === 'question' ? 'ask the community' : kind === 'review' ? 'post review' : 'post'}
       </button>
     </div>
   );
 
   return (
-    <Sheet title="new post" onClose={onClose} footer={footer}>
-      <div className="cm-segmented" role="tablist" aria-label="What are you creating?">
-        {KINDS.map((k) => (
-          <button key={k.key} type="button" role="tab" aria-selected={kind === k.key} className={kind === k.key ? 'is-active' : ''} onClick={() => setKind(k.key)}>
-            {k.label}
-          </button>
-        ))}
-      </div>
+    <Sheet title={TITLES[kind] || 'new post'} onClose={onClose} footer={footer}>
 
       {kind === 'playlist' ? (
         <div className="cm-form">
@@ -171,12 +214,16 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
             />
           </label>
 
-          {photoPreview && (
-            <div className="cm-photo-preview">
-              <img src={photoPreview} alt="" />
-              <button type="button" className="cm-icon-btn" aria-label="Remove photo" onClick={() => setPhoto(null)}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              </button>
+          {previews.length > 0 && (
+            <div className="cm-photo-strip">
+              {previews.map((src, i) => (
+                <div key={src} className="cm-photo-preview">
+                  <img src={src} alt="" />
+                  <button type="button" className="cm-icon-btn" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos((prev) => prev.filter((_, j) => j !== i))}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                  </button>
+                </div>
+              ))}
             </div>
           )}
 
@@ -216,18 +263,28 @@ export default function CommunityComposer({ initialKind = 'question', initialPro
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1.2 11.1a2 2 0 0 1-2 1.9H8.2a2 2 0 0 1-2-1.9L5 8Zm4 0V6a3 3 0 0 1 6 0v2" /></svg>
               Add product
             </button>
-            <button type="button" onClick={() => fileRef.current?.click()}>
+            <button type="button" disabled={photos.length >= MAX_POST_PHOTOS} onClick={() => fileRef.current?.click()}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="m21 16-5-5-8 8" /></svg>
-              Add photo
+              {photos.length ? `Photos ${photos.length}/${MAX_POST_PHOTOS}` : 'Add photos'}
             </button>
             <button type="button" className={showTopics ? 'is-on' : ''} onClick={() => setShowTopics((v) => !v)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18" /></svg>
               Add topic
             </button>
-            <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { setPhoto(e.target.files?.[0] || null); e.target.value = ''; }} />
+            <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic" multiple hidden onChange={(e) => { addPhotos(e.target.files); e.target.value = ''; }} />
           </div>
 
-          <Toggle checked={anonymous} onChange={setAnonymous} label="Post anonymously" hint="Your name and profile won’t appear on this post." />
+          {isGuest ? (
+            <div className="cm-postas cm-postas--guest">
+              <UserAvatar anonymous size={28} />
+              <span className="cm-postas__who">
+                <strong>Posting as Anonymous</strong>
+                <small>No account needed. You can edit or delete it from this device.</small>
+              </span>
+            </div>
+          ) : (
+            <PostAs me={me} anonymous={anonymous} onChange={setAnonymous} />
+          )}
         </div>
       )}
     </Sheet>

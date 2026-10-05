@@ -24,6 +24,7 @@ const COMMUNITY_TABLES = [
   ['community_profiles', 'user_id'],
   ['community_posts', 'author_id'],
   ['community_comments', 'author_id'],
+  ['community_post_media', 'owner_id'],
   ['community_helpful_votes', 'user_id'],
   ['community_saved_posts', 'user_id'],
   ['community_hidden_posts', 'user_id'],

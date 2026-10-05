@@ -44,6 +44,25 @@ create table if not exists public.community_profiles (
   constraint community_profiles_bio_len check (bio is null or char_length(bio) <= 160)
 );
 create unique index if not exists community_profiles_username_key on public.community_profiles (username);
+-- Public interests are chosen by the user on their profile. They are NEVER
+-- filled from the private health intake.
+alter table public.community_profiles add column if not exists public_interests text[] not null default '{}';
+alter table public.community_profiles add column if not exists username_changed_at timestamptz;
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'community_profiles_interests_max') then
+    alter table public.community_profiles add constraint community_profiles_interests_max
+      check (coalesce(array_length(public_interests, 1), 0) <= 8);
+  end if;
+  -- avatar_url holds a storage PATH in this project's community-media bucket,
+  -- inside the owner's own folder; the client turns it into a URL. A full URL
+  -- is rejected, so nobody can point their avatar at a third-party tracking
+  -- pixel or at someone else's photo.
+  if not exists (select 1 from pg_constraint where conname = 'community_profiles_avatar_path') then
+    alter table public.community_profiles add constraint community_profiles_avatar_path
+      check (avatar_url is null or avatar_url ~ ('^avatars/' || user_id::text || '/[0-9a-f-]{36}\.(jpg|jpeg|webp|png)$'));
+  end if;
+end $$;
 create extension if not exists pg_trgm;
 create index if not exists community_profiles_search_idx
   on public.community_profiles using gin ((username || ' ' || display_name) gin_trgm_ops);
@@ -91,6 +110,27 @@ create table if not exists public.community_post_products (
   primary key (post_id, product_id)
 );
 create index if not exists community_post_products_product_idx on public.community_post_products (product_id);
+
+-- Photos attached to a post (max 4). Video lands here later with kind='video'.
+-- storage_path is posts/<random uuid>.<ext> — deliberately no user id in it,
+-- because an anonymous post's image URL must not name its author. Ownership of
+-- the upload is checked against storage.objects.owner in the insert trigger.
+create table if not exists public.community_post_media (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references public.community_posts(id) on delete cascade,
+  owner_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  kind text not null default 'image' check (kind in ('image')),
+  storage_path text not null,
+  width integer check (width is null or width between 1 and 10000),
+  height integer check (height is null or height between 1 and 10000),
+  position smallint not null default 0 check (position between 0 and 9),
+  status text not null default 'published' check (status in ('published', 'pending', 'removed')),
+  created_at timestamptz not null default now(),
+  constraint community_post_media_path check (storage_path ~ '^posts/[0-9a-f-]{36}\.(jpg|jpeg|webp|png)$')
+);
+create unique index if not exists community_post_media_path_key on public.community_post_media (storage_path);
+create index if not exists community_post_media_post_idx on public.community_post_media (post_id, position);
+create index if not exists community_post_media_owner_idx on public.community_post_media (owner_id);
 
 -- ── Comments (one level of nesting) ──────────────────────────────────────────
 create table if not exists public.community_comments (
@@ -324,6 +364,132 @@ as $$
        where r.status = 'accepted' and (r.requester_id = target or r.addressee_id = target));
 $$;
 
+-- ── Viewer-scoped helpers (the only helpers clients may call) ───────────────
+-- A guest is a Supabase anonymous sign-in: a real auth.uid() (so ownership,
+-- RLS and rate limits work) whose JWT carries is_anonymous = true. Guests may
+-- post and comment anonymously and report; everything social needs an account.
+create or replace function public.community_is_guest()
+returns boolean
+language sql
+stable
+set search_path = ''
+as $$
+  select coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false);
+$$;
+
+-- "Is there a block between me and this person?" False when signed out.
+create or replace function public.community_viewer_blocked(other uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select auth.uid() is not null and other is not null and exists (
+    select 1 from public.community_blocks bl
+     where (bl.blocker_id = auth.uid() and bl.blocked_id = other)
+        or (bl.blocker_id = other and bl.blocked_id = auth.uid())
+  );
+$$;
+
+create or replace function public.community_viewer_is_friend(other uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select auth.uid() is not null and other is not null and exists (
+    select 1 from public.community_friend_requests f
+     where f.status = 'accepted'
+       and least(f.requester_id, f.addressee_id) = least(auth.uid(), other)
+       and greatest(f.requester_id, f.addressee_id) = greatest(auth.uid(), other)
+  );
+$$;
+
+-- Server-side truth for "is this user a guest", for definer triggers (reads
+-- auth.users rather than trusting the token).
+create or replace function public.community_user_is_guest(uid uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select coalesce((select u.is_anonymous from auth.users u where u.id = uid), false);
+$$;
+revoke execute on function public.community_user_is_guest(uuid) from public, anon, authenticated;
+
+-- ── Usernames ───────────────────────────────────────────────────────────────
+-- Format is enforced by the table constraint (lowercase a-z 0-9 _ . so
+-- uniqueness is case-insensitive by construction). This adds reserved names,
+-- impersonation of ayna/staff/clinicians, a short abuse list, and a 30-day
+-- cooldown between changes. Mirrored client-side in
+-- src/utils/community/username.js for instant feedback; this is the authority.
+create or replace function public.community_username_problem(u text)
+returns text
+language plpgsql
+immutable
+set search_path = ''
+as $$
+declare
+  bare text := regexp_replace(lower(coalesce(u, '')), '[._0-9]', '', 'g');
+begin
+  if u is null or u !~ '^[a-z0-9_.]{3,24}$' then return 'format'; end if;
+  if u ~ '^[._]|[._]$' or u ~ '[._]{2}' then return 'format'; end if;
+  if u = any (array[
+    'ayna','aynahealth','admin','administrator','root','system','support','help','helpdesk','mod','moderator',
+    'moderators','staff','team','official','security','privacy','legal','abuse','report','reports','anonymous',
+    'anon','guest','null','undefined','me','you','settings','community','search','notifications','post','posts',
+    'u','playlist','playlists','rec','api','www','mail','billing','account','login','signup','verified',
+    'doctor','doctors','dr','md','do','rn','np','pa','nurse','obgyn','ob_gyn','gyn','gynecologist','physician',
+    'clinician','midwife','therapist','pharmacist','dietitian','nutritionist','medic','fda','cdc','who','nih'
+  ]) then return 'reserved'; end if;
+  if bare ~ '^ayna' or bare ~ '(admin|moderator|support|official|verified)' then return 'reserved'; end if;
+  if u ~ '^(dr|doc|doctor)[._]' or u ~ '[._](md|do|rn|np|dnp|phd|obgyn)$'
+     or bare ~ '(doctor|physician|clinician|obgyn|gynecolog|midwife|pharmacist|dietitian|nurse)' then
+    return 'clinician';
+  end if;
+  if bare ~ '(fuck|shit|cunt|bitch|whore|slut|nigg|faggot|retard|rapist|nazi|porn)' then return 'abuse'; end if;
+  return null;
+end;
+$$;
+
+create or replace function public.community_profiles_before_write()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+declare
+  problem text;
+begin
+  new.username := lower(btrim(new.username));
+  new.display_name := btrim(new.display_name);
+  if tg_op = 'INSERT' or new.username is distinct from old.username then
+    problem := public.community_username_problem(new.username);
+    if problem is not null then
+      raise exception 'community_username_%', problem using errcode = 'P0001';
+    end if;
+  end if;
+  if new.display_name ~* '(^|\W)(admin|administrator|moderator)(\W|$)'
+     or new.display_name ~* 'ayna\s*(team|official|support|staff|admin|health)' then
+    raise exception 'community_display_name_reserved' using errcode = 'P0001';
+  end if;
+  if tg_op = 'UPDATE' and new.username is distinct from old.username then
+    if old.username_changed_at is not null and old.username_changed_at > now() - interval '30 days' then
+      raise exception 'community_username_cooldown' using errcode = 'P0001';
+    end if;
+    new.username_changed_at := now();
+  end if;
+  if tg_op = 'INSERT' then new.username_changed_at := null; end if;
+  new.public_interests := coalesce(
+    (select array_agg(distinct lower(btrim(t))) from unnest(new.public_interests) t where lower(btrim(t)) ~ '^[a-z0-9-]{2,30}$'),
+    '{}'
+  );
+  return new;
+end;
+$$;
+
 create or replace function public.community_touch_updated_at()
 returns trigger
 language plpgsql
@@ -351,6 +517,8 @@ as $$
 begin
   if p_recipient is null or p_recipient = p_actor then return; end if;
   if p_actor is not null and public.community_is_blocked(p_recipient, p_actor) then return; end if;
+  -- Guests have no inbox (and nothing should accumulate against a guest id).
+  if public.community_user_is_guest(p_recipient) then return; end if;
   insert into public.community_notifications
     (recipient_id, actor_id, type, post_id, comment_id, playlist_id, recommendation_id, product_id)
   values
@@ -373,7 +541,7 @@ declare
 begin
   select count(*) into recent from public.community_posts
    where author_id = new.author_id and created_at > now() - interval '1 hour';
-  if recent >= 20 then
+  if recent >= (case when public.community_user_is_guest(new.author_id) then 5 else 20 end) then
     raise exception 'community_rate_limited' using errcode = 'P0001';
   end if;
   new.status := 'visible';
@@ -414,7 +582,7 @@ declare
 begin
   select count(*) into recent from public.community_comments
    where author_id = new.author_id and created_at > now() - interval '1 hour';
-  if recent >= 60 then
+  if recent >= (case when public.community_user_is_guest(new.author_id) then 20 else 60 end) then
     raise exception 'community_rate_limited' using errcode = 'P0001';
   end if;
 
@@ -699,6 +867,49 @@ begin
 end;
 $$;
 
+-- Media: max 4 per post, status forced to published (moderation flips it),
+-- and the uploader must own the storage object (Supabase only — a bare test
+-- Postgres has no storage schema, so the check is skipped there).
+create or replace function public.community_post_media_before_insert()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  owns boolean;
+begin
+  if (select count(*) from public.community_post_media where post_id = new.post_id) >= 4 then
+    raise exception 'community_media_full' using errcode = 'P0001';
+  end if;
+  new.status := 'published';
+  if to_regclass('storage.objects') is not null then
+    execute 'select exists (select 1 from storage.objects o where o.bucket_id = $1 and o.name = $2 and o.owner = $3)'
+      into owns using 'community-media', new.storage_path, new.owner_id;
+    if not owns then
+      raise exception 'community_media_not_found' using errcode = 'P0001';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+-- Report flooding (guests can report too).
+create or replace function public.community_reports_before_insert()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if (select count(*) from public.community_reports
+       where reporter_id = new.reporter_id and created_at > now() - interval '1 hour') >= 30 then
+    raise exception 'community_rate_limited' using errcode = 'P0001';
+  end if;
+  return new;
+end;
+$$;
+
 -- ── Triggers ─────────────────────────────────────────────────────────────────
 drop trigger if exists community_post_products_cap on public.community_post_products;
 create trigger community_post_products_cap before insert on public.community_post_products
@@ -706,6 +917,16 @@ create trigger community_post_products_cap before insert on public.community_pos
 drop trigger if exists community_playlist_items_cap on public.community_playlist_items;
 create trigger community_playlist_items_cap before insert on public.community_playlist_items
   for each row execute function public.community_playlist_items_cap();
+
+drop trigger if exists community_profiles_bw on public.community_profiles;
+create trigger community_profiles_bw before insert or update on public.community_profiles
+  for each row execute function public.community_profiles_before_write();
+drop trigger if exists community_post_media_bi on public.community_post_media;
+create trigger community_post_media_bi before insert on public.community_post_media
+  for each row execute function public.community_post_media_before_insert();
+drop trigger if exists community_reports_bi on public.community_reports;
+create trigger community_reports_bi before insert on public.community_reports
+  for each row execute function public.community_reports_before_insert();
 
 drop trigger if exists community_profiles_touch on public.community_profiles;
 create trigger community_profiles_touch before update on public.community_profiles
@@ -785,7 +1006,7 @@ select
   case when p.is_anonymous then null else pr.username end as author_username,
   case when p.is_anonymous then null else pr.display_name end as author_display_name,
   case when p.is_anonymous then null else pr.avatar_url end as author_avatar_url,
-  (p.author_id = auth.uid()) as is_mine,
+  coalesce(p.author_id = auth.uid(), false) as is_mine,
   p.product_id,
   coalesce(
     (select array_agg(pp.product_id order by pp.position, pp.product_id)
@@ -800,12 +1021,17 @@ select
   exists (select 1 from public.community_helpful_votes v where v.post_id = p.id and v.user_id = auth.uid()) as viewer_found_helpful,
   exists (select 1 from public.community_saved_posts s where s.post_id = p.id and s.user_id = auth.uid()) as viewer_saved,
   p.created_at,
-  p.edited_at
+  p.edited_at,
+  -- Storage paths only (posts/<random uuid>.jpg — never the author's id).
+  coalesce(
+    (select jsonb_agg(jsonb_build_object('path', m.storage_path, 'width', m.width, 'height', m.height) order by m.position, m.created_at)
+       from public.community_post_media m where m.post_id = p.id and m.status = 'published'),
+    '[]'::jsonb
+  ) as media
 from public.community_posts p
 left join public.community_profiles pr on pr.user_id = p.author_id
-where auth.uid() is not null
-  and p.status = 'visible'
-  and (p.is_anonymous or not public.community_is_blocked(auth.uid(), p.author_id))
+where p.status = 'visible'
+  and (p.is_anonymous or not public.community_viewer_blocked(p.author_id))
   and not exists (select 1 from public.community_hidden_posts h where h.post_id = p.id and h.user_id = auth.uid());
 
 create or replace view public.community_feed_comments
@@ -822,7 +1048,7 @@ select
   case when c.is_anonymous then null else pr.username end as author_username,
   case when c.is_anonymous then null else pr.display_name end as author_display_name,
   case when c.is_anonymous then null else pr.avatar_url end as author_avatar_url,
-  (c.author_id = auth.uid()) as is_mine,
+  coalesce(c.author_id = auth.uid(), false) as is_mine,
   -- The original poster replying in their own anonymous thread is labelled
   -- "OP" without revealing who that is.
   -- Never true for a named comment on an anonymous post: that would name the
@@ -835,11 +1061,10 @@ select
 from public.community_comments c
 join public.community_posts p on p.id = c.post_id
 left join public.community_profiles pr on pr.user_id = c.author_id
-where auth.uid() is not null
-  and c.status = 'visible'
+where c.status = 'visible'
   and p.status = 'visible'
-  and (c.is_anonymous or not public.community_is_blocked(auth.uid(), c.author_id))
-  and (p.is_anonymous or not public.community_is_blocked(auth.uid(), p.author_id))
+  and (c.is_anonymous or not public.community_viewer_blocked(c.author_id))
+  and (p.is_anonymous or not public.community_viewer_blocked(p.author_id))
   and not exists (select 1 from public.community_hidden_posts h where h.post_id = p.id and h.user_id = auth.uid());
 
 -- Playlists with the owner's public profile, filtered by RLS-equivalent rules.
@@ -852,7 +1077,7 @@ select
   pr.username as owner_username,
   pr.display_name as owner_display_name,
   pr.avatar_url as owner_avatar_url,
-  (pl.owner_id = auth.uid()) as is_mine,
+  coalesce(pl.owner_id = auth.uid(), false) as is_mine,
   pl.title,
   pl.description,
   pl.cover_url,
@@ -870,33 +1095,42 @@ select
   pl.updated_at
 from public.community_playlists pl
 left join public.community_profiles pr on pr.user_id = pl.owner_id
-where auth.uid() is not null
-  and (pl.visibility = 'public' or pl.owner_id = auth.uid())
-  and not public.community_is_blocked(auth.uid(), pl.owner_id);
+where (pl.visibility = 'public' or pl.owner_id = auth.uid())
+  and not public.community_viewer_blocked(pl.owner_id);
 
 -- ═════════════════════════════════════════════════════════════════════════════
 -- Grants + RLS
 -- ═════════════════════════════════════════════════════════════════════════════
 
--- Nothing in the community is readable signed-out.
-revoke all on public.community_feed_posts, public.community_feed_comments, public.community_feed_playlists from anon, public;
-grant select on public.community_feed_posts, public.community_feed_comments, public.community_feed_playlists to authenticated;
-grant select on public.community_feed_posts, public.community_feed_comments, public.community_feed_playlists to service_role;
+-- Public content is readable signed-out (guests browse without an account).
+-- The views are the masking layer, so granting them to anon exposes nothing
+-- the signed-in feed doesn't; viewer-only columns are simply false.
+revoke all on public.community_feed_posts, public.community_feed_comments, public.community_feed_playlists from public;
+grant select on public.community_feed_posts, public.community_feed_comments, public.community_feed_playlists to anon, authenticated, service_role;
 
 revoke execute on function public.community_notify(uuid, uuid, text, uuid, uuid, uuid, uuid, text, boolean) from public, anon, authenticated;
-revoke execute on function public.community_are_friends(uuid, uuid) from public, anon;
-revoke execute on function public.community_is_blocked(uuid, uuid) from public, anon;
-revoke execute on function public.community_profile_stats(uuid) from public, anon;
-grant execute on function public.community_are_friends(uuid, uuid) to authenticated, service_role;
-grant execute on function public.community_is_blocked(uuid, uuid) to authenticated, service_role;
-grant execute on function public.community_profile_stats(uuid) to authenticated, service_role;
+-- Two-argument helpers answer questions about ANY pair of users (who blocked
+-- whom, who is friends with whom). Only definer triggers may call them;
+-- clients get the viewer-scoped versions below.
+revoke execute on function public.community_are_friends(uuid, uuid) from public, anon, authenticated;
+revoke execute on function public.community_is_blocked(uuid, uuid) from public, anon, authenticated;
+grant execute on function public.community_are_friends(uuid, uuid) to service_role;
+grant execute on function public.community_is_blocked(uuid, uuid) to service_role;
+revoke execute on function public.community_profile_stats(uuid) from public;
+grant execute on function public.community_profile_stats(uuid) to anon, authenticated, service_role;
+revoke execute on function public.community_viewer_blocked(uuid) from public;
+revoke execute on function public.community_viewer_is_friend(uuid) from public;
+revoke execute on function public.community_is_guest() from public;
+grant execute on function public.community_viewer_blocked(uuid) to anon, authenticated, service_role;
+grant execute on function public.community_viewer_is_friend(uuid) to anon, authenticated, service_role;
+grant execute on function public.community_is_guest() to anon, authenticated, service_role;
 
 do $$
 declare
   t text;
 begin
   foreach t in array array[
-    'community_profiles', 'community_posts', 'community_post_products', 'community_comments',
+    'community_profiles', 'community_posts', 'community_post_products', 'community_post_media', 'community_comments',
     'community_helpful_votes', 'community_saved_posts', 'community_hidden_posts',
     'community_follows', 'community_friend_requests', 'community_blocks',
     'community_playlists', 'community_playlist_items', 'community_playlist_saves',
@@ -911,10 +1145,11 @@ end $$;
 -- Profiles: public to signed-in users (they hold nothing but username, name,
 -- bio, avatar). Owner writes.
 grant select, insert, delete on public.community_profiles to authenticated;
-grant update (username, display_name, bio, avatar_url) on public.community_profiles to authenticated;
+grant select on public.community_profiles to anon;
+grant update (username, display_name, bio, avatar_url, public_interests) on public.community_profiles to authenticated;
 drop policy if exists community_profiles_select on public.community_profiles;
-create policy community_profiles_select on public.community_profiles for select to authenticated
-  using (not public.community_is_blocked(auth.uid(), user_id));
+create policy community_profiles_select on public.community_profiles for select to anon, authenticated
+  using (not public.community_viewer_blocked(user_id));
 drop policy if exists community_profiles_insert on public.community_profiles;
 create policy community_profiles_insert on public.community_profiles for insert to authenticated
   with check (user_id = auth.uid());
@@ -1022,8 +1257,9 @@ create policy community_blocks_own on public.community_blocks for all to authent
 grant select, insert, delete on public.community_playlists to authenticated;
 grant update (title, description, cover_url, visibility) on public.community_playlists to authenticated;
 drop policy if exists community_playlists_select on public.community_playlists;
-create policy community_playlists_select on public.community_playlists for select to authenticated
-  using (owner_id = auth.uid() or (visibility = 'public' and not public.community_is_blocked(auth.uid(), owner_id)));
+grant select on public.community_playlists, public.community_playlist_items to anon;
+create policy community_playlists_select on public.community_playlists for select to anon, authenticated
+  using (owner_id = auth.uid() or (visibility = 'public' and not public.community_viewer_blocked(owner_id)));
 drop policy if exists community_playlists_insert on public.community_playlists;
 create policy community_playlists_insert on public.community_playlists for insert to authenticated
   with check (owner_id = auth.uid());
@@ -1037,11 +1273,11 @@ create policy community_playlists_delete on public.community_playlists for delet
 grant select, insert, delete on public.community_playlist_items to authenticated;
 grant update (note, position) on public.community_playlist_items to authenticated;
 drop policy if exists community_playlist_items_select on public.community_playlist_items;
-create policy community_playlist_items_select on public.community_playlist_items for select to authenticated
+create policy community_playlist_items_select on public.community_playlist_items for select to anon, authenticated
   using (exists (
     select 1 from public.community_playlists pl
      where pl.id = playlist_id
-       and (pl.owner_id = auth.uid() or (pl.visibility = 'public' and not public.community_is_blocked(auth.uid(), pl.owner_id)))
+       and (pl.owner_id = auth.uid() or (pl.visibility = 'public' and not public.community_viewer_blocked(pl.owner_id)))
   ));
 drop policy if exists community_playlist_items_write on public.community_playlist_items;
 create policy community_playlist_items_write on public.community_playlist_items for insert to authenticated
@@ -1062,7 +1298,7 @@ create policy community_playlist_saves_own on public.community_playlist_saves fo
     user_id = auth.uid()
     and exists (select 1 from public.community_playlists pl
                  where pl.id = playlist_id and pl.visibility = 'public' and pl.owner_id <> auth.uid()
-                   and not public.community_is_blocked(auth.uid(), pl.owner_id))
+                   and not public.community_viewer_blocked(pl.owner_id))
   );
 
 -- Recommendations: only to an accepted friend; visible to sender + recipient.
@@ -1073,7 +1309,7 @@ create policy community_recommendations_select on public.community_product_recom
   using (auth.uid() in (sender_id, recipient_id));
 drop policy if exists community_recommendations_insert on public.community_product_recommendations;
 create policy community_recommendations_insert on public.community_product_recommendations for insert to authenticated
-  with check (sender_id = auth.uid() and public.community_are_friends(sender_id, recipient_id));
+  with check (sender_id = auth.uid() and public.community_viewer_is_friend(recipient_id));
 drop policy if exists community_recommendations_update on public.community_product_recommendations;
 create policy community_recommendations_update on public.community_product_recommendations for update to authenticated
   using (recipient_id = auth.uid()) with check (recipient_id = auth.uid());
@@ -1107,3 +1343,70 @@ create policy community_reports_select on public.community_reports for select to
 -- A report on content needs no reported_user_id from the client; the reporter
 -- may not know (anonymous) and must not be able to probe it. Moderators join
 -- through post_id/comment_id with the service role.
+
+-- Media: the author attaches photos to their own post; everyone else sees them
+-- through community_feed_posts.media (paths only, status = published).
+grant select, insert, delete on public.community_post_media to authenticated;
+drop policy if exists community_post_media_select_own on public.community_post_media;
+create policy community_post_media_select_own on public.community_post_media for select to authenticated
+  using (owner_id = auth.uid());
+drop policy if exists community_post_media_insert_own on public.community_post_media;
+create policy community_post_media_insert_own on public.community_post_media for insert to authenticated
+  with check (
+    owner_id = auth.uid()
+    and exists (select 1 from public.community_posts p where p.id = post_id and p.author_id = auth.uid())
+  );
+drop policy if exists community_post_media_delete_own on public.community_post_media;
+create policy community_post_media_delete_own on public.community_post_media for delete to authenticated
+  using (owner_id = auth.uid());
+
+-- ═════════════════════════════════════════════════════════════════════════════
+-- Guests (Supabase anonymous sign-ins)
+-- ═════════════════════════════════════════════════════════════════════════════
+-- RESTRICTIVE policies are AND-ed with the permissive ones above, so they can
+-- only take access away. A guest keeps: reading, own anonymous posts
+-- (discussion/question) and comments, attaching products/photos to them,
+-- editing/deleting them, and reporting. Everything that builds a social
+-- identity (profile, votes, saves, follows, friends, blocks, playlists,
+-- recommendations, notifications, hides) needs an account.
+
+-- Posts: guests post anonymously, and only discussions/questions (reviews are
+-- tied to a profile so product feedback stays accountable).
+drop policy if exists community_posts_guest_insert on public.community_posts;
+create policy community_posts_guest_insert on public.community_posts as restrictive for insert to authenticated
+  with check (not public.community_is_guest() or (is_anonymous and kind in ('post', 'question') and product_id is null));
+
+drop policy if exists community_comments_guest_insert on public.community_comments;
+create policy community_comments_guest_insert on public.community_comments as restrictive for insert to authenticated
+  with check (not public.community_is_guest() or is_anonymous);
+
+do $$
+declare
+  t text;
+  cmd text;
+begin
+  -- Account-only for every command.
+  foreach t in array array[
+    'community_helpful_votes', 'community_saved_posts', 'community_hidden_posts',
+    'community_follows', 'community_friend_requests', 'community_blocks',
+    'community_playlist_saves', 'community_product_recommendations', 'community_notifications'
+  ] loop
+    execute format('drop policy if exists %I on public.%I', t || '_no_guests', t);
+    execute format(
+      'create policy %I on public.%I as restrictive for all to authenticated using (not public.community_is_guest()) with check (not public.community_is_guest())',
+      t || '_no_guests', t);
+  end loop;
+  -- Readable by guests, writable by accounts only.
+  foreach t in array array['community_profiles', 'community_playlists', 'community_playlist_items'] loop
+    foreach cmd in array array['insert', 'update', 'delete'] loop
+      execute format('drop policy if exists %I on public.%I', t || '_no_guests_' || cmd, t);
+      if cmd = 'insert' then
+        execute format('create policy %I on public.%I as restrictive for insert to authenticated with check (not public.community_is_guest())', t || '_no_guests_' || cmd, t);
+      elsif cmd = 'update' then
+        execute format('create policy %I on public.%I as restrictive for update to authenticated using (not public.community_is_guest()) with check (not public.community_is_guest())', t || '_no_guests_' || cmd, t);
+      else
+        execute format('create policy %I on public.%I as restrictive for delete to authenticated using (not public.community_is_guest())', t || '_no_guests_' || cmd, t);
+      end if;
+    end loop;
+  end loop;
+end $$;

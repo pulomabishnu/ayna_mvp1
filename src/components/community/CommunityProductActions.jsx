@@ -21,18 +21,19 @@ export default function CommunityProductActions({ product, onOpenCommunity, ...c
   const inCatalog = Boolean(product?.id && ctx.productsById.has(product.id));
 
   useEffect(() => {
-    if (!ctx.supabase || !coreProps.user || !inCatalog) return undefined;
+    if (!ctx.supabase || !inCatalog) return undefined;
     let alive = true;
     store.listFeedPosts(ctx.supabase, { productId: product.id, limit: 20 })
       .then((rows) => { if (alive) setMentions(rows.length); })
       .catch(() => {});
     return () => { alive = false; };
-  }, [ctx.supabase, coreProps.user, product?.id, inCatalog]);
+  }, [ctx.supabase, product?.id, inCatalog]);
 
   if (!inCatalog || !ctx.supabase) return null;
 
   const open = (name) => {
-    if (ctx.requireProfile(() => setSheet(name))) setSheet(name);
+    const reason = { recommend: 'recommend products to friends', playlist: 'make playlists', review: 'write reviews' }[name];
+    if (ctx.requireProfile(() => setSheet(name), reason)) setSheet(name);
   };
 
   return (

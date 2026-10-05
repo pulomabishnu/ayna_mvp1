@@ -5,6 +5,7 @@ import CommunityPostCard from './CommunityPostCard';
 import { PlaylistCard } from './Playlists';
 import * as store from '../../utils/community/communityStore';
 import { trackCommunity } from '../../utils/community/analytics';
+import { topicLabel } from '../../utils/community/topics';
 
 export function FollowButton({ targetId, compact = false, onChanged }) {
   const { supabase, user, social, requireProfile, toast } = useCommunity();
@@ -12,7 +13,7 @@ export function FollowButton({ targetId, compact = false, onChanged }) {
   const [busy, setBusy] = useState(false);
   if (!targetId || targetId === user?.id) return null;
   const toggle = async () => {
-    if (!requireProfile() || busy) return;
+    if (!requireProfile(null, 'follow people') || busy) return;
     setBusy(true);
     social.setFollowing(targetId, !following);
     try {
@@ -37,10 +38,10 @@ export function FriendButton({ targetId, onChanged }) {
   const { supabase, user, social, requireProfile, toast } = useCommunity();
   const [busy, setBusy] = useState(false);
   if (!targetId || targetId === user?.id) return null;
-  const { state, row } = store.friendshipState(social.friendships, user.id, targetId);
+  const { state, row } = store.friendshipState(social.friendships, user?.id, targetId);
 
   const run = async (fn, okMessage) => {
-    if (!requireProfile() || busy) return;
+    if (!requireProfile(null, 'add friends') || busy) return;
     setBusy(true);
     try {
       await fn();
@@ -84,6 +85,11 @@ function ProfileHeader({ profile, stats, isMe, onEdit, onStatsChanged }) {
       <h2>{profile.display_name}</h2>
       <p className="cm-profile-head__username">@{profile.username}</p>
       {profile.bio && <p className="cm-profile-head__bio">{profile.bio}</p>}
+      {profile.public_interests?.length > 0 && (
+        <div className="cm-interests" aria-label="Interests">
+          {profile.public_interests.map((k) => <span key={k} className="cm-interest">{topicLabel(k)}</span>)}
+        </div>
+      )}
       <div className="cm-stats">
         <span><strong>{stats?.friends ?? '–'}</strong>friends</span>
         <span><strong>{stats?.followers ?? '–'}</strong>followers</span>

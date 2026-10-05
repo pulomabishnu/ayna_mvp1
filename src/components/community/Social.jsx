@@ -1,78 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
+export { ProfileSetupSheet } from './ProfileEditor';
 import { useCommunity, relativeTime } from './CommunityContext';
 import { CommunityProductPreview, EmptyState, FeedSkeleton, Sheet, UserAvatar } from './CommunityUI';
 import * as store from '../../utils/community/communityStore';
 import { trackCommunity } from '../../utils/community/analytics';
-
-const USERNAME_RE = /^[a-z0-9_.]{3,24}$/;
-
-function suggestUsername(name) {
-  const base = String(name || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '').slice(0, 16);
-  return (base.length >= 3 ? base : `ayna${base}`) + Math.floor(100 + Math.random() * 900);
-}
-
-/** First visit (or "Edit profile"): the only things that ever become public. */
-export function ProfileSetupSheet({ existing, defaultName, onClose, onSaved }) {
-  const { supabase, user } = useCommunity();
-  const [displayName, setDisplayName] = useState(existing?.display_name || defaultName || '');
-  const [username, setUsername] = useState(existing?.username || suggestUsername(defaultName));
-  const [bio, setBio] = useState(existing?.bio || '');
-  const [error, setError] = useState('');
-  const [saving, setSaving] = useState(false);
-  const validUsername = USERNAME_RE.test(username);
-
-  const save = async () => {
-    if (!displayName.trim() || !validUsername) return;
-    setSaving(true);
-    setError('');
-    try {
-      if (await store.isUsernameTaken(supabase, username, user.id)) {
-        setError('That username is taken.');
-        return;
-      }
-      const profile = await store.upsertCommunityProfile(supabase, user.id, { username, displayName, bio, avatarUrl: existing?.avatar_url });
-      onSaved(profile);
-    } catch (e) {
-      setError(store.friendlyError(e));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <Sheet
-      title={existing ? 'Edit profile' : 'Join the ayna community'}
-      onClose={onClose}
-      footer={<button type="button" className="btn btn-navy cm-btn-block" disabled={!displayName.trim() || !validUsername || saving} onClick={save}>{existing ? 'Save' : 'Continue'}</button>}
-    >
-      <div className="cm-form">
-        {!existing && (
-          <div className="cm-privacy-note">
-            <strong>Your health profile stays private.</strong>
-            <span>Only your name, username, bio and what you choose to post are visible. You can post anonymously anytime.</span>
-          </div>
-        )}
-        <label className="cm-field">
-          <span>Name</span>
-          <input className="cm-input" maxLength={50} value={displayName} onChange={(e) => setDisplayName(e.target.value)} autoComplete="given-name" />
-        </label>
-        <label className="cm-field">
-          <span>Username</span>
-          <div className="cm-input-prefix">
-            <span>@</span>
-            <input className="cm-input" maxLength={24} value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ''))} autoCapitalize="none" autoCorrect="off" spellCheck={false} />
-          </div>
-          {!validUsername && <small className="cm-hint">3–24 letters, numbers, _ or .</small>}
-        </label>
-        <label className="cm-field">
-          <span>Bio <em>optional</em></span>
-          <textarea className="cm-input" rows={2} maxLength={160} value={bio} onChange={(e) => setBio(e.target.value)} />
-        </label>
-        {error && <p className="cm-error" role="alert">{error}</p>}
-      </div>
-    </Sheet>
-  );
-}
 
 const REPORT_REASONS = [
   ['unsafe_advice', 'Unsafe or misleading health advice'],
@@ -85,14 +16,17 @@ const REPORT_REASONS = [
 ];
 
 export function ReportSheet({ target, onClose }) {
-  const { supabase, user, toast } = useCommunity();
+  const { supabase, resolveActor, toast } = useCommunity();
   const [reason, setReason] = useState('');
   const [details, setDetails] = useState('');
   const [saving, setSaving] = useState(false);
   const submit = async () => {
     setSaving(true);
     try {
-      await store.fileReport(supabase, user.id, { ...target, reason, details });
+      const actorId = await resolveActor();
+      if (!actorId) return;
+      await store.fileReport(supabase, actorId, { ...target, reason, details });
+      trackCommunity('community_report_submitted', { kind: target.targetType });
       toast('Thanks — we’ll review it.');
       onClose();
     } catch (e) {

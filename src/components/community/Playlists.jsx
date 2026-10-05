@@ -172,7 +172,7 @@ export function PlaylistPage({ playlistId }) {
   const avg = knownMatches >= 2 ? averageMatch(items.map((i) => i.product_id), matchFor) : null;
 
   const toggleSave = async () => {
-    if (!requireProfile()) return;
+    if (!requireProfile(null, 'save playlists')) return;
     const next = !playlist.viewer_saved;
     setPlaylist({ ...playlist, viewer_saved: next, save_count: Math.max(0, playlist.save_count + (next ? 1 : -1)) });
     try {

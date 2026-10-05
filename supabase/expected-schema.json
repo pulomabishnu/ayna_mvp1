@@ -526,6 +526,13 @@
                     "command": "DELETE"
                 },
                 {
+                    "name": "community_posts_guest_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
                     "name": "community_posts_insert_own",
                     "roles": [
                         "authenticated"
@@ -994,6 +1001,13 @@
             ],
             "policies": [
                 {
+                    "name": "community_blocks_no_guests",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                },
+                {
                     "name": "community_blocks_own",
                     "roles": [
                         "authenticated"
@@ -1073,6 +1087,13 @@
                         "authenticated"
                     ],
                     "command": "INSERT"
+                },
+                {
+                    "name": "community_follows_no_guests",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
                 },
                 {
                     "name": "community_follows_select",
@@ -1463,6 +1484,13 @@
                     "command": "DELETE"
                 },
                 {
+                    "name": "community_comments_guest_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
                     "name": "community_comments_insert_own",
                     "roles": [
                         "authenticated"
@@ -1526,6 +1554,7 @@
         },
         "community_profiles": {
             "grants": [
+                "anon:SELECT",
                 "authenticated:DELETE",
                 "authenticated:INSERT",
                 "authenticated:SELECT",
@@ -1579,6 +1608,18 @@
                     "column": "updated_at",
                     "default": "now()",
                     "notnull": true
+                },
+                {
+                    "type": "text[]",
+                    "column": "public_interests",
+                    "default": "'{}'::text[]",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "username_changed_at",
+                    "default": null,
+                    "notnull": false
                 }
             ],
             "policies": [
@@ -1597,8 +1638,30 @@
                     "command": "INSERT"
                 },
                 {
+                    "name": "community_profiles_no_guests_delete",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_profiles_no_guests_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_profiles_no_guests_update",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                },
+                {
                     "name": "community_profiles_select",
                     "roles": [
+                        "anon",
                         "authenticated"
                     ],
                     "command": "SELECT"
@@ -1613,6 +1676,11 @@
             ],
             "constraints": [
                 {
+                    "name": "community_profiles_avatar_path",
+                    "type": "check",
+                    "definition": "CHECK (((avatar_url IS NULL) OR (avatar_url ~ (('^avatars/'::text || (user_id)::text) || '/[0-9a-f-]{36}\\.(jpg|jpeg|webp|png)$'::text))))"
+                },
+                {
                     "name": "community_profiles_bio_len",
                     "type": "check",
                     "definition": "CHECK (((bio IS NULL) OR (char_length(bio) <= 160)))"
@@ -1621,6 +1689,11 @@
                     "name": "community_profiles_display_name_len",
                     "type": "check",
                     "definition": "CHECK (((char_length(btrim(display_name)) >= 1) AND (char_length(btrim(display_name)) <= 50)))"
+                },
+                {
+                    "name": "community_profiles_interests_max",
+                    "type": "check",
+                    "definition": "CHECK ((COALESCE(array_length(public_interests, 1), 0) <= 8))"
                 },
                 {
                     "name": "community_profiles_pkey",
@@ -1643,6 +1716,7 @@
         },
         "community_playlists": {
             "grants": [
+                "anon:SELECT",
                 "authenticated:DELETE",
                 "authenticated:INSERT",
                 "authenticated:SELECT",
@@ -1732,8 +1806,30 @@
                     "command": "INSERT"
                 },
                 {
+                    "name": "community_playlists_no_guests_delete",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_playlists_no_guests_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_playlists_no_guests_update",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                },
+                {
                     "name": "community_playlists_select",
                     "roles": [
+                        "anon",
                         "authenticated"
                     ],
                     "command": "SELECT"
@@ -1779,6 +1875,154 @@
                 }
             ],
             "index_count": 5,
+            "rls_enabled": true
+        },
+        "community_post_media": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "post_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "owner_id",
+                    "default": "auth.uid()",
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "kind",
+                    "default": "'image'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "storage_path",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "integer",
+                    "column": "width",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "integer",
+                    "column": "height",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "smallint",
+                    "column": "position",
+                    "default": "0",
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "status",
+                    "default": "'published'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_post_media_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_post_media_insert_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_post_media_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_post_media_height_check",
+                    "type": "check",
+                    "definition": "CHECK (((height IS NULL) OR ((height >= 1) AND (height <= 10000))))"
+                },
+                {
+                    "name": "community_post_media_kind_check",
+                    "type": "check",
+                    "definition": "CHECK ((kind = 'image'::text))"
+                },
+                {
+                    "name": "community_post_media_owner_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_post_media_path",
+                    "type": "check",
+                    "definition": "CHECK ((storage_path ~ '^posts/[0-9a-f-]{36}\\.(jpg|jpeg|webp|png)$'::text))"
+                },
+                {
+                    "name": "community_post_media_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "community_post_media_position_check",
+                    "type": "check",
+                    "definition": "CHECK (((\"position\" >= 0) AND (\"position\" <= 9)))"
+                },
+                {
+                    "name": "community_post_media_post_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (post_id) REFERENCES community_posts(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_post_media_status_check",
+                    "type": "check",
+                    "definition": "CHECK ((status = ANY (ARRAY['published'::text, 'pending'::text, 'removed'::text])))"
+                },
+                {
+                    "name": "community_post_media_width_check",
+                    "type": "check",
+                    "definition": "CHECK (((width IS NULL) OR ((width >= 1) AND (width <= 10000))))"
+                }
+            ],
+            "index_count": 4,
             "rls_enabled": true
         },
         "product_recall_state": {
@@ -1837,8 +2081,7 @@
                     "notnull": true
                 }
             ],
-            "policies": [
-            ],
+            "policies": [],
             "constraints": [
                 {
                     "name": "product_recall_state_pkey",
@@ -1923,8 +2166,7 @@
                     "notnull": true
                 }
             ],
-            "policies": [
-            ],
+            "policies": [],
             "constraints": [
                 {
                     "name": "recall_notifications_pkey",
@@ -2165,6 +2407,13 @@
             ],
             "policies": [
                 {
+                    "name": "community_saved_posts_no_guests",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                },
+                {
                     "name": "community_saved_posts_own",
                     "roles": [
                         "authenticated"
@@ -2295,6 +2544,13 @@
             ],
             "policies": [
                 {
+                    "name": "community_hidden_posts_no_guests",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                },
+                {
                     "name": "community_hidden_posts_own",
                     "roles": [
                         "authenticated"
@@ -2362,6 +2618,13 @@
                 }
             ],
             "policies": [
+                {
+                    "name": "community_helpful_votes_no_guests",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                },
                 {
                     "name": "community_votes_own",
                     "roles": [
@@ -2482,6 +2745,13 @@
                         "authenticated"
                     ],
                     "command": "DELETE"
+                },
+                {
+                    "name": "community_notifications_no_guests",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
                 },
                 {
                     "name": "community_notifications_select",
@@ -2607,6 +2877,7 @@
         },
         "community_playlist_items": {
             "grants": [
+                "anon:SELECT",
                 "authenticated:DELETE",
                 "authenticated:INSERT",
                 "authenticated:SELECT",
@@ -2659,8 +2930,30 @@
                     "command": "DELETE"
                 },
                 {
+                    "name": "community_playlist_items_no_guests_delete",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_playlist_items_no_guests_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_playlist_items_no_guests_update",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                },
+                {
                     "name": "community_playlist_items_select",
                     "roles": [
+                        "anon",
                         "authenticated"
                     ],
                     "command": "SELECT"
@@ -2739,6 +3032,13 @@
                 }
             ],
             "policies": [
+                {
+                    "name": "community_playlist_saves_no_guests",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                },
                 {
                     "name": "community_playlist_saves_own",
                     "roles": [
@@ -2832,6 +3132,13 @@
                         "authenticated"
                     ],
                     "command": "INSERT"
+                },
+                {
+                    "name": "community_friend_requests_no_guests",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
                 },
                 {
                     "name": "community_friend_requests_select",
@@ -2940,8 +3247,7 @@
                     "notnull": true
                 }
             ],
-            "policies": [
-            ],
+            "policies": [],
             "constraints": [
                 {
                     "name": "pending_phone_verifications_pkey",
@@ -3015,6 +3321,13 @@
                 }
             ],
             "policies": [
+                {
+                    "name": "community_product_recommendations_no_guests",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                },
                 {
                     "name": "community_recommendations_delete",
                     "roles": [
@@ -3148,6 +3461,12 @@
             "security_definer": true
         },
         {
+            "args": "",
+            "name": "community_is_guest",
+            "returns": "boolean",
+            "security_definer": false
+        },
+        {
             "args": "p_recipient uuid, p_actor uuid, p_type text, p_post uuid, p_comment uuid, p_playlist uuid, p_recommendation uuid, p_product text, p_actor_hidden boolean",
             "name": "community_notify",
             "returns": "void",
@@ -3179,6 +3498,12 @@
         },
         {
             "args": "",
+            "name": "community_post_media_before_insert",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
             "name": "community_post_products_cap",
             "returns": "trigger",
             "security_definer": true
@@ -3203,7 +3528,19 @@
         },
         {
             "args": "",
+            "name": "community_profiles_before_write",
+            "returns": "trigger",
+            "security_definer": false
+        },
+        {
+            "args": "",
             "name": "community_recommendations_after_insert",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_reports_before_insert",
             "returns": "trigger",
             "security_definer": true
         },
@@ -3212,6 +3549,30 @@
             "name": "community_touch_updated_at",
             "returns": "trigger",
             "security_definer": false
+        },
+        {
+            "args": "uid uuid",
+            "name": "community_user_is_guest",
+            "returns": "boolean",
+            "security_definer": true
+        },
+        {
+            "args": "u text",
+            "name": "community_username_problem",
+            "returns": "text",
+            "security_definer": false
+        },
+        {
+            "args": "other uuid",
+            "name": "community_viewer_blocked",
+            "returns": "boolean",
+            "security_definer": true
+        },
+        {
+            "args": "other uuid",
+            "name": "community_viewer_is_friend",
+            "returns": "boolean",
+            "security_definer": true
         },
         {
             "args": "",
@@ -3268,5 +3629,5 @@
             "security_definer": false
         }
     ],
-    "generated_at": "2026-10-05T15:56:38.892801-04:00"
+    "generated_at": "2026-10-05T17:37:10.479468-04:00"
 }
