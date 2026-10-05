@@ -28,6 +28,8 @@ const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
 const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
 const CampusResources = React.lazy(() => import('./components/CampusResources'));
+const Community = React.lazy(() => import('./components/community/Community'));
+const CommunityProductActions = React.lazy(() => import('./components/community/CommunityProductActions'));
 import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage } from './data/products';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import Screenings from './components/Screenings';
@@ -60,6 +62,8 @@ import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchL
 import posthog from 'posthog-js';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
+import { isCommunityPath } from './utils/community/route';
+import { countUnreadNotifications } from './utils/community/communityStore';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
@@ -117,6 +121,9 @@ const VIEW_TO_PATH = {
   about: '/about',
   contact: '/contact',
   'campus-resources': '/campus-resources',
+  // /community/* sub-routes (posts, profiles, playlists…) all resolve to this
+  // one view; Community.jsx parses the rest of the path itself.
+  community: '/community',
   'auth-callback': '/auth/callback',
   'auth-confirm': '/auth/confirm',
   'confirmed': '/confirmed',
@@ -137,6 +144,7 @@ const VIEW_TITLES = {
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
   'campus-resources': 'Campus Sexual Assault Support Resources',
   'admin-reviews': 'All Reviews',
+  community: 'Community',
 };
 
 const PATH_TO_VIEW = Object.fromEntries(
@@ -147,6 +155,7 @@ PATH_TO_VIEW['/'] = 'welcome';
 function getInitialView() {
   const path = window.location.pathname;
   if (parseProductIdFromPath(path)) return 'product';
+  if (isCommunityPath(path)) return 'community';
   // An unrecognized path used to silently resolve to 'welcome' — a typo'd
   // or stale-bookmarked URL landed on the homepage with zero indication
   // anything was wrong (found live, 2026-08-24 bug bash). The root path
@@ -314,16 +323,19 @@ function App() {
   }, [setCurrentView]);
   useEffect(() => {
     const path = pathForView(currentView, productRouteId);
-    const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources')
-      ? `${path}${window.location.search}${window.location.hash}`
-      : path;
+    const initialUrl = currentView === 'community'
+      // Keep the full /community/... sub-route (a shared post or playlist link).
+      ? `${window.location.pathname}${window.location.search}`
+      : (currentView === 'auth-callback' || currentView === 'campus-resources')
+        ? `${path}${window.location.search}${window.location.hash}`
+        : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     const onPop = (e) => {
       const pathProductId = parseProductIdFromPath(window.location.pathname);
-      const view = pathProductId ? 'product' : (e.state?.view || PATH_TO_VIEW[window.location.pathname] || PATH_TO_VIEW[window.location.pathname.replace(/\/+$/, '')] || 'not-found');
+      const view = pathProductId ? 'product' : isCommunityPath(window.location.pathname) ? 'community' : (e.state?.view || PATH_TO_VIEW[window.location.pathname] || PATH_TO_VIEW[window.location.pathname.replace(/\/+$/, '')] || 'not-found');
       currentViewRef.current = view;
       setCurrentViewRaw(view);
       setProductRouteId(pathProductId);
@@ -392,6 +404,8 @@ function App() {
   const [savedProducts, setSavedProducts] = useState(() => loadSavedProducts());
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const [user, setUser] = useState(null);
+  const [communityNavKey, setCommunityNavKey] = useState(0);
+  const [communityUnread, setCommunityUnread] = useState(0);
   const [userSession, setUserSession] = useState(null);
   // Set to true once the LLM builds the ecosystem this session — prevents
   // Supabase token-refresh reloads from overwriting in-memory LLM products.
@@ -558,6 +572,9 @@ function App() {
       'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles',
       'how-it-works', 'how-we-make-money', 'campus-resources',
+      // Signed-out visitors get Community's own "log in to join" screen, so a
+      // shared post/playlist link survives the round trip through login.
+      'community',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
@@ -1066,6 +1083,20 @@ function App() {
   const handleOpenDeleteAccount = () => setCurrentView('delete-account');
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
+  // Community owns its own sub-routes (/community/post/:id, /community/u/:name…).
+  // Push the exact href and bump a key so a mounted Community re-reads it.
+  const handleViewCommunity = (href = '/community') => {
+    discoveryKeepAliveRef.current = false;
+    currentViewRef.current = 'community';
+    setCurrentViewRaw('community');
+    setProductRouteId(null);
+    if (`${window.location.pathname}${window.location.search}` !== href) {
+      window.history.pushState({ view: 'community' }, '', href);
+      inAppPushCountRef.current += 1;
+    }
+    setCommunityNavKey((k) => k + 1);
+    window.scrollTo({ top: 0 });
+  };
   const handleViewWishlist = () => {
     if (!user) {
       setPendingAction('login');
@@ -1568,6 +1599,18 @@ function App() {
     document.title = label ? `${label} | ayna` : base;
   }, [currentView, displayedProduct, productStillResolving]);
 
+  // Community notification dot in the nav. One HEAD count per navigation —
+  // fails quietly (e.g. before community.sql is applied to an environment).
+  useEffect(() => {
+    if (!user) { setCommunityUnread(0); return undefined; }
+    const supabase = getSupabaseClient();
+    if (!supabase) return undefined;
+    let alive = true;
+    countUnreadNotifications(supabase).then((n) => { if (alive) setCommunityUnread(n); }).catch(() => {});
+    return () => { alive = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- per account + per navigation
+  }, [user?.id, currentView]);
+
   // Campus Resources gets its own meta description; restored on leave.
   useEffect(() => {
     if (currentView !== 'campus-resources') return undefined;
@@ -1675,6 +1718,13 @@ function App() {
             >
               Browse
             </button>
+            <button
+              className={`app-nav__tab ${currentView === 'community' ? 'app-nav__tab--active' : ''}`}
+              onClick={() => handleViewCommunity()}
+            >
+              Community
+              {communityUnread > 0 && <span className="app-nav__unread-dot" aria-label={`${communityUnread} new`} />}
+            </button>
           </div>
 
           {/* Account stays a subtle utility; primary navigation is only Ayna, My Ecosystem and Browse. */}
@@ -1766,6 +1816,9 @@ function App() {
               My Ecosystem {ecosystemCount > 0 && <span className="nav-ecosystem__pill">{ecosystemCount}</span>}
             </button>
             <button className="mobile-drawer-item" onClick={() => { handleViewDiscovery(''); setMobileMenuOpen(false); }}>Browse</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewCommunity(); setMobileMenuOpen(false); }}>
+              Community {communityUnread > 0 && <span className="nav-ecosystem__pill">{communityUnread}</span>}
+            </button>
             <button className="mobile-drawer-item" onClick={() => { handleViewWishlist(); setMobileMenuOpen(false); }}>
               Wishlist {Object.keys(savedProducts || {}).length > 0 ? `(${Object.keys(savedProducts || {}).length})` : ''}
             </button>
@@ -3212,6 +3265,26 @@ function App() {
             onBrowse={() => handleViewDiscovery('')}
           />
         )}
+        {currentView === 'community' && (
+          <Suspense fallback={<ViewLoadingFallback />}>
+            <Community
+              navKey={communityNavKey}
+              user={user}
+              quizResults={quizResults}
+              healthProfile={healthProfile}
+              myProducts={myProducts}
+              savedProducts={savedProducts}
+              onOpenProduct={handleOpenProduct}
+              onAddToEcosystem={toggleMyProduct}
+              onStartQuiz={handleStartQuiz}
+              onViewDiscovery={handleViewDiscovery}
+              onUnreadChange={setCommunityUnread}
+              // 'community' has no post-login redirect, so signing in keeps
+              // them on the post/playlist they were looking at.
+              onRequireAuth={() => { setPendingAction('community'); pendingActionRef.current = 'community'; setShowAuthModal(true); }}
+            />
+          </Suspense>
+        )}
         {(currentView === 'discovery' || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
           <div style={currentView === 'discovery' ? undefined : { display: 'none' }}>
           <Suspense fallback={<ViewLoadingFallback />}>
@@ -3370,6 +3443,23 @@ function App() {
               onOpenProduct={handleOpenProduct}
               onBack={handleBackFromProduct}
               searchOrigin={lastOpenOrigin?.productId === displayedProduct.id ? lastOpenOrigin : null}
+              communitySlot={user ? (
+                <Suspense fallback={null}>
+                  <CommunityProductActions
+                    product={displayedProduct}
+                    user={user}
+                    quizResults={quizResults}
+                    healthProfile={healthProfile}
+                    myProducts={myProducts}
+                    savedProducts={savedProducts}
+                    onOpenProduct={handleOpenProduct}
+                    onAddToEcosystem={toggleMyProduct}
+                    onStartQuiz={handleStartQuiz}
+                    onOpenCommunity={handleViewCommunity}
+                    onRequireAuth={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+                  />
+                </Suspense>
+              ) : null}
             />
           ) : productStillResolving ? (
             <ViewLoadingFallback />

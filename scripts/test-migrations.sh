@@ -61,6 +61,9 @@ done
 
 run supabase/seed/product_catalog.sql
 
+# Community references product_catalog rows, so it goes after the seed.
+run supabase/community.sql
+
 # _verify.sql skips its behavioural half without an auth.users row — seed one, or
 # the most valuable checks silently no-op.
 psql -v ON_ERROR_STOP=1 -q -d "$DB" -c \
@@ -87,6 +90,7 @@ verify() {
 
 verify "structural verification" supabase/_verify.sql
 verify "behavioural verification" supabase/_behaviour_test.sql
+verify "community behavioural verification" supabase/_community_behaviour_test.sql
 
 echo
 printf '   catalog rows: '

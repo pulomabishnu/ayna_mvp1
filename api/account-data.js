@@ -17,6 +17,59 @@ const USER_TABLES = [
   ['user_reviews', '*'],
 ];
 
+// Community rows the person authored or owns, keyed by whichever column
+// identifies them as the owner. Anonymous posts are included — they are this
+// person's own data, and the export only ever goes to them.
+const COMMUNITY_TABLES = [
+  ['community_profiles', 'user_id'],
+  ['community_posts', 'author_id'],
+  ['community_comments', 'author_id'],
+  ['community_helpful_votes', 'user_id'],
+  ['community_saved_posts', 'user_id'],
+  ['community_hidden_posts', 'user_id'],
+  ['community_follows', 'follower_id'],
+  ['community_blocks', 'blocker_id'],
+  ['community_playlists', 'owner_id'],
+  ['community_playlist_saves', 'user_id'],
+  ['community_notifications', 'recipient_id'],
+  ['community_reports', 'reporter_id'],
+];
+
+// The community schema may not be applied in every environment yet; a missing
+// table must not fail the whole export.
+function isMissingTable(err) {
+  return err?.code === '42P01' || err?.code === 'PGRST205' || /does not exist|schema cache/i.test(err?.message || '');
+}
+
+async function exportCommunity(admin, userId) {
+  const out = {};
+  for (const [table, column] of COMMUNITY_TABLES) {
+    const { data, error } = await admin.from(table).select('*').eq(column, userId);
+    if (error) {
+      if (isMissingTable(error)) return {};
+      throw new Error(`${table}: ${error.message}`);
+    }
+    out[table] = data || [];
+  }
+  const playlistIds = (out.community_playlists || []).map((p) => p.id);
+  const extra = await Promise.all([
+    playlistIds.length
+      ? admin.from('community_playlist_items').select('*').in('playlist_id', playlistIds)
+      : Promise.resolve({ data: [], error: null }),
+    out.community_posts?.length
+      ? admin.from('community_post_products').select('*').in('post_id', out.community_posts.map((p) => p.id))
+      : Promise.resolve({ data: [], error: null }),
+    admin.from('community_friend_requests').select('*').or(`requester_id.eq.${userId},addressee_id.eq.${userId}`),
+    admin.from('community_product_recommendations').select('*').or(`sender_id.eq.${userId},recipient_id.eq.${userId}`),
+  ]);
+  const names = ['community_playlist_items', 'community_post_products', 'community_friend_requests', 'community_product_recommendations'];
+  extra.forEach((result, i) => {
+    if (result.error) throw new Error(`${names[i]}: ${result.error.message}`);
+    out[names[i]] = result.data || [];
+  });
+  return out;
+}
+
 function dedupeById(rows) {
   const seen = new Set();
   return (rows || []).filter((row) => {
@@ -65,11 +118,12 @@ export default async function handler(req, res) {
     const feedbackQueries = [admin.from('feedback').select('*').eq('user_id', user.id)];
     if (user.email) feedbackQueries.push(admin.from('feedback').select('*').eq('email', user.email));
 
-    const [feedbackResults, approvedResult] = await Promise.all([
+    const [feedbackResults, approvedResult, community] = await Promise.all([
       Promise.all(feedbackQueries),
       user.email
         ? admin.from('approved_users').select('email,approved_at').eq('email', user.email)
         : Promise.resolve({ data: [], error: null }),
+      exportCommunity(admin, user.id),
     ]);
 
     const feedbackError = feedbackResults.find((result) => result.error)?.error;
@@ -92,6 +146,7 @@ export default async function handler(req, res) {
         ...tableResults,
         ['feedback', feedback],
         ['approved_users', approvedResult.data || []],
+        ...Object.entries(community),
       ]),
     };
 

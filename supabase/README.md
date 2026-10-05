@@ -100,6 +100,12 @@ done
 # Seed the catalog (generated — regenerate with `npm run catalog:export`)
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed/product_catalog.sql
 
+# Community — after the catalog, because posts/playlists reference real
+# product_catalog rows. community_storage.sql needs Supabase's storage schema
+# (photo uploads) and is not part of the local test harness.
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/community.sql
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/community_storage.sql
+
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/_verify.sql
 ```
 
@@ -125,6 +131,28 @@ destroyed the ecosystem, reviews and learning memory of every user.
 | Composite key on `user_ecosystems` | Every product write raises `42P10`; the UI shows success and the data is lost |
 | `user_ecosystems` UPDATE/DELETE policy | Clearing the ecosystem is a silent 0-row no-op — stale products reappear |
 | A SELECT policy on `pending_phone_verifications` | **Account takeover.** See below. |
+
+## Community (`community.sql`)
+
+Questions, reviews, posts, comments, product tags, follows, friends, helpful
+votes, saves, playlists, friend recommendations, notifications, reports and
+blocks. `_community_behaviour_test.sql` runs in `scripts/test-migrations.sh`.
+
+- **Anonymous authors are protected in the database, not the UI.** The base
+  `community_posts` / `community_comments` tables only return a user's own rows.
+  Everyone else reads through the `community_feed_*` views, which null out
+  `author_id` and every profile field on anonymous rows. Notifications caused
+  by an anonymous comment are written with `actor_id = null`.
+- **Blocks never filter anonymous content.** If they did, blocking someone and
+  comparing the feed would reveal which anonymous posts are theirs. Anonymous
+  posts get "Hide" instead.
+- **No health data lives here.** The viewer's "% match" is computed in their
+  own browser from their own profile with the same engine as Browse
+  (`getProfileMatchPercentForProduct`); nothing about it is stored or sent.
+- **Counters and moderation status are trigger/service-role only** —
+  column-level UPDATE grants leave them out, so a client can't inflate them.
+- **Reports** land in `community_reports` (status `open`) for a future admin
+  view; read them with the service role.
 
 ## Two deliberate security decisions
 

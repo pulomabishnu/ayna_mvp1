@@ -406,6 +406,197 @@
             "index_count": 1,
             "rls_enabled": true
         },
+        "community_posts": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "author_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "kind",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "body",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text[]",
+                    "column": "topics",
+                    "default": "'{}'::text[]",
+                    "notnull": true
+                },
+                {
+                    "type": "boolean",
+                    "column": "is_anonymous",
+                    "default": "false",
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "smallint",
+                    "column": "rating",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "boolean",
+                    "column": "would_recommend",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "photo_url",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "integer",
+                    "column": "helpful_count",
+                    "default": "0",
+                    "notnull": true
+                },
+                {
+                    "type": "integer",
+                    "column": "comment_count",
+                    "default": "0",
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "status",
+                    "default": "'visible'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "edited_at",
+                    "default": null,
+                    "notnull": false
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_posts_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_posts_insert_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_posts_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "community_posts_update_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_posts_author_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (author_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_posts_body_len",
+                    "type": "check",
+                    "definition": "CHECK (((char_length(btrim(body)) >= 1) AND (char_length(btrim(body)) <= 5000)))"
+                },
+                {
+                    "name": "community_posts_kind_check",
+                    "type": "check",
+                    "definition": "CHECK ((kind = ANY (ARRAY['question'::text, 'review'::text, 'post'::text])))"
+                },
+                {
+                    "name": "community_posts_photo_url",
+                    "type": "check",
+                    "definition": "CHECK (((photo_url IS NULL) OR (photo_url ~ '^https://'::text)))"
+                },
+                {
+                    "name": "community_posts_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "community_posts_product_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (product_id) REFERENCES product_catalog(id) ON DELETE RESTRICT"
+                },
+                {
+                    "name": "community_posts_review_shape",
+                    "type": "check",
+                    "definition": "CHECK ((((kind = 'review'::text) AND (product_id IS NOT NULL) AND ((rating >= 1) AND (rating <= 5))) OR ((kind <> 'review'::text) AND (rating IS NULL) AND (would_recommend IS NULL))))"
+                },
+                {
+                    "name": "community_posts_status_check",
+                    "type": "check",
+                    "definition": "CHECK ((status = ANY (ARRAY['visible'::text, 'hidden'::text, 'removed'::text])))"
+                },
+                {
+                    "name": "community_posts_topics_max",
+                    "type": "check",
+                    "definition": "CHECK ((COALESCE(array_length(topics, 1), 0) <= 5))"
+                }
+            ],
+            "index_count": 8,
+            "rls_enabled": true
+        },
         "product_catalog": {
             "grants": [
                 "anon:DELETE",
@@ -705,6 +896,12 @@
                     "notnull": true
                 },
                 {
+                    "type": "boolean",
+                    "column": "is_saved",
+                    "default": "false",
+                    "notnull": true
+                },
+                {
                     "type": "timestamp with time zone",
                     "column": "created_at",
                     "default": "now()",
@@ -757,6 +954,316 @@
                     "name": "user_ecosystems_user_id_fkey",
                     "type": "foreign key",
                     "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        },
+        "community_blocks": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "blocker_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "blocked_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_blocks_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_blocks_blocked_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (blocked_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_blocks_blocker_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (blocker_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_blocks_not_self",
+                    "type": "check",
+                    "definition": "CHECK ((blocker_id <> blocked_id))"
+                },
+                {
+                    "name": "community_blocks_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (blocker_id, blocked_id)"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        },
+        "community_follows": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "follower_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "followee_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_follows_delete",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_follows_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_follows_select",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_follows_followee_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (followee_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_follows_follower_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (follower_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_follows_not_self",
+                    "type": "check",
+                    "definition": "CHECK ((follower_id <> followee_id))"
+                },
+                {
+                    "name": "community_follows_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (follower_id, followee_id)"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        },
+        "community_reports": {
+            "grants": [
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "reporter_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "target_type",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "post_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "uuid",
+                    "column": "comment_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "uuid",
+                    "column": "playlist_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "uuid",
+                    "column": "reported_user_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "reason",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "details",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "status",
+                    "default": "'open'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "reviewed_at",
+                    "default": null,
+                    "notnull": false
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_reports_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_reports_select",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_reports_comment_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (comment_id) REFERENCES community_comments(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_reports_details_len",
+                    "type": "check",
+                    "definition": "CHECK (((details IS NULL) OR (char_length(details) <= 1000)))"
+                },
+                {
+                    "name": "community_reports_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "community_reports_playlist_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (playlist_id) REFERENCES community_playlists(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_reports_post_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (post_id) REFERENCES community_posts(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_reports_reason_check",
+                    "type": "check",
+                    "definition": "CHECK ((reason = ANY (ARRAY['spam'::text, 'harassment'::text, 'misinformation'::text, 'unsafe_advice'::text, 'self_harm'::text, 'privacy'::text, 'other'::text])))"
+                },
+                {
+                    "name": "community_reports_reported_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (reported_user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_reports_reporter_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (reporter_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_reports_status_check",
+                    "type": "check",
+                    "definition": "CHECK ((status = ANY (ARRAY['open'::text, 'reviewing'::text, 'actioned'::text, 'dismissed'::text])))"
+                },
+                {
+                    "name": "community_reports_target",
+                    "type": "check",
+                    "definition": "CHECK ((((target_type = 'post'::text) AND (post_id IS NOT NULL)) OR ((target_type = 'comment'::text) AND (comment_id IS NOT NULL)) OR ((target_type = 'playlist'::text) AND (playlist_id IS NOT NULL)) OR ((target_type = 'user'::text) AND (reported_user_id IS NOT NULL))))"
+                },
+                {
+                    "name": "community_reports_target_type_check",
+                    "type": "check",
+                    "definition": "CHECK ((target_type = ANY (ARRAY['post'::text, 'comment'::text, 'user'::text, 'playlist'::text])))"
                 }
             ],
             "index_count": 2,
@@ -858,6 +1365,420 @@
                 }
             ],
             "index_count": 4,
+            "rls_enabled": true
+        },
+        "community_comments": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "post_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "parent_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "uuid",
+                    "column": "author_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "body",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "boolean",
+                    "column": "is_anonymous",
+                    "default": "false",
+                    "notnull": true
+                },
+                {
+                    "type": "integer",
+                    "column": "helpful_count",
+                    "default": "0",
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "status",
+                    "default": "'visible'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "edited_at",
+                    "default": null,
+                    "notnull": false
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_comments_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_comments_insert_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_comments_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "community_comments_update_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_comments_author_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (author_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_comments_body_len",
+                    "type": "check",
+                    "definition": "CHECK (((char_length(btrim(body)) >= 1) AND (char_length(btrim(body)) <= 2000)))"
+                },
+                {
+                    "name": "community_comments_parent_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (parent_id) REFERENCES community_comments(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_comments_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "community_comments_post_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (post_id) REFERENCES community_posts(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_comments_product_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (product_id) REFERENCES product_catalog(id) ON DELETE RESTRICT"
+                },
+                {
+                    "name": "community_comments_status_check",
+                    "type": "check",
+                    "definition": "CHECK ((status = ANY (ARRAY['visible'::text, 'hidden'::text, 'removed'::text])))"
+                }
+            ],
+            "index_count": 3,
+            "rls_enabled": true
+        },
+        "community_profiles": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "username",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "display_name",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "bio",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "avatar_url",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_profiles_delete",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_profiles_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_profiles_select",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "community_profiles_update",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_profiles_bio_len",
+                    "type": "check",
+                    "definition": "CHECK (((bio IS NULL) OR (char_length(bio) <= 160)))"
+                },
+                {
+                    "name": "community_profiles_display_name_len",
+                    "type": "check",
+                    "definition": "CHECK (((char_length(btrim(display_name)) >= 1) AND (char_length(btrim(display_name)) <= 50)))"
+                },
+                {
+                    "name": "community_profiles_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id)"
+                },
+                {
+                    "name": "community_profiles_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_profiles_username_format",
+                    "type": "check",
+                    "definition": "CHECK ((username ~ '^[a-z0-9_.]{3,24}$'::text))"
+                }
+            ],
+            "index_count": 3,
+            "rls_enabled": true
+        },
+        "community_playlists": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "owner_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "title",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "description",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "cover_url",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "visibility",
+                    "default": "'public'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "integer",
+                    "column": "item_count",
+                    "default": "0",
+                    "notnull": true
+                },
+                {
+                    "type": "integer",
+                    "column": "save_count",
+                    "default": "0",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_playlists_delete",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_playlists_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_playlists_select",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "community_playlists_update",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_playlists_cover_url",
+                    "type": "check",
+                    "definition": "CHECK (((cover_url IS NULL) OR (cover_url ~ '^https://'::text)))"
+                },
+                {
+                    "name": "community_playlists_description_len",
+                    "type": "check",
+                    "definition": "CHECK (((description IS NULL) OR (char_length(description) <= 300)))"
+                },
+                {
+                    "name": "community_playlists_owner_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_playlists_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "community_playlists_title_len",
+                    "type": "check",
+                    "definition": "CHECK (((char_length(btrim(title)) >= 1) AND (char_length(btrim(title)) <= 80)))"
+                },
+                {
+                    "name": "community_playlists_visibility_check",
+                    "type": "check",
+                    "definition": "CHECK ((visibility = ANY (ARRAY['public'::text, 'private'::text])))"
+                }
+            ],
+            "index_count": 5,
             "rls_enabled": true
         },
         "product_recall_state": {
@@ -1209,6 +2130,68 @@
             "index_count": 1,
             "rls_enabled": true
         },
+        "community_saved_posts": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "post_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_saved_posts_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_saved_posts_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id, post_id)"
+                },
+                {
+                    "name": "community_saved_posts_post_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (post_id) REFERENCES community_posts(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_saved_posts_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 1,
+            "rls_enabled": true
+        },
         "user_ecosystem_builds": {
             "grants": [
                 "anon:DELETE",
@@ -1275,6 +2258,624 @@
                 }
             ],
             "index_count": 1,
+            "rls_enabled": true
+        },
+        "community_hidden_posts": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "post_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_hidden_posts_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_hidden_posts_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id, post_id)"
+                },
+                {
+                    "name": "community_hidden_posts_post_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (post_id) REFERENCES community_posts(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_hidden_posts_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 1,
+            "rls_enabled": true
+        },
+        "community_helpful_votes": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "post_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "uuid",
+                    "column": "comment_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_votes_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_helpful_votes_comment_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (comment_id) REFERENCES community_comments(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_helpful_votes_one_target",
+                    "type": "check",
+                    "definition": "CHECK (((post_id IS NULL) <> (comment_id IS NULL)))"
+                },
+                {
+                    "name": "community_helpful_votes_post_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (post_id) REFERENCES community_posts(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_helpful_votes_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        },
+        "community_notifications": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "recipient_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "actor_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "type",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "post_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "uuid",
+                    "column": "comment_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "uuid",
+                    "column": "playlist_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "uuid",
+                    "column": "recommendation_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "product_id",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "read_at",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_notifications_delete",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_notifications_select",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "community_notifications_update",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_notifications_actor_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (actor_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_notifications_comment_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (comment_id) REFERENCES community_comments(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_notifications_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "community_notifications_playlist_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (playlist_id) REFERENCES community_playlists(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_notifications_post_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (post_id) REFERENCES community_posts(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_notifications_recipient_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (recipient_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_notifications_recommendation_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (recommendation_id) REFERENCES community_product_recommendations(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_notifications_type_check",
+                    "type": "check",
+                    "definition": "CHECK ((type = ANY (ARRAY['follow'::text, 'friend_request'::text, 'friend_accepted'::text, 'comment'::text, 'reply'::text, 'helpful'::text, 'recommendation'::text, 'playlist_saved'::text])))"
+                }
+            ],
+            "index_count": 3,
+            "rls_enabled": true
+        },
+        "community_post_products": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "post_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "smallint",
+                    "column": "position",
+                    "default": "0",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_post_products_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_post_products_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (post_id, product_id)"
+                },
+                {
+                    "name": "community_post_products_post_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (post_id) REFERENCES community_posts(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_post_products_product_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (product_id) REFERENCES product_catalog(id) ON DELETE RESTRICT"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        },
+        "community_playlist_items": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "playlist_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "note",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "integer",
+                    "column": "position",
+                    "default": "0",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "added_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_playlist_items_delete",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_playlist_items_select",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "community_playlist_items_update",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                },
+                {
+                    "name": "community_playlist_items_write",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_playlist_items_note_len",
+                    "type": "check",
+                    "definition": "CHECK (((note IS NULL) OR (char_length(note) <= 200)))"
+                },
+                {
+                    "name": "community_playlist_items_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (playlist_id, product_id)"
+                },
+                {
+                    "name": "community_playlist_items_playlist_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (playlist_id) REFERENCES community_playlists(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_playlist_items_product_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (product_id) REFERENCES product_catalog(id) ON DELETE RESTRICT"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        },
+        "community_playlist_saves": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "playlist_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_playlist_saves_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "ALL"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_playlist_saves_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id, playlist_id)"
+                },
+                {
+                    "name": "community_playlist_saves_playlist_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (playlist_id) REFERENCES community_playlists(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_playlist_saves_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        },
+        "community_friend_requests": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "requester_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "addressee_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "status",
+                    "default": "'pending'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "responded_at",
+                    "default": null,
+                    "notnull": false
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_friend_requests_delete",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_friend_requests_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_friend_requests_select",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "community_friend_requests_update",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_friend_requests_addressee_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (addressee_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_friend_requests_not_self",
+                    "type": "check",
+                    "definition": "CHECK ((requester_id <> addressee_id))"
+                },
+                {
+                    "name": "community_friend_requests_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "community_friend_requests_requester_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (requester_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_friend_requests_status_check",
+                    "type": "check",
+                    "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'accepted'::text])))"
+                }
+            ],
+            "index_count": 4,
             "rls_enabled": true
         },
         "pending_phone_verifications": {
@@ -1355,6 +2956,128 @@
             ],
             "index_count": 2,
             "rls_enabled": true
+        },
+        "community_product_recommendations": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:SELECT",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "sender_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "recipient_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "note",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "seen_at",
+                    "default": null,
+                    "notnull": false
+                }
+            ],
+            "policies": [
+                {
+                    "name": "community_recommendations_delete",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "community_recommendations_insert",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "community_recommendations_select",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "community_recommendations_update",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "community_product_recommendations_not_self",
+                    "type": "check",
+                    "definition": "CHECK ((sender_id <> recipient_id))"
+                },
+                {
+                    "name": "community_product_recommendations_note_len",
+                    "type": "check",
+                    "definition": "CHECK (((note IS NULL) OR (char_length(note) <= 280)))"
+                },
+                {
+                    "name": "community_product_recommendations_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "community_product_recommendations_product_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (product_id) REFERENCES product_catalog(id) ON DELETE RESTRICT"
+                },
+                {
+                    "name": "community_product_recommendations_recipient_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (recipient_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                },
+                {
+                    "name": "community_product_recommendations_sender_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (sender_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 3,
+            "rls_enabled": true
         }
     },
     "functions": [
@@ -1368,6 +3091,132 @@
             "args": "p_user_id uuid, p_max_attempts integer",
             "name": "claim_otp_attempt",
             "returns": "TABLE(found boolean, locked_out boolean, expired boolean, phone_number text, code_hash text, attempts integer)",
+            "security_definer": true
+        },
+        {
+            "args": "a uuid, b uuid",
+            "name": "community_are_friends",
+            "returns": "boolean",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_blocks_after_insert",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_comments_after_change",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_comments_before_insert",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_comments_before_update",
+            "returns": "trigger",
+            "security_definer": false
+        },
+        {
+            "args": "",
+            "name": "community_follows_after_insert",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_friend_requests_after_change",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_friend_requests_guard",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "a uuid, b uuid",
+            "name": "community_is_blocked",
+            "returns": "boolean",
+            "security_definer": true
+        },
+        {
+            "args": "p_recipient uuid, p_actor uuid, p_type text, p_post uuid, p_comment uuid, p_playlist uuid, p_recommendation uuid, p_product text, p_actor_hidden boolean",
+            "name": "community_notify",
+            "returns": "void",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_playlist_items_after_change",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_playlist_items_cap",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_playlist_saves_after_change",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_playlists_before_write",
+            "returns": "trigger",
+            "security_definer": false
+        },
+        {
+            "args": "",
+            "name": "community_post_products_cap",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_posts_before_insert",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_posts_before_update",
+            "returns": "trigger",
+            "security_definer": false
+        },
+        {
+            "args": "target uuid",
+            "name": "community_profile_stats",
+            "returns": "TABLE(followers integer, following integer, friends integer)",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_recommendations_after_insert",
+            "returns": "trigger",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "community_touch_updated_at",
+            "returns": "trigger",
+            "security_definer": false
+        },
+        {
+            "args": "",
+            "name": "community_votes_after_change",
+            "returns": "trigger",
             "security_definer": true
         },
         {
@@ -1419,5 +3268,5 @@
             "security_definer": false
         }
     ],
-    "generated_at": "2026-08-09T20:02:42.510596-07:00"
+    "generated_at": "2026-10-05T15:56:38.892801-04:00"
 }

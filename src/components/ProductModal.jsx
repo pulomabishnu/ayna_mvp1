@@ -417,6 +417,9 @@ export default function ProductModal({
   // real routes (/product/:id) reachable via direct/shared links, so unlike
   // a nested modal there's no other on-screen way back to Discovery.
   onBack = null,
+  // Community entry points (recommend to a friend, add to playlist, write a
+  // review). Rendered under the buy/save actions; null when signed out.
+  communitySlot = null,
 }) {
   // The mockup draws the product page two ways — 1f, tabs with the Ayna
   // summary, and 1g, an evidence rail beside the specs. Both are built, and
@@ -815,6 +818,7 @@ export default function ProductModal({
           {ecosystemBtnLabel}
         </button>
       )}
+      {communitySlot}
     </div>
   );
 
