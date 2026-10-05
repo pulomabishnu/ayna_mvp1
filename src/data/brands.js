@@ -5423,6 +5423,32 @@ export const BRAND_PRODUCTS = [
             'Pre-launch: specs, final price and ship date are not final.',
             'Wellness insights only. It is not contraception and does not diagnose hormonal conditions.',
         ],
+        // The four papers Rèsa cites on shop.resa-labs.com for its claim that
+        // HRV, heart rate and skin temperature have to be read against the
+        // cycle. Links and findings checked 2026-10-05. They support the
+        // premise, not the accuracy of the (unreleased) Rèsa device itself.
+        scientificCitations: [
+            {
+                url: 'https://www.nature.com/articles/s41562-020-01046-9',
+                text: 'Pierson et al. Daily, weekly, seasonal and menstrual cycles in women\'s mood, behaviour and vital signs. Nature Human Behaviour (2021)',
+                summary: 'Analyzed 241 million observations from 3.3 million women in 109 countries using the Clue period-tracking app. Of the daily, weekly, seasonal and menstrual cycles, the menstrual cycle had the largest effect on most measures of mood, behaviour and vital signs, while sleep and exercise stayed more constant.',
+            },
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11666598/',
+                text: 'Jasinski et al. A novel method for quantifying fluctuations in wearable-derived daily cardiovascular parameters across the menstrual cycle. npj Digital Medicine (2024)',
+                summary: 'Wearable data from 11,590 people across 45,811 menstrual cycles. Resting heart rate and HRV rose and fell in a regular pattern through the cycle: resting heart rate lowest and HRV highest around day 5, resting heart rate highest around day 26 and HRV lowest around day 27. The swing was smaller in older participants and those using birth control.',
+            },
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7141121/',
+                text: 'Schmalenberger et al. Menstrual cycle changes in vagally-mediated heart rate variability are associated with progesterone. Journal of Clinical Medicine (2020)',
+                summary: 'Two within-person studies that measured hormones and HRV repeatedly across the cycle. Higher-than-usual progesterone predicted lower-than-usual HRV, and HRV was lowest in the mid-luteal phase; estradiol showed no significant effect. A practical example of why the same HRV number can mean different things depending on cycle phase.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/38767963/',
+                text: 'Gombert-Labedens et al. Using wearable skin temperature data to advance tracking and characterization of the menstrual cycle in a real-world setting. Journal of Biological Rhythms (2024)',
+                summary: 'Minute-by-minute wearable skin temperature from 120 women over a menstrual cycle. Temperature across the cycle was better described as a smooth rhythm (a cosinor model) than as a simple two-phase low/high step, which lets wearables measure the cycle\'s temperature rhythm in everyday life.',
+            },
+        ],
         integrations: [],
         badges: ['Pre-launch', 'Waitlist', 'Female-Founded'],
         isEmergingBrand: true,
