@@ -14,16 +14,6 @@ import * as store from '../../utils/community/communityStore';
 import { parseCommunityRoute, communityHref } from '../../utils/community/route';
 import { trackCommunity } from '../../utils/community/analytics';
 
-const svg = (d) => <svg viewBox="0 0 24 24"><path d={d} /></svg>;
-// Bottom tab bar on phones — the same five sections as the top tabs on desktop.
-const TABBAR = [
-  { key: 'for-you', label: 'for you', icon: svg('M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2L12 3.5Z') },
-  { key: 'following', label: 'following', icon: svg('M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-6 9c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5M16 4.3a3.5 3.5 0 0 1 0 6.4M18 14.8c1.7.8 2.8 2.6 3 5.2') },
-  { key: 'questions', label: 'q&a', icon: svg('M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.1A8 8 0 1 1 20 12ZM10 9.5a2 2 0 1 1 2.8 1.8c-.5.2-.8.7-.8 1.2v.3M12 15.6v.1') },
-  { key: 'reviews', label: 'reviews', icon: svg('m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8L12 3.5Z') },
-  { key: 'playlists', label: 'playlists', icon: svg('M4 6h11M4 11h11M4 16h7M19 5v10.5M19 15.5a2.5 2.5 0 1 1-2.5-2.5H19') },
-];
-
 function readRoute() {
   return parseCommunityRoute(window.location.pathname, window.location.search);
 }
@@ -164,7 +154,6 @@ export default function Community(props) {
           {isFeed ? (
             <div className="cm-header__title">
               <h2>community</h2>
-              <p>what’s actually working, from people like you</p>
             </div>
           ) : (
             <button type="button" className="cm-back" onClick={() => (window.history.length > 1 ? window.history.back() : navigate({ name: 'feed' }))}>
@@ -180,7 +169,6 @@ export default function Community(props) {
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16Zm4 4a2 2 0 0 0 4 0" /></svg>
               {unread > 0 && <span className="cm-bell__count">{unread > 9 ? '9+' : unread}</span>}
             </button>
-            <span className="cm-header__sep" aria-hidden="true" />
             <button type="button" className="cm-me" aria-label="Your community profile" onClick={() => (ctx.me ? navigate({ name: 'profile', username: ctx.me.username }) : ctx.requireProfile())}>
               <UserAvatar name={ctx.me?.display_name || ''} url={ctx.me?.avatar_url} size={32} />
             </button>
@@ -193,24 +181,6 @@ export default function Community(props) {
         {body}
 
       </section>
-      {/* Outside the animated section: a transformed ancestor would break position: fixed. */}
-      <nav className="cm-tabbar" aria-label="Community sections">
-        {TABBAR.map((t) => {
-          const active = route.name === 'feed' && route.tab === t.key;
-          return (
-            <button
-              key={t.key}
-              type="button"
-              className={active ? 'is-active' : ''}
-              aria-current={active ? 'page' : undefined}
-              onClick={() => navigate({ name: 'feed', tab: t.key }, { replace: route.name === 'feed' })}
-            >
-              <span className="cm-tabbar__icon" aria-hidden="true">{t.icon}</span>
-              <span className="cm-tabbar__label">{t.label}</span>
-            </button>
-          );
-        })}
-      </nav>
       {composer && (
         <CommunityComposer initialKind={composer.kind} initialProductId={composer.productId} onClose={() => setComposer(null)} onCreated={onCreated} />
       )}

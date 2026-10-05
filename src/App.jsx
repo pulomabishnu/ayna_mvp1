@@ -2,6 +2,7 @@ import FeedbackPrompts from './components/FeedbackPrompts';
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
+import MobileTabBar from './components/MobileTabBar';
 import ConsentBanner from './components/ConsentBanner';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
@@ -1808,6 +1809,26 @@ function App() {
             </div>
           </div>
         </nav>
+
+        {/* Phone bottom navigation (hidden on desktop and during the quiz/auth flows). */}
+        {!['quiz', 'auth-callback', 'auth-confirm'].includes(currentView) && (
+          <MobileTabBar
+            active={
+              (currentView === 'welcome' || currentView === 'hero') ? 'home'
+                : (currentView === 'discovery' || currentView === 'product') ? 'browse'
+                  : currentView === 'community' ? 'community'
+                    : ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'ecosystem' : null
+            }
+            badges={{ community: communityUnread > 0 }}
+            onSelect={(key) => {
+              setMobileMenuOpen(false);
+              if (key === 'home') navigateHome();
+              else if (key === 'browse') handleViewDiscovery('');
+              else if (key === 'community') handleViewCommunity();
+              else handleViewEcosystem();
+            }}
+          />
+        )}
 
         {/* Mobile drawer */}
         {mobileMenuOpen && (

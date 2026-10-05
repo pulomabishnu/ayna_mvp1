@@ -83,6 +83,13 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
         try { await store.deletePost(supabase, post.id); onRemove?.(post); toast('Post deleted'); } catch (e) { toast(store.friendlyError(e)); }
       },
     },
+    {
+      label: 'Share',
+      onClick: async () => {
+        const r = await shareLink(communityHref({ name: 'post', id: post.id }), 'ayna community');
+        if (r === 'copied') toast('link copied');
+      },
+    },
     !post.is_mine && { label: 'Report post', onClick: () => openReport({ targetType: 'post', postId: post.id }) },
     !post.is_mine && {
       label: 'Hide post',
@@ -151,7 +158,7 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
       )}
 
       <div className="cm-post__foot" onClick={(e) => e.stopPropagation()}>
-        {visibleTopics.length > 0 && (
+        {expanded && visibleTopics.length > 0 && (
           <div className="cm-tags">
             {visibleTopics.map((t) => <span key={t} className="cm-tag" title={topicLabel(t)}>#{t.replace(/-/g, '')}</span>)}
           </div>
@@ -183,17 +190,6 @@ export default function CommunityPostCard({ post, onChange, onRemove, expanded =
             onClick={() => toggle('viewer_saved', (on) => store.setSaved(supabase, user.id, post.id, on))}
           >
             {icon.save}
-          </button>
-          <button
-            type="button"
-            className="cm-action"
-            aria-label="Share"
-            onClick={async () => {
-              const r = await shareLink(communityHref({ name: 'post', id: post.id }), 'ayna community');
-              if (r === 'copied') toast('link copied ✓');
-            }}
-          >
-            {icon.share}
           </button>
         </div>
       </div>
