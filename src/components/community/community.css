@@ -7,6 +7,7 @@
 .cm-page,
 .cm-sheet-backdrop,
 .cm-pdp-actions,
+.cm-tabbar,
 .cm-toast {
   --cm-ink: var(--color-navy, #242A52);
   --cm-text: #29252F;
@@ -435,4 +436,36 @@ span.cm-author__name { cursor: default; }
   .cm-cover--lg { width: 104px; }
   .cm-segmented button { font-size: .74rem; }
   .cm-tabs button { padding: .55rem .7rem; font-size: .82rem; }
+}
+
+/* ── bottom tab bar (phones) ───────────────────────────────────────────── */
+.cm-tabbar { display: none; }
+@media (max-width: 720px) {
+  .cm-page { padding-bottom: calc(7.5rem + env(safe-area-inset-bottom)); }
+  /* the top pill tabs move to the bottom bar on phones */
+  .cm-tabs:not(.cm-tabs--profile) { display: none; }
+  .cm-tabbar {
+    position: fixed; z-index: 950; left: .75rem; right: .75rem; bottom: calc(.75rem + env(safe-area-inset-bottom));
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: .1rem;
+    padding: .35rem; border-radius: 26px;
+    background: rgba(255, 255, 255, .86);
+    -webkit-backdrop-filter: saturate(1.5) blur(18px); backdrop-filter: saturate(1.5) blur(18px);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .6) inset, 0 12px 32px -10px rgba(36, 42, 82, .35), 0 0 0 1px rgba(36, 42, 82, .06);
+    animation: cmUp .35s var(--cm-ease);
+  }
+  .cm-tabbar button {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .15rem;
+    min-height: 54px; border: 0; border-radius: 20px; background: none; color: var(--cm-muted); cursor: pointer;
+    transition: color .15s, background .2s var(--cm-ease);
+  }
+  .cm-tabbar__icon { display: grid; place-items: center; width: 44px; height: 28px; border-radius: 999px; transition: background .2s var(--cm-ease), transform .2s var(--cm-ease); }
+  .cm-tabbar__icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .cm-tabbar__label { font: 600 .66rem var(--font-body); letter-spacing: .01em; }
+  .cm-tabbar button.is-active { color: var(--cm-ink); }
+  .cm-tabbar button.is-active .cm-tabbar__icon { background: var(--cm-ink); color: #fff; }
+  .cm-tabbar button.is-active .cm-tabbar__icon svg { fill: rgba(255, 255, 255, .18); }
+  .cm-tabbar button:active .cm-tabbar__icon { transform: scale(.9); }
+  /* keep Ask Ayna and toasts clear of the bar */
+  html body:has(.cm-tabbar) .ayna-ask-launcher { bottom: calc(6.4rem + env(safe-area-inset-bottom)) !important; }
+  .cm-toast { bottom: calc(6.6rem + env(safe-area-inset-bottom)); }
 }
