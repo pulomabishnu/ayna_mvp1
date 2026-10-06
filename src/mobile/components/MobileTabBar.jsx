@@ -1,23 +1,23 @@
 const icons = {
-  home: <><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" /></>,
+  home: <><circle cx="12" cy="12" r="3" /><ellipse cx="12" cy="12" rx="9" ry="5" transform="rotate(-35 12 12)" /><circle cx="19" cy="7" r="1" fill="currentColor" stroke="none" /></>,
   browse: <><circle cx="12" cy="12" r="9" /><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8 4.8-2.2Z" /></>,
   community: <><path d="M20 11.5a7.5 7.5 0 0 1-10.8 6.7L4 20l1.8-5.2A7.5 7.5 0 1 1 20 11.5Z" /><path d="M9 11h6M9 14h4" /></>,
   profile: <><circle cx="12" cy="8" r="4" /><path d="M4.5 21a7.5 7.5 0 0 1 15 0" /></>,
 };
 
 const tabs = [
-  ['home', 'Home'],
+  ['home', 'Ecosystem'],
   ['browse', 'Browse'],
   ['community', 'Community'],
   ['profile', 'Profile'],
 ];
 
-export default function MobileTabBar({ active, onHome, onBrowse, onCommunity, onProfile }) {
+export default function MobileTabBar({ active, hasEcosystem = false, onHome, onBrowse, onCommunity, onProfile }) {
   const actions = { home: onHome, browse: onBrowse, community: onCommunity, profile: onProfile };
   return <nav className="ayna-bottom-nav" aria-label="Main navigation">
     {tabs.map(([key, label]) => <button type="button" key={key} className={active === key ? 'is-active' : ''} onClick={actions[key]} aria-current={active === key ? 'page' : undefined}>
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{icons[key]}</svg>
-      <span>{label}</span>
+      <span>{key === 'home' && hasEcosystem ? 'My Ecosystem' : label}</span>
     </button>)}
   </nav>;
 }

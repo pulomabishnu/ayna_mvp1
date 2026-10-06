@@ -568,7 +568,8 @@ export default function MobileApp() {
       />
       {showTabBar && <MobileTabBar
         active={activeTab}
-        onHome={() => { setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'landing'); }}
+        hasEcosystem={hasEcosystem}
+        onHome={() => { setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onBrowse={() => { setOverlay(null); setScreen('browse'); }}
         onCommunity={() => { setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
         onProfile={openProfile}
