@@ -165,10 +165,19 @@ export default function MobileApp() {
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
   const [authMode, setAuthMode] = useState('signup');
+  const [authPrompt, setAuthPrompt] = useState(null);
   const authReturnScreenRef = useRef('landing');
+  const authResumeRef = useRef(null);
   const [communitySeed, setCommunitySeed] = useState(null);
   const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
-  const openAuth = (mode) => {
+  const requestAuth = (feature, resume = null) => {
+    authResumeRef.current = resume || (() => setScreen(screen));
+    setAuthPrompt({ feature });
+  };
+  const openAuth = (mode, fromPrompt = false) => {
+    if (!fromPrompt) authResumeRef.current = null;
+    setAuthPrompt(null);
+    setAskAynaOpen(false);
     setOverlay(null);
     if (mode === 'signup' && !lastQuizAnswers) {
       setEditingHealthProfile(false);
@@ -179,7 +188,7 @@ export default function MobileApp() {
     setAuthMode(mode);
     setScreen('signin');
   };
-  const openProfile = () => setOverlay({ type: authUser ? 'profile' : 'profile-auth' });
+  const openProfile = () => { authResumeRef.current = null; setOverlay({ type: authUser ? 'profile' : 'profile-auth' }); };
 
   // Backend-only state used to keep mobile ecosystem writes consistent with
   // the same Supabase user_ecosystems rows used by the website.
@@ -423,11 +432,11 @@ export default function MobileApp() {
     onOpenProduct: (p) => setOverlay({ type: 'product', item: p }),
     onOpenArticle: (a) => setOverlay({ type: 'article', item: a }),
     onOpenProfile: openProfile,
-    onRequireAuth: () => openAuth('signup'),
+    onRequireAuth: (feature) => requestAuth(feature || 'this feature'),
     onAlreadyHaveAccount: () => openAuth('signin'),
     onAboutAyna: () => setOverlay({ type: 'about' }),
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
-    onAskAyna: () => setAskAynaOpen(true),
+    onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
     onBack: () => setScreen(['quiz', 'ecointro'].includes(screen) ? (hasEcosystem ? 'eco' : 'landing') : ['building', 'reveal'].includes(screen) ? 'quiz' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing'),
     onRetake: () => { setEditingHealthProfile(false); setScreen('quiz'); },
     onUpdateHealth: () => { setEditingHealthProfile(false); setScreen('quiz'); },
@@ -470,7 +479,12 @@ export default function MobileApp() {
     onFinish: () => setScreen(authUser ? 'eco' : 'reveal'),
     onContinue: () => openAuth('signup'),
     initialMode: authMode,
-    onAuthBack: () => setScreen(authReturnScreenRef.current),
+    onAuthBack: () => {
+      const resume = authResumeRef.current;
+      authResumeRef.current = null;
+      if (resume) resume();
+      else setScreen(authReturnScreenRef.current);
+    },
     onStartEcosystem: lastQuizAnswers ? null : () => { setEditingHealthProfile(false); setScreen('quiz'); },
     // Real Supabase auth (src/mobile/hooks/useSupabaseAuth.js) — the name
     // comes from whatever SigninScreen already has in its own form state
@@ -486,19 +500,22 @@ export default function MobileApp() {
     onResendConfirmation: resendConfirmation,
     onAuthenticated: (name) => {
       updateSession((prev) => ({ userName: name || prev.userName }));
-      setScreen(hasEcosystem ? 'eco' : 'ecointro');
+      const resume = authMode === 'signin' ? authResumeRef.current : null;
+      authResumeRef.current = null;
+      if (resume) resume();
+      else setScreen(hasEcosystem ? 'eco' : 'ecointro');
     },
     hasEcosystem,
   };
 
   const showTabBar = !['quiz', 'building', 'reveal', 'signin', 'checkin'].includes(screen) && (!overlay || ['profile', 'profile-auth'].includes(overlay.type));
   const activeTab = ['profile', 'profile-auth'].includes(overlay?.type) ? 'profile'
-    : screen === 'browse' ? 'search'
+    : screen === 'browse' ? 'browse'
       : screen === 'community' ? 'community'
         : ['landing', 'eco', 'ecointro'].includes(screen) ? 'home' : null;
 
   return (
-    <div className="ayna-mobile" data-theme={resolvedTheme} style={{ '--ayna-text-scale': textScale }}>
+    <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} style={{ '--ayna-text-scale': textScale }}>
       <Screen
         key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen}
         {...nav}
@@ -536,19 +553,19 @@ export default function MobileApp() {
       {showTabBar && <MobileTabBar
         active={activeTab}
         onHome={() => { setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'landing'); }}
-        onSearch={() => { setOverlay(null); setScreen('browse'); }}
+        onBrowse={() => { setOverlay(null); setScreen('browse'); }}
         onCommunity={() => { setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
         onProfile={openProfile}
       />}
-      {overlay?.type === 'profile-auth' && (
-        <div className="ayna-profile-auth-backdrop" onClick={() => setOverlay(null)}>
+      {(overlay?.type === 'profile-auth' || authPrompt) && (
+        <div className="ayna-profile-auth-backdrop" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>
           <section className="ayna-profile-auth-sheet" role="dialog" aria-modal="true" aria-labelledby="ayna-profile-auth-title" onClick={(event) => event.stopPropagation()}>
-            <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={() => setOverlay(null)}>×</button>
+            <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>×</button>
             <div className="ayna-profile-auth-eyebrow">YOUR AYNA</div>
-            <h2 id="ayna-profile-auth-title">Your space starts here.</h2>
-            <p>Create an account to build and save your ecosystem, or sign in to pick up where you left off.</p>
-            <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signup')}>Sign up</button>
-            <button type="button" className="ayna-profile-auth-secondary" onClick={() => openAuth('signin')}>Sign in</button>
+            <h2 id="ayna-profile-auth-title">{authPrompt ? `Sign in for ${authPrompt.feature}.` : 'Your space starts here.'}</h2>
+            <p>{authPrompt ? 'Create an account to build your ecosystem, or sign in to continue.' : 'Create an account to build and save your ecosystem, or sign in to pick up where you left off.'}</p>
+            <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signup', !!authPrompt)}>Sign up</button>
+            <button type="button" className="ayna-profile-auth-secondary" onClick={() => openAuth('signin', !!authPrompt)}>Sign in</button>
           </section>
         </div>
       )}
@@ -563,11 +580,21 @@ export default function MobileApp() {
             isInEcosystem={myProducts.some((p) => p.id === overlay.item?.id)}
             onAddToEcosystem={() => handleAddToEcosystem(overlay.item)}
             onCommunityAction={(kind) => {
+              if (!authUser && ['review', 'playlist', 'recommend'].includes(kind)) {
+                const productId = overlay.item?.id;
+                requestAuth(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : 'friend recommendations', () => {
+                  setCommunitySeed({ kind, productId, token: Date.now() });
+                  setScreen('community');
+                });
+                return;
+              }
               setCommunitySeed({ kind, productId: overlay.item?.id, token: Date.now() });
               setOverlay(null);
               setScreen('community');
             }}
             onStartQuiz={() => { setOverlay(null); setEditingHealthProfile(false); setScreen('quiz'); }}
+            authUser={authUser}
+            onRequireAuth={(feature) => requestAuth(feature || 'Ask Ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
             quizAnswers={effectiveQuizAnswers}
             ecosystemProducts={myProducts}
             theme={theme}
@@ -622,7 +649,7 @@ export default function MobileApp() {
       )}
       {!askAynaOpen && !overlay && !['landing', 'signin', 'quiz', 'building', 'reveal'].includes(screen) && (
         <AskAynaChip
-          onClick={() => setAskAynaOpen(true)}
+          onClick={() => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
           viewKey={overlay ? `${overlay.type}:${overlay.item?.id || ''}` : screen}
         />
       )}
@@ -636,6 +663,7 @@ export default function MobileApp() {
         name={resolvedName}
         onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
+        onRequireAuth={(feature) => requestAuth(feature || 'Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
       />
     </div>
   );

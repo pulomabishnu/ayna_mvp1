@@ -77,3 +77,24 @@
 .am-friends { display: grid; gap: 9px; font-size: 12px; }
 .am-friends label { display: flex; align-items: center; gap: 7px; }
 .am-friends p { color: var(--ayna-text-muted); margin: 0; }
+
+.am-top-actions button { width: auto; min-width: 37px; padding: 0 10px; font-size: 11px; font-weight: 700; }
+.am-cover { overflow: hidden; font: italic 14px 'Playfair Display', serif; }
+.am-cover img { width: 100%; height: 100%; object-fit: cover; }
+.am-cover-detail { display: block; width: 100%; max-height: 250px; aspect-ratio: 1.6; object-fit: cover; border-radius: 16px; }
+.am-cover-picker { display: grid; gap: 10px; }
+.am-cover-picker > strong, .am-cover-picker label { font-size: 12px; color: var(--ayna-heading); }
+.am-cover-mode { display: flex; gap: 8px; }
+.am-cover-mode button { border: 1px solid var(--ayna-border); border-radius: 99px; background: var(--ayna-surface); color: var(--ayna-heading); padding: 8px 12px; font-size: 12px; }
+.am-cover-mode button.is-active { background: var(--ayna-heading); color: var(--ayna-bg); }
+.am-cover-preview { width: 100%; max-width: 220px; aspect-ratio: 1; padding: 17px; box-sizing: border-box; border-radius: 14px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+.am-cover-preview img { width: calc(100% + 34px); height: calc(100% + 34px); margin: -17px; object-fit: cover; }
+.am-cover-preview span { font: italic 27px/1.1 'Playfair Display', serif; overflow-wrap: anywhere; }
+.am-cover-preview small { font: italic 11px 'Playfair Display', serif; }
+.am-cover-colors { display: flex; gap: 8px; }
+.am-cover-colors button { width: 28px; height: 28px; border: 2px solid transparent; border-radius: 50%; }
+.am-cover-colors button.is-selected { outline: 2px solid var(--ayna-heading); outline-offset: 2px; }
+.am-product-search { display: flex; align-items: center; gap: 7px; border: 1px solid var(--ayna-border); border-radius: 12px; background: var(--ayna-surface); padding: 0 11px; }
+.am-product-search svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; }
+.am-product-search input { border: 0; flex: 1; min-width: 0; }
+.am-picker-empty { color: var(--ayna-text-muted); }

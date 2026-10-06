@@ -120,7 +120,7 @@ function SafetyBanner({ text }) {
       style={{ margin: '14px 22px 0', background: '#FEF2F2', border: '1px solid #991B1B', borderLeft: '4px solid #991B1B', borderRadius: 16, padding: '12px 14px', cursor: 'pointer' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#991B1B' }}>⚠️ Safety note</div>
+        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#991B1B' }}>Safety note</div>
         <span style={{ color: '#991B1B', fontSize: 12 }}>{expanded ? '▴' : '▾'}</span>
       </div>
       <p style={{ margin: '6px 0 0', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: '#3f3831', display: '-webkit-box', WebkitLineClamp: expanded ? 'unset' : 2, WebkitBoxOrient: 'vertical', overflow: expanded ? 'visible' : 'hidden' }}>
@@ -137,7 +137,7 @@ function SafetyBanner({ text }) {
  * changed (mobile's own inline-style patterns instead of the desktop
  * pdp-* classes).
  */
-function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
+function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -166,6 +166,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
   const ask = async (question) => {
     const q = String(question || '').trim();
     if (!q || sending) return;
+    if (!session?.access_token) { onRequireAuth?.('Ask Ayna'); return; }
     setError('');
     setInput('');
     const nextMessages = [...messages, { role: 'user', text: q }];
@@ -192,7 +193,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
       setMessages((prev) => [...prev, { role: 'assistant', text: data.answer }]);
     } catch (e) {
       if (e?.code === 'not_signed_in') {
-        setError('Sign in to ask Ayna about this product — free accounts get a few AI chats per week.');
+        onRequireAuth?.('Ask Ayna');
       } else if (e?.code === 'weekly_limit_reached') {
         setError("You've used your free chats for this week. They reset weekly.");
       } else {
@@ -293,6 +294,8 @@ export default function ProductDetailScreen({
   isInEcosystem = false,
   onAddToEcosystem,
   onCommunityAction,
+  authUser,
+  onRequireAuth,
   onStartQuiz,
   whyMatched,
   reads = [],
@@ -554,7 +557,7 @@ export default function ProductDetailScreen({
                 </div>
               </div>
             )}
-            {matchPercent == null && <button type="button" onClick={onStartQuiz} style={{ position: 'absolute', right: 12, bottom: 12, border: 0, borderRadius: 99, background: '#fff9f2', color: '#5c3b2c', padding: '9px 13px', fontWeight: 600 }}>🔒 Build to see your match</button>}
+            {matchPercent == null && <button type="button" onClick={onStartQuiz} style={{ position: 'absolute', right: 12, bottom: 12, border: 0, borderRadius: 99, background: '#fff9f2', color: '#5c3b2c', padding: '9px 13px', fontWeight: 600 }}>Build to see your match</button>}
           </div>
         </div>
 
@@ -613,7 +616,7 @@ export default function ProductDetailScreen({
                 return (
                   <div
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
+                    onClick={() => { if (tab.id === 'ask' && !authUser) onRequireAuth?.('Ask Ayna'); else setActiveTab(tab.id); }}
                     style={{
                       flex: 'none',
                       whiteSpace: 'nowrap',
@@ -770,7 +773,7 @@ export default function ProductDetailScreen({
             )}
 
             {activeTab === 'ask' && (
-              <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} />
+              <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />
             )}
           </div>
         ) : (
@@ -936,7 +939,7 @@ export default function ProductDetailScreen({
             border: '1px solid ' + (isInEcosystem ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)'),
           }}
         >
-          {isInEcosystem ? '✓ In ecosystem' : '+ Ecosystem'}
+          {isInEcosystem ? 'In ecosystem' : '+ Ecosystem'}
         </div>
         {buyUrl ? (
           <a

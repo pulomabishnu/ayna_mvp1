@@ -78,7 +78,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         >
           <ProductImage src={resolvedImage} alt={name} allowBrandLogo={product?.type === 'digital'} compact />
           <div style={{ position: 'absolute', right: 2, bottom: 2 }}>
-            {matchPercent == null ? <button type="button" onClick={(event) => { event.stopPropagation(); onStartQuiz?.(); }} aria-label="Build your ecosystem to see your match" style={{ border: 0, borderRadius: 99, padding: '3px 6px', background: '#fff9f2', color: '#6b4b37', fontSize: 10 }}>🔒</button> : <MatchRing percent={matchPercent} size={28} onClick={openWhyMatch} />}
+            {matchPercent == null ? <button type="button" onClick={(event) => { event.stopPropagation(); onStartQuiz?.(); }} aria-label="Build your ecosystem to see your match" style={{ border: 0, borderRadius: 99, padding: '3px 6px', background: '#fff9f2', color: '#6b4b37', fontSize: 10 }}>Match</button> : <MatchRing percent={matchPercent} size={28} onClick={openWhyMatch} />}
           </div>
           {matchPercent != null && <div style={{ fontSize: 11, color: 'var(--ayna-accent-dark)', marginTop: 4 }}>Why {matchPercent}% match →</div>}
         </div>
@@ -140,7 +140,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         <ProductImage src={resolvedImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
         {isPartner && <div style={{ ...PARTNER_BADGE_STYLE, top: 10, left: 10 }}>ayna Favorite</div>}
         <div style={{ position: 'absolute', right: 6, bottom: 6 }}>
-          {matchPercent == null ? <button type="button" onClick={(event) => { event.stopPropagation(); onStartQuiz?.(); }} style={{ border: 0, borderRadius: 99, padding: '6px 9px', background: '#fff9f2', color: '#6b4b37', fontSize: 11, fontWeight: 600 }}>🔒 Your match</button> : <MatchRing percent={matchPercent} size={44} onClick={openWhyMatch} />}
+          {matchPercent == null ? <button type="button" onClick={(event) => { event.stopPropagation(); onStartQuiz?.(); }} style={{ border: 0, borderRadius: 99, padding: '6px 9px', background: '#fff9f2', color: '#6b4b37', fontSize: 11, fontWeight: 600 }}>Your match</button> : <MatchRing percent={matchPercent} size={44} onClick={openWhyMatch} />}
         </div>
       </div>
       {matchPercent != null && <button type="button" onClick={(event) => { event.stopPropagation(); openWhyMatch?.(); }} style={{ display: 'block', border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', padding: '8px 0 0', fontSize: 12, fontWeight: 600 }}>Why {matchPercent}% match →</button>}

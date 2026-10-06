@@ -111,7 +111,7 @@ function LayoutToggle({ layout, onToggle }) {
         marginLeft: 8,
       }}
     >
-      {layout === 'grid' ? '☰' : '▦'}
+      {layout === 'grid' ? 'List' : 'Grid'}
     </div>
   );
 }

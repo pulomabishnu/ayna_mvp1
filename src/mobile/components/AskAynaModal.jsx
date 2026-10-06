@@ -70,6 +70,7 @@ export default function AskAynaModal({
   name,
   onNavigateToDiscovery,
   onViewRecommendations,
+  onRequireAuth,
 }) {
   const [messages, setMessages] = useState(chatHistory.length > 0 ? chatHistory : buildWelcome(name));
   const [input, setInput] = useState('');
@@ -94,7 +95,7 @@ export default function AskAynaModal({
 
   useEffect(() => {
     if (chatHistory.length > 0) setMessages(chatHistory);
-  }, [chatHistory.length]);
+  }, [chatHistory]);
 
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -106,6 +107,7 @@ export default function AskAynaModal({
     e.preventDefault();
     const msg = input.trim();
     if (!msg || sending) return;
+    if (!session?.access_token) { onRequireAuth?.('Ask Ayna'); return; }
     setInput('');
     setSendError('');
     const userMsg = { role: 'user', text: msg };
@@ -151,7 +153,7 @@ export default function AskAynaModal({
       onChatHistoryUpdate?.(newMessages);
     } catch (err) {
       if (err?.code === 'not_signed_in') {
-        setSendError('Sign in to ask Ayna anything — free accounts get a few AI chats per week.');
+        onRequireAuth?.('Ask Ayna');
       } else if (err?.code === 'weekly_limit_reached') {
         setSendError("You've used your free chats for this week. They reset weekly.");
       } else {
@@ -188,8 +190,9 @@ export default function AskAynaModal({
       >
         <div
           style={{
-            width: 34,
-            height: 34,
+            width: 30,
+            height: 30,
+            boxSizing: 'border-box',
             borderRadius: '50%',
             background: 'linear-gradient(135deg,#242A52,#4E3866 55%,#A2603C)',
             animation: 'ay-float 3s ease-in-out infinite',

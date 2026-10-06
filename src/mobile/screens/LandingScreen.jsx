@@ -1,6 +1,6 @@
 import OrbHero from '../components/OrbHero.jsx';
 
-export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, onAboutAyna, authUser }) {
+export default function LandingScreen({ onStartQuiz, onAlreadyHaveAccount, onAboutAyna, authUser }) {
   return (
     <div
       style={{
@@ -80,6 +80,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
           alignItems: 'center',
           justifyContent: 'center',
           padding: '0 26px',
+          transform: 'translateY(-58px)',
         }}
       >
         <OrbHero />
@@ -137,23 +138,6 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
           >
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
-        </div>
-        <div
-          onClick={onBrowse}
-          style={{
-            background: 'rgba(255,249,242,.13)',
-            border: '1.5px solid rgba(255,255,255,.34)',
-            color: '#FFF9F2',
-            padding: 17,
-            borderRadius: 99,
-            textAlign: 'center',
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 600,
-            fontSize: 'calc(15.5px * var(--ayna-text-scale, 1))',
-            cursor: 'pointer',
-          }}
-        >
-          Browse everything
         </div>
         {!authUser && <button type="button" onClick={onAlreadyHaveAccount} style={{ border: 0, background: 'transparent', color: '#FFF9F2', padding: 8, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
           I already have an account

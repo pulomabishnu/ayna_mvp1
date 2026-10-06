@@ -190,8 +190,9 @@ export async function updatePostBody(supabase, postId, body) {
   check(await supabase.from('community_posts').update({ body: String(body).trim() }).eq('id', postId));
 }
 
-export async function deletePost(supabase, postId) {
-  check(await supabase.from('community_posts').delete().eq('id', postId));
+export async function deletePost(supabase, postId, userId) {
+  const rows = check(await supabase.from('community_posts').delete().eq('id', postId).eq('author_id', userId).select('id'));
+  if (!rows?.length) throw new Error('This post could not be deleted. Please refresh and try again.');
 }
 
 // ── Comments ────────────────────────────────────────────────────────────────

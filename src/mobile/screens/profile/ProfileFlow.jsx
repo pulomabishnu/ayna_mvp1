@@ -16,6 +16,7 @@ import {
 import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportApi.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
+import './about-scrapbook.css';
 
 /**
  * Profile hub + its four sub-sections and one detail page, ported from the
@@ -1519,7 +1520,7 @@ function isAnalyticsOptedOut() {
   try { return typeof window !== 'undefined' && window.posthog?.has_opted_out_capturing?.() === true; } catch { return false; }
 }
 
-function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount }) {
+function PrivacyDataScreen({ onBack, onOpenDeleteAccount }) {
   const [analyticsOptedOut, setAnalyticsOptedOut] = useState(isAnalyticsOptedOut);
 
   const toggleAnalytics = () => {
@@ -2302,7 +2303,7 @@ function AccountRow({ title, sub, value, badge, badgeTone = 'neutral', onClick, 
 // either is real. Delete account opens a real in-app confirm flow
 // (DeleteAccountScreen) backed by account_deletion_requests, not an email
 // link.
-function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile, onOpenManageData, onOpenDeleteAccount }) {
+function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile, onOpenDeleteAccount }) {
   const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
   const [phone, setPhone] = useState({ loading: true, number: '', verified: false });
   // Real Supabase auth.updateUser() call, same first_name/full_name fields
@@ -2533,7 +2534,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <BackHeader title="Delete account" onBack={onBack} />
         <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '30px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          <div style={{ width: 56, height: 56, borderRadius: 99, background: 'var(--ayna-chip-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'calc(26px * var(--ayna-text-scale, 1))', marginBottom: 18 }}>✓</div>
+          <div style={{ width: 56, height: 56, borderRadius: 99, background: 'var(--ayna-chip-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'calc(26px * var(--ayna-text-scale, 1))', marginBottom: 18 }}>Done</div>
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', marginBottom: 10, color: 'var(--ayna-heading)' }}>Request received.</div>
           <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, maxWidth: 280 }}>
             We'll process it within a week — nothing kept after. You're being signed out now.
@@ -2985,98 +2986,85 @@ function AdvisorAvatar({ advisor }) {
 
 export function AboutAynaScreen({ onBack }) {
   return (
-    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <div style={{ background: 'linear-gradient(165deg,#4A3663,#332748 62%,#2C2340)', paddingBottom: 30 }}>
-        <PlainBackLink onBack={onBack} color="rgba(255,252,249,.72)" />
-        <div style={{ textAlign: 'center', padding: '4px 22px 0' }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.8px', textTransform: 'uppercase', color: 'rgba(255,252,249,.6)' }}>About ayna</div>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#FFF9F2', margin: '10px 0 8px' }}>
-            No <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>mystery box</span>.
+    <div className="ayna-scrapbook">
+      <header className="ayna-scrapbook__header">
+        <button type="button" onClick={onBack} aria-label="Back to ayna">← Back</button>
+        <span>the ayna scrapbook</span>
+      </header>
+      <div className="ayna-scrapbook__scroll">
+        <section className="ayna-scrapbook__hero">
+          <div className="ayna-scrapbook__tape" aria-hidden="true" />
+          <span className="ayna-scrapbook__eyebrow">A little note from us</span>
+          <h1>Made for the <em>whole you.</em></h1>
+          <p>Women's health isn't one-size-fits-all. Ayna helps you explore options with the context, evidence, and explanations you deserve.</p>
+          <div className="ayna-scrapbook__scribble" aria-hidden="true" />
+        </section>
+
+        <section className="ayna-scrapbook__team" aria-label="The people behind ayna">
+          <div className="ayna-scrapbook__polaroid">
+            <div className="ayna-scrapbook__photo"><img src="/team/ayna-founders.jpg" alt="The ayna team together outdoors" /></div>
+            <div className="ayna-scrapbook__handwriting">the people behind ayna</div>
           </div>
-          <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.78)' }}>See what shapes your shop.</div>
-        </div>
-      </div>
-
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '26px 20px 36px' }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', lineHeight: 1.2, color: 'var(--ayna-heading)' }}>Women's health isn't one-size-fits-all.</div>
-        <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
-          ayna starts with you, scans relevant products, checks available evidence, then makes the reasoning visible.
-        </div>
-
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '28px 0 7px' }}>The funnel</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginBottom: 14 }}>Broad in. Focused out.</div>
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {CONCEPT_FUNNEL.map((row) => (
-            <div key={row.label}>
-              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', marginBottom: 6 }}>{row.label}</div>
-              <div style={{ height: 9, borderRadius: 99, background: 'var(--ayna-track)', overflow: 'hidden' }}>
-                <div style={{ width: row.width, height: '100%', borderRadius: 99, background: row.fill }} />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 22 }}>
-          <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 18 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>What we look at</div>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', margin: '7px 0 13px' }}>Multiple signals, one view</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7 }}>
-              {['Published research', 'Clinical guidance', 'Clinician input', 'Community experience'].map((t) => (
-                <div key={t} style={{ background: 'var(--ayna-chip-bg)', borderRadius: 11, padding: '11px 12px', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{t}</div>
-              ))}
-            </div>
+          <div className="ayna-scrapbook__team-note">
+            <span className="ayna-scrapbook__eyebrow">Meet the team</span>
+            <h2>Ameera, Eliz &amp; Puloma</h2>
+            <p>Real people building a place to explore women's health with more clarity, care, and community.</p>
           </div>
-          <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 18 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>What shapes a match</div>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', margin: '7px 0 13px' }}>Relevant, not paid-first</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-              {['Your profile', 'Evidence', 'Clinician context', 'Community context'].map((t) => (
-                <div key={t} style={{ background: 'var(--ayna-chip-bg)', borderRadius: 11, padding: 12, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{t}</div>
-              ))}
-            </div>
-            <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: '#B4402A', marginTop: 11 }}>Sponsorship is never a match input.</div>
+        </section>
+
+        <section className="ayna-scrapbook__paper ayna-scrapbook__paper--chart">
+          <span className="ayna-scrapbook__eyebrow">01 / the little map</span>
+          <h2>From a big market to <em>your</em> shop.</h2>
+          <p>Each step narrows what you see and makes the reason visible.</p>
+          <div className="ayna-scrapbook__chart" role="img" aria-label="Illustration of four stages: open market, fits your profile, passes evidence checks, reaches your shop">
+            {CONCEPT_FUNNEL.map((row, index) => <div className="ayna-scrapbook__chart-row" key={row.label}>
+              <span className="ayna-scrapbook__chart-num">0{index + 1}</span>
+              <div className="ayna-scrapbook__chart-track"><div style={{ width: row.width, background: row.fill }} /></div>
+              <span className="ayna-scrapbook__chart-label">{row.label}</span>
+            </div>)}
           </div>
-        </div>
+          <small>Illustration of the process · bar lengths are not measured data.</small>
+        </section>
 
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '32px 0 7px' }}>The process</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginBottom: 14 }}>Four gates, in order.</div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-          {TRUST_GATES.map((gate) => {
-            const dark = gate.n === '04';
-            return (
-              <div key={gate.n} style={{ background: dark ? 'linear-gradient(150deg,#3B2E55,#5B3B57)' : 'var(--ayna-surface)', border: dark ? 'none' : '1px solid var(--ayna-border)', borderRadius: 18, padding: '15px 14px 17px' }}>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: dark ? '#F0A84B' : '#C0761F' }}>{gate.n}</div>
-                <div style={{ fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: dark ? '#FFF9F2' : 'var(--ayna-text)', margin: '5px 0' }}>{gate.title}</div>
-                <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: dark ? 'rgba(255,252,249,.82)' : 'var(--ayna-text-muted)' }}>{gate.body}</div>
-              </div>
-            );
-          })}
-        </div>
+        <section className="ayna-scrapbook__paper ayna-scrapbook__paper--lavender">
+          <span className="ayna-scrapbook__eyebrow">02 / how it works</span>
+          <h2>Four little checkpoints.</h2>
+          <div className="ayna-scrapbook__gate-grid">
+            {TRUST_GATES.map((gate) => <div className="ayna-scrapbook__gate" key={gate.n}>
+              <span>{gate.n}</span><strong>{gate.title}</strong><p>{gate.body}</p>
+            </div>)}
+          </div>
+        </section>
 
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '32px 0 7px' }}>Why ayna</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginBottom: 14 }}>Discovery with context.</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {WHY_AYNA_DIFFERENCES.map((t) => (
-            <div key={t} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 13, padding: 14, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{t}</div>
-          ))}
-        </div>
+        <section className="ayna-scrapbook__paper ayna-scrapbook__paper--match">
+          <span className="ayna-scrapbook__eyebrow">03 / what shapes a match</span>
+          <h2>More than one signal.</h2>
+          <div className="ayna-scrapbook__orbit" role="img" aria-label="Your profile, evidence, clinician context, and community context all shape a match">
+            <div className="ayna-scrapbook__orbit-center">your<br />match</div>
+            <span>Your profile</span><span>Evidence</span><span>Clinician context</span><span>Community context</span>
+          </div>
+          <div className="ayna-scrapbook__sticky">Paid placement never changes your match. <span aria-hidden="true">↗</span></div>
+        </section>
 
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '32px 0 7px' }}>Our advisors</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginBottom: 16 }}>Guided by real expertise.</div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px 12px' }}>
-          {ADVISORS.map((advisor) => (
-            <div key={advisor.name} style={{ textAlign: 'center' }}>
-              <div style={{ display: 'flex', justifyContent: 'center' }}><AdvisorAvatar advisor={advisor} /></div>
-              <div style={{ fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', marginTop: 8 }}>{advisor.name}</div>
-              <div style={{ fontSize: 'calc(11px * var(--ayna-text-scale, 1))', lineHeight: 1.4, color: 'var(--ayna-text-muted)', marginTop: 3 }}>{advisor.title}</div>
-            </div>
-          ))}
-        </div>
+        <section className="ayna-scrapbook__paper">
+          <span className="ayna-scrapbook__eyebrow">04 / why ayna</span>
+          <h2>Discovery with context.</h2>
+          <div className="ayna-scrapbook__difference-list">
+            {WHY_AYNA_DIFFERENCES.map((text, index) => <div key={text}><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>{text}</div>)}
+          </div>
+        </section>
 
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: '19px 18px', marginTop: 26 }}>
-          <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>ayna is not a doctor.</div>
-          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'var(--ayna-text-muted)', marginTop: 6 }}>Medical decisions stay with you and your clinician.</div>
-        </div>
+        <section className="ayna-scrapbook__paper ayna-scrapbook__paper--advisors">
+          <span className="ayna-scrapbook__eyebrow">People who guide us</span>
+          <h2>Real expertise, real names.</h2>
+          <div className="ayna-scrapbook__advisors">
+            {ADVISORS.map((advisor) => <div key={advisor.name}>
+              <AdvisorAvatar advisor={advisor} />
+              <strong>{advisor.name}</strong><small>{advisor.title}</small>
+            </div>)}
+          </div>
+        </section>
+        <div className="ayna-scrapbook__footer">Ayna is not a doctor. Medical decisions stay with you and your clinician.</div>
         <LegalFooter />
       </div>
     </div>

@@ -170,8 +170,8 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: start;
   padding: 7px 8px max(8px, env(safe-area-inset-bottom));
-  border-top: 1px solid var(--ayna-border);
-  background: var(--ayna-surface);
+  border-top: 1px solid rgba(78,56,102,.16);
+  background: linear-gradient(180deg,#fffaf3,#f6eee7);
   z-index: 70;
 }
 .ayna-mobile .ayna-bottom-nav button {
@@ -185,13 +185,19 @@
   border: 0;
   padding: 2px 0;
   background: transparent;
-  color: var(--ayna-text-muted);
+  color: #766b78;
   font: 600 10px 'DM Sans', sans-serif;
   cursor: pointer;
 }
-.ayna-mobile .ayna-bottom-nav button.is-active { color: var(--ayna-heading); }
+.ayna-mobile .ayna-bottom-nav button.is-active { color: #4e3866; background: rgba(240,168,75,.2); border-radius: 14px; }
 .ayna-mobile .ayna-bottom-nav svg { width: 22px; height: 22px; }
 .ayna-mobile .ayna-bottom-nav button.is-active svg { stroke-width: 2.25; }
+.ayna-mobile[data-screen='landing'] .ayna-bottom-nav,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav { background: linear-gradient(110deg,#49335f,#805044); border-top-color: rgba(255,249,242,.24); }
+.ayna-mobile[data-screen='landing'] .ayna-bottom-nav button,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button { color: rgba(255,249,242,.8); }
+.ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #ffc774; background: rgba(255,199,116,.15); }
 .ayna-profile-auth-backdrop {
   position: fixed;
   inset: 0 0 64px;

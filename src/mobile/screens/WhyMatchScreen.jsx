@@ -59,9 +59,9 @@ const GOAL_COMPONENTS = new Set(['primaryGoal', 'periodFlow', 'periodPain', 'uti
 const PROFILE_COMPONENTS = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'triedBefore']);
 
 function kindForComponent(component) {
-  if (GOAL_COMPONENTS.has(component)) return { kind: 'Your goal', glyph: '✦', bg: '#E1EFE2', fg: '#3F6B4A' };
-  if (PROFILE_COMPONENTS.has(component)) return { kind: 'Your profile', glyph: '❋', bg: '#E1EFE2', fg: '#3F6B4A' };
-  return { kind: 'Your preference', glyph: '◈', bg: '#E7EAF5', fg: '#3B4677' };
+  if (GOAL_COMPONENTS.has(component)) return { kind: 'Your goal', glyph: '1', bg: '#E1EFE2', fg: '#3F6B4A' };
+  if (PROFILE_COMPONENTS.has(component)) return { kind: 'Your profile', glyph: '2', bg: '#E1EFE2', fg: '#3F6B4A' };
+  return { kind: 'Your preference', glyph: '3', bg: '#E7EAF5', fg: '#3B4677' };
 }
 
 /**

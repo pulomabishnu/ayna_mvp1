@@ -73,6 +73,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
   const [compact, setCompact] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dockedX, setDockedX] = useState(null);
+  const [manualDock, setManualDock] = useState(false);
   const drag = useRef({ active: false, moved: false, startX: 0, startY: 0, originX: 0, originY: 0 });
 
   useEffect(() => {
@@ -102,19 +103,20 @@ export default function AskAynaChip({ onClick, viewKey }) {
     // Compute the dock target only at the instant compact turns on/off —
     // deliberately not reacting to `pos` here, so it anchors once rather
     // than following the free position around while docked.
-    setDockedX(compact ? nearestEdgeX(pos.x, CHIP_WIDTH) : null);
+    setDockedX(compact || manualDock ? nearestEdgeX(pos.x, CHIP_WIDTH) : null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [compact]);
+  }, [compact, manualDock]);
 
   useEffect(() => {
     // A new screen always starts scrolled to the top — undock/un-compact
     // immediately rather than waiting for a scroll event on it (which may
     // never come if the new screen's content is short).
-    setCompact(false);
-  }, [viewKey]);
+    if (!manualDock) setCompact(false);
+  }, [viewKey, manualDock]);
 
   const handlePointerDown = (e) => {
     e.currentTarget.setPointerCapture?.(e.pointerId);
+    if (manualDock) return;
     const visualX = dockedX !== null ? dockedX : pos.x;
     setDragging(true);
     drag.current = { active: true, moved: false, startX: e.clientX, startY: e.clientY, originX: visualX, originY: pos.y };
@@ -150,10 +152,12 @@ export default function AskAynaChip({ onClick, viewKey }) {
       drag.current.moved = false;
       return;
     }
+    if (manualDock) { setManualDock(false); setCompact(false); setDockedX(null); return; }
     onClick?.();
   };
 
   const renderX = dockedX !== null ? dockedX : pos.x;
+  const isCompact = compact || manualDock;
 
   return (
     <div
@@ -168,10 +172,10 @@ export default function AskAynaChip({ onClick, viewKey }) {
         top: pos.y,
         display: 'flex',
         alignItems: 'center',
-        gap: compact ? 0 : 8,
-        padding: compact ? '9px' : '9px 14px 9px 9px',
+        gap: isCompact ? 0 : 8,
+        padding: isCompact ? '8px' : '7px 10px',
         background: '#1C1917',
-        borderRadius: 999,
+        borderRadius: manualDock ? 12 : 999,
         boxShadow: '0 12px 26px -10px rgba(0,0,0,.4)',
         cursor: 'grab',
         zIndex: 45,
@@ -182,8 +186,9 @@ export default function AskAynaChip({ onClick, viewKey }) {
     >
       <div
         style={{
-          width: 24,
-          height: 24,
+          width: 26,
+          height: 26,
+          boxSizing: 'border-box',
           borderRadius: '50%',
           background: 'linear-gradient(135deg,#242A52,#4E3866 55%,#A2603C)',
           animation: 'ay-float 3s ease-in-out infinite',
@@ -197,13 +202,15 @@ export default function AskAynaChip({ onClick, viewKey }) {
           fontWeight: 600,
           whiteSpace: 'nowrap',
           overflow: 'hidden',
-          maxWidth: compact ? 0 : 100,
-          opacity: compact ? 0 : 1,
+          maxWidth: isCompact ? 0 : 100,
+          opacity: isCompact ? 0 : 1,
           transition: 'max-width .22s ease, opacity .15s ease',
         }}
       >
         Ask Ayna
       </span>
+      {!isCompact && <button type="button" aria-label="Move Ask Ayna to screen edge" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); setManualDock(true); setCompact(true); }} style={{ border: 0, background: 'transparent', color: '#fff', padding: '0 1px', fontSize: 18, lineHeight: 1, cursor: 'pointer' }}>›</button>}
+      {manualDock && <span aria-hidden="true" style={{ color: '#fff', fontSize: 17, lineHeight: 1 }}>‹</span>}
     </div>
   );
 }
