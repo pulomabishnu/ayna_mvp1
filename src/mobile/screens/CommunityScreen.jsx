@@ -366,9 +366,9 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
     return <div className="am-empty-state"><div className="am-empty-art" aria-hidden="true"><span /><span /><span /></div><h2>{copy[0]}</h2><p>{copy[1]}</p><button type="button" onClick={() => copy[3] ? openCompose(copy[3]) : setTab('for-you')}>{copy[2]}</button></div>;
   };
 
-  if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onBack={onGoEco} onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><p className="am-empty">Community is unavailable right now.</p></div>;
+  if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><p className="am-empty">Community is unavailable right now.</p></div>;
   return <div className="am-screen">
-    <MobileHeader activeTab="community" initial={headerInitial} onBack={onGoEco} onGoBrowse={onGoBrowse} onGoEco={onGoEco} onGoCommunity={() => {}} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
+    <MobileHeader activeTab="community" initial={headerInitial} onGoBrowse={onGoBrowse} onGoEco={onGoEco} onGoCommunity={() => {}} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
     <div className="am-scroll">
       <div className="am-top"><div className="am-title"><small>AYNA TOGETHER</small><h1>{page ? (page.type === 'notifications' ? 'Notifications' : page.type === 'playlist' ? 'Playlist' : page.type === 'profile' ? 'Profile' : 'Conversation') : 'Community'}</h1></div><div className="am-top-actions"><button type="button" className="am-icon-button" onClick={() => authUser ? (profile ? openProfile(profile.username) : setNotice('Create your community profile below.')) : requireAccount('your Community profile')} aria-label="Community profile"><CommunityAvatar name={profile?.display_name || 'You'} path={profile?.avatar_url} /></button><button type="button" className="am-icon-button" onClick={openNotifications} aria-label="Notifications"><CommunityIcon name="bell" /></button></div></div>
       {error && <p className="am-error" role="alert">{error}</p>}{notice && <p className="am-notice" role="status">{notice}</p>}
