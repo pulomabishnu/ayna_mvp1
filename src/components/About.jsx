@@ -65,7 +65,8 @@ const ADVISORS = [
   { name: 'Pamela Nasr', title: 'Product Lead, Benchling', photo: '/advisors/pamela-nasr.png', linkedin: 'https://www.linkedin.com/in/pamelatnasr/' },
   { name: 'Nishtha Kaushik', title: 'Advisor', photo: '/advisors/nishtha-kaushik.jpg', linkedin: 'https://www.linkedin.com/in/nkaushik29/' },
   { name: 'Navneet Kaur', title: 'Advisor', photo: '/advisors/navneet-kaur.jpg', linkedin: 'https://www.linkedin.com/in/navneet-kaur-80109b227' },
-  { name: 'Dr. Anuja Vyas', title: 'Board-Certified OB/GYN, Advisor', photo: '/advisors/anuja-vyas.jpg' },
+  // No LinkedIn found; links her Houston Methodist physician profile instead.
+  { name: 'Dr. Anuja Vyas', title: 'Board-Certified OB/GYN, Advisor', photo: '/advisors/anuja-vyas.jpg', linkedin: 'https://www.houstonmethodist.org/doctor/anuja-vyas/', linkLabel: 'Profile' },
 ];
 
 function initials(name) {
@@ -212,7 +213,7 @@ export default function About({ onExplore, onStart }) {
                 <div className="ab-advisor__name">{advisor.name}</div>
                 <div className="ab-advisor__title">{advisor.title}</div>
                 {advisor.linkedin && (
-                  <a className="ab-founder__link" href={advisor.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+                  <a className="ab-founder__link" href={advisor.linkedin} target="_blank" rel="noopener noreferrer">{advisor.linkLabel || 'LinkedIn'} ↗</a>
                 )}
               </div>
             ))}
