@@ -81,7 +81,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
   const [compact, setCompact] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dockedX, setDockedX] = useState(null);
-  const [manualDock, setManualDock] = useState(false);
+  const [manualDock, setManualDock] = useState(viewKey === 'community');
   const drag = useRef({ active: false, moved: false, startX: 0, startY: 0, originX: 0, originY: 0 });
 
   useEffect(() => {
@@ -120,8 +120,9 @@ export default function AskAynaChip({ onClick, viewKey }) {
     // A new screen always starts scrolled to the top — undock/un-compact
     // immediately rather than waiting for a scroll event on it (which may
     // never come if the new screen's content is short).
-    if (!manualDock) setCompact(false);
-  }, [viewKey, manualDock]);
+    setManualDock(viewKey === 'community');
+    setCompact(false);
+  }, [viewKey]);
 
   const handlePointerDown = (e) => {
     e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -167,6 +168,8 @@ export default function AskAynaChip({ onClick, viewKey }) {
 
   const renderX = dockedX !== null ? dockedX : pos.x;
   const isCompact = compact || manualDock;
+  const bounds = screenBounds();
+  const dockLeft = pos.x + CHIP_WIDTH / 2 < (bounds.left + bounds.right) / 2;
 
   return (
     <div
@@ -218,8 +221,8 @@ export default function AskAynaChip({ onClick, viewKey }) {
       >
         Ask Ayna
       </span>
-      {!isCompact && <button type="button" aria-label="Move Ask Ayna to screen edge" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); setManualDock(true); setCompact(true); }} style={{ border: 0, background: 'transparent', color: '#fff', padding: '0 1px', fontSize: 18, lineHeight: 1, cursor: 'pointer' }}>›</button>}
-      {manualDock && <span aria-hidden="true" style={{ color: '#fff', fontSize: 17, lineHeight: 1 }}>‹</span>}
+      {!isCompact && <button type="button" aria-label="Move Ask Ayna to screen edge" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); setManualDock(true); setCompact(true); }} style={{ border: 0, background: 'transparent', color: '#fff', padding: '0 1px', fontSize: 18, lineHeight: 1, cursor: 'pointer' }}>{dockLeft ? '‹' : '›'}</button>}
+      {manualDock && <span aria-hidden="true" style={{ color: '#fff', fontSize: 17, lineHeight: 1 }}>{dockLeft ? '›' : '‹'}</span>}
     </div>
   );
 }
