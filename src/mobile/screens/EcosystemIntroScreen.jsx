@@ -54,7 +54,6 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
             fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
             boxShadow: '0 18px 34px -16px rgba(255,199,116,.8)',
-            animation: 'ay-bob 2.5s ease-in-out infinite',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

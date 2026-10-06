@@ -102,7 +102,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
           padding: '0 24px max(28px, env(safe-area-inset-bottom))',
           display: 'flex',
           flexDirection: 'column',
-          gap: 8,
+          gap: 12,
         }}
       >
         <div
@@ -122,7 +122,6 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
             alignItems: 'center',
             justifyContent: 'center',
             gap: 7,
-            animation: 'ay-bob 2.5s ease-in-out infinite',
           }}
         >
           Build my ecosystem
