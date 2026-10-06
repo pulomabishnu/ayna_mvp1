@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { ASK_AYNA_CHIP_POSITION_KEY as POSITION_KEY } from '../utils/askAynaChipPosition.js';
 
 const CHIP_WIDTH = 148; // includes the label and manual dock control
-const CHIP_COMPACT_WIDTH = 60; // includes the arrow on the manually docked tab — a
-// separate value from CHIP_WIDTH so clamping/docking don't reserve room for
-// the "Ask Ayna" label when it isn't actually showing.
+const CHIP_COMPACT_WIDTH = 42;
+const DOCK_HANDLE_WIDTH = 20;
 const CHIP_HEIGHT = 42;
 const DRAG_THRESHOLD = 6; // px of movement before a press counts as a drag, not a tap
 const EDGE_MARGIN = 8;
@@ -45,7 +44,7 @@ function clamp(pos, width) {
 function nearestEdgeX(x, width) {
   const bounds = screenBounds();
   const center = x + width / 2;
-  return center < (bounds.left + bounds.right) / 2 ? bounds.left + EDGE_MARGIN : bounds.right - CHIP_COMPACT_WIDTH - EDGE_MARGIN;
+  return center < (bounds.left + bounds.right) / 2 ? bounds.left - (CHIP_COMPACT_WIDTH - DOCK_HANDLE_WIDTH) : bounds.right - DOCK_HANDLE_WIDTH;
 }
 
 /**
@@ -126,7 +125,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
 
   const handlePointerDown = (e) => {
     e.currentTarget.setPointerCapture?.(e.pointerId);
-    if (manualDock) return;
+    if (compact || manualDock) return;
     const visualX = dockedX !== null ? dockedX : pos.x;
     setDragging(true);
     drag.current = { active: true, moved: false, startX: e.clientX, startY: e.clientY, originX: visualX, originY: pos.y };
@@ -162,7 +161,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
       drag.current.moved = false;
       return;
     }
-    if (manualDock) { setManualDock(false); setCompact(false); setDockedX(null); return; }
+    if (compact || manualDock) { setManualDock(false); setCompact(false); setDockedX(null); return; }
     onClick?.();
   };
 
@@ -175,7 +174,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
     <div
       role="button"
       tabIndex={0}
-      aria-label={manualDock ? 'Expand Ask Ayna' : 'Open Ask Ayna'}
+      aria-label={isCompact ? 'Slide Ask Ayna back onto the screen' : 'Open Ask Ayna'}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
@@ -189,9 +188,13 @@ export default function AskAynaChip({ onClick, viewKey }) {
         display: 'flex',
         alignItems: 'center',
         gap: isCompact ? 0 : 8,
-        padding: isCompact ? '8px' : '7px 10px',
+        width: isCompact ? CHIP_COMPACT_WIDTH : undefined,
+        height: isCompact ? CHIP_HEIGHT : undefined,
+        boxSizing: 'border-box',
+        justifyContent: isCompact ? (dockLeft ? 'flex-end' : 'flex-start') : undefined,
+        padding: isCompact ? 0 : '7px 10px',
         background: '#1C1917',
-        borderRadius: manualDock ? 12 : 999,
+        borderRadius: isCompact ? (dockLeft ? '0 12px 12px 0' : '12px 0 0 12px') : 999,
         boxShadow: '0 12px 26px -10px rgba(0,0,0,.4)',
         cursor: 'grab',
         zIndex: 45,
@@ -200,7 +203,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
         transition: dragging ? 'none' : 'left .28s cubic-bezier(.4,0,.2,1), padding .22s ease, gap .22s ease',
       }}
     >
-      <div
+      {!isCompact && <div
         style={{
           width: 26,
           height: 26,
@@ -210,8 +213,8 @@ export default function AskAynaChip({ onClick, viewKey }) {
           animation: 'ay-float 3s ease-in-out infinite',
           flex: 'none',
         }}
-      />
-      <span
+      />}
+      {!isCompact && <span
         style={{
           color: '#FFFFFF',
           fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
@@ -224,9 +227,9 @@ export default function AskAynaChip({ onClick, viewKey }) {
         }}
       >
         Ask Ayna
-      </span>
+      </span>}
       {!isCompact && <button type="button" aria-label="Move Ask Ayna to screen edge" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); setManualDock(true); setCompact(true); }} style={{ border: 0, background: 'transparent', color: '#fff', padding: '0 1px', fontSize: 18, lineHeight: 1, cursor: 'pointer' }}>{dockLeft ? '‹' : '›'}</button>}
-      {manualDock && <span aria-hidden="true" style={{ color: '#fff', fontSize: 17, lineHeight: 1 }}>{dockLeft ? '›' : '‹'}</span>}
+      {isCompact && <span aria-hidden="true" style={{ width: DOCK_HANDLE_WIDTH, textAlign: 'center', color: '#fff', fontSize: 17, lineHeight: 1 }}>{dockLeft ? '›' : '‹'}</span>}
     </div>
   );
 }

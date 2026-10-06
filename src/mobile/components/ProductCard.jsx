@@ -40,7 +40,7 @@ function shortPrice(price) {
  * both read the same real product fields, nothing is fetched twice.
  */
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz }) {
-  const { name, category, price, priceDisplay, userRating, image, imageUrl, images } = product || {};
+  const { name, brand, category, price, priceDisplay, userRating, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   const resolvedPrice = shortPrice(price || priceDisplay);
   const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
@@ -80,7 +80,6 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           <div style={{ position: 'absolute', right: 2, bottom: 2 }}>
             {matchPercent == null ? null : <MatchRing percent={matchPercent} size={28} onClick={openWhyMatch} />}
           </div>
-          {matchPercent != null && <div style={{ fontSize: 11, color: 'var(--ayna-accent-dark)', marginTop: 4 }}>Why {matchPercent}% match →</div>}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
@@ -93,7 +92,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
             {isPartner && (
-              <div style={{ ...PARTNER_BADGE_STYLE, position: 'static', padding: '3px 7px' }}>ayna Favorite</div>
+              <div style={{ ...PARTNER_BADGE_STYLE, position: 'static', padding: '3px 7px' }}>ayna partner</div>
             )}
             {userRating != null && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -122,6 +121,11 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         border: '1px solid var(--ayna-border)',
         borderRadius: 18,
         padding: 10,
+        display: 'flex',
+        flexDirection: 'column',
+        minWidth: 0,
+        height: '100%',
+        boxSizing: 'border-box',
         cursor: 'pointer',
         boxShadow: '0 1px 2px rgba(41,37,36,.04)',
         transition: 'transform .16s cubic-bezier(.2,.8,.2,1), box-shadow .16s ease',
@@ -138,28 +142,27 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         }}
       >
         <ProductImage src={resolvedImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
-        {isPartner && <div style={{ ...PARTNER_BADGE_STYLE, top: 10, left: 10 }}>ayna Favorite</div>}
-        <div style={{ position: 'absolute', right: 6, bottom: 6 }}>
-          {matchPercent == null ? null : <MatchRing percent={matchPercent} size={44} onClick={openWhyMatch} />}
-        </div>
+        {isPartner && <div style={{ ...PARTNER_BADGE_STYLE, top: 8, left: 8 }}>ayna partner</div>}
       </div>
-      {matchPercent != null && <button type="button" onClick={(event) => { event.stopPropagation(); openWhyMatch?.(); }} style={{ display: 'block', border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', padding: '8px 0 0', fontSize: 12, fontWeight: 600 }}>Why {matchPercent}% match →</button>}
-      {matchPercent == null && <button type="button" onClick={(event) => { event.stopPropagation(); onStartQuiz?.(); }} style={{ display: 'block', border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', padding: '8px 0 0', fontSize: 12, fontWeight: 600, textAlign: 'left' }}>See your personal match →</button>}
-
+      <div style={{ minHeight: 20, marginTop: 9, fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{[brand, labelForCategory(category)].filter(Boolean).join(' · ')}</div>
       <div
         style={{
           fontFamily: "'DM Sans',sans-serif",
           fontWeight: 600,
           fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
-          lineHeight: 1.25,
-          marginTop: 9,
-          textWrap: 'pretty',
+          lineHeight: 1.3,
+          minHeight: '2.6em',
+          display: '-webkit-box',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: 2,
+          overflow: 'hidden',
+          color: 'var(--ayna-heading)',
         }}
       >
         {name}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 6 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 'auto', paddingTop: 9 }}>
         {resolvedPrice && (
           <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>{resolvedPrice}</div>
         )}
@@ -172,6 +175,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           </div>
         )}
       </div>
+      <button type="button" onClick={(event) => { event.stopPropagation(); if (matchPercent != null) openWhyMatch?.(); else onStartQuiz?.(); }} style={{ display: 'block', width: '100%', border: 0, borderTop: '1px solid var(--ayna-border)', background: 'transparent', color: 'var(--ayna-accent-dark)', padding: '9px 0 1px', marginTop: 9, fontSize: 'calc(11px * var(--ayna-text-scale, 1))', fontWeight: 600, textAlign: 'left', cursor: 'pointer' }}>
+        {matchPercent != null ? `${matchPercent}% match · See why` : 'See your personal match'}
+      </button>
     </div>
   );
 }
