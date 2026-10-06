@@ -590,6 +590,7 @@ export default function ProductDetailScreen({
               <span aria-hidden="true">→</span>
             </button>
           )}
+          {matchPercent == null && <button type="button" onClick={onStartQuiz} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>Build your ecosystem to see your personal match →</button>}
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.1, margin: '9px 0 0', color: 'var(--ayna-heading)' }}>{name}</div>
           {price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
           {buyUrl && <p style={{ margin: '10px 0 0', color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>Buying opens the seller’s site. The seller handles payment, shipping, and returns; check the final price and delivery there.</p>}
@@ -656,6 +657,10 @@ export default function ProductDetailScreen({
                   <>
                     <div style={{ fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: sourceCountTotal > 0 ? 12 : 0, ...(!summaryExpanded && String(summary).length > 320 ? { display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' } : {}) }}>{summary}</div>
                     {String(summary).length > 320 && <button type="button" onClick={() => setSummaryExpanded((value) => !value)} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', padding: '8px 0 0', fontWeight: 600 }}>{summaryExpanded ? 'Show less' : 'Read full summary'}</button>}
+                    <details style={{ marginTop: 12, borderTop: '1px solid var(--ayna-border)', paddingTop: 10, color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>
+                      <summary style={{ cursor: 'pointer', color: 'var(--ayna-accent-dark)', fontWeight: 600 }}>How to read this summary</summary>
+                      <p style={{ margin: '8px 0 0' }}>This is a short overview of the product information available to Ayna. Linked sources appear below when available. Check the original sources and product label for details; a personal match is about fit with your profile, not a health or safety rating.</p>
+                    </details>
                   </>
                 ) : (
                   <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>No summary yet.</div>

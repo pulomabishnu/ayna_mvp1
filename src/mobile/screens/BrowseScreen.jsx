@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
-import CtaBanner from '../components/CtaBanner.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
@@ -444,9 +443,13 @@ export default function BrowseScreen({
       {/* Once the ecosystem exists, Browse stays pure browsing — the
           "update your health" prompt lives on the Ecosystem screen instead,
           after its Reads section. */}
-      {!hasEcosystem && ctaVariant !== 'none' && (ctaVariant === 'gradient' || ctaVariant === 'inline') ? (
-        <CtaBanner variant={ctaVariant} onClick={onStartQuiz} />
-      ) : null}
+      {!hasEcosystem && ctaVariant !== 'none' && (
+        <section style={{ margin: '0 20px 18px', padding: '16px 18px', borderRadius: 20, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)' }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 21, color: 'var(--ayna-heading)' }}>Find what fits you</div>
+          <p style={{ margin: '7px 0 13px', color: 'var(--ayna-text-muted)', fontSize: 12.5, lineHeight: 1.5 }}>Browse freely. Build your ecosystem when you want personal match percentages, reasons behind recommendations, and a place to save your picks.</p>
+          <button type="button" onClick={onStartQuiz} style={{ border: 0, borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', padding: '10px 15px', fontSize: 12.5, fontWeight: 700, cursor: 'pointer' }}>See my matches</button>
+        </section>
+      )}
 
       {mode === 'products' ? (
         <>
