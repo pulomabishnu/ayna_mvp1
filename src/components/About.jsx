@@ -17,9 +17,9 @@ const TEAM_PHOTO = '/about/team.jpg';
 const FOUNDERS = [
   // linkedin: paste the profile URL to show the "LinkedIn ↗" link.
   // position: which part of the photo stays in frame in the 4:3 crop.
-  { name: 'Puloma Bishnu', role: 'Co-founder', photo: '/about/puloma.jpg', position: '50% 22%', linkedin: '' },
-  { name: 'Eliz Celik', role: 'Co-founder', photo: '/about/eliz.jpg', position: '50% 38%', linkedin: '' },
-  { name: 'Ameera Omar', role: 'Co-founder', photo: '/about/ameera.jpg', position: '50% 50%', linkedin: '' },
+  { name: 'Puloma Bishnu', role: 'CEO', photo: '/about/puloma.jpg', position: '50% 22%', linkedin: '' },
+  { name: 'Eliz Celik', role: 'COO', photo: '/about/eliz.jpg', position: '50% 38%', linkedin: '' },
+  { name: 'Ameera Omar', role: 'Interim CTO and CMO', photo: '/about/ameera.jpg', position: '50% 50%', linkedin: '' },
 ];
 
 const HELPS = [
