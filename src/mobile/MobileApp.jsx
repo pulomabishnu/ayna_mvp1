@@ -153,9 +153,9 @@ function seedEcosystemFromAnswers(quizAnswers) {
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts, lastQuizAnswers, userName } = session;
-  // A returning user (persisted hasEcosystem) lands back in their ecosystem
-  // instead of the landing page every time the app reloads.
-  const [screen, setScreen] = useState(() => (session.hasEcosystem ? 'eco' : 'landing'));
+  // The welcome screen is the signed-out entry point. Returning accounts
+  // move into their ecosystem once auth finishes restoring their session.
+  const [screen, setScreen] = useState('landing');
   // Product/article detail render as an overlay ON TOP of whichever base
   // screen (Browse, My Ecosystem, Saved) is currently mounted, instead of
   // replacing it — `screen` never changes when one opens. That's what makes
@@ -185,7 +185,11 @@ export default function MobileApp() {
     if (screen === 'eco' && dx < 0) setScreen('browse');
     if (screen === 'browse' && dx > 0 && hasEcosystem) setScreen('eco');
   };
-  const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+  const { user: authUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+  useEffect(() => {
+    if (authLoading || !authUser || screen !== 'landing') return;
+    Promise.resolve().then(() => setScreen(hasEcosystem ? 'eco' : 'ecointro'));
+  }, [authLoading, authUser, hasEcosystem, screen]);
   const requestAuth = (feature, resume = null) => {
     authResumeRef.current = resume || (() => setScreen(screen));
     setAuthPrompt({ feature });
@@ -524,11 +528,11 @@ export default function MobileApp() {
     hasEcosystem,
   };
 
-  const showTabBar = !['quiz', 'building', 'reveal', 'signin', 'checkin'].includes(screen) && (!overlay || ['profile', 'profile-auth'].includes(overlay.type));
+  const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin'].includes(screen) && (!overlay || ['profile', 'profile-auth'].includes(overlay.type));
   const activeTab = ['profile', 'profile-auth'].includes(overlay?.type) ? 'profile'
     : screen === 'browse' ? 'browse'
       : screen === 'community' ? 'community'
-        : ['landing', 'eco', 'ecointro'].includes(screen) ? 'home' : null;
+        : ['eco', 'ecointro'].includes(screen) ? 'home' : null;
 
   return (
     <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
@@ -664,7 +668,7 @@ export default function MobileApp() {
           onOpenMonthlyCheckin={() => setScreen('checkin')}
         />
       )}
-      {!askAynaOpen && !overlay && !['landing', 'signin', 'quiz', 'building', 'reveal'].includes(screen) && (
+      {!askAynaOpen && !overlay && !['landing', 'ecointro', 'signin', 'quiz', 'building', 'reveal'].includes(screen) && (
         <AskAynaChip
           onClick={() => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
           viewKey={overlay ? `${overlay.type}:${overlay.item?.id || ''}` : screen}

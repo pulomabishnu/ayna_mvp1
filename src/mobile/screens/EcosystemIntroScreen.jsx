@@ -1,7 +1,7 @@
 import MobileHeader from '../components/MobileHeader.jsx';
 import OrbHero from '../components/OrbHero.jsx';
 
-export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrowse, onGoCommunity, onBack, headerInitial = 'A', onOpenProfile }) {
+export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile }) {
   return (
     <div
       style={{
@@ -15,7 +15,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrows
         animation: 'ay-page .25s ease-out',
       }}
     >
-      <MobileHeader variant="dark" activeTab="eco" initial={headerInitial} onBack={onBack} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
+      <MobileHeader variant="dark" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
 
       <div
         style={{
