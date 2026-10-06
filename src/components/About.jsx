@@ -59,7 +59,7 @@ const HELPS = [
 
 const ADVISORS = [
   { name: 'Dr. David Orbach', title: 'BME, MD, Startup Advisor', photo: '/advisors/david-orbach.png', linkedin: 'https://www.linkedin.com/in/davidorbach/' },
-  { name: 'Gwyn Blanton', title: 'Former Director of Ethics & Compliance, Deloitte', photo: '/advisors/gwyn-blanton.png' },
+  { name: 'Gwyn Blanton', title: 'Former Director of Ethics & Compliance, Deloitte', photo: '/advisors/gwyn-blanton.png', linkedin: 'https://www.linkedin.com/in/gwyn-blanton-8910638/' },
   { name: 'Albert Charles', title: 'Co-Founder, Gorges Ventures', photo: '/advisors/albert-charles.png', linkedin: 'https://www.linkedin.com/in/albert-charles-6800a41a1/' },
   { name: 'Erika Demonsant', title: 'Healthcare Consultant, Huron', photo: '/advisors/erika-demonsant.png', linkedin: 'https://www.linkedin.com/in/erikalacey/' },
   { name: 'Pamela Nasr', title: 'Product Lead, Benchling', photo: '/advisors/pamela-nasr.png', linkedin: 'https://www.linkedin.com/in/pamelatnasr/' },
