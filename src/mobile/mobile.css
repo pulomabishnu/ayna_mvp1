@@ -223,3 +223,15 @@
 .ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 15px 'DM Sans', sans-serif; cursor: pointer; }
 .ayna-profile-auth-primary { border: 0; background: #ffc774; color: #231a12; }
 .ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #242a52; background: transparent; color: #242a52; }
+
+/* Keep the browser preview at a readable phone width on a large display. */
+@media (min-width: 700px) {
+  .ayna-mobile[data-preview="true"] {
+    position: relative;
+    width: min(100%, 440px);
+    margin-inline: auto;
+    box-shadow: 0 0 0 1px rgba(36,42,82,.08), 0 20px 70px rgba(36,42,82,.14);
+    --ayna-orb-scale: .86;
+  }
+  .ayna-mobile[data-preview="true"] .am-sheet-backdrop { position: absolute; }
+}

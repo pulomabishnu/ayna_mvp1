@@ -515,7 +515,7 @@ export default function MobileApp() {
         : ['landing', 'eco', 'ecointro'].includes(screen) ? 'home' : null;
 
   return (
-    <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} style={{ '--ayna-text-scale': textScale }}>
+    <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }}>
       <Screen
         key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen}
         {...nav}

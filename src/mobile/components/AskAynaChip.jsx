@@ -9,13 +9,18 @@ const CHIP_HEIGHT = 42;
 const DRAG_THRESHOLD = 6; // px of movement before a press counts as a drag, not a tap
 const EDGE_MARGIN = 8;
 
+function screenBounds() {
+  const root = document.querySelector('.ayna-mobile');
+  const rect = root?.getBoundingClientRect();
+  return rect && rect.width ? { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom } : { left: 0, right: window.innerWidth, top: 0, bottom: window.innerHeight };
+}
+
 function defaultPosition() {
   // `|| 390`/`|| 812` rather than just checking `typeof window` — guards
   // against innerWidth/innerHeight themselves reading 0 at a very early
   // render (before layout has run), not just `window` being undefined.
-  const vw = (typeof window !== 'undefined' && window.innerWidth) || 390;
-  const vh = (typeof window !== 'undefined' && window.innerHeight) || 812;
-  return { x: vw - CHIP_WIDTH - 20, y: vh - CHIP_HEIGHT - 96 };
+  const bounds = typeof document !== 'undefined' ? screenBounds() : { right: 390, bottom: 812 };
+  return { x: bounds.right - CHIP_WIDTH - 20, y: bounds.bottom - CHIP_HEIGHT - 96 };
 }
 
 function loadPosition() {
@@ -30,18 +35,17 @@ function loadPosition() {
 }
 
 function clamp(pos, width) {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  const bounds = screenBounds();
   return {
-    x: Math.min(Math.max(pos.x, EDGE_MARGIN), vw - width - EDGE_MARGIN),
-    y: Math.min(Math.max(pos.y, EDGE_MARGIN), vh - CHIP_HEIGHT - EDGE_MARGIN),
+    x: Math.min(Math.max(pos.x, bounds.left + EDGE_MARGIN), bounds.right - width - EDGE_MARGIN),
+    y: Math.min(Math.max(pos.y, bounds.top + EDGE_MARGIN), bounds.bottom - CHIP_HEIGHT - EDGE_MARGIN),
   };
 }
 
 function nearestEdgeX(x, width) {
-  const vw = window.innerWidth;
+  const bounds = screenBounds();
   const center = x + width / 2;
-  return center < vw / 2 ? EDGE_MARGIN : vw - CHIP_COMPACT_WIDTH - EDGE_MARGIN;
+  return center < (bounds.left + bounds.right) / 2 ? bounds.left + EDGE_MARGIN : bounds.right - CHIP_COMPACT_WIDTH - EDGE_MARGIN;
 }
 
 /**
@@ -77,6 +81,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
   const drag = useRef({ active: false, moved: false, startX: 0, startY: 0, originX: 0, originY: 0 });
 
   useEffect(() => {
+    setPos((p) => clamp(p, CHIP_WIDTH));
     const onResize = () => {
       setPos((p) => clamp(p, compact ? CHIP_COMPACT_WIDTH : CHIP_WIDTH));
       setDockedX((d) => (d === null ? d : nearestEdgeX(pos.x, CHIP_WIDTH)));
