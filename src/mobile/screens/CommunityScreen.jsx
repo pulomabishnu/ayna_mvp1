@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { getGuestClient, getGuestId, ensureGuestSession } from '../../utils/community/guestClient.js';
@@ -314,11 +314,17 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
     } catch (e) { notifyError(e); } finally { setBusy(false); }
   };
 
-  const runSearch = useCallback(async (value) => {
-    setSearch(value); setSearchResults(null);
-    if (value.trim().length < 2 || !supabase) return;
-    try { setSearchResults(await community.searchCommunity(supabase, value)); } catch (e) { notifyError(e); }
-  }, [supabase]);
+  useEffect(() => {
+    if (search.trim().length < 2 || !supabase) return;
+    let active = true;
+    const timer = window.setTimeout(async () => {
+      try {
+        const results = await community.searchCommunity(supabase, search);
+        if (active) setSearchResults(results);
+      } catch (e) { if (active) notifyError(e); }
+    }, 250);
+    return () => { active = false; window.clearTimeout(timer); };
+  }, [search, supabase]);
 
   const renderPost = (post) => {
     const authorName = post.is_anonymous || !post.author_id ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
@@ -375,7 +381,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
         {page.type === 'profile' && details && !authUser && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={() => requireAccount('following people')}>Follow</button><button type="button" className="am-secondary" onClick={() => requireAccount('friends')}>Add friend</button></div>}
       </> : <>
         {authUser && !profile && <div className="am-card am-profile-setup"><strong>Make your community profile</strong><p>Your health profile stays private.</p><input value={profileName} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" /><input value={profileHandle} onChange={(e) => setProfileHandle(e.target.value)} placeholder="Username" /><button type="button" disabled={busy} onClick={saveProfile}>Save profile</button></div>}
-        <div className="am-search"><CommunityIcon name="search" size={19} /><input value={search} onChange={(e) => runSearch(e.target.value)} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</div>
+        <div className="am-search"><CommunityIcon name="search" size={19} /><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</div>
         {search ? <div className="am-search-results">{search.trim().length < 2 ? <p className="am-search-message">Type at least two letters to search Community.</p> : !searchResults ? <p className="am-search-message">Searching Community…</p> : <>
           {searchResults.people.length > 0 && <section><h2>People</h2>{searchResults.people.map((p) => <button type="button" className="am-list-row" key={p.user_id} onClick={() => openProfile(p.username)}><CommunityAvatar name={p.display_name} path={p.avatar_url} /><span>{p.display_name}<small>@{p.username}</small></span></button>)}</section>}
           {searchResults.posts.length > 0 && <section><h2>Posts</h2>{searchResults.posts.map(renderPost)}</section>}
@@ -383,7 +389,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
           {!searchResults.people.length && !searchResults.posts.length && !searchResults.playlists.length && <div className="am-empty-state am-search-empty"><h2>No results yet</h2><p>Try a person’s name, product topic, or playlist title.</p></div>}
         </>}</div> : <>
           <div className="am-tabs" role="tablist" aria-label="Community sections">{TABS.map(([key, label]) => <button type="button" role="tab" aria-selected={tab === key} key={key} className={tab === key ? 'is-active' : ''} onClick={() => key === 'following' && !authUser ? requireAccount('your following feed') : setTab(key)}>{label}</button>)}</div>
-          {tab === 'for-you' && <button type="button" className="am-share-prompt" onClick={() => openCompose('post')}><CommunityAvatar name={profile?.display_name || 'You'} path={profile?.avatar_url} /><span>Share with the community</span><span className="am-share-plus"><CommunityIcon name="plus" size={18} /></span></button>}
+          {tab === 'for-you' && posts.length > 0 && <button type="button" className="am-share-prompt" onClick={() => openCompose('post')}><CommunityAvatar name={profile?.display_name || 'You'} path={profile?.avatar_url} /><span>Share with the community</span><span className="am-share-plus"><CommunityIcon name="plus" size={18} /></span></button>}
           {tab === 'playlists' ? <>{playlists.length > 0 && <div className="am-list-heading"><h2>Made by the community</h2><button type="button" onClick={() => openCompose('playlist')}>Create playlist</button></div>}<div className="am-playlist-grid">{playlists.map((p) => <button type="button" className="am-playlist" key={p.id} onClick={() => openPlaylist(p)}><span className="am-cover">{p.cover_url ? <img src={publicMediaUrl(p.cover_url)} alt="" loading="lazy" /> : <span>ayna</span>}</span><span className="am-playlist-copy"><strong>{p.title}</strong><small>{p.item_count || 0} products</small><small>by {p.owner_display_name || 'ayna community'}</small></span></button>)}</div>{!loading && playlists.length === 0 && renderEmpty()}</> : <>{posts.map(renderPost)}{!loading && posts.length === 0 && renderEmpty()}{cursor && <button type="button" className="am-more" disabled={loading} onClick={loadMore}>Show more posts</button>}</>}
           {loading && <p className="am-empty">Loading…</p>}
         </>}
@@ -397,7 +403,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
       {compose === 'playlist' ? <><label className="am-field-label" htmlFor="am-playlist-name">Playlist name</label><input id="am-playlist-name" value={playlistTitle} onChange={(e) => setPlaylistTitle(e.target.value)} placeholder="Give your collection a name" /><PlaylistCoverPicker title={playlistTitle} mode={coverMode} onMode={setCoverMode} color={coverColor} onColor={setCoverColor} text={coverText} onText={setCoverText} photo={coverPhoto} onPhoto={setCoverPhoto} /></> : <><label className="am-field-label" htmlFor="am-post-text">{compose === 'question' ? 'Your question' : compose === 'review' ? 'Your experience' : compose === 'recommend' ? 'A note to your friends' : 'Your post'}</label><textarea id="am-post-text" value={body} onChange={(e) => setBody(e.target.value)} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} />{hashtagSuggestions.length > 0 && <div className="am-hashtags" aria-label="Suggested hashtags">{hashtagSuggestions.map((tag) => <button type="button" key={tag.key} onClick={() => setBody((text) => text.replace(/#(?:[A-Za-z][\w-]*)?$/, `${tag.tag} `))}>{tag.tag}</button>)}</div>}</>}
       {compose === 'review' && <label className="am-rating">Your rating <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>{[5,4,3,2,1].map((n) => <option key={n} value={n}>{n} out of 5</option>)}</select></label>}
       <ProductPicker products={products} value={productId} onChange={setProductId} />
-      {compose !== 'playlist' && compose !== 'recommend' && <label className="am-photo-input"><strong>Add photos</strong><span>Up to 4 images</span><input type="file" accept="image/*" multiple onChange={(e) => { try { const files = Array.from(e.target.files || []).slice(0, MAX_POST_PHOTOS); files.forEach(checkImageFile); setPhotos(files); setError(''); } catch (error) { setError(error.message); } }} />{photos.length > 0 && <small>{photos.map((file) => file.name).join(', ')}</small>}</label>}
+      {compose !== 'playlist' && compose !== 'recommend' && <label className="am-photo-input"><strong>Add photos</strong><span>Up to 4 images</span><span className="am-photo-cta">Choose photos</span><input type="file" accept="image/*" multiple onChange={(e) => { try { const files = Array.from(e.target.files || []).slice(0, MAX_POST_PHOTOS); files.forEach(checkImageFile); setPhotos(files); setError(''); } catch (error) { setError(error.message); } }} />{photos.length > 0 && <small>{photos.map((file) => file.name).join(', ')}</small>}</label>}
       {compose === 'recommend' && <div className="am-friends"><strong>Send to friends</strong>{friendProfiles.length ? friendProfiles.map((friend) => <label key={friend.user_id}><input type="checkbox" checked={selectedFriendIds.includes(friend.user_id)} onChange={(e) => setSelectedFriendIds((ids) => e.target.checked ? [...ids, friend.user_id] : ids.filter((id) => id !== friend.user_id))} /> {friend.display_name || friend.username}</label>) : <p>Add friends in Community profiles first.</p>}</div>}
       {authUser && compose !== 'playlist' && compose !== 'recommend' && <label className="am-anon"><input type="checkbox" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} /> Post anonymously</label>}
       {error && <p className="am-error" role="alert">{error}</p>}

@@ -235,3 +235,6 @@
   }
   .ayna-mobile[data-preview="true"] .am-sheet-backdrop { position: absolute; }
 }
+@media (min-width: 700px) {
+  .ayna-mobile[data-preview="true"] .ayna-profile-auth-backdrop { position: absolute; }
+}

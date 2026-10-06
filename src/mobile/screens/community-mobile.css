@@ -202,3 +202,6 @@
 .am-search-results .am-list-row > span:last-child { min-width: 0; display: grid; gap: 3px; }
 .am-search-message { margin: 16px 0; color: var(--ayna-text-muted); text-align: center; font-size: 13px; }
 .am-search-empty { margin-top: 0; }
+.am-photo-input { position: relative; cursor: pointer; }
+.am-photo-input .am-photo-cta { display: inline-flex; width: max-content; padding: 7px 11px; border-radius: 99px; background: #eee7f3; color: #4e3866; font-size: 11px; font-weight: 700; }
+.am-photo-input input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
