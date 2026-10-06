@@ -106,6 +106,10 @@ psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed/product_catalog.sql
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/community.sql
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/community_storage.sql
 
+# Monthly check-ins (website MonthlyCheckin + mobile check-in). Owner-only RLS;
+# community guests (anonymous sign-ins) are excluded by every policy.
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/monthly_checkins.sql
+
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/_verify.sql
 ```
 

@@ -940,6 +940,7 @@ export default function MyEcosystem({
     userSession = null,
     isPremium = false,
     progressSlot = null,
+    insightsSlot = null,
     hubLinks = [],
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
@@ -1918,6 +1919,7 @@ export default function MyEcosystem({
                         <div style={{ textAlign: 'center', margin: '1rem 0 2rem' }}>
                             <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
                         </div>
+                        {insightsSlot}
 
                         <h2 className="eco2-main__details-title">Details</h2>
                         <div className="eco2-details">
