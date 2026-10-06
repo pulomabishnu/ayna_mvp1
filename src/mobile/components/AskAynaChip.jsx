@@ -173,11 +173,15 @@ export default function AskAynaChip({ onClick, viewKey }) {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={manualDock ? 'Expand Ask Ayna' : 'Open Ask Ayna'}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
       onClick={handleClick}
+      onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); handleClick(); } }}
       style={{
         position: 'fixed',
         left: renderX,
