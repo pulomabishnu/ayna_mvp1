@@ -195,6 +195,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
         padding: isCompact ? 0 : '7px 10px',
         background: '#1C1917',
         borderRadius: isCompact ? (dockLeft ? '0 12px 12px 0' : '12px 0 0 12px') : 999,
+        clipPath: isCompact ? (dockLeft ? 'inset(0 0 0 22px)' : 'inset(0 22px 0 0)') : undefined,
         boxShadow: '0 12px 26px -10px rgba(0,0,0,.4)',
         cursor: 'grab',
         zIndex: 45,
