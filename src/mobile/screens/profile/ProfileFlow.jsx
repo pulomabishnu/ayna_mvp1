@@ -2989,15 +2989,22 @@ export function AboutAynaScreen({ onBack }) {
     <div className="ayna-scrapbook">
       <header className="ayna-scrapbook__header">
         <button type="button" onClick={onBack} aria-label="Back to ayna">← Back</button>
-        <span>the ayna scrapbook</span>
+        <span>About us</span>
       </header>
       <div className="ayna-scrapbook__scroll">
         <section className="ayna-scrapbook__hero">
           <div className="ayna-scrapbook__tape" aria-hidden="true" />
-          <span className="ayna-scrapbook__eyebrow">A little note from us</span>
+          <span className="ayna-scrapbook__eyebrow">Hello from ayna</span>
           <h1>Made for the <em>whole you.</em></h1>
           <p>Women's health isn't one-size-fits-all. Ayna helps you explore options with the context, evidence, and explanations you deserve.</p>
           <div className="ayna-scrapbook__scribble" aria-hidden="true" />
+        </section>
+
+        <section className="ayna-scrapbook__paper ayna-scrapbook__paper--intro">
+          <span className="ayna-scrapbook__eyebrow">The short version</span>
+          <h2>What is ayna?</h2>
+          <p>Ayna is a place to discover women's health products with more context. You tell us about your goals and preferences; we help you find relevant options and show why they may fit.</p>
+          <div className="ayna-scrapbook__intro-stamp">Made around you</div>
         </section>
 
         <section className="ayna-scrapbook__team" aria-label="The people behind ayna">
@@ -3044,6 +3051,20 @@ export function AboutAynaScreen({ onBack }) {
             <span>Your profile</span><span>Evidence</span><span>Clinician context</span><span>Community context</span>
           </div>
           <div className="ayna-scrapbook__sticky">Paid placement never changes your match. <span aria-hidden="true">↗</span></div>
+        </section>
+
+        <section className="ayna-scrapbook__paper ayna-scrapbook__paper--questions">
+          <span className="ayna-scrapbook__eyebrow">Questions we hear</span>
+          <h2>A few things to know.</h2>
+          <div className="ayna-scrapbook__question-list">
+            <div><strong>Who is it for?</strong><p>Anyone exploring products for their own women's health needs, goals, and stage of life.</p></div>
+            <div><strong>What's my ecosystem?</strong><p>Your personal space for the products and explanations that fit the profile you build in Ayna.</p></div>
+            <div><strong>How do you choose what I see?</strong><p>We compare your profile with relevant products and available evidence, then explain the match in your shop.</p></div>
+            <div><strong>What information do you look at?</strong><p>Published research, clinical guidance, clinician input, and community experience all add context.</p></div>
+            <div><strong>What can I do in Community?</strong><p>Find people and conversations, share posts and reviews, and make playlists of products.</p></div>
+            <div><strong>Can a brand pay for a better match?</strong><p>No. Sponsorship is never an input to your match.</p></div>
+            <div><strong>Is ayna medical advice?</strong><p>No. Ayna helps with discovery; medical decisions stay with you and your clinician.</p></div>
+          </div>
         </section>
 
         <section className="ayna-scrapbook__paper">

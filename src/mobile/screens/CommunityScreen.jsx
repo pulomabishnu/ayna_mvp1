@@ -15,6 +15,14 @@ import './community-mobile.css';
 const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Q&A'], ['review', 'Reviews'], ['playlists', 'Playlists'] ];
 const timeLabel = (value) => value ? new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
 
+function CommunityAvatar({ name, path, anonymous = false }) {
+  const [failed, setFailed] = useState(false);
+  const initials = anonymous ? 'A' : String(name || 'A').split(/\s+/).filter(Boolean).map((part) => part[0]).slice(0, 2).join('').toUpperCase();
+  return <span className="am-avatar" aria-hidden="true">
+    {path && !failed ? <img src={publicMediaUrl(path)} alt="" onError={() => setFailed(true)} /> : initials}
+  </span>;
+}
+
 function ProductMention({ productId, productsById, quizAnswers, onOpenProduct }) {
   const product = productsById.get(String(productId));
   if (!product) return null;
@@ -82,6 +90,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [profile, setProfile] = useState(null);
+  const [profileById, setProfileById] = useState(new Map());
   const [profileName, setProfileName] = useState('');
   const [profileHandle, setProfileHandle] = useState('');
   const [refresh, setRefresh] = useState(0);
@@ -94,6 +103,15 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   const notifyError = (e) => setError(community.friendlyError(e));
   const requireAccount = (feature = 'this feature') => onRequireAuth?.(feature);
   const closePage = () => { setPage(null); setDetails(null); setComments([]); setItems([]); setError(''); };
+
+  useEffect(() => {
+    if (!supabase) return;
+    const ids = [...new Set([...posts, ...comments, ...(searchResults?.posts || []), ...(page?.type === 'post' && details ? [details] : [])].map((item) => item.author_id).filter(Boolean))];
+    if (!ids.length) return;
+    let active = true;
+    community.getProfilesByIds(supabase, ids).then((profiles) => { if (active) setProfileById((previous) => new Map([...previous, ...profiles])); }).catch(() => {});
+    return () => { active = false; };
+  }, [supabase, posts, comments, searchResults, page, details]);
 
   useEffect(() => {
     if (!supabase || !authUser) return;
@@ -151,6 +169,24 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
     if (!authUser) { requireAccount('notifications'); return; }
     setPage({ type: 'notifications' }); setError('');
     try { const rows = await community.listNotifications(supabase); setDetails(rows); await community.markNotificationsRead(supabase); } catch (e) { notifyError(e); }
+  };
+
+  const uploadAvatar = async (file) => {
+    if (!authUser || !profile || !file) return;
+    setBusy(true); setError('');
+    try {
+      checkImageFile(file);
+      const uploaded = await uploadCommunityImage(supabase, file, { folder: 'avatars', userId: authUser.id });
+      try {
+        const next = await community.setAvatarPath(supabase, authUser.id, uploaded.path);
+        setProfile(next); setDetails((previous) => previous?.user_id === authUser.id ? { ...previous, avatar_url: uploaded.path } : previous);
+        setProfileById((previous) => new Map(previous).set(authUser.id, next));
+        setNotice('Profile picture updated.');
+      } catch (error) {
+        await deleteCommunityImage(supabase, uploaded.path);
+        throw error;
+      }
+    } catch (e) { notifyError(e); } finally { setBusy(false); }
   };
 
   const saveProfile = async () => {
@@ -264,7 +300,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   }, [supabase]);
 
   const renderPost = (post) => <article className="am-card" key={post.id}>
-    <div className="am-meta"><button type="button" onClick={() => openProfile(post.author_username)}>{post.is_anonymous || !post.author_id ? 'Anonymous' : post.author_display_name || post.author_username}</button><span>{timeLabel(post.created_at)}</span></div>
+    <div className="am-meta"><div className="am-author"><CommunityAvatar name={post.author_display_name || post.author_username} path={!post.is_anonymous && post.author_id ? profileById.get(post.author_id)?.avatar_url : null} anonymous={post.is_anonymous || !post.author_id} /><button type="button" onClick={() => openProfile(post.author_username)}>{post.is_anonymous || !post.author_id ? 'Anonymous' : post.author_display_name || post.author_username}</button></div><span>{timeLabel(post.created_at)}</span></div>
     <button type="button" className="am-postbody" onClick={() => openPost(post)}>{post.body}</button>
     {(post.media || []).length > 0 && <div className="am-photo-grid">{post.media.slice(0, 4).map((photo) => <img key={photo.path} src={publicMediaUrl(photo.path)} alt="" loading="lazy" />)}</div>}
     {post.kind !== 'post' && <small className="am-kind">{post.kind === 'question' ? 'question' : 'review'}{post.kind === 'review' ? ` · Rating ${post.rating || 0}/5` : ''}</small>}
@@ -280,15 +316,15 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
       {error && <p className="am-error" role="alert">{error}</p>}{notice && <p className="am-notice" role="status">{notice}</p>}
       {page ? <>
         <button type="button" className="am-back" onClick={closePage}>← Community</button>
-        {page.type === 'post' && details && <>{renderPost(details)}<h2 className="am-section">Replies</h2>{comments.map((c) => <div className="am-comment" key={c.id}><div className="am-meta"><span>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</span><span>{timeLabel(c.created_at)}</span></div><p>{c.body}</p>{c.product_id && <ProductMention productId={c.product_id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />}<button type="button" onClick={() => setReplyTo(c.id)}>Reply</button></div>)}<div className="am-compose-inline">{replyTo && <button type="button" onClick={() => setReplyTo(null)}>Replying · cancel</button>}<textarea value={commentBody} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" /><ProductPicker products={products} value={productId} onChange={setProductId} /><button type="button" className="am-primary" disabled={busy || !commentBody.trim()} onClick={submitComment}>Post reply</button></div></>}
+        {page.type === 'post' && details && <>{renderPost(details)}<h2 className="am-section">Replies</h2>{comments.map((c) => <div className="am-comment" key={c.id}><div className="am-meta"><div className="am-author"><CommunityAvatar name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><span>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</span></div><span>{timeLabel(c.created_at)}</span></div><p>{c.body}</p>{c.product_id && <ProductMention productId={c.product_id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />}<button type="button" onClick={() => setReplyTo(c.id)}>Reply</button></div>)}<div className="am-compose-inline">{replyTo && <button type="button" onClick={() => setReplyTo(null)}>Replying · cancel</button>}<textarea value={commentBody} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" /><ProductPicker products={products} value={productId} onChange={setProductId} /><button type="button" className="am-primary" disabled={busy || !commentBody.trim()} onClick={submitComment}>Post reply</button></div></>}
         {page.type === 'playlist' && details && <>{details.cover_url && <img className="am-cover-detail" src={publicMediaUrl(details.cover_url)} alt="Playlist cover" />}<h2 className="am-detail-title">{details.title}</h2><p className="am-detail-copy">{details.description || ''}</p>{items.map((item) => <ProductMention key={item.product_id} productId={item.product_id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />)}{items.length === 0 && <p className="am-empty">No products added yet.</p>}</>}
-        {page.type === 'profile' && details && <><h2 className="am-detail-title">{details.display_name}</h2><p className="am-detail-copy">@{details.username}</p>{details.bio && <p>{details.bio}</p>}{authUser && details.user_id !== authUser.id && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={async () => { try { const on = !followingIds.includes(details.user_id); await community.setFollowing(supabase, authUser.id, details.user_id, on); setFollowingIds((ids) => on ? [...ids, details.user_id] : ids.filter((id) => id !== details.user_id)); } catch (e) { notifyError(e); } }}>{followingIds.includes(details.user_id) ? 'Following' : 'Follow'}</button><button type="button" className="am-secondary" onClick={async () => { try { const state = community.friendshipState(friendships, authUser.id, details.user_id); if (state.state === 'none') await community.sendFriendRequest(supabase, authUser.id, details.user_id); else if (state.state === 'incoming') await community.acceptFriendRequest(supabase, state.row.id); else return; setRefresh((v) => v + 1); } catch (e) { notifyError(e); } }}>{({ none: 'Add friend', incoming: 'Accept request', requested: 'Requested', friends: 'Friends' })[community.friendshipState(friendships, authUser.id, details.user_id).state]}</button></div>}</>}
+        {page.type === 'profile' && details && <><div className="am-profile-hero"><CommunityAvatar name={details.display_name} path={details.avatar_url} /><div><h2 className="am-detail-title">{details.display_name}</h2><p className="am-detail-copy">@{details.username}</p></div></div>{authUser?.id === details.user_id && <label className="am-avatar-upload">Change profile picture<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" disabled={busy} onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadAvatar(file); event.target.value = ''; }} /></label>}{details.bio && <p>{details.bio}</p>}{authUser && details.user_id !== authUser.id && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={async () => { try { const on = !followingIds.includes(details.user_id); await community.setFollowing(supabase, authUser.id, details.user_id, on); setFollowingIds((ids) => on ? [...ids, details.user_id] : ids.filter((id) => id !== details.user_id)); } catch (e) { notifyError(e); } }}>{followingIds.includes(details.user_id) ? 'Following' : 'Follow'}</button><button type="button" className="am-secondary" onClick={async () => { try { const state = community.friendshipState(friendships, authUser.id, details.user_id); if (state.state === 'none') await community.sendFriendRequest(supabase, authUser.id, details.user_id); else if (state.state === 'incoming') await community.acceptFriendRequest(supabase, state.row.id); else return; setRefresh((v) => v + 1); } catch (e) { notifyError(e); } }}>{({ none: 'Add friend', incoming: 'Accept request', requested: 'Requested', friends: 'Friends' })[community.friendshipState(friendships, authUser.id, details.user_id).state]}</button></div>}</>}
         {page.type === 'notifications' && (details || []).map((n) => <div className="am-card" key={n.id}><p>{n.message || n.body || n.type?.replace(/_/g, ' ')}</p><small>{timeLabel(n.created_at)}</small></div>)}
         {page.type === 'profile' && details && !authUser && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={() => requireAccount('following people')}>Follow</button><button type="button" className="am-secondary" onClick={() => requireAccount('friends')}>Add friend</button></div>}
       </> : <>
         {authUser && !profile && <div className="am-card am-profile-setup"><strong>Make your community profile</strong><p>Your health profile stays private.</p><input value={profileName} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" /><input value={profileHandle} onChange={(e) => setProfileHandle(e.target.value)} placeholder="Username" /><button type="button" disabled={busy} onClick={saveProfile}>Save profile</button></div>}
         <div className="am-search"><input value={search} onChange={(e) => runSearch(e.target.value)} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</div>
-        {search ? <>{searchResults?.people?.map((p) => <button type="button" className="am-list-row" key={p.user_id} onClick={() => openProfile(p.username)}>{p.display_name}<small>@{p.username}</small></button>)}{searchResults?.posts?.map(renderPost)}{searchResults?.playlists?.map((p) => <button type="button" className="am-list-row" key={p.id} onClick={() => openPlaylist(p)}>{p.title}<small>{p.item_count} products</small></button>)}{searchResults && !searchResults.people.length && !searchResults.posts.length && !searchResults.playlists.length && <p className="am-empty">Nothing found.</p>}</> : <>
+        {search ? <>{searchResults?.people?.map((p) => <button type="button" className="am-list-row" key={p.user_id} onClick={() => openProfile(p.username)}><CommunityAvatar name={p.display_name} path={p.avatar_url} /><span>{p.display_name}<small>@{p.username}</small></span></button>)}{searchResults?.posts?.map(renderPost)}{searchResults?.playlists?.map((p) => <button type="button" className="am-list-row" key={p.id} onClick={() => openPlaylist(p)}>{p.title}<small>{p.item_count} products</small></button>)}{searchResults && !searchResults.people.length && !searchResults.posts.length && !searchResults.playlists.length && <p className="am-empty">Nothing found.</p>}</> : <>
           <div className="am-tabs">{TABS.map(([key, label]) => <button type="button" key={key} className={tab === key ? 'is-active' : ''} onClick={() => key === 'following' && !authUser ? requireAccount('your following feed') : setTab(key)}>{label}</button>)}</div>
           {tab === 'playlists' ? <>{playlists.map((p) => <button type="button" className="am-playlist" key={p.id} onClick={() => openPlaylist(p)}><span className="am-cover">{p.cover_url ? <img src={publicMediaUrl(p.cover_url)} alt="" loading="lazy" /> : <span>ayna</span>}</span><span><strong>{p.title}</strong><small>{p.item_count || 0} products · {p.owner_display_name || 'ayna community'}</small></span><b>›</b></button>)}{!loading && playlists.length === 0 && <p className="am-empty">No playlists yet. Start one with products you love.</p>}</> : <>{posts.map(renderPost)}{!loading && posts.length === 0 && <p className="am-empty">{tab === 'following' ? 'Follow people to see their posts here.' : 'Nothing here yet.'}</p>}{cursor && <button type="button" className="am-more" disabled={loading} onClick={loadMore}>Show more</button>}</>}
           {loading && <p className="am-empty">Loading…</p>}
