@@ -58,11 +58,11 @@ const HELPS = [
 ];
 
 const ADVISORS = [
-  { name: 'Dr. David Orbach', title: 'BME, MD, Startup Advisor', photo: '/advisors/david-orbach.png' },
+  { name: 'Dr. David Orbach', title: 'BME, MD, Startup Advisor', photo: '/advisors/david-orbach.png', linkedin: 'https://www.linkedin.com/in/davidorbach/' },
   { name: 'Gwyn Blanton', title: 'Former Director of Ethics & Compliance, Deloitte', photo: '/advisors/gwyn-blanton.png' },
-  { name: 'Albert Charles', title: 'Co-Founder, Gorges Ventures', photo: '/advisors/albert-charles.png' },
-  { name: 'Erika Demonsant', title: 'Healthcare Consultant, Huron', photo: '/advisors/erika-demonsant.png' },
-  { name: 'Pamela Nasr', title: 'Product Lead, Benchling', photo: '/advisors/pamela-nasr.png' },
+  { name: 'Albert Charles', title: 'Co-Founder, Gorges Ventures', photo: '/advisors/albert-charles.png', linkedin: 'https://www.linkedin.com/in/albert-charles-6800a41a1/' },
+  { name: 'Erika Demonsant', title: 'Healthcare Consultant, Huron', photo: '/advisors/erika-demonsant.png', linkedin: 'https://www.linkedin.com/in/erikalacey/' },
+  { name: 'Pamela Nasr', title: 'Product Lead, Benchling', photo: '/advisors/pamela-nasr.png', linkedin: 'https://www.linkedin.com/in/pamelatnasr/' },
   { name: 'Nishtha Kaushik', title: 'Advisor', photo: '/advisors/nishtha-kaushik.jpg', linkedin: 'https://www.linkedin.com/in/nkaushik29/' },
   { name: 'Navneet Kaur', title: 'Advisor', photo: '/advisors/navneet-kaur.jpg', linkedin: 'https://www.linkedin.com/in/navneet-kaur-80109b227' },
   { name: 'Dr. Anuja Vyas', title: 'Board-Certified OB/GYN, Advisor', photo: '/advisors/anuja-vyas.jpg' },
