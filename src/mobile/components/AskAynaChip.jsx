@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { ASK_AYNA_CHIP_POSITION_KEY as POSITION_KEY } from '../utils/askAynaChipPosition.js';
 
-const CHIP_WIDTH = 118; // approx rendered width when expanded, used only for clamping to the viewport
-const CHIP_COMPACT_WIDTH = 44; // approx rendered width when scrolled-compact (icon only) — a
+const CHIP_WIDTH = 148; // includes the label and manual dock control
+const CHIP_COMPACT_WIDTH = 60; // includes the arrow on the manually docked tab — a
 // separate value from CHIP_WIDTH so clamping/docking don't reserve room for
 // the "Ask Ayna" label when it isn't actually showing.
 const CHIP_HEIGHT = 42;
@@ -69,7 +69,7 @@ function nearestEdgeX(x, width) {
  * top, so `viewKey` changing resets it to match.
  */
 export default function AskAynaChip({ onClick, viewKey }) {
-  const [pos, setPos] = useState(loadPosition);
+  const [pos, setPos] = useState(() => clamp(loadPosition(), CHIP_WIDTH));
   const [compact, setCompact] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dockedX, setDockedX] = useState(null);
