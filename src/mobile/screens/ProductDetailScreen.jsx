@@ -583,8 +583,16 @@ export default function ProductDetailScreen({
 
         <div style={{ padding: '18px 22px 0' }}>
           {eyebrowLine && <div style={EYEBROW}>{eyebrowLine}</div>}
+          {matchPercent != null && (
+            <button type="button" onClick={openWhyMatch} style={{ display: 'flex', alignItems: 'center', gap: 9, width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer' }}>
+              <strong style={{ fontSize: 16, whiteSpace: 'nowrap' }}>{matchPercent}% match</strong>
+              <span style={{ flex: 1, fontSize: 12, lineHeight: 1.35 }}>See why this fits your ecosystem</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          )}
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.1, margin: '9px 0 0', color: 'var(--ayna-heading)' }}>{name}</div>
           {price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
+          {buyUrl && <p style={{ margin: '10px 0 0', color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>Buying opens the seller’s site. The seller handles payment, shipping, and returns; check the final price and delivery there.</p>}
           {pillTags.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
               {pillTags.map((t) => (
@@ -960,7 +968,7 @@ export default function ProductDetailScreen({
               textDecoration: 'none',
             }}
           >
-            Buy Now
+            View buying options
           </a>
         ) : (
           <div

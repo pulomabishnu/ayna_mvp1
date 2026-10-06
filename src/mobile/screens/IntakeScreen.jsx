@@ -1166,7 +1166,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
 // Pattern C1: search bar + grouped chips, each group header showing a live
 // "n/m" selected count.
 function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
-  const [openGroups, setOpenGroups] = useState([]);
+  const [openGroups, setOpenGroups] = useState([groups[0]?.label]);
   const q = search.trim().toLowerCase();
   const visible = groups
     .map((group) => ({ ...group, items: group.items.filter((item) => !q || item.toLowerCase().includes(q) || group.label.toLowerCase().includes(q)) }))
@@ -1174,12 +1174,13 @@ function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
   return (
     <div>
       <SearchBar value={search} onChange={onSearch} placeholder="Search options..." />
+      <p style={{ margin: '0 0 12px', color: 'rgba(255,249,242,.76)', fontSize: 12, lineHeight: 1.5 }}>Open one topic at a time. Choose as many as you need.</p>
       <div style={{ maxHeight: 400, overflowY: 'auto', textAlign: 'left' }}>
         {visible.map((group) => {
           const count = group.items.filter((item) => selected.includes(item)).length;
           return (
-            <div key={group.label} style={{ marginBottom: 9, border: '1px solid rgba(255,249,242,.25)', borderRadius: 14, padding: '12px 14px' }}>
-              <button type="button" aria-expanded={!!q || openGroups.includes(group.label)} onClick={() => setOpenGroups((current) => current.includes(group.label) ? current.filter((label) => label !== group.label) : [...current, group.label])} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, border: 0, background: 'transparent', padding: 0, textAlign: 'left', cursor: 'pointer' }}>
+            <div key={group.label} style={{ marginBottom: 9, border: '1px solid rgba(255,249,242,.3)', borderRadius: 16, padding: '14px', background: 'rgba(255,249,242,.06)' }}>
+              <button type="button" aria-expanded={!!q || openGroups.includes(group.label)} onClick={() => setOpenGroups((current) => current.includes(group.label) ? current.filter((label) => label !== group.label) : [group.label])} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, border: 0, background: 'transparent', padding: 0, textAlign: 'left', cursor: 'pointer', minHeight: 30 }}>
                 <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#FFF9F2' }}>{group.label}</span>
                 <span style={{ flex: 1, height: 1, background: 'rgba(255,249,242,.24)' }} />
                 <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', color: count > 0 ? '#FFC774' : 'rgba(255,249,242,.55)' }}>{count}/{group.items.length}</span>
@@ -1672,7 +1673,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       return (
         <>
           <SearchBar value={search} onChange={setSearch} placeholder="Search conditions..." />
-          <RowChoiceList items={filtered} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} exclusiveValues={['None that I know of', 'Prefer not to say']} />
+          <RowChoiceList items={['None that I know of', 'Prefer not to say', ...filtered.filter((item) => !['None that I know of', 'Prefer not to say'].includes(item))]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} />
           {filtered.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No matches. Try a different search.</div>}
           {intake.diagnosisSelections.includes('Other / not listed') && (
             <OtherBox label="What condition was diagnosed?" value={intake.conditionOtherText} onChange={(v) => set('conditionOtherText', v)} placeholder="Type the condition..." />

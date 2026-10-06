@@ -169,6 +169,22 @@ export default function MobileApp() {
   const authReturnScreenRef = useRef('landing');
   const authResumeRef = useRef(null);
   const [communitySeed, setCommunitySeed] = useState(null);
+  const swipeStart = useRef(null);
+  const handleMainTouchStart = (event) => {
+    if (overlay || !['browse', 'eco'].includes(screen) || event.touches.length !== 1) return;
+    const target = event.target;
+    if (target.closest('input, textarea, select, [contenteditable="true"], [data-no-page-swipe]')) return;
+    swipeStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+  };
+  const handleMainTouchEnd = (event) => {
+    if (!swipeStart.current || !event.changedTouches.length) return;
+    const dx = event.changedTouches[0].clientX - swipeStart.current.x;
+    const dy = event.changedTouches[0].clientY - swipeStart.current.y;
+    swipeStart.current = null;
+    if (Math.abs(dx) < 85 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
+    if (screen === 'eco' && dx < 0) setScreen('browse');
+    if (screen === 'browse' && dx > 0 && hasEcosystem) setScreen('eco');
+  };
   const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   const requestAuth = (feature, resume = null) => {
     authResumeRef.current = resume || (() => setScreen(screen));
@@ -515,7 +531,7 @@ export default function MobileApp() {
         : ['landing', 'eco', 'ecointro'].includes(screen) ? 'home' : null;
 
   return (
-    <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }}>
+    <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
       <Screen
         key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen}
         {...nav}
