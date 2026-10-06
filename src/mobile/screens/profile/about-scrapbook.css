@@ -150,11 +150,17 @@
 .ayna-scrapbook__difference-list > div { display: flex; align-items: center; gap: 11px; padding: 11px 12px; background: #f5e9e6; border-radius: 11px; color: #5a4b58; font-size: 12px; }
 .ayna-scrapbook__difference-list > div:nth-child(even) { background: #eee6f1; }
 .ayna-scrapbook__difference-list span { font-size: 19px; color: #a86f8f; }
-.ayna-scrapbook__paper--advisors { background: #fff6ef; }
-.ayna-scrapbook__advisors { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 17px 12px; margin-top: 16px; }
-.ayna-scrapbook__advisors > div { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 14px 8px; background: #fffdf9; border: 1px solid #ecded5; border-radius: 14px; }
-.ayna-scrapbook__advisors strong { margin-top: 8px; font-size: 11px; }
-.ayna-scrapbook__advisors small { margin-top: 3px; color: #83757a; font-size: 10px; line-height: 1.35; }
+.ayna-scrapbook__paper--advisors { background: #f1e9f0; border-color: #dacbdc; }
+.ayna-scrapbook__paper--advisors > p { color: #614f65; }
+.ayna-scrapbook__advisors { display: grid; gap: 10px; margin-top: 18px; }
+.ayna-scrapbook__advisors > div { display: flex; align-items: center; gap: 14px; min-width: 0; padding: 12px; background: #fffaf3; border: 1px solid #e4d3cb; border-radius: 16px; box-shadow: 3px 4px 0 rgba(78,56,102,.09); }
+.ayna-scrapbook__advisors > div:nth-child(even) { background: #f9e6dc; }
+.ayna-scrapbook__advisors > div:nth-child(3n) { background: #e8e2ef; }
+.ayna-scrapbook__advisor-avatar { width: 68px; height: 68px; flex: none; box-sizing: border-box; border: 3px solid #fffaf3; border-radius: 50%; object-fit: cover; background: #d9c8dc; box-shadow: 0 0 0 1px #cdb8ce; }
+.ayna-scrapbook__advisor-avatar--initials { display: grid; place-items: center; color: #4e3866; font: 600 22px 'Playfair Display', serif; }
+.ayna-scrapbook__advisor-copy { display: grid; min-width: 0; gap: 4px; }
+.ayna-scrapbook__advisors strong { color: #362845; font: 700 14px/1.25 'DM Sans', sans-serif; }
+.ayna-scrapbook__advisors small { color: #5f5264; font: 500 12px/1.35 'DM Sans', sans-serif; overflow-wrap: anywhere; }
 .ayna-scrapbook__footer { margin-top: 28px; padding: 15px 16px; border-radius: 12px; background: #e8ddea; color: #5c4b63; font-size: 12px; line-height: 1.5; text-align: center; }
 @media (max-width: 350px) {
   .ayna-scrapbook__scroll { padding-left: 15px; padding-right: 15px; }

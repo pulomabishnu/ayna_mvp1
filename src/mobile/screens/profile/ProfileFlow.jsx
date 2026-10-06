@@ -2973,12 +2973,12 @@ function AdvisorAvatar({ advisor }) {
         src={advisor.photo}
         alt={advisor.name}
         onError={() => setFailed(true)}
-        style={{ width: 62, height: 62, borderRadius: '50%', objectFit: 'cover', background: 'var(--ayna-chip-bg)', flex: 'none' }}
+        className="ayna-scrapbook__advisor-avatar"
       />
     );
   }
   return (
-    <div style={{ width: 62, height: 62, borderRadius: '50%', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', flex: 'none' }}>
+    <div className="ayna-scrapbook__advisor-avatar ayna-scrapbook__advisor-avatar--initials" aria-label={advisor.name}>
       {advisorInitials(advisor.name)}
     </div>
   );
@@ -3057,10 +3057,11 @@ export function AboutAynaScreen({ onBack }) {
         <section className="ayna-scrapbook__paper ayna-scrapbook__paper--advisors">
           <span className="ayna-scrapbook__eyebrow">People who guide us</span>
           <h2>Real expertise, real names.</h2>
+          <p>Meet the people whose experience helps guide ayna.</p>
           <div className="ayna-scrapbook__advisors">
             {ADVISORS.map((advisor) => <div key={advisor.name}>
               <AdvisorAvatar advisor={advisor} />
-              <strong>{advisor.name}</strong><small>{advisor.title}</small>
+              <div className="ayna-scrapbook__advisor-copy"><strong>{advisor.name}</strong><small>{advisor.title}</small></div>
             </div>)}
           </div>
         </section>
