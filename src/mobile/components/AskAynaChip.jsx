@@ -38,7 +38,7 @@ function clamp(pos, width) {
   const bounds = screenBounds();
   return {
     x: Math.min(Math.max(pos.x, bounds.left + EDGE_MARGIN), bounds.right - width - EDGE_MARGIN),
-    y: Math.min(Math.max(pos.y, bounds.top + EDGE_MARGIN), bounds.bottom - CHIP_HEIGHT - EDGE_MARGIN),
+    y: Math.min(Math.max(pos.y, bounds.top + 76), bounds.bottom - CHIP_HEIGHT - 80),
   };
 }
 
@@ -73,7 +73,11 @@ function nearestEdgeX(x, width) {
  * top, so `viewKey` changing resets it to match.
  */
 export default function AskAynaChip({ onClick, viewKey }) {
-  const [pos, setPos] = useState(() => clamp(loadPosition(), CHIP_WIDTH));
+  const [pos, setPos] = useState(() => {
+    const saved = loadPosition();
+    const bounds = screenBounds();
+    return clamp(saved.y < bounds.top + 76 ? defaultPosition() : saved, CHIP_WIDTH);
+  });
   const [compact, setCompact] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dockedX, setDockedX] = useState(null);
@@ -81,7 +85,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
   const drag = useRef({ active: false, moved: false, startX: 0, startY: 0, originX: 0, originY: 0 });
 
   useEffect(() => {
-    setPos((p) => clamp(p, CHIP_WIDTH));
+    setPos((p) => clamp(p.y < screenBounds().top + 76 ? defaultPosition() : p, CHIP_WIDTH));
     const onResize = () => {
       setPos((p) => clamp(p, compact ? CHIP_COMPACT_WIDTH : CHIP_WIDTH));
       setDockedX((d) => (d === null ? d : nearestEdgeX(pos.x, CHIP_WIDTH)));
