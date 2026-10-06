@@ -102,9 +102,10 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
           padding: '0 24px max(28px, env(safe-area-inset-bottom))',
           display: 'flex',
           flexDirection: 'column',
-          gap: 12,
+          gap: 18,
         }}
       >
+        <div className="ayna-welcome-choices" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <div
           onClick={onStartQuiz}
           style={{
@@ -141,6 +142,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
         <button type="button" onClick={onBrowse} style={{ width: '100%', minHeight: 52, border: '1.5px solid rgba(255,249,242,.7)', borderRadius: 99, background: 'rgba(255,249,242,.08)', color: '#FFF9F2', padding: '12px 16px', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
           I'm just browsing
         </button>
+        </div>
         <button type="button" onClick={onAlreadyHaveAccount} style={{ border: 0, background: 'transparent', color: '#FFF9F2', minHeight: 42, padding: '8px 12px', fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
           I already have an account
         </button>
