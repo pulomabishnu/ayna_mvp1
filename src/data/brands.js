@@ -3223,6 +3223,341 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
+    // kieró Comfort Cleansing Balm, Prime Sun Gel SPF 40+, Essential Boost
+    // Serum — verified against us.kieroskincare.com on 2026-10-06 (product
+    // description, full INCI list, and review counts from each product page).
+    // Every science claim below was read from its abstract via NCBI
+    // E-utilities; the sun gel reuses the sun stick's already-verified
+    // sunscreen sources because it has the same UV filters. Not a brand
+    // partner and no affiliate link, so Buy Now goes to kieró's own page.
+    {
+        id: 'p-kiero-comfort-cleansing-balm',
+        name: 'Comfort Cleansing Balm',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'cleanser', 'cleansing balm', 'makeup remover', 'oil cleanser', 'vegan', 'fragrance-free'],
+        price: '$11.99 for 80 g (2.82 oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/comfort-cleansing-balm',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/comfort-cleansing-balm',
+        },
+        image: '/products/kiero/comfort-cleansing-balm.jpg', // supplied by ayna; same photo as kieró's product page
+        summary: 'A cleansing balm with grape seed oil, macadamia oil and vitamin E that melts on contact to dissolve makeup and impurities. kieró positions it as a first cleanse that removes makeup without drying and protects the skin\'s moisture barrier. Massage it onto dry skin, then rinse with warm water. It is step 1 (cleanse) of kieró\'s 5-step routine.',
+        ingredients: 'Full INCI list per kieró: Cetyl Ethylhexanoate, Caprylic/Capric Triglyceride, PEG-20 Glyceryl Triisostearate, PEG-10 Isostearate, Synthetic Wax, Sorbitan Sesquioleate, Glyceryl Caprylate, Ethylhexylglycerin, Vitis Vinifera (Grape) Seed Oil, Eclipta Prostrata Extract, Melia Azadirachta Leaf Extract, Melia Azadirachta Flower Extract, Coccinia Indica Fruit Extract, Solanum Melongena (Eggplant) Fruit Extract, Moringa Oleifera Seed Oil, Simmondsia Chinensis (Jojoba) Seed Oil, Corallina Officinalis Extract, Curcuma Longa (Turmeric) Root Extract, Ocimum Sanctum Leaf Extract, Macadamia Ternifolia Seed Oil, Tocopherol, Helianthus Annuus (Sunflower) Seed Oil, Vegetable Oil.',
+        safety: {
+            fdaStatus: 'Cosmetic cleanser; not an FDA-cleared drug or medical device. kieró states its products are vegan and cruelty-free; ayna did not independently verify that.',
+            materials: 'Solid balm (80 g / 2.82 oz) made mostly of emollient esters, oils and wax, with grape seed, moringa, jojoba, macadamia and sunflower oils, vitamin E (tocopherol), and small amounts of plant extracts including neem (Melia azadirachta), turmeric, holy basil (Ocimum sanctum) and eggplant. No water, added fragrance or essential oils appear in the published ingredient list.',
+            recalls: 'No recalls found.',
+            sideEffects: 'None reported by kieró. It contains several plant extracts and macadamia seed oil, so patch test first if you have sensitive skin or plant or nut allergies. Full warnings are listed below.',
+            opinionAlerts: 'Claims that it soothes sensitive skin and strengthens the skin barrier come from kieró, and no independent study of the finished product was found. One reviewer noted it doesn\'t melt as quickly as expected.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says the balm dissolves makeup and impurities without drying, soothes and protects sensitive skin, and nourishes the skin barrier, crediting grape seed oil, macadamia oil and vitamin E.\n\nNo independent study of this product, or of cleansing balms as a category, was found, so these benefits rest on kieró\'s own claims. Vitamin E is the main antioxidant naturally found in skin, but in a rinse-off cleanser most of it is washed away. The formula lists no added fragrance or essential oils.',
+        doctorOpinionShort: 'An oil-based makeup-removing balm with no added fragrance. Its soothing and barrier claims come from kieró, and no independent study of the product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/comfort-cleansing-balm', label: 'kieroskincare.com: Comfort Cleansing Balm — ingredient list and claims' },
+        ],
+        whoItsFor: [
+            'People who wear makeup or sunscreen and want a first cleanse that dissolves it without scrubbing',
+            'Dry or normal skin that feels tight after foaming cleansers',
+            'People who prefer a fragrance-free, vegan formula',
+        ],
+        howToUse: {
+            intro: 'Per kieró\'s own site: use as step 1 (cleanse) of the routine.',
+            steps: [
+                'Scoop a small amount onto dry hands.',
+                'Massage it onto a dry face in circular motions to dissolve makeup.',
+                'Rinse with warm water.',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/comfort-cleansing-balm',
+            sourceLabel: 'kieroskincare.com: Comfort Cleansing Balm',
+        },
+        warnings: [
+            'Plant or nut allergies (it contains macadamia oil and several plant extracts): patch test first.',
+            'Keep out of eyes. If you get redness, burning, or a rash, stop using it.',
+        ],
+        communityReview: 'kieró\'s US site shows 334 customer reviews, and 311 of them (93%) are five stars; the rest are four stars. Most reviews are in Spanish and praise how fully it removes makeup, including waterproof makeup and long-wear lipstick, and that it has no scent. For example: "Me encantó que removió todo el maquillaje de mi rostro" ("I loved that it removed all the makeup from my face"). One reviewer said it doesn\'t melt as quickly as expected. These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        effectiveness: 'Reviewers on kieró\'s site say it removes even waterproof makeup and long-wear lipstick without scrubbing.',
+        ingredientScience: [
+            {
+                name: 'Vitamin E',
+                text: 'kieró credits vitamin E for nourishing the skin. Vitamin E is the main antioxidant naturally found in human skin, and UV exposure depletes it. In a rinse-off cleanser, most of it is washed away.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the Response of Skin to Oxidative Stress — Vitamin E as a Key Indicator' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/comfort-cleansing-balm',
+                        text: 'kieroskincare.com: Comfort Cleansing Balm customer reviews',
+                        summary: 'kieró\'s own product page shows 334 reviews, 93% of them five stars and the rest four stars, mostly in Spanish (see the Community summary above).',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-kiero-prime-sun-gel-spf40',
+        name: 'Prime Sun Gel SPF 40+',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'spf', 'sunscreen', 'vegan'],
+        price: '$12.99 for 50 ml (1.69 fl oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/sun-barrier',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/sun-barrier',
+        },
+        image: '/products/kiero/prime-sun-gel.jpg', // supplied by ayna; same photo as kieró's product page
+        summary: 'A lightweight gel sunscreen labeled SPF 40+ / PA++++ broad spectrum, with chamomile, azulene and panthenol. kieró positions it for daily UV protection in a fast-absorbing, non-sticky texture that soothes sensitive skin and redness, hydrates, and wears alone or under makeup. It is the last step (protect) of kieró\'s morning routine.',
+        ingredients: 'Full INCI list per kieró: Isododecane, Cyclopentasiloxane, Homosalate, Octocrylene, Cyclohexasiloxane, Dimethicone/Bis-Isobutyl PPG-20 Crosspolymer, Vinyl Dimethicone/Methicone Silsesquioxane Crosspolymer, Octisalate, Butyloctyl Salicylate, Avobenzone, 1,2-Hexanediol, Helianthus Annuus (Sunflower) Seed Oil, Polyglyceryl-4 Oleate, Water, C12-13 Pareth-9, Polyglyceryl-6 Oleate, Polyhydroxystearic Acid, Ethylhexylglycerin, Glycine Soja (Soybean) Oil, Caryodendron Orinocense Seed Oil, Tocopherol, Plukenetia Volubilis Seed Oil, Bixa Orellana Seed Oil, Sodium Guaiazulene Sulfonate, Panthenol, Butylene Glycol, Anthemis Nobilis Flower Water, Madecassoside, Asiaticoside, Asiatic Acid, Madecassic Acid, Fragrance.',
+        safety: {
+            fdaStatus: 'In the US, sunscreens are regulated as over-the-counter drugs. No FDA drug listing for this product was found in openFDA\'s NDC directory (checked 2026-10-06), so the SPF 40+ / PA++++ and broad-spectrum claims are per kieró. kieró doesn\'t publish the percentage of each UV filter or say whether it is water resistant. kieró states the formula is vegan and free of sulfates, parabens and phthalates; ayna did not independently verify that.',
+            materials: 'Silicone-based gel (50 ml / 1.69 fl oz). UV filters: avobenzone (UVA), octocrylene, homosalate, octisalate, and butyloctyl salicylate, all chemical filters with no zinc oxide or titanium dioxide. Soothing ingredients are Roman chamomile flower water, sodium guaiazulene sulfonate (an azulene derivative), panthenol, and madecassoside (from centella). It also contains soybean oil, vitamin E, and added fragrance.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Octocrylene can cause photoallergic reactions (a rash after sun exposure), notably in people who have reacted to ketoprofen, an anti-inflammatory gel. The formula contains Roman chamomile, a daisy-family (Asteraceae) plant; this family is a known contact allergen and cross-reacts with ragweed. It also contains added fragrance. People with those allergies or fragrance sensitivity should patch test first. Full warnings are listed below.',
+            opinionAlerts: 'Safety note: sunscreen only reaches its labeled SPF when applied generously, and most people apply far less. Its chemical UV filters were absorbed into the bloodstream in an FDA study; the FDA researchers said that doesn\'t mean people should stop using sunscreen. Contains added fragrance and Roman chamomile, so patch test if you\'re fragrance-sensitive or allergic to ragweed or daisies. No FDA drug listing for this product was found. Soothing and redness claims come from kieró, and no independent study of the finished product was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says chamomile and azulene soothe sensitive skin and reduce redness, panthenol hydrates and strengthens the barrier, and the gel wears well alone or under makeup. No independent study of this product was found, and no FDA drug listing for it was found, so its SPF rating is per kieró.\n\nThe strongest evidence is for daily sunscreen use itself, from a randomized trial of 1,621 adults in Nambour, Australia, using an SPF 15+ sunscreen. People assigned to daily use had 24% less skin aging over 4.5 years than people who used sunscreen when they chose to. They also had about 39% fewer squamous cell carcinoma tumors, though the share of people who got one didn\'t differ significantly, and there was no effect on basal cell carcinoma. Ten years later, the daily group had 11 new melanomas versus 22, a difference just short of statistical significance overall, though the drop in invasive melanoma (3 vs 11) was significant.\n\nHow much you apply matters. SPF is tested at 2 mg/cm², while consumers typically apply 0.5–1 mg/cm², and lab studies show actual SPF drops steeply at those amounts. The AAD and FDA advise applying 15 minutes before sun exposure and reapplying at least every two hours, and more often when swimming or sweating. kieró doesn\'t claim water resistance.\n\nThe UV filters in this gel (avobenzone, octocrylene, homosalate, octisalate) were all absorbed into the bloodstream in a 2020 FDA randomized trial of 48 people, above the point at which the FDA can waive further safety testing; the FDA researchers said this does not mean people should stop using sunscreen. People who want to avoid these filters can choose a mineral (zinc oxide) sunscreen.\n\nFor the soothing ingredients: panthenol\'s active form, dexpanthenol, improved skin hydration and reduced water loss through the skin within 7 days in a small randomized, double-blind, placebo-controlled study. No human study of sodium guaiazulene sulfonate for redness was found; a 2003 lab study in bacteria found azulene and guaiazulene became mutagenic when exposed to UVA or visible light, which has not been tested in people. The gel also contains added fragrance, which can irritate sensitive skin.',
+        doctorOpinionShort: 'Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a large randomized trial. Protection depends on applying enough and reapplying every two hours. No FDA drug listing for this product was found, so its SPF 40+ rating is per kieró. It contains added fragrance and chemical filters that are absorbed into the blood; mineral sunscreen is an alternative.',
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/sun-barrier', label: 'kieroskincare.com: Prime Sun Gel SPF 40+ — ingredient list and claims' },
+            { url: 'https://www.aad.org/public/everyday-care/sun-protection/shade-clothing-sunscreen/how-to-apply-sunscreen', label: 'American Academy of Dermatology: How to apply sunscreen' },
+            { url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun', label: 'FDA: Sunscreen — how to help protect your skin from the sun' },
+        ],
+        whoItsFor: [
+            'People who want a lightweight daily sunscreen that works under makeup',
+            'Oily or combination skin looking for a non-sticky gel finish',
+            'Not ideal for fragrance-sensitive skin, since it contains added fragrance',
+        ],
+        howToUse: {
+            intro: 'Per kieró\'s own site: use alone or as the last step of your morning routine, before makeup.',
+            steps: [
+                'Apply evenly to all sun-exposed skin. Use enough: most people apply far less than the amount SPF is tested at.',
+                'Apply about 15 minutes before going outside (AAD).',
+                'Reapply at least every two hours, and right after swimming or sweating (AAD / FDA).',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/sun-barrier',
+            sourceLabel: 'kieroskincare.com: Prime Sun Gel SPF 40+',
+        },
+        warnings: [
+            'Contains added fragrance: patch test if you have fragrance-sensitive skin.',
+            'Allergy to ragweed, chamomile, or other daisy-family plants: patch test first.',
+            'Have you reacted to ketoprofen (an anti-inflammatory gel)? Octocrylene can cause photoallergic reactions in people sensitized to it.',
+            'Not stated as water resistant: reapply after swimming or sweating.',
+            'Infants under 6 months: the FDA doesn\'t recommend sunscreen; keep them out of the sun instead.',
+        ],
+        communityReview: 'kieró\'s US site shows 310 customer reviews, and 287 of them (93%) are five stars; 22 are four stars and one is one star. Most reviews are in Spanish and praise the light texture, fast absorption, and hydrated feel. For example: "Textura ligera y se siente muy bien en la piel" ("Light texture and it feels great on the skin"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        effectiveness: 'Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a large randomized trial.',
+        ingredientScience: [
+            {
+                name: 'Daily broad-spectrum sunscreen',
+                text: 'In the Nambour randomized trial (1,621 adults, SPF 15+), people assigned to daily sunscreen showed no detectable increase in skin aging over 4.5 years, 24% less aging than the discretionary-use group. They had 39% fewer squamous cell carcinoma tumors, though the share of people who got one didn\'t differ significantly, and there was no effect on basal cell carcinoma. Ten years later, the daily group had 11 new melanomas vs 22; that overall difference was just short of statistical significance (p = 0.051), while the drop in invasive melanoma (3 vs 11) was significant.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/10475183/', label: 'PubMed: Daily sunscreen application in prevention of basal-cell and squamous-cell carcinomas — a randomised controlled trial (Green et al., Lancet 1999)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23732711/', label: 'PubMed: Sunscreen and prevention of skin aging — a randomized trial (Hughes et al., Ann Intern Med 2013)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/21135266/', label: 'PubMed: Reduced melanoma after regular sunscreen use — randomized trial follow-up (Green et al., J Clin Oncol 2011)' },
+                ],
+            },
+            {
+                name: 'How much you apply',
+                text: 'SPF is measured at 2 mg/cm², but consumers typically apply 0.5–1 mg/cm². Lab studies on volunteers found actual SPF falls significantly at lower amounts. One found SPF 30–50 products may not give enough protection at typical consumer amounts.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/19614894/', label: 'PubMed: The influence of the amount of sunscreen applied on its sun protection factor' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/22463921/', label: 'PubMed: High-SPF sunscreens may compensate for lower user application amounts' },
+                ],
+            },
+            {
+                name: 'Chemical UV filters (avobenzone, octocrylene, homosalate, octisalate)',
+                text: 'In a 2020 FDA randomized trial of 48 people, all of these filters were absorbed into the bloodstream after a single application, above the level at which the FDA can waive further safety testing. The researchers concluded this does not mean people should stop using sunscreen. A separate lab study found benzophenone, a possible human carcinogen, in all 28 octocrylene-containing products tested. Levels rose with time and heat.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31961417/', label: 'PubMed: Effect of sunscreen application on plasma concentration of sunscreen active ingredients — a randomized clinical trial (JAMA 2020)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33763894/', label: 'PubMed: The presence of benzophenone in sunscreens and cosmetics containing the organic UV filter octocrylene' },
+                ],
+            },
+            {
+                name: 'Panthenol',
+                text: 'kieró states this hydrates and strengthens the skin barrier. In a small randomized, double-blind, placebo-controlled study, dexpanthenol (panthenol\'s active form) in two lipophilic creams improved skin hydration and reduced water loss through the skin after 7 days compared with the same creams without it. A 2017 review describes dexpanthenol\'s use as a moisturizer and barrier restorer; three of its four authors work for Bayer Consumer Care.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/10965426/', label: 'PubMed: Effect of topically applied dexpanthenol on epidermal barrier function and stratum corneum hydration (Gehring & Gloor, 2000)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28503966/', label: 'PubMed: Topical use of dexpanthenol — a 70th anniversary article (Proksch et al., 2017)' },
+                ],
+            },
+            {
+                name: 'Azulene (sodium guaiazulene sulfonate)',
+                text: 'kieró states azulene reduces redness. No human study of sodium guaiazulene sulfonate for redness was found. A 2003 lab study in bacteria found azulene and guaiazulene became mutagenic when exposed to UVA or visible light, though not in the dark. That was not a study in people or skin, it tested guaiazulene rather than the sulfonate form used here, and its relevance to sunscreen use is unknown.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3767376/', label: 'NIH (PMC): Photomutagenicity of cosmetic ingredient chemicals azulene and guaiazulene (2003)' },
+                ],
+            },
+            {
+                name: 'Madecassoside (centella)',
+                text: 'No study testing madecassoside alone for barrier strength was found. In a 6-month double-blind study of 20 women, a cream combining 5% vitamin C with 0.1% madecassoside improved wrinkles, firmness, and hydration, but the result can\'t be credited to madecassoside alone. In another study, madecassoside reduced UV-triggered inflammation in skin cells and reduced UV tanning on human skin over 8 weeks.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6290557/', label: 'NIH (PMC): Madecassoside inhibits melanin synthesis by blocking ultraviolet-induced inflammation' },
+                ],
+            },
+            {
+                name: 'Roman chamomile',
+                text: 'kieró states this soothes sensitive skin. No study of chamomile flower water for soothing was found. Chamomile is in the daisy (Asteraceae) family, whose compounds are known skin sensitizers that can cross-react with ragweed.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11847717/', label: 'NIH (PMC): Allergic potential of medicinal plants from the Asteraceae family (2025 review)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/everyday-care/sun-protection/shade-clothing-sunscreen/how-to-apply-sunscreen',
+                text: 'American Academy of Dermatology: How to apply sunscreen',
+                summary: 'AAD guidance: use SPF 30+ broad-spectrum sunscreen, apply about 15 minutes before going out, and reapply every two hours and after swimming or sweating. This is general guidance, not product-specific validation.',
+            },
+            {
+                url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun',
+                text: 'FDA: Sunscreen — how to help protect your skin from the sun',
+                summary: 'FDA guidance: use broad-spectrum SPF 15+, apply 15 minutes before sun exposure, reapply at least every two hours, and keep infants under 6 months out of the sun rather than using sunscreen.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/sun-barrier',
+                        text: 'kieroskincare.com: Prime Sun Gel SPF 40+ customer reviews',
+                        summary: 'kieró\'s own product page shows 310 reviews, 93% of them five stars, mostly in Spanish (see the Community summary above).',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-kiero-essential-boost-serum',
+        name: 'Essential Boost Serum',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'serum', 'niacinamide', 'hyaluronic acid', 'peptides', 'hydration', 'hyperpigmentation', 'vegan'],
+        price: '$11.99 for 30 ml (1.01 fl oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/essential-boost-serum',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/essential-boost-serum',
+        },
+        image: '/products/kiero/essential-boost-serum.jpg', // supplied by ayna; same photo as kieró's product page
+        summary: 'A lightweight serum with prickly pear, peptides, niacinamide and panthenol, plus several forms of hyaluronic acid. kieró positions it to hydrate, improve firmness, even out skin tone and strengthen the skin barrier for a brighter complexion. Apply a small amount to clean face and neck, morning and night. It is step 3 (treat) of kieró\'s 5-step routine.',
+        ingredients: 'Full INCI list per kieró: Water, Butylene Glycol, Glycerin, Panthenol, Dipropylene Glycol, Niacinamide, Benzyl Glycol, Hydroxyethyl Urea, Carbomer, Arginine, Methylpropanediol, Beta-Glucan, Betaine, Ethylhexylglycerin, Protease, Hydrolyzed Sclerotium Gum, Caprylyl Glycol, Adenosine, Mica (CI 77019), 1,2-Hexanediol, Opuntia Ficus-Indica Fruit Extract, Agar, Gellan Gum, Calcium Alginate, Phenoxyethanol, Steareth-30, Madecassoside, Asiaticoside, Asiatic Acid, Madecassic Acid, Sodium Hyaluronate, Hydrolyzed Hyaluronic Acid, Hydrolyzed Sodium Hyaluronate, Dimethylsilanol Hyaluronate, Potassium Hyaluronate, Hyaluronic Acid, Hydroxypropyltrimonium Hyaluronate, Sodium Hyaluronate Crosspolymer, Sodium Hyaluronate Dimethylsilanol, Sodium Acetylated Hyaluronate, Palmitoyl Tetrapeptide-7, Palmitoyl Tripeptide-1, Titanium Dioxide (CI 77891), Iron Oxides Red (CI 77491).',
+        safety: {
+            fdaStatus: 'Cosmetic serum; not an FDA-cleared drug or medical device. kieró states its products are vegan and cruelty-free; ayna did not independently verify that.',
+            materials: 'Water-based gel serum (30 ml / 1.01 fl oz). Key ingredients: panthenol, niacinamide, hydroxyethyl urea, beta-glucan, prickly pear (Opuntia ficus-indica) extract, centella compounds (madecassoside, asiaticoside), ten forms of hyaluronic acid, and two peptides (palmitoyl tetrapeptide-7, palmitoyl tripeptide-1). It also contains a protease enzyme, phenoxyethanol as a preservative, and mica, titanium dioxide and red iron oxide as colorants. kieró doesn\'t list ingredient percentages. No added fragrance appears in the published ingredient list.',
+            recalls: 'No recalls found.',
+            sideEffects: 'None reported by kieró. As with any new skincare product, patch test first if you have sensitive skin, and stop using it if you get redness, burning or a rash. Full warnings are listed below.',
+            opinionAlerts: 'kieró doesn\'t list the niacinamide percentage, and its firmness and tone claims are its own: no independent study of the finished product, its peptides, or its prickly pear extract was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says the serum hydrates and protects with antioxidants, improves firmness, evens out skin tone, and soothes and strengthens the skin barrier. No independent study of this product was found, so what follows is what the research says about its main ingredients.\n\nNiacinamide has the best evidence. In two 12-week, double-blind, split-face trials, each with 50 women, 5% niacinamide improved fine lines and wrinkles, dark spots, red blotchiness, sallowness and elasticity compared with the same cream without it. Both trials were run by Procter & Gamble, and kieró doesn\'t say how much niacinamide this serum contains.\n\nFor hydration, a randomized trial of 76 women found that 0.1% hyaluronic acid eye creams improved skin hydration and elasticity over 60 days compared with a placebo cream, and the lower-molecular-weight forms also reduced wrinkle depth. Panthenol\'s active form, dexpanthenol, improved hydration and reduced water loss through the skin within 7 days in a small double-blind, placebo-controlled study.\n\nNo independent clinical trial of its two peptides (palmitoyl tetrapeptide-7 and palmitoyl tripeptide-1) or of prickly pear extract on skin was found, so the firmness claim rests on kieró.',
+        doctorOpinionShort: 'Niacinamide improved wrinkles, dark spots and redness in two 12-week controlled trials at 5%, but kieró doesn\'t list this serum\'s percentage. Hyaluronic acid and panthenol have small controlled studies for hydration. No independent study of the product, its peptides, or its prickly pear extract was found.',
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/essential-boost-serum', label: 'kieroskincare.com: Essential Boost Serum — ingredient list and claims' },
+        ],
+        whoItsFor: [
+            'People who want a lightweight hydrating serum for morning and night',
+            'People interested in niacinamide for uneven tone, dark spots or redness',
+            'People who prefer a fragrance-free, vegan formula',
+        ],
+        howToUse: {
+            intro: 'Per kieró\'s own site: use as step 3 (treat) of the routine, morning and night.',
+            steps: [
+                'Cleanse your face first.',
+                'Apply a small amount to your face and neck.',
+                'Follow with moisturizer, and sunscreen in the morning.',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/essential-boost-serum',
+            sourceLabel: 'kieroskincare.com: Essential Boost Serum',
+        },
+        warnings: [
+            'Sensitive skin: patch test first.',
+            'Keep out of eyes. If you get redness, burning, or a rash, stop using it.',
+        ],
+        communityReview: 'kieró\'s US site shows 236 customer reviews, and 213 of them (90%) are five stars; the rest are four stars. Most reviews are in Spanish and describe skin looking hydrated and smoother. For example: "Llevo casi un mes usándolo y mi piel se ve muy hidratada y bonita" ("I\'ve been using it for almost a month and my skin looks very hydrated and pretty"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        effectiveness: 'Niacinamide improved wrinkles, dark spots and redness in controlled trials at 5%, and hyaluronic acid and panthenol have small controlled studies for hydration.',
+        ingredientScience: [
+            {
+                name: 'Niacinamide',
+                text: 'kieró states this evens out skin tone. In two 12-week, double-blind, split-face trials of 50 women each, 5% niacinamide improved fine lines and wrinkles, dark spots, red blotchiness, sallowness and elasticity compared with the same cream without it, and was well tolerated. Both trials were run by Procter & Gamble. kieró doesn\'t list this serum\'s niacinamide percentage.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/16029679/', label: 'PubMed: Niacinamide — a B vitamin that improves aging facial skin appearance (Bissett et al., 2005)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18492135/', label: 'PubMed: Topical niacinamide reduces yellowing, wrinkling, red blotchiness, and hyperpigmented spots in aging facial skin (Bissett et al., 2004)' },
+                ],
+            },
+            {
+                name: 'Hyaluronic acid',
+                text: 'kieró states this hydrates. In a randomized trial of 76 women, eye creams with 0.1% hyaluronic acid applied twice daily for 60 days improved skin hydration and elasticity compared with a placebo cream on the other eye. Only the lower-molecular-weight forms also reduced wrinkle depth. This serum combines ten forms of hyaluronic acid at unlisted amounts.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/22052267/', label: 'PubMed: Efficacy of cream-based formulations of hyaluronic acid of different molecular weights in anti-wrinkle treatment (Pavicic et al., 2011)' },
+                ],
+            },
+            {
+                name: 'Panthenol',
+                text: 'kieró states this soothes and strengthens the skin barrier. In a small randomized, double-blind, placebo-controlled study, dexpanthenol (panthenol\'s active form) improved skin hydration and reduced water loss through the skin after 7 days compared with the same creams without it. A 2017 review describes its use as a moisturizer and barrier restorer; three of its four authors work for Bayer Consumer Care.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/10965426/', label: 'PubMed: Effect of topically applied dexpanthenol on epidermal barrier function and stratum corneum hydration (Gehring & Gloor, 2000)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28503966/', label: 'PubMed: Topical use of dexpanthenol — a 70th anniversary article (Proksch et al., 2017)' },
+                ],
+            },
+            {
+                name: 'Madecassoside (centella)',
+                text: 'No study testing madecassoside alone for barrier strength was found. In a 6-month double-blind study of 20 women, a cream combining 5% vitamin C with 0.1% madecassoside improved wrinkles, firmness, and hydration, but the result can\'t be credited to madecassoside alone.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/essential-boost-serum',
+                        text: 'kieroskincare.com: Essential Boost Serum customer reviews',
+                        summary: 'kieró\'s own product page shows 236 reviews, 90% of them five stars and the rest four stars, mostly in Spanish (see the Community summary above).',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
 
     // Joylux — the company, split into its individual products (2026-10-02).
     // Replaces the single 's-joylux' startup entry, which described the whole
