@@ -1,5 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Disclaimer from './Disclaimer';
+import { estimateReadMinutes, splitBodyAndSources, getNextArticle } from '../utils/articleReading';
+import './articlesReading.css';
 import { ALL_PRODUCTS, getPersonalizedProductIds } from '../data/products';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import { RELEASED_STARTUPS } from '../data/startups';
@@ -390,6 +392,7 @@ function DiagnosticProductsAndStartups({ articleId, quizResults, healthProfile, 
 const ARTICLES = [
   {
     id: 'intimate-wash',
+    image: '/articles/intimate-wash.webp',
     title: 'Intimate Washes',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Gynecology', 'Vulvovaginal health'],
@@ -415,6 +418,7 @@ const ARTICLES = [
   },
   {
     id: 'heavy-bleeding',
+    image: '/articles/heavy-bleeding.webp',
     title: 'Heavy Menstrual Bleeding',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Menstrual health', 'Clinical guidance'],
@@ -435,6 +439,7 @@ const ARTICLES = [
   },
   {
     id: 'menopause-basics',
+    image: '/articles/menopause-basics.webp',
     title: 'Menopause & Perimenopause',
     source: 'NAMS, UpToDate, ACOG',
     tags: ['Menopause', 'Hormone therapy'],
@@ -454,6 +459,7 @@ const ARTICLES = [
   },
   {
     id: 'uti-prevention',
+    image: '/articles/uti-prevention.webp',
     title: 'UTI Prevention',
     source: 'UpToDate, NIH, CDC',
     tags: ['Urinary health', 'Prevention'],
@@ -473,6 +479,7 @@ const ARTICLES = [
   },
   {
     id: 'yeast-infection-basics',
+    image: '/articles/yeast-infection-basics.webp',
     title: 'Yeast Infection Basics',
     source: 'UpToDate, CDC, ACOG',
     tags: ['Vulvovaginal health', 'Infections'],
@@ -492,6 +499,7 @@ const ARTICLES = [
   },
   {
     id: 'period-pain-when-to-seek-care',
+    image: '/articles/period-pain-when-to-seek-care.webp',
     title: 'Period Pain: When to Seek Care',
     source: 'ACOG, UpToDate, Mayo Clinic',
     tags: ['Menstrual health', 'Pain'],
@@ -511,6 +519,7 @@ const ARTICLES = [
   },
   {
     id: 'pcos-basics',
+    image: '/articles/pcos-basics.webp',
     title: 'PCOS: What It Is and How It\'s Managed',
     source: 'ACOG, Endocrine Society, UpToDate',
     tags: ['Hormones', 'Reproductive health'],
@@ -531,6 +540,7 @@ const ARTICLES = [
   },
   {
     id: 'pelvic-floor-dysfunction',
+    image: '/articles/pelvic-floor-dysfunction.webp',
     title: 'Pelvic Floor Dysfunction',
     source: 'ACOG, UpToDate, APTA',
     tags: ['Pelvic health', 'Physical therapy'],
@@ -551,6 +561,7 @@ const ARTICLES = [
   },
   {
     id: 'endometriosis-basics',
+    image: '/articles/endometriosis-basics.webp',
     title: 'Endometriosis: Symptoms, Diagnosis, and Care',
     source: 'ACOG, EndoFound, UpToDate',
     tags: ['Chronic pain', 'Reproductive health'],
@@ -571,6 +582,7 @@ const ARTICLES = [
   },
   {
     id: 'bacterial-vaginosis',
+    image: '/articles/bacterial-vaginosis.webp',
     title: 'Bacterial Vaginosis (BV)',
     source: 'CDC, ACOG, UpToDate',
     tags: ['Vaginal health', 'Infections'],
@@ -591,6 +603,7 @@ const ARTICLES = [
   },
   {
     id: 'pmdd',
+    image: '/articles/pmdd.webp',
     title: 'PMDD: Premenstrual Dysphoric Disorder',
     source: 'ACOG, IAPMD, UpToDate',
     tags: ['Mental health', 'Hormonal health'],
@@ -611,6 +624,7 @@ const ARTICLES = [
   },
   {
     id: 'fibroids',
+    image: '/articles/fibroids.webp',
     title: 'Uterine Fibroids',
     source: 'ACOG, NIH, UpToDate',
     tags: ['Chronic conditions', 'Menstrual health'],
@@ -631,6 +645,7 @@ const ARTICLES = [
   },
   {
     id: 'iron-deficiency-anemia',
+    image: '/articles/iron-deficiency-anemia.webp',
     title: 'Iron Deficiency & Anemia from Heavy Periods',
     source: 'ACOG, NIH, UpToDate',
     tags: ['Menstrual health', 'Nutrition'],
@@ -651,6 +666,7 @@ const ARTICLES = [
   },
   {
     id: 'ovarian-cysts',
+    image: '/articles/ovarian-cysts.webp',
     title: 'Ovarian Cysts',
     source: 'ACOG, Mayo Clinic, UpToDate',
     tags: ['Reproductive health', 'Pelvic health'],
@@ -671,6 +687,7 @@ const ARTICLES = [
   },
   {
     id: 'hormonal-birth-control',
+    image: '/articles/hormonal-birth-control.webp',
     title: 'Hormonal Birth Control: Types, Benefits & Side Effects',
     source: 'ACOG, Planned Parenthood, UpToDate',
     tags: ['Contraception', 'Hormonal health'],
@@ -740,40 +757,120 @@ function getArticlesByProfileRelevance(quizAnswers, healthProfile = null) {
 
 export { ARTICLES };
 
-function renderArticleCard(art, setSelectedId) {
+/** Read-time per article, computed once (bodies are static). */
+const READ_MINUTES = Object.fromEntries(ARTICLES.map((a) => [a.id, estimateReadMinutes(a.body)]));
+
+function ArticleThumb({ image }) {
+  if (!image) return null;
   return (
-    <button
-      type="button"
-      onClick={() => setSelectedId(art.id)}
-      style={{
-        width: '100%',
-        textAlign: 'left',
-        background: 'var(--color-surface-soft)',
-        border: '1px solid var(--color-border)',
-        borderRadius: 'var(--radius-md)',
-        padding: '1.25rem 1.5rem',
-        marginBottom: '0.75rem',
-        cursor: 'pointer',
-        transition: 'border-color 0.2s, box-shadow 0.2s'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = 'var(--color-primary)';
-        e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = '';
-        e.currentTarget.style.boxShadow = '';
-      }}
-    >
-      <h3 style={{ fontSize: '1.2rem', marginBottom: '0.4rem', color: 'var(--color-text-main)', fontWeight: '600' }}>{art.title}</h3>
-      <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.5, margin: 0 }}>{art.teaser}</p>
-      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: '600' }}>{art.source}</span>
-        {art.tags.map((t) => (
-          <span key={t} style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>· {t}</span>
-        ))}
-      </div>
+    <span className="ayna-article-thumb" aria-hidden="true">
+      <img src={image} alt="" loading="lazy" decoding="async" width="88" height="104" />
+    </span>
+  );
+}
+
+function renderArticleCard(art, openArticle) {
+  return (
+    <button type="button" className="ayna-article-tile" onClick={() => openArticle(art.id)}>
+      <ArticleThumb image={art.image} />
+      <span className="ayna-article-tile-text">
+        <h3 className="ayna-article-tile-title">{art.title}</h3>
+        <p className="ayna-article-tile-teaser">{art.teaser}</p>
+        <span className="ayna-article-tile-meta">
+          <strong>{READ_MINUTES[art.id]} min read</strong>
+          <span>· {art.source}</span>
+          {art.tags.map((t) => (
+            <span key={t}>· {t}</span>
+          ))}
+        </span>
+      </span>
     </button>
+  );
+}
+
+/** Slim fixed bar at the top of the viewport tracking how far through `targetRef` the reader is. */
+function ReadingProgressBar({ targetRef, resetKey }) {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const el = targetRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      const p = total > 0 ? -rect.top / total : (rect.top <= 0 ? 1 : 0);
+      setProgress(Math.min(1, Math.max(0, p)));
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [targetRef, resetKey]);
+  return (
+    <div
+      className="ayna-article-progress"
+      role="progressbar"
+      aria-label="Reading progress"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(progress * 100)}
+    >
+      <div className="ayna-article-progress-fill" style={{ transform: `scaleX(${progress})` }} />
+    </div>
+  );
+}
+
+function ArticleSources({ source, links }) {
+  if (!source && links.length === 0) return null;
+  return (
+    <section className="ayna-article-sources-panel" aria-label="Sources">
+      <div className="ayna-article-sources-head">
+        <span className="ayna-article-sources-mark" aria-hidden="true">A</span>
+        <div>
+          <div className="ayna-article-sources-label">Sources</div>
+          {source && <div className="ayna-article-sources-org">{source}</div>}
+        </div>
+      </div>
+      {links.length > 0 && (
+        <ul className="ayna-article-sources-list">
+          {links.map((l) => (
+            <li key={l.href}>
+              <a href={l.href} target="_blank" rel="noopener noreferrer">{l.text}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function ReadNext({ next, onOpen }) {
+  if (!next) return null;
+  const { article, label } = next;
+  return (
+    <section className="ayna-read-next" aria-label="Read next">
+      <p className="ayna-read-next-label">Read next · {label}</p>
+      <button type="button" className="ayna-read-next-tile" onClick={() => onOpen(article.id)}>
+        <ArticleThumb image={article.image} />
+        <span className="ayna-article-tile-text">
+          <span className="ayna-article-tile-title">{article.title}</span>
+          <span className="ayna-article-tile-meta" style={{ marginTop: '0.2rem' }}>
+            <strong>{READ_MINUTES[article.id]} min read</strong>
+            {article.tags[0] && <span>· {article.tags[0]}</span>}
+          </span>
+        </span>
+        <span className="ayna-read-next-arrow" aria-hidden="true">→</span>
+      </button>
+    </section>
   );
 }
 
@@ -817,12 +914,35 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const hasProfile =
     !!(quizResults?.frustrations?.length) || inferTagsFromHealthProfile(healthProfile).length > 0;
   const articlesToShow = filter === 'recommended' ? (hasProfile ? recommendedArticles : []) : ARTICLES;
+  const [seenIds, setSeenIds] = useState([]);
+  const articleRef = useRef(null);
 
   React.useEffect(() => {
     if (initialArticleId && ARTICLES.some((a) => a.id === initialArticleId)) {
       setSelectedId(initialArticleId);
     }
   }, [initialArticleId]);
+
+  const openArticle = useCallback((id) => {
+    setSelectedId(id);
+    setSeenIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  }, []);
+
+  // When a new article opens (from the list or "Read next"), bring its top
+  // into view instead of leaving the reader mid-page.
+  useEffect(() => {
+    if (!selectedId || typeof window === 'undefined') return;
+    const el = articleRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 96;
+    if (window.scrollY > top) window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+  }, [selectedId]);
+
+  const selectedParts = useMemo(() => (selected ? splitBodyAndSources(selected.body) : null), [selected]);
+  const nextArticle = useMemo(
+    () => (selected ? getNextArticle(selected, ARTICLES, ARTICLE_CATEGORIES, seenIds, hasProfile ? recommendedArticles : []) : null),
+    [selected, seenIds, hasProfile, recommendedArticles]
+  );
 
   return (
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '900px', margin: '0 auto' }}>
@@ -885,15 +1005,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       )}
 
       {selected ? (
-        <article
-          style={{
-            background: 'var(--color-surface-soft)',
-            padding: '2.5rem 2rem',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--color-border)',
-            boxShadow: 'var(--shadow-sm)'
-          }}
-        >
+        <article ref={articleRef} className="ayna-article-view">
           <button
             type="button"
             onClick={() => setSelectedId(null)}
@@ -913,11 +1025,21 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           >
             ← Back to articles
           </button>
-          <h2 style={{ fontSize: '1.85rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', lineHeight: 1.3 }}>{selected.title}</h2>
+          <ReadingProgressBar targetRef={articleRef} resetKey={selected.id} />
+          {selected.image && (
+            <div className="ayna-article-hero">
+              <img className="ayna-article-hero-backdrop" src={selected.image} alt="" aria-hidden="true" decoding="async" />
+              <img className="ayna-article-hero-img" src={selected.image} alt="" decoding="async" width="1414" height="2000" />
+            </div>
+          )}
+          <div className="ayna-article-kicker">
+            {selected.tags[0] && <span>{selected.tags[0]}</span>}
+            <span className="ayna-article-kicker-rule" aria-hidden="true" />
+            <span className="ayna-article-kicker-time">{READ_MINUTES[selected.id]} min read</span>
+          </div>
+          <h2 className="ayna-article-title">{selected.title}</h2>
+          {selected.teaser && <p className="ayna-article-teaser">{selected.teaser}</p>}
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-            <span style={{ padding: '0.25rem 0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-primary)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: '600' }}>
-              Sources: {selected.source}
-            </span>
             {selected.tags.map((t) => (
               <span key={t} style={{ padding: '0.25rem 0.65rem', background: 'var(--color-surface)', color: 'var(--color-text-muted)', border: '1px solid var(--color-border)', borderRadius: '1rem', fontSize: '0.8rem' }}>
                 {t}
@@ -925,19 +1047,21 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
             ))}
           </div>
           <div className="article-body" style={{ lineHeight: '1.85', fontSize: '1.05rem', color: 'var(--color-text-main)' }}>
-            {selected.body}
+            {selectedParts.mainBody}
           </div>
+          <ArticleSources source={selected.source} links={selectedParts.sourceLinks} />
           <Disclaimer compact style={{ marginTop: '1.5rem' }} />
 
           <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
           <DiagnosticProductsAndStartups articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
+          <ReadNext next={nextArticle} onOpen={openArticle} />
         </article>
       ) : (
         <>
           {filter === 'recommended' ? (
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {articlesToShow.map((art) => (
-                <li key={art.id}>{renderArticleCard(art, setSelectedId)}</li>
+                <li key={art.id}>{renderArticleCard(art, openArticle)}</li>
               ))}
             </ul>
           ) : (
@@ -951,7 +1075,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
                   </h2>
                   <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                     {catArticles.map((art) => (
-                      <li key={art.id}>{renderArticleCard(art, setSelectedId)}</li>
+                      <li key={art.id}>{renderArticleCard(art, openArticle)}</li>
                     ))}
                   </ul>
                 </div>
