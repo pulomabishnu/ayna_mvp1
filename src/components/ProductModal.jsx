@@ -12,6 +12,8 @@ import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
+import WhyMatchPanel from './WhyMatchPanel';
+import { hasProfileSignal, shouldClampSummary } from '../utils/whyMatch';
 import { resolveBuyUrl, isAmazonUrl, buyGoesToAmazonListing } from '../utils/buyLink';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 import { getSafetyAlertText, buildSummarySentences } from '../utils/productSafetyAlert';
@@ -420,6 +422,13 @@ export default function ProductModal({
   // Community entry points (recommend to a friend, add to playlist, write a
   // review). Rendered under the buy/save actions; null when signed out.
   communitySlot = null,
+  // Optional: starts the quiz / ecosystem builder. When passed, viewers with
+  // no profile yet see a "Build your ecosystem to see your match" CTA where
+  // the match % would be.
+  onStartQuiz = null,
+  // Optional: opens the health-profile editor from the "not enough to score"
+  // state of the match breakdown.
+  onEditHealthProfile = null,
 }) {
   // The mockup draws the product page two ways — 1f, tabs with the Ayna
   // summary, and 1g, an evidence rail beside the specs. Both are built, and
@@ -450,6 +459,8 @@ export default function ProductModal({
   const imageIdentity = JSON.stringify([product?.id, product?.name, product?.brand, product?.url, product?.type, product?.image]);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  const [whyMatchOpen, setWhyMatchOpen] = useState(false);
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
 
   // Most catalog entries only ever carry a single `image` URL — when that's a
   // placeholder, this tries once to resolve a real product photo instead.
@@ -494,6 +505,28 @@ export default function ProductModal({
   const hasEcosystemContext = isInEcosystem || (Array.isArray(ecosystemProducts) && ecosystemProducts.length > 0);
   const matchPercent = profileMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
+  const viewerHasProfile = hasProfileSignal(quizResults, healthProfile);
+  const showBuildMatchCta = matchPercent == null && !viewerHasProfile && typeof onStartQuiz === 'function';
+  const toggleWhyMatch = () => {
+    if (!whyMatchOpen) posthog.capture('product_why_match_opened', { productId: product?.id, matchPercent });
+    setWhyMatchOpen(!whyMatchOpen);
+  };
+  const whyMatchPanelId = `pdp-whymatch-${product?.id || 'product'}`;
+  const whyMatchPanel = whyMatchOpen && matchPercent != null ? (
+    <WhyMatchPanel
+      id={whyMatchPanelId}
+      product={product}
+      quizResults={quizResults}
+      healthProfile={healthProfile}
+      onClose={() => setWhyMatchOpen(false)}
+      onUpdateHealth={onEditHealthProfile}
+    />
+  ) : null;
+  const buildMatchCta = showBuildMatchCta ? (
+    <button type="button" className="pdp-buildmatch" onClick={onStartQuiz}>
+      Build your ecosystem to see your match <span aria-hidden="true">→</span>
+    </button>
+  ) : null;
   const buyUrl = resolveBuyUrl(product, choice.variant);
   const sizeChosenOnAmazon = choice.hasVariants && buyGoesToAmazonListing(product, choice.variant);
   const isAmazonBuyLink = useMemo(() => isAmazonUrl(buyUrl), [buyUrl]);
@@ -1057,16 +1090,28 @@ export default function ProductModal({
                   <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
                 )}
                 {matchPercent != null ? (
-                  <span className="pdp-head__match pdp-head__match--gauge">
+                  <button
+                    type="button"
+                    className="pdp-head__match pdp-head__match--gauge pdp-whymatch-toggle"
+                    onClick={toggleWhyMatch}
+                    aria-expanded={whyMatchOpen}
+                    aria-controls={whyMatchPanelId}
+                  >
                     <MatchGauge percent={matchPercent} size={28} theme="light" />
                     match
-                  </span>
+                    <span className="pdp-whymatch-toggle__why">
+                      Why? <span className="pdp-whymatch-toggle__chev" aria-hidden="true">▾</span>
+                    </span>
+                  </button>
                 ) : isInEcosystem ? (
                   <span className="pdp-head__match">In your ecosystem</span>
                 ) : headMatchLabel ? (
                   <span className="pdp-head__match">{headMatchLabel}</span>
                 ) : null}
               </div>
+
+              {whyMatchPanel}
+              {buildMatchCta}
 
               {safetyAlert && <SafetyAlert text={safetyAlert} sources={product.safetyNoteSources || []} />}
 
@@ -1098,9 +1143,31 @@ export default function ProductModal({
                         ayna SUMMARY · {sourceCounts.total} SOURCE{sourceCounts.total === 1 ? '' : 'S'}
                       </div>
                     )}
-                    {summarySentences.length > 0 ? (
-                      <p className="pdp-summary-card__body">{summarySentences.join(' ')}</p>
-                    ) : (
+                    {summarySentences.length > 0 ? (() => {
+                      const summaryText = summarySentences.join(' ');
+                      const clampable = shouldClampSummary(summaryText);
+                      return (
+                        <>
+                          <p
+                            id={`pdp-summary-${product.id}`}
+                            className={`pdp-summary-card__body${clampable && !summaryExpanded ? ' pdp-summary-clamp' : ''}`}
+                          >
+                            {summaryText}
+                          </p>
+                          {clampable && (
+                            <button
+                              type="button"
+                              className="pdp-readmore"
+                              aria-expanded={summaryExpanded}
+                              aria-controls={`pdp-summary-${product.id}`}
+                              onClick={() => setSummaryExpanded((v) => !v)}
+                            >
+                              {summaryExpanded ? 'Show less' : 'Read more'}
+                            </button>
+                          )}
+                        </>
+                      );
+                    })() : (
                       <p className="pdp-summary-card__empty">No summary yet.</p>
                     )}
                     {sourceChips.length > 0 && (
@@ -1422,6 +1489,7 @@ export default function ProductModal({
               {summarySentences[0] && (
                 <p className="pdp-evidence-head__desc">{summarySentences[0]}</p>
               )}
+              {buildMatchCta}
               {safetyAlert && <SafetyAlert text={safetyAlert} sources={product.safetyNoteSources || []} />}
               {actionButtons}
               {factRows.length > 0 && (
@@ -1445,6 +1513,10 @@ export default function ProductModal({
               isInEcosystem={isInEcosystem}
               whyItWorks={whyItWorks}
               considerations={recommendationConsiderations}
+              onToggleWhyMatch={toggleWhyMatch}
+              whyMatchOpen={whyMatchOpen}
+              whyMatchPanelId={whyMatchPanelId}
+              whyMatchPanel={whyMatchPanel}
             />
           </div>
         )}
