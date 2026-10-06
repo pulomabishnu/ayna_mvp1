@@ -58,6 +58,7 @@ const LIFE_STAGES = [
   'I use hormonal birth control', 'I am trying to conceive', 'I am pregnant', 'I am postpartum',
   'I am in perimenopause', 'I am in menopause', 'I am post-menopause', 'Other',
 ];
+const MIDLIFE_LIFE_STAGES = ['I am in perimenopause', 'I am in menopause', 'I am post-menopause'];
 
 const PERIOD_FLOW = ['Very light', 'Light', 'Moderate', 'Heavy', 'Very heavy', 'It varies', 'I do not currently get periods', 'Not sure'];
 const PERIOD_PAIN = ['None', 'Mild', 'Moderate', 'Severe', 'Very severe', 'It varies', 'Not sure'];
@@ -849,7 +850,7 @@ function AgeCard({ value, onChange, underage, onOpenGate }) {
       <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 20, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 2 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
         <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT }}>
-          We store your age, not a date of birth. It's health data under our policy, and it's never used to advertise to you.
+          We store your age, not a date of birth. It helps us order relevant questions; your selected life stage, symptoms, and goals guide product matches. We never use it to advertise to you.
         </div>
       </div>
 
@@ -1612,6 +1613,10 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   };
 
   const selectedLifeStages = getLifeStages(intake);
+  const showMidlifeFirst = intake.age !== '' && Number(intake.age) >= 40;
+  const lifeStageOptions = showMidlifeFirst
+    ? [...MIDLIFE_LIFE_STAGES, ...LIFE_STAGES.filter((item) => !MIDLIFE_LIFE_STAGES.includes(item))]
+    : LIFE_STAGES;
 
   const renderBody = () => {
     if (step.type === 'age') return (
@@ -1625,7 +1630,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
     if (step.type === 'lifeStage') return (
       <>
-        <ChoiceGrid items={LIFE_STAGES} selected={selectedLifeStages} onToggle={toggleLifeStage} />
+        {showMidlifeFirst && <p style={{ margin: '0 0 14px', color: 'rgba(255,249,242,.85)', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5 }}>We moved some life-stage choices higher based on your age. Choose only what describes you; age alone does not determine your life stage.</p>}
+        <ChoiceGrid items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} />
         {selectedLifeStages.includes('I am postpartum') && (
           <div style={{ marginTop: 18, padding: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 18, textAlign: 'left' }}>
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: INK, marginBottom: 12 }}>Are you currently breastfeeding?</div>

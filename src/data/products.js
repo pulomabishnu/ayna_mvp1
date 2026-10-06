@@ -2217,7 +2217,9 @@ function knownWeightedPoints(parts, weights) {
 }
 
 function getAgeFitScore(product, intake) {
-    const age = Number(intake?.age);
+    const rawAge = String(intake?.age ?? '').trim();
+    if (!rawAge) return null;
+    const age = Number(rawAge);
     if (!Number.isFinite(age)) return null;
 
     const rawMin = product?.minAge ?? product?.minimumAge ?? product?.ageMin ?? product?.age_min;
