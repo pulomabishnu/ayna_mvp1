@@ -10,6 +10,7 @@ import WhyMatchScreen from './WhyMatchScreen.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
+import { productHref } from '../../utils/productRoute.js';
 
 const CARD = { background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18, boxShadow: '0 2px 10px rgba(41,37,36,.04)' };
 const EYEBROW = { fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' };
@@ -383,7 +384,10 @@ export default function ProductDetailScreen({
   const pillTags = tags.slice(0, 4).map(humanizeTag);
 
   const handleShare = async () => {
-    const shareData = { title: name, text: `${name} on ayna`, url: product.url || buyUrl || undefined };
+    const origin = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
+      ? 'https://www.aynahealth.co'
+      : window.location.origin;
+    const shareData = { title: name, text: `Take a look at ${name} on ayna`, url: new URL(productHref(product.id), origin).toString() };
     if (navigator.share) {
       try { await navigator.share(shareData); } catch { /* user cancelled the share sheet */ }
       return;
@@ -520,14 +524,16 @@ export default function ProductDetailScreen({
               </div>
             ))}
           </div>
-          <div
+          <button
+            type="button"
+            aria-label={`Share ${name} with a friend`}
             onClick={handleShare}
             style={{ width: 36, height: 36, borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', cursor: 'pointer' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-heading)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 15V3" /><path d="M7 8l5-5 5 5" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
             </svg>
-          </div>
+          </button>
         </div>
         {shareCopied && (
           <div style={{ textAlign: 'right', paddingRight: 20, marginTop: 4, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Link copied</div>
@@ -594,6 +600,9 @@ export default function ProductDetailScreen({
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.1, margin: '9px 0 0', color: 'var(--ayna-heading)' }}>{name}</div>
           {price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
           {buyUrl && <p style={{ margin: '10px 0 0', color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>Buying opens the seller’s site. The seller handles payment, shipping, and returns; check the final price and delivery there.</p>}
+          <button type="button" onClick={handleShare} style={{ marginTop: 12, padding: 0, border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 3, cursor: 'pointer' }}>
+            {shareCopied ? 'Ayna link copied' : 'Share this product with a friend'}
+          </button>
           {pillTags.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
               {pillTags.map((t) => (
@@ -973,7 +982,7 @@ export default function ProductDetailScreen({
               textDecoration: 'none',
             }}
           >
-            View buying options
+            Shop with {brand || 'seller'}
           </a>
         ) : (
           <div

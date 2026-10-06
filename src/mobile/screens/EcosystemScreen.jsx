@@ -18,6 +18,7 @@ export default function EcosystemScreen({
   name = 'You',
   tags = '',
   relatedReads = [],
+  savedProducts = {},
   headerInitial = 'A',
   onOpenProduct,
   onOpenArticle,
@@ -36,6 +37,8 @@ export default function EcosystemScreen({
   const showingArea = selectedSeat && !selectedSeat.gap;
   const gridTitle = showingArea ? selectedSeat.label : 'Matched for you';
   const gridProducts = showingArea ? selectedSeat.products : myProducts;
+  const savedList = Object.values(savedProducts || {});
+  const nextSaved = savedList[0];
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
@@ -46,6 +49,24 @@ export default function EcosystemScreen({
           {getTimeGreeting()}, {name}
         </div>
       </div>
+
+      <section aria-label="Your next steps" style={{ margin: '18px 20px 0', padding: 18, borderRadius: 22, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)' }}>
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 7 }}>Your next steps</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.25 }}>
+          {nextSaved ? 'Pick up where you left off' : 'Make this space yours'}
+        </div>
+        <p style={{ margin: '8px 0 14px', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.5 }}>
+          {nextSaved ? `${savedList.length} saved product${savedList.length === 1 ? '' : 's'} in your shortlist. Revisit one when you’re ready.` : 'Save products you want to revisit, and check in when your needs change.'}
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <button type="button" onClick={nextSaved ? () => onOpenProduct?.(nextSaved) : onBrowse} style={{ border: 0, borderRadius: 99, padding: '10px 14px', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: 'pointer' }}>
+            {nextSaved ? `View ${nextSaved.name || 'saved product'}` : 'Explore products'}
+          </button>
+          <button type="button" onClick={nextSaved ? onOpenSaved : onOpenMonthlyCheckin} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '10px 14px', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: 'pointer' }}>
+            {nextSaved ? 'Your saved list' : 'Monthly check-in'}
+          </button>
+        </div>
+      </section>
 
       <div style={{ padding: '18px 20px 0' }}>
         <EcosystemOrbit
