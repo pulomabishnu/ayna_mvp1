@@ -1,7 +1,7 @@
 import MobileHeader from '../components/MobileHeader.jsx';
 import OrbHero from '../components/OrbHero.jsx';
 
-export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile }) {
+export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, onAboutAyna, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile }) {
   return (
     <div
       style={{
@@ -40,8 +40,8 @@ export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrows
         </div>
       </div>
 
-      <div style={{ position: 'relative', padding: '8px 24px 40px' }}>
-        <div
+      <div style={{ position: 'relative', padding: '8px 24px 28px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <button type="button"
           onClick={onStartQuiz}
           style={{
             background: '#FFC774',
@@ -58,14 +58,16 @@ export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrows
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 9,
+            gap: 7,
           }}
         >
           Start the intake
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#231A12" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
-        </div>
+        </button>
+        {!authUser && <button type="button" onClick={onAlreadyHaveAccount} style={{ minHeight: 42, border: 0, background: 'transparent', color: '#FFF9F2', padding: '8px 12px', fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>I already have an account</button>}
+        <button type="button" onClick={onAboutAyna} style={{ minHeight: 42, border: 0, background: 'transparent', color: 'rgba(255,249,242,.85)', padding: '8px 12px', fontFamily: "'DM Sans',sans-serif", fontSize: 13, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>About us <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>→</span></button>
       </div>
     </div>
   );

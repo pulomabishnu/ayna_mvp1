@@ -543,6 +543,7 @@ export default function MobileApp() {
         seedProductId={communitySeed?.productId}
         onGoBrowse={() => setScreen('browse')}
         onGoEco={() => setScreen(hasEcosystem ? 'eco' : 'ecointro')}
+        authUser={authUser}
         theme={theme}
         onToggleTheme={setThemeMode}
         personalized={personalized}
