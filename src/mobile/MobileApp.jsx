@@ -138,6 +138,21 @@ function capProductsPerBrand(products, maxPerBrand = MAX_PRODUCTS_PER_BRAND) {
 // subset of this same array — stays a variety of brands instead of one
 // brand's whole catalog crowding everything else out.
 const MIN_ECOSYSTEM_MATCH_PERCENT = 30;
+const DEFAULT_PRODUCTS_PER_AREA = 3;
+
+function limitProductsPerArea(products, requestedCount) {
+  const perArea = [1, 2, 3, 5].includes(Number(requestedCount))
+    ? Number(requestedCount)
+    : DEFAULT_PRODUCTS_PER_AREA;
+  const counts = new Map();
+  return products.filter((product) => {
+    const area = product.areaKey || 'other';
+    const count = counts.get(area) || 0;
+    if (count >= perArea) return false;
+    counts.set(area, count + 1);
+    return true;
+  });
+}
 
 function seedEcosystemFromAnswers(quizAnswers) {
   const { matches } = getRecommendationMatchesAndRest(quizAnswers, null);
@@ -148,7 +163,10 @@ function seedEcosystemFromAnswers(quizAnswers) {
     const area = resolveEcosystemProductArea(p, REAL_ECOSYSTEM_AREAS);
     return { ...p, areaKey: area ? area.key : null };
   });
-  return capProductsPerBrand(withAreas);
+  return limitProductsPerArea(
+    capProductsPerBrand(withAreas),
+    quizAnswers?.fullHealthIntake?.recommendedProductsPerArea,
+  );
 }
 
 export default function MobileApp() {

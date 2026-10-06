@@ -184,7 +184,7 @@ const EMPTY = {
   allergyStatus: '', allergyItems: [], allergySelections: [], allergyOtherText: '',
   takesCurrent: '', currentMedicationItems: [],
   productHistory: [], avoidRepeat: [], safetyConcern: '',
-  preferredFormats: [], formatOtherText: '', priceRange: [], largePurchaseFrequency: '',
+  preferredFormats: [], formatOtherText: '', recommendedProductsPerArea: 3, priceRange: [], largePurchaseFrequency: '',
   brandOpenness: '', trustedBrands: [], brandSupportPreferences: [],
   avoidIngredients: [], avoidIngredientsOtherText: '', fsaHsaAnswer: '',
   trustRanking: TRUST_ITEMS, trustRankingTouched: false, anythingElse: '',
@@ -207,7 +207,7 @@ const RESUMABLE_PASSTHROUGH_FIELDS = [
   'allergyStatus', 'allergyItems',
   'takesCurrent', 'currentMedicationItems',
   'productHistory', 'avoidRepeat', 'safetyConcern',
-  'preferredFormats', 'formatOtherText', 'priceRange', 'largePurchaseFrequency',
+  'preferredFormats', 'formatOtherText', 'recommendedProductsPerArea', 'priceRange', 'largePurchaseFrequency',
   'brandOpenness', 'trustedBrands',
   'avoidIngredients', 'avoidIngredientsOtherText',
   'anythingElse',
@@ -478,6 +478,7 @@ function buildSnapshot(intake) {
     safetyConcern: intake.safetyConcern,
     preferredFormats: intake.preferredFormats,
     formatOtherText: intake.formatOtherText.trim(),
+    recommendedProductsPerArea: intake.recommendedProductsPerArea,
     preferredProductTypes,
     priceRange: intake.priceRange,
     largePurchaseFrequency: intake.largePurchaseFrequency,
@@ -1562,6 +1563,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       { id: 'avoidRepeat', section: 'history', title: 'Are there any products or brands you definitely do not want recommended again?', type: 'avoidRepeat', optional: true },
       { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
       { id: 'formats', section: 'preferences', title: 'Which product formats do you prefer?', type: 'formats', optional: true },
+      { id: 'recommendationCount', section: 'preferences', title: 'How many products would you like to see for each health area?', subtitle: 'We’ll show up to this many strong matches per area. You can always browse more.', type: 'recommendationCount', optional: true },
       { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'trustedBrands', optional: true }] : []),
@@ -1794,6 +1796,16 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       );
     }
     if (step.type === 'fsa') return <Pills options={FSA_HSA} selected={intake.fsaHsaAnswer ? [intake.fsaHsaAnswer] : []} onToggle={(v) => set('fsaHsaAnswer', v)} />;
+    if (step.type === 'recommendationCount') return (
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 10 }}>
+        {[1, 2, 3, 5].map((count) => {
+          const selected = Number(intake.recommendedProductsPerArea) === count;
+          return <button key={count} type="button" aria-pressed={selected} onClick={() => set('recommendedProductsPerArea', count)} style={{ padding: '20px 10px', borderRadius: 18, border: selected ? '2px solid #FFC774' : '1px solid rgba(255,249,242,.35)', background: selected ? '#FFF9F2' : 'rgba(255,249,242,.1)', color: selected ? NAVY : '#FFF9F2', fontFamily: "'DM Sans',sans-serif", fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>
+            {count} {count === 1 ? 'product' : 'products'}
+          </button>;
+        })}
+      </div>
+    );
     if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
     if (step.type === 'textarea') return <TextAreaField value={intake.anythingElse} onChange={(v) => set('anythingElse', v)} placeholder="Share anything else that could help us personalize your recommendations." />;
 
