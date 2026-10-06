@@ -139,7 +139,8 @@ export default function About({ onExplore, onStart }) {
             <div className="ab-eyebrow">Our story</div>
             <h2 className="ab-h2">Different stories.<br />One shared question.</h2>
             <p className="ab-p">
-              For our co-founder Puloma, getting a PCOS diagnosis took visits to three doctors. Finding guidance on
+              For our co-founder Puloma, getting a PMOS diagnosis took visits to three doctors. When she asked her OB-GYN
+              which products could help manage her symptoms, she was told to “look it up.” Finding guidance on
               non-prescription products brought another challenge: figuring out where to begin.
             </p>
             <p className="ab-p">
