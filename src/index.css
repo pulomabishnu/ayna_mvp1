@@ -3028,9 +3028,11 @@ html {
   background-repeat: no-repeat !important;
 }
 
+/* About + How it works (2026-10-05 redesign): a purely horizontal gradient,
+   identical to .ab-hero's, so nav and hero blend at any hero height. */
 .app-nav--landing.app-nav--about {
-  background: linear-gradient(125deg, #242A52 0%, #33305F 34%, #4E3866 64%, #A2603C 100%) !important;
-  background-size: 100% 342px !important;
+  background: linear-gradient(90deg, #252A5C 0%, #33306A 35%, #5A3A5E 65%, #A8603A 90%, #C77A3A 100%) !important;
+  background-size: 100% 100% !important;
   background-position: 0 0 !important;
   background-repeat: no-repeat !important;
 }
@@ -5976,3 +5978,69 @@ html[data-v6-site-theme='dark'] .resa-modal__logo {
   .ab .ab-h2--section, .ab .ab-mirror__title, .ab .ab-cta__title { font-size: 30px; }
   .ab-block { padding-top: 64px; }
 }
+
+/* Shared hero gradient for the About / How it works redesign. */
+.ab .hiw-hero.ab-hero {
+  background: linear-gradient(90deg, #252A5C 0%, #33306A 35%, #5A3A5E 65%, #A8603A 90%, #C77A3A 100%) !important;
+  padding: 88px 24px 96px !important;
+  margin: 0 !important;
+  max-width: none !important;
+  border-radius: 0 !important;
+}
+.ab .ab-hero .hiw-hero__col { max-width: 900px !important; margin: 0 auto !important; }
+.ab .ab-cta { background: linear-gradient(90deg, #252A5C 0%, #33306A 35%, #5A3A5E 65%, #A8603A 90%, #C77A3A 100%); }
+
+/* ── How it works (2026-10-05 redesign) — builds on the .ab styles above. */
+.ab-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.ab-step { display: flex; flex-direction: column; gap: 12px; padding: 28px; }
+.ab-step__n { font: 400 30px/1 'Playfair Display', Georgia, serif; color: #E2C7A8; margin-bottom: 6px; }
+.ab-step--dark { background: linear-gradient(140deg, #252A5C 0%, #3D3266 55%, #5A3A5E 100%); box-shadow: none; }
+.ab-step--dark .ab-step__n { color: #F0A84B; }
+.ab .ab-step--dark .ab-h3, .ab .ab-step--dark .ab-p { color: #FFFCF9; }
+.ab-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 12px; }
+.ab-chip { padding: 6px 12px; border-radius: 999px; background: #F6EFE6; color: #242A52; font: 400 12px/1.2 'DM Sans', sans-serif; }
+.ab-step__note {
+  margin-top: auto;
+  padding: 10px 12px;
+  border: 1px dashed #D9D1C6;
+  border-radius: 8px;
+  color: #8A8499;
+  font: 400 12px/1.5 'DM Sans', sans-serif;
+}
+.ab-funnel { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 44px; }
+.ab-funnel__bar {
+  height: 44px; display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; color: #FFFCF9; font: 400 14px/1.2 'DM Sans', sans-serif; text-align: center; padding: 0 12px;
+}
+.ab-funnel__bar--light { color: #242A52; font-weight: 500; }
+.ab-funnel__arrow { color: #B7AFC2; font-size: 12px; line-height: 1; }
+.ab-match { padding-top: 88px; padding-bottom: 0; align-items: center; }
+.ab-match .ab-h2--section { margin-bottom: 18px; }
+.ab-match .ab-p { max-width: 460px; }
+.ab-match__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ab-match__item {
+  padding: 18px 20px; background: #fff; border: 1px solid #EDE5DA; border-radius: 10px;
+  color: #242A52; font: 400 15px/1.35 'DM Sans', sans-serif;
+}
+.ab-notdoctor { display: flex; align-items: center; justify-content: space-between; gap: 40px; margin: 96px 0 96px; padding: 44px; }
+.ab .ab-notdoctor__title { font-size: 34px; margin-bottom: 14px; }
+.ab-notdoctor .ab-p { max-width: 640px; }
+.ab .ab-btn-outline {
+  flex: none; padding: 12px 24px; border: 1px solid #242A52; border-radius: 999px; background: transparent;
+  color: #242A52; font: 500 14px/1.2 'DM Sans', sans-serif; cursor: pointer;
+}
+.ab .ab-btn-outline:hover { background: #242A52; color: #FFFCF9; }
+
+@media (max-width: 960px) {
+  .ab-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .ab .hiw-hero.ab-hero { padding: 56px 20px 64px !important; }
+  .ab-steps, .ab-match__grid { grid-template-columns: 1fr; }
+  .ab-funnel { padding: 24px 16px; }
+  .ab-funnel__bar { min-width: 60%; }
+  .ab-match { padding-top: 64px; }
+  .ab-notdoctor { flex-direction: column; align-items: flex-start; padding: 28px 22px; margin: 64px 0; }
+  .ab .ab-notdoctor__title { font-size: 28px; }
+}
+.ab-nowrap { white-space: nowrap; }

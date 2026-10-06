@@ -63,7 +63,7 @@ import { productHref, productRouteKey, parseProductIdFromPath } from './utils/pr
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
-const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about'];
+const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about', 'how-it-works'];
 
 const HEALTH_PROFILE_UPDATE_CUTOFF = Date.parse('2026-09-05T02:56:40.000Z');
 const HEALTH_PROFILE_UPDATE_NOTICE_KEY = 'ayna_health_profile_update_2026_09_05_seen';
@@ -1445,7 +1445,7 @@ function App() {
   // Declared here, below ecosystemCount, and not up with the other nav flags —
   // reading ecosystemCount before its `const` is a temporal dead zone error,
   // and && short-circuiting hid it from every signed-out check.
-  const navGradientVariant = currentView === 'about'
+  const navGradientVariant = (currentView === 'about' || currentView === 'how-it-works')
     ? ' app-nav--about'
     : (user && ecosystemCount > 0) ? ' app-nav--returning' : '';
   const handleOpenProduct = (product, meta = {}) => {
