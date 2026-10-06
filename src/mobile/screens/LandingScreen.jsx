@@ -99,10 +99,10 @@ export default function LandingScreen({ onStartQuiz, onAlreadyHaveAccount, onAbo
       <div
         style={{
           position: 'relative',
-          padding: '0 24px 44px',
+          padding: '0 24px 30px',
           display: 'flex',
           flexDirection: 'column',
-          gap: 11,
+          gap: 8,
         }}
       >
         <div
@@ -121,7 +121,7 @@ export default function LandingScreen({ onStartQuiz, onAlreadyHaveAccount, onAbo
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 9,
+            gap: 7,
             animation: 'ay-bob 2.5s ease-in-out infinite',
           }}
         >
@@ -139,10 +139,12 @@ export default function LandingScreen({ onStartQuiz, onAlreadyHaveAccount, onAbo
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
         </div>
-        {!authUser && <button type="button" onClick={onAlreadyHaveAccount} style={{ border: 0, background: 'transparent', color: '#FFF9F2', padding: 8, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
+        {!authUser && <button type="button" onClick={onAlreadyHaveAccount} style={{ border: 0, background: 'transparent', color: '#FFF9F2', minHeight: 42, padding: '8px 12px', fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
           I already have an account
         </button>}
-        <button type="button" onClick={onAboutAyna} style={{ border: 0, background: 'transparent', color: 'rgba(255,249,242,.8)', padding: 6, fontFamily: "'DM Sans',sans-serif", fontSize: 13, cursor: 'pointer' }}>About us →</button>
+        <button type="button" onClick={onAboutAyna} style={{ border: 0, background: 'transparent', color: 'rgba(255,249,242,.85)', minHeight: 42, padding: '8px 12px', fontFamily: "'DM Sans',sans-serif", fontSize: 13, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+          About us <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>→</span>
+        </button>
       </div>
     </div>
   );
