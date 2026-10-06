@@ -115,7 +115,8 @@
 .ayna-scrapbook__paper--intro { background: #4e3866; border-color: #3a294e; color: #fffaf0; padding-bottom: 42px; transform: rotate(1.2deg); }
 .ayna-scrapbook__paper--intro::before { content: ''; position: absolute; top: -9px; right: 22px; width: 71px; height: 22px; background: rgba(240,168,75,.62); transform: rotate(-7deg); clip-path: polygon(2% 0,100% 7%,97% 100%,0 91%); }
 .ayna-scrapbook__paper--intro .ayna-scrapbook__eyebrow { color: #f0bd70; }
-.ayna-scrapbook__paper--intro > p { color: #f8efe4; font-size: 14px; }
+.ayna-scrapbook .ayna-scrapbook__paper--intro h2 { color: #fffaf0; }
+.ayna-scrapbook .ayna-scrapbook__paper--intro > p { color: #f8efe4; font-size: 14px; }
 .ayna-scrapbook__intro-stamp { position: absolute; right: 13px; bottom: -17px; padding: 7px 10px; border: 2px solid #9f603d; border-radius: 3px; background: #f6e3be; color: #6c3e2b; font: 700 10px 'DM Mono', monospace; letter-spacing: .06em; text-transform: uppercase; transform: rotate(-7deg); box-shadow: 2px 3px 0 rgba(53,38,34,.2); }
 .ayna-scrapbook__paper h2 { margin: 8px 0 12px; font-size: 26px; line-height: 1.15; }
 .ayna-scrapbook__paper > p { margin: 0 0 18px; color: #615866; font-size: 13px; line-height: 1.55; }
