@@ -946,7 +946,6 @@ function ZipDigits({ value, onChange, onSkip }) {
   );
 }
 
-const SCALE_BAR_HEIGHTS = [18, 31, 44, 57, 70];
 
 // Pattern D2: rising bars for the first up-to-5 ordered levels; any
 // trailing non-ordinal options (e.g. "It varies", "Not sure") render as
@@ -955,22 +954,15 @@ const SCALE_BAR_HEIGHTS = [18, 31, 44, 57, 70];
 function Scale({ options, value, onChange }) {
   const scaleOptions = options.slice(0, 5);
   const extraOptions = options.slice(5);
+  const index = scaleOptions.indexOf(value);
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 5 }}>
-        {scaleOptions.map((opt, i) => {
-          const on = value === opt;
-          return (
-            <div key={opt} onClick={() => onChange(opt)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, cursor: 'pointer' }}>
-              <span style={{
-                width: '100%', height: SCALE_BAR_HEIGHTS[i], borderRadius: '10px 10px 4px 4px',
-                background: on ? `linear-gradient(180deg, ${ACCENT_BG}, ${ACCENT_BORDER})` : 'var(--ayna-track)',
-                boxShadow: on ? '0 6px 16px rgba(232,169,79,.35)' : 'none',
-              }} />
-              <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: on ? 600 : 500, fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', lineHeight: 1.2, textAlign: 'center', color: on ? '#FFC774' : 'rgba(255,249,242,.6)' }}>{opt}</span>
-            </div>
-          );
-        })}
+      <div style={{ borderRadius: 18, padding: '18px 16px', background: 'rgba(255,249,242,.08)', border: '1px solid rgba(255,249,242,.25)' }}>
+        <div style={{ textAlign: 'center', color: '#FFF9F2', fontWeight: 700, fontSize: 18, minHeight: 28 }}>{index >= 0 ? value : 'Slide to choose'}</div>
+        <input type="range" min="0" max={scaleOptions.length - 1} step="1" value={index >= 0 ? index : 0} onChange={(event) => onChange(scaleOptions[Number(event.target.value)])} aria-label="Choose a level" style={{ width: '100%', margin: '18px 0 8px', accentColor: '#FFC774', height: 30, cursor: 'pointer' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, color: 'rgba(255,249,242,.78)', fontSize: 11 }}>
+          <span>{scaleOptions[0]}</span><span>{scaleOptions[scaleOptions.length - 1]}</span>
+        </div>
       </div>
       {extraOptions.length > 0 && (
         <div style={{ marginTop: 14 }}>
