@@ -7,7 +7,7 @@ import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch } from '../utils/ecosystemStore.js';
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
-import { ARTICLES } from '../components/Articles.jsx';
+import { ARTICLES, getArticlesByProfileRelevance } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
@@ -18,6 +18,7 @@ import { useEcosystemSession } from './hooks/useEcosystemSession.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
 import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
+import { getNextArticle } from './utils/nextArticle.js';
 import AskAynaChip from './components/AskAynaChip.jsx';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
@@ -164,6 +165,7 @@ export default function MobileApp() {
   // scroll pagination) is exactly as the user left it, not reset to a
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
+  const [readArticleIds, setReadArticleIds] = useState([]);
   const [authMode, setAuthMode] = useState('signup');
   const [authPrompt, setAuthPrompt] = useState(null);
   const authReturnScreenRef = useRef('landing');
@@ -450,7 +452,10 @@ export default function MobileApp() {
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
     onGoLanding: () => setScreen('landing'),
     onOpenProduct: (p) => setOverlay({ type: 'product', item: p }),
-    onOpenArticle: (a) => setOverlay({ type: 'article', item: a }),
+    onOpenArticle: (a) => {
+      setReadArticleIds((ids) => ids.includes(a.id) ? ids : [...ids, a.id]);
+      setOverlay({ type: 'article', item: a });
+    },
     onOpenProfile: openProfile,
     onRequireAuth: (feature) => requestAuth(feature || 'this feature'),
     onAlreadyHaveAccount: () => openAuth('signin'),
@@ -626,7 +631,17 @@ export default function MobileApp() {
       )}
       {overlay?.type === 'article' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
-          <ArticleDetailScreen article={overlay.item} onBack={() => setOverlay(null)} theme={theme} onToggleTheme={setThemeMode} />
+          <ArticleDetailScreen
+            key={overlay.item.id}
+            article={overlay.item}
+            onBack={() => setOverlay(null)}
+            nextRead={getNextArticle(overlay.item, ARTICLES, readArticleIds, getArticlesByProfileRelevance(effectiveQuizAnswers || {}, null))}
+            onNext={(article) => {
+              setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]);
+              setOverlay({ type: 'article', item: article });
+            }}
+            theme={theme}
+          />
         </div>
       )}
       {overlay?.type === 'why-match' && (

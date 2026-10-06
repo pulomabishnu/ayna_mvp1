@@ -58,7 +58,7 @@ function splitBodyAndSources(body) {
   return { mainBody, sourceLinks };
 }
 
-export default function ArticleDetailScreen({ article, onBack, theme }) {
+export default function ArticleDetailScreen({ article, onBack, nextRead, onNext, theme }) {
   const scrollRef = useRef(null);
   const [progress, setProgress] = useState(0);
 
@@ -213,6 +213,14 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
               Every guide draws on peer-reviewed literature and established clinical guidance.
             </div>
           </div>
+        )}
+        {nextRead?.article && (
+          <section style={{ marginTop: 24, padding: '18px', borderRadius: 22, background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-border)' }} aria-label="Next article">
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{nextRead.label}</div>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, lineHeight: 1.2, color: 'var(--ayna-heading)', marginTop: 8 }}>{nextRead.article.title}</div>
+            {nextRead.article.teaser && <p style={{ margin: '8px 0 14px', color: 'var(--ayna-text-muted)', fontSize: 12.5, lineHeight: 1.5 }}>{nextRead.article.teaser}</p>}
+            <button type="button" onClick={() => onNext?.(nextRead.article)} style={{ border: 0, borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', padding: '11px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>Read next →</button>
+          </section>
         )}
       </div>
       <LegalFooter />
