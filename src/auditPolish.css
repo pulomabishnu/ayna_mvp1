@@ -1,0 +1,44 @@
+/* Oct 2026 design-audit fixes that apply across pages (loaded last).
+   Small, additive: 44px hit areas, readable minimum text, one focus ring. */
+
+/* 44px touch targets without changing the visual size of small icon buttons */
+.ayna-browse-card__wishlist,
+.app-nav__circle,
+.pdp-head__link,
+.ayna-intake-back { position: relative; }
+.ayna-browse-card__wishlist::after,
+.ayna-intake-back::after,
+.pdp-head__link::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+.ayna-browse-card__wishlist { position: absolute; }
+
+/* No text under 12px: mono eyebrows and tiny labels */
+.ayna-landing-eyebrow, .v6-eyebrow, .pp-eyebrow, .qrp__cat,
+.ayna-category-title, .ayna-intake-section-label { font-size: max(12px, 1em); }
+.ayna-landing-eyebrow, .v6-eyebrow { font-size: 12px !important; }
+
+/* One visible focus ring everywhere */
+a:focus-visible, button:focus-visible, [role='button']:focus-visible, summary:focus-visible,
+select:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid #F0A84B;
+  outline-offset: 2px;
+}
+
+/* Honour reduced motion for the remaining decorative animation */
+@media (prefers-reduced-motion: reduce) {
+  .ayna-intake-glow, .v6-glow, [class*='blob'] { animation: none !important; }
+}
+
+/* ask ayna launcher: a plain navy pill instead of the gradient blob; hidden during the quiz */
+.v6-ask-locked-fallback {
+  width: auto !important; min-width: 52px !important; height: 52px !important; min-height: 52px !important;
+  border-radius: 999px !important; padding: 0 18px !important; border: 0 !important;
+  background: #242A52 !important; filter: none !important; box-shadow: 0 8px 24px rgba(26, 23, 20, .18) !important;
+}
+.v6-ask-locked-fallback__inner { grid-auto-flow: column; gap: 8px; }
+.v6-ask-locked-fallback__label { font: 600 14px/1 var(--font-body, 'DM Sans', sans-serif) !important; letter-spacing: 0; }
+.v6-ask-locked-fallback__lock { display: none; }
+body:has(.ayna-intake-root) .v6-ask-locked-fallback { display: none !important; }
+
+/* Hero: explanatory line + CTA share the headline's centre line */
+.ayna-landing-hero-col .ayna-landing-sub { margin-left: auto; margin-right: auto; text-align: center; }
+.ayna-landing-hero-col .ayna-landing-cta-row { justify-content: center; }

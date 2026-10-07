@@ -25,12 +25,13 @@ export default function CommunityPeek({ onOpenCommunity }) {
     supabase.from('community_feed_posts')
       .select('id, kind, body, is_anonymous, author_display_name, comment_count, created_at')
       .order('created_at', { ascending: false })
-      .limit(3)
+      .limit(5)
       .then(({ data, error }) => { if (alive) setPosts(error ? [] : data || []); });
     return () => { alive = false; };
   }, []);
 
-  if (posts === null) return null;
+  // An empty or near-empty feed on the landing page reads as a dead product: only show it once there are real posts.
+  if (posts === null || posts.length < 5) return null;
 
   return (
     <section className="cp-peek" aria-label="From the community">
@@ -48,7 +49,7 @@ export default function CommunityPeek({ onOpenCommunity }) {
         </button>
       ) : (
         <ul className="cp-peek__list">
-          {posts.map((p) => (
+          {posts.slice(0, 3).map((p) => (
             <li key={p.id}>
               <button type="button" onClick={() => onOpenCommunity?.(`/community/post/${p.id}`)}>
                 <span className="cp-peek__meta">

@@ -103,21 +103,6 @@ function triggerExistingSignIn(fallback) {
   else fallback?.();
 }
 
-function UnlockCard({ onStartQuiz }) {
-  return (
-    <div className="v6-unlock-card v6-unlock-card--slim" role="dialog" aria-label="Unlock personalized results">
-      <span className="v6-unlock-icon"><LockIcon /></span>
-      <div className="v6-unlock-copy">
-        <strong>sign in to unlock personalized results.</strong>
-        <span>save picks, see your ayna score, and open your health universe.</span>
-      </div>
-      <div className="v6-unlock-actions">
-        <button type="button" className="primary" onClick={() => triggerExistingSignIn(onStartQuiz)}>sign in</button>
-        <button type="button" onClick={onStartQuiz}>build my ecosystem</button>
-      </div>
-    </div>
-  );
-}
 
 function LandingFeatures({
   onStartQuiz,
@@ -132,8 +117,8 @@ function LandingFeatures({
   recommendedProductIds = [],
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [seed, setSeed] = useState(() => Math.floor(Math.random() * 10000));
-  const [exploreOffset, setExploreOffset] = useState(0);
+  const [seed] = useState(() => Math.floor(Math.random() * 10000));
+  const [exploreOffset] = useState(0);
 
   const owned = useMemo(() => Object.values(myProducts || {}), [myProducts]);
   const recommended = useMemo(
@@ -163,11 +148,6 @@ function LandingFeatures({
     const product = source.length ? source[(seed + index * 7) % source.length] : null;
     return { ...area, product };
   }), [visibleAreas, visualPool, seed]);
-
-  const refreshExplore = () => {
-    setExploreOffset((current) => (current + 6) % careAreas.length);
-    setSeed((current) => (current + 137 + Math.floor(Math.random() * 997)) % 100000);
-  };
 
   const name = firstName(user);
   const selectedScore = selected ? scoreFor(selected) : null;
@@ -220,7 +200,6 @@ function LandingFeatures({
           </div>
         </div>
 
-        {!personalizedUnlocked && <div className="v6-cabinet-lock"><UnlockCard onStartQuiz={onStartQuiz} /></div>}
       </section>
 
       <section className="v6-explore">
@@ -231,7 +210,6 @@ function LandingFeatures({
           </div>
           <div className="v6-explore-meta">
             <p>Browse real ayna products by the health need that matters to you.</p>
-            <button type="button" className="v6-explore-refresh" onClick={refreshExplore} aria-label="Refresh health categories">↻ refresh</button>
           </div>
         </div>
 

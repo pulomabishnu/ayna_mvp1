@@ -5679,3 +5679,11 @@ textarea {
 .v6-survey-toast .v6-survey-actions { display: flex; gap: 8px; margin-top: 4px; }
 .v6-survey-toast .v6-survey-submit { background: #F0A84B; color: #242A52; }
 .v6-survey-toast .v6-survey-skip { background: transparent; color: #FAF6F1; border: 1px solid rgba(250,246,241,.4); }
+
+/* Home hero: one explanatory line + the primary quiz CTA */
+.ayna-landing-sub { margin: 14px 0 0; max-width: 560px; font: 400 1.0625rem/1.55 var(--font-body); color: rgba(250, 246, 241, .82); }
+.ayna-landing-cta-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 22px 0 18px; }
+.ayna-landing-cta { border: 0; border-radius: 10px; min-height: 52px; padding: 0 28px; background: #FAF6F1; color: #242A52; font: 600 1rem var(--font-body); cursor: pointer; }
+.ayna-landing-cta:hover { background: #fff; }
+.ayna-landing-cta:focus-visible { outline: 2px solid #F0A84B; outline-offset: 3px; }
+.ayna-landing-cta-row span { font-size: .875rem; color: rgba(250, 246, 241, .78); }

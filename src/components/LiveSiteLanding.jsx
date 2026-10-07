@@ -666,7 +666,7 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
 /* 1a — first visit                                                    */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
+function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState(initialCategory || 'all');
   useEffect(() => {
@@ -678,9 +678,6 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
     }
   }, [filter]);
   const [personalize, setPersonalize] = useState(false);
-  const [chipSetIndex, setChipSetIndex] = useState(0);
-  const [chipsPaused, setChipsPaused] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
   const [showShopFilters, setShowShopFilters] = useState(false);
   const [priceFilter, setPriceFilter] = useState('all');
   const [eligibilityFilter, setEligibilityFilter] = useState('all');
@@ -691,21 +688,7 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
   const [productTypeFilter, setProductTypeFilter] = useState('all');
   const [aynaFilter, setAynaFilter] = useState('all');
 
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => setReduceMotion(media.matches);
-    sync();
-    media.addEventListener('change', sync);
-    return () => media.removeEventListener('change', sync);
-  }, []);
-
-  useEffect(() => {
-    if (chipsPaused || reduceMotion) return undefined;
-    const timer = window.setInterval(() => {
-      setChipSetIndex((current) => (current + 1) % CHIP_SETS.length);
-    }, 3800);
-    return () => window.clearInterval(timer);
-  }, [chipsPaused, reduceMotion]);
+  // Suggestion chips are fixed so returning visitors can build memory (no rotation).
 
   // Rotates weekly, one product per category — see utils/trendingLineup.js.
   const lineup = useMemo(() => getWeeklyTrendingLineup(ALL_PRODUCTS), []);
@@ -764,10 +747,16 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
     <div className="mockup-landing">
       <section className="ayna-landing-hero">
         <div className="ayna-landing-hero-col">
-          <div className="ayna-landing-eyebrow">Women&apos;s health, personalized</div>
           <h1 className="ayna-landing-headline">
-            Care that&apos;s <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>matched</span> to your body.
+            Women&apos;s health products, <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>matched</span> to your body.
           </h1>
+          <p className="ayna-landing-sub">
+            Answer a few questions. We rank products by fit, ingredients and evidence — not by who pays us.
+          </p>
+          <div className="ayna-landing-cta-row">
+            <button type="button" className="ayna-landing-cta" onClick={onStartQuiz}>Get my matches</button>
+            <span>Takes about 3 minutes</span>
+          </div>
 
           <form className="ayna-landing-searchbar v6-home-search" onSubmit={submitSearch}>
             <input
@@ -780,28 +769,14 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
             <button type="submit">Search</button>
           </form>
 
-          <div className="ayna-landing-chips ayna-landing-chips--rotating" aria-label="Popular searches"
-            onMouseEnter={() => setChipsPaused(true)} onMouseLeave={() => setChipsPaused(false)}
-            onFocus={() => setChipsPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setChipsPaused(false); }}>
-            {CHIP_SETS[chipSetIndex].map((chip) => (
-              <button key={`${chipSetIndex}-${chip}`} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(chip))}>
+          <div className="ayna-landing-chips" aria-label="Popular searches">
+            {CHIP_SETS[0].map((chip) => (
+              <button key={chip} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(chip))}>
                 {chip}
               </button>
             ))}
           </div>
 
-        </div>
-      </section>
-
-      <section className="ayna-landing-band">
-        <div className="mockup-page ayna-landing-band__inner">
-          <div className="ayna-landing-band__copy">
-            Access your personal ecosystem of health and wellness picks, just for you.
-          </div>
-          <div className="ayna-login-actions">
-            <button type="button" className="ayna-landing-btn ayna-landing-btn--navy" onClick={onLogIn}>Log in</button>
-            <p>Don’t have an account? <button type="button" onClick={onStartQuiz}>Build your ecosystem</button></p>
-          </div>
         </div>
       </section>
 

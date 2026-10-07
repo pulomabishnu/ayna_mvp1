@@ -1158,7 +1158,7 @@ export default function ProductModal({
                 </div>
 
                 <div className="pdp-section" style={{ order: 2 }}>
-                  <h3 className="pdp-section__title">Clinician opinion</h3>
+                  <h3 className="pdp-section__title">{product.doctorOpinion && !product.clinicianAttribution ? 'What the brand claims' : 'Clinician opinion'}</h3>
                   {(
                   <div className="pdp-summary-card">
                     {product.doctorOpinion ? (
