@@ -942,7 +942,9 @@ export default function ProductDetailScreen({
             <path d="M12 20s-7-4.4-8.9-8.4A4.9 4.9 0 0 1 12 6.3a4.9 4.9 0 0 1 8.9 5.3C19 15.6 12 20 12 20z" />
           </svg>
         </div>
-        <div
+        <button
+          type="button"
+          aria-pressed={isInEcosystem}
           onClick={onAddToEcosystem}
           style={{
             flex: 'none',
@@ -962,7 +964,7 @@ export default function ProductDetailScreen({
           }}
         >
           {isInEcosystem ? 'Remove from Ecosystem' : 'Add to Ecosystem'}
-        </div>
+        </button>
         {buyUrl ? (
           <a
             href={buyUrl}

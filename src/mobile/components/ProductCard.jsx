@@ -51,9 +51,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const isPartner = isPartnerBrandItem(product);
   const insightLabels = [
     'Ayna take',
-    product?.doctorOpinion || getVerificationLinks(product, 'doctor').length ? 'Clinical' : null,
-    product?.scientificCitations?.length || product?.ingredientScience?.some((item) => item.citations?.length) || getVerificationLinks(product, 'scientific').length ? 'Research' : null,
-    product?.communityReview || getVerificationLinks(product, 'community').length ? 'Social reviews' : null,
+    product?.doctorOpinion || getVerificationLinks(product, 'doctor').length ? 'Clinical opinion' : null,
+    product?.scientificCitations?.length || product?.ingredientScience?.some((item) => item.citations?.length) || getVerificationLinks(product, 'scientific').length ? 'Scientific literature' : null,
+    product?.communityReview || getVerificationLinks(product, 'community').length ? 'Social media + reviews' : null,
   ].filter(Boolean);
   const openCardWithKeyboard = (event) => {
     if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
