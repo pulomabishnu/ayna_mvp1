@@ -153,7 +153,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {name}
       </div>
 
-      <div style={{ marginTop: 'auto', paddingTop: 9 }}>
+      <div style={{ paddingTop: 8 }}>
         {resolvedPrice && (
           <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', whiteSpace: 'nowrap', color: 'var(--ayna-heading)' }}>{resolvedPrice}</div>
         )}
