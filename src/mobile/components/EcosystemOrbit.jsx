@@ -1,17 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import { ECOSYSTEM_AREAS, MAX_SATELLITES, CANVAS, CANVAS_H, BUBBLE, seatPosition } from '../data/ecosystemAreas.js';
 
-// Wrapper reserves the post-scale box (overflow hidden) while the inner
-// canvas keeps its real 560x520 coordinate space and is scaled down visually
-// — same technique EcosystemBubbles.jsx uses so bubble math stays correct.
 const SCALE = 0.62;
 
-// Controlled: selection state lives in the parent (EcosystemScreen) so a
-// "Show all" affordance elsewhere on the page can clear it.
 export default function EcosystemOrbit({ products = [], name = 'You', selectedKey = null, onSelectKey, onSelect, onExploreArea }) {
-  // NOTE: expects each product to already carry an `areaKey` (computed by
-  // the real resolveEcosystemProductArea, once real data is wired in) —
-  // this component intentionally does not resolve areas itself.
   const { seats } = useMemo(() => {
     const byArea = new Map();
     products.forEach((p) => {
@@ -26,19 +18,15 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
       gap: false,
     }));
 
-    if (byArea.has('other')) {
-      filled.push({ key: 'other', label: 'Other', products: byArea.get('other'), gap: false });
-    }
+    if (byArea.has('other')) filled.push({ key: 'other', label: 'Other', products: byArea.get('other'), gap: false });
 
     const filledCapped = filled.slice(0, MAX_SATELLITES);
     const addMoreSeat = { key: '__add-more__', label: 'Add More', products: [], gap: true };
     const seats = filledCapped.length < MAX_SATELLITES ? [...filledCapped, addMoreSeat] : filledCapped;
 
-    return { seats, covered: filled.length };
+    return { seats };
   }, [products]);
 
-  // No default selection — every node starts in its plain/white resting
-  // state until the person actually taps one, matching the design.
   const selected = seats.find((s) => s.key === selectedKey) || null;
 
   useEffect(() => {
@@ -47,56 +35,24 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
   }, [selected?.key]);
 
   return (
-    <div
-      style={{
-        width: CANVAS * SCALE,
-        height: CANVAS_H * SCALE,
-        margin: '0 auto',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
+    <div style={{ width: CANVAS * SCALE, height: CANVAS_H * SCALE, margin: '0 auto', position: 'relative', overflow: 'hidden' }}>
       <div style={{ width: CANVAS, height: CANVAS_H, transform: `scale(${SCALE})`, transformOrigin: 'top left', position: 'relative' }}>
-        <div
-          style={{
-            position: 'absolute',
-            left: 280 - 178,
-            top: 260 - 178,
-            width: 178 * 2,
-            height: 178 * 2,
-            borderRadius: '50%',
-            border: '1px dashed #DCCFC6',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            left: 280 - 118,
-            top: 260 - 118,
-            width: 118 * 2,
-            height: 118 * 2,
-            borderRadius: '50%',
-            border: '1px solid #E7DED6',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            left: 280 - 50,
-            top: 260 - 50,
-            width: 100,
-            height: 100,
-            borderRadius: '50%',
-            background: 'linear-gradient(140deg,#242A52,#4E3866 60%,#A2603C)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#FFFCF9',
-            boxShadow: '0 12px 26px rgba(36,42,82,.24)',
-          }}
-        >
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(21px * var(--ayna-text-scale, 1))' }}>{name}</div>
+        <div style={{
+          position: 'absolute', left: 280 - 178, top: 260 - 178, width: 356, height: 356,
+          borderRadius: '50%', border: '1px dashed rgba(77,58,99,.24)'
+        }} />
+        <div style={{
+          position: 'absolute', left: 280 - 118, top: 260 - 118, width: 236, height: 236,
+          borderRadius: '50%', border: '1px solid rgba(77,58,99,.14)'
+        }} />
+
+        <div style={{
+          position: 'absolute', left: 230, top: 210, width: 100, height: 100, borderRadius: '50%',
+          background: 'linear-gradient(145deg,#241C3E 0%,#4D3A63 48%,#A9647A 78%,#D98A52 100%)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFCF9',
+          boxShadow: '0 10px 24px rgba(36,28,62,.22)'
+        }}>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(18px * var(--ayna-text-scale, 1))' }}>{name}</div>
         </div>
 
         {seats.map((seat, i) => {
@@ -108,34 +64,24 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
               type="button"
               onClick={() => (seat.gap ? onExploreArea && onExploreArea() : onSelectKey && onSelectKey(isSelected ? null : seat.key))}
               style={{
-                position: 'absolute',
-                left: pos.left,
-                top: pos.top,
-                width: BUBBLE,
-                height: BUBBLE,
-                borderRadius: '50%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 8,
-                boxSizing: 'border-box',
-                cursor: 'pointer',
-                fontFamily: "'DM Sans',sans-serif",
-                textAlign: 'center',
-                color: '#1A1714',
-                background: seat.gap ? 'transparent' : isSelected ? '#FFC774' : '#FFFFFF',
-                borderWidth: 1.5,
-                borderStyle: seat.gap ? 'dashed' : 'solid',
-                borderColor: seat.gap ? '#DCCFC6' : isSelected ? '#E8A94F' : '#E1D5CE',
-                boxShadow: isSelected ? '0 12px 24px rgba(232,169,79,.38)' : seat.gap ? 'none' : '0 3px 10px rgba(41,37,36,.07)',
-                transform: isSelected ? 'scale(1.06)' : 'none',
-                transition: 'transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s',
+                position: 'absolute', left: pos.left, top: pos.top, width: BUBBLE, height: BUBBLE,
+                borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                padding: 8, boxSizing: 'border-box', cursor: 'pointer', fontFamily: "'DM Sans',sans-serif", textAlign: 'center',
+                color: isSelected ? '#FFFCF9' : '#292524',
+                background: seat.gap ? '#FFFCF9' : isSelected ? '#4D3A63' : '#FFFFFF',
+                borderWidth: 1.25, borderStyle: seat.gap ? 'dashed' : 'solid',
+                borderColor: seat.gap ? 'rgba(77,58,99,.28)' : isSelected ? '#4D3A63' : '#E7E0DB',
+                boxShadow: isSelected ? '0 8px 18px rgba(36,28,62,.18)' : '0 2px 8px rgba(41,37,36,.05)',
+                transform: isSelected ? 'scale(1.035)' : 'none',
+                transition: 'transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease'
               }}
             >
               <span style={{ fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{seat.gap ? '+ Add' : seat.label}</span>
               {!seat.gap && (
-                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', color: '#78716C', marginTop: 2 }}>
+                <span style={{
+                  fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))',
+                  color: isSelected ? 'rgba(255,252,249,.72)' : '#78716C', marginTop: 2
+                }}>
                   {seat.products.length}
                 </span>
               )}
