@@ -19,7 +19,7 @@ const CONSENT_ITEMS = [
 
 function Field({ label, icon, children }) {
   return (
-    <div
+    <label
       style={{
         background: '#FFFFFF',
         borderRadius: 20,
@@ -33,10 +33,10 @@ function Field({ label, icon, children }) {
     >
       {icon}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: '#A8A29E' }}>{label}</div>
+        <span style={{ display: 'block', fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 700, color: '#5C514C' }}>{label}</span>
         {children}
       </div>
-    </div>
+    </label>
   );
 }
 
@@ -61,9 +61,10 @@ const LockIcon = (
 
 function PrimaryButton({ onClick, disabled, children }) {
   return (
-    <div
-      onClick={disabled ? undefined : onClick}
+    <button type="button" disabled={disabled} onClick={onClick}
       style={{
+        width: '100%',
+        border: 0,
         background: disabled ? 'rgba(255,199,116,.45)' : '#FFC774',
         color: '#292524',
         textAlign: 'center',
@@ -81,15 +82,16 @@ function PrimaryButton({ onClick, disabled, children }) {
       }}
     >
       {children}
-    </div>
+    </button>
   );
 }
 
 function GoogleButton({ onClick, disabled }) {
   return (
-    <div
-      onClick={disabled ? undefined : onClick}
+    <button type="button" disabled={disabled} onClick={onClick}
       style={{
+        width: '100%',
+        color: '#FFFCF9',
         background: 'rgba(255,252,249,.14)',
         border: '1px solid rgba(255,255,255,.28)',
         textAlign: 'center',
@@ -113,15 +115,16 @@ function GoogleButton({ onClick, disabled }) {
         <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.58 1.79l3.44-3.44C17.94 1.19 15.23 0 12 0A12 12 0 0 0 1.28 6.62l3.99 3.09C6.22 6.86 8.87 4.75 12 4.75Z" />
       </svg>
       {disabled ? 'Opening Google…' : 'Continue with Google'}
-    </div>
+    </button>
   );
 }
 
 function AppleButton({ onClick, disabled }) {
   return (
-    <div
-      onClick={disabled ? undefined : onClick}
+    <button type="button" disabled={disabled} onClick={onClick}
       style={{
+        width: '100%',
+        color: '#FFFCF9',
         background: 'rgba(255,252,249,.14)',
         border: '1px solid rgba(255,255,255,.28)',
         textAlign: 'center',
@@ -143,7 +146,7 @@ function AppleButton({ onClick, disabled }) {
         <path fill="#FFFCF9" d="M11.1 3.68c.54-.65.9-1.56.8-2.46-.77.03-1.71.51-2.27 1.15-.5.57-.94 1.5-.82 2.38.86.06 1.75-.44 2.29-1.07z" />
       </svg>
       {disabled ? 'Opening Apple…' : 'Continue with Apple'}
-    </div>
+    </button>
   );
 }
 
@@ -324,7 +327,7 @@ export default function SigninScreen({
         </>
       ) : (
         <>
-          {mode === 'signup' && (
+          {mode === 'signup' && stats.some((stat) => Number(stat.value) > 0) && (
             <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
               {stats.map((s) => (
                 <div key={s.label} style={{ flex: 1, borderRadius: 16, padding: '12px 10px', background: 'rgba(255,252,249,.13)', border: '1px solid rgba(255,255,255,.2)', textAlign: 'center' }}>
@@ -340,34 +343,32 @@ export default function SigninScreen({
           </div>
 
           {mode === 'signup' && (
-            <div style={{ background: '#FFFFFF', borderRadius: 20, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 8px 20px -12px rgba(0,0,0,.35)' }}>
+            <label style={{ background: '#FFFFFF', borderRadius: 20, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 8px 20px -12px rgba(0,0,0,.35)' }}>
               <div style={{ width: 42, height: 42, borderRadius: 99, background: '#FFC774', color: '#292524', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
                 {initial}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: '#A8A29E' }}>First name</div>
-                <input type="text" placeholder="Maya" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={{ ...inputStyle, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', fontWeight: 500 }} />
+                <span style={{ display: 'block', fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 700, color: '#5C514C' }}>First name</span>
+                <input type="text" autoComplete="given-name" placeholder="Your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={{ ...inputStyle, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', fontWeight: 500 }} />
               </div>
-            </div>
+            </label>
           )}
 
           <Field label="Email" icon={EmailIcon}>
-            <input type="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
+            <input type="email" autoComplete="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
           </Field>
 
           <Field label="Password" icon={LockIcon}>
-            <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} />
+            <input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} />
           </Field>
 
           {mode === 'signup' && (
             <div style={{ marginTop: 6, marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {CONSENT_ITEMS.map((text, i) => (
-                <div key={i} onClick={() => toggleCheck(i)} style={{ display: 'flex', gap: 10, cursor: 'pointer' }}>
-                  <div style={{ width: 18, height: 18, borderRadius: 5, border: '1.5px solid rgba(255,255,255,.5)', background: checked[i] ? '#FFC774' : 'transparent', flex: 'none', marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#292524', fontWeight: 700 }}>
-                    {checked[i] ? 'Yes' : ''}
-                  </div>
-                  <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'rgba(255,252,249,.78)' }}>{text}</div>
-                </div>
+                <label key={i} style={{ display: 'flex', gap: 10, cursor: 'pointer', alignItems: 'flex-start' }}>
+                  <input type="checkbox" checked={checked[i]} onChange={() => toggleCheck(i)} style={{ width: 18, height: 18, flex: 'none', marginTop: 1, accentColor: '#FFC774' }} />
+                  <span style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'rgba(255,252,249,.9)' }}>{text}</span>
+                </label>
               ))}
             </div>
           )}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './mobile.css';
 import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest, filterPrescriptionCareGate, hydrateCatalogProduct } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
@@ -173,7 +173,7 @@ function seedEcosystemFromAnswers(quizAnswers) {
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName } = session;
-  const myProducts = storedProducts.map(hydrateCatalogProduct);
+  const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
   const [screen, setScreen] = useState('landing');
@@ -212,6 +212,7 @@ export default function MobileApp() {
     if (screen === 'browse' && dx > 0 && hasEcosystem) setScreen('eco');
   };
   const { user: authUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+  const [loadedAccountId, setLoadedAccountId] = useState(null);
   useEffect(() => {
     if (authLoading || !authUser || screen !== 'landing') return;
     Promise.resolve().then(() => setScreen(hasEcosystem ? 'eco' : 'ecointro'));
@@ -342,8 +343,10 @@ export default function MobileApp() {
       }));
 
       if (remoteProducts.length > 0) setScreen('eco');
+      setLoadedAccountId(userId);
     })().catch((error) => {
       console.warn('[Ayna] mobile ecosystem sync failed:', error);
+      if (!cancelled) setLoadedAccountId(userId);
     });
 
     return () => {
@@ -386,6 +389,13 @@ export default function MobileApp() {
   // otherwise be read, without touching the real stored answers themselves
   // (still saved, still shown when editing your own profile).
   const effectiveQuizAnswers = personalizeWithData ? lastQuizAnswers : null;
+  const suggestedEcosystemProducts = useMemo(() => {
+    if (!effectiveQuizAnswers) return [];
+    const savedIds = new Set(myProducts.map((product) => product.id));
+    return seedEcosystemFromAnswers(effectiveQuizAnswers)
+      .filter((product) => !savedIds.has(product.id))
+      .slice(0, 6);
+  }, [effectiveQuizAnswers, myProducts]);
 
   // Only true right after a mobile-initiated Google sign-in completes — the
   // full-page OAuth redirect leaves this app entirely and comes back on
@@ -622,6 +632,10 @@ export default function MobileApp() {
       : screen === 'community' ? 'community'
         : ['eco', 'ecointro'].includes(screen) ? 'home' : null;
 
+  if (authLoading || (authUser?.id && loadedAccountId !== authUser.id)) {
+    return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "'Playfair Display',serif", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14 }}>Opening your Ecosystem…</p></div></div>;
+  }
+
   return (
     <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
       <Screen
@@ -642,6 +656,7 @@ export default function MobileApp() {
         onToggleSaved={toggleSaved}
         onAddToEcosystem={handleAddToEcosystem}
         myProducts={myProducts}
+        suggestedEcosystemProducts={suggestedEcosystemProducts}
         quizAnswers={effectiveQuizAnswers}
         lastQuizAnswers={lastQuizAnswers}
         initialSnapshot={editingHealthProfile ? lastQuizAnswers?.fullHealthIntake || null : null}

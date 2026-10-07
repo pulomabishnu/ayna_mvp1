@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard.jsx';
 import ArticleCard from '../components/ArticleCard.jsx';
 import CtaBanner from '../components/CtaBanner.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
+import { getProductMatchDetailsForProduct } from '../../data/products.js';
 
 function getTimeGreeting() {
   const hour = new Date().getHours();
@@ -15,6 +16,7 @@ function getTimeGreeting() {
 
 export default function EcosystemScreen({
   myProducts = [],
+  suggestedEcosystemProducts = [],
   name = 'You',
   tags = '',
   relatedReads = [],
@@ -32,13 +34,23 @@ export default function EcosystemScreen({
   onOpenProfile,
   quizAnswers = null,
   onOpenWhyMatch,
+  onAddToEcosystem,
 }) {
   const [selectedKey, setSelectedKey] = useState(null);
   const [selectedSeat, setSelectedSeat] = useState(null);
 
+  const rankedProducts = myProducts
+    .map((product) => ({ product, details: getProductMatchDetailsForProduct(product, quizAnswers) }))
+    .sort((a, b) => (b.details.percent ?? -1) - (a.details.percent ?? -1));
+  const matchedProducts = quizAnswers
+    ? rankedProducts.filter(({ details }) => details.matchStatus === 'scored' && details.percent >= 30).map(({ product }) => product)
+    : myProducts;
+  const olderProducts = quizAnswers
+    ? rankedProducts.filter(({ details }) => details.matchStatus !== 'scored' || details.percent < 30).map(({ product }) => product)
+    : [];
   const showingArea = selectedSeat && !selectedSeat.gap;
   const gridTitle = showingArea ? selectedSeat.label : 'In your Ecosystem';
-  const gridProducts = showingArea ? selectedSeat.products : myProducts;
+  const gridProducts = showingArea ? selectedSeat.products : matchedProducts;
   const savedList = Object.values(savedProducts || {});
   const nextSaved = savedList[0];
 
@@ -73,7 +85,7 @@ export default function EcosystemScreen({
 
       <div style={{ padding: '18px 20px 0' }}>
         <EcosystemOrbit
-          products={myProducts}
+          products={matchedProducts}
           name={name}
           tags={tags}
           selectedKey={selectedKey}
@@ -101,7 +113,33 @@ export default function EcosystemScreen({
             <ProductCard key={p.id} product={p} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
           ))}
         </div>
+        {!showingArea && matchedProducts.length === 0 && <p style={{ color: 'var(--ayna-text-muted)', fontSize: 13, lineHeight: 1.5 }}>No strong matches are saved yet. Explore the recommendations below or update your intake answers.</p>}
       </div>
+
+      {suggestedEcosystemProducts.length > 0 && (
+        <section aria-label="Top matches to add" style={{ padding: '24px 20px 0' }}>
+          <h2 style={{ margin: '0 0 5px', fontFamily: "'Playfair Display',serif", fontSize: 21, color: 'var(--ayna-heading)' }}>Top matches to add</h2>
+          <p style={{ margin: '0 0 13px', color: 'var(--ayna-text-muted)', fontSize: 13, lineHeight: 1.5 }}>Ranked from your intake answers. Add the ones you want in your Ecosystem.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11 }}>
+            {suggestedEcosystemProducts.map((product) => (
+              <div key={product.id}>
+                <ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
+                <button type="button" onClick={() => onAddToEcosystem?.(product)} style={{ width: '100%', minHeight: 44, marginTop: 7, border: '1px solid var(--ayna-border)', borderRadius: 999, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', fontWeight: 700, cursor: 'pointer' }}>Add to Ecosystem</button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {olderProducts.length > 0 && (
+        <details style={{ margin: '22px 20px 0', padding: '14px 16px', border: '1px solid var(--ayna-border)', borderRadius: 18, background: 'var(--ayna-surface)' }}>
+          <summary style={{ cursor: 'pointer', fontWeight: 700, color: 'var(--ayna-heading)' }}>Earlier picks · {olderProducts.length}</summary>
+          <p style={{ color: 'var(--ayna-text-muted)', fontSize: 13, lineHeight: 1.5 }}>These are still saved, but they do not strongly match your current answers. Open a product to review or remove it.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11 }}>
+            {olderProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />)}
+          </div>
+        </details>
+      )}
 
       {relatedReads.length > 0 && (
         <div style={{ padding: '24px 20px 0' }}>

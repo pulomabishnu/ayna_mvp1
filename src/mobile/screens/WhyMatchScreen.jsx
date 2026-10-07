@@ -146,10 +146,10 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
   if (matchStatus === 'no-relevance') {
     return (
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)' }}>
-        <SimpleHeader title="Why 0%?" onBack={onBack} />
+        <SimpleHeader title="No clear match" onBack={onBack} />
         <div style={{ flex: 1, overflowY: 'auto', padding: '18px 20px 40px' }}>
           <div style={{ padding: 18, border: '1px solid var(--ayna-border)', borderRadius: 20, background: 'var(--ayna-surface)', color: 'var(--ayna-text)', fontSize: 14, lineHeight: 1.6 }}>
-            This product has no clear match with the needs you selected. The 0% describes profile fit, not product safety or quality. You can still read the product details and sources.
+            This product does not clearly line up with the needs you selected, so we do not show a match percentage. You can still read its product details and sources.
           </div>
           {unknowns.length > 0 && <div style={{ marginTop: 12, padding: 15, border: '1px solid var(--ayna-border)', borderRadius: 18, color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>{unknowns.map((note) => <p key={note} style={{ margin: '5px 0' }}>{note}</p>)}</div>}
           <LegalFooter />

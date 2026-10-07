@@ -60,7 +60,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const isPartner = isPartnerBrandItem(product);
   const insightLabels = [
     'Ayna take',
-    product?.doctorOpinion || getVerificationLinks(product, 'doctor').length ? 'Clinical opinion' : null,
+    product?.doctorOpinion || getVerificationLinks(product, 'doctor').length ? product?.clinicianOpinionSource === 'brand' ? 'Brand claims' : 'Clinical evidence' : null,
     product?.scientificCitations?.length || product?.ingredientScience?.some((item) => item.citations?.length) || getVerificationLinks(product, 'scientific').length ? 'Scientific literature' : null,
     product?.communityReview || getVerificationLinks(product, 'community').length ? 'Social media + reviews' : null,
   ].filter(Boolean);
@@ -111,7 +111,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           <div style={{ color: 'var(--ayna-heading)', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.35, fontWeight: 700, marginTop: 5, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{name}</div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 'auto', paddingTop: 8 }}>
             <span style={{ color: 'var(--ayna-heading)', fontSize: 13, fontWeight: 700 }}>{resolvedPrice || 'See details'}</span>
-            <button type="button" onClick={openMatch} style={{ border: 0, background: 'var(--ayna-peach)', borderRadius: 99, padding: '6px 9px', minHeight: 30, color: 'var(--ayna-heading)', fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap', cursor: 'pointer' }}>{matchPercent != null ? `${matchPercent}% match` : matchLabel}</button>
+            <button type="button" onClick={openMatch} style={{ border: 0, background: 'var(--ayna-peach)', borderRadius: 99, padding: '6px 9px', minHeight: 30, color: 'var(--ayna-heading)', fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap', cursor: 'pointer' }}>{matchDetails.matchStatus === 'scored' ? `${matchPercent}% match` : matchLabel}</button>
           </div>
         </div>
         <div style={{ gridColumn: '1 / -1', borderTop: '1px solid var(--ayna-border)', marginTop: 12, paddingTop: 10, display: 'flex', flexWrap: 'wrap', gap: '6px 12px', color: 'var(--ayna-text-muted)', fontSize: 11, lineHeight: 1.4 }}>
@@ -184,7 +184,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {insightLabels.map((label) => <span key={label}>{label}</span>)}
       </div>
       <button type="button" onClick={openMatch} style={{ width: '100%', minHeight: 44, marginTop: 10, border: '1px solid var(--ayna-chip-border)', borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', padding: '8px 10px', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700, textAlign: 'left', cursor: 'pointer' }}>
-        {matchDetails.matchStatus === 'scored' ? `${matchPercent}% match · See why` : matchDetails.matchStatus === 'no-profile' ? 'Complete profile to see your match' : `${matchPercent}% match · ${matchLabel}`}
+        {matchDetails.matchStatus === 'scored' ? `${matchPercent}% match · See why` : matchDetails.matchStatus === 'no-profile' ? 'Complete profile to see your match' : `${matchLabel} · See why`}
       </button>
     </div>
   );

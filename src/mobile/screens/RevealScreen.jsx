@@ -9,7 +9,9 @@ export default function RevealScreen({
   onBack,
 }) {
   const [orbit1, orbit2, orbit3] = topAreas;
-  const caption = `${productCount} products · ${readCount} reads · ${goalCount} goal${goalCount === 1 ? '' : 's'} you named`;
+  const caption = productCount > 0
+    ? `${productCount} products chosen from your answers${readCount > 0 ? ` · ${readCount} reads` : ''}${goalCount > 0 ? ` · ${goalCount} goal${goalCount === 1 ? '' : 's'} you named` : ''}`
+    : 'Your answers are saved. Explore products and reads picked for your needs.';
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', background: 'linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%)', color: '#FFF9F2', position: 'relative', fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out' }}>
@@ -114,7 +116,7 @@ export default function RevealScreen({
                 }}
               >
                 <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#4E3866', flex: 'none' }} />
-                <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{orbit1}</span>
+                <span style={{ color: '#242A52', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700 }}>{orbit1}</span>
               </div>
             </div>
           )}
@@ -137,7 +139,7 @@ export default function RevealScreen({
                 }}
               >
                 <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#C0761F', flex: 'none' }} />
-                <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{orbit2}</span>
+                <span style={{ color: '#242A52', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700 }}>{orbit2}</span>
               </div>
             </div>
           )}
@@ -160,7 +162,7 @@ export default function RevealScreen({
                 }}
               >
                 <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#242A52', flex: 'none' }} />
-                <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{orbit3}</span>
+                <span style={{ color: '#242A52', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700 }}>{orbit3}</span>
               </div>
             </div>
           )}
@@ -190,7 +192,7 @@ export default function RevealScreen({
             boxShadow: '0 16px 28px -14px rgba(232,169,79,.9)',
           }}
         >
-          See my full ecosystem
+          {productCount > 0 ? 'See my full ecosystem' : 'Explore my matches'}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A1714" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>

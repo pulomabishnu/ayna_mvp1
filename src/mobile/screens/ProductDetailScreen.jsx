@@ -317,6 +317,7 @@ export default function ProductDetailScreen({
     ingredients,
     effectiveness,
     doctorOpinion,
+    clinicianOpinionSource,
     doctorOpinionCitations = [],
     clinicianAttribution,
     safety = {},
@@ -516,7 +517,7 @@ export default function ProductDetailScreen({
             </button>
           )}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" onClick={onStartQuiz} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>Build your ecosystem to see your personal match →</button>}
-          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>0% match · {matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
+          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.1, margin: '9px 0 0', color: 'var(--ayna-heading)' }}>{name}</div>
           {price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
           {buyUrl && <p style={{ margin: '10px 0 0', color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>Buying opens the seller’s site. The seller handles payment, shipping, and returns; check the final price and delivery there.</p>}
@@ -574,7 +575,7 @@ export default function ProductDetailScreen({
 
             {!!doctorOpinion && (
               <div style={CARD}>
-                <div style={EYEBROW}>Clinician opinion</div>
+                <div style={EYEBROW}>{clinicianOpinionSource === 'brand' ? 'Brand claims' : clinicianOpinionSource === 'independent' ? 'Clinical evidence summary' : 'Health information'}</div>
                 {doctorOpinion ? (
                   <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: 10, whiteSpace: 'pre-line' }}>{doctorOpinion}</div>
                 ) : (
