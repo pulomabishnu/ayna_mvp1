@@ -1676,6 +1676,7 @@ function getLifeStageLabels(intake) {
     return [
         ...asStringArray(intake?.lifeStageSelections),
         ...asStringArray(intake?.lifeStage),
+        ...asStringArray(intake?.lifeStageOther).filter((label) => tagsForHealthLabel(label).length > 0),
     ];
 }
 
@@ -2444,6 +2445,12 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
     ])];
     if (unmappedNeeds.length) {
         unknowns.push(`We do not have enough product data to compare: ${unmappedNeeds.slice(0, 3).join(', ')}${unmappedNeeds.length > 3 ? ', and more' : ''}.`);
+    }
+    if (String(intake?.formatOtherText || '').trim()) {
+        unknowns.push('Your custom format preference is saved, but is not yet included in this score.');
+    }
+    if (String(intake?.anythingElse || '').trim()) {
+        unknowns.push('Your additional note is saved, but is not automatically interpreted in this score.');
     }
 
     const goalParts = {
