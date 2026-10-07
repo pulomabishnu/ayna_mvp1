@@ -997,9 +997,11 @@ export const MACRO_GROUPS = [
     // products use (see e.g. p-honeypot-wash, p-good-clean-love, p-v-wash) instead.
     { id: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'vulva', 'intimate', 'moisturizer', 'ph balance', 'ph-balanced', 'ph balanced', 'ph level', 'ph support'] },
     { id: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['lubricant', 'lube', 'condom', 'sexual wellness', 'intimacy'] },
-    // 'barrier' is for barrier methods, but skin-care copy says "skin barrier" too, so skin and hair
-    // categories are opted out of the keyword scan (2026-10-06: kieró serum/balm/sun stick surfaced here).
-    { id: 'birth-control', label: 'Birth Control', categories: ['contraception'], keywords: ['contraception', 'contraceptive', 'emergency contraception', 'barrier'], excludeCategories: ['skin', 'skincare', 'body-care', 'hair', 'haircare'] },
+    // A bare 'barrier' keyword matched "skin barrier" and "moisture barrier" copy (kieró skincare,
+    // Joylux vaginal gel) and never a real contraceptive, so only explicit barrier-contraception
+    // phrasing counts (2026-10-07). 'condom' is deliberately absent: lubricant copy says
+    // "condom-compatible". Skin and hair categories stay opted out of the keyword scan.
+    { id: 'birth-control', label: 'Birth Control', categories: ['contraception'], keywords: ['contraception', 'contraceptive', 'emergency contraception', 'barrier method', 'barrier contraception'], excludeCategories: ['skin', 'skincare', 'body-care', 'hair', 'haircare'] },
     { id: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation', 'conceive', 'conception'] },
     { id: 'pregnancy', label: 'Pregnancy', categories: ['pregnancy'], keywords: ['pregnancy', 'prenatal'] },
     { id: 'postpartum', label: 'Postpartum', categories: ['postpartum'], keywords: ['postpartum', 'lactation', 'breastfeeding', 'perineal'] },
