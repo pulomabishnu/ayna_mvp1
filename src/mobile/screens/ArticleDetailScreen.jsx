@@ -112,14 +112,13 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
           )}
         </div>
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-          <div
-            onClick={onBack}
-            style={{ width: 36, height: 36, borderRadius: 99, background: 'var(--ayna-glass-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+          <button type="button" aria-label="Back" onClick={onBack}
+            style={{ width: 44, height: 44, border: 0, borderRadius: 99, background: 'var(--ayna-glass-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'var(--ayna-text)' }}>
               <path d="M19 12H5M11 18l-6-6 6-6" />
             </svg>
-          </div>
+          </button>
         </div>
         {/* A true semicircular arc — border-radius: 50% 50% ties the curve to
             this box's own HEIGHT (300px), not its width, so it actually drew
@@ -150,12 +149,13 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
           <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: 'var(--ayna-text-faint)' }}>{readMinutes} MIN</div>
         </div>
 
-        <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 400, fontSize: 'calc(32px * var(--ayna-text-scale, 1))', lineHeight: 1.13, color: 'var(--ayna-text)', margin: 0 }}>{title}</div>
+        <h1 style={{ fontFamily: "'Playfair Display',serif", fontWeight: 400, fontSize: 'calc(32px * var(--ayna-text-scale, 1))', lineHeight: 1.13, color: 'var(--ayna-text)', margin: 0 }}>{title}</h1>
         {teaser && (
           <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 'calc(16.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-accent-dark)', marginTop: 13 }}>
             {teaser}
           </div>
         )}
+        <p style={{ margin: '13px 0 0', color: 'var(--ayna-text-muted)', fontFamily: "'DM Sans',sans-serif", fontSize: 12, lineHeight: 1.5 }}>Ayna guide · Sources listed below</p>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '20px 0 24px' }}>
           {[0, 1, 2, 3, 4].map((i) => {
@@ -211,7 +211,7 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
               </div>
             )}
             <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'var(--ayna-text-muted)', marginTop: 13, paddingTop: 13, borderTop: '1px solid var(--ayna-border)' }}>
-              Every guide draws on peer-reviewed literature and established clinical guidance.
+              Sources and further reading for this guide.
             </div>
           </div>
         )}

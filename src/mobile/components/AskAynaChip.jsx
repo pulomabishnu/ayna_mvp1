@@ -80,7 +80,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
   const [compact, setCompact] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [dockedX, setDockedX] = useState(null);
-  const [manualDock, setManualDock] = useState(viewKey === 'community');
+  const [manualDock, setManualDock] = useState(true);
   const drag = useRef({ active: false, moved: false, startX: 0, startY: 0, originX: 0, originY: 0 });
 
   useEffect(() => {
@@ -119,7 +119,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
     // A new screen always starts scrolled to the top — undock/un-compact
     // immediately rather than waiting for a scroll event on it (which may
     // never come if the new screen's content is short).
-    setManualDock(viewKey === 'community');
+    setManualDock(true);
     setCompact(false);
   }, [viewKey]);
 

@@ -84,16 +84,18 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
         }}
       >
         <OrbHero />
-        <div
+        <h1
           style={{
             fontFamily: "'Playfair Display',serif",
             fontSize: 'calc(39px * var(--ayna-text-scale, 1))',
             lineHeight: 1.1,
             textAlign: 'center',
+            margin: 0,
           }}
         >
           Hey you, meet <span style={{ fontStyle: 'italic' }}>you</span>
-        </div>
+        </h1>
+        <p style={{ maxWidth: 285, margin: '13px 0 0', textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontSize: 14, lineHeight: 1.5, color: 'rgba(255,249,242,.9)' }}>Find health products that fit your needs, with research and real experiences in one place.</p>
       </div>
 
       <div
@@ -106,9 +108,11 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
         }}
       >
         <div className="ayna-welcome-choices" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div
+        <button type="button"
           onClick={onStartQuiz}
           style={{
+            width: '100%',
+            border: 0,
             background: '#FFC774',
             color: '#231A12',
             padding: 17,
@@ -138,7 +142,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
           >
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
-        </div>
+        </button>
         <button type="button" onClick={onBrowse} style={{ width: '100%', minHeight: 52, border: '1.5px solid rgba(255,249,242,.7)', borderRadius: 99, background: 'rgba(255,249,242,.08)', color: '#FFF9F2', padding: '12px 16px', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
           I'm just browsing
         </button>

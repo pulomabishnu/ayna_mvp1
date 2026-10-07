@@ -525,7 +525,8 @@ const ARTICLES = [
     body: (
       <>
         <p>Polycystic ovary syndrome (PCOS) is a common hormonal condition that affects how the ovaries work. Diagnosis is based on criteria that may include irregular or absent periods, high androgen levels (e.g., excess hair growth, acne), and/or polycystic-appearing ovaries on ultrasound. Not everyone has all features; a clinician makes the diagnosis and rules out other conditions (e.g., thyroid, prolactin).</p>
-        <p>Management focuses on your goals and symptoms: cycle regulation (often with birth control or metformin), improving insulin sensitivity (lifestyle, metformin, inositol in some cases), and treating acne or excess hair. Lifestyle changes. Balanced diet, regular exercise, and weight management when relevant. Are first-line and can improve both metabolic and reproductive outcomes. If you're trying to conceive, ovulation induction or other fertility treatments may be recommended.</p>
+        <p>Management depends on your goals and symptoms. Options may include cycle regulation, support for insulin resistance, and treatment for acne or excess hair.</p>
+        <p>Lifestyle changes such as balanced eating and regular movement can support metabolic health. If you are trying to conceive, a clinician may discuss ovulation induction or other fertility treatment.</p>
         <p><strong>When to seek care:</strong> Irregular periods, unexplained weight changes, severe acne or excess hair, or difficulty conceiving. Early diagnosis and treatment can reduce long-term risks (e.g., diabetes, cardiovascular).</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
