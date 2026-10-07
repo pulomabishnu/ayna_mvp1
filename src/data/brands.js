@@ -5249,6 +5249,117 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
+    // Lilyeve Grow:Turn Ampoule — verified against
+    // lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100 on
+    // 2026-10-07 (price, full ingredients, how-to, claim images, review
+    // breakdown) and the Amazon listing B0DXPGSDZJ (rating, price). Image
+    // supplied by ayna. Studies read via NCBI E-utilities. Not a brand
+    // partner, no affiliate link.
+    {
+        id: 'p-lilyeve-growturn-ampoule',
+        name: 'Lilyeve Grow:Turn Ampoule (Hair Serum with Brush)',
+        brand: 'Lilyeve',
+        category: 'hair',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['lilyeve', 'growturn', 'grow:turn', 'hair', 'scalp', 'hair serum', 'thinning', 'shedding', 'caffeine', 'heartleaf', 'exosome', 'korean', 'cosmetic'],
+        price: '$29.70 for 100 mL on lilyeveus.com (single tube sold out at time of writing; 3-pack $108); $19.99 on Amazon',
+        whereToBuy: ['lilyeveus.com', 'Amazon'],
+        url: 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100',
+        whereToBuyLinks: {
+            'lilyeveus.com': 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100',
+            Amazon: 'https://www.amazon.com/dp/B0DXPGSDZJ',
+        },
+        image: '/products/lilyeve/growturn-ampoule.png', // supplied by ayna
+        summary: 'A Korean leave-in scalp serum in a 100 mL tube with a built-in 38-bristle brush head for massaging it in. Lilyeve says it reduces hair shedding and flakes and soothes the scalp, using caffeine, heartleaf (which it calls exosome-derived) and a herbal blend it calls Scalp Clera. Apply to a damp scalp after shampooing, morning and evening. It\'s sold for both men and women.',
+        ingredients: 'Full ingredient list per Lilyeve: Water, Alcohol Denat., Butylene Glycol, Caffeine, 1,2-Hexanediol, Hydroxyacetophenone, PEG-60 Hydrogenated Castor Oil, Carbomer, Tromethamine, Menthol, Trideceth-10, Betaine, Disodium EDTA, Glycerin, Eucalyptus Globulus Leaf Oil, Camellia Japonica Flower Extract, Prunus Mume Flower Extract, Prunus Persica (Peach) Flower Extract, Althaea Rosea Flower Extract, Viola Mandshurica Flower Extract, Helianthus Annuus (Sunflower) Flower Extract, Houttuynia Cordata (Heartleaf) Extract, Cyananthus Atratus Extract, Inula Britannica Flower Extract, Lysimachia Foenum-graecum Extract. No exosome ingredient is named in this list, and two of the three Scalp Clera herbs Lilyeve names (Cimicifuga heracleifolia and Pogostemon cablin) aren\'t in it either. The Amazon listing mentions biotin and peptides, which also aren\'t in this list.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic; not an FDA-approved drug for hair loss.',
+            materials: '100 mL tube with a twist-lock brush head (38 bristles). The second ingredient is denatured alcohol, and it contains menthol and eucalyptus leaf oil even though Lilyeve markets it as fragrance-free.',
+            recalls: 'No recalls found.',
+            sideEffects: 'No warnings are published on Lilyeve\'s product page. It contains denatured alcohol, menthol and eucalyptus oil, so patch test first if you have a sensitive scalp.',
+            opinionAlerts: 'Lilyeve\'s results (75.61% less hair fall after 4 weeks, 89.04% less flaking) are from its own unpublished testing, with no details on how many people took part or whether there was a comparison group.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Lilyeve; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Lilyeve says that, "based on clinical testing," four weeks of use cut hair fall by 75.61%, scalp flakiness by 89.04% and scalp irritation by 62.89%, and raised scalp hydration by 113.70%. It doesn\'t say how many people were tested, whether there was a comparison group, or who ran the test, and no published study of this product was found.\n\nCaffeine is the best-studied ingredient here. In a 2017 open-label randomized trial of 210 men with pattern hair loss, a 0.2% caffeine scalp liquid did about as well as 5% minoxidil after 6 months (anagen hairs improved 10.59% vs 11.68%). That trial was in men, and Lilyeve doesn\'t publish its caffeine concentration.\n\nHeartleaf (Houttuynia cordata) extract helped cultured human hair cells grow and kept lab-grown hair follicles in their growth phase longer in a 2019 lab study by a cosmetics company; it hasn\'t been tested on people\'s hair loss. Exosomes are a new area: a 2025 review found only 125 patients across the clinical studies of exosomes for hair loss and called for larger, well-designed trials. Lilyeve\'s ingredient list doesn\'t name an exosome ingredient.\n\nIf you have thinning hair, a dermatologist can check for causes and discuss treatments with stronger evidence, such as minoxidil.',
+        doctorOpinionShort: 'Lilyeve\'s results come from its own unpublished testing. Topical caffeine has one notable trial in 210 men, where it did about as well as minoxidil; heartleaf has been tested only in lab-grown hair cells, and exosomes for hair loss are still early. No published study of this serum was found.',
+        doctorOpinionCitations: [
+            { url: 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100', label: 'lilyeveus.com: Grow:Turn Ampoule — ingredients and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/29055953/', label: 'PubMed: Caffeine-based topical liquid 0.2% vs minoxidil 5% in male androgenetic alopecia — open-label randomized trial (Skin Pharmacol Physiol 2017)', chipLabel: 'Caffeine vs minoxidil trial, 210 men (2017)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31582654/', label: 'PubMed: Hair growth promoting effect of Houttuynia cordata extract in cultured human hair follicle dermal papilla cells (Biol Pharm Bull 2019)', chipLabel: 'Heartleaf lab study (2019)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/39447204/', label: 'PubMed: Exosomes for treating hair loss — a review of clinical studies (Dermatol Surg 2025)', chipLabel: 'Exosomes for hair loss review (2025)' },
+        ],
+        whoItsFor: [
+            'People with thinning hair or shedding who want a non-drug scalp serum with a built-in massage brush',
+            'People with a flaky or itchy scalp looking for a cooling, leave-in serum',
+            'Not a substitute for seeing a dermatologist about new or fast hair loss',
+        ],
+        howToUse: {
+            intro: 'Per Lilyeve: use twice daily, morning and evening.',
+            steps: [
+                'After shampooing, gently towel-dry your hair until damp.',
+                'Twist the brush head counterclockwise to unlock.',
+                'Apply directly to the scalp, focusing on thinning areas.',
+                'Twist the brush head clockwise to lock, then massage the scalp with the brush.',
+            ],
+            sourceUrl: 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100',
+            sourceLabel: 'lilyeveus.com: Grow:Turn Ampoule',
+        },
+        warnings: [
+            'Contains denatured alcohol, menthol and eucalyptus oil: patch test first if you have a sensitive scalp.',
+            'Using medicated hair-loss treatments such as minoxidil: check with a healthcare professional before combining.',
+        ],
+        communityReview: 'On lilyeveus.com, 1,434 of 1,642 reviews (87%) are five stars, and 35 are one or two stars. On Amazon it has 4.1 out of 5 stars from 954 ratings. Reviews on Lilyeve\'s site range from "seems to be working after a month" to "roots feel stronger but not like dramatic changes yet like in ads."',
+        effectiveness: 'No published study of this serum was found. Its best-studied ingredient, topical caffeine, did about as well as minoxidil in one trial in men.',
+        ingredientScience: [
+            {
+                name: 'Caffeine',
+                text: 'In a 2017 open-label, randomized trial of 210 men with pattern hair loss, a 0.2% caffeine scalp liquid was not inferior to 5% minoxidil after 6 months: the share of hairs in the growth (anagen) phase improved 10.59% with caffeine and 11.68% with minoxidil. The trial was in men only and wasn\'t blinded. Lilyeve doesn\'t publish its caffeine concentration.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/29055953/', label: 'PubMed: An open-label randomized multicenter study assessing the noninferiority of a caffeine-based topical liquid 0.2% versus minoxidil 5% solution in male androgenetic alopecia (Dhurat et al., 2017)' },
+                ],
+            },
+            {
+                name: 'Heartleaf (Houttuynia cordata)',
+                text: 'In a 2019 lab study by researchers at LG Household & Healthcare, heartleaf extract made cultured human hair papilla cells multiply and kept lab-grown human hair follicles in their growth phase longer. It hasn\'t been tested for hair loss in people.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31582654/', label: 'PubMed: Hair growth promoting effect of Houttuynia cordata extract in cultured human hair follicle dermal papilla cells (Kim et al., 2019)' },
+                ],
+            },
+            {
+                name: 'Exosomes',
+                text: 'A 2025 review of exosomes for hair loss found nine relevant clinical studies covering 125 patients in total. Side effects were rare, but the authors called for larger, well-designed trials and consistent manufacturing standards. Lilyeve says its exosomes come from heartleaf, but its ingredient list doesn\'t name an exosome ingredient.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/39447204/', label: 'PubMed: Exosomes for treating hair loss — a review of clinical studies (Queen & Avram, Dermatol Surg 2025)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.amazon.com/dp/B0DXPGSDZJ',
+                        text: 'Amazon: lilyeve GROWTURN Hair Growth Serum reviews',
+                        summary: '4.1 out of 5 stars from 954 ratings at time of writing.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100',
+                        text: 'lilyeveus.com: Grow:Turn customer reviews',
+                        summary: '1,642 reviews; 87% are five stars.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
     // Liv Labs (Pippa Resistance Spring) — catalog entry only, NOT yet an
     // ayna brand partner (as of 2026-09-23). isEmergingBrand still shows the
     // "Brand" tag on Discovery, but it's deliberately left out of
