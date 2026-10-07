@@ -5013,6 +5013,97 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: false,
     },
+    // Magnum Solace Nighttime Magnesium Cream — verified against
+    // magnumsolace.com/products/nighttime-magnesium-cream on 2026-10-07
+    // (description, full ingredients, scents, price, how-to). Walmart
+    // listing supplied by ayna; Walmart blocks automated access, so no
+    // rating is quoted. Science read via NCBI E-utilities. Not a brand
+    // partner, no affiliate link.
+    {
+        id: 'p-magnumsolace-nighttime-magnesium-cream',
+        name: 'Magnum Solace Nighttime Magnesium Cream',
+        brand: 'Magnum Solace',
+        category: 'sleep',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sleep'],
+        tags: ['sleep', 'magnesium', 'magnesium cream', 'muscle', 'restless legs', 'relaxation', 'lavender', 'unscented option', 'magnumsolace'],
+        price: '$27.99 for 5 oz (list $39.99)',
+        whereToBuy: ['magnumsolace.com', 'Walmart'],
+        url: 'https://www.magnumsolace.com/products/nighttime-magnesium-cream',
+        image: '/products/magnumsolace/nighttime-magnesium-cream.jpg', // supplied by ayna
+        summary: 'A magnesium chloride body cream with shea butter and grapeseed oil, meant to be massaged into the legs, feet, arms or chest before bed. Magnum Solace says it eases muscle tension and restless legs and promotes relaxation and sleep, with 250 mg of magnesium per teaspoon. It comes in nine scents, including lavender, chamomile & lavender, and unscented. Made in small batches in Houston, Texas.',
+        ingredients: 'Full ingredient list per Magnum Solace: Purified Water (Aqua), Magnesium Chloride, Emulsifying Wax, Organic Butyrospermum Parkii (Shea Butter), Vitis Vinifera (Grape) Seed Oil, Tocopheryl Acetate (Vitamin E), Organic Helianthus Annuus (Sunflower) Oil, Phenoxyethanol. This published list contains no scent ingredients, so scented versions (such as Lavender) likely add essential oils or fragrance not listed here; check the jar.',
+        safety: {
+            fdaStatus: 'Cosmetic body cream; not an FDA-cleared drug or medical device. Magnum Solace\'s claims that it relieves restless legs, muscle tension and sleep problems have not been evaluated by the FDA.',
+            materials: '5 oz jar. Magnesium chloride (250 mg magnesium per teaspoon, per Magnum Solace) in a cream base of water, emulsifying wax, shea butter, grapeseed and sunflower oils, and vitamin E, preserved with phenoxyethanol.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Magnum Solace says to avoid broken skin and freshly shaved areas. Scented versions add scent ingredients that aren\'t in the published ingredient list; if you have sensitive skin, the unscented version avoids them. Full warnings are listed below.',
+            opinionAlerts: 'Magnum Solace says the cream delivers "100% absorbable" magnesium "directly to the cellular level." A 2017 scientific review concluded that claims of magnesium absorption through the skin are scientifically unsupported. It may still feel soothing to massage in as a moisturizing bedtime cream.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Magnum Solace; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Magnum Solace says the cream eases muscle tension and restless legs and helps with sleep, because magnesium is absorbed through the skin, "100% absorbable" and delivered "directly to the cellular level."\n\nThe evidence for that absorption is weak. A 2017 review in Nutrients concluded that the promotion of transdermal magnesium is scientifically unsupported, while oral magnesium is well documented for treating deficiency. The only human trial found was a 2017 pilot of 25 people: a magnesium cream (56 mg a day for two weeks) raised blood magnesium slightly compared with a placebo cream, but the change was statistically significant only in a subgroup of non-athletes. One author has a financial interest in a different magnesium cream.\n\nNo study of this product, or of magnesium cream for sleep or restless legs, was found. Massaging in a rich cream at bedtime may still feel relaxing. If you have ongoing restless legs or trouble sleeping, it\'s worth talking to a clinician.',
+        doctorOpinionShort: 'Its central claim, that magnesium absorbs through the skin, is unsupported according to a 2017 review; a small 2017 pilot found only a slight rise in blood magnesium. No study of this product or of magnesium cream for sleep was found. It may still work as a soothing bedtime massage cream.',
+        doctorOpinionCitations: [
+            { url: 'https://www.magnumsolace.com/products/nighttime-magnesium-cream', label: 'magnumsolace.com: Nighttime Magnesium Cream — ingredients and claims' },
+        ],
+        whoItsFor: [
+            'People who like a rich, moisturizing massage cream as part of a bedtime routine',
+            'People who want an unscented option (one of its nine versions)',
+            'Not a substitute for seeing a clinician about ongoing restless legs, cramps or insomnia',
+        ],
+        howToUse: {
+            intro: 'Per Magnum Solace: use every night for at least two weeks for best results.',
+            steps: [
+                'Massage generously onto your legs, arms, chest or feet before going to sleep.',
+                'For restless legs, apply to your legs and the bottoms of your feet before bed.',
+                'Avoid broken skin and freshly shaved areas.',
+            ],
+            sourceUrl: 'https://www.magnumsolace.com/products/nighttime-magnesium-cream',
+            sourceLabel: 'magnumsolace.com: Nighttime Magnesium Cream',
+        },
+        warnings: [
+            'Don\'t apply to broken skin or freshly shaved areas (per Magnum Solace).',
+            'Sensitive skin or scent sensitivity: choose the unscented version or patch test first; scented versions\' added ingredients aren\'t listed.',
+            'Ongoing restless legs, cramps or trouble sleeping: see a clinician to check for underlying causes.',
+        ],
+        communityReview: 'Magnum Solace\'s product page shows six featured five-star testimonials from verified buyers, mentioning better sleep, eased restless legs and cramps, and a non-greasy feel, for example: "It helps with cramping and restless legs—feels wonderful!" The page doesn\'t show a total review count or average. It is also sold on Walmart, but Walmart blocks automated access, so no rating could be confirmed at time of writing.',
+        effectiveness: 'No study of this cream, or of magnesium cream for sleep or restless legs, was found.',
+        ingredientScience: [
+            {
+                name: 'Magnesium chloride (transdermal)',
+                text: 'Magnum Solace states its magnesium is absorbed through the skin. A 2017 review concluded that the promotion of transdermal magnesium is scientifically unsupported. A 2017 pilot of 25 people found a magnesium cream (56 mg a day for two weeks) raised blood magnesium slightly versus placebo, significant only in a subgroup of non-athletes; one author has a financial interest in a different magnesium cream.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28788060/', label: 'PubMed: Myth or reality — transdermal magnesium? (Gröber et al., Nutrients 2017)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28403154/', label: 'PubMed: Effect of transdermal magnesium cream on serum and urinary magnesium levels in humans — pilot study (Kass et al., 2017)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.walmart.com/ip/17531958604',
+                        text: 'Walmart: Magnum Solace Nighttime Magnesium Cream reviews',
+                        summary: 'Customer reviews on Walmart. A rating couldn\'t be confirmed at time of writing because Walmart blocks automated access.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.magnumsolace.com/products/nighttime-magnesium-cream',
+                        text: 'magnumsolace.com: featured customer testimonials',
+                        summary: 'Six featured five-star testimonials from verified buyers; no total count or average shown.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
     // Liv Labs (Pippa Resistance Spring) — catalog entry only, NOT yet an
     // ayna brand partner (as of 2026-09-23). isEmergingBrand still shows the
     // "Brand" tag on Discovery, but it's deliberately left out of
