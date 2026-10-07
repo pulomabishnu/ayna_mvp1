@@ -68,6 +68,7 @@ function compactProduct(product) {
   const keys = [
     'id', 'name', 'brand', 'category', 'type', 'price', 'priceDisplay', 'stage',
     'image', 'imageUrl', 'images', 'summary', 'description', 'tagline',
+    'tags', 'healthFunctions', 'internal', 'safety', 'ageMin', 'ageMax',
     'whereToBuy', 'url', 'website', 'buyUrl', 'purchaseUrl', 'affiliateUrl',
     'llmGenerated', 'intakeGenerated', '_llmConcern', '_userSwapped',
     'aynaMatch', 'aynaMatchPercent', 'matchPercent', 'matchPercentage',

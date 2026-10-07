@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import './mobile.css';
-import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest, filterPrescriptionCareGate } from '../data/products.js';
+import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest, filterPrescriptionCareGate, hydrateCatalogProduct } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
@@ -172,7 +172,8 @@ function seedEcosystemFromAnswers(quizAnswers) {
 
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
-  const { hasEcosystem, myProducts, lastQuizAnswers, userName } = session;
+  const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName } = session;
+  const myProducts = storedProducts.map(hydrateCatalogProduct);
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
   const [screen, setScreen] = useState('landing');

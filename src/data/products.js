@@ -12,6 +12,7 @@ import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
 import { MENSTRUAL_PHYSICAL } from './menstrualProducts.js';
 import { BRAND_PRODUCTS } from './brands.js';
 import { INCONTINENCE_PHYSICAL } from './incontinenceProducts.js';
+import { RELEASED_STARTUPS } from './startups.js';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 import { getInteractions } from './interactions.js';
 
@@ -809,6 +810,23 @@ export const ALL_PRODUCTS = [
 export function getProductById(id) {
     if (!id) return null;
     return ALL_PRODUCTS.find((p) => p.id === id) || null;
+}
+
+// Saved Ecosystem rows are deliberately compact and older rows omit the
+// product's health tags. Restore catalog facts before using a saved row for
+// matching or displaying its evidence; keep user-specific row fields.
+export function hydrateCatalogProduct(product) {
+    if (!product?.id) return product;
+    const catalogProduct = getProductById(product.id)
+        || RELEASED_STARTUPS.find((entry) => entry.id === product.id);
+    if (!catalogProduct) return product;
+    return {
+        ...catalogProduct,
+        ...product,
+        tags: catalogProduct.tags || product.tags,
+        healthFunctions: catalogProduct.healthFunctions || product.healthFunctions,
+        safety: catalogProduct.safety || product.safety,
+    };
 }
 
 /**
@@ -2385,7 +2403,8 @@ function getPerimenopauseTimingFitScore(product, intake, lifeStageLabels) {
     return stageRelevant ? 1 : null;
 }
 
-function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
+function getProductRelevanceStats(savedProduct, quizAnswers, healthProfile = null) {
+    const product = hydrateCatalogProduct(savedProduct);
     const intake = rawIntakeFromProfile(quizAnswers);
     const safety = getSafetyAssessment(product, quizAnswers, healthProfile);
 

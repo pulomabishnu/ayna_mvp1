@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductMatchDetailsForProduct, getProductRelevanceScore } from './products';
+import { ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductMatchDetailsForProduct, getProductRelevanceScore, hydrateCatalogProduct } from './products';
 import { STARTUPS } from './startups';
 
 describe('getPersonalizedProductIds', () => {
@@ -97,6 +97,14 @@ describe('personalized relevance scoring', () => {
         const pcosProduct = { id: 'pcos-support', name: 'PCOS support', category: 'supplement', tags: ['pcos'], healthFunctions: ['pcos-management'] };
         const quiz = { frustrations: ['PCOS symptoms'], fullHealthIntake: { symptoms: ['cramps'] } };
         expect(getProductRelevanceScore(pcosProduct, quiz)).toBeGreaterThan(0);
+    });
+
+    it('restores health tags for older saved Ecosystem products before scoring them', () => {
+        const savedProduct = { id: 'p-spearmint-pcos', name: 'Traditional Medicinals Organic Spearmint Tea', category: 'supplement' };
+        const quiz = { fullHealthIntake: { supportSelections: ['PCOS support'], age: 27 } };
+        expect(savedProduct.tags).toBeUndefined();
+        expect(hydrateCatalogProduct(savedProduct).tags).toContain('pcos');
+        expect(getProductRelevanceScore(savedProduct, quiz)).toBeGreaterThan(0);
     });
 
     it('does not let evidence alone claim a strong personal match', () => {
