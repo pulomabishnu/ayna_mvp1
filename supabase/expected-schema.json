@@ -1040,6 +1040,116 @@
             "index_count": 2,
             "rls_enabled": true
         },
+        "monthly_checkins": {
+            "grants": [
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "date",
+                    "column": "check_in_month",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "answers",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "monthly_checkins_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "monthly_checkins_insert_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "monthly_checkins_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "monthly_checkins_update_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "monthly_checkins_answers_shape",
+                    "type": "check",
+                    "definition": "CHECK (((jsonb_typeof(answers) = 'object'::text) AND (pg_column_size(answers) <= 16384)))"
+                },
+                {
+                    "name": "monthly_checkins_month_is_first",
+                    "type": "check",
+                    "definition": "CHECK ((check_in_month = (date_trunc('month'::text, (check_in_month)::timestamp with time zone))::date))"
+                },
+                {
+                    "name": "monthly_checkins_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "monthly_checkins_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        },
         "community_follows": {
             "grants": [
                 "authenticated:DELETE",
@@ -3629,5 +3739,5 @@
             "security_definer": false
         }
     ],
-    "generated_at": "2026-10-05T17:37:10.479468-04:00"
+    "generated_at": "2026-10-06T19:57:52.538052-04:00"
 }

@@ -32,6 +32,14 @@ const CampusResources = React.lazy(() => import('./components/CampusResources'))
 const Community = React.lazy(() => import('./components/community/Community'));
 const CommunityProductActions = React.lazy(() => import('./components/community/CommunityProductActions'));
 import ProfileProgress from './components/ProfileProgress';
+import EcosystemInsights from './components/EcosystemInsights';
+import PreferencesPage from './components/PreferencesPage';
+import { initTextSize, setTextSizeIndex } from './utils/textSize';
+import { fetchNotificationPreferences } from './utils/notificationPreferencesApi';
+const EarlyStartups = React.lazy(() => import('./components/EarlyStartups'));
+
+// Apply a saved text size before first paint of any page.
+initTextSize();
 import CommunityPeek from './components/CommunityPeek';
 import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage } from './data/products';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
@@ -69,7 +77,7 @@ import { isCommunityPath } from './utils/community/route';
 import { countUnreadNotifications } from './utils/community/communityStore';
 
 // Everything personal lives under the "My Ecosystem" tab.
-const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'tracked', 'screenings', 'articles', 'doctor-prep', 'profile-edit', 'phone-verify'];
+const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'tracked', 'screenings', 'articles', 'doctor-prep', 'profile-edit', 'phone-verify', 'preferences', 'early-startups'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
 const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about'];
 
@@ -128,6 +136,8 @@ const VIEW_TO_PATH = {
   // /community/* sub-routes (posts, profiles, playlists…) all resolve to this
   // one view; Community.jsx parses the rest of the path itself.
   community: '/community',
+  preferences: '/settings',
+  'early-startups': '/early-stage',
   'auth-callback': '/auth/callback',
   'auth-confirm': '/auth/confirm',
   'confirmed': '/confirmed',
@@ -149,6 +159,8 @@ const VIEW_TITLES = {
   'campus-resources': 'Campus Sexual Assault Support Resources',
   'admin-reviews': 'All Reviews',
   community: 'Community',
+  preferences: 'Settings',
+  'early-startups': 'Early-stage startups',
 };
 
 const PATH_TO_VIEW = Object.fromEntries(
@@ -402,12 +414,32 @@ function App() {
   const [discoveryInitial, setDiscoveryInitial] = useState(null); // { initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase }
   const [userZipCode, setUserZipCode] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  // Settings → "Personalize with my data". Off = no match %, no For-You
+  // ordering from the health profile (the profile itself is untouched).
+  const [personalizeWithData, setPersonalizeWithData] = useState(true);
   const [selectedArticleId, setSelectedArticleId] = useState(null);
   const [aynaReviews, setAynaReviews] = useState({});
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
+  // What match-% displays see: nothing when "Personalize with my data" is off.
+  const matchQuizResults = personalizeWithData ? quizResults : null;
+  const matchHealthProfile = personalizeWithData ? healthProfile : null;
   const [savedProducts, setSavedProducts] = useState(() => loadSavedProducts());
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const [user, setUser] = useState(null);
+  // Account-level display preferences (Settings page): personalize switch and
+  // text size follow the account across devices.
+  useEffect(() => {
+    if (!user?.id) { setPersonalizeWithData(true); return undefined; }
+    let alive = true;
+    fetchNotificationPreferences()
+      .then((prefs) => {
+        if (!alive || !prefs) return;
+        if (typeof prefs.personalizeWithDataEnabled === 'boolean') setPersonalizeWithData(prefs.personalizeWithDataEnabled);
+        if (Number.isInteger(prefs.textSizeIndex)) setTextSizeIndex(prefs.textSizeIndex);
+      })
+      .catch(() => { /* settings are best-effort */ });
+    return () => { alive = false; };
+  }, [user?.id]);
   const [communityNavKey, setCommunityNavKey] = useState(0);
   const [communityUnread, setCommunityUnread] = useState(0);
   const [userSession, setUserSession] = useState(null);
@@ -579,6 +611,8 @@ function App() {
       // Signed-out visitors get Community's own "log in to join" screen, so a
       // shared post/playlist link survives the round trip through login.
       'community',
+      // Settings handles guests itself (text size works signed out).
+      'preferences', 'early-startups',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
@@ -1795,6 +1829,9 @@ function App() {
                   >
                     Check-in
                   </button>
+                  <button type="button" onClick={() => { setShowAccountMenu(false); setCurrentView('preferences'); }}>
+                    Settings
+                  </button>
                   {user ? (
                     <>
                       <button
@@ -1863,6 +1900,7 @@ function App() {
             <button className="mobile-drawer-item" onClick={() => { handleViewWishlist(); setMobileMenuOpen(false); }}>
               Wishlist {Object.keys(savedProducts || {}).length > 0 ? `(${Object.keys(savedProducts || {}).length})` : ''}
             </button>
+            <button className="mobile-drawer-item" onClick={() => { setCurrentView('preferences'); setMobileMenuOpen(false); }}>Settings</button>
             {user ? (
               <>
                 <button className="mobile-drawer-item" onClick={() => { getSupabaseClient()?.auth.signOut(); setMobileMenuOpen(false); }}>Log out</button>
@@ -3208,6 +3246,25 @@ function App() {
             />
           </Suspense>
         )}
+        {currentView === 'early-startups' && (
+          <Suspense fallback={<ViewLoadingFallback />}>
+            <EarlyStartups quizResults={matchQuizResults} healthProfile={matchHealthProfile} />
+          </Suspense>
+        )}
+        {currentView === 'preferences' && (
+          <PreferencesPage
+            key={`prefs-${user?.id || 'guest'}`}
+            user={user}
+            onBack={handleBackFromStandalonePage}
+            onRequestLogin={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onOpenPhoneVerify={handleOpenPhoneVerification}
+            onOpenDeleteAccount={handleOpenDeleteAccount}
+            onOpenPrivacyPolicy={() => setCurrentView('privacy-policy')}
+            onPersonalizeChange={setPersonalizeWithData}
+            askAynaMessageCount={chatHistory.filter((m) => m.role === 'user').length}
+            onClearAskAynaHistory={() => setChatHistory([])}
+          />
+        )}
         {currentView === 'articles' && (
           <Suspense fallback={<ViewLoadingFallback />}>
             <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} healthProfile={healthProfile} />
@@ -3299,7 +3356,19 @@ function App() {
               { label: 'Recalls', onClick: () => setCurrentView('recalls') },
               { label: 'Screenings', onClick: () => setCurrentView('screenings') },
               { label: 'Health library', onClick: () => setCurrentView('articles') },
+              { label: 'Early-stage startups', onClick: () => setCurrentView('early-startups') },
+              { label: 'Settings', onClick: () => setCurrentView('preferences') },
             ]}
+            insightsSlot={(
+              <EcosystemInsights
+                myProducts={myProducts}
+                quizResults={quizResults}
+                healthProfile={healthProfile}
+                onOpenProduct={handleOpenProduct}
+                onViewAlternative={(p) => handleViewDiscovery({ initialCategory: p?.category })}
+                onExploreCategory={(cat) => handleViewDiscovery({ initialCategory: cat })}
+              />
+            )}
             quizResults={quizResults}
             healthProfile={healthProfile}
             userZipCode={userZipCode}
@@ -3329,6 +3398,8 @@ function App() {
             onAddToEcosystem={toggleMyProduct}
             myProducts={myProducts}
             onBrowse={() => handleViewDiscovery('')}
+            quizResults={matchQuizResults}
+            healthProfile={matchHealthProfile}
           />
         )}
         {currentView === 'community' && (
@@ -3336,8 +3407,8 @@ function App() {
             <Community
               navKey={communityNavKey}
               user={user}
-              quizResults={quizResults}
-              healthProfile={healthProfile}
+              quizResults={matchQuizResults}
+              healthProfile={matchHealthProfile}
               myProducts={myProducts}
               savedProducts={savedProducts}
               onOpenProduct={handleOpenProduct}
@@ -3379,8 +3450,8 @@ function App() {
             hasQuizFrustrations={!!(quizResults?.frustrations?.length)}
             hasHealthImport={hasHealthImport}
             hasStatedLifeStage={hasStatedQuizLifeStage}
-            quizResults={quizResults}
-            healthProfile={healthProfile}
+            quizResults={matchQuizResults}
+            healthProfile={matchHealthProfile}
             user={user}
             onRequirePersonalizeAuth={handleRequirePersonalizeAuth}
           />
@@ -3419,6 +3490,7 @@ function App() {
 
         {showCheckin && (
           <MonthlyCheckin
+            myProducts={myProducts}
             onComplete={(answers) => {
               setCheckinData(answers);
               const now = new Date().toISOString();
@@ -3501,21 +3573,23 @@ function App() {
               aynaReviews={aynaReviews}
               onRate={handleRateProduct}
               onReview={handleReviewProduct}
-              quizResults={quizResults}
-              healthProfile={healthProfile}
+              quizResults={matchQuizResults}
+              healthProfile={matchHealthProfile}
               ecosystemProducts={Object.values(myProducts)}
               user={user}
               userSession={userSession}
               onOpenProduct={handleOpenProduct}
               onBack={handleBackFromProduct}
+              onStartQuiz={handleStartQuiz}
+              onEditHealthProfile={handleOpenHealthProfileEditor}
               searchOrigin={lastOpenOrigin?.productId === displayedProduct.id ? lastOpenOrigin : null}
               communitySlot={user ? (
                 <Suspense fallback={null}>
                   <CommunityProductActions
                     product={displayedProduct}
                     user={user}
-                    quizResults={quizResults}
-                    healthProfile={healthProfile}
+                    quizResults={matchQuizResults}
+                    healthProfile={matchHealthProfile}
                     myProducts={myProducts}
                     savedProducts={savedProducts}
                     onOpenProduct={handleOpenProduct}
