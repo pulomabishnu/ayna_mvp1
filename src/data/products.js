@@ -73,15 +73,15 @@ export const PHYSICAL_PRODUCTS = [
         safety: {
             fdaStatus: 'FDA-registered medical device',
             materials: 'FlexFoam (polyethylene/polypropylene blend), fragrance-free options available',
-            recalls: '⚠️ 2024 social media concerns about chemical residues. Always has not been subject to FDA recall but independent testing found trace PFAS in some pad brands.',
+            recalls: 'No product-specific recall source is linked in this catalog.',
             allergens: 'Fragrance in scented versions; fragrance-free version available',
             sideEffects: 'Possible contact dermatitis or irritation, especially with scented versions. Rash or itching from synthetic materials.',
-            opinionAlerts: 'Common complaints include the "plastic feel" and environmental concerns regarding non-biodegradability. A 2024 independent lab test (commissioned by Mamavation/EHN) found PFAS ("forever chemical") indicators in some Always pad lines, which drove a wave of social media discussion and pushed a visible share of users toward organic-cotton alternatives — Always disputes that its products pose a health risk, and no regulatory recall has followed, but the concern is real and widely discussed, not fringe.'
+            opinionAlerts: 'Some users report irritation or dislike the synthetic feel. This catalog has no product-specific chemical-residue test result for Always Infinity FlexFoam.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'FlexFoam absorption is reliable for heavy flow; unscented versions minimize irritation risk for sensitive users.',
-        communityReview: 'Community discussions on Reddit r/periods are split: strong praise for absorption and the thin profile during heavy flow, alongside a distinct and growing thread of PFAS/chemical-residue concern that picked up in 2024 and made a real share of users switch to organic-cotton brands or say they no longer feel fully comfortable using it.',
+        communityReview: 'Community discussions on Reddit r/periods include praise for absorption and a thin profile, along with reports of irritation or dislike of the synthetic feel. These are user experiences, not clinical safety findings.',
         ingredients: 'Polyethylene, polypropylene, wood pulp, adhesive. Fragrance-free version omits parfum.',
         effectiveness: 'Highly effective for heavy flow — users consistently report fewer leaks than with standard mainstream pads at a comparable price point.',
         integrations: [],
@@ -95,7 +95,7 @@ export const PHYSICAL_PRODUCTS = [
                 ]
             },
             scientific: {
-                aiSummary: "Independent and regulatory oversight confirms that FlexFoam technology meets FDA safety standards for medical devices. Recent independent research highlights the effectiveness of polyethylene blends in moisture-wicking, though sustainability remains a scientific trade-off.",
+                aiSummary: "The listed FDA guidance explains menstrual product regulation generally; it does not independently test this specific pad or establish product-specific chemical safety.",
                 links: [
                     { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon & Menstrual Product Safety', summary: 'The FDA regulates pads and tampons as medical devices and monitors safety.', justification: 'The FDA is the federal authority for medical device safety in the US.' }
                 ]
@@ -1579,9 +1579,12 @@ function tagsForHealthLabel(label) {
     if (/irregular period|missed period|cycle tracking/.test(text)) add('irregular', 'cycle-tracking');
     if (/spotting/.test(text)) add('liner', 'menstrual-collection', 'leak-protection', 'irregular');
     if (/pms|pmdd|mood swing|irritability|anxiety|low mood|cycle-related mood/.test(text)) add('mental-health');
-    if (/pcos|polycystic/.test(text)) add('pcos', 'pcos-management', 'hormone-balance');
-    if (/endometriosis|adenomyosis/.test(text)) add('endometriosis', 'cramps', 'cramp-relief');
-    if (/fibroid/.test(text)) add('heavy-flow', 'hormone-balance');
+    // A condition does not imply every symptom that can accompany it.
+    // Bleeding and pain products require separately reported symptoms.
+    if (/pcos|polycystic/.test(text)) add('pcos', 'pcos-management');
+    if (/endometriosis/.test(text)) add('endometriosis');
+    if (/adenomyosis/.test(text)) add('adenomyosis');
+    if (/fibroid/.test(text)) add('fibroids');
     if (/hormone-related|hormonal|bloating|breast tenderness|nausea/.test(text)) add('hormone-balance', 'bloating');
     if (/fertility|trying to conceive|\bttc\b|ovulation/.test(text)) add('fertility', 'cycle-tracking');
     if (/pregnan|prenatal|trimester/.test(text)) add('pregnancy');
@@ -1656,7 +1659,17 @@ function getPrimaryGoalLabels(intake, quizAnswers) {
 
 function getSymptomLabels(intake, quizAnswers) {
     const explicit = asStringArray(intake?.symptoms);
-    return [...new Set([...explicit, ...asStringArray(quizAnswers?.frustrations)])];
+    // Current intake stores exact answers. Its legacy frustrations are generated
+    // for older screens and can imply symptoms the person never selected.
+    const hasCurrentAnswers = Boolean(quizAnswers?.fullHealthIntake && (
+        asStringArray(intake?.supportSelections).length
+        || asStringArray(intake?.primaryConcerns).length
+        || asStringArray(intake?.diagnosisSelections).length
+    ));
+    return [...new Set([
+        ...explicit,
+        ...(hasCurrentAnswers ? [] : asStringArray(quizAnswers?.frustrations)),
+    ])];
 }
 
 function getOtherNeedLabels(intake, quizAnswers, primaryLabels) {
@@ -1667,7 +1680,11 @@ function getOtherNeedLabels(intake, quizAnswers, primaryLabels) {
         ...asStringArray(intake?.symptoms),
         ...asStringArray(intake?.goals),
         ...asStringArray(intake?.supportOtherText),
-        ...asStringArray(quizAnswers?.frustrations),
+        ...(quizAnswers?.fullHealthIntake && (
+            asStringArray(intake?.supportSelections).length
+            || asStringArray(intake?.primaryConcerns).length
+            || asStringArray(intake?.diagnosisSelections).length
+        ) ? [] : asStringArray(quizAnswers?.frustrations)),
     ].filter((label) => {
         const normalized = String(label).trim().toLowerCase();
         const tags = tagsForHealthLabel(label);

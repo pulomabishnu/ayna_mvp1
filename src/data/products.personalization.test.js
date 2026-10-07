@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductMatchDetailsForProduct, getProductRelevanceScore, hydrateCatalogProduct } from './products';
 import { STARTUPS } from './startups';
+import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake';
 
 describe('getPersonalizedProductIds', () => {
     it('restricts to real tag matches, unlike getRecommendations()\'s full fallback list', () => {
@@ -39,6 +40,45 @@ describe('getPersonalizedProductIds', () => {
 describe('personalized relevance scoring', () => {
     const elitone = STARTUPS.find((p) => p.id === 's-elitone');
     const oura = ALL_PRODUCTS.find((p) => p.id === 'd-oura');
+
+    it('does not turn fibroid concerns into a period-product or hormone-supplement match', () => {
+        const pad = ALL_PRODUCTS.find((p) => p.id === 'p-always-infinity');
+        const hormoneProduct = { id: 'hormone-test', name: 'General hormone supplement', category: 'supplement', tags: ['hormone-balance'] };
+        const care = ALL_PRODUCTS.find((p) => p.id === 'd-visana');
+        const intake = {
+            supportSelections: ['Fibroid-related concerns'],
+            diagnosisSelections: ['Fibroids'],
+            primaryConcerns: ['Fibroid-related concerns'],
+            age: 29,
+        };
+        const quiz = { ...mapIntakeToLegacyQuizProfile(intake), fullHealthIntake: intake };
+
+        expect(pad && care).toBeTruthy();
+        expect(quiz.frustrations).not.toContain('Hormonal bloating');
+        expect(getProductRelevanceScore(pad, quiz)).toBe(0);
+        expect(getProductRelevanceScore(hormoneProduct, quiz)).toBe(0);
+        expect(getProductRelevanceScore(care, quiz)).toBeGreaterThan(0);
+    });
+
+    it('labels a pad as heavy-flow support only when heavy flow was separately reported', () => {
+        const pad = ALL_PRODUCTS.find((p) => p.id === 'p-always-infinity');
+        const quiz = { fullHealthIntake: {
+            supportSelections: ['Fibroid-related concerns', 'Heavy periods'],
+            diagnosisSelections: ['Fibroids'],
+            periodFlow: 'Heavy',
+        } };
+        const details = getProductMatchDetailsForProduct(pad, quiz);
+        expect(details.percent).toBeGreaterThan(0);
+        expect(details.reasons.some((reason) => /heavy|flow/i.test(reason))).toBe(true);
+        expect(details.reasons.some((reason) => /fibroid/i.test(reason))).toBe(false);
+    });
+
+    it('does not infer cramps from endometriosis or hormone needs from PCOS', () => {
+        const crampProduct = { id: 'cramp-only', name: 'Cramp warmer', category: 'cramp-relief', tags: ['cramps', 'cramp-relief'] };
+        const hormoneProduct = { id: 'hormone-only', name: 'General hormone supplement', category: 'supplement', tags: ['hormone-balance'] };
+        expect(getProductRelevanceScore(crampProduct, { fullHealthIntake: { supportSelections: ['Endometriosis support'] } })).toBe(0);
+        expect(getProductRelevanceScore(hormoneProduct, { fullHealthIntake: { supportSelections: ['PCOS support'] } })).toBe(0);
+    });
 
     it('does not treat menstrual leaks and staining as urinary leakage', () => {
         expect(elitone).toBeTruthy();

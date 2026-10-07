@@ -398,6 +398,14 @@ export default function BrowseScreen({
     return sortBy === 'price-asc' ? pa - pb : pb - pa;
   });
   if (sortBy === 'rating') filtered = [...filtered].sort((a, b) => (RATING_VALUE(b) ?? -1) - (RATING_VALUE(a) ?? -1));
+  if (sortBy === 'default' && personalized && hasProfile && !searchTermRaw) {
+    const matchScores = new Map(filtered.map((product) => [
+      product.id,
+      getProfileMatchPercentForProduct(product, quizAnswers) ?? 0,
+    ]));
+    filtered = [...filtered].sort((a, b) =>
+      matchScores.get(b.id) - matchScores.get(a.id));
+  }
   // Brand partners pinned to the top of the default browsing sort — same
   // rule as desktop Discovery.jsx: a partnership buys visibility on the
   // page you browse freely, never placement inside an actual text search
