@@ -1,0 +1,396 @@
+:root {
+  --color-bg: #FFFCF9;
+  --color-surface-soft: #F3EFE9;
+  --color-surface: #FFFFFF;
+  --color-text-main: #292524;
+  --color-text-muted: #78716C;
+  --color-primary: #241C3E;
+  --color-primary-hover: #4E3866;
+  --color-secondary: #F3EFE9;
+  --color-secondary-fade: rgba(36, 28, 62, 0.06);
+  --color-primary-fade: rgba(36, 28, 62, 0.08);
+  --color-border: #E8E0DB;
+  --color-navy: #242A52;
+  --color-plum: #4E3866;
+  --color-terracotta: #D98A52;
+  --color-amber: #F0A84B;
+  --hero-gradient: linear-gradient(135deg, #241C3E 0%, #4E3866 58%, #A9647A 78%, #D98A52 100%);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --shadow-sm: 0 1px 6px rgba(36, 28, 62, 0.04);
+  --shadow-md: 0 8px 24px rgba(36, 28, 62, 0.06);
+  --shadow-lg: 0 16px 36px rgba(36, 28, 62, 0.08);
+}
+
+html,
+body,
+#root {
+  background: #FFFCF9;
+}
+
+body {
+  color: #292524;
+}
+
+/* Calm chrome: let content lead. */
+.app-nav,
+.app-nav--scrolled {
+  background: rgba(255, 252, 249, 0.97) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid #EEE7E2 !important;
+}
+
+.card,
+[class*='card'] {
+  box-shadow: none;
+}
+
+/* Keep primary actions authoritative and neutral-purple instead of pastel. */
+button.primary,
+.primary-button,
+.btn-primary,
+[class*='primary'][class*='button'] {
+  background: #241C3E !important;
+  color: #FFFCF9 !important;
+  box-shadow: none !important;
+}
+
+/* Ecosystem: one expressive moment, otherwise simple. */
+.ayna-calm-ecosystem {
+  background: #FFFCF9;
+  color: #292524;
+  padding: clamp(24px, 5vw, 56px) clamp(16px, 4vw, 48px);
+  border-top: 1px solid #EEE7E2;
+  border-bottom: 1px solid #EEE7E2;
+}
+
+.ayna-calm-ecosystem__intro {
+  max-width: 760px;
+  margin: 0 auto 24px;
+}
+
+.ayna-calm-ecosystem__eyebrow,
+.ayna-calm-ecosystem__details-kicker {
+  color: #4E3866;
+  font: 700 0.72rem/1.2 var(--font-body);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.ayna-calm-ecosystem__intro h2 {
+  margin: 8px 0 8px;
+  color: #241C3E;
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 3vw, 2.35rem);
+  line-height: 1.08;
+  letter-spacing: -.025em;
+}
+
+.ayna-calm-ecosystem__intro p {
+  margin: 0;
+  color: #78716C;
+  font-size: .95rem;
+}
+
+.ayna-calm-ecosystem__layout {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(300px, .95fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.ayna-calm-ecosystem__visual-card {
+  background: #241C3E;
+  color: #FFFCF9;
+  border-radius: 22px;
+  overflow: hidden;
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ayna-calm-ecosystem__diagram {
+  position: relative;
+  width: min(430px, calc(100% - 36px));
+  aspect-ratio: 1;
+  margin: auto;
+}
+
+.ayna-calm-ecosystem__ring {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 252, 249, .18);
+  pointer-events: none;
+}
+
+.ayna-calm-ecosystem__ring--outer {
+  width: 82%;
+  height: 82%;
+}
+
+.ayna-calm-ecosystem__ring--inner {
+  width: 48%;
+  height: 48%;
+  border-color: rgba(255, 252, 249, .10);
+}
+
+.ayna-calm-ecosystem__center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  background: #FFFCF9;
+  color: #241C3E;
+  border: 1px solid rgba(255, 252, 249, .65);
+}
+
+.ayna-calm-ecosystem__center span {
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #78716C;
+}
+
+.ayna-calm-ecosystem__center strong {
+  margin-top: 2px;
+  font-size: 1rem;
+}
+
+.ayna-calm-ecosystem__node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  min-width: 82px;
+  max-width: 116px;
+  padding: 9px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 252, 249, .18);
+  background: rgba(255, 252, 249, .08);
+  color: #FFFCF9;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.ayna-calm-ecosystem__node:hover,
+.ayna-calm-ecosystem__node:focus-visible,
+.ayna-calm-ecosystem__node.is-active {
+  background: rgba(255, 252, 249, .15);
+  border-color: rgba(255, 252, 249, .55);
+  transform: translate(-50%, -50%) scale(1.03);
+}
+
+.ayna-calm-ecosystem__node-dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-radius: 50%;
+  background: var(--ayna-node-accent, #A9647A);
+}
+
+.ayna-calm-ecosystem__node strong {
+  font-size: .77rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ayna-calm-ecosystem__node small {
+  font-size: .68rem;
+  opacity: .7;
+}
+
+.ayna-calm-ecosystem__visual-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-top: 1px solid rgba(255, 252, 249, .12);
+  color: rgba(255, 252, 249, .76);
+  font-size: .82rem;
+}
+
+.ayna-calm-ecosystem__visual-footer button {
+  background: transparent;
+  border: 0;
+  color: #FFFCF9;
+  padding: 0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ayna-calm-ecosystem__details {
+  background: #FFFFFF;
+  border: 1px solid #EEE7E2;
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.ayna-calm-ecosystem__details-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.ayna-calm-ecosystem__details-heading h3 {
+  margin: 4px 0 0;
+  color: #241C3E;
+  font: 700 1.3rem/1.2 var(--font-heading);
+}
+
+.ayna-calm-ecosystem__details-heading > button,
+.ayna-calm-ecosystem__text-action {
+  border: 0;
+  background: transparent;
+  color: #4E3866;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.ayna-calm-ecosystem__product-list {
+  border-top: 1px solid #EEE7E2;
+}
+
+.ayna-calm-ecosystem__product-row {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #EEE7E2;
+}
+
+.ayna-calm-ecosystem__product-image {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: #F3EFE9;
+  display: grid;
+  place-items: center;
+  padding: 5px;
+  overflow: hidden;
+}
+
+.ayna-calm-ecosystem__product-main {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  color: #292524;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.ayna-calm-ecosystem__product-name,
+.ayna-calm-ecosystem__product-meta {
+  display: block;
+}
+
+.ayna-calm-ecosystem__product-name {
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.ayna-calm-ecosystem__product-meta {
+  margin-top: 4px;
+  color: #78716C;
+  font-size: .78rem;
+}
+
+.ayna-calm-ecosystem__remove {
+  border: 0;
+  background: transparent;
+  color: #78716C;
+  font-size: .76rem;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.ayna-calm-ecosystem--empty {
+  border-radius: 18px;
+  text-align: center;
+}
+
+.ayna-calm-ecosystem--empty > div {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.ayna-calm-ecosystem--empty h2 {
+  margin: 8px 0;
+  color: #241C3E;
+}
+
+.ayna-calm-ecosystem--empty p {
+  color: #78716C;
+  margin-bottom: 16px;
+}
+
+.ayna-calm-ecosystem__primary {
+  border: 0;
+  border-radius: 12px;
+  background: #241C3E;
+  color: #FFFCF9;
+  font-weight: 700;
+  padding: 11px 16px;
+  cursor: pointer;
+}
+
+@media (max-width: 780px) {
+  .ayna-calm-ecosystem {
+    padding: 24px 16px;
+  }
+
+  .ayna-calm-ecosystem__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ayna-calm-ecosystem__visual-card {
+    min-height: 400px;
+  }
+
+  .ayna-calm-ecosystem__diagram {
+    width: min(350px, calc(100% - 26px));
+  }
+
+  .ayna-calm-ecosystem__node {
+    min-width: 72px;
+    max-width: 96px;
+    padding: 8px;
+  }
+
+  .ayna-calm-ecosystem__node strong {
+    font-size: .7rem;
+  }
+
+  .ayna-calm-ecosystem__details {
+    padding: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ayna-calm-ecosystem__node {
+    transition: none;
+  }
+}
