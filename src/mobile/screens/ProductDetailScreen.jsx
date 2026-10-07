@@ -41,10 +41,13 @@ function humanizeTag(tag) {
 function buildFactRows(product) {
   const bestFor = (product.healthFunctions || []).concat(product.tags || []).slice(0, 3).map(humanizeTag).join(', ');
   const materials = (product.safety?.materials || '').trim();
+  const ingredients = String(product.ingredients || '').trim();
+  const sameAsIngredients = materials && ingredients
+    && materials.toLowerCase().replace(/[^a-z0-9]/g, '') === ingredients.toLowerCase().replace(/[^a-z0-9]/g, '');
   const skipIf = firstSentence(product.safety?.sideEffects, 90) || firstSentence(product.safety?.allergens, 90);
   return [
     bestFor ? { label: 'Best for', value: bestFor } : null,
-    materials ? { label: 'Materials', value: materials } : null,
+    materials && !sameAsIngredients ? { label: 'Materials', value: materials } : null,
     skipIf ? { label: 'Skip if', value: skipIf } : null,
   ].filter(Boolean);
 }
