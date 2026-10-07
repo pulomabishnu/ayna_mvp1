@@ -87,7 +87,7 @@ function PersonalizedToggle({ on, disabled, onClick }) {
         transition: 'background .15s',
       }}
     >
-      <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: on ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)' }}>For You</span>
+      <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: on ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)' }}>Personalized</span>
       <div
         style={{
           width: 30,
