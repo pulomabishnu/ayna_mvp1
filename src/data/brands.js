@@ -4741,6 +4741,181 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
+    // The Good Bug (India) — Gut Balance and Good To Glow, verified against
+    // thegoodbug.com product pages and shipping policy on 2026-10-07. Prices
+    // are the store's own, in rupees; it ships to the US via Aramex. Science
+    // claims read from their abstracts via NCBI E-utilities. Not a brand
+    // partner, no affiliate link.
+    {
+        id: 'p-goodbug-gut-balance',
+        name: 'The Good Bug Gut Balance SuperGut Stick',
+        brand: 'The Good Bug',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement'],
+        tags: ['goodbug', 'tgb', 'gut', 'gut health', 'probiotic', 'synbiotic', 'digestion', 'bloating', 'supplement'],
+        price: '₹1,249 for 30 sticks (1 month); ₹649 for 15. Ships to the US from India.',
+        whereToBuy: ['thegoodbug.com'],
+        url: 'https://thegoodbug.com/products/healthy-gut-balance',
+        image: '/products/goodbug/gut-balance.jpg', // supplied by ayna
+        summary: 'A daily synbiotic powder stick (probiotics plus prebiotic fiber) for gut and digestive health. The Good Bug says it eases bloating, gas and indigestion, supports regular digestion and immunity, and contains two of the most researched probiotic strains, Lacticaseibacillus rhamnosus LGG® and Bifidobacterium animalis subsp. lactis BB-12®, with an enzyme blend, vitamin C and inulin. The box lists 4 billion CFU. Mix one stick into 200 ml of water.',
+        ingredients: 'Per The Good Bug\'s description and the box: L. rhamnosus LGG®, B. lactis BB-12®, enzyme blend (amylase, cellulase, lipase, lactase, protease), vitamin C, inulin; 4 billion CFU. The ingredient list on the same product page instead reads: Isomalt, Hydrolyzed Guar Gum, Polydextrose, Fructooligosaccharides, Lactobacillus Plantarum UALp-05, Bifidobacterium lactis UABla-12, Added Flavors (Nature Identical Flavors), Permitted Natural Color (INS 160a). 1.2 g per stick.',
+        safety: {
+            fdaStatus: 'Sold in India as a nutraceutical (per the box). In the US this would be a dietary supplement, which the FDA does not evaluate for safety or efficacy claims.',
+            materials: 'Powder sticks, 1.2 g each; packs of 15, 30, 60 or 90. Made in India by Sundyota Numandis Probioceuticals for SevenTurns Private Limited. Best before 12 months from manufacture.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per The Good Bug, some people get mild bloating, gas or loose stools in the first few days; stop and see a doctor if it lasts more than 2 days. The Good Bug advises checking with a health practitioner first if you are pregnant or breastfeeding, or have IBS, diabetes or another medical condition. Full warnings are listed below.',
+            opinionAlerts: 'Ingredient mismatch: The Good Bug\'s description and box name the strains LGG® and BB-12®, but the ingredient list on the same page names different strains (L. plantarum UALp-05 and B. lactis UABla-12) and no enzymes or vitamin C. It may be from the older formula; check the box you receive.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from The Good Bug; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'The Good Bug says Gut Balance eases bloating, gas and indigestion, and supports digestion and immunity, using LGG® and BB-12®, two well-studied probiotic strains. No independent study of this product was found.\n\nFor LGG, a 2025 meta-analysis of 69 randomized trials found it reduced the risk and length of diarrhea, with moderate-certainty evidence that was strongest in children. Its effects on bloating, abdominal pain and constipation were limited, and the authors said evidence in adults was limited.\n\nOne thing to check: the ingredient list on The Good Bug\'s own page names different strains (L. plantarum UALp-05 and B. lactis UABla-12) than its description and box (LGG® and BB-12®). Research on one strain doesn\'t carry over to another, so it matters which formula you get.',
+        doctorOpinionShort: 'Its main strain, LGG, reduces diarrhea in a large body of trials, mostly in children, but did little for bloating or constipation, and adult evidence is limited. The product page lists different strains in its ingredient list than in its description, so check the box. No independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://thegoodbug.com/products/healthy-gut-balance', label: 'thegoodbug.com: Gut Balance — ingredients and claims' },
+        ],
+        whoItsFor: [
+            'Adults looking for a daily probiotic powder for general digestive support',
+            'People who prefer a stick mixed into water over capsules',
+            'Not a substitute for seeing a doctor about persistent bloating, diarrhea or changes in bowel habits',
+        ],
+        howToUse: {
+            intro: 'The Good Bug sizes its packs at one stick a day (15 sticks for 15 days, 30 for a month) and says the best results came with 3 months of consistent use.',
+            steps: [
+                'Mix one stick into 200 ml of water.',
+                'Avoid mixing it into carbonated drinks like soda.',
+                'If you miss a dose, take it when you remember; don\'t double up.',
+            ],
+            sourceUrl: 'https://thegoodbug.com/products/healthy-gut-balance',
+            sourceLabel: 'thegoodbug.com: Gut Balance',
+        },
+        warnings: [
+            'Pregnant, breastfeeding, or managing IBS, diabetes or another medical condition: check with a doctor first (per The Good Bug).',
+            'Loose stools or digestive changes lasting more than 2 days: stop and see a doctor (per The Good Bug).',
+            'Ships from India: The Good Bug says international shipping costs ₹1,100–3,200, takes about 2–3 weeks (3–5 business days to dispatch, then 8–10 to deliver), and customs duties or taxes may be extra.',
+        ],
+        communityReview: 'The Good Bug\'s product page shows 4.6 out of 5 stars from 119 reviews: 68% five stars, 22% four stars, 8% three stars and 2% two stars. The first reviews shown describe less bloating and acidity and better digestion after a few weeks or months. These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        effectiveness: 'LGG reduced diarrhea in many trials, mostly in children; effects on bloating and constipation were limited.',
+        ingredientScience: [
+            {
+                name: 'Lacticaseibacillus rhamnosus GG (LGG)',
+                text: 'The Good Bug calls this the world\'s most studied probiotic. A 2025 meta-analysis of 69 randomized trials found LGG reduced the risk of diarrhea and shortened it, with moderate-certainty evidence that was more consistent in children. It had limited effects on bloating, abdominal pain, constipation and nausea, and the authors said evidence in adults was limited.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/40702885/', label: 'PubMed: Effects of Lacticaseibacillus rhamnosus GG on gastrointestinal and respiratory outcomes — systematic review and meta-analysis (2025)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://thegoodbug.com/products/healthy-gut-balance',
+                        text: 'thegoodbug.com: Gut Balance customer reviews',
+                        summary: 'The Good Bug\'s own product page shows 4.6 out of 5 stars from 119 reviews.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-goodbug-good-to-glow',
+        name: 'The Good Bug Good To Glow SuperGut Stick',
+        brand: 'The Good Bug',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement', 'skin-hair'],
+        tags: ['goodbug', 'tgb', 'skin', 'hair', 'nails', 'probiotic', 'synbiotic', 'glutathione', 'beauty supplement', 'supplement'],
+        price: '₹1,249 for 30 sticks (1 month); ₹649 for 15. Ships to the US from India.',
+        whereToBuy: ['thegoodbug.com'],
+        url: 'https://thegoodbug.com/products/good-to-glow',
+        image: '/products/goodbug/good-to-glow.jpg', // supplied by ayna
+        summary: 'A daily synbiotic powder stick for skin, hair and nails "from within". It combines the probiotic Lactobacillus plantarum (5 billion CFU, per the box) with glutathione, trans-resveratrol, vitamin C, vitamin A, zinc, biotin, lycopene and inulin, in a berry flavor. The Good Bug says it brightens and hydrates skin, helps with sun damage, blemishes, dark spots and wrinkles, and strengthens hair and nails.',
+        ingredients: 'Full ingredient list per The Good Bug: Stabilizer [Xylitol (INS 967)], Sweetener [Sorbitol (INS 420(i))], Glutathione, Zinc Gluconate, Vitamin C, Lactobacillus plantarum, Trans Resveratrol, Inulin, Lycopene, Sweetener [Steviol Glycoside (INS 960)], Anti-Sticking Agent [Magnesium Stearate (INS 470(iii))], Vitamin A, Biotin. Contains added berry flavor. 3 g per stick; 5 billion CFU per the box.',
+        safety: {
+            fdaStatus: 'Sold in India as a nutraceutical (per the box). In the US this would be a dietary supplement, which the FDA does not evaluate for safety or efficacy claims.',
+            materials: 'Powder sticks, 3 g each; packs of 15, 30, 60 or 90. Sweetened with xylitol, sorbitol and stevia. The Good Bug doesn\'t list amounts of glutathione, vitamins or other actives. Made in India by Sundyota Numandis Probioceuticals for SevenTurns Private Limited. Best before 24 months from manufacture.',
+            recalls: 'No recalls found.',
+            sideEffects: 'The Good Bug says it isn\'t recommended for children, or for pregnant or breastfeeding women or anyone with a medical condition without checking with a healthcare professional first. It contains biotin, which the FDA warns can interfere with certain lab tests, so tell your doctor you take it before blood work. It also contains sugar alcohols (xylitol, sorbitol). Full warnings are listed below.',
+            opinionAlerts: 'Skin claims come from The Good Bug, and no independent study of this product was found. The Good Bug doesn\'t list how much glutathione or vitamins each stick contains.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from The Good Bug; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'The Good Bug says Good To Glow brightens and hydrates skin, helps with sun damage, blemishes and dark spots, reduces the look of wrinkles, and strengthens hair and nails. No independent study of this product was found, so what follows is what the research says about its main ingredients.\n\nGlutathione has the most direct evidence. In a randomized, double-blind, placebo-controlled trial of 60 medical students in Thailand, 500 mg a day of oral glutathione for 4 weeks lightened skin at two of six measured sites compared with placebo. A 2024 systematic review found oral glutathione at 250–500 mg a day reduced the skin\'s melanin index in five randomized trials, but called the results unsustainable and noted long-term safety isn\'t established. The Good Bug doesn\'t list how much glutathione each stick contains.\n\nFor Lactobacillus plantarum, the human evidence found was for a different form: in a Korean study, candy containing dead-bacteria fragments (lysate) of one specific strain, L. plantarum K8, improved skin hydration over 8 weeks compared with plain candy. Good To Glow\'s label doesn\'t name its strain, and it uses live bacteria, so that result may not apply.',
+        doctorOpinionShort: 'Oral glutathione lightened skin in small randomized trials, but long-term safety isn\'t established and this product doesn\'t list its dose. Evidence for its probiotic comes from a different form and strain. No independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://thegoodbug.com/products/good-to-glow', label: 'thegoodbug.com: Good To Glow — ingredients and claims' },
+        ],
+        whoItsFor: [
+            'Adults interested in an ingestible skin, hair and nail supplement alongside their skincare',
+            'People who prefer a flavored powder stick over capsules',
+            'Not for children, or during pregnancy or breastfeeding without checking with a clinician (per The Good Bug)',
+        ],
+        howToUse: {
+            intro: 'The Good Bug sizes its packs at one stick a day (15 sticks for 15 days, 30 for a month). Its Good To Glow page doesn\'t give mixing directions.',
+            steps: [
+                'Take one stick a day.',
+                'Keep using sunscreen daily; The Good Bug\'s own page recommends it alongside the product.',
+            ],
+            sourceUrl: 'https://thegoodbug.com/products/good-to-glow',
+            sourceLabel: 'thegoodbug.com: Good To Glow',
+        },
+        warnings: [
+            'Pregnant, breastfeeding, or managing a medical condition: check with a doctor first (per The Good Bug). Not for children.',
+            'Contains biotin: the FDA warns biotin can interfere with certain lab tests, so tell your doctor before blood work.',
+            'Ships from India: The Good Bug says international shipping costs ₹1,100–3,200, takes about 2–3 weeks (3–5 business days to dispatch, then 8–10 to deliver), and customs duties or taxes may be extra.',
+        ],
+        communityReview: 'The Good Bug\'s product page shows 4.3 out of 5 stars from 1,623 reviews: 36% five stars, 61% four stars, 2% three stars, and two one-star reviews. The first reviews shown describe brighter, glowing skin after about a month, for example: "within a month of using it, people started telling me that my skin is glowing." These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        effectiveness: 'Oral glutathione lightened skin in small randomized trials; the probiotic\'s skin evidence comes from a different form and strain.',
+        ingredientScience: [
+            {
+                name: 'Glutathione (oral)',
+                text: 'The Good Bug states this brightens skin. In a randomized, double-blind, placebo-controlled trial of 60 people, 500 mg a day of oral glutathione for 4 weeks lightened skin at two of six measured sites (the face and a sun-exposed forearm) compared with placebo. A 2024 systematic review found five randomized trials where oral glutathione at 250–500 mg a day reduced the melanin index, but described the effect as unsustainable. Long-term safety isn\'t established. This product\'s glutathione amount isn\'t listed.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/20524875/', label: 'PubMed: Glutathione as an oral whitening agent — randomized, double-blind, placebo-controlled study (2012)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/39444151/', label: 'PubMed: Glutathione as a skin-lightening agent and in melasma — systematic review (2024)' },
+                ],
+            },
+            {
+                name: 'Lactobacillus plantarum',
+                text: 'The Good Bug states this revitalizes skin. In a Korean study, people who ate candy containing 2.1% dead-bacteria fragments (lysate) of L. plantarum strain K8 had better skin hydration after 4 and 8 weeks than people eating the same candy without it. Good To Glow uses live L. plantarum of an unnamed strain, so that result may not apply.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/25179904/', label: 'PubMed: Effects of oral intake of kimchi-derived Lactobacillus plantarum K8 lysates on skin moisturizing (2015)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.fda.gov/medical-devices/in-vitro-diagnostics/biotin-interference-troponin-lab-tests-assays-subject-biotin-interference',
+                text: 'FDA: Biotin interference with lab tests',
+                summary: 'The FDA says biotin, often found in dietary supplements, can significantly interfere with certain lab tests and cause incorrect results that may go undetected.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://thegoodbug.com/products/good-to-glow',
+                        text: 'thegoodbug.com: Good To Glow customer reviews',
+                        summary: 'The Good Bug\'s own product page shows 4.3 out of 5 stars from 1,623 reviews.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
     // Liv Labs (Pippa Resistance Spring) — catalog entry only, NOT yet an
     // ayna brand partner (as of 2026-09-23). isEmergingBrand still shows the
     // "Brand" tag on Discovery, but it's deliberately left out of
