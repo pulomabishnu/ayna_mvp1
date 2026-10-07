@@ -427,6 +427,15 @@ export default function ProductModal({
   onEditHealthProfile = null,
 }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  // Mobile: once the main Buy button scrolls out of view, a slim bar keeps it reachable.
+  const [mainBuyVisible, setMainBuyVisible] = useState(true);
+  useEffect(() => {
+    const el = document.querySelector('.pdp-btn--buy');
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([entry]) => setMainBuyVisible(entry.isIntersecting), { threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [product?.id]);
   const [selectedVariantId, setSelectedVariantId] = useState(product.defaultVariantId || '');
   const choice = getVariantSelection(product, selectedVariantId);
   const displayName = choice.displayName;
@@ -702,8 +711,8 @@ export default function ProductModal({
 
   if (!product) return null;
 
-  const ecosystemBtnLabel = isInEcosystem ? 'In ecosystem' : 'Add to ecosystem';
-  const wishlistBtnLabel = isSaved ? 'Wishlisted' : 'Wishlist';
+  const ecosystemBtnLabel = isInEcosystem ? 'In my ecosystem' : 'I use this';
+  const wishlistBtnLabel = isSaved ? 'Saved' : 'Save for later';
 
   const shareUrl = productShareUrl(product);
   const shareText = `Check out ${product.name} on ayna.`;
@@ -759,10 +768,17 @@ export default function ProductModal({
   const emailSubject = encodeURIComponent(`${product.name} | ayna`);
   const emailBody = encodeURIComponent(`${shareText}\n\n${shareUrl}`);
 
+  // No named clinician reviews products today, so never head this section "Clinician opinion":
+  // brand-sourced text is the brand's claim; everything else is ayna's own synthesis.
+  const clinicalSectionTitle = /own site|marketing claims|brand|no independent|no clinician|\bclaims\b/i.test(product.clinicianAttribution || '') && !/ayna synthesis/i.test(product.clinicianAttribution || '')
+    ? 'What the brand claims'
+    : 'Clinical context';
+
   const retailerName = (() => {
     try {
       const host = new URL(buyUrl).hostname.replace(/^www\./, '');
       if (/(^|\.)amazon\./.test(host) || host === 'amzn.to') return 'Amazon';
+      if (product.brand) return String(product.brand);
       const base = host.split('.').slice(-2, -1)[0] || host;
       return base.charAt(0).toUpperCase() + base.slice(1);
     } catch { return ''; }
@@ -825,6 +841,7 @@ export default function ProductModal({
           type="button"
           className="pdp-actions__ecosystem"
           aria-pressed={isInEcosystem}
+          title="Add products you already use to your ecosystem for recall alerts and sharper matches"
           onClick={() => onAddToEcosystem(product)}
         >
           {ecosystemBtnLabel}
@@ -1017,7 +1034,7 @@ export default function ProductModal({
                   on the Scientific literature tab (where this ingredient
                   detail is relevant), not shown under every tab, and only
                   when a catalog entry has this on file. */}
-              {Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
+              {ingredientCitationEntries.length === 0 && Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
                 <div style={{ marginTop: 20 }}>
                   <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
                     INSIDE
@@ -1080,6 +1097,9 @@ export default function ProductModal({
 
               {/* Small tabs, matching mockup 1f — dark underline on the active
                   tab, muted text on the rest, one compact card below. */}
+            </div>
+          </div>
+          <div className="pdp-below">
               <div className="pdp-tabpanel pdp-onepage">
 
                 <div className="pdp-section" style={{ order: 1 }}>
@@ -1158,7 +1178,7 @@ export default function ProductModal({
                 </div>
 
                 <div className="pdp-section" style={{ order: 2 }}>
-                  <h3 className="pdp-section__title">{product.doctorOpinion && !product.clinicianAttribution ? 'What the brand claims' : 'Clinician opinion'}</h3>
+                  <h3 className="pdp-section__title">{clinicalSectionTitle}</h3>
                   {(
                   <div className="pdp-summary-card">
                     {product.doctorOpinion ? (
@@ -1394,13 +1414,21 @@ export default function ProductModal({
                   )}
                 </div>
               </div>
-            </div>
           </div>
 
           {relatedGrid}
         </>
 
       </div>
+
+      {buyUrl && !mainBuyVisible && (
+        <div className="pdp-stickybuy">
+          <span className="pdp-stickybuy__price">{choice.hasVariants ? (choice.variant?.priceLabel || '') : (product.price || '')}</span>
+          <a className="pdp-btn pdp-btn--navy" href={buyUrl} target="_blank" rel="noopener noreferrer" onClick={() => recordRetailerVisit(product, choice.variant)}>
+            {retailerName ? `Buy at ${retailerName}` : 'Buy Now'}
+          </a>
+        </div>
+      )}
 
       {lightboxOpen && heroImageSrc && (
         <ImageLightbox src={heroImageSrc} alt={displayName} onClose={() => setLightboxOpen(false)} />
