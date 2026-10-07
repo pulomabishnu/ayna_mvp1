@@ -128,8 +128,8 @@ function ensureBrowseLink(input, helper) {
       syncInput(input, 'browse');
     });
   }
-  // Sits directly under the category pills: link first, then the box it reveals.
-  const categories = document.querySelector('.ayna-browse .ayna-browse__categories');
+  // Sits after the results (not between the filters and the grid): link first, then the box it reveals.
+  const categories = document.querySelector('.ayna-browse .ayna-browse__grid');
   if (categories) {
     if (categories.nextElementSibling !== link) categories.insertAdjacentElement('afterend', link);
     if (link.nextElementSibling !== helper) link.insertAdjacentElement('afterend', helper);

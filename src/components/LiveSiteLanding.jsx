@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
-import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, BROWSE_GROUPS, itemMatchesMacroGroup, getProductMatchDetailsForProduct } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { getWeeklyTrendingLineup, isBeautyProduct, orderByWeeklyTrending, takeDistinctCategories, trendingAreaLabel } from '../utils/trendingLineup';
@@ -31,19 +31,10 @@ const CHIP_SETS = [
   ['Fertility', 'Intimate care', 'Hot flashes', 'Cycle support'],
 ];
 
-const SHOP_FILTERS = [
-  { key: 'all', label: 'All', categories: [], keywords: [] },
-  { key: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'], keywords: ['period', 'menstrual'] },
-  { key: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'intimate', 'moisturizer', 'ph'] },
-  { key: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['intimacy', 'lubricant', 'lube'] },
-  { key: 'postpartum', label: 'Postpartum', categories: ['postpartum', 'pregnancy'], keywords: ['postpartum', 'nursing', 'lactation'] },
-  { key: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel'] },
-  { key: 'hormones', label: 'Hormones', categories: ['supplement', 'hormone-monitoring'], keywords: ['pms', 'pcos', 'hormone', 'cycle'] },
-  { key: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
-  { key: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation'] },
-  { key: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'spf', 'acne'] },
-  { key: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo'] },
-];
+// Same categories as Browse (one taxonomy across the site).
+const SHOP_FILTERS = BROWSE_GROUPS
+  .filter((g) => !['life-perimenopause', 'life-postmenopause'].includes(g.id))
+  .map((g) => ({ key: g.id, label: g.label }));
 
 function productText(product) {
   return [product?.name, product?.brand, product?.category, product?.summary, product?.description, ...(product?.tags || [])]
@@ -52,11 +43,7 @@ function productText(product) {
 
 function matchesShopFilter(product, key) {
   if (!key || key === 'all') return true;
-  const filter = SHOP_FILTERS.find((item) => item.key === key);
-  if (!filter) return true;
-  if (filter.categories.includes(product?.category)) return true;
-  const text = productText(product);
-  return filter.keywords.some((keyword) => text.includes(keyword));
+  return itemMatchesMacroGroup(product, key);
 }
 
 function priceNumber(product) {

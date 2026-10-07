@@ -29,16 +29,49 @@ select:focus-visible, input:focus-visible, textarea:focus-visible {
 }
 
 /* ask ayna launcher: a plain navy pill instead of the gradient blob; hidden during the quiz */
-.v6-ask-locked-fallback {
+html body button.v6-ask-locked-fallback, html body button.ayna-ask-launcher {
   width: auto !important; min-width: 52px !important; height: 52px !important; min-height: 52px !important;
   border-radius: 999px !important; padding: 0 18px !important; border: 0 !important;
   background: #242A52 !important; filter: none !important; box-shadow: 0 8px 24px rgba(26, 23, 20, .18) !important;
 }
-.v6-ask-locked-fallback__inner { grid-auto-flow: column; gap: 8px; }
+html body .v6-ask-locked-fallback .v6-ask-locked-fallback__inner { grid-auto-flow: column; gap: 8px; }
 .v6-ask-locked-fallback__label { font: 600 14px/1 var(--font-body, 'DM Sans', sans-serif) !important; letter-spacing: 0; }
 .v6-ask-locked-fallback__lock { display: none; }
-body:has(.ayna-intake-root) .v6-ask-locked-fallback { display: none !important; }
+html body:has(.ayna-intake-root) button.v6-ask-locked-fallback { display: none !important; }
 
 /* Hero: explanatory line + CTA share the headline's centre line */
 .ayna-landing-hero-col .ayna-landing-sub { margin-left: auto; margin-right: auto; text-align: center; }
 .ayna-landing-hero-col .ayna-landing-cta-row { justify-content: center; }
+
+/* Browse: sticky toolbar with result count, one scrolling category row */
+.ayna-browse__toolbar { position: sticky; top: 64px; z-index: 40; background: var(--color-bg, #FAF6F1); }
+.ayna-browse__count { margin-left: auto; margin-right: 12px; font: 500 .875rem var(--font-body); color: var(--color-text-muted, #5E564E); white-space: nowrap; }
+.ayna-browse__categories { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; }
+.ayna-browse__categories::-webkit-scrollbar { display: none; }
+.ayna-browse__categories button { flex: none !important; width: auto !important; }
+
+/* Browse product card: 4:5 muted image well, DM Sans title, no frame */
+html body .ayna-browse .ayna-browse-card .ayna-discover-card__tile {
+  aspect-ratio: 4 / 5 !important; border-radius: 14px !important; background: #F3ECE2 !important; padding: 0 !important;
+}
+html body .ayna-browse .ayna-browse-card .ayna-discover-card__tile img { padding: 12% !important; filter: none !important; }
+html body .ayna-browse .ayna-browse-card .ayna-discover-card__body { padding: 12px 0 0 !important; }
+html body .ayna-browse .ayna-browse-card .ayna-discover-card__category,
+html body .ayna-browse .ayna-browse-card .ayna-browse-card__labels span {
+  font: 500 12px/1.2 var(--font-body) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--color-text-muted, #5E564E) !important;
+}
+html body .ayna-browse .ayna-browse-card .ayna-discover-card__name {
+  font: 500 16px/1.35 var(--font-body) !important; margin: 4px 0 4px !important; color: var(--color-text-main, #1A1714) !important;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.7em;
+}
+html body .ayna-browse .ayna-browse-card .ayna-discover-card__price { font: 600 14px var(--font-body) !important; color: var(--color-text-main, #1A1714) !important; }
+.ayna-browse-card__wishlist { border: 0 !important; width: 32px !important; height: 32px !important; background: rgba(255, 255, 255, .92) !important; }
+.ayna-browse-card__wishlist.is-saved { color: #242A52 !important; }
+
+/* Mobile header: logo left, menu at the far edge */
+@media (max-width: 899px) {
+  html body .app-nav .app-nav__brand { flex: 1 1 auto; justify-content: space-between; }
+}
+/* Category chips: one scrolling row at every width */
+html body .ayna-browse.v6-browse-live .ayna-browse__categories:not(.v6-browse-needs-menu) { flex-wrap: nowrap !important; overflow-x: auto !important; }
+html body .ayna-browse.v6-browse-live .ayna-browse__categories:not(.v6-browse-needs-menu) button { flex: 0 0 auto !important; width: auto !important; }

@@ -410,6 +410,9 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
+// One taxonomy site-wide: the stage-specific menopause pills fold into "Menopause".
+const HIDDEN_BROWSE_CHIPS = new Set(['life-perimenopause', 'life-postmenopause']);
+
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, hasStatedLifeStage = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         // initialMacroGroup (a whole care area, e.g. from "Swap" in the
@@ -669,7 +672,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const recommendedSet = personalizedSet;
 
     const availableMacroGroups = useMemo(
-        () => BROWSE_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))),
+        () => BROWSE_GROUPS.filter((group) => !HIDDEN_BROWSE_CHIPS.has(group.id) && (group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id)))),
         [combined]
     );
 
@@ -1424,7 +1427,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <button type="button" className="ayna-browse__filter-button" onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
                         Filters
                     </button>
-                    <label className="ayna-browse__personalized-toggle">
+                    {user && <label className="ayna-browse__personalized-toggle">
                         <span>Personalized</span>
                         <span className="ayna-browse__personalized-switch">
                             <input
@@ -1444,8 +1447,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             />
                             <span className="ayna-browse__personalized-track" aria-hidden="true" />
                         </span>
-                    </label>
+                    </label>}
                 </div>
+                <span className="ayna-browse__count" role="status">{gridItems.length} product{gridItems.length === 1 ? '' : 's'}{searchSubmitted && submittedQuery ? ` for “${submittedQuery}”` : ''}</span>
                 <label className="ayna-browse__sort">
                     <span>Sort</span>
                     <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>

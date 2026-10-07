@@ -1,6 +1,6 @@
-import { productMatchesCareArea, selectCabinetProducts, careAreasForProfile } from '../utils/landingProducts';
+import { selectCabinetProducts } from '../utils/landingProducts';
 import React, { useMemo, useState } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, BROWSE_GROUPS, itemMatchesMacroGroup } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import LiveSiteLanding from './LiveSiteLanding';
 
@@ -49,28 +49,11 @@ function hasImage(product) {
   );
 }
 
-function categoryLabel(product) {
-  return CATEGORY_LABELS[product?.category] || product?.category || 'ayna pick';
-}
-
 function scoreFor(product) {
   const raw = product?.matchPercentage ?? product?.matchScore ?? product?.score;
   if (typeof raw !== 'number' || !Number.isFinite(raw)) return null;
   const normalized = raw <= 1 ? Math.round(raw * 100) : Math.round(raw);
   return Math.max(0, Math.min(100, normalized));
-}
-
-function discoveryTargetFor(value) {
-  const query = String(value || '').trim();
-  if (!query) return '';
-  const q = query.toLowerCase();
-  if (q.includes('pad')) return { query, initialCategory: 'pad' };
-  if (q.includes('tampon')) return { query, initialCategory: 'tampon' };
-  if (q.includes('cup')) return { query, initialCategory: 'cup' };
-  if (q.includes('pcos')) return { query, initialMacroGroup: 'hormones' };
-  if (q.includes('fertil') || q.includes('ovulation')) return { query, initialMacroGroup: 'fertility' };
-  if (q.includes('pelvic')) return { query, initialMacroGroup: 'pelvic' };
-  return query;
 }
 
 function ProductVisual({ product, compact = false }) {
@@ -113,12 +96,10 @@ function LandingFeatures({
   myProducts,
   ecosystemCount = 0,
   hasProfile = false,
-  healthIntake,
   recommendedProductIds = [],
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [seed] = useState(() => Math.floor(Math.random() * 10000));
-  const [exploreOffset] = useState(0);
 
   const owned = useMemo(() => Object.values(myProducts || {}), [myProducts]);
   const recommended = useMemo(
@@ -136,18 +117,17 @@ function LandingFeatures({
   }, [owned, recommended, visualPool, user]);
   const selected = cabinetProducts[selectedIndex] || cabinetProducts[0] || null;
 
-  const careAreas = useMemo(() => careAreasForProfile(CARE_AREAS, healthIntake), [healthIntake]);
-  const visibleAreas = useMemo(() => Array.from({ length: 6 }, (_, index) => (
-    careAreas[(exploreOffset + index) % careAreas.length]
-  )), [exploreOffset, careAreas]);
-
-  const categoryCards = useMemo(() => visibleAreas.map((area, index) => {
-    const matches = visualPool.filter((product) => productMatchesCareArea(product, area));
-    const physical = matches.filter(product => product.type !== 'digital');
-    const source = physical.length ? physical : matches;
-    const product = source.length ? source[(seed + index * 7) % source.length] : null;
-    return { ...area, product };
-  }), [visibleAreas, visualPool, seed]);
+  // Same categories as Browse and the home chips.
+  const categoryCards = useMemo(() => BROWSE_GROUPS
+    .filter((g) => !['all', 'life-perimenopause', 'life-postmenopause'].includes(g.id))
+    .map((group, index) => {
+      const matches = visualPool.filter((product) => itemMatchesMacroGroup(product, group.id));
+      const physical = matches.filter((product) => product.type !== 'digital');
+      const source = physical.length ? physical : matches;
+      const product = source.length ? source[(seed + index * 7) % source.length] : null;
+      return { label: group.label, groupId: group.id, product };
+    })
+    .filter((card) => card.product), [visualPool, seed]);
 
   const name = firstName(user);
   const selectedScore = selected ? scoreFor(selected) : null;
@@ -205,19 +185,17 @@ function LandingFeatures({
       <section className="v6-explore">
         <div className="v6-section-head">
           <div>
-            <div className="v6-eyebrow">explore by need</div>
-            <h2>find your way in, <em>fast.</em></h2>
+            <h2>Shop by category</h2>
           </div>
           <div className="v6-explore-meta">
-            <p>Browse real ayna products by the health need that matters to you.</p>
-          </div>
+                      </div>
         </div>
 
         <div className="v6-category-grid">
           {categoryCards.map((card) => (
-            <button type="button" className="v6-category-card" key={card.label} onClick={() => onViewDiscovery?.(discoveryTargetFor(card.query))}>
+            <button type="button" className="v6-category-card" key={card.label} onClick={() => onViewDiscovery?.({ initialMacroGroup: card.groupId })}>
               <div className="v6-category-media">{card.product && <ProductVisual product={card.product} compact />}</div>
-              <div><strong>{card.label}</strong><small>{card.product ? card.product.name : categoryLabel(card.product)}</small><em>explore →</em></div>
+              <div><strong>{card.label}</strong></div>
             </button>
           ))}
         </div>
