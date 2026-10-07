@@ -31,21 +31,27 @@ function shortPrice(price) {
 }
 
 function MatchLine({ percent, onOpenWhyMatch, onStartQuiz }) {
+  const sharedStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    border: 0,
+    background: 'transparent',
+    padding: 0,
+    minHeight: 44,
+    fontWeight: 600,
+    textAlign: 'left',
+    cursor: 'pointer',
+  };
+
   if (percent == null) {
     return (
       <button
         type="button"
         onClick={(event) => { event.stopPropagation(); onStartQuiz?.(); }}
         style={{
-          border: 0,
-          background: 'transparent',
+          ...sharedStyle,
           color: 'var(--ayna-text-muted)',
-          padding: 0,
-          minHeight: 24,
           fontSize: 'calc(11px * var(--ayna-text-scale, 1))',
-          fontWeight: 600,
-          textAlign: 'left',
-          cursor: 'pointer',
         }}
       >
         See your match
@@ -58,18 +64,13 @@ function MatchLine({ percent, onOpenWhyMatch, onStartQuiz }) {
       type="button"
       onClick={(event) => { event.stopPropagation(); onOpenWhyMatch?.(); }}
       style={{
-        border: 0,
-        background: 'transparent',
+        ...sharedStyle,
         color: 'var(--ayna-accent-dark)',
-        padding: 0,
-        minHeight: 24,
         fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
         fontWeight: 700,
-        textAlign: 'left',
-        cursor: 'pointer',
       }}
     >
-      {percent}% match <span aria-hidden="true" style={{ color: 'var(--ayna-text-faint)', fontWeight: 600 }}>· Why</span>
+      {percent}% match <span aria-hidden="true" style={{ color: 'var(--ayna-text-faint)', fontWeight: 600, marginLeft: 4 }}>· Why</span>
     </button>
   );
 }
@@ -113,7 +114,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <MatchLine percent={matchPercent} onOpenWhyMatch={openWhyMatch} onStartQuiz={onStartQuiz} />
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 2 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: -4 }}>
             <div
               style={{
                 flex: 1,
@@ -139,7 +140,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, minHeight: 16 }}>
             {isPartner && <span style={{ fontSize: 'calc(10px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text-muted)' }}>Partner</span>}
             {category && <span style={{ fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>{labelForCategory(category)}</span>}
-            {userRating != null && <span style={{ marginLeft: 'auto', fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>★ {userRating}</span>}
+            {userRating != null && <span style={{ marginLeft: 'auto', fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>Rating {userRating}</span>}
           </div>
         </div>
       </div>
@@ -171,7 +172,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {isPartner && <div style={PARTNER_LABEL_STYLE}>Partner</div>}
       </div>
 
-      <div style={{ marginTop: 10 }}>
+      <div style={{ marginTop: 4 }}>
         <MatchLine percent={matchPercent} onOpenWhyMatch={openWhyMatch} onStartQuiz={onStartQuiz} />
       </div>
 
@@ -181,7 +182,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           fontWeight: 600,
           fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
           lineHeight: 1.3,
-          marginTop: 2,
+          marginTop: -4,
           display: '-webkit-box',
           WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical',
@@ -196,7 +197,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>{resolvedPrice}</div>
         )}
         {userRating != null && (
-          <div style={{ marginLeft: 'auto', fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>★ {userRating}</div>
+          <div style={{ marginLeft: 'auto', fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>Rating {userRating}</div>
         )}
       </div>
     </div>
