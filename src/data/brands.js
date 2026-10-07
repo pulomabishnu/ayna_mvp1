@@ -5155,6 +5155,100 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
+    // InfiniWell PTD-DBM + Methyl Vanillate — verified against
+    // infiniwell.com/products/ptd-dbm-methyl-vanillate on 2026-10-07 (price,
+    // description, FAQ, how-to, review stats). Image supplied by ayna.
+    // Studies read via NCBI E-utilities. Not a brand partner, no affiliate link.
+    {
+        id: 'p-infiniwell-ptd-dbm',
+        name: 'InfiniWell PTD-DBM + Methyl Vanillate',
+        brand: 'InfiniWell',
+        category: 'hair',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['infiniwell', 'ptd-dbm', 'methyl vanillate', 'hair', 'scalp', 'hair serum', 'peptide', 'thinning', 'cosmetic'],
+        price: '$69.95 for 25 mL',
+        whereToBuy: ['infiniwell.com'],
+        url: 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate',
+        image: '/products/infiniwell/ptd-dbm.webp', // supplied by ayna
+        summary: 'A leave-in scalp serum in a 25 mL dropper bottle, pairing the peptide PTD-DBM with methyl vanillate, a compound derived from vanillin. InfiniWell calls it physician-formulated and sells it as a cosmetic for fuller-looking hair, not as a hair-loss treatment. Apply to the scalp once a day; no rinsing. InfiniWell offers a refund if you don\'t feel a difference in 30 days.',
+        ingredients: 'Per InfiniWell: PTD-DBM (a peptide) and methyl vanillate. InfiniWell doesn\'t list the full ingredients or the amount of either active as text on its product page.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic; not an FDA-approved drug for hair loss. InfiniWell says its statements haven\'t been evaluated by the FDA and that the product isn\'t formulated to treat hair loss.',
+            materials: '25 mL serum with a dropper. InfiniWell says it is made in a cGMP facility in the USA and third-party tested by ISO-certified labs.',
+            recalls: 'No recalls found.',
+            sideEffects: 'For external use only; avoid contact with eyes. InfiniWell says to consult a physician first if you take prescription medication, have a medical condition, or are pregnant or nursing, and to check with a professional if you also use medicated hair treatments. Not for children.',
+            opinionAlerts: 'The research on PTD-DBM so far is in cells and mice; no human trial was found. InfiniWell describes methyl vanillate two ways: as nourishing hair follicles, and as an ingredient that helps the serum spread and absorb.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from InfiniWell; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'InfiniWell says PTD-DBM supports the Wnt/β-catenin pathway, a signaling pathway involved in hair follicle growth, and that the serum aims for visible results in less than 30 days. No study of this product was found.\n\nPTD-DBM comes from a 2017 Journal of Investigative Dermatology study. Researchers found a protein called CXXC5 that slows hair regrowth and is raised in balding human scalp. In human hair cells, CXXC5 slowed cell growth; in mice, a peptide that blocks it sped up hair regrowth. A 2023 study by the same group found the peptide also reversed hair loss caused by DHT and prostaglandin D2 in mice. The senior researcher is CEO of a company licensed to develop the peptide.\n\nThe human evidence is for methyl vanillate: a 2016 uncontrolled, open-label study of 20 women with female pattern hair loss used a 0.2% methyl vanillate spray for 6 months. Hair count rose 6% and hair mass index 12% from baseline, with no dropouts for side effects. There was no placebo group, and InfiniWell doesn\'t say how much methyl vanillate its serum contains.\n\nIf you have thinning hair, a dermatologist can check for causes and discuss treatments with stronger evidence, such as minoxidil.',
+        doctorOpinionShort: 'PTD-DBM has been tested only in cells and mice so far. Methyl vanillate has one small, uncontrolled study in 20 women (6% more hairs after 6 months). No study of this serum was found, and InfiniWell doesn\'t publish its ingredient amounts.',
+        doctorOpinionCitations: [
+            { url: 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate', label: 'infiniwell.com: PTD-DBM + Methyl Vanillate — claims and FAQ' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28595998/', label: 'PubMed: Targeting of CXXC5 by a competing peptide stimulates hair regrowth and wound-induced hair neogenesis (J Invest Dermatol 2017)', chipLabel: 'PTD-DBM cell and mouse study (2017)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/36831222/', label: 'PubMed: CXXC5 mediates DHT-induced androgenetic alopecia via PGD2 (Cells 2023)', chipLabel: 'PTD-DBM mouse study (2023)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/27121450/', label: 'PubMed: Topical methyl vanillate increases hair count and hair mass index in women with androgenetic alopecia (J Cosmet Dermatol 2016)', chipLabel: 'Methyl vanillate open-label study, 20 women (2016)' },
+        ],
+        whoItsFor: [
+            'People with thinning hair who want a non-drug cosmetic scalp serum and are comfortable with early-stage evidence',
+            'Not a substitute for seeing a dermatologist about new or fast hair loss',
+            'Pregnant or nursing: InfiniWell says to check with your physician first',
+        ],
+        howToUse: {
+            intro: 'Per InfiniWell: use daily.',
+            steps: [
+                'Apply evenly to the affected areas of the scalp once a day.',
+                'No need to rinse; it can be used with your usual shampoo and conditioner.',
+                'Avoid contact with eyes.',
+            ],
+            sourceUrl: 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate',
+            sourceLabel: 'infiniwell.com: PTD-DBM + Methyl Vanillate',
+        },
+        warnings: [
+            'External use only; avoid contact with eyes.',
+            'Pregnant, nursing, on prescription medication, or have a medical condition: consult your physician before use (per InfiniWell).',
+            'Using medicated hair-loss treatments such as minoxidil: check with a healthcare professional first (per InfiniWell).',
+            'Not for children.',
+        ],
+        communityReview: 'InfiniWell\'s page shows two sets of numbers. A stats card says 217 verified customers rated it 4.6 out of 5 on average, and 20% (about 1 in 5) mentioned thicker- or fuller-looking hair without being asked. InfiniWell says these reviews were collected by post-purchase email through July 2026 and that most reviewers received an incentive. Separately, the page header shows 4.9 stars from 1,136 reviews, which appear to cover InfiniWell\'s products more broadly.',
+        effectiveness: 'One small, uncontrolled study supports methyl vanillate in women with pattern hair loss; PTD-DBM hasn\'t been tested in people.',
+        ingredientScience: [
+            {
+                name: 'PTD-DBM',
+                text: 'A peptide that blocks CXXC5, a protein that slows Wnt/β-catenin signaling and is raised in balding human scalp. In a 2017 study, CXXC5 slowed the growth of human hair follicle cells, and blocking it with the peptide sped up hair regrowth in mice. A 2023 study by the same group found it reversed hair loss caused by DHT and prostaglandin D2 in mice. The senior researcher is CEO of a company licensed to develop the peptide. No human trial was found.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28595998/', label: 'PubMed: Targeting of CXXC5 by a competing peptide stimulates hair regrowth and wound-induced hair neogenesis (Lee et al., J Invest Dermatol 2017)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/36831222/', label: 'PubMed: CXXC5 mediates DHT-induced androgenetic alopecia via PGD2 (Ryu et al., Cells 2023)' },
+                ],
+            },
+            {
+                name: 'Methyl vanillate',
+                text: 'In a 2016 uncontrolled, open-label study, 20 women aged 25 to 57 with female pattern hair loss used a spray with 0.2% methyl vanillate for 6 months. Hair count rose 6% and hair mass index 12% compared with baseline, and no one stopped because of side effects. There was no placebo group. InfiniWell doesn\'t publish its serum\'s methyl vanillate concentration.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27121450/', label: 'PubMed: Topical application of the Wnt/β-catenin activator methyl vanillate increases hair count and hair mass index in women with androgenetic alopecia (Tosti et al., 2016)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate',
+                        text: 'infiniwell.com: PTD-DBM customer reviews',
+                        summary: '217 verified buyers average 4.6 out of 5, collected by post-purchase email; most reviewers received an incentive.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
     // Liv Labs (Pippa Resistance Spring) — catalog entry only, NOT yet an
     // ayna brand partner (as of 2026-09-23). isEmergingBrand still shows the
     // "Brand" tag on Discovery, but it's deliberately left out of
