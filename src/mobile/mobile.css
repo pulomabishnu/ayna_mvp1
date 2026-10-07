@@ -2,6 +2,7 @@
    Scoped under .ayna-mobile so nothing here can affect the existing website. */
 
 .ayna-mobile {
+  position: relative;
   --ayna-bottom-nav-height: calc(55px + max(8px, env(safe-area-inset-bottom)));
   --ayna-bg: #F3EFE9;
   --ayna-bg-alt: #FAF6F1;
@@ -57,6 +58,17 @@
   font-family: Inter, system-ui, sans-serif;
   color: var(--ayna-text);
   background: var(--ayna-bg);
+}
+
+.ayna-ecosystem-reset-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(36, 42, 82, .56);
+  padding: 18px;
 }
 
 /* Dark theme — exact tokens from the "Nebula"/"Mission control" reference

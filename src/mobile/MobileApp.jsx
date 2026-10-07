@@ -4,8 +4,8 @@ import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduc
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
-import { loadEcosystemForUser, upsertProductState, upsertProductsBatch } from '../utils/ecosystemStore.js';
-import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
+import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from '../utils/ecosystemStore.js';
+import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
 import { ARTICLES, getArticlesByProfileRelevance } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
@@ -34,6 +34,7 @@ import BuildingScreen from './screens/BuildingScreen.jsx';
 import RevealScreen from './screens/RevealScreen.jsx';
 import SigninScreen from './screens/SigninScreen.jsx';
 import EcosystemScreen from './screens/EcosystemScreen.jsx';
+import EcosystemResetDialog from './components/EcosystemResetDialog.jsx';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
@@ -184,6 +185,10 @@ export default function MobileApp() {
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
   const [readArticleIds, setReadArticleIds] = useState([]);
+  const [intakeMode, setIntakeMode] = useState('new');
+  const [ecosystemNotice, setEcosystemNotice] = useState('');
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [resettingEcosystem, setResettingEcosystem] = useState(false);
   const [authMode, setAuthMode] = useState('signup');
   const [authPrompt, setAuthPrompt] = useState(null);
   const authReturnScreenRef = useRef('landing');
@@ -220,6 +225,7 @@ export default function MobileApp() {
     setAskAynaOpen(false);
     setOverlay(null);
     if (mode === 'signup' && !lastQuizAnswers) {
+      setIntakeMode('new');
       setEditingHealthProfile(false);
       setScreen('quiz');
       return;
@@ -448,6 +454,28 @@ export default function MobileApp() {
     }
   };
 
+  const handleResetEcosystem = async () => {
+    if (resettingEcosystem) return;
+    setResettingEcosystem(true);
+    try {
+      const supabase = getSupabaseClient();
+      if (authUser?.id && supabase) {
+        await clearEcosystemForUser(supabase, authUser.id, { includeTracking: true });
+      }
+      await clearHealthIntakeForCurrentUser();
+      pendingQuizEcosystemRef.current = null;
+      ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
+      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false });
+      setEcosystemNotice('');
+      setIntakeMode('new');
+      setEditingHealthProfile(false);
+      setResetDialogOpen(false);
+      setScreen('ecointro');
+    } finally {
+      setResettingEcosystem(false);
+    }
+  };
+
   // "See swap" on a Shopper Profile safety alert — reuses the same real
   // alternative-finding logic as the desktop ecosystem swap flow instead of
   // just linking back to the flagged product itself.
@@ -462,7 +490,7 @@ export default function MobileApp() {
     // Night mode is a persistent user preference (Preferences screen) — it
     // stays on everywhere until turned off there, so navigation must never
     // force it back to light.
-    onStartQuiz: () => { setEditingHealthProfile(false); setScreen('quiz'); },
+    onStartQuiz: () => { setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); },
     onOpenMonthlyCheckin: () => setScreen('checkin'),
     onBrowse: () => setScreen('browse'),
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
@@ -481,21 +509,33 @@ export default function MobileApp() {
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
     onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
     onBack: () => setScreen(['quiz', 'ecointro'].includes(screen) ? (hasEcosystem ? 'eco' : 'landing') : ['building', 'reveal'].includes(screen) ? 'quiz' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing'),
-    onRetake: () => { setEditingHealthProfile(false); setScreen('quiz'); },
-    onUpdateHealth: () => { setEditingHealthProfile(false); setScreen('quiz'); },
-    onEditProfile: () => { setEditingHealthProfile(true); setScreen('quiz'); },
+    onRetake: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
+    onRequestEcosystemReset: () => setResetDialogOpen(true),
+    onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
+    onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
       const seededProducts = seedEcosystemFromAnswers(quizAnswers);
+      const existingProducts = intakeMode === 'add' ? myProducts : [];
+      const existingIds = new Set(existingProducts.map((product) => product.id));
+      const addedProducts = seededProducts.filter((product) => !existingIds.has(product.id));
+      const nextProducts = [...existingProducts, ...addedProducts];
 
       updateSession({
-        myProducts: seededProducts,
+        myProducts: nextProducts,
         lastQuizAnswers: quizAnswers,
-        hasEcosystem: seededProducts.length > 0,
+        hasEcosystem: nextProducts.length > 0,
       });
+      if (intakeMode === 'add') {
+        setEcosystemNotice(addedProducts.length
+          ? `${addedProducts.length} new product${addedProducts.length === 1 ? '' : 's'} added. Your existing Ecosystem stayed in place.`
+          : 'No new strong matches this time. Your existing Ecosystem stayed in place.');
+      } else {
+        setEcosystemNotice('');
+      }
 
       const supabase = getSupabaseClient();
       if (authUser && supabase) {
-        upsertProductsBatch(supabase, authUser.id, seededProducts, {
+        upsertProductsBatch(supabase, authUser.id, addedProducts, {
           inEcosystem: true,
           isTracked: false,
           isOmitted: false,
@@ -503,7 +543,7 @@ export default function MobileApp() {
           console.warn('[Ayna] mobile generated ecosystem sync failed:', error);
         });
       } else {
-        pendingQuizEcosystemRef.current = seededProducts;
+        pendingQuizEcosystemRef.current = nextProducts;
       }
       // Same real save desktop's App.jsx makes after quiz completion — was
       // never ported to mobile (a real signed-in session didn't exist here
@@ -512,6 +552,7 @@ export default function MobileApp() {
       // that user on any other device. No-ops harmlessly when signed out.
       const rawIntake = quizAnswers?.fullHealthIntake || quizAnswers;
       saveHealthIntakeForCurrentUser(rawIntake).catch(() => {});
+      setIntakeMode('new');
       setScreen('building');
     },
     // The reveal->sign-in funnel is for a first-time, still-anonymous build:
@@ -528,7 +569,7 @@ export default function MobileApp() {
       if (resume) resume();
       else setScreen(authReturnScreenRef.current);
     },
-    onStartEcosystem: lastQuizAnswers ? null : () => { setEditingHealthProfile(false); setScreen('quiz'); },
+    onStartEcosystem: lastQuizAnswers ? null : () => { setIntakeMode('new'); setEditingHealthProfile(false); setScreen('quiz'); },
     // Real Supabase auth (src/mobile/hooks/useSupabaseAuth.js) — the name
     // comes from whatever SigninScreen already has in its own form state
     // (the person just typed it) rather than from authUser here, since
@@ -580,6 +621,8 @@ export default function MobileApp() {
         quizAnswers={effectiveQuizAnswers}
         lastQuizAnswers={lastQuizAnswers}
         initialSnapshot={editingHealthProfile ? lastQuizAnswers?.fullHealthIntake || null : null}
+        startAtBeginning={intakeMode === 'add'}
+        ecosystemNotice={ecosystemNotice}
         name={resolvedName}
         headerInitial={headerInitial}
         tags={topAreaLabels.length ? `${topAreaLabels.length} area${topAreaLabels.length === 1 ? '' : 's'} covered` : ''}
@@ -602,6 +645,7 @@ export default function MobileApp() {
         onCommunity={() => { setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
         onProfile={openProfile}
       />}
+      <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
       {(overlay?.type === 'profile-auth' || authPrompt) && (
         <div className="ayna-profile-auth-backdrop" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>
           <section className="ayna-profile-auth-sheet" role="dialog" aria-modal="true" aria-labelledby="ayna-profile-auth-title" onClick={(event) => event.stopPropagation()}>
@@ -637,7 +681,7 @@ export default function MobileApp() {
               setOverlay(null);
               setScreen('community');
             }}
-            onStartQuiz={() => { setOverlay(null); setEditingHealthProfile(false); setScreen('quiz'); }}
+            onStartQuiz={() => { setOverlay(null); setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); }}
             authUser={authUser}
             onRequireAuth={(feature) => requestAuth(feature || 'Ask Ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
             quizAnswers={effectiveQuizAnswers}
@@ -668,7 +712,7 @@ export default function MobileApp() {
             product={overlay.item}
             quizAnswers={effectiveQuizAnswers}
             onBack={() => setOverlay(null)}
-            onUpdateHealth={() => { setOverlay(null); setEditingHealthProfile(false); setScreen('quiz'); }}
+            onUpdateHealth={() => { setOverlay(null); setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
             onViewDetails={() => setOverlay({ type: 'product', item: overlay.item })}
           />
         </div>
@@ -698,7 +742,7 @@ export default function MobileApp() {
           onClearAskAynaHistory={() => setAskAynaHistory([])}
           textSizeIndex={textSizeIndex}
           onTextSizeChange={setTextSizeIndex}
-          onEditProfile={() => { setEditingHealthProfile(true); setScreen('quiz'); }}
+          onEditProfile={() => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
         />
       )}

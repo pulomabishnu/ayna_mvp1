@@ -1534,9 +1534,9 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 
 /* --------------------------------- Main screen --------------------------------- */
 
-export default function IntakeScreen({ onBack, onComplete, initialSnapshot = null }) {
+export default function IntakeScreen({ onBack, onComplete, initialSnapshot = null, startAtBeginning = false }) {
   const [intake, setIntake] = useState(() => reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => getFirstIncompleteStepId(initialSnapshot) || 'age');
+  const [stepId, setStepId] = useState(() => startAtBeginning ? 'age' : getFirstIncompleteStepId(initialSnapshot) || 'age');
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started — not
   // re-derived as answers change, so a step's flag clears only by actually

@@ -26,6 +26,8 @@ export default function EcosystemScreen({
   onBrowse,
   onGoCommunity,
   onRetake,
+  onRequestEcosystemReset,
+  ecosystemNotice,
   onOpenMonthlyCheckin,
   onOpenProfile,
   quizAnswers = null,
@@ -48,6 +50,7 @@ export default function EcosystemScreen({
         <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.3 }}>
           {getTimeGreeting()}, {name}
         </div>
+        {ecosystemNotice && <p role="status" style={{ margin: '12px 0 0', padding: '11px 14px', borderRadius: 14, background: 'var(--ayna-peach)', color: 'var(--ayna-heading)', fontSize: 13, lineHeight: 1.45 }}>{ecosystemNotice}</p>}
       </div>
 
       <section aria-label="Your next steps" style={{ margin: '18px 20px 0', padding: 18, borderRadius: 22, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)' }}>
@@ -113,22 +116,12 @@ export default function EcosystemScreen({
         <CtaBanner title="Update Ayna on your health" buttonLabel="Monthly check-in" onClick={onOpenMonthlyCheckin} />
       </div>
 
-      <div style={{ padding: '4px 20px 0' }}>
-        <div
-          onClick={onRetake}
-          style={{
-            textAlign: 'center',
-            padding: 14,
-            border: '1px solid #E1D5CE',
-            borderRadius: 99,
-            fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
-            color: '#78716C',
-            cursor: 'pointer',
-          }}
-        >
-          Retake the intake
-        </div>
-      </div>
+      <section aria-label="Manage your Ecosystem" style={{ margin: '24px 20px 0', padding: 18, borderRadius: 22, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)' }}>
+        <h2 style={{ margin: 0, fontFamily: "'Playfair Display',serif", fontSize: 20, color: 'var(--ayna-heading)' }}>Manage your Ecosystem</h2>
+        <p style={{ margin: '8px 0 14px', color: 'var(--ayna-text-muted)', fontSize: 13, lineHeight: 1.5 }}>Update your answers and find new matches. Products already in your Ecosystem will stay.</p>
+        <button type="button" onClick={onRetake} style={{ width: '100%', padding: 13, border: 0, borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 700, cursor: 'pointer' }}>Redo intake and add products</button>
+        <button type="button" onClick={onRequestEcosystemReset} style={{ width: '100%', marginTop: 10, padding: 11, border: 0, background: 'transparent', color: '#994739', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Reset Ecosystem</button>
+      </section>
       <LegalFooter />
     </div>
   );

@@ -26,7 +26,7 @@ function describeError(error, op) {
 }
 
 function emptyShadow() {
-  return { version: SHADOW_VERSION, resetAt: 0, rows: {} };
+  return { version: SHADOW_VERSION, resetAt: 0, fullResetAt: 0, rows: {} };
 }
 
 function normalizeShadow(value) {
@@ -35,6 +35,7 @@ function normalizeShadow(value) {
   return {
     version: SHADOW_VERSION,
     resetAt: Number(value.resetAt || 0) || 0,
+    fullResetAt: Number(value.fullResetAt || 0) || 0,
     rows,
   };
 }
@@ -97,6 +98,7 @@ function mergeShadows(a, b) {
   const merged = {
     version: SHADOW_VERSION,
     resetAt: Math.max(left.resetAt || 0, right.resetAt || 0),
+    fullResetAt: Math.max(left.fullResetAt || 0, right.fullResetAt || 0),
     rows: { ...left.rows },
   };
   for (const [id, row] of Object.entries(right.rows || {})) {
@@ -143,12 +145,17 @@ function updateLocalProductShadow(userId, product, flags) {
   return shadow;
 }
 
-function clearLocalEcosystemShadow(userId) {
+function clearLocalEcosystemShadow(userId, includeTracking = false) {
   const shadow = readLocalShadow(userId);
   const now = Date.now();
   shadow.resetAt = now;
+  if (includeTracking) shadow.fullResetAt = now;
   for (const row of Object.values(shadow.rows)) {
     row.inEcosystem = false;
+    if (includeTracking) {
+      row.isTracked = false;
+      row.isOmitted = false;
+    }
     row.updatedAt = now;
   }
   writeLocalShadow(userId, shadow);
@@ -220,6 +227,10 @@ export async function loadEcosystemForUser(supabase, userId) {
     if (shadow.resetAt && converted.updatedAt <= shadow.resetAt) {
       converted.inEcosystem = false;
     }
+    if (shadow.fullResetAt && converted.updatedAt <= shadow.fullResetAt) {
+      converted.isTracked = false;
+      converted.isOmitted = false;
+    }
     mergedRows[row.product_id] = converted;
   }
 
@@ -242,15 +253,16 @@ export async function loadEcosystemForUser(supabase, userId) {
  * The local/auth shadow is written first so reset remains durable even when the
  * live table rejects UPDATE/DELETE through RLS.
  */
-export async function clearEcosystemForUser(supabase, userId) {
-  const shadow = clearLocalEcosystemShadow(userId);
+export async function clearEcosystemForUser(supabase, userId, { includeTracking = false } = {}) {
+  const shadow = clearLocalEcosystemShadow(userId, includeTracking);
 
   try {
-    const { error: updateError, count } = await supabase
+    let updateQuery = supabase
       .from('user_ecosystems')
-      .update({ in_ecosystem: false, updated_at: new Date().toISOString() }, { count: 'exact' })
-      .eq('user_id', userId)
-      .eq('in_ecosystem', true);
+      .update({ in_ecosystem: false, ...(includeTracking ? { is_tracked: false, is_omitted: false } : {}), updated_at: new Date().toISOString() }, { count: 'exact' })
+      .eq('user_id', userId);
+    if (!includeTracking) updateQuery = updateQuery.eq('in_ecosystem', true);
+    const { error: updateError, count } = await updateQuery;
     if (updateError) throw updateError;
 
     const { error: deleteError } = await supabase

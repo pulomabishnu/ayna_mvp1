@@ -48,6 +48,16 @@ function makeSupabase({ selectData = [], failOn = null, failCode = null } = {}) 
 }
 
 describe('clearEcosystemForUser — must not destroy tracked/omitted state', () => {
+  it('clears ecosystem and tracking flags for an explicit full reset while keeping saved rows', async () => {
+    const sb = makeSupabase();
+    await clearEcosystemForUser(sb, 'user-reset', { includeTracking: true });
+    const update = sb.calls.find((c) => c.op === 'update');
+    expect(update.payload).toMatchObject({ in_ecosystem: false, is_tracked: false, is_omitted: false });
+    expect(update.payload).not.toHaveProperty('is_saved');
+    expect(update.filters).toEqual({ user_id: 'user-reset' });
+    const cleanup = sb.calls.find((c) => c.op === 'delete');
+    expect(cleanup.filters.is_saved).toBe(false);
+  });
   it('UPDATEs the ecosystem flag rather than deleting the rows', async () => {
     const sb = makeSupabase();
     await clearEcosystemForUser(sb, 'user-1');
