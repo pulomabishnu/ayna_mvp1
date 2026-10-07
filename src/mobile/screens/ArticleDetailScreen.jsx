@@ -1,5 +1,6 @@
 import { Children, isValidElement, useRef, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
+import './article-detail.css';
 
 const HERO_TINTS = [
   ['#F5E8DA', '#EADACB'],
@@ -167,7 +168,7 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
           })}
         </div>
 
-        <div style={{ fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.75, color: 'var(--ayna-text)' }}>{mainBody}</div>
+        <div className="ay-article-body" style={{ fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.75, color: 'var(--ayna-text)' }}>{mainBody}</div>
 
         {(sourceLinks.length > 0 || source) && (
           <div style={{ marginTop: 28, padding: 18, borderRadius: 22, background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-border)' }}>

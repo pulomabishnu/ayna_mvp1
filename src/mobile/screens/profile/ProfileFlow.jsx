@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { ALL_PRODUCTS } from '../../../data/products.js';
 import { getSupabaseClient } from '../../../utils/supabaseClient.js';
 import { apiUrl } from '../../../utils/apiUrl.js';
@@ -17,6 +18,8 @@ import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportA
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
 import './about-scrapbook.css';
+
+const IS_NATIVE_APP = Capacitor.isNativePlatform();
 
 /**
  * Profile hub + its four sub-sections and one detail page, ported from the
@@ -287,8 +290,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
           { key: 'checkin', title: 'Monthly check-in', sub: "What's changed since last time", onClick: onOpenMonthlyCheckin },
           { key: 'shopper', title: 'Shopper Profile', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} NEW` : null },
           { key: 'startups', title: 'Early Stage Startups', sub: 'Emerging brands worth backing' },
-          { key: 'preferences', title: 'Preferences', sub: 'Notifications, updates, night mode' },
-          { key: 'settings', title: 'Settings', sub: 'Account, privacy, about Ayna' },
+          { key: 'settings', title: 'Settings', sub: IS_NATIVE_APP ? 'Preferences, notifications and privacy' : 'Preferences, account and privacy' },
         ].map((row) => (
           <div
             key={row.key}
@@ -1092,8 +1094,8 @@ function PreferencesScreen({
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Preferences" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '4px 0 6px', color: 'var(--ayna-heading)' }}>How Ayna reaches you.</div>
-        <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 22 }}>Everything here is off by default and reversible.</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '4px 0 6px', color: 'var(--ayna-heading)' }}>{IS_NATIVE_APP ? 'Make Ayna yours.' : 'Your website preferences.'}</div>
+        <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 22 }}>Choose how Ayna looks and how your information shapes what you see.</div>
 
         {/* Always visible regardless of the notification-preferences backend's
             load state below — Substack subscription has nothing to do with
@@ -1129,41 +1131,37 @@ function PreferencesScreen({
           )}
         </div>
 
-        <SectionLabel>Notifications</SectionLabel>
-        {loadState === 'loading' && (
+        {IS_NATIVE_APP && <SectionLabel>Notifications</SectionLabel>}
+        {IS_NATIVE_APP && loadState === 'loading' && (
           <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading your preferences…</div>
         )}
-        {loadState === 'signed_out' && (
+        {IS_NATIVE_APP && loadState === 'signed_out' && (
           <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
             Sign in to manage how Ayna reaches you — these settings save to your account, not just this device.
           </div>
         )}
-        {loadState === 'error' && (
+        {IS_NATIVE_APP && loadState === 'error' && (
           <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, textAlign: 'center' }}>
             <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load your preferences.</div>
             <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
           </div>
         )}
-        {loadState === 'ready' && prefs && (
-          <>
+        {IS_NATIVE_APP && loadState === 'ready' && prefs && (
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
               <ToggleRow first title="Notifications" sub="Recalls and safety flags on things you own." on={prefs.notificationsEnabled} onClick={() => patchField('notifications_enabled', !prefs.notificationsEnabled, 'notificationsEnabled')} />
               <ToggleRow title="Updates" sub="New matches and restocks, weekly digest." on={prefs.updatesEnabled} onClick={() => patchField('updates_enabled', !prefs.updatesEnabled, 'updatesEnabled')} />
               <DrillRow title="Channels & quiet hours" sub={channelsSummary} onClick={onOpenChannels} />
             </div>
-
-            <SectionLabel>AI & personalization</SectionLabel>
-            <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
-              <ToggleRow first title="Personalize with my data" sub="Your intake answers and cycle logs shape your matches and Ask Ayna replies." on={personalizeWithData} onClick={handlePersonalizeToggle} />
-            </div>
-          </>
         )}
+        <SectionLabel>AI & personalization</SectionLabel>
+        {loadState === 'ready' && prefs && <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
+          <ToggleRow first title="Personalize with my data" sub="Your intake answers and cycle logs shape your matches and Ask Ayna replies." on={personalizeWithData} onClick={handlePersonalizeToggle} />
+        </div>}
 
         {/* Clearing Ask Ayna history is purely local (in-memory chat state in
             MobileApp.jsx — nothing is stored server-side for this feature),
             so unlike the toggles above it needs no account and works whether
             or not the fetch above succeeded. */}
-        {loadState !== 'ready' && <SectionLabel>AI & personalization</SectionLabel>}
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px', marginTop: loadState === 'ready' ? 20 : 0 }}>
           <div onClick={() => setClearHistoryConfirm(true)} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -1414,7 +1412,7 @@ function ChannelsScreen({ onBack }) {
 
 /* ------------------------------ Settings ------------------------------ */
 
-function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
+function SettingsScreen({ onBack, onOpenPreferences, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
   const aboutRows = [
     { title: 'How it works', sub: 'Nothing reaches you unchecked.', onClick: onOpenHowItWorks },
     { title: 'About ayna', sub: 'No mystery box.', onClick: onOpenAboutAyna },
@@ -1444,7 +1442,12 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Settings" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
-        <div style={{ margin: '4px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About Ayna</div>
+        <div style={{ margin: '4px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your app</div>
+        <button type="button" onClick={onOpenPreferences} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: '16px 18px', textAlign: 'left', color: 'var(--ayna-text)', cursor: 'pointer' }}>
+          <span style={{ flex: 1 }}><strong style={{ display: 'block', fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>Preferences</strong><span style={{ display: 'block', marginTop: 3, color: 'var(--ayna-text-muted)', fontSize: 'calc(12px * var(--ayna-text-scale, 1))' }}>{IS_NATIVE_APP ? 'Notifications, personalization, text size and night mode' : 'Personalization, text size and night mode'}</span></span>
+          <ChevronIcon />
+        </button>
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About Ayna</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           {aboutRows.map((r, i) => (
             <div key={r.title} onClick={r.onClick} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)', cursor: r.onClick ? 'pointer' : 'default' }}>
@@ -3310,6 +3313,7 @@ export default function ProfileFlow({
     body = (
       <SettingsScreen
         onBack={goBack}
+        onOpenPreferences={() => pushScreen('preferences')}
         onOpenHowItWorks={() => pushScreen('howItWorks')}
         onOpenAboutAyna={() => pushScreen('aboutAyna')}
         onOpenContact={() => pushScreen('contact')}

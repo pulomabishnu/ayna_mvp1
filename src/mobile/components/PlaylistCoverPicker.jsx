@@ -7,7 +7,7 @@ function coverInk(color) {
   return color === '#E8A94F' ? '#30233B' : '#FFF9F2';
 }
 
-export default function PlaylistCoverPicker({ title, mode, onMode, color, onColor, text, onText, photo, onPhoto }) {
+export default function PlaylistCoverPicker({ title, mode, onMode, color, onColor, text, onText, photo, onPhoto, existingCoverUrl }) {
   const [preview, setPreview] = useState('');
   const choosePhoto = (event) => {
     const file = event.target.files?.[0];
@@ -26,7 +26,7 @@ export default function PlaylistCoverPicker({ title, mode, onMode, color, onColo
       <button type="button" className={mode === 'photo' ? 'is-active' : ''} onClick={() => onMode('photo')}>Upload photo</button>
     </div>
     <div className="am-cover-preview" style={mode === 'color' ? { background: color, color: coverInk(color) } : undefined}>
-      {mode === 'photo' && preview ? <img src={preview} alt="Playlist cover preview" /> : <><small>ayna</small><span>{text.trim() || title.trim() || 'My playlist'}</span><small>a little collection for you</small></>}
+      {mode === 'photo' && (preview || existingCoverUrl) ? <img src={preview || existingCoverUrl} alt="Playlist cover preview" /> : <><small>ayna</small><span>{text.trim() || title.trim() || 'My playlist'}</span><small>a little collection for you</small></>}
     </div>
     {mode === 'color' ? <>
       <label htmlFor="am-cover-text">Cover text</label>

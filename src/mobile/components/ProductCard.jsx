@@ -147,9 +147,6 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 10, minWidth: 0 }}>
         <div style={{ flex: 1, minWidth: 0, fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{brand || labelForCategory(category)}</div>
-        <button type="button" onClick={(event) => { event.stopPropagation(); if (matchPercent != null) openWhyMatch?.(); else onStartQuiz?.(); }} style={{ flex: 'none', border: 0, background: 'transparent', color: 'var(--ayna-brown)', padding: '1px 0', fontSize: 'calc(10px * var(--ayna-text-scale, 1))', fontWeight: 700, whiteSpace: 'nowrap', cursor: 'pointer' }}>
-          {matchPercent != null ? `${matchPercent}% match` : 'See match'}
-        </button>
       </div>
       <div
         style={{
@@ -177,6 +174,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px 8px', marginTop: 8, color: 'var(--ayna-text-muted)', fontSize: 10, lineHeight: 1.35 }}>
         {insightLabels.map((label) => <span key={label}>{label}</span>)}
       </div>
+      <button type="button" onClick={(event) => { event.stopPropagation(); if (matchPercent != null) openWhyMatch?.(); else onStartQuiz?.(); }} style={{ width: '100%', minHeight: 44, marginTop: 10, border: '1px solid var(--ayna-chip-border)', borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', padding: '8px 10px', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700, textAlign: 'left', cursor: 'pointer' }}>
+        {matchPercent != null ? `${matchPercent}% match · See why` : 'Build your profile to see your match'}
+      </button>
     </div>
   );
 }

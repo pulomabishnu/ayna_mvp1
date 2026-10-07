@@ -242,7 +242,7 @@ export default function MobileApp() {
   const pendingQuizEcosystemRef = useRef(null);
   const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
-  const [personalized, setPersonalized] = usePersonalizedFeed();
+  const [personalized, setPersonalized] = usePersonalizedFeed(authUser?.id);
   // Requests push permission and registers this device on launch (iOS only
   // for now); stores the token against authUser once both are available.
   // Registration only — nothing sends a push yet.
@@ -611,6 +611,11 @@ export default function MobileApp() {
   };
 
   const showTabBar = !['landing', 'quiz', 'building', 'reveal', 'signin', 'checkin'].includes(screen) && (!overlay || ['profile', 'profile-auth'].includes(overlay.type));
+  const rankedEcosystemReads = getArticlesByProfileRelevance(effectiveQuizAnswers || {}, null);
+  const ecosystemReads = (rankedEcosystemReads.length ? rankedEcosystemReads : ARTICLES)
+    .filter((article) => !readArticleIds.includes(article.id))
+    .concat((rankedEcosystemReads.length ? rankedEcosystemReads : ARTICLES).filter((article) => readArticleIds.includes(article.id)))
+    .slice(0, 3);
   const activeTab = ['profile', 'profile-auth'].includes(overlay?.type) ? 'profile'
     : screen === 'browse' ? 'browse'
       : screen === 'community' ? 'community'
@@ -644,7 +649,7 @@ export default function MobileApp() {
         name={resolvedName}
         headerInitial={headerInitial}
         tags={topAreaLabels.length ? `${topAreaLabels.length} area${topAreaLabels.length === 1 ? '' : 's'} covered` : ''}
-        relatedReads={ARTICLES.slice(0, 3)}
+        relatedReads={ecosystemReads}
         topAreas={topAreaLabels.length ? topAreaLabels : ['Period', 'Hormones', 'Sleep']}
         productCount={myProducts.length}
         readCount={ARTICLES.length}

@@ -169,6 +169,17 @@
 .am-playlist strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ayna-heading); font-size: 13px; }
 .am-playlist small { font-size: 10px; }
 .am-playlist small:last-child { color: var(--ayna-brown); }
+.am-playlist-switch { display: flex; gap: 8px; margin: 12px 0 16px; }
+.am-playlist-switch button { border: 1px solid var(--ayna-border); border-radius: 999px; background: var(--ayna-surface); color: var(--ayna-text-muted); padding: 10px 15px; min-height: 44px; font-size: 12px; font-weight: 700; }
+.am-playlist-switch button[aria-pressed="true"] { background: var(--ayna-chip-bg); border-color: var(--ayna-accent-dark); color: var(--ayna-heading); }
+.am-playlist-owner-actions { display: flex; gap: 8px; margin: 14px 0 18px; }
+.am-playlist-owner-actions button { flex: 1; min-height: 44px; }
+.am-playlist-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.am-playlist-item .am-product { flex: 1; min-width: 0; }
+.am-playlist-item > button { border: 0; background: transparent; color: var(--ayna-brown); font-size: 12px; font-weight: 700; padding: 12px 4px; min-height: 44px; }
+.am-playlist-add { margin-top: 18px; }
+.am-playlist-add h3 { color: var(--ayna-heading); font-size: 15px; margin: 0 0 12px; }
+.am-playlist-add .am-primary { margin-top: 12px; }
 .am-sheet { gap: 14px; border-radius: 25px 25px 0 0; background: var(--ayna-bg); padding-top: 10px; }
 .am-compose-sheet::before { content: ''; width: 36px; height: 4px; margin: 0 auto 3px; border-radius: 99px; background: var(--ayna-border); }
 .am-compose-sheet .am-sheet-head small { color: var(--ayna-brown); font: 700 9px 'DM Mono', monospace; letter-spacing: .13em; }

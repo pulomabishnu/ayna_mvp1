@@ -1,0 +1,13 @@
+.ay-article-body p {
+  margin: 0 0 1.35em;
+}
+
+.ay-article-body p:last-child {
+  margin-bottom: 0;
+}
+
+.ay-article-body ul,
+.ay-article-body ol {
+  margin: 0 0 1.35em;
+  padding-left: 1.4em;
+}
