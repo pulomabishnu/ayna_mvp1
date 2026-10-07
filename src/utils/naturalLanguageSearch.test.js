@@ -181,3 +181,21 @@ describe('findConfidentProductMatch', () => {
     ).toBe('menopause-relief-001');
   });
 });
+
+describe('search ignores accents', () => {
+  const kiero = { id: 'p-kiero-x', name: 'Essential Boost Serum', brand: 'kieró', category: 'skincare', tags: ['skin'] };
+  const score = (q, item) => scoreQueryAgainstProduct(q, buildSearchTextForItem(item), buildIdentityTextForItem(item));
+
+  it('finds an accented brand when the shopper types it without the accent', () => {
+    expect(score('kiero', kiero)).toBeGreaterThan(0);
+  });
+
+  it('still finds it when the shopper types the accent', () => {
+    expect(score('kieró', kiero)).toBeGreaterThan(0);
+  });
+
+  it('finds an unaccented product when the query has an accent', () => {
+    const plain = { id: 'p-plain', name: 'Resa Bracelet', brand: 'Resa', category: 'tracker', tags: [] };
+    expect(score('rèsa', plain)).toBeGreaterThan(0);
+  });
+});

@@ -29,7 +29,8 @@ const TOPIC_RECORDS = [
 ];
 
 function clean(value) { return String(value || '').replace(/\s+/g, ' ').trim(); }
-function norm(value) { return clean(value).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
+// Accents are folded first ("kieró" -> "kiero"); otherwise the a-z filter deleted the accented letter.
+function norm(value) { return clean(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
 function text(node) { return clean(node?.textContent); }
 
 function scoreRecord(record, query) {

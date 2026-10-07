@@ -23,12 +23,20 @@ const STOP = new Set([
   'right', 'maybe', 'sure', 'okay', 'ok', 'yes', 'yeah', 'no', 'nah',
 ]);
 
+/**
+ * Lowercases and strips accents so a shopper typing "kiero" finds kieró and
+ * "resa" finds Rèsa. Applied to both product text and the query.
+ */
+export function foldForSearch(text) {
+  return String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
 /** Flatten item fields used for matching */
 export function buildSearchTextForItem(item, categoryLabels = {}) {
   const safetyStr = item.safety && typeof item.safety === 'object'
     ? [item.safety.fdaStatus, item.safety.materials, item.safety.recalls, item.safety.allergens].filter(Boolean).join(' ')
     : '';
-  return [
+  return foldForSearch([
     item.name,
     item.brand,
     item.summary,
@@ -43,7 +51,7 @@ export function buildSearchTextForItem(item, categoryLabels = {}) {
     categoryLabels[item.category],
     (item.badges || []).join(' '),
     (item.healthFunctions || []).join(' '),
-  ].filter(Boolean).join(' ').toLowerCase();
+  ].filter(Boolean).join(' '));
 }
 
 /**
@@ -59,7 +67,7 @@ export function buildSearchTextForItem(item, categoryLabels = {}) {
  * haystack to weight identity-field matches above prose-only ones.
  */
 export function buildIdentityTextForItem(item, categoryLabels = {}) {
-  return [
+  return foldForSearch([
     item.name,
     item.brand,
     (item.tags || []).join(' '),
@@ -67,7 +75,7 @@ export function buildIdentityTextForItem(item, categoryLabels = {}) {
     categoryLabels[item.category],
     (item.badges || []).join(' '),
     (item.healthFunctions || []).join(' '),
-  ].filter(Boolean).join(' ').toLowerCase();
+  ].filter(Boolean).join(' '));
 }
 
 /** True when `w` appears in `haystack` as its own word, not as a run inside a longer one. */
@@ -151,7 +159,7 @@ function termMatchesWithVariants(term, haystack) {
  * Tokenizes query, drops stop words and punctuation, keeps meaningful terms.
  */
 function meaningfulTerms(query) {
-  const q = query.toLowerCase().trim().replace(/[^\w\s'-]/g, ' ');
+  const q = foldForSearch(query).trim().replace(/[^\w\s'-]/g, ' ');
   // Single-character tokens used to be dropped outright (w.length > 1), which
   // silently collapsed "vitamin c" into a bare "vitamin" search — the "c" was
   // never tokenized at all, so C/D/E/B/K-specific vitamin queries (and things
@@ -188,7 +196,7 @@ function minHitsForMatch(termCount) {
  * haystack are unaffected.
  */
 export function scoreQueryAgainstProduct(query, haystackLower, identityHaystackLower = '') {
-  const raw = query.toLowerCase().trim();
+  const raw = foldForSearch(query).trim();
   if (!raw) return 0;
 
   const terms = meaningfulTerms(query);
