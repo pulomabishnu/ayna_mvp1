@@ -89,3 +89,11 @@ html body .ayna-browse.v6-browse-live .ayna-browse__categories:not(.v6-browse-ne
   .pdp-stickybuy__price { font: 600 1rem var(--font-body); }
   .pdp-stickybuy .pdp-btn { min-height: 44px; }
 }
+
+/* One primary action colour: navy fill (cream on dark surfaces). No amber/gradient buttons. */
+html body .ayna-landing-searchbar button[type='submit'] { background: #242A52 !important; color: #FAF6F1 !important; box-shadow: none !important; border-radius: 10px; }
+html body .ayna-landing-searchbar { box-shadow: none !important; }
+html body .ayna-intake-root .ayna-continue { background: #FAF6F1 !important; color: #242A52 !important; box-shadow: none !important; border-radius: 10px !important; min-height: 52px; }
+html body .ayna-intake-root .ayna-continue:disabled { opacity: .4; }
+html body .ayna-intake-root .ayna-skip { color: rgba(250, 246, 241, .8); min-height: 44px; font-size: 14px; }
+html body .qrp__cta, html body .ayna-landing-btn--navy { border-radius: 10px; }

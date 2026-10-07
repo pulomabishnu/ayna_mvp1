@@ -784,7 +784,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
         {!isSignup && (
           <p style={styles.fine}>
             ayna is for adults 18+. By continuing you agree to our{' '}
-            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Privacy Policy</a>
+            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: '#242A52', textDecoration: 'underline' }}>Privacy Policy</a>
             {' '}and{' '}
             <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Terms of Use</a>.
           </p>
@@ -1091,18 +1091,19 @@ const styles = {
     textAlign: 'center',
   },
   link: {
-    color: 'var(--color-primary)',
+    color: '#242A52',
     textDecoration: 'underline',
   },
   primaryBtn: {
     padding: '0.82rem',
     fontSize: '0.9rem',
     fontWeight: '600',
-    background: '#E4B25E',
-    color: '#1E1430',
+    background: '#242A52',
+    color: '#FAF6F1',
     border: 'none',
-    borderRadius: '12px',
-    boxShadow: '0 8px 20px rgba(209, 154, 62, 0.18)',
+    borderRadius: '10px',
+    minHeight: '48px',
+    boxShadow: 'none',
     cursor: 'pointer',
     transition: 'background var(--transition-fast)',
     marginTop: '0.25rem',
