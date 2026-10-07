@@ -4644,6 +4644,103 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
+    // gina Starter Kit — verified against getgina.com/products/the-starter-kit
+    // on 2026-10-07 (contents, price, how-to tip, review count). gina is a
+    // confirmed brand partner, so it gets the "ayna Favorite" label via
+    // src/utils/partnerBrands.js. The glides inside are the same product as
+    // p-gina-vaginal-moisturizing-glides, so the evidence below reuses that
+    // entry's already-verified coconut-oil sources.
+    {
+        id: 'p-gina-starter-kit',
+        name: 'gina The Starter Kit',
+        brand: 'gina',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal', 'cruelty-free', 'non-toxic', 'ph-neutral', 'single-use', 'clinician-informed', 'starter kit', 'bundle'],
+        price: '$48.00 (list $63)',
+        whereToBuy: ['getgina.com'],
+        url: 'https://getgina.com/products/the-starter-kit',
+        image: '/products/gina/starter-kit.jpg', // supplied by ayna
+        summary: 'gina\'s starter bundle for vaginal dryness, irritation, or discomfort during intimacy, at any life stage: perimenopause, menopause, postpartum, or day to day. It includes a one-month supply of its coconut-oil Vaginal Moisturizing Glides (pack of 12), plus disposable finger sleeves, an insertion applicator, a free cotton pouch, a brochure guide, and free wellness advice from gina\'s nurse practitioner team. The glides are non-hormonal, single-ingredient suppositories of 100% pure, extra virgin, unrefined, cold-pressed coconut oil, with no fillers or artificial ingredients.',
+        safety: {
+            materials: 'Contents per gina: 12 Vaginal Moisturizing Glides (100% pure, extra virgin, unrefined, cold-pressed coconut oil; 1.72 g each), disposable finger sleeves, an insertion applicator, a cotton pouch, and a brochure guide. gina doesn\'t state what the finger sleeves are made of.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation or an allergic reaction. Coconut oil is oil-based and can weaken latex condoms. Full warnings are listed below.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
+        doctorOpinion: 'The Starter Kit bundles gina\'s coconut-oil Vaginal Moisturizing Glides with the tools for inserting them, at $48 compared with a $63 list price. gina says the glides hydrate and condition vaginal tissue and soothe discomfort, including during intimacy.\n\nThere\'s real clinical evidence behind coconut oil for this use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and most reported real improvement. It wasn\'t placebo-controlled and didn\'t test this specific product. No independent clinical study of gina\'s glides was found.',
+        doctorOpinionShort: 'A starter bundle of gina\'s single-ingredient coconut-oil glides plus insertion tools. A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness reported improvement, though it wasn\'t placebo-controlled; no independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/', label: 'Cureus (2023): Virgin coconut oil for dyspareunia and vaginal dryness — pilot study, 53 women', chipLabel: 'Read the 2023 study (NIH) →' },
+        ],
+        whoItsFor: [
+            'People trying gina for the first time who want the glides and every insertion option in one box',
+            'Vaginal dryness or discomfort at any life stage, including perimenopause, menopause and postpartum',
+            'People who prefer a single-ingredient, hormone-free option',
+        ],
+        howToUse: {
+            intro: 'Per gina\'s own site: if you\'re new to vaginal care or have extreme dryness, start with finger or finger-sleeve insertion for greater comfort, then try the applicator.',
+            steps: [
+                'Empty your bladder, clean the area, and wash your hands.',
+                'Separate a single chilled glide, wait 1 to 3 minutes, then peel back the foil.',
+                'Squeeze to pop the glide out onto a clean surface.',
+                'Insert with a finger, a finger sleeve, or the applicator while lying on your back with your knees raised.',
+                'Wait 3 minutes, or until it\'s fully melted.',
+            ],
+            sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
+            sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
+        },
+        warnings: [
+            'Oil-based: can weaken latex condoms.',
+            'Latex allergy: gina doesn\'t say what the finger sleeves are made of, so check with gina before using them.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'gina\'s product page lists 18 reviews for The Starter Kit, but no star rating is shown alongside the count. The glides inside the kit are reviewed separately on gina\'s glides page.',
+        effectiveness: 'Clinical evidence supports coconut oil for vaginal dryness generally, though no independent study has tested gina\'s glides specifically.',
+        ingredients: 'Glides: coconut oil (100% pure, extra virgin, unrefined, cold-pressed). Kit also includes finger sleeves, an applicator, a pouch and a guide.',
+        ingredientScience: [
+            {
+                name: 'Coconut oil (100% pure, extra virgin, unrefined, cold-pressed)',
+                text: 'A natural moisturizer rich in lauric acid. In a randomized, double-blind clinical trial, topical virgin coconut oil improved skin barrier function (lower transepidermal water loss, higher skin capacitance) more than mineral oil.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/24320105/', label: 'PubMed: Topical virgin coconut oil in pediatric atopic dermatitis — a randomized, double-blind clinical trial' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/',
+                text: 'Virgin Coconut Oil in Paste Form as Treatment for Dyspareunia and Vaginal Dryness in Patients With and Without Rheumatic Autoimmune Diseases: An Efficacy and Safety Assessment Pilot Study',
+                summary: 'A 2023 pilot survey study (Cureus) of 53 women who used a virgin coconut oil paste for vaginal dryness and painful sex found dryness decreased in both of its groups, with no side effects reported. It had no control group and didn\'t test gina\'s product.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://getgina.com/products/the-starter-kit',
+                        text: 'getgina.com: The Starter Kit reviews',
+                        summary: 'gina\'s product page lists 18 reviews for the kit, without a star rating shown.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
     // Liv Labs (Pippa Resistance Spring) — catalog entry only, NOT yet an
     // ayna brand partner (as of 2026-09-23). isEmergingBrand still shows the
     // "Brand" tag on Discovery, but it's deliberately left out of
