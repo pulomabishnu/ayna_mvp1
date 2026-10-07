@@ -2994,7 +2994,7 @@ export const BRAND_PRODUCTS = [
             'Don\'t use on broken, cut, or sunburned skin.',
             'Keep out of eyes. If you get redness, burning, or an allergic reaction, stop using it and see a doctor.',
         ],
-        communityReview: 'kieró\'s US site shows 251 customer reviews, and 233 of them (93%) are five stars. Most reviews are in Spanish and describe skin feeling very clean, soft, and hydrated, for example: "Muy recomendable, te deja la piel suave e hidratada" ("Highly recommend, it leaves your skin soft and hydrated"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        communityReview: 'kieró\'s US site shows 251 customer reviews, and 233 of them (93%) are five stars. Most reviews are in Spanish and describe skin feeling very clean, soft, and hydrated, for example: "Muy recomendable, te deja la piel suave e hidratada" ("Highly recommend, it leaves your skin soft and hydrated"). On Amazon it has 4.6 out of 5 stars from 36 ratings as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
         effectiveness: 'Cleanses with mild syndet surfactants. Papain may add light exfoliation, but enzyme exfoliation has few clinical trials and a cleanser is rinsed off quickly. Evidence for beta-glucan and chia comes from small studies of leave-on products. No independent study of the finished product was found.',
         // Per-ingredient science claims, each paired with a credible
         // source (NIH-hosted or PubMed). Rendered on the Scientific
@@ -3057,6 +3057,12 @@ export const BRAND_PRODUCTS = [
             scientific: { links: [] },
             community: {
                 links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FRMDSSY6',
+                        text: 'Amazon: kieró Refining Enzyme Cleanser reviews',
+                        summary: '4.6 out of 5 stars from 36 ratings on Amazon as of October 2026.',
+                    },
                     {
                         platform: 'website',
                         url: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
@@ -3136,7 +3142,7 @@ export const BRAND_PRODUCTS = [
             'Not stated as water resistant: reapply after swimming or sweating.',
             'Infants under 6 months: the FDA doesn\'t recommend sunscreen; keep them out of the sun instead.',
         ],
-        communityReview: 'kieró\'s US site shows 657 customer reviews, and 593 of them (90%) are five stars; the rest are four stars. Most reviews are in Spanish and praise how easily it goes on, how fast it absorbs, and its non-greasy feel, including over makeup. For example: "No es grasoso y protege muy bien tu piel del sol" ("It\'s not greasy and protects your skin from the sun really well"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        communityReview: 'kieró\'s US site shows 657 customer reviews, and 593 of them (90%) are five stars; the rest are four stars. Most reviews are in Spanish and praise how easily it goes on, how fast it absorbs, and its non-greasy feel, including over makeup. For example: "No es grasoso y protege muy bien tu piel del sol" ("It\'s not greasy and protects your skin from the sun really well"). On Amazon it has 4.5 out of 5 stars from 28 ratings (69% five-star, 26% four-star, 5% one-star) as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
         effectiveness: 'Labeled SPF 50+ / PA++++ broad spectrum, but real-world protection depends on how much you apply. Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a randomized trial. No independent study of the finished product was found.',
         // Per-ingredient / per-topic science, each paired with a credible
         // source (NIH-hosted or PubMed). Rendered on the Scientific
@@ -3211,6 +3217,12 @@ export const BRAND_PRODUCTS = [
             community: {
                 links: [
                     {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0HBVSP2QH',
+                        text: 'Amazon: kieró Airy Sun Stick reviews',
+                        summary: '4.5 out of 5 stars from 28 ratings (69% five-star, 26% four-star, 5% one-star) on Amazon as of October 2026.',
+                    },
+                    {
                         platform: 'website',
                         url: 'https://us.kieroskincare.com/products/sun-stick-spf-50',
                         text: 'kieroskincare.com: Airy Sun Stick SPF 50+ customer reviews',
@@ -3281,7 +3293,7 @@ export const BRAND_PRODUCTS = [
             'Plant or nut allergies (it contains macadamia oil and several plant extracts): patch test first.',
             'Keep out of eyes. If you get redness, burning, or a rash, stop using it.',
         ],
-        communityReview: 'kieró\'s US site shows 334 customer reviews, and 311 of them (93%) are five stars; the rest are four stars. Most reviews are in Spanish and praise how fully it removes makeup, including waterproof makeup and long-wear lipstick, and that it has no scent. For example: "Me encantó que removió todo el maquillaje de mi rostro" ("I loved that it removed all the makeup from my face"). One reviewer said it doesn\'t melt as quickly as expected. These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        communityReview: 'kieró\'s US site shows 334 customer reviews, and 311 of them (93%) are five stars; the rest are four stars. Most reviews are in Spanish and praise how fully it removes makeup, including waterproof makeup and long-wear lipstick, and that it has no scent. For example: "Me encantó que removió todo el maquillaje de mi rostro" ("I loved that it removed all the makeup from my face"). One reviewer said it doesn\'t melt as quickly as expected. On Amazon it has 4.5 out of 5 stars from 58 ratings as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
         effectiveness: 'Reviewers on kieró\'s site say it removes even waterproof makeup and long-wear lipstick without scrubbing.',
         ingredientScience: [
             {
@@ -3297,6 +3309,12 @@ export const BRAND_PRODUCTS = [
             scientific: { links: [] },
             community: {
                 links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FRMXWM2M',
+                        text: 'Amazon: kieró Comfort Cleansing Balm reviews',
+                        summary: '4.5 out of 5 stars from 58 ratings on Amazon as of October 2026.',
+                    },
                     {
                         platform: 'website',
                         url: 'https://us.kieroskincare.com/products/comfort-cleansing-balm',
@@ -3366,7 +3384,7 @@ export const BRAND_PRODUCTS = [
             'Not stated as water resistant: reapply after swimming or sweating.',
             'Infants under 6 months: the FDA doesn\'t recommend sunscreen; keep them out of the sun instead.',
         ],
-        communityReview: 'kieró\'s US site shows 310 customer reviews, and 287 of them (93%) are five stars; 22 are four stars and one is one star. Most reviews are in Spanish and praise the light texture, fast absorption, and hydrated feel. For example: "Textura ligera y se siente muy bien en la piel" ("Light texture and it feels great on the skin"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        communityReview: 'kieró\'s US site shows 310 customer reviews, and 287 of them (93%) are five stars; 22 are four stars and one is one star. Most reviews are in Spanish and praise the light texture, fast absorption, and hydrated feel. For example: "Textura ligera y se siente muy bien en la piel" ("Light texture and it feels great on the skin"). On Amazon it has 4.5 out of 5 stars from 34 ratings (75% five-star; 5% two-star, none one-star) as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
         effectiveness: 'Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a large randomized trial.',
         ingredientScience: [
             {
@@ -3443,6 +3461,12 @@ export const BRAND_PRODUCTS = [
             community: {
                 links: [
                     {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0HBVTHQDG',
+                        text: 'Amazon: kieró Prime Sun Gel reviews',
+                        summary: '4.5 out of 5 stars from 34 ratings (75% five-star; 5% two-star, none one-star) on Amazon as of October 2026.',
+                    },
+                    {
                         platform: 'website',
                         url: 'https://us.kieroskincare.com/products/sun-barrier',
                         text: 'kieroskincare.com: Prime Sun Gel SPF 40+ customer reviews',
@@ -3506,7 +3530,7 @@ export const BRAND_PRODUCTS = [
             'Sensitive skin: patch test first.',
             'Keep out of eyes. If you get redness, burning, or a rash, stop using it.',
         ],
-        communityReview: 'kieró\'s US site shows 236 customer reviews, and 213 of them (90%) are five stars; the rest are four stars. Most reviews are in Spanish and describe skin looking hydrated and smoother. For example: "Llevo casi un mes usándolo y mi piel se ve muy hidratada y bonita" ("I\'ve been using it for almost a month and my skin looks very hydrated and pretty"). These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        communityReview: 'kieró\'s US site shows 236 customer reviews, and 213 of them (90%) are five stars; the rest are four stars. Most reviews are in Spanish and describe skin looking hydrated and smoother. For example: "Llevo casi un mes usándolo y mi piel se ve muy hidratada y bonita" ("I\'ve been using it for almost a month and my skin looks very hydrated and pretty"). On Amazon it has 4.4 out of 5 stars from 37 ratings (69% five-star; 8% two-star, none one-star) as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
         effectiveness: 'Niacinamide improved wrinkles, dark spots and redness in controlled trials at 5%, and hyaluronic acid and panthenol have small controlled studies for hydration.',
         ingredientScience: [
             {
@@ -3546,10 +3570,129 @@ export const BRAND_PRODUCTS = [
             community: {
                 links: [
                     {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FRMCLFT1',
+                        text: 'Amazon: kieró Essential Boost Serum reviews',
+                        summary: '4.4 out of 5 stars from 37 ratings (69% five-star; 8% two-star, none one-star) on Amazon as of October 2026.',
+                    },
+                    {
                         platform: 'website',
                         url: 'https://us.kieroskincare.com/products/essential-boost-serum',
                         text: 'kieroskincare.com: Essential Boost Serum customer reviews',
                         summary: 'kieró\'s own product page shows 236 reviews, 90% of them five stars and the rest four stars, mostly in Spanish (see the Community summary above).',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // kieró Pure Radiant Eye Cream — verified against
+    // us.kieroskincare.com/products/pure-radiant-eye-cream on 2026-10-07
+    // (description, full INCI, review counts). Contains retinal (a retinoid),
+    // so it carries a pregnancy note sourced to a meta-analysis read via NCBI
+    // E-utilities. Amazon rating from Amazon's search listing for B0FRMQZRF3.
+    {
+        id: 'p-kiero-pure-radiant-eye-cream',
+        name: 'Pure Radiant Eye Cream',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'eye cream', 'retinal', 'retinoid', 'niacinamide', 'dark circles', 'fine lines', 'vegan'],
+        price: '$12.99 for 25 ml (0.85 fl oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/pure-radiant-eye-cream',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/pure-radiant-eye-cream',
+        },
+        image: '/products/kiero/pure-radiant-eye-cream.jpg', // supplied by ayna; same photo as kieró's product page
+        summary: 'An eye cream with retinal, pink algae (Dunaliella salina), centella asiatica and niacinamide. kieró positions it to smooth fine lines, brighten dark circles and firm the eye area, in a lightweight formula that soothes delicate skin. Apply a small amount around the eyes once a day, preferably at night. It is step 3 (treat) of kieró\'s 5-step routine.',
+        ingredients: 'Full INCI list per kieró: Water, Caprylic/Capric Triglyceride, Glycerin, Butylene Glycol, Pentaerythrityl Tetraethylhexanoate, Polyglyceryl-3 Methylglucose Distearate, Niacinamide, Cetearyl Alcohol, Glyceryl Stearate SE, 1,2-Hexanediol, Cetearyl Olivate, Betaine, Hydroxyacetophenone, Sorbitan Olivate, Glyceryl Stearate, Carbomer, Arginine, Sodium Polyacrylate, Hydrogenated Polydecene, Retinal, Tocopherol, Centella Asiatica Extract, Adenosine, Disodium EDTA, Trideceth-6, Dunaliella Salina Extract, Macadamia Integrifolia Seed Oil, Rosa Canina Fruit Oil, Olea Europaea (Olive) Fruit Oil, Lactobacillus Ferment Lysate, C11-13 Isoparaffin, Bambusa Vulgaris Sap Extract, Caprylyl Glycol, Moringa Oleifera Seed Extract, Thuja Orientalis Leaf Extract, Zanthoxylum Piperitum Fruit Extract, Polygonum Cuspidatum Root Extract, Madecassoside, Dipeptide Diaminobutyroyl Benzylamide Diacetate, Asiaticoside, Ethylhexylglycerin, Asiatic Acid, Madecassic Acid, Centaurea Cyanus Flower Extract, Paeonia Albiflora Flower Extract, Nymphaea Caerulea Flower Extract, Sophora Japonica Flower Extract, Crocus Sativus Flower Extract, Histidine, Taurine, Ornithine, Phenylalanine, Proline, Aspartic Acid, Serine, Alanine, Isoleucine, Methionine, Valine, Leucine, Glycine, Glutamic Acid.',
+        safety: {
+            fdaStatus: 'Cosmetic eye cream; not an FDA-cleared drug or medical device. kieró states its products are vegan and cruelty-free; ayna did not independently verify that.',
+            materials: 'Cream (25 ml / 0.85 fl oz). Key ingredients: retinal (retinaldehyde, a retinoid), niacinamide, pink algae (Dunaliella salina) extract, centella compounds (madecassoside, asiaticoside), adenosine, a peptide (dipeptide diaminobutyroyl benzylamide diacetate), vitamin E, and macadamia, rosehip and olive oils, plus several botanical extracts. kieró doesn\'t list the retinal or niacinamide percentage. No added fragrance appears in the published ingredient list.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Contains a retinoid. A 2015 meta-analysis found no significant increase in birth defects or miscarriage after topical retinoid use in early pregnancy, but said the data aren\'t strong enough to justify using retinoids while pregnant, so ask your clinician first if you\'re pregnant, trying to conceive or breastfeeding. It also contains macadamia oil and many plant extracts, so patch test first if you have sensitive skin or nut or plant allergies. Full warnings are listed below.',
+            opinionAlerts: 'Contains retinal, a retinoid: ask your clinician before using it if you\'re pregnant, trying to conceive or breastfeeding. kieró doesn\'t list its retinal percentage.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says retinal smooths fine lines and wrinkles, the formula brightens dark circles, centella calms and strengthens the eye area, and niacinamide evens out tone. No independent study of this product was found, so what follows is what the research says about its main ingredients.\n\nRetinal (retinaldehyde) is the natural precursor of retinoic acid, the prescription retinoid. In a 3-month randomized, double-blind trial of 40 Korean women, retinal creams at 0.1% and 0.05% applied twice daily improved texture around the crow\'s feet and skin hydration, were well tolerated, and only the 0.1% cream improved pigmentation. The trial compared the two strengths and had no placebo group. kieró doesn\'t list this cream\'s retinal percentage.\n\nNiacinamide improved fine lines, dark spots and redness in two 12-week controlled trials at 5%, run by Procter & Gamble; this cream\'s percentage isn\'t listed. For the pink algae, a placebo-controlled study of a Dunaliella salina extract reported fewer wrinkles and spots under intense sun exposure, but it was run by the company that sells that extract, and it may not be the same extract used here.\n\nRetinoids and pregnancy: a 2015 meta-analysis of 654 pregnancies exposed to topical retinoids found no significant increase in birth defects or miscarriage, but its authors said the data aren\'t strong enough to justify using topical retinoids during pregnancy.',
+        doctorOpinionShort: 'Retinal improved skin texture and hydration in a small 3-month trial, and niacinamide has good controlled-trial evidence at 5%, but kieró doesn\'t list either percentage. No independent study of this cream was found. It contains a retinoid, so ask your clinician first if you\'re pregnant, trying to conceive or breastfeeding.',
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/pure-radiant-eye-cream', label: 'kieroskincare.com: Pure Radiant Eye Cream — ingredient list and claims' },
+        ],
+        whoItsFor: [
+            'People looking for a gentle retinoid eye cream for fine lines',
+            'People interested in niacinamide for dark circles or uneven tone around the eyes',
+            'Not for use during pregnancy or while trying to conceive without checking with a clinician first',
+        ],
+        howToUse: {
+            intro: 'Per kieró\'s own site: use once a day, preferably at night.',
+            steps: [
+                'Apply a small amount to the eye contour area.',
+                'Massage gently until absorbed.',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/pure-radiant-eye-cream',
+            sourceLabel: 'kieroskincare.com: Pure Radiant Eye Cream',
+        },
+        warnings: [
+            'Pregnant, trying to conceive, or breastfeeding: contains a retinoid (retinal), so ask your clinician first.',
+            'Nut or plant allergies (it contains macadamia oil and several plant extracts): patch test first.',
+            'Keep out of eyes. If you get redness, burning, or a rash, stop using it.',
+        ],
+        communityReview: 'kieró\'s US site shows 325 customer reviews, and 291 of them (90%) are five stars; 33 are four stars and one is two stars. Most reviews are in Spanish, and several are from people who had only just started using it. One reviewer wrote that after less than a month: "aún no veo grandes cambios pero sí una mejora en la textura de la piel del contorno de mis ojos" ("I don\'t see big changes yet, but I do see better texture in the skin around my eyes"). On Amazon it has 3.8 out of 5 stars from 55 ratings as of October 2026, noticeably lower than on kieró\'s site. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s search listing.',
+        effectiveness: 'Retinal improved skin texture and hydration around the crow\'s feet in a small 3-month trial, and niacinamide improved fine lines and dark spots in controlled trials at 5%.',
+        ingredientScience: [
+            {
+                name: 'Retinal (retinaldehyde)',
+                text: 'kieró states this smooths fine lines and wrinkles. In a 3-month randomized, double-blind trial of 40 Korean women, 0.1% and 0.05% retinal creams applied twice daily improved texture around the crow\'s feet (about 13%) and skin hydration, and were well tolerated; only the 0.1% cream improved pigmentation. The trial compared the two strengths and had no placebo group. kieró doesn\'t list this cream\'s retinal percentage.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/29663701/', label: 'PubMed: Efficacy and safety of retinaldehyde 0.1% and 0.05% creams used to treat photoaged skin (Kwon et al., 2018)' },
+                ],
+            },
+            {
+                name: 'Topical retinoids in pregnancy',
+                text: 'A 2015 meta-analysis of 654 pregnant women exposed to topical retinoids in the first trimester, compared with 1,375 unexposed, found no significant increase in major birth defects, miscarriage, low birth weight or prematurity. Its authors said this can reassure people exposed by accident, but the data aren\'t strong enough to justify using topical retinoids during pregnancy.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26215715/', label: 'PubMed: Pregnancy outcomes following first-trimester exposure to topical retinoids — systematic review and meta-analysis (Kaplan et al., 2015)' },
+                ],
+            },
+            {
+                name: 'Niacinamide',
+                text: 'kieró states this evens out skin tone. In two 12-week, double-blind, split-face trials of 50 women each, 5% niacinamide improved fine lines and wrinkles, dark spots, red blotchiness, sallowness and elasticity compared with the same cream without it. Both trials were run by Procter & Gamble and tested the whole face, not the eye area. kieró doesn\'t list this cream\'s niacinamide percentage.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/16029679/', label: 'PubMed: Niacinamide — a B vitamin that improves aging facial skin appearance (Bissett et al., 2005)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18492135/', label: 'PubMed: Topical niacinamide reduces yellowing, wrinkling, red blotchiness, and hyperpigmented spots in aging facial skin (Bissett et al., 2004)' },
+                ],
+            },
+            {
+                name: 'Pink algae (Dunaliella salina extract)',
+                text: 'In a placebo-controlled study under intense sun exposure, a Dunaliella salina extract rich in colorless carotenoids reduced skin glycation scores and improved wrinkle counts and spots compared with placebo. The authors work for the company that sells that extract, and it may not be the same extract kieró uses.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8879334/', label: 'NIH (PMC): A Dunaliella salina extract counteracts skin aging under intense solar irradiation (Havas et al., 2022)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FRMQZRF3',
+                        text: 'Amazon: kieró Pure Radiant Eye Cream reviews',
+                        summary: '3.8 out of 5 stars from 55 ratings on Amazon as of October 2026.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/pure-radiant-eye-cream',
+                        text: 'kieroskincare.com: Pure Radiant Eye Cream customer reviews',
+                        summary: 'kieró\'s own product page shows 325 reviews, 90% of them five stars, mostly in Spanish (see the Community summary above).',
                     },
                 ],
             },
