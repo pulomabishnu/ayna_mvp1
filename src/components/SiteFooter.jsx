@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PrivacyPreferencesLink from './PrivacyPreferencesLink';
 
+// Links always show on wide screens; on phones each column is an accordion so the footer stays short.
 function FooterColumn({ title, children }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="v6-footer-column">
-      <div className="v6-footer-column__title">{title}</div>
+    <div className={`v6-footer-column${open ? ' is-open' : ''}`}>
+      <button type="button" className="v6-footer-column__title" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+        {title}<span className="v6-footer-column__chev" aria-hidden="true">▾</span>
+      </button>
       <div className="v6-footer-column__links">{children}</div>
     </div>
   );
@@ -37,7 +41,7 @@ export default function SiteFooter({
           </div>
         </div>
 
-        <FooterColumn title="Explore">
+        <FooterColumn title="Shop">
           <FooterButton onClick={() => onViewDiscovery?.('')}>Browse</FooterButton>
           <a className="v6-footer-link" href="/ecosystem">My Ecosystem</a>
           <a className="v6-footer-link" href="/profile">Health Profile</a>
@@ -62,13 +66,8 @@ export default function SiteFooter({
         </FooterColumn>
       </div>
 
-      <div className="site-footer__baseline v6-footer__baseline">
-        <span>© ayna 2026</span>
-        <span>Made for women, by women.</span>
-      </div>
-
       <div className="site-footer__legal v6-footer__legal">
-        18+ only. ayna provides wellness information only, not medical advice. We do not sell your personal health information.
+        © ayna 2026 · Made for women, by women. · 18+ only. ayna provides wellness information only, not medical advice. We do not sell your personal health information.
         {' '}
         <FooterButton onClick={onViewPrivacyPolicy}>Privacy Policy</FooterButton>
         {' · '}

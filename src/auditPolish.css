@@ -97,3 +97,23 @@ html body .ayna-intake-root .ayna-continue { background: #FAF6F1 !important; col
 html body .ayna-intake-root .ayna-continue:disabled { opacity: .4; }
 html body .ayna-intake-root .ayna-skip { color: rgba(250, 246, 241, .8); min-height: 44px; font-size: 14px; }
 html body .qrp__cta, html body .ayna-landing-btn--navy { border-radius: 10px; }
+
+/* Footer: sentence-case headings, comfortable link rows, accordions on phones */
+html body .v6-footer .v6-footer-column__title { all: unset; display: flex; align-items: center; justify-content: space-between; font: 600 14px var(--font-body) !important; letter-spacing: 0 !important; text-transform: none !important; cursor: default; box-sizing: border-box; width: 100%; }
+html body .v6-footer .v6-footer-column__chev { display: none; }
+html body .v6-footer .v6-footer-link { min-height: 36px; font-size: 14px; display: inline-flex; align-items: center; }
+@media (max-width: 639px) {
+  html body .v6-footer .v6-footer-column__title { cursor: pointer; min-height: 48px; border-bottom: 1px solid rgba(250, 246, 241, .18); }
+  html body .v6-footer .v6-footer-column__chev { display: inline; }
+  html body .v6-footer .v6-footer-column:not(.is-open) .v6-footer-column__links { display: none; }
+  html body .v6-footer .v6-footer-link { min-height: 44px; }
+}
+
+/* Shop by category: 4x2 on desktop, horizontal scroll on phones; flat tiles */
+html body .v6-category-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 24px 20px !important; }
+html body .v6-category-grid .v6-category-card { border: 0 !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; text-align: left; }
+html body .v6-category-grid .v6-category-card strong { font: 500 16px/1.3 var(--font-body) !important; }
+@media (max-width: 899px) {
+  html body .v6-category-grid { grid-template-columns: none !important; grid-auto-flow: column; grid-auto-columns: 42%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; }
+  html body .v6-category-grid .v6-category-card { scroll-snap-align: start; }
+}
