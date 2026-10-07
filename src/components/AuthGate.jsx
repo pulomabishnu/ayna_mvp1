@@ -31,6 +31,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -301,7 +302,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
     }
   };
 
-  const handleGoogle = async () => {
+  // Google and Apple share one OAuth path (Apple is required next to Google
+  // for the App Store, and offered on the web for parity with the app).
+  const handleOAuth = async (provider) => {
+    const setBusy = provider === 'apple' ? setAppleLoading : setGoogleLoading;
     if (isSignup && !allConsented) {
       setError("Please agree to all four statements above before continuing.");
       return;
@@ -315,7 +319,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
       return;
     }
     setError('');
-    setGoogleLoading(true);
+    setBusy(true);
     try {
       if (isSignup) {
         try {
@@ -324,18 +328,20 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
       }
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
-          queryParams: { prompt: 'select_account' },
+          ...(provider === 'google' ? { queryParams: { prompt: 'select_account' } } : {}),
         },
       });
       if (error) throw error;
     } catch (err) {
-      setError(err.message || 'Could not sign in with Google.');
-      setGoogleLoading(false);
+      setError(err.message || `Could not sign in with ${provider === 'apple' ? 'Apple' : 'Google'}.`);
+      setBusy(false);
     }
   };
+  const handleGoogle = () => handleOAuth('google');
+  const handleApple = () => handleOAuth('apple');
 
   const switchMode = (next) => {
     setMode(next);
@@ -758,9 +764,22 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
           <GoogleIcon />
           {googleLoading ? 'Redirecting…' : 'Continue with Google'}
         </button>
+        <button
+          type="button"
+          onClick={handleApple}
+          disabled={appleLoading || (isSignup && (!allConsented || !referralOk()))}
+          style={{
+            ...styles.googleBtn,
+            ...styles.appleBtn,
+            ...((isSignup && (!allConsented || !referralOk())) ? styles.googleBtnDisabled : {}),
+          }}
+        >
+          <AppleIcon />
+          {appleLoading ? 'Redirecting…' : 'Continue with Apple'}
+        </button>
         </>
         {!allowSignup && <p className="ayna-login-new">Don’t have an account? <button type="button" onClick={onStartEcosystem} style={styles.skipBtn}>Build your ecosystem</button></p>}
-        {!allowSignup && <p style={styles.fine}>New to ayna? Continuing with Google creates your account. We&apos;ll ask you to confirm a few statements first.</p>}
+        {!allowSignup && <p style={styles.fine}>New to ayna? Continuing with Google or Apple creates your account. We&apos;ll ask you to confirm a few statements first.</p>}
 
         {!isSignup && (
           <p style={styles.fine}>
@@ -883,6 +902,14 @@ export function ConsentGate({ onAgreed, onDecline }) {
         <button type="button" onClick={onDecline} style={styles.skipBtn}>No thanks, sign me out</button>
       </div>
     </div>
+  );
+}
+
+function AppleIcon() {
+  return (
+    <svg width="16" height="18" viewBox="0 0 16 19" aria-hidden="true" style={{ flexShrink: 0 }}>
+      <path fill="currentColor" d="M13.2 10.1c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8C3.7 4.9 2.3 5.8 1.5 7.2c-1.6 2.8-.4 6.9 1.1 9.2.8 1.1 1.7 2.3 2.8 2.3 1.1 0 1.6-.7 2.9-.7 1.4 0 1.8.7 3 .7 1.2 0 2-1.1 2.7-2.2.9-1.3 1.2-2.5 1.2-2.6 0 0-2.4-.9-2.4-3.6ZM10.9 3.3c.6-.8 1-1.8.9-2.8-.9 0-2 .6-2.6 1.4-.6.7-1.1 1.7-1 2.7 1 .1 2-.5 2.7-1.3Z" />
+    </svg>
   );
 }
 
@@ -1128,6 +1155,12 @@ const styles = {
     transition: 'background var(--transition-fast)',
     fontFamily: 'var(--font-body)',
     width: '100%',
+  },
+  appleBtn: {
+    marginTop: '0.55rem',
+    background: '#000000',
+    color: '#FFFFFF',
+    border: '1.4px solid #000000',
   },
   googleBtnDisabled: {
     opacity: 0.45,

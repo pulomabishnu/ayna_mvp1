@@ -915,13 +915,15 @@ function App() {
     if (!hasCompletedPersonalization) setCurrentView('quiz');
   }, [user, dataLoadedForUserId, hasCompletedPersonalization]);
 
-  // A Google account with no consent on record (created straight from Log in, which skips the
+  // A Google/Apple account with no consent on record (created straight from Log in, which skips the
   // signup form) must confirm 18+ / consent / referral before going further. Waits briefly so a
   // signup-form Google account, whose consent is written right after the redirect, never flashes it.
   useEffect(() => {
-    const isGoogle = user?.app_metadata?.provider === 'google'
-      || (Array.isArray(user?.identities) && user.identities.some((i) => i?.provider === 'google'));
-    const missingConsent = Boolean(user) && isGoogle && !user.user_metadata?.consent_given_at;
+    // Google or Apple (both skip the signup form when used from Log in).
+    const OAUTH = ['google', 'apple'];
+    const isOAuth = OAUTH.includes(user?.app_metadata?.provider)
+      || (Array.isArray(user?.identities) && user.identities.some((i) => OAUTH.includes(i?.provider)));
+    const missingConsent = Boolean(user) && isOAuth && !user.user_metadata?.consent_given_at;
     if (!missingConsent || authLoading || currentView === 'auth-callback' || currentView === 'campus-resources') {
       setConsentGateOpen(false);
       return undefined;
