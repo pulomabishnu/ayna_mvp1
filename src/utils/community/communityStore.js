@@ -191,7 +191,10 @@ export async function updatePostBody(supabase, postId, body) {
 }
 
 export async function deletePost(supabase, postId) {
-  check(await supabase.from('community_posts').delete().eq('id', postId));
+  // RLS only lets the author delete; report it if nothing was removed instead
+  // of pretending it worked.
+  const rows = check(await supabase.from('community_posts').delete().eq('id', postId).select('id'));
+  if (!rows || rows.length === 0) throw new Error('community_post_unavailable');
 }
 
 // ── Comments ────────────────────────────────────────────────────────────────
