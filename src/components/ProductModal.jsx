@@ -759,6 +759,15 @@ export default function ProductModal({
   const emailSubject = encodeURIComponent(`${product.name} | ayna`);
   const emailBody = encodeURIComponent(`${shareText}\n\n${shareUrl}`);
 
+  const retailerName = (() => {
+    try {
+      const host = new URL(buyUrl).hostname.replace(/^www\./, '');
+      if (/(^|\.)amazon\./.test(host) || host === 'amzn.to') return 'Amazon';
+      const base = host.split('.').slice(-2, -1)[0] || host;
+      return base.charAt(0).toUpperCase() + base.slice(1);
+    } catch { return ''; }
+  })();
+
   const actionButtons = (
     <div className="pdp-actions">
       {choice.hasVariants && <label style={{ display: 'block', width: '100%', marginBottom: '0.8rem', fontSize: '0.9rem' }}>
@@ -787,12 +796,17 @@ export default function ProductModal({
             });
             }}
           >
-            Buy Now
+            {retailerName ? `Buy at ${retailerName}` : 'Buy Now'}
           </a>
         ) : (
           <button type="button" className="pdp-btn pdp-btn--navy pdp-btn--buy" disabled>
             Buy Now
           </button>
+        )}
+        {buyUrl && (
+          <p className="pdp-buy-note">
+            Opens {retailerName || 'the retailer'} in a new tab. ayna may earn a commission; price and shipping are set by the retailer.
+          </p>
         )}
         {onToggleSaved && (
           <button

@@ -933,14 +933,14 @@ function requiredReady(stepId, intake) {
   if (stepId === 'safety') return !!intake.safetyConcern;
   if (stepId === 'products') return true;
   // Required: the default order is not an answer — reorder or confirm it.
-  if (stepId === 'trust') return intake.trustRankingTouched === true;
+  if (stepId === 'trust') return true;
   return true;
 }
 
 const STYLES = `
 .ayna-intake-root{min-height:calc(100dvh - 70px);background:linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%);font-family:var(--font-body,'DM Sans',system-ui,sans-serif);color:#FFF9F2;position:relative;overflow:hidden;padding:36px 18px 72px}
 .ayna-intake-root *{box-sizing:border-box}.ayna-intake-root button,.ayna-intake-root input,.ayna-intake-root textarea{font:inherit}.ayna-intake-glow{position:absolute;border-radius:50%;pointer-events:none}.ayna-intake-glow.g1{top:-120px;right:-110px;width:420px;height:420px;background:radial-gradient(circle,rgba(255,199,116,.4),rgba(255,199,116,0) 70%)}.ayna-intake-glow.g2{bottom:-110px;left:-110px;width:360px;height:360px;background:radial-gradient(circle,rgba(126,84,186,.35),rgba(126,84,186,0) 70%)}.ayna-intake-glow.g3{top:340px;left:-70px;width:220px;height:220px;background:radial-gradient(circle,rgba(217,122,43,.3),rgba(217,122,43,0) 70%)}
-.ayna-intake-shell{max-width:640px;margin:0 auto;position:relative;z-index:1}.ayna-intake-top{display:flex;align-items:center;gap:12px;max-width:600px;margin:0 auto}.ayna-intake-back{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(255,249,242,.25);background:rgba(255,249,242,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;padding:0;color:#FFF9F2}.ayna-intake-back svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round}.ayna-intake-segments{display:flex;gap:6px;flex:1}.ayna-intake-segment{flex:1;height:6px;border-radius:3px;background:rgba(255,249,242,.22)}.ayna-intake-segment.on{background:#FFC774}.ayna-intake-section-label{max-width:600px;margin:0 auto;padding:9px 0 0 46px;font-size:12px;color:rgba(255,249,242,.55);letter-spacing:.02em}
+.ayna-intake-shell{max-width:640px;margin:0 auto;position:relative;z-index:1}.ayna-intake-top{display:flex;align-items:center;gap:12px;max-width:600px;margin:0 auto}.ayna-intake-back{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(255,249,242,.25);background:rgba(255,249,242,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;padding:0;color:#FFF9F2}.ayna-intake-back svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round}.ayna-intake-progress{flex:1;height:4px;border-radius:2px;background:rgba(255,249,242,.22);overflow:hidden}.ayna-intake-progress span{display:block;height:100%;background:#FFC774;transition:width .3s ease}.ayna-intake-segments{display:flex;gap:6px;flex:1}.ayna-intake-segment{flex:1;height:6px;border-radius:3px;background:rgba(255,249,242,.22)}.ayna-intake-segment.on{background:#FFC774}.ayna-intake-section-label{max-width:600px;margin:0 auto;padding:9px 0 0 46px;font-size:12px;color:rgba(255,249,242,.55);letter-spacing:.02em}
 .ayna-intake-question{text-align:center;padding-top:28px;max-width:620px;margin:0 auto}.ayna-intake-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 10px 24px -12px rgba(0,0,0,.35)}.ayna-intake-icon svg{width:24px;height:24px;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}.ayna-intake-icon.core{background:#FFF3DD}.ayna-intake-icon.core svg{stroke:#C0761F}.ayna-intake-icon.support,.ayna-intake-icon.preferences,.ayna-intake-icon.trust{background:#EAEBF3}.ayna-intake-icon.support svg,.ayna-intake-icon.preferences svg,.ayna-intake-icon.trust svg{stroke:#242A52}.ayna-intake-icon.safety{background:#F1ECF4}.ayna-intake-icon.safety svg{stroke:#4E3866}.ayna-intake-icon.history{background:#FBEAD3}.ayna-intake-icon.history svg{stroke:#8A5A1E}
 .ayna-intake-question h1{font-family:var(--font-serif,'Playfair Display',Georgia,serif);font-weight:500;font-size:27px;line-height:1.3;margin:0 auto 10px;max-width:540px;color:#FFF9F2}.ayna-intake-subtitle{margin:0 auto 10px;font-size:14px;color:rgba(255,249,242,.72);line-height:1.5;max-width:460px}.ayna-intake-hint{margin:5px auto 0;font-size:12px;color:#FFDCA8;font-weight:600}.ayna-intake-stage{margin-top:28px}.ayna-white-card{background:#FFF9F2;border-radius:24px;padding:24px 26px;box-shadow:0 20px 44px -22px rgba(0,0,0,.5);color:#2A1F4E}
 .ayna-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.ayna-choice-card{cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;min-height:82px;padding:20px 36px 20px 16px;border-radius:18px;background:#FFF9F2;border:1.5px solid transparent;box-shadow:0 10px 22px -16px rgba(0,0,0,.4);color:#2A1F4E;transition:.15s}.ayna-choice-card:hover{transform:translateY(-1px)}.ayna-choice-card.selected{border-color:#E8843C;background:#FFF3DD}.ayna-choice-card>span:first-child{font-size:14px;font-weight:500;line-height:1.35}.ayna-choice-indicator{position:absolute;top:10px;right:10px;width:19px;height:19px;border-radius:50%;border:1.5px solid rgba(42,31,78,.25)}.ayna-choice-card.selected .ayna-choice-indicator{background:#2A1F4E;border-color:#2A1F4E}.ayna-choice-card.selected .ayna-choice-indicator:after{content:'';position:absolute;inset:5px;border-radius:50%;background:#fff}
@@ -1178,7 +1178,13 @@ const STYLES = `
 @media(max-width:720px){.ayna-intake-root{padding:24px 14px 58px}.ayna-intake-question{padding-top:20px}.ayna-choice-grid{grid-template-columns:1fr}.ayna-intake-question h1{font-size:25px}.ayna-spectrum-grid{grid-template-columns:1fr}.ayna-scale{overflow-x:auto}.ayna-scale button{min-width:76px}.ayna-timeline{overflow-x:auto;padding-bottom:8px}.ayna-timeline button{min-width:110px}.ayna-intake-section-label{padding-left:46px}.ayna-segmented{flex-wrap:wrap}.ayna-seg-option{min-width:110px}.ayna-token-line:not(.ayna-smart-search-line){flex-direction:column}.ayna-smart-search-line{flex-direction:row}.ayna-token-line button{padding:11px}.ayna-product-card .ayna-segmented{flex-direction:column}.ayna-product-card .ayna-seg-option{width:100%}}
 `;
 
-export default function HealthIntakeForm({ onComplete }) {
+// Part 1 is what we need to rank products (no account); Part 2 sharpens safety checks
+// and runs after signup. Dropped as low-signal: purchase frequency, new-brand openness.
+const PART_ONE_ORDER = ['lifeStage', 'support', 'periodFlow', 'periodPain', 'utiFrequency', 'postpartumTiming', 'pregnancyTrimester', 'avoidIngredients', 'allergies', 'priceRange', 'name'];
+const PART_ONE_LAST = 'name';
+const DROPPED_STEPS = new Set(['largePurchaseFrequency', 'brandOpenness', 'trustedBrands']);
+
+export default function HealthIntakeForm({ onComplete, isSignedIn = true, onPartOneComplete = null }) {
   const [intake, setIntake] = useState(() => {
     try {
       const raw = window.sessionStorage.getItem(DRAFT_KEY);
@@ -1223,8 +1229,8 @@ export default function HealthIntakeForm({ onComplete }) {
   const [stepId, setStepId] = useState(() => {
     try {
       const raw = window.sessionStorage.getItem(DRAFT_KEY);
-      return raw ? JSON.parse(raw)?.stepId || 'name' : 'name';
-    } catch (_) { return 'name'; }
+      return raw ? JSON.parse(raw)?.stepId || 'lifeStage' : 'lifeStage';
+    } catch (_) { return 'lifeStage'; }
   });
   const [search, setSearch] = useState('');
   const [saving, setSaving] = useState(false);
@@ -1260,27 +1266,37 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', type: 'trust', optional: false },
       { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
     ];
-    return steps;
+    const kept = steps.filter((st) => !DROPPED_STEPS.has(st.id));
+    const rank = (id) => { const i = PART_ONE_ORDER.indexOf(id); return i === -1 ? 1000 : i; };
+    const first = kept.filter((st) => PART_ONE_ORDER.includes(st.id)).sort((a, b) => rank(a.id) - rank(b.id));
+    const second = kept.filter((st) => !PART_ONE_ORDER.includes(st.id));
+    return [...first, ...second].map((st) => ({ ...st, part: PART_ONE_ORDER.includes(st.id) ? 1 : 2 }));
   }, [intake]);
 
   useEffect(() => {
-    if (!visibleSteps.some((step) => step.id === stepId)) setStepId(visibleSteps[0]?.id || 'name');
+    if (!visibleSteps.some((step) => step.id === stepId)) setStepId(visibleSteps[0]?.id || 'lifeStage');
   }, [visibleSteps, stepId]);
 
   const currentIndex = Math.max(0, visibleSteps.findIndex((step) => step.id === stepId));
   const step = visibleSteps[currentIndex] || visibleSteps[0];
-  const sectionIndex = Math.max(0, SECTION_ORDER.indexOf(step.section));
+  const partSteps = visibleSteps.filter((st) => st.part === step.part);
+  const partIndex = Math.max(0, partSteps.findIndex((st) => st.id === step.id));
 
   useEffect(() => {
     try { window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ intake, stepId })); } catch (_) {}
   }, [intake, stepId]);
 
+  // Answers are saved per step (sessionStorage draft above), so there is no leave-page block.
+  // Each new step starts at the top with focus on its question (keyboard + screen readers).
+  const questionRef = useRef(null);
   useEffect(() => {
-    if (currentIndex <= 0) return undefined;
-    const handler = (event) => { event.preventDefault(); event.returnValue = ''; return ''; };
-    window.addEventListener('beforeunload', handler);
-    return () => window.removeEventListener('beforeunload', handler);
-  }, [currentIndex]);
+    window.scrollTo({ top: 0 });
+    questionRef.current?.focus({ preventScroll: true });
+  }, [stepId]);
+  useEffect(() => {
+    const first = String(intake.name || '').trim();
+    if (first) { try { window.sessionStorage.setItem('ayna_v6_first_name', first); } catch { /* ignore */ } }
+  }, [intake.name]);
 
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
   const toggleExclusive = (key, value, exclusiveValues = []) => setIntake((prev) => {
@@ -1324,6 +1340,12 @@ export default function HealthIntakeForm({ onComplete }) {
   const goNext = () => {
     if (!requiredReady(step.id, intake) || saving) return;
     if (currentIndex >= visibleSteps.length - 1) { finish(); return; }
+    if (!isSignedIn && onPartOneComplete && step.id === PART_ONE_LAST) {
+      const nextId = visibleSteps[currentIndex + 1].id;
+      try { window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ intake, stepId: nextId })); } catch { /* ignore */ }
+      onPartOneComplete(mapIntakeToLegacyQuizProfile(buildSnapshot(intake)));
+      return;
+    }
     setSearch('');
     setStepId(visibleSteps[currentIndex + 1].id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1446,14 +1468,16 @@ export default function HealthIntakeForm({ onComplete }) {
       <div className="ayna-intake-shell">
         <div className="ayna-intake-top">
           {currentIndex > 0 && <button type="button" className="ayna-intake-back" onClick={goBack} aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" /></svg></button>}
-          <div className="ayna-intake-segments">{SECTION_ORDER.map((section, index) => <span key={section} className={`ayna-intake-segment${index <= sectionIndex ? ' on' : ''}`} />)}</div>
+          <div className="ayna-intake-progress" role="progressbar" aria-label={step.part === 1 ? 'Your matches' : 'Safety checks'} aria-valuemin={1} aria-valuemax={partSteps.length} aria-valuenow={partIndex + 1}>
+            <span style={{ width: `${((partIndex + 1) / partSteps.length) * 100}%` }} />
+          </div>
         </div>
-        <div className="ayna-intake-section-label">{SECTION_LABELS[step.section]}</div>
+        <div className="ayna-intake-section-label" aria-live="polite">{step.part === 2 ? 'Improve your safety checks' : 'Your matches'} · {partIndex + 1} of {partSteps.length}</div>
         <div className="ayna-intake-question">
           <SectionIcon section={step.section} />
-          <h1>{step.title}</h1>
+          <h1 ref={questionRef} tabIndex={-1} style={{ outline: 'none' }}>{step.title}</h1>
           {step.subtitle && <p className="ayna-intake-subtitle">{step.subtitle}</p>}
-          {!step.optional && <p className="ayna-intake-hint">{step.section === 'safety' ? 'Required for safety' : 'Required'}</p>}
+          {!step.optional && <p className="ayna-intake-hint">{step.section === 'safety' ? 'Required — we use this only to filter out products that aren’t safe for you. Never shared or used for ads.' : 'Required'}</p>}
           <div className="ayna-intake-stage">{renderBody()}</div>
           <div className="ayna-continue-wrap">
             <button type="button" className="ayna-continue" onClick={goNext} disabled={!ready || saving}>{saving ? 'Saving...' : isLast ? 'Finish profile' : 'Continue'}{countForStep > 0 && <span className="ayna-count">{countForStep}</span>}<span aria-hidden="true">→</span></button>

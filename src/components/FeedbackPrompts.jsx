@@ -17,7 +17,7 @@ function FeedbackDialog({ prompt, onClose }) {
   const submitting = useRef(false);
   useEffect(() => {
     const previous = document.activeElement;
-    card.current?.querySelector('button')?.focus();
+    if (prompt.kind !== 'purchase') card.current?.querySelector('button')?.focus();
     return () => { if (previous?.isConnected) previous.focus(); };
   }, []);
   const submit = async (answer) => {
@@ -32,14 +32,15 @@ function FeedbackDialog({ prompt, onClose }) {
   };
   const onKeyDown = event => {
     if (event.key === 'Escape' && !busy) { event.stopPropagation(); onClose(); }
-    if (event.key !== 'Tab') return;
+    if (event.key !== 'Tab' || prompt.kind === 'purchase') return;
     const focusable = [...card.current.querySelectorAll('button:not(:disabled), textarea, select, input')].filter(el => !el.hidden);
     const first = focusable[0], last = focusable[focusable.length - 1];
     if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
     if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
   };
-  return <div className="v6-survey-backdrop ph-no-capture ph-mask" data-ph-no-capture="true" onKeyDown={onKeyDown}>
-    <div ref={card} className="v6-survey-card" role="dialog" aria-modal="true" aria-labelledby="feedback-title">
+  const toast = prompt.kind === 'purchase';
+  return <div className={`${toast ? 'v6-survey-toast' : 'v6-survey-backdrop'} ph-no-capture ph-mask`} data-ph-no-capture="true" onKeyDown={onKeyDown}>
+    <div ref={card} className="v6-survey-card" role={toast ? 'status' : 'dialog'} aria-modal={toast ? undefined : 'true'} aria-labelledby="feedback-title">
       <button type="button" className="v6-survey-close" aria-label="Close feedback" disabled={busy} onClick={onClose}>✕</button>
       <h2 id="feedback-title">{done ? 'Thank you!' : prompt.kind === 'purchase' ? 'Did you buy this item?' : 'How are you liking ayna?'}</h2>
       {done ? <><p>Your anonymous answer was saved.</p><button type="button" className="v6-survey-submit" onClick={onClose}>Done</button></> : <>

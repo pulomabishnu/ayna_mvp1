@@ -1571,7 +1571,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
                     const matchDetails = getProductMatchDetailsForProduct(item, quizResults, healthProfile);
-                    const matchPercent = matchDetails.percent;
+                    // Never show a match to signed-out visitors, and never "0% match".
+                    const matchPercent = user && Number.isFinite(matchDetails.percent) && matchDetails.percent > 0 ? matchDetails.percent : null;
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];

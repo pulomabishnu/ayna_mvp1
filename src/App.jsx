@@ -7,6 +7,7 @@ import ConsentBanner from './components/ConsentBanner';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import HealthIntakeForm from './components/HealthIntakeForm';
+import QuizResultsPreview from './components/QuizResultsPreview';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import DeleteAccountPage from './components/DeleteAccountPage';
 import AdminReviewsPage from './components/AdminReviewsPage';
@@ -466,6 +467,8 @@ function App() {
   const pendingActionRef = useRef(null);
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
   const [quizPreviewOffsets, setQuizPreviewOffsets] = useState([0, 0, 0]);
+  // Part 1 of the quiz done, no account yet: show real matches before asking for signup.
+  const [quizPartOneResults, setQuizPartOneResults] = useState(null);
   const [quizPreviewWhyOpen, setQuizPreviewWhyOpen] = useState(null);
   const [showQuizSaveBanner, setShowQuizSaveBanner] = useState(true);
   const [showQuizInlineAuth, setShowQuizInlineAuth] = useState(false);
@@ -877,6 +880,10 @@ function App() {
       const rawIntake = pendingQuizResults?.fullHealthIntake || pendingQuizResults;
       saveHealthIntakeForCurrentUser(rawIntake).catch(e => reportSaveFailure('Could not save your health profile', e));
       setPendingQuizResults(null);
+    } else if (pendingAction === 'quiz-part1') {
+      // Signed up from the results preview: carry on with Part 2 where the draft left off.
+      setQuizPartOneResults(null);
+      setCurrentView('quiz');
     } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
     } else if (pendingAction === 'login') {
@@ -1117,7 +1124,7 @@ function App() {
     setCurrentView('quiz');
   };
 
-  const handleStartQuiz = () => setCurrentView('quiz');
+  const handleStartQuiz = () => { setQuizPartOneResults(null); setCurrentView('quiz'); };
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
   const handleOpenPhoneVerification = () => setCurrentView('phone-verify');
   // Profile-completion checklist → the place each step is done.
@@ -3177,7 +3184,29 @@ function App() {
               })()}
             </div>
           ) : (
-            <HealthIntakeForm onComplete={handleQuizComplete} />
+            !user && quizPartOneResults ? (
+              <QuizResultsPreview
+                results={quizPartOneResults}
+                healthProfile={healthProfile}
+                onOpenProduct={handleOpenProduct}
+                onSaveMatches={() => { setPendingAction('quiz-part1'); pendingActionRef.current = 'quiz-part1'; setShowAuthModal(true); }}
+                onEditAnswers={() => {
+                  try {
+                    const raw = window.sessionStorage.getItem('ayna_intake_redesign_draft_v1');
+                    const draft = raw ? JSON.parse(raw) : null;
+                    if (draft) window.sessionStorage.setItem('ayna_intake_redesign_draft_v1', JSON.stringify({ ...draft, stepId: 'lifeStage' }));
+                  } catch { /* draft is best-effort */ }
+                  setQuizPartOneResults(null);
+                }}
+              />
+            ) : (
+              <HealthIntakeForm
+                key={user?.id || 'guest'}
+                isSignedIn={Boolean(user)}
+                onPartOneComplete={setQuizPartOneResults}
+                onComplete={handleQuizComplete}
+              />
+            )
           )
         )}
 
@@ -3761,7 +3790,7 @@ function App() {
               setShowAuthModal(false);
             }}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; handleStartQuiz(); }}
-            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
+            context={(pendingAction === 'quiz-complete' || pendingAction === 'quiz-part1') ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
             onBeforeOAuthRedirect={() => {
               try {
                 if (pendingAction) sessionStorage.setItem('ayna_pending_auth_action', pendingAction);

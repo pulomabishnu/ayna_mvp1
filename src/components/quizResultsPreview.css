@@ -1,0 +1,19 @@
+.qrp { background: var(--color-bg, #FAF6F1); min-height: 70vh; padding: 48px 16px 80px; color: var(--color-text-main, #1A1714); }
+.qrp__inner { max-width: 1000px; margin: 0 auto; }
+.qrp h1 { margin: 0 0 8px; font-family: var(--font-serif); font-weight: 400; font-size: clamp(1.9rem, 4vw, 2.5rem); line-height: 1.1; color: var(--color-navy, #242A52); }
+.qrp__based { margin: 0 0 28px; color: var(--color-text-muted, #5E564E); font-size: .95rem; }
+.qrp__link { border: 0; background: none; padding: 0; color: var(--color-navy, #242A52); font: inherit; text-decoration: underline; cursor: pointer; min-height: 24px; }
+.qrp__grid { list-style: none; margin: 0 0 40px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 20px; }
+.qrp__item { all: unset; box-sizing: border-box; display: grid; gap: 4px; width: 100%; cursor: pointer; }
+.qrp__item:focus-visible { outline: 2px solid #F0A84B; outline-offset: 3px; border-radius: 14px; }
+.qrp__well { display: block; aspect-ratio: 4 / 5; border-radius: 14px; background: #F3ECE2; padding: 12%; overflow: hidden; margin-bottom: 8px; }
+.qrp__cat { font-size: .75rem; color: var(--color-text-muted, #5E564E); }
+.qrp__name { font: 500 1rem/1.35 var(--font-body); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.7em; }
+.qrp__price { font: 600 .95rem var(--font-body); }
+.qrp__match { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; font-size: .88rem; color: var(--color-navy, #242A52); }
+.qrp__none { margin: 0 0 32px; max-width: 520px; }
+.qrp__save { max-width: 520px; padding-top: 24px; border-top: 1px solid #E6DDD1; }
+.qrp__save h2 { margin: 0 0 6px; font-family: var(--font-serif); font-weight: 400; font-size: 1.5rem; color: var(--color-navy, #242A52); }
+.qrp__save p { margin: 0 0 16px; color: var(--color-text-muted, #5E564E); }
+.qrp__cta { border: 0; border-radius: 10px; background: var(--color-navy, #242A52); color: #FAF6F1; font: 600 1rem var(--font-body); min-height: 52px; padding: 0 28px; cursor: pointer; }
+@media (max-width: 900px) { .qrp__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; } }

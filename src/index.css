@@ -5668,3 +5668,14 @@ textarea {
 .ayna-discover-matchbar { display: flex; align-items: center; gap: .5rem; margin-top: .6rem; padding: .45rem .6rem; border-radius: 12px; background: rgba(240, 168, 75, .14); color: var(--color-navy, #242A52); border: 0; }
 .ayna-discover-matchbar strong { font: 700 .86rem var(--font-body); }
 .ayna-discover-matchbar small { margin-left: auto; font: 500 .72rem var(--font-body); color: var(--color-text-muted, #78716C); }
+
+/* Buy handoff note + non-blocking "did you buy it?" toast */
+.pdp-buy-note { flex-basis: 100%; margin: .5rem 0 0; font: 400 .8125rem/1.4 var(--font-body); color: var(--color-text-muted, #5E564E); }
+.v6-survey-toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 60; width: min(420px, calc(100vw - 32px)); }
+.v6-survey-toast .v6-survey-card { position: relative; max-width: none; width: 100%; margin: 0; padding: 14px 16px; border-radius: 14px; background: #242A52; color: #FAF6F1; box-shadow: 0 8px 24px rgba(26,23,20,.25); display: grid; gap: 6px; }
+.v6-survey-toast h2 { margin: 0; font: 600 .95rem var(--font-body); color: inherit; }
+.v6-survey-toast .v6-survey-sub, .v6-survey-toast p { margin: 0; font-size: .82rem; color: rgba(250,246,241,.8); }
+.v6-survey-toast .v6-survey-close { top: 8px; right: 8px; color: #FAF6F1; }
+.v6-survey-toast .v6-survey-actions { display: flex; gap: 8px; margin-top: 4px; }
+.v6-survey-toast .v6-survey-submit { background: #F0A84B; color: #242A52; }
+.v6-survey-toast .v6-survey-skip { background: transparent; color: #FAF6F1; border: 1px solid rgba(250,246,241,.4); }

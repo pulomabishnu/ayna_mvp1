@@ -47,13 +47,13 @@ describe('feedback popup lifecycle', () => {
     await tick(2000);
     expect(host.textContent).not.toContain('Did you buy');
     await act(async () => { window.dispatchEvent(new Event('blur')); window.dispatchEvent(new Event('focus')); window.dispatchEvent(new Event('focus')); });
-    expect(host.querySelectorAll('[role="dialog"]')).toHaveLength(1);
+    expect(host.querySelectorAll('.v6-survey-card')).toHaveLength(1);
     await click(button('Yes'));
     expect(host.textContent).toContain('Your anonymous answer was saved');
     expect(fetchMock.mock.calls.map(c => JSON.parse(c[1].body)).filter(b => b.action === 'submit')).toEqual([{ action: 'submit', receipt: 'purchase-token', answer: 'yes' }]);
     await click(button('Done'));
     await tick(4000);
-    expect(host.querySelector('[role="dialog"]')).toBeNull();
+    expect(host.querySelector('.v6-survey-card')).toBeNull();
     expect(readPurchaseQueue()).toHaveLength(0);
   });
   it('allows X without recording a purchase answer', async () => {
