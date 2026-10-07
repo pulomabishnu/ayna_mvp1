@@ -67,6 +67,10 @@ export async function verifyUser(req) {
   try {
     const { data, error } = await withTimeout(admin.auth.getUser(token), AUTH_TIMEOUT_MS, 'auth');
     if (error || !data?.user) return { user: null, error: 'invalid_session', admin };
+    // Supabase anonymous sign-ins (Community guests) are not accounts: they
+    // must never unlock account features, AI quota or SMS sends — anyone can
+    // mint one, so each would be a fresh quota.
+    if (data.user.is_anonymous) return { user: null, error: 'auth_required', admin };
     return { user: data.user, error: null, admin };
   } catch (e) {
     console.error('[usageLimit] verifyUser error:', e?.message);

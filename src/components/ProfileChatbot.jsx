@@ -183,6 +183,10 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
 
   useEffect(() => {
     if (chatHistory?.length > 0) setMessages(chatHistory);
+    // Settings > "Clear Ask Ayna history" empties App's chatHistory while this
+    // widget stays mounted; reset to the greeting so the cleared chat doesn't
+    // linger in local state (only when there was something to clear).
+    else if (Array.isArray(chatHistory)) setMessages((prev) => (prev.some((m) => m.role === 'user') ? buildWelcome(firstName) : prev));
   }, [chatHistory?.length]);
 
   useEffect(() => {

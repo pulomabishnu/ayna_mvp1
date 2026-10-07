@@ -46,7 +46,22 @@ function firstSentences(text, maxSentences = 3, maxChars = 480) {
   return out;
 }
 
-export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0, hasEcosystemContext = false, isInEcosystem = false, whyItWorks = null, considerations = null }) {
+export default function ProductEvidenceRail({
+  product,
+  matchLabels = [],
+  matchPercent = null,
+  aynaReviewCount = 0,
+  hasEcosystemContext = false,
+  isInEcosystem = false,
+  whyItWorks = null,
+  considerations = null,
+  // Optional: makes the match ring a button that toggles the "Why this
+  // match" breakdown; `whyMatchPanel` is rendered right below this card.
+  onToggleWhyMatch = null,
+  whyMatchOpen = false,
+  whyMatchPanelId = undefined,
+  whyMatchPanel = null,
+}) {
   // A product can be genuinely in the user's ecosystem while still scoring no
   // quiz-match labels (e.g. it was added manually, or its tags don't map to
   // any quiz answer) — that's a real state, not "no ecosystem yet". Flagged
@@ -103,14 +118,31 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
         <div className="pdp-rail__label">Why you&apos;re seeing this</div>
         {Number.isFinite(matchPercent) ? (
           <div className="pdp-rail__match-wrap">
-            <div
-              className="pdp-rail__match-ring"
-              style={{ '--match-pct': `${Math.max(0, Math.min(100, matchPercent))}%` }}
-              aria-label={`${matchPercent}% profile match`}
-            >
-              <span>{matchPercent}%</span>
-              <small>match</small>
-            </div>
+            {(() => {
+              const ring = (
+                <div
+                  className="pdp-rail__match-ring"
+                  style={{ '--match-pct': `${Math.max(0, Math.min(100, matchPercent))}%` }}
+                  aria-label={`${matchPercent}% profile match`}
+                >
+                  <span>{matchPercent}%</span>
+                  <small>match</small>
+                </div>
+              );
+              if (!onToggleWhyMatch) return ring;
+              return (
+                <button
+                  type="button"
+                  className="pdp-rail__match-btn"
+                  onClick={onToggleWhyMatch}
+                  aria-expanded={whyMatchOpen}
+                  aria-controls={whyMatchPanelId}
+                >
+                  {ring}
+                  <span className="pdp-rail__match-why">{whyMatchOpen ? 'Hide breakdown' : 'See why'}</span>
+                </button>
+              );
+            })()}
               <ul className="pdp-rail__reasons">
                 {matchLabels.length > 0
                   ? matchLabels.slice(0, 3).map((label) => (
@@ -139,6 +171,8 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
           <div className="pdp-rail__body" style={{ marginTop: 6, fontStyle: 'italic' }}>{considerations}</div>
         )}
       </div>
+
+      {whyMatchPanel}
 
       <div className="pdp-rail__card">
         <div className="pdp-rail__label">Clinician Opinion</div>

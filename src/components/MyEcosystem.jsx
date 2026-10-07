@@ -940,6 +940,9 @@ export default function MyEcosystem({
     user = null,
     userSession = null,
     isPremium = false,
+    progressSlot = null,
+    insightsSlot = null,
+    hubLinks = [],
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
     useEscapeToClose(showAddModal, () => setShowAddModal(false));
@@ -1823,6 +1826,7 @@ export default function MyEcosystem({
 
                 <div className="eco2-body">
                     <aside className="eco2-sidebar">
+                        {progressSlot}
                         <div className="eco2-sidebar__card">
                             <p className="eco2-sidebar__eyebrow">Your ecosystem</p>
                             {llmLoading ? (
@@ -1890,6 +1894,13 @@ export default function MyEcosystem({
                             {typeof onOpenDoctorPrep === 'function' && (
                                 <button type="button" className="eco2-tool-row" onClick={onOpenDoctorPrep}>Doctor prep<span>›</span></button>
                             )}
+                            {hubLinks.map((link) => (
+                                <button key={link.label} type="button" className="eco2-tool-row" onClick={link.onClick}>
+                                    {link.label}
+                                    {link.badge ? <em className="eco2-tool-row__badge">{link.badge}</em> : null}
+                                    <span>›</span>
+                                </button>
+                            ))}
                             <button type="button" className="eco2-tool-row" onClick={() => setShowMoreTools(true)}>More tools<span>›</span></button>
                         </div>
                     </aside>
@@ -1910,6 +1921,7 @@ export default function MyEcosystem({
                         <div style={{ textAlign: 'center', margin: '1rem 0 2rem' }}>
                             <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
                         </div>
+                        {insightsSlot}
 
                         <h2 className="eco2-main__details-title">Details</h2>
                         <div className="eco2-details">

@@ -47,7 +47,29 @@ returns uuid
 language sql
 stable
 as $$
-  select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
+  -- Same shape as Supabase's: the legacy per-claim GUC, else the claims JSON
+  -- PostgREST sets — so a local PostgREST can drive these tables too.
+  select coalesce(
+    nullif(current_setting('request.jwt.claim.sub', true), ''),
+    nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub'
+  )::uuid;
+$$;
+
+-- Supabase marks anonymous sign-ins (community guests) on auth.users.
+alter table auth.users add column if not exists is_anonymous boolean not null default false;
+
+-- Supabase's auth.jwt() returns the request's JWT claims. Locally a test sets
+--   set local request.jwt.claims = '{"is_anonymous": true}';
+create or replace function auth.jwt()
+returns jsonb
+language sql
+stable
+as $$
+  select coalesce(
+    nullif(current_setting('request.jwt.claim', true), ''),
+    nullif(current_setting('request.jwt.claims', true), ''),
+    '{}'
+  )::jsonb;
 $$;
 
 -- ── Extensions the migrations use ────────────────────────────────────────────

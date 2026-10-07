@@ -1,0 +1,273 @@
+/* Early Stage Startups page. Class names avoid "-card" (global v6 rule). */
+
+.ayna-early {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.ayna-early-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.25rem;
+  background: linear-gradient(140deg, var(--color-plum), var(--color-navy));
+  color: #FFF9F2;
+  margin-bottom: 1.25rem;
+}
+@media (min-width: 640px) {
+  .ayna-early-hero { padding: 2.25rem 2.25rem; }
+}
+.ayna-early-hero-ring {
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+.ayna-early-eyebrow {
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-amber);
+  margin: 0;
+}
+.ayna-early-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 6vw, 2.4rem);
+  line-height: 1.15;
+  margin: 0.5rem 0 0.5rem;
+  color: #FFF9F2;
+}
+.ayna-early-sub {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: rgba(255, 249, 242, 0.78);
+  margin: 0;
+  max-width: 560px;
+}
+
+.ayna-early-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1.25rem;
+}
+.ayna-early-chip {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-soft);
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.ayna-early-chip:hover { border-color: var(--color-amber); }
+.ayna-early-chip.is-active {
+  background: var(--color-navy);
+  border-color: var(--color-navy);
+  color: #FFF9F2;
+}
+
+.ayna-early-status {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.ayna-early-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+@media (min-width: 720px) {
+  .ayna-early-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ayna-early-grid > li.is-featured { grid-column: 1 / -1; }
+  .ayna-early-grid > li.is-featured .ayna-early-tile { flex-direction: row; }
+  .ayna-early-grid > li.is-featured .ayna-early-media { width: 40%; height: auto; min-height: 220px; }
+}
+.ayna-early-grid > li { min-width: 0; display: flex; }
+
+.ayna-early-tile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.ayna-early-tile:hover {
+  border-color: var(--color-amber);
+  box-shadow: var(--shadow-sm);
+}
+
+.ayna-early-media {
+  position: relative;
+  flex: none;
+  height: 150px;
+  background: linear-gradient(160deg, #F3EADC, #EFE3D2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.ayna-early-media img {
+  max-width: 70%;
+  max-height: 70%;
+  object-fit: contain;
+}
+.ayna-early-monogram {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  color: var(--color-plum);
+  opacity: 0.55;
+}
+.ayna-early-founded {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  background: rgba(255, 255, 255, 0.93);
+  color: var(--color-amber-deep);
+  font-family: var(--font-label);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-pill);
+}
+
+.ayna-early-body {
+  flex: 1;
+  min-width: 0;
+  padding: 1rem 1.1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+}
+.ayna-early-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+}
+.ayna-early-category {
+  font-family: var(--font-label);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-plum);
+}
+.ayna-early-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: #2F6B4F;
+}
+.ayna-early-stage-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2F6B4F;
+}
+.ayna-early-name {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--color-navy);
+  margin: 0.45rem 0 0.3rem;
+  overflow-wrap: anywhere;
+}
+.ayna-early-tagline {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--color-plum);
+  margin: 0 0 0.35rem;
+  line-height: 1.45;
+}
+.ayna-early-blurb {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.ayna-early-badges {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.ayna-early-badges li {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-secondary-fade);
+  color: var(--color-amber-deep);
+}
+.ayna-early-badges li.is-match {
+  background: var(--color-navy);
+  color: #FFF9F2;
+}
+.ayna-early-founders {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin: 0.6rem 0 0;
+}
+.ayna-early-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-top: auto;
+  padding-top: 0.9rem;
+}
+.ayna-early-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-navy);
+  color: #FFF9F2;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.6rem 1.15rem;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+}
+.ayna-early-cta:hover { background: var(--color-plum); color: #FFF9F2; }
+.ayna-early-link {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-plum);
+}
+
+.ayna-early-footnote {
+  margin: 1.5rem auto 0;
+  max-width: 720px;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  text-align: center;
+}

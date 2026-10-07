@@ -100,6 +100,16 @@ done
 # Seed the catalog (generated — regenerate with `npm run catalog:export`)
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed/product_catalog.sql
 
+# Community — after the catalog, because posts/playlists reference real
+# product_catalog rows. community_storage.sql needs Supabase's storage schema
+# (photo uploads) and is not part of the local test harness.
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/community.sql
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/community_storage.sql
+
+# Monthly check-ins (website MonthlyCheckin + mobile check-in). Owner-only RLS;
+# community guests (anonymous sign-ins) are excluded by every policy.
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/monthly_checkins.sql
+
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/_verify.sql
 ```
 
@@ -125,6 +135,47 @@ destroyed the ecosystem, reviews and learning memory of every user.
 | Composite key on `user_ecosystems` | Every product write raises `42P10`; the UI shows success and the data is lost |
 | `user_ecosystems` UPDATE/DELETE policy | Clearing the ecosystem is a silent 0-row no-op — stale products reappear |
 | A SELECT policy on `pending_phone_verifications` | **Account takeover.** See below. |
+
+## Community (`community.sql`)
+
+Questions, reviews, posts, comments, product tags, follows, friends, helpful
+votes, saves, playlists, friend recommendations, notifications, reports and
+blocks. `_community_behaviour_test.sql` runs in `scripts/test-migrations.sh`.
+
+- **Anonymous authors are protected in the database, not the UI.** The base
+  `community_posts` / `community_comments` tables only return a user's own rows.
+  Everyone else reads through the `community_feed_*` views, which null out
+  `author_id` and every profile field on anonymous rows. Notifications caused
+  by an anonymous comment are written with `actor_id = null`.
+- **Blocks never filter anonymous content.** If they did, blocking someone and
+  comparing the feed would reveal which anonymous posts are theirs. Anonymous
+  posts get "Hide" instead.
+- **No health data lives here.** The viewer's "% match" is computed in their
+  own browser from their own profile with the same engine as Browse
+  (`getProfileMatchPercentForProduct`); nothing about it is stored or sent.
+- **Counters and moderation status are trigger/service-role only** —
+  column-level UPDATE grants leave them out, so a client can't inflate them.
+- **Reports** land in `community_reports` (status `open`) for a future admin
+  view; read them with the service role.
+- **Guests browse and post without an account.** The feed views, profiles and
+  public playlists are readable by `anon`. A guest who posts gets a Supabase
+  *anonymous sign-in* (real `auth.uid()`, JWT `is_anonymous: true`), so
+  ownership, rate limits (5 posts / 20 comments an hour) and RLS work as for
+  accounts. Restrictive policies keep guests to anonymous discussions,
+  questions and comments, photos on them, and reports — no profile, votes,
+  saves, follows, friends, blocks, playlists, reviews or notifications.
+  **Enable it in the dashboard: Authentication → Sign In / Providers → "Allow
+  anonymous sign-ins"** (guest posting shows "log in to post" until you do).
+  Before a public launch, turn on CAPTCHA for sign-ups and schedule a purge of
+  old anonymous users.
+- **Usernames** are lowercase (so unique case-insensitively), and
+  `community_username_problem()` blocks reserved names, ayna/staff/clinician
+  impersonation and a short abuse list, with a 30-day change cooldown.
+  `src/utils/community/username.js` mirrors it; a unit test keeps the lists in sync.
+- **Photos** are stored as paths, never URLs: `community_post_media.storage_path`
+  (`posts/<random uuid>.jpg`, no user id) and `community_profiles.avatar_url`
+  (`avatars/<own uid>/<uuid>.jpg`). The insert trigger checks the uploader owns
+  the storage object.
 
 ## Two deliberate security decisions
 

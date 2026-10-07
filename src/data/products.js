@@ -3038,6 +3038,38 @@ export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProf
 }
 
 /**
+ * The same profile signals the match engine uses, flattened into a tag set so
+ * other surfaces (the Community "For you" feed) can rank against them without
+ * a second, conflicting interpretation of the intake. Runs entirely
+ * client-side; the result is used for local ranking only and must never be
+ * sent to analytics or stored.
+ */
+export function getProfileInterestSignals(quizAnswers, healthProfile = null) {
+    const intake = rawIntakeFromProfile(quizAnswers);
+    const { directTags, inferredTags } = normalizeProfileSignals(quizAnswers, healthProfile);
+    const lifeStageLabels = getLifeStageLabels(intake);
+    const labels = [
+        ...getPrimaryGoalLabels(intake, quizAnswers),
+        ...getSymptomLabels(intake, quizAnswers),
+        ...getDiagnosisLabels(intake, healthProfile),
+        ...lifeStageLabels,
+    ];
+    const tags = new Set([...directTags, ...inferredTags]);
+    labels.forEach((label) => tagsForHealthLabel(label).forEach((t) => tags.add(t)));
+
+    const stages = lifeStageLabels.map((label) => String(label).toLowerCase());
+    const lifeStage = {
+        pregnant: stages.some((l) => /\bpregnant\b/.test(l)),
+        postpartum: stages.some((l) => /\bpostpartum\b/.test(l)),
+        perimenopause: stages.some((l) => /perimenopause/.test(l)),
+        postMenopause: stages.some((l) => /post[- ]?menopaus/.test(l)),
+        menopause: stages.some((l) => /\bi am in menopause\b/.test(l) || (/menopause/.test(l) && !/peri|post/.test(l))),
+        noPeriods: String(intake?.periodFlow || '') === 'I do not currently get periods',
+    };
+    return { tags: [...tags], lifeStage, hasProfile: labels.length > 0 || tags.size > 0 };
+}
+
+/**
  * Personalized product relevance score used across recommendation ranking
  * and signed-in UI. This is a relevance score, not a diagnosis or probability.
  */
