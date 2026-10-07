@@ -3114,6 +3114,15 @@ export const BRAND_PRODUCTS = [
             { url: 'https://us.kieroskincare.com/products/sun-stick-spf-50', label: 'kieroskincare.com: Airy Sun Stick SPF 50+ — ingredient list and claims' },
             { url: 'https://www.aad.org/public/everyday-care/sun-protection/shade-clothing-sunscreen/how-to-apply-sunscreen', label: 'American Academy of Dermatology: How to apply sunscreen' },
             { url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun', label: 'FDA: Sunscreen — how to help protect your skin from the sun' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/10475183/', label: 'PubMed: Daily sunscreen application in prevention of basal-cell and squamous-cell carcinomas — randomised controlled trial', chipLabel: 'Nambour sunscreen trial (Lancet 1999)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23732711/', label: 'PubMed: Sunscreen and prevention of skin aging — a randomized trial (Ann Intern Med 2013)', chipLabel: 'Sunscreen and skin aging trial (2013)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/21135266/', label: 'PubMed: Reduced melanoma after regular sunscreen use — randomized trial follow-up (J Clin Oncol 2011)', chipLabel: 'Sunscreen and melanoma follow-up (2011)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/19614894/', label: 'PubMed: The influence of the amount of sunscreen applied on its sun protection factor', chipLabel: 'Sunscreen amount and SPF study' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31961417/', label: 'PubMed: Effect of sunscreen application on plasma concentration of sunscreen active ingredients — randomized clinical trial (JAMA 2020)', chipLabel: 'FDA sunscreen absorption trial (JAMA 2020)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/33763894/', label: 'PubMed: The presence of benzophenone in sunscreens and cosmetics containing the organic UV filter octocrylene', chipLabel: 'Benzophenone in octocrylene products (2021)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin', chipLabel: 'Vitamin C + madecassoside trial, 20 women' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6290557/', label: 'NIH (PMC): Madecassoside inhibits melanin synthesis by blocking ultraviolet-induced inflammation', chipLabel: 'Madecassoside UV study' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the response of skin to oxidative stress — vitamin E as a key indicator', chipLabel: 'Vitamin E in skin (review)' },
         ],
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
@@ -3273,6 +3282,7 @@ export const BRAND_PRODUCTS = [
         doctorOpinionShort: 'An oil-based makeup-removing balm with no added fragrance. Its soothing and barrier claims come from kieró, and no independent study of the product was found.',
         doctorOpinionCitations: [
             { url: 'https://us.kieroskincare.com/products/comfort-cleansing-balm', label: 'kieroskincare.com: Comfort Cleansing Balm — ingredient list and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the response of skin to oxidative stress — vitamin E as a key indicator', chipLabel: 'Vitamin E in skin (review)' },
         ],
         whoItsFor: [
             'People who wear makeup or sunscreen and want a first cleanse that dissolves it without scrubbing',
@@ -3361,6 +3371,15 @@ export const BRAND_PRODUCTS = [
             { url: 'https://us.kieroskincare.com/products/sun-barrier', label: 'kieroskincare.com: Prime Sun Gel SPF 40+ — ingredient list and claims' },
             { url: 'https://www.aad.org/public/everyday-care/sun-protection/shade-clothing-sunscreen/how-to-apply-sunscreen', label: 'American Academy of Dermatology: How to apply sunscreen' },
             { url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun', label: 'FDA: Sunscreen — how to help protect your skin from the sun' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/10475183/', label: 'PubMed: Daily sunscreen application in prevention of basal-cell and squamous-cell carcinomas — randomised controlled trial', chipLabel: 'Nambour sunscreen trial (Lancet 1999)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23732711/', label: 'PubMed: Sunscreen and prevention of skin aging — a randomized trial (Ann Intern Med 2013)', chipLabel: 'Sunscreen and skin aging trial (2013)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/21135266/', label: 'PubMed: Reduced melanoma after regular sunscreen use — randomized trial follow-up (J Clin Oncol 2011)', chipLabel: 'Sunscreen and melanoma follow-up (2011)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/19614894/', label: 'PubMed: The influence of the amount of sunscreen applied on its sun protection factor', chipLabel: 'Sunscreen amount and SPF study' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31961417/', label: 'PubMed: Effect of sunscreen application on plasma concentration of sunscreen active ingredients — randomized clinical trial (JAMA 2020)', chipLabel: 'FDA sunscreen absorption trial (JAMA 2020)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/10965426/', label: 'PubMed: Effect of topically applied dexpanthenol on epidermal barrier function and stratum corneum hydration', chipLabel: 'Dexpanthenol skin barrier trial (2000)' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3767376/', label: 'NIH (PMC): Photomutagenicity of cosmetic ingredient chemicals azulene and guaiazulene', chipLabel: 'Azulene lab study (2003)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin', chipLabel: 'Vitamin C + madecassoside trial, 20 women' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6290557/', label: 'NIH (PMC): Madecassoside inhibits melanin synthesis by blocking ultraviolet-induced inflammation', chipLabel: 'Madecassoside UV study' },
         ],
         whoItsFor: [
             'People who want a lightweight daily sunscreen that works under makeup',
@@ -3510,6 +3529,10 @@ export const BRAND_PRODUCTS = [
         doctorOpinionShort: 'Niacinamide improved wrinkles, dark spots and redness in two 12-week controlled trials at 5%, but kieró doesn\'t list this serum\'s percentage. Hyaluronic acid and panthenol have small controlled studies for hydration. No independent study of the product, its peptides, or its prickly pear extract was found.',
         doctorOpinionCitations: [
             { url: 'https://us.kieroskincare.com/products/essential-boost-serum', label: 'kieroskincare.com: Essential Boost Serum — ingredient list and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/16029679/', label: 'PubMed: Niacinamide — a B vitamin that improves aging facial skin appearance', chipLabel: 'Niacinamide trial, 50 women (2005)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/18492135/', label: 'PubMed: Topical niacinamide reduces yellowing, wrinkling, red blotchiness, and hyperpigmented spots in aging facial skin', chipLabel: 'Niacinamide trial, 50 women (2004)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/22052267/', label: 'PubMed: Efficacy of cream-based formulations of hyaluronic acid of different molecular weights in anti-wrinkle treatment', chipLabel: 'Hyaluronic acid trial, 76 women (2011)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/10965426/', label: 'PubMed: Effect of topically applied dexpanthenol on epidermal barrier function and stratum corneum hydration', chipLabel: 'Dexpanthenol skin barrier trial (2000)' },
         ],
         whoItsFor: [
             'People who want a lightweight hydrating serum for morning and night',
@@ -3624,6 +3647,11 @@ export const BRAND_PRODUCTS = [
         doctorOpinionShort: 'Retinal improved skin texture and hydration in a small 3-month trial, and niacinamide has good controlled-trial evidence at 5%, but kieró doesn\'t list either percentage. No independent study of this cream was found. It contains a retinoid, so ask your clinician first if you\'re pregnant, trying to conceive or breastfeeding.',
         doctorOpinionCitations: [
             { url: 'https://us.kieroskincare.com/products/pure-radiant-eye-cream', label: 'kieroskincare.com: Pure Radiant Eye Cream — ingredient list and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/29663701/', label: 'PubMed: Efficacy and safety of retinaldehyde 0.1% and 0.05% creams used to treat photoaged skin', chipLabel: 'Retinal trial, 40 women (2018)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/16029679/', label: 'PubMed: Niacinamide — a B vitamin that improves aging facial skin appearance', chipLabel: 'Niacinamide trial, 50 women (2005)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/18492135/', label: 'PubMed: Topical niacinamide reduces yellowing, wrinkling, red blotchiness, and hyperpigmented spots in aging facial skin', chipLabel: 'Niacinamide trial, 50 women (2004)' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8879334/', label: 'NIH (PMC): A Dunaliella salina extract counteracts skin aging under intense solar irradiation', chipLabel: 'Pink algae extract study (2022)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/26215715/', label: 'PubMed: Pregnancy outcomes following first-trimester exposure to topical retinoids — systematic review and meta-analysis', chipLabel: 'Retinoids in pregnancy meta-analysis (2015)' },
         ],
         whoItsFor: [
             'People looking for a gentle retinoid eye cream for fine lines',
@@ -4741,9 +4769,9 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
-    // The Good Bug (India) — Gut Balance and Good To Glow, verified against
-    // thegoodbug.com product pages and shipping policy on 2026-10-07. Prices
-    // are the store's own, in rupees; it ships to the US via Aramex. Science
+    // The Good Bug — Gut Balance and Good To Glow, verified against
+    // thegoodbug.com product pages on 2026-10-07. The store converts prices by
+    // visitor location; US dollar prices to be filled in from the US storefront. Science
     // claims read from their abstracts via NCBI E-utilities. Not a brand
     // partner, no affiliate link.
     {
@@ -4755,7 +4783,7 @@ export const BRAND_PRODUCTS = [
         internal: false,
         healthFunctions: ['supplement'],
         tags: ['goodbug', 'tgb', 'gut', 'gut health', 'probiotic', 'synbiotic', 'digestion', 'bloating', 'supplement'],
-        price: '₹1,249 for 30 sticks (1 month); ₹649 for 15. Ships to the US from India.',
+        price: 'See thegoodbug.com for current US price',
         whereToBuy: ['thegoodbug.com'],
         url: 'https://thegoodbug.com/products/healthy-gut-balance',
         image: '/products/goodbug/gut-balance.jpg', // supplied by ayna
@@ -4774,6 +4802,7 @@ export const BRAND_PRODUCTS = [
         doctorOpinionShort: 'Its main strain, LGG, reduces diarrhea in a large body of trials, mostly in children, but did little for bloating or constipation, and adult evidence is limited. The product page lists different strains in its ingredient list than in its description, so check the box. No independent study of this product was found.',
         doctorOpinionCitations: [
             { url: 'https://thegoodbug.com/products/healthy-gut-balance', label: 'thegoodbug.com: Gut Balance — ingredients and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/40702885/', label: 'PubMed: Effects of Lacticaseibacillus rhamnosus GG on gastrointestinal and respiratory outcomes — systematic review and meta-analysis (2025)', chipLabel: 'LGG meta-analysis, 69 trials (2025)' },
         ],
         whoItsFor: [
             'Adults looking for a daily probiotic powder for general digestive support',
@@ -4793,7 +4822,6 @@ export const BRAND_PRODUCTS = [
         warnings: [
             'Pregnant, breastfeeding, or managing IBS, diabetes or another medical condition: check with a doctor first (per The Good Bug).',
             'Loose stools or digestive changes lasting more than 2 days: stop and see a doctor (per The Good Bug).',
-            'Ships from India: The Good Bug says international shipping costs ₹1,100–3,200, takes about 2–3 weeks (3–5 business days to dispatch, then 8–10 to deliver), and customs duties or taxes may be extra.',
         ],
         communityReview: 'The Good Bug\'s product page shows 4.6 out of 5 stars from 119 reviews: 68% five stars, 22% four stars, 8% three stars and 2% two stars. The first reviews shown describe less bloating and acidity and better digestion after a few weeks or months. These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
         effectiveness: 'LGG reduced diarrhea in many trials, mostly in children; effects on bloating and constipation were limited.',
@@ -4833,7 +4861,7 @@ export const BRAND_PRODUCTS = [
         internal: false,
         healthFunctions: ['supplement', 'skin-hair'],
         tags: ['goodbug', 'tgb', 'skin', 'hair', 'nails', 'probiotic', 'synbiotic', 'glutathione', 'beauty supplement', 'supplement'],
-        price: '₹1,249 for 30 sticks (1 month); ₹649 for 15. Ships to the US from India.',
+        price: 'See thegoodbug.com for current US price',
         whereToBuy: ['thegoodbug.com'],
         url: 'https://thegoodbug.com/products/good-to-glow',
         image: '/products/goodbug/good-to-glow.jpg', // supplied by ayna
@@ -4852,6 +4880,9 @@ export const BRAND_PRODUCTS = [
         doctorOpinionShort: 'Oral glutathione lightened skin in small randomized trials, but long-term safety isn\'t established and this product doesn\'t list its dose. Evidence for its probiotic comes from a different form and strain. No independent study of this product was found.',
         doctorOpinionCitations: [
             { url: 'https://thegoodbug.com/products/good-to-glow', label: 'thegoodbug.com: Good To Glow — ingredients and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/20524875/', label: 'PubMed: Glutathione as an oral whitening agent — randomized, double-blind, placebo-controlled study', chipLabel: 'Oral glutathione trial, 60 people (2012)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/39444151/', label: 'PubMed: Glutathione as a skin-lightening agent and in melasma — systematic review', chipLabel: 'Glutathione systematic review (2024)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/25179904/', label: 'PubMed: Effects of oral intake of kimchi-derived Lactobacillus plantarum K8 lysates on skin moisturizing', chipLabel: 'L. plantarum K8 skin study (2015)' },
         ],
         whoItsFor: [
             'Adults interested in an ingestible skin, hair and nail supplement alongside their skincare',
@@ -4870,7 +4901,6 @@ export const BRAND_PRODUCTS = [
         warnings: [
             'Pregnant, breastfeeding, or managing a medical condition: check with a doctor first (per The Good Bug). Not for children.',
             'Contains biotin: the FDA warns biotin can interfere with certain lab tests, so tell your doctor before blood work.',
-            'Ships from India: The Good Bug says international shipping costs ₹1,100–3,200, takes about 2–3 weeks (3–5 business days to dispatch, then 8–10 to deliver), and customs duties or taxes may be extra.',
         ],
         communityReview: 'The Good Bug\'s product page shows 4.3 out of 5 stars from 1,623 reviews: 36% five stars, 61% four stars, 2% three stars, and two one-star reviews. The first reviews shown describe brighter, glowing skin after about a month, for example: "within a month of using it, people started telling me that my skin is glowing." These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
         effectiveness: 'Oral glutathione lightened skin in small randomized trials; the probiotic\'s skin evidence comes from a different form and strain.',
@@ -4950,6 +4980,9 @@ export const BRAND_PRODUCTS = [
         doctorOpinionCitations: [
             { url: 'https://www.happyhead.com/products/hair-growth-supplements', label: 'happyhead.com: Hair Growth Supplements — ingredients and claims' },
             { url: 'https://www.nccih.nih.gov/health/ashwagandha', label: 'NIH NCCIH: Ashwagandha — safety' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/36449274/', label: 'PubMed: Evaluation of the safety and effectiveness of nutritional supplements for treating hair loss — systematic review (JAMA Dermatol 2023)', chipLabel: 'Hair supplements review, JAMA Derm (2023)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28879195/', label: 'PubMed: A review of the use of biotin for hair loss', chipLabel: 'Biotin for hair loss review (2017)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/33313047/', label: 'PubMed: Natural hair supplement — friend or foe? Saw palmetto, a systematic review in alopecia', chipLabel: 'Saw palmetto systematic review (2020)' },
         ],
         whoItsFor: [
             'Adults with thinning hair looking for a drug-free supplement, ideally after a clinician has checked for causes like iron or thyroid problems',
@@ -5047,6 +5080,8 @@ export const BRAND_PRODUCTS = [
         doctorOpinionShort: 'Its central claim, that magnesium absorbs through the skin, is unsupported according to a 2017 review; a small 2017 pilot found only a slight rise in blood magnesium. No study of this product or of magnesium cream for sleep was found. It may still work as a soothing bedtime massage cream.',
         doctorOpinionCitations: [
             { url: 'https://www.magnumsolace.com/products/nighttime-magnesium-cream', label: 'magnumsolace.com: Nighttime Magnesium Cream — ingredients and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28788060/', label: 'PubMed: Myth or reality — transdermal magnesium? (Nutrients 2017)', chipLabel: 'Transdermal magnesium review (2017)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28403154/', label: 'PubMed: Effect of transdermal magnesium cream on serum and urinary magnesium levels — pilot study', chipLabel: 'Magnesium cream pilot trial, 25 people (2017)' },
         ],
         whoItsFor: [
             'People who like a rich, moisturizing massage cream as part of a bedtime routine',
