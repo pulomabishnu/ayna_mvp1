@@ -3186,7 +3186,6 @@ function App() {
             currentProfile={quizResults}
             onSave={handleHealthProfileEditorSave}
             onCancel={() => setCurrentView('ecosystem')}
-            onOpenPhoneVerify={handleOpenPhoneVerification}
             onOpenDeleteAccount={handleOpenDeleteAccount}
           />
         )}
@@ -3359,7 +3358,6 @@ function App() {
               { label: 'Screenings', onClick: () => setCurrentView('screenings') },
               { label: 'Health library', onClick: () => setCurrentView('articles') },
               { label: 'Early-stage startups', onClick: () => setCurrentView('early-startups') },
-              { label: 'Settings', onClick: () => setCurrentView('preferences') },
             ]}
             insightsSlot={(
               <EcosystemInsights

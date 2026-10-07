@@ -2,9 +2,8 @@ import { getVariantSelection } from '../utils/productVariantSelection';
 import { recordRetailerVisit } from '../utils/feedbackClient';
 import React, { useState, useMemo, useEffect } from 'react';
 import { getAppSessionId } from '../utils/conversationId';
-import ProductEvidenceRail from './ProductEvidenceRail';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, getRecommendationExplanation, CATEGORY_LABELS } from '../data/products';
+import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../utils/partnerBrands';
@@ -19,9 +18,6 @@ import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verific
 import { getSafetyAlertText, buildSummarySentences } from '../utils/productSafetyAlert';
 import posthog from 'posthog-js';
 import { productHref } from '../utils/productRoute';
-
-/** Remembers whether this browser prefers the tabs (1f) or evidence rail (1g) layout. */
-const PRODUCT_VIEW_KEY = 'ayna_product_detail_view_v1';
 
 const AYNA_TABS = [
   { id: 'summary', label: 'ayna Summary' },
@@ -430,29 +426,11 @@ export default function ProductModal({
   // state of the match breakdown.
   onEditHealthProfile = null,
 }) {
-  // The mockup draws the product page two ways — 1f, tabs with the Ayna
-  // summary, and 1g, an evidence rail beside the specs. Both are built, and
-  // this toggle switches between them so MVP users can tell us which one
-  // they prefer. The choice is remembered per browser and reported to PostHog.
-  const [detailView, setDetailView] = useState(() => {
-    try {
-      const stored = localStorage.getItem(PRODUCT_VIEW_KEY);
-      return stored === 'rail' || stored === 'tabs' ? stored : 'tabs';
-    } catch {
-      return 'tabs';
-    }
-  });
-  const chooseDetailView = (next) => {
-    setDetailView(next);
-    try { localStorage.setItem(PRODUCT_VIEW_KEY, next); } catch { /* private mode */ }
-    posthog.capture('product_detail_view_changed', { view: next, productId: product?.id });
-  };
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [selectedVariantId, setSelectedVariantId] = useState(product.defaultVariantId || '');
   const choice = getVariantSelection(product, selectedVariantId);
   const displayName = choice.displayName;
 
-  const [activeTab, setActiveTab] = useState('summary');
   const [reviewInput, setReviewInput] = useState('');
   const [hoverRating, setHoverRating] = useState(0);
   const [resolvedModalImage, setResolvedModalImage] = useState(null);
@@ -490,19 +468,6 @@ export default function ProductModal({
     () => getProfileMatchPercentForProduct(product, quizResults, healthProfile),
     [product, quizResults, healthProfile]
   );
-  // A per-product LLM-written narrative (from ecosystem generation), when
-  // present, takes precedence over the generic engine explanation — same
-  // precedence MyEcosystem.jsx already uses for this same product shape.
-  const recommendationExplanation = useMemo(
-    () => getRecommendationExplanation(product, quizResults, healthProfile),
-    [product, quizResults, healthProfile]
-  );
-  const useLlmNarrative = product?.whyItWorks != null && String(product.whyItWorks).trim().length > 0;
-  const whyItWorks = useLlmNarrative ? String(product.whyItWorks).trim() : recommendationExplanation.whyItWorks;
-  const recommendationConsiderations = useLlmNarrative
-    ? (String(product.considerations || '').trim() || null)
-    : recommendationExplanation.considerations;
-  const hasEcosystemContext = isInEcosystem || (Array.isArray(ecosystemProducts) && ecosystemProducts.length > 0);
   const matchPercent = profileMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
   const viewerHasProfile = hasProfileSignal(quizResults, healthProfile);
@@ -1023,27 +988,9 @@ export default function ProductModal({
             )}
           </div>
 
-          <div className="pdp-viewswitch__group" role="group" aria-label="Product detail layout">
-            <button
-              type="button"
-              className={detailView === 'tabs' ? 'is-active' : undefined}
-              aria-pressed={detailView === 'tabs'}
-              onClick={() => chooseDetailView('tabs')}
-            >
-              Summary
-            </button>
-            <button
-              type="button"
-              className={detailView === 'rail' ? 'is-active' : undefined}
-              aria-pressed={detailView === 'rail'}
-              onClick={() => chooseDetailView('rail')}
-            >
-              Evidence
-            </button>
-          </div>
         </div>
 
-        {detailView === 'tabs' && (<>
+        <>
           {/* Product head — mockup board 1f: square product tile beside the
               eyebrow / name / price / actions column. */}
           <div className="pdp-head">
@@ -1056,7 +1003,7 @@ export default function ProductModal({
                   on the Scientific literature tab (where this ingredient
                   detail is relevant), not shown under every tab, and only
                   when a catalog entry has this on file. */}
-              {activeTab === 'scientific' && Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
+              {Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
                 <div style={{ marginTop: 20 }}>
                   <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
                     INSIDE
@@ -1119,23 +1066,11 @@ export default function ProductModal({
 
               {/* Small tabs, matching mockup 1f — dark underline on the active
                   tab, muted text on the rest, one compact card below. */}
-              <div className="pdp-tabpanel">
-                <div className="pdp-tabs" role="tablist" aria-label="Product information">
-                  {visibleTabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      role="tab"
-                      aria-selected={activeTab === tab.id}
-                      className={activeTab === tab.id ? 'is-active' : undefined}
-                      onClick={() => setActiveTab(tab.id)}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
+              <div className="pdp-tabpanel pdp-onepage">
 
-                {activeTab === 'summary' && (
+                <div className="pdp-section" style={{ order: 1 }}>
+                  <h3 className="pdp-section__title">ayna summary</h3>
+                  {(
                   <div className="pdp-summary-card">
                     {sourceCounts.total > 0 && (
                       <div className="pdp-summary-card__meta">
@@ -1205,9 +1140,12 @@ export default function ProductModal({
                       </div>
                     )}
                   </div>
-                )}
+                  )}
+                </div>
 
-                {activeTab === 'clinician' && (
+                <div className="pdp-section" style={{ order: 2 }}>
+                  <h3 className="pdp-section__title">Clinician opinion</h3>
+                  {(
                   <div className="pdp-summary-card">
                     {product.doctorOpinion ? (
                       <>
@@ -1252,9 +1190,12 @@ export default function ProductModal({
                       <p className="pdp-summary-card__empty">No clinician note yet.</p>
                     )}
                   </div>
-                )}
+                  )}
+                </div>
 
-                {activeTab === 'whoitsfor' && (
+                {visibleTabs.some((t) => t.id === 'whoitsfor') && <div className="pdp-section" style={{ order: 5 }}>
+                  <h3 className="pdp-section__title">Who it’s for</h3>
+                  {(
                   <div className="pdp-summary-card">
                     <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
                       {(product.whoItsFor || []).map((item) => (
@@ -1265,9 +1206,12 @@ export default function ProductModal({
                       ))}
                     </ul>
                   </div>
-                )}
+                  )}
+                </div>}
 
-                {activeTab === 'howtouse' && (
+                {visibleTabs.some((t) => t.id === 'howtouse') && <div className="pdp-section" style={{ order: 6 }}>
+                  <h3 className="pdp-section__title">How to use</h3>
+                  {(
                   <div className="pdp-summary-card">
                     {product.howToUse?.intro && (
                       <p className="pdp-summary-card__body" style={{ marginTop: 0 }}>{product.howToUse.intro}</p>
@@ -1294,9 +1238,12 @@ export default function ProductModal({
                       </div>
                     )}
                   </div>
-                )}
+                  )}
+                </div>}
 
-                {activeTab === 'community' && (
+                <div className="pdp-section" style={{ order: 4 }}>
+                  <h3 className="pdp-section__title">Social media + reviews</h3>
+                  {(
                   <div className="pdp-summary-card">
                     {(aynaRating != null || aynaReviewCount > 0) && (
                       <div className="pdp-community__rating">
@@ -1372,18 +1319,37 @@ export default function ProductModal({
                       </>
                     )}
                   </div>
-                )}
+                  )}
+                </div>
 
-                {activeTab === 'ask' && (
+                {factRows.length > 0 && (
+                  <div className="pdp-section" style={{ order: 8 }}>
+                    <h3 className="pdp-section__title">Details</h3>
+                    <div className="pdp-summary-card">
+                      {factRows.map((row) => (
+                        <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 16, padding: '6px 0', fontSize: 14 }}>
+                          <span style={{ color: '#8c8078' }}>{row.label}</span>
+                          <span style={{ textAlign: 'right' }}>{row.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="pdp-section" style={{ order: 9 }}>
+                  <h3 className="pdp-section__title">Ask ayna</h3>
+                  {(
                   <AskAynaProductTab
                     product={product}
                     aiContext={{}}
                     quizResults={quizResults}
                     ecosystemProducts={ecosystemProducts}
                   />
-                )}
+                  )}
+                </div>
 
-                {activeTab === 'scientific' && (
+                <div className="pdp-section" style={{ order: 3 }}>
+                  <h3 className="pdp-section__title">Research</h3>
+                  {(
                   <div className="pdp-summary-card">
                     {ingredientCitationEntries.length > 0 && product.ingredientScienceNote && (
                       <p className="pdp-summary-card__empty" style={{ marginTop: 0, marginBottom: 14 }}>{product.ingredientScienceNote}</p>
@@ -1411,115 +1377,15 @@ export default function ProductModal({
                       <p className="pdp-summary-card__empty">No scientific literature yet.</p>
                     )}
                   </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
           {relatedGrid}
-        </>)}
+        </>
 
-        {detailView === 'rail' && (
-          <div className="pdp-evidence-head">
-            <div>
-              {galleryTile}
-
-              {/* Sits under the product image, in the same left column — not
-                  every product has this (only rendered when a catalog entry
-                  carries whoItsFor/howToUse), so it's invisible for the vast
-                  majority of products without this level of brand-supplied
-                  detail on file. Filling the dead space below a short square
-                  image beats stacking these under the much taller middle
-                  info column, which pushed them far down the page. */}
-              {Array.isArray(product.whoItsFor) && product.whoItsFor.length > 0 && (
-                <div style={{ marginTop: 20 }}>
-                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
-                    WHO IT&apos;S FOR
-                  </div>
-                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    {product.whoItsFor.map((item) => (
-                      <li key={item} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 8 }}>
-                        <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {product.howToUse?.steps?.length > 0 && (
-                <div style={{ marginTop: 20 }}>
-                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
-                    HOW TO USE
-                  </div>
-                  {product.howToUse.intro && (
-                    <p style={{ fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', margin: '0 0 8px' }}>{product.howToUse.intro}</p>
-                  )}
-                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    {product.howToUse.steps.map((step) => (
-                      <li key={step} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 8 }}>
-                        <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {product.howToUse.sourceUrl && (
-                    <div style={{ marginTop: 10 }}>
-                      <a
-                        href={product.howToUse.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="pdp-head__badge"
-                        title={product.howToUse.sourceLabel || product.howToUse.sourceUrl}
-                      >
-                        {hostLabel(product.howToUse.sourceUrl) || 'Source'}
-                      </a>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="pdp-evidence-head__info">
-              <div className="pdp-head__eyebrow">{eyebrow}</div>
-              <h2 className="pdp-head__name" style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)' }}>{displayName}</h2>
-              {(product.price || product.stage) && (
-                <span className="pdp-head__price" style={choice.hasVariants && !choice.variant?.priceLabel ? { fontSize: '1rem' } : undefined}>{choice.hasVariants ? choice.variant?.priceLabel || 'See retailer for price' : product.price || product.stage}</span>
-              )}
-              {summarySentences[0] && (
-                <p className="pdp-evidence-head__desc">{summarySentences[0]}</p>
-              )}
-              {buildMatchCta}
-              {safetyAlert && <SafetyAlert text={safetyAlert} sources={product.safetyNoteSources || []} />}
-              {actionButtons}
-              {factRows.length > 0 && (
-                <div className="pdp-rail__specs">
-                  {factRows.map((row, i) => (
-                    <div key={row.label} className={`pdp-rail__spec${i === factRows.length - 1 ? ' pdp-rail__spec--last' : ''}`}>
-                      <span>{row.label}</span>
-                      <span>{row.value}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <ProductEvidenceRail
-              product={product}
-              matchLabels={matchLabels}
-              matchPercent={matchPercent}
-              aynaReviewCount={aynaReviewCount}
-              hasEcosystemContext={hasEcosystemContext}
-              isInEcosystem={isInEcosystem}
-              whyItWorks={whyItWorks}
-              considerations={recommendationConsiderations}
-              onToggleWhyMatch={toggleWhyMatch}
-              whyMatchOpen={whyMatchOpen}
-              whyMatchPanelId={whyMatchPanelId}
-              whyMatchPanel={whyMatchPanel}
-            />
-          </div>
-        )}
       </div>
 
       {lightboxOpen && heroImageSrc && (

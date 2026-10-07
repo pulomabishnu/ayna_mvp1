@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import AccountDataControls from './AccountDataControls';
-import { getSupabaseClient } from '../utils/supabaseClient';
-import { loadPhoneNumberForUser } from '../utils/phoneNumberStore';
 import {
   NotSignedInError,
   fetchNotificationPreferences,
@@ -14,11 +12,6 @@ import {
   readStoredTextSizeIndex,
   setTextSizeIndex as applyAndStoreTextSize,
 } from '../utils/textSize';
-import {
-  formatQuietHoursSummary,
-  normalizeTimeInput,
-  validateQuietHours,
-} from '../utils/quietHours';
 import './PreferencesPage.css';
 
 /**
@@ -96,7 +89,6 @@ export default function PreferencesPage({
   user = null,
   onBack,
   onRequestLogin,
-  onOpenPhoneVerify,
   onOpenDeleteAccount,
   onOpenPrivacyPolicy,
   onPersonalizeChange,
@@ -105,16 +97,12 @@ export default function PreferencesPage({
 }) {
   const [loadState, setLoadState] = useState('loading'); // loading | signed_out | error | ready
   const [prefs, setPrefs] = useState(null);
-  const [phoneLast4, setPhoneLast4] = useState('');
   const [status, setStatus] = useState({ text: '', tone: 'info' });
   const [textSizeIndex, setTextSizeIndexState] = useState(readStoredTextSizeIndex);
-  const [quietDraft, setQuietDraft] = useState({ start: '22:00', end: '07:00' });
-  const [quietError, setQuietError] = useState('');
   const [clearConfirm, setClearConfirm] = useState(false);
   const statusTimer = useRef(null);
   const onPersonalizeRef = useRef(onPersonalizeChange);
   const textGroupName = useId();
-  const channelGroupName = useId();
 
   useEffect(() => { onPersonalizeRef.current = onPersonalizeChange; }, [onPersonalizeChange]);
   useEffect(() => () => clearTimeout(statusTimer.current), []);
@@ -129,7 +117,6 @@ export default function PreferencesPage({
     fetchNotificationPreferences()
       .then((data) => {
         setPrefs(data);
-        setQuietDraft({ start: data.quietHoursStart || '22:00', end: data.quietHoursEnd || '07:00' });
         setLoadState('ready');
         // The account's saved size wins over this browser's, same as mobile.
         if (Number.isInteger(data.textSizeIndex)) {
@@ -143,20 +130,6 @@ export default function PreferencesPage({
   }, []);
 
   useEffect(() => { load(); }, [load, user?.id]);
-
-  // Masked number next to "Text message" when verified (best-effort; RLS-scoped).
-  useEffect(() => {
-    const supabase = getSupabaseClient();
-    if (!supabase || !user?.id || !prefs?.phoneVerified) return undefined;
-    let cancelled = false;
-    loadPhoneNumberForUser(supabase, user.id)
-      .then((row) => {
-        const digits = String(row?.phone_number || '').replace(/\D/g, '');
-        if (!cancelled && row?.is_verified && digits.length >= 4) setPhoneLast4(digits.slice(-4));
-      })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, [user?.id, prefs?.phoneVerified]);
 
   const retry = () => {
     setLoadState('loading');
@@ -185,40 +158,6 @@ export default function PreferencesPage({
     });
   };
 
-  const selectChannel = (key) => {
-    if (!prefs || key === prefs.deliveryChannel) return;
-    if (key === 'sms' && !prefs.phoneVerified) {
-      say('Verify your phone number first, then come back to switch to texts.');
-      return;
-    }
-    patchField('delivery_channel', 'deliveryChannel', key);
-  };
-
-  const commitQuietTime = (which, raw) => {
-    const value = normalizeTimeInput(raw);
-    const nextDraft = { ...quietDraft, [which]: raw };
-    setQuietDraft(nextDraft);
-    if (!value) {
-      setQuietError(raw ? 'Pick a valid time.' : '');
-      return;
-    }
-    const start = which === 'start' ? value : normalizeTimeInput(nextDraft.start);
-    const end = which === 'end' ? value : normalizeTimeInput(nextDraft.end);
-    const err = validateQuietHours(start, end);
-    if (err === 'same_time') {
-      setQuietError('Start and end can’t be the same time.');
-      return;
-    }
-    setQuietError('');
-    const apiField = which === 'start' ? 'quiet_hours_start' : 'quiet_hours_end';
-    const clientField = which === 'start' ? 'quietHoursStart' : 'quietHoursEnd';
-    const previous = prefs?.[clientField];
-    if (previous === value) return;
-    patchField(apiField, clientField, value).then((ok) => {
-      if (!ok && previous) setQuietDraft((d) => ({ ...d, [which]: previous }));
-    });
-  };
-
   const handleTextSize = (index) => {
     const i = applyAndStoreTextSize(normalizeTextSizeIndex(index));
     setTextSizeIndexState(i);
@@ -237,7 +176,6 @@ export default function PreferencesPage({
   };
 
   const signedIn = loadState === 'ready' && prefs;
-  const smsBadge = prefs?.phoneVerified ? (phoneLast4 ? `Verified ···${phoneLast4}` : 'Verified') : 'Verify to use';
 
   return (
     <main className="ayna-prefs" aria-labelledby="ayna-prefs-title">
@@ -262,7 +200,7 @@ export default function PreferencesPage({
           <div className="ayna-prefs__login">
             <p className="ayna-prefs__login-title">Log in for the rest of your settings</p>
             <p className="ayna-prefs__login-sub">
-              Notifications, delivery channel, quiet hours, personalization and your data controls save to your account. Text size works on this device without one.
+              Personalization and your data controls save to your account. Text size works on this device without one.
             </p>
             {onRequestLogin && (
               <button type="button" className="ayna-prefs__pill" onClick={onRequestLogin}>Log in</button>
@@ -279,93 +217,6 @@ export default function PreferencesPage({
 
         {signedIn && (
           <>
-            <Section title="Notifications">
-              <ToggleRow
-                title="Notifications"
-                sub="Recalls and safety flags on products you own."
-                checked={!!prefs.notificationsEnabled}
-                onChange={(v) => patchField('notifications_enabled', 'notificationsEnabled', v)}
-              />
-              <ToggleRow
-                title="Product updates"
-                sub="New matches and restocks, in a weekly digest."
-                checked={!!prefs.updatesEnabled}
-                onChange={(v) => patchField('updates_enabled', 'updatesEnabled', v)}
-              />
-            </Section>
-
-            <Section title="Delivery channel">
-              <fieldset className="ayna-prefs__fieldset">
-                <legend className="ayna-prefs__sr">How ayna reaches you</legend>
-                {CHANNELS.map((c) => {
-                  const locked = c.key === 'sms' && !prefs.phoneVerified;
-                  const checked = prefs.deliveryChannel === c.key;
-                  return (
-                    <div key={c.key} className="ayna-prefs__row ayna-prefs__row--radio">
-                      <label className={`ayna-prefs__radio${locked ? ' is-locked' : ''}`}>
-                        <input
-                          type="radio"
-                          name={channelGroupName}
-                          value={c.key}
-                          checked={checked}
-                          aria-disabled={locked || undefined}
-                          onChange={() => selectChannel(c.key)}
-                        />
-                        <span className="ayna-prefs__radio-dot" aria-hidden="true" />
-                        <span className="ayna-prefs__row-text">
-                          <span className="ayna-prefs__row-title">{c.label}</span>
-                          <span className="ayna-prefs__row-sub">{c.sub}</span>
-                        </span>
-                      </label>
-                      {c.key === 'sms' && (
-                        prefs.phoneVerified ? (
-                          <span className="ayna-prefs__badge">{smsBadge}</span>
-                        ) : (
-                          onOpenPhoneVerify && (
-                            <button type="button" className="ayna-prefs__badge ayna-prefs__badge--action" onClick={onOpenPhoneVerify}>
-                              Verify phone
-                            </button>
-                          )
-                        )
-                      )}
-                    </div>
-                  );
-                })}
-              </fieldset>
-            </Section>
-
-            <Section title="Quiet hours" note={prefs.quietHoursEnabled ? formatQuietHoursSummary(true, prefs.quietHoursStart, prefs.quietHoursEnd) : null}>
-              <ToggleRow
-                title="Quiet hours"
-                sub="Hold notifications overnight. They’ll be waiting when you’re back."
-                checked={!!prefs.quietHoursEnabled}
-                onChange={(v) => patchField('quiet_hours_enabled', 'quietHoursEnabled', v)}
-              />
-              {prefs.quietHoursEnabled && (
-                <div className="ayna-prefs__times">
-                  <label className="ayna-prefs__time">
-                    <span>From</span>
-                    <input
-                      type="time"
-                      value={quietDraft.start}
-                      onChange={(e) => commitQuietTime('start', e.target.value)}
-                      aria-invalid={!!quietError || undefined}
-                    />
-                  </label>
-                  <label className="ayna-prefs__time">
-                    <span>To</span>
-                    <input
-                      type="time"
-                      value={quietDraft.end}
-                      onChange={(e) => commitQuietTime('end', e.target.value)}
-                      aria-invalid={!!quietError || undefined}
-                    />
-                  </label>
-                  {quietError && <p className="ayna-prefs__field-error" role="alert">{quietError}</p>}
-                </div>
-              )}
-            </Section>
-
             <Section
               title="Personalization"
               note="When this is off, ayna stops using your intake answers and check-ins for match scores and Ask Ayna replies."

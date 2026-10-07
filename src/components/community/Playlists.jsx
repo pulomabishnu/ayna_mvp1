@@ -8,11 +8,12 @@ import * as store from '../../utils/community/communityStore';
 import { communityHref } from '../../utils/community/route';
 import { trackCommunity } from '../../utils/community/analytics';
 import { averageMatch } from '../../utils/community/ranking';
+import { publicMediaUrl, uploadCommunityImage, deleteCommunityImage, checkImageFile } from '../../utils/community/imageUpload';
 
 
 function Cover({ playlist, size = 'md' }) {
   const { productsById } = useCommunity();
-  if (playlist.cover_url) return <img className={`cm-cover cm-cover--${size}`} src={playlist.cover_url} alt="" loading="lazy" />;
+  if (playlist.cover_url) return <img className={`cm-cover cm-cover--${size}`} src={publicMediaUrl(playlist.cover_url)} alt="" loading="lazy" />;
   const products = (playlist.preview_product_ids || []).map((id) => productsById.get(id)).filter(Boolean).slice(0, 3);
   return (
     <div className={`cm-cover cm-cover--${size} cm-cover--g${hueIndex(playlist.id)} cm-cover--n${products.length}`} aria-hidden="true">
@@ -188,6 +189,11 @@ export function PlaylistPage({ playlistId }) {
     try { await store.removeFromPlaylist(supabase, playlist.id, productId); } catch (e) { toast(store.friendlyError(e)); load(); }
   };
 
+  const confirmDelete = async () => {
+    if (!window.confirm('Delete this playlist? This can’t be undone.')) return;
+    try { await store.deletePlaylist(supabase, playlist.id); navigate({ name: 'feed', tab: 'playlists' }, { replace: true }); } catch (e) { toast(store.friendlyError(e)); }
+  };
+
   const menu = playlist.is_mine
     ? [
       { label: 'Edit details', onClick: () => setEditing(true) },
@@ -230,7 +236,10 @@ export function PlaylistPage({ playlistId }) {
               </button>
             )}
             {playlist.is_mine && (
-              <button type="button" className="cm-pill-btn cm-pill-btn--primary" onClick={() => setAdding(true)}>+ add products</button>
+              <>
+                <button type="button" className="cm-pill-btn cm-pill-btn--primary" onClick={() => setAdding(true)}>+ add products</button>
+                <button type="button" className="cm-pill-btn" onClick={() => setEditing(true)}>edit</button>
+              </>
             )}
             {playlist.visibility === 'public' && (
               <button
@@ -293,7 +302,7 @@ export function PlaylistPage({ playlistId }) {
         </ol>
       )}
 
-      {editing && <EditPlaylistSheet playlist={playlist} onClose={() => setEditing(false)} onSaved={() => { setEditing(false); load(); }} />}
+      {editing && <EditPlaylistSheet playlist={playlist} onDelete={confirmDelete} onClose={() => setEditing(false)} onSaved={() => { setEditing(false); load(); }} />}
       {adding && (
         <AddProductsSheet
           playlist={playlist}
@@ -306,16 +315,41 @@ export function PlaylistPage({ playlistId }) {
   );
 }
 
-function EditPlaylistSheet({ playlist, onClose, onSaved }) {
+function EditPlaylistSheet({ playlist, onClose, onSaved, onDelete }) {
   const { supabase, toast } = useCommunity();
   const [title, setTitle] = useState(playlist.title);
   const [description, setDescription] = useState(playlist.description || '');
   const [isPublic, setIsPublic] = useState(playlist.visibility === 'public');
+  const [cover, setCover] = useState(playlist.cover_url || null);
+  const [newCover, setNewCover] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [saving, setSaving] = useState(false);
+  useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
+  const pick = (e) => {
+    const f = e.target.files?.[0];
+    e.target.value = '';
+    if (!f) return;
+    const problem = checkImageFile(f);
+    if (problem) { toast(problem); return; }
+    setNewCover(f);
+    setPreview(URL.createObjectURL(f));
+  };
+  const clearCover = () => { setNewCover(null); setPreview(null); setCover(null); };
   const save = async () => {
     setSaving(true);
     try {
-      await store.updatePlaylist(supabase, playlist.id, { title, description, visibility: isPublic ? 'public' : 'private' });
+      const patch = { title, description, visibility: isPublic ? 'public' : 'private' };
+      let uploaded = null;
+      if (newCover) {
+        uploaded = await uploadCommunityImage(supabase, newCover, { folder: 'covers' });
+        patch.coverUrl = uploaded.path;
+      } else if (cover !== (playlist.cover_url || null)) {
+        patch.coverUrl = null;
+      }
+      await store.updatePlaylist(supabase, playlist.id, patch);
+      if ('coverUrl' in patch && playlist.cover_url && !/^https?:/.test(playlist.cover_url)) {
+        deleteCommunityImage(supabase, playlist.cover_url).catch(() => {});
+      }
       onSaved();
     } catch (e) {
       toast(store.friendlyError(e));
@@ -323,12 +357,25 @@ function EditPlaylistSheet({ playlist, onClose, onSaved }) {
       setSaving(false);
     }
   };
+  const shown = preview || (cover ? publicMediaUrl(cover) : null);
   return (
-    <Sheet title="Edit playlist" onClose={onClose} footer={<button type="button" className="btn btn-navy cm-btn-block" disabled={!title.trim() || saving} onClick={save}>Save</button>}>
+    <Sheet title="Edit playlist" onClose={onClose} footer={<button type="button" className="btn btn-navy cm-btn-block" disabled={!title.trim() || saving} onClick={save}>{saving ? 'Saving…' : 'Save'}</button>}>
       <div className="cm-form">
+        <div className="cm-field">
+          <span>Cover</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {shown ? <img src={shown} alt="" className="cm-cover cm-cover--md" /> : <span className="cm-muted">Uses your products by default</span>}
+            <label className="cm-pill-btn" style={{ cursor: 'pointer' }}>
+              {shown ? 'change' : 'upload photo'}
+              <input type="file" accept="image/*" hidden onChange={pick} />
+            </label>
+            {shown && <button type="button" className="cm-pill-btn" onClick={clearCover}>remove</button>}
+          </div>
+        </div>
         <label className="cm-field"><span>Name</span><input className="cm-input" maxLength={80} value={title} onChange={(e) => setTitle(e.target.value)} /></label>
         <label className="cm-field"><span>Description</span><textarea className="cm-input" rows={2} maxLength={300} value={description} onChange={(e) => setDescription(e.target.value)} /></label>
         <Toggle checked={isPublic} onChange={setIsPublic} label="Public" hint="Anyone on ayna can find it." />
+        {onDelete && <button type="button" className="cm-link" style={{ color: '#b3261e', justifySelf: 'start' }} onClick={onDelete}>Delete playlist</button>}
       </div>
     </Sheet>
   );

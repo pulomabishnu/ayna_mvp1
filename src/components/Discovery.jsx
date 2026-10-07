@@ -433,7 +433,32 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Personalization requires an actual account (quiz results / health import /
     // real recommendations all live behind login) -- never on for a logged-out
     // visitor, regardless of any of those other signals somehow being truthy.
-    const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (Boolean(recommendedProductIds?.length) || hasQuizFrustrations || hasHealthImport || hasStatedLifeStage));
+    // Signed-in default is ON (when there is something to personalize with), and the
+    // last choice sticks per account: toggling it off, visiting My Ecosystem and
+    // coming back must not flip it on again.
+    const hasPersonalizeSignals = Boolean(recommendedProductIds?.length) || hasQuizFrustrations || hasHealthImport || hasStatedLifeStage;
+    const personalizeKey = user?.id ? `ayna_browse_personalized_${user.id}` : null;
+    const readStoredPersonalize = () => {
+        if (!personalizeKey) return null;
+        try {
+            const v = localStorage.getItem(personalizeKey);
+            return v === '1' ? true : v === '0' ? false : null;
+        } catch { return null; }
+    };
+    const [personalizationFilter, setPersonalizationFilterRaw] = useState(() => {
+        const stored = readStoredPersonalize();
+        return Boolean(user) && (stored ?? hasPersonalizeSignals);
+    });
+    const setPersonalizationFilter = (next) => {
+        setPersonalizationFilterRaw(next);
+        if (!personalizeKey) return;
+        try { localStorage.setItem(personalizeKey, next ? '1' : '0'); } catch { /* private mode */ }
+    };
+    // Signals (quiz / recommendations) often arrive after mount; with no saved
+    // choice yet, turn it on once there is something to personalize with.
+    useEffect(() => {
+        if (user && hasPersonalizeSignals && readStoredPersonalize() === null) setPersonalizationFilterRaw(true);
+    }, [user?.id, hasPersonalizeSignals]); // eslint-disable-line react-hooks/exhaustive-deps
     const [showFilters, setShowFilters] = useState(false);
     const [priceFilter, setPriceFilter] = useState('all');
     const [ratingFilter, setRatingFilter] = useState('all');
@@ -1595,11 +1620,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     ) : (
                                         <ProductImageFallback />
                                     )}
-                                    {matchPercent != null && (
-                                        <span className="ayna-browse-card__match">
-                                            <MatchGauge percent={matchPercent} size={24} theme="light" label="match" />
-                                        </span>
-                                    )}
                                     {isInEcosystem && <span className="ayna-browse-card__ecosystem">In ecosystem</span>}
                                 </div>
                                 <div className="ayna-discover-card__body">
@@ -1610,6 +1630,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     </div>
                                     <h3 className="ayna-discover-card__name">{item.name}</h3>
                                     <span className="ayna-discover-card__price">{item.price || item.stage || ''}</span>
+                                    {matchPercent != null && (
+                                        <span className="ayna-discover-matchbar">
+                                            <MatchGauge percent={matchPercent} size={26} theme="light" />
+                                            <strong>{Math.round(matchPercent)}% match</strong>
+                                            <small>for you</small>
+                                        </span>
+                                    )}
                                 </div>
                             </a>
                             <button

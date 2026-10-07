@@ -76,7 +76,7 @@ describe('PreferencesPage', () => {
     await act(async () => root.render(<PreferencesPage user={{ id: 'u1' }} onPersonalizeChange={onPersonalizeChange} />));
     await flush();
 
-    expect(host.querySelectorAll('[role="switch"]').length).toBeGreaterThanOrEqual(4);
+    expect(host.querySelectorAll('[role="switch"]').length).toBeGreaterThanOrEqual(1);
     expect(document.documentElement.getAttribute('data-ayna-text-size')).toBe('large');
     expect(onPersonalizeChange).toHaveBeenLastCalledWith(true);
 
@@ -90,18 +90,14 @@ describe('PreferencesPage', () => {
     expect(JSON.parse(patch[1].body)).toEqual({ personalize_with_data_enabled: false });
   });
 
-  it('signed in: SMS without a verified phone does not PATCH and offers phone verification', async () => {
+  it('signed in: web settings leave out app-only notification controls', async () => {
     session = { access_token: 'tok' };
-    const onOpenPhoneVerify = vi.fn();
-    await act(async () => root.render(<PreferencesPage user={{ id: 'u1' }} onOpenPhoneVerify={onOpenPhoneVerify} />));
+    await act(async () => root.render(<PreferencesPage user={{ id: 'u1' }} />));
     await flush();
-    const sms = host.querySelector('input[type="radio"][value="sms"]');
-    await act(async () => sms.click());
-    expect(fetchMock.mock.calls.some(([, o]) => o.method === 'PATCH')).toBe(false);
-    await act(async () => byText('button', 'Verify phone').click());
-    expect(onOpenPhoneVerify).toHaveBeenCalled();
+    const text = host.textContent;
+    expect(text).not.toMatch(/Quiet hours|Delivery channel|Product updates/);
+    expect(host.querySelector('input[type="radio"][value="sms"]')).toBeNull();
   });
-
   it('clears Ask Ayna history after confirming', async () => {
     const onClear = vi.fn();
     await act(async () => root.render(<PreferencesPage askAynaMessageCount={3} onClearAskAynaHistory={onClear} />));

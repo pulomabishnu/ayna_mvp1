@@ -5659,3 +5659,12 @@ textarea {
     flex: 1;
   }
 }
+
+/* Product page: one scrollable page, sections stacked (no tabs). */
+.pdp-onepage { display: flex; flex-direction: column; gap: 1.25rem; }
+.pdp-section__title { margin: 0 0 .5rem; font: 600 .72rem var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-muted, #78716C); }
+
+/* Browse cards: match % lives at the bottom of the card so it's hard to miss. */
+.ayna-discover-matchbar { display: flex; align-items: center; gap: .5rem; margin-top: .6rem; padding: .45rem .6rem; border-radius: 12px; background: rgba(240, 168, 75, .14); color: var(--color-navy, #242A52); border: 0; }
+.ayna-discover-matchbar strong { font: 700 .86rem var(--font-body); }
+.ayna-discover-matchbar small { margin-left: auto; font: 500 .72rem var(--font-body); color: var(--color-text-muted, #78716C); }
