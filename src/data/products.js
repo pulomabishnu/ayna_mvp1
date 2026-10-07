@@ -1638,8 +1638,7 @@ function getPrimaryGoalLabels(intake, quizAnswers) {
 
 function getSymptomLabels(intake, quizAnswers) {
     const explicit = asStringArray(intake?.symptoms);
-    if (explicit.length) return explicit;
-    return asStringArray(quizAnswers?.frustrations);
+    return [...new Set([...explicit, ...asStringArray(quizAnswers?.frustrations)])];
 }
 
 function getOtherNeedLabels(intake, quizAnswers, primaryLabels) {

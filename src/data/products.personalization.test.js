@@ -93,6 +93,12 @@ describe('personalized relevance scoring', () => {
         expect(twoNeeds).toBeGreaterThan(0);
     });
 
+    it('keeps older concern answers when a newer symptom list is also present', () => {
+        const pcosProduct = { id: 'pcos-support', name: 'PCOS support', category: 'supplement', tags: ['pcos'], healthFunctions: ['pcos-management'] };
+        const quiz = { frustrations: ['PCOS symptoms'], fullHealthIntake: { symptoms: ['cramps'] } };
+        expect(getProductRelevanceScore(pcosProduct, quiz)).toBeGreaterThan(0);
+    });
+
     it('does not let evidence alone claim a strong personal match', () => {
         const product = { id: 'single-need', name: 'Cramp warmer', category: 'cramp-relief', tags: ['cramps'], healthFunctions: ['cramp-relief'], scientificCitations: Array(8).fill('source') };
         const details = getProductMatchDetailsForProduct(product, { frustrations: ['Painful cramps'] });

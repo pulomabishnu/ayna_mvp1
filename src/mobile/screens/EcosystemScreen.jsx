@@ -37,7 +37,7 @@ export default function EcosystemScreen({
   const [selectedSeat, setSelectedSeat] = useState(null);
 
   const showingArea = selectedSeat && !selectedSeat.gap;
-  const gridTitle = showingArea ? selectedSeat.label : 'Matched for you';
+  const gridTitle = showingArea ? selectedSeat.label : 'In your Ecosystem';
   const gridProducts = showingArea ? selectedSeat.products : myProducts;
   const savedList = Object.values(savedProducts || {});
   const nextSaved = savedList[0];
