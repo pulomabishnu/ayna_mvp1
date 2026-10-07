@@ -1,6 +1,6 @@
 import { getProfileMatchPercentForProduct } from '../../data/products.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
-import MatchRing from './MatchRing.jsx';
+import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import ProductImage from './ProductImage.jsx';
 
 const PARTNER_BADGE_STYLE = {
@@ -49,54 +49,66 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   // pattern-match desktop's Discovery.jsx uses for its "Affiliate link"
   // card badge, just labeled "ayna Favorite" here per product's request.
   const isPartner = isPartnerBrandItem(product);
+  const insightLabels = [
+    'Ayna take',
+    product?.doctorOpinion || getVerificationLinks(product, 'doctor').length ? 'Clinical' : null,
+    product?.scientificCitations?.length || product?.ingredientScience?.some((item) => item.citations?.length) || getVerificationLinks(product, 'scientific').length ? 'Research' : null,
+    product?.communityReview || getVerificationLinks(product, 'community').length ? 'Social reviews' : null,
+  ].filter(Boolean);
+  const openCardWithKeyboard = (event) => {
+    if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault();
+      onClick?.();
+    }
+  };
 
   if (variant === 'list') {
     return (
       <div
         onClick={onClick}
+        onKeyDown={openCardWithKeyboard}
+        role="button"
+        tabIndex={0}
+        aria-label={`View ${name}`}
         style={{
-          display: 'flex',
-          gap: 12,
-          alignItems: 'center',
-          padding: '10px 12px',
-          borderRadius: 16,
+          display: 'grid',
+          gridTemplateColumns: '104px minmax(0,1fr)',
+          columnGap: 14,
+          padding: 12,
+          borderRadius: 20,
           cursor: 'pointer',
           background: 'var(--ayna-surface)',
           border: '1px solid var(--ayna-border)',
+          boxShadow: '0 2px 10px rgba(36,42,82,.04)',
         }}
       >
         <div
           style={{
             position: 'relative',
-            width: 56,
-            height: 56,
-            flex: 'none',
+            width: 104,
+            height: 112,
             borderRadius: 14,
             overflow: 'hidden',
             background: 'var(--ayna-bg-alt)',
           }}
         >
-          <ProductImage src={resolvedImage} alt={name} allowBrandLogo={product?.type === 'digital'} compact />
-          <div style={{ position: 'absolute', right: 2, bottom: 2 }}>
-            {matchPercent == null ? null : <MatchRing percent={matchPercent} size={28} onClick={openWhyMatch} />}
+          <ProductImage src={resolvedImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
+        </div>
+        <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', minWidth: 0 }}>
+            <span style={{ color: 'var(--ayna-text-muted)', fontSize: 11, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', flex: 1 }}>{brand || labelForCategory(category)}</span>
+            {isPartner && <span style={{ color: 'var(--ayna-brown)', fontSize: 10, whiteSpace: 'nowrap', fontWeight: 700 }}>Partner</span>}
+          </div>
+          <div style={{ color: 'var(--ayna-heading)', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.35, fontWeight: 700, marginTop: 5, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{name}</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 'auto', paddingTop: 8 }}>
+            <span style={{ color: 'var(--ayna-heading)', fontSize: 13, fontWeight: 700 }}>{resolvedPrice || 'See details'}</span>
+            <button type="button" onClick={(event) => { event.stopPropagation(); if (matchPercent != null) openWhyMatch?.(); else onStartQuiz?.(); }} style={{ border: 0, background: 'var(--ayna-peach)', borderRadius: 99, padding: '6px 9px', minHeight: 30, color: 'var(--ayna-heading)', fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap', cursor: 'pointer' }}>{matchPercent != null ? `${matchPercent}% match` : 'See match'}</button>
           </div>
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-            <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))' }}>{name}</div>
-            {resolvedPrice && (
-              <div style={{ flex: 'none', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)', whiteSpace: 'nowrap' }}>
-                {resolvedPrice}
-              </div>
-            )}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
-            {isPartner && (
-              <div style={{ ...PARTNER_BADGE_STYLE, position: 'static', padding: '3px 7px' }}>ayna partner</div>
-            )}
-            <div style={{ fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{brand || labelForCategory(category)}</div>
-          </div>
+        <div style={{ gridColumn: '1 / -1', borderTop: '1px solid var(--ayna-border)', marginTop: 12, paddingTop: 10, display: 'flex', flexWrap: 'wrap', gap: '6px 12px', color: 'var(--ayna-text-muted)', fontSize: 11, lineHeight: 1.4 }}>
+          {insightLabels.map((label) => <span key={label}>{label}</span>)}
         </div>
+        <div style={{ gridColumn: '1 / -1', color: 'var(--ayna-heading)', fontWeight: 700, fontSize: 12, marginTop: 10 }}>View product details <span aria-hidden="true">→</span></div>
       </div>
     );
   }
@@ -104,6 +116,10 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   return (
     <div
       onClick={onClick}
+      onKeyDown={openCardWithKeyboard}
+      role="button"
+      tabIndex={0}
+      aria-label={`View ${name}`}
       style={{
         background: 'transparent',
         padding: 0,
@@ -157,6 +173,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {resolvedPrice && (
           <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', whiteSpace: 'nowrap', color: 'var(--ayna-heading)' }}>{resolvedPrice}</div>
         )}
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px 8px', marginTop: 8, color: 'var(--ayna-text-muted)', fontSize: 10, lineHeight: 1.35 }}>
+        {insightLabels.map((label) => <span key={label}>{label}</span>)}
       </div>
     </div>
   );

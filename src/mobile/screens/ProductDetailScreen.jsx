@@ -961,7 +961,7 @@ export default function ProductDetailScreen({
             border: '1px solid ' + (isInEcosystem ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)'),
           }}
         >
-          {isInEcosystem ? 'In ecosystem' : '+ Ecosystem'}
+          {isInEcosystem ? 'Remove from Ecosystem' : 'Add to Ecosystem'}
         </div>
         {buyUrl ? (
           <a

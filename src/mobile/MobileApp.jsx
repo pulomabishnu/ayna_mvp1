@@ -427,6 +427,24 @@ export default function MobileApp() {
   const handleAddToEcosystem = (product) => {
     if (!product?.id) return;
 
+    const alreadyAdded = myProducts.some((entry) => entry.id === product.id);
+    if (alreadyAdded) {
+      updateSession((prev) => ({
+        myProducts: prev.myProducts.filter((entry) => entry.id !== product.id),
+        hasEcosystem: prev.myProducts.some((entry) => entry.id !== product.id),
+      }));
+      const supabase = getSupabaseClient();
+      if (authUser && supabase) {
+        upsertProductState(supabase, authUser.id, product, {
+          inEcosystem: false,
+          isTracked: false,
+          isOmitted: !!ecosystemFlagsRef.current.omittedProducts?.[product.id],
+        }).catch((error) => console.warn('[Ayna] mobile ecosystem remove sync failed:', error));
+        delete ecosystemFlagsRef.current.trackedProducts[product.id];
+      }
+      return;
+    }
+
     const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
     const ecosystemProduct = {
       ...product,

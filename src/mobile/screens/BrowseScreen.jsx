@@ -219,7 +219,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
       <div
         style={
           isList
-            ? { display: 'flex', flexDirection: 'column', gap: 4, padding: '0 14px' }
+            ? { display: 'flex', flexDirection: 'column', gap: 12, padding: '0 20px' }
             : { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }
         }
       >
