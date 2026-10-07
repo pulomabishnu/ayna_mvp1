@@ -4783,7 +4783,7 @@ export const BRAND_PRODUCTS = [
         internal: false,
         healthFunctions: ['supplement'],
         tags: ['goodbug', 'tgb', 'gut', 'gut health', 'probiotic', 'synbiotic', 'digestion', 'bloating', 'supplement'],
-        price: 'See thegoodbug.com for current US price',
+        price: '$13 (list $14)',
         whereToBuy: ['thegoodbug.com'],
         url: 'https://thegoodbug.com/products/healthy-gut-balance',
         image: '/products/goodbug/gut-balance.jpg', // supplied by ayna
@@ -4798,11 +4798,13 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Product claims are sourced from The Good Bug; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'The Good Bug says Gut Balance eases bloating, gas and indigestion, and supports digestion and immunity, using LGG® and BB-12®, two well-studied probiotic strains. No independent study of this product was found.\n\nFor LGG, a 2025 meta-analysis of 69 randomized trials found it reduced the risk and length of diarrhea, with moderate-certainty evidence that was strongest in children. Its effects on bloating, abdominal pain and constipation were limited, and the authors said evidence in adults was limited.\n\nOne thing to check: the ingredient list on The Good Bug\'s own page names different strains (L. plantarum UALp-05 and B. lactis UABla-12) than its description and box (LGG® and BB-12®). Research on one strain doesn\'t carry over to another, so it matters which formula you get.',
-        doctorOpinionShort: 'Its main strain, LGG, reduces diarrhea in a large body of trials, mostly in children, but did little for bloating or constipation, and adult evidence is limited. The product page lists different strains in its ingredient list than in its description, so check the box. No independent study of this product was found.',
+        doctorOpinion: 'The Good Bug says Gut Balance eases bloating, gas and indigestion, and supports digestion and immunity, using LGG® and BB-12®, two well-studied probiotic strains. No independent study of this product was found.\n\nFor LGG, a 2025 meta-analysis of 69 randomized trials found it reduced the risk and length of diarrhea, with moderate-certainty evidence that was strongest in children. Its effects on bloating, abdominal pain and constipation were limited, and the authors said evidence in adults was limited.\n\nThe Good Bug cites two studies. The first, a 2015 randomized, double-blind, placebo-controlled trial of 650 people in Croatia, gave the same two strains (LGG® and BB-12®) or a placebo for 14 days alongside antibiotics for an H. pylori stomach infection. The probiotic group had a higher cure rate (87% vs 73%) and less bloating, flatulence and other treatment side effects. Those were people on antibiotics, not people with everyday bloating, and two authors worked for JGL, the company that sells that probiotic. The second, a 2024 study of 20 healthy adults with post-meal bloating, found that a single dose of a different company\'s supplement (18 digestive enzymes plus ginger, fennel and peppermint) reduced belly distension after one meal compared with a placebo. It was funded by HUM Nutrition, whose employee wrote it, and Gut Balance\'s enzyme blend doesn\'t include those herbs.\n\nOne thing to check: the ingredient list on The Good Bug\'s own page names different strains (L. plantarum UALp-05 and B. lactis UABla-12) than its description and box (LGG® and BB-12®). Research on one strain doesn\'t carry over to another, so it matters which formula you get.',
+        doctorOpinionShort: 'Its main strain, LGG, reduces diarrhea in a large body of trials, mostly in children, but did little for bloating or constipation in a 2025 meta-analysis. The trial The Good Bug cites found less bloating only in people taking antibiotics for H. pylori. The product page lists different strains in its ingredient list than in its description, so check the box. No independent study of this product was found.',
         doctorOpinionCitations: [
             { url: 'https://thegoodbug.com/products/healthy-gut-balance', label: 'thegoodbug.com: Gut Balance — ingredients and claims' },
             { url: 'https://pubmed.ncbi.nlm.nih.gov/40702885/', label: 'PubMed: Effects of Lacticaseibacillus rhamnosus GG on gastrointestinal and respiratory outcomes — systematic review and meta-analysis (2025)', chipLabel: 'LGG meta-analysis, 69 trials (2025)' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4603068/', label: 'NIH (PMC): Probiotics for standard triple Helicobacter pylori eradication — randomized, double-blind, placebo-controlled trial (Hauser et al., 2015)', chipLabel: 'H. pylori probiotic trial, 650 people (2015)' },
+            { url: 'https://doi.org/10.2147/NDS.S453377', label: 'Nutrition and Dietary Supplements (2024): A multi-digestive enzyme and herbal dietary supplement reduces bloating in a single use in healthy adults', chipLabel: 'Enzyme + herbal bloating study, 20 people (2024)' },
         ],
         whoItsFor: [
             'Adults looking for a daily probiotic powder for general digestive support',
@@ -4826,6 +4828,20 @@ export const BRAND_PRODUCTS = [
         communityReview: 'The Good Bug\'s product page shows 4.6 out of 5 stars from 119 reviews: 68% five stars, 22% four stars, 8% three stars and 2% two stars. The first reviews shown describe less bloating and acidity and better digestion after a few weeks or months. These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
         effectiveness: 'LGG reduced diarrhea in many trials, mostly in children; effects on bloating and constipation were limited.',
         ingredientScience: [
+            {
+                name: 'LGG® + BB-12® with antibiotics (study cited by The Good Bug)',
+                text: 'In a 2015 randomized, double-blind, placebo-controlled trial, 650 people taking standard antibiotic therapy for an H. pylori stomach infection also took LGG® and BB-12® (10⁸ to 10¹⁰ live bacteria per capsule) or a placebo, twice a day for 14 days. The probiotic group had a higher cure rate (87% vs 73%) and fewer treatment side effects, including less bloating and flatulence, in 7 of 10 tracked symptoms. Participants were on antibiotics, not people with everyday bloating, and two of the authors worked for JGL, which sells that probiotic.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4603068/', label: 'NIH (PMC): Probiotics for standard triple Helicobacter pylori eradication — randomized, double-blind, placebo-controlled trial (Hauser et al., Medicine 2015)' },
+                ],
+            },
+            {
+                name: 'Digestive enzymes (study cited by The Good Bug)',
+                text: 'In a 2024 double-blind, placebo-controlled crossover study, 20 healthy adults with daily post-meal bloating took a single dose of a supplement with 18 digestive enzymes plus ginger, fennel and peppermint, or a placebo, before a test meal, then switched after a one-week washout. The supplement reduced waist distension by 58% at 30 minutes and 68% at 90 minutes compared with placebo. The study tested HUM Nutrition\'s product, was funded by HUM, and its author worked there. Gut Balance\'s enzyme blend doesn\'t include the herbs.',
+                citations: [
+                    { url: 'https://doi.org/10.2147/NDS.S453377', label: 'Nutrition and Dietary Supplements (2024): A multi-digestive enzyme and herbal dietary supplement reduces bloating in a single use in healthy adults' },
+                ],
+            },
             {
                 name: 'Lacticaseibacillus rhamnosus GG (LGG)',
                 text: 'The Good Bug calls this the world\'s most studied probiotic. A 2025 meta-analysis of 69 randomized trials found LGG reduced the risk of diarrhea and shortened it, with moderate-certainty evidence that was more consistent in children. It had limited effects on bloating, abdominal pain, constipation and nausea, and the authors said evidence in adults was limited.',
@@ -4861,7 +4877,7 @@ export const BRAND_PRODUCTS = [
         internal: false,
         healthFunctions: ['supplement', 'skin-hair'],
         tags: ['goodbug', 'tgb', 'skin', 'hair', 'nails', 'probiotic', 'synbiotic', 'glutathione', 'beauty supplement', 'supplement'],
-        price: 'See thegoodbug.com for current US price',
+        price: '$13 (list $14)',
         whereToBuy: ['thegoodbug.com'],
         url: 'https://thegoodbug.com/products/good-to-glow',
         image: '/products/goodbug/good-to-glow.jpg', // supplied by ayna
