@@ -5169,8 +5169,12 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['skin-hair'],
         tags: ['infiniwell', 'ptd-dbm', 'methyl vanillate', 'hair', 'scalp', 'hair serum', 'peptide', 'thinning', 'cosmetic'],
         price: '$69.95 for 25 mL',
-        whereToBuy: ['infiniwell.com'],
+        whereToBuy: ['infiniwell.com', 'Amazon'],
         url: 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate',
+        whereToBuyLinks: {
+            'infiniwell.com': 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate',
+            Amazon: 'https://www.amazon.com/InfiniWell-Hair-Growth-Serum-Restoration/dp/B09J97Z29F',
+        },
         image: '/products/infiniwell/ptd-dbm.webp', // supplied by ayna
         summary: 'A leave-in scalp serum in a 25 mL dropper bottle, pairing the peptide PTD-DBM with methyl vanillate, a compound derived from vanillin. InfiniWell calls it physician-formulated and sells it as a cosmetic for fuller-looking hair, not as a hair-loss treatment. Apply to the scalp once a day; no rinsing. The research on PTD-DBM has only been done in cells and mice so far. InfiniWell offers a refund if you don\'t feel a difference in 30 days.',
         ingredients: 'Per InfiniWell: PTD-DBM (a peptide) and methyl vanillate. InfiniWell doesn\'t list the full ingredients or the amount of either active as text on its product page.',
@@ -5212,7 +5216,7 @@ export const BRAND_PRODUCTS = [
             'Using medicated hair-loss treatments such as minoxidil: check with a healthcare professional first (per InfiniWell).',
             'Not for children.',
         ],
-        communityReview: 'InfiniWell\'s page shows two sets of numbers. A stats card says 217 verified customers rated it 4.6 out of 5 on average, and 20% (about 1 in 5) mentioned thicker- or fuller-looking hair without being asked. InfiniWell says these reviews were collected by post-purchase email through July 2026 and that most reviewers received an incentive. Separately, the page header shows 4.9 stars from 1,136 reviews, which appear to cover InfiniWell\'s products more broadly.',
+        communityReview: 'InfiniWell\'s page shows two sets of numbers. A stats card says 217 verified customers rated it 4.6 out of 5 on average, and 20% (about 1 in 5) mentioned thicker- or fuller-looking hair without being asked. InfiniWell says these reviews were collected by post-purchase email through July 2026 and that most reviewers received an incentive. Separately, the page header shows 4.9 stars from 1,136 reviews, which appear to cover InfiniWell\'s products more broadly. On Amazon it has 3.3 out of 5 stars from 37 ratings.',
         effectiveness: 'One small, uncontrolled study supports methyl vanillate in women with pattern hair loss.',
         ingredientScience: [
             {
@@ -5241,6 +5245,12 @@ export const BRAND_PRODUCTS = [
                         url: 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate',
                         text: 'infiniwell.com: PTD-DBM customer reviews',
                         summary: '217 verified buyers average 4.6 out of 5, collected by post-purchase email; most reviewers received an incentive.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.amazon.com/InfiniWell-Hair-Growth-Serum-Restoration/dp/B09J97Z29F',
+                        text: 'Amazon: InfiniWell PTD-DBM Peptide Hair Serum reviews',
+                        summary: '3.3 out of 5 stars from 37 ratings at time of writing.',
                     },
                 ],
             },
