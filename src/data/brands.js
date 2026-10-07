@@ -4916,6 +4916,103 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
+    // Happy Head Hair Growth Supplements — verified against
+    // happyhead.com/products/hair-growth-supplements on 2026-10-07 (price,
+    // dose, ingredient names, pregnancy note). Happy Head doesn't publish
+    // ingredient amounts. Science read via NCBI E-utilities; ashwagandha
+    // safety from NIH NCCIH. Not a brand partner, no affiliate link.
+    {
+        id: 'p-happyhead-hair-growth-supplements',
+        name: 'Happy Head Hair Growth Supplements',
+        brand: 'Happy Head',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement', 'skin-hair'],
+        tags: ['happyhead', 'hair', 'hair growth', 'hair thinning', 'biotin', 'saw palmetto', 'ashwagandha', 'collagen', 'supplement', 'drug-free'],
+        price: '$79 for 60 capsules (1 month); $67/month with a subscription',
+        whereToBuy: ['happyhead.com'],
+        url: 'https://www.happyhead.com/products/hair-growth-supplements',
+        image: '/products/happyhead/hair-growth-supplements.jpg', // supplied by ayna
+        summary: 'A daily, drug-free hair supplement from Happy Head, a hair-loss company that also offers dermatologist-prescribed treatments. The blend\'s headline ingredients are biotin, collagen, keratin, saw palmetto, ashwagandha, and vitamins A and D (full list under Ingredients). Happy Head says it supports healthier hair and scalp and visibly thicker hair in 3 to 6 months. Take 2 capsules daily with a meal; a jar of 60 capsules lasts a month. No prescription needed.',
+        ingredients: 'Per Happy Head: biotin, collagen, keratin, saw palmetto, ashwagandha, probiotics, vitamin A, vitamin D. Happy Head doesn\'t publish the amount of each ingredient on its product page.',
+        safety: {
+            fdaStatus: 'Dietary supplement; not evaluated by the FDA for safety or efficacy claims.',
+            materials: '60 capsules per jar (2 a day, 1-month supply). Happy Head doesn\'t publish a Supplement Facts panel with ingredient amounts on its product page. Store in a cool, dry place; no refrigeration needed.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Contains ashwagandha. The NIH says ashwagandha should be avoided during pregnancy and breastfeeding, isn\'t recommended for people with thyroid or autoimmune disorders or before surgery, has been linked to rare cases of liver injury, and may interact with medicines for diabetes, blood pressure, thyroid, seizures and immune suppression, and with sedatives. Happy Head says to consult a physician if you are pregnant, nursing or planning to become pregnant. It also contains biotin, which the FDA warns can interfere with certain lab tests. Full warnings are listed below.',
+            opinionAlerts: 'Contains ashwagandha, which the NIH says to avoid during pregnancy and breastfeeding and with thyroid or autoimmune conditions. Happy Head doesn\'t publish ingredient amounts, so its doses can\'t be compared with the studies below.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Happy Head; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Happy Head says this dermatologist-developed blend supports fuller, thicker, stronger hair in 3 to 6 months. No independent study of this product was found, and Happy Head doesn\'t publish its ingredient amounts, so what follows is what the research says about its main ingredients.\n\nA 2023 JAMA Dermatology systematic review of 30 studies of supplements for hair loss in people without a known nutritional deficiency found the best evidence for specific products (Viviscal, Nourkrin, Nutrafol and others) and some single ingredients, with rare, mild side effects. It called for larger trials with active comparators.\n\nBiotin is the most popular hair ingredient but has the weakest case: a 2017 review found it helped only in people with an underlying cause such as biotin deficiency, and found no good evidence for healthy people. Saw palmetto has more support: a 2020 systematic review of 5 randomized trials and 2 other studies found oral or topical saw palmetto (100–320 mg) improved hair quality and density in people with pattern hair loss or shedding, though high-quality data are lacking. Saw palmetto is anti-androgenic.\n\nAshwagandha is the main safety concern for women: the NIH says to avoid it during pregnancy and breastfeeding, and with thyroid or autoimmune disorders.',
+        doctorOpinionShort: 'Saw palmetto has modest evidence for pattern hair loss; biotin helps only if you\'re deficient. Happy Head doesn\'t publish ingredient amounts, and no independent study of this product was found. It contains ashwagandha, which the NIH says to avoid during pregnancy, breastfeeding, and with thyroid or autoimmune conditions.',
+        doctorOpinionCitations: [
+            { url: 'https://www.happyhead.com/products/hair-growth-supplements', label: 'happyhead.com: Hair Growth Supplements — ingredients and claims' },
+            { url: 'https://www.nccih.nih.gov/health/ashwagandha', label: 'NIH NCCIH: Ashwagandha — safety' },
+        ],
+        whoItsFor: [
+            'Adults with thinning hair looking for a drug-free supplement, ideally after a clinician has checked for causes like iron or thyroid problems',
+            'Not for pregnancy, breastfeeding, or trying to conceive, or for people with thyroid or autoimmune conditions (ashwagandha)',
+        ],
+        howToUse: {
+            intro: 'Per Happy Head: take consistently for 3 to 6 months to see results.',
+            steps: [
+                'Take 2 capsules by mouth daily with a meal.',
+                'Store in a cool, dry place with the lid tightly closed.',
+            ],
+            sourceUrl: 'https://www.happyhead.com/products/hair-growth-supplements',
+            sourceLabel: 'happyhead.com: Hair Growth Supplements',
+        },
+        warnings: [
+            'Pregnant, breastfeeding, or trying to conceive: the NIH says to avoid ashwagandha; Happy Head says to consult your physician first.',
+            'Thyroid or autoimmune condition, or surgery coming up: the NIH doesn\'t recommend ashwagandha.',
+            'Taking medicine for diabetes, blood pressure, thyroid, seizures, or immune suppression, or sedatives: ashwagandha may interact, so check with your doctor.',
+            'Contains biotin: the FDA warns biotin can interfere with certain lab tests, so tell your doctor before blood work.',
+            'Signs of liver problems: stop and see a doctor; the NIH notes rare liver injury linked to ashwagandha.',
+        ],
+        communityReview: 'Happy Head\'s product page shows a company-wide Trustpilot widget but no reviews specific to this supplement, and Trustpilot blocks automated access, so no product-specific review data was found at time of writing.',
+        effectiveness: 'Saw palmetto has modest, low-quality evidence for pattern hair loss and shedding; biotin hasn\'t been shown to help people who aren\'t deficient.',
+        ingredientScience: [
+            {
+                name: 'Supplements for hair loss (overall evidence)',
+                text: 'A 2023 JAMA Dermatology systematic review of 30 studies (17 randomized trials) in people without a known nutritional deficiency found the highest-quality evidence for specific branded supplements and some single ingredients. Side effects were rare and mild. The authors called for larger trials against active treatments.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/36449274/', label: 'PubMed: Evaluation of the safety and effectiveness of nutritional supplements for treating hair loss — systematic review (Drake et al., JAMA Dermatol 2023)' },
+                ],
+            },
+            {
+                name: 'Biotin',
+                text: 'A 2017 review found 18 reported cases where biotin improved hair or nails, all in people with an underlying problem such as biotin deficiency. The authors concluded there isn\'t enough evidence for biotin supplements in healthy people. The FDA also warns biotin can interfere with certain lab tests.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28879195/', label: 'PubMed: A review of the use of biotin for hair loss (Patel et al., 2017)' },
+                    { url: 'https://www.fda.gov/medical-devices/in-vitro-diagnostics/biotin-interference-troponin-lab-tests-assays-subject-biotin-interference', label: 'FDA: Biotin interference with lab tests' },
+                ],
+            },
+            {
+                name: 'Saw palmetto',
+                text: 'A 2020 systematic review of 5 randomized trials and 2 other studies found oral or topical saw palmetto (100–320 mg) improved overall hair quality, hair count and density in people with pattern hair loss and shedding, and was well tolerated. The authors said high-quality data are lacking and larger trials are needed. Saw palmetto is anti-androgenic.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33313047/', label: 'PubMed: Natural hair supplement — friend or foe? Saw palmetto, a systematic review in alopecia (Evron et al., 2020)' },
+                ],
+            },
+            {
+                name: 'Ashwagandha (safety)',
+                text: 'The NIH says ashwagandha may be safe short term (up to 3 months), long-term safety is unknown, and rare cases of liver injury have been linked to it. It should be avoided during pregnancy and breastfeeding, isn\'t recommended for people with thyroid or autoimmune disorders or before surgery, and may interact with several medications.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/ashwagandha', label: 'NIH NCCIH: Ashwagandha' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [] },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
     // Liv Labs (Pippa Resistance Spring) — catalog entry only, NOT yet an
     // ayna brand partner (as of 2026-09-23). isEmergingBrand still shows the
     // "Brand" tag on Discovery, but it's deliberately left out of
