@@ -1,4 +1,4 @@
-import { getProfileMatchPercentForProduct } from '../../data/products.js';
+import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import ProductImage from './ProductImage.jsx';
@@ -43,7 +43,16 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const { name, brand, category, price, priceDisplay, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   const resolvedPrice = shortPrice(price || priceDisplay);
-  const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
+  const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers);
+  const matchPercent = matchDetails.percent;
+  const matchLabel = matchDetails.matchStatus === 'excluded' ? 'Not a fit'
+    : matchDetails.matchStatus === 'no-relevance' ? 'No clear match'
+      : 'Complete profile';
+  const openMatch = (event) => {
+    event.stopPropagation();
+    if (matchDetails.matchStatus === 'no-profile') onStartQuiz?.();
+    else openWhyMatch?.();
+  };
   const openWhyMatch = onOpenWhyMatch ? () => onOpenWhyMatch(product) : undefined;
   // Real brand-partnership flag (src/utils/partnerBrands.js) — same
   // pattern-match desktop's Discovery.jsx uses for its "Affiliate link"
@@ -102,7 +111,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           <div style={{ color: 'var(--ayna-heading)', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.35, fontWeight: 700, marginTop: 5, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{name}</div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 'auto', paddingTop: 8 }}>
             <span style={{ color: 'var(--ayna-heading)', fontSize: 13, fontWeight: 700 }}>{resolvedPrice || 'See details'}</span>
-            <button type="button" onClick={(event) => { event.stopPropagation(); if (matchPercent != null) openWhyMatch?.(); else onStartQuiz?.(); }} style={{ border: 0, background: 'var(--ayna-peach)', borderRadius: 99, padding: '6px 9px', minHeight: 30, color: 'var(--ayna-heading)', fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap', cursor: 'pointer' }}>{matchPercent != null ? `${matchPercent}% match` : 'See match'}</button>
+            <button type="button" onClick={openMatch} style={{ border: 0, background: 'var(--ayna-peach)', borderRadius: 99, padding: '6px 9px', minHeight: 30, color: 'var(--ayna-heading)', fontSize: 10, fontWeight: 700, whiteSpace: 'nowrap', cursor: 'pointer' }}>{matchPercent != null ? `${matchPercent}% match` : matchLabel}</button>
           </div>
         </div>
         <div style={{ gridColumn: '1 / -1', borderTop: '1px solid var(--ayna-border)', marginTop: 12, paddingTop: 10, display: 'flex', flexWrap: 'wrap', gap: '6px 12px', color: 'var(--ayna-text-muted)', fontSize: 11, lineHeight: 1.4 }}>
@@ -174,8 +183,8 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px 8px', marginTop: 8, color: 'var(--ayna-text-muted)', fontSize: 10, lineHeight: 1.35 }}>
         {insightLabels.map((label) => <span key={label}>{label}</span>)}
       </div>
-      <button type="button" onClick={(event) => { event.stopPropagation(); if (matchPercent != null) openWhyMatch?.(); else onStartQuiz?.(); }} style={{ width: '100%', minHeight: 44, marginTop: 10, border: '1px solid var(--ayna-chip-border)', borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', padding: '8px 10px', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700, textAlign: 'left', cursor: 'pointer' }}>
-        {matchPercent != null ? `${matchPercent}% match · See why` : 'Build your profile to see your match'}
+      <button type="button" onClick={openMatch} style={{ width: '100%', minHeight: 44, marginTop: 10, border: '1px solid var(--ayna-chip-border)', borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', padding: '8px 10px', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700, textAlign: 'left', cursor: 'pointer' }}>
+        {matchDetails.matchStatus === 'scored' ? `${matchPercent}% match · See why` : matchDetails.matchStatus === 'no-profile' ? 'Complete profile to see your match' : `${matchPercent}% match · ${matchLabel}`}
       </button>
     </div>
   );

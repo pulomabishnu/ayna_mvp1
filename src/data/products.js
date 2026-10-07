@@ -369,7 +369,7 @@ export const PHYSICAL_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['sleep-energy'],
-        tags: ['heavy-flow', 'fatigue', 'cramps', 'pcos'],
+        tags: ['anemia', 'fatigue'],
         price: '$10.59 (180 tablets, 180-day supply)',
         userRating: 4.7,
         url: 'https://www.naturemade.com/products/iron-tablets',
@@ -1492,6 +1492,7 @@ function noveltyAdjustment(product, quizAnswers) {
 
 const GOAL_MATCH_WEIGHTS = {
     primaryGoal: 20,
+    otherNeeds: 8,
     periodFlow: 2,
     periodPain: 2,
     utiFrequency: 1,
@@ -1568,7 +1569,7 @@ function tagsForHealthLabel(label) {
     if (/pregnan|prenatal|trimester/.test(text)) add('pregnancy');
     if (/postpartum|breastfeeding|lactation/.test(text)) add('postpartum');
     if (/vaginal|bv\b|yeast infection/.test(text)) add('vaginal-health');
-    if (/\buti\b|urinary tract|burning with urination|urinary urgency|frequent urination/.test(text)) add('uti', 'uti-prevention');
+    if (/\butis?\b|urinary tract|burning with urination|urinary urgency|frequent urination/.test(text)) add('uti', 'uti-prevention');
     if (/bladder leak|incontinence/.test(text)) add('bladder-leaks', 'bladder-leak-protection');
     if (/contraception|birth control/.test(text)) add('contraception');
     if (/sti/.test(text)) add('sexual-health', 'telehealth');
@@ -1577,6 +1578,11 @@ function tagsForHealthLabel(label) {
     if (/skin|acne/.test(text)) add('skin', 'skin-hair');
     if (/hair thinning|hair loss|excess facial|excess body hair/.test(text)) add('hair', 'skin-hair');
     if (/fitness|strength|exercise/.test(text)) add('fitness-cycle');
+    if (/bone health|joint ache/.test(text)) add('bone-health');
+    if (/low libido|libido change/.test(text)) add('sexual-health');
+    if (/headache|migraine/.test(text)) add('migraine');
+    if (/anemia|iron deficien/.test(text)) add('anemia');
+    if (/metabolism|weight support/.test(text)) add('hormone-balance');
     if (/doctor|specialist|provider|telehealth/.test(text)) add('telehealth');
 
     return [...tags];
@@ -1592,11 +1598,21 @@ function productMatchesAnyHealthLabel(product, labels) {
     return { matched: false, label: null, tag: null };
 }
 
+function evaluateHealthLabels(product, labels) {
+    const selected = [...new Set(labels)].filter((label) => String(label).trim());
+    if (!selected.length) return { score: null, matched: false, label: null, unmapped: [] };
+    const matches = selected.map((label) => productMatchesAnyHealthLabel(product, [label]));
+    const first = matches.find((result) => result.matched);
+    return {
+        score: matches.filter((result) => result.matched).length / selected.length,
+        matched: Boolean(first),
+        label: first?.label || null,
+        unmapped: selected.filter((label) => tagsForHealthLabel(label).length === 0),
+    };
+}
+
 function getPrimaryGoalLabels(intake, quizAnswers) {
     const safeIntake = rawIntakeFromProfile(intake);
-
-    const primary = asStringArray(safeIntake.primaryConcerns);
-    if (primary.length) return primary;
 
     const support = asStringArray(safeIntake.supportSelections)
         .filter((item) => !['Nothing right now', 'Something else'].includes(item));
@@ -1604,13 +1620,20 @@ function getPrimaryGoalLabels(intake, quizAnswers) {
     if (supportOther) support.push(supportOther);
     if (support.length) return support;
 
+    const primary = asStringArray(safeIntake.primaryConcerns);
+    if (primary.length) return primary;
+
     const goals = String(
         quizAnswers?.healthGoals
         || safeIntake.healthGoals
         || ''
     ).trim();
 
-    return goals ? [goals] : [];
+    if (goals) return [goals];
+
+    // Older profiles have only frustrations. Treat those as the stated goal
+    // instead of leaving the primary-goal component empty.
+    return getSymptomLabels(safeIntake, quizAnswers);
 }
 
 function getSymptomLabels(intake, quizAnswers) {
@@ -1619,8 +1642,29 @@ function getSymptomLabels(intake, quizAnswers) {
     return asStringArray(quizAnswers?.frustrations);
 }
 
+function getOtherNeedLabels(intake, quizAnswers, primaryLabels) {
+    const primary = new Set(primaryLabels.map((label) => String(label).trim().toLowerCase()));
+    const primaryTags = new Set(primaryLabels.flatMap(tagsForHealthLabel));
+    return [...new Set([
+        ...asStringArray(intake?.supportSelections),
+        ...asStringArray(intake?.symptoms),
+        ...asStringArray(intake?.goals),
+        ...asStringArray(intake?.supportOtherText),
+        ...asStringArray(quizAnswers?.frustrations),
+    ].filter((label) => {
+        const normalized = String(label).trim().toLowerCase();
+        const tags = tagsForHealthLabel(label);
+        return normalized && normalized !== 'nothing right now' && normalized !== 'something else'
+            && !primary.has(normalized) && tags.length > 0
+            && !tags.every((tag) => primaryTags.has(tag));
+    }))];
+}
+
 function getDiagnosisLabels(intake, healthProfile) {
-    const direct = asStringArray(intake?.diagnosisSelections || intake?.conditions);
+    const direct = asStringArray(intake?.diagnosisSelections || intake?.conditions)
+        .filter((label) => !['None that I know of', 'Prefer not to say', 'Other / not listed', 'other'].includes(label));
+    const other = String(intake?.conditionOtherText || '').trim();
+    if (other && tagsForHealthLabel(other).length) direct.push(other);
     const imported = [
         ...asStringArray(healthProfile?.conditions),
         ...asStringArray(healthProfile?.fhirSummary?.conditions),
@@ -1841,6 +1885,8 @@ function getExtendedAvoidSet(quizAnswers) {
         ...asStringArray(intake.allergyItems),
         ...asStringArray(intake.allergySelections),
         ...asStringArray(intake.avoidIngredients),
+        ...asStringArray(intake.avoidIngredientsOtherText),
+        ...asStringArray(intake.allergyOtherText),
     ].forEach((label) => {
         const trigger = labelToTrigger[String(label).toLowerCase()];
         if (trigger) out.add(trigger);
@@ -1849,7 +1895,7 @@ function getExtendedAvoidSet(quizAnswers) {
     return out;
 }
 
-function getSafetyAssessment(product, quizAnswers) {
+function getSafetyAssessment(product, quizAnswers, healthProfile = null) {
     const intake = rawIntakeFromProfile(quizAnswers);
     const lifeStages = getLifeStageLabels(intake)
         .map((label) => String(label).toLowerCase());
@@ -1876,6 +1922,17 @@ function getSafetyAssessment(product, quizAnswers) {
 
     const category = String(product?.category || '').toLowerCase();
     const productText = productTextBlob(product);
+
+    // A 65 mg iron tablet exceeds the ordinary adult daily upper limit.
+    // Generic fatigue or heavy periods do not establish iron deficiency.
+    if (product?.id === 'p-nature-made-iron-65mg') {
+        const hasIntake = Object.keys(intake).length > 0;
+        const diagnosedDeficiency = getDiagnosisLabels(intake, healthProfile)
+            .some((label) => /anemia|iron deficien/i.test(String(label)));
+        if (hasIntake && !diagnosedDeficiency) {
+            return { eligible: false, reason: 'High-dose iron is best considered after iron deficiency is confirmed with a clinician or lab test.' };
+        }
+    }
 
     const pregnancySpecific =
         category === 'pregnancy'
@@ -1948,7 +2005,8 @@ function getSafetyAssessment(product, quizAnswers) {
     }
 
     const history = getProductHistoryEntry(product, intake);
-    if (history?.worked === 'Made it worse' || history?.reaction === 'Serious') {
+    if (['Made it worse', 'Made things worse'].includes(history?.worked)
+        || ['Serious', 'Serious or concerning reaction'].includes(history?.reaction)) {
         return { eligible: false, reason: 'You previously reported a negative reaction to this product' };
     }
 
@@ -2329,11 +2387,12 @@ function getPerimenopauseTimingFitScore(product, intake, lifeStageLabels) {
 
 function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
     const intake = rawIntakeFromProfile(quizAnswers);
-    const safety = getSafetyAssessment(product, quizAnswers);
+    const safety = getSafetyAssessment(product, quizAnswers, healthProfile);
 
     if (!safety.eligible) {
         return {
             percent: 0,
+            matchStatus: 'excluded',
             score: 0,
             goalMatch: 0,
             profileFit: 0,
@@ -2360,15 +2419,39 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
     const unknowns = [];
 
     const primaryGoalLabels = getPrimaryGoalLabels(intake, quizAnswers);
+    const otherNeedLabels = getOtherNeedLabels(intake, quizAnswers, primaryGoalLabels);
     const diagnosisLabels = getDiagnosisLabels(intake, healthProfile);
     const lifeStageLabels = getLifeStageLabels(intake);
+    const hasProfileSignals = Boolean(
+        primaryGoalLabels.length || otherNeedLabels.length || diagnosisLabels.length
+        || lifeStageLabels.length || String(intake?.age || '').trim()
+        || String(intake?.periodFlow || '').trim() || String(intake?.periodPain || '').trim()
+        || String(intake?.utiFrequency || '').trim()
+    );
 
-    const goalMatchResult = productMatchesAnyHealthLabel(product, primaryGoalLabels);
-    const diagnosisMatch = productMatchesAnyHealthLabel(product, diagnosisLabels);
+    const goalMatchResult = evaluateHealthLabels(product, primaryGoalLabels);
+    const otherNeedMatch = evaluateHealthLabels(product, otherNeedLabels);
+    const primaryTags = new Set(primaryGoalLabels.flatMap(tagsForHealthLabel));
+    const additionalDiagnoses = diagnosisLabels.filter((label) => {
+        const tags = tagsForHealthLabel(label);
+        return !tags.length || !tags.every((tag) => primaryTags.has(tag));
+    });
+    const diagnosisMatch = evaluateHealthLabels(product, additionalDiagnoses);
+    const unmappedNeeds = [...new Set([
+        ...goalMatchResult.unmapped,
+        ...otherNeedMatch.unmapped,
+        ...diagnosisMatch.unmapped,
+    ])];
+    if (unmappedNeeds.length) {
+        unknowns.push(`We do not have enough product data to compare: ${unmappedNeeds.slice(0, 3).join(', ')}${unmappedNeeds.length > 3 ? ', and more' : ''}.`);
+    }
 
     const goalParts = {
-        primaryGoal: primaryGoalLabels.length
-            ? { score: goalMatchResult.matched ? 1 : 0 }
+        primaryGoal: goalMatchResult.score != null
+            ? { score: goalMatchResult.score }
+            : null,
+        otherNeeds: otherNeedMatch.score != null
+            ? { score: otherNeedMatch.score }
             : null,
         periodFlow: null,
         periodPain: null,
@@ -2379,8 +2462,17 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
         reasons.push({
             component: 'primaryGoal',
             weight: GOAL_MATCH_WEIGHTS.primaryGoal,
-            score: 1,
+            score: goalMatchResult.score,
             text: `Goal: ${goalMatchResult.label}`,
+        });
+    }
+
+    if (otherNeedMatch.matched) {
+        reasons.push({
+            component: 'otherNeeds',
+            weight: GOAL_MATCH_WEIGHTS.otherNeeds,
+            score: otherNeedMatch.score,
+            text: `Another need you selected: ${otherNeedMatch.label}`,
         });
     }
 
@@ -2559,18 +2651,18 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
     }
 
     if (
-        diagnosisLabels.length
+        additionalDiagnoses.length
         && productTargetsAnySignal(product, DIAGNOSIS_SPECIFIC_SIGNALS)
     ) {
         profileParts.diagnoses = {
-            score: diagnosisMatch.matched ? 1 : 0,
+            score: diagnosisMatch.score ?? 0,
         };
 
         if (diagnosisMatch.matched) {
             reasons.push({
                 component: 'diagnoses',
                 weight: PROFILE_FIT_WEIGHTS.diagnoses,
-                score: 1,
+                score: diagnosisMatch.score,
                 text: `Relevant to a condition you selected: ${diagnosisMatch.label}`,
             });
         }
@@ -2621,12 +2713,12 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
         : null;
 
     const topLevel = [
-        goalMatch == null ? null : { weight: 25, value: goalMatch },
-        profileFit == null ? null : { weight: 25, value: profileFit },
-        { weight: 25, value: evidenceQuality },
+        goalMatch == null ? null : { weight: 55, value: goalMatch },
+        profileFit == null ? null : { weight: 20, value: profileFit },
+        { weight: 10, value: evidenceQuality },
         preference.percent == null
             ? null
-            : { weight: 25, value: preference.percent },
+            : { weight: 15, value: preference.percent },
     ].filter(Boolean);
 
     const hasPositiveGoalRelevance = Object.values(goalParts)
@@ -2647,14 +2739,14 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
 
     const totalWeight = topLevel.reduce((sum, item) => sum + item.weight, 0);
 
-    const percent = hasHealthRelevance && totalWeight
+    const rawPercent = hasHealthRelevance && totalWeight
         ? Math.round(
             topLevel.reduce(
                 (sum, item) => sum + item.weight * item.value,
                 0
             ) / totalWeight
         )
-        : null;
+        : hasProfileSignals ? 0 : null;
 
     const knownGoalWeight = knownWeightedPoints(goalParts, GOAL_MATCH_WEIGHTS);
     const knownProfileWeight =
@@ -2678,6 +2770,13 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
                 ? 'medium'
                 : 'limited';
 
+    // Evidence quality is useful context, but it cannot turn one matching
+    // intake answer into a claim of near-certain personal fit.
+    const percent = rawPercent == null ? null : Math.min(
+        rawPercent,
+        confidence === 'limited' ? 85 : confidence === 'medium' ? 95 : 100
+    );
+
     const allReasons = hasHealthRelevance
         ? [
             ...reasons,
@@ -2693,6 +2792,7 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
 
     return {
         percent,
+        matchStatus: hasHealthRelevance ? 'scored' : hasProfileSignals ? 'no-relevance' : 'no-profile',
         score: percent == null ? 0 : percent,
         goalMatch,
         profileFit,
@@ -2727,10 +2827,10 @@ export function getProductRelevanceScore(product, quizAnswers, healthProfile = n
 export function getRecommendationMatchesAndRest(quizAnswers, healthProfile = null) {
     const intake = rawIntakeFromProfile(quizAnswers);
     const hasAnyProfileSignal =
-        getPrimaryGoalLabels(quizAnswers).length > 0 ||
-        getSymptomLabels(quizAnswers).length > 0 ||
-        getDiagnosisLabels(quizAnswers, healthProfile).length > 0 ||
-        getLifeStageLabels(quizAnswers).length > 0 ||
+        getPrimaryGoalLabels(intake, quizAnswers).length > 0 ||
+        getSymptomLabels(intake, quizAnswers).length > 0 ||
+        getDiagnosisLabels(intake, healthProfile).length > 0 ||
+        getLifeStageLabels(intake).length > 0 ||
         asStringArray(intake?.preferredFormats).length > 0 ||
         asStringArray(intake?.avoidIngredients).length > 0 ||
         Boolean(String(intake?.priceRange || '').trim()) ||

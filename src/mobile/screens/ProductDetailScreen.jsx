@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CATEGORY_LABELS, getProfileMatchPercentForProduct } from '../../data/products.js';
+import { CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
@@ -303,7 +303,8 @@ export default function ProductDetailScreen({
     );
   }
 
-  const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
+  const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers);
+  const matchPercent = matchDetails.matchStatus === 'scored' ? matchDetails.percent : null;
   const openWhyMatch = () => setShowWhyMatch(true);
 
   const {
@@ -481,7 +482,7 @@ export default function ProductDetailScreen({
                 </div>
               </div>
             )}
-            {matchPercent == null && <button type="button" onClick={onStartQuiz} style={{ position: 'absolute', right: 12, bottom: 12, border: 0, borderRadius: 99, background: '#fff9f2', color: '#5c3b2c', padding: '9px 13px', fontWeight: 600 }}>Build to see your match</button>}
+            {matchDetails.matchStatus === 'no-profile' && <button type="button" onClick={onStartQuiz} style={{ position: 'absolute', right: 12, bottom: 12, border: 0, borderRadius: 99, background: '#fff9f2', color: '#5c3b2c', padding: '9px 13px', fontWeight: 600 }}>Build to see your match</button>}
           </div>
         </div>
 
@@ -514,7 +515,8 @@ export default function ProductDetailScreen({
               <span aria-hidden="true">→</span>
             </button>
           )}
-          {matchPercent == null && <button type="button" onClick={onStartQuiz} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>Build your ecosystem to see your personal match →</button>}
+          {matchDetails.matchStatus === 'no-profile' && <button type="button" onClick={onStartQuiz} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>Build your ecosystem to see your personal match →</button>}
+          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>0% match · {matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.1, margin: '9px 0 0', color: 'var(--ayna-heading)' }}>{name}</div>
           {price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
           {buyUrl && <p style={{ margin: '10px 0 0', color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>Buying opens the seller’s site. The seller handles payment, shipping, and returns; check the final price and delivery there.</p>}

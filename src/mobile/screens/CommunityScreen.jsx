@@ -9,6 +9,7 @@ import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PH
 import { CATEGORY_LABELS, getProfileMatchPercentForProduct } from '../../data/products.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
 import PlaylistCoverPicker from '../components/PlaylistCoverPicker.jsx';
+import PlaylistAudiencePicker from '../components/PlaylistAudiencePicker.jsx';
 import { makePlaylistCoverFile } from '../components/playlistCoverImage.js';
 import './community-mobile.css';
 
@@ -99,6 +100,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   const [anonymous, setAnonymous] = useState(false);
   const [rating, setRating] = useState(5);
   const [playlistTitle, setPlaylistTitle] = useState('');
+  const [playlistVisibility, setPlaylistVisibility] = useState('public');
   const [coverMode, setCoverMode] = useState('color');
   const [coverColor, setCoverColor] = useState('#4E3866');
   const [coverText, setCoverText] = useState('');
@@ -116,6 +118,10 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   const [profileById, setProfileById] = useState(new Map());
   const [profileName, setProfileName] = useState('');
   const [profileHandle, setProfileHandle] = useState('');
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [editProfileName, setEditProfileName] = useState('');
+  const [editProfileHandle, setEditProfileHandle] = useState('');
+  const [editProfileBio, setEditProfileBio] = useState('');
   const [refresh, setRefresh] = useState(0);
   const [reportPost, setReportPost] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -276,6 +282,35 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
     } catch (e) { notifyError(e); } finally { setBusy(false); }
   };
 
+  const startProfileEdit = () => {
+    setEditProfileName(profile?.display_name || '');
+    setEditProfileHandle(profile?.username || '');
+    setEditProfileBio(profile?.bio || '');
+    setEditingProfile(true);
+    setError('');
+  };
+
+  const saveProfileEdit = async () => {
+    if (!authUser || !profile || !editProfileName.trim() || !editProfileHandle.trim()) return;
+    if (editProfileName.trim().length > 50 || editProfileBio.trim().length > 160) {
+      setError('Use up to 50 characters for your name and 160 for your bio.');
+      return;
+    }
+    setBusy(true); setError('');
+    try {
+      const next = await community.upsertCommunityProfile(supabase, authUser.id, {
+        username: editProfileHandle, displayName: editProfileName, bio: editProfileBio,
+        avatarUrl: profile.avatar_url,
+      });
+      setProfile(next);
+      setDetails((previous) => previous?.user_id === authUser.id ? next : previous);
+      setProfileById((previous) => new Map(previous).set(authUser.id, next));
+      setPage({ type: 'profile', id: next.username });
+      setEditingProfile(false);
+      setNotice('Community profile updated.');
+    } catch (e) { notifyError(e); } finally { setBusy(false); }
+  };
+
   const submit = async () => {
     if (busy) return;
     if (compose === 'playlist' ? !playlistTitle.trim() : compose !== 'recommend' && !body.trim()) return;
@@ -296,11 +331,11 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
           if (coverMode === 'photo' && !coverPhoto) throw new Error('Choose a cover photo first.');
           const coverFile = coverMode === 'photo' ? coverPhoto : await makePlaylistCoverFile(coverText || playlistTitle, coverColor);
           uploadedCover = await uploadCommunityImage(client, coverFile, { folder: 'covers', userId });
-          const result = await community.createPlaylist(client, userId, { title: playlistTitle, coverUrl: uploadedCover.url });
+          const result = await community.createPlaylist(client, userId, { title: playlistTitle, visibility: playlistVisibility, coverUrl: uploadedCover.url });
           if (productId) {
             try { await community.addToPlaylist(client, result.id, productId); } catch { setNotice('Playlist created, but the product could not be added.'); }
           }
-          setCompose(null); setPlaylistTitle(''); setProductId(null); setCoverMode('color'); setCoverText(''); setCoverPhoto(null); setTab('playlists'); setRefresh((v) => v + 1); await openPlaylist(result);
+          setCompose(null); setPlaylistTitle(''); setPlaylistVisibility('public'); setProductId(null); setCoverMode('color'); setCoverText(''); setCoverPhoto(null); setTab('playlists'); setRefresh((v) => v + 1); await openPlaylist(result);
         } catch (error) {
           if (uploadedCover) await deleteCommunityImage(client, uploadedCover.path);
           throw error;
@@ -450,7 +485,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
             <button type="button" className="am-primary" disabled={busy || !productId} onClick={addPlaylistProduct}>Add to playlist</button>
           </div>}
         </>}
-        {page.type === 'profile' && details && <><div className="am-profile-hero"><CommunityAvatar name={details.display_name} path={details.avatar_url} /><div><h2 className="am-detail-title">{details.display_name}</h2><p className="am-detail-copy">@{details.username}</p></div></div>{authUser?.id === details.user_id && <label className="am-avatar-upload">Change profile picture<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" disabled={busy} onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadAvatar(file); event.target.value = ''; }} /></label>}{details.bio && <p>{details.bio}</p>}{authUser && details.user_id !== authUser.id && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={async () => { try { const on = !followingIds.includes(details.user_id); await community.setFollowing(supabase, authUser.id, details.user_id, on); setFollowingIds((ids) => on ? [...ids, details.user_id] : ids.filter((id) => id !== details.user_id)); } catch (e) { notifyError(e); } }}>{followingIds.includes(details.user_id) ? 'Following' : 'Follow'}</button><button type="button" className="am-secondary" onClick={async () => { try { const state = community.friendshipState(friendships, authUser.id, details.user_id); if (state.state === 'none') await community.sendFriendRequest(supabase, authUser.id, details.user_id); else if (state.state === 'incoming') await community.acceptFriendRequest(supabase, state.row.id); else return; setRefresh((v) => v + 1); } catch (e) { notifyError(e); } }}>{({ none: 'Add friend', incoming: 'Accept request', requested: 'Requested', friends: 'Friends' })[community.friendshipState(friendships, authUser.id, details.user_id).state]}</button></div>}</>}
+        {page.type === 'profile' && details && <><div className="am-profile-hero"><CommunityAvatar name={details.display_name} path={details.avatar_url} /><div><h2 className="am-detail-title">{details.display_name}</h2><p className="am-detail-copy">@{details.username}</p></div></div>{authUser?.id === details.user_id && <div className="am-profile-owner"><button type="button" className="am-secondary" onClick={startProfileEdit}>Edit profile</button><label className="am-avatar-upload">Change profile picture<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" disabled={busy} onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadAvatar(file); event.target.value = ''; }} /></label></div>}{details.bio && <p>{details.bio}</p>}{authUser && details.user_id !== authUser.id && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={async () => { try { const on = !followingIds.includes(details.user_id); await community.setFollowing(supabase, authUser.id, details.user_id, on); setFollowingIds((ids) => on ? [...ids, details.user_id] : ids.filter((id) => id !== details.user_id)); } catch (e) { notifyError(e); } }}>{followingIds.includes(details.user_id) ? 'Following' : 'Follow'}</button><button type="button" className="am-secondary" onClick={async () => { try { const state = community.friendshipState(friendships, authUser.id, details.user_id); if (state.state === 'none') await community.sendFriendRequest(supabase, authUser.id, details.user_id); else if (state.state === 'incoming') await community.acceptFriendRequest(supabase, state.row.id); else return; setRefresh((v) => v + 1); } catch (e) { notifyError(e); } }}>{({ none: 'Add friend', incoming: 'Accept request', requested: 'Requested', friends: 'Friends' })[community.friendshipState(friendships, authUser.id, details.user_id).state]}</button></div>}</>}
         {page.type === 'notifications' && (details || []).map((n) => <div className="am-card" key={n.id}><p>{n.message || n.body || n.type?.replace(/_/g, ' ')}</p><small>{timeLabel(n.created_at)}</small></div>)}
         {page.type === 'profile' && details && !authUser && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={() => requireAccount('following people')}>Follow</button><button type="button" className="am-secondary" onClick={() => requireAccount('friends')}>Add friend</button></div>}
       </> : <>
@@ -464,7 +499,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
         </>}</div> : <>
           <div className="am-tabs" role="tablist" aria-label="Community sections">{TABS.map(([key, label]) => <button type="button" role="tab" aria-selected={tab === key} key={key} className={tab === key ? 'is-active' : ''} onClick={() => key === 'following' && !authUser ? requireAccount('your following feed') : setTab(key)}>{label}</button>)}</div>
           {tab === 'for-you' && posts.length > 0 && <button type="button" className="am-share-prompt" onClick={() => openCompose('post')}><CommunityAvatar name={profile?.display_name || 'You'} path={profile?.avatar_url} /><span>Share with the community</span><span className="am-share-plus"><CommunityIcon name="plus" size={18} /></span></button>}
-          {tab === 'playlists' ? <><div className="am-list-heading"><h2>{playlistSection === 'mine' ? 'My playlists' : 'Made by the community'}</h2><button type="button" onClick={() => openCompose('playlist')}>Create playlist</button></div><div className="am-playlist-switch"><button type="button" aria-pressed={playlistSection === 'recent'} onClick={() => setPlaylistSection('recent')}>Community</button><button type="button" aria-pressed={playlistSection === 'mine'} onClick={() => authUser ? setPlaylistSection('mine') : requireAccount('your playlists')}>My playlists</button></div><div className="am-playlist-grid">{playlists.map((p) => <button type="button" className="am-playlist" key={p.id} onClick={() => openPlaylist(p)}><span className="am-cover">{p.cover_url ? <img src={publicMediaUrl(p.cover_url)} alt="" loading="lazy" /> : <span>ayna</span>}</span><span className="am-playlist-copy"><strong>{p.title}</strong><small>{p.item_count || 0} products</small><small>by {p.owner_display_name || 'ayna community'}</small></span></button>)}</div>{!loading && playlists.length === 0 && renderEmpty()}</> : <>{posts.map(renderPost)}{!loading && posts.length === 0 && renderEmpty()}{cursor && <button type="button" className="am-more" disabled={loading} onClick={loadMore}>Show more posts</button>}</>}
+          {tab === 'playlists' ? <><div className="am-list-heading"><h2>{playlistSection === 'mine' ? 'My playlists' : playlistSection === 'friends' ? 'Shared by friends' : 'Made by the community'}</h2><button type="button" onClick={() => openCompose('playlist')}>Create playlist</button></div><div className="am-playlist-switch"><button type="button" aria-pressed={playlistSection === 'recent'} onClick={() => setPlaylistSection('recent')}>Community</button><button type="button" aria-pressed={playlistSection === 'friends'} onClick={() => authUser ? setPlaylistSection('friends') : requireAccount('friends-only playlists')}>Friends</button><button type="button" aria-pressed={playlistSection === 'mine'} onClick={() => authUser ? setPlaylistSection('mine') : requireAccount('your playlists')}>My playlists</button></div><div className="am-playlist-grid">{playlists.map((p) => <button type="button" className="am-playlist" key={p.id} onClick={() => openPlaylist(p)}><span className="am-cover">{p.cover_url ? <img src={publicMediaUrl(p.cover_url)} alt="" loading="lazy" /> : <span>ayna</span>}</span><span className="am-playlist-copy"><strong>{p.title}</strong><small>{p.item_count || 0} products</small><small>by {p.owner_display_name || 'ayna community'}</small></span></button>)}</div>{!loading && playlists.length === 0 && renderEmpty()}</> : <>{posts.map(renderPost)}{!loading && posts.length === 0 && renderEmpty()}{cursor && <button type="button" className="am-more" disabled={loading} onClick={loadMore}>Show more posts</button>}</>}
           {loading && <p className="am-empty">Loading…</p>}
         </>}
       </>}
@@ -473,9 +508,23 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
       <div className="am-sheet-head"><h2>Edit playlist</h2><button type="button" aria-label="Close" onClick={() => setEditingPlaylist(false)}>×</button></div>
       <label className="am-field-label" htmlFor="am-edit-playlist-title">Playlist name</label><input id="am-edit-playlist-title" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
       <label className="am-field-label" htmlFor="am-edit-playlist-description">Description</label><textarea id="am-edit-playlist-description" value={editDescription} onChange={(e) => setEditDescription(e.target.value)} placeholder="What is this collection for?" />
-      <label className="am-field-label" htmlFor="am-edit-playlist-visibility">Who can see this?</label><select id="am-edit-playlist-visibility" value={editVisibility} onChange={(e) => setEditVisibility(e.target.value)}><option value="public">Everyone</option><option value="private">Only me</option></select>
+      <PlaylistAudiencePicker id="am-edit-playlist-visibility" value={editVisibility} onChange={setEditVisibility} />
       <PlaylistCoverPicker title={editTitle} mode={editCoverMode} onMode={setEditCoverMode} color={editCoverColor} onColor={setEditCoverColor} text={editCoverText} onText={setEditCoverText} photo={editCoverPhoto} onPhoto={setEditCoverPhoto} existingCoverUrl={publicMediaUrl(details?.cover_url)} />
       <button type="button" className="am-primary" disabled={busy || !editTitle.trim()} onClick={savePlaylist}>{busy ? 'Saving…' : 'Save changes'}</button>
+    </div></div>}
+    {editingProfile && <div className="am-sheet-backdrop" onClick={() => setEditingProfile(false)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Edit community profile" onClick={(e) => e.stopPropagation()}>
+      <div className="am-sheet-head"><h2>Edit profile</h2><button type="button" aria-label="Close" onClick={() => setEditingProfile(false)}>×</button></div>
+      <p className="am-detail-copy">This is your public Community profile. Your health answers stay private.</p>
+      <label className="am-field-label" htmlFor="am-profile-display-name">Display name</label>
+      <input id="am-profile-display-name" value={editProfileName} maxLength={50} onChange={(event) => setEditProfileName(event.target.value)} />
+      <label className="am-field-label" htmlFor="am-profile-username">Username</label>
+      <input id="am-profile-username" value={editProfileHandle} maxLength={24} autoCapitalize="none" onChange={(event) => setEditProfileHandle(event.target.value.toLowerCase())} />
+      <small className="am-profile-help">You can change your username once every 30 days.</small>
+      <label className="am-field-label" htmlFor="am-profile-bio">Bio</label>
+      <textarea id="am-profile-bio" value={editProfileBio} maxLength={160} onChange={(event) => setEditProfileBio(event.target.value)} placeholder="A little about you" />
+      <small className="am-profile-help">{editProfileBio.length}/160</small>
+      {error && <p className="am-error" role="alert">{error}</p>}
+      <button type="button" className="am-primary" disabled={busy || !editProfileName.trim() || !editProfileHandle.trim()} onClick={saveProfileEdit}>{busy ? 'Saving…' : 'Save profile'}</button>
     </div></div>}
     {deletePlaylistTarget && <div className="am-sheet-backdrop" onClick={() => setDeletePlaylistTarget(null)}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete playlist" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete playlist?</h2><button type="button" aria-label="Close" onClick={() => setDeletePlaylistTarget(null)}>×</button></div><p className="am-detail-copy">This removes the playlist and its product list. This cannot be undone.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDeletePlaylist}>{busy ? 'Deleting…' : 'Delete playlist'}</button><button type="button" className="am-secondary" onClick={() => setDeletePlaylistTarget(null)}>Cancel</button></div></div>}
     {deleteTarget && <div className="am-sheet-backdrop" onClick={() => setDeleteTarget(null)}><div className="am-sheet" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete post?</h2><button type="button" onClick={() => setDeleteTarget(null)}>×</button></div><p className="am-detail-copy">This will remove your post and its replies from Community.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDelete}>{busy ? 'Deleting…' : 'Delete post'}</button><button type="button" className="am-secondary" onClick={() => setDeleteTarget(null)}>Cancel</button></div></div>}
@@ -483,7 +532,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
     {compose && <div className="am-sheet-backdrop" onClick={() => setCompose(null)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Create in Community" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><div><small>SHARE YOUR VOICE</small><h2>{({ post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' })[compose]}</h2></div><button type="button" aria-label="Close" onClick={() => setCompose(null)}>×</button></div>
       <div className="am-type-row" aria-label="What would you like to share?">{[['post','Post'],['question','Question'],['review','Review'],['playlist','Playlist'],['recommend','Recommend']].map(([kind,label]) => <button type="button" key={kind} className={compose === kind ? 'is-active' : ''} aria-pressed={compose === kind} onClick={() => { if (!authUser && ['review','playlist','recommend'].includes(kind)) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : 'friend recommendations'); return; } setCompose(kind); setError(''); }}>{label}</button>)}</div>
-      {compose === 'playlist' ? <><label className="am-field-label" htmlFor="am-playlist-name">Playlist name</label><input id="am-playlist-name" value={playlistTitle} onChange={(e) => setPlaylistTitle(e.target.value)} placeholder="Give your collection a name" /><PlaylistCoverPicker title={playlistTitle} mode={coverMode} onMode={setCoverMode} color={coverColor} onColor={setCoverColor} text={coverText} onText={setCoverText} photo={coverPhoto} onPhoto={setCoverPhoto} /></> : <><label className="am-field-label" htmlFor="am-post-text">{compose === 'question' ? 'Your question' : compose === 'review' ? 'Your experience' : compose === 'recommend' ? 'A note to your friends' : 'Your post'}</label><textarea id="am-post-text" value={body} onChange={(e) => setBody(e.target.value)} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} />{hashtagSuggestions.length > 0 && <div className="am-hashtags" aria-label="Suggested hashtags">{hashtagSuggestions.map((tag) => <button type="button" key={tag.key} onClick={() => setBody((text) => text.replace(/#(?:[A-Za-z][\w-]*)?$/, `${tag.tag} `))}>{tag.tag}</button>)}</div>}</>}
+      {compose === 'playlist' ? <><label className="am-field-label" htmlFor="am-playlist-name">Playlist name</label><input id="am-playlist-name" value={playlistTitle} onChange={(e) => setPlaylistTitle(e.target.value)} placeholder="e.g. My everyday essentials" /><PlaylistAudiencePicker id="am-new-playlist-visibility" value={playlistVisibility} onChange={setPlaylistVisibility} /><PlaylistCoverPicker title={playlistTitle} mode={coverMode} onMode={setCoverMode} color={coverColor} onColor={setCoverColor} text={coverText} onText={setCoverText} photo={coverPhoto} onPhoto={setCoverPhoto} /></> : <><label className="am-field-label" htmlFor="am-post-text">{compose === 'question' ? 'Your question' : compose === 'review' ? 'Your experience' : compose === 'recommend' ? 'A note to your friends' : 'Your post'}</label><textarea id="am-post-text" value={body} onChange={(e) => setBody(e.target.value)} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} />{hashtagSuggestions.length > 0 && <div className="am-hashtags" aria-label="Suggested hashtags">{hashtagSuggestions.map((tag) => <button type="button" key={tag.key} onClick={() => setBody((text) => text.replace(/#(?:[A-Za-z][\w-]*)?$/, `${tag.tag} `))}>{tag.tag}</button>)}</div>}</>}
       {compose === 'review' && <label className="am-rating">Your rating <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>{[5,4,3,2,1].map((n) => <option key={n} value={n}>{n} out of 5</option>)}</select></label>}
       <ProductPicker products={products} value={productId} onChange={setProductId} />
       {compose !== 'playlist' && compose !== 'recommend' && <label className="am-photo-input"><strong>Add photos</strong><span>Up to 4 images</span><span className="am-photo-cta">Choose photos</span><input type="file" accept="image/*" multiple onChange={(e) => { try { const files = Array.from(e.target.files || []).slice(0, MAX_POST_PHOTOS); files.forEach(checkImageFile); setPhotos(files); setError(''); } catch (error) { setError(error.message); } }} />{photos.length > 0 && <small>{photos.map((file) => file.name).join(', ')}</small>}</label>}

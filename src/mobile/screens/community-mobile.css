@@ -94,6 +94,17 @@
 .am-cover-colors { display: flex; gap: 8px; }
 .am-cover-colors button { width: 28px; height: 28px; border: 2px solid transparent; border-radius: 50%; }
 .am-cover-colors button.is-selected { outline: 2px solid var(--ayna-heading); outline-offset: 2px; }
+.am-cover-hint { color: var(--ayna-text-muted); font-size: 11px; }
+.am-cover-examples { display: flex; flex-wrap: wrap; gap: 7px; }
+.am-cover-examples button { border: 1px solid var(--ayna-border); border-radius: 99px; background: var(--ayna-surface); color: var(--ayna-heading); padding: 7px 10px; font-size: 11px; }
+.am-audience { display: grid; gap: 7px; border: 0; margin: 6px 0; padding: 0; }
+.am-audience legend { color: var(--ayna-heading); font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+.am-audience label { display: flex; align-items: flex-start; gap: 10px; padding: 11px 12px; border: 1px solid var(--ayna-border); border-radius: 13px; background: var(--ayna-surface); color: var(--ayna-heading); cursor: pointer; }
+.am-audience label.is-selected { border-color: #4e3866; background: var(--ayna-chip-bg); }
+.am-audience input { accent-color: #4e3866; margin-top: 2px; flex: none; }
+.am-audience span { display: grid; gap: 3px; }
+.am-audience strong { font-size: 12px; }
+.am-audience small { color: var(--ayna-text-muted); font-size: 11px; line-height: 1.4; }
 .am-product-search { display: flex; align-items: center; gap: 7px; border: 1px solid var(--ayna-border); border-radius: 12px; background: var(--ayna-surface); padding: 0 11px; }
 .am-product-search svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; }
 .am-product-search input { border: 0; flex: 1; min-width: 0; }
@@ -108,6 +119,9 @@
 .am-profile-hero .am-detail-copy { margin: 0; }
 .am-avatar-upload { display: inline-grid; gap: 6px; padding: 8px 0; color: var(--ayna-brown); font-size: 12px; font-weight: 700; }
 .am-avatar-upload input { max-width: 250px; font-size: 11px; }
+.am-profile-owner { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 10px 0; }
+.am-profile-owner .am-avatar-upload { padding: 0; }
+.am-profile-help { color: var(--ayna-text-muted); font-size: 11px; }
 .am-list-row:has(.am-avatar) > span:last-child { display: grid; gap: 3px; }
 
 /* Community home: calm reading surface, clear actions, and familiar social cards. */

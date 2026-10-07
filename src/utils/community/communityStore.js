@@ -317,6 +317,7 @@ export async function listPlaylists(supabase, { section = 'recent', ownerIds = n
   let q = supabase.from('community_feed_playlists').select('*');
   if (section === 'mine') q = q.eq('is_mine', true);
   else if (section === 'saved') q = q.eq('viewer_saved', true);
+  else if (section === 'friends') q = q.eq('visibility', 'friends').gt('item_count', 0);
   else if (ownerIds) {
     if (!ownerIds.length) return [];
     q = q.in('owner_id', ownerIds).eq('visibility', 'public');

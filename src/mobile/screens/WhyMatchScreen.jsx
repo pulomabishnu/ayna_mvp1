@@ -32,7 +32,7 @@ function ShieldIcon() {
 const TIERS = [
   {
     min: 75, tier: 'Strong match', headline: 'A strong match.',
-    sub: "Multiple signals from your profile line up, and nothing you've flagged gets in the way.",
+    sub: 'Several survey answers line up with this product. Check the details before choosing it.',
     ink: '#25382A', ring: '#3F6B4A', soft: '#EFF3EC', mid: '#E0EDE1', deep: '#CFE5D2', edge: '#CFE0CE',
   },
   {
@@ -42,7 +42,7 @@ const TIERS = [
   },
   {
     min: 0, tier: 'Worth a look', headline: 'Worth a look.',
-    sub: 'A couple of things line up with your profile — enough to show you, not enough to push.',
+    sub: 'At least one answer lines up, but much of your profile does not clearly match.',
     ink: '#7A4410', ring: '#E8A94F', soft: '#FFF4E2', mid: '#FFE7C6', deep: '#FFDCA8', edge: '#F0D9B4',
   },
 ];
@@ -55,8 +55,8 @@ function tierForPercent(percent) {
 // same three "kind" groupings the score itself is weighted by — goal fit,
 // profile fit, and preference fit — rather than inventing categories that
 // don't map to what was actually computed.
-const GOAL_COMPONENTS = new Set(['primaryGoal', 'periodFlow', 'periodPain', 'utiFrequency', 'diagnoses']);
-const PROFILE_COMPONENTS = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'triedBefore']);
+const GOAL_COMPONENTS = new Set(['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency']);
+const PROFILE_COMPONENTS = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'perimenopauseLastPeriod', 'diagnoses', 'triedBefore']);
 
 function kindForComponent(component) {
   if (GOAL_COMPONENTS.has(component)) return { kind: 'Your goal', glyph: '1', bg: '#E1EFE2', fg: '#3F6B4A' };
@@ -90,17 +90,19 @@ function SimpleHeader({ title, onBack }) {
 
 export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateHealth, onViewDetails }) {
   const details = getProductMatchDetailsForProduct(product, quizAnswers);
-  const { percent, eligible, reasonDetails = [], considerations = [] } = details;
+  const { percent, eligible, matchStatus, reasonDetails = [], considerations = [], unknowns = [] } = details;
 
   if (percent == null) {
     return (
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
-        <SimpleHeader title="About this match" onBack={onBack} />
+        <SimpleHeader title={matchStatus === 'no-relevance' ? 'No clear match' : 'About this match'} onBack={onBack} />
         <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '18px 20px 40px' }}>
           <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)' }}>
-            We don't have enough from your health profile yet to score this one personally.
+            {matchStatus === 'no-relevance'
+              ? "This product does not clearly line up with the needs you selected. We leave the percentage blank instead of guessing. You can still review its evidence and product details."
+              : "We don't have enough from your health profile yet to score this one personally."}
           </div>
-          {onUpdateHealth && (
+          {matchStatus === 'no-profile' && onUpdateHealth && (
             <div
               onClick={onUpdateHealth}
               style={{ marginTop: 18, display: 'inline-block', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', padding: '12px 20px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
@@ -135,6 +137,21 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
           >
             Back to product
           </div>
+          <LegalFooter />
+        </div>
+      </div>
+    );
+  }
+
+  if (matchStatus === 'no-relevance') {
+    return (
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)' }}>
+        <SimpleHeader title="Why 0%?" onBack={onBack} />
+        <div style={{ flex: 1, overflowY: 'auto', padding: '18px 20px 40px' }}>
+          <div style={{ padding: 18, border: '1px solid var(--ayna-border)', borderRadius: 20, background: 'var(--ayna-surface)', color: 'var(--ayna-text)', fontSize: 14, lineHeight: 1.6 }}>
+            This product has no clear match with the needs you selected. The 0% describes profile fit, not product safety or quality. You can still read the product details and sources.
+          </div>
+          {unknowns.length > 0 && <div style={{ marginTop: 12, padding: 15, border: '1px solid var(--ayna-border)', borderRadius: 18, color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>{unknowns.map((note) => <p key={note} style={{ margin: '5px 0' }}>{note}</p>)}</div>}
           <LegalFooter />
         </div>
       </div>
@@ -244,6 +261,11 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
             ))}
           </>
         )}
+
+        {unknowns.length > 0 && <div style={{ marginTop: 16, padding: '14px 15px', border: '1px solid var(--ayna-border)', borderRadius: 18, background: 'var(--ayna-surface)', color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.55 }}>
+          <strong style={{ display: 'block', color: 'var(--ayna-heading)', marginBottom: 4 }}>What we could not confirm</strong>
+          {unknowns.map((note) => <p key={note} style={{ margin: '5px 0' }}>{note}</p>)}
+        </div>}
 
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 11, marginTop: 16, background: 'var(--ayna-surface)', border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: '14px 15px' }}>
           <div style={{ width: 26, height: 26, borderRadius: 99, background: 'var(--ayna-chip-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', marginTop: 1 }}>
