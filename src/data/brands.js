@@ -5370,6 +5370,98 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
+    // HerAuré HerMag Magnesium 20-in-1 Complex — verified against
+    // heraure.com/products/hermag-magnesium-20-in-1-complex on 2026-10-07
+    // (price, ingredient facts, usage, FAQ). Image supplied by ayna. NIH ODS
+    // magnesium fact sheet read in a browser (it blocks curl); studies read
+    // via NCBI E-utilities. Not a brand partner, no affiliate link.
+    {
+        id: 'p-heraure-hermag-magnesium',
+        name: 'HerAuré HerMag Magnesium 20-in-1 Complex',
+        brand: 'HerAuré',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement', 'sleep'],
+        tags: ['heraure', 'hermag', 'magnesium', 'magnesium glycinate', 'l-theanine', 'lions mane', 'sleep', 'stress', 'relaxation', 'focus', 'supplement'],
+        price: '$29.99 for 90 capsules (list $49.99)',
+        whereToBuy: ['heraure.com'],
+        url: 'https://heraure.com/products/hermag-magnesium-20-in-1-complex',
+        image: '/products/heraure/hermag-magnesium.webp', // supplied by ayna
+        summary: 'A daily magnesium capsule made for women, combining 12 forms of magnesium (led by magnesium glycinate) with a brain blend of L-theanine, lion\'s mane, alpha-GPC, phosphatidylserine, PQQ, vitamin B6 and zinc, plus slippery elm. HerAuré says it supports relaxation, restful sleep, calm focus and steady energy. Take 2 capsules a day, which gives 300 mg of magnesium; a bottle lasts 45 days.',
+        ingredients: 'Per serving (2 capsules), per HerAuré: HerMag™ Magnesium Complex 800 mg (magnesium glycinate, malate, taurate, orotate, aspartate, lactate, ascorbate, gluconate, sulfate heptahydrate, citrate, oxide and chloride), providing 300 mg magnesium (71% DV). NeuroRadiance™ Blend 135 mg: L-theanine, lion\'s mane mushroom extract, alpha-GPC, phosphatidylserine, PQQ (disodium salt), vitamin B6, zinc (as zinc picolinate). Slippery elm bark extract 50 mg. Other ingredients: HPMC vegetarian capsules, rice flour, magnesium stearate, silicon dioxide. The amounts of each magnesium form and each blend ingredient aren\'t listed.',
+        safety: {
+            fdaStatus: 'Dietary supplement; not evaluated by the FDA for safety or efficacy claims.',
+            materials: '90 vegan capsules (2 a day, 45-day supply). Made in the USA, per the label.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Each serving has 300 mg of magnesium, under the NIH\'s 350 mg daily upper limit for magnesium from supplements; if you take other magnesium products, the total can go over it. The NIH says high supplement intakes can cause diarrhea, nausea and abdominal cramping. Full warnings are listed below.',
+            opinionAlerts: 'The label\'s "1685 mg" and "12x absorption" claims aren\'t explained on HerAuré\'s product page, which lists 800 mg of magnesium compounds giving 300 mg of magnesium per serving.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from HerAuré; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'HerAuré says this formula supports relaxation, restful sleep, calm focus and steady energy. No study of this product was found, and HerAuré doesn\'t list how much of each ingredient is in its blends, so what follows is what the research says about its main ingredients.\n\nThe evidence for magnesium and sleep is weak. A 2026 systematic review of 12 randomized trials concluded that current evidence doesn\'t support oral magnesium as a routine treatment for insomnia; it may modestly help some people, but results were inconsistent and the certainty of evidence was low to very low. An earlier 2021 review of 3 trials in 151 older adults found people fell asleep about 17 minutes faster on magnesium than placebo, also with low-quality evidence.\n\nL-theanine has somewhat more support: a 2025 meta-analysis of 18 trials (897 people) found small improvements in self-reported sleep quality and how quickly people fell asleep, though many studies didn\'t test L-theanine alone. This product\'s whole 7-ingredient brain blend is 135 mg, so its L-theanine dose is unknown.\n\nIf you have ongoing trouble sleeping, it\'s worth talking to a clinician.',
+        doctorOpinionShort: 'Evidence that magnesium helps sleep is low quality and inconsistent; L-theanine has small benefits for self-reported sleep. HerAuré doesn\'t publish the amount of each ingredient, and no study of this product was found. Its 300 mg of magnesium is under the NIH\'s 350 mg daily supplement limit.',
+        doctorOpinionCitations: [
+            { url: 'https://heraure.com/products/hermag-magnesium-20-in-1-complex', label: 'heraure.com: Magnesium 20-in-1 Complex — ingredients and claims' },
+            { url: 'https://ods.od.nih.gov/factsheets/Magnesium-Consumer/', label: 'NIH Office of Dietary Supplements: Magnesium — upper limits and interactions' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/42661485/', label: 'PubMed: Magnesium supplementation for sleep in adults — systematic review of randomized controlled trials (J Diet Suppl 2026)', chipLabel: 'Magnesium for sleep review, 12 trials (2026)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/33865376/', label: 'PubMed: Oral magnesium supplementation for insomnia in older adults — systematic review and meta-analysis (BMC Complement Med Ther 2021)', chipLabel: 'Magnesium for insomnia meta-analysis, 151 people (2021)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/40056718/', label: 'PubMed: The effects of L-theanine consumption on sleep outcomes — systematic review and meta-analysis (Sleep Med Rev 2025)', chipLabel: 'L-theanine sleep meta-analysis, 897 people (2025)' },
+        ],
+        whoItsFor: [
+            'Adults who want a magnesium supplement as part of a bedtime or daily routine',
+            'Pregnant, breastfeeding, on medication or managing a medical condition: HerAuré says to check with your healthcare professional first',
+            'Not a substitute for seeing a clinician about ongoing insomnia, anxiety or low energy',
+        ],
+        howToUse: {
+            intro: 'Per HerAuré: take it consistently; any time of day works, though many people take it in the evening.',
+            steps: [
+                'Take 2 capsules daily, with or without food.',
+            ],
+            sourceUrl: 'https://heraure.com/products/hermag-magnesium-20-in-1-complex',
+            sourceLabel: 'heraure.com: Magnesium 20-in-1 Complex',
+        },
+        warnings: [
+            'Pregnant, breastfeeding, taking medication or managing a medical condition: talk with your healthcare professional first (per HerAuré).',
+            'Taking other magnesium supplements or magnesium-containing medicines: the NIH\'s upper limit for magnesium from supplements and medications is 350 mg a day for adults, and this product alone has 300 mg.',
+            'Taking a bisphosphonate for osteoporosis: the NIH says these aren\'t well absorbed when taken too close to a magnesium supplement, so ask about timing.',
+            'Diarrhea, nausea or cramping: the NIH lists these as effects of too much supplemental magnesium.',
+        ],
+        communityReview: 'HerAuré\'s product page shows no customer reviews for this product yet.',
+        effectiveness: 'Evidence that magnesium improves sleep is low quality and inconsistent; L-theanine shows small benefits for self-reported sleep.',
+        ingredientScience: [
+            {
+                name: 'Magnesium (for sleep)',
+                text: 'A 2026 systematic review of 12 randomized trials found inconsistent results and low to very low certainty of evidence, and concluded that oral magnesium isn\'t supported as a routine insomnia treatment, though it may modestly help some people. A 2021 meta-analysis of 3 trials in 151 older adults found magnesium cut the time to fall asleep by about 17 minutes versus placebo; total sleep time didn\'t change significantly, and the evidence was low quality.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/42661485/', label: 'PubMed: Magnesium supplementation for sleep in adults — a systematic review of randomized controlled trials (Lopresti et al., J Diet Suppl 2026)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33865376/', label: 'PubMed: Oral magnesium supplementation for insomnia in older adults — a systematic review & meta-analysis (Mah & Pitre, 2021)' },
+                ],
+            },
+            {
+                name: 'Magnesium (safety)',
+                text: 'The NIH sets the upper limit for magnesium from supplements and medications at 350 mg a day for adults. Too much can cause diarrhea, nausea and abdominal cramping, and magnesium supplements can interfere with some medicines, such as bisphosphonates for osteoporosis.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/Magnesium-Consumer/', label: 'NIH Office of Dietary Supplements: Magnesium fact sheet for consumers' },
+                ],
+            },
+            {
+                name: 'L-theanine',
+                text: 'A 2025 meta-analysis of 18 randomized trials (897 people) found L-theanine made small improvements in self-reported sleep quality, time to fall asleep and daytime functioning. The authors noted few studies tested L-theanine on its own. HerAuré doesn\'t list its L-theanine dose.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/40056718/', label: 'PubMed: The effects of L-theanine consumption on sleep outcomes — a systematic review and meta-analysis (Bulman et al., Sleep Med Rev 2025)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [] },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
     // Liv Labs (Pippa Resistance Spring) — catalog entry only, NOT yet an
     // ayna brand partner (as of 2026-09-23). isEmergingBrand still shows the
     // "Brand" tag on Discovery, but it's deliberately left out of
