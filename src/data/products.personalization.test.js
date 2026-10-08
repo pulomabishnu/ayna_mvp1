@@ -107,6 +107,17 @@ describe('personalized relevance scoring', () => {
         }
     });
 
+    it('keeps preliminary PCOS supplements below a strong-match claim', () => {
+        const pcosOnly = { fullHealthIntake: { supportSelections: ['PCOS support'], diagnosisSelections: ['PCOS'] } };
+        for (const id of ['p-inositol-wholesome', 'p-spearmint-pcos']) {
+            const product = ALL_PRODUCTS.find((entry) => entry.id === id);
+            const match = getProductMatchDetailsForProduct(product, pcosOnly);
+            expect(match.percent, id).toBeGreaterThan(0);
+            expect(match.percent, id).toBeLessThan(60);
+            expect(match.unknowns.some((note) => /evidence.*limited/i.test(note)), id).toBe(true);
+        }
+    });
+
     it('does not treat menstrual leaks and staining as urinary leakage', () => {
         expect(elitone).toBeTruthy();
 
