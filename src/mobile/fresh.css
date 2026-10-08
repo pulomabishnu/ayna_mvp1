@@ -472,3 +472,16 @@
 .ayna-fresh-match-header h1,
 .ayna-fresh-match-header>div>div:last-child>div:last-child { font-family:'DM Sans',sans-serif!important; font-size:28px!important; font-weight:900!important; letter-spacing:-.055em; color:#203c9c!important; }
 .ayna-fresh-match-header>div>div:first-child { width:44px!important; height:44px!important; border-radius:12px!important; border-color:#c7ceef!important; }
+
+/* Community creation and detail screens keep the same type and color rules. */
+.ayna-mobile .am-sheet-head h2,
+.ayna-mobile .am-detail-title,
+.ayna-mobile .am-list-heading h2,
+.ayna-mobile .am-section,
+.ayna-mobile .am-empty-state h2 { font-family:'DM Sans',sans-serif!important; font-weight:900!important; letter-spacing:-.045em; line-height:1.09; }
+.ayna-mobile .am-cover-preview span { font-family:'DM Sans',sans-serif!important; font-style:normal!important; font-weight:900; letter-spacing:-.045em; }
+.ayna-mobile .am-audience label.is-selected { border-color:#203c9c; background:#dfe2ff; }
+.ayna-mobile .am-cover-mode button.is-active { background:#203c9c; color:#fff; }
+.ayna-mobile .am-avatar { background:#dfe2ff; color:#203c9c; }
+.ayna-mobile .am-share-plus { background:#d5f477; color:#203c9c; }
+.ayna-mobile .am-tabs button.is-active { color:#203c9c; border-bottom-color:#203c9c; }
