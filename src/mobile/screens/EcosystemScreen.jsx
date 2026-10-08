@@ -1,6 +1,7 @@
 import MobileHeader from '../components/MobileHeader.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import ArticleCard from '../components/ArticleCard.jsx';
+import ProductImage from '../components/ProductImage.jsx';
 import CtaBanner from '../components/CtaBanner.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
@@ -46,6 +47,8 @@ export default function EcosystemScreen({
   const gridProducts = matchedProducts;
   const savedList = Object.values(savedProducts || {});
   const nextSaved = savedList[0];
+  const featuredProduct = matchedProducts[0] || suggestedEcosystemProducts[0] || nextSaved;
+  const featuredImage = featuredProduct?.image || featuredProduct?.imageUrl || featuredProduct?.images?.[0];
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
@@ -58,9 +61,13 @@ export default function EcosystemScreen({
         {ecosystemNotice && <p role="status" style={{ margin: '12px 0 0', padding: '11px 14px', borderRadius: 14, background: 'var(--ayna-peach)', color: 'var(--ayna-heading)', fontSize: 13, lineHeight: 1.45 }}>{ecosystemNotice}</p>}
       </div>
 
-      <button type="button" className="ayna-editorial-feature" onClick={nextSaved ? () => onOpenProduct?.(nextSaved) : onBrowse}>
-        <img src="/landing-bg.png" alt="" />
-        <span className="ayna-editorial-feature-copy"><small>Your space to discover</small><strong>{nextSaved ? 'Pick up where you left off ↗' : 'Find your next favorite ↗'}</strong></span>
+      <button type="button" className="ayna-v2-eco-feature" onClick={featuredProduct ? () => onOpenProduct?.(featuredProduct) : onBrowse}>
+        <span className="ayna-v2-eco-feature-copy">
+          <small>{featuredProduct ? 'A PICK FOR YOU / 01' : 'YOUR SPACE TO DISCOVER'}</small>
+          <strong>{featuredProduct ? featuredProduct.name : 'Find your next good thing.'}</strong>
+          <span>See the details ↗</span>
+        </span>
+        {featuredImage && <span className="ayna-v2-eco-feature-image"><ProductImage src={featuredImage} alt="" allowBrandLogo={featuredProduct?.type === 'digital'} style={{ objectFit: 'contain' }} /></span>}
       </button>
 
       <div style={{ padding: '18px 20px 0' }}>

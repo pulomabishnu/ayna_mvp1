@@ -30,8 +30,8 @@ export default function BuildingScreen({ onFinish, onBack, statuses = DEFAULT_ST
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#242A52',
-        color: '#FFFCF9',
+        background: '#4100F5',
+        color: '#FFFFFF',
         padding: 40,
         animation: 'ay-page .25s ease-out',
       }}
@@ -40,7 +40,7 @@ export default function BuildingScreen({ onFinish, onBack, statuses = DEFAULT_ST
       <div style={{ position: 'relative', width: 150, height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 34 }}>
         <div style={{ position: 'absolute', inset: 0, borderRadius: 99, border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 2.6s ease-out infinite' }} />
         <div style={{ position: 'absolute', inset: 0, borderRadius: 99, border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 2.6s ease-out infinite 1.3s' }} />
-        <div style={{ width: 66, height: 66, borderRadius: 99, background: '#FFC774', animation: 'ay-float 3.4s ease-in-out infinite' }} />
+        <div style={{ width: 66, height: 66, borderRadius: 99, background: '#CDF500', animation: 'ay-float 3.4s ease-in-out infinite' }} />
       </div>
       <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(26px * var(--ayna-text-scale, 1))', textAlign: 'center', lineHeight: 1.2 }}>{headline}</div>
       <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.6px', opacity: 0.72, marginTop: 12, textAlign: 'center' }}>

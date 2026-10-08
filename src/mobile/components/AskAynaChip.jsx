@@ -210,7 +210,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
           height: 26,
           boxSizing: 'border-box',
           borderRadius: '50%',
-          background: 'linear-gradient(135deg,#242A52,#4E3866 55%,#A2603C)',
+          background: 'linear-gradient(135deg,#4100F5,#4100F5 55%,#4100F5)',
           animation: 'ay-float 3s ease-in-out infinite',
           flex: 'none',
         }}

@@ -6,8 +6,8 @@ function GradientBanner({ onClick, title = 'Build your ecosystem', buttonLabel =
         margin: '0 20px 20px',
         borderRadius: 24,
         padding: 20,
-        background: 'linear-gradient(135deg,#242A52 0%,#4E3866 52%,#A2603C 100%)',
-        color: '#FFFCF9',
+        background: 'linear-gradient(135deg,#4100F5 0%,#4100F5 52%,#4100F5 100%)',
+        color: '#FFFFFF',
         cursor: 'pointer',
         position: 'relative',
         overflow: 'hidden',
@@ -22,8 +22,8 @@ function GradientBanner({ onClick, title = 'Build your ecosystem', buttonLabel =
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 16 }}>
         <div
           style={{
-            background: '#FFC774',
-            color: '#292524',
+            background: '#CDF500',
+            color: '#171717',
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 600,
             fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
@@ -49,18 +49,18 @@ function InlineRow({ onClick }) {
         alignItems: 'center',
         gap: 12,
         padding: '14px 16px',
-        border: '1px solid #E1D5CE',
+        border: '1px solid #E0E0D9',
         borderRadius: 18,
-        background: '#FFFCF9',
+        background: '#FFFFFF',
         cursor: 'pointer',
       }}
     >
-      <div style={{ width: 34, height: 34, borderRadius: 99, background: 'linear-gradient(135deg,#242A52,#A2603C)', flexShrink: 0 }} />
+      <div style={{ width: 34, height: 34, borderRadius: 99, background: 'linear-gradient(135deg,#4100F5,#4100F5)', flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
         <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))' }}>Build your ecosystem</div>
-        <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: '#78716C', marginTop: 2 }}>6 steps</div>
+        <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: '#626262', marginTop: 2 }}>6 steps</div>
       </div>
-      <div style={{ color: '#A2603C', fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>→</div>
+      <div style={{ color: '#4100F5', fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>→</div>
     </div>
   );
 }
@@ -74,8 +74,8 @@ function StickyPill({ onClick }) {
         left: 20,
         right: 20,
         bottom: 44,
-        background: '#292524',
-        color: '#FFFCF9',
+        background: '#171717',
+        color: '#FFFFFF',
         borderRadius: 99,
         padding: '14px 20px',
         display: 'flex',
@@ -92,8 +92,8 @@ function StickyPill({ onClick }) {
       </div>
       <div
         style={{
-          background: '#FFC774',
-          color: '#292524',
+          background: '#CDF500',
+          color: '#171717',
           width: 32,
           height: 32,
           borderRadius: 99,

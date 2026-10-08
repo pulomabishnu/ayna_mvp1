@@ -479,7 +479,7 @@ export default function ProductDetailScreen({
             }}
           >
             <ProductImage src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
-            {matchDetails.matchStatus === 'no-profile' && <button type="button" onClick={onStartQuiz} style={{ position: 'absolute', right: 12, bottom: 12, border: 0, borderRadius: 99, background: '#fff9f2', color: '#5c3b2c', padding: '9px 13px', fontWeight: 600 }}>Build to see your match</button>}
+            {matchDetails.matchStatus === 'no-profile' && <button type="button" onClick={onStartQuiz} style={{ position: 'absolute', right: 12, bottom: 12, border: 0, borderRadius: 99, background: '#F8F8F3', color: '#5c3b2c', padding: '9px 13px', fontWeight: 600 }}>Build to see your match</button>}
           </div>
         </div>
 

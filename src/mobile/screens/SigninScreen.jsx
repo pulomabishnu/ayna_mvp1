@@ -44,7 +44,7 @@ function Field({ label, icon, children }) {
 // font-size is under 16px, then doesn't reliably zoom back out — the
 // max() floor keeps that from firing without changing the size at any
 // --ayna-text-scale setting that was already >= 16px.
-const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: '#292524', width: '100%', padding: '3px 0 0' };
+const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: '#171717', width: '100%', padding: '3px 0 0' };
 
 const EmailIcon = (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="1.75" style={{ flex: 'none' }}>
@@ -65,8 +65,8 @@ function PrimaryButton({ onClick, disabled, children }) {
       style={{
         width: '100%',
         border: 0,
-        background: disabled ? 'rgba(255,199,116,.45)' : '#FFC774',
-        color: '#292524',
+        background: disabled ? 'rgba(255,199,116,.45)' : '#CDF500',
+        color: '#171717',
         textAlign: 'center',
         padding: 15,
         borderRadius: 14,
@@ -91,7 +91,7 @@ function GoogleButton({ onClick, disabled }) {
     <button type="button" disabled={disabled} onClick={onClick}
       style={{
         width: '100%',
-        color: '#FFFCF9',
+        color: '#FFFFFF',
         background: 'rgba(255,252,249,.14)',
         border: '1px solid rgba(255,255,255,.28)',
         textAlign: 'center',
@@ -124,7 +124,7 @@ function AppleButton({ onClick, disabled }) {
     <button type="button" disabled={disabled} onClick={onClick}
       style={{
         width: '100%',
-        color: '#FFFCF9',
+        color: '#FFFFFF',
         background: 'rgba(255,252,249,.14)',
         border: '1px solid rgba(255,255,255,.28)',
         textAlign: 'center',
@@ -142,8 +142,8 @@ function AppleButton({ onClick, disabled }) {
       }}
     >
       <svg width="16" height="18" viewBox="0 0 16 18">
-        <path fill="#FFFCF9" d="M13.06 9.53c-.02-1.96 1.6-2.9 1.67-2.94-.91-1.33-2.33-1.51-2.84-1.53-1.21-.12-2.36.71-2.97.71-.62 0-1.55-.7-2.55-.68-1.31.02-2.53.76-3.2 1.93-1.37 2.37-.35 5.87.98 7.79.65.94 1.42 1.99 2.44 1.96.98-.04 1.35-.63 2.53-.63 1.18 0 1.51.63 2.55.6 1.05-.02 1.72-.95 2.36-1.89.75-1.08 1.05-2.13 1.06-2.18-.02-.01-2.03-.78-2.03-3.13z" />
-        <path fill="#FFFCF9" d="M11.1 3.68c.54-.65.9-1.56.8-2.46-.77.03-1.71.51-2.27 1.15-.5.57-.94 1.5-.82 2.38.86.06 1.75-.44 2.29-1.07z" />
+        <path fill="#FFFFFF" d="M13.06 9.53c-.02-1.96 1.6-2.9 1.67-2.94-.91-1.33-2.33-1.51-2.84-1.53-1.21-.12-2.36.71-2.97.71-.62 0-1.55-.7-2.55-.68-1.31.02-2.53.76-3.2 1.93-1.37 2.37-.35 5.87.98 7.79.65.94 1.42 1.99 2.44 1.96.98-.04 1.35-.63 2.53-.63 1.18 0 1.51.63 2.55.6 1.05-.02 1.72-.95 2.36-1.89.75-1.08 1.05-2.13 1.06-2.18-.02-.01-2.03-.78-2.03-3.13z" />
+        <path fill="#FFFFFF" d="M11.1 3.68c.54-.65.9-1.56.8-2.46-.77.03-1.71.51-2.27 1.15-.5.57-.94 1.5-.82 2.38.86.06 1.75-.44 2.29-1.07z" />
       </svg>
       {disabled ? 'Opening Apple…' : 'Continue with Apple'}
     </button>
@@ -293,8 +293,8 @@ export default function SigninScreen({
       style={{
         flex: 1,
         overflowY: 'auto',
-        background: '#242A52',
-        color: '#FFFCF9',
+        background: '#4100F5',
+        color: '#FFFFFF',
         paddingTop: 'max(20px, env(safe-area-inset-top))',
         paddingLeft: 24,
         paddingRight: 24,
@@ -304,7 +304,7 @@ export default function SigninScreen({
         animation: 'ay-page .25s ease-out',
       }}
     >
-      <button type="button" onClick={onAuthBack} style={{ alignSelf: 'flex-start', border: '1px solid rgba(255,255,255,.35)', background: 'rgba(255,255,255,.08)', color: '#FFFCF9', borderRadius: 99, padding: '10px 15px', marginBottom: 20, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
+      <button type="button" onClick={onAuthBack} style={{ alignSelf: 'flex-start', border: '1px solid rgba(255,255,255,.35)', background: 'rgba(255,255,255,.08)', color: '#FFFFFF', borderRadius: 99, padding: '10px 15px', marginBottom: 20, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
         ← Back
       </button>
       {mode === 'check-email' ? (
@@ -319,7 +319,7 @@ export default function SigninScreen({
           {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginBottom: 14 }}>{resendMsg}</div>}
           <div
             onClick={resending ? undefined : handleResend}
-            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#FFC774', cursor: resending ? 'default' : 'pointer' }}
+            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#CDF500', cursor: resending ? 'default' : 'pointer' }}
           >
             {resending ? 'Sending…' : 'Resend confirmation email'}
           </div>
@@ -344,7 +344,7 @@ export default function SigninScreen({
 
           {mode === 'signup' && (
             <label style={{ background: '#FFFFFF', borderRadius: 14, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 42, height: 42, borderRadius: 99, background: '#FFC774', color: '#292524', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
+              <div style={{ width: 42, height: 42, borderRadius: 99, background: '#CDF500', color: '#171717', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
                 {initial}
               </div>
               <div style={{ flex: 1 }}>
@@ -366,7 +366,7 @@ export default function SigninScreen({
             <div style={{ marginTop: 6, marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {CONSENT_ITEMS.map((text, i) => (
                 <label key={i} style={{ display: 'flex', gap: 10, cursor: 'pointer', alignItems: 'flex-start' }}>
-                  <input type="checkbox" checked={checked[i]} onChange={() => toggleCheck(i)} style={{ width: 18, height: 18, flex: 'none', marginTop: 1, accentColor: '#FFC774' }} />
+                  <input type="checkbox" checked={checked[i]} onChange={() => toggleCheck(i)} style={{ width: 18, height: 18, flex: 'none', marginTop: 1, accentColor: '#CDF500' }} />
                   <span style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'rgba(255,252,249,.9)' }}>{text}</span>
                 </label>
               ))}
@@ -382,7 +382,7 @@ export default function SigninScreen({
               <PrimaryButton onClick={handleSignUp} disabled={loading}>
                 <span>{loading ? 'Creating account…' : 'Create my account'}</span>
                 {!loading && (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#292524" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#171717" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 12h14M13 6l6 6-6 6" />
                   </svg>
                 )}
@@ -404,7 +404,7 @@ export default function SigninScreen({
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFF9F2" strokeWidth="2" strokeLinecap="round">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F8F8F3" strokeWidth="2" strokeLinecap="round">
               <rect x="5" y="11" width="14" height="10" rx="2.5" />
               <path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" />
             </svg>

@@ -61,7 +61,7 @@ function ModeTab({ label, active, onClick }) {
         cursor: 'pointer',
         paddingBottom: 10,
         color: active ? 'var(--ayna-text)' : 'var(--ayna-text-faint)',
-        borderBottom: '2px solid ' + (active ? '#FFC774' : 'transparent'),
+        borderBottom: '2px solid ' + (active ? '#CDF500' : 'transparent'),
         marginBottom: -1,
       }}
     >
@@ -93,7 +93,7 @@ function PersonalizedToggle({ on, disabled, onClick }) {
           width: 30,
           height: 17,
           borderRadius: 99,
-          background: on ? '#FFC774' : 'var(--ayna-chip-border)',
+          background: on ? '#CDF500' : 'var(--ayna-chip-border)',
           position: 'relative',
           transition: 'background .15s',
         }}

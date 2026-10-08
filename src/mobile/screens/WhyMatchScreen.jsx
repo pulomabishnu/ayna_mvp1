@@ -43,7 +43,7 @@ const TIERS = [
   {
     min: 0, tier: 'Worth a look', headline: 'Worth a look.',
     sub: 'At least one answer lines up, but much of your profile does not clearly match.',
-    ink: '#7A4410', ring: '#E8A94F', soft: '#FFF4E2', mid: '#FFE7C6', deep: '#FFDCA8', edge: '#F0D9B4',
+    ink: '#7A4410', ring: '#BBDD00', soft: '#FFF4E2', mid: '#FFE7C6', deep: '#FFDCA8', edge: '#F0D9B4',
   },
 ];
 

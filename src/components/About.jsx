@@ -1,10 +1,10 @@
 import React from 'react';
 
 const FUNNEL = [
-  { label: 'Open market', width: '100%', fill: 'linear-gradient(90deg,#242A52,#3b3866)' },
-  { label: 'Fits your profile', width: '68%', fill: 'linear-gradient(90deg,#4E3866,#6d4a72)' },
-  { label: 'Passes evidence checks', width: '42%', fill: 'linear-gradient(90deg,#8A5049,#A2603C)' },
-  { label: 'Reaches your shop', width: '24%', fill: 'linear-gradient(90deg,#C07A2C,#F0A84B)' },
+  { label: 'Open market', width: '100%', fill: 'linear-gradient(90deg,#4100F5,#3b3866)' },
+  { label: 'Fits your profile', width: '68%', fill: 'linear-gradient(90deg,#4100F5,#6d4a72)' },
+  { label: 'Passes evidence checks', width: '42%', fill: 'linear-gradient(90deg,#8A5049,#4100F5)' },
+  { label: 'Reaches your shop', width: '24%', fill: 'linear-gradient(90deg,#C07A2C,#CDF500)' },
 ];
 
 const GATES = [
@@ -73,7 +73,7 @@ export default function About({ onBack, onViewSources }) {
         <div className="hiw-hero__col">
           {onBack && <button type="button" className="hiw-back" onClick={onBack}>Back</button>}
           <div className="hiw-hero__eyebrow">About ayna</div>
-          <h1 className="hiw-hero__headline">No <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>mystery box</span>.</h1>
+          <h1 className="hiw-hero__headline">No <span style={{ fontStyle: 'italic', color: '#CDF500' }}>mystery box</span>.</h1>
           <p className="hiw-hero__sub">See what shapes your shop.</p>
         </div>
       </section>

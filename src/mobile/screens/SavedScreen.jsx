@@ -188,13 +188,13 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
       </article>
 
       {gaps.length > 0 && (
-        <div style={{ marginTop: 20, borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#4E3866,#242A52)', color: '#FFF9F2', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ marginTop: 20, borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#4100F5,#4100F5)', color: '#F8F8F3', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', right: -56, top: -56, width: 190, height: 190, borderRadius: '50%', border: '1px solid rgba(255,255,255,.16)' }} />
           <div style={{ position: 'absolute', right: -16, top: 18, width: 110, height: 110, borderRadius: '50%', border: '1px solid rgba(255,255,255,.12)' }} />
-          <div style={{ position: 'relative', fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#FFC774' }}>Your ecosystem · {gaps.length} gap{gaps.length === 1 ? '' : 's'}</div>
+          <div style={{ position: 'relative', fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#CDF500' }}>Your ecosystem · {gaps.length} gap{gaps.length === 1 ? '' : 's'}</div>
           <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '8px 0 9px', maxWidth: 235 }}>Saves become a routine once you fill the gaps.</div>
           <div style={{ position: 'relative', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 255 }}>{gaps.join(', ')} {gaps.length === 1 ? 'is' : 'are'} still empty for you.</div>
-          <div onClick={onGoEco} style={{ position: 'relative', display: 'inline-block', marginTop: 15, background: '#FFC774', color: '#231A12', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '11px 18px', borderRadius: 99, cursor: 'pointer', animation: 'ay-bob 2.6s ease-in-out infinite' }}>
+          <div onClick={onGoEco} style={{ position: 'relative', display: 'inline-block', marginTop: 15, background: '#CDF500', color: '#231A12', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '11px 18px', borderRadius: 99, cursor: 'pointer', animation: 'ay-bob 2.6s ease-in-out infinite' }}>
             See what's missing
           </div>
         </div>
@@ -339,8 +339,9 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
       <div style={{ flex: 1, overflowY: 'auto', padding: isEmpty ? '10px 22px 30px' : '16px 20px 0' }}>
         {isEmpty ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ position: 'relative', height: 210, flex: 'none', overflow: 'hidden', borderRadius: 16, background: 'var(--ayna-bg-alt)' }}>
-              <img src="/landing-bg.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ height: 186, flex: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 20, borderRadius: 11, background: '#4100F5', color: '#fff' }}>
+              <span style={{ color: '#CDF500', fontSize: 11, fontWeight: 800, letterSpacing: '.12em' }}>YOUR LITTLE SHORTLIST</span>
+              <strong style={{ maxWidth: 250, fontSize: 29, lineHeight: 1.05, letterSpacing: '-.05em' }}>Keep the good stuff close.</strong>
             </div>
 
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '18px 0 0', textAlign: 'center', color: 'var(--ayna-heading)' }}>Nothing saved yet.</div>

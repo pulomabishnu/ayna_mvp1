@@ -178,7 +178,7 @@ function OptionCard({ selected, title, subtitle, onClick, tone, icon }) {
             justifyContent: 'center',
           }}
         >
-          {selected && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFCF9" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>}
+          {selected && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>}
         </div>
       )}
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -273,7 +273,7 @@ function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
                       borderRadius: 99,
                       border: '1.5px solid ' + (on ? NAVY : ROW_BORDER),
                       background: on ? NAVY : CARD_BG,
-                      color: on ? '#FFFCF9' : INK,
+                      color: on ? '#FFFFFF' : INK,
                       fontFamily: "'DM Sans',sans-serif",
                       fontWeight: 500,
                       fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
@@ -475,7 +475,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
           <CompletionCard month={thisMonth} />
           <div
             onClick={onBack}
-            style={{ marginTop: 20, textAlign: 'center', padding: 15, borderRadius: 99, background: NAVY, color: '#FFFCF9', fontWeight: 600, fontFamily: "'DM Sans',sans-serif", cursor: 'pointer' }}
+            style={{ marginTop: 20, textAlign: 'center', padding: 15, borderRadius: 99, background: NAVY, color: '#FFFFFF', fontWeight: 600, fontFamily: "'DM Sans',sans-serif", cursor: 'pointer' }}
           >
             Back to profile
           </div>
@@ -506,7 +506,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
           padding: 15,
           borderRadius: 99,
           background: readyForNext && !saving ? NAVY : ROW_BORDER,
-          color: readyForNext && !saving ? '#FFFCF9' : MUTED,
+          color: readyForNext && !saving ? '#FFFFFF' : MUTED,
           fontWeight: 600,
           fontFamily: "'DM Sans',sans-serif",
           fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',

@@ -269,7 +269,7 @@ function ShopGrid({ items, onOpenProduct }) {
           <div style={{
             font: "500 9.5px 'DM Mono', monospace",
             letterSpacing: '0.1em',
-            color: '#C0761F',
+            color: '#4100F5',
             marginTop: '12px',
           }}>
             {label}
@@ -291,7 +291,7 @@ function ShopGrid({ items, onOpenProduct }) {
 }
 
 /** The mockup's 38×22 pill toggle. Off = grey track, knob left; on = knob right. */
-function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#242A52', onKnob = '#F0A84B', ...rest }) {
+function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#4100F5', onKnob = '#CDF500', ...rest }) {
   return (
     <span
       role="switch"
@@ -455,13 +455,13 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
               {ecosystemCount > 0 ? (
                 <>
                   Your ecosystem is{' '}
-                  <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>
+                  <span style={{ fontStyle: 'italic', color: '#CDF500' }}>
                     {ecosystemCount} product{ecosystemCount === 1 ? '' : 's'}
                   </span>{' '}
                   strong.
                 </>
               ) : (
-                <>Build your <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>ecosystem</span>.</>
+                <>Build your <span style={{ fontStyle: 'italic', color: '#CDF500' }}>ecosystem</span>.</>
               )}
             </h1>
             <p style={{
@@ -511,7 +511,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
                   }}
                 >
                   <span style={{ font: "400 15px 'Playfair Display', serif" }}>{a.label}</span>
-                  <span style={{ fontSize: '11.5px', color: '#F0A84B' }}>
+                  <span style={{ fontSize: '11.5px', color: '#CDF500' }}>
                     {a.count} {a.count === 1 ? 'pick' : 'picks'}
                   </span>
                 </div>
@@ -548,7 +548,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
               </button>
               <div className="ayna-landing-personalize">
                 <span>{personalize ? 'Personalized' : 'Personalize'}</span>
-                <Toggle on={personalize} onTrack="#4E3866" onClick={() => setPersonalize((value) => !value)} />
+                <Toggle on={personalize} onTrack="#4100F5" onClick={() => setPersonalize((value) => !value)} />
               </div>
             </div>
           </div>
@@ -766,12 +766,12 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
     <div className="mockup-landing">
       <section className="ayna-landing-hero">
         <div className="ayna-landing-hero-col">
-          <div className="ayna-landing-eyebrow">Women&apos;s health, personalized</div>
+          <div className="ayna-landing-eyebrow">Your health, your rules</div>
           <h1 className="ayna-landing-headline">
-            Care that&apos;s <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>matched</span> to your body.
+            Your body.<br /><span>Your call.</span>
           </h1>
           <p className="ayna-landing-sub">
-            Real research, doctor input, and other women&apos;s experiences in one place.
+            Discover products for your body with research, clinical insight, and real experiences all in one place.
           </p>
 
           <form className="ayna-landing-searchbar" onSubmit={submitSearch}>
@@ -792,8 +792,11 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
               </button>
             ))}
           </div>
-
         </div>
+        <figure className="ayna-landing-hero-photo">
+          <img src="/team/ayna-founders.jpg" alt="The Ayna team together outdoors" />
+          <figcaption>Built by women who wanted better answers.</figcaption>
+        </figure>
       </section>
 
       <section className="ayna-landing-band">

@@ -51,7 +51,7 @@ export default function SearchBar({ value = '', onChange, onFilterClick, terms =
                 display: 'flex',
                 alignItems: 'center',
                 fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
-                color: '#78716C',
+                color: '#626262',
                 whiteSpace: 'nowrap',
                 animation: (rot % 2 ? 'ay-swap2' : 'ay-swap') + ' 2.4s ease-in-out',
               }}
@@ -84,7 +84,7 @@ export default function SearchBar({ value = '', onChange, onFilterClick, terms =
             width: 28,
             height: 28,
             borderRadius: '50%',
-            background: '#FFEFD6',
+            background: '#E2F8F3',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -92,7 +92,7 @@ export default function SearchBar({ value = '', onChange, onFilterClick, terms =
             cursor: 'pointer',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A2603C" strokeWidth="2" strokeLinecap="round">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4100F5" strokeWidth="2" strokeLinecap="round">
             <path d="M4 6h16M7 12h10M10 18h4" />
           </svg>
         </div>

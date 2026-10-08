@@ -4,36 +4,36 @@
 .ayna-mobile {
   position: relative;
   --ayna-bottom-nav-height: calc(55px + max(8px, env(safe-area-inset-bottom)));
-  --ayna-bg: #F3EFE9;
-  --ayna-bg-alt: #FAF6F1;
-  --ayna-surface: #FFFCF9;
-  --ayna-surface-alt: #FFF9F2;
-  --ayna-border: #E1D5CE;
-  --ayna-text: #292524;
-  --ayna-text-muted: #78716C;
+  --ayna-bg: #F8F8F3;
+  --ayna-bg-alt: #F8F8F3;
+  --ayna-surface: #FFFFFF;
+  --ayna-surface-alt: #F8F8F3;
+  --ayna-border: #E0E0D9;
+  --ayna-text: #171717;
+  --ayna-text-muted: #626262;
   --ayna-text-faint: #A8A29E;
-  --ayna-accent: #FFC774;
-  --ayna-accent-dark: #E8A94F;
-  --ayna-brown: #A2603C;
-  --ayna-navy: #242A52;
-  --ayna-purple: #4E3866;
-  --ayna-peach: #FFEFD6;
-  --ayna-cta-bg: #242A52;
-  --ayna-cta-text: #FFFCF9;
-  --ayna-heading: #242A52;
-  --ayna-product-panel: linear-gradient(150deg,#FFEFD6,#F6DCC0);
+  --ayna-accent: #CDF500;
+  --ayna-accent-dark: #BBDD00;
+  --ayna-brown: #4100F5;
+  --ayna-navy: #4100F5;
+  --ayna-purple: #4100F5;
+  --ayna-peach: #E2F8F3;
+  --ayna-cta-bg: #4100F5;
+  --ayna-cta-text: #FFFFFF;
+  --ayna-heading: #4100F5;
+  --ayna-product-panel: linear-gradient(150deg,#E2F8F3,#F6DCC0);
   --ayna-glass-bg: rgba(255,252,249,.9);
   --ayna-track: #EAE3DA;
-  --ayna-chip-bg: #F3EFE9;
-  --ayna-chip-border: #E1D5CE;
-  --ayna-gradient-hero: linear-gradient(165deg, #2A1F4E 0%, #4E3866 42%, #8A4A3C 74%, #D97A2B 100%);
-  --ayna-gradient-panel: linear-gradient(168deg, #242A52 0%, #4E3866 52%, #A2603C 100%);
+  --ayna-chip-bg: #F8F8F3;
+  --ayna-chip-border: #E0E0D9;
+  --ayna-gradient-hero: linear-gradient(165deg, #4100F5 0%, #4100F5 42%, #4100F5 74%, #4100F5 100%);
+  --ayna-gradient-panel: linear-gradient(168deg, #4100F5 0%, #4100F5 52%, #4100F5 100%);
 
   /* Copied from the real site's src/index.css so real content (e.g. article
      bodies from src/components/Articles.jsx, which style their own links
      inline with var(--color-primary)) renders with the correct color when
      reused inside the mobile app, instead of falling back to default blue. */
-  --color-primary: #FFC774;
+  --color-primary: #CDF500;
 
   /* Scales OrbHero.jsx's orb+chips so the chips' worst-case reach during
      their orbit (241px from center either way, at the component's native
@@ -83,9 +83,9 @@
   --ayna-text: #F5F3FF;
   --ayna-text-muted: #9E9BC4;
   --ayna-text-faint: #55527A;
-  --ayna-accent: #FFC774;
-  --ayna-accent-dark: #FFC774;
-  --ayna-cta-bg: #FFC774;
+  --ayna-accent: #CDF500;
+  --ayna-accent-dark: #CDF500;
+  --ayna-cta-bg: #CDF500;
   --ayna-cta-text: #231A12;
   --ayna-heading: #F5F3FF;
   --ayna-product-panel: radial-gradient(130% 110% at 28% 0%, rgba(192,118,31,.34), rgba(255,255,255,.03) 68%);
@@ -169,7 +169,7 @@
   height: 20px;
   border-radius: 50%;
   background: #1A1714;
-  border: 3px solid #FFEFD6;
+  border: 3px solid #E2F8F3;
   cursor: pointer;
   margin-top: -8px;
 }
@@ -205,15 +205,15 @@
   font: 600 10px/1.15 'DM Sans', sans-serif;
   cursor: pointer;
 }
-.ayna-mobile .ayna-bottom-nav button.is-active { color: #4e3866; background: rgba(240,168,75,.2); border-radius: 14px; }
+.ayna-mobile .ayna-bottom-nav button.is-active { color: #4100F5; background: rgba(240,168,75,.2); border-radius: 14px; }
 .ayna-mobile .ayna-bottom-nav svg { width: 21px; height: 21px; flex: none; }
 .ayna-mobile .ayna-bottom-nav button.is-active svg { stroke-width: 2.25; }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav,
-.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav { background: linear-gradient(110deg,#49335f,#805044); border-top-color: rgba(255,249,242,.24); }
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav { background: linear-gradient(110deg,#4100F5,#4100F5); border-top-color: rgba(255,249,242,.24); }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button,
 .ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button { color: rgba(255,249,242,.8); }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
-.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #ffc774; background: rgba(255,199,116,.15); }
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #CDF500; background: rgba(255,199,116,.15); }
 .ayna-profile-auth-backdrop {
   position: fixed;
   inset: 0 0 64px;
@@ -228,17 +228,17 @@
   padding: 30px 24px max(28px, env(safe-area-inset-bottom));
   border-radius: 26px 26px 0 0;
   background: #fffaf3;
-  color: #242a52;
+  color: #4100F5;
   box-shadow: 0 -12px 40px rgba(20, 20, 40, .2);
   font-family: 'DM Sans', sans-serif;
 }
-.ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #242a52; font-size: 28px; cursor: pointer; }
+.ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #4100F5; font-size: 28px; cursor: pointer; }
 .ayna-profile-auth-eyebrow { color: #9a5c36; font-size: 11px; font-weight: 700; letter-spacing: .16em; }
 .ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 29px/1.15 'Playfair Display', serif; }
 .ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
 .ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 15px 'DM Sans', sans-serif; cursor: pointer; }
-.ayna-profile-auth-primary { border: 0; background: #ffc774; color: #231a12; }
-.ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #242a52; background: transparent; color: #242a52; }
+.ayna-profile-auth-primary { border: 0; background: #CDF500; color: #231a12; }
+.ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #4100F5; background: transparent; color: #4100F5; }
 
 /* Keep the browser preview at a readable phone width on a large display. */
 @media (min-width: 700px) {

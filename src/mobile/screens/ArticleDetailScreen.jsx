@@ -161,9 +161,9 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
           {[0, 1, 2, 3, 4].map((i) => {
             const filled = progress >= i / 4;
             return i % 2 === 1 ? (
-              <div key={i} style={{ width: 5, height: 5, borderRadius: 99, background: filled ? '#E8A94F' : 'var(--ayna-track)' }} />
+              <div key={i} style={{ width: 5, height: 5, borderRadius: 99, background: filled ? '#BBDD00' : 'var(--ayna-track)' }} />
             ) : (
-              <div key={i} style={{ flex: 1, height: 3, borderRadius: 99, background: filled ? '#FFC774' : 'var(--ayna-track)' }} />
+              <div key={i} style={{ flex: 1, height: 3, borderRadius: 99, background: filled ? '#CDF500' : 'var(--ayna-track)' }} />
             );
           })}
         </div>
@@ -178,14 +178,14 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
                   width: 46,
                   height: 46,
                   borderRadius: 99,
-                  background: 'linear-gradient(140deg,#242A52,#4E3866 60%,var(--ayna-brown))',
+                  background: 'linear-gradient(140deg,#4100F5,#4100F5 60%,var(--ayna-brown))',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flex: 'none',
                   fontFamily: "'Playfair Display',serif",
                   fontSize: 'calc(18px * var(--ayna-text-scale, 1))',
-                  color: '#FFF9F2',
+                  color: '#F8F8F3',
                 }}
               >
                 A

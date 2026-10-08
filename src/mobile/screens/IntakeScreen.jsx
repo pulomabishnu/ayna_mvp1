@@ -782,7 +782,7 @@ function TextInput({ value, onChange, placeholder, inputMode, maxLength }) {
 function OtherBox({ label, value, onChange, placeholder }) {
   return (
     <div style={{ marginTop: 16, textAlign: 'left' }}>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#FFC774', marginBottom: 9 }}>{label}</div>
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#CDF500', marginBottom: 9 }}>{label}</div>
       <TextInput value={value} onChange={onChange} placeholder={placeholder} />
     </div>
   );
@@ -960,8 +960,8 @@ function Scale({ options, value, onChange }) {
   return (
     <div>
       <div style={{ borderRadius: 18, padding: '18px 16px', background: 'rgba(255,249,242,.08)', border: '1px solid rgba(255,249,242,.25)' }}>
-        <div style={{ textAlign: 'center', color: '#FFF9F2', fontWeight: 700, fontSize: 18, minHeight: 28 }}>{index >= 0 ? value : 'Slide to choose'}</div>
-        <input type="range" min="0" max={scaleOptions.length - 1} step="1" value={index >= 0 ? index : 0} onChange={(event) => onChange(scaleOptions[Number(event.target.value)])} aria-label="Choose a level" style={{ width: '100%', margin: '18px 0 8px', accentColor: '#FFC774', height: 30, cursor: 'pointer' }} />
+        <div style={{ textAlign: 'center', color: '#F8F8F3', fontWeight: 700, fontSize: 18, minHeight: 28 }}>{index >= 0 ? value : 'Slide to choose'}</div>
+        <input type="range" min="0" max={scaleOptions.length - 1} step="1" value={index >= 0 ? index : 0} onChange={(event) => onChange(scaleOptions[Number(event.target.value)])} aria-label="Choose a level" style={{ width: '100%', margin: '18px 0 8px', accentColor: '#CDF500', height: 30, cursor: 'pointer' }} />
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, color: 'rgba(255,249,242,.78)', fontSize: 11 }}>
           <span>{scaleOptions[0]}</span><span>{scaleOptions[scaleOptions.length - 1]}</span>
         </div>
@@ -1090,10 +1090,10 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
             padding: '15px', borderRadius: 16, border: '1.5px dashed rgba(255,249,242,.35)', background: 'transparent',
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#FFC774',
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#CDF500',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFC774" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CDF500" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           Add a product or brand
         </div>
       ) : (
@@ -1130,7 +1130,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
 
       {quickAdd.length > 0 && (
         <div style={{ marginTop: 18 }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#FFC774', marginBottom: 10 }}>From your history</div>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#CDF500', marginBottom: 10 }}>From your history</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {quickAdd.map((name) => (
               <div
@@ -1175,10 +1175,10 @@ function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
           return (
             <div key={group.label} style={{ marginBottom: 9, border: '1px solid rgba(255,249,242,.3)', borderRadius: 16, padding: '14px', background: 'rgba(255,249,242,.06)' }}>
               <button type="button" aria-expanded={!!q || openGroups.includes(group.label)} onClick={() => setOpenGroups((current) => current.includes(group.label) ? current.filter((label) => label !== group.label) : [group.label])} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, border: 0, background: 'transparent', padding: 0, textAlign: 'left', cursor: 'pointer', minHeight: 30 }}>
-                <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#FFF9F2' }}>{group.label}</span>
+                <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#F8F8F3' }}>{group.label}</span>
                 <span style={{ flex: 1, height: 1, background: 'rgba(255,249,242,.24)' }} />
-                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', color: count > 0 ? '#FFC774' : 'rgba(255,249,242,.55)' }}>{count}/{group.items.length}</span>
-                <span style={{ color: '#FFF9F2', fontSize: 17 }}>{q || openGroups.includes(group.label) ? '−' : '+'}</span>
+                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', color: count > 0 ? '#CDF500' : 'rgba(255,249,242,.55)' }}>{count}/{group.items.length}</span>
+                <span style={{ color: '#F8F8F3', fontSize: 17 }}>{q || openGroups.includes(group.label) ? '−' : '+'}</span>
               </button>
               {(q || openGroups.includes(group.label)) && <div style={{ marginTop: 12 }}><RowChoiceList items={group.items} selected={selected} onToggle={onToggle} /></div>}
             </div>
@@ -1221,10 +1221,10 @@ function ProductHistoryBuilder({ products, onChange }) {
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
             padding: '15px', borderRadius: 16, border: '1.5px dashed rgba(255,249,242,.35)', background: 'transparent',
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#FFC774',
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#CDF500',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFC774" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CDF500" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           Add a product or brand
         </div>
       ) : (
@@ -1521,7 +1521,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
       </div>
 
       <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', borderTop: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
-        <div onClick={onBrowseLibrary} style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFFCF9', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
+        <div onClick={onBrowseLibrary} style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFFFFF', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
           Browse the reading library
         </div>
         <div onClick={onChangeAge} style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>
@@ -1780,7 +1780,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
           <div style={{ height: 1, background: 'rgba(255,249,242,.24)', margin: '24px 0 20px' }} />
 
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: '#FFF9F2', marginBottom: 4 }}>How often do you spend $75 or more?</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: '#F8F8F3', marginBottom: 4 }}>How often do you spend $75 or more?</div>
           <p style={{ margin: '0 0 14px', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>This is about purchase frequency, not your usual preferred price per product.</p>
           <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
         </>
@@ -1806,7 +1806,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 10 }}>
         {[1, 2, 3, 5].map((count) => {
           const selected = Number(intake.recommendedProductsPerArea) === count;
-          return <button key={count} type="button" aria-pressed={selected} onClick={() => set('recommendedProductsPerArea', count)} style={{ padding: '20px 10px', borderRadius: 18, border: selected ? '2px solid #FFC774' : '1px solid rgba(255,249,242,.35)', background: selected ? '#FFF9F2' : 'rgba(255,249,242,.1)', color: selected ? NAVY : '#FFF9F2', fontFamily: "'DM Sans',sans-serif", fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>
+          return <button key={count} type="button" aria-pressed={selected} onClick={() => set('recommendedProductsPerArea', count)} style={{ padding: '20px 10px', borderRadius: 18, border: selected ? '2px solid #CDF500' : '1px solid rgba(255,249,242,.35)', background: selected ? '#F8F8F3' : 'rgba(255,249,242,.1)', color: selected ? NAVY : '#F8F8F3', fontFamily: "'DM Sans',sans-serif", fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>
             {count} {count === 1 ? 'product' : 'products'}
           </button>;
         })}
@@ -1835,31 +1835,31 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     <div
       style={{
         flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column',
-        background: '#242a52',
-        color: '#FFF9F2', position: 'relative', overflow: 'hidden',
+        background: '#4100F5',
+        color: '#F8F8F3', position: 'relative', overflow: 'hidden',
         fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out',
       }}
     >
       <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
           <div onClick={goBack} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid rgba(255,249,242,.28)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFF9F2" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F8F8F3" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: '#FFC774', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: '#CDF500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
           </div>
           {step.optional && (
             <div onClick={goNext} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.65)', cursor: 'pointer', flex: 'none' }}>Skip</div>
           )}
         </div>
         <div style={{ height: 4, borderRadius: 99, background: 'rgba(255,249,242,.24)', overflow: 'hidden' }}>
-          <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#FFC774,#E8A94F)' }} />
+          <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#CDF500,#BBDD00)' }} />
         </div>
       </div>
 
       <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
         <div style={{ padding: '22px 20px 0' }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.045em', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#FFF9F2' }}>{step.title}</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.045em', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#F8F8F3' }}>{step.title}</div>
           {step.subtitle && <p style={{ margin: '8px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
           {flaggedStepIds.has(step.id) && (
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 11, padding: '6px 12px', borderRadius: 99, background: 'rgba(180,64,42,.16)', border: '1px solid rgba(180,64,42,.35)', color: '#FFC9BC', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>
@@ -1873,13 +1873,13 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         </div>
       </div>
 
-      <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', position: 'relative', background: '#242a52', borderTop: '1px solid rgba(255,255,255,.16)' }}>
+      <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', position: 'relative', background: '#4100F5', borderTop: '1px solid rgba(255,255,255,.16)' }}>
         <button
           onClick={goNext}
           disabled={!ready}
           style={{
             width: '100%', padding: 15, border: 'none', borderRadius: 14,
-            background: ready ? '#FFC774' : 'rgba(255,249,242,.18)',
+            background: ready ? '#CDF500' : 'rgba(255,249,242,.18)',
             color: ready ? NAVY : 'rgba(255,249,242,.5)',
             fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9,
