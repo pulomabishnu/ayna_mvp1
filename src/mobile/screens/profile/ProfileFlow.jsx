@@ -205,8 +205,9 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
   return (
-    <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+    <div className="ayna-fresh-profile-hub" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
+        className="ayna-fresh-profile-hero"
         style={{
           position: 'relative',
           padding: 'max(24px, env(safe-area-inset-top)) 22px 26px',
@@ -261,7 +262,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
             <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'rgba(255,249,242,.62)', marginTop: 5 }}>{memberSince}</div>
           </div>
         </div>
-        <div style={{ position: 'relative', display: 'flex', gap: 8, marginTop: 22 }}>
+        <div className="ayna-fresh-profile-stats" style={{ position: 'relative', display: 'flex', gap: 8, marginTop: 22 }}>
           {[
             { value: ecosystemCount, label: 'In ecosystem', onClick: onOpenEcosystem, ariaLabel: 'Go to your ecosystem' },
             { value: savedCount, label: 'Saved', onClick: onOpenSaved, ariaLabel: 'Go to saved products' },
@@ -281,7 +282,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
         </div>
       </div>
 
-      <div style={{ flex: 1, padding: '22px 20px 26px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div className="ayna-fresh-profile-menu" style={{ flex: 1, padding: '22px 20px 26px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 2 }}>Your account</div>
 
         {[

@@ -29,38 +29,30 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const isService = product?.type === 'digital' || category === 'telehealth';
   const isPartner = isPartnerBrandItem(product);
   const isList = variant === 'list';
-  const sourceCount = new Set(['doctor', 'scientific', 'community']
-    .flatMap((kind) => getVerificationLinks(product, kind))
-    .map((link) => link?.url || link?.href)
-    .filter(Boolean)).size;
+  const contexts = [['doctor', 'Clinical'], ['scientific', 'Research'], ['community', 'Community']]
+    .filter(([kind]) => getVerificationLinks(product, kind).some((link) => link?.url || link?.href))
+    .map(([, label]) => label);
+  const tone = ['pad', 'tampon', 'cup', 'disc', 'period-underwear'].includes(category) ? 'mint'
+    : ['telehealth', 'digital', 'therapy'].includes(category) || isService ? 'lilac'
+      : ['supplement', 'vitamin'].includes(category) ? 'lime' : 'pink';
 
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={`${name}${resolvedPrice ? `, ${resolvedPrice}` : ''}${showMatch ? `, ${match.percent} percent match` : ''}. View product details`}
-      style={{
-        width: '100%', height: '100%', padding: isList ? 12 : 0, textAlign: 'left', cursor: 'pointer',
-        border: isList ? '1px solid var(--ayna-border)' : 0, borderRadius: isList ? 14 : 0,
-        background: isList ? 'var(--ayna-surface)' : 'transparent', color: 'var(--ayna-heading)',
-        display: isList ? 'grid' : 'flex', gridTemplateColumns: isList ? '72px minmax(0,1fr)' : undefined,
-        gap: isList ? 14 : undefined, flexDirection: isList ? undefined : 'column', minWidth: 0,
-        fontFamily: "'DM Sans',sans-serif",
-      }}
+      className={`ayna-fresh-product-card ${isList ? 'is-list' : ''} tone-${tone}`}
     >
-      <span style={{ position: 'relative', display: 'block', width: isList ? 72 : '100%', height: isList ? 72 : undefined, aspectRatio: isList ? undefined : '4 / 5', flex: 'none', overflow: 'hidden', borderRadius: 14, background: 'var(--ayna-bg-alt)' }}>
+      <span className="ayna-fresh-product-image">
+        {showMatch && <span className="ayna-fresh-match-badge">{match.percent}% match</span>}
         <ProductImage src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
       </span>
-      <span style={{ display: 'flex', flexDirection: 'column', minWidth: 0, paddingTop: isList ? 0 : 12, flex: 1 }}>
-        <span style={{ fontSize: 13, lineHeight: 1.35, color: 'var(--ayna-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{secondaryLabel}</span>
-        <span style={{ fontWeight: 700, fontSize: 16, lineHeight: 1.3, marginTop: 4, minHeight: isList ? undefined : '2.6em', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{name}</span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 'auto', paddingTop: 8 }}>
-          <span style={{ fontWeight: 700, fontSize: 16 }}>{resolvedPrice || 'See details'}</span>
-          {isPartner && <span style={{ fontSize: 12, color: 'var(--ayna-text-muted)' }}>Partner</span>}
-        </span>
-        {showMatch && <span style={{ display: 'block', fontWeight: 700, fontSize: 15, color: 'var(--ayna-heading)', marginTop: 8 }}>{match.percent}% match</span>}
-        {relevantReason && <span style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontSize: 13, lineHeight: 1.35, color: 'var(--ayna-text-muted)', marginTop: 8 }}>{relevantReason.text}</span>}
-        {sourceCount > 0 && <span style={{ fontSize: 12, lineHeight: 1.35, color: 'var(--ayna-text-muted)', marginTop: 8 }}>{sourceCount} linked source{sourceCount === 1 ? '' : 's'}</span>}
+      <span className="ayna-fresh-product-copy">
+        <span className="ayna-fresh-product-category">{secondaryLabel}{isPartner ? ' / Partner' : ''}</span>
+        <strong>{name}</strong>
+        {relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
+        <span className="ayna-fresh-product-foot"><b>{resolvedPrice || 'See details'}</b><span aria-hidden="true">↗</span></span>
+        {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
     </button>
   );

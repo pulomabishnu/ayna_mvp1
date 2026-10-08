@@ -52,7 +52,10 @@ const PAGE_SIZE = 20;
 
 function ModeTab({ label, active, onClick }) {
   return (
-    <div
+    <button
+      type="button"
+      className="ayna-fresh-mode-tab"
+      aria-pressed={active}
       onClick={onClick}
       style={{
         fontFamily: "'DM Sans',sans-serif",
@@ -66,7 +69,7 @@ function ModeTab({ label, active, onClick }) {
       }}
     >
       {label}
-    </div>
+    </button>
   );
 }
 
@@ -143,9 +146,12 @@ function LayoutToggle({ layout, onToggle }) {
 
 function CategoryChipRow({ groups, active, onSelect }) {
   return (
-    <div style={{ display: 'flex', gap: 7, overflowX: 'auto', padding: '0 20px 12px', scrollbarWidth: 'none' }}>
+    <div className="ayna-fresh-category-row" style={{ display: 'flex', gap: 7, overflowX: 'auto', padding: '0 20px 12px', scrollbarWidth: 'none' }}>
       {groups.map((g) => (
-        <div
+        <button
+          type="button"
+          className="ayna-fresh-category-chip"
+          aria-pressed={active === g.id}
           key={g.id}
           onClick={() => onSelect(g.id)}
           style={{
@@ -163,7 +169,7 @@ function CategoryChipRow({ groups, active, onSelect }) {
           }}
         >
           {g.label}
-        </div>
+        </button>
       ))}
     </div>
   );
@@ -474,7 +480,7 @@ export default function BrowseScreen({
   );
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
+    <div className="ayna-fresh-browse-screen">
       <MobileHeader
         variant={theme}
         activeTab="browse"
@@ -486,10 +492,11 @@ export default function BrowseScreen({
         onOpenProfile={onOpenProfile}
       />
 
-      <div className="ayna-editorial-page-title">
-        <p className="ayna-editorial-kicker">The Ayna edit</p>
-        <h1>Good things, <em>found.</em></h1>
-        <p>Explore products, honest perspectives, and reads worth saving.</p>
+      <div className="ayna-fresh-browse-heading">
+        <span>THE AYNA EDIT</span>
+        <h1>Find your<br /><em>good thing.</em></h1>
+        <p>Products, research, and real talk. Pick your starting point.</p>
+        <i aria-hidden="true" />
       </div>
 
       <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />

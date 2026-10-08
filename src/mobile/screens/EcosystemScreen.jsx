@@ -51,26 +51,33 @@ export default function EcosystemScreen({
   const featuredImage = featuredProduct?.image || featuredProduct?.imageUrl || featuredProduct?.images?.[0];
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
+    <div className="ayna-fresh-ecosystem">
       <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
 
-      <div className="ayna-editorial-page-title">
-        <p className="ayna-editorial-kicker">{getTimeGreeting()}, {name}</p>
-        <h1>Your <em>Ecosystem.</em></h1>
-        <p>Thoughtful picks based on what you shared.</p>
+      <div className="ayna-fresh-home-heading">
+        <p>{getTimeGreeting()}, {name}</p>
+        <h1>Your space<br />to feel <em>good.</em></h1>
         {ecosystemNotice && <p role="status" style={{ margin: '12px 0 0', padding: '11px 14px', borderRadius: 14, background: 'var(--ayna-peach)', color: 'var(--ayna-heading)', fontSize: 13, lineHeight: 1.45 }}>{ecosystemNotice}</p>}
       </div>
 
-      <button type="button" className="ayna-v2-eco-feature" onClick={featuredProduct ? () => onOpenProduct?.(featuredProduct) : onBrowse}>
-        <span className="ayna-v2-eco-feature-copy">
-          <small>{featuredProduct ? 'A PICK FOR YOU / 01' : 'YOUR SPACE TO DISCOVER'}</small>
+      <div className="ayna-fresh-home-stack">
+        <button type="button" className="ayna-fresh-stack-card stack-lime" onClick={featuredProduct ? () => onOpenProduct?.(featuredProduct) : onBrowse}>
+          <span className="ayna-fresh-stack-label">01 / PICKED FOR YOU</span>
           <strong>{featuredProduct ? featuredProduct.name : 'Find your next good thing.'}</strong>
-          <span>See the details ↗</span>
-        </span>
-        {featuredImage && <span className="ayna-v2-eco-feature-image"><ProductImage src={featuredImage} alt="" allowBrandLogo={featuredProduct?.type === 'digital'} style={{ objectFit: 'contain' }} /></span>}
-      </button>
+          <span className="ayna-fresh-stack-action">Explore this pick <span aria-hidden="true">↗</span></span>
+          {featuredImage && <span className="ayna-fresh-stack-photo"><ProductImage src={featuredImage} alt="" allowBrandLogo={featuredProduct?.type === 'digital'} style={{ objectFit: 'contain' }} /></span>}
+        </button>
+        <button type="button" className="ayna-fresh-stack-card stack-pink" onClick={onOpenMonthlyCheckin}>
+          <span className="ayna-fresh-stack-label">02 / CHECK IN</span><strong>How are you feeling lately?</strong>
+          <span className="ayna-fresh-stack-action">Monthly check-in <span aria-hidden="true">↗</span></span><span className="ayna-fresh-stack-flower" aria-hidden="true" />
+        </button>
+        <button type="button" className="ayna-fresh-stack-card stack-lilac" onClick={relatedReads[0] ? () => onOpenArticle?.(relatedReads[0]) : onBrowse}>
+          <span className="ayna-fresh-stack-label">03 / WORTH A READ</span><strong>{relatedReads[0]?.title || 'Learn something new about your body.'}</strong>
+          <span className="ayna-fresh-stack-action">Open a read <span aria-hidden="true">↗</span></span><span className="ayna-fresh-stack-star" aria-hidden="true" />
+        </button>
+      </div>
 
-      <div style={{ padding: '18px 20px 0' }}>
+      <div className="ayna-fresh-picks" style={{ padding: '18px 20px 0' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
           <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(22px * var(--ayna-text-scale, 1))', letterSpacing: '-.04em' }}>Your picks</div>
           <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, color: 'var(--ayna-text-muted)' }}>{gridProducts.length} product{gridProducts.length === 1 ? '' : 's'}</div>

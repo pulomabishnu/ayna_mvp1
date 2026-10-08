@@ -2,22 +2,22 @@ import MobileHeader from '../components/MobileHeader.jsx';
 
 export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, onAboutAyna, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile }) {
   return (
-    <div className="ayna-v2-eco-intro">
+    <main className="ayna-fresh-intro">
       <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
-      <div className="ayna-v2-eco-intro-scroll">
-        <section className="ayna-v2-eco-intro-blue">
-          <p className="ayna-v2-overline">THIS SPACE IS YOURS</p>
-          <h1>Less noise.<br /><span>More you.</span></h1>
-          <div className="ayna-v2-eco-intro-notes"><span>01 / Your goals</span><span>02 / Your history</span><span>03 / Your preferences</span></div>
+      <div className="ayna-fresh-intro-scroll">
+        <section className="ayna-fresh-intro-stage">
+          <span className="ayna-fresh-kicker">YOUR ECOSYSTEM STARTS HERE</span>
+          <h1>More <em>you.</em><br />Less guesswork.</h1>
+          <div className="ayna-fresh-intro-art" aria-hidden="true"><span className="shape shape-a" /><span className="shape shape-b" /><span className="shape shape-c" /><span className="shape shape-d" /></div>
         </section>
-        <section className="ayna-v2-eco-intro-copy">
-          <h2>Meet your Ecosystem.</h2>
-          <p>Tell us what matters to you. We’ll show you products with context from research and real people.</p>
-          <button type="button" className="ayna-v2-primary" onClick={onStartQuiz}>Start the intake <span aria-hidden="true">↗</span></button>
-          {!authUser && <button type="button" className="ayna-v2-text-link" onClick={onAlreadyHaveAccount}>I already have an account</button>}
-          <button type="button" className="ayna-v2-text-link" onClick={onAboutAyna}>About us</button>
+        <section className="ayna-fresh-intro-content">
+          <p>Tell us what matters. We’ll bring the products, research, and real perspectives together for you.</p>
+          <div className="ayna-fresh-intro-steps"><span>01 <strong>Your goals</strong></span><span>02 <strong>Your health</strong></span><span>03 <strong>Your preferences</strong></span></div>
+          <button type="button" className="ayna-fresh-start" onClick={onStartQuiz}>Start the intake <span aria-hidden="true">↗</span></button>
+          {!authUser && <button type="button" className="ayna-fresh-plain-link" onClick={onAlreadyHaveAccount}>I already have an account</button>}
+          <button type="button" className="ayna-fresh-plain-link" onClick={onAboutAyna}>About us</button>
         </section>
       </div>
-    </div>
+    </main>
   );
 }
