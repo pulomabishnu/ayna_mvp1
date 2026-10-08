@@ -297,7 +297,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
             <BackIcon />
           </div>
           <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'baseline', gap: 9 }}>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(27px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Saved</div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(29px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Saved</div>
             {!isEmpty && (
               <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1px', color: 'var(--ayna-accent-dark)', background: 'var(--ayna-peach)', borderRadius: 99, padding: '4px 8px' }}>
                 {items.length} ITEM{items.length === 1 ? '' : 'S'}
@@ -339,21 +339,17 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
       <div style={{ flex: 1, overflowY: 'auto', padding: isEmpty ? '10px 22px 30px' : '16px 20px 0' }}>
         {isEmpty ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ position: 'relative', height: 210, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ position: 'absolute', width: 210, height: 210, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,199,116,.42),rgba(255,199,116,0) 68%)', animation: 'ay-drift 16s ease-in-out infinite' }} />
-              <div style={{ position: 'absolute', width: 150, height: 150, borderRadius: '50%', border: '1px solid var(--ayna-border)' }} />
-              <svg width="58" height="58" viewBox="0 0 24 24" fill="none" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'relative', stroke: 'var(--ayna-accent-dark)' }}>
-                <path d="M12 20s-7-4.5-7-9.4A4.1 4.1 0 0 1 12 7.6a4.1 4.1 0 0 1 7 3c0 4.9-7 9.4-7 9.4Z" />
-              </svg>
+            <div style={{ position: 'relative', height: 210, flex: 'none', overflow: 'hidden', borderRadius: 16, background: 'var(--ayna-bg-alt)' }}>
+              <img src="/landing-bg.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
 
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(29px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '4px 0 0', textAlign: 'center', color: 'var(--ayna-heading)' }}>Nothing saved yet.</div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '18px 0 0', textAlign: 'center', color: 'var(--ayna-heading)' }}>Nothing saved yet.</div>
             <div style={{ margin: '10px 0 0', padding: '0 12px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, textAlign: 'center' }}>
               Tap the heart on anything in Browse. We'll watch it for recalls and price drops while it sits here.
             </div>
             <div
               onClick={onBrowse}
-              style={{ marginTop: 22, display: 'block', width: '100%', textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', padding: 14, borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
+              style={{ marginTop: 22, display: 'block', width: '100%', textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', padding: 14, borderRadius: 14, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
             >
               Browse products
             </div>
