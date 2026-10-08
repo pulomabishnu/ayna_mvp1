@@ -317,7 +317,7 @@ export default function SigninScreen({
             A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. Once confirmed, come back here — this screen updates on its own.
           </div>
           {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginBottom: 14 }}>{resendMsg}</div>}
-          <div
+          <div className="ayna-fresh-auth-switch"
             onClick={resending ? undefined : handleResend}
             style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#CDF500', cursor: resending ? 'default' : 'pointer' }}
           >
@@ -396,14 +396,14 @@ export default function SigninScreen({
             <AppleButton onClick={handleApple} disabled={appleLoading || googleLoading || loading} />
           </div>
 
-          <div
+          <div className="ayna-fresh-auth-switch"
             onClick={() => { if (mode === 'signin' && onStartEcosystem) onStartEcosystem(); else setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); }}
             style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'rgba(255,252,249,.72)', marginTop: 16, cursor: 'pointer' }}
           >
             {mode === 'signup' ? 'Already have an account? Sign in' : "New here? Create an account"}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>
+          <div className="ayna-fresh-auth-trust" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F8F8F3" strokeWidth="2" strokeLinecap="round">
               <rect x="5" y="11" width="14" height="10" rx="2.5" />
               <path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" />

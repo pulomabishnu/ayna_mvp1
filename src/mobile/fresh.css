@@ -386,3 +386,26 @@
 .ayna-fresh-article-paper h1 { font-family:'DM Sans',sans-serif!important; font-size:calc(31px * var(--ayna-text-scale,1))!important; font-weight:900!important; letter-spacing:-.06em; line-height:1.07!important; }
 .ayna-fresh-article-paper .ay-article-body p { margin:0 0 1.2em!important; }
 .ayna-fresh-article-paper .ay-article-body h2,.ayna-fresh-article-paper .ay-article-body h3 { margin-top:1.5em; }
+.ayna-fresh-auth-switch { color:#203c9c!important; font-weight:800; text-decoration:underline; text-underline-offset:3px; }
+.ayna-fresh-auth-trust { color:#454759; opacity:1!important; }
+.ayna-fresh-auth-trust svg { stroke:#203c9c!important; }
+.ayna-fresh-auth > div:last-child { color:#454759!important; }
+
+/* Saved products use the same bento and image-forward card language. */
+.ayna-fresh-saved { background:#f8f8fd!important; }
+.ayna-fresh-saved > div:first-child { background:#dfe2ff; border-bottom:0!important; padding-bottom:19px!important; }
+.ayna-fresh-saved > div:first-child > div:first-child > div:nth-child(2) > div:first-child { font-size:34px!important; font-weight:900!important; color:#203c9c!important; }
+.ayna-fresh-saved-empty-hero { position:relative; overflow:hidden; min-height:206px; border-radius:19px!important; background:#203c9c!important; }
+.ayna-fresh-saved-empty-hero::after { content:''; position:absolute; right:-35px; bottom:-75px; width:200px; height:200px; border:26px solid #9faefa; border-radius:50%; opacity:.7; }
+.ayna-fresh-saved-empty-hero strong { position:relative; z-index:1; font-size:32px!important; max-width:250px; }
+.ayna-fresh-saved-empty-hero span { position:relative; z-index:1; color:#d5f477!important; }
+
+/* Community posts and playlists share the new card system with Browse. */
+.ayna-mobile .am-screen { background:#f8f8fd; }
+.ayna-mobile .am-card.am-post-card { margin:0 20px 16px!important; border:1px solid #e1e3eb!important; border-radius:19px!important; background:#fff; box-shadow:0 3px 0 #ebecf2!important; overflow:hidden; }
+.ayna-mobile .am-post-head { padding:16px 16px 0!important; }
+.ayna-mobile .am-postbody { padding:14px 16px 9px!important; font-size:14px; line-height:1.5; }
+.ayna-mobile .am-post-card .am-product { margin-left:16px; margin-right:16px; width:calc(100% - 32px); border-radius:13px; }
+.ayna-mobile .am-playlist-grid { gap:12px; }
+.ayna-mobile .am-playlist { overflow:hidden; border:1px solid #e1e3eb; border-radius:16px; background:#fff; box-shadow:0 3px 0 #ebecf2; }
+.ayna-mobile .am-playlist .am-cover { border-radius:12px; }

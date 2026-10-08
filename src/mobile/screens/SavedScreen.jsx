@@ -278,7 +278,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
   const isSingle = items.length === 1;
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
+    <div className="ayna-fresh-saved" style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
       <div
         style={{
           flex: 'none',
@@ -339,7 +339,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
       <div style={{ flex: 1, overflowY: 'auto', padding: isEmpty ? '10px 22px 30px' : '16px 20px 0' }}>
         {isEmpty ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ height: 186, flex: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 20, borderRadius: 11, background: '#4100F5', color: '#fff' }}>
+            <div className="ayna-fresh-saved-empty-hero" style={{ height: 186, flex: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 20, borderRadius: 11, background: '#4100F5', color: '#fff' }}>
               <span style={{ color: '#CDF500', fontSize: 11, fontWeight: 800, letterSpacing: '.12em' }}>YOUR LITTLE SHORTLIST</span>
               <strong style={{ maxWidth: 250, fontSize: 29, lineHeight: 1.05, letterSpacing: '-.05em' }}>Keep the good stuff close.</strong>
             </div>
