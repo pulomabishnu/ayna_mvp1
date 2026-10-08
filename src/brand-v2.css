@@ -66,8 +66,18 @@
 .app-nav--cream { background: var(--brand-paper) !important; border-bottom: 1px solid var(--brand-rule); }
 .app-nav--landing { background: var(--brand-blue) !important; }
 .app-nav--landing.app-nav--scrolled { background: var(--brand-blue) !important; }
+.mockup-landing--returning .ayna-landing-hero { padding-top: 65px; padding-bottom: 70px; }
+.mockup-landing--returning .ayna-landing-welcomeback { grid-template-columns: minmax(0,1.3fr) minmax(290px,.7fr); gap: clamp(30px,5vw,80px); }
+.mockup-landing--returning .ayna-landing-headline--returning { max-width: 790px; color: #fff; font: 800 clamp(50px,5.6vw,84px)/.94 'DM Sans', sans-serif; letter-spacing: -.075em; }
+.mockup-landing--returning .ayna-landing-headline--returning span { font: inherit !important; color: var(--brand-lime) !important; }
+.mockup-landing--returning .ayna-landing-ecocard { border-radius: 8px; background: rgba(255,255,255,.1); }
+.mockup-landing--returning .ayna-landing-ecocard > div:last-child span:first-child { font-family: 'DM Sans', sans-serif !important; font-weight: 700 !important; }
+.mockup-landing--returning .ayna-landing-btn--amber { color: var(--brand-ink); font-weight: 800; }
+.mockup-landing--returning .ayna-landing-btn--browse { border-radius: 9px; background: #fff; color: var(--brand-blue); font-weight: 800; }
+.mockup-landing--returning .ayna-landing-shop-title--returning { font-size: clamp(30px,3vw,44px); }
 
 @media (max-width: 860px) {
+  .mockup-landing--returning .ayna-landing-welcomeback { grid-template-columns: 1fr; }
   .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero { grid-template-columns: 1fr; }
   .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero-col { max-width: none; padding: 44px var(--mockup-gutter) 36px; }
   .mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline { font-size: clamp(54px, 11vw, 82px); }

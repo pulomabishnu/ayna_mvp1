@@ -240,7 +240,7 @@
 .am-search { border-radius: 14px; box-shadow: none; }
 .am-tabs { gap: 22px; border-bottom: 1px solid var(--ayna-border); padding-bottom: 0; }
 .am-tabs button { padding: 10px 0 13px; border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: none; box-shadow: none; }
-.am-tabs button.is-active { border: 0; border-bottom: 3px solid #e6aa51; background: none; color: var(--ayna-heading); box-shadow: none; }
+.am-tabs button.is-active { border: 0; border-bottom: 3px solid #4100F5; background: none; color: #4100F5; box-shadow: none; }
 .am-share-prompt { border-radius: 13px; box-shadow: none; }
 .am-card.am-post-card { border-radius: 0; border-left: 0; border-right: 0; margin-left: -16px; margin-right: -16px; margin-bottom: 9px; box-shadow: none; }
 .am-post-head { padding: 16px 17px 0; }
