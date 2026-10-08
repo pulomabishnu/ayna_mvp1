@@ -1,181 +1,67 @@
-.ayna-scrapbook {
-  --paper: #fffaf0;
-  --ink: #342940;
-  --berry: #4100F5;
-  --gold: #edb45e;
-  flex: 1;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  background: #f5efe3;
-  color: var(--ink);
-  font-family: 'DM Sans', sans-serif;
-}
-.ayna-scrapbook__header {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: max(18px, env(safe-area-inset-top)) 20px 13px;
-  background: #ece7e2;
-  border-bottom: 1px solid #d8cec4;
-  color: #4100F5;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .04em;
-}
-.ayna-scrapbook__header button {
-  border: 1px solid #c5b8ca;
-  border-radius: 99px;
-  background: #fffaf0;
-  padding: 9px 13px;
-  color: #503754;
-  font: 600 13px 'DM Sans', sans-serif;
-  cursor: pointer;
-}
-.ayna-scrapbook__scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 27px 22px 32px;
-  background-color: #f5efe3;
-  background-image: radial-gradient(#d7cabd 0.6px, transparent 0.6px);
-  background-size: 15px 15px;
-}
-.ayna-scrapbook__scroll > section,
-.ayna-scrapbook__footer { max-width: 520px; margin-left: auto; margin-right: auto; }
-.ayna-scrapbook__eyebrow {
-  display: block;
-  color: #8a5049;
-  font: 700 10px 'DM Mono', monospace;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-}
-.ayna-scrapbook h1,
-.ayna-scrapbook h2 { font-family: 'Playfair Display', serif; font-weight: 500; letter-spacing: -.025em; }
-.ayna-scrapbook h1 em,
-.ayna-scrapbook h2 em { color: #4100F5; font-weight: 500; }
-.ayna-scrapbook__hero {
-  position: relative;
-  padding: 30px 25px 28px;
-  border: 1px solid #d9c9b7;
-  border-radius: 5px 24px 7px 23px;
-  background: #fff9ee;
-  box-shadow: 7px 9px 0 #e0d1be, 0 13px 30px rgba(70,40,60,.1);
-  transform: rotate(-1.4deg);
-}
-.ayna-scrapbook__tape {
-  position: absolute;
-  top: -10px;
-  left: calc(50% - 42px);
-  width: 84px;
-  height: 24px;
-  background: rgba(247,197,127,.65);
-  transform: rotate(4deg);
-  clip-path: polygon(0 6%,100% 0,97% 100%,3% 94%);
-}
-.ayna-scrapbook__hero h1 { margin: 14px 0 10px; font-size: clamp(32px,8.5vw,47px); line-height: 1.05; }
-.ayna-scrapbook__hero p { margin: 0; max-width: 400px; color: #675a61; font-size: 14px; line-height: 1.6; }
-.ayna-scrapbook__scribble { width: 90px; height: 9px; margin: 17px 0 0 auto; border-top: 2px solid #4100F5; border-bottom: 2px solid #4100F5; transform: rotate(-5deg); }
-.ayna-scrapbook__team { position: relative; margin-top: 38px; }
-.ayna-scrapbook__polaroid {
-  padding: 10px 10px 12px;
-  background: #fffdf8;
-  border: 1px solid #eadfd4;
-  box-shadow: 0 15px 30px rgba(48,31,42,.18);
-  transform: rotate(2deg);
-}
-.ayna-scrapbook__photo { height: clamp(185px, 56vw, 310px); overflow: hidden; background: #e7dccb; }
-.ayna-scrapbook__photo img { display: block; width: 118%; height: 100%; margin-left: -9%; object-fit: cover; object-position: center 42%; }
-.ayna-scrapbook__handwriting { padding-top: 10px; text-align: center; color: #604258; font: italic 19px 'Playfair Display', serif; }
-.ayna-scrapbook__team-note {
-  position: relative;
-  width: 85%;
-  margin: -9px 0 0 auto;
-  padding: 19px 18px;
-  background: #e9ddcb;
-  box-shadow: 4px 7px 0 rgba(163,108,121,.16);
-  transform: rotate(-3deg);
-}
-.ayna-scrapbook__team-note h2 { margin: 6px 0; font-size: 25px; }
-.ayna-scrapbook__team-note p { margin: 0; color: #67535d; font-size: 13px; line-height: 1.55; }
-.ayna-scrapbook__paper {
-  position: relative;
-  margin-top: 30px;
-  padding: 25px 21px;
-  border: 1px solid #d9ccb9;
-  border-radius: 6px 21px 7px 20px;
-  background: var(--paper);
-  box-shadow: 5px 7px 0 rgba(104,76,80,.09);
-}
-.ayna-scrapbook__paper:nth-of-type(even) { transform: rotate(.7deg); }
-.ayna-scrapbook__paper:nth-of-type(odd) { transform: rotate(-.7deg); }
-.ayna-scrapbook__paper--intro { background: #4100F5; border-color: #3a294e; color: #fffaf0; padding-bottom: 42px; transform: rotate(1.2deg); }
-.ayna-scrapbook__paper--intro::before { content: ''; position: absolute; top: -9px; right: 22px; width: 71px; height: 22px; background: rgba(240,168,75,.62); transform: rotate(-7deg); clip-path: polygon(2% 0,100% 7%,97% 100%,0 91%); }
-.ayna-scrapbook__paper--intro .ayna-scrapbook__eyebrow { color: #f0bd70; }
-.ayna-scrapbook .ayna-scrapbook__paper--intro h2 { color: #fffaf0; }
-.ayna-scrapbook .ayna-scrapbook__paper--intro > p { color: #f8efe4; font-size: 14px; }
-.ayna-scrapbook__intro-stamp { position: absolute; right: 13px; bottom: -17px; padding: 7px 10px; border: 2px solid #9f603d; border-radius: 3px; background: #f6e3be; color: #6c3e2b; font: 700 10px 'DM Mono', monospace; letter-spacing: .06em; text-transform: uppercase; transform: rotate(-7deg); box-shadow: 2px 3px 0 rgba(53,38,34,.2); }
-.ayna-scrapbook__paper h2 { margin: 8px 0 12px; font-size: 26px; line-height: 1.15; }
-.ayna-scrapbook__paper > p { margin: 0 0 18px; color: #615866; font-size: 13px; line-height: 1.55; }
-.ayna-scrapbook__paper--chart { background: #fff8ed; }
-.ayna-scrapbook__chart { display: grid; gap: 11px; margin: 15px 0 13px; }
-.ayna-scrapbook__chart-row { display: grid; grid-template-columns: 22px 1fr; gap: 4px 9px; align-items: center; }
-.ayna-scrapbook__chart-num { color: #4100F5; font: 700 10px 'DM Mono', monospace; grid-row: span 2; }
-.ayna-scrapbook__chart-track { height: 12px; border-radius: 99px; background: #efe3dd; overflow: hidden; }
-.ayna-scrapbook__chart-track > div { height: 100%; border-radius: inherit; }
-.ayna-scrapbook__chart-label { font-size: 11px; color: #6c5964; }
-.ayna-scrapbook__paper small { color: #877a80; font-size: 10px; line-height: 1.4; }
-.ayna-scrapbook__paper--lavender { background: #e8e2ed; border-color: #c8bbd3; }
-.ayna-scrapbook__gate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.ayna-scrapbook__gate { min-height: 96px; padding: 14px; border-radius: 13px; background: #fff9ef; box-shadow: 2px 3px 0 #d5cadf; }
-.ayna-scrapbook__gate:nth-child(2) { background: #fff4db; }
-.ayna-scrapbook__gate:nth-child(3) { background: #f0e1cf; }
-.ayna-scrapbook__gate:nth-child(4) { background: #ece8d9; }
-.ayna-scrapbook__gate span { display: block; color: #7a5a74; font: 700 10px 'DM Mono', monospace; }
-.ayna-scrapbook__gate strong { display: block; margin-top: 6px; font-size: 12px; }
-.ayna-scrapbook__gate p { margin: 5px 0 0; color: #615866; font-size: 11px; line-height: 1.4; }
-.ayna-scrapbook__paper--match { background: #f3e7d5; }
-.ayna-scrapbook__orbit { position: relative; width: 100%; height: 205px; margin-top: 12px; }
-.ayna-scrapbook__orbit-center {
-  position: absolute; top: 62px; left: calc(50% - 52px); display: grid; place-items: center;
-  width: 104px; height: 104px; border-radius: 50%; background: #4100F5; color: #fff8ef;
-  text-align: center; font: italic 21px/1.05 'Playfair Display', serif; box-shadow: 0 7px 0 #c8bbd3;
-}
-.ayna-scrapbook__orbit > span { position: absolute; border-radius: 99px; padding: 8px 12px; font-size: 10px; font-weight: 700; color: #4e3a4e; box-shadow: 2px 3px 0 rgba(83,48,58,.12); }
-.ayna-scrapbook__orbit > span:nth-of-type(1) { top: 13px; left: 2%; background: #e5dbea; transform: rotate(-7deg); }
-.ayna-scrapbook__orbit > span:nth-of-type(2) { top: 12px; right: 1%; background: #f8d991; transform: rotate(6deg); }
-.ayna-scrapbook__orbit > span:nth-of-type(3) { bottom: 8px; left: 0; background: #e1e2ed; transform: rotate(4deg); }
-.ayna-scrapbook__orbit > span:nth-of-type(4) { bottom: 7px; right: 0; background: #e9e0cf; transform: rotate(-6deg); }
-.ayna-scrapbook__sticky { padding: 12px 14px; background: #ffe3a8; color: #654638; font: italic 18px 'Playfair Display', serif; transform: rotate(-2deg); }
-.ayna-scrapbook__sticky span { float: right; }
-.ayna-scrapbook__paper--questions { background: #fffaf0; }
-.ayna-scrapbook__paper--questions::after { content: ''; position: absolute; top: -11px; left: 24px; width: 74px; height: 21px; background: rgba(194,160,113,.5); transform: rotate(5deg); clip-path: polygon(0 8%,97% 0,100% 88%,3% 100%); }
-.ayna-scrapbook__question-list { display: grid; gap: 10px; }
-.ayna-scrapbook__question-list > div { padding: 13px 13px 11px; border: 1px solid #d8cbbd; border-left: 4px solid #4100F5; border-radius: 3px 11px 11px 3px; background: #f7f0e7; }
-.ayna-scrapbook__question-list > div:nth-child(even) { border-left-color: #4100F5; background: #f1e9e0; }
-.ayna-scrapbook__question-list strong { color: #382a4a; font: 700 13px/1.3 'DM Sans', sans-serif; }
-.ayna-scrapbook__question-list p { margin: 5px 0 0; color: #5c5260; font: 12px/1.5 'DM Sans', sans-serif; }
-.ayna-scrapbook__difference-list { display: grid; gap: 8px; }
-.ayna-scrapbook__difference-list > div { display: flex; align-items: center; gap: 11px; padding: 11px 12px; background: #ede6dc; border-radius: 11px; color: #5a4b58; font-size: 12px; }
-.ayna-scrapbook__difference-list > div:nth-child(even) { background: #e8e2ed; }
-.ayna-scrapbook__difference-list span { font-size: 19px; color: #4100F5; }
-.ayna-scrapbook__paper--advisors { background: #e8e2ed; border-color: #c6bdd3; }
-.ayna-scrapbook__paper--advisors > p { color: #614f65; }
-.ayna-scrapbook__advisors { display: grid; gap: 10px; margin-top: 18px; }
-.ayna-scrapbook__advisors > div { display: flex; align-items: center; gap: 14px; min-width: 0; padding: 12px; background: #fffaf3; border: 1px solid #e4d3cb; border-radius: 16px; box-shadow: 3px 4px 0 rgba(78,56,102,.09); }
-.ayna-scrapbook__advisors > div:nth-child(even) { background: #f1dfcb; }
-.ayna-scrapbook__advisors > div:nth-child(3n) { background: #e4deed; }
-.ayna-scrapbook__advisor-avatar { width: 68px; height: 68px; flex: none; box-sizing: border-box; border: 3px solid #fffaf3; border-radius: 50%; object-fit: cover; background: #d3c9dc; box-shadow: 0 0 0 1px #b9abca; }
-.ayna-scrapbook__advisor-avatar--initials { display: grid; place-items: center; color: #4100F5; font: 600 22px 'Playfair Display', serif; }
-.ayna-scrapbook__advisor-copy { display: grid; min-width: 0; gap: 4px; }
-.ayna-scrapbook__advisors strong { color: #362845; font: 700 14px/1.25 'DM Sans', sans-serif; }
-.ayna-scrapbook__advisors small { color: #5f5264; font: 500 12px/1.35 'DM Sans', sans-serif; overflow-wrap: anywhere; }
-.ayna-scrapbook__footer { margin-top: 28px; padding: 15px 16px; border-radius: 12px; background: #e5dfeb; color: #5c4b63; font-size: 12px; line-height: 1.5; text-align: center; }
-@media (max-width: 350px) {
-  .ayna-scrapbook__scroll { padding-left: 15px; padding-right: 15px; }
-  .ayna-scrapbook__paper { padding-left: 16px; padding-right: 16px; }
-  .ayna-scrapbook__orbit > span { font-size: 9px; padding: 7px 8px; }
-}
+/* About Ayna: an editorial field guide in the new app language. */
+.ayna-scrapbook{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:#f8f8fd;color:#171717;font-family:'DM Sans',sans-serif}
+.ayna-scrapbook__header{flex:none;display:flex;align-items:center;justify-content:space-between;padding:max(17px,env(safe-area-inset-top)) 20px 15px;background:#f8f8fd;border-bottom:1px solid #e2e4eb;color:#203c9c;font-size:13px;font-weight:800}
+.ayna-scrapbook__header button{min-height:40px;padding:8px 13px;border:1px solid #dce0e9;border-radius:12px;background:#fff;color:#203c9c;font:700 13px 'DM Sans',sans-serif;cursor:pointer}
+.ayna-scrapbook__scroll{flex:1;min-height:0;overflow-y:auto;padding:0 20px 32px}
+.ayna-scrapbook__scroll>section,.ayna-scrapbook__footer{max-width:520px;margin-left:auto;margin-right:auto}
+.ayna-scrapbook__eyebrow{display:block;color:#203c9c;text-transform:uppercase;letter-spacing:.12em;font:800 10px 'DM Sans',sans-serif}
+.ayna-scrapbook h1,.ayna-scrapbook h2{font-family:'DM Sans',sans-serif;font-weight:900;letter-spacing:-.065em}
+.ayna-scrapbook h1 em,.ayna-scrapbook h2 em{font:italic 500 1.06em 'Playfair Display',serif;color:inherit}
+.ayna-scrapbook__hero{position:relative;overflow:hidden;min-height:230px;margin:0 -20px 22px!important;padding:31px 23px;background:#203c9c;color:#fff}
+.ayna-scrapbook__hero .ayna-scrapbook__eyebrow{color:#d5f477}
+.ayna-scrapbook__hero h1{max-width:350px;margin:14px 0 14px;color:#d5f477;font-size:clamp(38px,10vw,51px);line-height:.99}
+.ayna-scrapbook__hero h1 em{color:#fff}
+.ayna-scrapbook__hero p{position:relative;z-index:1;max-width:330px;margin:0;color:#fff;font-size:14px;line-height:1.45}
+.ayna-scrapbook__hero::after{content:'';position:absolute;right:-35px;bottom:-66px;width:190px;height:190px;border:30px solid rgba(159,174,250,.55);border-radius:50%}
+.ayna-scrapbook__tape,.ayna-scrapbook__scribble{display:none}
+.ayna-scrapbook__paper{position:relative;margin-top:16px;padding:23px 20px;border:1px solid #e1e3eb;border-radius:19px;background:#fff;box-shadow:0 3px 0 #ecedf2}
+.ayna-scrapbook__paper h2{margin:9px 0 12px;font-size:clamp(26px,7vw,34px);line-height:1.05}
+.ayna-scrapbook__paper>p{margin:0 0 16px;color:#41434d;font-size:13px;line-height:1.55}
+.ayna-scrapbook__paper--intro{padding-bottom:26px;border:0;background:#d5f477;box-shadow:none}
+.ayna-scrapbook__paper--intro h2,.ayna-scrapbook__paper--intro>p{color:#171717}
+.ayna-scrapbook__intro-stamp{display:inline-block;padding:8px 11px;border:1px solid #203c9c;border-radius:9px;color:#203c9c;text-transform:uppercase;letter-spacing:.05em;font-size:10px;font-weight:800}
+.ayna-scrapbook__team{display:grid;gap:13px;margin-top:18px}
+.ayna-scrapbook__polaroid{overflow:hidden;padding:7px;border-radius:19px;background:#fff;border:1px solid #e1e3eb}
+.ayna-scrapbook__photo{height:clamp(190px,55vw,300px);overflow:hidden;border-radius:13px;background:#dfe2ff}
+.ayna-scrapbook__photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 42%}
+.ayna-scrapbook__handwriting{padding:8px 7px 4px;color:#203c9c;font:italic 18px 'Playfair Display',serif}
+.ayna-scrapbook__team-note{padding:18px 20px;border-radius:18px;background:#f1a4df}
+.ayna-scrapbook__team-note h2{margin:7px 0;font-size:27px}
+.ayna-scrapbook__team-note p{margin:0;font-size:13px;line-height:1.5}
+.ayna-scrapbook__paper--lavender{background:#dfe2ff;border:0;box-shadow:none}
+.ayna-scrapbook__paper--match{background:#aff1dd;border:0;box-shadow:none}
+.ayna-scrapbook__paper--advisors{background:#dfe2ff;border:0;box-shadow:none}
+.ayna-scrapbook__chart{display:grid;gap:12px;margin:17px 0 13px}
+.ayna-scrapbook__chart-row{display:grid;grid-template-columns:23px 1fr;gap:4px 9px;align-items:center}
+.ayna-scrapbook__chart-num{grid-row:span 2;color:#203c9c;font-size:11px;font-weight:900}
+.ayna-scrapbook__chart-track{height:12px;overflow:hidden;border-radius:99px;background:#eef0f7}
+.ayna-scrapbook__chart-track>div{height:100%;border-radius:inherit}
+.ayna-scrapbook__chart-label{font-size:11px;color:#4f5260}
+.ayna-scrapbook__paper small{color:#555a65;font-size:10px;line-height:1.4}
+.ayna-scrapbook__gate-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.ayna-scrapbook__gate{min-height:108px;padding:13px;border-radius:13px;background:#fff}
+.ayna-scrapbook__gate:nth-child(2){background:#d5f477}.ayna-scrapbook__gate:nth-child(3){background:#f1a4df}.ayna-scrapbook__gate:nth-child(4){background:#aff1dd}
+.ayna-scrapbook__gate span{color:#203c9c;font-size:10px;font-weight:900}
+.ayna-scrapbook__gate strong{display:block;margin-top:8px;font-size:13px;line-height:1.2}
+.ayna-scrapbook__gate p{margin:5px 0 0;font-size:11px;line-height:1.4}
+.ayna-scrapbook__orbit{position:relative;height:220px;margin-top:10px}
+.ayna-scrapbook__orbit::before{content:'';position:absolute;inset:36px 15px;border:2px solid rgba(32,60,156,.27);border-radius:50%;transform:rotate(-15deg)}
+.ayna-scrapbook__orbit-center{position:absolute;top:62px;left:calc(50% - 55px);display:grid;place-items:center;width:110px;height:110px;border-radius:50%;background:#203c9c;color:#fff;text-align:center;font:italic 21px/1 'Playfair Display',serif}
+.ayna-scrapbook__orbit>span{position:absolute;padding:8px 10px;border-radius:20px;background:#fff;color:#171717;font-size:10px;font-weight:800}
+.ayna-scrapbook__orbit>span:nth-of-type(1){top:7px;left:1%}.ayna-scrapbook__orbit>span:nth-of-type(2){top:7px;right:2%;background:#d5f477}.ayna-scrapbook__orbit>span:nth-of-type(3){bottom:0;left:0;background:#f1a4df}.ayna-scrapbook__orbit>span:nth-of-type(4){bottom:0;right:0;background:#9faefa}
+.ayna-scrapbook__sticky{padding:12px 14px;border-radius:12px;background:#203c9c;color:#fff;font-size:12px;font-weight:800;line-height:1.4}
+.ayna-scrapbook__sticky span{float:right}
+.ayna-scrapbook__question-list,.ayna-scrapbook__difference-list,.ayna-scrapbook__advisors{display:grid;gap:9px}
+.ayna-scrapbook__question-list>div,.ayna-scrapbook__difference-list>div{padding:13px;border-radius:12px;background:#f2f3f8}
+.ayna-scrapbook__question-list>div:nth-child(even),.ayna-scrapbook__difference-list>div:nth-child(even){background:#eef6d9}
+.ayna-scrapbook__question-list strong{color:#203c9c;font-size:13px}
+.ayna-scrapbook__question-list p{margin:5px 0 0;color:#41434d;font-size:12px;line-height:1.45}
+.ayna-scrapbook__difference-list>div{display:flex;gap:11px;color:#41434d;font-size:12px;line-height:1.4}
+.ayna-scrapbook__difference-list span{color:#203c9c;font-weight:900}
+.ayna-scrapbook__advisors{margin-top:16px}
+.ayna-scrapbook__advisors>div{display:flex;align-items:center;gap:13px;padding:12px;border-radius:13px;background:#fff}
+.ayna-scrapbook__advisor-avatar{width:64px;height:64px;flex:none;border:3px solid #d5f477;border-radius:50%;object-fit:cover;background:#fff}
+.ayna-scrapbook__advisor-avatar--initials{display:grid;place-items:center;color:#203c9c;font-weight:900}
+.ayna-scrapbook__advisor-copy{display:grid;gap:3px;min-width:0}
+.ayna-scrapbook__advisors strong{font-size:14px;line-height:1.2}.ayna-scrapbook__advisors small{overflow-wrap:anywhere;font-size:11px;line-height:1.3}
+.ayna-scrapbook__footer{margin-top:19px;padding:15px;border-radius:12px;background:#eef0f7;color:#4b4f5d;text-align:center;font-size:12px;line-height:1.4}

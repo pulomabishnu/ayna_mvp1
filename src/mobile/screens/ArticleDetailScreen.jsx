@@ -87,8 +87,8 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
   };
 
   return (
-    <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
-      <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--ayna-bg)', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20 }}>
+    <div className="ayna-fresh-article" ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
+      <div className="ayna-fresh-article-hero" style={{ position: 'relative', overflow: 'hidden', background: 'var(--ayna-bg)', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20 }}>
         {/* Blurred fill for the space outside the arc — a scaled-up, blurred
             copy of the article's OWN image (not a generic per-article tint)
             so the corners the arc's curve reveals are always the same color
@@ -131,13 +131,13 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
             reference shape exactly, on any phone width. Flat square bottom.
             objectFit:contain + centered so the full illustration is always
             visible, never cropped off any side. */}
-        <div style={{ position: 'relative', height: 300, borderRadius: 'calc(50vw - 20px) calc(50vw - 20px) 0 0', overflow: 'hidden' }}>
+        <div className="ayna-fresh-article-photo" style={{ position: 'relative', height: 300, borderRadius: 'calc(50vw - 20px) calc(50vw - 20px) 0 0', overflow: 'hidden' }}>
           {image && <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center' }} />}
         </div>
         <div style={{ height: 34 }} />
       </div>
 
-      <div style={{ background: 'var(--ayna-surface)', borderRadius: '28px 28px 0 0', marginTop: -24, position: 'relative', padding: '26px 24px 34px' }}>
+      <div className="ayna-fresh-article-paper" style={{ background: 'var(--ayna-surface)', borderRadius: '28px 28px 0 0', marginTop: -24, position: 'relative', padding: '26px 24px 34px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 13 }}>
           <div style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--ayna-accent-dark)' }} />
           {tags[0] && (

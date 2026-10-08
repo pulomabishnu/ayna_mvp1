@@ -358,3 +358,31 @@
 .ayna-fresh-ecosystem .ayna-editorial-read-copy small { color:#203c9c; }
 .ayna-fresh-ecosystem .ayna-editorial-read-copy strong { font-size:17px; font-weight:800; line-height:1.17; }
 .ayna-fresh-ecosystem .ayna-editorial-read-image { height:112px; border-radius:12px; background:#dfe2ff; }
+
+/* Account creation is a calm light surface; the intake remains the first step. */
+.ayna-fresh-auth { background:#dfe2ff!important; color:#171717!important; }
+.ayna-fresh-auth-back { border:1px solid #203c9c!important;background:#fff!important;color:#203c9c!important;border-radius:12px!important;font-weight:800!important; }
+.ayna-fresh-auth-heading { margin-top:8px; color:#203c9c; font-size:calc(42px * var(--ayna-text-scale,1))!important; font-weight:900!important; line-height:1!important; letter-spacing:-.07em!important; }
+.ayna-fresh-auth-field { border:1px solid #d5d8e9; border-radius:15px!important; box-shadow:0 3px 0 rgba(32,60,156,.08)!important; }
+.ayna-fresh-auth-field span { color:#454759!important; }
+.ayna-fresh-auth input[type='checkbox'] { accent-color:#203c9c!important; }
+.ayna-fresh-auth input[type='checkbox'] + span { color:#373a4b!important; }
+.ayna-fresh-auth-primary { min-height:55px; background:#203c9c!important; color:#fff!important; border-radius:14px!important; font-weight:800!important; }
+.ayna-fresh-auth-primary:disabled { background:#acb5d7!important; }
+.ayna-fresh-auth-primary svg { stroke:#fff!important; }
+.ayna-fresh-auth-social { min-height:54px; border:1px solid #c9cee2!important; border-radius:14px!important; background:#fff!important; color:#171717!important; font-weight:700!important; }
+.ayna-fresh-auth-social svg path[fill='#FFFFFF'] { fill:#171717; }
+.ayna-fresh-auth > div[style*='rgba(255, 252, 249'] { color:#414455!important; }
+.ayna-fresh-auth > div[style*='rgba(255, 252, 249'] svg { stroke:#203c9c!important; }
+.ayna-fresh-auth > div[style*='flex: 1'] { min-height:0; }
+
+/* Reads open as a photo-led magazine page, with space between paragraphs. */
+.ayna-fresh-article { background:#f8f8fd!important; }
+.ayna-fresh-article-hero { padding-bottom:10px; background:#dfe2ff!important; }
+.ayna-fresh-article-hero > div:first-child { display:none; }
+.ayna-fresh-article-photo { height:258px!important; border-radius:18px!important; background:#b5c6f5; }
+.ayna-fresh-article-photo img { object-fit:cover!important; }
+.ayna-fresh-article-paper { margin:-20px 14px 20px!important; padding:24px 21px 28px!important; border:1px solid #e2e4ea; border-radius:20px!important; box-shadow:0 5px 0 #ebecf2; }
+.ayna-fresh-article-paper h1 { font-family:'DM Sans',sans-serif!important; font-size:calc(31px * var(--ayna-text-scale,1))!important; font-weight:900!important; letter-spacing:-.06em; line-height:1.07!important; }
+.ayna-fresh-article-paper .ay-article-body p { margin:0 0 1.2em!important; }
+.ayna-fresh-article-paper .ay-article-body h2,.ayna-fresh-article-paper .ay-article-body h3 { margin-top:1.5em; }

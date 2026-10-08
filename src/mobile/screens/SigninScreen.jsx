@@ -19,7 +19,7 @@ const CONSENT_ITEMS = [
 
 function Field({ label, icon, children }) {
   return (
-    <label
+    <label className="ayna-fresh-auth-field"
       style={{
         background: '#FFFFFF',
         borderRadius: 14,
@@ -61,7 +61,7 @@ const LockIcon = (
 
 function PrimaryButton({ onClick, disabled, children }) {
   return (
-    <button type="button" disabled={disabled} onClick={onClick}
+    <button className="ayna-fresh-auth-primary" type="button" disabled={disabled} onClick={onClick}
       style={{
         width: '100%',
         border: 0,
@@ -88,7 +88,7 @@ function PrimaryButton({ onClick, disabled, children }) {
 
 function GoogleButton({ onClick, disabled }) {
   return (
-    <button type="button" disabled={disabled} onClick={onClick}
+    <button className="ayna-fresh-auth-social" type="button" disabled={disabled} onClick={onClick}
       style={{
         width: '100%',
         color: '#FFFFFF',
@@ -121,7 +121,7 @@ function GoogleButton({ onClick, disabled }) {
 
 function AppleButton({ onClick, disabled }) {
   return (
-    <button type="button" disabled={disabled} onClick={onClick}
+    <button className="ayna-fresh-auth-social" type="button" disabled={disabled} onClick={onClick}
       style={{
         width: '100%',
         color: '#FFFFFF',
@@ -289,7 +289,7 @@ export default function SigninScreen({
   };
 
   return (
-    <div
+    <div className="ayna-fresh-auth"
       style={{
         flex: 1,
         overflowY: 'auto',
@@ -304,7 +304,7 @@ export default function SigninScreen({
         animation: 'ay-page .25s ease-out',
       }}
     >
-      <button type="button" onClick={onAuthBack} style={{ alignSelf: 'flex-start', border: '1px solid rgba(255,255,255,.35)', background: 'rgba(255,255,255,.08)', color: '#FFFFFF', borderRadius: 99, padding: '10px 15px', marginBottom: 20, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
+      <button className="ayna-fresh-auth-back" type="button" onClick={onAuthBack} style={{ alignSelf: 'flex-start', border: '1px solid rgba(255,255,255,.35)', background: 'rgba(255,255,255,.08)', color: '#FFFFFF', borderRadius: 99, padding: '10px 15px', marginBottom: 20, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
         ← Back
       </button>
       {mode === 'check-email' ? (
@@ -338,12 +338,12 @@ export default function SigninScreen({
             </div>
           )}
 
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.08, marginBottom: 20 }}>
+          <div className="ayna-fresh-auth-heading" style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.08, marginBottom: 20 }}>
             {mode === 'signup' ? (<>Save it under<br />your name.</>) : (<>Welcome<br />back.</>)}
           </div>
 
           {mode === 'signup' && (
-            <label style={{ background: '#FFFFFF', borderRadius: 14, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <label className="ayna-fresh-auth-field" style={{ background: '#FFFFFF', borderRadius: 14, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 42, height: 42, borderRadius: 99, background: '#CDF500', color: '#171717', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
                 {initial}
               </div>
