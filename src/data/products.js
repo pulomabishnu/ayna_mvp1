@@ -3245,43 +3245,37 @@ export const SIMILAR_PROFILES = {
     'heavy-flow': {
         label: 'Users with Heavy Flow',
         topProducts: ['p-saalt-cup', 'p-flex-disc', 'p-always-infinity'],
-        quote: "I was changing my tampon every two hours before I found the right cup and disc combination."
     },
     'cramps': {
         label: 'Users with Period Pain',
         topProducts: ['p-magnesium-glycinate', 'p-honeypot-pad', 'p-thermacare'],
-        quote: "The combination of magnesium glycinate and herbal heat therapy completely changed my day 1 experience."
     },
     'bloating': {
         label: 'Users with Hormonal Bloating',
-        topProducts: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me', 'p-evening-primrose', 'p-magnesium-glycinate'],
-        quote: "Flo gummies and digestive enzymes made a real difference for my cycle-related bloating."
+        topProducts: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me'],
     },
     'uti': {
         label: 'Users with Recurrent UTIs',
         topProducts: ['p-azo-test', 'p-boric-acid', 'p-cranberry-supplement'],
-        quote: "AZO test strips and early intervention with probiotics saved me so many trips to urgent care."
     },
     'irregular': {
         label: 'Users with Irregular Cycles',
         topProducts: ['d-clue', 'd-natural-cycles', 'p-vitex'],
-        quote: "Tracking my basal body temperature with Natural Cycles finally helped me understand when I'm actually ovulating."
     },
     'pcos': {
         label: 'Users with PCOS',
-        topProducts: ['p-zinc', 'p-evening-primrose', 'd-clue'],
-        quote: "Zinc and Chasteberry helped stabilize my hormonal acne and regulate my cycles after years of guessing."
+        topProducts: ['p-inositol-wholesome', 'p-spearmint-pcos', 'd-maven'],
     }
 };
 
 /** Symptom → product IDs for supplement/symptom browse. Used when category=supplement. */
 export const SYMPTOM_TO_SUPPLEMENTS = {
-    cramps: ['p-magnesium-glycinate', 'p-evening-primrose', 'p-fish-oil', 'p-honeypot-pad', 'p-thermacare', 'p-vitex'],
-    bloating: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me', 'p-evening-primrose', 'p-magnesium-glycinate'],
+    cramps: ['p-magnesium-glycinate', 'p-fish-oil', 'p-thermacare'],
+    bloating: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me'],
     uti: ['p-cranberry-supplement', 'p-d-mannose-now', 'p-uqora-control', 'p-probiotics-women', 'p-azo-test', 'p-boric-acid', 'p-cystex'],
-    pcos: ['p-inositol-wholesome', 'p-spearmint-pcos', 'p-zinc', 'p-evening-primrose', 'p-vitex'],
+    pcos: ['p-inositol-wholesome', 'p-spearmint-pcos'],
     menopause: ['p-estroven-mood', 'p-remifemin', 'p-creatine-womens'],
-    irregular: ['p-vitex', 'p-inositol-wholesome', 'p-evening-primrose'],
+    irregular: ['p-inositol-wholesome'],
     fertility: ['p-ubiquinol-thorne'],
 };
 

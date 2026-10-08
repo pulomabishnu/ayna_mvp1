@@ -1961,7 +1961,7 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['fertility'],
-        tags: ['fertility', 'irregular', 'pcos'],
+        tags: ['fertility', 'irregular'],
         price: '$99.99',
         whereToBuy: [], // direct-to-consumer only; affiliateUrl below covers it
         url: 'https://proovtest.com/products/complete-testing-system',

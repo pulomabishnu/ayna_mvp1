@@ -637,11 +637,8 @@ export default function Recommendations({
                                     );
                                 })}
                             </div>
-                            <p style={{ fontStyle: 'italic', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-                                {profile.quote}
-                            </p>
                             <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.35rem', fontWeight: '600' }}>
-                                From the community, not a paid brand partnership
+                                Options to compare. Review each product’s evidence and fit before choosing.
                             </p>
                         </div>
                     ))}
@@ -744,4 +741,3 @@ export default function Recommendations({
         </section>
     );
 }
-

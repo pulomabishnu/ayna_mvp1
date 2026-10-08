@@ -300,7 +300,7 @@ export const MVP_PHYSICAL = [
     type: 'physical',
     internal: false,
     healthFunctions: ['supplement'],
-    tags: ['bloating', 'discomfort', 'organic', 'pcos'],
+    tags: ['bloating', 'discomfort', 'organic'],
     price: '$24 for 60 capsules',
     userRating: 4.2,
     whereToBuy: ['Amazon', 'LoveWellness.com', 'Target', 'Ulta'],
