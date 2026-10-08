@@ -48,7 +48,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         fontFamily: "'DM Sans',sans-serif",
       }}
     >
-      <span style={{ position: 'relative', display: 'block', width: isList ? 72 : '100%', height: isList ? 72 : undefined, aspectRatio: isList ? undefined : isService ? '3 / 2' : '4 / 5', flex: 'none', overflow: 'hidden', borderRadius: 14, background: 'var(--ayna-bg-alt)' }}>
+      <span style={{ position: 'relative', display: 'block', width: isList ? 72 : '100%', height: isList ? 72 : undefined, aspectRatio: isList ? undefined : '4 / 5', flex: 'none', overflow: 'hidden', borderRadius: 14, background: 'var(--ayna-bg-alt)' }}>
         <ProductImage src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
       </span>
       <span style={{ display: 'flex', flexDirection: 'column', minWidth: 0, paddingTop: isList ? 0 : 12, flex: 1 }}>
