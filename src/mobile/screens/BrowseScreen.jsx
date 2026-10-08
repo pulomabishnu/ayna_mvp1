@@ -1,506 +1,168 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
-import SearchBar from '../components/SearchBar.jsx';
-import CtaBanner from '../components/CtaBanner.jsx';
 import ProductCard from '../components/ProductCard.jsx';
+import ProductImage from '../components/ProductImage.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
-import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 import { getPersonalizedProductIds, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
 import { getArticlesByProfileRelevance } from '../../components/Articles.jsx';
-import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
-import { useCardLayout } from '../hooks/useCardLayout.js';
 
-// Fisher-Yates — uniform shuffle, unlike sort(() => Math.random() - 0.5)
-// (which is biased and not a proper random permutation).
-function fisherYatesShuffle(list) {
-  const result = list.slice();
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
+function imageFor(product) {
+  return product?.image || product?.imageUrl || (Array.isArray(product?.images) ? product.images[0] : undefined);
 }
 
-const PAGE_SIZE = 20;
+function SearchIcon() {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>;
+}
 
-function ModeTab({ label, active, onClick }) {
+function CategoryTile({ group, product, active, onClick }) {
+  const image = imageFor(product);
   return (
-    <div
-      onClick={onClick}
-      style={{
-        fontFamily: "'DM Sans',sans-serif",
-        fontWeight: 600,
-        fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
-        cursor: 'pointer',
-        paddingBottom: 10,
-        color: active ? 'var(--ayna-text)' : 'var(--ayna-text-faint)',
-        borderBottom: '2px solid ' + (active ? '#FFC774' : 'transparent'),
-        marginBottom: -1,
-      }}
-    >
-      {label}
-    </div>
+    <button type="button" onClick={onClick} style={{ position: 'relative', height: 112, border: active ? '1.5px solid var(--ayna-purple)' : '1px solid var(--ayna-border)', borderRadius: 18, overflow: 'hidden', padding: 0, background: 'var(--ayna-bg-alt)', textAlign: 'left', cursor: 'pointer' }}>
+      {image && <div style={{ position: 'absolute', inset: 0, opacity: .5 }}><ProductImage src={image} alt="" compact /></div>}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(36,28,62,.02),rgba(36,28,62,.62))' }} />
+      <div style={{ position: 'absolute', left: 12, right: 12, bottom: 11, color: '#fff', fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{group.label}</div>
+    </button>
   );
 }
 
-function PersonalizedToggle({ on, disabled, onClick }) {
-  return (
-    <div
-      onClick={disabled ? undefined : onClick}
-      title={disabled ? 'Complete your profile to personalize' : undefined}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 6,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.45 : 1,
-        padding: '5px 5px 5px 10px',
-        borderRadius: 99,
-        background: on ? 'var(--ayna-text)' : 'var(--ayna-chip-bg)',
-        transition: 'background .15s',
-      }}
-    >
-      <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: on ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)' }}>For You</span>
-      <div
-        style={{
-          width: 30,
-          height: 17,
-          borderRadius: 99,
-          background: on ? '#FFC774' : 'var(--ayna-chip-border)',
-          position: 'relative',
-          transition: 'background .15s',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: 2,
-            left: on ? 15 : 2,
-            width: 13,
-            height: 13,
-            borderRadius: 99,
-            background: '#FFFFFF',
-            transition: 'left .15s',
-          }}
-        />
-      </div>
-    </div>
-  );
+function ProductSkeleton() {
+  return <div><div style={{ aspectRatio: '4/5', borderRadius: 16, background: 'var(--ayna-bg-alt)', animation: 'ay-skeleton 1.2s ease-in-out infinite' }}/><div style={{ width: '75%', height: 11, borderRadius: 6, background: 'var(--ayna-bg-alt)', marginTop: 9 }}/><div style={{ width: '42%', height: 9, borderRadius: 6, background: 'var(--ayna-bg-alt)', marginTop: 6 }}/></div>;
 }
 
-function LayoutToggle({ layout, onToggle }) {
-  return (
-    <div
-      onClick={onToggle}
-      role="button"
-      aria-label={layout === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
-      style={{
-        width: 30,
-        height: 30,
-        borderRadius: 8,
-        border: '1px solid var(--ayna-chip-border)',
-        background: 'var(--ayna-chip-bg)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
-        color: 'var(--ayna-text-muted)',
-        marginLeft: 8,
-      }}
-    >
-      {layout === 'grid' ? '☰' : '▦'}
-    </div>
-  );
-}
-
-function CategoryChipRow({ groups, active, onSelect }) {
-  return (
-    <div style={{ display: 'flex', gap: 7, overflowX: 'auto', padding: '0 20px 12px', scrollbarWidth: 'none' }}>
-      {groups.map((g) => (
-        <div
-          key={g.id}
-          onClick={() => onSelect(g.id)}
-          style={{
-            flex: 'none',
-            padding: '7px 13px',
-            borderRadius: 99,
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 600,
-            fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            background: active === g.id ? 'var(--ayna-text)' : 'var(--ayna-chip-bg)',
-            color: active === g.id ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)',
-            border: '1px solid ' + (active === g.id ? 'var(--ayna-text)' : 'var(--ayna-chip-border)'),
-          }}
-        >
-          {g.label}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function SkeletonCard() {
-  return (
-    <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: 10 }}>
-      <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 13, background: 'var(--ayna-chip-bg)', animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
-      <div style={{ height: 12, width: '70%', background: 'var(--ayna-chip-bg)', borderRadius: 4, marginTop: 9, animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
-      <div style={{ height: 10, width: '40%', background: 'var(--ayna-chip-bg)', borderRadius: 4, marginTop: 6, animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
-    </div>
-  );
-}
-
-// AI-search loading state: a coarse checkerboard "pixel" pattern that
-// materializes in via steps() (a chunky, non-smooth animation) rather than
-// the plain fade SkeletonCard uses above — this is a live network+LLM call
-// (real latency, not instant like the local catalog filter), so it reads as
-// a distinct, more eventful kind of waiting.
-function PixelateCard() {
-  const pixelStyle = {
-    background: 'repeating-conic-gradient(var(--ayna-chip-bg) 0% 25%, var(--ayna-border) 0% 50%) 50% / 12px 12px',
-    animation: 'ay-pixelate 900ms steps(5, end) infinite alternate',
-  };
-  return (
-    <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: 10 }}>
-      <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 13, ...pixelStyle }} />
-      <div style={{ height: 12, width: '70%', borderRadius: 4, marginTop: 9, ...pixelStyle }} />
-      <div style={{ height: 10, width: '40%', borderRadius: 4, marginTop: 6, ...pixelStyle }} />
-    </div>
-  );
-}
-
-function PixelateGrid({ count = 6 }) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }}>
-      {Array.from({ length: count }).map((_, i) => (
-        <PixelateCard key={i} />
-      ))}
-    </div>
-  );
-}
-
-// Owns its own pagination state, remounted via `key` (from the parent)
-// whenever the active filters change — that gives it a fresh initial
-// visibleCount naturally, instead of needing a manual reset that either
-// calls setState in an effect body or reads/writes a ref during render
-// (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch }) {
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const sentinelRef = useRef(null);
-
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && visibleCount < products.length && !loadingMore) {
-          setLoadingMore(true);
-          setTimeout(() => {
-            setVisibleCount((v) => Math.min(v + PAGE_SIZE, products.length));
-            setLoadingMore(false);
-          }, 350);
-        }
-      },
-      { rootMargin: '200px' }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [products.length, visibleCount, loadingMore]);
-
-  const visibleProducts = products.slice(0, visibleCount);
-  const isList = layout === 'list';
-
-  return (
-    <>
-      <div
-        style={
-          isList
-            ? { display: 'flex', flexDirection: 'column', gap: 4, padding: '0 14px' }
-            : { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }
-        }
-      >
-        {visibleProducts.map((p) => (
-          <ProductCard key={p.id} product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
-        ))}
-        {loadingMore && !isList && (
-          <>
-            <SkeletonCard />
-            <SkeletonCard />
-          </>
-        )}
-      </div>
-      {visibleCount < products.length && <div ref={sentinelRef} style={{ height: 1 }} />}
-    </>
-  );
-}
-
-// products.js/ALL_PRODUCTS is a static array bundled into the app, not a
-// paginated network endpoint — this app has no live backend for the
-// catalog. "Infinite scroll" is therefore client-side batching over that
-// same real array (same fields/images), revealed progressively as the user
-// scrolls, rather than network-fetched pages.
 export default function BrowseScreen({
   products = [],
   articles = [],
-  ctaVariant = 'gradient',
   headerInitial = 'A',
   onOpenProduct,
   onOpenArticle,
   onOpenSaved,
-  onGoEco,
   onStartQuiz,
   hasEcosystem = false,
   quizAnswers = null,
-  theme = 'dark',
-  onToggleTheme,
+  theme = 'light',
   onOpenProfile,
   onOpenWhyMatch,
-  // Controlled from MobileApp.jsx (and persisted there) so the toggle
-  // survives this screen unmounting when the user navigates away (e.g. to
-  // My Ecosystem) and back — it should stay on until the user explicitly
-  // turns it off, not reset just because they left the tab.
   personalized: personalizedProp,
   onPersonalizedChange,
 }) {
-  const [mode, setMode] = useState('products');
   const [searchValue, setSearchValue] = useState('');
-  // Falls back to local state only if no controlled value is passed in
-  // (keeps this component usable/testable standalone).
-  const [personalizedLocal, setPersonalizedLocal] = useState(false);
-  const personalized = personalizedProp ?? personalizedLocal;
-  const setPersonalized = (updater) => {
-    const next = typeof updater === 'function' ? updater(personalized) : updater;
-    if (onPersonalizedChange) onPersonalizedChange(next);
-    else setPersonalizedLocal(next);
-  };
   const [activeGroup, setActiveGroup] = useState('all');
-  const { layout: cardLayout, toggleLayout } = useCardLayout();
-  // AI fallback for a typed search the local catalog scoring found nothing
-  // for — same /api/search-suggestions the desktop Discovery page falls
-  // back to (see fetchSearchSuggestions.js), not a separate mechanism.
-  const [aiState, setAiState] = useState({ query: '', loading: false, suggestions: [], error: null });
+  const [personalizedLocal, setPersonalizedLocal] = useState(true);
+  const personalized = personalizedProp ?? personalizedLocal;
+  const setPersonalized = (value) => onPersonalizedChange ? onPersonalizedChange(value) : setPersonalizedLocal(value);
+  const [aiState, setAiState] = useState({ query: '', loading: false, suggestions: [] });
 
-  // Re-shuffled once per mount — this screen unmounts whenever you navigate
-  // away (MobileApp swaps which screen component renders), so a fresh
-  // shuffle happens on every visit to Browse, not just once per app load.
-  const [shuffled] = useState(() => fisherYatesShuffle(products));
-
-  // frustrations is the legacy desktop quiz shape; the real current mobile
-  // intake (IntakeScreen.jsx) never sets it at all — it produces
-  // fullHealthIntake.supportSelections/primaryConcerns instead — so relying
-  // on frustrations alone meant "For You" personalization was permanently
-  // disabled for every real mobile user who'd actually completed the quiz.
   const hasProfile = !!(
     quizAnswers?.frustrations?.length
     || quizAnswers?.fullHealthIntake?.supportSelections?.length
     || quizAnswers?.fullHealthIntake?.primaryConcerns?.length
   );
 
-  // Real filtering — reuses the site's own scoreQueryAgainstProduct/
-  // buildSearchTextForItem/buildIdentityTextForItem (naturalLanguageSearch.js)
-  // and getPersonalizedProductIds/itemMatchesMacroGroup (products.js) — the
-  // exact same search-scoring and personalization/category-matching
-  // functions the desktop Discovery page already uses, not a separate,
-  // weaker matching system. This is why terms like "PCOS" or "hair
-  // thinning" now work here too: scoreQueryAgainstProduct already knows the
-  // real term aliases (e.g. pcos -> polycystic/ovarian) and scores natural-
-  // language queries, unlike a plain substring check.
-  const searchTermRaw = searchValue.trim();
-  const searchTerm = searchTermRaw.toLowerCase();
-  let filtered = shuffled;
-  if (searchTermRaw) {
-    filtered = shuffled
-      .map((p) => ({
-        item: p,
-        matchScore: scoreQueryAgainstProduct(
-          searchTermRaw,
-          buildSearchTextForItem(p, CATEGORY_LABELS),
-          buildIdentityTextForItem(p, CATEGORY_LABELS)
-        ),
-      }))
-      .filter((x) => x.matchScore > 0)
-      .sort((a, b) => b.matchScore - a.matchScore)
-      .map((x) => x.item);
-  }
-  // Captured before the personalized/category filters narrow `filtered`
-  // further — the AI fallback below should trigger on "the typed search
-  // itself found nothing in the catalog", not "this narrower filtered view
-  // happens to be empty because of an unrelated active filter".
-  const searchScored = filtered;
+  const searchTerm = searchValue.trim();
+  const scored = useMemo(() => {
+    if (!searchTerm) return products;
+    return products
+      .map((p) => ({ p, score: scoreQueryAgainstProduct(searchTerm, buildSearchTextForItem(p, CATEGORY_LABELS), buildIdentityTextForItem(p, CATEGORY_LABELS)) }))
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map((x) => x.p);
+  }, [products, searchTerm]);
+
+  let filtered = scored;
   if (personalized && hasProfile) {
-    const personalizedIds = new Set(getPersonalizedProductIds(quizAnswers, null));
-    filtered = filtered.filter((p) => personalizedIds.has(p.id));
+    const ids = new Set(getPersonalizedProductIds(quizAnswers, null));
+    filtered = filtered.filter((p) => ids.has(p.id));
   }
-  if (activeGroup !== 'all') {
-    filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
-  }
-  // Brand partners pinned to the top of the default browsing sort — same
-  // rule as desktop Discovery.jsx: a partnership buys visibility on the
-  // page you browse freely, never placement inside an actual text search
-  // or personalized ("For You") recommendation.
-  if (!searchTermRaw && !(personalized && hasProfile)) {
-    filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
-  }
-  const filterKey = `${searchTerm}|${personalized}|${activeGroup}`;
+  if (activeGroup !== 'all') filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
 
   useEffect(() => {
-    // Nothing to fetch — and nothing to reset either: the render logic below
-    // already gates on `aiState.query === searchTermRaw`, so a stale
-    // aiState from a previous search can never render once searchTermRaw
-    // has changed. Resetting it here would be a synchronous setState call
-    // in the effect body, which this project'''s lint rules disallow.
-    if (searchTermRaw.length < 2 || searchScored.length > 0) return undefined;
+    if (searchTerm.length < 2 || scored.length > 0) return undefined;
     let cancelled = false;
     const controller = new AbortController();
     const timer = setTimeout(() => {
-      setAiState({ query: searchTermRaw, loading: true, suggestions: [], error: null });
-      fetchSearchSuggestions({
-        query: searchTermRaw,
-        category: activeGroup !== 'all' ? activeGroup : '',
-        maxResults: 20,
-        signal: controller.signal,
-      })
-        .then(({ suggestions, error }) => {
-          if (cancelled) return;
-          setAiState({ query: searchTermRaw, loading: false, suggestions: suggestions || [], error: error || null });
-        })
-        .catch((e) => {
-          if (cancelled || e?.name === 'AbortError') return;
-          setAiState({ query: searchTermRaw, loading: false, suggestions: [], error: 'Could not load suggestions.' });
-        });
-    }, 600);
-    return () => {
-      cancelled = true;
-      controller.abort();
-      clearTimeout(timer);
-    };
-  }, [searchTermRaw, searchScored.length, activeGroup]);
+      setAiState({ query: searchTerm, loading: true, suggestions: [] });
+      fetchSearchSuggestions({ query: searchTerm, category: activeGroup !== 'all' ? activeGroup : '', maxResults: 12, signal: controller.signal })
+        .then(({ suggestions }) => { if (!cancelled) setAiState({ query: searchTerm, loading: false, suggestions: suggestions || [] }); })
+        .catch(() => { if (!cancelled) setAiState({ query: searchTerm, loading: false, suggestions: [] }); });
+    }, 550);
+    return () => { cancelled = true; controller.abort(); clearTimeout(timer); };
+  }, [searchTerm, scored.length, activeGroup]);
 
-  const articlesById = new Map(articles.map((a) => [a.id, a]));
-  const rows = ARTICLE_CATEGORIES.map((cat) => ({
-    ...cat,
-    items: cat.articleIds.map((id) => articlesById.get(id)).filter(Boolean),
-  })).filter((row) => row.items.length > 0);
-
-  // Same personalization logic as the "Recommended" filter on the desktop
-  // Health Articles Library (Articles.jsx's getArticlesByProfileRelevance) —
-  // not a separate/weaker mobile-only scoring system. Falls back to the
-  // category-grouped `rows` above when off or when there's no profile yet.
-  const recommendedReads = getArticlesByProfileRelevance(quizAnswers || {}, null).filter((a) =>
-    articlesById.has(a.id)
-  );
+  const groups = MACRO_GROUPS.filter((g) => g.id !== 'all').slice(0, 6);
+  const categorySamples = groups.map((g) => products.find((p) => itemMatchesMacroGroup(p, g.id)) || null);
+  const recommendedReads = hasProfile ? getArticlesByProfileRelevance(quizAnswers || {}, null).slice(0, 4) : articles.slice(0, 4);
+  const displayProducts = filtered.length ? filtered : (aiState.query === searchTerm ? aiState.suggestions : []);
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
-      <MobileHeader
-        variant={theme}
-        activeTab="browse"
-        initial={headerInitial}
-        onOpenSaved={onOpenSaved}
-        onGoEco={onGoEco}
-        onToggleTheme={onToggleTheme}
-        onOpenProfile={onOpenProfile}
-      />
+    <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 104, background: 'var(--ayna-bg)', animation: 'ay-page .2s ease-out' }}>
+      <MobileHeader variant={theme} initial={headerInitial} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
 
-      <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+      <section style={{ padding: '12px 20px 0' }}>
+        <div style={{ fontSize: 'calc(28px * var(--ayna-text-scale, 1))', fontWeight: 750, letterSpacing: '-.035em', color: 'var(--ayna-heading)' }}>Explore</div>
+        <div style={{ marginTop: 5, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>Products, symptoms, questions, ingredients.</div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px', borderBottom: '1px solid var(--ayna-border)', margin: '0 0 14px' }}>
-        <div style={{ display: 'flex', gap: 18 }}>
-          <ModeTab label="Products" active={mode === 'products'} onClick={() => setMode('products')} />
-          <ModeTab label="Reads" active={mode === 'reads'} onClick={() => setMode('reads')} />
+        <div style={{ marginTop: 16, height: 48, borderRadius: 15, border: '1px solid var(--ayna-border)', background: '#fff', display: 'flex', alignItems: 'center', gap: 10, padding: '0 14px', color: 'var(--ayna-text-faint)' }}>
+          <SearchIcon />
+          <input value={searchValue} onChange={(e) => setSearchValue(e.target.value)} placeholder="Search ayna" style={{ flex: 1, minWidth: 0, border: 0, outline: 0, background: 'transparent', color: 'var(--ayna-text)', font: 'inherit', fontSize: 'calc(14px * var(--ayna-text-scale, 1))' }}/>
+          {searchValue && <button type="button" onClick={() => setSearchValue('')} style={{ border: 0, background: 'transparent', color: 'var(--ayna-text-faint)', fontSize: 18, cursor: 'pointer' }}>×</button>}
         </div>
-        {mode === 'products' && (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
-            <LayoutToggle layout={cardLayout} onToggle={toggleLayout} />
-          </div>
-        )}
-        {mode === 'reads' && (
-          <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
-        )}
-      </div>
+      </section>
 
-      {mode === 'products' && (
-        <CategoryChipRow groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} />
+      {!searchTerm && (
+        <>
+          <section style={{ padding: '24px 20px 0' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
+              <h2 style={{ margin: 0, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>What are you looking for?</h2>
+              <button type="button" onClick={() => setActiveGroup('all')} style={{ border: 0, background: 'transparent', color: 'var(--ayna-mauve)', fontSize: 11, fontWeight: 700 }}>All</button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 10 }}>
+              {groups.map((g, i) => <CategoryTile key={g.id} group={g} product={categorySamples[i]} active={activeGroup === g.id} onClick={() => setActiveGroup(activeGroup === g.id ? 'all' : g.id)} />)}
+            </div>
+          </section>
+
+          {!hasProfile && !hasEcosystem && (
+            <section style={{ margin: '24px 20px 0', borderRadius: 20, background: 'var(--ayna-deep-space)', color: '#fff', padding: 18 }}>
+              <div style={{ fontWeight: 750, fontSize: 17 }}>Make this more personal</div>
+              <div style={{ opacity: .75, fontSize: 12.5, lineHeight: 1.45, marginTop: 5 }}>Tell ayna what you care about and we’ll prioritize better matches.</div>
+              <button type="button" onClick={onStartQuiz} style={{ marginTop: 14, border: 0, borderRadius: 11, background: '#fff', color: 'var(--ayna-deep-space)', padding: '10px 13px', fontWeight: 750 }}>Personalize</button>
+            </section>
+          )}
+        </>
       )}
 
-      {/* Once the ecosystem exists, Browse stays pure browsing — the
-          "update your health" prompt lives on the Ecosystem screen instead,
-          after its Reads section. */}
-      {!hasEcosystem && ctaVariant !== 'none' && (ctaVariant === 'gradient' || ctaVariant === 'inline') ? (
-        <CtaBanner variant={ctaVariant} onClick={onStartQuiz} />
-      ) : null}
-
-      {mode === 'products' ? (
-        <>
-          {filtered.length > 0 ? (
-            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
-          ) : searchTermRaw.length >= 2 && aiState.loading ? (
-            <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
-                Searching beyond our catalog…
-              </div>
-              <PixelateGrid />
-            </>
-          ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
-            <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
-                Not in our catalog yet — found via AI search
-              </div>
-              <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
-            </>
-          ) : (
-            <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
-              No products match.
-            </div>
-          )}
-          <div
-            style={{
-              margin: '22px 20px 0',
-              textAlign: 'center',
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 'calc(10px * var(--ayna-text-scale, 1))',
-              letterSpacing: 0.8,
-              color: 'var(--ayna-text-faint)',
-            }}
-          >
-            ALL OTC · NOT A DIAGNOSIS
+      <section style={{ padding: '26px 20px 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 13 }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: 'calc(18px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{searchTerm ? `Results for “${searchTerm}”` : 'Curated for you'}</h2>
+            {!searchTerm && <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', marginTop: 3 }}>{personalized && hasProfile ? 'Based on your profile' : 'A mix worth exploring'}</div>}
           </div>
-        </>
-      ) : personalized && hasProfile ? (
-        recommendedReads.length === 0 ? (
-          <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
-            No reads match your profile yet.
+          {hasProfile && !searchTerm && (
+            <button type="button" onClick={() => setPersonalized(!personalized)} style={{ border: 0, background: 'transparent', color: personalized ? 'var(--ayna-purple)' : 'var(--ayna-text-faint)', fontWeight: 700, fontSize: 11.5 }}>{personalized ? 'For You' : 'All'}</button>
+          )}
+        </div>
+
+        {aiState.loading && !displayProducts.length ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 14 }}>{Array.from({ length: 4 }).map((_, i) => <ProductSkeleton key={i} />)}</div>
+        ) : displayProducts.length ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: '20px 12px' }}>
+            {displayProducts.slice(0, searchTerm ? 18 : 10).map((p) => <ProductCard key={p.id} product={p} onClick={() => onOpenProduct?.(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />)}
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }}>
-            {recommendedReads.map((a) => (
-              <LibraryCard key={a.id} article={a} fullWidth onClick={() => onOpenArticle && onOpenArticle(a)} />
-            ))}
+          <div style={{ padding: '34px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Nothing matched that yet.</div>
+        )}
+      </section>
+
+      {!searchTerm && recommendedReads.length > 0 && (
+        <section style={{ padding: '30px 0 0' }}>
+          <div style={{ padding: '0 20px 12px' }}>
+            <h2 style={{ margin: 0, fontSize: 'calc(18px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Worth knowing</h2>
           </div>
-        )
-      ) : rows.length === 0 ? (
-        <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
-          No reads yet.
-        </div>
-      ) : (
-        rows.map((row) => (
-          <div key={row.id} style={{ marginBottom: 24 }}>
-            <div style={{ padding: '0 20px 11px' }}>
-              <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))' }}>{row.label}</div>
-            </div>
-            <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
-              {row.items.map((a) => (
-                <LibraryCard key={a.id} article={a} onClick={() => onOpenArticle && onOpenArticle(a)} />
-              ))}
-            </div>
+          <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
+            {recommendedReads.map((a) => <LibraryCard key={a.id} article={a} onClick={() => onOpenArticle?.(a)} />)}
           </div>
-        ))
+        </section>
       )}
     </div>
   );
