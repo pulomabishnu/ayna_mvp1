@@ -69,7 +69,7 @@ export default function EcosystemScreen({
         </button>
         <button type="button" className="ayna-fresh-stack-card stack-pink" onClick={onOpenMonthlyCheckin}>
           <span className="ayna-fresh-stack-label">02 / CHECK IN</span><strong>How are you feeling lately?</strong>
-          <span className="ayna-fresh-stack-action">Monthly check-in <span aria-hidden="true">↗</span></span><span className="ayna-fresh-stack-flower" aria-hidden="true" />
+          <span className="ayna-fresh-stack-action">Monthly check-in <span aria-hidden="true">↗</span></span><span className="ayna-fresh-stack-loop" aria-hidden="true" />
         </button>
         <button type="button" className="ayna-fresh-stack-card stack-lilac" onClick={relatedReads[0] ? () => onOpenArticle?.(relatedReads[0]) : onBrowse}>
           <span className="ayna-fresh-stack-label">03 / WORTH A READ</span><strong>{relatedReads[0]?.title || 'Learn something new about your body.'}</strong>

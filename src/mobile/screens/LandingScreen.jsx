@@ -6,12 +6,11 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
         <span className="ayna-fresh-kicker">A BETTER WAY TO FIGURE IT OUT</span>
         <h1>GOOD THINGS<br />FOR <em>YOUR</em><br />BODY.</h1>
       </div>
-      <div className="ayna-fresh-playground" aria-hidden="true">
-        <span className="ayna-fresh-orbit orbit-one" /><span className="ayna-fresh-orbit orbit-two" />
-        <span className="ayna-fresh-sticker sticker-one">real answers</span>
-        <span className="ayna-fresh-sticker sticker-two">your way</span>
-        <span className="ayna-fresh-dot dot-one" /><span className="ayna-fresh-dot dot-two" />
-        <span className="ayna-fresh-character"><i className="eye eye-one" /><i className="eye eye-two" /><i className="smile" /><i className="arm arm-one" /><i className="arm arm-two" /></span>
+      <div className="ayna-fresh-playground" aria-label="The Ayna team and what shapes your matches">
+        <div className="ayna-fresh-collage-card collage-back" aria-hidden="true">CLINICAL<br />CONTEXT</div>
+        <div className="ayna-fresh-collage-card collage-photo"><img src="/team/ayna-founders.jpg" alt="The Ayna team together outdoors" /></div>
+        <div className="ayna-fresh-collage-card collage-front" aria-hidden="true">RESEARCH<br />+ REAL LIFE</div>
+        <span className="ayna-fresh-collage-orbit orbit-one" aria-hidden="true" /><span className="ayna-fresh-collage-orbit orbit-two" aria-hidden="true" />
       </div>
       <div className="ayna-fresh-welcome-bottom">
         <p>Products, research, and real experiences. All in one place.</p>

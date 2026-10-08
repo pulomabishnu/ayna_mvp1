@@ -442,7 +442,7 @@ export default function ProductDetailScreen({
   const factRows = buildFactRows(product);
 
   return (
-    <div style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
+    <div className="ayna-fresh-product-detail" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
       <div style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out', paddingBottom: 104 }}>
         <div style={{ paddingTop: 'max(24px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
           <button type="button" onClick={onBack} aria-label="Back to products" style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer', flex: 'none', minHeight: 44, border: 0, background: 'transparent', padding: 0 }}>
@@ -466,7 +466,7 @@ export default function ProductDetailScreen({
           <div style={{ textAlign: 'right', paddingRight: 20, marginTop: 4, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Link copied</div>
         )}
 
-        <div style={{ margin: '14px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
+        <div className="ayna-fresh-detail-image" style={{ margin: '14px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
           <div
             style={{
               position: 'relative',
@@ -503,7 +503,7 @@ export default function ProductDetailScreen({
           </div>
         )}
 
-        <div style={{ padding: '18px 22px 0' }}>
+        <div className="ayna-fresh-detail-title" style={{ padding: '18px 22px 0' }}>
           {eyebrowLine && <div style={EYEBROW}>{eyebrowLine}</div>}
           {matchPercent != null && (
             <button type="button" onClick={openWhyMatch} style={{ display: 'flex', alignItems: 'center', gap: 9, width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer' }}>

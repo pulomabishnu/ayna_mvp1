@@ -706,9 +706,9 @@ export default function MobileApp() {
           </section>
         </div>
       )}
-      {overlay?.type === 'about' && <div style={{ position: 'fixed', inset: 0, zIndex: 80, background: 'var(--ayna-surface)', display: 'flex' }}><AboutAynaScreen onBack={() => setOverlay(null)} /></div>}
+      {overlay?.type === 'about' && <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 80, background: 'var(--ayna-surface)', display: 'flex' }}><AboutAynaScreen onBack={() => setOverlay(null)} /></div>}
       {overlay?.type === 'product' && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+        <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
           <ProductDetailScreen
             product={overlay.item}
             onBack={() => setOverlay(null)}
@@ -740,7 +740,7 @@ export default function MobileApp() {
         </div>
       )}
       {overlay?.type === 'article' && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+        <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
           <ArticleDetailScreen
             key={overlay.item.id}
             article={overlay.item}
@@ -755,7 +755,7 @@ export default function MobileApp() {
         </div>
       )}
       {overlay?.type === 'why-match' && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+        <div className="ayna-fresh-detail-overlay" style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
           <WhyMatchScreen
             product={overlay.item}
             quizAnswers={effectiveQuizAnswers}

@@ -8,7 +8,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
         <section className="ayna-fresh-intro-stage">
           <span className="ayna-fresh-kicker">YOUR ECOSYSTEM STARTS HERE</span>
           <h1>More <em>you.</em><br />Less guesswork.</h1>
-          <div className="ayna-fresh-intro-art" aria-hidden="true"><span className="shape shape-a" /><span className="shape shape-b" /><span className="shape shape-c" /><span className="shape shape-d" /></div>
+          <div className="ayna-fresh-intro-art" aria-hidden="true"><span className="ayna-fresh-intro-ring" /><span className="ayna-fresh-intro-note note-one">HEALTH HISTORY</span><span className="ayna-fresh-intro-note note-two">YOUR GOALS</span><span className="ayna-fresh-intro-note note-three">YOUR PREFERENCES</span></div>
         </section>
         <section className="ayna-fresh-intro-content">
           <p>Tell us what matters. We’ll bring the products, research, and real perspectives together for you.</p>
