@@ -325,3 +325,36 @@
 .ayna-fresh-home-stack .stack-lilac .ayna-fresh-stack-action { max-width:100%; font-size:11px; }
 .ayna-fresh-home-stack .stack-pink .ayna-fresh-stack-loop { width:90px; height:90px; border-width:14px; right:-21px; bottom:-24px; opacity:.35; }
 .ayna-fresh-home-stack .stack-lilac .ayna-fresh-stack-star { width:85px; height:85px; opacity:.3; }
+
+/* Keep the orbit labels clear of the headline on narrow phones. */
+.ayna-fresh-intro-stage { min-height:402px; }
+.ayna-fresh-intro-stage h1 { max-width:none; font-size:clamp(37px,9.3vw,47px); line-height:.98; }
+.ayna-fresh-intro-art { bottom:0; height:178px; }
+.ayna-fresh-intro-note.note-one { left:5%; top:24px; }
+.ayna-fresh-intro-note.note-two { left:38%; top:61px; }
+.ayna-fresh-intro-note.note-three { right:5%; top:15px; }
+.ayna-fresh-collage-card.collage-back { top:5%; right:3%; height:55%; }
+.ayna-fresh-collage-card.collage-photo { top:14%; }
+@media (max-width:375px) { .ayna-fresh-intro-stage { min-height:420px; } .ayna-fresh-intro-stage h1 { font-size:36px; } }
+
+/* Profile is a light personal dashboard instead of the former dark account sheet. */
+.ayna-fresh-profile-hub { background:#f8f8fd; }
+.ayna-fresh-profile-hero { background:#dfe2ff!important; color:#171717!important; padding-bottom:25px!important; }
+.ayna-fresh-profile-hero::after { background:#9faefa; opacity:.55; }
+.ayna-fresh-profile-hero > div:first-child > div:first-child { color:#203c9c!important; }
+.ayna-fresh-profile-hero > div:first-child > div:last-child { border:1px solid #203c9c!important; background:#fff!important; color:#203c9c!important; }
+.ayna-fresh-profile-hero > div:nth-child(2) > div:first-child { background:#d5f477!important; color:#203c9c!important; font-family:'DM Sans',sans-serif!important; font-weight:900!important; }
+.ayna-fresh-profile-hero > div:nth-child(2) > div:last-child > div:last-child { color:#45456a!important; }
+.ayna-fresh-profile-stats { gap:9px!important; margin-top:25px!important; }
+.ayna-fresh-profile-stats > div { min-height:81px; padding:12px 9px!important; box-shadow:0 3px 0 rgba(32,60,156,.12); }
+.ayna-fresh-profile-stats > div > div:first-child { font-size:24px!important; }
+.ayna-fresh-profile-stats > div > div:last-child { font-family:'DM Sans',sans-serif!important; font-size:9px!important; font-weight:800!important; letter-spacing:0!important; }
+.ayna-fresh-profile-menu { gap:13px!important; padding-top:27px!important; background:#f8f8fd; }
+.ayna-fresh-profile-menu > div:not(:first-child) { min-height:73px; border:1px solid #e1e2ec!important; border-radius:16px!important; background:#fff!important; }
+.ayna-fresh-profile-menu > div:not(:first-child) > div:nth-child(2) > div:first-child { font-weight:800!important; }
+
+/* Reads follow the same clean editorial rhythm and show the real article image. */
+.ayna-fresh-ecosystem .ayna-editorial-read { min-height:145px; grid-template-columns:minmax(0,1fr) 113px; gap:15px; margin:0 0 13px; padding:15px; border:1px solid #e0e2eb; border-radius:18px; background:#fff; box-shadow:0 3px 0 #ececf2; }
+.ayna-fresh-ecosystem .ayna-editorial-read-copy small { color:#203c9c; }
+.ayna-fresh-ecosystem .ayna-editorial-read-copy strong { font-size:17px; font-weight:800; line-height:1.17; }
+.ayna-fresh-ecosystem .ayna-editorial-read-image { height:112px; border-radius:12px; background:#dfe2ff; }
