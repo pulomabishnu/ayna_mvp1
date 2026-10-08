@@ -243,6 +243,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
   return (
     <>
       <div
+        className="ayna-editorial-product-grid"
         style={
           isList
             ? { display: 'flex', flexDirection: 'column', gap: 12, padding: '0 20px' }
@@ -484,6 +485,12 @@ export default function BrowseScreen({
         onToggleTheme={onToggleTheme}
         onOpenProfile={onOpenProfile}
       />
+
+      <div className="ayna-editorial-page-title">
+        <p className="ayna-editorial-kicker">The Ayna edit</p>
+        <h1>Good things, <em>found.</em></h1>
+        <p>Explore products, honest perspectives, and reads worth saving.</p>
+      </div>
 
       <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
 

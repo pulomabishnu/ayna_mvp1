@@ -1,72 +1,22 @@
 import MobileHeader from '../components/MobileHeader.jsx';
-import OrbHero from '../components/OrbHero.jsx';
 
 export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, onAboutAyna, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile }) {
   return (
-    <div
-      style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        position: 'relative',
-        background: 'linear-gradient(168deg,#242A52 0%,#4E3866 52%,#A2603C 100%)',
-        color: '#FFF9F2',
-        animation: 'ay-page .25s ease-out',
-      }}
-    >
-      <MobileHeader variant="dark" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
-
-      <div
-        style={{
-          position: 'absolute',
-          top: -70,
-          right: -80,
-          width: 260,
-          height: 260,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(255,199,116,.34),rgba(255,199,116,0) 70%)',
-          animation: 'ay-drift 15s ease-in-out infinite',
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '6px 24px 20px' }}>
-        <OrbHero showYou={false} />
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.16, textAlign: 'center' }}>
-          Build your
-          <br />
-          ecosystem
+    <div className="ayna-editorial-eco-intro">
+      <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
+      <div className="ayna-editorial-eco-intro-scroll">
+        <div className="ayna-editorial-eco-intro-photo">
+          <img src="/landing-bg.png" alt="A person stretching in warm afternoon light" />
+          <span>Made for all the things that make you, you.</span>
         </div>
-      </div>
-
-      <div style={{ position: 'relative', padding: '8px 24px 28px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <button type="button"
-          onClick={onStartQuiz}
-          style={{
-            background: '#FFC774',
-            color: '#231A12',
-            textAlign: 'center',
-            padding: 16,
-            borderRadius: 99,
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 600,
-            fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
-            cursor: 'pointer',
-            boxShadow: '0 18px 34px -16px rgba(255,199,116,.8)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 7,
-          }}
-        >
-          Start the intake
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#231A12" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
-        </button>
-        {!authUser && <button type="button" onClick={onAlreadyHaveAccount} style={{ minHeight: 42, border: 0, background: 'transparent', color: '#FFF9F2', padding: '8px 12px', fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>I already have an account</button>}
-        <button type="button" onClick={onAboutAyna} style={{ minHeight: 42, border: 0, background: 'transparent', color: 'rgba(255,249,242,.85)', padding: '8px 12px', fontFamily: "'DM Sans',sans-serif", fontSize: 13, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>About us <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>→</span></button>
+        <div className="ayna-editorial-eco-intro-copy">
+          <p className="ayna-editorial-kicker">Your personal edit</p>
+          <h1>Meet your <em>Ecosystem.</em></h1>
+          <p>Tell us what matters to you. We’ll bring together products, research, and real experiences worth exploring.</p>
+          <button type="button" className="ayna-editorial-primary" onClick={onStartQuiz}>Start the intake <span aria-hidden="true">↗</span></button>
+          {!authUser && <button type="button" className="ayna-editorial-text-link" onClick={onAlreadyHaveAccount}>I already have an account</button>}
+          <button type="button" className="ayna-editorial-text-link" onClick={onAboutAyna}>About us</button>
+        </div>
       </div>
     </div>
   );

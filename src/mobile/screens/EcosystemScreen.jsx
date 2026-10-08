@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
-import EcosystemOrbit from '../components/EcosystemOrbit.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import ArticleCard from '../components/ArticleCard.jsx';
 import CtaBanner from '../components/CtaBanner.jsx';
@@ -19,7 +17,6 @@ export default function EcosystemScreen({
   authUser = null,
   suggestedEcosystemProducts = [],
   name = 'You',
-  tags = '',
   relatedReads = [],
   savedProducts = {},
   headerInitial = 'A',
@@ -37,9 +34,6 @@ export default function EcosystemScreen({
   onOpenWhyMatch,
   onAddToEcosystem,
 }) {
-  const [selectedKey, setSelectedKey] = useState(null);
-  const [selectedSeat, setSelectedSeat] = useState(null);
-
   const rankedProducts = myProducts
     .map((product) => ({ product, details: getProductMatchDetailsForProduct(product, quizAnswers) }))
     .sort((a, b) => (b.details.percent ?? -1) - (a.details.percent ?? -1));
@@ -49,9 +43,7 @@ export default function EcosystemScreen({
   const olderProducts = quizAnswers
     ? rankedProducts.filter(({ details }) => details.matchStatus !== 'scored' || details.percent < 30).map(({ product }) => product)
     : [];
-  const showingArea = selectedSeat && !selectedSeat.gap;
-  const gridTitle = showingArea ? selectedSeat.label : 'In your Ecosystem';
-  const gridProducts = showingArea ? selectedSeat.products : matchedProducts;
+  const gridProducts = matchedProducts;
   const savedList = Object.values(savedProducts || {});
   const nextSaved = savedList[0];
 
@@ -59,62 +51,29 @@ export default function EcosystemScreen({
     <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
       <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
 
-      <div style={{ padding: '18px 20px 0' }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.3 }}>
-          {getTimeGreeting()}, {name}
-        </div>
+      <div className="ayna-editorial-page-title">
+        <p className="ayna-editorial-kicker">{getTimeGreeting()}, {name}</p>
+        <h1>Your <em>Ecosystem.</em></h1>
+        <p>Thoughtful picks based on what you shared.</p>
         {ecosystemNotice && <p role="status" style={{ margin: '12px 0 0', padding: '11px 14px', borderRadius: 14, background: 'var(--ayna-peach)', color: 'var(--ayna-heading)', fontSize: 13, lineHeight: 1.45 }}>{ecosystemNotice}</p>}
       </div>
 
-      <section aria-label="Your next steps" style={{ margin: '18px 20px 0', padding: 18, borderRadius: 22, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)' }}>
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 7 }}>Your next steps</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.25 }}>
-          {nextSaved ? 'Pick up where you left off' : 'Make this space yours'}
-        </div>
-        <p style={{ margin: '8px 0 14px', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.5 }}>
-          {nextSaved ? `${savedList.length} saved product${savedList.length === 1 ? '' : 's'} in your shortlist. Revisit one when you’re ready.` : 'Save products you want to revisit, and check in when your needs change.'}
-        </p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          <button type="button" onClick={nextSaved ? () => onOpenProduct?.(nextSaved) : onBrowse} style={{ border: 0, borderRadius: 99, padding: '10px 14px', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: 'pointer' }}>
-            {nextSaved ? `View ${nextSaved.name || 'saved product'}` : 'Explore products'}
-          </button>
-          <button type="button" onClick={nextSaved ? onOpenSaved : onOpenMonthlyCheckin} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '10px 14px', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: 'pointer' }}>
-            {nextSaved ? 'Your saved list' : 'Monthly check-in'}
-          </button>
-        </div>
-      </section>
-
-      <div style={{ padding: '18px 20px 0' }}>
-        <EcosystemOrbit
-          products={matchedProducts}
-          name={name}
-          tags={tags}
-          selectedKey={selectedKey}
-          onSelectKey={setSelectedKey}
-          onSelect={setSelectedSeat}
-          onExploreArea={onBrowse}
-        />
-      </div>
+      <button type="button" className="ayna-editorial-feature" onClick={nextSaved ? () => onOpenProduct?.(nextSaved) : onBrowse}>
+        <img src="/landing-bg.png" alt="" />
+        <span className="ayna-editorial-feature-copy"><small>Your space to discover</small><strong>{nextSaved ? 'Pick up where you left off ↗' : 'Find your next favorite ↗'}</strong></span>
+      </button>
 
       <div style={{ padding: '18px 20px 0' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>{gridTitle}</div>
-          {showingArea ? (
-            <div onClick={() => setSelectedKey(null)} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: '#A2603C', cursor: 'pointer' }}>
-              Show all
-            </div>
-          ) : (
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: '#78716C' }}>
-              {gridProducts.length} product{gridProducts.length === 1 ? '' : 's'}
-            </div>
-          )}
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(22px * var(--ayna-text-scale, 1))', letterSpacing: '-.04em' }}>Your picks</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, color: 'var(--ayna-text-muted)' }}>{gridProducts.length} product{gridProducts.length === 1 ? '' : 's'}</div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11 }}>
+        <div className="ayna-editorial-product-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11 }}>
           {gridProducts.map((p) => (
             <ProductCard key={p.id} product={p} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} />
           ))}
         </div>
-        {!showingArea && matchedProducts.length === 0 && <p style={{ color: 'var(--ayna-text-muted)', fontSize: 13, lineHeight: 1.5 }}>No strong matches are saved yet. Explore the recommendations below or update your intake answers.</p>}
+        {matchedProducts.length === 0 && <p style={{ color: 'var(--ayna-text-muted)', fontSize: 13, lineHeight: 1.5 }}>No strong matches are saved yet. Explore the recommendations below or update your intake answers.</p>}
       </div>
 
       {suggestedEcosystemProducts.length > 0 && (

@@ -1,159 +1,25 @@
-import OrbHero from '../components/OrbHero.jsx';
-
 export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, onAboutAyna }) {
   return (
-    <div
-      style={{
-        flex: 1,
-        position: 'relative',
-        overflow: 'hidden',
-        background:
-          'linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        color: '#FFF9F2',
-        animation: 'ay-page .25s ease-out',
-        minHeight: 0,
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          top: -90,
-          left: -70,
-          width: 300,
-          height: 300,
-          borderRadius: '50%',
-          background:
-            'radial-gradient(circle,rgba(255,199,116,.5),rgba(255,199,116,0) 68%)',
-          animation: 'ay-drift 13s ease-in-out infinite',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 130,
-          right: -90,
-          width: 320,
-          height: 320,
-          borderRadius: '50%',
-          background:
-            'radial-gradient(circle,rgba(217,122,43,.6),rgba(217,122,43,0) 66%)',
-          animation: 'ay-drift 17s ease-in-out infinite reverse',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          top: '40%',
-          left: -70,
-          width: 250,
-          height: 250,
-          borderRadius: '50%',
-          background:
-            'radial-gradient(circle,rgba(126,84,186,.5),rgba(126,84,186,0) 70%)',
-          animation: 'ay-drift 21s ease-in-out infinite',
-        }}
-      />
-      <div
-        style={{
-          position: 'relative',
-          paddingTop: 'max(20px, env(safe-area-inset-top))',
-          paddingLeft: 26,
-          paddingRight: 26,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', letterSpacing: 0.5 }}>
-          ayna
+    <main className="ayna-editorial-welcome">
+      <div className="ayna-editorial-welcome-photo">
+        <img src="/landing-bg.png" alt="A person stretching in warm afternoon light" />
+        <div className="ayna-editorial-welcome-top">
+          <span className="ayna-editorial-wordmark">ayna</span>
+          <button type="button" onClick={onAlreadyHaveAccount}>Log in</button>
+        </div>
+        <p className="ayna-editorial-photo-caption">A little more in tune with you.</p>
+      </div>
+      <div className="ayna-editorial-welcome-content">
+        <p className="ayna-editorial-kicker">Wellness, your way</p>
+        <h1>Find what <em>feels right.</em></h1>
+        <p className="ayna-editorial-intro">Health products picked with your needs in mind. Real research and real experiences, all in one place.</p>
+        <button type="button" className="ayna-editorial-primary" onClick={onStartQuiz}>Build my Ecosystem <span aria-hidden="true">↗</span></button>
+        <button type="button" className="ayna-editorial-secondary" onClick={onBrowse}>I’m just browsing</button>
+        <div className="ayna-editorial-welcome-links">
+          <button type="button" onClick={onAlreadyHaveAccount}>I already have an account</button>
+          <button type="button" onClick={onAboutAyna}>About us</button>
         </div>
       </div>
-
-      <div
-        style={{
-          position: 'relative',
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '0 26px',
-          transform: 'translateY(-58px)',
-        }}
-      >
-        <OrbHero />
-        <h1
-          style={{
-            fontFamily: "'Playfair Display',serif",
-            fontSize: 'calc(39px * var(--ayna-text-scale, 1))',
-            lineHeight: 1.1,
-            textAlign: 'center',
-            margin: 0,
-          }}
-        >
-          Hey you, meet <span style={{ fontStyle: 'italic' }}>you</span>
-        </h1>
-        <p style={{ maxWidth: 285, margin: '13px 0 0', textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontSize: 14, lineHeight: 1.5, color: 'rgba(255,249,242,.9)' }}>Find health products that fit your needs, with research and real experiences in one place.</p>
-      </div>
-
-      <div
-        style={{
-          position: 'relative',
-          padding: '0 24px max(28px, env(safe-area-inset-bottom))',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 18,
-        }}
-      >
-        <div className="ayna-welcome-choices" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <button type="button"
-          onClick={onStartQuiz}
-          style={{
-            width: '100%',
-            border: 0,
-            background: '#FFC774',
-            color: '#231A12',
-            padding: 17,
-            borderRadius: 99,
-            textAlign: 'center',
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 600,
-            fontSize: 'calc(15.5px * var(--ayna-text-scale, 1))',
-            cursor: 'pointer',
-            boxShadow: '0 18px 34px -14px rgba(255,199,116,.85)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 7,
-          }}
-        >
-          Build my ecosystem
-          <svg
-            width="17"
-            height="17"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#231A12"
-            strokeWidth="2.25"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
-        </button>
-        <button type="button" onClick={onBrowse} style={{ width: '100%', minHeight: 52, border: '1.5px solid rgba(255,249,242,.7)', borderRadius: 99, background: 'rgba(255,249,242,.08)', color: '#FFF9F2', padding: '12px 16px', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-          I'm just browsing
-        </button>
-        </div>
-        <button type="button" onClick={onAlreadyHaveAccount} style={{ border: 0, background: 'transparent', color: '#FFF9F2', minHeight: 42, padding: '8px 12px', fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
-          I already have an account
-        </button>
-        <button type="button" onClick={onAboutAyna} style={{ border: 0, background: 'transparent', color: 'rgba(255,249,242,.85)', minHeight: 42, padding: '8px 12px', fontFamily: "'DM Sans',sans-serif", fontSize: 13, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-          About us <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>→</span>
-        </button>
-      </div>
-    </div>
+    </main>
   );
 }

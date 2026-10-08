@@ -1,79 +1,15 @@
-const DOT_PALETTE = ['#C0761F', '#4E3866', '#5C7A4A', '#A2603C', '#3F7A6A', '#B0537A', '#242A52', '#78716C'];
-
-function colorForId(id) {
-  const str = id || '';
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
-  return DOT_PALETTE[hash % DOT_PALETTE.length];
-}
-
 export default function ArticleCard({ article, onClick }) {
-  const { id, title, teaser, tags = [], image } = article || {};
-  const color = colorForId(id || title);
-
+  const { title, teaser, tags = [], image } = article || {};
   return (
-    <div
-      onClick={onClick}
-      style={{
-        display: 'flex',
-        gap: 12,
-        background: '#FFFFFF',
-        border: '1px solid #E1D5CE',
-        borderRadius: 16,
-        padding: '12px 14px',
-        marginBottom: 8,
-        cursor: 'pointer',
-      }}
-    >
-      <div
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: 12,
-          flexShrink: 0,
-          overflow: 'hidden',
-          background: image ? undefined : `linear-gradient(150deg, ${color}33, ${color}66)`,
-        }}
-      >
-        {image && (
-          <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        )}
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', lineHeight: 1.3 }}>
-          {title}
-        </div>
-        {teaser && (
-          <div
-            style={{
-              fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
-              color: '#78716C',
-              marginTop: 4,
-              lineHeight: 1.45,
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-            }}
-          >
-            {teaser}
-          </div>
-        )}
-        {tags.length > 0 && (
-          <div
-            style={{
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))',
-              letterSpacing: 0.6,
-              textTransform: 'uppercase',
-              color: '#A2603C',
-              marginTop: 6,
-            }}
-          >
-            {tags[0]}
-          </div>
-        )}
-      </div>
-    </div>
+    <button type="button" onClick={onClick} className="ayna-editorial-read">
+      <span className="ayna-editorial-read-copy">
+        {tags[0] && <small>{tags[0]}</small>}
+        <strong>{title}</strong>
+        {teaser && <span>{teaser}</span>}
+      </span>
+      <span className="ayna-editorial-read-image">
+        {image ? <img src={image} alt="" loading="lazy" /> : <span>ayna</span>}
+      </span>
+    </button>
   );
 }

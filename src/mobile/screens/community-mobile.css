@@ -110,6 +110,7 @@
 .am-product-search input { border: 0; flex: 1; min-width: 0; }
 .am-picker-empty { color: var(--ayna-text-muted); }
 
+
 .am-author { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .am-avatar { width: 30px; height: 30px; flex: none; display: grid; place-items: center; overflow: hidden; border-radius: 50%; background: #e4dced; color: #4e3866; font: 700 11px 'DM Sans', sans-serif; }
 .am-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -231,3 +232,23 @@
 .am-photo-input { position: relative; cursor: pointer; }
 .am-photo-input .am-photo-cta { display: inline-flex; width: max-content; padding: 7px 11px; border-radius: 99px; background: #eee7f3; color: #4e3866; font-size: 11px; font-weight: 700; }
 .am-photo-input input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
+/* Editorial feed: let people's photos and words carry the page. */
+.am-top { padding-top: 24px; padding-bottom: 20px; }
+.am-top small { color: #a06234; font: 700 10px 'DM Sans',sans-serif; letter-spacing: .13em; }
+.am-top h1 { font: 700 35px/1.05 'DM Sans',sans-serif; letter-spacing: -.055em; }
+.am-search { border-radius: 14px; box-shadow: none; }
+.am-tabs { gap: 22px; border-bottom: 1px solid var(--ayna-border); padding-bottom: 0; }
+.am-tabs button { padding: 10px 0 13px; border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: none; box-shadow: none; }
+.am-tabs button.is-active { border: 0; border-bottom: 3px solid #e6aa51; background: none; color: var(--ayna-heading); box-shadow: none; }
+.am-share-prompt { border-radius: 13px; box-shadow: none; }
+.am-card.am-post-card { border-radius: 0; border-left: 0; border-right: 0; margin-left: -16px; margin-right: -16px; margin-bottom: 9px; box-shadow: none; }
+.am-post-head { padding: 16px 17px 0; }
+.am-postbody { padding: 14px 17px 3px; font-size: 14px; line-height: 1.5; }
+.am-photo-grid { width: 100%; margin: 12px 0 0; border-radius: 0; gap: 2px; }
+.am-photo-grid img { height: 190px; }
+.am-photo-grid img:only-child { height: auto; max-height: 460px; aspect-ratio: 4 / 5; object-fit: cover; }
+.am-post-card .am-product { margin-left: 17px; margin-right: 17px; width: calc(100% - 34px); }
+.am-actions { margin: 12px 17px 0; }
+.am-playlist { box-shadow: none; border-radius: 13px; }
+.am-empty-state { box-shadow: none; }

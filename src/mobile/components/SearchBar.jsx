@@ -29,11 +29,11 @@ export default function SearchBar({ value = '', onChange, onFilterClick, terms =
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          background: '#FFFFFF',
-          border: '1.5px solid #E1D5CE',
-          borderRadius: 99,
+          background: 'var(--ayna-surface)',
+          border: '1px solid var(--ayna-border)',
+          borderRadius: 14,
           padding: '12px 14px 12px 16px',
-          boxShadow: '0 2px 8px rgba(41,37,36,.04)',
+          boxShadow: 'none',
         }}
       >
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="2" strokeLinecap="round" style={{ flex: 'none' }}>
@@ -61,6 +61,7 @@ export default function SearchBar({ value = '', onChange, onFilterClick, terms =
           ) : null}
           <input
             type="text"
+            aria-label="Search products and reads"
             value={value}
             onChange={onChange}
             style={{
@@ -71,7 +72,7 @@ export default function SearchBar({ value = '', onChange, onFilterClick, terms =
               outline: 'none',
               background: 'transparent',
               fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))',
-              color: '#292524',
+              color: 'var(--ayna-text)',
               fontFamily: 'Inter, system-ui, sans-serif',
             }}
           />
