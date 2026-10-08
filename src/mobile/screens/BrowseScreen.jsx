@@ -38,7 +38,6 @@ export default function BrowseScreen({
   onOpenProduct,
   onOpenArticle,
   onOpenSaved,
-  onGoEco,
   onStartQuiz,
   hasEcosystem = false,
   quizAnswers = null,
@@ -97,8 +96,8 @@ export default function BrowseScreen({
   const displayProducts = filtered.length ? filtered : (aiState.query === searchTerm ? aiState.suggestions : []);
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 44, background: 'var(--ayna-bg)', animation: 'ay-page .2s ease-out' }}>
-      <MobileHeader variant={theme} activeTab="browse" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={onGoEco} onOpenProfile={onOpenProfile} />
+    <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 104, background: 'var(--ayna-bg)', animation: 'ay-page .2s ease-out' }}>
+      <MobileHeader variant={theme} initial={headerInitial} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
 
       <section style={{ padding: '12px 20px 0' }}>
         <div style={{ fontSize: 'calc(28px * var(--ayna-text-scale, 1))', fontWeight: 750, letterSpacing: '-.035em', color: 'var(--ayna-heading)' }}>Explore</div>
