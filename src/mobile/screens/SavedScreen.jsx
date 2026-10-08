@@ -345,7 +345,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
 
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '18px 0 0', textAlign: 'center', color: 'var(--ayna-heading)' }}>Nothing saved yet.</div>
             <div style={{ margin: '10px 0 0', padding: '0 12px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, textAlign: 'center' }}>
-              Tap the heart on anything in Browse. We'll watch it for recalls and price drops while it sits here.
+              Save products you want to compare or come back to later.
             </div>
             <div
               onClick={onBrowse}
