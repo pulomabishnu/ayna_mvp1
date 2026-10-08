@@ -27,8 +27,8 @@ export default function EcosystemScreen({
   const listProducts = showingArea ? selectedSeat.products : myProducts;
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 44, background: 'var(--ayna-bg)', animation: 'ay-page .2s ease-out' }}>
-      <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onOpenProfile={onOpenProfile} />
+    <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 104, background: 'var(--ayna-bg)', animation: 'ay-page .2s ease-out' }}>
+      <MobileHeader variant="light" initial={headerInitial} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
 
       <section style={{ padding: '18px 20px 0' }}>
         <h1 style={{ margin: 0, fontSize: 'calc(28px * var(--ayna-text-scale, 1))', letterSpacing: '-.035em', color: 'var(--ayna-heading)' }}>Your ecosystem</h1>
