@@ -434,3 +434,41 @@
 .ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu { background:#171719; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu>div:not(:first-child) { background:#242429!important; border-color:#464854!important; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-article-paper { background:#242429!important; border-color:#464854; box-shadow:none; }
+
+/* Onboarding continues in the same orbit-and-card language. */
+.ayna-fresh-building { position:relative; overflow:hidden; background:#dfe2ff!important; color:#203c9c!important; }
+.ayna-fresh-building::before { content:''; position:absolute; width:320px; height:320px; left:-140px; top:-130px; border:46px solid rgba(159,174,250,.4); border-radius:50%; }
+.ayna-fresh-building>button { border-color:#203c9c!important; background:#fff!important; color:#203c9c!important; border-radius:12px!important; }
+.ayna-fresh-building>div:nth-child(2)>div:last-child { background:#d5f477!important; box-shadow:0 0 0 18px rgba(213,244,119,.23); }
+.ayna-fresh-building>div:nth-child(3) { max-width:310px; font-size:calc(34px * var(--ayna-text-scale,1))!important; font-weight:900!important; line-height:1.04!important; letter-spacing:-.06em!important; }
+.ayna-fresh-building>div:nth-child(4) { opacity:1!important; color:#444b72; font-family:'DM Sans',sans-serif!important; font-size:13px!important; letter-spacing:0!important; }
+.ayna-fresh-reveal { background:#f8f8fd!important; color:#203c9c!important; }
+.ayna-fresh-reveal>div>button:first-child { border-color:#cdd3ed!important; border-radius:12px!important; }
+.ayna-fresh-reveal h1 { margin-top:10px!important; font-size:clamp(39px,10vw,52px)!important; line-height:.99!important; font-weight:900!important; letter-spacing:-.07em!important; }
+.ayna-fresh-reveal [aria-label='Areas in your profile'] span { border:0!important; border-radius:12px!important; background:#dfe2ff!important; color:#203c9c!important; font-weight:800!important; }
+.ayna-fresh-reveal [aria-label='Areas in your profile'] span:nth-child(2n) { background:#aff1dd!important; }
+.ayna-fresh-reveal-grid { gap:13px!important; }
+.ayna-fresh-reveal-grid article { min-width:0; padding:7px; border:1px solid #e0e2eb; border-radius:17px; background:#fff; box-shadow:0 3px 0 #ebecf2; }
+.ayna-fresh-reveal-grid article:nth-child(3n+1)>div:first-child { background:#dfe2ff!important; }
+.ayna-fresh-reveal-grid article:nth-child(3n+2)>div:first-child { background:#aff1dd!important; }
+.ayna-fresh-reveal-grid article:nth-child(3n)>div:first-child { background:#f1a4df!important; }
+.ayna-fresh-reveal-grid article>div:first-child { border-radius:12px!important; }
+.ayna-fresh-reveal-grid article>div:last-child { padding:10px 6px 8px!important; }
+.ayna-fresh-reveal-grid article>div:last-child>div:last-child { color:#171717!important; font-weight:800!important; }
+.ayna-fresh-reveal button { border-radius:13px!important; }
+
+/* The returning check-in gets the same large type, blue rail, and quiet cards. */
+.ayna-fresh-checkin-header { background:#dfe2ff; padding-bottom:18px!important; }
+.ayna-fresh-checkin-header>div:last-child { height:6px!important; background:#b9c2ee!important; }
+.ayna-fresh-checkin-header>div:last-child>div { background:#203c9c!important; }
+.ayna-fresh-checkin-step { background:#f8f8fd; }
+.ayna-fresh-checkin-step>div:first-child { padding:25px 20px 20px!important; }
+.ayna-fresh-checkin-title { max-width:335px; color:#203c9c!important; }
+.ayna-fresh-checkin-step>div:last-child { background:#f8f8fd!important; }
+.ayna-fresh-checkin-step>div:first-child>div:not(.ayna-fresh-checkin-title) { line-height:1.5; }
+
+/* The match explanation emphasizes verified reasons in tidy numbered cards. */
+.ayna-fresh-match-header { background:#dfe2ff; border:0!important; padding-bottom:18px!important; }
+.ayna-fresh-match-header h1,
+.ayna-fresh-match-header>div>div:last-child>div:last-child { font-family:'DM Sans',sans-serif!important; font-size:28px!important; font-weight:900!important; letter-spacing:-.055em; color:#203c9c!important; }
+.ayna-fresh-match-header>div>div:first-child { width:44px!important; height:44px!important; border-radius:12px!important; border-color:#c7ceef!important; }

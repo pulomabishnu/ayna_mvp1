@@ -13,9 +13,9 @@ const PANEL_BG = 'var(--ayna-chip-bg)';
 const INK = 'var(--ayna-text)';
 const MUTED = 'var(--ayna-text-faint)';
 const BODY_TEXT = 'var(--ayna-text-muted)';
-const NAVY = 'var(--ayna-navy)';
-const ACCENT_BG = 'var(--ayna-peach)';
-const ACCENT_BORDER = 'var(--ayna-accent-dark)';
+const NAVY = '#203c9c';
+const ACCENT_BG = '#dfe2ff';
+const ACCENT_BORDER = '#203c9c';
 const WARNING_BORDER = '#B4402A';
 const WARNING_BG = '#FAEDE8';
 
@@ -294,12 +294,12 @@ function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
 
 function StepShell({ title, subtitle, tag, children, footer }) {
   return (
-    <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+    <div className="ayna-fresh-checkin-step" style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', padding: '4px 20px 20px' }}>
         {tag && (
           <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: ACCENT_BORDER, marginBottom: 8 }}>{tag}</div>
         )}
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.2, color: INK }}>{title}</div>
+        <div className="ayna-fresh-checkin-title" style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(30px * var(--ayna-text-scale, 1))', fontWeight: 900, letterSpacing: '-.055em', lineHeight: 1.06, color: INK }}>{title}</div>
         {subtitle && <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 8, marginBottom: 20 }}>{subtitle}</div>}
         {!subtitle && <div style={{ height: 18 }} />}
         {children}
@@ -690,7 +690,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
 
 function Header({ onBack, label, progress, stepText }) {
   return (
-    <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px' }}>
+    <div className="ayna-fresh-checkin-header" style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
         <div onClick={onBack} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>

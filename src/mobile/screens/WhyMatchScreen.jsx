@@ -33,17 +33,17 @@ const TIERS = [
   {
     min: 80, tier: 'Strong match', headline: 'A strong match.',
     sub: 'Several survey answers line up with this product. Check the details before choosing it.',
-    ink: '#25382A', ring: '#3F6B4A', soft: '#EFF3EC', mid: '#E0EDE1', deep: '#CFE5D2', edge: '#CFE0CE',
+    ink: '#203C9C', ring: '#203C9C', soft: '#F0F2FF', mid: '#DFE2FF', deep: '#BFC9FA', edge: '#CBD2F2',
   },
   {
     min: 60, tier: 'Good fit', headline: 'A good fit for this need.',
     sub: "Some of your answers line up. Review the details and anything this product does not address.",
-    ink: '#6B4413', ring: '#E8843C', soft: '#FFF1E4', mid: '#FFE1CB', deep: '#FFD2B4', edge: '#F1D3BC',
+    ink: '#155F50', ring: '#268C76', soft: '#EFFBF6', mid: '#D8F5E9', deep: '#AFF1DD', edge: '#C0EBDD',
   },
   {
     min: 0, tier: 'Worth a look', headline: 'Worth a look.',
     sub: 'At least one answer lines up, but much of your profile does not clearly match.',
-    ink: '#7A4410', ring: '#BBDD00', soft: '#FFF4E2', mid: '#FFE7C6', deep: '#FFDCA8', edge: '#F0D9B4',
+    ink: '#74305E', ring: '#B857A1', soft: '#FFF2FB', mid: '#F9E0F2', deep: '#F1A4DF', edge: '#EAC7E1',
   },
 ];
 
@@ -59,9 +59,9 @@ const GOAL_COMPONENTS = new Set(['primaryGoal', 'otherNeeds', 'periodFlow', 'per
 const PROFILE_COMPONENTS = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'perimenopauseLastPeriod', 'diagnoses', 'triedBefore']);
 
 function kindForComponent(component) {
-  if (GOAL_COMPONENTS.has(component)) return { kind: 'Your goal', glyph: '1', bg: '#E1EFE2', fg: '#3F6B4A' };
-  if (PROFILE_COMPONENTS.has(component)) return { kind: 'Your profile', glyph: '2', bg: '#E1EFE2', fg: '#3F6B4A' };
-  return { kind: 'Your preference', glyph: '3', bg: '#E7EAF5', fg: '#3B4677' };
+  if (GOAL_COMPONENTS.has(component)) return { kind: 'Your goal', glyph: '1', bg: '#D5F477', fg: '#203C9C' };
+  if (PROFILE_COMPONENTS.has(component)) return { kind: 'Your profile', glyph: '2', bg: '#DFE2FF', fg: '#203C9C' };
+  return { kind: 'Your preference', glyph: '3', bg: '#AFF1DD', fg: '#155F50' };
 }
 
 /**
@@ -75,7 +75,7 @@ function kindForComponent(component) {
  */
 function SimpleHeader({ title, onBack }) {
   return (
-    <div style={{ flex: 'none', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, paddingBottom: 14, borderBottom: '1px solid var(--ayna-border)' }}>
+    <div className="ayna-fresh-match-header" style={{ flex: 'none', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, paddingBottom: 14, borderBottom: '1px solid var(--ayna-border)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <button type="button" onClick={onBack} aria-label="Back to product" style={{ width: 44, height: 44, flex: 'none', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <BackIcon />
@@ -185,7 +185,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
-      <div style={{ flex: 'none', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, paddingBottom: 14, borderBottom: '1px solid var(--ayna-border)' }}>
+      <div className="ayna-fresh-match-header" style={{ flex: 'none', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, paddingBottom: 14, borderBottom: '1px solid var(--ayna-border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div onClick={onBack} style={{ width: 36, height: 36, flex: 'none', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             <BackIcon />

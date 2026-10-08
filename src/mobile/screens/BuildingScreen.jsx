@@ -23,7 +23,7 @@ export default function BuildingScreen({ onFinish, onBack, statuses = DEFAULT_ST
   }, []);
 
   return (
-    <div
+    <div className="ayna-fresh-building"
       style={{
         flex: 1,
         display: 'flex',
