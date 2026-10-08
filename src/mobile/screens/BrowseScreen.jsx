@@ -272,6 +272,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
 export default function BrowseScreen({
   products = [],
   articles = [],
+  authUser = null,
   ctaVariant = 'gradient',
   headerInitial = 'A',
   onOpenProduct,
@@ -531,7 +532,7 @@ export default function BrowseScreen({
       {mode === 'products' ? (
         <>
           {filtered.length > 0 ? (
-            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
               <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
@@ -544,7 +545,7 @@ export default function BrowseScreen({
               <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Not in our catalog yet — found via AI search
               </div>
-              <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+              <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
             </>
           ) : (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>

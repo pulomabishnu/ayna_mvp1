@@ -1,204 +1,60 @@
-import LegalFooter from '../components/LegalFooter.jsx';
+import ProductImage from '../components/ProductImage.jsx';
 
-export default function RevealScreen({
-  topAreas = ['Cycle', 'Energy', 'Sleep'],
-  productCount = 0,
-  readCount = 0,
-  goalCount = 0,
-  onContinue,
-  onBack,
-}) {
-  const [orbit1, orbit2, orbit3] = topAreas;
-  const caption = productCount > 0
-    ? `${productCount} products chosen from your answers${readCount > 0 ? ` · ${readCount} reads` : ''}${goalCount > 0 ? ` · ${goalCount} goal${goalCount === 1 ? '' : 's'} you named` : ''}`
-    : 'Your answers are saved. Explore products and reads picked for your needs.';
+const colors = {
+  cream: '#FAF6F1',
+  navy: '#242A52',
+  muted: '#5E564E',
+};
+
+export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse }) {
+  const preview = myProducts.slice(0, 3);
+  const hasMatches = preview.length > 0;
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', background: 'linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%)', color: '#FFF9F2', position: 'relative', fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out' }}>
-      <button type="button" onClick={onBack} style={{ position: 'relative', zIndex: 1, margin: 'max(20px, env(safe-area-inset-top)) 24px 0', border: '1px solid rgba(255,255,255,.35)', borderRadius: 99, padding: '10px 15px', background: 'rgba(255,255,255,.08)', color: '#fff', fontSize: 14 }}>← Back</button>
-      <div
-        style={{
-          position: 'absolute',
-          top: -70,
-          right: -70,
-          width: 240,
-          height: 240,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(255,199,116,.3),rgba(255,199,116,0) 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          bottom: -60,
-          left: -60,
-          width: 220,
-          height: 220,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(78,56,102,.14),rgba(78,56,102,0) 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 24, paddingRight: 24, position: 'relative' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
-          <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))' }}>ayna</span>
-          <span style={{ fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.6)' }}>beta</span>
-        </div>
-      </div>
-
-      <div style={{ padding: '30px 24px 0', textAlign: 'center', position: 'relative' }}>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '5px 12px',
-            borderRadius: 999,
-            background: '#FFEFD6',
-            color: '#8a5a1e',
-            fontSize: 'calc(11px * var(--ayna-text-scale, 1))',
-            fontWeight: 600,
-            letterSpacing: '.04em',
-            textTransform: 'uppercase',
-            marginBottom: 14,
-          }}
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8a5a1e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12l4 4 10-10" />
-          </svg>
-          Intake complete
-        </div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 500, fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '0 0 8px' }}>
-          Your ecosystem is ready.
-        </div>
-        <p style={{ margin: '0 auto', maxWidth: 280, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', lineHeight: 1.5 }}>Built from your answers.</p>
-      </div>
-
-      <div style={{ position: 'relative', width: 320, height: 320, margin: '22px auto 0' }}>
-        <div
-          style={{
-            position: 'absolute',
-            left: 96,
-            top: 96,
-            width: 128,
-            height: 128,
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg,#F0A84B 0%,#E8A94F 100%)',
-            boxShadow: '0 24px 50px -20px rgba(232,169,79,.75)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            animation: 'ay-breathe 4s ease-in-out infinite',
-            zIndex: 1,
-          }}
-        >
-          <span style={{ color: '#1A1714', fontFamily: "'Playfair Display',serif", fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>you</span>
-        </div>
-        <div style={{ position: 'absolute', inset: 0, zIndex: 2, animation: 'ay-orbit 28s linear infinite' }}>
-          {orbit1 && (
-            <div style={{ position: 'absolute', left: 114, top: 9, width: 92, height: 38 }}>
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  animation: 'ay-counter 28s linear infinite',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  padding: '0 12px',
-                  background: '#FFFFFF',
-                  border: '1.5px solid rgba(26,23,20,.08)',
-                  borderRadius: 999,
-                  boxShadow: '0 10px 22px -12px rgba(26,23,20,.3)',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#4E3866', flex: 'none' }} />
-                <span style={{ color: '#242A52', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700 }}>{orbit1}</span>
-              </div>
-            </div>
-          )}
-          {orbit2 && (
-            <div style={{ position: 'absolute', left: 228, top: 207, width: 92, height: 38 }}>
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  animation: 'ay-counter 28s linear infinite',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  padding: '0 12px',
-                  background: '#FFFFFF',
-                  border: '1.5px solid rgba(26,23,20,.08)',
-                  borderRadius: 999,
-                  boxShadow: '0 10px 22px -12px rgba(26,23,20,.3)',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#C0761F', flex: 'none' }} />
-                <span style={{ color: '#242A52', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700 }}>{orbit2}</span>
-              </div>
-            </div>
-          )}
-          {orbit3 && (
-            <div style={{ position: 'absolute', left: 0, top: 207, width: 92, height: 38 }}>
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  animation: 'ay-counter 28s linear infinite',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  padding: '0 12px',
-                  background: '#FFFFFF',
-                  border: '1.5px solid rgba(26,23,20,.08)',
-                  borderRadius: 999,
-                  boxShadow: '0 10px 22px -12px rgba(26,23,20,.3)',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#242A52', flex: 'none' }} />
-                <span style={{ color: '#242A52', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700 }}>{orbit3}</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div style={{ textAlign: 'center', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', marginTop: 6, position: 'relative' }}>{caption}</div>
-
-      <div style={{ margin: '24px 24px 34px', position: 'relative' }}>
-        <button
-          onClick={onContinue}
-          style={{
-            width: '100%',
-            padding: 16,
-            border: 'none',
-            borderRadius: 16,
-            background: 'linear-gradient(135deg,#F0A84B,#E8A94F)',
-            color: '#1A1714',
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 600,
-            fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-            cursor: 'pointer',
-            boxShadow: '0 16px 28px -14px rgba(232,169,79,.9)',
-          }}
-        >
-          {productCount > 0 ? 'See my full ecosystem' : 'Explore my matches'}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A1714" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
+    <main style={{ flex: 1, minHeight: '100dvh', overflowY: 'auto', background: colors.cream, color: colors.navy, fontFamily: "'DM Sans',sans-serif", padding: 'max(20px, env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))' }}>
+      <div style={{ maxWidth: 480, margin: '0 auto' }}>
+        <button type="button" onClick={onBack} aria-label="Back to your health answers" style={{ width: 44, height: 44, borderRadius: 10, border: '1px solid #CFC3B4', background: '#fff', color: colors.navy, fontSize: 23, cursor: 'pointer' }}>
+          <span aria-hidden="true">‹</span>
         </button>
+
+        <div style={{ marginTop: 24, color: '#A2603C', fontSize: 12, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase' }}>Your results</div>
+        <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 34, lineHeight: 1.12, fontWeight: 400, margin: '8px 0 12px' }}>
+          {hasMatches ? 'Your first matches' : 'Your answers are in'}
+        </h1>
+        <p style={{ margin: 0, color: colors.muted, fontSize: 16, lineHeight: 1.5 }}>
+          {hasMatches
+            ? 'Here are products selected from the needs you shared. See what they are before deciding whether to make an account.'
+            : 'We could not find a confident product match yet. You can revisit your answers or explore the full catalog.'}
+        </p>
+
+        {topAreas.length > 0 && <div aria-label="Areas in your profile" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 20 }}>
+          {topAreas.slice(0, 4).map((area) => <span key={area} style={{ padding: '7px 10px', border: '1px solid #E6DDD1', borderRadius: 10, background: '#fff', color: colors.navy, fontSize: 13, fontWeight: 600 }}>{area}</span>)}
+        </div>}
+
+        {hasMatches && <section aria-labelledby="reveal-matches-title" style={{ marginTop: 30 }}>
+          <h2 id="reveal-matches-title" style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, fontWeight: 400, margin: '0 0 14px' }}>Picked for your profile</h2>
+          <div style={{ display: 'grid', gap: 10 }}>
+            {preview.map((product) => (
+              <article key={product.id} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: 12, minHeight: 92, background: '#fff', border: '1px solid #E6DDD1', borderRadius: 14 }}>
+                <div style={{ position: 'relative', flex: 'none', width: 68, height: 68, background: '#F3ECE2', borderRadius: 10, overflow: 'hidden' }}>
+                  <ProductImage src={product.image || product.imageUrl} alt={product.name} allowBrandLogo={product.type === 'digital'} style={{ objectFit: 'contain' }} />
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ color: colors.muted, fontSize: 13, lineHeight: 1.3 }}>{product.brand || String(product.category || '').replaceAll('-', ' ')}</div>
+                  <div style={{ color: colors.navy, fontWeight: 700, fontSize: 16, lineHeight: 1.3, marginTop: 4 }}>{product.name}</div>
+                </div>
+              </article>
+            ))}
+          </div>
+          {myProducts.length > preview.length && <p style={{ color: colors.muted, fontSize: 13, margin: '12px 0 0' }}>And {myProducts.length - preview.length} more in your Ecosystem.</p>}
+        </section>}
+
+        <div style={{ marginTop: 30, display: 'grid', gap: 10 }}>
+          {hasMatches && <button type="button" onClick={onContinue} style={{ minHeight: 52, width: '100%', border: 0, borderRadius: 10, background: colors.navy, color: '#fff', fontSize: 16, fontWeight: 700, cursor: 'pointer' }}>Create an account to save my Ecosystem</button>}
+          <button type="button" onClick={onGoBrowse} style={{ minHeight: 44, width: '100%', border: '1px solid #CFC3B4', borderRadius: 10, background: 'transparent', color: colors.navy, fontSize: 16, fontWeight: 600, cursor: 'pointer' }}>Browse products</button>
+          {!hasMatches && <button type="button" onClick={onBack} style={{ minHeight: 44, width: '100%', border: 0, background: 'transparent', color: colors.navy, fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>Update my answers</button>}
+        </div>
       </div>
-      <LegalFooter />
-    </div>
+    </main>
   );
 }

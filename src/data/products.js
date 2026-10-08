@@ -1578,14 +1578,19 @@ function tagsForHealthLabel(label) {
     if (/pelvic pain|pain.*sex|sexual wellness|sexual.*comfort|dyspareunia/.test(text)) add('pelvic-floor', 'sexual-health');
     if (/irregular period|missed period|cycle tracking/.test(text)) add('irregular', 'cycle-tracking');
     if (/spotting/.test(text)) add('liner', 'menstrual-collection', 'leak-protection', 'irregular');
-    if (/pms|pmdd|mood swing|irritability|anxiety|low mood|cycle-related mood/.test(text)) add('mental-health');
+    if (/\bpms\b/.test(text)) add('pms');
+    if (/\bpmdd\b/.test(text)) add('pmdd');
+    if (/mood swing|irritability|anxiety|low mood|cycle-related mood/.test(text)) add('mental-health');
     // A condition does not imply every symptom that can accompany it.
     // Bleeding and pain products require separately reported symptoms.
     if (/pcos|polycystic/.test(text)) add('pcos', 'pcos-management');
     if (/endometriosis/.test(text)) add('endometriosis');
     if (/adenomyosis/.test(text)) add('adenomyosis');
     if (/fibroid/.test(text)) add('fibroids');
-    if (/hormone-related|hormonal|bloating|breast tenderness|nausea/.test(text)) add('hormone-balance', 'bloating');
+    if (/hormone-related|hormonal/.test(text)) add('hormone-balance');
+    if (/bloating/.test(text)) add('bloating');
+    if (/breast tenderness/.test(text)) add('breast-tenderness');
+    if (/nausea/.test(text)) add('nausea');
     if (/fertility|trying to conceive|\bttc\b|ovulation/.test(text)) add('fertility', 'cycle-tracking');
     if (/pregnan|prenatal|trimester/.test(text)) add('pregnancy');
     if (/postpartum|breastfeeding|lactation/.test(text)) add('postpartum');
@@ -1621,14 +1626,18 @@ function productMatchesAnyHealthLabel(product, labels) {
 
 function evaluateHealthLabels(product, labels) {
     const selected = [...new Set(labels)].filter((label) => String(label).trim());
-    if (!selected.length) return { score: null, matched: false, label: null, unmapped: [] };
+    if (!selected.length) return { score: null, matched: false, label: null, unmapped: [], unmatched: [] };
     const matches = selected.map((label) => productMatchesAnyHealthLabel(product, [label]));
     const first = matches.find((result) => result.matched);
+    const matchedCount = matches.filter((result) => result.matched).length;
     return {
-        score: matches.filter((result) => result.matched).length / selected.length,
+        // Keep the score conservative until product-specific evidence and
+        // outcome data can support a calibrated product-fit percentage.
+        score: matchedCount / selected.length,
         matched: Boolean(first),
         label: first?.label || null,
         unmapped: selected.filter((label) => tagsForHealthLabel(label).length === 0),
+        unmatched: selected.filter((_, index) => !matches[index].matched),
     };
 }
 
@@ -2473,6 +2482,11 @@ function getProductRelevanceStats(savedProduct, quizAnswers, healthProfile = nul
         return !tags.length || !tags.every((tag) => primaryTags.has(tag));
     });
     const diagnosisMatch = evaluateHealthLabels(product, additionalDiagnoses);
+    const unmetNeeds = [...new Set([
+        ...goalMatchResult.unmatched,
+        ...otherNeedMatch.unmatched,
+        ...diagnosisMatch.unmatched,
+    ])];
     const unmappedNeeds = [...new Set([
         ...goalMatchResult.unmapped,
         ...otherNeedMatch.unmapped,
@@ -2816,8 +2830,12 @@ function getProductRelevanceStats(savedProduct, quizAnswers, healthProfile = nul
     // intake answer into a claim of near-certain personal fit.
     const percent = rawPercent == null ? null : Math.min(
         rawPercent,
-        confidence === 'limited' ? 85 : confidence === 'medium' ? 95 : 100
+        confidence === 'limited' ? 85 : confidence === 'medium' ? 95 : 100,
+        product.evidenceStrength === 'limited' ? 59 : 100
     );
+    if (product.evidenceStrength === 'limited' && rawPercent > 59) {
+        unknowns.push('Evidence for this product’s health benefit is limited; the personal match is capped until stronger product-specific evidence is available.');
+    }
 
     const allReasons = hasHealthRelevance
         ? [
@@ -2848,6 +2866,7 @@ function getProductRelevanceStats(savedProduct, quizAnswers, healthProfile = nul
         reasonDetails: allReasons.slice(0, 4),
         considerations: Array.from(new Map(considerations.map((c) => [c.text, c])).values()),
         unknowns: [...new Set(unknowns)],
+        unmetNeeds,
         components: {
             goal: goalParts,
             profile: profileParts,

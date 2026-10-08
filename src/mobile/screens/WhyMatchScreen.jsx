@@ -31,13 +31,13 @@ function ShieldIcon() {
 // entirely by the real score.
 const TIERS = [
   {
-    min: 75, tier: 'Strong match', headline: 'A strong match.',
+    min: 80, tier: 'Strong match', headline: 'A strong match.',
     sub: 'Several survey answers line up with this product. Check the details before choosing it.',
     ink: '#25382A', ring: '#3F6B4A', soft: '#EFF3EC', mid: '#E0EDE1', deep: '#CFE5D2', edge: '#CFE0CE',
   },
   {
-    min: 50, tier: 'Good fit', headline: 'Most of it fits.',
-    sub: "Several signals line up. Worth a quick look at what's below before you commit.",
+    min: 60, tier: 'Good fit', headline: 'A good fit for this need.',
+    sub: "Some of your answers line up. Review the details and anything this product does not address.",
     ink: '#6B4413', ring: '#E8843C', soft: '#FFF1E4', mid: '#FFE1CB', deep: '#FFD2B4', edge: '#F1D3BC',
   },
   {
@@ -77,12 +77,12 @@ function SimpleHeader({ title, onBack }) {
   return (
     <div style={{ flex: 'none', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, paddingBottom: 14, borderBottom: '1px solid var(--ayna-border)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div onClick={onBack} style={{ width: 36, height: 36, flex: 'none', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+        <button type="button" onClick={onBack} aria-label="Back to product" style={{ width: 44, height: 44, flex: 'none', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <BackIcon />
-        </div>
-        <div style={{ flex: 1, minWidth: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>
+        </button>
+        <h1 style={{ flex: 1, minWidth: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', fontWeight: 400, margin: 0 }}>
           {title}
-        </div>
+        </h1>
       </div>
     </div>
   );
@@ -90,7 +90,7 @@ function SimpleHeader({ title, onBack }) {
 
 export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateHealth, onViewDetails }) {
   const details = getProductMatchDetailsForProduct(product, quizAnswers);
-  const { percent, eligible, matchStatus, reasonDetails = [], considerations = [], unknowns = [] } = details;
+  const { percent, eligible, matchStatus, reasonDetails = [], considerations = [], unknowns = [], unmetNeeds = [] } = details;
 
   if (percent == null) {
     return (
@@ -158,6 +158,20 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
     );
   }
 
+  if (percent < 60) {
+    return (
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)' }}>
+        <SimpleHeader title="About this product" onBack={onBack} />
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 40px', fontFamily: "'DM Sans',sans-serif" }}>
+          <p style={{ margin: 0, fontSize: 16, lineHeight: 1.5, color: 'var(--ayna-text)' }}>This product relates to some of your answers, but we do not have a clear enough fit to display a match percentage.</p>
+          {reasonDetails.length > 0 && <section style={{ marginTop: 24 }}><h2 style={{ fontSize: 17, marginBottom: 10 }}>What lines up</h2>{reasonDetails.map((reason) => <p key={reason.text} style={{ fontSize: 15, lineHeight: 1.5, margin: '8px 0' }}>{reason.text}</p>)}</section>}
+          {unmetNeeds.length > 0 && <section style={{ marginTop: 24 }}><h2 style={{ fontSize: 17, marginBottom: 10 }}>Other needs this product does not address</h2><ul style={{ paddingLeft: 20, fontSize: 15, lineHeight: 1.5 }}>{unmetNeeds.slice(0, 5).map((need) => <li key={need}>{need}</li>)}</ul></section>}
+          <LegalFooter />
+        </div>
+      </div>
+    );
+  }
+
   const t = tierForPercent(percent);
 
   // Capped at 4 upstream already (reasonDetails.slice(0, 4) in the engine) —
@@ -218,7 +232,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
               </div>
               <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#3F6B4A' }}>What matched</div>
               <div style={{ flex: 1, height: 1, background: 'var(--ayna-border)' }} />
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', color: '#3F6B4A', background: '#E1EFE2', borderRadius: 99, padding: '3px 8px' }}>{displayedMatches.length} of 4</div>
+              <div style={{ fontSize: 12, color: '#3F6B4A', background: '#E1EFE2', borderRadius: 10, padding: '3px 8px' }}>{displayedMatches.length} reason{displayedMatches.length === 1 ? '' : 's'}</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
               {displayedMatches.map((m, i) => (
@@ -233,6 +247,15 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
               ))}
             </div>
           </>
+        )}
+
+        {unmetNeeds.length > 0 && (
+          <section style={{ marginTop: 24, padding: 16, border: '1px solid var(--ayna-border)', borderRadius: 14, background: 'var(--ayna-surface)' }}>
+            <h2 style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 16, margin: '0 0 8px' }}>Other needs this product does not address</h2>
+            <ul style={{ margin: 0, paddingLeft: 20, fontSize: 14, lineHeight: 1.5, color: 'var(--ayna-text-muted)' }}>
+              {unmetNeeds.slice(0, 5).map((need) => <li key={need}>{need}</li>)}
+            </ul>
+          </section>
         )}
 
         {considerations.length > 0 && (

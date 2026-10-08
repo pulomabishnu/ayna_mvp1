@@ -80,6 +80,24 @@ describe('personalized relevance scoring', () => {
         expect(getProductRelevanceScore(hormoneProduct, { fullHealthIntake: { supportSelections: ['PCOS support'] } })).toBe(0);
     });
 
+    it('does not recommend chasteberry for cramps or PCOS from unsupported catalog tags', () => {
+        const vitex = ALL_PRODUCTS.find((product) => product.id === 'p-vitex');
+        expect(vitex).toBeTruthy();
+        expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['Cramps or period pain'] } })).toBe(0);
+        expect(getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PCOS support'] } })).toBe(0);
+        const pmsMatch = getProductRelevanceScore(vitex, { fullHealthIntake: { supportSelections: ['PMS symptoms'] } });
+        expect(pmsMatch).toBeGreaterThan(0);
+        expect(pmsMatch).toBeLessThan(60);
+    });
+
+    it('does not match evening primrose oil to PCOS, cramps, or bloating', () => {
+        const primrose = ALL_PRODUCTS.find((product) => product.id === 'p-evening-primrose');
+        expect(primrose).toBeTruthy();
+        for (const concern of ['PCOS support', 'Cramps or period pain', 'Hormonal bloating']) {
+            expect(getProductRelevanceScore(primrose, { fullHealthIntake: { supportSelections: [concern] } })).toBe(0);
+        }
+    });
+
     it('does not treat menstrual leaks and staining as urinary leakage', () => {
         expect(elitone).toBeTruthy();
 
@@ -131,6 +149,19 @@ describe('personalized relevance scoring', () => {
         const twoNeeds = getProductRelevanceScore(product, { fullHealthIntake: { supportSelections: ['Cramps or period pain', 'Recurrent UTIs'] } });
         expect(oneNeed).toBeGreaterThan(twoNeeds);
         expect(twoNeeds).toBeGreaterThan(0);
+        expect(getProductMatchDetailsForProduct(product, { fullHealthIntake: { supportSelections: ['Cramps or period pain', 'Recurrent UTIs'] } }).unmetNeeds).toContain('Recurrent UTIs');
+    });
+
+    it('keeps a broad-profile percentage conservative while explaining a real match', () => {
+        const product = { id: 'cramp-support', name: 'Cramp warmer', category: 'cramp-relief', tags: ['cramps'], healthFunctions: ['cramp-relief'] };
+        const quiz = { fullHealthIntake: { supportSelections: [
+            'Cramps or period pain', 'Sleep support', 'Skin or acne concerns',
+            'Fertility support', 'Bladder leakage', 'Hair thinning',
+        ] } };
+        const match = getProductMatchDetailsForProduct(product, quiz);
+        expect(match.percent).toBeGreaterThan(0);
+        expect(match.percent).toBeLessThan(85);
+        expect(match.reasons.some((reason) => /cramp/i.test(reason))).toBe(true);
     });
 
     it('keeps older concern answers when a newer symptom list is also present', () => {

@@ -537,7 +537,14 @@ export default function MobileApp() {
     onAboutAyna: () => setOverlay({ type: 'about' }),
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
     onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
-    onBack: () => setScreen(['quiz', 'ecointro'].includes(screen) ? (hasEcosystem ? 'eco' : 'landing') : ['building', 'reveal'].includes(screen) ? 'quiz' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing'),
+    onBack: () => {
+      if (['building', 'reveal'].includes(screen)) {
+        setEditingHealthProfile(true);
+        setScreen('quiz');
+        return;
+      }
+      setScreen(['quiz', 'ecointro'].includes(screen) ? (hasEcosystem ? 'eco' : 'landing') : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
+    },
     onRetake: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onRequestEcosystemReset: () => setResetDialogOpen(true),
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
@@ -666,7 +673,7 @@ export default function MobileApp() {
         headerInitial={headerInitial}
         tags={topAreaLabels.length ? `${topAreaLabels.length} area${topAreaLabels.length === 1 ? '' : 's'} covered` : ''}
         relatedReads={ecosystemReads}
-        topAreas={topAreaLabels.length ? topAreaLabels : ['Period', 'Hormones', 'Sleep']}
+        topAreas={screen === 'reveal' ? topAreaLabels : topAreaLabels.length ? topAreaLabels : ['Period', 'Hormones', 'Sleep']}
         productCount={myProducts.length}
         readCount={ARTICLES.length}
         goalCount={goalCount}
@@ -723,7 +730,7 @@ export default function MobileApp() {
             onStartQuiz={() => { setOverlay(null); setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); }}
             authUser={authUser}
             onRequireAuth={(feature) => requestAuth(feature || 'Ask Ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
-            quizAnswers={effectiveQuizAnswers}
+            quizAnswers={authUser ? effectiveQuizAnswers : null}
             ecosystemProducts={myProducts}
             theme={theme}
             onToggleTheme={setThemeMode}

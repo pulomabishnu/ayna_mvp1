@@ -5,7 +5,6 @@ import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
-import MatchRing from '../components/MatchRing.jsx';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
@@ -38,13 +37,18 @@ function humanizeTag(tag) {
   return String(tag || '').replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+function meaningfulDetail(value) {
+  const text = String(value || '').trim();
+  return text && !/^(n\/?a|none|not applicable|unknown)$/i.test(text) ? text : '';
+}
+
 function buildFactRows(product) {
   const bestFor = (product.healthFunctions || []).concat(product.tags || []).slice(0, 3).map(humanizeTag).join(', ');
-  const materials = (product.safety?.materials || '').trim();
-  const ingredients = String(product.ingredients || '').trim();
+  const materials = meaningfulDetail(product.safety?.materials);
+  const ingredients = meaningfulDetail(product.ingredients);
   const sameAsIngredients = materials && ingredients
     && materials.toLowerCase().replace(/[^a-z0-9]/g, '') === ingredients.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const skipIf = firstSentence(product.safety?.sideEffects, 90) || firstSentence(product.safety?.allergens, 90);
+  const skipIf = firstSentence(meaningfulDetail(product.safety?.sideEffects), 90) || firstSentence(meaningfulDetail(product.safety?.allergens), 90);
   return [
     bestFor ? { label: 'Best for', value: bestFor } : null,
     materials && !sameAsIngredients ? { label: 'Materials', value: materials } : null,
@@ -307,7 +311,7 @@ export default function ProductDetailScreen({
   }
 
   const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers);
-  const matchPercent = matchDetails.matchStatus === 'scored' ? matchDetails.percent : null;
+  const matchPercent = quizAnswers && matchDetails.matchStatus === 'scored' && matchDetails.percent >= 60 ? matchDetails.percent : null;
   const openWhyMatch = () => setShowWhyMatch(true);
 
   const {
@@ -441,17 +445,17 @@ export default function ProductDetailScreen({
     <div style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
       <div style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out', paddingBottom: 104 }}>
         <div style={{ paddingTop: 'max(24px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-          <div onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer', flex: 'none' }}>
+          <button type="button" onClick={onBack} aria-label="Back to products" style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer', flex: 'none', minHeight: 44, border: 0, background: 'transparent', padding: 0 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'var(--ayna-heading)' }}>
               <path d="M19 12H5M11 18l-6-6 6-6" />
             </svg>
             <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Back</span>
-          </div>
+          </button>
           <button
             type="button"
             aria-label={`Share ${name} with a friend`}
             onClick={handleShare}
-            style={{ width: 36, height: 36, borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', cursor: 'pointer' }}
+            style={{ width: 44, height: 44, borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', cursor: 'pointer' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-heading)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 15V3" /><path d="M7 8l5-5 5 5" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
@@ -475,17 +479,6 @@ export default function ProductDetailScreen({
             }}
           >
             <ProductImage src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
-            {matchPercent != null && (
-              <div
-                onClick={openWhyMatch}
-                style={{ position: 'absolute', right: 14, bottom: 14, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer' }}
-              >
-                <MatchRing percent={matchPercent} size={56} />
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', color: 'var(--ayna-accent-dark)', background: 'rgba(255,255,255,.9)', borderRadius: 99, padding: '3px 8px' }}>
-                  WHY {matchPercent}%
-                </div>
-              </div>
-            )}
             {matchDetails.matchStatus === 'no-profile' && <button type="button" onClick={onStartQuiz} style={{ position: 'absolute', right: 12, bottom: 12, border: 0, borderRadius: 99, background: '#fff9f2', color: '#5c3b2c', padding: '9px 13px', fontWeight: 600 }}>Build to see your match</button>}
           </div>
         </div>
@@ -521,7 +514,7 @@ export default function ProductDetailScreen({
           )}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" onClick={onStartQuiz} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>Build your ecosystem to see your personal match →</button>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.1, margin: '9px 0 0', color: 'var(--ayna-heading)' }}>{name}</div>
+          <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.1, margin: '9px 0 0', color: 'var(--ayna-heading)', fontWeight: 400 }}>{name}</h1>
           {price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
           {buyUrl && <p style={{ margin: '10px 0 0', color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>Buying opens the seller’s site. The seller handles payment, shipping, and returns; check the final price and delivery there.</p>}
           <button type="button" onClick={handleShare} style={{ marginTop: 12, padding: 0, border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 3, cursor: 'pointer' }}>
@@ -578,7 +571,7 @@ export default function ProductDetailScreen({
 
             {!!doctorOpinion && (
               <div style={CARD}>
-                <div style={EYEBROW}>{clinicianOpinionSource === 'brand' ? 'Brand claims' : clinicianOpinionSource === 'independent' ? 'Clinical evidence summary' : 'Health information'}</div>
+                <div style={EYEBROW}>{clinicianOpinionSource === 'brand' ? 'What the brand says' : 'ayna product note'}</div>
                 {doctorOpinion ? (
                   <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: 10, whiteSpace: 'pre-line' }}>{doctorOpinion}</div>
                 ) : (
@@ -602,7 +595,7 @@ export default function ProductDetailScreen({
 
             {scientificLiteratureEntries.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                <div style={EYEBROW}>Scientific literature</div>
+                <div style={EYEBROW}>Sources and further reading</div>
                 {scientificLiteratureEntries.map((entry) => (
                   <a key={entry.url} href={entry.url} target="_blank" rel="noopener noreferrer" style={{ ...CARD, display: 'block', textDecoration: 'none', color: 'inherit' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -677,7 +670,7 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {(ingredientScience?.length > 0 || safety.materials) && (
+            {(ingredientScience?.length > 0 || meaningfulDetail(safety.materials)) && (
               <div style={{ ...CARD, padding: '6px 18px' }}>
                 <div style={{ ...EYEBROW, paddingTop: 12 }}>What's inside</div>
                 {(ingredientScience || []).map((item, i) => (
@@ -686,7 +679,7 @@ export default function ProductDetailScreen({
                     <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.58, color: 'var(--ayna-text-muted)', marginTop: 5 }}>{item.text}</div>
                   </div>
                 ))}
-                {safety.materials && (
+                {meaningfulDetail(safety.materials) && (
                   <div style={{ padding: '14px 0', borderTop: (ingredientScience || []).length ? '1px solid var(--ayna-chip-bg)' : 'none', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.58, color: 'var(--ayna-text-muted)', whiteSpace: 'pre-line' }}>
                     {safety.materials}
                   </div>
@@ -700,9 +693,9 @@ export default function ProductDetailScreen({
                 {warnings.map((warning) => <p key={warning} style={{ fontSize: 13, lineHeight: 1.55, margin: '8px 0 0' }}>{warning}</p>)}
               </div>
             )}
-            {safety.fdaStatus && <div style={CARD}><div style={EYEBROW}>FDA status</div><p style={{ fontSize: 13, lineHeight: 1.55 }}>{safety.fdaStatus}</p></div>}
+            {meaningfulDetail(safety.fdaStatus) && <div style={CARD}><div style={EYEBROW}>FDA status</div><p style={{ fontSize: 13, lineHeight: 1.55 }}>{safety.fdaStatus}</p></div>}
             {factRows.length > 0 && <div style={{ ...CARD, padding: '6px 18px' }}>{factRows.map((row, i) => <SpecRow key={row.label} label={row.label} value={row.value} last={i === factRows.length - 1} />)}</div>}
-            {ingredients && <div style={CARD}><div style={EYEBROW}>Ingredients</div><p style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{ingredients}</p></div>}
+            {meaningfulDetail(ingredients) && <div style={CARD}><div style={EYEBROW}>Ingredients</div><p style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{ingredients}</p></div>}
             {!buyUrl && whereToBuy.length > 0 && <div style={CARD}><SpecRow label="Where to buy" value={whereToBuy.join(' · ')} last /></div>}
             <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />
           </div>
@@ -739,7 +732,7 @@ export default function ProductDetailScreen({
         <LegalFooter />
       </div>
 
-      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'linear-gradient(to top, var(--ayna-bg) 72%, transparent)', display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'var(--ayna-surface)', borderTop: '1px solid var(--ayna-border)', display: 'flex', gap: 8, alignItems: 'center' }}>
         <div
           onClick={onToggleSaved}
           role="button"
@@ -792,7 +785,7 @@ export default function ProductDetailScreen({
               textDecoration: 'none',
             }}
           >
-            Shop with {brand || 'seller'}
+            {category === 'telehealth' ? 'Explore care' : product.type === 'digital' ? 'View app' : 'Shop product'}
           </a>
         ) : (
           <div
