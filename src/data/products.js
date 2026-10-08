@@ -407,8 +407,8 @@ export const PHYSICAL_PRODUCTS = [
         category: 'supplement',
         type: 'physical',
         internal: false,
-        healthFunctions: ['hormone-balance'],
-        tags: ['pcos', 'irregular', 'safety-concern', 'organic'],
+        healthFunctions: ['supplement'],
+        tags: ['vitamin-d'],
         price: '$10–15 (150 softgels)',
         userRating: 4.8,
         url: 'https://naturesbounty.com/products/vitamin-d3-5000-iu-150-rapid-release-softgels',
@@ -419,22 +419,22 @@ export const PHYSICAL_PRODUCTS = [
             'Amazon': 'https://www.amazon.com/Natures-Bounty-Supplement-Supports-Softgels/dp/B002Y27LLS',
         },
         image: 'https://naturesbounty.com/cdn/shop/products/089377.png',
-        summary: '125 mcg (5000 IU) vitamin D3 cholecalciferol per rapid-release softgel. Supports bone health, immune function, and hormonal balance. Non-GMO, gluten-free, no artificial colors or flavors.',
+        summary: '125 mcg (5,000 IU) vitamin D3 per softgel. This is above the usual adult upper limit of 4,000 IU per day; use this dose only with guidance from a clinician. PCOS alone does not establish a need for high-dose vitamin D.',
         safety: {
             fdaStatus: 'Dietary supplement',
             materials: 'Cholecalciferol (D3), soybean oil, gelatin, vegetable glycerin, corn oil. Non-GMO. Free from gluten, wheat, yeast, fish, artificial colors, flavors, and sweeteners.',
             recalls: 'No known recalls',
             allergens: 'Contains soy (soybean oil). Gelatin (not vegan).',
-            sideEffects: 'At 5000 IU daily, vitamin D toxicity is unlikely but possible with very long-term high-dose use. Do not take additional high-dose D3 supplements concurrently without monitoring blood levels.',
+            sideEffects: 'At 5,000 IU per softgel, this exceeds the usual adult upper limit of 4,000 IU per day. Excess vitamin D can cause high blood calcium and other harms. Check total intake from all supplements with a clinician.',
             opinionAlerts: 'D3 at 5000 IU is a higher dose. Clinicians often recommend confirming deficiency with a 25(OH)D blood test before starting.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of Endocrine Society and NIH ODS guidance on vitamin D supplementation.',
-        doctorOpinion: 'Vitamin D deficiency is widespread and often goes undetected. Confirming your level with a 25(OH)D blood test before starting high-dose supplementation is recommended.',
+        doctorOpinion: 'A high-dose vitamin D supplement should be considered with a clinician after assessing vitamin D status and total daily intake.',
         communityReview: 'Highly rated. Users report improvements in mood, energy, and general wellbeing. Consistently well-reviewed for quality and value.',
         verificationLinks: {
             scientific: { links: [
-                
+                { url: 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/', text: 'NIH Office of Dietary Supplements: Vitamin D', summary: 'Vitamin D intake, upper limits, and risks from excessive supplementation.' }
             ] }
         }
     },

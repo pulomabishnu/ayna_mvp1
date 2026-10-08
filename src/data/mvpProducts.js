@@ -253,7 +253,7 @@ export const MVP_PHYSICAL = [
     type: 'physical',
     internal: false,
     healthFunctions: ['supplement'],
-    tags: ['bloating', 'discomfort', 'organic', 'pcos'],
+    tags: ['bloating', 'discomfort', 'organic'],
     price: '$22 for 30 capsules',
     userRating: 4.3,
     whereToBuy: ['Amazon', 'PinkStork.com', 'Target'],
