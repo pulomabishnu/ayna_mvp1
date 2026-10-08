@@ -409,3 +409,28 @@
 .ayna-mobile .am-playlist-grid { gap:12px; }
 .ayna-mobile .am-playlist { overflow:hidden; border:1px solid #e1e3eb; border-radius:16px; background:#fff; box-shadow:0 3px 0 #ebecf2; }
 .ayna-mobile .am-playlist .am-cover { border-radius:12px; }
+
+/* The vivid light palette is the default; dark surfaces appear only in dark mode. */
+.ayna-mobile[data-theme='dark'] { --ayna-bg:#171719; --ayna-surface:#242429; --ayna-border:#3b3d49; --ayna-text:#f7f7fb; --ayna-text-muted:#c4c5d0; --ayna-heading:#fff; --ayna-chip-bg:#2d2e38; --ayna-chip-border:#464854; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-ecosystem,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-browse-screen,
+.ayna-mobile[data-theme='dark'] .am-screen,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hub,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-saved,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-article { background:#171719!important; }
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav { background:#242429; border-color:#464854; }
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button:not(.is-active) { color:#d0d0d9; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-ecosystem .ayna-editorial-read,
+.ayna-mobile[data-theme='dark'] .am-card.am-post-card,
+.ayna-mobile[data-theme='dark'] .am-playlist { background:#242429; border-color:#464854!important; color:#fff; box-shadow:none!important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-copy>strong,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-foot,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-ecosystem .ayna-editorial-read-copy strong { color:#fff; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-reason,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-context { color:#d0d0d9; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-home-heading h1,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-home-heading>p:first-child { color:#fff; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu { background:#171719; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu>div:not(:first-child) { background:#242429!important; border-color:#464854!important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-article-paper { background:#242429!important; border-color:#464854; box-shadow:none; }

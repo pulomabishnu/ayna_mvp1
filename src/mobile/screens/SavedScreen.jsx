@@ -361,15 +361,15 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
                 <div style={{ width: 38, height: 38, flex: 'none', borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', background: 'var(--ayna-peach)', color: 'var(--ayna-accent-dark)' }}>1</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Cycle support</div>
-                  <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>Your most-viewed category</div>
+                  <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>Browse period and cycle products</div>
                 </div>
                 <ChevronIcon />
               </div>
               <div onClick={onGoEco} style={{ display: 'flex', alignItems: 'center', gap: 13, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: '14px 15px', cursor: 'pointer' }}>
                 <div style={{ width: 38, height: 38, flex: 'none', borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', background: '#E7E3F2', color: 'var(--ayna-purple)' }}>2</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Your ecosystem gaps</div>
-                  <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>See what's still missing</div>
+                  <div style={{ fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Your Ecosystem</div>
+                  <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>Build or revisit your picks</div>
                 </div>
                 <ChevronIcon />
               </div>
