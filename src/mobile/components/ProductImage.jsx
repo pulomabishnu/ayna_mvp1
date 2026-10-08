@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
-import { ProductImageFallback } from '../../components/ProductTileImage.jsx';
+
+function PhotoPlaceholder({ style }) {
+  return (
+    <div className="ayna-fresh-photo-placeholder" role="img" aria-label="Product photo unavailable" style={{ position: 'absolute', inset: 0, ...style }}>
+      <span aria-hidden="true" className="ayna-fresh-photo-placeholder-shape" />
+      <span aria-hidden="true" className="ayna-fresh-photo-placeholder-mark">ayna.</span>
+    </div>
+  );
+}
 
 /**
  * Fills its (position: relative) parent with either the product's real
@@ -14,12 +22,12 @@ import { ProductImageFallback } from '../../components/ProductTileImage.jsx';
  * so a prop change to a different src is automatically treated as
  * untried/not-errored during render, with no effect needed to clear it.
  */
-export default function ProductImage({ src, alt, allowBrandLogo = false, compact = false, style }) {
+export default function ProductImage({ src, alt, allowBrandLogo = false, style }) {
   const safeSrc = safeProductImageSrc(src, allowBrandLogo);
   const [erroredSrc, setErroredSrc] = useState(null);
 
   if (!safeSrc || erroredSrc === safeSrc) {
-    return <ProductImageFallback compact={compact} style={{ position: 'absolute', inset: 0, ...style }} />;
+    return <PhotoPlaceholder style={style} />;
   }
   return (
     <img

@@ -485,3 +485,9 @@
 .ayna-mobile .am-avatar { background:#dfe2ff; color:#203c9c; }
 .ayna-mobile .am-share-plus { background:#d5f477; color:#203c9c; }
 .ayna-mobile .am-tabs button.is-active { color:#203c9c; border-bottom-color:#203c9c; }
+
+/* A missing catalog photo remains a designed, plainly labelled placeholder. */
+.ayna-fresh-photo-placeholder { display:grid; place-items:center; overflow:hidden; background:#dfe2ff; color:#203c9c; }
+.ayna-fresh-photo-placeholder-shape { position:absolute; width:70%; aspect-ratio:1; border:13px solid #9faefa; border-radius:50%; transform:translate(30%,-23%); }
+.ayna-fresh-photo-placeholder-shape::after { content:''; position:absolute; width:55%; height:55%; left:-65%; bottom:-40%; background:#d5f477; border-radius:18px; transform:rotate(-19deg); }
+.ayna-fresh-photo-placeholder-mark { position:relative; z-index:1; font:900 20px/.9 'DM Sans',sans-serif; letter-spacing:-.08em; }
