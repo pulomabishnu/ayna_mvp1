@@ -210,14 +210,12 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
         style={{
           position: 'relative',
           padding: 'max(24px, env(safe-area-inset-top)) 22px 26px',
-          background: 'linear-gradient(160deg,#242A52 0%,#4E3866 58%,#8A4A3C 100%)',
+          background: '#242A52',
           color: '#FFF9F2',
           overflow: 'hidden',
           flex: 'none',
         }}
       >
-        <div style={{ position: 'absolute', top: -70, right: -60, width: 230, height: 230, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,199,116,.45),rgba(255,199,116,0) 68%)', animation: 'ay-drift 15s ease-in-out infinite' }} />
-        <div style={{ position: 'absolute', left: -40, bottom: -80, width: 200, height: 200, borderRadius: '50%', border: '1px solid rgba(255,255,255,.14)' }} />
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', letterSpacing: 0.5 }}>ayna</div>
           <div
@@ -246,20 +244,20 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               height: 66,
               borderRadius: 99,
               flex: 'none',
-              background: 'linear-gradient(140deg,#FFDCA8,#FFC774 48%,#E8843C)',
+              background: '#FFC774',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontFamily: "'Playfair Display',serif",
               fontSize: 'calc(26px * var(--ayna-text-scale, 1))',
               color: '#3A2410',
-              boxShadow: '0 14px 30px -12px rgba(255,150,60,.7)',
+              boxShadow: 'none',
             }}
           >
             {initial}
           </div>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{name}</div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{name}</div>
             <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'rgba(255,249,242,.62)', marginTop: 5 }}>{memberSince}</div>
           </div>
         </div>
@@ -274,9 +272,9 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               onClick={s.onClick}
               role={s.onClick ? 'button' : undefined}
               aria-label={s.onClick ? s.ariaLabel : undefined}
-              style={{ flex: 1, background: 'rgba(255,249,242,.11)', border: '1px solid rgba(255,255,255,.16)', borderRadius: 16, padding: '11px 12px', cursor: s.onClick ? 'pointer' : 'default' }}
+              style={{ flex: 1, background: 'rgba(255,249,242,.08)', border: '1px solid rgba(255,255,255,.22)', borderRadius: 13, padding: '11px 12px', cursor: s.onClick ? 'pointer' : 'default' }}
             >
-              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', color: '#FFC774' }}>{s.value}</div>
+              <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(23px * var(--ayna-text-scale, 1))', color: '#FFC774' }}>{s.value}</div>
               <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: 'rgba(255,249,242,.66)', marginTop: 3 }}>{s.label}</div>
             </div>
           ))}
@@ -301,7 +299,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               gap: 14,
               background: 'var(--ayna-surface)',
               border: '1px solid var(--ayna-border)',
-              borderRadius: 20,
+              borderRadius: 14,
               padding: 16,
               cursor: 'pointer',
             }}
