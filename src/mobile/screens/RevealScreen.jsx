@@ -18,7 +18,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </button>
 
         <div style={{ marginTop: 24, color: '#A2603C', fontSize: 12, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase' }}>Your results</div>
-        <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 34, lineHeight: 1.12, fontWeight: 400, margin: '8px 0 12px' }}>
+        <h1 style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 36, lineHeight: 1.05, letterSpacing: '-.05em', fontWeight: 700, margin: '8px 0 12px' }}>
           {hasMatches ? 'Your first matches' : 'Your answers are in'}
         </h1>
         <p style={{ margin: 0, color: colors.muted, fontSize: 16, lineHeight: 1.5 }}>
@@ -32,16 +32,16 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </div>}
 
         {hasMatches && <section aria-labelledby="reveal-matches-title" style={{ marginTop: 30 }}>
-          <h2 id="reveal-matches-title" style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, fontWeight: 400, margin: '0 0 14px' }}>Picked for your profile</h2>
-          <div style={{ display: 'grid', gap: 10 }}>
+          <h2 id="reveal-matches-title" style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 22, letterSpacing: '-.04em', fontWeight: 700, margin: '0 0 14px' }}>Picked for your profile</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 13 }}>
             {preview.map((product) => (
-              <article key={product.id} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: 12, minHeight: 92, background: '#fff', border: '1px solid #E6DDD1', borderRadius: 14 }}>
-                <div style={{ position: 'relative', flex: 'none', width: 68, height: 68, background: '#F3ECE2', borderRadius: 10, overflow: 'hidden' }}>
+              <article key={product.id} style={{ minWidth: 0 }}>
+                <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 5', background: '#F3ECE2', borderRadius: 14, overflow: 'hidden' }}>
                   <ProductImage src={product.image || product.imageUrl} alt={product.name} allowBrandLogo={product.type === 'digital'} style={{ objectFit: 'contain' }} />
                 </div>
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ color: colors.muted, fontSize: 13, lineHeight: 1.3 }}>{product.brand || String(product.category || '').replaceAll('-', ' ')}</div>
-                  <div style={{ color: colors.navy, fontWeight: 700, fontSize: 16, lineHeight: 1.3, marginTop: 4 }}>{product.name}</div>
+                <div style={{ minWidth: 0, paddingTop: 9 }}>
+                  <div style={{ color: colors.muted, fontSize: 12, lineHeight: 1.3 }}>{product.brand || String(product.category || '').replaceAll('-', ' ')}</div>
+                  <div style={{ color: colors.navy, fontWeight: 700, fontSize: 15, lineHeight: 1.3, marginTop: 4 }}>{product.name}</div>
                 </div>
               </article>
             ))}

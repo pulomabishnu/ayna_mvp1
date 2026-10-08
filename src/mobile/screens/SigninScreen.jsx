@@ -22,13 +22,13 @@ function Field({ label, icon, children }) {
     <label
       style={{
         background: '#FFFFFF',
-        borderRadius: 20,
+        borderRadius: 14,
         padding: '14px 16px',
         marginBottom: 10,
         display: 'flex',
         alignItems: 'center',
         gap: 12,
-        boxShadow: '0 8px 20px -12px rgba(0,0,0,.35)',
+        boxShadow: 'none',
       }}
     >
       {icon}
@@ -69,7 +69,7 @@ function PrimaryButton({ onClick, disabled, children }) {
         color: '#292524',
         textAlign: 'center',
         padding: 15,
-        borderRadius: 99,
+        borderRadius: 14,
         fontFamily: "'DM Sans',sans-serif",
         fontWeight: 600,
         fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
@@ -78,7 +78,7 @@ function PrimaryButton({ onClick, disabled, children }) {
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
-        boxShadow: disabled ? 'none' : '0 16px 30px -14px rgba(255,199,116,.8)',
+        boxShadow: 'none',
       }}
     >
       {children}
@@ -96,7 +96,7 @@ function GoogleButton({ onClick, disabled }) {
         border: '1px solid rgba(255,255,255,.28)',
         textAlign: 'center',
         padding: 15,
-        borderRadius: 99,
+        borderRadius: 14,
         fontFamily: "'DM Sans',sans-serif",
         fontWeight: 500,
         fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
@@ -129,7 +129,7 @@ function AppleButton({ onClick, disabled }) {
         border: '1px solid rgba(255,255,255,.28)',
         textAlign: 'center',
         padding: 15,
-        borderRadius: 99,
+        borderRadius: 14,
         fontFamily: "'DM Sans',sans-serif",
         fontWeight: 500,
         fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
@@ -293,7 +293,7 @@ export default function SigninScreen({
       style={{
         flex: 1,
         overflowY: 'auto',
-        background: 'linear-gradient(170deg,#242A52 0%,#4E3866 60%,#A2603C 100%)',
+        background: '#242A52',
         color: '#FFFCF9',
         paddingTop: 'max(20px, env(safe-area-inset-top))',
         paddingLeft: 24,
@@ -338,12 +338,12 @@ export default function SigninScreen({
             </div>
           )}
 
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(30px * var(--ayna-text-scale, 1))', lineHeight: 1.2, marginBottom: 20 }}>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.08, marginBottom: 20 }}>
             {mode === 'signup' ? (<>Save it under<br />your name.</>) : (<>Welcome<br />back.</>)}
           </div>
 
           {mode === 'signup' && (
-            <label style={{ background: '#FFFFFF', borderRadius: 20, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 8px 20px -12px rgba(0,0,0,.35)' }}>
+            <label style={{ background: '#FFFFFF', borderRadius: 14, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 42, height: 42, borderRadius: 99, background: '#FFC774', color: '#292524', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
                 {initial}
               </div>
