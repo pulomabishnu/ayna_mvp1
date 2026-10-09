@@ -247,11 +247,6 @@ const SECTION_LABELS = {
   history: 'What you have tried', preferences: 'Shopping preferences', trust: 'What matters to you',
 };
 
-const SECTION_PROMPTS = {
-  core: 'Start with you', support: 'What is going on', safety: 'Make it safe',
-  history: 'Your experience', preferences: 'Make it yours', trust: 'The final say',
-};
-
 const PERIOD_TRIGGER = new Set([
   'Period product support', 'Cramps or period pain', 'Pelvic pain', 'Heavy periods', 'Light periods',
   'Irregular periods', 'Missed periods', 'Spotting between periods', 'PMS symptoms', 'PMDD symptoms',
@@ -836,31 +831,54 @@ function isMinorAge(value) {
   return Number.isFinite(n) && n < MINOR_AGE_LIMIT;
 }
 
-// A draggable scale makes age quick to explore. The native picker lets someone
-// choose an exact age without relying on precise slider movement.
+// A native age picker keeps the first intake step easy to complete without
+// opening the keyboard. Age is optional, but under-18 selections remain gated.
 function AgeCard({ value, onChange, underage, onOpenGate }) {
   const hasValue = value !== '' && value !== null && value !== undefined;
-  const age = hasValue ? Number(value) : 24;
-  const setAge = (next) => onChange(String(Math.max(18, Math.min(120, next))));
 
   return (
-    <div className="ayna-age-picker">
-      <div className="ayna-age-picker-top"><span>YOUR AGE</span><span>18–120</span></div>
-      <div className="ayna-age-picker-value">
-        <button type="button" aria-label="Decrease age" onClick={() => setAge(age - 1)} disabled={hasValue && age <= 18}>−</button>
-        <div aria-live="polite"><strong>{hasValue ? age : '—'}</strong><span>{hasValue ? 'years old' : 'pick an age'}</span></div>
-        <button type="button" aria-label="Increase age" onClick={() => setAge(age + 1)} disabled={hasValue && age >= 120}>+</button>
+    <div style={{ background: CARD_BG, borderRadius: 24, padding: 20, boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
+      <div
+        style={{
+          borderRadius: 18,
+          padding: '16px 18px',
+          textAlign: 'center',
+          background: !hasValue ? PANEL_BG : underage ? WARNING_BG : 'linear-gradient(160deg,#FCEBD1,#F7D9A8)',
+          border: '1px solid ' + (!hasValue ? ROW_BORDER : underage ? WARNING_BORDER_SOFT : ACCENT_BORDER),
+        }}
+      >
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: MUTED }}>Your age</div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+          <select
+            aria-label="Your age"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            style={{
+              width: 150,
+              textAlign: 'center',
+              border: 'none',
+              outline: 'none',
+              background: 'transparent',
+              fontFamily: "'Playfair Display',serif",
+              fontSize: 'calc(24px * var(--ayna-text-scale, 1))',
+              color: underage ? WARNING_BORDER : hasValue ? NAVY : MUTED,
+            }}
+          >
+            <option value="">Select age</option>
+            {Array.from({ length: 103 }, (_, index) => index + 18).map((age) => <option key={age} value={age}>{age}</option>)}
+          </select>
+        </div>
+        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: underage ? WARNING_BODY : BODY_TEXT, marginTop: 8 }}>
+          {underage ? "That's under our age requirement" : 'Choose your age from the list'}
+        </div>
       </div>
-      <label className="ayna-age-slider-label" htmlFor="ayna-age-slider">Slide to your age</label>
-      <input id="ayna-age-slider" className="ayna-age-slider" type="range" min="18" max="120" step="1" value={age} onChange={(event) => onChange(event.target.value)} aria-label="Your age" style={{ '--ayna-age-fill': `${((age - 18) / 102) * 100}%` }} />
-      <div className="ayna-age-slider-ends"><span>18</span><span>120</span></div>
-      <label className="ayna-age-exact" htmlFor="ayna-age-select">Want to choose an exact age?
-        <select id="ayna-age-select" value={value} onChange={(event) => onChange(event.target.value)} aria-label="Choose exact age">
-          <option value="">Choose from list</option>
-          {Array.from({ length: 103 }, (_, index) => index + 18).map((optionAge) => <option key={optionAge} value={optionAge}>{optionAge}</option>)}
-        </select>
-      </label>
-      <p className="ayna-age-privacy">Only your age is saved, never your birthday. Your answers about symptoms, goals, and life stage guide your matches.</p>
+
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 20, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 2 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
+        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT }}>
+          We store your age, not a date of birth. It helps us order relevant questions; your selected life stage, symptoms, and goals guide product matches. We never use it to advertise to you.
+        </div>
+      </div>
 
       {underage && (
         <div
@@ -1853,9 +1871,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       </div>
 
       <div className="ayna-fresh-intake-body" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
-        <div className="ayna-intake-question-head" style={{ padding: '22px 20px 0' }}>
-          <div className="ayna-intake-question-kicker"><span>{SECTION_PROMPTS[step.section]}</span>{countForStep > 0 && <strong>{countForStep} picked</strong>}</div>
-          <span className="ayna-intake-question-number" aria-hidden="true">{String(currentIndex + 1).padStart(2, '0')}</span>
+        <div style={{ padding: '22px 20px 0' }}>
+          <div className="ayna-intake-question-kicker"><span>{SECTION_LABELS[step.section]}</span>{countForStep > 0 && <strong>{countForStep} picked</strong>}</div>
           <div className="ayna-fresh-intake-title" style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.045em', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#F8F8F3' }}>{step.title}</div>
           {step.subtitle && <p className="ayna-fresh-intake-subtitle" style={{ margin: '8px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
           {flaggedStepIds.has(step.id) && (
