@@ -301,8 +301,8 @@
 .ayna-count-stack i { position:absolute; bottom:0; left:calc(var(--pick-index) * 9px); width:31px; height:35px; border:1.5px solid currentColor; border-radius:2px; background:#f6f2e9; transform:rotate(calc(var(--pick-index) * 3deg)); transition:transform 180ms ease; }
 .ayna-count-choices>button[aria-pressed='true'] .ayna-count-stack i { transform:translateY(calc(var(--pick-index) * -2px)) rotate(calc(var(--pick-index) * 3deg)); }
 
-.ayna-ecosystem-area-map { display:grid; gap:0; margin-top:22px; padding:8px 0; border-top:1px solid var(--ayna-border); border-bottom:1px solid var(--ayna-border); }
-.ayna-ecosystem-area-map a { display:flex; align-items:center; gap:14px; min-height:44px; color:var(--ayna-text); text-decoration:none; font-size:12px; }
+.ayna-ecosystem-area-map { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 18px; margin-top:22px; padding:8px 0; border-top:1px solid var(--ayna-border); border-bottom:1px solid var(--ayna-border); }
+.ayna-ecosystem-area-map a { display:flex; align-items:center; gap:7px; min-height:44px; color:var(--ayna-text); text-decoration:none; font-size:12px; }
 .ayna-ecosystem-area-map a>span:first-child { flex:1; }
 .ayna-area-dots { display:flex; gap:5px; }
 .ayna-area-dots i { width:10px; height:10px; border-radius:50%; background:#a64d37; }
