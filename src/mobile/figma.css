@@ -639,6 +639,7 @@
 /* October refinement: quiet surfaces, playful color, and a faster shopping scan. */
 .ayna-mobile .ayna-bottom-nav { padding:6px 8px max(7px,env(safe-area-inset-bottom))!important; }
 .ayna-mobile .ayna-bottom-nav button { min-height:46px!important; padding:8px 2px!important; border-radius:14px!important; font-size:11px!important; font-weight:700; letter-spacing:-.02em; }
+@media (max-width:380px) { .ayna-mobile .ayna-bottom-nav button { font-size:9px!important; letter-spacing:-.035em; } }
 .ayna-mobile .ayna-bottom-nav button.is-active { background:var(--ayna-figma-mint)!important; }
 .ayna-mobile .ayna-figma-header button,.ayna-mobile .ayna-cover-top button { border-radius:15px!important; }
 .ayna-mobile :is(.ayna-cover-metric,.ayna-fresh-collage-card,.ayna-figma-choice-tile,.ayna-intake-chapter-choice) { border-radius:16px!important; }

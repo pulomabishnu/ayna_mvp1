@@ -10,7 +10,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
         <div className="ayna-cover-intro">
           <span className="ayna-cover-eyebrow">HEALTH, WITH CONTEXT</span>
           <h1 id="ayna-cover-title">Picked for<br /><em>your body.</em><br />With the why.</h1>
-          <p>Tell us what matters to you. Explore products with the research and real experiences behind each pick.</p>
+          <p>Products. Research. Real experiences.</p>
         </div>
         <div className="ayna-cover-metrics" aria-label="Ayna at a glance">
           <div className="ayna-cover-metric"><strong>140+</strong><span>studies cited</span></div>
