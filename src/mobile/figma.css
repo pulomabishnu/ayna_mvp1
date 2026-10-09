@@ -90,6 +90,14 @@
 .ayna-mobile .ayna-fresh-intake-footer { padding:11px 18px max(13px,env(safe-area-inset-bottom))!important; border-top:1px solid var(--ayna-border)!important; background:var(--ayna-figma-paper)!important; box-shadow:none!important; }
 .ayna-mobile .ayna-fresh-intake-footer button:not(:disabled) { min-height:49px!important; border-radius:4px!important; background:var(--ayna-figma-ink)!important; color:#fff!important; }
 .ayna-mobile .ayna-fresh-intake-footer button:disabled { min-height:49px!important; border-radius:4px!important; background:#d9deda!important; color:#51545c!important; }
+.ayna-mobile .ayna-profile-auth-sheet { padding:24px 18px max(18px,env(safe-area-inset-bottom)); border-top:5px solid var(--ayna-figma-mint); border-radius:4px 4px 0 0; background:var(--ayna-figma-paper); color:var(--ayna-figma-ink); box-shadow:0 -12px 30px rgba(23,19,41,.14); }
+.ayna-mobile .ayna-profile-auth-close { top:10px; right:12px; width:38px; height:38px; color:var(--ayna-figma-ink); }
+.ayna-mobile .ayna-profile-auth-eyebrow { color:var(--ayna-figma-berry); font-size:9px; font-weight:800; letter-spacing:.1em; }
+.ayna-mobile .ayna-profile-auth-sheet h2 { margin:11px 0 7px; color:var(--ayna-figma-ink); font:800 31px/1 'Bricolage Grotesque','DM Sans',sans-serif; letter-spacing:-.05em; }
+.ayna-mobile .ayna-profile-auth-sheet p { margin-bottom:18px; color:var(--ayna-text-muted); font-size:12px; }
+.ayna-mobile .ayna-profile-auth-primary,.ayna-mobile .ayna-profile-auth-secondary { min-height:45px; padding:10px 15px; border-radius:4px; font-size:12px; font-weight:800; }
+.ayna-mobile .ayna-profile-auth-primary { background:var(--ayna-figma-ink); color:#fff; }
+.ayna-mobile .ayna-profile-auth-secondary { margin-top:8px; border:1px solid var(--ayna-figma-ink); color:var(--ayna-figma-ink); }
 
 /* Ecosystem: mint context, one large real product image, and a compact routine. */
 .ayna-mobile .ayna-figma-ecosystem { background:var(--ayna-figma-paper)!important; padding-bottom:34px; }
