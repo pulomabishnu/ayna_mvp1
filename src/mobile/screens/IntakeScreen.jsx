@@ -601,14 +601,14 @@ const cardShadow = '0 1px 3px rgba(41,37,36,.04)';
 // `icons` map to render a small rounded-square badge above the label;
 // callers without one (life stages, which have no matching icon set) get the
 // plain label-only tile exactly as before.
-function ChoiceGrid({ items, selected = [], onToggle, icons }) {
+function ChoiceGrid({ items, selected = [], onToggle, icons, numbered = false }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 9 }}>
-      {items.map((item) => {
+      {items.map((item, index) => {
         const on = selected.includes(item);
         const icon = icons && icons[item];
         return (
-          <button type="button" aria-pressed={on} className="ayna-figma-choice-tile"
+          <button type="button" aria-pressed={on} className={`ayna-figma-choice-tile${numbered ? ' ayna-intake-chapter-choice' : ''}`}
             key={item}
             onClick={() => onToggle(item)}
             style={{
@@ -620,6 +620,7 @@ function ChoiceGrid({ items, selected = [], onToggle, icons }) {
               boxShadow: 'none',
             }}
           >
+            {numbered && <span className="ayna-intake-chapter-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>}
             {icon && (
               <span style={{
                 width: 32, height: 32, borderRadius: 10, marginBottom: 10, flex: 'none',
@@ -692,14 +693,14 @@ function AddCustomChoice({ query, options, onAdd }) {
   return <button type="button" className="ayna-intake-add-choice" onClick={() => onAdd(value)}><span aria-hidden="true">+</span><span>Add “{value}”</span><small>Not listed? Add your own</small></button>;
 }
 
-function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons }) {
+function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons, numbered = false }) {
   const query = search.trim().toLowerCase();
   const filtered = query ? items.filter((item) => item.toLowerCase().includes(query)) : items;
   const custom = selected.filter((item) => !items.includes(item));
   return <div className="ayna-intake-choice-picker">
     <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />
     {custom.length > 0 && <div className="ayna-intake-custom-selected"><small>ADDED BY YOU</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
-    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} /> : <p className="ayna-intake-no-results">No suggestions match yet. You can add your own answer below.</p>}
+    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} numbered={numbered} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} /> : <p className="ayna-intake-no-results">No suggestions match yet. You can add your own answer below.</p>}
     <AddCustomChoice query={search} options={[...items, ...selected]} onAdd={onAdd} />
   </div>;
 }
@@ -1670,7 +1671,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     if (step.type === 'lifeStage') return (
       <>
         {showMidlifeFirst && <p className="ayna-intake-note">We moved some life-stage choices higher based on your age. Choose only what describes you; age alone does not determine your life stage.</p>}
-        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" />
+        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" numbered />
         {selectedLifeStages.includes('I am postpartum') && (
           <div style={{ marginTop: 18, padding: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 18, textAlign: 'left' }}>
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: INK, marginBottom: 12 }}>Are you currently breastfeeding?</div>

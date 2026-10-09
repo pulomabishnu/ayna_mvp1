@@ -52,11 +52,19 @@ export default function EcosystemScreen({
       <div className="ayna-figma-eco-intro ayna-eco-dashboard-hero">
         <div className="ayna-eco-hero-top"><span>YOUR SPACE / PERSONAL EDIT</span><span>01</span></div>
         <h1>{name === 'You' ? 'Your' : `${name}'s`}<br />Ecosystem.</h1>
-        <p>Products, research, and real experiences shaped by your answers.</p>
+        <p>Picked around your answers.</p>
         <div className="ayna-eco-focus-list"><small>YOUR FOCUS</small>{(topAreas.length ? topAreas.slice(0, 3) : ['Your health, in context']).map((area) => <span key={area}>{area}</span>)}</div>
         <div className="ayna-eco-hero-stats"><div><strong>{matchedProducts.length}</strong><span>current picks</span></div><div><strong>{myProducts.length}</strong><span>in your space</span></div><div><strong>{relatedReads.length}</strong><span>reads for you</span></div></div>
         <div className="ayna-eco-hero-actions"><button type="button" onClick={onRetake}>Update answers <span aria-hidden="true">↗</span></button><button type="button" onClick={onBrowse}>Discover more <span aria-hidden="true">→</span></button></div>
         {ecosystemNotice && <p role="status" style={{ margin: '12px 0 0', padding: '11px 14px', borderRadius: 14, background: 'var(--ayna-peach)', color: 'var(--ayna-heading)', fontSize: 13, lineHeight: 1.45 }}>{ecosystemNotice}</p>}
+      </div>
+
+      <div className="ayna-eco-journey" aria-label="How your Ecosystem comes together">
+        <div><small>01 / YOU SAID</small><strong>{topAreas[0] || 'Your priorities'}</strong></div>
+        <span aria-hidden="true">→</span>
+        <div><small>02 / MATCHING NOW</small><strong>{matchedProducts.length} {matchedProducts.length === 1 ? 'fit' : 'fits'}</strong></div>
+        <span aria-hidden="true">→</span>
+        <div><small>03 / YOU CHOOSE</small><strong>{myProducts.length} saved</strong></div>
       </div>
 
       <section className="ayna-figma-eco-feature">
@@ -68,7 +76,7 @@ export default function EcosystemScreen({
         <div className="ayna-figma-eco-feature-copy">
           <small>{showFeaturedMatch ? 'YOUR TOP SAVED MATCH' : 'SAVED BY YOU'}</small>
           <h2>{featuredProduct?.name || 'Find a product that fits your priorities.'}</h2>
-          <p>{featuredProduct ? 'See why it appears here, compare the evidence, and decide if it belongs in your routine.' : 'Explore the catalog and add what belongs in your routine.'}</p>
+          <p>{featuredProduct ? 'Match, evidence, and real experiences.' : 'Find your first pick.'}</p>
           <button type="button" onClick={featuredProduct ? () => onOpenProduct?.(featuredProduct) : onBrowse}>{featuredProduct ? 'See details and shop' : 'Discover products'} <span aria-hidden="true">→</span></button>
         </div>
       </section>
@@ -80,7 +88,7 @@ export default function EcosystemScreen({
         {myProducts.length > 3 && <button type="button" className="ayna-eco-see-all" onClick={() => document.getElementById('ayna-eco-picks')?.scrollIntoView({ behavior: 'smooth' })}>See all {myProducts.length} products <span aria-hidden="true">↓</span></button>}
       </section>
 
-      <section className="ayna-figma-checkin"><small>NEXT / THIS MONTH</small><h2>How did it fit your day?</h2><p>Note what felt useful, changed, or worth looking into.</p><button type="button" onClick={onOpenMonthlyCheckin}>Log this month's experience <span aria-hidden="true">→</span></button></section>
+      <section className="ayna-figma-checkin"><small>NEXT / THIS MONTH</small><h2>How did it fit your day?</h2><button type="button" onClick={onOpenMonthlyCheckin}>Monthly check-in <span aria-hidden="true">→</span></button></section>
 
       <div id="ayna-eco-picks" className="ayna-fresh-picks ayna-eco-picks">
         <div className="ayna-eco-list-heading">

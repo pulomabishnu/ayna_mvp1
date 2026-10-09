@@ -23,7 +23,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const categoryLabel = labelForCategory(category);
   const secondaryLabel = brand && !String(name || '').toLowerCase().startsWith(brand.toLowerCase()) ? brand : categoryLabel;
   const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
-  const showMatch = match?.matchStatus === 'scored' && match.percent >= 60;
+  const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   const relevantReason = match?.matchStatus === 'scored' && !showMatch
     ? match.reasonDetails?.find((reason) => ['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency', 'diagnoses', 'lifeStage'].includes(reason.component))
     : null;

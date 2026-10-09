@@ -94,6 +94,8 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   const [details, setDetails] = useState(null);
   const [comments, setComments] = useState([]);
   const [items, setItems] = useState([]);
+  const [profilePosts, setProfilePosts] = useState([]);
+  const [profilePlaylists, setProfilePlaylists] = useState([]);
   const [compose, setCompose] = useState(seedKind || null); // 'post' | 'question' | 'review' | 'playlist'
   const [body, setBody] = useState('');
   const [productId, setProductId] = useState(seedProductId || null);
@@ -246,8 +248,19 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
 
   const openProfile = async (username) => {
     if (!username) return;
-    setPage({ type: 'profile', id: username }); setError('');
-    try { setDetails(await community.getProfileByUsername(supabase, username)); } catch (e) { notifyError(e); }
+    setPage({ type: 'profile', id: username }); setDetails(null); setProfilePosts([]); setProfilePlaylists([]); setError('');
+    try {
+      const nextProfile = await community.getProfileByUsername(supabase, username);
+      setDetails(nextProfile);
+      if (nextProfile?.user_id) {
+        const [postsResult, playlistsResult] = await Promise.allSettled([
+          community.listFeedPosts(supabase, { authorIds: [nextProfile.user_id], limit: 8 }),
+          community.listPlaylists(supabase, { section: nextProfile.user_id === authUser?.id ? 'mine' : 'owner', ownerIds: [nextProfile.user_id], limit: 8 }),
+        ]);
+        if (postsResult.status === 'fulfilled') setProfilePosts(postsResult.value);
+        if (playlistsResult.status === 'fulfilled') setProfilePlaylists(playlistsResult.value);
+      }
+    } catch (e) { notifyError(e); }
   };
   const openNotifications = async () => {
     if (!authUser) { requireAccount('notifications'); return; }
@@ -484,7 +497,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
             <button type="button" className="am-primary" disabled={busy || !productId} onClick={addPlaylistProduct}>Add to playlist</button>
           </div>}
         </section>}
-        {page.type === 'profile' && details && <section className="am-profile-detail"><div className="am-profile-hero"><CommunityAvatar name={details.display_name} path={details.avatar_url} /><div><small>COMMUNITY PROFILE</small><h2 className="am-detail-title">{details.display_name}</h2><p className="am-detail-copy">@{details.username}</p></div></div>{details.bio && <p className="am-profile-bio">{details.bio}</p>}{authUser?.id === details.user_id && <div className="am-profile-owner"><button type="button" className="am-secondary" onClick={startProfileEdit}>Edit profile</button><label className="am-avatar-upload">Change photo<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" disabled={busy} onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadAvatar(file); event.target.value = ''; }} /></label></div>}{authUser && details.user_id !== authUser.id && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={async () => { try { const on = !followingIds.includes(details.user_id); await community.setFollowing(supabase, authUser.id, details.user_id, on); setFollowingIds((ids) => on ? [...ids, details.user_id] : ids.filter((id) => id !== details.user_id)); } catch (e) { notifyError(e); } }}>{followingIds.includes(details.user_id) ? 'Following' : 'Follow'}</button><button type="button" className="am-secondary" onClick={async () => { try { const state = community.friendshipState(friendships, authUser.id, details.user_id); if (state.state === 'none') await community.sendFriendRequest(supabase, authUser.id, details.user_id); else if (state.state === 'incoming') await community.acceptFriendRequest(supabase, state.row.id); else return; setRefresh((v) => v + 1); } catch (e) { notifyError(e); } }}>{({ none: 'Add friend', incoming: 'Accept request', requested: 'Requested', friends: 'Friends' })[community.friendshipState(friendships, authUser.id, details.user_id).state]}</button></div>}</section>}
+        {page.type === 'profile' && details && <section className="am-profile-detail"><div className="am-profile-hero"><CommunityAvatar name={details.display_name} path={details.avatar_url} /><div><small>COMMUNITY PROFILE</small><h2 className="am-detail-title">{details.display_name}</h2><p className="am-detail-copy">@{details.username}</p></div></div>{details.bio && <p className="am-profile-bio">{details.bio}</p>}{authUser?.id === details.user_id && <div className="am-profile-owner"><button type="button" className="am-secondary" onClick={startProfileEdit}>Edit profile</button><label className="am-avatar-upload">Change photo<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" disabled={busy} onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadAvatar(file); event.target.value = ''; }} /></label></div>}{authUser && details.user_id !== authUser.id && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={async () => { try { const on = !followingIds.includes(details.user_id); await community.setFollowing(supabase, authUser.id, details.user_id, on); setFollowingIds((ids) => on ? [...ids, details.user_id] : ids.filter((id) => id !== details.user_id)); } catch (e) { notifyError(e); } }}>{followingIds.includes(details.user_id) ? 'Following' : 'Follow'}</button><button type="button" className="am-secondary" onClick={async () => { try { const state = community.friendshipState(friendships, authUser.id, details.user_id); if (state.state === 'none') await community.sendFriendRequest(supabase, authUser.id, details.user_id); else if (state.state === 'incoming') await community.acceptFriendRequest(supabase, state.row.id); else return; setRefresh((v) => v + 1); } catch (e) { notifyError(e); } }}>{({ none: 'Add friend', incoming: 'Accept request', requested: 'Requested', friends: 'Friends' })[community.friendshipState(friendships, authUser.id, details.user_id).state]}</button></div>}<div className="am-profile-content"><div className="am-playlist-section-heading"><span>PLAYLISTS</span><strong>{profilePlaylists.length}</strong></div>{profilePlaylists.length ? <div className="am-profile-playlists">{profilePlaylists.map((list) => <button type="button" key={list.id} onClick={() => openPlaylist(list)}><span className="am-profile-playlist-cover">{list.cover_url ? <img src={publicMediaUrl(list.cover_url)} alt="" /> : 'ayna'}</span><span><strong>{list.title}</strong><small>{list.item_count || 0} products</small></span><span aria-hidden="true">→</span></button>)}</div> : <p className="am-profile-empty">No playlists shared yet.</p>}<div className="am-playlist-section-heading"><span>POSTS</span><strong>{profilePosts.length}</strong></div>{profilePosts.length ? profilePosts.map(renderPost) : <p className="am-profile-empty">No posts shared yet.</p>}</div></section>}
         {page.type === 'notifications' && (details || []).map((n) => <div className="am-card" key={n.id}><p>{n.message || n.body || n.type?.replace(/_/g, ' ')}</p><small>{timeLabel(n.created_at)}</small></div>)}
         {page.type === 'profile' && details && !authUser && <div className="am-profile-actions"><button type="button" className="am-primary" onClick={() => requireAccount('following people')}>Follow</button><button type="button" className="am-secondary" onClick={() => requireAccount('friends')}>Add friend</button></div>}
       </div> : <>
