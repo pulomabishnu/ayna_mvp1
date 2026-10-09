@@ -4,7 +4,7 @@ import './editorial.css';
 import './fresh.css';
 import './figma.css';
 import './cabinet.css';
-import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest, filterPrescriptionCareGate, hydrateCatalogProduct } from '../data/products.js';
+import { ALL_PRODUCTS, getEcosystemAlternatives, getRecommendationMatchesAndRest, filterPrescriptionCareGate, hydrateCatalogProduct } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
@@ -23,6 +23,7 @@ import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAu
 import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import { getNextArticle } from './utils/nextArticle.js';
+import { selectEcosystemProducts } from './utils/recommendationSelection.js';
 import AskAynaChip from './components/AskAynaChip.jsx';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
@@ -142,34 +143,15 @@ function capProductsPerBrand(products, maxPerBrand = MAX_PRODUCTS_PER_BRAND) {
 // — and every per-area seat within it, since each seat's product list is a
 // subset of this same array — stays a variety of brands instead of one
 // brand's whole catalog crowding everything else out.
-const MIN_ECOSYSTEM_MATCH_PERCENT = 30;
-const DEFAULT_PRODUCTS_PER_AREA = 3;
-
-function limitProductsPerArea(products, requestedCount) {
-  const perArea = [1, 2, 3, 5].includes(Number(requestedCount))
-    ? Number(requestedCount)
-    : DEFAULT_PRODUCTS_PER_AREA;
-  const counts = new Map();
-  return products.filter((product) => {
-    const area = product.areaKey || 'other';
-    const count = counts.get(area) || 0;
-    if (count >= perArea) return false;
-    counts.set(area, count + 1);
-    return true;
-  });
-}
-
 function seedEcosystemFromAnswers(quizAnswers) {
   const { matches } = getRecommendationMatchesAndRest(quizAnswers, null);
-  const strongMatches = matches.filter(
-    (p) => (getProfileMatchPercentForProduct(p, quizAnswers) || 0) >= MIN_ECOSYSTEM_MATCH_PERCENT
-  );
-  const withAreas = strongMatches.map((p) => {
+  const withAreas = matches.map((p) => {
     const area = resolveEcosystemProductArea(p, REAL_ECOSYSTEM_AREAS);
     return { ...p, areaKey: area ? area.key : null };
   });
-  return limitProductsPerArea(
+  return selectEcosystemProducts(
     capProductsPerBrand(withAreas),
+    quizAnswers,
     quizAnswers?.fullHealthIntake?.recommendedProductsPerArea,
   );
 }
@@ -255,7 +237,9 @@ export default function MobileApp() {
   usePushNotifications(authUser?.id);
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
-  const [askAynaHistory, setAskAynaHistory] = useState([]);
+  const [askAynaHistoryState, setAskAynaHistoryState] = useState({ userId: null, messages: [] });
+  const askAynaHistory = askAynaHistoryState.userId === authUser?.id ? askAynaHistoryState.messages : [];
+  const setAskAynaHistory = (messages) => setAskAynaHistoryState({ userId: authUser?.id, messages });
   // App-wide gate for Preferences > AI & Personalization > "Personalize with
   // my data" — real, account-scoped (notification_preferences table), loaded
   // once on sign-in below. Defaults true (matches the DB column default) so
@@ -288,7 +272,12 @@ export default function MobileApp() {
       // Mobile onboarding builds recommendations before sign-in. If that just
       // happened in this app session, save those recommendations for this
       // newly authenticated user before loading the canonical merged state.
-      const pending = pendingQuizEcosystemRef.current;
+      const pending = pendingQuizEcosystemRef.current || (session.pendingIntakeSync ? storedProducts : null);
+      if (session.pendingIntakeSync && lastQuizAnswers?.fullHealthIntake) {
+        // A completed anonymous intake must travel with its picks through
+        // OAuth redirects, including the recommendation-count preference.
+        await saveHealthIntakeForCurrentUser(lastQuizAnswers.fullHealthIntake);
+      }
       if (Array.isArray(pending) && pending.length > 0) {
         await upsertProductsBatch(supabase, userId, pending, {
           inEcosystem: true,
@@ -338,12 +327,11 @@ export default function MobileApp() {
         userName: firstName || prev.userName,
         myProducts: remoteProducts,
         hasEcosystem: remoteProducts.length > 0,
+        pendingIntakeSync: false,
         // Don't clobber a completion that just happened locally this same
         // session (e.g. mobile onboarding right before sign-in) with
         // possibly-older server data.
-        lastQuizAnswers: prev.lastQuizAnswers?.frustrations?.length
-          ? prev.lastQuizAnswers
-          : (restoredQuizAnswers || prev.lastQuizAnswers),
+        lastQuizAnswers: restoredQuizAnswers || (Array.isArray(pending) ? prev.lastQuizAnswers : null),
       }));
 
       if (remoteProducts.length > 0) setScreen('eco');
@@ -356,6 +344,9 @@ export default function MobileApp() {
     return () => {
       cancelled = true;
     };
+    // The current intake is captured on account transition. Including the
+    // session here would restart hydration after every local product edit.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser, updateSession, setTextSizeIndex]);
 
   // Same loadProductCatalog() call Discovery.jsx makes — a live source
@@ -431,6 +422,9 @@ export default function MobileApp() {
   // newly real here.
   const handleSignOut = () => {
     setOverlay(null);
+    setAskAynaOpen(false);
+    setAskAynaHistory([]);
+    pendingQuizEcosystemRef.current = null;
     resetSession();
     signOutSupabase();
     setScreen('landing');
@@ -498,7 +492,7 @@ export default function MobileApp() {
       await clearHealthIntakeForCurrentUser();
       pendingQuizEcosystemRef.current = null;
       ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
-      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false });
+      updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false });
       setEcosystemNotice('');
       setIntakeMode('new');
       setEditingHealthProfile(false);
@@ -564,6 +558,7 @@ export default function MobileApp() {
         myProducts: nextProducts,
         lastQuizAnswers: quizAnswers,
         hasEcosystem: nextProducts.length > 0,
+        pendingIntakeSync: !authUser,
       });
       if (intakeMode === 'add') {
         setEcosystemNotice(addedProducts.length
@@ -664,7 +659,7 @@ export default function MobileApp() {
         products={browseProducts}
         articles={ARTICLES}
         savedProducts={savedMap}
-        onToggleSaved={toggleSaved}
+        onToggleSaved={(product) => authUser ? toggleSaved(product) : requestAuth('Saved products')}
         onAddToEcosystem={handleAddToEcosystem}
         myProducts={myProducts}
         suggestedEcosystemProducts={suggestedEcosystemProducts}
@@ -803,7 +798,10 @@ export default function MobileApp() {
         />
       )}
       <AskAynaModal
+        key={authUser?.id || 'anonymous'}
         open={askAynaOpen}
+        enabled={!!authUser}
+        onOpen={() => setAskAynaOpen(true)}
         onClose={() => setAskAynaOpen(false)}
         profile={effectiveQuizAnswers}
         onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}

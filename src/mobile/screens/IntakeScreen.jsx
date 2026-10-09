@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_PRODUCTS } from '../../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profileCompleteness.js';
+import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
+import { normalizeAge, normalizeLifeStages, selectLifeStage } from '../../utils/intakeSelections.js';
 
 // Mirrors the real onboarding form's one-question-per-step wizard from
 // src/components/HealthIntakeForm.jsx (a full redesign — SUPPORT_GROUPS,
@@ -9,18 +11,8 @@ import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profile
 // near-verbatim from that file's `intakeVersion: 'beta-redesign-2026-09'`).
 // Keep in sync if the real intake changes again.
 //
-// Not ported to mobile:
-// - sessionStorage draft persistence (DRAFT_KEY on desktop) — the rest of
-//   this app doesn't persist in-progress screen state either, so a fresh
-//   quiz each time it's opened is consistent with existing mobile behavior.
-// - Server-side save (saveHealthIntakeForCurrentUser) — no real signed-in
-//   session exists in the mobile app yet, same reasoning as elsewhere in
-//   this build. onComplete still receives the exact same
-//   mapIntakeToLegacyQuizProfile(...) shape the recommendation engine
-//   expects, so matching works identically to the web version.
-// - The "what matters to you" trust ranking uses real drag-to-reorder, but
-//   built on Pointer Events rather than HTML5 native drag-and-drop, which
-//   doesn't fire reliably on touchscreens (see TrustRanker below).
+// MobileApp owns account persistence when onComplete receives this snapshot.
+// The wizard itself keeps draft edits separate until completion.
 
 /* ------------------------------- Data ------------------------------- */
 
@@ -234,6 +226,8 @@ function reconstructIntakeFromSnapshot(snapshot) {
     stopReasons: (product.stopReasons || []).filter((reason) => reason !== 'Other').concat(product.stopOther?.trim() || []),
   }));
   if (next.lifeStage === 'Other') next.lifeStage = next.lifeStageSelections[0] || '';
+  next.lifeStageSelections = normalizeLifeStages(next.lifeStageSelections.length ? next.lifeStageSelections : next.lifeStage ? [next.lifeStage] : []);
+  next.lifeStage = next.lifeStageSelections[0] || '';
   if (snapshot.fsaHsa) next.fsaHsaAnswer = FSA_HSA_REVERSE[snapshot.fsaHsa] || '';
   if (Array.isArray(snapshot.trustRanking) && snapshot.trustRanking.length > 0) {
     next.trustRanking = snapshot.trustRanking;
@@ -453,7 +447,7 @@ function buildSnapshot(intake) {
   const fsaHsa = { FSA: 'fsa', HSA: 'hsa', Both: 'both', No: 'none', 'Not sure': 'unsure' }[intake.fsaHsaAnswer] || '';
 
   return {
-    age: intake.age,
+    age: normalizeAge(intake.age),
     zipcode: intake.zipcode.trim(),
     location: '',
     lifeStage: primaryLifeStage,
@@ -1592,7 +1586,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       { id: 'avoidRepeat', section: 'history', title: 'Are there any products or brands you definitely do not want recommended again?', type: 'avoidRepeat', optional: true },
       { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
       { id: 'formats', section: 'preferences', title: 'How do you like products to fit your day?', subtitle: 'Search formats and pick what you would actually use.', type: 'formats', optional: true },
-      { id: 'recommendationCount', section: 'preferences', title: 'How many products would you like to see for each health area?', subtitle: 'We’ll show up to this many strong matches per area. You can always browse more.', type: 'recommendationCount', optional: true },
+      { id: 'recommendationCount', section: 'preferences', title: 'How many picks?', subtitle: 'Up to this many strong matches per health area.', type: 'recommendationCount', optional: true },
       { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'trustedBrands', optional: true }] : []),
@@ -1619,7 +1613,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   });
   const toggleLifeStage = (value) => setIntake((prev) => {
     const current = getLifeStages(prev);
-    const next = current.includes(value) ? current.filter((item) => item !== value) : [...current, value];
+    const next = selectLifeStage(current, value);
     return { ...prev, lifeStageSelections: next, lifeStage: next[0] || '' };
   });
   const addCustomSelection = (key, raw, exclusiveValues = []) => {
@@ -1814,16 +1808,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       );
     }
     if (step.type === 'fsa') return <Pills options={FSA_HSA} selected={intake.fsaHsaAnswer ? [intake.fsaHsaAnswer] : []} onToggle={(v) => set('fsaHsaAnswer', v)} />;
-    if (step.type === 'recommendationCount') return (
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 10 }}>
-        {[1, 2, 3, 5].map((count) => {
-          const selected = Number(intake.recommendedProductsPerArea) === count;
-          return <button key={count} type="button" aria-pressed={selected} onClick={() => set('recommendedProductsPerArea', count)} style={{ padding: '20px 10px', borderRadius: 4, border: selected ? '2px solid var(--ayna-figma-ink)' : '1px solid var(--ayna-border)', background: selected ? ACCENT_BG : CARD_BG, color: INK, fontFamily: "'Bricolage Grotesque','DM Sans',sans-serif", fontSize: 16, fontWeight: 800, cursor: 'pointer' }}>
-            {count} {count === 1 ? 'product' : 'products'}
-          </button>;
-        })}
-      </div>
-    );
+    if (step.type === 'recommendationCount') return <RecommendationCountPicker value={intake.recommendedProductsPerArea} onChange={(count) => set('recommendedProductsPerArea', count)} />;
     if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
     if (step.type === 'textarea') return <TextAreaField value={intake.anythingElse} onChange={(v) => set('anythingElse', v)} placeholder="Share anything else that could help us personalize your recommendations." />;
 

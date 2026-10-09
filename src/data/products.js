@@ -2273,17 +2273,21 @@ function evaluatePreferenceMatch(product, intake) {
         };
     }
 
-    const fsaAnswer = String(intake?.fsaHsaAnswer || intake?.fsaHsa || '');
-    if (fsaAnswer && !['No', 'Not sure'].includes(fsaAnswer)) {
-        if (product?.fsaHsaEligible === true) {
+    const fsaAnswer = String(intake?.fsaHsaAnswer || intake?.fsaHsa || '').toLowerCase();
+    if (['fsa', 'hsa', 'both'].includes(fsaAnswer)) {
+        const combined = product?.fsaHsaEligible ?? product?.fsa_hsa_eligible;
+        const fsa = product?.fsaEligible ?? product?.fsa_eligible ?? combined;
+        const hsa = product?.hsaEligible ?? product?.hsa_eligible ?? combined;
+        const eligible = fsaAnswer === 'fsa' ? fsa : fsaAnswer === 'hsa' ? hsa : fsa === true || hsa === true ? true : fsa === false && hsa === false ? false : undefined;
+        if (eligible === true) {
             parts.fsaHsa = { score: 1 };
             reasons.push({
                 component: 'fsaHsa',
                 weight: PREFERENCE_WEIGHTS.fsaHsa,
                 score: 1,
-                text: 'FSA/HSA eligible',
+                text: `${fsaAnswer === 'both' ? 'FSA or HSA' : fsaAnswer.toUpperCase()} eligible`,
             });
-        } else if (product?.fsaHsaEligible === false) {
+        } else if (eligible === false) {
             parts.fsaHsa = { score: 0 };
         }
     }

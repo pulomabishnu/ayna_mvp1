@@ -55,6 +55,7 @@ const LOCAL_API_ROUTES = [
   'contact',
   'notification-preferences',
   'export-data',
+  'ask-ayna',
 ]
 
 function apiDevProxy(routes, env) {

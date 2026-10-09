@@ -214,7 +214,7 @@ export function mapIntakeToLegacyQuizProfile(intake) {
   if ((intake?.symptoms || []).includes('bloating')) frustrations.add('Hormonal bloating');
 
   return {
-    age: intake?.age || '',
+    age: intake?.age == null || String(intake.age).trim() === '' || Number(intake.age) === 0 ? null : intake.age,
     frustrations: [...frustrations],
     preference: intake?.productPreferences || [],
     currentUse: intake?.preferredProductTypes || [],

@@ -63,6 +63,8 @@ function buildWelcome(firstName) {
 export default function AskAynaModal({
   open,
   onClose,
+  onOpen,
+  enabled = true,
   profile,
   onProfileUpdate,
   chatHistory = [],
@@ -77,6 +79,7 @@ export default function AskAynaModal({
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
+  const [hasOpened, setHasOpened] = useState(open);
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -98,10 +101,16 @@ export default function AskAynaModal({
   }, [chatHistory]);
 
   useEffect(() => {
-    if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, open]);
+    if (open) setHasOpened(true);
+  }, [open]);
 
-  if (!open) return null;
+  useEffect(() => {
+    if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Reopening preserves the existing scroll position.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
+
+  if (!enabled || (!open && !hasOpened)) return null;
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -166,16 +175,19 @@ export default function AskAynaModal({
 
   return (
     <div
+      className="ayna-ask-drawer"
+      data-open={open ? 'true' : 'false'}
       style={{
-        position: 'fixed',
+        position: 'absolute',
         inset: 0,
         zIndex: 60,
         background: 'var(--ayna-bg)',
         display: 'flex',
         flexDirection: 'column',
-        animation: 'ay-page .25s ease-out',
       }}
     >
+      <button type="button" className="ayna-ask-drawer-handle" onClick={onOpen} aria-label="Reopen Ask Ayna" tabIndex={open ? -1 : 0} aria-hidden={open}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" /></svg></button>
+      <div className="ayna-ask-drawer-content" role="dialog" aria-label="Ask Ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       <div
         style={{
           paddingTop: 'max(20px, env(safe-area-inset-top))',
@@ -207,11 +219,12 @@ export default function AskAynaModal({
             {name ? `Hey, ${name}.` : 'Hey.'}
           </div>
         </div>
-        <div
-          onClick={onClose}
+        <button
+          type="button" aria-label="Collapse Ask Ayna to the screen edge" onClick={onClose}
           style={{
-            width: 32,
-            height: 32,
+            width: 44,
+            height: 44,
+            border: 0,
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
@@ -222,8 +235,8 @@ export default function AskAynaModal({
             background: 'var(--ayna-chip-bg)',
           }}
         >
-          ×
-        </div>
+          ›
+        </button>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -314,6 +327,7 @@ export default function AskAynaModal({
           Ask
         </button>
       </form>
+      </div>
     </div>
   );
 }
