@@ -11,7 +11,7 @@ import ProductImage from '../components/ProductImage.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
 import { productHref } from '../../utils/productRoute.js';
 
-const CARD = { background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18, boxShadow: '0 2px 10px rgba(41,37,36,.04)' };
+const CARD = { background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '16px 0', boxShadow: 'none' };
 const EYEBROW = { fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' };
 const CHIP = { fontSize: 'calc(12px * var(--ayna-text-scale, 1))', background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-chip-border)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '7px 12px', textDecoration: 'none', display: 'inline-block' };
 const PLATFORM_LABELS = { reddit: 'Reddit', tiktok: 'TikTok', youtube: 'YouTube', instagram: 'Instagram', facebook: 'Facebook' };
@@ -273,6 +273,7 @@ export default function ProductDetailScreen({
 }) {
   const [partnerOpen, setPartnerOpen] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [activeDetailSection, setActiveDetailSection] = useState('fit');
   const [shareCopied, setShareCopied] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
   // only holds one layer) so "back" from here returns to this product
@@ -514,8 +515,13 @@ export default function ProductDetailScreen({
         )}
 
         {safetyAlertText && <SafetyBanner text={safetyAlertText} />}
+        {Array.isArray(warnings) && warnings.length > 0 && <div className="ayna-detail-warnings" role="note"><strong>Warnings</strong>{warnings.map((warning) => <p key={warning}>{warning}</p>)}</div>}
 
-        {onCommunityAction && <div style={{ display: 'flex', gap: 8, padding: '18px 22px 0', overflowX: 'auto' }}>
+        <div className="ayna-detail-sections" role="tablist" aria-label="Product information">
+          {['fit', 'evidence', 'ingredients', 'reviews'].map((section) => <button key={section} type="button" role="tab" aria-selected={activeDetailSection === section} onClick={() => setActiveDetailSection(section)}>{section[0].toUpperCase() + section.slice(1)}</button>)}
+        </div>
+
+        {activeDetailSection === 'reviews' && onCommunityAction && <div style={{ display: 'flex', gap: 8, padding: '18px 22px 0', overflowX: 'auto' }}>
           <button type="button" onClick={() => onCommunityAction('review')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Write a review</button>
           <button type="button" onClick={() => onCommunityAction('post')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Mention in a post</button>
           <button type="button" onClick={() => onCommunityAction('playlist')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Add to playlist</button>
@@ -523,7 +529,8 @@ export default function ProductDetailScreen({
         </div>}
 
         <div style={{ padding: '18px 22px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {whyMatched && <div style={{ ...CARD, background: 'var(--ayna-chip-bg)' }}><div style={EYEBROW}>Why this fits you</div><p style={{ fontSize: 13, lineHeight: 1.55, margin: '8px 0 0' }}>{whyMatched}</p></div>}
+          {activeDetailSection === 'fit' && whyMatched && <div style={{ ...CARD, background: 'var(--ayna-chip-bg)' }}><div style={EYEBROW}>Why this fits you</div><p style={{ fontSize: 13, lineHeight: 1.55, margin: '8px 0 0' }}>{whyMatched}</p></div>}
+          {activeDetailSection === 'evidence' && <>
             {(
               <div style={CARD}>
                 {sourceCountTotal > 0 && (
@@ -590,8 +597,9 @@ export default function ProductDetailScreen({
                 ))}
               </div>
             )}
+          </>}
 
-            {(communityCitationEntries.length > 0 || communityReview) && (
+            {activeDetailSection === 'reviews' && (communityCitationEntries.length > 0 || communityReview) && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
                 <div style={EYEBROW}>Social media + reviews</div>
                 {communityCitationEntries.length > 0 ? communityCitationEntries.map((entry) => (
@@ -615,7 +623,7 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {whoItsFor?.length > 0 && (
+            {activeDetailSection === 'fit' && whoItsFor?.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
                 <div style={EYEBROW}>Who it's for</div>
                 {(whoItsFor || []).map((item, i) => (
@@ -629,7 +637,7 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {howToUse?.steps?.length > 0 && (
+            {activeDetailSection === 'ingredients' && howToUse?.steps?.length > 0 && (
               <div style={CARD}>
                 <div style={EYEBROW}>How to use</div>
                 {howToUse?.intro && (
@@ -652,7 +660,7 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {(ingredientScience?.length > 0 || meaningfulDetail(safety.materials)) && (
+            {activeDetailSection === 'ingredients' && (ingredientScience?.length > 0 || meaningfulDetail(safety.materials)) && (
               <div style={{ ...CARD, padding: '6px 18px' }}>
                 <div style={{ ...EYEBROW, paddingTop: 12 }}>What's inside</div>
                 {(ingredientScience || []).map((item, i) => (
@@ -669,17 +677,11 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {Array.isArray(warnings) && warnings.length > 0 && (
-              <div style={{ ...CARD, borderLeft: '4px solid #991B1B' }}>
-                <div style={{ ...EYEBROW, color: '#991B1B' }}>Warnings</div>
-                {warnings.map((warning) => <p key={warning} style={{ fontSize: 13, lineHeight: 1.55, margin: '8px 0 0' }}>{warning}</p>)}
-              </div>
-            )}
-            {meaningfulDetail(safety.fdaStatus) && <div style={CARD}><div style={EYEBROW}>FDA status</div><p style={{ fontSize: 13, lineHeight: 1.55 }}>{safety.fdaStatus}</p></div>}
-            {factRows.length > 0 && <div style={{ ...CARD, padding: '6px 18px' }}>{factRows.map((row, i) => <SpecRow key={row.label} label={row.label} value={row.value} last={i === factRows.length - 1} />)}</div>}
-            {meaningfulDetail(ingredients) && <div style={CARD}><div style={EYEBROW}>Ingredients</div><p style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{ingredients}</p></div>}
-            {!buyUrl && whereToBuy.length > 0 && <div style={CARD}><SpecRow label="Where to buy" value={whereToBuy.join(' · ')} last /></div>}
-            <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />
+            {activeDetailSection === 'ingredients' && meaningfulDetail(safety.fdaStatus) && <div style={CARD}><div style={EYEBROW}>FDA status</div><p style={{ fontSize: 13, lineHeight: 1.55 }}>{safety.fdaStatus}</p></div>}
+            {activeDetailSection === 'ingredients' && factRows.length > 0 && <div style={{ ...CARD, padding: '6px 18px' }}>{factRows.map((row, i) => <SpecRow key={row.label} label={row.label} value={row.value} last={i === factRows.length - 1} />)}</div>}
+            {activeDetailSection === 'ingredients' && meaningfulDetail(ingredients) && <div style={CARD}><div style={EYEBROW}>Ingredients</div><p style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{ingredients}</p></div>}
+            {activeDetailSection === 'ingredients' && !buyUrl && whereToBuy.length > 0 && <div style={CARD}><SpecRow label="Where to buy" value={whereToBuy.join(' · ')} last /></div>}
+            {activeDetailSection === 'fit' && <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />}
           </div>
 
         <div style={{ padding: '18px 22px 0' }}>

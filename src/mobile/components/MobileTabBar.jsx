@@ -1,9 +1,9 @@
 const tabs = [
-  ['home', 'Ecosystem'],
-  ['browse', 'Discover'],
+  ['home', 'Home'],
+  ['browse', 'Shop'],
   ['community', 'Community'],
   ['ask', 'Ask'],
-  ['profile', 'You'],
+  ['profile', 'Me'],
 ];
 
 export default function MobileTabBar({ active, onHome, onBrowse, onCommunity, onAskAyna, onProfile }) {

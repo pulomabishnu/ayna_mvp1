@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
+import ProductImage from '../components/ProductImage.jsx';
+import { ALL_PRODUCTS } from '../../data/products.js';
 
-const DEFAULT_STATS = [
-  { label: 'Products', value: 0 },
-  { label: 'Reads', value: 0 },
-  { label: 'Pillars', value: 0 },
-];
+const AUTH_PRODUCT = ALL_PRODUCTS.find((product) => product.id === 'p-lola-pad') || ALL_PRODUCTS.find((product) => product.image);
 
 // Same three statements, same order, same required-before-signup gate as
 // src/components/AuthGate.jsx's CONSENT_ITEMS — this is a real compliance
@@ -151,7 +149,6 @@ function AppleButton({ onClick, disabled }) {
 }
 
 export default function SigninScreen({
-  stats = DEFAULT_STATS,
   initialMode = 'signup',
   authUser,
   onSignUp,
@@ -327,16 +324,7 @@ export default function SigninScreen({
         </>
       ) : (
         <>
-          {mode === 'signup' && stats.some((stat) => Number(stat.value) > 0) && (
-            <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
-              {stats.map((s) => (
-                <div key={s.label} style={{ flex: 1, borderRadius: 16, padding: '12px 10px', background: 'rgba(255,252,249,.13)', border: '1px solid rgba(255,255,255,.2)', textAlign: 'center' }}>
-                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(22px * var(--ayna-text-scale, 1))' }}>{s.value}</div>
-                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', textTransform: 'uppercase', opacity: 0.68, marginTop: 3 }}>{s.label}</div>
-                </div>
-              ))}
-            </div>
-          )}
+          {AUTH_PRODUCT && <div className="ayna-auth-campaign" aria-hidden="true"><span>ayna</span><div><ProductImage src={AUTH_PRODUCT.image || AUTH_PRODUCT.imageUrl || AUTH_PRODUCT.images?.[0]} alt="" /></div></div>}
 
           <div className="ayna-fresh-auth-heading" style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.08, marginBottom: 20 }}>
             {mode === 'signup' ? (<>Save it under<br />your name.</>) : (<>Welcome<br />back.</>)}

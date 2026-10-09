@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import ProductCard from '../components/ProductCard.jsx';
+import ProductImage from '../components/ProductImage.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
@@ -10,7 +11,6 @@ import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
-import { useCardLayout } from '../hooks/useCardLayout.js';
 
 // Fisher-Yates — uniform shuffle, unlike sort(() => Math.random() - 0.5)
 // (which is biased and not a proper random permutation).
@@ -118,58 +118,15 @@ function PersonalizedToggle({ on, disabled, onClick }) {
   );
 }
 
-function LayoutToggle({ layout, onToggle }) {
+function CategoryPhotoRow({ products, active, onSelect }) {
+  const groups = ['all', 'period', 'intimate', 'hormones', 'fertility', 'pelvic', 'tests-devices']
+    .map((id) => MACRO_GROUPS.find((group) => group.id === id)).filter(Boolean);
   return (
-    <button type="button"
-      onClick={onToggle}
-      aria-label={layout === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
-      style={{
-        width: 44,
-        height: 44,
-        borderRadius: 14,
-        border: '1px solid var(--ayna-chip-border)',
-        background: 'var(--ayna-chip-bg)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
-        color: 'var(--ayna-text-muted)',
-        marginLeft: 8,
-      }}
-    >
-      {layout === 'grid' ? 'List' : 'Grid'}
-    </button>
-  );
-}
-
-function CategoryChipRow({ groups, active, onSelect }) {
-  return (
-    <div className="ayna-fresh-category-row" style={{ display: 'flex', gap: 7, overflowX: 'auto', padding: '0 20px 12px', scrollbarWidth: 'none' }}>
-      {groups.map((g) => (
-        <button
-          type="button"
-          className="ayna-fresh-category-chip"
-          aria-pressed={active === g.id}
-          key={g.id}
-          onClick={() => onSelect(g.id)}
-          style={{
-            flex: 'none',
-            padding: '7px 13px',
-            borderRadius: 99,
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 600,
-            fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            background: active === g.id ? 'var(--ayna-text)' : 'var(--ayna-chip-bg)',
-            color: active === g.id ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)',
-            border: '1px solid ' + (active === g.id ? 'var(--ayna-text)' : 'var(--ayna-chip-border)'),
-          }}
-        >
-          {g.label}
-        </button>
-      ))}
+    <div className="ayna-shop-category-row" aria-label="Shop by category">
+      {groups.map((group) => {
+        const sample = group.id === 'all' ? null : products.find((product) => itemMatchesMacroGroup(product, group.id) && (product.image || product.imageUrl || product.images?.[0]));
+        return <button className="ayna-shop-category" type="button" key={group.id} aria-pressed={active === group.id} onClick={() => onSelect(group.id)}><span className="ayna-shop-category-image">{sample ? <ProductImage src={sample.image || sample.imageUrl || sample.images?.[0]} alt="" allowBrandLogo={sample.type === 'digital'} style={{ objectFit: 'contain' }} /> : <span className="ayna-shop-all-mark" aria-hidden="true">a</span>}</span><span>{group.label}</span></button>;
+      })}
     </div>
   );
 }
@@ -258,7 +215,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
         {visibleProducts.map((p, index) => (
           <Fragment key={p.id}>
             <ProductCard product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
-            {showOnboarding && index === 0 && <section className="ayna-figma-discover-cta"><span>Want personal matches? Build your Ecosystem.</span><button type="button" onClick={onStartQuiz}>Start <span aria-hidden="true">→</span></button></section>}
+            {showOnboarding && index === Math.min(3, visibleProducts.length - 1) && <section className="ayna-figma-discover-cta"><span>See your match</span><button type="button" onClick={onStartQuiz}>Get matched <span aria-hidden="true">→</span></button></section>}
           </Fragment>
         ))}
         {loadingMore && !isList && (
@@ -319,7 +276,7 @@ export default function BrowseScreen({
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [sortBy, setSortBy] = useState('default');
-  const { layout: cardLayout, toggleLayout } = useCardLayout();
+  const cardLayout = 'grid';
   // AI fallback for a typed search the local catalog scoring found nothing
   // for — same /api/search-suggestions the desktop Discovery page falls
   // back to (see fetchSearchSuggestions.js), not a separate mechanism.
@@ -494,9 +451,8 @@ export default function BrowseScreen({
         onOpenProfile={onOpenProfile}
       />
 
-      <div className="ayna-fresh-browse-heading">
-        <span>FOR YOU / DISCOVER</span>
-        <h1>Start <em>with what</em><br />you need.</h1>
+      <div className="ayna-fresh-browse-heading ayna-shop-heading">
+        <h1>Shop</h1>
         <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
       </div>
 
@@ -508,7 +464,6 @@ export default function BrowseScreen({
         {mode === 'products' && (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
-            <LayoutToggle layout={cardLayout} onToggle={toggleLayout} />
           </div>
         )}
         {mode === 'reads' && (
@@ -517,7 +472,7 @@ export default function BrowseScreen({
       </div>
 
       {mode === 'products' && (
-        <CategoryChipRow groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} />
+        <CategoryPhotoRow products={products} active={activeGroup} onSelect={setActiveGroup} />
       )}
 
       {mode === 'products' && <div style={{ padding: '0 20px 14px' }}>
@@ -525,13 +480,17 @@ export default function BrowseScreen({
           <button type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)} style={{ minHeight: 44, padding: '10px 16px', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', fontWeight: 700 }}>Filters{Object.values(filters).filter((value) => value !== 'all').length ? ` · ${Object.values(filters).filter((value) => value !== 'all').length}` : ''}</button>
           <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto', color: 'var(--ayna-text-muted)', fontSize: 12 }}>Sort <select aria-label="Sort products" value={sortBy} onChange={(event) => setSortBy(event.target.value)} style={{ minHeight: 44, maxWidth: 155, border: '1px solid var(--ayna-border)', borderRadius: 12, padding: '8px 10px', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)' }}><option value="default">Featured</option><option value="rating">Highest rated</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label>
         </div>
-        {showFilters && <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 10, padding: 14, marginTop: 10, border: '1px solid var(--ayna-border)', borderRadius: 18, background: 'var(--ayna-surface)' }}>
+        {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
+          <div className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>
+          <div className="ayna-shop-filter-head"><strong>Filters</strong><button type="button" aria-label="Close filters" onClick={() => setShowFilters(false)}>Close</button></div>
+          <div className="ayna-shop-filter-fields">
           {FILTER_FIELDS.map(([key, label, options]) => <label key={key} style={{ display: 'grid', gap: 5, color: 'var(--ayna-text-muted)', fontSize: 11, fontWeight: 600 }}>{label}<select value={filters[key]} onChange={(event) => setFilters((current) => ({ ...current, [key]: event.target.value }))} style={{ width: '100%', minWidth: 0, minHeight: 44, border: '1px solid var(--ayna-border)', borderRadius: 10, background: 'var(--ayna-bg)', color: 'var(--ayna-heading)', padding: '8px' }}>{(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, CATEGORY_LABELS[category] || category.replaceAll('-', ' ')])] : options).map(([value, text]) => <option key={value} value={value}>{text}</option>)}</select></label>)}
-          <button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); }} style={{ gridColumn: '1 / -1', minHeight: 44, border: 0, borderRadius: 10, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', fontWeight: 700 }}>Clear filters</button>
+          </div>
+          <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Show {filtered.length} products</button></div>
+          </div>
         </div>}
       </div>}
 
-      {mode === 'products' && <div className="ayna-figma-ranked"><span>RANKED BY</span><strong>{personalized && hasProfile ? 'Your profile' : 'Relevance'}</strong><span>Safety · Fit · Preferences · Evidence</span></div>}
 
       {/* Once the ecosystem exists, Browse stays pure browsing — the
           "update your health" prompt lives on the Ecosystem screen instead,

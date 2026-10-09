@@ -1,51 +1,26 @@
 import { useEffect, useState } from 'react';
+import { ALL_PRODUCTS } from '../../data/products.js';
+import ProductImage from '../components/ProductImage.jsx';
 
-const DEFAULT_STATUSES = [
-  'matching symptoms to evidence',
-  'filtering for your medicine cabinet',
-  'fitting your budget',
-  'arranging your pillars',
-];
+const STEPS = ['your answers', 'the evidence', 'your matches'];
+const OBJECTS = ['p-lola-pad', 'p-spearmint-pcos', 'p-portable-heating']
+  .map((id) => ALL_PRODUCTS.find((product) => product.id === id)).filter(Boolean);
 
-export default function BuildingScreen({ onFinish, onBack, statuses = DEFAULT_STATUSES, headline = 'Reading your answers' }) {
-  const [statusIndex, setStatusIndex] = useState(0);
+export default function BuildingScreen({ onFinish, onBack }) {
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
-    const stepTimers = statuses.map((_, i) => setTimeout(() => setStatusIndex(i), 900 * i));
-    const finishTimer = setTimeout(() => {
-      if (onFinish) onFinish();
-    }, 900 * statuses.length + 300);
-    return () => {
-      stepTimers.forEach(clearTimeout);
-      clearTimeout(finishTimer);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const timers = STEPS.map((_, index) => window.setTimeout(() => setStep(index), index * 600));
+    const finish = window.setTimeout(() => onFinish?.(), 2200);
+    return () => { timers.forEach(window.clearTimeout); window.clearTimeout(finish); };
+  }, [onFinish]);
 
-  return (
-    <div className="ayna-fresh-building"
-      style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#16122A',
-        color: '#FFFFFF',
-        padding: 40,
-        animation: 'ay-page .25s ease-out',
-      }}
-    >
-      <button type="button" onClick={onBack} style={{ position: 'absolute', top: 'max(20px, env(safe-area-inset-top))', left: 24, border: '1px solid rgba(255,255,255,.35)', borderRadius: 99, padding: '10px 15px', background: 'rgba(255,255,255,.08)', color: '#fff', fontSize: 14 }}>← Back</button>
-      <div style={{ position: 'relative', width: 150, height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 34 }}>
-        <div style={{ position: 'absolute', inset: 0, borderRadius: 99, border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 2.6s ease-out infinite' }} />
-        <div style={{ position: 'absolute', inset: 0, borderRadius: 99, border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 2.6s ease-out infinite 1.3s' }} />
-        <div style={{ width: 66, height: 66, borderRadius: 99, background: '#9BF0E1', animation: 'ay-float 3.4s ease-in-out infinite' }} />
-      </div>
-      <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(26px * var(--ayna-text-scale, 1))', textAlign: 'center', lineHeight: 1.2 }}>{headline}</div>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.6px', opacity: 0.72, marginTop: 12, textAlign: 'center' }}>
-        {statuses[statusIndex]}
-      </div>
+  return <div className="ayna-cabinet-building" role="status" aria-live="polite">
+    <button type="button" className="ayna-cabinet-building-back" onClick={onBack}>Back</button>
+    <span className="ayna-cabinet-building-label">AYNA / MATCHING</span>
+    <div className="ayna-cabinet-building-shelf" aria-hidden="true">
+      {OBJECTS.map((product, index) => <span key={product.id} className="ayna-cabinet-building-object" style={{ '--object-index': index }}><ProductImage src={product.image || product.imageUrl || product.images?.[0]} alt="" /></span>)}
     </div>
-  );
+    <div className="ayna-cabinet-building-progress"><span>{String(step + 1).padStart(2, '0')} / 03</span><strong>{STEPS[step]}</strong></div>
+  </div>;
 }

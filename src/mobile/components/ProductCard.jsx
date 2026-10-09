@@ -31,9 +31,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const isPartner = isPartnerBrandItem(product);
   const buyUrl = getBuyUrl(product);
   const isList = variant === 'list';
-  const contexts = [['doctor', 'Clinical'], ['scientific', 'Research'], ['community', 'Community']]
+  const contexts = isList ? [['doctor', 'Clinical'], ['scientific', 'Research'], ['community', 'Community']]
     .filter(([kind]) => getVerificationLinks(product, kind).some((link) => link?.url || link?.href))
-    .map(([, label]) => label);
+    .map(([, label]) => label) : [];
   const tone = ['pad', 'tampon', 'cup', 'disc', 'period-underwear'].includes(category) ? 'mint'
     : ['telehealth', 'digital', 'therapy'].includes(category) || isService ? 'lilac'
       : ['supplement', 'vitamin'].includes(category) ? 'lime' : 'pink';
@@ -42,22 +42,22 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
     <article className={`ayna-fresh-product-card ${isList ? 'is-list' : ''} tone-${tone}`}>
       <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}${resolvedPrice ? `, ${resolvedPrice}` : ''}${showMatch ? `, ${match.percent} percent match` : ''}. View product details`}>
       <span className="ayna-fresh-product-image">
-        {showMatch && <span className="ayna-fresh-match-badge"><strong>{match.percent}</strong><span>match /100<br />for your profile</span></span>}
+        {showMatch && <span className="ayna-fresh-match-badge"><strong>{match.percent}%</strong><span>MATCH</span></span>}
         <ProductImage src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
       </span>
       <span className="ayna-fresh-product-copy">
         <span className="ayna-fresh-product-category">{secondaryLabel}{isPartner ? ' / Partner' : ''}</span>
         <strong>{name}</strong>
-        {relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
+        {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
         <span className="ayna-fresh-product-foot"><b>{resolvedPrice || 'See details'}</b></span>
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
       </button>
-      <div className="ayna-fresh-product-actions">
+      {isList && <div className="ayna-fresh-product-actions">
         <button type="button" onClick={onClick}>Details <span aria-hidden="true">→</span></button>
         {buyUrl && <a href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" aria-label={`Shop ${name} on the seller's site`}>{isService ? 'Explore care' : 'Shop'} <span aria-hidden="true">↗</span></a>}
-      </div>
-      {buyUrl && <small className="ayna-fresh-product-seller-note">{isPartner ? 'Partner link · ' : ''}Opens seller site</small>}
+      </div>}
+      {isList && buyUrl && <small className="ayna-fresh-product-seller-note">{isPartner ? 'Partner link · ' : ''}Opens seller site</small>}
     </article>
   );
 }
