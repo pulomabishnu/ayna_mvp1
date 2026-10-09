@@ -1903,7 +1903,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         >
           <span>{isLast ? 'Finish profile' : 'Continue'}</span>
           {countForStep > 0 && <span style={{ background: 'rgba(42,31,78,.16)', borderRadius: 999, padding: '2px 9px', fontSize: 'calc(12px * var(--ayna-text-scale, 1))' }}>{countForStep}</span>}
-          <span aria-hidden="true">→</span>
+          <span className="ayna-intake-next-arrow" aria-hidden="true">→</span>
         </button>
       </div>
     </div>
