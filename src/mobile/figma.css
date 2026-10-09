@@ -75,6 +75,21 @@
 .ayna-mobile .ayna-fresh-intro-steps strong { margin-top:5px; color:var(--ayna-figma-ink); font-size:10px; line-height:1.1; }
 .ayna-mobile .ayna-fresh-intro-content .ayna-fresh-start { min-height:43px; }
 .ayna-mobile .ayna-fresh-plain-link { color:var(--ayna-figma-ink)!important; text-decoration:none; font-size:11px; }
+.ayna-mobile .ayna-fresh-intake { background:var(--ayna-figma-paper)!important; color:var(--ayna-figma-ink)!important; }
+.ayna-mobile .ayna-fresh-intake-header { padding:17px 18px 13px!important; background:var(--ayna-figma-ink)!important; }
+.ayna-mobile .ayna-fresh-intake-header>div:first-child>div:nth-child(2)>div { color:var(--ayna-figma-mint)!important; font-family:'DM Sans',sans-serif!important; font-weight:800; }
+.ayna-mobile .ayna-fresh-intake-header>div:last-child { height:4px!important; border-radius:0!important; background:#514b60!important; }
+.ayna-mobile .ayna-fresh-intake-header>div:last-child>div { border-radius:0!important; background:var(--ayna-figma-mint)!important; }
+.ayna-mobile .ayna-fresh-intake-body { background:var(--ayna-figma-paper)!important; }
+.ayna-mobile .ayna-fresh-intake-body>div:first-child { padding:24px 18px 4px!important; }
+.ayna-mobile .ayna-fresh-intake-title { color:var(--ayna-figma-ink)!important; font:800 calc(32px * var(--ayna-text-scale,1))/1 'Bricolage Grotesque','DM Sans',sans-serif!important; letter-spacing:-.05em!important; }
+.ayna-mobile .ayna-fresh-intake-subtitle { color:var(--ayna-text-muted)!important; }
+.ayna-mobile .ayna-fresh-intake-body>div:nth-child(2) { padding:16px 18px 24px!important; }
+.ayna-mobile .ayna-fresh-intake-body>div:nth-child(2)>div { border-radius:4px!important; box-shadow:none!important; }
+.ayna-mobile .ayna-fresh-intake-body select { font-family:'DM Sans',sans-serif!important; font-weight:700; color:var(--ayna-figma-ink)!important; }
+.ayna-mobile .ayna-fresh-intake-footer { padding:11px 18px max(13px,env(safe-area-inset-bottom))!important; border-top:1px solid var(--ayna-border)!important; background:var(--ayna-figma-paper)!important; box-shadow:none!important; }
+.ayna-mobile .ayna-fresh-intake-footer button:not(:disabled) { min-height:49px!important; border-radius:4px!important; background:var(--ayna-figma-ink)!important; color:#fff!important; }
+.ayna-mobile .ayna-fresh-intake-footer button:disabled { min-height:49px!important; border-radius:4px!important; background:#d9deda!important; color:#51545c!important; }
 
 /* Ecosystem: mint context, one large real product image, and a compact routine. */
 .ayna-mobile .ayna-figma-ecosystem { background:var(--ayna-figma-paper)!important; padding-bottom:34px; }

@@ -1842,14 +1842,14 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     >
       <div className="ayna-fresh-intake-header" style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-          <div onClick={goBack} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid rgba(255,249,242,.28)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
+          <button type="button" aria-label="Go back" onClick={goBack} style={{ width: 32, height: 32, borderRadius: 4, border: '1px solid rgba(255,249,242,.45)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F8F8F3" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-          </div>
+          </button>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: '#CDF500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
           </div>
           {step.optional && (
-            <div onClick={goNext} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.65)', cursor: 'pointer', flex: 'none' }}>Skip</div>
+            <button type="button" onClick={goNext} style={{ padding: '7px 0', border: 0, background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#F8F8F3', cursor: 'pointer', flex: 'none' }}>Skip</button>
           )}
         </div>
         <div style={{ height: 4, borderRadius: 99, background: 'rgba(255,249,242,.24)', overflow: 'hidden' }}>
