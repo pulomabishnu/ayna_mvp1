@@ -838,8 +838,9 @@ function AgeCard({ value, onChange, underage, onOpenGate }) {
   const hasValue = value !== '' && value !== null && value !== undefined;
 
   return (
-    <div style={{ background: CARD_BG, borderRadius: 24, padding: 20, boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
+    <div className="ayna-intake-age-card" style={{ background: CARD_BG, borderRadius: 24, padding: 20, boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
       <div
+        className="ayna-intake-age-selector"
         style={{
           borderRadius: 18,
           padding: '16px 18px',
@@ -869,15 +870,13 @@ function AgeCard({ value, onChange, underage, onOpenGate }) {
             {Array.from({ length: 103 }, (_, index) => index + 18).map((age) => <option key={age} value={age}>{age}</option>)}
           </select>
         </div>
-        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: underage ? WARNING_BODY : BODY_TEXT, marginTop: 8 }}>
-          {underage ? "That's under our age requirement" : 'Choose your age from the list'}
-        </div>
+        {underage && <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: WARNING_BODY, marginTop: 8 }}>That's under our age requirement</div>}
       </div>
 
-      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 20, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
+      <div className="ayna-intake-age-note" style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 20, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 2 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
         <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT }}>
-          We store your age, not a date of birth. It helps us order relevant questions; your selected life stage, symptoms, and goals guide product matches. We never use it to advertise to you.
+          Age helps us tailor the questions. We never use it for advertising.
         </div>
       </div>
 

@@ -68,14 +68,6 @@ function HeartIcon({ filled }) {
   );
 }
 
-function ChevronIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" style={{ stroke: 'var(--ayna-text-faint)', flex: 'none' }}>
-      <path d="M9 6l6 6-6 6" />
-    </svg>
-  );
-}
-
 const BADGE_STYLES = {
   eco: { background: 'rgba(47,107,79,.92)', color: '#F2F8F4', label: 'IN ECOSYSTEM' },
   new: { background: 'var(--ayna-glass-bg)', color: 'var(--ayna-text-muted)', label: 'NOT TRIED' },
@@ -338,42 +330,10 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
 
       <div style={{ flex: 1, overflowY: 'auto', padding: isEmpty ? '10px 22px 30px' : '16px 20px 0' }}>
         {isEmpty ? (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div className="ayna-fresh-saved-empty-hero" style={{ height: 186, flex: 'none', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 20, borderRadius: 11, background: '#16122A', color: '#fff' }}>
-              <span style={{ color: '#9BF0E1', fontSize: 11, fontWeight: 800, letterSpacing: '.12em' }}>YOUR LITTLE SHORTLIST</span>
-              <strong style={{ maxWidth: 250, fontSize: 29, lineHeight: 1.05, letterSpacing: '-.05em' }}>Keep the good stuff close.</strong>
-            </div>
-
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '18px 0 0', textAlign: 'center', color: 'var(--ayna-heading)' }}>Nothing saved yet.</div>
-            <div style={{ margin: '10px 0 0', padding: '0 12px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, textAlign: 'center' }}>
-              Save products you want to compare or come back to later.
-            </div>
-            <button type="button" className="ayna-saved-empty-cta"
-              onClick={onBrowse}
-              style={{ marginTop: 22, display: 'block', width: '100%', textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', padding: 14, borderRadius: 14, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
-            >
-              Browse products
-            </button>
-
-            <div style={{ marginTop: 30, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Start from your profile</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 12 }}>
-              <button type="button" className="ayna-saved-empty-link" onClick={onBrowse} style={{ display: 'flex', alignItems: 'center', gap: 13, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: '14px 15px', cursor: 'pointer' }}>
-                <span className="ayna-saved-empty-number" style={{ width: 38, height: 38, flex: 'none', borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', background: 'var(--ayna-peach)', color: 'var(--ayna-accent-dark)' }}>1</span>
-                <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: 'block', fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Cycle support</span>
-                  <span style={{ display: 'block', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>Browse period and cycle products</span>
-                </span>
-                <ChevronIcon />
-              </button>
-              <button type="button" className="ayna-saved-empty-link" onClick={onGoEco} style={{ display: 'flex', alignItems: 'center', gap: 13, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: '14px 15px', cursor: 'pointer' }}>
-                <span className="ayna-saved-empty-number" style={{ width: 38, height: 38, flex: 'none', borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', background: '#E7E3F2', color: 'var(--ayna-purple)' }}>2</span>
-                <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: 'block', fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Your Ecosystem</span>
-                  <span style={{ display: 'block', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>Build or revisit your picks</span>
-                </span>
-                <ChevronIcon />
-              </button>
-            </div>
+          <div className="ayna-saved-empty">
+            <div className="ayna-saved-empty-stage" aria-hidden="true"><span /><span /><span /></div>
+            <h2>Nothing saved yet.</h2>
+            <button type="button" onClick={onBrowse}>Shop products <span aria-hidden="true">→</span></button>
           </div>
         ) : isSingle ? (
           <SingleSavedHero

@@ -259,7 +259,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
           </div>
           <div style={{ minWidth: 0 }}>
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{name}</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'rgba(255,249,242,.62)', marginTop: 5 }}>{memberSince}</div>
+            {memberSince && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'rgba(255,249,242,.62)', marginTop: 5 }}>{memberSince}</div>}
           </div>
         </div>
         <div className="ayna-fresh-profile-stats" style={{ position: 'relative', display: 'flex', gap: 8, marginTop: 22 }}>
@@ -310,7 +310,6 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 600, fontSize: 'calc(15.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{row.title}</div>
-              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>{row.sub}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 'none' }}>
               {row.badge && <div style={{ background: 'var(--ayna-accent)', color: '#231A12', fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.5px', padding: '3px 7px', borderRadius: 99 }}>{row.badge}</div>}
@@ -3272,7 +3271,7 @@ export default function ProfileFlow({
         onClose={onClose}
         name={name}
         initial={initial}
-        memberSince={authUser?.created_at ? formatMemberSince(authUser.created_at) : 'Member since 2026'}
+        memberSince={authUser?.created_at ? formatMemberSince(authUser.created_at) : ''}
         ecosystemCount={ecosystemCount}
         savedCount={savedCount}
         profileFilledPct={profileFilledPct}
