@@ -13,6 +13,7 @@ function CabinetProduct({ product, quizAnswers, onOpen }) {
     <span className="ayna-cabinet-product-image"><ProductImage src={image} alt="" allowBrandLogo={product.type === 'digital'} style={{ objectFit: 'contain' }} /></span>
     {score != null && <span className="ayna-match-stamp"><strong>{score}%</strong><small>MATCH</small></span>}
     <span className="ayna-cabinet-product-name">{product.name}</span>
+    {score != null && <span className="ayna-cabinet-match-bar" aria-hidden="true"><span style={{ width: `${score}%` }} /></span>}
   </button>;
 }
 
