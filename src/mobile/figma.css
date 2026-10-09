@@ -314,7 +314,7 @@
 .ayna-mobile .ayna-fresh-product-detail { background:var(--ayna-figma-paper)!important; }
 .ayna-mobile .ayna-fresh-product-detail>div:first-child>div:first-child { padding:10px 17px!important; background:var(--ayna-figma-paper); }
 .ayna-mobile .ayna-fresh-detail-image { margin:0!important; border-radius:0!important; background:var(--ayna-figma-mist)!important; }
-.ayna-mobile .ayna-fresh-detail-image>div { aspect-ratio:1.18!important; border-radius:0!important; }
+.ayna-mobile .ayna-fresh-detail-image>div { aspect-ratio:1.18!important; border-radius:0!important; background:var(--ayna-figma-mist)!important; }
 .ayna-mobile .ayna-fresh-detail-image img { object-fit:cover!important; padding:0!important; }
 .ayna-figma-detail-score { position:absolute; left:9px; bottom:9px; z-index:2; cursor:pointer; }
 .ayna-figma-guest-match { position:absolute; left:9px; bottom:9px; z-index:2; display:flex; align-items:center; gap:7px; padding:7px 10px; border:0; border-left:4px solid var(--ayna-figma-ink); border-radius:2px; background:var(--ayna-figma-mint); color:var(--ayna-figma-ink); text-align:left; font-size:10px; font-weight:800; line-height:1.1; cursor:pointer; }
