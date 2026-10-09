@@ -1,15 +1,15 @@
-export default function ArticleCard({ article, onClick }) {
+export default function ArticleCard({ article, onClick, compact = false }) {
   const { title, teaser, tags = [], image } = article || {};
   return (
-    <button type="button" onClick={onClick} className="ayna-editorial-read">
+    <button type="button" onClick={onClick} className={`ayna-editorial-read${compact ? ' is-compact' : ''}`}>
       <span className="ayna-editorial-read-copy">
         {tags[0] && <small>{tags[0]}</small>}
         <strong>{title}</strong>
-        {teaser && <span>{teaser}</span>}
+        {!compact && teaser && <span>{teaser}</span>}
       </span>
-      <span className="ayna-editorial-read-image">
+      {!compact && <span className="ayna-editorial-read-image">
         {image ? <img src={image} alt="" loading="lazy" /> : <span>ayna</span>}
-      </span>
+      </span>}
     </button>
   );
 }

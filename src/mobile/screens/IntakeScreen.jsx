@@ -1574,8 +1574,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
   const visibleSteps = useMemo(() => {
     const steps = [
-      { id: 'age', section: 'core', title: 'First, how old are you?', subtitle: 'Only your age, never your birthday.', type: 'age', optional: true },
-      { id: 'lifeStage', section: 'core', title: 'Where are you at right now?', subtitle: 'Your chapter can change. Pick everything that fits today.', type: 'lifeStage', optional: true },
+      { id: 'age', section: 'core', title: 'How old are you?', type: 'age', optional: true },
+      { id: 'lifeStage', section: 'core', title: 'Where are you at right now?', type: 'lifeStage', optional: true },
       { id: 'zip', section: 'core', title: 'What is your ZIP code?', subtitle: 'Optional. This helps us personalize local care and availability.', type: 'zip', optional: true },
       { id: 'support', section: 'support', title: 'What could use a little support?', subtitle: 'Search a feeling, symptom, or goal. Add your own if we missed it.', type: 'support', optional: true },
       ...(isPeriodRelevant(intake) ? [
@@ -1670,7 +1670,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     if (step.type === 'lifeStage') return (
       <>
         {showMidlifeFirst && <p className="ayna-intake-note">We moved some life-stage choices higher based on your age. Choose only what describes you; age alone does not determine your life stage.</p>}
-        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" numbered />
+        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" />
         {selectedLifeStages.includes('I am postpartum') && (
           <div style={{ marginTop: 18, padding: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 18, textAlign: 'left' }}>
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: INK, marginBottom: 12 }}>Are you currently breastfeeding?</div>
@@ -1864,7 +1864,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
             <button type="button" onClick={goNext} style={{ padding: '7px 0', border: 0, background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#FAFBF8', cursor: 'pointer', flex: 'none' }}>Skip</button>
           )}
         </div>
-        <div className="ayna-intake-progress-copy"><span>YOUR AYNA EDIT</span><strong>{String(currentIndex + 1).padStart(2, '0')} / {String(visibleSteps.length).padStart(2, '0')}</strong></div>
+        <div className="ayna-intake-progress-copy"><strong>{String(currentIndex + 1).padStart(2, '0')} / {String(visibleSteps.length).padStart(2, '0')}</strong></div>
         <div style={{ height: 4, borderRadius: 99, background: 'rgba(255,249,242,.24)', overflow: 'hidden' }}>
           <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#9BF0E1,#9BF0E1)' }} />
         </div>
@@ -1872,7 +1872,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
       <div className="ayna-fresh-intake-body" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
         <div style={{ padding: '22px 20px 0' }}>
-          <div className="ayna-intake-question-kicker"><span>{SECTION_LABELS[step.section]}</span>{countForStep > 0 && <strong>{countForStep} picked</strong>}</div>
+          {countForStep > 0 && <div className="ayna-intake-question-kicker"><strong>{countForStep} picked</strong></div>}
           <div className="ayna-fresh-intake-title" style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.045em', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#FAFBF8' }}>{step.title}</div>
           {step.subtitle && <p className="ayna-fresh-intake-subtitle" style={{ margin: '8px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
           {flaggedStepIds.has(step.id) && (

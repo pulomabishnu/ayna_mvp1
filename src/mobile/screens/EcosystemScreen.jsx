@@ -40,7 +40,7 @@ export default function EcosystemScreen({
 
     <section className="ayna-cabinet-stage" aria-labelledby="ayna-cabinet-title">
       <div className="ayna-cabinet-topline"><span>YOUR CABINET</span><button type="button" onClick={onRetake}>Edit answers</button></div>
-      <h1 id="ayna-cabinet-title">{name === 'You' ? 'Your' : `${name}'s`} cabinet.</h1>
+      <h1 id="ayna-cabinet-title">{name === 'You' ? 'Your' : `${name}'s`} cabinet</h1>
       {topAreas[0] && <span className="ayna-cabinet-focus">{topAreas[0]}</span>}
       <div className="ayna-cabinet-shelf" aria-label={currentProducts.length ? 'Your highest matching products' : 'Products worth considering'}>
         {shelfProducts.length ? shelfProducts.map((product) => <CabinetProduct key={product.id} product={product} quizAnswers={authUser ? quizAnswers : null} onOpen={onOpenProduct} />) : <p>Your cabinet is ready for its first pick.</p>}
@@ -61,7 +61,7 @@ export default function EcosystemScreen({
       <div className="ayna-editorial-product-grid">{suggestedEcosystemProducts.map((product) => <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to cabinet</button></div>)}</div>
     </section>}
 
-    {relatedReads.length > 0 && <section className="ayna-cabinet-reads" aria-labelledby="ayna-cabinet-reads-title"><div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-reads-title">Read next</h2></div>{relatedReads.slice(0, 3).map((article) => <ArticleCard key={article.id} article={article} onClick={() => onOpenArticle?.(article)} />)}</section>}
+    {relatedReads.length > 0 && <section className="ayna-cabinet-reads" aria-labelledby="ayna-cabinet-reads-title"><div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-reads-title">Read next</h2></div>{relatedReads.slice(0, 3).map((article) => <ArticleCard key={article.id} article={article} compact onClick={() => onOpenArticle?.(article)} />)}</section>}
 
     <section className="ayna-cabinet-more" aria-label="More ways to manage your cabinet">
       {earlierProducts.length > 0 && <details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>These remain saved, but fit your current answers less closely.</p><div className="ayna-editorial-product-grid">{earlierProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} />)}</div></details>}
