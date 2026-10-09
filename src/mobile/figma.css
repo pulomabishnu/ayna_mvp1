@@ -675,5 +675,10 @@
 .ayna-mobile .ayna-figma-eco-feature-copy p { margin:8px 0 14px; }
 .ayna-mobile .am-profile-playlists>button { border:0; border-bottom:1px solid var(--ayna-border); border-radius:0; background:transparent; }
 .ayna-mobile .am-profile-empty { border:0; border-left:3px solid var(--ayna-figma-mint); background:transparent; }
+.ayna-mobile .ayna-figma-community-start { min-height:340px; margin:0; padding:48px 22px 30px; background:transparent; }
+.ayna-mobile .ayna-figma-community-start h2 { max-width:280px; margin:15px 0 28px; font-size:clamp(35px,11vw,46px); line-height:.93; }
+.ayna-mobile .ayna-figma-community-start>button { min-height:50px; border-radius:999px; background:var(--ayna-figma-mint); color:var(--ayna-figma-ink); }
+.ayna-mobile .ayna-figma-community-start>div { margin-top:16px; border-top:1px solid var(--ayna-border); }
+.ayna-mobile .ayna-figma-community-start>div button { min-height:48px; padding:0 4px; border:0; border-radius:0; background:transparent; color:var(--ayna-figma-ink); font-size:12px; }
 @media (max-width:340px) { .ayna-figma-discover .ayna-editorial-product-grid { gap:18px 9px!important; padding-inline:12px!important; } .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy>strong { font-size:14px; } }
 @media (prefers-reduced-motion:no-preference) { .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image img { transition:transform .35s cubic-bezier(.2,.8,.2,1); } .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-main:active img { transform:scale(1.035); } }
