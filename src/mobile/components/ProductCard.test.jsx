@@ -23,4 +23,13 @@ describe('product card match display', () => {
     expect(html).toContain('Heavy periods');
     expect(html).not.toContain('% match');
   });
+
+  it('offers a direct seller action only for an exact product link', () => {
+    const shop = renderToStaticMarkup(<ProductCard product={{ ...pad, productUrl: 'https://example.com/products/flow-pad' }} onClick={() => {}} />);
+    const search = renderToStaticMarkup(<ProductCard product={{ ...pad, productUrl: 'https://example.com/search?q=flow-pad' }} onClick={() => {}} />);
+    expect(shop).toContain('href="https://example.com/products/flow-pad"');
+    expect(shop).toContain('Shop');
+    expect(shop).toContain('Details');
+    expect(search).not.toContain('>Shop');
+  });
 });
