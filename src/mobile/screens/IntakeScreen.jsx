@@ -50,13 +50,13 @@ const SUPPORT_GROUPS = [
   { label: 'Skin + hair', items: ['Acne', 'Hair thinning or hair loss', 'Excess facial or body hair', 'Other hormone-related skin concerns'] },
   { label: 'Metabolic + physical wellness', items: ['Metabolism or weight support', 'Strength or fitness', 'Bone health'] },
   { label: 'Care access', items: ['Finding a doctor or specialist', 'Finding a telehealth provider'] },
-  { label: 'Other', items: ['Something else', 'Nothing right now'] },
+  { label: 'Right now', items: ['Nothing right now'] },
 ];
 
 const LIFE_STAGES = [
   'I get periods regularly', 'My periods are irregular', 'I do not currently get periods',
   'I use hormonal birth control', 'I am trying to conceive', 'I am pregnant', 'I am postpartum',
-  'I am in perimenopause', 'I am in menopause', 'I am post-menopause', 'Other',
+  'I am in perimenopause', 'I am in menopause', 'I am post-menopause',
 ];
 const MIDLIFE_LIFE_STAGES = ['I am in perimenopause', 'I am in menopause', 'I am post-menopause'];
 
@@ -70,7 +70,7 @@ const PERIMENOPAUSE_LAST_PERIOD = ['Within the past 3 months', '3–6 months ago
 const CONDITIONS = [
   'PCOS', 'Endometriosis', 'Fibroids', 'Adenomyosis', 'PMS', 'PMDD', 'Infertility', 'Thyroid condition',
   'Diabetes', 'Insulin resistance', 'High blood pressure', 'Migraine with aura', 'Anemia or iron deficiency',
-  'IBS or another digestive condition', 'Autoimmune condition', 'Anxiety', 'Depression', 'Other / not listed',
+  'IBS or another digestive condition', 'Autoimmune condition', 'Anxiety', 'Depression',
   'None that I know of', 'Prefer not to say',
 ];
 
@@ -105,7 +105,7 @@ const PRODUCT_OR_BRAND_SUGGESTIONS = [...new Set([...CATALOG_PRODUCT_NAMES, ...B
 
 const PRODUCT_FORMATS = [
   'Pills or capsules', 'Gummies', 'Powders', 'Drinks or teas', 'Creams, lotions, or gels', 'Patches',
-  'Suppositories', 'Devices or wearables', 'Period-care products', 'No preference', 'Other',
+  'Suppositories', 'Devices or wearables', 'Period-care products', 'No preference',
 ];
 
 // One real icon per product format, keyed to the exact option strings above
@@ -142,9 +142,6 @@ const FORMAT_ICONS = {
   'No preference': (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" /><path d="M6.5 17.5l11-11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
   ),
-  Other: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="6" cy="12" r="1.6" fill="currentColor" /><circle cx="12" cy="12" r="1.6" fill="currentColor" /><circle cx="18" cy="12" r="1.6" fill="currentColor" /></svg>
-  ),
 };
 const PRICE_RANGES = ['Under $25', '$25–$75', '$75–$150', '$150+', 'Price is not a major factor for me'];
 const PRICE_BAND_SUBTITLES = {
@@ -166,14 +163,14 @@ const AVOID_INGREDIENTS = [
   'Animal-derived', 'Added sugar', 'Artificial sweeteners', 'Pregnancy considerations',
   'Fragrance-free', 'Dye-free', 'Paraben-free', 'Sulfate-free', 'Latex-free', 'Vegan', 'Cruelty-free',
   'Black-owned', 'Brown-owned', 'Eco-friendly', 'Reusable', 'Organic', 'Minimal ingredients',
-  'Sensitive skin', 'Unscented', 'Other', 'No preference',
+  'Sensitive skin', 'Unscented', 'No preference',
 ];
 const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
 const TRUST_ITEMS = ['Clinical or scientific evidence', 'Reviews and experiences from other women', 'Brand reputation or expert recommendations'];
 const STOP_REASONS = [
   'It did not help', 'It stopped working', 'I had side effects or a reaction', 'It was too expensive',
   'It was inconvenient', 'I did not like the format', 'I found something better',
-  'A clinician recommended stopping it', 'I simply did not repurchase it', 'Other',
+  'A clinician recommended stopping it', 'I simply did not repurchase it',
 ];
 
 const EMPTY = {
@@ -220,6 +217,22 @@ function reconstructIntakeFromSnapshot(snapshot) {
   RESUMABLE_PASSTHROUGH_FIELDS.forEach((key) => {
     if (snapshot[key] !== undefined && snapshot[key] !== null) next[key] = snapshot[key];
   });
+  [
+    ['lifeStageSelections', 'Other', 'lifeStageOther'],
+    ['supportSelections', 'Something else', 'supportOtherText'],
+    ['diagnosisSelections', 'Other / not listed', 'conditionOtherText'],
+    ['preferredFormats', 'Other', 'formatOtherText'],
+    ['avoidIngredients', 'Other', 'avoidIngredientsOtherText'],
+  ].forEach(([key, legacyOption, textKey]) => {
+    if (!Array.isArray(next[key]) || !next[key].includes(legacyOption)) return;
+    next[key] = next[key].filter((item) => item !== legacyOption);
+    if (String(next[textKey] || '').trim()) next[key].push(String(next[textKey]).trim());
+  });
+  next.productHistory = (next.productHistory || []).map((product) => ({
+    ...product,
+    stopReasons: (product.stopReasons || []).filter((reason) => reason !== 'Other').concat(product.stopOther?.trim() || []),
+  }));
+  if (next.lifeStage === 'Other') next.lifeStage = next.lifeStageSelections[0] || '';
   if (snapshot.fsaHsa) next.fsaHsaAnswer = FSA_HSA_REVERSE[snapshot.fsaHsa] || '';
   if (Array.isArray(snapshot.trustRanking) && snapshot.trustRanking.length > 0) {
     next.trustRanking = snapshot.trustRanking;
@@ -376,14 +389,20 @@ function buildSnapshot(intake) {
   const lifeStageSelections = getLifeStages(intake);
   const primaryLifeStage = intake.lifeStage || lifeStageSelections[0] || '';
   const primaryConcerns = [...new Set((intake.supportSelections || []).map((item) => LEGACY_CONCERN_BY_ITEM[item]).filter(Boolean))];
-  const customConcerns = intake.supportOtherText.trim()
-    ? [intake.supportOtherText.trim()]
-    : [];
+  const knownSupportOptions = new Set(SUPPORT_GROUPS.flatMap((group) => group.items));
+  const customConcerns = [...new Set([
+    ...(intake.supportSelections || []).filter((item) => !knownSupportOptions.has(item) && item !== 'Something else'),
+    intake.supportOtherText.trim(),
+  ].filter(Boolean))];
+  const customLifeStages = lifeStageSelections.filter((item) => !LIFE_STAGES.includes(item) && item !== 'Other');
+  const customConditions = (intake.diagnosisSelections || []).filter((item) => !CONDITIONS.includes(item) && !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(item));
+  const customFormats = (intake.preferredFormats || []).filter((item) => !PRODUCT_FORMATS.includes(item) && item !== 'Other');
+  const customPreferences = (intake.avoidIngredients || []).filter((item) => !AVOID_INGREDIENTS.includes(item) && item !== 'Other');
 
   const conditions = (intake.diagnosisSelections || [])
     .filter((v) => !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(v))
     .map((v) => CONDITION_TO_LEGACY[v] || v.toLowerCase());
-  if (intake.diagnosisSelections.includes('Other / not listed') && intake.conditionOtherText.trim()) conditions.push('other');
+  if (intake.diagnosisSelections.includes('Other / not listed') && intake.conditionOtherText.trim()) conditions.push(intake.conditionOtherText.trim().toLowerCase());
 
   const menstrualCycle = {
     'I get periods regularly': 'yes',
@@ -438,9 +457,9 @@ function buildSnapshot(intake) {
     location: '',
     lifeStage: primaryLifeStage,
     lifeStageSelections,
-    lifeStageOther: intake.lifeStageOther.trim(),
+    lifeStageOther: [...new Set([...customLifeStages, intake.lifeStageOther.trim()].filter(Boolean))].join('; '),
     supportSelections: intake.supportSelections,
-    supportOtherText: intake.supportOtherText.trim(),
+    supportOtherText: customConcerns.join('; '),
     primaryConcerns,
     customConcerns,
     concernFollowups: {},
@@ -458,7 +477,7 @@ function buildSnapshot(intake) {
     perimenopauseLastPeriod: hasLifeStage(intake, 'I am in perimenopause') ? intake.perimenopauseLastPeriod : '',
     diagnosisSelections: intake.diagnosisSelections,
     conditions,
-    conditionOtherText: intake.conditionOtherText.trim(),
+    conditionOtherText: [...new Set([...customConditions, intake.conditionOtherText.trim()].filter(Boolean))].join('; '),
     allergyStatus: intake.allergyStatus,
     allergyItems: intake.allergyStatus === 'Yes' ? intake.allergyItems : [],
     allergySelections: legacyAllergySelections,
@@ -478,7 +497,7 @@ function buildSnapshot(intake) {
     brandSupportPreferences: intake.brandSupportPreferences,
     safetyConcern: intake.safetyConcern,
     preferredFormats: intake.preferredFormats,
-    formatOtherText: intake.formatOtherText.trim(),
+    formatOtherText: [...new Set([...customFormats, intake.formatOtherText.trim()].filter(Boolean))].join('; '),
     recommendedProductsPerArea: intake.recommendedProductsPerArea,
     preferredProductTypes,
     priceRange: intake.priceRange,
@@ -486,7 +505,7 @@ function buildSnapshot(intake) {
     brandOpenness: intake.brandOpenness,
     trustedBrands: intake.trustedBrands,
     avoidIngredients: intake.avoidIngredients,
-    avoidIngredientsOtherText: intake.avoidIngredientsOtherText.trim(),
+    avoidIngredientsOtherText: [...new Set([...customPreferences, intake.avoidIngredientsOtherText.trim()].filter(Boolean))].join('; '),
     productPreferences,
     fsaHsa,
     trustRanking: intake.trustRankingTouched ? intake.trustRanking : [],
@@ -631,22 +650,22 @@ function RowChoiceList({ items, selected = [], onToggle }) {
       {items.map((item) => {
         const on = selected.includes(item);
         return (
-          <div
+          <button type="button" aria-pressed={on} className="ayna-intake-chip"
             key={item}
             onClick={() => onToggle(item)}
             style={{
               cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
-              fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1, padding: '10px 14px', borderRadius: 99,
+              fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1, padding: '10px 14px', borderRadius: 4,
               fontWeight: on ? 600 : 500,
               background: on ? ACCENT_BG : CARD_BG,
               color: on ? SELECTED_TEXT : INK,
               border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-              boxShadow: on ? '0 2px 8px rgba(232,169,79,.22)' : 'none',
+              boxShadow: 'none',
             }}
           >
             {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
             {item}
-          </div>
+          </button>
         );
       })}
     </div>
@@ -659,11 +678,29 @@ function RowChoiceList({ items, selected = [], onToggle }) {
 // (previously ungrouped flat lists with no filtering at all) can use it too.
 function SearchBar({ value, onChange, placeholder }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 99, padding: '11px 14px', marginBottom: 14 }}>
+    <div className="ayna-intake-search" style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 4, padding: '11px 14px', marginBottom: 14 }}>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
+      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} aria-label={placeholder} maxLength={80} style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
     </div>
   );
+}
+
+function AddCustomChoice({ query, options, onAdd }) {
+  const value = query.trim().replace(/\s+/g, ' ');
+  if (value.length < 2 || options.some((item) => item.toLowerCase() === value.toLowerCase())) return null;
+  return <button type="button" className="ayna-intake-add-choice" onClick={() => onAdd(value)}><span aria-hidden="true">+</span><span>Add “{value}”</span><small>Not listed? Add your own</small></button>;
+}
+
+function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons }) {
+  const query = search.trim().toLowerCase();
+  const filtered = query ? items.filter((item) => item.toLowerCase().includes(query)) : items;
+  const custom = selected.filter((item) => !items.includes(item));
+  return <div className="ayna-intake-choice-picker">
+    <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />
+    {custom.length > 0 && <div className="ayna-intake-custom-selected"><small>ADDED BY YOU</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
+    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} /> : <p className="ayna-intake-no-results">No suggestions match yet. You can add your own answer below.</p>}
+    <AddCustomChoice query={search} options={[...items, ...selected]} onAdd={onAdd} />
+  </div>;
 }
 
 // Same chip spec as RowChoiceList — kept as a separate component since
@@ -678,21 +715,21 @@ function Pills({ options, selected, onToggle, left, compact, exclusiveValues = [
         const on = selected.includes(opt);
         const exclusive = exclusiveValues.includes(opt);
         return (
-          <div
+          <button type="button" aria-pressed={on} className="ayna-intake-chip"
             key={opt}
             onClick={() => onToggle(opt)}
             style={{
               cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
-              fontFamily: "'DM Sans',sans-serif", padding: compact ? '8px 11px' : '10px 14px', borderRadius: 99,
+              fontFamily: "'DM Sans',sans-serif", padding: compact ? '8px 11px' : '10px 14px', borderRadius: 4,
               background: on ? ACCENT_BG : (exclusive ? PANEL_BG : CARD_BG), color: on ? SELECTED_TEXT : (exclusive ? MUTED : INK),
               border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
               fontSize: compact ? 'calc(11.5px * var(--ayna-text-scale, 1))' : 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: on ? 600 : 500,
-              boxShadow: on ? '0 2px 8px rgba(232,169,79,.22)' : 'none',
+              boxShadow: 'none',
             }}
           >
             {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
             {opt}
-          </div>
+          </button>
         );
       })}
     </div>
@@ -708,11 +745,11 @@ function Segmented({ options, value, onChange }) {
       {options.map((opt) => {
         const on = value === opt;
         return (
-          <div
+          <button type="button" aria-pressed={on} className="ayna-intake-radio"
             key={opt}
             onClick={() => onChange(opt)}
             style={{
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 11, padding: '13px 15px', borderRadius: 16,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 11, padding: '13px 15px', borderRadius: 4, textAlign: 'left',
               background: on ? ACCENT_BG : CARD_BG, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
             }}
           >
@@ -723,7 +760,7 @@ function Segmented({ options, value, onChange }) {
               {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
             </span>
             <span style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.35, fontWeight: on ? 600 : 400, color: on ? SELECTED_TEXT : INK }}>{opt}</span>
-          </div>
+          </button>
         );
       })}
     </div>
@@ -773,15 +810,6 @@ function TextInput({ value, onChange, placeholder, inputMode, maxLength }) {
       maxLength={maxLength}
       style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none' }}
     />
-  );
-}
-
-function OtherBox({ label, value, onChange, placeholder }) {
-  return (
-    <div style={{ marginTop: 16, textAlign: 'left' }}>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#CDF500', marginBottom: 9 }}>{label}</div>
-      <TextInput value={value} onChange={onChange} placeholder={placeholder} />
-    </div>
   );
 }
 
@@ -956,10 +984,10 @@ function Scale({ options, value, onChange }) {
   const index = scaleOptions.indexOf(value);
   return (
     <div>
-      <div style={{ borderRadius: 18, padding: '18px 16px', background: 'rgba(255,249,242,.08)', border: '1px solid rgba(255,249,242,.25)' }}>
-        <div style={{ textAlign: 'center', color: '#F8F8F3', fontWeight: 700, fontSize: 18, minHeight: 28 }}>{index >= 0 ? value : 'Slide to choose'}</div>
-        <input type="range" min="0" max={scaleOptions.length - 1} step="1" value={index >= 0 ? index : 0} onChange={(event) => onChange(scaleOptions[Number(event.target.value)])} aria-label="Choose a level" style={{ width: '100%', margin: '18px 0 8px', accentColor: '#CDF500', height: 30, cursor: 'pointer' }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, color: 'rgba(255,249,242,.78)', fontSize: 11 }}>
+      <div className="ayna-intake-scale" style={{ borderRadius: 4, padding: '18px 16px', background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
+        <div style={{ textAlign: 'center', color: INK, fontWeight: 800, fontSize: 18, minHeight: 28 }}>{index >= 0 ? value : 'Slide to choose'}</div>
+        <input type="range" min="0" max={scaleOptions.length - 1} step="1" value={index >= 0 ? index : 0} onChange={(event) => onChange(scaleOptions[Number(event.target.value)])} aria-label="Choose a level" style={{ width: '100%', margin: '18px 0 8px', accentColor: 'var(--ayna-figma-berry)', height: 30, cursor: 'pointer' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, color: BODY_TEXT, fontSize: 11 }}>
           <span>{scaleOptions[0]}</span><span>{scaleOptions[scaleOptions.length - 1]}</span>
         </div>
       </div>
@@ -1156,32 +1184,35 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
 
 // Pattern C1: search bar + grouped chips, each group header showing a live
 // "n/m" selected count.
-function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
+function SearchableGroups({ groups, selected, onToggle, search, onSearch, onAdd }) {
   const [openGroups, setOpenGroups] = useState([groups[0]?.label]);
   const q = search.trim().toLowerCase();
+  const known = groups.flatMap((group) => group.items);
+  const custom = selected.filter((item) => !known.includes(item));
   const visible = groups
     .map((group) => ({ ...group, items: group.items.filter((item) => !q || item.toLowerCase().includes(q) || group.label.toLowerCase().includes(q)) }))
     .filter((group) => group.items.length);
   return (
-    <div>
-      <SearchBar value={search} onChange={onSearch} placeholder="Search options..." />
-      <p style={{ margin: '0 0 12px', color: 'rgba(255,249,242,.76)', fontSize: 12, lineHeight: 1.5 }}>Open one topic at a time. Choose as many as you need.</p>
-      <div style={{ maxHeight: 400, overflowY: 'auto', textAlign: 'left' }}>
+    <div className="ayna-intake-topic-picker">
+      <SearchBar value={search} onChange={onSearch} placeholder="Search concerns, goals, or symptoms" />
+      <div className="ayna-intake-picker-caption"><span>EXPLORE BY TOPIC</span><strong>{selected.length ? `${selected.length} selected` : 'Choose what fits'}</strong></div>
+      <AddCustomChoice query={search} options={[...known, ...selected]} onAdd={onAdd} />
+      {custom.length > 0 && <div className="ayna-intake-custom-selected"><small>ADDED BY YOU</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
+      <div className="ayna-intake-topic-list">
         {visible.map((group) => {
           const count = group.items.filter((item) => selected.includes(item)).length;
           return (
-            <div key={group.label} style={{ marginBottom: 9, border: '1px solid rgba(255,249,242,.3)', borderRadius: 16, padding: '14px', background: 'rgba(255,249,242,.06)' }}>
-              <button type="button" aria-expanded={!!q || openGroups.includes(group.label)} onClick={() => setOpenGroups((current) => current.includes(group.label) ? current.filter((label) => label !== group.label) : [group.label])} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, border: 0, background: 'transparent', padding: 0, textAlign: 'left', cursor: 'pointer', minHeight: 30 }}>
-                <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#F8F8F3' }}>{group.label}</span>
-                <span style={{ flex: 1, height: 1, background: 'rgba(255,249,242,.24)' }} />
-                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', color: count > 0 ? '#CDF500' : 'rgba(255,249,242,.55)' }}>{count}/{group.items.length}</span>
-                <span style={{ color: '#F8F8F3', fontSize: 17 }}>{q || openGroups.includes(group.label) ? '−' : '+'}</span>
+            <div className="ayna-intake-topic" key={group.label}>
+              <button type="button" aria-expanded={!!q || openGroups.includes(group.label)} onClick={() => setOpenGroups((current) => current.includes(group.label) ? current.filter((label) => label !== group.label) : [group.label])}>
+                <span className="ayna-intake-topic-name">{group.label}</span>
+                <span className="ayna-intake-topic-count">{count ? `${count} picked` : `${group.items.length} options`}</span>
+                <span className="ayna-intake-topic-toggle" aria-hidden="true">{q || openGroups.includes(group.label) ? '−' : '+'}</span>
               </button>
-              {(q || openGroups.includes(group.label)) && <div style={{ marginTop: 12 }}><RowChoiceList items={group.items} selected={selected} onToggle={onToggle} /></div>}
+              {(q || openGroups.includes(group.label)) && <div className="ayna-intake-topic-options"><RowChoiceList items={group.items} selected={selected} onToggle={onToggle} /></div>}
             </div>
           );
         })}
-        {visible.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No matches. Try a different search.</div>}
+        {visible.length === 0 && <p className="ayna-intake-no-results">No suggestions match yet. Add your own answer above.</p>}
       </div>
     </div>
   );
@@ -1190,6 +1221,7 @@ function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
 function ProductHistoryBuilder({ products, onChange }) {
   const [adding, setAdding] = useState(false);
   const [query, setQuery] = useState('');
+  const [stopSearch, setStopSearch] = useState('');
   const [expandedIndex, setExpandedIndex] = useState(null);
   const suggestions = useMemo(() => {
     const added = new Set(products.map((p) => normalizeSuggestion(p.name)));
@@ -1254,7 +1286,7 @@ function ProductHistoryBuilder({ products, onChange }) {
             const summary = [product.current, product.worked, product.reaction].filter(Boolean);
             return (
               <div key={`${product.name}-${index}`} style={{ background: CARD_BG, color: INK, border: '1.5px solid ' + (expanded ? ACCENT_BORDER : ROW_BORDER), borderRadius: 16, overflow: 'hidden', textAlign: 'left' }}>
-                <div onClick={() => setExpandedIndex(expanded ? null : index)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '13px 14px', cursor: 'pointer' }}>
+                <div onClick={() => { setExpandedIndex(expanded ? null : index); setStopSearch(''); }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '13px 14px', cursor: 'pointer' }}>
                   <div style={{ minWidth: 0 }}>
                     <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{product.name}</div>
                     <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>{summary.length ? summary.join(' · ') : 'Optional details'}</div>
@@ -1289,19 +1321,17 @@ function ProductHistoryBuilder({ products, onChange }) {
                     {product.current === 'No' && (
                       <div style={{ marginBottom: 8 }}>
                         <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 8 }}>Why did you stop?</div>
-                        <Pills
-                          options={STOP_REASONS}
+                        <SearchableChoices
+                          items={STOP_REASONS}
                           selected={product.stopReasons || []}
                           onToggle={(reason) => updateProduct(index, {
                             stopReasons: (product.stopReasons || []).includes(reason) ? product.stopReasons.filter((x) => x !== reason) : [...(product.stopReasons || []), reason],
                           })}
-                          left compact
+                          search={stopSearch}
+                          onSearch={setStopSearch}
+                          onAdd={(value) => { updateProduct(index, { stopReasons: [...new Set([...(product.stopReasons || []), value])] }); setStopSearch(''); }}
+                          placeholder="Search why you stopped"
                         />
-                        {(product.stopReasons || []).includes('Other') && (
-                          <div style={{ marginTop: 10, padding: '12px 13px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                            <input value={product.stopOther || ''} onChange={(e) => updateProduct(index, { stopOther: e.target.value })} placeholder="Other reason" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'max(16px, calc(12.5px * var(--ayna-text-scale, 1)))', color: INK, fontFamily: 'inherit' }} />
-                          </div>
-                        )}
                       </div>
                     )}
 
@@ -1543,10 +1573,10 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
   const visibleSteps = useMemo(() => {
     const steps = [
-      { id: 'age', section: 'core', title: 'How old are you?', type: 'age', optional: true },
-      { id: 'lifeStage', section: 'core', title: 'Which options best describe you right now?', subtitle: 'Select all that apply.', type: 'lifeStage', optional: true },
+      { id: 'age', section: 'core', title: 'First, how old are you?', subtitle: 'Only your age, never your birthday.', type: 'age', optional: true },
+      { id: 'lifeStage', section: 'core', title: 'Where are you at right now?', subtitle: 'Your chapter can change. Pick everything that fits today.', type: 'lifeStage', optional: true },
       { id: 'zip', section: 'core', title: 'What is your ZIP code?', subtitle: 'Optional. This helps us personalize local care and availability.', type: 'zip', optional: true },
-      { id: 'support', section: 'support', title: 'What are you currently experiencing or looking for support with?', subtitle: 'Choose anything that feels relevant. You can search or browse by category.', type: 'support', optional: true },
+      { id: 'support', section: 'support', title: 'What could use a little support?', subtitle: 'Search a feeling, symptom, or goal. Add your own if we missed it.', type: 'support', optional: true },
       ...(isPeriodRelevant(intake) ? [
         { id: 'periodFlow', section: 'support', title: 'How would you describe your typical period flow?', type: 'flow', optional: true },
         { id: 'periodPain', section: 'support', title: 'How would you describe your typical period pain?', type: 'pain', optional: true },
@@ -1554,18 +1584,18 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often do you experience UTI-like symptoms?', type: 'utiFrequency', optional: true }] : []),
       ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago did you give birth?', type: 'postpartumTiming', optional: true }] : []),
       ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', optional: true }] : []),
-      { id: 'conditions', section: 'safety', title: 'Have you been diagnosed with any of the following?', subtitle: 'This is different from what you are experiencing. It helps us separate a diagnosed condition from a symptom or goal.', type: 'conditions', optional: false },
+      { id: 'conditions', section: 'safety', title: 'Has a clinician named a condition for you?', subtitle: 'Choose only diagnosed conditions. Symptoms and goals are handled separately.', type: 'conditions', optional: false },
       { id: 'allergies', section: 'safety', title: 'Do you have any known allergies or sensitivities that affect the products you can use?', subtitle: 'We use this to help flag products that may not be a fit for you.', type: 'allergies', optional: false },
       { id: 'medications', section: 'safety', title: 'Are you currently taking any medications, supplements, vitamins, or hormonal birth control?', subtitle: 'This helps us avoid duplicate ingredients and flag possible compatibility issues.', type: 'medications', optional: false },
       { id: 'products', section: 'history', title: 'What health or wellness products have you tried?', subtitle: 'Add any products you’ve tried. You can add more than one.', type: 'products', optional: true },
       { id: 'avoidRepeat', section: 'history', title: 'Are there any products or brands you definitely do not want recommended again?', type: 'avoidRepeat', optional: true },
       { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
-      { id: 'formats', section: 'preferences', title: 'Which product formats do you prefer?', type: 'formats', optional: true },
+      { id: 'formats', section: 'preferences', title: 'How do you like products to fit your day?', subtitle: 'Search formats and pick what you would actually use.', type: 'formats', optional: true },
       { id: 'recommendationCount', section: 'preferences', title: 'How many products would you like to see for each health area?', subtitle: 'We’ll show up to this many strong matches per area. You can always browse more.', type: 'recommendationCount', optional: true },
       { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'trustedBrands', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Any ingredients or product qualities you prefer?', subtitle: 'Things like fragrance-free, vegan, or eco-friendly. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
+      { id: 'avoidIngredients', section: 'preferences', title: 'What matters on the label?', subtitle: 'Search ingredients or qualities. We keep allergies separate.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
       { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', type: 'trust', optional: false },
       { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
@@ -1591,6 +1621,17 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     const next = current.includes(value) ? current.filter((item) => item !== value) : [...current, value];
     return { ...prev, lifeStageSelections: next, lifeStage: next[0] || '' };
   });
+  const addCustomSelection = (key, raw, exclusiveValues = []) => {
+    const value = String(raw || '').trim().replace(/\s+/g, ' ').slice(0, 80);
+    if (value.length < 2) return;
+    setIntake((prev) => {
+      const current = Array.isArray(prev[key]) ? prev[key] : [];
+      if (current.some((item) => item.toLowerCase() === value.toLowerCase())) return prev;
+      const next = [...current.filter((item) => !exclusiveValues.includes(item)), value];
+      return key === 'lifeStageSelections' ? { ...prev, [key]: next, lifeStage: next[0] || '' } : { ...prev, [key]: next };
+    });
+    setSearch('');
+  };
 
   const goBack = () => {
     if (currentIndex > 0) {
@@ -1627,8 +1668,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
     if (step.type === 'lifeStage') return (
       <>
-        {showMidlifeFirst && <p style={{ margin: '0 0 14px', color: 'rgba(255,249,242,.85)', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5 }}>We moved some life-stage choices higher based on your age. Choose only what describes you; age alone does not determine your life stage.</p>}
-        <ChoiceGrid items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} />
+        {showMidlifeFirst && <p className="ayna-intake-note">We moved some life-stage choices higher based on your age. Choose only what describes you; age alone does not determine your life stage.</p>}
+        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" />
         {selectedLifeStages.includes('I am postpartum') && (
           <div style={{ marginTop: 18, padding: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 18, textAlign: 'left' }}>
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: INK, marginBottom: 12 }}>Are you currently breastfeeding?</div>
@@ -1641,9 +1682,6 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
             <Pills options={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} left />
           </div>
         )}
-        {selectedLifeStages.includes('Other') && (
-          <OtherBox label="Tell us what best describes you (optional)" value={intake.lifeStageOther} onChange={(v) => set('lifeStageOther', v)} placeholder="Type here..." />
-        )}
       </>
     );
 
@@ -1651,10 +1689,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
     if (step.type === 'support') return (
       <>
-        <SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />
-        {intake.supportSelections.includes('Something else') && (
-          <OtherBox label="Tell us what else you are looking for support with" value={intake.supportOtherText} onChange={(v) => set('supportOtherText', v)} placeholder="Type here..." />
-        )}
+        <SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} onAdd={(value) => addCustomSelection('supportSelections', value, ['Nothing right now'])} />
       </>
     );
 
@@ -1665,17 +1700,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     if (step.type === 'pregnancyTrimester') return <Timeline options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
 
     if (step.type === 'conditions') {
-      const q = search.trim().toLowerCase();
-      const filtered = q ? CONDITIONS.filter((item) => item.toLowerCase().includes(q)) : CONDITIONS;
       return (
-        <>
-          <SearchBar value={search} onChange={setSearch} placeholder="Search conditions..." />
-          <RowChoiceList items={['None that I know of', 'Prefer not to say', ...filtered.filter((item) => !['None that I know of', 'Prefer not to say'].includes(item))]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} />
-          {filtered.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No matches. Try a different search.</div>}
-          {intake.diagnosisSelections.includes('Other / not listed') && (
-            <OtherBox label="What condition was diagnosed?" value={intake.conditionOtherText} onChange={(v) => set('conditionOtherText', v)} placeholder="Type the condition..." />
-          )}
-        </>
+        <SearchableChoices items={['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((item) => !['None that I know of', 'Prefer not to say'].includes(item))]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('diagnosisSelections', value, ['None that I know of', 'Prefer not to say'])} placeholder="Search diagnosed conditions" />
       );
     }
 
@@ -1744,10 +1770,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
     if (step.type === 'formats') return (
       <>
-        <ChoiceGrid items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} icons={FORMAT_ICONS} />
-        {intake.preferredFormats.includes('Other') && (
-          <OtherBox label="What format do you prefer?" value={intake.formatOtherText} onChange={(v) => set('formatOtherText', v)} placeholder="Type here..." />
-        )}
+        <SearchableChoices items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('preferredFormats', value, ['No preference'])} placeholder="Search product formats" layout="grid" icons={FORMAT_ICONS} />
       </>
     );
 
@@ -1775,27 +1798,18 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
             {notAFactor}
           </div>
 
-          <div style={{ height: 1, background: 'rgba(255,249,242,.24)', margin: '24px 0 20px' }} />
+          <div style={{ height: 1, background: ROW_BORDER, margin: '24px 0 20px' }} />
 
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: '#F8F8F3', marginBottom: 4 }}>How often do you spend $75 or more?</div>
-          <p style={{ margin: '0 0 14px', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>This is about purchase frequency, not your usual preferred price per product.</p>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 4 }}>How often do you spend $75 or more?</div>
+          <p style={{ margin: '0 0 14px', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT }}>This is about purchase frequency, not your usual preferred price per product.</p>
           <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
         </>
       );
     }
     if (step.type === 'brand') return <BrandSpectrum value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
     if (step.type === 'avoidIngredients') {
-      const q = search.trim().toLowerCase();
-      const filtered = q ? AVOID_INGREDIENTS.filter((item) => item.toLowerCase().includes(q)) : AVOID_INGREDIENTS;
       return (
-        <>
-          <SearchBar value={search} onChange={setSearch} placeholder="Search preferences..." />
-          <Pills options={filtered} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} exclusiveValues={['No preference']} left />
-          {filtered.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No matches. Try a different search.</div>}
-          {intake.avoidIngredients.includes('Other') && (
-            <OtherBox label="Other preference" value={intake.avoidIngredientsOtherText} onChange={(v) => set('avoidIngredientsOtherText', v)} placeholder="Type here..." />
-          )}
-        </>
+        <SearchableChoices items={AVOID_INGREDIENTS} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('avoidIngredients', value, ['No preference'])} placeholder="Search ingredients or qualities" />
       );
     }
     if (step.type === 'fsa') return <Pills options={FSA_HSA} selected={intake.fsaHsaAnswer ? [intake.fsaHsaAnswer] : []} onToggle={(v) => set('fsaHsaAnswer', v)} />;
@@ -1803,7 +1817,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 10 }}>
         {[1, 2, 3, 5].map((count) => {
           const selected = Number(intake.recommendedProductsPerArea) === count;
-          return <button key={count} type="button" aria-pressed={selected} onClick={() => set('recommendedProductsPerArea', count)} style={{ padding: '20px 10px', borderRadius: 18, border: selected ? '2px solid #CDF500' : '1px solid rgba(255,249,242,.35)', background: selected ? '#F8F8F3' : 'rgba(255,249,242,.1)', color: selected ? NAVY : '#F8F8F3', fontFamily: "'DM Sans',sans-serif", fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>
+          return <button key={count} type="button" aria-pressed={selected} onClick={() => set('recommendedProductsPerArea', count)} style={{ padding: '20px 10px', borderRadius: 4, border: selected ? '2px solid var(--ayna-figma-ink)' : '1px solid var(--ayna-border)', background: selected ? ACCENT_BG : CARD_BG, color: INK, fontFamily: "'Bricolage Grotesque','DM Sans',sans-serif", fontSize: 16, fontWeight: 800, cursor: 'pointer' }}>
             {count} {count === 1 ? 'product' : 'products'}
           </button>;
         })}
@@ -1829,7 +1843,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   }
 
   return (
-    <div className="ayna-fresh-intake"
+    <div className="ayna-fresh-intake" data-section={step.section}
       style={{
         flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column',
         background: '#4100F5',
@@ -1849,6 +1863,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
             <button type="button" onClick={goNext} style={{ padding: '7px 0', border: 0, background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#F8F8F3', cursor: 'pointer', flex: 'none' }}>Skip</button>
           )}
         </div>
+        <div className="ayna-intake-progress-copy"><span>YOUR AYNA EDIT</span><strong>{String(currentIndex + 1).padStart(2, '0')} / {String(visibleSteps.length).padStart(2, '0')}</strong></div>
         <div style={{ height: 4, borderRadius: 99, background: 'rgba(255,249,242,.24)', overflow: 'hidden' }}>
           <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#CDF500,#BBDD00)' }} />
         </div>
@@ -1856,6 +1871,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
       <div className="ayna-fresh-intake-body" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
         <div style={{ padding: '22px 20px 0' }}>
+          <div className="ayna-intake-question-kicker"><span>{SECTION_LABELS[step.section]}</span>{countForStep > 0 && <strong>{countForStep} picked</strong>}</div>
           <div className="ayna-fresh-intake-title" style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.045em', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#F8F8F3' }}>{step.title}</div>
           {step.subtitle && <p className="ayna-fresh-intake-subtitle" style={{ margin: '8px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
           {flaggedStepIds.has(step.id) && (
