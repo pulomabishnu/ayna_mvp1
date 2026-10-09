@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import ProductCard from '../components/ProductCard.jsx';
@@ -219,7 +219,7 @@ function PixelateGrid({ count = 6 }) {
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz }) {
+function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
@@ -256,8 +256,11 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
             : { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }
         }
       >
-        {visibleProducts.map((p) => (
-          <ProductCard key={p.id} product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+        {visibleProducts.map((p, index) => (
+          <Fragment key={p.id}>
+            <ProductCard product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+            {showOnboarding && index === 0 && <section className="ayna-figma-discover-cta"><span>Want personal matches? Build your Ecosystem.</span><button type="button" onClick={onStartQuiz}>Start <span aria-hidden="true">→</span></button></section>}
+          </Fragment>
         ))}
         {loadingMore && !isList && (
           <>
@@ -535,18 +538,10 @@ export default function BrowseScreen({
       {/* Once the ecosystem exists, Browse stays pure browsing — the
           "update your health" prompt lives on the Ecosystem screen instead,
           after its Reads section. */}
-      {!hasEcosystem && ctaVariant !== 'none' && (
-        <section style={{ margin: '0 20px 18px', padding: '16px 18px', borderRadius: 20, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)' }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 21, color: 'var(--ayna-heading)' }}>Find what fits you</div>
-          <p style={{ margin: '7px 0 13px', color: 'var(--ayna-text-muted)', fontSize: 12.5, lineHeight: 1.5 }}>Browse freely. Build your ecosystem when you want personal match percentages, reasons behind recommendations, and a place to save your picks.</p>
-          <button type="button" onClick={onStartQuiz} style={{ border: 0, borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', padding: '10px 15px', fontSize: 12.5, fontWeight: 700, cursor: 'pointer' }}>See my matches</button>
-        </section>
-      )}
-
       {mode === 'products' ? (
         <>
           {filtered.length > 0 ? (
-            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
               <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>

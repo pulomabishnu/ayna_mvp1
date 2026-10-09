@@ -484,26 +484,6 @@ export default function ProductDetailScreen({
           </div>
         </div>
 
-        {isPartner && (
-          <div style={{ margin: '10px 22px 0' }}>
-            <div onClick={() => setPartnerOpen((v) => !v)} style={{ display: 'flex', alignItems: 'center', gap: 9, cursor: 'pointer' }}>
-              <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', fontWeight: 500, background: 'var(--ayna-chip-bg)', borderRadius: 99, padding: '6px 11px', flex: 'none' }}>ayna Partner</div>
-              <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.4 }}>
-                {partnerOpen ? 'Hide the disclosure' : 'Reviewed by us · we may earn a commission'}
-              </div>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-text-faint)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', transform: partnerOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s ease' }}>
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </div>
-            {partnerOpen && (
-              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.6, marginTop: 8 }}>
-                {partnerDisclosure}
-                <a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer" style={{ display: 'block', color: 'var(--ayna-accent-dark)', fontWeight: 600, marginTop: 6 }}>Read about our brand partnerships →</a>
-              </div>
-            )}
-          </div>
-        )}
-
         <div className="ayna-fresh-detail-title" style={{ padding: '18px 22px 0' }}>
           {eyebrowLine && <div style={EYEBROW}>{eyebrowLine}</div>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" onClick={onStartQuiz} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>Build your ecosystem to see your personal match →</button>}
@@ -524,6 +504,15 @@ export default function ProductDetailScreen({
             </div>
           )}
         </div>
+
+        {isPartner && (
+          <div className="ayna-figma-partner-disclosure">
+            <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
+              <span>AYNA PARTNER</span><span>{partnerOpen ? 'Hide disclosure' : 'We may earn a commission'}</span><span aria-hidden="true">{partnerOpen ? '−' : '+'}</span>
+            </button>
+            {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships →</a></div>}
+          </div>
+        )}
 
         {safetyAlertText && <SafetyBanner text={safetyAlertText} />}
 

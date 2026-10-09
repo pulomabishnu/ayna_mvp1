@@ -31,7 +31,7 @@
 .ayna-mobile .ayna-figma-header>div>span { font-family:'Bricolage Grotesque','DM Sans',sans-serif!important; color:var(--ayna-figma-ink)!important; font-size:25px!important; letter-spacing:-.085em!important; }
 .ayna-mobile .ayna-figma-header>div>span span { color:var(--ayna-figma-berry)!important; }
 .ayna-mobile .ayna-figma-header button { border-radius:5px!important; border-color:#d6dcda!important; background:#fff!important; }
-.ayna-mobile .ayna-bottom-nav { width:100%!important; margin:0!important; padding:4px 4px max(5px,env(safe-area-inset-bottom))!important; border:0!important; border-top:1px solid var(--ayna-border)!important; border-radius:0!important; box-shadow:none!important; background:var(--ayna-figma-paper)!important; }
+.ayna-mobile .ayna-bottom-nav { width:100%!important; grid-template-columns:repeat(5,minmax(0,1fr))!important; margin:0!important; padding:4px 4px max(5px,env(safe-area-inset-bottom))!important; border:0!important; border-top:1px solid var(--ayna-border)!important; border-radius:0!important; box-shadow:none!important; background:var(--ayna-figma-paper)!important; }
 .ayna-mobile .ayna-bottom-nav button { min-width:0; min-height:49px!important; gap:2px!important; border-radius:3px!important; color:var(--ayna-figma-ink)!important; font-size:9px!important; font-weight:600; }
 .ayna-mobile .ayna-bottom-nav button.is-active { background:var(--ayna-figma-mint)!important; color:var(--ayna-figma-ink)!important; }
 .ayna-mobile .ayna-bottom-nav button.is-active svg { stroke:var(--ayna-figma-ink)!important; }
@@ -53,6 +53,12 @@
 .ayna-mobile .ayna-fresh-start { background:var(--ayna-figma-ink)!important; color:#fff!important; border-radius:6px!important; }
 .ayna-mobile .ayna-fresh-browse { color:var(--ayna-figma-ink)!important; border-color:var(--ayna-figma-ink)!important; border-radius:6px!important; }
 .ayna-mobile .ayna-fresh-links button { color:var(--ayna-figma-ink)!important; }
+@media (max-height:760px) {
+  .ayna-mobile .ayna-fresh-welcome-copy { padding-top:22px; }
+  .ayna-mobile .ayna-fresh-welcome h1 { font-size:clamp(42px,11vw,56px); }
+  .ayna-mobile .ayna-fresh-playground { min-height:195px; max-height:250px; }
+  .ayna-mobile .ayna-fresh-welcome-bottom { padding-bottom:13px; }
+}
 .ayna-mobile .ayna-fresh-intro-stage { background:var(--ayna-figma-ink)!important; }
 .ayna-mobile .ayna-fresh-intro-stage h1 em { color:var(--ayna-figma-mint)!important; }
 .ayna-mobile .ayna-fresh-intro-steps span { background:var(--ayna-figma-mint)!important; }
@@ -113,6 +119,9 @@
 .ayna-figma-ranked span:first-child { color:var(--ayna-figma-berry); font-weight:800; letter-spacing:.07em; }
 .ayna-figma-ranked strong { color:var(--ayna-figma-ink); font-size:10px; }
 .ayna-figma-ranked span:last-child { margin-left:auto; text-align:right; font-size:8px; }
+.ayna-figma-discover-cta { display:flex; align-items:center; gap:12px; justify-content:space-between; min-height:48px; margin:0 0 2px; padding:7px 10px; border-left:3px solid var(--ayna-figma-berry); background:#f5e5ed; color:var(--ayna-figma-ink); }
+.ayna-figma-discover-cta span { max-width:230px; font-size:11px; font-weight:700; }
+.ayna-figma-discover-cta button { display:flex; align-items:center; gap:5px; min-height:34px; flex:none; padding:5px 9px; border:0; border-radius:3px; background:var(--ayna-figma-ink); color:#fff; font-size:10px; font-weight:800; }
 .ayna-figma-discover .ayna-editorial-product-grid { display:flex!important; flex-direction:column!important; gap:17px!important; padding:0 17px!important; }
 .ayna-mobile .ayna-fresh-product-card { height:auto; border:0; border-radius:0; box-shadow:none; background:#fff; }
 .ayna-mobile .ayna-fresh-product-card .ayna-fresh-product-image { width:100%; aspect-ratio:1.25; background:var(--ayna-figma-mist)!important; }
@@ -134,9 +143,9 @@
 .ayna-mobile .ayna-fresh-product-detail>div:first-child>div:first-child { padding:10px 17px!important; background:var(--ayna-figma-paper); }
 .ayna-mobile .ayna-fresh-detail-image { margin:0!important; border-radius:0!important; background:var(--ayna-figma-mist)!important; }
 .ayna-mobile .ayna-fresh-detail-image>div { aspect-ratio:1.18!important; border-radius:0!important; }
-.ayna-mobile .ayna-fresh-detail-image img { object-fit:cover!important; }
+.ayna-mobile .ayna-fresh-detail-image img { object-fit:cover!important; padding:0!important; }
 .ayna-figma-detail-score { position:absolute; left:9px; bottom:9px; z-index:2; cursor:pointer; }
-.ayna-mobile .ayna-fresh-detail-title { padding:19px 18px 22px!important; background:var(--ayna-figma-ink); color:#fff; }
+.ayna-mobile .ayna-fresh-detail-title { margin:0!important; padding:19px 18px 22px!important; border-radius:0!important; background:var(--ayna-figma-ink); color:#fff; box-shadow:none!important; }
 .ayna-mobile .ayna-fresh-detail-title h1 { color:#fff!important; font:800 clamp(30px,8vw,39px)/.96 'Bricolage Grotesque','DM Sans',sans-serif!important; letter-spacing:-.055em!important; }
 .ayna-mobile .ayna-fresh-detail-title>div { color:var(--ayna-figma-mint)!important; }
 .ayna-mobile .ayna-fresh-detail-title p { color:#e7e2e8!important; }
@@ -144,6 +153,12 @@
 .ayna-mobile .ayna-fresh-detail-title button[style*='width: 100%'] { background:#fff!important; color:var(--ayna-figma-ink)!important; }
 .ayna-mobile .ayna-fresh-detail-title div[style*='border-radius: 99px'] { border-color:#696274!important; background:#2b263d!important; color:#fff!important; }
 .ayna-mobile .ayna-fresh-product-detail [style*='font-family: "Playfair Display"'] { font-family:'Bricolage Grotesque','DM Sans',sans-serif!important; }
+.ayna-figma-partner-disclosure { border-bottom:1px solid var(--ayna-border); background:var(--ayna-figma-paper); }
+.ayna-figma-partner-disclosure>button { display:flex; align-items:center; gap:8px; width:100%; min-height:41px; padding:8px 18px; border:0; background:transparent; color:var(--ayna-figma-ink); text-align:left; }
+.ayna-figma-partner-disclosure>button span:first-child { color:var(--ayna-figma-berry); font-size:9px; font-weight:800; letter-spacing:.06em; }
+.ayna-figma-partner-disclosure>button span:nth-child(2) { flex:1; font-size:10px; }
+.ayna-figma-partner-copy { padding:0 18px 13px; color:var(--ayna-text-muted); font-size:11px; line-height:1.5; }
+.ayna-figma-partner-copy a { display:block; margin-top:7px; color:var(--ayna-figma-berry); font-weight:800; }
 
 /* Community: white editorial feed, berry questions, mint context panels. */
 .ayna-mobile .am-screen { background:var(--ayna-figma-paper)!important; }
