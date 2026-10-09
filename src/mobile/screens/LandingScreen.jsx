@@ -13,7 +13,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
           <p>Find products for your body, backed by research and real experiences.</p>
         </div>
         <div className="ayna-cover-photo">
-          <img src="/team/ayna-founders.jpg" alt="The three Ayna founders together outdoors" fetchPriority="high" />
+          <img src="/team/ayna-founders-cover.jpg" alt="The three Ayna founders together outdoors" fetchPriority="high" />
           <span className="ayna-cover-photo-label">Made with care,<br />by real people.</span>
         </div>
       </section>
