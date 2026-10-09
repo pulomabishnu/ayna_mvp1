@@ -16,12 +16,12 @@ function shortPrice(price) {
   return amount ? amount[1] : value.split(/[,(]| for /i)[0].trim();
 }
 
-export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved }) {
+export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch }) {
   const { name, brand, category, price, priceDisplay, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   const resolvedPrice = shortPrice(price || priceDisplay);
   const categoryLabel = labelForCategory(category);
-  const secondaryLabel = brand && !String(name || '').toLowerCase().startsWith(brand.toLowerCase()) ? brand : categoryLabel;
+  const secondaryLabel = brand || (variant === 'list' ? categoryLabel : '');
   const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
   const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   const relevantReason = match?.matchStatus === 'scored' && !showMatch
@@ -42,17 +42,17 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
     <article className={`ayna-fresh-product-card ${isList ? 'is-list' : ''} tone-${tone}`}>
       <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}${resolvedPrice ? `, ${resolvedPrice}` : ''}${showMatch ? `, ${match.percent} percent match` : ''}. View product details`}>
       <span className="ayna-fresh-product-image">
-        {showMatch && <span className="ayna-fresh-match-badge"><strong>{match.percent}%</strong><span>MATCH</span></span>}
         <ProductImage src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
       </span>
       <span className="ayna-fresh-product-copy">
-        <span className="ayna-fresh-product-category">{secondaryLabel}{isPartner ? ' / Partner' : ''}</span>
+        <span className="ayna-fresh-product-category">{secondaryLabel}{isList && isPartner ? ' / Partner' : ''}</span>
         <strong>{name}</strong>
         {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
         <span className="ayna-fresh-product-foot"><b>{resolvedPrice || 'See details'}</b></span>
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
       </button>
+      {showMatch && <button type="button" className="ayna-fresh-match-badge ayna-match-action" aria-label={`Why ${match.percent} percent match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()}><strong>{match.percent}%</strong><span>MATCH</span></button>}
       {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={`${isSaved ? 'Unsave' : 'Save'} ${name}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}><svg viewBox="0 0 24 24" aria-hidden="true" fill={isSaved ? 'currentColor' : 'none'}><path d="M6 4h12v16l-6-4-6 4V4Z" /></svg></button>}
       {isList && <div className="ayna-fresh-product-actions">
         <button type="button" onClick={onClick}>Details <span aria-hidden="true">→</span></button>

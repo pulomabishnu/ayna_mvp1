@@ -2,7 +2,6 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import ProductCard from '../components/ProductCard.jsx';
-import ProductImage from '../components/ProductImage.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
@@ -118,17 +117,12 @@ function PersonalizedToggle({ on, disabled, onClick }) {
   );
 }
 
-function CategoryPhotoRow({ products, active, onSelect }) {
+function ShopCategories({ active, onSelect }) {
   const groups = ['all', 'period', 'intimate', 'hormones', 'fertility', 'pelvic', 'tests-devices']
     .map((id) => MACRO_GROUPS.find((group) => group.id === id)).filter(Boolean);
-  return (
-    <div className="ayna-shop-category-row" aria-label="Shop by category">
-      {groups.map((group) => {
-        const sample = group.id === 'all' ? null : products.find((product) => itemMatchesMacroGroup(product, group.id) && (product.image || product.imageUrl || product.images?.[0]));
-        return <button className="ayna-shop-category" type="button" key={group.id} aria-pressed={active === group.id} onClick={() => onSelect(group.id)}><span className="ayna-shop-category-image">{sample ? <ProductImage src={sample.image || sample.imageUrl || sample.images?.[0]} alt="" allowBrandLogo={sample.type === 'digital'} style={{ objectFit: 'contain' }} /> : <span className="ayna-shop-all-mark" aria-hidden="true">a</span>}</span><span>{group.label}</span></button>;
-      })}
-    </div>
-  );
+  return <div className="ayna-shop-category-row" aria-label="Shop by category">
+    {groups.map((group) => <button className="ayna-shop-category" type="button" key={group.id} aria-pressed={active === group.id} onClick={() => onSelect(group.id)}>{group.label}</button>)}
+  </div>;
 }
 
 function SkeletonCard() {
@@ -455,7 +449,7 @@ export default function BrowseScreen({
 
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
         <h1>Shop</h1>
-        <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+        <SearchBar placeholder={mode === 'products' ? 'Search products or brands' : 'Search reads'} value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px', borderBottom: '1px solid var(--ayna-border)', margin: '0 0 14px' }}>
@@ -474,21 +468,22 @@ export default function BrowseScreen({
       </div>
 
       {mode === 'products' && (
-        <CategoryPhotoRow products={products} active={activeGroup} onSelect={setActiveGroup} />
+        <ShopCategories active={activeGroup} onSelect={setActiveGroup} />
       )}
 
       {mode === 'products' && <div style={{ padding: '0 20px 14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <button type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)} style={{ minHeight: 44, padding: '10px 16px', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', fontWeight: 700 }}>Filters{Object.values(filters).filter((value) => value !== 'all').length ? ` · ${Object.values(filters).filter((value) => value !== 'all').length}` : ''}</button>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto', color: 'var(--ayna-text-muted)', fontSize: 12 }}>Sort <select aria-label="Sort products" value={sortBy} onChange={(event) => setSortBy(event.target.value)} style={{ minHeight: 44, maxWidth: 155, border: '1px solid var(--ayna-border)', borderRadius: 12, padding: '8px 10px', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)' }}><option value="default">Featured</option><option value="rating">Highest rated</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label>
+
         </div>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
           <div className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>
           <div className="ayna-shop-filter-head"><strong>Filters</strong><button type="button" aria-label="Close filters" onClick={() => setShowFilters(false)}>Close</button></div>
           <div className="ayna-shop-filter-fields">
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto', color: 'var(--ayna-text-muted)', fontSize: 12 }}>Sort <select aria-label="Sort products" value={sortBy} onChange={(event) => setSortBy(event.target.value)} style={{ minHeight: 44, maxWidth: 155, border: '1px solid var(--ayna-border)', borderRadius: 12, padding: '8px 10px', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)' }}><option value="default">Featured</option><option value="rating">Highest rated</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label>
           {FILTER_FIELDS.map(([key, label, options]) => <label key={key} style={{ display: 'grid', gap: 5, color: 'var(--ayna-text-muted)', fontSize: 11, fontWeight: 600 }}>{label}<select value={filters[key]} onChange={(event) => setFilters((current) => ({ ...current, [key]: event.target.value }))} style={{ width: '100%', minWidth: 0, minHeight: 44, border: '1px solid var(--ayna-border)', borderRadius: 10, background: 'var(--ayna-bg)', color: 'var(--ayna-heading)', padding: '8px' }}>{(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, CATEGORY_LABELS[category] || category.replaceAll('-', ' ')])] : options).map(([value, text]) => <option key={value} value={value}>{text}</option>)}</select></label>)}
           </div>
-          <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Show {filtered.length} products</button></div>
+          <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Apply</button></div>
           </div>
         </div>}
       </div>}

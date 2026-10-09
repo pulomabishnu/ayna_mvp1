@@ -716,17 +716,18 @@ export default function ProductDetailScreen({
         <LegalFooter />
       </div>
 
-      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'var(--ayna-surface)', borderTop: '1px solid var(--ayna-border)', display: 'flex', gap: 8, alignItems: 'center' }}>
-        <div
+      <div className="ayna-product-purchase-bar" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'var(--ayna-surface)', borderTop: '1px solid var(--ayna-border)', display: 'flex', gap: 8, alignItems: 'center' }}>
+        <button
+          type="button"
           onClick={onToggleSaved}
-          role="button"
+          aria-label={isSaved ? 'Unsave product' : 'Save product'}
           aria-pressed={isSaved}
           style={{ width: 50, height: 50, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--ayna-surface)', border: '1px solid ' + (isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)') }}
         >
           <svg width="19" height="19" viewBox="0 0 24 24" fill={isSaved ? 'var(--ayna-accent-dark)' : 'none'} stroke={isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-heading)'} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 20s-7-4.4-8.9-8.4A4.9 4.9 0 0 1 12 6.3a4.9 4.9 0 0 1 8.9 5.3C19 15.6 12 20 12 20z" />
           </svg>
-        </div>
+        </button>
         <button
           type="button"
           aria-pressed={isInEcosystem}
@@ -769,7 +770,7 @@ export default function ProductDetailScreen({
               textDecoration: 'none',
             }}
           >
-            {category === 'telehealth' ? 'Explore care' : product.type === 'digital' ? 'View app' : 'Shop product'}
+            {category === 'telehealth' ? 'Explore' : product.type === 'digital' ? 'View app' : 'Shop'}
           </a>
         ) : (
           <div
