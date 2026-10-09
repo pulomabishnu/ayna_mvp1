@@ -1115,11 +1115,11 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
           onClick={() => setAdding(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed rgba(255,249,242,.35)', background: 'transparent',
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#CDF500',
+            padding: '15px', borderRadius: 16, border: '1.5px dashed #C41C72', background: '#F8E5EF',
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#16122A',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CDF500" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C41C72" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           Add a product or brand
         </div>
       ) : (
@@ -1156,7 +1156,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
 
       {quickAdd.length > 0 && (
         <div style={{ marginTop: 18 }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#CDF500', marginBottom: 10 }}>From your history</div>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#C41C72', marginBottom: 10 }}>From your history</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {quickAdd.map((name) => (
               <div
@@ -1250,11 +1250,11 @@ function ProductHistoryBuilder({ products, onChange }) {
           onClick={() => setAdding(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed rgba(255,249,242,.35)', background: 'transparent',
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#CDF500',
+            padding: '15px', borderRadius: 16, border: '1.5px dashed #C41C72', background: '#F8E5EF',
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#16122A',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CDF500" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C41C72" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           Add a product or brand
         </div>
       ) : (
