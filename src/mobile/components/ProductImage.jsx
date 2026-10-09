@@ -5,7 +5,7 @@ function PhotoPlaceholder({ style }) {
   return (
     <div className="ayna-fresh-photo-placeholder" role="img" aria-label="Product photo unavailable" style={{ position: 'absolute', inset: 0, ...style }}>
       <span aria-hidden="true" className="ayna-fresh-photo-placeholder-shape" />
-      <span aria-hidden="true" className="ayna-fresh-photo-placeholder-mark">ayna.</span>
+      <span aria-hidden="true" className="ayna-fresh-photo-placeholder-mark">ayna</span>
     </div>
   );
 }

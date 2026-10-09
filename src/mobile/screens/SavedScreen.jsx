@@ -123,7 +123,7 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <article
+      <article className="ayna-saved-feature"
         onClick={onOpen}
         style={{
           cursor: 'pointer',
@@ -135,7 +135,7 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
           animation: 'ay-up .3s ease-out',
         }}
       >
-        <div style={{ position: 'relative', height: 230, background: 'var(--ayna-bg-alt)' }}>
+        <div className="ayna-saved-feature-media" style={{ position: 'relative', height: 230, background: 'var(--ayna-bg-alt)' }}>
           <ProductImage src={image} alt={item.name} allowBrandLogo={item.type === 'digital'} />
           <button
             onClick={(e) => { e.stopPropagation(); onRemove(); }}
@@ -188,7 +188,7 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
       </article>
 
       {gaps.length > 0 && (
-        <div style={{ marginTop: 20, borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#4100F5,#4100F5)', color: '#F8F8F3', position: 'relative', overflow: 'hidden' }}>
+        <div className="ayna-saved-gap-callout" style={{ marginTop: 20, borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#4100F5,#4100F5)', color: '#F8F8F3', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', right: -56, top: -56, width: 190, height: 190, borderRadius: '50%', border: '1px solid rgba(255,255,255,.16)' }} />
           <div style={{ position: 'absolute', right: -16, top: 18, width: 110, height: 110, borderRadius: '50%', border: '1px solid rgba(255,255,255,.12)' }} />
           <div style={{ position: 'relative', fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#CDF500' }}>Your ecosystem · {gaps.length} gap{gaps.length === 1 ? '' : 's'}</div>
@@ -212,7 +212,7 @@ function SavedCard({ item, status, onOpen, onRemove, quizAnswers, onOpenWhyMatch
   const image = item.image || item.imageUrl || (Array.isArray(item.images) ? item.images[0] : undefined);
 
   return (
-    <article
+    <article className="ayna-saved-card"
       onClick={onOpen}
       style={{
         minWidth: 0,
@@ -224,7 +224,7 @@ function SavedCard({ item, status, onOpen, onRemove, quizAnswers, onOpenWhyMatch
         boxShadow: '0 1px 2px rgba(41,37,36,.04)',
       }}
     >
-      <div style={{ position: 'relative', aspectRatio: '1 / 1', borderRadius: 13, overflow: 'hidden', background: 'var(--ayna-bg-alt)' }}>
+      <div className="ayna-saved-card-media" style={{ position: 'relative', aspectRatio: '1 / 1', borderRadius: 13, overflow: 'hidden', background: 'var(--ayna-bg-alt)' }}>
         <ProductImage src={image} alt={item.name} allowBrandLogo={item.type === 'digital'} compact />
         <button
           onClick={(e) => { e.stopPropagation(); onRemove(); }}
@@ -245,7 +245,7 @@ function SavedCard({ item, status, onOpen, onRemove, quizAnswers, onOpenWhyMatch
         </div>
       </div>
       <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginTop: 9 }}>{categoryLabel(item.category)}</div>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 4, color: 'var(--ayna-text)' }}>{item.name}</div>
+      <div className="ayna-saved-card-name" style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 4, color: 'var(--ayna-text)' }}>{item.name}</div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, marginTop: 4 }}>
         {item.price && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{item.price}</div>}
       </div>
@@ -290,12 +290,12 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div
+          <button type="button" aria-label="Back" 
             onClick={onBack}
             style={{ width: 36, height: 36, flex: 'none', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
           >
             <BackIcon />
-          </div>
+          </button>
           <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'baseline', gap: 9 }}>
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(29px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Saved</div>
             {!isEmpty && (
@@ -314,7 +314,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
         {!isEmpty && !isSingle && (
           <div style={{ display: 'flex', gap: 7, overflowX: 'auto', marginTop: 14, paddingBottom: 2 }}>
             {FILTERS.map((f) => (
-              <div
+              <button type="button" aria-pressed={filter === f.key}
                 key={f.key}
                 onClick={() => setFilter(f.key)}
                 style={{
@@ -330,7 +330,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
                 }}
               >
                 {f.label} {counts[f.key]}
-              </div>
+              </button>
             ))}
           </div>
         )}
@@ -348,12 +348,12 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
             <div style={{ margin: '10px 0 0', padding: '0 12px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, textAlign: 'center' }}>
               Save products you want to compare or come back to later.
             </div>
-            <div
+            <button type="button"
               onClick={onBrowse}
               style={{ marginTop: 22, display: 'block', width: '100%', textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', padding: 14, borderRadius: 14, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
             >
               Browse products
-            </div>
+            </button>
 
             <div style={{ marginTop: 30, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Start from your profile</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 12 }}>
@@ -389,7 +389,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
           />
         ) : (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 11 }}>
+            <div className="ayna-saved-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 11 }}>
               {visible.map(({ item, status }) => (
                 <SavedCard
                   key={item.id}

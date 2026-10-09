@@ -1,7 +1,7 @@
 export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, onAboutAyna }) {
   return (
     <main className="ayna-fresh-welcome">
-      <div className="ayna-fresh-welcome-top"><span className="ayna-fresh-wordmark">ayna.</span><button type="button" onClick={onAlreadyHaveAccount}>Sign in</button></div>
+      <div className="ayna-fresh-welcome-top"><span className="ayna-fresh-wordmark">ayna</span><button type="button" onClick={onAlreadyHaveAccount}>Sign in</button></div>
       <div className="ayna-fresh-welcome-copy">
         <span className="ayna-fresh-kicker">AYNA / YOUR HEALTH ECOSYSTEM</span>
         <h1>YOUR BODY.<br /><em>YOUR</em><br />CONTEXT.</h1>

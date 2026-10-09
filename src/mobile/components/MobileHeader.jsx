@@ -15,7 +15,7 @@ export default function MobileHeader({ variant = 'light', onOpenSaved, onBack })
   }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       {onBack && <button type="button" onClick={onBack} aria-label="Back" style={{ width: 36, height: 36, borderRadius: 99, border: dark ? '1px solid rgba(255,255,255,.28)' : '1px solid var(--ayna-border)', background: dark ? 'rgba(255,249,242,.12)' : 'var(--ayna-surface)', color: dark ? '#F8F8F3' : 'var(--ayna-text)', fontSize: 20, cursor: 'pointer' }}>‹</button>}
-      <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 900, fontSize: 'calc(27px * var(--ayna-text-scale, 1))', letterSpacing: '-.1em', color: dark ? '#FFFFFF' : '#203c9c' }}>ayna<span style={{ color: '#c6ec70' }}>.</span></span>
+      <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 900, fontSize: 'calc(27px * var(--ayna-text-scale, 1))', letterSpacing: '-.1em', color: dark ? '#FFFFFF' : '#203c9c' }}>ayna</span>
     </div>
     {onOpenSaved && <button type="button" onClick={onOpenSaved} aria-label="Saved products" style={{ width: 36, height: 36, borderRadius: 99, border: dark ? '1px solid rgba(255,255,255,.28)' : '1px solid var(--ayna-border)', background: dark ? 'rgba(255,249,242,.12)' : 'var(--ayna-surface)', display: 'grid', placeItems: 'center' }}><HeartIcon stroke={dark ? '#c6ec70' : '#203c9c'} /></button>}
   </header>;
