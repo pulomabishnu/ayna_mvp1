@@ -526,3 +526,20 @@
 .ayna-mobile[data-theme='dark'] .ayna-figma-discover,.ayna-mobile[data-theme='dark'] .ayna-figma-ecosystem,.ayna-mobile[data-theme='dark'] .am-screen { background:#16122a!important; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-product-card,.ayna-mobile[data-theme='dark'] .ayna-figma-routine,.ayna-mobile[data-theme='dark'] .ayna-figma-routine>button,.ayna-mobile[data-theme='dark'] .am-post-card { background:#241f34!important; color:#fff; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-product-copy>strong,.ayna-mobile[data-theme='dark'] .ayna-figma-routine>button { color:#fff!important; }
+.ayna-mobile[data-theme='dark'] { --color-primary:#9bf0e1; }
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button:not(.is-active) { color:#f9f7fb!important; }
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button:not(.is-active) svg { stroke:#f9f7fb!important; }
+.ayna-mobile[data-theme='dark'] .ayna-figma-header button { border-color:#4b4558!important; background:#302a3e!important; color:#fff!important; }
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-fresh-category-chip:not([aria-pressed='true']) { border-color:#4b4558!important; background:#302a3e!important; color:#f9f7fb!important; }
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-fresh-mode-tab:not([aria-pressed='true']) { color:#d7d3dc!important; }
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover :is(select,.ayna-fresh-browse-controls button) { border-color:#4b4558!important; background:#302a3e!important; color:#f9f7fb!important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card { border-color:#4b4558!important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card small { color:#d7d3dc; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-actions button { border-color:#4b4558!important; background:#302a3e!important; color:#f9f7fb!important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-actions a { border-color:#9bf0e1!important; background:#9bf0e1!important; color:#16122a!important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-detail,.ayna-mobile[data-theme='dark'] .ayna-fresh-saved,.ayna-mobile[data-theme='dark'] .ayna-fresh-article,.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hub,.ayna-mobile[data-theme='dark'] .ayna-fresh-checkin-step { background:#16122a!important; color:#f9f7fb!important; }
+.ayna-mobile[data-theme='dark'] .ayna-figma-partner-disclosure,.ayna-mobile[data-theme='dark'] .ayna-fresh-article-paper,.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu,.ayna-mobile[data-theme='dark'] .ayna-saved-card,.ayna-mobile[data-theme='dark'] .ayna-saved-feature { background:#241f34!important; color:#f9f7fb!important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-article-paper .ay-article-body,.ayna-mobile[data-theme='dark'] .ayna-fresh-article-paper h1,.ayna-mobile[data-theme='dark'] .ayna-saved-card-name { color:#f9f7fb!important; }
+.ayna-mobile[data-theme='dark'] .am-top,.ayna-mobile[data-theme='dark'] .am-sheet,.ayna-mobile[data-theme='dark'] .am-card.am-post-card { background:#241f34!important; color:#f9f7fb!important; }
+.ayna-mobile[data-theme='dark'] .am-top .am-title h1,.ayna-mobile[data-theme='dark'] .am-postbody { color:#f9f7fb!important; }
+.ayna-mobile[data-theme='dark'] .am-tabs button:not(.is-active) { color:#d7d3dc!important; }

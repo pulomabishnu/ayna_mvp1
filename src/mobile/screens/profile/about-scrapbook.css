@@ -9,10 +9,10 @@
 .ayna-scrapbook h1 em,.ayna-scrapbook h2 em{font:italic 500 1.06em 'Playfair Display',serif;color:inherit}
 .ayna-scrapbook__hero{position:relative;overflow:hidden;min-height:230px;margin:0 -20px 22px!important;padding:31px 23px;background:#16122a;color:#fff}
 .ayna-scrapbook__hero .ayna-scrapbook__eyebrow{color:#9bf0e1}
-.ayna-scrapbook__hero h1{max-width:350px;margin:14px 0 14px;color:#9bf0e1;font-size:clamp(38px,10vw,51px);line-height:.99}
+.ayna-scrapbook__hero h1{position:relative;z-index:1;max-width:310px;margin:14px 0 14px;color:#9bf0e1;font-size:clamp(38px,10vw,51px);line-height:.99}
 .ayna-scrapbook__hero h1 em{color:#fff}
 .ayna-scrapbook__hero p{position:relative;z-index:1;max-width:330px;margin:0;color:#fff;font-size:14px;line-height:1.45}
-.ayna-scrapbook__hero::after{content:'';position:absolute;right:-35px;bottom:-66px;width:190px;height:190px;border:30px solid rgba(159,174,250,.55);border-radius:50%}
+.ayna-scrapbook__hero::after{content:'';position:absolute;right:-35px;bottom:-66px;width:190px;height:190px;border:30px solid rgba(155,240,225,.22);border-radius:50%}
 .ayna-scrapbook__tape,.ayna-scrapbook__scribble{display:none}
 .ayna-scrapbook__paper{position:relative;margin-top:16px;padding:23px 20px;border:1px solid #d8dfdc;border-radius:19px;background:#fff;box-shadow:0 3px 0 #e8f0ee}
 .ayna-scrapbook__paper h2{margin:9px 0 12px;font-size:clamp(26px,7vw,34px);line-height:1.05}
