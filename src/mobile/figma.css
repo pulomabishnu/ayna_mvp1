@@ -222,6 +222,12 @@
 .ayna-mobile .ayna-fresh-product-card.is-list .ayna-fresh-product-copy { padding:9px 10px; }
 .ayna-mobile .ayna-fresh-product-card.is-list .ayna-fresh-product-copy>strong { font-size:16px; }
 .ayna-mobile .ayna-fresh-product-card.is-list .ayna-fresh-product-context { display:none; }
+.ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-main { display:grid; grid-template-columns:38% minmax(0,1fr); min-height:156px; }
+.ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { width:100%; height:100%; min-height:156px; aspect-ratio:auto; }
+.ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { justify-content:center; padding:11px 12px; }
+.ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy>strong { font-size:18px; line-height:1.07; }
+.ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-context { margin-top:5px; padding-top:5px; }
+.ayna-figma-discover .ayna-editorial-product-grid { gap:11px!important; }
 
 /* A personal dashboard with clear shopping paths. */
 .ayna-mobile .ayna-eco-dashboard-hero { min-height:0; padding:18px 18px 0; background:var(--ayna-figma-mint); }
