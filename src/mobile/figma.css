@@ -151,6 +151,41 @@
 .ayna-mobile .ayna-intake-add-choice small { margin-left:auto; color:var(--ayna-figma-berry); font-size:9px; }
 .ayna-mobile .ayna-intake-no-results,.ayna-mobile .ayna-intake-note { margin:0 0 12px; color:var(--ayna-text-muted); font-size:11px; line-height:1.45; }
 .ayna-mobile .ayna-fresh-intake-body [style*='color: rgb(248, 248, 243)'],.ayna-mobile .ayna-fresh-intake-body [style*='color: rgba(255, 249, 242'] { color:var(--ayna-figma-ink)!important; }
+/* Intake: a clear chapter card, tactile choices, and an age control that invites touch. */
+.ayna-mobile .ayna-fresh-intake-body>.ayna-intake-question-head { position:relative; min-height:165px; padding:22px 20px 24px!important; overflow:hidden; background:var(--ayna-figma-mint); border-bottom:1px solid var(--ayna-figma-ink); }
+.ayna-mobile .ayna-fresh-intake[data-section='support'] .ayna-intake-question-head { background:#f8dce9; }
+.ayna-mobile .ayna-fresh-intake[data-section='safety'] .ayna-intake-question-head { background:#e8f0ee; }
+.ayna-mobile .ayna-fresh-intake[data-section='history'] .ayna-intake-question-head { background:#e3e8fc; }
+.ayna-mobile .ayna-fresh-intake[data-section='preferences'] .ayna-intake-question-head { background:#f4f0cf; }
+.ayna-mobile .ayna-fresh-intake[data-section='trust'] .ayna-intake-question-head { background:#dceeea; }
+.ayna-mobile .ayna-intake-question-head .ayna-intake-question-kicker { position:relative; z-index:1; max-width:290px; color:var(--ayna-figma-berry); text-transform:uppercase; font-size:10px; }
+.ayna-mobile .ayna-intake-question-head .ayna-fresh-intake-title { position:relative; z-index:1; max-width:310px; font-size:clamp(28px,8vw,36px)!important; }
+.ayna-mobile .ayna-intake-question-head .ayna-fresh-intake-subtitle { position:relative; z-index:1; max-width:310px; color:#393849!important; font-size:13px!important; line-height:1.42!important; }
+.ayna-mobile .ayna-intake-question-number { position:absolute; right:7px; top:36px; color:rgba(22,18,42,.09); font:900 105px/.8 'Bricolage Grotesque','DM Sans',sans-serif; letter-spacing:-.12em; pointer-events:none; }
+.ayna-mobile .ayna-fresh-intake-body>div:nth-child(2) { padding-top:20px!important; }
+.ayna-mobile .ayna-fresh-intake-body .ayna-age-picker { padding:20px; border:1px solid var(--ayna-border); border-radius:16px!important; background:#fff; box-shadow:5px 5px 0 var(--ayna-figma-mist)!important; }
+.ayna-mobile .ayna-age-picker-top,.ayna-mobile .ayna-age-slider-ends { display:flex; justify-content:space-between; color:var(--ayna-figma-berry); font-size:10px; font-weight:800; letter-spacing:.08em; }
+.ayna-mobile .ayna-age-picker-value { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:15px 0 17px; }
+.ayna-mobile .ayna-age-picker-value button { width:48px; height:48px; flex:none; border:1px solid var(--ayna-figma-ink); border-radius:50%; background:#fff; color:var(--ayna-figma-ink); font-size:27px; line-height:1; cursor:pointer; }
+.ayna-mobile .ayna-age-picker-value button:disabled { opacity:.4; cursor:not-allowed; }
+.ayna-mobile .ayna-age-picker-value>div { display:flex; flex-direction:column; align-items:center; min-width:0; }
+.ayna-mobile .ayna-age-picker-value strong { color:var(--ayna-figma-ink); font:900 76px/.9 'Bricolage Grotesque','DM Sans',sans-serif; letter-spacing:-.08em; }
+.ayna-mobile .ayna-age-picker-value span { margin-top:6px; color:#4a4855; font-size:12px; font-weight:700; }
+.ayna-mobile .ayna-age-slider-label { display:block; margin-bottom:8px; color:var(--ayna-figma-ink); font-size:12px; font-weight:800; }
+.ayna-mobile .ayna-age-slider { width:100%; height:44px; margin:0; appearance:none; -webkit-appearance:none; background:transparent; cursor:pointer; }
+.ayna-mobile .ayna-age-slider::-webkit-slider-runnable-track { height:10px; border-radius:99px; background:linear-gradient(90deg,var(--ayna-figma-berry) 0 var(--ayna-age-fill),var(--ayna-figma-mist) var(--ayna-age-fill) 100%); }
+.ayna-mobile .ayna-age-slider::-moz-range-track { height:10px; border-radius:99px; background:var(--ayna-figma-mist); }
+.ayna-mobile .ayna-age-slider::-moz-range-progress { height:10px; border-radius:99px; background:var(--ayna-figma-berry); }
+.ayna-mobile .ayna-age-slider::-webkit-slider-thumb { width:30px; height:30px; margin-top:-10px; appearance:none; -webkit-appearance:none; border:5px solid var(--ayna-figma-ink); border-radius:50%; background:var(--ayna-figma-mint); box-shadow:0 2px 6px rgba(22,18,42,.18); }
+.ayna-mobile .ayna-age-slider::-moz-range-thumb { width:21px; height:21px; border:5px solid var(--ayna-figma-ink); border-radius:50%; background:var(--ayna-figma-mint); }
+.ayna-mobile .ayna-age-slider-ends { color:#62626c; font-size:10px; letter-spacing:0; }
+.ayna-mobile .ayna-age-exact { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; min-height:57px; margin-top:20px; padding-top:15px; border-top:1px solid var(--ayna-border); color:var(--ayna-figma-ink); font-size:11px; font-weight:700; }
+.ayna-mobile .ayna-age-exact select { min-width:130px; height:36px; padding:4px 10px; border:1px solid var(--ayna-figma-ink); border-radius:6px; background:#fff; font-size:11px; }
+.ayna-mobile .ayna-age-privacy { margin:17px 0 0; padding:11px 12px; border-left:4px solid var(--ayna-figma-mint); background:var(--ayna-figma-mist); color:#42424d; font-size:11px; line-height:1.45; }
+.ayna-mobile .ayna-fresh-intake .ayna-figma-choice-tile { min-height:68px; border-radius:10px!important; transition:transform .16s ease,box-shadow .16s ease; }
+.ayna-mobile .ayna-fresh-intake .ayna-figma-choice-tile[aria-pressed='true'] { transform:translateY(-2px); box-shadow:0 4px 0 var(--ayna-figma-ink)!important; }
+.ayna-mobile .ayna-fresh-intake .ayna-figma-choice-tile:focus-visible,.ayna-mobile .ayna-fresh-intake button:focus-visible,.ayna-mobile .ayna-fresh-intake select:focus-visible,.ayna-mobile .ayna-fresh-intake input:focus-visible { outline:3px solid var(--ayna-figma-berry)!important; outline-offset:2px; }
+@media (prefers-reduced-motion:reduce) { .ayna-mobile .ayna-fresh-intake .ayna-figma-choice-tile { transition:none; } }
 @media (prefers-reduced-motion:reduce) { .ayna-mobile .ayna-intake-topic-options { animation:none; } }
 .ayna-mobile .ayna-profile-auth-sheet { padding:24px 18px max(18px,env(safe-area-inset-bottom)); border-top:5px solid var(--ayna-figma-mint); border-radius:4px 4px 0 0; background:var(--ayna-figma-paper); color:var(--ayna-figma-ink); box-shadow:0 -12px 30px rgba(23,19,41,.14); }
 .ayna-mobile .ayna-profile-auth-close { top:10px; right:12px; width:38px; height:38px; color:var(--ayna-figma-ink); }
