@@ -70,7 +70,7 @@
 .ayna-cover-card strong { display:block; margin-top:11px; font:800 21px/.98 'Bricolage Grotesque','DM Sans',sans-serif; letter-spacing:-.045em; }
 .ayna-cover-card small { display:block; margin-top:6px; font:500 11px/1.25 'DM Sans',sans-serif; }
 .ayna-cover-card-personal { grid-column:1/-1; display:grid; grid-template-columns:42% 1fr; min-height:138px; padding:0; background:var(--ayna-figma-mint); }
-.ayna-cover-card-personal img { width:100%; height:100%; min-height:138px; object-fit:cover; object-position:50% 45%; }
+.ayna-cover-card-personal img { width:100%; height:100%; min-height:138px; object-fit:cover; object-position:40% 45%; }
 .ayna-cover-card-personal>div { display:flex; flex-direction:column; padding:13px 14px; }
 .ayna-cover-card-personal strong { font-size:27px; }
 .ayna-cover-card-evidence { border:1px solid #d8dfdc; background:var(--ayna-figma-mist); }
@@ -85,7 +85,8 @@
 .ayna-mobile .ayna-cover-browse span { font-size:19px; }
 .ayna-mobile .ayna-cover-links { display:flex; justify-content:space-between; gap:8px; padding:8px 0 0; }
 .ayna-mobile .ayna-cover-links button { min-height:44px; padding:0 2px; border:0; background:transparent; color:var(--ayna-figma-berry)!important; font-size:12px; font-weight:700; text-align:left; cursor:pointer; }
-@media (max-height:710px) { .ayna-cover-intro { padding-top:13px; padding-bottom:14px; } .ayna-cover-eyebrow { margin-bottom:8px; } .ayna-mobile .ayna-cover h1 { font-size:clamp(36px,9.8vw,43px)!important; } .ayna-cover-intro p { margin-top:8px; font-size:12px; } .ayna-cover-cards { padding-top:9px; gap:6px; } .ayna-cover-card { min-height:101px; padding:9px; } .ayna-cover-card-personal { min-height:111px; padding:0; } .ayna-cover-card-personal img { min-height:111px; } .ayna-cover-card-personal>div { padding:10px; } .ayna-cover-card strong { margin-top:7px; font-size:18px; } .ayna-cover-card-personal strong { font-size:23px; } .ayna-cover-card small { font-size:10px; } .ayna-cover-actions { padding-top:10px; } .ayna-mobile .ayna-cover-links button { min-height:38px; } }
+@media (max-height:710px) { .ayna-cover-intro { padding-top:13px; padding-bottom:14px; } .ayna-cover-eyebrow { margin-bottom:8px; } .ayna-mobile .ayna-cover h1 { font-size:clamp(36px,9.8vw,43px)!important; } .ayna-cover-intro p { margin-top:8px; font-size:12px; } .ayna-cover-cards { grid-template-rows:minmax(111px,1.1fr) minmax(101px,.9fr); padding-top:9px; gap:6px; } .ayna-cover-card { min-height:101px; padding:9px; } .ayna-cover-card-personal { min-height:111px; padding:0; } .ayna-cover-card-personal img { min-height:111px; } .ayna-cover-card-personal>div { padding:10px; } .ayna-cover-card strong { margin-top:7px; font-size:18px; } .ayna-cover-card-personal strong { font-size:23px; } .ayna-cover-card small { font-size:10px; } .ayna-cover-actions { padding-top:10px; } .ayna-mobile .ayna-cover-links button { min-height:38px; } }
+@media (max-height:600px) { .ayna-cover-intro { padding-top:9px; padding-bottom:10px; } .ayna-cover-cards { grid-template-rows:91px 80px; padding-top:7px; } .ayna-cover-card { min-height:80px; } .ayna-cover-card-personal,.ayna-cover-card-personal img { min-height:91px; } .ayna-cover-card small { display:none; } .ayna-cover-actions { padding-top:7px; } .ayna-mobile .ayna-cover-links button { min-height:32px; } }
 @media (max-height:760px) {
   .ayna-mobile .ayna-fresh-welcome-copy { padding-top:22px; }
   .ayna-mobile .ayna-fresh-welcome h1 { font-size:clamp(42px,11vw,56px); }
