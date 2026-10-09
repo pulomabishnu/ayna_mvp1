@@ -13,9 +13,9 @@ const PANEL_BG = 'var(--ayna-chip-bg)';
 const INK = 'var(--ayna-text)';
 const MUTED = 'var(--ayna-text-faint)';
 const BODY_TEXT = 'var(--ayna-text-muted)';
-const NAVY = '#203c9c';
+const NAVY = '#16122a';
 const ACCENT_BG = '#dfe2ff';
-const ACCENT_BORDER = '#203c9c';
+const ACCENT_BORDER = '#16122a';
 const WARNING_BORDER = '#B4402A';
 const WARNING_BG = '#FAEDE8';
 
@@ -223,7 +223,7 @@ function ScaleSelector({ options, value, onChange }) {
       </div>
       {selectedOption && (
         <div style={{ marginTop: 20, padding: '16px 18px', borderRadius: 18, background: CARD_BG, border: '1px solid ' + ROW_BORDER }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', color: NAVY }}>{selectedOption[0]}</div>
+          <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', color: NAVY }}>{selectedOption[0]}</div>
           <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: BODY_TEXT, marginTop: 6 }}>{selectedOption[1]}</div>
         </div>
       )}
@@ -593,7 +593,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
         <StepShell title="How did the products we suggested work for you?" subtitle="This is the answer that changes your matches the most — worth the ten seconds." footer={footer}>
           {myProducts.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, marginBottom: 16 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, flex: 'none', background: ACCENT_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 'calc(16px * var(--ayna-text-scale, 1))', color: ACCENT_BORDER }}>{myProducts.length}</div>
+              <div style={{ width: 36, height: 36, borderRadius: 10, flex: 'none', background: ACCENT_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(16px * var(--ayna-text-scale, 1))', color: ACCENT_BORDER }}>{myProducts.length}</div>
               <div>
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: MUTED, marginBottom: 3 }}>In your ecosystem</div>
                 <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>{myProducts.slice(0, 3).map((p) => p.name).join(' · ')}</div>
@@ -653,7 +653,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
             <div style={{ marginTop: 4, padding: 16, borderRadius: 18, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: WARNING_BORDER }}>Please talk to a clinician</div>
+                <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: WARNING_BORDER }}>Please talk to a clinician</div>
               </div>
               <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: '#7A4234' }}>
                 Ayna is a discovery tool, not a diagnosis. We'll keep your check-in, but nothing here should replace being seen — especially for something new or getting worse.
@@ -713,7 +713,7 @@ function CompletionCard({ month, justFinished }) {
       <div style={{ width: 48, height: 48, borderRadius: 99, background: ACCENT_BG, border: '1px solid ' + ACCENT_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={ACCENT_BORDER} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
       </div>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: INK }}>
+      <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: INK }}>
         {justFinished ? `That's ${monthLabel(month)} logged.` : `${monthLabel(month)} is already logged.`}
       </div>
       <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: BODY_TEXT, marginTop: 8 }}>

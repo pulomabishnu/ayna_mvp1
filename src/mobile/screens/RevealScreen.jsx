@@ -1,8 +1,8 @@
 import ProductImage from '../components/ProductImage.jsx';
 
 const colors = {
-  cream: '#F8F8F3',
-  navy: '#203c9c',
+  cream: '#FAFBF8',
+  navy: '#16122a',
   muted: '#515568',
 };
 
@@ -17,7 +17,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <span aria-hidden="true">‹</span>
         </button>
 
-        <div style={{ marginTop: 24, color: '#203c9c', fontSize: 12, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase' }}>Your results</div>
+        <div style={{ marginTop: 24, color: '#16122a', fontSize: 12, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase' }}>Your results</div>
         <h1 style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 36, lineHeight: 1.05, letterSpacing: '-.05em', fontWeight: 700, margin: '8px 0 12px' }}>
           {hasMatches ? 'Your first matches' : 'Your answers are in'}
         </h1>

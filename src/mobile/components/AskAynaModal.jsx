@@ -194,7 +194,7 @@ export default function AskAynaModal({
             height: 30,
             boxSizing: 'border-box',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg,#4100F5,#4100F5 55%,#4100F5)',
+            background: 'linear-gradient(135deg,#16122A,#16122A 55%,#16122A)',
             animation: 'ay-float 3s ease-in-out infinite',
             flex: 'none',
           }}

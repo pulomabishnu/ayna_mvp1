@@ -596,7 +596,7 @@ export default function ProductDetailScreen({
                 <div style={EYEBROW}>Social media + reviews</div>
                 {communityCitationEntries.length > 0 ? communityCitationEntries.map((entry) => (
                   <a key={entry.url} href={entry.url} target="_blank" rel="noopener noreferrer" style={{ ...CARD, display: 'flex', gap: 12, alignItems: 'flex-start', textDecoration: 'none', color: 'inherit' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 12, flex: 'none', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "'Playfair Display',serif", fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 12, flex: 'none', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "'Bricolage Grotesque',serif", fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {entry.label.charAt(0)}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -620,7 +620,7 @@ export default function ProductDetailScreen({
                 <div style={EYEBROW}>Who it's for</div>
                 {(whoItsFor || []).map((item, i) => (
                   <div key={item} style={{ ...CARD, display: 'flex', gap: 12, alignItems: 'center', padding: '14px 15px' }}>
-                    <div style={{ width: 34, height: 34, borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "'Playfair Display',serif", fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "'Bricolage Grotesque',serif", fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
                       {i + 1}
                     </div>
                     <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5 }}>{item}</div>

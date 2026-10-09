@@ -149,9 +149,9 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
           <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: 'var(--ayna-text-faint)' }}>{readMinutes} MIN</div>
         </div>
 
-        <h1 style={{ fontFamily: "'Playfair Display',serif", fontWeight: 400, fontSize: 'calc(32px * var(--ayna-text-scale, 1))', lineHeight: 1.13, color: 'var(--ayna-text)', margin: 0 }}>{title}</h1>
+        <h1 style={{ fontFamily: "'Bricolage Grotesque',serif", fontWeight: 400, fontSize: 'calc(32px * var(--ayna-text-scale, 1))', lineHeight: 1.13, color: 'var(--ayna-text)', margin: 0 }}>{title}</h1>
         {teaser && (
-          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 'calc(16.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-accent-dark)', marginTop: 13 }}>
+          <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontStyle: 'italic', fontSize: 'calc(16.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-accent-dark)', marginTop: 13 }}>
             {teaser}
           </div>
         )}
@@ -161,9 +161,9 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
           {[0, 1, 2, 3, 4].map((i) => {
             const filled = progress >= i / 4;
             return i % 2 === 1 ? (
-              <div key={i} style={{ width: 5, height: 5, borderRadius: 99, background: filled ? '#BBDD00' : 'var(--ayna-track)' }} />
+              <div key={i} style={{ width: 5, height: 5, borderRadius: 99, background: filled ? '#9BF0E1' : 'var(--ayna-track)' }} />
             ) : (
-              <div key={i} style={{ flex: 1, height: 3, borderRadius: 99, background: filled ? '#CDF500' : 'var(--ayna-track)' }} />
+              <div key={i} style={{ flex: 1, height: 3, borderRadius: 99, background: filled ? '#9BF0E1' : 'var(--ayna-track)' }} />
             );
           })}
         </div>
@@ -178,14 +178,14 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
                   width: 46,
                   height: 46,
                   borderRadius: 99,
-                  background: 'linear-gradient(140deg,#4100F5,#4100F5 60%,var(--ayna-brown))',
+                  background: 'linear-gradient(140deg,#16122A,#16122A 60%,var(--ayna-brown))',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flex: 'none',
-                  fontFamily: "'Playfair Display',serif",
+                  fontFamily: "'Bricolage Grotesque',serif",
                   fontSize: 'calc(18px * var(--ayna-text-scale, 1))',
-                  color: '#F8F8F3',
+                  color: '#FAFBF8',
                 }}
               >
                 A
@@ -218,7 +218,7 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
         {nextRead?.article && (
           <section style={{ marginTop: 24, padding: '18px', borderRadius: 22, background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-border)' }} aria-label="Next article">
             <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{nextRead.label}</div>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, lineHeight: 1.2, color: 'var(--ayna-heading)', marginTop: 8 }}>{nextRead.article.title}</div>
+            <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 22, lineHeight: 1.2, color: 'var(--ayna-heading)', marginTop: 8 }}>{nextRead.article.title}</div>
             {nextRead.article.teaser && <p style={{ margin: '8px 0 14px', color: 'var(--ayna-text-muted)', fontSize: 12.5, lineHeight: 1.5 }}>{nextRead.article.teaser}</p>}
             <button type="button" onClick={() => onNext?.(nextRead.article)} style={{ border: 0, borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', padding: '11px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>Read next →</button>
           </section>

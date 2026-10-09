@@ -33,17 +33,17 @@ const TIERS = [
   {
     min: 80, tier: 'Strong match', headline: 'A strong match.',
     sub: 'Several survey answers line up with this product. Check the details before choosing it.',
-    ink: '#203C9C', ring: '#203C9C', soft: '#F0F2FF', mid: '#DFE2FF', deep: '#BFC9FA', edge: '#CBD2F2',
+    ink: '#16122A', ring: '#16122A', soft: '#FAFBF8', mid: '#E8F0EE', deep: '#9BF0E1', edge: '#D8DFDC',
   },
   {
     min: 60, tier: 'Good fit', headline: 'A good fit for this need.',
     sub: "Some of your answers line up. Review the details and anything this product does not address.",
-    ink: '#155F50', ring: '#268C76', soft: '#EFFBF6', mid: '#D8F5E9', deep: '#AFF1DD', edge: '#C0EBDD',
+    ink: '#16122A', ring: '#C41C72', soft: '#FAFBF8', mid: '#F8E5EF', deep: '#F8E5EF', edge: '#D8DFDC',
   },
   {
     min: 0, tier: 'Worth a look', headline: 'Worth a look.',
     sub: 'At least one answer lines up, but much of your profile does not clearly match.',
-    ink: '#74305E', ring: '#B857A1', soft: '#FFF2FB', mid: '#F9E0F2', deep: '#F1A4DF', edge: '#EAC7E1',
+    ink: '#16122A', ring: '#53545A', soft: '#FAFBF8', mid: '#E8F0EE', deep: '#E8F0EE', edge: '#D8DFDC',
   },
 ];
 
@@ -59,9 +59,9 @@ const GOAL_COMPONENTS = new Set(['primaryGoal', 'otherNeeds', 'periodFlow', 'per
 const PROFILE_COMPONENTS = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'perimenopauseLastPeriod', 'diagnoses', 'triedBefore']);
 
 function kindForComponent(component) {
-  if (GOAL_COMPONENTS.has(component)) return { kind: 'Your goal', glyph: '1', bg: '#D5F477', fg: '#203C9C' };
-  if (PROFILE_COMPONENTS.has(component)) return { kind: 'Your profile', glyph: '2', bg: '#DFE2FF', fg: '#203C9C' };
-  return { kind: 'Your preference', glyph: '3', bg: '#AFF1DD', fg: '#155F50' };
+  if (GOAL_COMPONENTS.has(component)) return { kind: 'Your goal', glyph: '1', bg: '#9BF0E1', fg: '#16122A' };
+  if (PROFILE_COMPONENTS.has(component)) return { kind: 'Your profile', glyph: '2', bg: '#E8F0EE', fg: '#16122A' };
+  return { kind: 'Your preference', glyph: '3', bg: '#F8E5EF', fg: '#16122A' };
 }
 
 /**
@@ -80,7 +80,7 @@ function SimpleHeader({ title, onBack }) {
         <button type="button" onClick={onBack} aria-label="Back to product" style={{ width: 44, height: 44, flex: 'none', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <BackIcon />
         </button>
-        <h1 style={{ flex: 1, minWidth: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', fontWeight: 400, margin: 0 }}>
+        <h1 style={{ flex: 1, minWidth: 0, fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', fontWeight: 400, margin: 0 }}>
           {title}
         </h1>
       </div>
@@ -192,7 +192,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Match breakdown</div>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.2 }}>Why {percent}%</div>
+            <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.2 }}>Why {percent}%</div>
           </div>
         </div>
       </div>
@@ -210,7 +210,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
               }}
             >
               <div style={{ width: 58, height: 58, borderRadius: 99, background: 'var(--ayna-surface)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: t.ink, lineHeight: 1 }}>{percent}</div>
+                <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: t.ink, lineHeight: 1 }}>{percent}</div>
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(7.5px * var(--ayna-text-scale, 1))', letterSpacing: 1, color: t.ink, opacity: 0.55, marginTop: 2 }}>PCT</div>
               </div>
             </div>
@@ -218,7 +218,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
               <div style={{ display: 'inline-block', fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', background: 'var(--ayna-surface)', color: t.ink, borderRadius: 99, padding: '5px 10px' }}>
                 {t.tier}
               </div>
-              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.22, marginTop: 9, color: t.ink }}>{t.headline}</div>
+              <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.22, marginTop: 9, color: t.ink }}>{t.headline}</div>
               <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.55, marginTop: 6, color: t.ink, opacity: 0.78 }}>{t.sub}</div>
             </div>
           </div>

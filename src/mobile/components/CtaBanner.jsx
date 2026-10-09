@@ -6,7 +6,7 @@ function GradientBanner({ onClick, title = 'Build your ecosystem', buttonLabel =
         margin: '0 20px 20px',
         borderRadius: 24,
         padding: 20,
-        background: 'linear-gradient(135deg,#4100F5 0%,#4100F5 52%,#4100F5 100%)',
+        background: 'linear-gradient(135deg,#16122A 0%,#16122A 52%,#16122A 100%)',
         color: '#FFFFFF',
         cursor: 'pointer',
         position: 'relative',
@@ -16,13 +16,13 @@ function GradientBanner({ onClick, title = 'Build your ecosystem', buttonLabel =
     >
       <div style={{ position: 'absolute', right: -38, top: -38, width: 150, height: 150, borderRadius: 99, border: '1px solid rgba(255,255,255,.16)' }} />
       <div style={{ position: 'absolute', right: -8, top: 16, width: 92, height: 92, borderRadius: 99, border: '1px solid rgba(255,255,255,.12)' }} />
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '10px 0 6px', maxWidth: 230 }}>
+      <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '10px 0 6px', maxWidth: 230 }}>
         {title}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 16 }}>
         <div
           style={{
-            background: '#CDF500',
+            background: '#9BF0E1',
             color: '#171717',
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 600,
@@ -55,12 +55,12 @@ function InlineRow({ onClick }) {
         cursor: 'pointer',
       }}
     >
-      <div style={{ width: 34, height: 34, borderRadius: 99, background: 'linear-gradient(135deg,#4100F5,#4100F5)', flexShrink: 0 }} />
+      <div style={{ width: 34, height: 34, borderRadius: 99, background: 'linear-gradient(135deg,#16122A,#16122A)', flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
         <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))' }}>Build your ecosystem</div>
         <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: '#626262', marginTop: 2 }}>6 steps</div>
       </div>
-      <div style={{ color: '#4100F5', fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>→</div>
+      <div style={{ color: '#16122A', fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>→</div>
     </div>
   );
 }
@@ -92,7 +92,7 @@ function StickyPill({ onClick }) {
       </div>
       <div
         style={{
-          background: '#CDF500',
+          background: '#9BF0E1',
           color: '#171717',
           width: 32,
           height: 32,

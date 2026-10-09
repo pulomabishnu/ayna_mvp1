@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { checkImageFile } from '../../utils/community/imageUpload.js';
 
-const COLORS = ['#4100F5', '#4100F5', '#BBDD00', '#4100F5', '#765479', '#C87545'];
+const COLORS = ['#16122A', '#C41C72', '#9BF0E1', '#E8F0EE', '#F8E5EF', '#FAFBF8'];
 const EXAMPLES = ['Period care picks', 'My everyday routine', 'Worth sharing'];
 
 function coverInk(color) {
-  return color === '#BBDD00' ? '#30233B' : '#F8F8F3';
+  return ['#16122A', '#C41C72', '#4100F5', '#765479'].includes(color) ? '#FFFFFF' : '#16122A';
 }
 
 export default function PlaylistCoverPicker({ title, mode, onMode, color, onColor, text, onText, photo, onPhoto, existingCoverUrl }) {
