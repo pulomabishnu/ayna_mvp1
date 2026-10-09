@@ -559,19 +559,16 @@ function rankedSuggestions(query, options = [], limit = 6) {
 // accent-dark, peach, chip-bg, brown, navy, text-faint) — reused as CSS vars
 // here rather than re-hardcoded, so this screen gets the app's real dark
 // mode for free instead of staying permanently light like the mockup frame.
-// SELECTED_TEXT (#8A5A1E) is the one color the reference uses that has no
-// existing --ayna-* var; it's a fixed accent-on-peach text tone, not
-// intended to invert in dark mode (the reference's own dark-mode notes only
-// redefine the surface/border/accent tokens, not this one).
+// Choice colors use the app tokens so selection remains legible in both themes.
 const NAVY = 'var(--ayna-navy)';
 const CARD_BG = 'var(--ayna-surface)';
 const ROW_BORDER = 'var(--ayna-border)';
 const ACCENT_BORDER = 'var(--ayna-accent-dark)';
-const ACCENT_BG = 'var(--ayna-peach)';
+const ACCENT_BG = 'var(--ayna-accent)';
 const PANEL_BG = 'var(--ayna-chip-bg)';
 const MUTED = 'var(--ayna-text-faint)';
 const LABEL_GOLD = 'var(--ayna-brown)';
-const SELECTED_TEXT = '#8A5A1E';
+const SELECTED_TEXT = 'var(--ayna-text)';
 const INK = 'var(--ayna-text)';
 const BODY_TEXT = 'var(--ayna-text-muted)';
 
@@ -591,16 +588,16 @@ function ChoiceGrid({ items, selected = [], onToggle, icons }) {
         const on = selected.includes(item);
         const icon = icons && icons[item];
         return (
-          <div
+          <button type="button" aria-pressed={on} className="ayna-figma-choice-tile"
             key={item}
             onClick={() => onToggle(item)}
             style={{
               cursor: 'pointer', position: 'relative', minHeight: 60, display: 'flex',
               flexDirection: icon ? 'column' : 'row', alignItems: icon ? 'flex-start' : 'center',
-              padding: '13px 26px 13px 13px', borderRadius: 18,
+              padding: '13px 26px 13px 13px', borderRadius: 4, textAlign: 'left',
               background: on ? ACCENT_BG : CARD_BG,
               border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-              boxShadow: on ? '0 4px 14px rgba(232,169,79,.2)' : cardShadow,
+              boxShadow: 'none',
             }}
           >
             {icon && (
@@ -619,7 +616,7 @@ function ChoiceGrid({ items, selected = [], onToggle, icons }) {
                 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>
               </span>
             )}
-          </div>
+          </button>
         );
       })}
     </div>
