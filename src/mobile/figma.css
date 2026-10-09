@@ -648,6 +648,7 @@
 .ayna-mobile .ayna-cover-metric:nth-child(2) { background:var(--ayna-figma-berry); }
 .ayna-mobile .ayna-cover-metric:nth-child(3) { background:var(--ayna-figma-ink); }
 .ayna-figma-discover .ayna-editorial-product-grid { display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important; gap:23px 12px!important; padding:0 17px 22px!important; }
+.ayna-figma-discover .ayna-editorial-product-grid.is-list-layout { display:flex!important; flex-direction:column!important; gap:12px!important; }
 .ayna-figma-discover .ayna-editorial-product-grid > * { min-width:0; }
 .ayna-figma-discover .ayna-editorial-product-grid > .ayna-figma-discover-cta { grid-column:1 / -1; }
 .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) { min-width:0; border:0!important; border-radius:0!important; background:transparent!important; overflow:visible; }

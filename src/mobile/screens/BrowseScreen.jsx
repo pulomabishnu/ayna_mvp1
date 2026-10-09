@@ -120,14 +120,13 @@ function PersonalizedToggle({ on, disabled, onClick }) {
 
 function LayoutToggle({ layout, onToggle }) {
   return (
-    <div
+    <button type="button"
       onClick={onToggle}
-      role="button"
       aria-label={layout === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
       style={{
-        width: 30,
-        height: 30,
-        borderRadius: 8,
+        width: 44,
+        height: 44,
+        borderRadius: 14,
         border: '1px solid var(--ayna-chip-border)',
         background: 'var(--ayna-chip-bg)',
         display: 'flex',
@@ -140,7 +139,7 @@ function LayoutToggle({ layout, onToggle }) {
       }}
     >
       {layout === 'grid' ? 'List' : 'Grid'}
-    </div>
+    </button>
   );
 }
 
@@ -249,7 +248,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
   return (
     <>
       <div
-        className="ayna-editorial-product-grid"
+        className={`ayna-editorial-product-grid${isList ? ' is-list-layout' : ''}`}
         style={
           isList
             ? { display: 'flex', flexDirection: 'column', gap: 12, padding: '0 20px' }
@@ -499,7 +498,6 @@ export default function BrowseScreen({
         <span>FOR YOU / DISCOVER</span>
         <h1>Start <em>with what</em><br />you need.</h1>
         <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
-        <p>Find a product by concern, name, or what matters to you.</p>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px', borderBottom: '1px solid var(--ayna-border)', margin: '0 0 14px' }}>

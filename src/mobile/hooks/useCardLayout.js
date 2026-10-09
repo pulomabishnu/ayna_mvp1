@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
-const LAYOUT_KEY = 'ayna_mobile_card_layout_v2';
+const LAYOUT_KEY = 'ayna_mobile_card_layout_v3';
 
 function loadLayout() {
   try {
     const stored = localStorage.getItem(LAYOUT_KEY);
-    return stored === 'grid' ? 'grid' : 'list';
+    return stored === 'list' ? 'list' : 'grid';
   } catch {
-    return 'list';
+    return 'grid';
   }
 }
 
