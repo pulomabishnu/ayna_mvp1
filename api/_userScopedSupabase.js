@@ -46,6 +46,10 @@ export async function verifyUserWithRls(req) {
     if (error || !data?.user) {
       return { user: null, error: 'invalid_session', client: null };
     }
+    // Anonymous (guest) sessions are not accounts — see _usageLimit.js.
+    if (data.user.is_anonymous) {
+      return { user: null, error: 'auth_required', client: null };
+    }
 
     return { user: data.user, error: null, client };
   } catch (error) {
