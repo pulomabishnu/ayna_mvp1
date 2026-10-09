@@ -228,6 +228,7 @@ function reconstructIntakeFromSnapshot(snapshot) {
     next[key] = next[key].filter((item) => item !== legacyOption);
     if (String(next[textKey] || '').trim()) next[key].push(String(next[textKey]).trim());
   });
+  next.supportSelections = (next.supportSelections || []).map((item) => item === 'Other hormone-related skin concerns' ? 'Hormone-related skin concerns' : item);
   next.productHistory = (next.productHistory || []).map((product) => ({
     ...product,
     stopReasons: (product.stopReasons || []).filter((reason) => reason !== 'Other').concat(product.stopOther?.trim() || []),
@@ -1185,7 +1186,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
 // Pattern C1: search bar + grouped chips, each group header showing a live
 // "n/m" selected count.
 function SearchableGroups({ groups, selected, onToggle, search, onSearch, onAdd }) {
-  const [openGroups, setOpenGroups] = useState([groups[0]?.label]);
+  const [openGroups, setOpenGroups] = useState(() => [groups.find((group) => group.items.some((item) => selected.includes(item)))?.label || groups[0]?.label]);
   const q = search.trim().toLowerCase();
   const known = groups.flatMap((group) => group.items);
   const custom = selected.filter((item) => !known.includes(item));
@@ -1205,7 +1206,7 @@ function SearchableGroups({ groups, selected, onToggle, search, onSearch, onAdd 
             <div className="ayna-intake-topic" key={group.label}>
               <button type="button" aria-expanded={!!q || openGroups.includes(group.label)} onClick={() => setOpenGroups((current) => current.includes(group.label) ? current.filter((label) => label !== group.label) : [group.label])}>
                 <span className="ayna-intake-topic-name">{group.label}</span>
-                <span className="ayna-intake-topic-count">{count ? `${count} picked` : `${group.items.length} options`}</span>
+                <span className="ayna-intake-topic-count">{count ? `${count} picked` : `${group.items.length} ${group.items.length === 1 ? 'option' : 'options'}`}</span>
                 <span className="ayna-intake-topic-toggle" aria-hidden="true">{q || openGroups.includes(group.label) ? '−' : '+'}</span>
               </button>
               {(q || openGroups.includes(group.label)) && <div className="ayna-intake-topic-options"><RowChoiceList items={group.items} selected={selected} onToggle={onToggle} /></div>}
