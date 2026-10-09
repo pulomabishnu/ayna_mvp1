@@ -105,6 +105,16 @@
 .ayna-mobile .ayna-fresh-match-badge span { font-size:7px; letter-spacing:.08em; }
 .ayna-mobile .ayna-figma-discover-cta { padding:14px 0; border:0; border-top:1px solid var(--ayna-border); background:transparent; }
 .ayna-mobile .ayna-figma-discover-cta button { min-height:44px; border-radius:14px!important; }
+@media (max-height:1000px) {
+  .ayna-mobile .ayna-figma-discover .ayna-shop-heading { padding:6px 17px 8px; }
+  .ayna-mobile .ayna-figma-discover .ayna-shop-heading h1 { margin-bottom:7px; font-size:32px; }
+  .ayna-mobile .ayna-figma-discover .ayna-shop-heading .ayna-fresh-search { min-height:42px; }
+  .ayna-shop-category-row { gap:11px; padding-bottom:7px; }
+  .ayna-shop-category { width:53px; min-height:65px; }
+  .ayna-shop-category-image { width:48px; height:45px; margin-bottom:5px; }
+  .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { aspect-ratio:4/3!important; }
+  .ayna-shop-category-row+div { padding-bottom:4px!important; }
+}
 .ayna-shop-filter-backdrop { position:fixed; inset:0; z-index:400; display:flex; align-items:flex-end; background:rgba(22,18,42,.36); }
 .ayna-shop-filter-sheet { width:100%; max-height:min(83vh,760px); display:flex; flex-direction:column; padding:16px 18px max(14px,env(safe-area-inset-bottom)); border-radius:22px 22px 0 0; background:#f7f7f2; color:#16122a; }
 .ayna-shop-filter-head,.ayna-shop-filter-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; }
@@ -118,6 +128,8 @@
 /* Quiet utility screens and content-first Community. */
 .ayna-mobile .ayna-fresh-product-detail,.ayna-mobile .ayna-fresh-article,.ayna-mobile .ayna-fresh-saved,.ayna-mobile .ayna-fresh-profile-hub,.ayna-mobile .am-screen { background:#f7f7f2!important; }
 .ayna-mobile .ayna-fresh-detail-image>div { aspect-ratio:1!important; }
+.ayna-mobile .ayna-fresh-detail-title { background:#f7f7f2!important; color:#16122a!important; }
+.ayna-mobile .ayna-fresh-detail-title h1 { color:#16122a!important; }
 .ayna-mobile .ayna-fresh-detail-title h1 { font-family:'Bricolage Grotesque',-apple-system,sans-serif!important; font-size:30px!important; }
 .ayna-mobile .ayna-figma-detail-score { border:1px solid #16122a!important; border-radius:0!important; background:#f7f7f2!important; }
 .ayna-detail-sections { display:flex; gap:22px; overflow-x:auto; margin:27px 22px 0; border-bottom:1px solid var(--ayna-border); scrollbar-width:none; }
