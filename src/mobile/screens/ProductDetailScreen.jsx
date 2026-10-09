@@ -479,6 +479,7 @@ export default function ProductDetailScreen({
             }}
           >
             <ProductImage src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
+            {matchPercent != null && <button type="button" className="ayna-figma-detail-score" onClick={openWhyMatch} aria-label={`${matchPercent} percent match. See why`}><strong>{matchPercent}</strong><span>PERSONAL MATCH<br />match /100</span></button>}
             {matchDetails.matchStatus === 'no-profile' && <button type="button" onClick={onStartQuiz} style={{ position: 'absolute', right: 12, bottom: 12, border: 0, borderRadius: 99, background: '#F8F8F3', color: '#5c3b2c', padding: '9px 13px', fontWeight: 600 }}>Build to see your match</button>}
           </div>
         </div>
@@ -505,13 +506,6 @@ export default function ProductDetailScreen({
 
         <div className="ayna-fresh-detail-title" style={{ padding: '18px 22px 0' }}>
           {eyebrowLine && <div style={EYEBROW}>{eyebrowLine}</div>}
-          {matchPercent != null && (
-            <button type="button" onClick={openWhyMatch} style={{ display: 'flex', alignItems: 'center', gap: 9, width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer' }}>
-              <strong style={{ fontSize: 16, whiteSpace: 'nowrap' }}>{matchPercent}% match</strong>
-              <span style={{ flex: 1, fontSize: 12, lineHeight: 1.35 }}>See why this fits your ecosystem</span>
-              <span aria-hidden="true">→</span>
-            </button>
-          )}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" onClick={onStartQuiz} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>Build your ecosystem to see your personal match →</button>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
           <h1 style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(29px * var(--ayna-text-scale, 1))', lineHeight: 1.08, letterSpacing: '-.05em', margin: '12px 0 0', color: 'var(--ayna-heading)', fontWeight: 700 }}>{name}</h1>

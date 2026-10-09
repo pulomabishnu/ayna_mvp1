@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import './mobile.css';
 import './editorial.css';
 import './fresh.css';
+import './figma.css';
 import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest, filterPrescriptionCareGate, hydrateCatalogProduct } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
@@ -686,11 +687,11 @@ export default function MobileApp() {
         ]}
       />
       {showTabBar && <MobileTabBar
-        active={activeTab}
-        hasEcosystem={hasEcosystem}
+        active={askAynaOpen ? 'ask' : activeTab}
         onHome={() => { setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onBrowse={() => { setOverlay(null); setScreen('browse'); }}
         onCommunity={() => { setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
+        onAskAyna={() => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
         onProfile={openProfile}
       />}
       <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
@@ -794,7 +795,7 @@ export default function MobileApp() {
           onOpenMonthlyCheckin={() => setScreen('checkin')}
         />
       )}
-      {!askAynaOpen && !overlay && !['landing', 'ecointro', 'signin', 'quiz', 'building', 'reveal'].includes(screen) && (
+      {!showTabBar && !askAynaOpen && !overlay && !['landing', 'ecointro', 'signin', 'quiz', 'building', 'reveal'].includes(screen) && (
         <AskAynaChip
           onClick={() => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
           viewKey={overlay ? `${overlay.type}:${overlay.item?.id || ''}` : screen}

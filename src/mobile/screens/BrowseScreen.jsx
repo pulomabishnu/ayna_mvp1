@@ -480,7 +480,7 @@ export default function BrowseScreen({
   );
 
   return (
-    <div className="ayna-fresh-browse-screen">
+    <div className="ayna-fresh-browse-screen ayna-figma-discover">
       <MobileHeader
         variant={theme}
         activeTab="browse"
@@ -493,13 +493,11 @@ export default function BrowseScreen({
       />
 
       <div className="ayna-fresh-browse-heading">
-        <span>THE AYNA EDIT</span>
-        <h1>Find your<br /><em>good thing.</em></h1>
-        <p>Products, research, and real talk. Pick your starting point.</p>
-        <i aria-hidden="true" />
+        <span>FOR YOU / DISCOVER</span>
+        <h1>Start <em>with what</em><br />you need.</h1>
+        <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+        <p>Find a product by concern, name, or what matters to you.</p>
       </div>
-
-      <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px', borderBottom: '1px solid var(--ayna-border)', margin: '0 0 14px' }}>
         <div style={{ display: 'flex', gap: 18 }}>
@@ -531,6 +529,8 @@ export default function BrowseScreen({
           <button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); }} style={{ gridColumn: '1 / -1', minHeight: 44, border: 0, borderRadius: 10, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', fontWeight: 700 }}>Clear filters</button>
         </div>}
       </div>}
+
+      {mode === 'products' && <div className="ayna-figma-ranked"><span>RANKED BY</span><strong>{personalized && hasProfile ? 'Your profile' : 'Relevance'}</strong><span>Safety · Fit · Preferences · Evidence</span></div>}
 
       {/* Once the ecosystem exists, Browse stays pure browsing — the
           "update your health" prompt lives on the Ecosystem screen instead,

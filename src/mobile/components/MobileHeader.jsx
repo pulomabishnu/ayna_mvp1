@@ -6,7 +6,7 @@ const HeartIcon = ({ stroke }) => (
 
 export default function MobileHeader({ variant = 'light', onOpenSaved, onBack }) {
   const dark = variant === 'dark';
-  return <header style={{
+  return <header className="ayna-figma-header" style={{
     padding: 'max(20px, env(safe-area-inset-top)) 20px 12px',
     background: dark ? '#203c9c' : 'var(--ayna-bg)',
     color: dark ? '#F8F8F3' : 'var(--ayna-text)',

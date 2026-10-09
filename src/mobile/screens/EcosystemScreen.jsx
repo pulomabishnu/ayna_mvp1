@@ -6,13 +6,6 @@ import CtaBanner from '../components/CtaBanner.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
 
-function getTimeGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
 export default function EcosystemScreen({
   myProducts = [],
   authUser = null,
@@ -34,6 +27,7 @@ export default function EcosystemScreen({
   quizAnswers = null,
   onOpenWhyMatch,
   onAddToEcosystem,
+  topAreas = [],
 }) {
   const rankedProducts = myProducts
     .map((product) => ({ product, details: getProductMatchDetailsForProduct(product, quizAnswers) }))
@@ -49,33 +43,41 @@ export default function EcosystemScreen({
   const nextSaved = savedList[0];
   const featuredProduct = matchedProducts[0] || suggestedEcosystemProducts[0] || nextSaved;
   const featuredImage = featuredProduct?.image || featuredProduct?.imageUrl || featuredProduct?.images?.[0];
+  const featuredMatch = featuredProduct && quizAnswers ? getProductMatchDetailsForProduct(featuredProduct, quizAnswers) : null;
+  const showFeaturedMatch = featuredMatch?.matchStatus === 'scored' && featuredMatch.percent >= 60;
+  const focusLabel = topAreas.length ? topAreas.slice(0, 2).join(' & ') : 'Your health, in context';
 
   return (
-    <div className="ayna-fresh-ecosystem">
+    <div className="ayna-fresh-ecosystem ayna-figma-ecosystem">
       <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
 
-      <div className="ayna-fresh-home-heading">
-        <p>{getTimeGreeting()}, {name}</p>
-        <h1>Your space<br />to feel <em>good.</em></h1>
+      <div className="ayna-figma-eco-intro">
+        <div className="ayna-figma-kicker"><span>RIGHT NOW</span><span>EDIT</span></div>
+        <h1>{focusLabel}</h1>
+        <p>{name}'s Ecosystem</p>
         {ecosystemNotice && <p role="status" style={{ margin: '12px 0 0', padding: '11px 14px', borderRadius: 14, background: 'var(--ayna-peach)', color: 'var(--ayna-heading)', fontSize: 13, lineHeight: 1.45 }}>{ecosystemNotice}</p>}
       </div>
 
-      <div className="ayna-fresh-home-stack">
-        <button type="button" className="ayna-fresh-stack-card stack-lime" onClick={featuredProduct ? () => onOpenProduct?.(featuredProduct) : onBrowse}>
-          <span className="ayna-fresh-stack-label">01 / PICKED FOR YOU</span>
-          <strong>{featuredProduct ? featuredProduct.name : 'Find your next good thing.'}</strong>
-          <span className="ayna-fresh-stack-action">Explore this pick <span aria-hidden="true">↗</span></span>
-          {featuredImage && <span className="ayna-fresh-stack-photo"><ProductImage src={featuredImage} alt="" allowBrandLogo={featuredProduct?.type === 'digital'} style={{ objectFit: 'contain' }} /></span>}
+      <section className="ayna-figma-eco-feature">
+        <button type="button" className="ayna-figma-eco-photo" onClick={featuredProduct ? () => onOpenProduct?.(featuredProduct) : onBrowse} aria-label={featuredProduct ? `View ${featuredProduct.name}` : 'Browse products'}>
+          <ProductImage src={featuredImage} alt={featuredProduct?.name || ''} allowBrandLogo={featuredProduct?.type === 'digital'} />
+          {showFeaturedMatch && <span className="ayna-figma-score"><strong>{featuredMatch.percent}</strong><span>match /100<br />for your profile</span></span>}
         </button>
-        <button type="button" className="ayna-fresh-stack-card stack-pink" onClick={onOpenMonthlyCheckin}>
-          <span className="ayna-fresh-stack-label">02 / CHECK IN</span><strong>How are you feeling lately?</strong>
-          <span className="ayna-fresh-stack-action">Monthly check-in <span aria-hidden="true">↗</span></span><span className="ayna-fresh-stack-loop" aria-hidden="true" />
-        </button>
-        <button type="button" className="ayna-fresh-stack-card stack-lilac" onClick={relatedReads[0] ? () => onOpenArticle?.(relatedReads[0]) : onBrowse}>
-          <span className="ayna-fresh-stack-label">03 / WORTH A READ</span><strong>{relatedReads[0]?.title || 'Learn something new about your body.'}</strong>
-          <span className="ayna-fresh-stack-action">Open a read <span aria-hidden="true">↗</span></span><span className="ayna-fresh-stack-star" aria-hidden="true" />
-        </button>
-      </div>
+        <div className="ayna-figma-eco-feature-copy">
+          <small>YOUR CURRENT PICK</small>
+          <h2>{featuredProduct?.name || 'Find a product that fits your priorities.'}</h2>
+          <p>{featuredProduct ? 'See the product, its sources, and why it may fit your profile.' : 'Explore the catalog and add what belongs in your routine.'}</p>
+          <button type="button" onClick={featuredProduct ? () => onOpenProduct?.(featuredProduct) : onBrowse}>{featuredProduct ? 'See the full context' : 'Discover products'} <span aria-hidden="true">→</span></button>
+        </div>
+      </section>
+
+      <section className="ayna-figma-routine">
+        <div className="ayna-figma-routine-head"><strong>Connected routine</strong><span>{myProducts.length} saved</span></div>
+        {myProducts.slice(0, 3).map((product) => <button type="button" key={product.id} onClick={() => onOpenProduct?.(product)}><span>{product.name}</span><span aria-hidden="true">›</span></button>)}
+        {myProducts.length === 0 && <p>Your saved products will appear here.</p>}
+      </section>
+
+      <section className="ayna-figma-checkin"><small>NEXT / THIS MONTH</small><h2>How did it fit your day?</h2><p>Note what felt useful, changed, or worth looking into.</p><button type="button" onClick={onOpenMonthlyCheckin}>Log this month's experience <span aria-hidden="true">→</span></button></section>
 
       <div className="ayna-fresh-picks" style={{ padding: '18px 20px 0' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
