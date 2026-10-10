@@ -1081,9 +1081,6 @@ function PreferencesScreen({
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Preferences" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
-        <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '4px 0 6px', color: 'var(--ayna-heading)' }}>{IS_NATIVE_APP ? 'Make Ayna yours.' : 'Your website preferences.'}</div>
-        <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 22 }}>Choose how Ayna looks and how your information shapes what you see.</div>
-
         {/* Always visible regardless of the notification-preferences backend's
             load state below — Substack subscription has nothing to do with
             being signed into Ayna. */}
@@ -1177,12 +1174,12 @@ function PreferencesScreen({
           )}
         </div>
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, margin: '10px 2px 0' }}>
-          This is separate from the analytics toggle in Privacy & data — that one is about anonymised usage stats, this one shapes what you see.
+          Analytics choices are in Privacy & data.
         </div>
 
         {/* Appearance — always local, no account needed. */}
         <SectionLabel>Appearance</SectionLabel>
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18 }}>
+        <div style={{ background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '18px 0' }}>
           <div style={{ fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Theme</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
             {THEME_SWATCHES.map((s) => (
@@ -1191,7 +1188,7 @@ function PreferencesScreen({
           </div>
         </div>
 
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18, marginTop: 14 }}>
+        <div style={{ background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '18px 0', marginTop: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <div style={{ fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))' }}>Text size</div>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '.6px', color: 'var(--ayna-accent-dark)', background: 'var(--ayna-chip-bg)', padding: '3px 9px', borderRadius: 99 }}>
@@ -1205,28 +1202,6 @@ function PreferencesScreen({
           </div>
           <div style={{ marginTop: 14, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text)', lineHeight: 1.5 }}>
             This is what body text looks like across ayna.
-          </div>
-        </div>
-
-        {/* Region — both rows are informational only, matching how far the
-            real app actually reaches today (US-only, English-only); no
-            picker is shown for either since there is nothing real to pick
-            from yet. */}
-        <SectionLabel>Region</SectionLabel>
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Language</div>
-              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>More languages are on the way.</div>
-            </div>
-            <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', flex: 'none' }}>English</div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', borderTop: '1px solid var(--ayna-border)' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Ship to</div>
-              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>United States only, for now.</div>
-            </div>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: '.6px', color: 'var(--ayna-text-faint)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '4px 9px', flex: 'none' }}>US</div>
           </div>
         </div>
 

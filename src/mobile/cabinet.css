@@ -287,8 +287,10 @@
 
 /* The cabinet keeps its hierarchy when the user selects dark mode. */
 .ayna-mobile[data-theme='dark'] { --ayna-bg:#16122a; --ayna-surface:#241f34; --ayna-border:#444051; --ayna-chip-bg:#302a3e; background:#16122a; color:#f7f7fb; }
+.ayna-mobile[data-theme='dark'] { --ayna-accent-dark:#e5a683; --ayna-figma-berry:#e5a683; --ayna-color-green:#b8dfcb; }
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active { color:#16122a!important; background:#b8dfcb!important; }
 .ayna-mobile[data-theme='dark'] :is(.ayna-figma-header,.ayna-bottom-nav,.ayna-cabinet-cover,.ayna-cabinet-cover .ayna-cover-top,.ayna-cabinet-cover .ayna-cover-actions,.ayna-cabinet-home,.ayna-figma-discover .ayna-shop-heading,.ayna-fresh-product-detail,.ayna-fresh-article,.ayna-fresh-saved,.ayna-fresh-profile-hub,.am-screen,.ayna-fresh-auth,.ayna-fresh-intake) { background:#16122a!important; color:#f7f7fb!important; }
-.ayna-mobile[data-theme='dark'] :is(.ayna-bottom-nav button,.ayna-bottom-nav button.is-active,.ayna-cabinet-topline button,.ayna-cabinet-foot button,.ayna-cabinet-more details>button,.ayna-cabinet-suggestion>button,.ayna-cover-secondary button,.ayna-fresh-auth-back,.ayna-fresh-auth-switch,.ayna-shop-filter-head button,.ayna-shop-filter-actions button:first-child) { color:#f7f7fb!important; }
+.ayna-mobile[data-theme='dark'] :is(.ayna-bottom-nav button:not(.is-active),.ayna-cabinet-topline button,.ayna-cabinet-foot button,.ayna-cabinet-more details>button,.ayna-cabinet-suggestion>button,.ayna-cover-secondary button,.ayna-fresh-auth-back,.ayna-fresh-auth-switch,.ayna-shop-filter-head button,.ayna-shop-filter-actions button:first-child) { color:#f7f7fb!important; }
 .ayna-mobile[data-theme='dark'] :is(.ayna-cabinet-stage h1,.ayna-cabinet-section-head h2,.ayna-home-today h2,.ayna-cabinet-cover h1,.ayna-cabinet-cover h1 em,.ayna-figma-discover .ayna-shop-heading h1,.ayna-fresh-auth-heading,.ayna-fresh-auth label span,.ayna-fresh-auth-field input) { color:#f7f7fb!important; }
 .ayna-mobile[data-theme='dark'] :is(.ayna-match-stamp,.ayna-fresh-match-badge,.ayna-figma-detail-score) { background:#241f34!important; color:#f7f7fb!important; border-color:#f7f7fb!important; }
 .ayna-mobile[data-theme='dark'] :is(.ayna-cabinet-shelf::after,.ayna-cover-shelf) { background:#f7f7fb; }
