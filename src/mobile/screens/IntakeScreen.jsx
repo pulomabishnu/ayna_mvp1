@@ -52,36 +52,6 @@ const LIFE_STAGES = [
 ];
 const MIDLIFE_LIFE_STAGES = ['I am in perimenopause', 'I am in menopause', 'I am post-menopause'];
 
-// One editorial mark per question. These are tied to the question rather than
-// decorative confetti: a clock for age, a pin for ZIP, a shield for allergies,
-// a shelf for products, and so on. The answer controls remain the focus.
-const INTAKE_MARKS = {
-  age: 'M120 20a48 48 0 1 1 0 96 48 48 0 0 1 0-96Zm0 15v8m0 58v8m-33-33h-8m82 0h-8m-33-31v32l21 14',
-  lifeStage: 'M45 30h120M45 75h120M45 120h120M65 30v90m80-90v90M45 30a12 12 0 1 0 24 0 12 12 0 0 0-24 0Zm100 45a12 12 0 1 0 24 0 12 12 0 0 0-24 0Z',
-  zip: 'M120 125s-42-47-42-72a42 42 0 0 1 84 0c0 25-42 72-42 72Zm0-88a16 16 0 1 0 0 32 16 16 0 0 0 0-32Z',
-  support: 'M120 76m-20 0a20 20 0 1 0 40 0 20 20 0 1 0-40 0ZM120 18v26m0 64v26M62 76h26m64 0h26M79 35l18 18m46 46 18 18m0-82-18 18M97 99l-18 18',
-  periodFlow: 'M20 78c20-46 40-46 60 0s40 46 60 0 40-46 60 0M20 105c20-46 40-46 60 0s40 46 60 0 40-46 60 0',
-  periodPain: 'M22 105l43-42 25 22 27-51 25 42 37-27 19 17M22 124h176',
-  utiFrequency: 'M44 115h132M60 94h100M76 73h68M92 52h36M108 31h4',
-  postpartumTiming: 'M42 112a78 78 0 0 1 156 0M64 112a56 56 0 0 1 112 0M86 112a34 34 0 0 1 68 0M42 112h156',
-  pregnancyTrimester: 'M33 110a26 26 0 0 1 52 0M84 110a36 36 0 0 1 72 0M145 110a26 26 0 0 1 52 0M33 110h164',
-  conditions: 'M102 28h36v33h33v36h-33v33h-36V97H69V61h33V28Z',
-  allergies: 'M120 22l65 25v34c0 35-30 55-65 68-35-13-65-33-65-68V47l65-25Zm-29 57 19 19 39-39',
-  medications: 'M65 38a32 32 0 0 1 45 0l46 46a32 32 0 0 1-45 45L65 83a32 32 0 0 1 0-45Zm23 23 47 47',
-  products: 'M30 119h180M48 103V43h42v60m21 0V27h39v76m20 0V56h26v47M42 119h156',
-  avoidRepeat: 'M120 28a48 48 0 1 1 0 96 48 48 0 0 1 0-96Zm-34 14 68 68',
-  safety: 'M120 20 202 128H38L120 20Zm0 42v32m0 17v3',
-  formats: 'M29 38h50v74H29V38Zm71 0h50v74h-50V38Zm71 0h30v74h-30V38Z',
-  recommendationCount: 'M64 32h92M64 57h92M64 82h92M64 107h92M35 32h8m-8 25h8m-8 25h8m-8 25h8',
-  priceRange: 'M38 117h165M47 99h27V72H47v27Zm47 0h27V49H94v50Zm47 0h27V28h-27v71Z',
-  brandOpenness: 'M36 75h145m-21-20 22 20-22 20M88 41 52 75l36 34',
-  trustedBrands: 'M120 20 145 55l42 5-26 32 6 42-47-17-47 17 6-42-26-32 42-5 25-35Z',
-  avoidIngredients: 'M120 20v110M72 57c0-23 48-31 48 0 0 23-48 25-48 0Zm48 38c0-23 48-31 48 0 0 23-48 25-48 0Z',
-  fsaHsa: 'M39 47h142v76H39V47Zm0 22h142M64 100h48M53 47V32h114v15',
-  trust: 'M120 21 176 43v42c0 30-24 49-56 63-32-14-56-33-56-63V43l56-22Zm-22 57 16 16 29-31',
-  anythingElse: 'M61 24h96v115H61V24Zm17 28h61M78 73h61M78 94h44M159 114l32-32 12 12-32 32-20 8 8-20Z',
-};
-
 const PERIOD_FLOW = ['Very light', 'Light', 'Moderate', 'Heavy', 'Very heavy', 'It varies', 'I do not currently get periods', 'Not sure'];
 const PERIOD_PAIN = ['None', 'Mild', 'Moderate', 'Severe', 'Very severe', 'It varies', 'Not sure'];
 const UTI_FREQUENCY = ['This is the first time', 'Rarely', 'A few times a year', 'About monthly', 'More than once a month', 'I am experiencing them right now', 'Not sure'];
@@ -260,11 +230,6 @@ function reconstructIntakeFromSnapshot(snapshot) {
   }
   return next;
 }
-
-const SECTION_LABELS = {
-  core: 'Core profile', support: 'What you are looking for', safety: 'Health & safety',
-  history: 'What you have tried', preferences: 'Shopping preferences', trust: 'What matters to you',
-};
 
 const PERIOD_TRIGGER = new Set([
   'Period product support', 'Cramps or period pain', 'Pelvic pain', 'Heavy periods', 'Light periods',
@@ -622,7 +587,7 @@ const cardShadow = '0 1px 3px rgba(41,37,36,.04)';
 // plain label-only tile exactly as before.
 function ChoiceGrid({ items, selected = [], onToggle, icons, numbered = false }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 9 }}>
+    <div className="ayna-choice-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 9 }}>
       {items.map((item, index) => {
         const on = selected.includes(item);
         const icon = icons && icons[item];
@@ -869,7 +834,7 @@ function AgeCard({ value, onChange, underage, onOpenGate }) {
           border: '1px solid ' + (!hasValue ? ROW_BORDER : underage ? WARNING_BORDER_SOFT : ACCENT_BORDER),
         }}
       >
-        <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: MUTED }}>Your age</div>
+        <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: MUTED }}>Slide or tap</div>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
           <select
             aria-label="Your age"
@@ -890,14 +855,8 @@ function AgeCard({ value, onChange, underage, onOpenGate }) {
             {Array.from({ length: 103 }, (_, index) => index + 18).map((age) => <option key={age} value={age}>{age}</option>)}
           </select>
         </div>
+        <input className="ayna-age-slider" type="range" min="18" max="90" value={hasValue ? Math.min(90, Number(value)) : 18} onChange={(e) => onChange(e.target.value)} aria-label="Slide to choose your age" />
         {underage && <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: WARNING_BODY, marginTop: 8 }}>That's under our age requirement</div>}
-      </div>
-
-      <div className="ayna-intake-age-note" style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 20, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 2 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
-        <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT }}>
-          Better picks. Never ads.
-        </div>
       </div>
 
       {underage && (
@@ -1602,30 +1561,30 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     const steps = [
       { id: 'age', section: 'core', title: 'Your age', type: 'age', optional: true },
       { id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', optional: true },
-      { id: 'zip', section: 'core', title: 'ZIP code', subtitle: 'Optional · local care', type: 'zip', optional: true },
+      { id: 'zip', section: 'core', title: 'ZIP code', type: 'zip', optional: true },
       { id: 'support', section: 'support', title: 'What needs support?', type: 'support', optional: true },
       ...(isPeriodRelevant(intake) ? [
         { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', optional: true },
         { id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', optional: true },
       ] : []),
-      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often do you experience UTI-like symptoms?', type: 'utiFrequency', optional: true }] : []),
-      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago did you give birth?', type: 'postpartumTiming', optional: true }] : []),
+      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', optional: true }] : []),
+      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago?', type: 'postpartumTiming', optional: true }] : []),
       ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', optional: true }] : []),
-      { id: 'conditions', section: 'safety', title: 'Has a clinician named a condition for you?', subtitle: 'Choose only diagnosed conditions. Symptoms and goals are handled separately.', type: 'conditions', optional: false },
+      { id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', optional: false },
       { id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', optional: false },
-      { id: 'medications', section: 'safety', title: 'Medications or supplements?', subtitle: 'This helps us avoid duplicate ingredients and flag possible compatibility issues.', type: 'medications', optional: false },
+      { id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', optional: false },
       { id: 'products', section: 'history', title: 'What have you tried?', type: 'products', optional: true },
       { id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', optional: true },
-      { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
+      { id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', optional: false },
       { id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', optional: true },
       { id: 'recommendationCount', section: 'preferences', title: 'How many picks?', type: 'recommendationCount', optional: true },
       { id: 'priceRange', section: 'preferences', title: 'Your budget', type: 'price', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', optional: true },
-      ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'trustedBrands', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'What matters on the label?', subtitle: 'Search ingredients or qualities. We keep allergies separate.', type: 'avoidIngredients', optional: true },
+      ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', type: 'trustedBrands', optional: true }] : []),
+      { id: 'avoidIngredients', section: 'preferences', title: 'On the label', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', type: 'trust', optional: false },
-      { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', type: 'textarea', optional: true },
+      { id: 'trust', section: 'trust', title: 'Your trust order', type: 'trust', optional: false },
+      { id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', optional: true },
     ];
     return steps;
   }, [intake]);
@@ -1895,7 +1854,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   }
 
   return (
-    <div className="ayna-fresh-intake" data-section={step.section} data-step={step.id}
+    <div className="ayna-fresh-intake" data-section={step.section} data-step={step.id} data-layout={currentIndex % 4}
       onTouchStart={onStoryTouchStart} onTouchEnd={onStoryTouchEnd} onWheel={onStoryWheel}
       style={{
         flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column',
@@ -1909,14 +1868,12 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
           <button type="button" aria-label="Go back" onClick={goBack} style={{ width: 32, height: 32, borderRadius: 4, border: '1px solid rgba(255,249,242,.45)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FCFBFB" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: '#F2B8D7', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
-          </div>
+          <div style={{ flex: 1, minWidth: 0 }} />
           {step.optional && (
             <button type="button" onClick={goNext} style={{ padding: '7px 0', border: 0, background: 'transparent', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#FCFBFB', cursor: 'pointer', flex: 'none' }}>Skip</button>
           )}
         </div>
-        <div className="ayna-intake-progress-copy"><strong>{String(currentIndex + 1).padStart(2, '0')} / {String(visibleSteps.length).padStart(2, '0')}</strong></div>
+        <div className="ayna-intake-progress-copy" aria-label={`Question ${currentIndex + 1} of ${visibleSteps.length}`} />
         <div style={{ height: 4, borderRadius: 99, background: 'rgba(255,249,242,.24)', overflow: 'hidden' }}>
           <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#F2B8D7,#F2B8D7)' }} />
         </div>
@@ -1925,7 +1882,6 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       <div className="ayna-fresh-intake-body" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
         <div className="ayna-intake-scene" aria-hidden="true">
           <b>{String(currentIndex + 1).padStart(2, '0')}</b>
-          <svg viewBox="0 0 240 150" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"><path d={INTAKE_MARKS[step.id] || INTAKE_MARKS.support} /></svg>
         </div>
         <div style={{ padding: '22px 20px 0' }}>
           {countForStep > 0 && <div className="ayna-intake-question-kicker"><strong>{countForStep} picked</strong></div>}
