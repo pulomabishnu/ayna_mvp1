@@ -702,6 +702,30 @@
 .ayna-mobile .ayna-fresh-intake[data-section='history'] { --intake-paper:#FFF3A2; --intake-shape:#D8B5E8; --intake-pop:#F6B7DE; }
 .ayna-mobile .ayna-fresh-intake[data-section='preferences'] { --intake-paper:#F7D6EB; --intake-shape:#BFDAD0; }
 .ayna-mobile .ayna-fresh-intake[data-section='trust'] { --intake-paper:#D7D7FF; --intake-shape:#F4BDDB; }
+.ayna-mobile .ayna-fresh-intake[data-step='age'] { --intake-paper:#F8DFF3; --intake-shape:#C6C8FA; }
+.ayna-mobile .ayna-fresh-intake[data-step='lifeStage'] { --intake-paper:#F4E9FF; --intake-shape:#BCEFE4; }
+.ayna-mobile .ayna-fresh-intake[data-step='zip'] { --intake-paper:#FFF0C9; --intake-shape:#D4C8F7; }
+.ayna-mobile .ayna-fresh-intake[data-step='support'] { --intake-paper:#D3F2EA; --intake-shape:#EABBE4; }
+.ayna-mobile .ayna-fresh-intake[data-step='periodFlow'] { --intake-paper:#F7D8E8; --intake-shape:#BFC7FA; }
+.ayna-mobile .ayna-fresh-intake[data-step='periodPain'] { --intake-paper:#D8D6FA; --intake-shape:#F6C7D3; }
+.ayna-mobile .ayna-fresh-intake[data-step='utiFrequency'] { --intake-paper:#D9F0EA; --intake-shape:#CFC6F5; }
+.ayna-mobile .ayna-fresh-intake[data-step='postpartumTiming'] { --intake-paper:#F4E2F1; --intake-shape:#C8E7D4; }
+.ayna-mobile .ayna-fresh-intake[data-step='pregnancyTrimester'] { --intake-paper:#F6E4D8; --intake-shape:#C7CDF8; }
+.ayna-mobile .ayna-fresh-intake[data-step='conditions'] { --intake-paper:#D8D9FA; --intake-shape:#F2C8E6; }
+.ayna-mobile .ayna-fresh-intake[data-step='allergies'] { --intake-paper:#F4E6F7; --intake-shape:#C5E5D9; }
+.ayna-mobile .ayna-fresh-intake[data-step='medications'] { --intake-paper:#E1E4FA; --intake-shape:#F4D2DE; }
+.ayna-mobile .ayna-fresh-intake[data-step='products'] { --intake-paper:#FFF1B5; --intake-shape:#D4C7F1; }
+.ayna-mobile .ayna-fresh-intake[data-step='avoidRepeat'] { --intake-paper:#F7D9EA; --intake-shape:#C7E7DF; }
+.ayna-mobile .ayna-fresh-intake[data-step='safety'] { --intake-paper:#D7D6F4; --intake-shape:#F2C5D7; }
+.ayna-mobile .ayna-fresh-intake[data-step='formats'] { --intake-paper:#F7E4F0; --intake-shape:#C9D4F7; }
+.ayna-mobile .ayna-fresh-intake[data-step='recommendationCount'] { --intake-paper:#E6E2FA; --intake-shape:#F4D0E1; }
+.ayna-mobile .ayna-fresh-intake[data-step='priceRange'] { --intake-paper:#FAEDC5; --intake-shape:#D7C9F3; }
+.ayna-mobile .ayna-fresh-intake[data-step='brandOpenness'] { --intake-paper:#F6DCEB; --intake-shape:#C9EBDD; }
+.ayna-mobile .ayna-fresh-intake[data-step='trustedBrands'] { --intake-paper:#E2E4FA; --intake-shape:#F4CEE6; }
+.ayna-mobile .ayna-fresh-intake[data-step='avoidIngredients'] { --intake-paper:#D9F0E8; --intake-shape:#E9C7F2; }
+.ayna-mobile .ayna-fresh-intake[data-step='fsaHsa'] { --intake-paper:#F9E8C9; --intake-shape:#CDC8F5; }
+.ayna-mobile .ayna-fresh-intake[data-step='trust'] { --intake-paper:#DAD8FA; --intake-shape:#F3CEE0; }
+.ayna-mobile .ayna-fresh-intake[data-step='anythingElse'] { --intake-paper:#F4DDEF; --intake-shape:#C5E7E1; }
 .ayna-mobile .ayna-fresh-intake :is(.ayna-fresh-intake-header,.ayna-fresh-intake-body,.ayna-fresh-intake-footer) { background:var(--intake-paper)!important; color:var(--intake-ink)!important; }
 .ayna-mobile .ayna-fresh-intake-header { z-index:2; }
 .ayna-mobile .ayna-fresh-intake-header button,.ayna-mobile .ayna-intake-progress-copy strong { color:var(--intake-ink)!important; }
@@ -714,6 +738,10 @@
 .ayna-mobile .ayna-fresh-intake-body>.ayna-intake-scene { position:relative; z-index:1; height:158px!important; margin:8px 18px 0!important; padding:0 8px 0 14px!important; background:transparent!important; border:0!important; border-radius:0!important; }
 .ayna-mobile .ayna-intake-scene b { font:800 92px/.9 var(--ayna-font-display); letter-spacing:-.1em; color:var(--intake-ink)!important; }
 .ayna-mobile .ayna-intake-scene svg { width:52%; height:150px; stroke:var(--intake-ink); stroke-width:3.5; transform:rotate(-12deg); animation:ayna-intake-mark-float 2.5s ease-in-out infinite alternate; }
+.ayna-mobile .ayna-fresh-intake[data-step='periodFlow'] .ayna-intake-scene svg,.ayna-mobile .ayna-fresh-intake[data-step='periodPain'] .ayna-intake-scene svg,.ayna-mobile .ayna-fresh-intake[data-step='recommendationCount'] .ayna-intake-scene svg { width:62%; transform:rotate(8deg) scale(1.1); }
+.ayna-mobile .ayna-fresh-intake[data-step='allergies'] .ayna-intake-scene,.ayna-mobile .ayna-fresh-intake[data-step='medications'] .ayna-intake-scene,.ayna-mobile .ayna-fresh-intake[data-step='safety'] .ayna-intake-scene { flex-direction:row-reverse; }
+.ayna-mobile .ayna-fresh-intake[data-step='allergies'] .ayna-fresh-intake-body::before,.ayna-mobile .ayna-fresh-intake[data-step='medications'] .ayna-fresh-intake-body::before,.ayna-mobile .ayna-fresh-intake[data-step='safety'] .ayna-fresh-intake-body::before { border-radius:20% 80% 25% 75% / 50% 35% 65% 50%; transform:rotate(9deg); }
+.ayna-mobile .ayna-fresh-intake[data-step='products'] .ayna-fresh-intake-body::before,.ayna-mobile .ayna-fresh-intake[data-step='formats'] .ayna-fresh-intake-body::before,.ayna-mobile .ayna-fresh-intake[data-step='trustedBrands'] .ayna-fresh-intake-body::before { border-radius:60% 40% 70% 30% / 60% 25% 75% 40%; transform:rotate(11deg); }
 .ayna-mobile .ayna-fresh-intake-body>div:nth-child(2) { position:relative; z-index:1; padding:8px 22px 0!important; }
 .ayna-mobile .ayna-fresh-intake-body>div:nth-child(3) { position:relative; z-index:1; padding:24px 22px 30px!important; }
 .ayna-mobile .ayna-fresh-intake-title { max-width:320px; font:800 calc(32px * var(--ayna-text-scale,1))/1.08 var(--ayna-font-display)!important; letter-spacing:-.06em!important; color:var(--intake-ink)!important; }
