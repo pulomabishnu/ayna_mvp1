@@ -561,7 +561,7 @@
 .ayna-mobile .am-playlist-item .am-product strong { display:-webkit-box; overflow:hidden; white-space:normal; -webkit-box-orient:vertical; -webkit-line-clamp:2; color:var(--ayna-figma-ink); font:700 12px/1.25 var(--ayna-font-ui); }
 .ayna-mobile .am-playlist-item .am-product em { grid-column:2; align-self:start; color:var(--ayna-figma-berry); font:700 10px var(--ayna-font-ui); }
 .ayna-mobile .am-playlist-item>button:last-child { align-self:center; padding:8px 3px; color:var(--ayna-figma-berry); font-size:11px; }
-.ayna-mobile .am-playlist-add { margin:32px 0 0; padding:20px 0; border:0; border-top:1px solid var(--ayna-border); background:transparent; }
+.ayna-mobile .am-playlist-add { margin:32px 0 0; padding:20px 0; border:0; border-top:1px solid var(--ayna-border); border-radius:0; background:transparent; }
 .ayna-mobile .am-playlist-add h3 { font:800 22px 'Bricolage Grotesque',var(--ayna-font-ui); }
 .ayna-mobile .am-playlist-add .am-primary { width:100%; border-radius:10px!important; background:var(--ayna-figma-ink); color:#fff; }
 .ayna-mobile .am-profile-hero { gap:20px; min-width:0; margin:28px 0 0; padding:16px 0; background:transparent; }

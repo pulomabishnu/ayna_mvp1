@@ -180,17 +180,19 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
       {messages.length === 0 && (
         <>
           <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'var(--ayna-text-muted)' }}>
-            New to this kind of product, or not sure what it's actually for? Ask Ayna anything about it.
+            Ask ayna
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {suggestions.map((s) => (
-              <div
+              <button
+                type="button"
+                disabled={sending}
                 key={s}
                 onClick={() => ask(s)}
-                style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 500, padding: '8px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', cursor: 'pointer' }}
+                style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 500, minHeight: 44, border: 0, padding: '8px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', cursor: 'pointer' }}
               >
                 {s}
-              </div>
+              </button>
             ))}
           </div>
         </>
@@ -490,10 +492,7 @@ export default function ProductDetailScreen({
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
           <h1 style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(29px * var(--ayna-text-scale, 1))', lineHeight: 1.08, letterSpacing: '-.05em', margin: '12px 0 0', color: 'var(--ayna-heading)', fontWeight: 700 }}>{name}</h1>
           {price && <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
-          {buyUrl && <p style={{ margin: '10px 0 0', color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>Buying opens the seller’s site. The seller handles payment, shipping, and returns; check the final price and delivery there.</p>}
-          <button type="button" onClick={handleShare} style={{ marginTop: 12, padding: 0, border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontFamily: "var(--ayna-font-ui)", fontSize: 13, fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 3, cursor: 'pointer' }}>
-            {shareCopied ? 'Ayna link copied' : 'Share this product with a friend'}
-          </button>
+          {buyUrl && <details className="ayna-seller-info"><summary>Buying & delivery</summary><p>Checkout opens the seller’s site. The seller handles payment, shipping, and returns. Check the final price and delivery there.</p></details>}
           {pillTags.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
               {pillTags.map((t) => (

@@ -405,3 +405,7 @@
 .ayna-source-index span { font-size:12px; }
 .ayna-source-index strong { font:800 30px/1 var(--ayna-font-display); color:var(--ayna-accent-dark); }
 .ayna-source-index small { font-size:10px; color:var(--ayna-text-muted); }
+
+.ayna-seller-info { margin-top:12px; color:var(--ayna-text-muted); font-size:12px; line-height:1.5; }
+.ayna-seller-info summary { display:flex; align-items:center; min-height:44px; width:max-content; cursor:pointer; }
+.ayna-seller-info p { margin:4px 0 16px; }
