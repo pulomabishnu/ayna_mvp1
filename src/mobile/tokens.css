@@ -16,6 +16,7 @@
   --ay-mint: #bdebd6;
   --ay-mint-deep: #8fdabb;
   --ay-alert: #b4402a;
+  --ay-peri-ink: #4652b0; /* periwinkle dark enough for text */
   --ay-font-display: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
   --ay-font-ui: 'Poppins', system-ui, sans-serif;
   --ay-ease: cubic-bezier(.2, .8, .2, 1);
@@ -32,6 +33,7 @@
   --ayna-reference-paper: var(--ay-cream);
 }
 .ayna-mobile:not([data-theme='dark']) {
+  --ayna-figma-berry: var(--ay-peri-ink);
   --ayna-color-ink: var(--ay-ink);
   --ayna-figma-ink: var(--ay-ink);
   --ayna-text: var(--ay-ink);

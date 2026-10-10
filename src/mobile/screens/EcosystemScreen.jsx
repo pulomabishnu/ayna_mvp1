@@ -1,3 +1,4 @@
+import EmptyState from '../components/EmptyState.jsx';
 import { healthAreaLabel } from '../utils/healthAreaLabel.js';
 import MobileHeader from '../components/MobileHeader.jsx';
 import ProductCard from '../components/ProductCard.jsx';
@@ -43,7 +44,7 @@ export default function EcosystemScreen({
       <div className="ayna-cabinet-topline"><span>YOUR HEALTH CABINET</span><button type="button" onClick={onRetake}>Update picks</button></div>
       <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
       {groups.length > 0 && <EcosystemChart groups={groups} />}
-      {currentProducts.length === 0 && <div className="ayna-ecosystem-empty"><span className="ayna-saved-empty-stage" aria-hidden="true"><span /><span /><span /></span><p>No strong matches yet.</p><button type="button" onClick={onBrowse}>Shop</button></div>}
+      {currentProducts.length === 0 && <EmptyState compact art="spark" tone="mint" title="No strong matches yet" body="Shop around or update your answers." actionLabel="Shop" onAction={onBrowse} secondaryLabel="Update answers" onSecondary={onRetake} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>
 

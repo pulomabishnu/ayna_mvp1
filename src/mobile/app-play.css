@@ -84,3 +84,46 @@
 
 /* Ecosystem header panel sits on the page colour, not a white slab. */
 .ayna-mobile:not([data-theme='dark']) .ayna-cabinet-home > :first-child { background: transparent !important; }
+
+/* ===== Audit pass 2 ===== */
+
+/* Product photos: one clean tile, no halo blob behind cut-out packshots. */
+.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-image { background: var(--ay-tile) !important; border-radius: var(--ay-radius-lg) !important; overflow: hidden !important; }
+.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-image::before { display: none !important; }
+.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-image img { padding: 12% !important; object-fit: contain !important; mix-blend-mode: multiply; -webkit-mask-image: none !important; mask-image: none !important; }
+.ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { aspect-ratio: 1 !important; }
+.ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) { border-bottom: 0 !important; padding-bottom: 4px !important; }
+.ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { min-height: 0 !important; }
+.ayna-mobile .ayna-card-save { top: 8px !important; right: 8px !important; bottom: auto !important; }
+
+/* Form fields: labels above, custom select chevron, same radius as search. */
+.ayna-mobile .ay-field { display: grid; gap: 6px; min-width: 0; color: var(--ay-ink-soft); font: 600 var(--ay-text-xs)/1.2 var(--ay-font-ui); letter-spacing: .02em; }
+.ayna-mobile .ay-field select {
+  width: 100%; min-width: 0; min-height: 46px; padding: 0 36px 0 14px; border: 1.5px solid var(--ay-line); border-radius: var(--ay-radius-md);
+  background: var(--ay-paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d1a2b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 16px;
+  color: var(--ay-ink); font: 600 var(--ay-text-sm)/1 var(--ay-font-ui); appearance: none; -webkit-appearance: none;
+}
+.ayna-mobile .ay-field select:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 1px; }
+.ayna-mobile .ayna-shop-filter-fields { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: var(--ay-space-4) var(--ay-space-3) !important; }
+.ayna-mobile .ayna-shop-filter-sheet { border-radius: 24px 24px 0 0 !important; }
+.ayna-mobile .ayna-shop-filter-actions button:last-child { border-radius: var(--ay-radius-pill) !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; min-height: 48px; padding: 0 28px !important; }
+
+/* Auth inputs: same rounded field as everywhere else. */
+.ayna-mobile .ayna-fresh-auth-field { border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-radius-md) !important; background: var(--ay-paper) !important; }
+.ayna-mobile .ayna-fresh-auth-field:focus-within { border-color: var(--ay-ink) !important; }
+
+/* Partner disclosure: readable label. */
+.ayna-mobile .ayna-figma-partner-disclosure > button span:first-child { color: var(--ay-peri-ink) !important; font-size: 10px !important; }
+.ayna-mobile .ayna-figma-partner-disclosure > button span:nth-child(2) { font-size: 12px !important; color: var(--ay-ink-soft) !important; }
+
+/* Community: one header row aligned to the page gutter, readable tabs. */
+.ayna-mobile .am-top { padding-left: var(--ay-space-4) !important; padding-right: var(--ay-space-4) !important; }
+.ayna-mobile .am-top .am-title h1 { margin-left: 0 !important; }
+.ayna-mobile .am-tabs { gap: var(--ay-space-5) !important; padding: 0 var(--ay-space-4) !important; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--ay-line); }
+.ayna-mobile .am-tabs::-webkit-scrollbar { display: none; }
+.ayna-mobile .am-tabs button { flex: none; min-height: 44px !important; padding: 0 !important; border: 0 !important; border-bottom: 3px solid transparent !important; border-radius: 0 !important; background: transparent !important; color: var(--ay-ink-soft) !important; font: 600 var(--ay-text-sm)/1 var(--ay-font-ui) !important; box-shadow: none !important; }
+.ayna-mobile .am-tabs button.is-active { color: var(--ay-ink) !important; border-bottom-color: var(--ay-ink) !important; }
+.ayna-mobile:not([data-theme='dark']) .ayna-cabinet-stage { background: transparent !important; }
+/* Card rows line up: titles always reserve two lines, price sits a fixed step below. */
+.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { min-height: 2.5em !important; margin-top: 4px !important; }
+.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { margin-top: 6px !important; }

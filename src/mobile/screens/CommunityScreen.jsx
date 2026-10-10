@@ -491,13 +491,13 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
 
   const renderEmpty = () => {
     const copy = {
-      'for-you': ['A space to share and discover', 'Ask a question, share something you learned, or see what others are talking about.', 'Write a post', 'post'],
-      following: ['Your people will show up here', 'Visit someone’s profile to follow them and keep up with their posts.', 'Explore the community', null],
-      question: ['Start with a question', 'The community is here for the things you are curious about.', 'Ask a question', 'question'],
-      review: ['Real experiences start here', 'Share what you thought of a product so others can learn from it.', 'Write a review', 'review'],
-      playlists: ['Collect your favorites', 'Make a playlist of products you would recommend or want to try.', 'Create a playlist', 'playlist'],
+      'for-you': ['Start the conversation', 'Ask, share, or see what others are saying.', 'Write a post', 'post', 'chat', 'pink'],
+      following: ['No one here yet', 'Follow people to see their posts.', 'Explore', null, 'spark', 'peri'],
+      question: ['Ask the first question', null, 'Ask a question', 'question', 'chat', 'butter'],
+      review: ['No reviews yet', 'Share what worked for you.', 'Write a review', 'review', 'spark', 'mint'],
+      playlists: ['Make your first playlist', 'Group products you’d recommend.', 'Create a playlist', 'playlist', 'bookmark', 'pink'],
     }[tab];
-    return <div className="am-empty-state ayna-figma-community-empty"><small>COMMUNITY / {tab === 'for-you' ? 'START HERE' : tab.toUpperCase()}</small><h2>{copy[0]}</h2><p>{copy[1]}</p><button type="button" onClick={() => copy[3] ? openCompose(copy[3]) : setTab('for-you')}>{copy[2]} <span aria-hidden="true">→</span></button></div>;
+    return <EmptyState art={copy[4]} tone={copy[5]} title={copy[0]} body={copy[1]} actionLabel={copy[2]} onAction={() => copy[3] ? openCompose(copy[3]) : setTab('for-you')} />;
   };
 
   if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><EmptyState art="offline" tone="butter" title="Community is taking a nap" body="We can’t reach it right now. Check back soon." actionLabel="Shop instead" onAction={onGoBrowse} /></div>;
