@@ -21,8 +21,8 @@
 .am-actions { display: flex; gap: 20px; border-top: 1px solid var(--ayna-border); margin-top: 14px; padding-top: 12px; }
 .am-actions button { border: 0; background: none; color: var(--ayna-text-muted); padding: 2px 0; font-size: 12px; }
 .am-product { width: 100%; display: flex; gap: 10px; align-items: center; text-align: left; background: var(--ayna-bg-alt); border: 1px solid var(--ayna-border); border-radius: 12px; padding: 8px; margin-top: 12px; color: var(--ayna-text); }
-.am-product img { width: 42px; height: 42px; border-radius: 8px; object-fit: contain; background: white; }
-.am-product span { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.am-product-photo { position:relative; display:block!important; flex:none!important; width:48px; height:48px; overflow:hidden; background:var(--ayna-surface); }
+.am-product>span:not(.am-product-photo) { flex: 1; min-width: 0; display: grid; gap: 3px; }
 .am-product strong { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .am-product small { color: var(--ayna-text-muted); font-size: 10px; }
 .am-product em { font-style: normal; font-size: 11px; color: var(--ayna-brown); white-space: nowrap; }

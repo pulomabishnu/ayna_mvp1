@@ -556,14 +556,14 @@
 .ayna-mobile .am-playlist-section-heading strong { display:grid; place-items:center; width:24px; height:24px; background:transparent; font-size:12px; letter-spacing:0; }
 .ayna-mobile .am-playlist-item { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:stretch; gap:6px; margin:0 0 8px; }
 .ayna-mobile .am-playlist-item .am-product { display:grid; grid-template-columns:58px minmax(0,1fr); gap:5px 10px; width:100%; min-width:0; margin:0; padding:12px 0; border:0; border-bottom:1px solid var(--ayna-border); background:transparent; }
-.ayna-mobile .am-playlist-item .am-product img { grid-row:span 2; width:58px; height:58px; border-radius:2px; }
-.ayna-mobile .am-playlist-item .am-product span { align-self:end; min-width:0; }
+.ayna-mobile .am-playlist-item .am-product .am-product-photo { grid-row:span 2; position:relative; display:block; width:58px; height:58px; border-radius:2px; overflow:hidden; }
+.ayna-mobile .am-playlist-item .am-product>span:not(.am-product-photo) { grid-column:2; align-self:end; min-width:0; }
 .ayna-mobile .am-playlist-item .am-product strong { display:-webkit-box; overflow:hidden; white-space:normal; -webkit-box-orient:vertical; -webkit-line-clamp:2; color:var(--ayna-figma-ink); font:700 12px/1.25 var(--ayna-font-ui); }
 .ayna-mobile .am-playlist-item .am-product em { grid-column:2; align-self:start; color:var(--ayna-figma-berry); font:700 10px var(--ayna-font-ui); }
 .ayna-mobile .am-playlist-item>button:last-child { align-self:center; padding:8px 3px; color:var(--ayna-figma-berry); font-size:11px; }
 .ayna-mobile .am-playlist-add { margin:32px 0 0; padding:20px 0; border:0; border-top:1px solid var(--ayna-border); background:transparent; }
 .ayna-mobile .am-playlist-add h3 { font:800 22px 'Bricolage Grotesque',var(--ayna-font-ui); }
-.ayna-mobile .am-playlist-add .am-primary { width:100%; border-radius:3px!important; background:var(--ayna-figma-ink); color:#fff; }
+.ayna-mobile .am-playlist-add .am-primary { width:100%; border-radius:10px!important; background:var(--ayna-figma-ink); color:#fff; }
 .ayna-mobile .am-profile-hero { gap:20px; min-width:0; margin:28px 0 0; padding:16px 0; background:transparent; }
 .ayna-mobile .am-profile-hero .am-avatar { flex:none; width:78px; height:78px; border:0; border-radius:50%; }
 .ayna-mobile .am-profile-hero>div { min-width:0; }
@@ -571,8 +571,8 @@
 .ayna-mobile .am-profile-hero .am-detail-title { overflow-wrap:anywhere; margin:5px 0 3px; color:var(--ayna-figma-ink); font:800 clamp(25px,7vw,32px)/1 'Bricolage Grotesque',var(--ayna-font-ui); }
 .ayna-mobile .am-profile-hero .am-detail-copy { color:var(--ayna-figma-ink); font-size:13px; }
 .ayna-mobile .am-profile-bio { margin:0; padding:16px; border:1px solid var(--ayna-border); border-top:0; background:#fff; color:var(--ayna-figma-ink); font-size:14px; line-height:1.5; }
-.ayna-mobile .am-profile-owner { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0 0; }
-.ayna-mobile .am-profile-owner .am-secondary,.ayna-mobile .am-avatar-upload { display:flex; align-items:center; justify-content:center; width:100%; min-height:46px; padding:9px; border:1px solid var(--ayna-figma-ink); border-radius:3px; background:#fff; color:var(--ayna-figma-ink); font:700 12px var(--ayna-font-ui); text-align:center; }
+.ayna-mobile .am-profile-owner { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin:10px 0 0; }
+.ayna-mobile .am-profile-owner .am-secondary,.ayna-mobile .am-avatar-upload { display:flex; align-items:center; justify-content:center; box-sizing:border-box; min-width:0; width:100%; min-height:46px; padding:9px; border:1px solid var(--ayna-figma-ink); border-radius:10px; background:#fff; color:var(--ayna-figma-ink); font:700 12px var(--ayna-font-ui); text-align:center; }
 .ayna-mobile .am-profile-owner .am-secondary { background:var(--ayna-figma-ink); color:#fff; }
 .ayna-mobile .am-avatar-upload { position:relative; cursor:pointer; }
 .ayna-mobile .am-avatar-upload input[type='file'] { position:absolute; inset:0; width:100%; max-width:none; height:100%; opacity:0; cursor:pointer; }

@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
+import ProductImage from '../components/ProductImage.jsx';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { getGuestClient, getGuestId, ensureGuestSession } from '../../utils/community/guestClient.js';
 import * as community from '../../utils/community/communityStore.js';
 import { rankForYou, postProductIds } from '../../utils/community/ranking.js';
 import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts } from '../../utils/community/topics.js';
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS, publicMediaUrl } from '../../utils/community/imageUpload.js';
-import { CATEGORY_LABELS, getProfileMatchPercentForProduct } from '../../data/products.js';
+import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../../data/products.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
 import PlaylistCoverPicker from '../components/PlaylistCoverPicker.jsx';
 import PlaylistAudiencePicker from '../components/PlaylistAudiencePicker.jsx';
@@ -40,11 +41,12 @@ function CommunityAvatar({ name, path, anonymous = false }) {
 function ProductMention({ productId, productsById, quizAnswers, onOpenProduct }) {
   const product = productsById.get(String(productId));
   if (!product) return null;
-  const match = quizAnswers ? getProfileMatchPercentForProduct(product, quizAnswers) : null;
+  const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
+  const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   return <button type="button" className="am-product" onClick={() => onOpenProduct(product)}>
-    {product.image && <img src={product.image} alt="" loading="lazy" />}
+    <span className="am-product-photo"><ProductImage src={product.image || product.imageUrl || product.images?.[0]} alt="" allowBrandLogo={product.type === 'digital'} style={{ objectFit: 'contain' }} /></span>
     <span><strong>{product.name}</strong><small>{product.brand || 'ayna product'}</small></span>
-    <em>{Number.isFinite(match) ? `${match}% for you` : 'View'}</em>
+    <em>{showMatch ? `${match.percent}% match` : 'View'}</em>
   </button>;
 }
 
@@ -505,6 +507,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
       {error && <p className="am-error" role="alert">{error}</p>}{notice && <p className="am-notice" role="status">{notice}</p>}
       {page ? <div className="am-subpage" key={`${page.type}-${page.id || 'current'}`}>
         <div className="am-subpage-header"><button type="button" className="am-back" onClick={closePage} aria-label="Back to Community"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" /></svg></button><span>{page.type === 'playlist' ? 'PLAYLIST' : page.type === 'profile' ? 'PROFILE' : page.type === 'notifications' ? 'UPDATES' : 'CONVERSATION'}</span></div>
+        {!details && <p className="am-empty" role="status">Loading…</p>}
         {page.type === 'post' && details && <>{renderPost(details)}<h2 className="am-section">Replies</h2>{comments.map((c) => <div className="am-comment" key={c.id}><div className="am-meta"><div className="am-author"><CommunityAvatar name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><span>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</span></div><span>{timeLabel(c.created_at)}</span></div><p>{c.body}</p>{c.product_id && <ProductMention productId={c.product_id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />}<button type="button" onClick={() => setReplyTo(c.id)}>Reply</button></div>)}<div className="am-compose-inline">{replyTo && <button type="button" onClick={() => setReplyTo(null)}>Replying · cancel</button>}<textarea value={commentBody} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" /><ProductPicker products={products} value={productId} onChange={setProductId} /><button type="button" className="am-primary" disabled={busy || !commentBody.trim()} onClick={submitComment}>Post reply</button></div></>}
         {page.type === 'playlist' && details && <section className="am-playlist-detail">
           <div className="am-playlist-detail-hero">{details.cover_url && <img className="am-cover-detail" src={publicMediaUrl(details.cover_url)} alt="Playlist cover" />}<div className="am-playlist-detail-copy"><small>{items.length} {items.length === 1 ? 'PICK' : 'PICKS'}</small><h2 className="am-detail-title">{details.title}</h2>{details.description && <p className="am-detail-copy">{details.description}</p>}</div></div>
