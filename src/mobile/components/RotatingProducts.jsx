@@ -17,12 +17,12 @@ export default function RotatingProducts() {
   }, []);
   useEffect(() => {
     if (paused || reducedMotion || PRODUCTS.length < 2) return;
-    const timer = window.setInterval(() => setIndex((value) => (value + 1) % PRODUCTS.length), 4500);
+    const timer = window.setInterval(() => setIndex((value) => (value + 1) % PRODUCTS.length), 2800);
     return () => window.clearInterval(timer);
   }, [paused, reducedMotion]);
   const product = PRODUCTS[index];
   if (!product) return null;
-  return <div className="ayna-product-theatre" aria-label="Products in the ayna catalog">
+  return <div className="ayna-product-theatre" aria-label="Products in the ayna catalog" aria-live="off">
     <span className="ayna-theatre-orbit" aria-hidden="true" />
     <span className="ayna-theatre-sticker">Find your fit</span>
     <div key={product.id} className="ayna-theatre-photo"><ProductImage src={product.image || product.imageUrl || product.images?.[0]} alt={product.name} /></div>
