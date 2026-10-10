@@ -114,7 +114,7 @@
 .ayna-mobile .ayna-figma-discover .ayna-shop-heading { min-height:0; padding:18px 17px 15px; background:#f7f7f2!important; color:#16122a!important; }
 .ayna-mobile .ayna-figma-discover .ayna-shop-heading h1 { margin:0 0 14px; color:#16122a!important; font:800 38px/.95 'Bricolage Grotesque',-apple-system,sans-serif; }
 .ayna-mobile .ayna-figma-discover .ayna-shop-heading .ayna-fresh-search { min-height:46px; border:1px solid var(--ayna-border); border-radius:14px; }
-.ayna-shop-category-row { display:flex; gap:14px; overflow-x:auto; padding:2px 17px 14px; scrollbar-width:none; }
+.ayna-shop-category-row { overflow-x:auto; scrollbar-width:none; }
 .ayna-shop-category-row::-webkit-scrollbar { display:none; }
 .ayna-shop-category { flex:none; width:69px; min-height:89px; padding:0; border:0; background:transparent; color:#16122a; text-align:left; font-size:10px; font-weight:700; cursor:pointer; }
 .ayna-shop-category-image { position:relative; display:block; width:66px; height:63px; margin-bottom:7px; overflow:hidden; background:#e8f0ee; }
@@ -381,3 +381,20 @@
 .ayna-profile-progress i { grid-column:1/-1; height:3px; background:linear-gradient(to right,var(--ayna-color-green) var(--profile-progress),var(--ayna-border) var(--profile-progress)); }
 .ayna-mobile[data-theme="dark"] .ayna-ecosystem-total strong { color:var(--ayna-figma-mint); }
 .ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-fresh-product-image { background:#fff!important; }
+
+/* Saved uses the same catalog components rather than a second card design. */
+.ayna-saved-collection { display:flex; flex-direction:column; min-height:0; flex:1; background:var(--ayna-bg); }
+.ayna-saved-header { display:flex; align-items:center; gap:14px; padding:20px 18px; }
+.ayna-saved-header h1 { flex:1; margin:0; font:800 28px/1 var(--ayna-font-display); letter-spacing:-.04em; color:var(--ayna-heading); }
+.ayna-saved-header small { margin-left:6px; font:500 12px/1 var(--ayna-font-ui); color:var(--ayna-text-muted); }
+.ayna-saved-header button { min-width:44px; min-height:44px; padding:8px; border:0; background:transparent; color:var(--ayna-heading); font-size:13px; }
+.ayna-saved-header svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; }
+.ayna-saved-filters { display:flex; gap:18px; padding:0 18px 16px; overflow-x:auto; }
+.ayna-saved-filters button { flex:none; min-height:44px; padding:8px 0; border:0; border-bottom:2px solid transparent; background:transparent; color:var(--ayna-text-muted); font-size:12px; }
+.ayna-saved-filters button[aria-pressed='true'] { border-color:var(--ayna-accent-dark); color:var(--ayna-accent-dark); }
+.ayna-saved-filters small { margin-left:6px; font-size:10px; }
+.ayna-saved-content { flex:1; overflow-y:auto; padding:0 18px 24px; }
+.ayna-saved-no-results { margin:48px 0; text-align:center; color:var(--ayna-text-muted); }
+.ayna-saved-ecosystem-action { min-height:44px; padding:8px 0; border:0; background:transparent; color:var(--ayna-heading); font-size:12px; }
+.ayna-saved-safety { min-height:44px; border:0; padding:8px 0; background:transparent; color:var(--ayna-accent-dark); font-size:12px; }
+.ayna-saved-ecosystem { display:block; min-height:44px; margin:32px auto; border:0; padding:8px 16px; background:transparent; color:var(--ayna-heading); font-size:13px; }
