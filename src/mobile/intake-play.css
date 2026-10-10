@@ -66,7 +66,8 @@
 
 .ip-body { position: relative; z-index: 1; flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 .ip-question { padding: 18px var(--ay-gutter) 32px; animation: ip-in-forward .38s var(--ay-ease) both; }
-.ayna-play-intake[data-step='age'] .ip-question { min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; padding-bottom: 56px; }
+.ayna-play-intake[data-step='age'] .ip-question { min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding-bottom: 56px; }
+.ayna-play-intake[data-step='age'] .ip-answer { width: 100%; }
 .ayna-play-intake[data-direction='back'] .ip-question { animation-name: ip-in-back; }
 @keyframes ip-in-forward { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 @keyframes ip-in-back { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
