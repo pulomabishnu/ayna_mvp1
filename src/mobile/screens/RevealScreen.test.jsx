@@ -5,7 +5,7 @@ import RevealScreen from './RevealScreen.jsx';
 const noop = () => {};
 
 describe('intake results preview', () => {
-  it('starts a four-part story with the real recommendation count', () => {
+  it('starts a wrapped story with the real recommendation count', () => {
     const html = renderToStaticMarkup(<RevealScreen
       myProducts={[{ id: 'one', name: 'First match', category: 'pad' }, { id: 'two', name: 'Second match', category: 'app' }]}
       topAreas={['Period', 'Sleep']}
@@ -13,9 +13,9 @@ describe('intake results preview', () => {
       onBack={noop}
       onGoBrowse={noop}
     />);
-    expect(html).toContain('Story 1 of 4');
-    expect(html).toContain('2 picks');
-    expect(html).toContain('YOUR ECOSYSTEM');
+    expect(html).toContain('Story 1 of 5');
+    expect(html).toContain('<strong>2</strong><span>picks</span>');
+    expect(html).toContain('Your ecosystem is ready');
     expect(html).not.toContain('0 products');
   });
 
