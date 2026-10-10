@@ -696,8 +696,7 @@ export default function MobileApp() {
           <section className="ayna-profile-auth-sheet" role="dialog" aria-modal="true" aria-labelledby="ayna-profile-auth-title" onClick={(event) => event.stopPropagation()}>
             <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>×</button>
             <div className="ayna-profile-auth-eyebrow">YOUR AYNA</div>
-            <h2 id="ayna-profile-auth-title">{authPrompt ? `Sign in for ${authPrompt.feature}.` : 'Your space starts here.'}</h2>
-            <p>{authPrompt ? 'Create an account to build your ecosystem, or sign in to continue.' : 'Create an account to build and save your ecosystem, or sign in to pick up where you left off.'}</p>
+            <h2 id="ayna-profile-auth-title">{authPrompt ? `Sign in for ${authPrompt.feature}` : 'Your space.'}</h2>
             <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signup', !!authPrompt)}>Sign up</button>
             <button type="button" className="ayna-profile-auth-secondary" onClick={() => openAuth('signin', !!authPrompt)}>Sign in</button>
           </section>

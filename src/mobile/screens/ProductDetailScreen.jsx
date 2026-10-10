@@ -483,7 +483,6 @@ export default function ProductDetailScreen({
           >
             <ProductImage src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
             {matchPercent != null && <button type="button" className="ayna-figma-detail-score" onClick={openWhyMatch} aria-label={`${matchPercent} percent match. See why`}><strong>{matchPercent}%</strong><span>PROFILE MATCH</span></button>}
-            {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>Build to see<br />your match <span aria-hidden="true">↗</span></button>}
           </div>
         </div>
 
@@ -492,6 +491,7 @@ export default function ProductDetailScreen({
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
           <h1 style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(29px * var(--ayna-text-scale, 1))', lineHeight: 1.08, letterSpacing: '-.05em', margin: '12px 0 0', color: 'var(--ayna-heading)', fontWeight: 700 }}>{name}</h1>
           {price && <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
+          {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>See your match <span aria-hidden="true">↗</span></button>}
           {pillTags.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
               {pillTags.map((t) => (
