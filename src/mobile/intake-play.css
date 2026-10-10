@@ -43,7 +43,7 @@
 .ayna-play-intake button { font-family: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
 .ayna-play-intake :is(button, input, textarea):focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
 
-.ip-head { position: relative; z-index: 2; flex: none; padding: max(14px, env(safe-area-inset-top)) 18px 6px; }
+.ip-head { position: relative; z-index: 2; flex: none; padding: max(14px, env(safe-area-inset-top)) var(--ay-gutter) 6px; }
 .ip-head-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .ip-round {
   width: 40px; height: 40px; flex: none; display: grid; place-items: center;
@@ -65,7 +65,7 @@
 @keyframes ip-now { 50% { opacity: .45; } }
 
 .ip-body { position: relative; z-index: 1; flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
-.ip-question { padding: 18px 18px 28px; animation: ip-in-forward .38s var(--ay-ease) both; }
+.ip-question { padding: 18px var(--ay-gutter) 32px; animation: ip-in-forward .38s var(--ay-ease) both; }
 .ayna-play-intake[data-direction='back'] .ip-question { animation-name: ip-in-back; }
 @keyframes ip-in-forward { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 @keyframes ip-in-back { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
@@ -88,7 +88,7 @@
 .ip-hint { margin: -6px 0 14px; font: 500 12.5px/1.45 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ip-gap { margin-top: 14px; }
 
-.ip-foot { position: relative; z-index: 2; flex: none; padding: 10px 18px max(16px, env(safe-area-inset-bottom)); }
+.ip-foot { position: relative; z-index: 2; flex: none; padding: 8px var(--ay-gutter) max(16px, env(safe-area-inset-bottom)); }
 .ip-next {
   width: 100%; min-height: 58px; display: flex; align-items: center; gap: 10px;
   padding: 0 7px 0 24px; border: 2px solid var(--ay-ink); border-radius: 99px;
@@ -371,7 +371,7 @@
 
 /* ---------- topic tabs ---------- */
 
-.ip-tabs { display: flex; gap: 7px; margin: 0 -18px 14px; padding: 2px 18px 6px; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; }
+.ip-tabs { display: flex; gap: 8px; margin: 0 calc(-1 * var(--ay-gutter)) 16px; padding: 2px var(--ay-gutter) 6px; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; }
 .ip-tabs::-webkit-scrollbar { display: none; }
 .ip-tab { flex: none; min-height: 40px; display: inline-flex; align-items: center; gap: 7px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 12px; background: transparent; font: 700 13px/1 var(--ay-font-ui); white-space: nowrap; cursor: pointer; scroll-snap-align: start; transition: background-color .2s, transform .14s; }
 .ip-tab b { min-width: 20px; height: 20px; display: grid; place-items: center; padding: 0 5px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font-size: 11px; }

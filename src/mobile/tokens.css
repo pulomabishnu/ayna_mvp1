@@ -64,3 +64,4 @@
 .ayna-mobile { --ay-section: var(--ay-butter); }
 .ayna-mobile:is([data-screen='browse'], [data-screen='saved']) { --ay-section: var(--ay-pink); }
 .ayna-mobile[data-screen='community'] { --ay-section: var(--ay-mint); }
+.ayna-mobile { --ay-gutter: 20px; }
