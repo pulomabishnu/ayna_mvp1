@@ -27,7 +27,7 @@ const FILTER_FIELDS = [
   ['category', 'Product type', [['all', 'All products']]],
   ['price', 'Price', [['all', 'Any price'], ['under-25', 'Under $25'], ['25-50', '$25–$50'], ['50-100', '$50–$100'], ['100-plus', '$100+']]],
   ['rating', 'Rating', [['all', 'Any rating'], ['4-plus', '4+ stars']]],
-  ['ayna', 'ayna', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', 'Clinician backed'], ['community', 'Community favorite'], ['ecosystem', 'In my Ecosystem']]],
+  ['ayna', 'Match & sources', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', 'Clinician backed'], ['community', 'Community favorite'], ['ecosystem', 'In my Ecosystem']]],
   ['preference', 'Preferences', [['all', 'Any'], ['fragrance-free', 'Fragrance free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']]],
   ['eligibility', 'Eligibility', [['all', 'Any'], ['fsa-hsa', 'FSA/HSA eligible'], ['fsa', 'FSA eligible'], ['hsa', 'HSA eligible']]],
   ['sustainability', 'Sustainability', [['all', 'Any'], ['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']]],

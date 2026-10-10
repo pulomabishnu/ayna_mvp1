@@ -46,6 +46,10 @@
 .am-primary { border: 0; border-radius: 99px; background: var(--ayna-cta-bg); color: var(--ayna-cta-text); padding: 12px 18px; font-size: 13px; font-weight: 700; }
 .am-primary:disabled { opacity: .55; }
 .am-profile-setup { display: grid; gap: 9px; }
+.am-card.am-profile-setup { margin:12px 18px 18px; padding:16px 0; border:0; border-top:1px solid var(--ayna-border); border-bottom:1px solid var(--ayna-border); border-radius:0; background:transparent; box-shadow:none; }
+.am-profile-setup-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.am-profile-setup-fields input { width:100%; min-width:0; min-height:44px; }
+.am-profile-setup>button { min-height:44px; }
 .am-profile-setup p { margin: 0; color: var(--ayna-text-muted); font-size: 12px; }
 .am-profile-setup button { border: 0; background: var(--ayna-cta-bg); color: var(--ayna-cta-text); border-radius: 99px; padding: 10px; }
 .am-sheet-backdrop { position: fixed; inset: 0; z-index: 80; background: rgba(20,20,30,.42); display: flex; align-items: flex-end; }
