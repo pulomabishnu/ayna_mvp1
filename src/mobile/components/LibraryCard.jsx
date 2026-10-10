@@ -19,7 +19,23 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
   const [c1, c2] = tintForId(id || title);
 
   return (
-    <div onClick={onClick} style={fullWidth ? { cursor: 'pointer' } : { width: 158, flexShrink: 0, cursor: 'pointer' }}>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`Read ${title}`}
+      style={{
+        display: 'block',
+        width: fullWidth ? '100%' : 158,
+        flexShrink: 0,
+        padding: 0,
+        border: 0,
+        background: 'transparent',
+        color: 'var(--ayna-text)',
+        textAlign: 'left',
+        font: 'inherit',
+        cursor: 'pointer',
+      }}
+    >
       <div
         style={{
           position: 'relative',
@@ -67,6 +83,6 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
       <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 9, textWrap: 'pretty' }}>
         {title}
       </div>
-    </div>
+    </button>
   );
 }
