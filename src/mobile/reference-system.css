@@ -1,10 +1,10 @@
 /* Ayna's reference-led system: one blue stage, one yellow action, dark type. */
 .ayna-mobile {
-  --ayna-reference-blue:#b9c3e0;
-  --ayna-reference-yellow:#f1e399;
-  --ayna-reference-ink:#282539;
+  --ayna-reference-blue:#b9c2f4;
+  --ayna-reference-yellow:#f7e78e;
+  --ayna-reference-ink:#1d1a2b;
   --ayna-reference-paper:#faf8f1;
-  --ayna-reference-pink:#e8d5dc;
+  --ayna-reference-pink:#f7badd;
   --ayna-font-display:'Poppins',system-ui,sans-serif;
   --ayna-font-ui:'Poppins',system-ui,sans-serif;
   --ayna-color-ink:var(--ayna-reference-ink);
@@ -106,7 +106,7 @@
 .ayna-mobile .tone-lilac { --product-halo:#c5c9e4!important; }
 .ayna-mobile .tone-lime { --product-halo:#eee3aa!important; }
 .ayna-mobile .tone-mint { --product-halo:#c9d1dc!important; }
-.ayna-mobile .tone-pink { --product-halo:#e8d5dc!important; }
+.ayna-mobile .tone-pink { --product-halo:#f7badd!important; }
 .ayna-mobile .ayna-figma-discover .tone-mint .ayna-fresh-product-image,.ayna-mobile .ayna-figma-discover .tone-lilac .ayna-fresh-product-image,.ayna-mobile .ayna-figma-discover .tone-lime .ayna-fresh-product-image,.ayna-mobile .ayna-figma-discover .tone-pink .ayna-fresh-product-image { background:transparent!important; }
 .ayna-mobile .ayna-fresh-match-badge { color:var(--ayna-reference-ink)!important; border-color:var(--ayna-reference-blue)!important; }
 .ayna-mobile .ayna-story--intro,.ayna-mobile .ayna-story--collection { background:var(--ayna-reference-blue)!important; }

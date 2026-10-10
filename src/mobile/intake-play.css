@@ -3,28 +3,6 @@
    controls. Every question gets a tone + motif (see intakeScenes.js);
    safety questions use the calm tone with no art. */
 
-.ayna-mobile {
-  --ay-ink: #1d1a2b;
-  --ay-ink-soft: rgba(29, 26, 43, .62);
-  --ay-ink-faint: rgba(29, 26, 43, .16);
-  --ay-paper: #fffcf5;
-  --ay-cream: #f8f4ea;
-  --ay-peri: #b9c2f4;
-  --ay-peri-deep: #9ca9ee;
-  --ay-butter: #f7e78e;
-  --ay-butter-deep: #eed45a;
-  --ay-pink: #f7badd;
-  --ay-pink-deep: #ef9ccb;
-  --ay-mint: #bdebd6;
-  --ay-mint-deep: #8fdabb;
-  --ay-alert: #b4402a;
-  --ay-font-display: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
-  --ay-font-ui: 'Poppins', system-ui, sans-serif;
-  --ay-ease: cubic-bezier(.2, .8, .2, 1);
-  --ay-pop: cubic-bezier(.3, 1.5, .5, 1);
-  --ay-shadow: 3px 3px 0 var(--ay-ink);
-  --ay-shadow-lg: 5px 5px 0 var(--ay-ink);
-}
 
 /* ---------- shell ---------- */
 
@@ -214,6 +192,7 @@
 
 .ip-rows { display: grid; gap: 9px; }
 .ip-row {
+  width: 100%; box-sizing: border-box;
   min-height: 56px; display: flex; align-items: center; gap: 13px; padding: 12px 16px;
   border: 1.5px solid var(--ay-ink); border-radius: 16px; background: var(--ay-paper);
   font: 600 15px/1.3 var(--ay-font-ui); text-align: left; cursor: pointer;
@@ -423,3 +402,34 @@
   .ip-age-number { font-size: 88px; }
   .ip-sticker-label { font-size: 13px; }
 }
+
+/* ---------- shared bits used by the monthly check-in ---------- */
+
+.ip-row.has-sub { align-items: flex-start; }
+.ip-row.has-sub .ip-radio, .ip-row.has-sub .ip-row-icon { margin-top: 2px; }
+.ip-row-copy { display: grid; gap: 3px; }
+.ip-row-copy small { font: 500 12.5px/1.35 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ip-row.is-warning[aria-checked='true'] { background: #fbeee8; border-color: var(--ay-alert); }
+.ip-mark { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); font: 800 14px/1 var(--ay-font-ui); }
+.ip-mark[data-mark='helped'] { background: var(--ay-mint); }
+.ip-mark[data-mark='didnt_help'] { background: var(--ay-peri); }
+.ip-mark[data-mark='worse'] { background: #fbeee8; border-color: var(--ay-alert); color: var(--ay-alert); }
+.ip-divider { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font: 700 11px/1 var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; }
+.ip-divider::after { content: ''; flex: 1; height: 1.5px; background: var(--ay-ink-faint); order: 1; }
+.ip-divider small { order: 2; padding: 4px 8px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font-size: 10px; letter-spacing: .04em; text-transform: none; }
+.ip-groups { display: grid; gap: 20px; }
+.ip-onfile { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px 14px; border: 1.5px dashed var(--ay-ink); border-radius: 16px; background: rgba(255, 252, 245, .6); font: 600 13px/1.35 var(--ay-font-ui); }
+.ip-onfile b { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 2px solid var(--ay-ink); border-radius: 12px; background: var(--ay-paper); font: 800 18px/1 var(--ay-font-display); }
+.ip-onfile small { display: block; margin-bottom: 3px; font: 700 10.5px/1 var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--ay-ink-soft); }
+.ip-input { width: 100%; box-sizing: border-box; min-height: 52px; margin-top: 4px; padding: 0 16px; border: 1.5px solid var(--ay-ink); border-radius: 16px; outline: 0; background: var(--ay-paper); color: var(--ay-ink); font: 500 max(16px, calc(14px * var(--ayna-text-scale, 1))) var(--ay-font-ui); }
+.ip-counter { margin-top: 10px; text-align: right; font: 600 11px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ip-skip--foot { display: block; width: 100%; margin-top: 6px; color: var(--ay-ink-soft); }
+.ip-alert-link { display: flex; align-items: center; justify-content: center; min-height: 46px; margin-top: 12px; border: 2px solid var(--ay-alert); border-radius: 99px; background: var(--ay-paper); color: var(--ay-alert) !important; font: 700 14px/1 var(--ay-font-ui); text-decoration: none; }
+.ip-done { display: grid; justify-items: start; gap: 4px; padding: 40px 18px; animation: ip-in-forward .4s var(--ay-ease) both; }
+.ip-done-stamp { width: 96px; height: 96px; display: grid; place-items: center; margin-bottom: 18px; border: 2.5px solid var(--ay-ink); border-radius: 50%; background: var(--ay-butter); box-shadow: var(--ay-shadow-lg); rotate: -8deg; animation: ayw-stamp .5s var(--ay-pop) both; }
+.ip-done-stamp svg { width: 46px; height: 46px; fill: none; stroke: var(--ay-ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes ayw-stamp { from { scale: 1.8; opacity: 0; } to { scale: 1; opacity: 1; } }
+.ip-loading { display: grid; gap: 14px; padding: 90px 18px; }
+.ip-loading span { height: 54px; }
+.ip-loading span:first-child { width: 70%; height: 44px; }
+.ip-answer > .ip-row + .ip-row, .ip-answer > .ip-row + .ip-followup { margin-top: 9px; }

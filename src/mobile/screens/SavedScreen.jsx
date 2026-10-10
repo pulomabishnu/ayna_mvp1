@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ProductCard from '../components/ProductCard.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
+import EmptyState from '../components/EmptyState.jsx';
 import { getSafetyAlerts } from '../utils/shopperProfileData.js';
 
 const FILTERS = [['all', 'All'], ['eco', 'In Ecosystem'], ['new', 'Saved'], ['flag', 'Safety']];
@@ -23,7 +24,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
     {items.length > 0 && <>
       <nav className="ayna-saved-filters" aria-label="Saved product filters">{FILTERS.map(([key, label]) => <button type="button" key={key} aria-pressed={filter === key} onClick={() => setFilter(key)}>{label}<small>{items.filter((product) => matchesFilter(product, key)).length}</small></button>)}</nav>
       <div className="ayna-saved-content">
-        {visible.length === 0 ? <p className="ayna-saved-no-results" role="status">No products here.</p> : <div className="ayna-editorial-product-grid">{visible.map((product) => <div key={product.id}>
+        {visible.length === 0 ? <EmptyState compact art="search" tone="mint" title="Nothing in this filter" actionLabel="Show all" onAction={() => setFilter('all')} /> : <div className="ayna-editorial-product-grid">{visible.map((product) => <div key={product.id}>
           <ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} isSaved onToggleSaved={onToggleSaved} />
           <button className="ayna-saved-ecosystem-action" type="button" onClick={() => ecosystemIds.has(product.id) ? onGoEco?.() : onAddToEcosystem?.(product)}>{ecosystemIds.has(product.id) ? 'In Ecosystem' : 'Add to Ecosystem'}</button>
           {flaggedIds.has(product.id) && <button className="ayna-saved-safety" type="button" onClick={() => onOpenProduct?.(product)}>Safety note</button>}
@@ -32,6 +33,6 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
         <LegalFooter />
       </div>
     </>}
-    {items.length === 0 && <div className="ayna-saved-empty"><div className="ayna-saved-empty-stage" aria-hidden="true"><svg viewBox="0 0 160 180" fill="none"><path d="M29 20h102v143l-51-33-51 33V20Z" stroke="currentColor" strokeWidth="5" strokeLinejoin="round"/><path d="M61 75h38M80 56v38" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/></svg><span /></div><h2>Nothing saved yet.</h2><button type="button" onClick={onBrowse}>Shop</button></div>}
+    {items.length === 0 && <EmptyState art="bookmark" tone="pink" title="Nothing saved yet" body="Tap the bookmark on any product to keep it here." actionLabel="Start shopping" onAction={onBrowse} />}
   </div>;
 }

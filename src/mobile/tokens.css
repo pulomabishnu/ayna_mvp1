@@ -1,0 +1,44 @@
+/* ayna mobile palette — the single source for color, type and motion.
+   ink + paper + four pastels. Older token names used across the app are
+   aliased here so every screen draws from the same palette. */
+.ayna-mobile {
+  --ay-ink: #1d1a2b;
+  --ay-ink-soft: rgba(29, 26, 43, .62);
+  --ay-ink-faint: rgba(29, 26, 43, .16);
+  --ay-paper: #fffcf5;
+  --ay-cream: #faf8f1;
+  --ay-peri: #b9c2f4;
+  --ay-peri-deep: #9ca9ee;
+  --ay-butter: #f7e78e;
+  --ay-butter-deep: #eed45a;
+  --ay-pink: #f7badd;
+  --ay-pink-deep: #ef9ccb;
+  --ay-mint: #bdebd6;
+  --ay-mint-deep: #8fdabb;
+  --ay-alert: #b4402a;
+  --ay-font-display: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
+  --ay-font-ui: 'Poppins', system-ui, sans-serif;
+  --ay-ease: cubic-bezier(.2, .8, .2, 1);
+  --ay-pop: cubic-bezier(.3, 1.5, .5, 1);
+  --ay-shadow: 3px 3px 0 var(--ay-ink);
+  --ay-shadow-lg: 5px 5px 0 var(--ay-ink);
+}
+
+.ayna-mobile {
+  --ayna-reference-blue: var(--ay-peri);
+  --ayna-reference-yellow: var(--ay-butter);
+  --ayna-reference-ink: var(--ay-ink);
+  --ayna-reference-pink: var(--ay-pink);
+  --ayna-reference-paper: var(--ay-cream);
+}
+.ayna-mobile:not([data-theme='dark']) {
+  --ayna-color-ink: var(--ay-ink);
+  --ayna-figma-ink: var(--ay-ink);
+  --ayna-text: var(--ay-ink);
+  --ayna-heading: var(--ay-ink);
+  --ayna-cta-bg: var(--ay-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ayna-mobile *, .ayna-mobile *::before, .ayna-mobile *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}

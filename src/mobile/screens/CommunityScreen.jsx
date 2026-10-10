@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
+import EmptyState from '../components/EmptyState.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
@@ -83,7 +84,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   const [editDescription, setEditDescription] = useState('');
   const [editVisibility, setEditVisibility] = useState('public');
   const [editCoverMode, setEditCoverMode] = useState('photo');
-  const [editCoverColor, setEditCoverColor] = useState('#3E2F59');
+  const [editCoverColor, setEditCoverColor] = useState('#1D1A2B');
   const [editCoverText, setEditCoverText] = useState('');
   const [editCoverPhoto, setEditCoverPhoto] = useState(null);
   const [deletePlaylistTarget, setDeletePlaylistTarget] = useState(null);
@@ -106,7 +107,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   const [playlistTitle, setPlaylistTitle] = useState('');
   const [playlistVisibility, setPlaylistVisibility] = useState('public');
   const [coverMode, setCoverMode] = useState('color');
-  const [coverColor, setCoverColor] = useState('#3E2F59');
+  const [coverColor, setCoverColor] = useState('#1D1A2B');
   const [coverText, setCoverText] = useState('');
   const [coverPhoto, setCoverPhoto] = useState(null);
   const [photos, setPhotos] = useState([]);
@@ -499,7 +500,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
     return <div className="am-empty-state ayna-figma-community-empty"><small>COMMUNITY / {tab === 'for-you' ? 'START HERE' : tab.toUpperCase()}</small><h2>{copy[0]}</h2><p>{copy[1]}</p><button type="button" onClick={() => copy[3] ? openCompose(copy[3]) : setTab('for-you')}>{copy[2]} <span aria-hidden="true">→</span></button></div>;
   };
 
-  if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><p className="am-empty">Community is unavailable right now.</p></div>;
+  if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><EmptyState art="offline" tone="butter" title="Community is taking a nap" body="We can’t reach it right now. Check back soon." actionLabel="Shop instead" onAction={onGoBrowse} /></div>;
   return <div className="am-screen" ref={screenRef}>
     <MobileHeader activeTab="community" initial={headerInitial} onGoBrowse={onGoBrowse} onGoEco={onGoEco} onGoCommunity={() => {}} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
     <div className="am-scroll">
@@ -536,7 +537,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
           {searchResults.people.length > 0 && <section><h2>People</h2>{searchResults.people.map((p) => <button type="button" className="am-list-row" key={p.user_id} onClick={() => openProfile(p.username)}><CommunityAvatar name={p.display_name} path={p.avatar_url} /><span>{p.display_name}<small>@{p.username}</small></span></button>)}</section>}
           {searchResults.posts.length > 0 && <section><h2>Posts</h2>{searchResults.posts.map(renderPost)}</section>}
           {searchResults.playlists.length > 0 && <section><h2>Playlists</h2>{searchResults.playlists.map((p) => <button type="button" className="am-list-row" key={p.id} onClick={() => openPlaylist(p)}><span className="am-cover">{p.cover_url ? <img src={publicMediaUrl(p.cover_url)} alt="" /> : 'ayna'}</span><span>{p.title}<small>{p.item_count} products</small></span></button>)}</section>}
-          {!searchResults.people.length && !searchResults.posts.length && !searchResults.playlists.length && <div className="am-empty-state am-search-empty"><h2>No results yet</h2><p>Try a person’s name, product topic, or playlist title.</p></div>}
+          {!searchResults.people.length && !searchResults.posts.length && !searchResults.playlists.length && <EmptyState compact art="search" tone="mint" title="No results yet" body="Try a name, a topic, or a playlist." />}
         </>}</div> : <>
           <div className="am-tabs" role="tablist" aria-label="Community sections">{TABS.map(([key, label]) => <button type="button" role="tab" aria-selected={tab === key} key={key} className={tab === key ? 'is-active' : ''} onClick={() => key === 'following' && !authUser ? requireAccount('your following feed') : setTab(key)}>{label}</button>)}</div>
           {tab === 'for-you' && posts.length === 0 && !loading && <section className="ayna-figma-community-start" aria-label="Explore Community">

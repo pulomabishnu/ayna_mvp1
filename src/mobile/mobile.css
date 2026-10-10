@@ -8,31 +8,31 @@
   --ayna-surface: #FFFFFF;
   --ayna-surface-alt: #f2eee4;
   --ayna-border: #d7d1c4;
-  --ayna-text: #3E2F59;
+  --ayna-text: #1D1A2B;
   --ayna-text-muted: #625d55;
   --ayna-text-faint: #6b635b;
-  --ayna-accent: #F2B8D7;
-  --ayna-accent-dark: #F2B8D7;
-  --ayna-brown: #3E2F59;
-  --ayna-navy: #3E2F59;
-  --ayna-purple: #3E2F59;
-  --ayna-peach: #F2B8D7;
-  --ayna-cta-bg: #3E2F59;
+  --ayna-accent: #F7BADD;
+  --ayna-accent-dark: #F7BADD;
+  --ayna-brown: #1D1A2B;
+  --ayna-navy: #1D1A2B;
+  --ayna-purple: #1D1A2B;
+  --ayna-peach: #F7BADD;
+  --ayna-cta-bg: #1D1A2B;
   --ayna-cta-text: #ffffff;
-  --ayna-heading: #3E2F59;
-  --ayna-product-panel: linear-gradient(150deg,#ECEBFF,#F6DCC0);
+  --ayna-heading: #1D1A2B;
+  --ayna-product-panel: linear-gradient(150deg,#EEF0FD,#F6DCC0);
   --ayna-glass-bg: rgba(255,252,249,.9);
   --ayna-track: #EAE3DA;
   --ayna-chip-bg: #efebe0;
   --ayna-chip-border: #d7d1c4;
-  --ayna-gradient-hero: linear-gradient(165deg, #3E2F59 0%, #3E2F59 42%, #3E2F59 74%, #3E2F59 100%);
-  --ayna-gradient-panel: linear-gradient(168deg, #3E2F59 0%, #3E2F59 52%, #3E2F59 100%);
+  --ayna-gradient-hero: linear-gradient(165deg, #1D1A2B 0%, #1D1A2B 42%, #1D1A2B 74%, #1D1A2B 100%);
+  --ayna-gradient-panel: linear-gradient(168deg, #1D1A2B 0%, #1D1A2B 52%, #1D1A2B 100%);
 
   /* Copied from the real site's src/index.css so real content (e.g. article
      bodies from src/components/Articles.jsx, which style their own links
      inline with var(--color-primary)) renders with the correct color when
      reused inside the mobile app, instead of falling back to default blue. */
-  --color-primary: #F2B8D7;
+  --color-primary: #F7BADD;
 
   /* Scales OrbHero.jsx's orb+chips so the chips' worst-case reach during
      their orbit (241px from center either way, at the component's native
@@ -72,7 +72,7 @@
 
 /* The same palette adapted for dark mode. */
 .ayna-mobile[data-theme="dark"] {
-  --ayna-bg: #3E2F59;
+  --ayna-bg: #1D1A2B;
   --ayna-bg-alt: #211d30;
   --ayna-surface: rgba(255,255,255,.055);
   --ayna-surface-alt: #282338;
@@ -80,10 +80,10 @@
   --ayna-text: #FCFBFB;
   --ayna-text-muted: #d1cbbd;
   --ayna-text-faint: #b5ae9f;
-  --ayna-accent: #F2B8D7;
-  --ayna-accent-dark: #F2B8D7;
-  --ayna-cta-bg: #F2B8D7;
-  --ayna-cta-text: #3E2F59;
+  --ayna-accent: #F7BADD;
+  --ayna-accent-dark: #F7BADD;
+  --ayna-cta-bg: #F7BADD;
+  --ayna-cta-text: #1D1A2B;
   --ayna-heading: #FCFBFB;
   --ayna-product-panel: radial-gradient(130% 110% at 28% 0%, rgba(192,118,31,.34), rgba(255,255,255,.03) 68%);
   --ayna-glass-bg: rgba(255,255,255,.09);
@@ -166,7 +166,7 @@
   height: 20px;
   border-radius: 50%;
   background: #1A1714;
-  border: 3px solid #ECEBFF;
+  border: 3px solid #EEF0FD;
   cursor: pointer;
   margin-top: -8px;
 }
@@ -202,15 +202,15 @@
   font: 600 10px/1.15 var(--ayna-font-ui);
   cursor: pointer;
 }
-.ayna-mobile .ayna-bottom-nav button.is-active { color: #3E2F59; background: rgba(240,168,75,.2); border-radius: 14px; }
+.ayna-mobile .ayna-bottom-nav button.is-active { color: #1D1A2B; background: rgba(240,168,75,.2); border-radius: 14px; }
 .ayna-mobile .ayna-bottom-nav svg { width: 21px; height: 21px; flex: none; }
 .ayna-mobile .ayna-bottom-nav button.is-active svg { stroke-width: 2.25; }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav,
-.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav { background: linear-gradient(110deg,#3E2F59,#3E2F59); border-top-color: rgba(255,249,242,.24); }
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav { background: linear-gradient(110deg,#1D1A2B,#1D1A2B); border-top-color: rgba(255,249,242,.24); }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button,
 .ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button { color: rgba(255,249,242,.8); }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
-.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #F2B8D7; background: rgba(255,199,116,.15); }
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #F7BADD; background: rgba(255,199,116,.15); }
 .ayna-profile-auth-backdrop {
   position: fixed;
   inset: 0 0 64px;
@@ -225,17 +225,17 @@
   padding: 30px 24px max(28px, env(safe-area-inset-bottom));
   border-radius: 26px 26px 0 0;
   background: #fffaf3;
-  color: #3E2F59;
+  color: #1D1A2B;
   box-shadow: 0 -12px 40px rgba(20, 20, 40, .2);
   font-family: var(--ayna-font-ui);
 }
-.ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #3E2F59; font-size: 28px; cursor: pointer; }
+.ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #1D1A2B; font-size: 28px; cursor: pointer; }
 .ayna-profile-auth-eyebrow { color: #9a5c36; font-size: 11px; font-weight: 700; letter-spacing: .16em; }
 .ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 29px/1.15 var(--ayna-font-display); }
 .ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
 .ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 15px var(--ayna-font-ui); cursor: pointer; }
-.ayna-profile-auth-primary { border: 0; background: #F2B8D7; color: #231a12; }
-.ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #3E2F59; background: transparent; color: #3E2F59; }
+.ayna-profile-auth-primary { border: 0; background: #F7BADD; color: #231a12; }
+.ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #1D1A2B; background: transparent; color: #1D1A2B; }
 
 /* Keep the browser preview at a readable phone width on a large display. */
 @media (min-width: 700px) {
