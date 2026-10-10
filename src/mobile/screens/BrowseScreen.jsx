@@ -75,9 +75,12 @@ function ModeTab({ label, active, onClick }) {
 
 function PersonalizedToggle({ on, disabled, onClick }) {
   return (
-    <div
-      onClick={disabled ? undefined : onClick}
-      title={disabled ? 'Complete your profile to personalize' : undefined}
+    <button
+      type="button"
+      aria-pressed={on}
+      aria-label="Personalized products"
+      disabled={disabled}
+      onClick={onClick}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -85,6 +88,7 @@ function PersonalizedToggle({ on, disabled, onClick }) {
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.45 : 1,
         padding: '5px 5px 5px 10px',
+        border: 0,
         borderRadius: 99,
         background: on ? 'var(--ayna-text)' : 'var(--ayna-chip-bg)',
         transition: 'background .15s',
@@ -114,7 +118,7 @@ function PersonalizedToggle({ on, disabled, onClick }) {
           }}
         />
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -264,6 +268,27 @@ export default function BrowseScreen({
   };
   const [activeGroup, setActiveGroup] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const filterButtonRef = useRef(null);
+  const filterCloseRef = useRef(null);
+  const filterSheetRef = useRef(null);
+  useEffect(() => {
+    if (!showFilters) return undefined;
+    filterCloseRef.current?.focus();
+    const handleFilterKeys = (event) => {
+      if (event.key === 'Escape') {
+        setShowFilters(false);
+        filterButtonRef.current?.focus();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = [...(filterSheetRef.current?.querySelectorAll('button:not(:disabled), select:not(:disabled), input:not(:disabled)') || [])];
+      if (focusable.length < 2) return;
+      if (event.shiftKey && document.activeElement === focusable[0]) { event.preventDefault(); focusable.at(-1).focus(); }
+      if (!event.shiftKey && document.activeElement === focusable.at(-1)) { event.preventDefault(); focusable[0].focus(); }
+    };
+    window.addEventListener('keydown', handleFilterKeys);
+    return () => window.removeEventListener('keydown', handleFilterKeys);
+  }, [showFilters]);
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [sortBy, setSortBy] = useState('default');
   const cardLayout = 'grid';
@@ -463,7 +488,7 @@ export default function BrowseScreen({
 
       {mode === 'products' && (
         <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={
-          <button className="ayna-shop-filter-toggle" type="button" aria-label="Filters" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
+          <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-label="Filters" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
             <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
             {Object.values(filters).filter((value) => value !== 'all').length > 0 && <span>{Object.values(filters).filter((value) => value !== 'all').length}</span>}
           </button>
@@ -471,8 +496,8 @@ export default function BrowseScreen({
       )}
       {mode === 'products' && <>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
-          <div className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>
-          <div className="ayna-shop-filter-head"><strong>Filters</strong><button type="button" aria-label="Close filters" onClick={() => setShowFilters(false)}>Close</button></div>
+          <div ref={filterSheetRef} className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>
+          <div className="ayna-shop-filter-head"><strong>Filters</strong><button ref={filterCloseRef} type="button" aria-label="Close filters" onClick={() => { setShowFilters(false); filterButtonRef.current?.focus(); }}>Close</button></div>
           <div className="ayna-shop-filter-fields">
           <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto', color: 'var(--ayna-text-muted)', fontSize: 12 }}>Sort <select aria-label="Sort products" value={sortBy} onChange={(event) => setSortBy(event.target.value)} style={{ minHeight: 44, maxWidth: 155, border: '1px solid var(--ayna-border)', borderRadius: 12, padding: '8px 10px', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)' }}><option value="default">Featured</option><option value="rating">Highest rated</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label>
           {FILTER_FIELDS.map(([key, label, options]) => <label key={key} style={{ display: 'grid', gap: 5, color: 'var(--ayna-text-muted)', fontSize: 11, fontWeight: 600 }}>{label}<select value={filters[key]} onChange={(event) => setFilters((current) => ({ ...current, [key]: event.target.value }))} style={{ width: '100%', minWidth: 0, minHeight: 44, border: '1px solid var(--ayna-border)', borderRadius: 10, background: 'var(--ayna-bg)', color: 'var(--ayna-heading)', padding: '8px' }}>{(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, CATEGORY_LABELS[category] || category.replaceAll('-', ' ')])] : options).map(([value, text]) => <option key={value} value={value}>{text}</option>)}</select></label>)}
