@@ -398,3 +398,10 @@
 .ayna-saved-ecosystem-action { min-height:44px; padding:8px 0; border:0; background:transparent; color:var(--ayna-heading); font-size:12px; }
 .ayna-saved-safety { min-height:44px; border:0; padding:8px 0; background:transparent; color:var(--ayna-accent-dark); font-size:12px; }
 .ayna-saved-ecosystem { display:block; min-height:44px; margin:32px auto; border:0; padding:8px 16px; background:transparent; color:var(--ayna-heading); font-size:13px; }
+
+/* Source counts describe linked material, never a clinical rating. */
+.ayna-source-index { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:24px 22px; padding:20px 0; border-top:1px solid var(--ayna-border); border-bottom:1px solid var(--ayna-border); }
+.ayna-source-index button { display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-height:80px; padding:0; border:0; background:transparent; color:var(--ayna-heading); text-align:left; }
+.ayna-source-index span { font-size:12px; }
+.ayna-source-index strong { font:800 30px/1 var(--ayna-font-display); color:var(--ayna-accent-dark); }
+.ayna-source-index small { font-size:10px; color:var(--ayna-text-muted); }

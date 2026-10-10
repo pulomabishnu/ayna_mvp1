@@ -15,7 +15,7 @@
   --ayna-fresh-lilac: #e8f0ee;
   --ayna-fresh-mint: #9bf0e1;
   --ayna-fresh-black: #16122A;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--ayna-font-ui);
   background: #f7f7f5;
 }
 .ayna-mobile .ayna-bottom-nav,

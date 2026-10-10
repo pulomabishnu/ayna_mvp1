@@ -541,31 +541,31 @@
 .ayna-mobile .am-subpage-header>span { color:var(--ayna-figma-berry); font:800 10px/1 var(--ayna-font-ui); letter-spacing:.1em; }
 .ayna-mobile .am-subpage-header .am-back { display:flex; align-items:center; gap:8px; min-height:44px; padding:0; color:var(--ayna-figma-ink); font:700 14px var(--ayna-font-ui); }
 .ayna-mobile .am-playlist-detail,.ayna-mobile .am-profile-detail { min-width:0; }
-.ayna-mobile .am-playlist-detail-hero { display:grid; grid-template-columns:110px minmax(0,1fr); gap:15px; align-items:stretch; margin:17px 0 0; padding:12px; border:1px solid var(--ayna-border); border-radius:4px; background:#fff; }
-.ayna-mobile .am-playlist-detail-hero:not(:has(img)) { display:block; border-left:5px solid var(--ayna-figma-mint); }
-.ayna-mobile .am-playlist-detail-hero .am-cover-detail { width:110px; height:110px; max-height:none; aspect-ratio:1; border-radius:2px; object-fit:cover; }
+.ayna-mobile .am-playlist-detail-hero { display:grid; grid-template-columns:minmax(0,1fr); gap:20px; margin:24px 0 0; padding:0; border:0; background:transparent; }
+.ayna-mobile .am-playlist-detail-hero:not(:has(img)) { display:block; padding:24px 0; border:0; }
+.ayna-mobile .am-playlist-detail-hero .am-cover-detail { width:100%; height:auto; max-height:280px; aspect-ratio:4/3; border-radius:8px; object-fit:cover; }
 .ayna-mobile .am-playlist-detail-copy { min-width:0; align-self:center; }
 .ayna-mobile .am-playlist-detail-copy small,.ayna-mobile .am-profile-hero small { color:var(--ayna-figma-berry); font:800 10px/1.2 var(--ayna-font-ui); letter-spacing:.09em; }
 .ayna-mobile .am-playlist-detail-copy .am-detail-title { overflow-wrap:anywhere; margin:8px 0 4px; color:var(--ayna-figma-ink); font:800 clamp(21px,6vw,28px)/1 'Bricolage Grotesque',var(--ayna-font-ui); letter-spacing:-.04em; }
 .ayna-mobile .am-playlist-detail-copy .am-detail-copy { margin:0; color:var(--ayna-text-muted); font-size:12px; line-height:1.35; }
-.ayna-mobile .am-playlist-owner-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0 20px; }
-.ayna-mobile .am-playlist-owner-actions button { min-width:0; min-height:44px; padding:9px 8px; border-radius:3px!important; font-size:12px; }
+.ayna-mobile .am-playlist-owner-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:16px 0 28px; }
+.ayna-mobile .am-playlist-owner-actions button { min-width:0; min-height:44px; padding:9px 8px; border-radius:10px!important; font-size:12px; }
 .ayna-mobile .am-playlist-owner-actions button:first-child { border-color:var(--ayna-figma-ink); background:var(--ayna-figma-ink); color:#fff; }
 .ayna-mobile .am-playlist-owner-actions button:last-child { color:var(--ayna-figma-berry); }
 .ayna-mobile .am-playlist-section-heading { display:flex; align-items:center; justify-content:space-between; margin:20px 0 8px; color:var(--ayna-figma-ink); font:800 11px var(--ayna-font-ui); letter-spacing:.1em; }
-.ayna-mobile .am-playlist-section-heading strong { display:grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--ayna-figma-mint); font-size:12px; letter-spacing:0; }
+.ayna-mobile .am-playlist-section-heading strong { display:grid; place-items:center; width:24px; height:24px; background:transparent; font-size:12px; letter-spacing:0; }
 .ayna-mobile .am-playlist-item { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:stretch; gap:6px; margin:0 0 8px; }
-.ayna-mobile .am-playlist-item .am-product { display:grid; grid-template-columns:58px minmax(0,1fr); gap:5px 10px; width:100%; min-width:0; margin:0; padding:8px; border-radius:3px; background:#fff; }
+.ayna-mobile .am-playlist-item .am-product { display:grid; grid-template-columns:58px minmax(0,1fr); gap:5px 10px; width:100%; min-width:0; margin:0; padding:12px 0; border:0; border-bottom:1px solid var(--ayna-border); background:transparent; }
 .ayna-mobile .am-playlist-item .am-product img { grid-row:span 2; width:58px; height:58px; border-radius:2px; }
 .ayna-mobile .am-playlist-item .am-product span { align-self:end; min-width:0; }
 .ayna-mobile .am-playlist-item .am-product strong { display:-webkit-box; overflow:hidden; white-space:normal; -webkit-box-orient:vertical; -webkit-line-clamp:2; color:var(--ayna-figma-ink); font:700 12px/1.25 var(--ayna-font-ui); }
 .ayna-mobile .am-playlist-item .am-product em { grid-column:2; align-self:start; color:var(--ayna-figma-berry); font:700 10px var(--ayna-font-ui); }
 .ayna-mobile .am-playlist-item>button:last-child { align-self:center; padding:8px 3px; color:var(--ayna-figma-berry); font-size:11px; }
-.ayna-mobile .am-playlist-add { margin:22px 0 0; padding:16px; border-radius:3px; background:var(--ayna-figma-mist); }
+.ayna-mobile .am-playlist-add { margin:32px 0 0; padding:20px 0; border:0; border-top:1px solid var(--ayna-border); background:transparent; }
 .ayna-mobile .am-playlist-add h3 { font:800 22px 'Bricolage Grotesque',var(--ayna-font-ui); }
 .ayna-mobile .am-playlist-add .am-primary { width:100%; border-radius:3px!important; background:var(--ayna-figma-ink); color:#fff; }
-.ayna-mobile .am-profile-hero { gap:17px; min-width:0; margin:17px 0 0; padding:21px 16px; border-radius:3px; background:var(--ayna-figma-mint); }
-.ayna-mobile .am-profile-hero .am-avatar { flex:none; width:78px; height:78px; border:3px solid var(--ayna-figma-ink); border-radius:50%; }
+.ayna-mobile .am-profile-hero { gap:20px; min-width:0; margin:28px 0 0; padding:16px 0; background:transparent; }
+.ayna-mobile .am-profile-hero .am-avatar { flex:none; width:78px; height:78px; border:0; border-radius:50%; }
 .ayna-mobile .am-profile-hero>div { min-width:0; }
 .ayna-mobile .am-profile-hero small { color:var(--ayna-figma-ink); }
 .ayna-mobile .am-profile-hero .am-detail-title { overflow-wrap:anywhere; margin:5px 0 3px; color:var(--ayna-figma-ink); font:800 clamp(25px,7vw,32px)/1 'Bricolage Grotesque',var(--ayna-font-ui); }

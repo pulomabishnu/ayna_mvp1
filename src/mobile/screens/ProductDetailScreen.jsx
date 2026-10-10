@@ -480,7 +480,7 @@ export default function ProductDetailScreen({
             }}
           >
             <ProductImage src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
-            {matchPercent != null && <button type="button" className="ayna-figma-detail-score" onClick={openWhyMatch} aria-label={`${matchPercent} percent match. See why`}><strong>{matchPercent}</strong><span>PERSONAL MATCH<br />match /100</span></button>}
+            {matchPercent != null && <button type="button" className="ayna-figma-detail-score" onClick={openWhyMatch} aria-label={`${matchPercent} percent match. See why`}><strong>{matchPercent}%</strong><span>PROFILE MATCH</span></button>}
             {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>Build to see<br />your match <span aria-hidden="true">↗</span></button>}
           </div>
         </div>
@@ -516,6 +516,10 @@ export default function ProductDetailScreen({
 
         {safetyAlertText && <SafetyBanner text={safetyAlertText} />}
         {Array.isArray(warnings) && warnings.length > 0 && <div className="ayna-detail-warnings" role="note"><strong>Warnings</strong>{warnings.map((warning) => <p key={warning}>{warning}</p>)}</div>}
+
+        <div className="ayna-source-index" aria-label="Available product sources">
+          {[['doctor', 'Clinical', 'evidence'], ['scientific', 'Research', 'evidence'], ['community', 'Community', 'reviews']].map(([kind, label, section]) => <button type="button" key={kind} onClick={() => setActiveDetailSection(section)} aria-label={`${label}: ${sourceCounts[kind]} linked sources`}><span>{label}</span><strong>{sourceCounts[kind] || '—'}</strong><small>{sourceCounts[kind] ? 'sources' : 'not listed'}</small></button>)}
+        </div>
 
         <div className="ayna-detail-sections" role="tablist" aria-label="Product information">
           {['fit', 'evidence', 'ingredients', 'reviews'].map((section) => <button key={section} type="button" role="tab" aria-selected={activeDetailSection === section} onClick={() => setActiveDetailSection(section)}>{section[0].toUpperCase() + section.slice(1)}</button>)}

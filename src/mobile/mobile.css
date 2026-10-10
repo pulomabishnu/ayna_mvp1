@@ -98,9 +98,9 @@
 .ayna-mobile a { color: var(--ayna-brown); text-decoration: none; }
 .ayna-mobile a:hover { color: #8A4F30; }
 
-.ayna-mobile .font-serif { font-family: 'Bricolage Grotesque', serif; }
-.ayna-mobile .font-sans { font-family: 'DM Sans', sans-serif; }
-.ayna-mobile .font-mono { font-family: 'DM Mono', monospace; }
+.ayna-mobile .font-serif { font-family: var(--ayna-font-display); }
+.ayna-mobile .font-sans { font-family: var(--ayna-font-ui); }
+.ayna-mobile .font-mono { font-family: var(--ayna-font-ui); }
 
 @keyframes ay-hero { from { opacity: 0; transform: scale(.93) translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes ay-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
@@ -202,7 +202,7 @@
   padding: 2px 0;
   background: transparent;
   color: #766b78;
-  font: 600 10px/1.15 'DM Sans', sans-serif;
+  font: 600 10px/1.15 var(--ayna-font-ui);
   cursor: pointer;
 }
 .ayna-mobile .ayna-bottom-nav button.is-active { color: #16122A; background: rgba(240,168,75,.2); border-radius: 14px; }
@@ -230,13 +230,13 @@
   background: #fffaf3;
   color: #16122A;
   box-shadow: 0 -12px 40px rgba(20, 20, 40, .2);
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--ayna-font-ui);
 }
 .ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #16122A; font-size: 28px; cursor: pointer; }
 .ayna-profile-auth-eyebrow { color: #9a5c36; font-size: 11px; font-weight: 700; letter-spacing: .16em; }
-.ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 29px/1.15 'Bricolage Grotesque', serif; }
+.ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 29px/1.15 var(--ayna-font-display); }
 .ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
-.ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 15px 'DM Sans', sans-serif; cursor: pointer; }
+.ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 15px var(--ayna-font-ui); cursor: pointer; }
 .ayna-profile-auth-primary { border: 0; background: #9BF0E1; color: #231a12; }
 .ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #16122A; background: transparent; color: #16122A; }
 
