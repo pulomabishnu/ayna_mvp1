@@ -387,6 +387,26 @@
 }
 @media (max-height: 700px) { .ay-reel { height: 236px; } .ay-reel-match svg { width: 130px; height: 130px; } .ay-reel-score strong { font-size: 40px; } }
 
+/* Landing: one actual app preview on the blue story canvas. */
+.ay-cover { padding: max(22px, env(safe-area-inset-top)) 24px max(22px, env(safe-area-inset-bottom)); }
+.ay-cover-art i:nth-child(1), .ay-cover-art i:nth-child(2) { width: 23px; height: 23px; border: 0; border-radius: 0; background: var(--ay-butter); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+.ay-cover-art i:nth-child(1) { left: -8px; right: auto; top: 28%; }
+.ay-cover-art i:nth-child(2) { left: auto; right: -8px; top: 58%; width: 29px; height: 29px; animation-delay: 1.5s; }
+.ay-cover-top button { min-height: 44px; padding: 0 2px; border: 0; border-bottom: 1px solid currentColor; border-radius: 0; background: transparent; }
+.ay-cover-reel { min-height: 250px; padding: 30px 0 24px; }
+.ay-cover-widget { width: 100%; max-width: 350px; filter: drop-shadow(0 8px 0 rgba(29,26,43,.12)); }
+.ayna-mobile .ay-cover-widget .ay-reel { border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-paper); }
+.ay-cover-widget .ay-reel-track { border-width: 1px; }
+.ay-cover-widget .ay-reel-track:first-child { background: var(--ay-butter); color: var(--ay-ink); }
+.ay-cover-widget .ay-reel-track:first-child .ay-reel-cover { border-color: var(--ay-ink); }
+.ayna-mobile .ay-cover-copy h1 { font-size: calc(clamp(36px, 10vw, 48px) * var(--ayna-text-scale, 1)) !important; line-height: .98 !important; letter-spacing: -.045em !important; }
+.ayna-mobile .ay-cover-copy h1 em { background: none; }
+.ay-cover-copy p { margin-top: 14px; font-size: 13px; font-weight: 600; }
+.ay-cover-actions { margin-top: 28px; gap: 10px; }
+.ay-cover-actions > div button { font-size: 13px; }
+.ayna-mobile .ay-cover .ayna-slide-start { border-width: 1.5px; }
+@media (max-height: 700px) { .ay-cover-reel { min-height: 210px; padding: 16px 0; } .ay-cover-widget { max-width: 320px; } }
+
 /* ===== Spacing: one page gutter (20px) and an 8-pt rhythm everywhere ===== */
 .ayna-mobile :is(.ayna-figma-header, .ayna-saved-header) { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
 .ayna-mobile .ayna-figma-discover .ayna-shop-heading { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
