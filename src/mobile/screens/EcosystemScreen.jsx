@@ -1,3 +1,4 @@
+import { healthAreaLabel } from '../utils/healthAreaLabel.js';
 import MobileHeader from '../components/MobileHeader.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import ArticleCard from '../components/ArticleCard.jsx';
@@ -22,9 +23,10 @@ export default function EcosystemScreen({
     const reason = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers).reasonDetails?.find((r) => ['primaryGoal', 'otherNeeds'].includes(r.component) && r.score > 0) : null;
     const healthLabel = reason?.text?.replace(/^(Goal: |Another need you selected: )/, '');
     const fallbackKey = ['supplements', 'tests-devices'].includes(product.areaKey) ? 'other' : product.areaKey || 'other';
-    const key = healthLabel ? `need-${encodeURIComponent(healthLabel)}` : fallbackKey;
-    const fallback = ECOSYSTEM_AREAS.find((area) => area.key === key)?.label;
-    if (!map.has(key)) map.set(key, { key, label: healthLabel || (['Supplements', 'Tests + Devices'].includes(fallback) ? 'Other support' : fallback) || 'Other support', products: [] });
+    const fallback = ECOSYSTEM_AREAS.find((area) => area.key === fallbackKey)?.label;
+    const label = healthAreaLabel(healthLabel || (['Supplements', 'Tests + Devices'].includes(fallback) ? 'Other support' : fallback) || 'Other support');
+    const key = `area-${encodeURIComponent(label.toLowerCase())}`;
+    if (!map.has(key)) map.set(key, { key, label, products: [] });
     map.get(key).products.push(product);
     return map;
   }, new Map()).values()];
@@ -37,7 +39,7 @@ export default function EcosystemScreen({
       <div className="ayna-cabinet-topline"><span>YOUR HEALTH CABINET</span><button type="button" onClick={onRetake}>Update picks</button></div>
       <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
       <div className="ayna-ecosystem-total"><strong>{currentProducts.length}</strong><span>current picks</span><span>{groups.length} areas</span></div>
-      {groups.length > 0 && <div className="ayna-ecosystem-area-map" aria-label="Your health areas">{groups.map((group, index) => <a key={group.key} href={`#ayna-area-${group.key}`} aria-label={`${group.label}, ${group.products.length} picks`}><small aria-hidden="true">{String(index + 1).padStart(2, '0')}</small><span>{group.label}</span><span className="ayna-area-dots" aria-hidden="true">{group.products.map((product) => <i key={product.id} />)}</span></a>)}</div>}
+      {groups.length > 0 && <div className="ayna-ecosystem-area-map" aria-label="Your health areas">{groups.map((group, index) => <a style={{ '--area-index': index, '--area-tint': ['#b8dfcb', '#e9ca59', '#f1e5b9', '#efb29a'][index % 4] }} key={group.key} href={`#ayna-area-${group.key}`} aria-label={`${group.label}, ${group.products.length} picks`}><span>{group.label}</span><span className="ayna-area-dots" aria-hidden="true">{group.products.map((product) => <i key={product.id} />)}</span><strong>{group.products.length} {group.products.length === 1 ? 'pick' : 'picks'}</strong></a>)}</div>}
       {currentProducts.length === 0 && <div className="ayna-ecosystem-empty"><span className="ayna-saved-empty-stage" aria-hidden="true"><span /><span /><span /></span><p>No strong matches yet.</p><button type="button" onClick={onBrowse}>Shop</button></div>}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>

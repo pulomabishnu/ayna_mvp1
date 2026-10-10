@@ -734,6 +734,7 @@ export default function ProductDetailScreen({
         <button
           type="button"
           aria-pressed={isInEcosystem}
+          aria-label={isInEcosystem ? 'Remove' : 'Add to Ecosystem'}
           onClick={onAddToEcosystem}
           style={{
             flex: 'none',
@@ -752,7 +753,7 @@ export default function ProductDetailScreen({
             border: '1px solid ' + (isInEcosystem ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)'),
           }}
         >
-          {isInEcosystem ? 'Remove from Ecosystem' : 'Add to Ecosystem'}
+          {isInEcosystem ? 'Remove' : 'Add to Ecosystem'}
         </button>
         {buyUrl ? (
           <a
@@ -789,7 +790,7 @@ export default function ProductDetailScreen({
               fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',
             }}
           >
-            {whereToBuy.length > 0 ? whereToBuy[0] : 'No link yet'}
+            <span className="ayna-seller-unavailable">No shop link</span>
           </div>
         )}
       </div>

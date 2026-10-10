@@ -1,31 +1,30 @@
-/* Design tokens extracted from design-reference/ayna-mobile-template.html.
-   Scoped under .ayna-mobile so nothing here can affect the existing website. */
+/* Shared Ayna mobile palette. Screen styles use these semantic colors. */
 
 .ayna-mobile {
   position: relative;
   --ayna-bottom-nav-height: calc(55px + max(8px, env(safe-area-inset-bottom)));
-  --ayna-bg: #FAFBF8;
-  --ayna-bg-alt: #FAFBF8;
+  --ayna-bg: #faf9f3;
+  --ayna-bg-alt: #f2eee4;
   --ayna-surface: #FFFFFF;
-  --ayna-surface-alt: #FAFBF8;
-  --ayna-border: #E0E0D9;
+  --ayna-surface-alt: #f2eee4;
+  --ayna-border: #d7d1c4;
   --ayna-text: #16122A;
-  --ayna-text-muted: #626262;
-  --ayna-text-faint: #A8A29E;
-  --ayna-accent: #9BF0E1;
-  --ayna-accent-dark: #9BF0E1;
+  --ayna-text-muted: #625d55;
+  --ayna-text-faint: #6b635b;
+  --ayna-accent: #b8dfcb;
+  --ayna-accent-dark: #b44328;
   --ayna-brown: #16122A;
   --ayna-navy: #16122A;
   --ayna-purple: #16122A;
-  --ayna-peach: #E2F8F3;
+  --ayna-peach: #efb29a;
   --ayna-cta-bg: #16122A;
-  --ayna-cta-text: #FFFFFF;
+  --ayna-cta-text: #ffffff;
   --ayna-heading: #16122A;
-  --ayna-product-panel: linear-gradient(150deg,#E2F8F3,#F6DCC0);
+  --ayna-product-panel: linear-gradient(150deg,#e5efe7,#F6DCC0);
   --ayna-glass-bg: rgba(255,252,249,.9);
   --ayna-track: #EAE3DA;
-  --ayna-chip-bg: #FAFBF8;
-  --ayna-chip-border: #E0E0D9;
+  --ayna-chip-bg: #efebe0;
+  --ayna-chip-border: #d7d1c4;
   --ayna-gradient-hero: linear-gradient(165deg, #16122A 0%, #16122A 42%, #16122A 74%, #16122A 100%);
   --ayna-gradient-panel: linear-gradient(168deg, #16122A 0%, #16122A 52%, #16122A 100%);
 
@@ -33,7 +32,7 @@
      bodies from src/components/Articles.jsx, which style their own links
      inline with var(--color-primary)) renders with the correct color when
      reused inside the mobile app, instead of falling back to default blue. */
-  --color-primary: #9BF0E1;
+  --color-primary: #2d7365;
 
   /* Scales OrbHero.jsx's orb+chips so the chips' worst-case reach during
      their orbit (241px from center either way, at the component's native
@@ -71,23 +70,21 @@
   padding: 18px;
 }
 
-/* Dark theme — exact tokens from the "Nebula"/"Mission control" reference
-   mockups (design-reference/). Only colors change here; typography (Playfair
-   Display/DM Sans/Inter/DM Mono) is identical in both themes. */
+/* The same palette adapted for dark mode. */
 .ayna-mobile[data-theme="dark"] {
-  --ayna-bg: #0B0E1F;
-  --ayna-bg-alt: #111427;
+  --ayna-bg: #16122a;
+  --ayna-bg-alt: #211d30;
   --ayna-surface: rgba(255,255,255,.055);
-  --ayna-surface-alt: #141833;
-  --ayna-border: rgba(255,255,255,.1);
-  --ayna-text: #F5F3FF;
-  --ayna-text-muted: #9E9BC4;
-  --ayna-text-faint: #55527A;
-  --ayna-accent: #9BF0E1;
-  --ayna-accent-dark: #9BF0E1;
-  --ayna-cta-bg: #9BF0E1;
-  --ayna-cta-text: #231A12;
-  --ayna-heading: #F5F3FF;
+  --ayna-surface-alt: #282338;
+  --ayna-border: rgba(255,255,255,.21);
+  --ayna-text: #faf9f3;
+  --ayna-text-muted: #d1cbbd;
+  --ayna-text-faint: #b5ae9f;
+  --ayna-accent: #b8dfcb;
+  --ayna-accent-dark: #efb29a;
+  --ayna-cta-bg: #b8dfcb;
+  --ayna-cta-text: #16122a;
+  --ayna-heading: #faf9f3;
   --ayna-product-panel: radial-gradient(130% 110% at 28% 0%, rgba(192,118,31,.34), rgba(255,255,255,.03) 68%);
   --ayna-glass-bg: rgba(255,255,255,.09);
   --ayna-track: rgba(255,255,255,.12);
@@ -169,7 +166,7 @@
   height: 20px;
   border-radius: 50%;
   background: #1A1714;
-  border: 3px solid #E2F8F3;
+  border: 3px solid #e5efe7;
   cursor: pointer;
   margin-top: -8px;
 }
@@ -213,7 +210,7 @@
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button,
 .ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button { color: rgba(255,249,242,.8); }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
-.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #9BF0E1; background: rgba(255,199,116,.15); }
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #b8dfcb; background: rgba(255,199,116,.15); }
 .ayna-profile-auth-backdrop {
   position: fixed;
   inset: 0 0 64px;
@@ -237,7 +234,7 @@
 .ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 29px/1.15 var(--ayna-font-display); }
 .ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
 .ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 15px var(--ayna-font-ui); cursor: pointer; }
-.ayna-profile-auth-primary { border: 0; background: #9BF0E1; color: #231a12; }
+.ayna-profile-auth-primary { border: 0; background: #b8dfcb; color: #231a12; }
 .ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #16122A; background: transparent; color: #16122A; }
 
 /* Keep the browser preview at a readable phone width on a large display. */

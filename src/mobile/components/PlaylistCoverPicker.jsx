@@ -1,22 +1,26 @@
 import { useState } from 'react';
 import { checkImageFile } from '../../utils/community/imageUpload.js';
+import { coverInk } from './playlistCoverImage.js';
 
-const COLORS = ['#16122A', '#C41C72', '#9BF0E1', '#E8F0EE', '#F8E5EF', '#FAFBF8'];
+const COLORS = ['#16122a', '#2d7365', '#b44328', '#e9ca59', '#b8dfcb', '#faf9f3'];
 const EXAMPLES = ['Period care picks', 'My everyday routine', 'Worth sharing'];
-
-function coverInk(color) {
-  return ['#16122A', '#C41C72', '#4100F5', '#765479'].includes(color) ? '#FFFFFF' : '#16122A';
-}
 
 export default function PlaylistCoverPicker({ title, mode, onMode, color, onColor, text, onText, photo, onPhoto, existingCoverUrl }) {
   const [preview, setPreview] = useState('');
+  const [photoError, setPhotoError] = useState('');
   const choosePhoto = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    checkImageFile(file);
+    try { checkImageFile(file); } catch (error) {
+      setPhotoError(error instanceof Error ? error.message : 'Choose a JPG, PNG, WebP, HEIC, or GIF image.');
+      event.target.value = '';
+      return;
+    }
+    setPhotoError('');
     onPhoto(file);
     const reader = new FileReader();
     reader.onload = () => setPreview(String(reader.result || ''));
+    reader.onerror = () => setPhotoError('Could not preview this image. Choose another.');
     reader.readAsDataURL(file);
   };
 
@@ -35,6 +39,6 @@ export default function PlaylistCoverPicker({ title, mode, onMode, color, onColo
       <small className="am-cover-hint">Leave blank to use your playlist name, or try:</small>
       <div className="am-cover-examples">{EXAMPLES.map((example) => <button type="button" key={example} onClick={() => onText(example)}>{example}</button>)}</div>
       <div className="am-cover-colors" aria-label="Background color">{COLORS.map((choice) => <button type="button" key={choice} aria-label={`Choose ${choice} background`} aria-pressed={color === choice} className={color === choice ? 'is-selected' : ''} style={{ background: choice }} onClick={() => onColor(choice)} />)}</div>
-    </> : <label className="am-photo-input">Choose a cover photo<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" onChange={choosePhoto} />{photo && <small>{photo.name}</small>}</label>}
+    </> : <><label className="am-photo-input">Choose a cover photo<input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" onChange={choosePhoto} />{photo && <small>{photo.name}</small>}</label>{photoError && <p role="alert" className="am-cover-error">{photoError}</p>}</>}
   </div>;
 }

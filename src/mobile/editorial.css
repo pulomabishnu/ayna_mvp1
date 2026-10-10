@@ -9,7 +9,7 @@
   --ayna-text-muted: #5F5F5F;
   --ayna-text-faint: #777777;
   --ayna-heading: #16122A;
-  --ayna-accent: #9BF0E1;
+  --ayna-accent: #b8dfcb;
   --ayna-accent-dark: #16122A;
   --ayna-peach: #DDF8F2;
   --ayna-brown: #16122A;
@@ -64,7 +64,7 @@
   border-radius: 3px;
 }
 .ayna-mobile .ayna-bottom-nav button { position: relative; }
-.ayna-mobile[data-theme="dark"] .ayna-bottom-nav button.is-active { color: #9BF0E1; }
+.ayna-mobile[data-theme="dark"] .ayna-bottom-nav button.is-active { color: #b8dfcb; }
 
 .ayna-editorial-welcome { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; background: #f7f5f0; color: #1d243f; }
 .ayna-editorial-welcome-photo { min-height: 36vh; max-height: 45vh; flex: 1; position: relative; overflow: hidden; background: #a0806b; }
@@ -128,14 +128,14 @@
 .ayna-v2-welcome-hero { min-height: 312px; padding: max(22px,env(safe-area-inset-top)) 22px 24px; display: flex; flex-direction: column; background: #16122A; color: #fff; }
 .ayna-v2-welcome-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: auto; }
 .ayna-v2-wordmark { color: #fff; font: 800 33px/1 var(--ayna-font-ui); letter-spacing: -.095em; }
-.ayna-v2-wordmark span { color: #9BF0E1; }
+.ayna-v2-wordmark span { color: #b8dfcb; }
 .ayna-v2-welcome-top button { min-height: 44px; padding: 0 15px; border: 1px solid rgba(255,255,255,.7); border-radius: 9px; background: transparent; color: #fff; font: 700 13px var(--ayna-font-ui); }
 .ayna-v2-overline { margin: 0 0 10px; font: 700 10px var(--ayna-font-ui); letter-spacing: .17em; }
-.ayna-v2-welcome-hero > .ayna-v2-overline { color: #9BF0E1; margin-top: 35px; }
+.ayna-v2-welcome-hero > .ayna-v2-overline { color: #b8dfcb; margin-top: 35px; }
 .ayna-v2-welcome-hero h1,
 .ayna-v2-eco-intro-blue h1 { margin: 0; font: 800 clamp(43px,12vw,63px)/.91 var(--ayna-font-ui); letter-spacing: -.075em; }
 .ayna-v2-welcome-hero h1 span,
-.ayna-v2-eco-intro-blue h1 span { color: #9BF0E1; }
+.ayna-v2-eco-intro-blue h1 span { color: #b8dfcb; }
 .ayna-v2-welcome-deck { max-width: 330px; margin: 15px 0 0; color: rgba(255,255,255,.9); font: 14px/1.4 var(--ayna-font-ui); }
 .ayna-v2-team-photo { position: relative; margin: 0; background: #E7E8DF; }
 .ayna-v2-team-photo img { display: block; width: 100%; aspect-ratio: 1.7; object-fit: cover; object-position: 58% 48%; }
@@ -144,7 +144,7 @@
 .ayna-v2-primary { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 53px; border: 0; border-radius: 10px; padding: 12px 17px; background: #16122A; color: #fff; font: 700 15px var(--ayna-font-ui); text-align: left; cursor: pointer; transition: transform .16s ease,background-color .16s ease; }
 .ayna-v2-primary:hover { background: #3200C2; }
 .ayna-v2-primary:active { transform: scale(.985); }
-.ayna-v2-primary span { color: #9BF0E1; font-size: 21px; font-weight: 400; }
+.ayna-v2-primary span { color: #b8dfcb; font-size: 21px; font-weight: 400; }
 .ayna-v2-outline { width: 100%; min-height: 51px; border: 1px solid #ACACA5; border-radius: 10px; background: transparent; color: #16122A; font: 700 14px var(--ayna-font-ui); cursor: pointer; }
 .ayna-v2-welcome-links { display: flex; justify-content: space-between; gap: 12px; margin-top: 5px; }
 .ayna-v2-welcome-links button,
@@ -153,7 +153,7 @@
 .ayna-v2-eco-intro { flex: 1; min-height: 0; display: flex; flex-direction: column; background: #FAFBF8; }
 .ayna-v2-eco-intro-scroll { flex: 1; min-height: 0; overflow-y: auto; }
 .ayna-v2-eco-intro-blue { min-height: 290px; padding: 27px 22px 22px; background: #16122A; color: #fff; display: flex; flex-direction: column; }
-.ayna-v2-eco-intro-blue .ayna-v2-overline { color: #9BF0E1; }
+.ayna-v2-eco-intro-blue .ayna-v2-overline { color: #b8dfcb; }
 .ayna-v2-eco-intro-blue h1 { margin: 22px 0 auto; }
 .ayna-v2-eco-intro-notes { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.4); font: 700 10px var(--ayna-font-ui); }
 .ayna-v2-eco-intro-copy { padding: 24px 22px 35px; display: flex; flex-direction: column; align-items: center; }
@@ -167,21 +167,21 @@
 .ayna-mobile .ayna-bottom-nav button.is-active,
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
 .ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #16122A; }
-.ayna-mobile .ayna-bottom-nav button.is-active::after { background: #9BF0E1; width: 22px; }
+.ayna-mobile .ayna-bottom-nav button.is-active::after { background: #b8dfcb; width: 22px; }
 .ayna-editorial-page-title h1 { font-weight: 800; letter-spacing: -.065em; }
 .ayna-editorial-page-title h1 em { color: #16122A; font: inherit; }
 .ayna-editorial-kicker { color: #16122A; }
 .ayna-editorial-feature { background: #16122A; border-radius: 11px; }
 .ayna-editorial-feature::after { background: linear-gradient(180deg,transparent 35%,rgba(0,0,0,.7)); }
-.ayna-editorial-feature-copy small { color: #9BF0E1; }
+.ayna-editorial-feature-copy small { color: #b8dfcb; }
 .ayna-editorial-feature-copy strong { color: #fff; }
 .ayna-editorial-read-copy small { color: #16122A; }
 .ayna-editorial-read-image { border-radius: 8px; }
 .ayna-v2-eco-feature { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr); width: calc(100% - 40px); min-height: 206px; margin: 3px 20px 0; padding: 0; overflow: hidden; border: 0; border-radius: 11px; background: #16122A; color: #fff; text-align: left; cursor: pointer; }
 .ayna-v2-eco-feature-copy { min-width: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 18px 12px 18px 17px; }
-.ayna-v2-eco-feature-copy small { color: #9BF0E1; font: 800 10px var(--ayna-font-ui); letter-spacing: .09em; }
+.ayna-v2-eco-feature-copy small { color: #b8dfcb; font: 800 10px var(--ayna-font-ui); letter-spacing: .09em; }
 .ayna-v2-eco-feature-copy strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; margin: 10px 0; color: #fff; font: 800 23px/1.05 var(--ayna-font-ui); letter-spacing: -.05em; }
 .ayna-v2-eco-feature-copy > span { color: #fff; font: 700 12px var(--ayna-font-ui); }
-.ayna-v2-eco-feature-image { position: relative; min-height: 206px; background: #E2F8F3; }
+.ayna-v2-eco-feature-image { position: relative; min-height: 206px; background: #e5efe7; }
 .ayna-v2-eco-feature-image img { padding: 10px; box-sizing: border-box; }
 @media (max-height: 690px) { .ayna-v2-welcome-hero { min-height: 285px; } .ayna-v2-team-photo img { aspect-ratio: 2; } }

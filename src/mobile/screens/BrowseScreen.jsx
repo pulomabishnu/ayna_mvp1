@@ -64,7 +64,7 @@ function ModeTab({ label, active, onClick }) {
         cursor: 'pointer',
         paddingBottom: 10,
         color: active ? 'var(--ayna-text)' : 'var(--ayna-text-faint)',
-        borderBottom: '2px solid ' + (active ? '#9BF0E1' : 'transparent'),
+        borderBottom: '2px solid ' + (active ? '#b8dfcb' : 'transparent'),
         marginBottom: -1,
       }}
     >
@@ -96,7 +96,7 @@ function PersonalizedToggle({ on, disabled, onClick }) {
           width: 30,
           height: 17,
           borderRadius: 99,
-          background: on ? '#9BF0E1' : 'var(--ayna-chip-border)',
+          background: on ? '#b8dfcb' : 'var(--ayna-chip-border)',
           position: 'relative',
           transition: 'background .15s',
         }}
@@ -462,14 +462,14 @@ export default function BrowseScreen({
       </div>
 
       {mode === 'products' && (
-        <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} />
+        <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={
+          <button className="ayna-shop-filter-toggle" type="button" aria-label="Filters" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
+            {Object.values(filters).filter((value) => value !== 'all').length > 0 && <span>{Object.values(filters).filter((value) => value !== 'all').length}</span>}
+          </button>
+        } />
       )}
-
-      {mode === 'products' && <div style={{ padding: '0 20px 14px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button type="button" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)} style={{ minHeight: 44, padding: '10px 16px', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', fontWeight: 700 }}>Filters{Object.values(filters).filter((value) => value !== 'all').length ? ` · ${Object.values(filters).filter((value) => value !== 'all').length}` : ''}</button>
-
-        </div>
+      {mode === 'products' && <>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
           <div className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>
           <div className="ayna-shop-filter-head"><strong>Filters</strong><button type="button" aria-label="Close filters" onClick={() => setShowFilters(false)}>Close</button></div>
@@ -480,7 +480,7 @@ export default function BrowseScreen({
           <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Apply</button></div>
           </div>
         </div>}
-      </div>}
+      </>}
 
 
       {/* Once the ecosystem exists, Browse stays pure browsing — the
