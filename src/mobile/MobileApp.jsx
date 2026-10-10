@@ -24,7 +24,6 @@ import { fetchNotificationPreferences } from './utils/notificationPreferencesApi
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import { getNextArticle } from './utils/nextArticle.js';
 import { selectEcosystemProducts } from './utils/recommendationSelection.js';
-import AskAynaChip from './components/AskAynaChip.jsx';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
 import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx';
@@ -789,12 +788,6 @@ export default function MobileApp() {
           onTextSizeChange={setTextSizeIndex}
           onEditProfile={() => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
-        />
-      )}
-      {!showTabBar && !askAynaOpen && !overlay && !['landing', 'ecointro', 'signin', 'quiz', 'building', 'reveal'].includes(screen) && (
-        <AskAynaChip
-          onClick={() => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
-          viewKey={overlay ? `${overlay.type}:${overlay.item?.id || ''}` : screen}
         />
       )}
       <AskAynaModal

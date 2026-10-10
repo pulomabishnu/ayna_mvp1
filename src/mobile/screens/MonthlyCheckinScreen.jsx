@@ -535,7 +535,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       <Header onBack={goBack} label="Monthly check-in" progress={(stepIndex + 1) / steps.length} stepText={`${stepIndex + 1}/${steps.length}`} />
 
       {stepId === 'lifeStage' && (
-        <StepShell title="Has anything changed since your last check-in?" subtitle="We only ask again when something big shifts — starting to try, a pregnancy, postpartum, perimenopause." footer={footer}>
+        <StepShell title="Anything changed?" footer={footer}>
           {LIFE_STAGE_OPTIONS.map(([value, label]) => (
             <OptionCard
               key={value}
@@ -568,7 +568,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       )}
 
       {stepId === 'symptoms' && (
-        <StepShell title="What are you dealing with this month?" subtitle="Carried over from last time — edit what's changed rather than starting over." footer={footer}>
+        <StepShell title="What needs support?" subtitle="Your last answers are selected." footer={footer}>
           <GroupedSymptomPicker selected={answers.symptoms} onToggle={toggleSymptom} onClearAll={() => set('symptoms', [])} />
         </StepShell>
       )}
@@ -696,9 +696,9 @@ function Header({ onBack, label, progress, stepText }) {
   return (
     <div className="ayna-fresh-checkin-header" style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-        <div onClick={onBack} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
+        <button type="button" aria-label="Back from check-in" onClick={onBack} style={{ width: 44, height: 44, background: 'transparent', color: INK, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-        </div>
+        </button>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: MUTED }}>{label}</div>
         </div>

@@ -1149,7 +1149,7 @@ function PreferencesScreen({
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px', marginTop: loadState === 'ready' ? 20 : 0 }}>
           <div onClick={() => setClearHistoryConfirm(true)} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#B4402A' }}>Clear Ask Ayna history</div>
+              <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)' }}>Clear Ask Ayna history</div>
               <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>
                 {askAynaHistoryCount} conversation{askAynaHistoryCount === 1 ? '' : 's'} this session. Deleted for good, not archived.
               </div>
@@ -1166,7 +1166,7 @@ function PreferencesScreen({
               </div>
               <div
                 onClick={handleClearHistory}
-                style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700, color: '#B4402A', cursor: 'pointer', padding: '6px 12px', background: 'rgba(180,64,42,.1)', borderRadius: 99, flex: 'none' }}
+                style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700, color: 'var(--ayna-accent-dark)', cursor: 'pointer', padding: '6px 12px', background: 'rgba(180,64,42,.1)', borderRadius: 99, flex: 'none' }}
               >
                 Yes, clear it
               </div>
