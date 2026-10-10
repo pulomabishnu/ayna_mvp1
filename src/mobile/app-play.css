@@ -117,7 +117,8 @@
 .ayna-mobile .ayna-figma-partner-disclosure > button span:nth-child(2) { font-size: 12px !important; color: var(--ay-ink-soft) !important; }
 
 /* Community: one header row aligned to the page gutter, readable tabs. */
-.ayna-mobile .am-top { padding-left: var(--ay-space-4) !important; padding-right: var(--ay-space-4) !important; }
+.ayna-mobile .am-top { padding: 4px 0 8px !important; border-bottom: 0 !important; align-items: center; }
+.ayna-mobile :is(.am-top-actions button, .am-icon-button) { border-radius: var(--ay-radius-pill) !important; border: 1.5px solid var(--ay-line) !important; background: var(--ay-paper) !important; }
 .ayna-mobile .am-top .am-title h1 { margin-left: 0 !important; }
 .ayna-mobile .am-tabs { gap: var(--ay-space-5) !important; padding: 0 var(--ay-space-4) !important; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--ay-line); }
 .ayna-mobile .am-tabs::-webkit-scrollbar { display: none; }
@@ -127,3 +128,6 @@
 /* Card rows line up: titles always reserve two lines, price sits a fixed step below. */
 .ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { min-height: 2.5em !important; margin-top: 4px !important; }
 .ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { margin-top: 6px !important; }
+
+/* Welcome cover headline: one size up so the cover reads as a cover. */
+.ayna-mobile.ayna-mobile .ayna-cabinet-cover .ayna-cover-intro h1 { font-size: calc(clamp(38px, 10.8vw, 52px) * var(--ayna-text-scale, 1)) !important; text-wrap: balance; line-height: .98 !important; letter-spacing: -.055em !important; }
