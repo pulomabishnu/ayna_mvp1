@@ -40,3 +40,12 @@
 /* Play surfaces (intake, check-in, wrapped, empty states) use the display
    face; everyday screens keep the quieter UI type. */
 .ayna-mobile :is(.ayna-play-intake, .ayna-wrapped) :is(h1, h2, h3) { font-family: var(--ay-font-display) !important; font-weight: 800 !important; letter-spacing: -.05em !important; }
+
+/* Shop / Reads mode tabs: ink text, chunky underline (was low-contrast periwinkle text). */
+.ayna-mobile .ayna-figma-discover .ayna-fresh-mode-tab { color: var(--ay-ink-soft) !important; transition: color .2s, border-color .2s; }
+.ayna-mobile .ayna-figma-discover .ayna-fresh-mode-tab[aria-pressed='true'] { color: var(--ay-ink) !important; border-bottom: 3px solid var(--ay-ink) !important; }
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-fresh-mode-tab[aria-pressed='true'] { color: #fffdfa !important; border-bottom-color: var(--ay-butter) !important; }
+
+/* Tactile press feedback on everyday controls */
+.ayna-mobile :is(.ayna-bottom-nav button, .ayna-fresh-mode-tab, .ay-btn, .ayna-saved-filters button) { -webkit-tap-highlight-color: transparent; transition: transform .14s var(--ay-ease), background-color .2s, color .2s; }
+.ayna-mobile :is(.ayna-bottom-nav button, .ayna-fresh-mode-tab, .ayna-saved-filters button):active { transform: scale(.94); }
