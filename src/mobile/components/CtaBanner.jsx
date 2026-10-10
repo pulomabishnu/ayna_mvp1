@@ -6,7 +6,7 @@ function GradientBanner({ onClick, title = 'Build your ecosystem', buttonLabel =
         margin: '0 20px 20px',
         borderRadius: 24,
         padding: 20,
-        background: 'linear-gradient(135deg,#25214A 0%,#25214A 52%,#25214A 100%)',
+        background: 'linear-gradient(135deg,#3E2F59 0%,#3E2F59 52%,#3E2F59 100%)',
         color: '#FFFFFF',
         cursor: 'pointer',
         position: 'relative',
@@ -22,7 +22,7 @@ function GradientBanner({ onClick, title = 'Build your ecosystem', buttonLabel =
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 16 }}>
         <div
           style={{
-            background: '#7E8DE7',
+            background: '#DBB0CF',
             color: '#171717',
             fontFamily: "var(--ayna-font-ui)",
             fontWeight: 600,
@@ -55,12 +55,12 @@ function InlineRow({ onClick }) {
         cursor: 'pointer',
       }}
     >
-      <div style={{ width: 34, height: 34, borderRadius: 99, background: 'linear-gradient(135deg,#25214A,#25214A)', flexShrink: 0 }} />
+      <div style={{ width: 34, height: 34, borderRadius: 99, background: 'linear-gradient(135deg,#3E2F59,#3E2F59)', flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
         <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))' }}>Build your ecosystem</div>
         <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: '#626262', marginTop: 2 }}>6 steps</div>
       </div>
-      <div style={{ color: '#25214A', fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>→</div>
+      <div style={{ color: '#3E2F59', fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>→</div>
     </div>
   );
 }
@@ -92,7 +92,7 @@ function StickyPill({ onClick }) {
       </div>
       <div
         style={{
-          background: '#7E8DE7',
+          background: '#DBB0CF',
           color: '#171717',
           width: 32,
           height: 32,

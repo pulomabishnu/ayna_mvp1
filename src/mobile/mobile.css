@@ -3,36 +3,36 @@
 .ayna-mobile {
   position: relative;
   --ayna-bottom-nav-height: calc(55px + max(8px, env(safe-area-inset-bottom)));
-  --ayna-bg: #F8F4E9;
+  --ayna-bg: #FCFBFB;
   --ayna-bg-alt: #f2eee4;
   --ayna-surface: #FFFFFF;
   --ayna-surface-alt: #f2eee4;
   --ayna-border: #d7d1c4;
-  --ayna-text: #25214A;
+  --ayna-text: #3E2F59;
   --ayna-text-muted: #625d55;
   --ayna-text-faint: #6b635b;
-  --ayna-accent: #7E8DE7;
-  --ayna-accent-dark: #7E8DE7;
-  --ayna-brown: #25214A;
-  --ayna-navy: #25214A;
-  --ayna-purple: #25214A;
-  --ayna-peach: #F2B6CF;
-  --ayna-cta-bg: #25214A;
+  --ayna-accent: #DBB0CF;
+  --ayna-accent-dark: #DBB0CF;
+  --ayna-brown: #3E2F59;
+  --ayna-navy: #3E2F59;
+  --ayna-purple: #3E2F59;
+  --ayna-peach: #DBB0CF;
+  --ayna-cta-bg: #3E2F59;
   --ayna-cta-text: #ffffff;
-  --ayna-heading: #25214A;
-  --ayna-product-panel: linear-gradient(150deg,#E8EAF9,#F6DCC0);
+  --ayna-heading: #3E2F59;
+  --ayna-product-panel: linear-gradient(150deg,#F5ECF2,#F6DCC0);
   --ayna-glass-bg: rgba(255,252,249,.9);
   --ayna-track: #EAE3DA;
   --ayna-chip-bg: #efebe0;
   --ayna-chip-border: #d7d1c4;
-  --ayna-gradient-hero: linear-gradient(165deg, #25214A 0%, #25214A 42%, #25214A 74%, #25214A 100%);
-  --ayna-gradient-panel: linear-gradient(168deg, #25214A 0%, #25214A 52%, #25214A 100%);
+  --ayna-gradient-hero: linear-gradient(165deg, #3E2F59 0%, #3E2F59 42%, #3E2F59 74%, #3E2F59 100%);
+  --ayna-gradient-panel: linear-gradient(168deg, #3E2F59 0%, #3E2F59 52%, #3E2F59 100%);
 
   /* Copied from the real site's src/index.css so real content (e.g. article
      bodies from src/components/Articles.jsx, which style their own links
      inline with var(--color-primary)) renders with the correct color when
      reused inside the mobile app, instead of falling back to default blue. */
-  --color-primary: #7E8DE7;
+  --color-primary: #DBB0CF;
 
   /* Scales OrbHero.jsx's orb+chips so the chips' worst-case reach during
      their orbit (241px from center either way, at the component's native
@@ -72,19 +72,19 @@
 
 /* The same palette adapted for dark mode. */
 .ayna-mobile[data-theme="dark"] {
-  --ayna-bg: #25214A;
+  --ayna-bg: #3E2F59;
   --ayna-bg-alt: #211d30;
   --ayna-surface: rgba(255,255,255,.055);
   --ayna-surface-alt: #282338;
   --ayna-border: rgba(255,255,255,.21);
-  --ayna-text: #F8F4E9;
+  --ayna-text: #FCFBFB;
   --ayna-text-muted: #d1cbbd;
   --ayna-text-faint: #b5ae9f;
-  --ayna-accent: #7E8DE7;
-  --ayna-accent-dark: #F2B6CF;
-  --ayna-cta-bg: #7E8DE7;
-  --ayna-cta-text: #25214A;
-  --ayna-heading: #F8F4E9;
+  --ayna-accent: #DBB0CF;
+  --ayna-accent-dark: #DBB0CF;
+  --ayna-cta-bg: #DBB0CF;
+  --ayna-cta-text: #3E2F59;
+  --ayna-heading: #FCFBFB;
   --ayna-product-panel: radial-gradient(130% 110% at 28% 0%, rgba(192,118,31,.34), rgba(255,255,255,.03) 68%);
   --ayna-glass-bg: rgba(255,255,255,.09);
   --ayna-track: rgba(255,255,255,.12);
@@ -166,7 +166,7 @@
   height: 20px;
   border-radius: 50%;
   background: #1A1714;
-  border: 3px solid #E8EAF9;
+  border: 3px solid #F5ECF2;
   cursor: pointer;
   margin-top: -8px;
 }
@@ -202,15 +202,15 @@
   font: 600 10px/1.15 var(--ayna-font-ui);
   cursor: pointer;
 }
-.ayna-mobile .ayna-bottom-nav button.is-active { color: #25214A; background: rgba(240,168,75,.2); border-radius: 14px; }
+.ayna-mobile .ayna-bottom-nav button.is-active { color: #3E2F59; background: rgba(240,168,75,.2); border-radius: 14px; }
 .ayna-mobile .ayna-bottom-nav svg { width: 21px; height: 21px; flex: none; }
 .ayna-mobile .ayna-bottom-nav button.is-active svg { stroke-width: 2.25; }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav,
-.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav { background: linear-gradient(110deg,#25214A,#25214A); border-top-color: rgba(255,249,242,.24); }
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav { background: linear-gradient(110deg,#3E2F59,#3E2F59); border-top-color: rgba(255,249,242,.24); }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button,
 .ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button { color: rgba(255,249,242,.8); }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
-.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #7E8DE7; background: rgba(255,199,116,.15); }
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #DBB0CF; background: rgba(255,199,116,.15); }
 .ayna-profile-auth-backdrop {
   position: fixed;
   inset: 0 0 64px;
@@ -225,17 +225,17 @@
   padding: 30px 24px max(28px, env(safe-area-inset-bottom));
   border-radius: 26px 26px 0 0;
   background: #fffaf3;
-  color: #25214A;
+  color: #3E2F59;
   box-shadow: 0 -12px 40px rgba(20, 20, 40, .2);
   font-family: var(--ayna-font-ui);
 }
-.ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #25214A; font-size: 28px; cursor: pointer; }
+.ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #3E2F59; font-size: 28px; cursor: pointer; }
 .ayna-profile-auth-eyebrow { color: #9a5c36; font-size: 11px; font-weight: 700; letter-spacing: .16em; }
 .ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 29px/1.15 var(--ayna-font-display); }
 .ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
 .ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 15px var(--ayna-font-ui); cursor: pointer; }
-.ayna-profile-auth-primary { border: 0; background: #7E8DE7; color: #231a12; }
-.ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #25214A; background: transparent; color: #25214A; }
+.ayna-profile-auth-primary { border: 0; background: #DBB0CF; color: #231a12; }
+.ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #3E2F59; background: transparent; color: #3E2F59; }
 
 /* Keep the browser preview at a readable phone width on a large display. */
 @media (min-width: 700px) {

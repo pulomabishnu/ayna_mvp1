@@ -63,7 +63,7 @@ function PrimaryButton({ onClick, disabled, children }) {
       style={{
         width: '100%',
         border: 0,
-        background: disabled ? 'rgba(255,199,116,.45)' : '#7E8DE7',
+        background: disabled ? 'rgba(255,199,116,.45)' : '#DBB0CF',
         color: '#171717',
         textAlign: 'center',
         padding: 15,
@@ -290,7 +290,7 @@ export default function SigninScreen({
       style={{
         flex: 1,
         overflowY: 'auto',
-        background: '#25214A',
+        background: '#3E2F59',
         color: '#FFFFFF',
         paddingTop: 'max(20px, env(safe-area-inset-top))',
         paddingLeft: 24,
@@ -316,7 +316,7 @@ export default function SigninScreen({
           {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginBottom: 14 }}>{resendMsg}</div>}
           <div className="ayna-fresh-auth-switch"
             onClick={resending ? undefined : handleResend}
-            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#7E8DE7', cursor: resending ? 'default' : 'pointer' }}
+            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#DBB0CF', cursor: resending ? 'default' : 'pointer' }}
           >
             {resending ? 'Sending…' : 'Resend confirmation email'}
           </div>
@@ -332,7 +332,7 @@ export default function SigninScreen({
 
           {mode === 'signup' && (
             <label className="ayna-fresh-auth-field" style={{ background: '#FFFFFF', borderRadius: 14, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 42, height: 42, borderRadius: 99, background: '#7E8DE7', color: '#171717', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "var(--ayna-font-display)", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
+              <div style={{ width: 42, height: 42, borderRadius: 99, background: '#DBB0CF', color: '#171717', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "var(--ayna-font-display)", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
                 {initial}
               </div>
               <div style={{ flex: 1 }}>
@@ -354,7 +354,7 @@ export default function SigninScreen({
             <div style={{ marginTop: 6, marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {CONSENT_ITEMS.map((text, i) => (
                 <label key={i} style={{ display: 'flex', gap: 10, cursor: 'pointer', alignItems: 'flex-start' }}>
-                  <input type="checkbox" checked={checked[i]} onChange={() => toggleCheck(i)} style={{ width: 18, height: 18, flex: 'none', marginTop: 1, accentColor: '#7E8DE7' }} />
+                  <input type="checkbox" checked={checked[i]} onChange={() => toggleCheck(i)} style={{ width: 18, height: 18, flex: 'none', marginTop: 1, accentColor: '#DBB0CF' }} />
                   <span style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'rgba(255,252,249,.9)' }}>{text}</span>
                 </label>
               ))}
@@ -392,7 +392,7 @@ export default function SigninScreen({
           </div>
 
           <div className="ayna-fresh-auth-trust" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F8F4E9" strokeWidth="2" strokeLinecap="round">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FCFBFB" strokeWidth="2" strokeLinecap="round">
               <rect x="5" y="11" width="14" height="10" rx="2.5" />
               <path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" />
             </svg>

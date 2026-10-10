@@ -1,10 +1,10 @@
 export function coverInk(color) {
   const hex = String(color || '').replace('#', '');
-  if (!/^[0-9a-f]{6}$/i.test(hex)) return '#25214A';
+  if (!/^[0-9a-f]{6}$/i.test(hex)) return '#3E2F59';
   const channels = [0, 2, 4].map((offset) => parseInt(hex.slice(offset, offset + 2), 16) / 255)
     .map((value) => value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4);
   const luminance = channels[0] * .2126 + channels[1] * .7152 + channels[2] * .0722;
-  return luminance < .24 ? '#F8F4E9' : '#25214A';
+  return luminance < .24 ? '#FCFBFB' : '#3E2F59';
 }
 
 /** Render a color-and-text cover as a real image, so it persists on every device. */
