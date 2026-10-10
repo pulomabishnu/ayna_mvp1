@@ -397,8 +397,17 @@ export function TopicPicker({ groups, selected, onToggle, search, onSearch, onAd
             {groups.map((g) => {
               const count = g.items.filter((i) => selected.includes(i)).length;
               return (
-                <button type="button" role="tab" key={g.label} aria-selected={g.label === active} className="ip-tab" onClick={() => setActive(g.label)}>
-                  <span>{g.label}</span>{count > 0 && <b>{count}</b>}
+                <button type="button" role="tab" key={g.label} aria-label={g.label} aria-selected={g.label === active} className="ip-tab" onClick={() => setActive(g.label)}>
+                  <span>{({
+                    'Period + cycle': 'Period',
+                    'Hormonal + reproductive': 'Hormones',
+                    'Sexual + reproductive health': 'Sexual health',
+                    'Perimenopause + menopause + post-menopause': 'Menopause',
+                    'Mood + mental wellbeing': 'Mood',
+                    'Sleep + energy + cognition': 'Sleep + energy',
+                    'Metabolic + physical wellness': 'Wellness',
+                    'Care access': 'Care',
+                  })[g.label] || g.label}</span>{count > 0 && <b>{count}</b>}
                 </button>
               );
             })}

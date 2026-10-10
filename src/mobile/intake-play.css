@@ -377,9 +377,9 @@
 .ip-tabs::-webkit-scrollbar { display: none; }
 .ip-tab { flex: none; min-height: 40px; display: inline-flex; align-items: center; gap: 7px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 12px; background: transparent; font: 700 13px/1 var(--ay-font-ui); white-space: nowrap; cursor: pointer; scroll-snap-align: start; transition: background-color .2s, transform .14s; }
 .ip-tab b { min-width: 20px; height: 20px; display: grid; place-items: center; padding: 0 5px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font-size: 11px; }
-.ip-tab[aria-selected='true'] { background: var(--ay-paper); box-shadow: var(--ay-shadow); }
+.ip-tab[aria-selected='true'] { background: var(--ay-paper); }
 .ip-tab[aria-selected='true'] b { background: var(--ay-pink-deep); color: var(--ay-ink); }
-.ip-tab-panel { padding: 14px; border: 2px solid var(--ay-ink); border-radius: 20px; background: rgba(255, 252, 245, .55); animation: ip-in-forward .26s var(--ay-ease) both; }
+.ip-tab-panel { padding: 4px 0 16px; animation: ip-in-forward .26s var(--ay-ease) both; }
 
 /* ---------- recommendation count (existing picker, play skin) ---------- */
 
