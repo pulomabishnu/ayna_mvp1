@@ -21,7 +21,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   const resolvedPrice = shortPrice(price || priceDisplay);
   const categoryLabel = labelForCategory(category);
-  const secondaryLabel = brand || (variant === 'list' ? categoryLabel : '');
+  const secondaryLabel = brand || categoryLabel;
   const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
   const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   const relevantReason = match?.matchStatus === 'scored' && !showMatch
