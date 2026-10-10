@@ -52,6 +52,36 @@ const LIFE_STAGES = [
 ];
 const MIDLIFE_LIFE_STAGES = ['I am in perimenopause', 'I am in menopause', 'I am post-menopause'];
 
+// One editorial mark per question. These are tied to the question rather than
+// decorative confetti: a clock for age, a pin for ZIP, a shield for allergies,
+// a shelf for products, and so on. The answer controls remain the focus.
+const INTAKE_MARKS = {
+  age: 'M120 20a48 48 0 1 1 0 96 48 48 0 0 1 0-96Zm0 15v8m0 58v8m-33-33h-8m82 0h-8m-33-31v32l21 14',
+  lifeStage: 'M45 30h120M45 75h120M45 120h120M65 30v90m80-90v90M45 30a12 12 0 1 0 24 0 12 12 0 0 0-24 0Zm100 45a12 12 0 1 0 24 0 12 12 0 0 0-24 0Z',
+  zip: 'M120 125s-42-47-42-72a42 42 0 0 1 84 0c0 25-42 72-42 72Zm0-88a16 16 0 1 0 0 32 16 16 0 0 0 0-32Z',
+  support: 'M120 76m-20 0a20 20 0 1 0 40 0 20 20 0 1 0-40 0ZM120 18v26m0 64v26M62 76h26m64 0h26M79 35l18 18m46 46 18 18m0-82-18 18M97 99l-18 18',
+  periodFlow: 'M20 78c20-46 40-46 60 0s40 46 60 0 40-46 60 0M20 105c20-46 40-46 60 0s40 46 60 0 40-46 60 0',
+  periodPain: 'M22 105l43-42 25 22 27-51 25 42 37-27 19 17M22 124h176',
+  utiFrequency: 'M44 115h132M60 94h100M76 73h68M92 52h36M108 31h4',
+  postpartumTiming: 'M42 112a78 78 0 0 1 156 0M64 112a56 56 0 0 1 112 0M86 112a34 34 0 0 1 68 0M42 112h156',
+  pregnancyTrimester: 'M33 110a26 26 0 0 1 52 0M84 110a36 36 0 0 1 72 0M145 110a26 26 0 0 1 52 0M33 110h164',
+  conditions: 'M102 28h36v33h33v36h-33v33h-36V97H69V61h33V28Z',
+  allergies: 'M120 22l65 25v34c0 35-30 55-65 68-35-13-65-33-65-68V47l65-25Zm-29 57 19 19 39-39',
+  medications: 'M65 38a32 32 0 0 1 45 0l46 46a32 32 0 0 1-45 45L65 83a32 32 0 0 1 0-45Zm23 23 47 47',
+  products: 'M30 119h180M48 103V43h42v60m21 0V27h39v76m20 0V56h26v47M42 119h156',
+  avoidRepeat: 'M120 28a48 48 0 1 1 0 96 48 48 0 0 1 0-96Zm-34 14 68 68',
+  safety: 'M120 20 202 128H38L120 20Zm0 42v32m0 17v3',
+  formats: 'M29 38h50v74H29V38Zm71 0h50v74h-50V38Zm71 0h30v74h-30V38Z',
+  recommendationCount: 'M64 32h92M64 57h92M64 82h92M64 107h92M35 32h8m-8 25h8m-8 25h8m-8 25h8',
+  priceRange: 'M38 117h165M47 99h27V72H47v27Zm47 0h27V49H94v50Zm47 0h27V28h-27v71Z',
+  brandOpenness: 'M36 75h145m-21-20 22 20-22 20M88 41 52 75l36 34',
+  trustedBrands: 'M120 20 145 55l42 5-26 32 6 42-47-17-47 17 6-42-26-32 42-5 25-35Z',
+  avoidIngredients: 'M120 20v110M72 57c0-23 48-31 48 0 0 23-48 25-48 0Zm48 38c0-23 48-31 48 0 0 23-48 25-48 0Z',
+  fsaHsa: 'M39 47h142v76H39V47Zm0 22h142M64 100h48M53 47V32h114v15',
+  trust: 'M120 21 176 43v42c0 30-24 49-56 63-32-14-56-33-56-63V43l56-22Zm-22 57 16 16 29-31',
+  anythingElse: 'M61 24h96v115H61V24Zm17 28h61M78 73h61M78 94h44M159 114l32-32 12 12-32 32-20 8 8-20Z',
+};
+
 const PERIOD_FLOW = ['Very light', 'Light', 'Moderate', 'Heavy', 'Very heavy', 'It varies', 'I do not currently get periods', 'Not sure'];
 const PERIOD_PAIN = ['None', 'Mild', 'Moderate', 'Severe', 'Very severe', 'It varies', 'Not sure'];
 const UTI_FREQUENCY = ['This is the first time', 'Rarely', 'A few times a year', 'About monthly', 'More than once a month', 'I am experiencing them right now', 'Not sure'];
@@ -1886,7 +1916,10 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       </div>
 
       <div className="ayna-fresh-intake-body" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
-        <div className="ayna-intake-scene" aria-hidden="true"><i /><i /><i /><b>{String(currentIndex + 1).padStart(2, '0')}</b></div>
+        <div className="ayna-intake-scene" aria-hidden="true">
+          <b>{String(currentIndex + 1).padStart(2, '0')}</b>
+          <svg viewBox="0 0 240 150" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"><path d={INTAKE_MARKS[step.id] || INTAKE_MARKS.support} /></svg>
+        </div>
         <div style={{ padding: '22px 20px 0' }}>
           {countForStep > 0 && <div className="ayna-intake-question-kicker"><strong>{countForStep} picked</strong></div>}
           <div className="ayna-fresh-intake-title" style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.045em', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#FAFBF8' }}>{step.title}</div>

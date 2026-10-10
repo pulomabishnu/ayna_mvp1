@@ -357,6 +357,12 @@
 .ayna-fresh-intake[data-step='trust'] .ayna-intake-scene i:first-child { clip-path:polygon(50% 0,62% 35%,100% 35%,70% 58%,82% 100%,50% 75%,18% 100%,30% 58%,0 35%,38% 35%); border-radius:0; }
 .ayna-fresh-intake[data-step='anythingElse'] .ayna-intake-scene { --scene-main:#F2B6CF; --scene-pop:#F4EA54; }
 .ayna-fresh-intake[data-step='anythingElse'] .ayna-intake-scene i:first-child { border-radius:8px; transform:rotate(-8deg); }
+.ayna-mobile .ayna-fresh-intake-body>.ayna-intake-scene { display:flex; align-items:center; justify-content:space-between; height:136px; margin:6px 18px 0; padding:14px 8px 14px 20px!important; box-sizing:border-box; background:var(--scene-main,#7E8DE7); border-radius:4px 54px 4px 4px; }
+.ayna-intake-scene b { position:relative; left:auto; top:auto; flex:none; font:800 66px/.9 'Poppins',sans-serif; transform:none; }
+.ayna-intake-scene svg { width:min(58%,205px); height:126px; color:#25214A; stroke-width:4; transform:rotate(-5deg); }
+.ayna-fresh-intake[data-step='age'] .ayna-intake-scene,.ayna-fresh-intake[data-step='conditions'] .ayna-intake-scene,.ayna-fresh-intake[data-step='products'] .ayna-intake-scene,.ayna-fresh-intake[data-step='fsaHsa'] .ayna-intake-scene { border-radius:4px 4px 54px 4px; }
+.ayna-fresh-intake[data-step='lifeStage'] .ayna-intake-scene,.ayna-fresh-intake[data-step='periodPain'] .ayna-intake-scene,.ayna-fresh-intake[data-step='allergies'] .ayna-intake-scene,.ayna-fresh-intake[data-step='trust'] .ayna-intake-scene { border-radius:54px 4px 4px 4px; }
+.ayna-fresh-intake[data-step='zip'] .ayna-intake-scene,.ayna-fresh-intake[data-step='medications'] .ayna-intake-scene,.ayna-fresh-intake[data-step='recommendationCount'] .ayna-intake-scene,.ayna-fresh-intake[data-step='anythingElse'] .ayna-intake-scene { border-radius:4px 4px 4px 54px; }
 @keyframes ayna-intake-scene-in { from { opacity:0; transform:translateY(18px) scale(.94); } to { opacity:1; transform:translateY(0) scale(1); } }
 @media (max-width:360px) { .ayna-mobile .ayna-fresh-intake-body>.ayna-intake-scene { height:126px; } .ayna-intake-scene b { top:36px; font-size:58px; } }
 @media (prefers-reduced-motion:reduce) { .ayna-mobile .ayna-fresh-intake-body>.ayna-intake-scene { animation:none; } .ayna-mobile .ayna-fresh-intake-header>div:last-child>div { transition:none; } }
