@@ -15,14 +15,14 @@ describe('intake results preview', () => {
     />);
     expect(html).toContain('First match');
     expect(html).toContain('Second match');
-    expect(html).toContain('Create an account to save my Ecosystem');
+    expect(html).toContain('Create account');
     expect(html).not.toContain('0 products');
   });
 
   it('does not promise an Ecosystem when no confident products were found', () => {
     const html = renderToStaticMarkup(<RevealScreen myProducts={[]} onContinue={noop} onBack={noop} onGoBrowse={noop} />);
     expect(html).toContain('could not find a confident product match');
-    expect(html).not.toContain('Create an account to save my Ecosystem');
+    expect(html).not.toContain('Create account');
     expect(html).toContain('Update my answers');
   });
 });

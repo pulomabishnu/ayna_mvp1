@@ -569,7 +569,7 @@ function rankedSuggestions(query, options = [], limit = 6) {
 // here rather than re-hardcoded, so this screen gets the app's real dark
 // mode for free instead of staying permanently light like the mockup frame.
 // Choice colors use the app tokens so selection remains legible in both themes.
-const NAVY = 'var(--ayna-navy)';
+const NAVY = 'var(--ayna-heading)';
 const CARD_BG = 'var(--ayna-surface)';
 const ROW_BORDER = 'var(--ayna-border)';
 const ACCENT_BORDER = 'var(--ayna-accent-dark)';
@@ -577,7 +577,7 @@ const ACCENT_BG = 'var(--ayna-accent)';
 const PANEL_BG = 'var(--ayna-chip-bg)';
 const MUTED = 'var(--ayna-text-faint)';
 const LABEL_GOLD = 'var(--ayna-brown)';
-const SELECTED_TEXT = 'var(--ayna-text)';
+const SELECTED_TEXT = 'var(--ayna-color-ink)';
 const INK = 'var(--ayna-text)';
 const BODY_TEXT = 'var(--ayna-text-muted)';
 
@@ -1035,8 +1035,8 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
       </div>
       {draft.trim().length > 0 && (
         <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-          <button type="button" className="ayna-intake-control" onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          <button type="button" className="ayna-intake-control" onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: INK, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
             <span>Add "{draft.trim()}"</span>
           </button>
           {matches.map((option) => (
@@ -1131,8 +1131,8 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
           </div>
           {draft.trim().length > 0 && (
             <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-              <button type="button" className="ayna-intake-control" onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+              <button type="button" className="ayna-intake-control" onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: INK, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
                 <span>Add "{draft.trim()}"</span>
               </button>
               {matches.map((option) => (
@@ -1259,8 +1259,8 @@ function ProductHistoryBuilder({ products, onChange }) {
           </div>
           {query.trim().length > 0 && (
             <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-              <button type="button" className="ayna-intake-control" onClick={() => addProduct(query)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+              <button type="button" className="ayna-intake-control" onClick={() => addProduct(query)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: INK, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
                 <span>Add "{query.trim()}"</span>
               </button>
               {suggestions.map((name) => (

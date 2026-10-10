@@ -14,8 +14,8 @@ const INK = 'var(--ayna-text)';
 const MUTED = 'var(--ayna-text-faint)';
 const BODY_TEXT = 'var(--ayna-text-muted)';
 const NAVY = '#16122a';
-const ACCENT_BG = '#dfe2ff';
-const ACCENT_BORDER = '#16122a';
+const ACCENT_BG = 'var(--ayna-chip-bg)';
+const ACCENT_BORDER = 'var(--ayna-accent-dark)';
 const WARNING_BORDER = '#B4402A';
 const WARNING_BG = '#FAEDE8';
 
@@ -225,7 +225,7 @@ function ScaleSelector({ options, value, onChange }) {
       </div>
       {selectedOption && (
         <div style={{ marginTop: 20, padding: '16px 18px', borderRadius: 18, background: CARD_BG, border: '1px solid ' + ROW_BORDER }}>
-          <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', color: NAVY }}>{selectedOption[0]}</div>
+          <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', color: INK }}>{selectedOption[0]}</div>
           <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: BODY_TEXT, marginTop: 6 }}>{selectedOption[1]}</div>
         </div>
       )}
@@ -273,9 +273,9 @@ function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
                     style={{
                       padding: '9px 14px',
                       borderRadius: 99,
-                      border: '1.5px solid ' + (on ? NAVY : ROW_BORDER),
-                      background: on ? NAVY : CARD_BG,
-                      color: on ? '#FFFFFF' : INK,
+                      border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
+                      background: on ? ACCENT_BG : CARD_BG,
+                      color: INK,
                       fontFamily: "var(--ayna-font-ui)",
                       fontWeight: 500,
                       fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
