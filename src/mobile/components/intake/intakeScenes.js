@@ -1,0 +1,28 @@
+// Tone + background motif per intake question. Safety questions use the
+// calm scene: plain paper, no art.
+export const INTAKE_SCENES = {
+  age: { tone: 'peri', art: 'scallop' },
+  lifeStage: { tone: 'butter', art: 'sparkle' },
+  zip: { tone: 'mint', art: 'arch' },
+  support: { tone: 'pink', art: 'bloom' },
+  periodFlow: { tone: 'peri', art: 'drops' },
+  periodPain: { tone: 'butter', art: 'zigzag' },
+  utiFrequency: { tone: 'mint', art: 'arch' },
+  postpartumTiming: { tone: 'mint', art: 'arch' },
+  pregnancyTrimester: { tone: 'mint', art: 'arch' },
+  conditions: { tone: 'calm', art: null, label: 'Safety check' },
+  allergies: { tone: 'calm', art: null, label: 'Safety check' },
+  medications: { tone: 'calm', art: null, label: 'Safety check' },
+  safety: { tone: 'calm', art: null, label: 'Safety check' },
+  products: { tone: 'peri', art: 'sparkle' },
+  avoidRepeat: { tone: 'pink', art: 'scallop' },
+  formats: { tone: 'butter', art: 'bloom' },
+  recommendationCount: { tone: 'mint', art: 'sparkle' },
+  priceRange: { tone: 'peri', art: 'coins' },
+  brandOpenness: { tone: 'pink', art: 'rings' },
+  trustedBrands: { tone: 'pink', art: 'rings' },
+  avoidIngredients: { tone: 'mint', art: 'scallop' },
+  fsaHsa: { tone: 'peri', art: 'arch' },
+  trust: { tone: 'butter', art: 'sparkle' },
+  anythingElse: { tone: 'pink', art: 'bloom' },
+};

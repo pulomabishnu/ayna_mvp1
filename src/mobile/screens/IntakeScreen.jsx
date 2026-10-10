@@ -1,7 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { ALL_PRODUCTS } from '../../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profileCompleteness.js';
+import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, LevelMeter, TrackLine, PriceStacks, DotScale, BrandSpectrum, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
+import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
+import { INTAKE_SCENES } from '../components/intake/intakeScenes.js';
+import '../intake-play.css';
 import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
 import { normalizeAge, normalizeLifeStages, selectLifeStage } from '../../utils/intakeSelections.js';
 
@@ -50,6 +54,32 @@ const LIFE_STAGES = [
   'I use hormonal birth control', 'I am trying to conceive', 'I am pregnant', 'I am postpartum',
   'I am in perimenopause', 'I am in menopause', 'I am post-menopause',
 ];
+const LIFE_STAGE_LABELS = {
+  'I get periods regularly': 'Regular periods',
+  'My periods are irregular': 'Irregular periods',
+  'I do not currently get periods': 'No periods now',
+  'I use hormonal birth control': 'Hormonal birth control',
+  'I am trying to conceive': 'Trying to conceive',
+  'I am pregnant': 'Pregnant',
+  'I am postpartum': 'Postpartum',
+  'I am in perimenopause': 'Perimenopause',
+  'I am in menopause': 'Menopause',
+  'I am post-menopause': 'Post-menopause',
+};
+// Abstract "phase" marks (CSS-drawn) so each stage reads at a glance
+// without leaning on clip-art icons.
+const LIFE_STAGE_GLYPHS = {
+  'I get periods regularly': 'full',
+  'My periods are irregular': 'wobble',
+  'I do not currently get periods': 'empty',
+  'I use hormonal birth control': 'pill',
+  'I am trying to conceive': 'spark',
+  'I am pregnant': 'bump',
+  'I am postpartum': 'pair',
+  'I am in perimenopause': 'half',
+  'I am in menopause': 'crescent',
+  'I am post-menopause': 'ring',
+};
 const MIDLIFE_LIFE_STAGES = ['I am in perimenopause', 'I am in menopause', 'I am post-menopause'];
 
 const PERIOD_FLOW = ['Very light', 'Light', 'Moderate', 'Heavy', 'Very heavy', 'It varies', 'I do not currently get periods', 'Not sure'];
@@ -576,7 +606,6 @@ const SELECTED_TEXT = 'var(--ayna-color-ink)';
 const INK = 'var(--ayna-text)';
 const BODY_TEXT = 'var(--ayna-text-muted)';
 
-const cardShadow = '0 1px 3px rgba(41,37,36,.04)';
 
 /* ------------------------------ Shared widgets ------------------------------ */
 
@@ -585,77 +614,14 @@ const cardShadow = '0 1px 3px rgba(41,37,36,.04)';
 // `icons` map to render a small rounded-square badge above the label;
 // callers without one (life stages, which have no matching icon set) get the
 // plain label-only tile exactly as before.
-function ChoiceGrid({ items, selected = [], onToggle, icons, numbered = false }) {
-  return (
-    <div className="ayna-choice-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 9 }}>
-      {items.map((item, index) => {
-        const on = selected.includes(item);
-        const icon = icons && icons[item];
-        return (
-          <button type="button" aria-pressed={on} className={`ayna-figma-choice-tile${numbered ? ' ayna-intake-chapter-choice' : ''}`}
-            key={item}
-            onClick={() => onToggle(item)}
-            style={{
-              cursor: 'pointer', position: 'relative', minHeight: 60, display: 'flex',
-              flexDirection: icon ? 'column' : 'row', alignItems: icon ? 'flex-start' : 'center',
-              padding: '13px 26px 13px 13px', borderRadius: 4, textAlign: 'left',
-              background: on ? ACCENT_BG : CARD_BG,
-              border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-              boxShadow: 'none',
-            }}
-          >
-            {numbered && <span className="ayna-intake-chapter-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>}
-            {icon && (
-              <span style={{
-                width: 32, height: 32, borderRadius: 10, marginBottom: 10, flex: 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: on ? 'rgba(255,255,255,.55)' : PANEL_BG,
-                color: on ? SELECTED_TEXT : NAVY,
-              }}>
-                {icon}
-              </span>
-            )}
-            <span style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.25, color: on ? SELECTED_TEXT : INK }}>{item}</span>
-            {on && (
-              <span style={{ position: 'absolute', top: 9, right: 9, width: 16, height: 16, borderRadius: 99, background: ACCENT_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
+function ChoiceGrid({ items, selected = [], onToggle, icons, labels, glyphs }) {
+  return <StickerGrid items={items} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} />;
 }
 
 // Chip spec (design pattern C1/G1) — flex-wrapped pills, not vertical rows.
 // Used both flat (conditions) and grouped under a label (SearchableGroups).
 function RowChoiceList({ items, selected = [], onToggle }) {
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-      {items.map((item) => {
-        const on = selected.includes(item);
-        return (
-          <button type="button" aria-pressed={on} className="ayna-intake-chip"
-            key={item}
-            onClick={() => onToggle(item)}
-            style={{
-              cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
-              fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1, padding: '10px 14px', borderRadius: 4,
-              fontWeight: on ? 600 : 500,
-              background: on ? ACCENT_BG : CARD_BG,
-              color: on ? SELECTED_TEXT : INK,
-              border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-              boxShadow: 'none',
-            }}
-          >
-            {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
-            {item}
-          </button>
-        );
-      })}
-    </div>
-  );
+  return <ChipList items={items} selected={selected} onToggle={onToggle} />;
 }
 
 // Shared search-bar chrome (design rule: "search on every list over ~12
@@ -663,29 +629,24 @@ function RowChoiceList({ items, selected = [], onToggle }) {
 // and ProductHistoryBuilder, factored out so conditions/avoidIngredients
 // (previously ungrouped flat lists with no filtering at all) can use it too.
 function SearchBar({ value, onChange, placeholder }) {
-  return (
-    <div className="ayna-intake-search" style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 4, padding: '11px 14px', marginBottom: 14 }}>
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} aria-label={placeholder} maxLength={80} style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
-    </div>
-  );
+  return <SearchField value={value} onChange={onChange} placeholder={placeholder} />;
 }
 
 function AddCustomChoice({ query, options, onAdd }) {
   const value = query.trim().replace(/\s+/g, ' ');
   if (value.length < 2 || options.some((item) => item.toLowerCase() === value.toLowerCase())) return null;
-  return <button type="button" className="ayna-intake-add-choice" onClick={() => onAdd(value)}><span aria-hidden="true">+</span><span>Add “{value}”</span></button>;
+  return <button type="button" className="ip-chip is-dashed ip-add" onClick={() => onAdd(value)}>+ Add “{value}”</button>;
 }
 
-function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons, numbered = false }) {
+function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons, labels, glyphs, searchable = true }) {
   const query = search.trim().toLowerCase();
-  const filtered = query ? items.filter((item) => item.toLowerCase().includes(query)) : items;
+  const filtered = query ? items.filter((item) => item.toLowerCase().includes(query) || String(labels?.[item] || '').toLowerCase().includes(query)) : items;
   const custom = selected.filter((item) => !items.includes(item));
-  return <div className="ayna-intake-choice-picker">
-    <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />
-    {custom.length > 0 && <div className="ayna-intake-custom-selected"><small>ADDED BY YOU</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
-    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} numbered={numbered} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} /> : <p className="ayna-intake-no-results">No matches</p>}
+  return <div className="ip-picker">
+    {searchable && <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />}
     <AddCustomChoice query={search} options={[...items, ...selected]} onAdd={onAdd} />
+    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} /> : <p className="ip-empty">No matches</p>}
+    {custom.length > 0 && <div className="ip-custom"><small>Added by you</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
   </div>;
 }
 
@@ -694,111 +655,21 @@ function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd,
 // single-select via toggleExclusive, some genuinely multi), and the
 // `compact`/`left` nested-context variants (inside ProductHistoryBuilder)
 // need a smaller size without becoming a third visual language.
-function Pills({ options, selected, onToggle, left, compact, exclusiveValues = [] }) {
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: compact ? 6 : 7, justifyContent: left ? 'flex-start' : 'center' }}>
-      {options.map((opt) => {
-        const on = selected.includes(opt);
-        const exclusive = exclusiveValues.includes(opt);
-        return (
-          <button type="button" aria-pressed={on} className="ayna-intake-chip"
-            key={opt}
-            onClick={() => onToggle(opt)}
-            style={{
-              cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
-              fontFamily: "var(--ayna-font-ui)", padding: compact ? '8px 11px' : '10px 14px', borderRadius: 4,
-              background: on ? ACCENT_BG : (exclusive ? PANEL_BG : CARD_BG), color: on ? SELECTED_TEXT : (exclusive ? MUTED : INK),
-              border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-              fontSize: compact ? 'calc(11.5px * var(--ayna-text-scale, 1))' : 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: on ? 600 : 500,
-              boxShadow: 'none',
-            }}
-          >
-            {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
-            {opt}
-          </button>
-        );
-      })}
-    </div>
-  );
+function Pills({ options, selected, onToggle, compact, exclusiveValues = [] }) {
+  return <ChipList items={options} selected={selected} onToggle={onToggle} compact={compact} muted={exclusiveValues} />;
 }
 
 // Vertical single-select radio list (design pattern F1) — the workhorse
 // pattern for every Yes/No/Not-sure-style question, replacing the old
 // horizontal segmented-button bar.
 function Segmented({ options, value, onChange }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-      {options.map((opt) => {
-        const on = value === opt;
-        return (
-          <button type="button" aria-pressed={on} className="ayna-intake-radio"
-            key={opt}
-            onClick={() => onChange(opt)}
-            style={{
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 11, padding: '13px 15px', borderRadius: 4, textAlign: 'left',
-              background: on ? ACCENT_BG : CARD_BG, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-            }}
-          >
-            <span style={{
-              width: 19, height: 19, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: on ? ACCENT_BORDER : 'transparent', border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-            }}>
-              {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
-            </span>
-            <span style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.35, fontWeight: on ? 600 : 400, color: on ? SELECTED_TEXT : INK }}>{opt}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
+  return <ChoiceRows options={options} value={value} onChange={onChange} />;
 }
 
 // Pattern K1: price bands as a vertical row list rather than chips — a
 // Playfair price label on the left, a descriptive subtitle right-aligned,
 // and a trailing checkmark instead of a leading radio circle.
-function PriceBandList({ options, selected, onToggle }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-      {options.map((opt) => {
-        const on = selected.includes(opt);
 
-        return (
-          <button
-            type="button"
-            aria-pressed={on}
-            key={opt}
-            onClick={() => onToggle(opt)}
-            style={{
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 15px', borderRadius: 16,
-              background: on ? ACCENT_BG : CARD_BG, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-            }}
-          >
-            <span style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(18px * var(--ayna-text-scale, 1))', flex: 1, textAlign: 'left', color: on ? SELECTED_TEXT : NAVY }}>{opt}</span>
-            <span style={{
-              width: 19, height: 19, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: on ? ACCENT_BORDER : 'transparent', border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-            }}>
-              {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-function TextInput({ value, onChange, placeholder, inputMode, maxLength }) {
-  return (
-    <input
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      inputMode={inputMode}
-      maxLength={maxLength}
-      style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none' }}
-    />
-  );
-}
 
 // Under-18 gate (Ayna_Minor_Gate.html design reference) — a fixed warm
 // warning tone rather than a --ayna-* var, same reasoning as SELECTED_TEXT
@@ -819,185 +690,26 @@ function isMinorAge(value) {
 
 // A native age picker keeps the first intake step easy to complete without
 // opening the keyboard. Age is optional, but under-18 selections remain gated.
-function AgeCard({ value, onChange, underage, onOpenGate }) {
-  const hasValue = value !== '' && value !== null && value !== undefined;
-
-  return (
-    <div className="ayna-intake-age-card" style={{ background: CARD_BG, borderRadius: 24, padding: 20, boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
-      <div
-        className="ayna-intake-age-selector"
-        style={{
-          borderRadius: 18,
-          padding: '16px 18px',
-          textAlign: 'center',
-          background: !hasValue ? PANEL_BG : underage ? WARNING_BG : 'linear-gradient(160deg,#FCEBD1,#F7D9A8)',
-          border: '1px solid ' + (!hasValue ? ROW_BORDER : underage ? WARNING_BORDER_SOFT : ACCENT_BORDER),
-        }}
-      >
-        <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: MUTED }}>Slide or tap</div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
-          <select
-            aria-label="Your age"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            style={{
-              width: 150,
-              textAlign: 'center',
-              border: 'none',
-              outline: 'none',
-              background: 'transparent',
-              fontFamily: "var(--ayna-font-display)",
-              fontSize: 'calc(24px * var(--ayna-text-scale, 1))',
-              color: underage ? WARNING_BORDER : hasValue ? NAVY : MUTED,
-            }}
-          >
-            <option value="">Select age</option>
-            {Array.from({ length: 103 }, (_, index) => index + 18).map((age) => <option key={age} value={age}>{age}</option>)}
-          </select>
-        </div>
-        <input className="ayna-age-slider" type="range" min="18" max="90" value={hasValue ? Math.min(90, Number(value)) : 18} onChange={(e) => onChange(e.target.value)} aria-label="Slide to choose your age" />
-        {underage && <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: WARNING_BODY, marginTop: 8 }}>That's under our age requirement</div>}
-      </div>
-
-      {underage && (
-        <button type="button" className="ayna-intake-control"
-          onClick={onOpenGate}
-          style={{ display: 'flex', gap: 11, alignItems: 'flex-start', marginTop: 14, padding: '14px 15px', borderRadius: 16, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER_SOFT, cursor: 'pointer' }}
-        >
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
-          <div>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: WARNING_TITLE }}>ayna is for ages 18 and up</div>
-            <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: WARNING_BODY, marginTop: 4 }}>We can't build a profile from this answer. Tap here to see what you can still do.</div>
-          </div>
-        </button>
-      )}
-    </div>
-  );
-}
 
 // Five real per-digit inputs (the standard OTP-input pattern), not one
 // invisible input overlaid on decorative boxes — that overlay trick proved
 // unreliable for actually opening the keyboard/accepting taps on real
 // mobile browsers, where each digit box here is itself a genuine,
 // correctly-sized, tappable, typeable <input>.
-function ZipDigits({ value, onChange, onSkip }) {
-  const inputRefs = useRef([]);
-  const chars = String(value || '').split('');
-
-  const setDigit = (index, raw) => {
-    const clean = raw.replace(/\D/g, '');
-    const next = [...chars];
-    if (!clean) {
-      next[index] = '';
-      onChange(next.join('').slice(0, 5));
-      return;
-    }
-    next[index] = clean[clean.length - 1];
-    onChange(next.join('').slice(0, 5));
-    if (index < 4) {
-      const nextInput = inputRefs.current[index + 1];
-      if (nextInput) nextInput.focus();
-    }
-  };
-
-  const handleKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !chars[index] && index > 0) {
-      const prevInput = inputRefs.current[index - 1];
-      if (prevInput) prevInput.focus();
-    }
-  };
-
-  const handlePaste = (e) => {
-    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 5);
-    if (!text) return;
-    e.preventDefault();
-    onChange(text);
-    const lastIndex = Math.max(0, Math.min(text.length, 5) - 1);
-    const el = inputRefs.current[lastIndex];
-    if (el) el.focus();
-  };
-
-  return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 9 }}>
-        {[0, 1, 2, 3, 4].map((i) => (
-          <input
-            key={i}
-            ref={(el) => { inputRefs.current[i] = el; }}
-            value={chars[i] || ''}
-            onChange={(e) => setDigit(i, e.target.value)}
-            onKeyDown={(e) => handleKeyDown(i, e)}
-            onPaste={handlePaste}
-            type="tel"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            maxLength={1}
-            aria-label={`ZIP code digit ${i + 1}`}
-            style={{
-              width: 52, height: 62, borderRadius: 16, background: CARD_BG,
-              border: '1.5px solid ' + (chars[i] ? ACCENT_BORDER : ROW_BORDER),
-              textAlign: 'center', padding: 0, outline: 'none', WebkitAppearance: 'none',
-              fontFamily: "var(--ayna-font-display)", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', color: NAVY,
-            }}
-          />
-        ))}
-      </div>
-      {onSkip && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
-          <button type="button" className="ayna-intake-control" onClick={onSkip} style={{ cursor: 'pointer', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '10px 14px', borderRadius: 99, background: PANEL_BG, border: '1.5px solid ' + ROW_BORDER, color: MUTED }}>
-            Skip this
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
 
 
 // Pattern D2: rising bars for the first up-to-5 ordered levels; any
 // trailing non-ordinal options (e.g. "It varies", "Not sure") render as
 // plain chips below instead of getting an arbitrary bar height — same
 // options, just not force-fit onto a severity scale they don't belong on.
-function Scale({ options, value, onChange }) {
-  const scaleOptions = options.slice(0, 5);
-  const extraOptions = options.slice(5);
-  const index = scaleOptions.indexOf(value);
-  return (
-    <div>
-      <div className="ayna-intake-scale" style={{ borderRadius: 4, padding: '18px 16px', background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-        <div style={{ textAlign: 'center', color: INK, fontWeight: 800, fontSize: 18, minHeight: 28 }}>{index >= 0 ? value : 'Slide to choose'}</div>
-        <input type="range" min="0" max={scaleOptions.length - 1} step="1" value={index >= 0 ? index : 0} onChange={(event) => onChange(scaleOptions[Number(event.target.value)])} aria-label="Choose a level" style={{ width: '100%', margin: '18px 0 8px', accentColor: 'var(--ayna-figma-berry)', height: 30, cursor: 'pointer' }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, color: BODY_TEXT, fontSize: 11 }}>
-          <span>{scaleOptions[0]}</span><span>{scaleOptions[scaleOptions.length - 1]}</span>
-        </div>
-      </div>
-      {extraOptions.length > 0 && (
-        <div style={{ marginTop: 14 }}>
-          <Pills options={extraOptions} selected={value ? [value] : []} onToggle={onChange} left compact />
-        </div>
-      )}
-    </div>
-  );
-}
 
 // Timeline questions (UTI recurrence, postpartum timing, trimester, large-
 // purchase frequency) are single-select among ordered options — pattern F1
 // (the same vertical radio list as Yes/No questions), not a distinct
 // visual language of their own.
-function Timeline({ options, value, onChange }) {
-  return <div className="ayna-intake-timeline" role="group" aria-label="Choose a time">
-    {options.map((option, index) => <button type="button" key={option} aria-pressed={value === option} onClick={() => onChange(option)}>
-      <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-      <strong>{option}</strong>
-    </button>)}
-  </div>;
-}
 
 // Brand openness is a single-select among ordered options too — F1 again,
 // swapping in only the option order it already had.
-function BrandSpectrum({ value, onChange }) {
-  return <Segmented options={BRAND_OPENNESS} value={value} onChange={onChange} />;
-}
 
 // Pattern H1: search-styled input, added items as swatch+title cards (not
 // small chips), a dashed "Add" affordance implicit in the search bar
@@ -1170,39 +882,6 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
 
 // Pattern C1: search bar + grouped chips, each group header showing a live
 // "n/m" selected count.
-function SearchableGroups({ groups, selected, onToggle, search, onSearch, onAdd }) {
-  const [openGroups, setOpenGroups] = useState(() => [groups.find((group) => group.items.some((item) => selected.includes(item)))?.label || groups[0]?.label]);
-  const q = search.trim().toLowerCase();
-  const known = groups.flatMap((group) => group.items);
-  const custom = selected.filter((item) => !known.includes(item));
-  const visible = groups
-    .map((group) => ({ ...group, items: group.items.filter((item) => !q || item.toLowerCase().includes(q) || group.label.toLowerCase().includes(q)) }))
-    .filter((group) => group.items.length);
-  return (
-    <div className="ayna-intake-topic-picker">
-      <SearchBar value={search} onChange={onSearch} placeholder="Search concerns, goals, or symptoms" />
-      <div className="ayna-intake-picker-caption"><span>EXPLORE BY TOPIC</span><strong>{selected.length ? `${selected.length} selected` : 'Choose what fits'}</strong></div>
-      <AddCustomChoice query={search} options={[...known, ...selected]} onAdd={onAdd} />
-      {custom.length > 0 && <div className="ayna-intake-custom-selected"><small>ADDED BY YOU</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
-      <div className="ayna-intake-topic-list">
-        {visible.map((group) => {
-          const count = group.items.filter((item) => selected.includes(item)).length;
-          return (
-            <div className="ayna-intake-topic" key={group.label}>
-              <button type="button" aria-expanded={!!q || openGroups.includes(group.label)} onClick={() => setOpenGroups((current) => current.includes(group.label) ? current.filter((label) => label !== group.label) : [group.label])}>
-                <span className="ayna-intake-topic-name">{group.label}</span>
-                <span className="ayna-intake-topic-count">{count ? `${count} picked` : `${group.items.length} ${group.items.length === 1 ? 'option' : 'options'}`}</span>
-                <span className="ayna-intake-topic-toggle" aria-hidden="true">{q || openGroups.includes(group.label) ? '−' : '+'}</span>
-              </button>
-              {(q || openGroups.includes(group.label)) && <div className="ayna-intake-topic-options"><RowChoiceList items={group.items} selected={selected} onToggle={onToggle} /></div>}
-            </div>
-          );
-        })}
-        {visible.length === 0 && <p className="ayna-intake-no-results">No suggestions match yet. Add your own answer above.</p>}
-      </div>
-    </div>
-  );
-}
 
 function ProductHistoryBuilder({ products, onChange }) {
   const [adding, setAdding] = useState(false);
@@ -1339,134 +1018,13 @@ function ProductHistoryBuilder({ products, onChange }) {
 // fixed rect snapshot taken at pointer-down, while the other rows' *live*
 // positions (read fresh on every move) decide when to splice the array —
 // so the list itself reorders live as you drag, not just on release.
-function TrustRanker({ order, onChange, onTouch }) {
-  const itemRefs = useRef({});
-  const [drag, setDrag] = useState(null); // { item, startClientY, top, height, y }
-
-  useEffect(() => {
-    if (!drag) return undefined;
-    const onMove = (e) => {
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      const deltaY = clientY - drag.startClientY;
-      setDrag((d) => (d ? { ...d, y: deltaY } : d));
-
-      const draggedMid = drag.top + drag.height / 2 + deltaY;
-      const others = order.filter((it) => it !== drag.item);
-      let newIndex = 0;
-      others.forEach((it) => {
-        const el = itemRefs.current[it];
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        if (draggedMid > rect.top + rect.height / 2) newIndex += 1;
-      });
-      const currentIndex = order.indexOf(drag.item);
-      if (newIndex !== currentIndex) {
-        const next = order.filter((it) => it !== drag.item);
-        next.splice(newIndex, 0, drag.item);
-        onTouch();
-        onChange(next);
-      }
-    };
-    const onUp = () => setDrag(null);
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
-    window.addEventListener('pointercancel', onUp);
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('pointercancel', onUp);
-    };
-  }, [drag, order, onChange, onTouch]);
-
-  const handlePointerDown = (item, e) => {
-    const el = itemRefs.current[item];
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    e.preventDefault();
-    setDrag({ item, startClientY: e.clientY, top: rect.top, height: rect.height, y: 0 });
-  };
-
-  return (
-    <div style={{ display: 'grid', gap: 10 }}>
-      {order.map((item, index) => {
-        const top = index === 0;
-        const isDragging = drag && drag.item === item;
-        return (
-          <div
-            key={item}
-            ref={(el) => { itemRefs.current[item] = el; }}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 12, borderRadius: 18, padding: 14,
-              background: top ? ACCENT_BG : CARD_BG,
-              border: '1.5px solid ' + (top ? ACCENT_BORDER : ROW_BORDER),
-              boxShadow: isDragging ? '0 18px 32px -12px rgba(41,37,36,.4)' : (top ? '0 8px 20px -10px rgba(232,169,79,.5)' : cardShadow),
-              transform: isDragging ? `translateY(${drag.y}px) scale(1.02)` : 'none',
-              position: 'relative',
-              zIndex: isDragging ? 5 : 1,
-              touchAction: 'none',
-            }}
-          >
-            <span style={{
-              width: 26, height: 26, borderRadius: 9, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: top ? 'rgba(255,255,255,.7)' : PANEL_BG, color: top ? SELECTED_TEXT : NAVY,
-              fontFamily: "var(--ayna-font-display)", fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
-            }}>{index + 1}</span>
-            <span style={{ flex: 1, textAlign: 'left', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.3, color: top ? SELECTED_TEXT : INK }}>{item}</span>
-            <span
-              onPointerDown={(e) => handlePointerDown(item, e)}
-              aria-label={`Drag to reorder ${item}`}
-              style={{
-                width: 30, height: 30, borderRadius: 8, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: top ? SELECTED_TEXT : MUTED, cursor: 'grab', touchAction: 'none',
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="9" cy="6" r="1.7" /><circle cx="15" cy="6" r="1.7" />
-                <circle cx="9" cy="12" r="1.7" /><circle cx="15" cy="12" r="1.7" />
-                <circle cx="9" cy="18" r="1.7" /><circle cx="15" cy="18" r="1.7" />
-              </svg>
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 // Pattern M1 — textarea plus dashed "inspiration only" prompt chips: tapping
 // one appends its starter phrase rather than committing an answer, since
 // unlike every selectable option elsewhere in this form, these never
 // represent a stored choice.
-const FREE_TEXT_PROMPTS = ['A goal I have', "Something that hasn't worked", "A concern I haven't mentioned"];
+const FREE_TEXT_PROMPTS = ['A goal', "What hasn't worked", 'Something I missed'];
 
-function TextAreaField({ value, onChange, placeholder }) {
-  const appendPrompt = (prompt) => {
-    const prefix = value && !value.endsWith('\n') && !value.endsWith(' ') ? `${value}\n` : value;
-    onChange(`${prefix}${prompt}: `);
-  };
-  return (
-    <div>
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        rows={5}
-        style={{ width: '100%', boxSizing: 'border-box', padding: 16, borderRadius: 20, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none', resize: 'vertical', minHeight: 150, lineHeight: 1.65, fontFamily: 'inherit' }}
-      />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 12 }}>
-        {FREE_TEXT_PROMPTS.map((prompt) => (
-          <button type="button" className="ayna-intake-control"
-            key={prompt}
-            onClick={() => appendPrompt(prompt)}
-            style={{ cursor: 'pointer', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', padding: '9px 13px', borderRadius: 99, background: CARD_BG, border: '1.5px dashed ' + ROW_BORDER, color: BODY_TEXT }}
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // Under-18 gate, terminal screen (Ayna_Minor_Gate.html design reference).
 // Deliberately not styled with the rest of the quiz's dark hero-gradient
@@ -1549,13 +1107,14 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 
 export default function IntakeScreen({ onBack, onComplete, initialSnapshot = null, startAtBeginning = false }) {
   const [intake, setIntake] = useState(() => reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => startAtBeginning ? 'age' : getFirstIncompleteStepId(initialSnapshot) || 'age');
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtBeginning ? 'age' : getFirstIncompleteStepId(initialSnapshot) || 'age'));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started — not
   // re-derived as answers change, so a step's flag clears only by actually
   // reaching and completing it, not by something else on the page changing.
   const [flaggedStepIds] = useState(() => new Set(getIncompleteStepIds(initialSnapshot)));
   const [minorGate, setMinorGate] = useState(false);
+  const [direction, setDirection] = useState('forward');
 
   const visibleSteps = useMemo(() => {
     const steps = [
@@ -1592,12 +1151,6 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = visibleSteps[currentIndex] || visibleSteps[0];
   const isLast = currentIndex === visibleSteps.length - 1;
-  const sceneBlues = ['#C5C9E4', '#CCD0E6', '#C2C8E0', '#D0D2E6', '#C7CBE2'];
-  const sceneStyle = {
-    '--intake-canvas': sceneBlues[currentIndex % sceneBlues.length],
-    '--wash-x': currentIndex % 2 ? '-12%' : '112%',
-    '--wash-y': `${18 + (currentIndex * 19) % 65}%`,
-  };
 
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
   const toggleExclusive = (key, value, exclusiveValues = []) => setIntake((prev) => {
@@ -1628,6 +1181,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const goBack = () => {
     if (currentIndex > 0) {
       setSearch('');
+      setDirection('back');
       setStepId(visibleSteps[currentIndex - 1].id);
     } else if (onBack) onBack();
   };
@@ -1639,6 +1193,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       return;
     }
     setSearch('');
+    setDirection('forward');
     setStepId(visibleSteps[currentIndex + 1].id);
   };
 
@@ -1650,50 +1205,43 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
   const renderBody = () => {
     if (step.type === 'age') return (
-      <AgeCard
-        value={intake.age}
-        onChange={(v) => set('age', v)}
-        underage={isMinorAge(intake.age)}
-        onOpenGate={() => setMinorGate(true)}
-      />
+      <AgeDial value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
     );
 
     if (step.type === 'lifeStage') return (
       <>
-        {showMidlifeFirst && <p className="ayna-intake-note">We moved some life-stage choices higher based on your age. Choose only what describes you; age alone does not determine your life stage.</p>}
-        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" />
+        {showMidlifeFirst && <p className="ip-hint">Midlife stages moved up. Pick only what fits.</p>}
+        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" labels={LIFE_STAGE_LABELS} glyphs={LIFE_STAGE_GLYPHS} searchable={false} />
         {selectedLifeStages.includes('I am postpartum') && (
-          <div style={{ marginTop: 18, padding: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 18, textAlign: 'left' }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: INK, marginBottom: 12 }}>Are you currently breastfeeding?</div>
-            <Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.breastfeedingStatus} onChange={(v) => set('breastfeedingStatus', v)} />
+          <div className="ip-followup">
+            <strong>Breastfeeding right now?</strong>
+            <ChipList items={['Yes', 'No', 'Prefer not to say']} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} compact />
           </div>
         )}
         {selectedLifeStages.includes('I am in perimenopause') && (
-          <div style={{ marginTop: 18, padding: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 18, textAlign: 'left' }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: INK, marginBottom: 12 }}>When was your last period?</div>
-            <Pills options={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} left />
+          <div className="ip-followup">
+            <strong>When was your last period?</strong>
+            <ChipList items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} compact />
           </div>
         )}
       </>
     );
 
-    if (step.type === 'zip') return <ZipDigits value={intake.zipcode} onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))} />;
+    if (step.type === 'zip') return <ZipTicket value={intake.zipcode} onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))} />;
 
     if (step.type === 'support') return (
-      <>
-        <SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} onAdd={(value) => addCustomSelection('supportSelections', value, ['Nothing right now'])} />
-      </>
+      <TopicPicker groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} onAdd={(value) => addCustomSelection('supportSelections', value, ['Nothing right now'])} />
     );
 
-    if (step.type === 'flow') return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} />;
-    if (step.type === 'pain') return <Scale options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} />;
-    if (step.type === 'utiFrequency') return <Timeline options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
-    if (step.type === 'postpartumTiming') return <Timeline options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />;
-    if (step.type === 'pregnancyTrimester') return <Timeline options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
+    if (step.type === 'flow') return <LevelMeter options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} shape="drop" />;
+    if (step.type === 'pain') return <LevelMeter options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} shape="bar" />;
+    if (step.type === 'utiFrequency') return <TrackLine options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
+    if (step.type === 'postpartumTiming') return <TrackLine options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />;
+    if (step.type === 'pregnancyTrimester') return <TrackLine options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
 
     if (step.type === 'conditions') {
       return (
-        <SearchableChoices items={['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((item) => !['None that I know of', 'Prefer not to say'].includes(item))]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('diagnosisSelections', value, ['None that I know of', 'Prefer not to say'])} placeholder="Search diagnosed conditions" />
+        <SearchableChoices items={['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((item) => !['None that I know of', 'Prefer not to say'].includes(item))]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('diagnosisSelections', value, ['None that I know of', 'Prefer not to say'])} placeholder="Search conditions" />
       );
     }
 
@@ -1705,8 +1253,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
           onChange={(value) => setIntake((prev) => ({ ...prev, allergyStatus: value, allergyItems: value === 'Yes' ? prev.allergyItems : [] }))}
         />
         {intake.allergyStatus === 'Yes' && (
-          <div style={{ marginTop: 16 }}>
-            <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Start typing an allergy or sensitivity" suggestions={ALLERGIES} suggestionLimit={8} />
+          <div className="ip-gap">
+            <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Type an allergy or sensitivity" suggestions={ALLERGIES} suggestionLimit={8} />
           </div>
         )}
       </>
@@ -1716,13 +1264,11 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       <>
         <Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.takesCurrent} onChange={(v) => set('takesCurrent', v)} />
         {intake.takesCurrent === 'Yes' && (
-          <div style={{ marginTop: 16 }}>
-            <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Start typing a medication, supplement, vitamin, or birth control" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
+          <div className="ip-gap">
+            <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medication, supplement, or birth control" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
           </div>
         )}
-        <div style={{ marginTop: 16, padding: '13px 15px', border: '1px solid ' + ROW_BORDER, background: PANEL_BG, borderRadius: 14, color: BODY_TEXT, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.55, textAlign: 'left' }}>
-          Always consult a clinician before starting a new supplement or medication. Ayna surfaces options relevant to the profile you shared, but you should still check product ingredients, labels, and instructions.
-        </div>
+        <p className="ip-callout">Check with a clinician before starting anything new.</p>
       </>
     );
 
@@ -1733,81 +1279,48 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         onChange={(v) => set('avoidRepeat', v)}
         suggestions={PRODUCT_OR_BRAND_SUGGESTIONS}
         historyNames={[...new Set((intake.productHistory || []).map((p) => p.name).filter(Boolean))]}
-        footerText="Excluded items never appear in your ecosystem, search results, or “similar product” rows."
+        footerText="These never show up in your picks."
       />
     );
-    if (step.type === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(v) => set('trustedBrands', v)} placeholder="Start typing a brand" suggestions={BRAND_SUGGESTIONS} />;
+    if (step.type === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(v) => set('trustedBrands', v)} placeholder="Type a brand" suggestions={BRAND_SUGGESTIONS} />;
 
-    // Pattern J1: the conditional alert panel gets its own amber header
-    // band + "!" badge, distinct from the plain informational panels used
-    // elsewhere — this one's meant to read as an escalation, not a note.
     if (step.type === 'safety') return (
       <>
         <Segmented options={['Yes', 'No', 'Not sure']} value={intake.safetyConcern} onChange={(v) => set('safetyConcern', v)} />
         {['Yes', 'Not sure'].includes(intake.safetyConcern) && (
-          <div style={{ marginTop: 14, borderRadius: 20, overflow: 'hidden', border: '1.5px solid ' + ACCENT_BORDER }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '12px 15px', background: ACCENT_BG }}>
-              <span style={{ width: 20, height: 20, borderRadius: 99, background: ACCENT_BORDER, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: '#fff' }}>!</span>
-              <span style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: SELECTED_TEXT }}>Worth a closer look</span>
-            </div>
-            <div style={{ padding: '14px 15px', background: CARD_BG }}>
-              <p style={{ margin: 0, fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: BODY_TEXT }}>
-                Some new or worsening symptoms may need evaluation by a healthcare professional. Ayna helps with product discovery and education and does not diagnose medical conditions or replace professional medical care. If symptoms feel urgent or severe, seek appropriate medical care promptly.
-              </p>
-            </div>
+          <div className="ip-alert" role="note">
+            <strong><span aria-hidden="true">!</span>Worth a closer look</strong>
+            <p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.</p>
           </div>
         )}
       </>
     );
 
     if (step.type === 'formats') return (
-      <>
-        <SearchableChoices items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('preferredFormats', value, ['No preference'])} placeholder="Search product formats" layout="grid" icons={FORMAT_ICONS} />
-      </>
+      <SearchableChoices items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('preferredFormats', value, ['No preference'])} placeholder="Search formats" layout="grid" icons={FORMAT_ICONS} searchable={false} />
     );
 
     if (step.type === 'price') {
       const selectedPrices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []);
-      const priceOnlyBands = PRICE_RANGES.filter((opt) => opt !== 'Price is not a major factor for me');
       const notAFactor = 'Price is not a major factor for me';
-      const notAFactorOn = selectedPrices.includes(notAFactor);
       return (
         <>
-          <PriceBandList options={priceOnlyBands} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
-          <button type="button" className="ayna-intake-control" aria-pressed={notAFactorOn}
-            onClick={() => toggleExclusive('priceRange', notAFactor, [notAFactor])}
-            style={{
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap', marginTop: 7,
-              fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '10px 14px', borderRadius: 99,
-              fontWeight: notAFactorOn ? 600 : 500,
-              background: notAFactorOn ? ACCENT_BG : PANEL_BG,
-              color: notAFactorOn ? SELECTED_TEXT : MUTED,
-              border: '1.5px solid ' + (notAFactorOn ? ACCENT_BORDER : ROW_BORDER),
-              justifyContent: 'center',
-            }}
-          >
-            {notAFactorOn && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
-            {notAFactor}
-          </button>
-
-          <div style={{ height: 1, background: ROW_BORDER, margin: '24px 0 20px' }} />
-
-          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 4 }}>How often do you spend $75 or more?</div>
-          <p style={{ margin: '0 0 14px', fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT }}>This is about purchase frequency, not your usual preferred price per product.</p>
-          <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
+          <PriceStacks options={PRICE_RANGES.filter((opt) => opt !== notAFactor)} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
+          <ChipList items={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} compact />
+          <DotScale label="How often do you spend $75+?" options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
         </>
       );
     }
-    if (step.type === 'brand') return <BrandSpectrum value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
+    if (step.type === 'brand') return <BrandSpectrum options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
     if (step.type === 'avoidIngredients') {
       return (
         <SearchableChoices items={AVOID_INGREDIENTS} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('avoidIngredients', value, ['No preference'])} placeholder="Search ingredients or qualities" />
       );
     }
-    if (step.type === 'fsa') return <Pills options={FSA_HSA} selected={intake.fsaHsaAnswer ? [intake.fsaHsaAnswer] : []} onToggle={(v) => set('fsaHsaAnswer', v)} />;
+    if (step.type === 'fsa') return <AccountCards options={FSA_HSA} value={intake.fsaHsaAnswer} onChange={(v) => set('fsaHsaAnswer', v)} />;
     if (step.type === 'recommendationCount') return <RecommendationCountPicker value={intake.recommendedProductsPerArea} onChange={(count) => set('recommendedProductsPerArea', count)} />;
-    if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
-    if (step.type === 'textarea') return <TextAreaField value={intake.anythingElse} onChange={(v) => set('anythingElse', v)} placeholder="Share anything else that could help us personalize your recommendations." />;
+    if (step.type === 'trust') return <TrustPodium order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
+    if (step.type === 'textarea') return <StickyNote value={intake.anythingElse} onChange={(v) => set('anythingElse', v)} placeholder="A goal, a worry, something that didn’t work…" prompts={FREE_TEXT_PROMPTS} />;
 
     return null;
   };
@@ -1836,14 +1349,14 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     const deltaX = start.x - event.changedTouches[0]?.clientX;
     const delta = start.y - event.changedTouches[0]?.clientY;
     if (Math.abs(deltaX) > 75 && Math.abs(deltaX) > Math.abs(delta) * 1.3) { storyAdvance(Math.sign(deltaX)); return; }
-    const body = event.currentTarget.querySelector('.ayna-fresh-intake-body');
+    const body = event.currentTarget.querySelector('.ip-body');
     if (!body || Math.abs(delta) < 100) return;
     if (delta > 0 && body.scrollTop + body.clientHeight >= body.scrollHeight - 8) storyAdvance(1);
     if (delta < 0 && body.scrollTop <= 8) storyAdvance(-1);
   };
   const onStoryWheel = (event) => {
     if (event.target.closest('input, textarea, select, [role="listbox"]')) return;
-    const body = event.currentTarget.querySelector('.ayna-fresh-intake-body');
+    const body = event.currentTarget.querySelector('.ip-body');
     if (!body) return;
     const atEnd = event.deltaY > 0 && body.scrollTop + body.clientHeight >= body.scrollHeight - 8;
     const atStart = event.deltaY < 0 && body.scrollTop <= 8;
@@ -1859,72 +1372,42 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     return <MinorGateScreen onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBack} />;
   }
 
+  const scene = INTAKE_SCENES[step.id] || { tone: 'peri', art: null };
+
   return (
-    <div className="ayna-fresh-intake" data-section={step.section} data-step={step.id} data-layout={currentIndex % 4}
-      onTouchStart={onStoryTouchStart} onTouchEnd={onStoryTouchEnd} onWheel={onStoryWheel}
-      style={{
-        ...sceneStyle,
-        flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column',
-        background: '#3E2F59',
-        color: '#FCFBFB', position: 'relative', overflow: 'hidden',
-        fontFamily: "var(--ayna-font-ui)", animation: 'ay-page .25s ease-out',
-      }}
-    >
-      <div className="ayna-fresh-intake-header" style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', position: 'relative' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-          <button type="button" aria-label="Go back" onClick={goBack} style={{ width: 32, height: 32, borderRadius: 4, border: '1px solid rgba(255,249,242,.45)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FCFBFB" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+    <div className={`ayna-play-intake ip-tone--${scene.tone}`} data-section={step.section} data-step={step.id} data-direction={direction}
+      onTouchStart={onStoryTouchStart} onTouchEnd={onStoryTouchEnd} onWheel={onStoryWheel}>
+      <IntakeSceneArt art={scene.art} key={`art-${step.id}`} />
+      <header className="ip-head">
+        <div className="ip-head-row">
+          <button type="button" className="ip-round" aria-label="Go back" onClick={goBack}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
-          <div style={{ flex: 1, minWidth: 0 }} />
-          {step.optional && (
-            <button type="button" onClick={goNext} style={{ padding: '7px 0', border: 0, background: 'transparent', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#FCFBFB', cursor: 'pointer', flex: 'none' }}>Skip</button>
-          )}
+          <span className="ip-count" aria-label={`Question ${currentIndex + 1} of ${visibleSteps.length}`}>{String(currentIndex + 1).padStart(2, '0')}<i>/{String(visibleSteps.length).padStart(2, '0')}</i></span>
+          {step.optional ? <button type="button" className="ip-skip" onClick={goNext}>Skip</button> : <span className="ip-skip-spacer" />}
         </div>
-        <div className="ayna-intake-progress-copy" aria-label={`Question ${currentIndex + 1} of ${visibleSteps.length}`} />
-        <div style={{ height: 4, borderRadius: 99, background: 'rgba(255,249,242,.24)', overflow: 'hidden' }}>
-          <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#F2B8D7,#F2B8D7)' }} />
+        <div className="ip-progress" aria-hidden="true">
+          {visibleSteps.map((s, i) => <span key={s.id} className={i < currentIndex ? 'is-done' : i === currentIndex ? 'is-now' : ''} />)}
+        </div>
+      </header>
+
+      <div className="ip-body">
+        <div className="ip-question" key={`q-${step.id}`}>
+          {scene.label && <span className="ip-label">{scene.label}</span>}
+          <h1 className="ip-title">{step.title}</h1>
+          {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
+          {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
+          <div className="ip-answer">{renderBody()}</div>
         </div>
       </div>
 
-      <div className="ayna-fresh-intake-body" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
-        <div className="ayna-intake-scene" key={step.id} aria-hidden="true">
-          <span className="ayna-intake-scene-index">{String(currentIndex + 1).padStart(2, '0')} / {String(visibleSteps.length).padStart(2, '0')}</span>
-        </div>
-        <div className="ayna-intake-question-heading" key={`heading-${step.id}`} style={{ padding: '22px 20px 0' }}>
-          {countForStep > 0 && <div className="ayna-intake-question-kicker"><strong>{countForStep} picked</strong></div>}
-          <div className="ayna-fresh-intake-title" style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.045em', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#FCFBFB' }}>{step.title}</div>
-          {step.subtitle && <p className="ayna-fresh-intake-subtitle" style={{ margin: '8px 0 0', fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
-          {flaggedStepIds.has(step.id) && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 11, padding: '6px 12px', borderRadius: 99, background: 'rgba(180,64,42,.16)', border: '1px solid rgba(180,64,42,.35)', color: '#FFC9BC', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>
-              <span style={{ width: 6, height: 6, borderRadius: 99, background: '#E8846F', flex: 'none' }} />
-              Not answered yet
-            </div>
-          )}
-        </div>
-        <div className="ayna-intake-answer-stage" key={`answer-${step.id}`} style={{ padding: '20px 20px 20px', textAlign: 'left' }}>
-          {renderBody()}
-        </div>
-      </div>
-
-      <div className="ayna-fresh-intake-footer" style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', position: 'relative', background: '#3E2F59', borderTop: '1px solid rgba(255,255,255,.16)' }}>
-        <button
-          onClick={goNext}
-          disabled={!ready}
-          style={{
-            width: '100%', padding: 15, border: 'none', borderRadius: 14,
-            background: ready ? '#F2B8D7' : 'rgba(255,249,242,.18)',
-            color: ready ? NAVY : 'rgba(255,249,242,.5)',
-            fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9,
-            cursor: ready ? 'pointer' : 'not-allowed',
-            boxShadow: 'none',
-          }}
-        >
-          <span>{isLast ? 'Finish profile' : 'Continue'}</span>
-          {countForStep > 0 && <span style={{ background: 'rgba(42,31,78,.16)', borderRadius: 999, padding: '2px 9px', fontSize: 'calc(12px * var(--ayna-text-scale, 1))' }}>{countForStep}</span>}
-          <span className="ayna-intake-next-arrow" aria-hidden="true">→</span>
+      <footer className="ip-foot">
+        <button type="button" className="ip-next" onClick={goNext} disabled={!ready}>
+          <span>{isLast ? 'See my results' : 'Next'}</span>
+          {countForStep > 0 && <b>{countForStep}</b>}
+          <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i>
         </button>
-      </div>
+      </footer>
     </div>
   );
 }
