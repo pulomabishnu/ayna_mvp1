@@ -20,6 +20,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const { name, brand, category, price, priceDisplay, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   const resolvedPrice = shortPrice(price || priceDisplay);
+  const hasDisplayPrice = /[$€£]|^free\b/i.test(resolvedPrice);
   const categoryLabel = labelForCategory(category);
   const secondaryLabel = brand || categoryLabel;
   const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
@@ -41,7 +42,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
 
   return (
     <article className={`ayna-fresh-product-card ${isList ? 'is-list' : ''} tone-${tone}`}>
-      <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}${resolvedPrice ? `, ${resolvedPrice}` : ''}${showMatch ? `, ${match.percent} percent match` : ''}. View product details`}>
+      <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}${hasDisplayPrice ? `, ${resolvedPrice}` : ''}${showMatch ? `, ${match.percent} percent match` : ''}. View product details`}>
       <span className="ayna-fresh-product-image">
         <ProductImage src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
       </span>
@@ -49,7 +50,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         <span className="ayna-fresh-product-category">{secondaryLabel}{isList && isPartner ? ' / Partner' : ''}</span>
         <strong>{name}</strong>
         {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
-        <span className="ayna-fresh-product-foot"><b>{resolvedPrice || 'See details'}</b></span>
+        <span className="ayna-fresh-product-foot"><b>{hasDisplayPrice ? resolvedPrice : 'Details'}</b></span>
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
       </button>
