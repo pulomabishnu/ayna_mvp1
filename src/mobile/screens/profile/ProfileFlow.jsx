@@ -129,11 +129,12 @@ function BackHeader({ title, onBack, dark }) {
         gap: 10,
       }}
     >
-      <div
+      <button
+        type="button" aria-label="Back"
         onClick={onBack}
         style={{
-          width: 34,
-          height: 34,
+          width: 44,
+          height: 44,
           borderRadius: 99,
           border: '1px solid ' + (dark ? 'rgba(255,255,255,.28)' : 'var(--ayna-border)'),
           background: dark ? 'rgba(255,255,255,.1)' : 'var(--ayna-surface)',
@@ -145,7 +146,7 @@ function BackHeader({ title, onBack, dark }) {
         }}
       >
         <BackIcon stroke={dark ? '#FAFBF8' : 'var(--ayna-heading)'} />
-      </div>
+      </button>
       <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: dark ? '#FAFBF8' : 'var(--ayna-heading)' }}>{title}</div>
     </div>
   );
@@ -943,7 +944,7 @@ function ThemeSwatch({ mode, selected, onClick }) {
   const bg = mode === 'light' ? 'var(--ayna-bg-alt)' : '#1B1B22';
   const barColor = mode === 'dark' ? 'rgba(255,249,242,.35)' : 'rgba(41,37,36,.25)';
   return (
-    <div onClick={onClick} style={{ cursor: 'pointer', textAlign: 'center' }}>
+    <button type="button" aria-label={mode === 'dark' ? 'Dark theme' : 'Light theme'} aria-pressed={selected} onClick={onClick} style={{ border: 0, padding: 0, background: 'transparent', color: 'var(--ayna-text)', cursor: 'pointer', textAlign: 'center' }}>
       <div
         style={{
           height: 58,
@@ -964,7 +965,7 @@ function ThemeSwatch({ mode, selected, onClick }) {
       <div style={{ marginTop: 7, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: selected ? 700 : 500, color: selected ? 'var(--ayna-heading)' : 'var(--ayna-text-muted)' }}>
         {THEME_SWATCHES.find((s) => s.key === mode)?.label}
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -1391,97 +1392,19 @@ function ChannelsScreen({ onBack }) {
 /* ------------------------------ Settings ------------------------------ */
 
 function SettingsScreen({ onBack, onOpenPreferences, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
-  const aboutRows = [
-    { title: 'How it works', sub: 'Nothing reaches you unchecked.', onClick: onOpenHowItWorks },
-    { title: 'About ayna', sub: 'No mystery box.', onClick: onOpenAboutAyna },
-    { title: 'Brand partnership', sub: 'Brands ayna actually works with.', onClick: () => window.open(BRAND_PARTNERSHIPS_URL, '_blank', 'noopener,noreferrer'), external: true },
+  const groups = [
+    ['Preferences', [{ title: 'Appearance & preferences', onClick: onOpenPreferences }]],
+    ['About', [{ title: 'How it works', onClick: onOpenHowItWorks }, { title: 'About ayna', onClick: onOpenAboutAyna }, { title: 'Brand partnerships', href: BRAND_PARTNERSHIPS_URL }]],
+    ['Account', [{ title: 'Account information', onClick: onOpenAccountInfo }, { title: 'Privacy & data', onClick: onOpenPrivacyData }, { title: 'Legal', onClick: onOpenLegal }, { title: 'Contact', onClick: onOpenContact }]],
   ];
-
-  // Same real phone_numbers read AccountInfoScreen already does, mirrored
-  // here just so this row's preview line can show the masked number
-  // alongside the email instead of email alone.
-  const [phone, setPhone] = useState('');
-  useEffect(() => {
-    let cancelled = false;
-    const supabase = getSupabaseClient();
-    if (!supabase || !authUser?.id) return undefined;
-    supabase
-      .from('phone_numbers')
-      .select('phone_number')
-      .eq('user_id', authUser.id)
-      .maybeSingle()
-      .then(({ data }) => { if (!cancelled) setPhone(data?.phone_number || ''); })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, [authUser?.id]);
-  const accountPreview = [authUser?.email, phone ? maskPhone(phone) : ''].filter(Boolean).join(' · ');
-
-  return (
-    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <BackHeader title="Settings" onBack={onBack} />
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
-        <div style={{ margin: '4px 0 11px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your app</div>
-        <button type="button" onClick={onOpenPreferences} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: '16px 18px', textAlign: 'left', color: 'var(--ayna-text)', cursor: 'pointer' }}>
-          <span style={{ flex: 1 }}><strong style={{ display: 'block', fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>Preferences</strong><span style={{ display: 'block', marginTop: 3, color: 'var(--ayna-text-muted)', fontSize: 'calc(12px * var(--ayna-text-scale, 1))' }}>{IS_NATIVE_APP ? 'Notifications, personalization, text size and night mode' : 'Personalization, text size and night mode'}</span></span>
-          <ChevronIcon />
-        </button>
-        <div style={{ margin: '24px 0 11px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About Ayna</div>
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          {aboutRows.map((r, i) => (
-            <div key={r.title} onClick={r.onClick} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)', cursor: r.onClick ? 'pointer' : 'default' }}>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{r.title}</div>
-                <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{r.sub}</div>
-              </div>
-              {r.external ? <ExternalLinkIcon /> : <ChevronIcon />}
-            </div>
-          ))}
-        </div>
-
-        <div style={{ margin: '24px 0 11px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your account</div>
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <div onClick={onOpenAccountInfo} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', cursor: 'pointer' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Account information</div>
-              {accountPreview && (
-                <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>{accountPreview}</div>
-              )}
-            </div>
-            <ChevronIcon />
-          </div>
-          <div onClick={onOpenPrivacyData} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Privacy & data</div>
-              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, what we hold, exports and deletion.</div>
-            </div>
-            <ChevronIcon />
-          </div>
-          <div onClick={onOpenLegal} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Legal</div>
-              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, terms and licences.</div>
-            </div>
-            <ChevronIcon />
-          </div>
-          <div onClick={onOpenContact} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Contact</div>
-              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>Usually a reply within a day.</div>
-            </div>
-            <ChevronIcon />
-          </div>
-        </div>
-
-        {authUser ? (
-          <div onClick={onSignOut} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid rgba(180,64,42,.3)', borderRadius: 99, color: '#B4402A', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign out</div>
-        ) : (
-          <div onClick={onSignIn} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid var(--ayna-border)', borderRadius: 99, color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign in</div>
-        )}
-        <div style={{ textAlign: 'center', marginTop: 16, fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', color: 'var(--ayna-text-muted)' }}>AYNA 0.9.4</div>
-        <LegalFooter />
-      </div>
+  return <div className="ayna-settings-index" style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+    <BackHeader title="Settings" onBack={onBack} />
+    <div className="ayna-settings-scroll">
+      {groups.map(([title, rows]) => <section key={title} aria-label={title}><h2>{title}</h2>{rows.map((row) => row.href ? <a key={row.title} href={row.href} target="_blank" rel="noopener noreferrer">{row.title}<ExternalLinkIcon /></a> : <button type="button" key={row.title} onClick={row.onClick}>{row.title}<ChevronIcon /></button>)}</section>)}
+      <button type="button" className="ayna-account-session" onClick={authUser ? onSignOut : onSignIn}>{authUser ? 'Sign out' : 'Sign in'}</button>
+      <LegalFooter />
     </div>
-  );
+  </div>;
 }
 
 /* ------------------------------ Privacy & data ------------------------------ */

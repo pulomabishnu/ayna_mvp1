@@ -420,7 +420,7 @@
 .ayna-mobile[data-theme='dark'] .ayna-fresh-home-heading h1,
 .ayna-mobile[data-theme='dark'] .ayna-fresh-home-heading>p:first-child { color:#fff; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu { background:#171719; }
-.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu>div:not(:first-child) { background:#242429!important; border-color:#464854!important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu>button { background:#242429!important; border-color:#464854!important; }
 .ayna-mobile[data-theme='dark'] .ayna-fresh-article-paper { background:#242429!important; border-color:#464854; box-shadow:none; }
 
 /* Onboarding continues in the same orbit-and-card language. */
