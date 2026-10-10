@@ -727,6 +727,11 @@
 .ayna-mobile .ayna-intake-age-selector select { color:var(--intake-ink)!important; }
 .ayna-mobile .ayna-intake-age-note { background:transparent!important; border:0!important; padding:10px 0!important; box-shadow:none!important; }
 .ayna-mobile .ayna-intake-search { background:#fff!important; border:2px solid var(--intake-ink)!important; border-radius:999px!important; box-shadow:5px 5px 0 var(--intake-pop)!important; }
+.ayna-mobile .ayna-intake-topic { background:transparent!important; border:0!important; border-bottom:1px solid rgba(41,35,71,.35)!important; border-radius:0!important; }
+.ayna-mobile .ayna-intake-topic>button { padding:13px 0!important; }
+.ayna-mobile .ayna-intake-topic-options { padding:5px 0 20px!important; }
+.ayna-mobile .ayna-intake-topic-toggle { border-radius:50%; background:var(--intake-pop)!important; }
+.ayna-mobile .ayna-intake-topic-name { font-family:var(--ayna-font-ui)!important; }
 .ayna-mobile .ayna-intake-chip { border-radius:999px!important; background:#fff!important; border:1.5px solid var(--intake-ink)!important; color:var(--intake-ink)!important; transition:transform .16s ease,background .16s ease; }
 .ayna-mobile .ayna-intake-chip[aria-pressed='true'] { background:var(--intake-pop)!important; transform:rotate(-2deg) scale(1.03); }
 .ayna-mobile .ayna-figma-choice-tile { min-height:92px!important; background:#fff!important; border:2px solid var(--intake-ink)!important; border-radius:24px!important; box-shadow:5px 5px 0 var(--intake-shape)!important; }

@@ -896,7 +896,7 @@ function AgeCard({ value, onChange, underage, onOpenGate }) {
       <div className="ayna-intake-age-note" style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 20, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 2 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
         <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT }}>
-          Age helps us tailor the questions. We never use it for advertising.
+          Better picks. Never ads.
         </div>
       </div>
 
@@ -1602,7 +1602,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     const steps = [
       { id: 'age', section: 'core', title: 'Your age', type: 'age', optional: true },
       { id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', optional: true },
-      { id: 'zip', section: 'core', title: 'ZIP code', subtitle: 'Optional. This helps us personalize local care and availability.', type: 'zip', optional: true },
+      { id: 'zip', section: 'core', title: 'ZIP code', subtitle: 'Optional · local care', type: 'zip', optional: true },
       { id: 'support', section: 'support', title: 'What needs support?', type: 'support', optional: true },
       ...(isPeriodRelevant(intake) ? [
         { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', optional: true },
@@ -1712,7 +1712,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       </>
     );
 
-    if (step.type === 'zip') return <ZipDigits value={intake.zipcode} onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))} onSkip={goNext} />;
+    if (step.type === 'zip') return <ZipDigits value={intake.zipcode} onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))} />;
 
     if (step.type === 'support') return (
       <>
