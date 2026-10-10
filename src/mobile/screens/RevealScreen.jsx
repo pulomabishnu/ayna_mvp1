@@ -11,6 +11,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
   const touchX = useRef(null);
   const swipeTime = useRef(0);
   const products = myProducts.slice(0, 4);
+  const areaCount = new Set(myProducts.map((product) => product.areaKey).filter(Boolean)).size;
   const slides = products.length ? ['intro', 'focus', 'collection', 'finish'] : ['empty'];
   const active = slides[index] || slides[0];
   const first = products[0];
@@ -63,7 +64,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <div className="ayna-story-kicker">YOUR ECOSYSTEM</div>
           <h1>Made for<br /><em>your</em> body.</h1>
           <div className="ayna-story-orbit" aria-hidden="true"><span>{myProducts.length}</span><i /><i /></div>
-          <div className="ayna-story-bottomline">{myProducts.length} {myProducts.length === 1 ? 'pick' : 'picks'} · {topAreas.length} {topAreas.length === 1 ? 'area' : 'areas'}</div>
+          <div className="ayna-story-bottomline">{myProducts.length} {myProducts.length === 1 ? 'pick' : 'picks'} · {areaCount} {areaCount === 1 ? 'area' : 'areas'}</div>
         </>}
         {active === 'focus' && first && <>
           <div className="ayna-story-kicker">FIRST UP / {topAreas[0] || 'YOUR MATCH'}</div>
