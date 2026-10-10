@@ -4,6 +4,8 @@ export default function SlideToStart({ onComplete }) {
   const trackRef = useRef(null);
   const draggingRef = useRef(false);
   const completedBySlideRef = useRef(false);
+  const movedRef = useRef(false);
+  const startXRef = useRef(0);
   const [distance, setDistance] = useState(0);
 
   const travel = () => Math.max(0, (trackRef.current?.clientWidth || 0) - 66);
@@ -14,11 +16,16 @@ export default function SlideToStart({ onComplete }) {
   };
   const start = (event) => {
     draggingRef.current = true;
+    movedRef.current = false;
+    startXRef.current = event.clientX;
     event.currentTarget.setPointerCapture(event.pointerId);
     setDistance(position(event));
   };
   const move = (event) => {
-    if (draggingRef.current) setDistance(position(event));
+    if (draggingRef.current) {
+      if (Math.abs(event.clientX - startXRef.current) > 8) movedRef.current = true;
+      setDistance(position(event));
+    }
   };
   const finish = (event) => {
     if (!draggingRef.current) return;
@@ -41,9 +48,10 @@ export default function SlideToStart({ onComplete }) {
       onPointerDown={start}
       onPointerMove={move}
       onPointerUp={finish}
-      onPointerCancel={() => { draggingRef.current = false; setDistance(0); }}
+      onPointerCancel={() => { draggingRef.current = false; movedRef.current = true; setDistance(0); }}
       onClick={() => {
         if (completedBySlideRef.current) { completedBySlideRef.current = false; return; }
+        if (movedRef.current) { movedRef.current = false; return; }
         onComplete?.();
       }}
       style={{ transform: `translateX(${distance}px)` }}
