@@ -311,6 +311,9 @@
 .ip-dot { position: relative; width: 34px; height: 34px; padding: 0; border: 2.5px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); cursor: pointer; transition: background-color .2s, transform .2s var(--ay-pop); }
 .ip-dot.is-on { background: var(--ip-bg); }
 .ip-dot[aria-checked='true'] { background: var(--ay-ink); transform: scale(1.15); }
+.ip-dots-ends { display:flex; justify-content:space-between; gap:18px; margin-top:12px; color:var(--ay-ink-soft); font:600 11px/1.25 var(--ay-font-ui); }
+.ip-dots-ends span { max-width:46%; }
+.ip-dots-ends span:last-child { text-align:right; }
 
 /* ---------- brand spectrum ---------- */
 
@@ -387,6 +390,7 @@
 .ayna-play-intake .ayna-count-choices button { min-height: 132px !important; border: 2px solid var(--ay-ink) !important; border-radius: 18px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; box-shadow: none !important; transition: transform .22s var(--ay-pop), background-color .2s !important; }
 .ayna-play-intake .ayna-count-choices button[aria-pressed='true'] { background: var(--ay-butter) !important; box-shadow: var(--ay-shadow-lg) !important; transform: translateY(-5px) rotate(-2deg) !important; }
 .ayna-play-intake .ayna-count-choices strong { font-family: var(--ay-font-display) !important; font-weight: 800 !important; }
+.ayna-play-intake .ayna-count-choices button>span:last-child { white-space:nowrap; font-size:12px; }
 
 /* ---------- builders (products tried / avoid / tokens) ---------- */
 

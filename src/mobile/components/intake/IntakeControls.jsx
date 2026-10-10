@@ -220,7 +220,7 @@ export function DotScale({ options, value, onChange, label }) {
             className={`ip-dot${index >= i ? ' is-on' : ''}`} onClick={() => onChange(opt)} />
         ))}
       </div>
-      <div className="ip-meter-ends" aria-hidden="true"><span>{options[0]}</span><span>{options[options.length - 1]}</span></div>
+      <div className="ip-dots-ends" aria-hidden="true"><span>{options[0]}</span><span>{options[options.length - 1]}</span></div>
     </div>
   );
 }

@@ -88,9 +88,10 @@
 /* ===== Audit pass 2 ===== */
 
 /* Product photos: one clean tile, no halo blob behind cut-out packshots. */
-.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image { background: var(--ay-tile) !important; border-radius: var(--ay-radius-lg) !important; overflow: hidden !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image { background: transparent !important; border-bottom: 1px solid var(--ay-line); border-radius: 0 !important; overflow: hidden !important; }
 .ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image::before { display: none !important; }
-.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image img { padding: 12% !important; object-fit: contain !important; mix-blend-mode: multiply; -webkit-mask-image: none !important; mask-image: none !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image img { padding: 3% !important; object-fit: contain !important; mix-blend-mode: multiply; -webkit-mask-image: none !important; mask-image: none !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-photo-placeholder { background: var(--ay-peri) !important; border: 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { aspect-ratio: 1 !important; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) { border-bottom: 0 !important; padding-bottom: 4px !important; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { min-height: 0 !important; }
@@ -124,6 +125,9 @@
 .ayna-mobile .am-tabs::-webkit-scrollbar { display: none; }
 .ayna-mobile .am-tabs button { flex: none; min-height: 44px !important; padding: 0 !important; border: 0 !important; border-bottom: 3px solid transparent !important; border-radius: 0 !important; background: transparent !important; color: var(--ay-ink-soft) !important; font: 600 var(--ay-text-sm)/1 var(--ay-font-ui) !important; box-shadow: none !important; }
 .ayna-mobile .am-tabs button.is-active { color: var(--ay-ink) !important; border-bottom-color: var(--ay-ink) !important; }
+.ayna-mobile .am-list-heading button { min-height: 44px; padding: 8px 0 8px 12px; color: var(--ay-ink) !important; font: 700 13px/1 var(--ay-font-ui); }
+.ayna-mobile .am-playlist-detail-hero { padding-block: var(--ay-space-5) var(--ay-space-6); }
+.ayna-mobile .am-playlist-section-heading { margin-top: var(--ay-space-6); }
 .ayna-mobile:not([data-theme='dark']) .ayna-cabinet-stage { background: transparent !important; }
 /* Card rows line up: titles always reserve two lines, price sits a fixed step below. */
 .ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { min-height: 2.5em !important; margin-top: 4px !important; }
@@ -139,7 +143,7 @@
 .ayna-mobile > :is(.ayna-figma-discover, .ayna-cabinet-home, .am-screen, .ayna-saved-collection, .ayna-ecosystem-start) { animation: ay-screen-in var(--ay-dur-2) var(--ay-ease) both; }
 
 /* Tab bar: active pill takes the tab's colour; icon gives a small hop. */
-.ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-bottom-nav button.is-active { background: var(--ay-section) !important; }
+.ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-bottom-nav button.is-active { background: var(--ay-butter) !important; }
 .ayna-mobile .ayna-bottom-nav button.is-active svg { animation: ay-hop .42s var(--ay-pop); }
 @keyframes ay-hop { 40% { transform: translateY(-4px) scale(1.08); } 100% { transform: none; } }
 
@@ -158,7 +162,7 @@
 /* Shop: swipe-to-discover entry card */
 .ayna-mobile .ay-discover-cta {
   display: flex; align-items: center; gap: var(--ay-space-3); width: calc(100% - 40px); margin: 0 20px var(--ay-space-4); padding: 12px 12px 12px 14px;
-  border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-pink); color: var(--ay-ink); text-align: left; cursor: pointer;
+  border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-peri); color: var(--ay-ink); text-align: left; cursor: pointer;
   box-shadow: 2px 2px 0 var(--ay-ink); transition: transform var(--ay-dur-1) var(--ay-ease), box-shadow var(--ay-dur-1);
 }
 .ayna-mobile .ay-discover-cta:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ay-ink); }
@@ -390,17 +394,17 @@
 /* Landing: one actual app preview on the blue story canvas. */
 .ay-cover { padding: max(22px, env(safe-area-inset-top)) 24px max(22px, env(safe-area-inset-bottom)); }
 .ay-cover-art i:nth-child(1), .ay-cover-art i:nth-child(2) { width: 23px; height: 23px; border: 0; border-radius: 0; background: var(--ay-butter); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
-.ay-cover-art i:nth-child(1) { left: -8px; right: auto; top: 28%; }
-.ay-cover-art i:nth-child(2) { left: auto; right: -8px; top: 58%; width: 29px; height: 29px; animation-delay: 1.5s; }
+.ay-cover-art i:nth-child(1) { left: 14px; right: auto; top: 20%; }
+.ay-cover-art i:nth-child(2) { left: auto; right: 15px; top: 55%; width: 29px; height: 29px; animation-delay: 1.5s; }
 .ay-cover-top button { min-height: 44px; padding: 0 2px; border: 0; border-bottom: 1px solid currentColor; border-radius: 0; background: transparent; }
 .ay-cover-reel { min-height: 250px; padding: 30px 0 24px; }
 .ay-cover-widget { width: 100%; max-width: 350px; filter: drop-shadow(0 8px 0 rgba(29,26,43,.12)); }
-.ayna-mobile .ay-cover-widget .ay-reel { border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-paper); }
+.ayna-mobile .ay-cover-widget .ay-reel { border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--reel-bg); }
 .ay-cover-widget .ay-reel-track { border-width: 1px; }
-.ay-cover-widget .ay-reel-track:first-child { background: var(--ay-butter); color: var(--ay-ink); }
-.ay-cover-widget .ay-reel-track:first-child .ay-reel-cover { border-color: var(--ay-ink); }
+.ay-cover-widget .ay-reel-track:first-child { background: var(--ay-ink); color: var(--ay-paper); }
+.ay-cover-widget .ay-reel-track:first-child .ay-reel-cover { border-color: var(--ay-paper); }
 .ayna-mobile .ay-cover-copy h1 { font-size: calc(clamp(36px, 10vw, 48px) * var(--ayna-text-scale, 1)) !important; line-height: .98 !important; letter-spacing: -.045em !important; }
-.ayna-mobile .ay-cover-copy h1 em { background: none; }
+.ayna-mobile .ay-cover-copy h1 em { background: linear-gradient(transparent 64%, var(--ay-butter) 64%, var(--ay-butter) 91%, transparent 91%); }
 .ay-cover-copy p { margin-top: 14px; font-size: 13px; font-weight: 600; }
 .ay-cover-actions { margin-top: 28px; gap: 10px; }
 .ay-cover-actions > div button { font-size: 13px; }
