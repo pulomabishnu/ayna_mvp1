@@ -34,9 +34,10 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const contexts = isList ? [['doctor', 'Clinical'], ['scientific', 'Research'], ['community', 'Community']]
     .filter(([kind]) => getVerificationLinks(product, kind).some((link) => link?.url || link?.href))
     .map(([, label]) => label) : [];
-  const tone = ['pad', 'tampon', 'cup', 'disc', 'period-underwear'].includes(category) ? 'mint'
-    : ['telehealth', 'digital', 'therapy'].includes(category) || isService ? 'lilac'
-      : ['supplement', 'vitamin'].includes(category) ? 'lime' : 'pink';
+  const functions = product?.healthFunctions || [];
+  const tone = functions.some((item) => ['perimenopause', 'hormone-balance'].includes(item)) || ['telehealth', 'digital', 'therapy', 'tracker'].includes(category) || isService ? 'lilac'
+    : functions.includes('fertility') || ['diagnostics', 'supplement', 'vitamin'].includes(category) ? 'lime'
+      : ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'pelvic-floor'].includes(category) ? 'mint' : 'pink';
 
   return (
     <article className={`ayna-fresh-product-card ${isList ? 'is-list' : ''} tone-${tone}`}>

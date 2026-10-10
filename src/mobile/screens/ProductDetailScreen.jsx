@@ -516,12 +516,12 @@ export default function ProductDetailScreen({
         {safetyAlertText && <SafetyBanner text={safetyAlertText} />}
         {Array.isArray(warnings) && warnings.length > 0 && <div className="ayna-detail-warnings" role="note"><strong>Warnings</strong>{warnings.map((warning) => <p key={warning}>{warning}</p>)}</div>}
 
-        <div className="ayna-source-index" aria-label="Available product sources">
-          {[['doctor', 'Clinical', 'evidence'], ['scientific', 'Research', 'evidence'], ['community', 'Community', 'reviews']].map(([kind, label, section]) => <button type="button" key={kind} onClick={() => setActiveDetailSection(section)} aria-label={`${label}: ${sourceCounts[kind]} linked sources`}><span>{label}</span><strong>{sourceCounts[kind] || '—'}</strong><small>{sourceCounts[kind] ? 'sources' : 'not listed'}</small></button>)}
-        </div>
+        {sourceCountTotal > 0 ? <div className="ayna-source-index" aria-label="Available product sources">
+          {[['doctor', 'Clinical', 'evidence'], ['scientific', 'Research', 'evidence'], ['community', 'Community', 'reviews']].map(([kind, label, section]) => <button type="button" key={kind} onClick={() => setActiveDetailSection(section)} aria-label={`${label}: ${sourceCounts[kind]} linked sources`}><span>{label}</span><strong>{sourceCounts[kind] || '—'}</strong>{sourceCounts[kind] > 0 && <small>linked</small>}</button>)}
+        </div> : <div className="ayna-source-empty">No sources linked yet</div>}
 
         <div className="ayna-detail-sections" role="tablist" aria-label="Product information">
-          {['fit', 'evidence', 'ingredients', 'reviews'].map((section) => <button key={section} type="button" role="tab" aria-selected={activeDetailSection === section} onClick={() => setActiveDetailSection(section)}>{section[0].toUpperCase() + section.slice(1)}</button>)}
+          {[['fit', 'Fit'], ['evidence', 'Sources'], ['ingredients', 'Details'], ['reviews', 'Community']].map(([section, label]) => <button key={section} type="button" role="tab" aria-selected={activeDetailSection === section} onClick={() => setActiveDetailSection(section)}>{label}</button>)}
         </div>
 
         {activeDetailSection === 'reviews' && onCommunityAction && <div style={{ display: 'flex', gap: 8, padding: '18px 22px 0', overflowX: 'auto' }}>
@@ -687,9 +687,6 @@ export default function ProductDetailScreen({
             {activeDetailSection === 'fit' && <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />}
           </div>
 
-        <div style={{ padding: '18px 22px 0' }}>
-          <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55 }}>Research + review summary. Not medical advice.</div>
-        </div>
 
         {reads.length > 0 && (
           <div style={{ padding: '22px 22px 34px' }}>
