@@ -4,7 +4,7 @@ import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profileCompleteness.js';
 import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, LevelMeter, TrackLine, PriceStacks, DotScale, BrandSpectrum, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
-import { INTAKE_SCENES } from '../components/intake/intakeScenes.js';
+import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/intake/intakeScenes.js';
 import '../intake-play.css';
 import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
 import { normalizeAge, normalizeLifeStages, selectLifeStage } from '../../utils/intakeSelections.js';
@@ -1254,7 +1254,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     return <MinorGateScreen onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBack} />;
   }
 
-  const scene = INTAKE_SCENES[step.id] || { tone: 'peri', art: null };
+  const scene = { tone: SECTION_TONES[step.section] || 'peri', art: INTAKE_SCENES[step.id]?.art || null, label: SECTION_LABELS[step.section] };
 
   return (
     <div className={`ayna-play-intake ip-tone--${scene.tone}`} data-section={step.section} data-step={step.id} data-direction={direction}
@@ -1275,7 +1275,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
       <div className="ip-body">
         <div className="ip-question" key={`q-${step.id}`}>
-          {scene.label && <span className="ip-label">{scene.label}</span>}
+          {scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
           <h1 className="ip-title">{step.title}</h1>
           {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
           {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}

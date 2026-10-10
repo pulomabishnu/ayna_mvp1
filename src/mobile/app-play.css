@@ -284,13 +284,24 @@
 .ay-cover-art { position: absolute; inset: 0; pointer-events: none; }
 .ay-cover-art i { position: absolute; display: block; }
 .ay-cover-art i:nth-child(1) { width: 200px; height: 200px; right: -80px; top: 26%; border-radius: 50%; background: var(--ay-peri-deep); }
-.ay-cover-art i:nth-child(2) { width: 44px; height: 44px; right: 22px; top: 72px; background: var(--ay-butter); border: 0; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); animation: ip-twinkle 3.6s ease-in-out infinite; }
+.ay-cover-art i:nth-child(2) { width: 30px; height: 30px; left: 26px; top: 84px; background: var(--ay-butter); border: 0; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); animation: ip-twinkle 3.6s ease-in-out infinite; }
 .ay-cover-art i:nth-child(3) { width: 120px; height: 120px; left: -50px; bottom: 22%; border-radius: 30px; background: var(--ay-pink); rotate: 18deg; opacity: .8; }
 .ay-cover-top { position: relative; display: flex; align-items: center; justify-content: space-between; }
 .ay-cover-mark { font: 800 30px/1 var(--ay-font-display); letter-spacing: -.07em; }
 .ay-cover-top button { min-height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); cursor: pointer; }
 .ay-cover-reel { position: relative; flex: 1 1 auto; min-height: 250px; display: grid; place-items: center; padding: 22px 0 18px; }
-.ay-cover-card { width: 100%; max-width: 360px; padding: 6px 4px; border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 6px 6px 0 var(--ay-ink); rotate: -1.5deg; }
+.ay-cover-stack { position: relative; width: 100%; max-width: 360px; }
+.ay-cover-behind { position: absolute; inset: 0; border: 2px solid var(--ay-ink); border-radius: 26px; }
+.ay-cover-behind.is-pink { background: var(--ay-pink); rotate: 5deg; translate: 8px 6px; animation: ay-fan-a 6s ease-in-out infinite; }
+.ay-cover-behind.is-butter { background: var(--ay-butter); rotate: -6deg; translate: -6px 10px; animation: ay-fan-b 6s ease-in-out infinite; }
+@keyframes ay-fan-a { 50% { rotate: 7deg; } }
+@keyframes ay-fan-b { 50% { rotate: -8deg; } }
+.ay-cover-badge { position: absolute; z-index: 2; right: -14px; top: -38px; width: 96px; height: 96px; animation: ip-spin 18s linear infinite; }
+.ay-cover-badge circle { fill: var(--ay-ink); }
+.ay-cover-badge text { font: 800 10px var(--ay-font-display); letter-spacing: .06em; fill: var(--ay-paper); }
+.ay-cover-badge-star { fill: var(--ay-butter); }
+.ay-cover-card { position: relative; width: 100%; max-width: 360px; padding: 6px 4px; border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 6px 6px 0 var(--ay-ink); rotate: -1.5deg; }
+@media (prefers-reduced-motion: reduce) { .ay-cover-badge, .ay-cover-behind { animation: none; } }
 .ayna-mobile .ay-cover-card .ayna-feature-montage { background: transparent !important; }
 .ay-cover-copy { position: relative; }
 .ayna-mobile .ay-cover-copy h1 { margin: 0; color: var(--ay-ink) !important; font: 800 calc(clamp(40px, 11.4vw, 54px) * var(--ayna-text-scale, 1))/.92 var(--ay-font-display) !important; letter-spacing: -.055em !important; }

@@ -7,7 +7,7 @@ import { loadMonthlyCheckinStatus, saveMonthlyCheckin, monthKey } from '../../ut
 // Uses the same play system as the intake (intake-play.css): one tone per
 // step, calm paper for medications and safety.
 
-const CHECKIN_TONES = { lifeStage: 'peri', symptoms: 'pink', flow: 'peri', pain: 'butter', uti: 'mint', recs: 'butter', medications: 'calm', safety: 'calm', notes: 'pink' };
+const CHECKIN_TONES = { lifeStage: 'peri', symptoms: 'pink', flow: 'peri', pain: 'butter', uti: 'mint', recs: 'butter', medications: 'mint', safety: 'mint', notes: 'pink' };
 
 // A curated, quick-to-answer subset of intake's own taxonomy (not every one
 // of its ~90 items — this is a monthly maintenance ping, not a re-run of

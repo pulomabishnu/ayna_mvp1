@@ -77,7 +77,11 @@
   font: 800 calc(40px * var(--ayna-text-scale, 1))/.95 var(--ay-font-display);
   letter-spacing: -.045em; color: var(--ay-ink); text-wrap: balance;
 }
-.ip-tone--calm .ip-title { font-size: calc(33px * var(--ayna-text-scale, 1)); max-width: 16ch; }
+.ayna-play-intake[data-section='safety'] .ip-title { font-size: calc(34px * var(--ayna-text-scale, 1)); max-width: 16ch; }
+.ip-label--safety::before { background: var(--ay-ink); }
+.ip-label--support::before { background: var(--ay-pink-deep); }
+.ip-label--history::before { background: var(--ay-butter-deep); }
+.ip-label--trust::before { background: var(--ay-pink-deep); }
 .ip-subtitle { margin: 9px 0 0; font: 500 13.5px/1.45 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ip-flag { display: inline-block; margin-top: 10px; padding: 5px 10px; border-radius: 99px; background: var(--ay-paper); border: 1.5px dashed var(--ay-alert); color: var(--ay-alert); font: 600 11.5px/1 var(--ay-font-ui); }
 .ip-answer { margin-top: 22px; }
@@ -344,10 +348,10 @@
   border: 2px solid var(--ay-ink); border-radius: 18px; background: var(--ay-paper); touch-action: none;
   transition: box-shadow .2s, transform .2s var(--ay-ease);
 }
-.ip-podium-row:first-child { min-height: 86px; background: var(--ay-pink); box-shadow: var(--ay-shadow-lg); }
+.ip-podium-row:first-child { min-height: 86px; background: var(--ip-select); box-shadow: var(--ay-shadow-lg); }
 .ip-podium-row.is-dragging { z-index: 5; box-shadow: var(--ay-shadow-lg); transition: none; }
 .ip-podium-rank { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); font: 800 20px/1 var(--ay-font-display); }
-.ip-podium-row:first-child .ip-podium-rank { width: 48px; height: 48px; background: var(--ay-butter); font-size: 24px; }
+.ip-podium-row:first-child .ip-podium-rank { width: 48px; height: 48px; background: var(--ay-paper); font-size: 24px; }
 .ip-podium-label { flex: 1; font: 700 14px/1.25 var(--ay-font-ui); }
 .ip-podium-up { width: 40px; height: 40px; flex: none; border: 1.5px solid var(--ay-ink); border-radius: 50%; background: transparent; font: 700 16px/1 var(--ay-font-ui); cursor: pointer; }
 .ip-podium-grip { width: 34px; height: 44px; flex: none; display: grid; place-items: center; cursor: grab; touch-action: none; }
