@@ -86,6 +86,13 @@
 .ayna-mobile .ayna-fresh-profile-stats>div:nth-child(3) { background:var(--ayna-reference-yellow)!important; }
 .ayna-mobile .ayna-fresh-profile-menu>div:nth-child(2)>div:first-child,.ayna-mobile .ayna-fresh-profile-menu>div:nth-child(3)>div:first-child { background:var(--ayna-reference-blue)!important; }
 .ayna-mobile .ayna-fresh-profile-menu>div:nth-child(4)>div:first-child { background:var(--ayna-reference-yellow)!important; }
+.ayna-mobile .ayna-saved-empty { min-height:0; padding:22px 18px 0; }
+.ayna-mobile .ayna-saved-empty-stage { position:relative; display:grid; place-items:center; height:240px; margin:0 0 38px; padding:0; overflow:hidden; background:var(--ayna-reference-blue)!important; border-radius:64px 12px 64px 12px; color:var(--ayna-reference-ink); }
+.ayna-mobile .ayna-saved-empty-stage::after { display:none; }
+.ayna-mobile .ayna-saved-empty-stage svg { position:relative; z-index:1; width:130px; height:150px; transform:rotate(-9deg); animation:ayna-story-orbit 3s ease-in-out infinite alternate; }
+.ayna-mobile .ayna-saved-empty-stage span { position:absolute; right:15%; top:23%; display:block; width:72px; height:72px; border:0; border-radius:50%; background:var(--ayna-reference-yellow); }
+.ayna-mobile .ayna-saved-empty h2 { color:var(--ayna-reference-ink); }
+.ayna-mobile .ayna-saved-empty>button { background:var(--ayna-reference-ink); color:#fff; border-radius:999px; }
 .ayna-mobile .ayna-fresh-detail-image,.ayna-mobile .ayna-fresh-detail-image>div { background:var(--ayna-reference-blue)!important; border-radius:0!important; }
 .ayna-mobile .ayna-fresh-detail-title { background:var(--ayna-reference-paper)!important; box-shadow:none!important; border-radius:0!important; }
 .ayna-mobile .ayna-fresh-detail-title .ayna-figma-guest-match { position:static; display:inline-flex; min-height:44px; margin:11px 0 0; padding:8px 0; border:0; border-bottom:2px solid var(--ayna-reference-ink); border-radius:0; background:transparent; color:var(--ayna-reference-ink); font:700 13px/1 var(--ayna-font-ui); }

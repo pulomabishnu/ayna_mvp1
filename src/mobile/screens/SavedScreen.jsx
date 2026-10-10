@@ -32,6 +32,6 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
         <LegalFooter />
       </div>
     </>}
-    {items.length === 0 && <div className="ayna-saved-empty"><div className="ayna-saved-empty-stage" aria-hidden="true"><span /><span /><span /></div><h2>Nothing saved yet.</h2><button type="button" onClick={onBrowse}>Shop</button></div>}
+    {items.length === 0 && <div className="ayna-saved-empty"><div className="ayna-saved-empty-stage" aria-hidden="true"><svg viewBox="0 0 160 180" fill="none"><path d="M29 20h102v143l-51-33-51 33V20Z" stroke="currentColor" strokeWidth="5" strokeLinejoin="round"/><path d="M61 75h38M80 56v38" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/></svg><span /></div><h2>Nothing saved yet.</h2><button type="button" onClick={onBrowse}>Shop</button></div>}
   </div>;
 }
