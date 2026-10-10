@@ -469,7 +469,7 @@ export default function BrowseScreen({
       />
 
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
-        <h1>Shop</h1>
+        <h1>{mode === 'products' ? 'Shop' : 'Reads'}</h1>
         <SearchBar placeholder={mode === 'products' ? 'Search products or brands' : 'Search reads'} value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
       </div>
 
