@@ -314,7 +314,7 @@ export default function ProductDetailScreen({
   }
 
   const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers);
-  const matchPercent = quizAnswers && matchDetails.matchStatus === 'scored' && matchDetails.percent >= 60 ? matchDetails.percent : null;
+  const matchPercent = quizAnswers && matchDetails.matchStatus === 'scored' && Number.isFinite(matchDetails.percent) ? matchDetails.percent : null;
   const openWhyMatch = () => setShowWhyMatch(true);
 
   const {
