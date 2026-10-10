@@ -36,6 +36,7 @@ export default function RotatingProducts() {
       {feature.key === 'ask' && <div className="ayna-feature-ask"><span>What fits my routine?</span><strong>ayna</strong><i /></div>}
       {feature.key === 'shop' && <div className="ayna-feature-shop"><span><ProductImage src={product?.image || product?.imageUrl || product?.images?.[0]} alt={product?.name || ''} /></span><span><ProductImage src={second?.image || second?.imageUrl || second?.images?.[0]} alt={second?.name || ''} /></span></div>}
     </div>
+    <button className="ayna-feature-next" type="button" aria-label="Show next app feature" onClick={() => setIndex((value) => (value + 1) % FEATURES.length)} />
     <div className="ayna-feature-foot"><strong>{feature.title}</strong><div aria-hidden="true">{FEATURES.map((item, step) => <i key={item.key} className={step === index ? 'is-active' : ''} />)}</div></div>
     {!reducedMotion && <button className="ayna-theatre-pause" type="button" aria-label={paused ? 'Resume feature montage' : 'Pause feature montage'} onClick={() => setPaused((value) => !value)}>{paused ? '▶' : 'Ⅱ'}</button>}
   </div>;

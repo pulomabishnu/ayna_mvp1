@@ -297,10 +297,6 @@
 .ayna-mobile:not([data-theme='dark']) .ayna-fresh-intake-header>div:last-child>div { border-radius:99px!important; background:#7E8DE7!important; transition:width .3s ease; }
 .ayna-mobile:not([data-theme='dark']) .ayna-fresh-intake-body { background:#F8F4E9!important; scroll-behavior:smooth; overscroll-behavior:contain; }
 .ayna-mobile .ayna-fresh-intake-body>.ayna-intake-scene { position:relative; height:152px; overflow:hidden; margin:6px 18px 0; padding:0!important; isolation:isolate; animation:ayna-intake-scene-in .36s cubic-bezier(.2,.8,.2,1) both; }
-.ayna-intake-scene i { position:absolute; display:block; width:142px; height:142px; border-radius:42% 58% 55% 45%; background:var(--scene-main,#7E8DE7); transform:rotate(-17deg); }
-.ayna-intake-scene i:first-child { left:-28px; top:19px; }
-.ayna-intake-scene i:nth-child(2) { left:83px; top:-34px; width:126px; height:126px; border-radius:50%; background:var(--scene-pop,#F4EA54); transform:rotate(24deg); }
-.ayna-intake-scene i:nth-child(3) { right:13px; bottom:2px; width:76px; height:76px; border-radius:50%; background:var(--scene-support,#F2B6CF); transform:rotate(22deg); }
 .ayna-intake-scene b { position:absolute; left:23px; top:47px; font:800 68px/.9 'Poppins',sans-serif; letter-spacing:-.09em; color:#25214A; transform:rotate(-7deg); }
 .ayna-mobile .ayna-fresh-intake-body>div:nth-child(2) { position:relative; padding-top:15px!important; }
 .ayna-mobile .ayna-fresh-intake-body>div:nth-child(3) { padding-top:22px!important; }
@@ -310,64 +306,43 @@
 .ayna-mobile:not([data-theme='dark']) .ayna-fresh-intake-footer button:not(:disabled) { background:#F4EA54!important; color:#25214A!important; }
 .ayna-mobile:not([data-theme='dark']) .ayna-fresh-intake-footer button:disabled { background:#e5e0d9!important; color:#696375!important; }
 .ayna-mobile:not([data-theme='dark']) .ayna-intake-age-selector { background:#7E8DE7!important; }
-.ayna-fresh-intake[data-step='age'] .ayna-intake-scene { --scene-main:#7E8DE7; --scene-pop:#F4EA54; }
-.ayna-fresh-intake[data-step='lifeStage'] .ayna-intake-scene { --scene-main:#F2B6CF; --scene-pop:#7E8DE7; }
-.ayna-fresh-intake[data-step='lifeStage'] .ayna-intake-scene i:first-child { border-radius:50% 50% 12% 12%; transform:rotate(0); }
-.ayna-fresh-intake[data-step='zip'] .ayna-intake-scene { --scene-main:#F4EA54; --scene-pop:#7E8DE7; }
-.ayna-fresh-intake[data-step='zip'] .ayna-intake-scene i:first-child { border-radius:50% 50% 50% 0; transform:rotate(-45deg); }
-.ayna-fresh-intake[data-step='support'] .ayna-intake-scene { --scene-main:#7E8DE7; --scene-pop:#F2B6CF; }
-.ayna-fresh-intake[data-step='support'] .ayna-intake-scene i { border-radius:50%; }
-.ayna-fresh-intake[data-step='periodFlow'] .ayna-intake-scene { --scene-main:#F2B6CF; --scene-pop:#F4EA54; }
-.ayna-fresh-intake[data-step='periodFlow'] .ayna-intake-scene i:first-child { border-radius:10% 80% 15% 70%; }
-.ayna-fresh-intake[data-step='periodPain'] .ayna-intake-scene { --scene-main:#F4EA54; --scene-pop:#F2B6CF; }
-.ayna-fresh-intake[data-step='periodPain'] .ayna-intake-scene i:nth-child(2) { clip-path:polygon(50% 0,100% 90%,0 90%); border-radius:0; }
-.ayna-fresh-intake[data-step='utiFrequency'] .ayna-intake-scene { --scene-main:#7E8DE7; --scene-pop:#F4EA54; }
-.ayna-fresh-intake[data-step='utiFrequency'] .ayna-intake-scene i:first-child { border-radius:0 65% 60% 65%; }
-.ayna-fresh-intake[data-step='postpartumTiming'] .ayna-intake-scene { --scene-main:#F2B6CF; --scene-pop:#7E8DE7; }
-.ayna-fresh-intake[data-step='postpartumTiming'] .ayna-intake-scene i:nth-child(2) { border-radius:50% 50% 0 0; }
-.ayna-fresh-intake[data-step='pregnancyTrimester'] .ayna-intake-scene { --scene-main:#F4EA54; --scene-pop:#7E8DE7; }
-.ayna-fresh-intake[data-step='pregnancyTrimester'] .ayna-intake-scene i:first-child { border-radius:50% 50% 0 0; }
-.ayna-fresh-intake[data-step='conditions'] .ayna-intake-scene { --scene-main:#7E8DE7; --scene-pop:#F2B6CF; }
-.ayna-fresh-intake[data-step='conditions'] .ayna-intake-scene i:nth-child(2) { border-radius:20%; }
-.ayna-fresh-intake[data-step='allergies'] .ayna-intake-scene { --scene-main:#F2B6CF; --scene-pop:#F4EA54; }
-.ayna-fresh-intake[data-step='allergies'] .ayna-intake-scene i:first-child { clip-path:polygon(50% 0,100% 20%,85% 80%,50% 100%,15% 80%,0 20%); border-radius:0; }
-.ayna-fresh-intake[data-step='medications'] .ayna-intake-scene { --scene-main:#F4EA54; --scene-pop:#7E8DE7; }
-.ayna-fresh-intake[data-step='medications'] .ayna-intake-scene i:first-child { border-radius:70px 70px 20px 20px; }
-.ayna-fresh-intake[data-step='products'] .ayna-intake-scene { --scene-main:#7E8DE7; --scene-pop:#F4EA54; }
-.ayna-fresh-intake[data-step='products'] .ayna-intake-scene i:first-child { border-radius:16px; transform:rotate(-11deg); }
-.ayna-fresh-intake[data-step='avoidRepeat'] .ayna-intake-scene { --scene-main:#F2B6CF; --scene-pop:#7E8DE7; }
-.ayna-fresh-intake[data-step='avoidRepeat'] .ayna-intake-scene i:first-child { border-radius:22px; transform:rotate(13deg); }
-.ayna-fresh-intake[data-step='safety'] .ayna-intake-scene { --scene-main:#F4EA54; --scene-pop:#F2B6CF; }
-.ayna-fresh-intake[data-step='safety'] .ayna-intake-scene i:first-child { border-radius:50%; border:9px solid #25214A; box-sizing:border-box; }
-.ayna-fresh-intake[data-step='formats'] .ayna-intake-scene { --scene-main:#7E8DE7; --scene-pop:#F4EA54; }
-.ayna-fresh-intake[data-step='formats'] .ayna-intake-scene i:nth-child(2) { border-radius:16px; }
-.ayna-fresh-intake[data-step='recommendationCount'] .ayna-intake-scene { --scene-main:#F4EA54; --scene-pop:#F2B6CF; }
-.ayna-fresh-intake[data-step='recommendationCount'] .ayna-intake-scene i { border-radius:14px; }
-.ayna-fresh-intake[data-step='priceRange'] .ayna-intake-scene { --scene-main:#F2B6CF; --scene-pop:#F4EA54; }
-.ayna-fresh-intake[data-step='priceRange'] .ayna-intake-scene i:first-child { border-radius:50% 50% 8% 8%; }
-.ayna-fresh-intake[data-step='brandOpenness'] .ayna-intake-scene { --scene-main:#7E8DE7; --scene-pop:#F2B6CF; }
-.ayna-fresh-intake[data-step='brandOpenness'] .ayna-intake-scene i:first-child { border-radius:15px 70px 70px 15px; }
-.ayna-fresh-intake[data-step='trustedBrands'] .ayna-intake-scene { --scene-main:#F4EA54; --scene-pop:#7E8DE7; }
-.ayna-fresh-intake[data-step='trustedBrands'] .ayna-intake-scene i:first-child { border-radius:8px; }
-.ayna-fresh-intake[data-step='avoidIngredients'] .ayna-intake-scene { --scene-main:#F2B6CF; --scene-pop:#F4EA54; }
-.ayna-fresh-intake[data-step='avoidIngredients'] .ayna-intake-scene i:nth-child(2) { clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); border-radius:0; }
-.ayna-fresh-intake[data-step='fsaHsa'] .ayna-intake-scene { --scene-main:#7E8DE7; --scene-pop:#F4EA54; }
-.ayna-fresh-intake[data-step='fsaHsa'] .ayna-intake-scene i:first-child { border-radius:50% 50% 10% 10%; }
-.ayna-fresh-intake[data-step='trust'] .ayna-intake-scene { --scene-main:#F4EA54; --scene-pop:#7E8DE7; }
-.ayna-fresh-intake[data-step='trust'] .ayna-intake-scene i:first-child { clip-path:polygon(50% 0,62% 35%,100% 35%,70% 58%,82% 100%,50% 75%,18% 100%,30% 58%,0 35%,38% 35%); border-radius:0; }
-.ayna-fresh-intake[data-step='anythingElse'] .ayna-intake-scene { --scene-main:#F2B6CF; --scene-pop:#F4EA54; }
-.ayna-fresh-intake[data-step='anythingElse'] .ayna-intake-scene i:first-child { border-radius:8px; transform:rotate(-8deg); }
+.ayna-fresh-intake[data-step='age'] .ayna-intake-scene { --scene-main:#7E8DE7; }
+.ayna-fresh-intake[data-step='lifeStage'] .ayna-intake-scene { --scene-main:#F2B6CF; }
+.ayna-fresh-intake[data-step='zip'] .ayna-intake-scene { --scene-main:#F4EA54; }
+.ayna-fresh-intake[data-step='support'] .ayna-intake-scene { --scene-main:#7E8DE7; }
+.ayna-fresh-intake[data-step='periodFlow'] .ayna-intake-scene { --scene-main:#F2B6CF; }
+.ayna-fresh-intake[data-step='periodPain'] .ayna-intake-scene { --scene-main:#F4EA54; }
+.ayna-fresh-intake[data-step='utiFrequency'] .ayna-intake-scene { --scene-main:#7E8DE7; }
+.ayna-fresh-intake[data-step='postpartumTiming'] .ayna-intake-scene { --scene-main:#F2B6CF; }
+.ayna-fresh-intake[data-step='pregnancyTrimester'] .ayna-intake-scene { --scene-main:#F4EA54; }
+.ayna-fresh-intake[data-step='conditions'] .ayna-intake-scene { --scene-main:#7E8DE7; }
+.ayna-fresh-intake[data-step='allergies'] .ayna-intake-scene { --scene-main:#F2B6CF; }
+.ayna-fresh-intake[data-step='medications'] .ayna-intake-scene { --scene-main:#F4EA54; }
+.ayna-fresh-intake[data-step='products'] .ayna-intake-scene { --scene-main:#7E8DE7; }
+.ayna-fresh-intake[data-step='avoidRepeat'] .ayna-intake-scene { --scene-main:#F2B6CF; }
+.ayna-fresh-intake[data-step='safety'] .ayna-intake-scene { --scene-main:#F4EA54; }
+.ayna-fresh-intake[data-step='formats'] .ayna-intake-scene { --scene-main:#7E8DE7; }
+.ayna-fresh-intake[data-step='recommendationCount'] .ayna-intake-scene { --scene-main:#F4EA54; }
+.ayna-fresh-intake[data-step='priceRange'] .ayna-intake-scene { --scene-main:#F2B6CF; }
+.ayna-fresh-intake[data-step='brandOpenness'] .ayna-intake-scene { --scene-main:#7E8DE7; }
+.ayna-fresh-intake[data-step='trustedBrands'] .ayna-intake-scene { --scene-main:#F4EA54; }
+.ayna-fresh-intake[data-step='avoidIngredients'] .ayna-intake-scene { --scene-main:#F2B6CF; }
+.ayna-fresh-intake[data-step='fsaHsa'] .ayna-intake-scene { --scene-main:#7E8DE7; }
+.ayna-fresh-intake[data-step='trust'] .ayna-intake-scene { --scene-main:#F4EA54; }
+.ayna-fresh-intake[data-step='anythingElse'] .ayna-intake-scene { --scene-main:#F2B6CF; }
 .ayna-mobile .ayna-fresh-intake-body>.ayna-intake-scene { display:flex; align-items:center; justify-content:space-between; height:136px; margin:6px 18px 0; padding:14px 8px 14px 20px!important; box-sizing:border-box; background:var(--scene-main,#7E8DE7); border-radius:4px 54px 4px 4px; }
+.ayna-mobile .ayna-fresh-intake[data-step='age'] .ayna-intake-scene { background:transparent; border-bottom:2px solid #7E8DE7; border-radius:0; }
+.ayna-mobile .ayna-fresh-intake[data-step='safety'] .ayna-intake-scene,.ayna-mobile .ayna-fresh-intake[data-step='trust'] .ayna-intake-scene,.ayna-mobile .ayna-fresh-intake[data-step='medications'] .ayna-intake-scene { height:100px; }
 .ayna-intake-scene b { position:relative; left:auto; top:auto; flex:none; font:800 66px/.9 'Poppins',sans-serif; transform:none; }
 .ayna-intake-scene svg { width:min(58%,205px); height:126px; color:#25214A; stroke-width:4; transform:rotate(-5deg); }
 .ayna-fresh-intake[data-step='age'] .ayna-intake-scene,.ayna-fresh-intake[data-step='conditions'] .ayna-intake-scene,.ayna-fresh-intake[data-step='products'] .ayna-intake-scene,.ayna-fresh-intake[data-step='fsaHsa'] .ayna-intake-scene { border-radius:4px 4px 54px 4px; }
 .ayna-fresh-intake[data-step='lifeStage'] .ayna-intake-scene,.ayna-fresh-intake[data-step='periodPain'] .ayna-intake-scene,.ayna-fresh-intake[data-step='allergies'] .ayna-intake-scene,.ayna-fresh-intake[data-step='trust'] .ayna-intake-scene { border-radius:54px 4px 4px 4px; }
 .ayna-fresh-intake[data-step='zip'] .ayna-intake-scene,.ayna-fresh-intake[data-step='medications'] .ayna-intake-scene,.ayna-fresh-intake[data-step='recommendationCount'] .ayna-intake-scene,.ayna-fresh-intake[data-step='anythingElse'] .ayna-intake-scene { border-radius:4px 4px 4px 54px; }
 @keyframes ayna-intake-scene-in { from { opacity:0; transform:translateY(18px) scale(.94); } to { opacity:1; transform:translateY(0) scale(1); } }
-@media (max-width:360px) { .ayna-mobile .ayna-fresh-intake-body>.ayna-intake-scene { height:126px; } .ayna-intake-scene b { top:36px; font-size:58px; } }
+@media (max-width:360px) { .ayna-mobile .ayna-fresh-intake-body>.ayna-intake-scene { height:126px; } .ayna-intake-scene b { font-size:58px; } }
 @media (prefers-reduced-motion:reduce) { .ayna-mobile .ayna-fresh-intake-body>.ayna-intake-scene { animation:none; } .ayna-mobile .ayna-fresh-intake-header>div:last-child>div { transition:none; } }
 
-/* Warm print-like neutrals and restrained ink/rust rules unite every surface. */
+/* Warm ivory and plum keep the bright surfaces readable. */
 .ayna-mobile:not([data-theme='dark']) :is(.ayna-figma-header,.ayna-cabinet-cover,.ayna-cabinet-cover .ayna-cover-top,.ayna-cabinet-cover .ayna-cover-actions,.ayna-cabinet-home,.ayna-figma-discover .ayna-shop-heading,.ayna-fresh-product-detail,.ayna-fresh-article,.ayna-fresh-saved,.ayna-fresh-profile-hub,.ayna-fresh-auth,.ayna-fresh-intake,.am-screen) { background:#F8F4E9!important; }
 .ayna-mobile:not([data-theme='dark']) .ayna-cabinet-stage { background:#F8F4E9!important; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) { padding-bottom:12px; border-bottom:1px solid var(--ayna-border)!important; }
@@ -651,9 +626,11 @@
 .ayna-feature-foot i { width:15px; height:3px; background:#25214A; opacity:.3; }
 .ayna-feature-foot i.is-active { opacity:1; }
 .ayna-feature-stage { position:absolute; inset:34px 14px 38px; display:grid; place-items:center; animation:ayna-feature-flip .42s cubic-bezier(.2,.8,.2,1) both; }
+.ayna-feature-next { position:absolute; inset:34px 0 49px; z-index:2; width:100%; border:0; background:transparent; cursor:pointer; }
+.ayna-feature-next:focus-visible { outline:3px solid #25214A; outline-offset:-4px; }
 .ayna-feature-match { position:relative; width:66%; height:100%; }
 .ayna-feature-match img { width:100%; height:100%; object-fit:contain!important; mix-blend-mode:multiply; }
-.ayna-feature-match span { position:absolute; right:-43%; top:18%; padding:8px 11px; background:#F4EA54; color:#25214A; font:800 12px var(--ayna-font-ui); transform:rotate(8deg); }
+.ayna-feature-match span { position:absolute; right:-12%; top:18%; padding:8px 11px; background:#F4EA54; color:#25214A; font:800 12px var(--ayna-font-ui); transform:rotate(8deg); }
 .ayna-feature-cabinet { position:relative; width:min(68%,220px); aspect-ratio:1; border:2px solid #25214A; border-radius:50%; }
 .ayna-feature-cabinet i { position:absolute; width:34%; height:34%; border-radius:50%; background:#7E8DE7; border:2px solid #25214A; }
 .ayna-feature-cabinet i:first-child { left:-6%; top:28%; }.ayna-feature-cabinet i:nth-child(2) { right:1%; top:-8%; background:#F2B6CF; }.ayna-feature-cabinet i:nth-child(3) { right:0; bottom:0; background:#F8F4E9; }
@@ -678,7 +655,7 @@
 .ayna-story-progress>span { flex:1; height:3px; background:rgba(37,33,74,.22); overflow:hidden; border-radius:99px; }
 .ayna-story-progress i { display:block; height:100%; background:#25214A; transition:width 80ms linear; }
 .ayna-story-top { display:flex; align-items:center; justify-content:space-between; padding:7px 16px; font:700 11px/1 var(--ayna-font-ui); letter-spacing:.06em; }
-.ayna-story-top button { display:grid; place-items:center; width:44px; height:44px; padding:0; border:0; background:transparent; color:#25214A; font:700 24px var(--ayna-font-ui); cursor:pointer; }
+.ayna-mobile .ayna-story-top button { display:grid; place-items:center; width:44px; height:44px; padding:0; border:0!important; border-radius:0!important; background:transparent!important; color:#25214A; font:700 24px var(--ayna-font-ui); cursor:pointer; }
 .ayna-story-stage { position:relative; display:flex; flex:1; min-height:0; flex-direction:column; padding:20px 25px 28px; overflow:hidden; animation:ayna-story-enter .42s cubic-bezier(.2,.8,.2,1) both; }
 .ayna-story-kicker { font:700 11px/1.2 var(--ayna-font-ui); letter-spacing:.14em; }
 .ayna-mobile .ayna-story-stage h1 { position:relative; z-index:2; margin:18px 0 0; max-width:340px; color:#25214A!important; font:800 clamp(42px,12vw,65px)/.94 var(--ayna-font-display)!important; letter-spacing:-.075em!important; }

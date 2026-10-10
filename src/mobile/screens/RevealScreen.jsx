@@ -11,7 +11,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
   const touchX = useRef(null);
   const swipeTime = useRef(0);
   const products = myProducts.slice(0, 4);
-  const slides = products.length ? ['intro', 'focus', 'collection', 'finish'] : ['intro', 'empty'];
+  const slides = products.length ? ['intro', 'focus', 'collection', 'finish'] : ['empty'];
   const active = slides[index] || slides[0];
   const first = products[0];
   const next = () => { progressRef.current = 0; setIndex((current) => Math.min(slides.length - 1, current + 1)); setProgress(0); };
