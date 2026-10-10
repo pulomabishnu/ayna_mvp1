@@ -143,12 +143,11 @@
 .ayna-mobile .ayna-bottom-nav button.is-active svg { animation: ay-hop .42s var(--ay-pop); }
 @keyframes ay-hop { 40% { transform: translateY(-4px) scale(1.08); } 100% { transform: none; } }
 
-/* Page titles get a marker swash in the tab colour. */
+/* Page titles share one quiet weight and baseline across the main tabs. */
 .ayna-mobile :is(.ayna-figma-discover .ayna-shop-heading h1, .ayna-cabinet-stage h1, .am-top .am-title h1, .ayna-saved-header h1) {
-  display: inline-block; background: linear-gradient(transparent 55%, var(--ay-section) 55%, var(--ay-section) 90%, transparent 90%) no-repeat 0 0 / 100% 100%;
-  animation: ay-swash .6s var(--ay-ease) .1s both; padding-right: 2px;
+  display: inline-block; background: none; font-family: var(--ay-font-ui) !important;
+  font-weight: 700 !important; line-height: 1.12 !important; letter-spacing: -.045em !important;
 }
-@keyframes ay-swash { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
 
 /* Product grids arrive in a short stagger. */
 .ayna-mobile .ayna-editorial-product-grid > * { animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; }
@@ -160,7 +159,7 @@
 .ayna-mobile .ay-discover-cta {
   display: flex; align-items: center; gap: var(--ay-space-3); width: calc(100% - 40px); margin: 0 20px var(--ay-space-4); padding: 12px 12px 12px 14px;
   border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-pink); color: var(--ay-ink); text-align: left; cursor: pointer;
-  box-shadow: 3px 3px 0 var(--ay-ink); transition: transform var(--ay-dur-1) var(--ay-ease), box-shadow var(--ay-dur-1);
+  box-shadow: 2px 2px 0 var(--ay-ink); transition: transform var(--ay-dur-1) var(--ay-ease), box-shadow var(--ay-dur-1);
 }
 .ayna-mobile .ay-discover-cta:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ay-ink); }
 .ay-discover-art { position: relative; display: block; width: 44px; height: 44px; flex: none; }
@@ -276,7 +275,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ay-deck-card { transition: none; }
-  .ayna-mobile :is(.ayna-figma-discover .ayna-shop-heading h1, .ayna-cabinet-stage h1, .am-top .am-title h1, .ayna-saved-header h1) { animation: none; }
+  .ayna-mobile :is(.ayna-figma-discover .ayna-shop-heading h1, .ayna-cabinet-stage h1, .am-top .am-title h1, .ayna-saved-header h1) { transition: none; }
 }
 
 /* ===== Welcome cover ===== */
@@ -392,10 +391,15 @@
 .ayna-mobile :is(.ayna-figma-header, .ayna-saved-header) { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
 .ayna-mobile .ayna-figma-discover .ayna-shop-heading { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
 .ayna-mobile .ayna-figma-discover .ayna-shop-heading h1 { margin: var(--ay-space-2) 0 var(--ay-space-4) !important; }
+.ayna-mobile .ayna-fresh-detail-image:is(.is-missing-image,:has(.ayna-fresh-photo-placeholder)) > div { aspect-ratio: 16 / 9 !important; }
 .ayna-mobile .ayna-shop-category-row { padding: 0 var(--ay-gutter) var(--ay-space-4) !important; }
 .ayna-mobile .ayna-shop-filter-toggle { margin-left: auto !important; flex: none; }
 .ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid, .ayna-mobile .ayna-cabinet-collection, .ayna-mobile .ayna-cabinet-reads, .ayna-mobile .ayna-cabinet-stage, .ayna-mobile .ayna-cabinet-more, .ayna-mobile .ayna-home-today { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
 .ayna-mobile .ayna-editorial-product-grid { column-gap: var(--ay-space-3) !important; row-gap: var(--ay-space-6) !important; }
+.ayna-mobile .ayna-saved-collection .ayna-editorial-product-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--ay-space-5) var(--ay-space-3) !important; }
+.ayna-mobile .ayna-saved-collection .ayna-editorial-product-grid > div { min-width:0; }
+.ayna-mobile .ayna-saved-collection .ayna-editorial-product-grid .ayna-fresh-product-image { aspect-ratio:1 !important; }
+.ayna-mobile .ayna-saved-collection .ayna-saved-ecosystem-action { width:100%; min-height:44px; margin:6px 0 0; padding:8px 2px; font:600 12px/1.2 var(--ay-font-ui); text-align:left; }
 .ayna-mobile .ayna-cabinet-collection { margin-top: var(--ay-space-8) !important; }
 .ayna-mobile .ayna-cabinet-section-head { margin-bottom: var(--ay-space-4) !important; }
 .ayna-mobile .ayna-ecosystem-start-scroll { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
