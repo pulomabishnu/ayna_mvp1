@@ -149,9 +149,11 @@ function RecsIcon({ value }) {
 function OptionCard({ selected, title, subtitle, onClick, tone, icon }) {
   const isWarning = tone === 'warning' && selected;
   return (
-    <div
+    <button
+      type="button" aria-pressed={selected}
       onClick={onClick}
       style={{
+        width: '100%', textAlign: 'left',
         display: 'flex',
         alignItems: 'flex-start',
         gap: 12,
@@ -185,7 +187,7 @@ function OptionCard({ selected, title, subtitle, onClick, tone, icon }) {
         <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK }}>{title}</div>
         {subtitle && <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: BODY_TEXT, marginTop: 3 }}>{subtitle}</div>}
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -214,10 +216,10 @@ function ScaleSelector({ options, value, onChange }) {
         {options.map(([label], i) => {
           const on = value === label;
           return (
-            <div key={label} onClick={() => onChange(label)} style={{ flex: 1, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <button type="button" aria-pressed={on} key={label} onClick={() => onChange(label)} style={{ flex: 1, minWidth: 0, minHeight: 44, padding: 0, border: 0, background: 'transparent', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
               <div style={{ width: '100%', height: SCALE_BAR_HEIGHTS[i] || 60, borderRadius: 10, background: on ? ACCENT_BORDER : ROW_BORDER, transition: 'background .15s' }} />
               <div style={{ textAlign: 'center', fontFamily: "var(--ayna-font-ui)", fontWeight: on ? 700 : 500, fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: on ? INK : MUTED }}>{label}</div>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -499,10 +501,11 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
 
   const footer = (
     <div style={{ flex: 'none', padding: '12px 20px max(16px, env(safe-area-inset-bottom))', background: PAGE_BG, borderTop: '1px solid ' + ROW_BORDER }}>
-      <div
-        onClick={saving ? undefined : goNext}
+      <button
+        type="button" disabled={!readyForNext || saving}
+        onClick={goNext}
         style={{
-          textAlign: 'center',
+          width: '100%', border: 0, minHeight: 48, textAlign: 'center',
           padding: 15,
           borderRadius: 99,
           background: readyForNext && !saving ? NAVY : ROW_BORDER,
@@ -514,14 +517,15 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
         }}
       >
         {saving ? 'Saving…' : isLast ? 'Finish check-in' : 'Next'}
-      </div>
+      </button>
       {stepId !== 'safety' && (
-        <div
+        <button
+          type="button" disabled={saving}
           onClick={() => (isLast ? goNext() : setStepIndex((i) => i + 1))}
-          style={{ textAlign: 'center', marginTop: 10, fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: MUTED, cursor: 'pointer' }}
+          style={{ width: '100%', border: 0, background: 'transparent', minHeight: 44, textAlign: 'center', marginTop: 10, fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: MUTED, cursor: 'pointer' }}
         >
           Skip this step
-        </div>
+        </button>
       )}
     </div>
   );

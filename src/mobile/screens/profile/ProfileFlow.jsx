@@ -219,11 +219,12 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
       >
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', letterSpacing: 0.5 }}>ayna</div>
-          <div
+          <button
+            type="button" aria-label="Close profile"
             onClick={onClose}
             style={{
-              width: 34,
-              height: 34,
+              width: 44,
+              height: 44,
               borderRadius: 99,
               border: '1px solid rgba(255,255,255,.28)',
               background: 'rgba(255,249,242,.12)',
@@ -236,7 +237,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
             }}
           >
             ×
-          </div>
+          </button>
         </div>
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 14, marginTop: 24 }}>
           <div
@@ -245,7 +246,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               height: 66,
               borderRadius: 99,
               flex: 'none',
-              background: '#9BF0E1',
+              background: 'var(--ayna-figma-mint)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -259,7 +260,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
           </div>
           <div style={{ minWidth: 0 }}>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{name}</div>
-            {memberSince && <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'rgba(255,249,242,.62)', marginTop: 5 }}>{memberSince}</div>}
+            {memberSince && <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-text-muted)', marginTop: 5 }}>{memberSince}</div>}
           </div>
         </div>
         <button type="button" className="ayna-profile-progress" onClick={onEditProfile} aria-label="Edit health profile"><span>Health profile</span><span>{profileFilledPct}%</span><i aria-hidden="true" style={{ '--profile-progress': `${profileFilledPct}%` }} /></button>
@@ -276,10 +277,12 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
           { key: 'startups', title: 'New brands', sub: 'Emerging brands worth backing' },
           { key: 'settings', title: 'Settings', sub: IS_NATIVE_APP ? 'Preferences, notifications and privacy' : 'Preferences, account and privacy' },
         ].map((row) => (
-          <div
+          <button
+            type="button"
             key={row.key}
             onClick={row.onClick || (() => onOpen(row.key))}
             style={{
+              width: '100%', textAlign: 'left', fontFamily: 'var(--ayna-font-ui)',
               display: 'flex',
               alignItems: 'center',
               gap: 14,
@@ -300,7 +303,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               {row.badge && <div style={{ background: 'var(--ayna-accent)', color: '#231A12', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.5px', padding: '3px 7px', borderRadius: 99 }}>{row.badge}</div>}
               <ChevronIcon />
             </div>
-          </div>
+          </button>
         ))}
       </div>
       <LegalFooter />
@@ -1196,15 +1199,7 @@ function PreferencesScreen({
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', flex: 'none' }}>A</span>
-            <div style={{ flex: 1, display: 'flex', gap: 6 }}>
-              {TEXT_SIZE_STEPS.map((step, i) => (
-                <div
-                  key={step.label}
-                  onClick={() => handleTextSizeChange(i)}
-                  style={{ flex: 1, height: 8, borderRadius: 99, cursor: 'pointer', background: i === textSizeIndex ? 'var(--ayna-heading)' : 'var(--ayna-border)' }}
-                />
-              ))}
-            </div>
+            <input type="range" aria-label="Text size" min="0" max={TEXT_SIZE_STEPS.length - 1} step="1" value={textSizeIndex} aria-valuetext={TEXT_SIZE_STEPS[textSizeIndex]?.label} onChange={(event) => handleTextSizeChange(Number(event.target.value))} style={{ flex: 1, minWidth: 0, height: 44, accentColor: 'var(--ayna-heading)' }} />
             <span style={{ fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', flex: 'none' }}>A</span>
           </div>
           <div style={{ marginTop: 14, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text)', lineHeight: 1.5 }}>
