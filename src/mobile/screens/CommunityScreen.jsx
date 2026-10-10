@@ -492,12 +492,12 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   const renderEmpty = () => {
     const copy = {
       'for-you': ['No posts yet', 'Be the first to post.', 'Post', 'post', 'chat', 'pink'],
-      following: ['Not following anyone', 'Follow people to see their posts here.', 'Explore', null, 'spark', 'peri'],
+      following: ['No posts yet', 'Follow someone to see their posts.', 'Explore', null, 'spark', 'peri'],
       question: ['No questions yet', null, 'Ask', 'question', 'chat', 'butter'],
       review: ['No reviews yet', null, 'Review', 'review', 'spark', 'mint'],
-      playlists: ['No playlists yet', 'Group products you’d recommend.', 'Create', 'playlist', 'bookmark', 'pink'],
+      playlists: ['No playlists yet', 'Collect your favorites.', 'Create', 'playlist', 'bookmark', 'pink'],
     }[tab];
-    return <EmptyState art={copy[4]} tone={copy[5]} title={copy[0]} body={copy[1]} actionLabel={copy[2]} onAction={() => copy[3] ? openCompose(copy[3]) : setTab('for-you')} />;
+    return <div className="am-community-empty-slot"><EmptyState art={copy[4]} tone={copy[5]} title={copy[0]} body={copy[1]} actionLabel={copy[2]} onAction={() => copy[3] ? openCompose(copy[3]) : setTab('for-you')} /></div>;
   };
 
   if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><EmptyState art="offline" tone="butter" title="Community isn’t loading" body="Try again later." actionLabel="Shop" onAction={onGoBrowse} /></div>;
