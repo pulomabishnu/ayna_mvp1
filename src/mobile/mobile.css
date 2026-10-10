@@ -11,16 +11,16 @@
   --ayna-text: #3E2F59;
   --ayna-text-muted: #625d55;
   --ayna-text-faint: #6b635b;
-  --ayna-accent: #DBB0CF;
-  --ayna-accent-dark: #DBB0CF;
+  --ayna-accent: #F2B8D7;
+  --ayna-accent-dark: #F2B8D7;
   --ayna-brown: #3E2F59;
   --ayna-navy: #3E2F59;
   --ayna-purple: #3E2F59;
-  --ayna-peach: #DBB0CF;
+  --ayna-peach: #F2B8D7;
   --ayna-cta-bg: #3E2F59;
   --ayna-cta-text: #ffffff;
   --ayna-heading: #3E2F59;
-  --ayna-product-panel: linear-gradient(150deg,#F5ECF2,#F6DCC0);
+  --ayna-product-panel: linear-gradient(150deg,#ECEBFF,#F6DCC0);
   --ayna-glass-bg: rgba(255,252,249,.9);
   --ayna-track: #EAE3DA;
   --ayna-chip-bg: #efebe0;
@@ -32,7 +32,7 @@
      bodies from src/components/Articles.jsx, which style their own links
      inline with var(--color-primary)) renders with the correct color when
      reused inside the mobile app, instead of falling back to default blue. */
-  --color-primary: #DBB0CF;
+  --color-primary: #F2B8D7;
 
   /* Scales OrbHero.jsx's orb+chips so the chips' worst-case reach during
      their orbit (241px from center either way, at the component's native
@@ -80,9 +80,9 @@
   --ayna-text: #FCFBFB;
   --ayna-text-muted: #d1cbbd;
   --ayna-text-faint: #b5ae9f;
-  --ayna-accent: #DBB0CF;
-  --ayna-accent-dark: #DBB0CF;
-  --ayna-cta-bg: #DBB0CF;
+  --ayna-accent: #F2B8D7;
+  --ayna-accent-dark: #F2B8D7;
+  --ayna-cta-bg: #F2B8D7;
   --ayna-cta-text: #3E2F59;
   --ayna-heading: #FCFBFB;
   --ayna-product-panel: radial-gradient(130% 110% at 28% 0%, rgba(192,118,31,.34), rgba(255,255,255,.03) 68%);
@@ -166,7 +166,7 @@
   height: 20px;
   border-radius: 50%;
   background: #1A1714;
-  border: 3px solid #F5ECF2;
+  border: 3px solid #ECEBFF;
   cursor: pointer;
   margin-top: -8px;
 }
@@ -210,7 +210,7 @@
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button,
 .ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button { color: rgba(255,249,242,.8); }
 .ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
-.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #DBB0CF; background: rgba(255,199,116,.15); }
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #F2B8D7; background: rgba(255,199,116,.15); }
 .ayna-profile-auth-backdrop {
   position: fixed;
   inset: 0 0 64px;
@@ -234,7 +234,7 @@
 .ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 29px/1.15 var(--ayna-font-display); }
 .ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
 .ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 15px var(--ayna-font-ui); cursor: pointer; }
-.ayna-profile-auth-primary { border: 0; background: #DBB0CF; color: #231a12; }
+.ayna-profile-auth-primary { border: 0; background: #F2B8D7; color: #231a12; }
 .ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #3E2F59; background: transparent; color: #3E2F59; }
 
 /* Keep the browser preview at a readable phone width on a large display. */

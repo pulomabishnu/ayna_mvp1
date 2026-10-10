@@ -17,7 +17,7 @@ export default function MatchRing({ percent, size = 40, onClick }) {
         height: size,
         flex: 'none',
         borderRadius: '50%',
-        background: `conic-gradient(#DBB0CF ${clamped}%, rgba(255,255,255,.55) 0)`,
+        background: `conic-gradient(#F2B8D7 ${clamped}%, rgba(255,255,255,.55) 0)`,
         display: 'grid',
         placeItems: 'center',
         cursor: onClick ? 'pointer' : 'default',

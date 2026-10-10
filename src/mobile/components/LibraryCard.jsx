@@ -1,10 +1,10 @@
 const TINT_PALETTE = [
-  ['#F5ECF2', '#DBB0CF'],
-  ['#FCFBFB', '#F5ECF2'],
-  ['#FCFBFB', '#DBB0CF'],
-  ['#F5ECF2', '#FCFBFB'],
-  ['#DBB0CF', '#FCFBFB'],
-  ['#FCFBFB', '#DBB0CF'],
+  ['#ECEBFF', '#F2B8D7'],
+  ['#FCFBFB', '#ECEBFF'],
+  ['#FCFBFB', '#F2B8D7'],
+  ['#ECEBFF', '#FCFBFB'],
+  ['#F2B8D7', '#FCFBFB'],
+  ['#FCFBFB', '#F2B8D7'],
 ];
 
 function tintForId(id) {

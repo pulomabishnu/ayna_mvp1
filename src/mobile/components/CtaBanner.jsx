@@ -22,7 +22,7 @@ function GradientBanner({ onClick, title = 'Build your ecosystem', buttonLabel =
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 16 }}>
         <div
           style={{
-            background: '#DBB0CF',
+            background: '#F2B8D7',
             color: '#171717',
             fontFamily: "var(--ayna-font-ui)",
             fontWeight: 600,
@@ -92,7 +92,7 @@ function StickyPill({ onClick }) {
       </div>
       <div
         style={{
-          background: '#DBB0CF',
+          background: '#F2B8D7',
           color: '#171717',
           width: 32,
           height: 32,

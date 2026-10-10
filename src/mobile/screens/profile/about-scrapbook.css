@@ -8,60 +8,60 @@
 .ayna-scrapbook h1,.ayna-scrapbook h2{font-family:'Bricolage Grotesque',var(--ayna-font-ui);font-weight:900;letter-spacing:-.065em}
 .ayna-scrapbook h1 em,.ayna-scrapbook h2 em{font:italic 500 1.06em var(--ayna-font-display);color:inherit}
 .ayna-scrapbook__hero{position:relative;overflow:hidden;min-height:230px;margin:0 -20px 22px!important;padding:31px 23px;background:#3E2F59;color:#fff}
-.ayna-scrapbook__hero .ayna-scrapbook__eyebrow{color:#DBB0CF}
-.ayna-scrapbook__hero h1{position:relative;z-index:1;max-width:310px;margin:14px 0 14px;color:#DBB0CF;font-size:clamp(38px,10vw,51px);line-height:.99}
+.ayna-scrapbook__hero .ayna-scrapbook__eyebrow{color:#F2B8D7}
+.ayna-scrapbook__hero h1{position:relative;z-index:1;max-width:310px;margin:14px 0 14px;color:#F2B8D7;font-size:clamp(38px,10vw,51px);line-height:.99}
 .ayna-scrapbook__hero h1 em{display:block;margin-top:2px;color:#fff;letter-spacing:-.035em}
 .ayna-scrapbook__hero p{position:relative;z-index:1;max-width:330px;margin:0;color:#fff;font-size:14px;line-height:1.45}
 .ayna-scrapbook__hero::after{content:'';position:absolute;right:-35px;bottom:-66px;width:190px;height:190px;border:30px solid rgba(155,240,225,.22);border-radius:50%}
 .ayna-scrapbook__tape,.ayna-scrapbook__scribble{display:none}
-.ayna-scrapbook__paper{position:relative;margin-top:16px;padding:23px 20px;border:1px solid #d8dfdc;border-radius:19px;background:#fff;box-shadow:0 3px 0 #F5ECF2}
+.ayna-scrapbook__paper{position:relative;margin-top:16px;padding:23px 20px;border:1px solid #d8dfdc;border-radius:19px;background:#fff;box-shadow:0 3px 0 #ECEBFF}
 .ayna-scrapbook__paper h2{margin:9px 0 12px;font-size:clamp(26px,7vw,34px);line-height:1.05}
 .ayna-scrapbook__paper>p{margin:0 0 16px;color:#53545a;font-size:13px;line-height:1.55}
-.ayna-scrapbook__paper--intro{padding-bottom:26px;border:0;background:#DBB0CF;box-shadow:none}
+.ayna-scrapbook__paper--intro{padding-bottom:26px;border:0;background:#F2B8D7;box-shadow:none}
 .ayna-scrapbook__paper--intro h2,.ayna-scrapbook__paper--intro>p{color:#3E2F59}
 .ayna-scrapbook__intro-stamp{display:inline-block;padding:8px 11px;border:1px solid #3E2F59;border-radius:9px;color:#3E2F59;text-transform:uppercase;letter-spacing:.05em;font-size:10px;font-weight:800}
 .ayna-scrapbook__team{display:grid;gap:13px;margin-top:18px}
 .ayna-scrapbook__polaroid{overflow:hidden;padding:7px;border-radius:19px;background:#fff;border:1px solid #d8dfdc}
-.ayna-scrapbook__photo{height:clamp(190px,55vw,300px);overflow:hidden;border-radius:13px;background:#F5ECF2}
+.ayna-scrapbook__photo{height:clamp(190px,55vw,300px);overflow:hidden;border-radius:13px;background:#ECEBFF}
 .ayna-scrapbook__photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 42%}
 .ayna-scrapbook__handwriting{padding:8px 7px 4px;color:#3E2F59;font:italic 18px var(--ayna-font-display)}
-.ayna-scrapbook__team-note{padding:18px 20px;border-radius:18px;background:#DBB0CF}
+.ayna-scrapbook__team-note{padding:18px 20px;border-radius:18px;background:#F2B8D7}
 .ayna-scrapbook__team-note h2{margin:7px 0;font-size:27px}
 .ayna-scrapbook__team-note p{margin:0;font-size:13px;line-height:1.5}
-.ayna-scrapbook__paper--lavender{background:#F5ECF2;border:0;box-shadow:none}
-.ayna-scrapbook__paper--match{background:#DBB0CF;border:0;box-shadow:none}
-.ayna-scrapbook__paper--advisors{background:#F5ECF2;border:0;box-shadow:none}
+.ayna-scrapbook__paper--lavender{background:#ECEBFF;border:0;box-shadow:none}
+.ayna-scrapbook__paper--match{background:#F2B8D7;border:0;box-shadow:none}
+.ayna-scrapbook__paper--advisors{background:#ECEBFF;border:0;box-shadow:none}
 .ayna-scrapbook__chart{display:grid;gap:12px;margin:17px 0 13px}
 .ayna-scrapbook__chart-row{display:grid;grid-template-columns:23px 1fr;gap:4px 9px;align-items:center}
 .ayna-scrapbook__chart-num{grid-row:span 2;color:#3E2F59;font-size:11px;font-weight:900}
-.ayna-scrapbook__chart-track{height:12px;overflow:hidden;border-radius:99px;background:#F5ECF2}
+.ayna-scrapbook__chart-track{height:12px;overflow:hidden;border-radius:99px;background:#ECEBFF}
 .ayna-scrapbook__chart-track>div{height:100%;border-radius:inherit}
 .ayna-scrapbook__chart-label{font-size:11px;color:#53545a}
 .ayna-scrapbook__paper small{color:#53545a;font-size:10px;line-height:1.4}
 .ayna-scrapbook__gate-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .ayna-scrapbook__gate{min-height:108px;padding:13px;border-radius:13px;background:#fff}
-.ayna-scrapbook__gate:nth-child(2){background:#DBB0CF}.ayna-scrapbook__gate:nth-child(3){background:#DBB0CF}.ayna-scrapbook__gate:nth-child(4){background:#3E2F59;color:#fff}
-.ayna-scrapbook__gate span{color:#3E2F59;font-size:10px;font-weight:900}.ayna-scrapbook__gate:nth-child(4) span{color:#DBB0CF}
+.ayna-scrapbook__gate:nth-child(2){background:#F2B8D7}.ayna-scrapbook__gate:nth-child(3){background:#F2B8D7}.ayna-scrapbook__gate:nth-child(4){background:#3E2F59;color:#fff}
+.ayna-scrapbook__gate span{color:#3E2F59;font-size:10px;font-weight:900}.ayna-scrapbook__gate:nth-child(4) span{color:#F2B8D7}
 .ayna-scrapbook__gate strong{display:block;margin-top:8px;font-size:13px;line-height:1.2}
 .ayna-scrapbook__gate p{margin:5px 0 0;font-size:11px;line-height:1.4}
 .ayna-scrapbook__orbit{position:relative;height:220px;margin-top:10px}
 .ayna-scrapbook__orbit::before{content:'';position:absolute;inset:36px 15px;border:2px solid rgba(22,18,42,.27);border-radius:50%;transform:rotate(-15deg)}
 .ayna-scrapbook__orbit-center{position:absolute;top:62px;left:calc(50% - 55px);display:grid;place-items:center;width:110px;height:110px;border-radius:50%;background:#3E2F59;color:#fff;text-align:center;font:italic 21px/1 var(--ayna-font-display)}
 .ayna-scrapbook__orbit>span{position:absolute;padding:8px 10px;border-radius:20px;background:#fff;color:#3E2F59;font-size:10px;font-weight:800}
-.ayna-scrapbook__orbit>span:nth-of-type(1){top:7px;left:1%}.ayna-scrapbook__orbit>span:nth-of-type(2){top:7px;right:2%;background:#DBB0CF}.ayna-scrapbook__orbit>span:nth-of-type(3){bottom:0;left:0;background:#DBB0CF}.ayna-scrapbook__orbit>span:nth-of-type(4){bottom:0;right:0;background:#F5ECF2}
+.ayna-scrapbook__orbit>span:nth-of-type(1){top:7px;left:1%}.ayna-scrapbook__orbit>span:nth-of-type(2){top:7px;right:2%;background:#F2B8D7}.ayna-scrapbook__orbit>span:nth-of-type(3){bottom:0;left:0;background:#F2B8D7}.ayna-scrapbook__orbit>span:nth-of-type(4){bottom:0;right:0;background:#ECEBFF}
 .ayna-scrapbook__sticky{padding:12px 14px;border-radius:12px;background:#3E2F59;color:#fff;font-size:12px;font-weight:800;line-height:1.4}
 .ayna-scrapbook__sticky span{float:right}
 .ayna-scrapbook__question-list,.ayna-scrapbook__difference-list,.ayna-scrapbook__advisors{display:grid;gap:9px}
-.ayna-scrapbook__question-list>div,.ayna-scrapbook__difference-list>div{padding:13px;border-radius:12px;background:#F5ECF2}
-.ayna-scrapbook__question-list>div:nth-child(even),.ayna-scrapbook__difference-list>div:nth-child(even){background:#DBB0CF}
+.ayna-scrapbook__question-list>div,.ayna-scrapbook__difference-list>div{padding:13px;border-radius:12px;background:#ECEBFF}
+.ayna-scrapbook__question-list>div:nth-child(even),.ayna-scrapbook__difference-list>div:nth-child(even){background:#F2B8D7}
 .ayna-scrapbook__question-list strong{color:#3E2F59;font-size:13px}
 .ayna-scrapbook__question-list p{margin:5px 0 0;color:#53545a;font-size:12px;line-height:1.45}
 .ayna-scrapbook__difference-list>div{display:flex;gap:11px;color:#53545a;font-size:12px;line-height:1.4}
 .ayna-scrapbook__difference-list span{color:#3E2F59;font-weight:900}
 .ayna-scrapbook__advisors{margin-top:16px}
 .ayna-scrapbook__advisors>div{display:flex;align-items:center;gap:13px;padding:12px;border-radius:13px;background:#fff}
-.ayna-scrapbook__advisor-avatar{width:64px;height:64px;flex:none;border:3px solid #DBB0CF;border-radius:50%;object-fit:cover;background:#fff}
+.ayna-scrapbook__advisor-avatar{width:64px;height:64px;flex:none;border:3px solid #F2B8D7;border-radius:50%;object-fit:cover;background:#fff}
 .ayna-scrapbook__advisor-avatar--initials{display:grid;place-items:center;color:#3E2F59;font-weight:900}
 .ayna-scrapbook__advisor-copy{display:grid;gap:3px;min-width:0}
 .ayna-scrapbook__advisors strong{font-size:14px;line-height:1.2}.ayna-scrapbook__advisors small{overflow-wrap:anywhere;font-size:11px;line-height:1.3}
-.ayna-scrapbook__footer{margin-top:19px;padding:15px;border-radius:12px;background:#F5ECF2;color:#53545a;text-align:center;font-size:12px;line-height:1.4}
+.ayna-scrapbook__footer{margin-top:19px;padding:15px;border-radius:12px;background:#ECEBFF;color:#53545a;text-align:center;font-size:12px;line-height:1.4}

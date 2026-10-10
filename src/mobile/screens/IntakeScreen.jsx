@@ -1026,7 +1026,12 @@ function Scale({ options, value, onChange }) {
 // (the same vertical radio list as Yes/No questions), not a distinct
 // visual language of their own.
 function Timeline({ options, value, onChange }) {
-  return <Segmented options={options} value={value} onChange={onChange} />;
+  return <div className="ayna-intake-timeline" role="group" aria-label="Choose a time">
+    {options.map((option, index) => <button type="button" key={option} aria-pressed={value === option} onClick={() => onChange(option)}>
+      <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+      <strong>{option}</strong>
+    </button>)}
+  </div>;
 }
 
 // Brand openness is a single-select among ordered options too — F1 again,
@@ -1136,11 +1141,11 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
           onClick={() => setAdding(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed #DBB0CF', background: '#FCFBFB',
+            padding: '15px', borderRadius: 16, border: '1.5px dashed #F2B8D7', background: '#FCFBFB',
             fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#3E2F59',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DBB0CF" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F2B8D7" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           Add a product or brand
         </button>
       ) : (
@@ -1177,7 +1182,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
 
       {quickAdd.length > 0 && (
         <div style={{ marginTop: 18 }}>
-          <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#DBB0CF', marginBottom: 10 }}>From your history</div>
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#F2B8D7', marginBottom: 10 }}>From your history</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {quickAdd.map((name) => (
               <button type="button" className="ayna-intake-control"
@@ -1271,11 +1276,11 @@ function ProductHistoryBuilder({ products, onChange }) {
           onClick={() => setAdding(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed #DBB0CF', background: '#FCFBFB',
+            padding: '15px', borderRadius: 16, border: '1.5px dashed #F2B8D7', background: '#FCFBFB',
             fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#3E2F59',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DBB0CF" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F2B8D7" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           Add a product or brand
         </button>
       ) : (
@@ -1857,13 +1862,15 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     if (direction < 0) goBack();
   };
   const onStoryTouchStart = (event) => {
-    storyTouch.current = { y: event.touches[0]?.clientY, target: event.target };
+    storyTouch.current = { x: event.touches[0]?.clientX, y: event.touches[0]?.clientY, target: event.target };
   };
   const onStoryTouchEnd = (event) => {
     const start = storyTouch.current;
     storyTouch.current = null;
-    if (!start || start.y == null || start.target?.closest('input, textarea, select, button, [role="slider"], [contenteditable]')) return;
+    if (!start || start.y == null || start.target?.closest('input, textarea, select, button, .ayna-intake-timeline, [role="slider"], [contenteditable]')) return;
+    const deltaX = start.x - event.changedTouches[0]?.clientX;
     const delta = start.y - event.changedTouches[0]?.clientY;
+    if (Math.abs(deltaX) > 75 && Math.abs(deltaX) > Math.abs(delta) * 1.3) { storyAdvance(Math.sign(deltaX)); return; }
     const body = event.currentTarget.querySelector('.ayna-fresh-intake-body');
     if (!body || Math.abs(delta) < 100) return;
     if (delta > 0 && body.scrollTop + body.clientHeight >= body.scrollHeight - 8) storyAdvance(1);
@@ -1903,7 +1910,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FCFBFB" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: '#DBB0CF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: '#F2B8D7', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
           </div>
           {step.optional && (
             <button type="button" onClick={goNext} style={{ padding: '7px 0', border: 0, background: 'transparent', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#FCFBFB', cursor: 'pointer', flex: 'none' }}>Skip</button>
@@ -1911,7 +1918,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         </div>
         <div className="ayna-intake-progress-copy"><strong>{String(currentIndex + 1).padStart(2, '0')} / {String(visibleSteps.length).padStart(2, '0')}</strong></div>
         <div style={{ height: 4, borderRadius: 99, background: 'rgba(255,249,242,.24)', overflow: 'hidden' }}>
-          <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#DBB0CF,#DBB0CF)' }} />
+          <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#F2B8D7,#F2B8D7)' }} />
         </div>
       </div>
 
@@ -1942,7 +1949,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
           disabled={!ready}
           style={{
             width: '100%', padding: 15, border: 'none', borderRadius: 14,
-            background: ready ? '#DBB0CF' : 'rgba(255,249,242,.18)',
+            background: ready ? '#F2B8D7' : 'rgba(255,249,242,.18)',
             color: ready ? NAVY : 'rgba(255,249,242,.5)',
             fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9,
