@@ -9,7 +9,7 @@ export function healthAreaLabel(label = '') {
     [/skin|acne/i, 'Skin'], [/hair/i, 'Hair'], [/sleep/i, 'Sleep'], [/fatigue|energy/i, 'Energy'],
     [/anxiety|mood|stress|mental/i, 'Mood'], [/gut|digest/i, 'Gut'], [/sexual|libido|sex$/i, 'Sexual wellness'],
     [/contraception|birth control/i, 'Birth control'], [/hormon/i, 'Hormones'], [/breast/i, 'Breast care'],
-    [/supplement|test.*device|other support/i, 'More care'],
+    [/test.*device/i, 'Tests'], [/supplement/i, 'Supplements'], [/other support/i, 'More care'],
   ];
   return matches.find(([pattern]) => pattern.test(label))?.[1] || label;
 }

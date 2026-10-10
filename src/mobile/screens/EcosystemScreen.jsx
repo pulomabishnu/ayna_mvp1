@@ -23,9 +23,12 @@ export default function EcosystemScreen({
   const groups = [...currentProducts.reduce((map, product) => {
     const reason = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers).reasonDetails?.find((r) => ['primaryGoal', 'otherNeeds'].includes(r.component) && r.score > 0) : null;
     const healthLabel = reason?.text?.replace(/^(Goal: |Another need you selected: )/, '');
-    const fallbackKey = ['supplements', 'tests-devices'].includes(product.areaKey) ? 'other' : product.areaKey || 'other';
+    const fallbackKey = product.areaKey || 'other';
     const fallback = ECOSYSTEM_AREAS.find((area) => area.key === fallbackKey)?.label;
-    const label = healthAreaLabel(healthLabel || (['Supplements', 'Tests + Devices'].includes(fallback) ? 'Other support' : fallback) || 'Other support');
+    const functions = product.healthFunctions || [];
+    const productNeed = functions.includes('fertility') || product.tags?.includes('fertility') ? 'Fertility'
+      : functions.includes('sleep-energy') || product.tags?.includes('anemia') ? 'Energy' : null;
+    const label = healthAreaLabel(healthLabel || productNeed || fallback || 'More care');
     const key = `area-${encodeURIComponent(label.toLowerCase())}`;
     if (!map.has(key)) map.set(key, { key, label, products: [] });
     map.get(key).products.push(product);
