@@ -9,12 +9,14 @@ import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import { ECOSYSTEM_AREAS } from '../data/ecosystemAreas.js';
 import { selectEcosystemProducts } from '../utils/recommendationSelection.js';
 
+const AREA_TONES = ['#F7E78E', '#F7BADD', '#BDEBD6', '#B9C2F4', '#EED45A', '#EF9CCB'];
+
 export default function EcosystemScreen({
   myProducts = [], authUser = null, suggestedEcosystemProducts = [], 
   relatedReads = [], savedProducts = {}, headerInitial = 'A', onOpenProduct,
   onOpenArticle, onOpenSaved, onBrowse, onGoCommunity, onRetake,
   onRequestEcosystemReset, ecosystemNotice, onOpenMonthlyCheckin, onOpenProfile,
-  quizAnswers = null, onOpenWhyMatch, onAddToEcosystem, onToggleSaved,
+  quizAnswers = null, onOpenWhyMatch, onAddToEcosystem, onToggleSaved, onReplayStory,
 }) {
   const currentProducts = quizAnswers
     ? selectEcosystemProducts(myProducts, quizAnswers, quizAnswers.fullHealthIntake?.recommendedProductsPerArea)
@@ -46,10 +48,17 @@ export default function EcosystemScreen({
       {groups.length > 0 && <EcosystemChart groups={groups} />}
       {currentProducts.length === 0 && <EmptyState compact art="spark" tone="mint" title="No strong matches yet" body="Shop around or update your answers." actionLabel="Shop" onAction={onBrowse} secondaryLabel="Update answers" onSecondary={onRetake} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
+      {currentProducts.length > 0 && onReplayStory && (
+        <button type="button" className="ay-replay" onClick={onReplayStory}>
+          <span className="ay-replay-art" aria-hidden="true"><i /><i /><i /></span>
+          <span><strong>Replay your Wrapped</strong><small>{currentProducts.length} picks · {groups.length} {groups.length === 1 ? 'area' : 'areas'}</small></span>
+          <span className="ay-replay-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+        </button>
+      )}
     </section>
 
 
-    {groups.map((group, index) => <section key={group.key} id={`ayna-area-${group.key}`} className="ayna-cabinet-collection ayna-area-collection" aria-labelledby={`ayna-area-title-${group.key}`}>
+    {groups.map((group, index) => <section key={group.key} id={`ayna-area-${group.key}`} className="ayna-cabinet-collection ayna-area-collection" style={{ '--area-tone': AREA_TONES[index % AREA_TONES.length] }} aria-labelledby={`ayna-area-title-${group.key}`}>
       <div className="ayna-cabinet-section-head"><h2 id={`ayna-area-title-${group.key}`}><small aria-hidden="true">{String(index + 1).padStart(2, '0')}</small>{group.label}</h2><span>{group.products.length} {group.products.length === 1 ? 'pick' : 'picks'}</span></div>
       <div className="ayna-editorial-product-grid">{group.products.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />)}</div>
     </section>)}

@@ -74,8 +74,6 @@
 .ayna-mobile .ayna-fresh-detail-title { background:var(--ayna-reference-paper)!important; box-shadow:none!important; border-radius:0!important; }
 .ayna-mobile .ayna-fresh-detail-title .ayna-figma-guest-match { position:static; display:inline-flex; min-height:44px; margin:11px 0 0; padding:8px 0; border:0; border-bottom:2px solid var(--ayna-reference-ink); border-radius:0; background:transparent; color:var(--ayna-reference-ink); font:700 13px/1 var(--ayna-font-ui); }
 .ayna-mobile .ayna-fresh-product-detail { background:var(--ayna-reference-paper)!important; }
-.ayna-mobile .ayna-ecosystem-chart-segment:nth-of-type(odd) { stroke:var(--ayna-reference-blue); }
-.ayna-mobile .ayna-ecosystem-chart-segment:nth-of-type(even) { stroke:var(--ayna-reference-yellow); }
 .ayna-mobile .ayna-ecosystem-chart-center { color:var(--ayna-reference-ink); }
 .ayna-mobile .ayna-shop-category[aria-pressed='true'],.ayna-mobile .ayna-shop-filter-toggle { background:var(--ayna-reference-yellow)!important; color:var(--ayna-reference-ink)!important; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) { border-bottom-color:var(--ayna-border)!important; }

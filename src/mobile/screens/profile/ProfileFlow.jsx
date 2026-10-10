@@ -204,6 +204,32 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 /* ---------------------------- Profile hub ---------------------------- */
 
+// Small, earned-only milestones built from the account's real counts. No
+// streaks or points: just a friendly nudge toward the next useful step.
+function ProfileBadges({ savedCount = 0, ecosystemCount = 0, profileFilledPct = 0 }) {
+  const badges = [
+    { key: 'eco', label: 'Ecosystem built', hint: 'Finish the quiz', earned: ecosystemCount > 0, tone: 'butter' },
+    { key: 'save', label: 'First save', hint: 'Save a product', earned: savedCount > 0, tone: 'pink' },
+    { key: 'profile', label: 'Profile complete', hint: `${profileFilledPct}% done`, earned: profileFilledPct >= 100, tone: 'mint' },
+    { key: 'collector', label: 'Collector', hint: `${Math.min(savedCount, 10)}/10 saved`, earned: savedCount >= 10, tone: 'peri' },
+  ];
+  const earned = badges.filter((b) => b.earned).length;
+  return (
+    <section className="ay-badges" aria-label="Badges">
+      <div className="ay-badges-head"><strong>Badges</strong><span>{earned} of {badges.length}</span></div>
+      <ul>
+        {badges.map((b, i) => (
+          <li key={b.key} className={`ay-badge ay-badge--${b.tone}${b.earned ? ' is-earned' : ''}`} style={{ '--i': i }}>
+            <span className="ay-badge-mark" aria-hidden="true">{b.earned ? '✓' : i + 1}</span>
+            <strong>{b.label}</strong>
+            <small>{b.earned ? 'Earned' : b.hint}</small>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
   return (
     <div className="ayna-fresh-profile-hub" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
@@ -212,12 +238,11 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
         style={{
           position: 'relative',
           padding: 'max(24px, env(safe-area-inset-top)) 22px 26px',
-          background: '#1D1A2B',
-          color: '#FCFBFB',
           overflow: 'hidden',
           flex: 'none',
         }}
       >
+        <span className="ay-hub-shapes" aria-hidden="true"><i /><i /><i /></span>
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', letterSpacing: 0.5 }}>ayna</div>
           <button
@@ -267,6 +292,8 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
         <button type="button" className="ayna-profile-progress" onClick={onEditProfile} aria-label="Edit health profile"><span>Health profile</span><span>{profileFilledPct}%</span><i aria-hidden="true" style={{ '--profile-progress': `${profileFilledPct}%` }} /></button>
       </div>
 
+      <ProfileBadges savedCount={savedCount} ecosystemCount={ecosystemCount} profileFilledPct={profileFilledPct} />
+
       <div className="ayna-fresh-profile-menu" style={{ flex: 1, padding: '22px 20px 26px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 2 }}>Your account</div>
 
@@ -294,7 +321,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               cursor: 'pointer',
             }}
           >
-            <div style={{ width: 42, height: 42, borderRadius: 14, flex: 'none', background: 'var(--ayna-chip-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="ay-hub-icon" style={{ width: 42, height: 42, borderRadius: 14, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <AccountIcon type={row.key} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>

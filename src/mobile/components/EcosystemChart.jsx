@@ -1,4 +1,6 @@
-const COLORS = ['#F7BADD', '#FFF374', '#1D1A2B', '#B99CC5', '#A5CE4E', '#80699B'];
+// Same order as the area tones on the Ecosystem sections, so ring, legend and
+// section numbers always match.
+const COLORS = ['#F7E78E', '#F7BADD', '#BDEBD6', '#B9C2F4', '#EED45A', '#EF9CCB'];
 const CIRCUMFERENCE = 2 * Math.PI * 72;
 
 export default function EcosystemChart({ groups }) {

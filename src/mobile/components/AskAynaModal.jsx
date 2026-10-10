@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+
+// Tapping a starter fills the box so the person can edit before asking.
+const ASK_STARTERS = ['What helps with cramps?', 'Is this safe with my birth control?', 'Explain my top match'];
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
@@ -259,7 +262,12 @@ export default function AskAynaModal({
             )}
           </div>
         ))}
-        {sending && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
+        {!messages.some((m) => m.role === 'user') && !sending && (
+          <div className="ay-ask-starters" aria-label="Try asking">
+            {ASK_STARTERS.map((q, i) => <button type="button" key={q} className="ay-ask-starter" style={{ '--i': i }} onClick={() => setInput(q)}>{q}</button>)}
+          </div>
+        )}
+        {sending && <div className="ay-typing" role="status" aria-label="ayna is thinking"><i /><i /><i /></div>}
         <div ref={bottomRef} />
       </div>
 
@@ -285,6 +293,7 @@ export default function AskAynaModal({
           disabled={sending || session === undefined}
           style={{
             flex: 1,
+            minWidth: 0,
             padding: '12px 16px',
             borderRadius: 99,
             border: '1px solid var(--ayna-border)',

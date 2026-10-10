@@ -131,3 +131,150 @@
 
 /* Welcome cover headline: one size up so the cover reads as a cover. */
 .ayna-mobile.ayna-mobile .ayna-cabinet-cover .ayna-cover-intro h1 { font-size: calc(clamp(38px, 10.8vw, 52px) * var(--ayna-text-scale, 1)) !important; text-wrap: balance; line-height: .98 !important; letter-spacing: -.055em !important; }
+
+/* ===== Play layer for the main tabs (kept light on purpose) ===== */
+
+/* Screens slide up a touch when they open; motion explains the change. */
+@keyframes ay-screen-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.ayna-mobile > :is(.ayna-figma-discover, .ayna-cabinet-home, .am-screen, .ayna-saved-collection, .ayna-ecosystem-start) { animation: ay-screen-in var(--ay-dur-2) var(--ay-ease) both; }
+
+/* Tab bar: active pill takes the tab's colour; icon gives a small hop. */
+.ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-bottom-nav button.is-active { background: var(--ay-section) !important; }
+.ayna-mobile .ayna-bottom-nav button.is-active svg { animation: ay-hop .42s var(--ay-pop); }
+@keyframes ay-hop { 40% { transform: translateY(-4px) scale(1.08); } 100% { transform: none; } }
+
+/* Page titles get a marker swash in the tab colour. */
+.ayna-mobile :is(.ayna-figma-discover .ayna-shop-heading h1, .ayna-cabinet-stage h1, .am-top .am-title h1, .ayna-saved-header h1) {
+  display: inline-block; background: linear-gradient(transparent 55%, var(--ay-section) 55%, var(--ay-section) 90%, transparent 90%) no-repeat 0 0 / 100% 100%;
+  animation: ay-swash .6s var(--ay-ease) .1s both; padding-right: 2px;
+}
+@keyframes ay-swash { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
+
+/* Product grids arrive in a short stagger. */
+.ayna-mobile .ayna-editorial-product-grid > * { animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; }
+.ayna-mobile .ayna-editorial-product-grid > :nth-child(2) { animation-delay: 50ms; }
+.ayna-mobile .ayna-editorial-product-grid > :nth-child(3) { animation-delay: 100ms; }
+.ayna-mobile .ayna-editorial-product-grid > :nth-child(4) { animation-delay: 150ms; }
+
+/* Shop: swipe-to-discover entry card */
+.ayna-mobile .ay-discover-cta {
+  display: flex; align-items: center; gap: var(--ay-space-3); width: calc(100% - 40px); margin: 0 20px var(--ay-space-4); padding: 12px 12px 12px 14px;
+  border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-pink); color: var(--ay-ink); text-align: left; cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ay-ink); transition: transform var(--ay-dur-1) var(--ay-ease), box-shadow var(--ay-dur-1);
+}
+.ayna-mobile .ay-discover-cta:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ay-ink); }
+.ay-discover-art { position: relative; display: block; width: 44px; height: 44px; flex: none; }
+.ay-discover-art i { position: absolute; display: block; left: 9px; top: 5px; width: 26px; height: 34px; border: 2px solid var(--ay-ink); border-radius: 8px; background: var(--ay-paper); }
+.ay-discover-art i:nth-child(1) { rotate: -16deg; translate: -5px 1px; background: var(--ay-butter); }
+.ay-discover-art i:nth-child(2) { rotate: 12deg; translate: 6px 1px; background: var(--ay-mint); }
+.ayna-mobile .ay-discover-cta:hover .ay-discover-art i:nth-child(3) { rotate: 6deg; }
+.ay-discover-art i:nth-child(3) { transition: rotate var(--ay-dur-2) var(--ay-pop); }
+.ay-discover-copy { flex: 1; display: grid; gap: 2px; min-width: 0; }
+.ay-discover-copy strong { font: 800 16px/1.1 var(--ay-font-display); letter-spacing: -.02em; }
+.ay-discover-copy small { font: 500 12px/1.2 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ay-discover-go { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--ay-ink); color: var(--ay-paper); font-weight: 700; }
+
+/* Discover deck */
+.ay-deck { position: fixed; inset: 0; z-index: 80; display: flex; flex-direction: column; padding: max(14px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom)); background: var(--ay-peri); color: var(--ay-ink); animation: ay-deck-in var(--ay-dur-2) var(--ay-ease) both; }
+@keyframes ay-deck-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.ay-deck-head { display: flex; align-items: center; justify-content: space-between; }
+.ay-deck-head strong { font: 800 20px/1 var(--ay-font-display); letter-spacing: -.03em; }
+.ay-deck-head span { min-width: 40px; text-align: right; font: 700 13px/1 var(--ay-font-ui); font-variant-numeric: tabular-nums; }
+.ay-deck-close { width: 40px; height: 40px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); font: 600 22px/1 var(--ay-font-ui); color: var(--ay-ink); cursor: pointer; }
+.ay-deck-stage { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; margin: 14px 0; }
+.ay-deck-card {
+  position: absolute; inset: 0; margin: auto; width: min(100%, 340px); height: min(100%, 470px); display: flex; flex-direction: column;
+  border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 5px 5px 0 var(--ay-ink); overflow: hidden;
+  touch-action: pan-y; user-select: none; cursor: grab; transition: transform var(--ay-dur-2) var(--ay-ease);
+}
+.ay-deck-card.is-dragging { transition: none; cursor: grabbing; }
+.ay-deck-card.is-behind { transform: translateY(calc(var(--depth) * 10px)) scale(calc(1 - var(--depth) * .04)); box-shadow: none; pointer-events: none; }
+.ay-deck-photo { position: relative; flex: 1; min-height: 0; margin: 12px 12px 0; border-radius: 18px; background: var(--ay-tile); overflow: hidden; }
+.ay-deck-photo img { padding: 10% !important; object-fit: contain !important; mix-blend-mode: multiply; }
+.ay-deck-copy { display: grid; gap: 4px; padding: 14px 16px 16px; }
+.ay-deck-copy span { font: 600 12px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ay-deck-copy strong { font: 800 20px/1.12 var(--ay-font-display); letter-spacing: -.025em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ay-deck-meta { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.ay-deck-meta b { font: 700 14px/1 var(--ay-font-ui); }
+.ay-deck-meta em { padding: 5px 9px; border-radius: 99px; background: var(--ay-butter); font: 700 11px/1 var(--ay-font-ui); font-style: normal; }
+.ay-deck-stamp { position: absolute; z-index: 2; top: 22px; padding: 6px 14px; border: 3px solid currentColor; border-radius: 10px; background: var(--ay-paper); font: 800 22px/1 var(--ay-font-display); text-transform: uppercase; letter-spacing: .04em; }
+.ay-deck-stamp.is-save { left: 22px; color: #2f7a52; rotate: -10deg; }
+.ay-deck-stamp.is-skip { right: 22px; color: var(--ay-alert); rotate: 10deg; }
+.ay-deck-actions { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.ay-deck-btn { display: grid; place-items: center; border: 2px solid var(--ay-ink); background: var(--ay-paper); color: var(--ay-ink); cursor: pointer; transition: transform var(--ay-dur-1) var(--ay-ease); }
+.ay-deck-btn:active { transform: scale(.9); }
+.ay-deck-btn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.ay-deck-btn.is-skip, .ay-deck-btn.is-save { width: 64px; height: 64px; border-radius: 50%; box-shadow: 3px 3px 0 var(--ay-ink); }
+.ay-deck-btn.is-save { background: var(--ay-pink); }
+.ay-deck-btn.is-view { min-height: 44px; padding: 0 18px; border-radius: 99px; font: 700 14px/1 var(--ay-font-ui); }
+.ay-deck-hint { margin: 12px 0 0; text-align: center; font: 500 12px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
+
+/* Ecosystem: replay card + coloured area numbers */
+.ayna-mobile .ay-replay { display: flex; align-items: center; gap: var(--ay-space-3); width: 100%; margin: var(--ay-space-5) 0 var(--ay-space-2); padding: 12px; border: 0; border-radius: var(--ay-radius-lg); background: var(--ay-ink); color: var(--ay-paper); text-align: left; cursor: pointer; transition: transform var(--ay-dur-1) var(--ay-ease); }
+.ayna-mobile .ay-replay:active { transform: scale(.98); }
+.ay-replay > span:nth-child(2) { flex: 1; display: grid; gap: 3px; }
+.ay-replay strong { font: 800 16px/1.1 var(--ay-font-display); letter-spacing: -.02em; }
+.ay-replay small { font: 500 12px/1 var(--ay-font-ui); opacity: .7; }
+.ay-replay-art { position: relative; display: block; width: 46px; height: 46px; flex: none; }
+.ay-replay-art i { position: absolute; display: block; width: 22px; height: 22px; border-radius: 50%; }
+.ay-replay-art i:nth-child(1) { left: 0; top: 2px; background: var(--ay-pink); }
+.ay-replay-art i:nth-child(2) { right: 0; top: 10px; background: var(--ay-butter); border-radius: 6px; rotate: 14deg; }
+.ay-replay-art i:nth-child(3) { left: 10px; bottom: 0; background: var(--ay-mint); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+.ay-replay-play { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--ay-butter); }
+.ay-replay-play svg { width: 16px; height: 16px; fill: var(--ay-ink); }
+.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { display: inline-grid; place-items: center; width: 30px; height: 30px; margin-right: 10px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--area-tone, var(--ay-butter)); color: var(--ay-ink); font: 800 11px/1 var(--ay-font-ui); vertical-align: middle; }
+
+/* You: colour hero, badges, tinted menu icons */
+.ayna-mobile .ayna-fresh-profile-hero { background: var(--ay-peri) !important; color: var(--ay-ink) !important; }
+.ayna-mobile .ayna-fresh-profile-hero * { color: inherit; }
+.ayna-mobile .ayna-fresh-profile-hero button[aria-label='Close profile'] { border: 2px solid var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
+.ay-hub-shapes { position: absolute; inset: 0; pointer-events: none; }
+.ay-hub-shapes i { position: absolute; display: block; border: 2px solid var(--ay-ink); }
+.ay-hub-shapes i:nth-child(1) { width: 110px; height: 110px; right: -34px; bottom: -40px; border-radius: 50%; background: var(--ay-butter); }
+.ay-hub-shapes i:nth-child(2) { width: 46px; height: 46px; right: 70px; bottom: 28px; border-radius: 12px; background: var(--ay-pink); rotate: 14deg; }
+.ay-hub-shapes i:nth-child(3) { width: 30px; height: 30px; right: 24px; top: 86px; border: 0; background: var(--ay-paper); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+.ayna-mobile .ay-hub-icon { background: var(--ay-butter); }
+.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(2) .ay-hub-icon { background: var(--ay-pink); }
+.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(3) .ay-hub-icon { background: var(--ay-mint); }
+.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(4) .ay-hub-icon { background: var(--ay-peri); }
+.ayna-mobile .ayna-fresh-profile-menu > button { transition: transform var(--ay-dur-1) var(--ay-ease); }
+.ayna-mobile .ayna-fresh-profile-menu > button:active { transform: scale(.98); }
+.ay-badges { padding: 20px 20px 0; }
+.ay-badges-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+.ay-badges-head strong { font: 800 18px/1 var(--ay-font-display); letter-spacing: -.02em; color: var(--ay-ink); }
+.ay-badges-head span { font: 600 12px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ay-badges ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ay-badge { display: grid; justify-items: center; gap: 6px; padding: 12px 4px 10px; border: 1.5px dashed var(--ay-line); border-radius: 16px; text-align: center; color: var(--ay-ink-soft); animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; animation-delay: calc(var(--i) * 60ms); }
+.ay-badge strong { font: 700 11px/1.15 var(--ay-font-ui); }
+.ay-badge small { font: 500 10px/1.2 var(--ay-font-ui); }
+.ay-badge-mark { width: 34px; height: 34px; display: grid; place-items: center; border: 2px dashed currentColor; border-radius: 50%; font: 800 13px/1 var(--ay-font-ui); }
+.ay-badge.is-earned { border: 2px solid var(--ay-ink); color: var(--ay-ink); }
+.ay-badge.is-earned .ay-badge-mark { border-style: solid; border-color: var(--ay-ink); animation: ayw-stamp .5s var(--ay-pop) both; animation-delay: calc(.2s + var(--i) * 80ms); }
+.ay-badge--butter.is-earned { background: var(--ay-butter); }
+.ay-badge--pink.is-earned { background: var(--ay-pink); }
+.ay-badge--mint.is-earned { background: var(--ay-mint); }
+.ay-badge--peri.is-earned { background: var(--ay-peri); }
+.ay-badge.is-earned .ay-badge-mark { background: var(--ay-paper); }
+@keyframes ayw-stamp { from { scale: 1.8; opacity: 0; } to { scale: 1; opacity: 1; } }
+
+/* Ask: starter chips + typing dots */
+.ay-ask-starters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.ay-ask-starter { min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 13px/1.2 var(--ay-font-ui); cursor: pointer; animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; animation-delay: calc(var(--i) * 70ms); transition: background-color var(--ay-dur-1); }
+.ay-ask-starter:nth-child(1) { background: var(--ay-butter); }
+.ay-ask-starter:nth-child(2) { background: var(--ay-mint); }
+.ay-ask-starter:nth-child(3) { background: var(--ay-pink); }
+.ay-ask-starter:active { transform: scale(.96); }
+.ay-typing { align-self: flex-start; display: inline-flex; gap: 5px; padding: 12px 14px; border-radius: 16px; background: var(--ayna-chip-bg); }
+.ay-typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--ay-ink); animation: ay-dot 1s ease-in-out infinite; }
+.ay-typing i:nth-child(2) { animation-delay: .15s; }
+.ay-typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes ay-dot { 0%, 60%, 100% { transform: none; opacity: .35; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+/* Community: helpful / save give a little pop */
+.ayna-mobile .am-actions button[aria-pressed='true'] svg { animation: ip-pop .36s var(--ay-pop); }
+.ayna-mobile .am-actions button[aria-pressed='true'] { color: var(--ay-ink) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ay-deck-card { transition: none; }
+  .ayna-mobile :is(.ayna-figma-discover .ayna-shop-heading h1, .ayna-cabinet-stage h1, .am-top .am-title h1, .ayna-saved-header h1) { animation: none; }
+}

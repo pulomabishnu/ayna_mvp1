@@ -521,6 +521,7 @@ export default function MobileApp() {
     // force it back to light.
     onStartQuiz: () => { setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); },
     onOpenMonthlyCheckin: () => setScreen('checkin'),
+    onReplayStory: () => setScreen('reveal'),
     onBrowse: () => setScreen('browse'),
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
     onOpenSaved: () => setScreen('saved'),

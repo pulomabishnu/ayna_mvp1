@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
+import DiscoverDeck from '../components/DiscoverDeck.jsx';
 import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
@@ -268,6 +269,7 @@ export default function BrowseScreen({
   };
   const [activeGroup, setActiveGroup] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [showDeck, setShowDeck] = useState(false);
   const filterButtonRef = useRef(null);
   const filterCloseRef = useRef(null);
   const filterSheetRef = useRef(null);
@@ -494,6 +496,14 @@ export default function BrowseScreen({
           </button>
         } />
       )}
+      {mode === 'products' && !searchValue.trim() && (
+        <button type="button" className="ay-discover-cta" onClick={() => setShowDeck(true)}>
+          <span className="ay-discover-art" aria-hidden="true"><i /><i /><i /></span>
+          <span className="ay-discover-copy"><strong>Swipe to discover</strong><small>{authUser && quizAnswers ? 'Your best matches first' : 'One product at a time'}</small></span>
+          <span className="ay-discover-go" aria-hidden="true">→</span>
+        </button>
+      )}
+      {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
       {mode === 'products' && <>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
           <div ref={filterSheetRef} className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>

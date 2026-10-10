@@ -55,3 +55,12 @@
   --ay-line: rgba(29, 26, 43, .1);
 }
 .ayna-mobile[data-theme='dark'] { --ay-tile: rgba(255, 255, 255, .06); --ay-line: rgba(255, 255, 255, .12); }
+
+/* Motion tokens: short for feedback, medium for entering, long for reveals. */
+.ayna-mobile { --ay-dur-1: 140ms; --ay-dur-2: 260ms; --ay-dur-3: 440ms; }
+
+/* Each main tab has a signature colour, used in a few places only:
+   the active tab pill, the title highlight, and small accents. */
+.ayna-mobile { --ay-section: var(--ay-butter); }
+.ayna-mobile:is([data-screen='browse'], [data-screen='saved']) { --ay-section: var(--ay-pink); }
+.ayna-mobile[data-screen='community'] { --ay-section: var(--ay-mint); }
