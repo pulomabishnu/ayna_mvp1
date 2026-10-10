@@ -88,7 +88,7 @@ export function AgeDial({ value, onChange, underage, onOpenGate }) {
   const hasValue = value !== '' && value !== null && value !== undefined;
   const n = hasValue ? Number(value) : null;
   const step = (delta) => {
-    const base = n ?? 28;
+    const base = n ?? MIN_AGE;
     onChange(String(Math.min(120, Math.max(MIN_AGE, base + delta))));
   };
   const fill = hasValue ? ((Math.min(MAX_AGE, n) - MIN_AGE) / (MAX_AGE - MIN_AGE)) * 100 : 0;
@@ -96,7 +96,7 @@ export function AgeDial({ value, onChange, underage, onOpenGate }) {
     <div className="ip-age">
       <div className="ip-age-readout">
         <button type="button" className="ip-round" aria-label="One year younger" onClick={() => step(-1)} disabled={hasValue && n <= MIN_AGE}>−</button>
-        <output className={`ip-age-number${hasValue ? '' : ' is-empty'}`} aria-live="polite">{hasValue ? n : '00'}</output>
+        <output className={`ip-age-number${hasValue ? '' : ' is-empty'}`} aria-live="polite">{hasValue ? n : '—'}</output>
         <button type="button" className="ip-round" aria-label="One year older" onClick={() => step(1)}>+</button>
       </div>
       <input className="ip-ruler" type="range" min={MIN_AGE} max={MAX_AGE} value={hasValue ? Math.min(MAX_AGE, n) : MIN_AGE}
