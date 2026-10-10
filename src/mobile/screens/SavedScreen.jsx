@@ -33,6 +33,6 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
         <LegalFooter />
       </div>
     </>}
-    {items.length === 0 && <EmptyState art="bookmark" tone="pink" title="Nothing saved yet" body="Tap the bookmark on any product to keep it here." actionLabel="Start shopping" onAction={onBrowse} />}
+    {items.length === 0 && <EmptyState art="bookmark" tone="pink" title="No saved products" body="Tap the bookmark on a product to save it." actionLabel="Shop" onAction={onBrowse} />}
   </div>;
 }

@@ -31,7 +31,7 @@ export default function PlaylistCoverPicker({ title, mode, onMode, color, onColo
       <button type="button" className={mode === 'photo' ? 'is-active' : ''} onClick={() => onMode('photo')}>Upload photo</button>
     </div>
     <div className="am-cover-preview" style={mode === 'color' ? { background: color, color: coverInk(color) } : undefined}>
-      {mode === 'photo' && (preview || existingCoverUrl) ? <img src={preview || existingCoverUrl} alt="Playlist cover preview" /> : <><small>ayna</small><span>{text.trim() || title.trim() || 'Your collection'}</span><small>CURATED BY YOU</small></>}
+      {mode === 'photo' && (preview || existingCoverUrl) ? <img src={preview || existingCoverUrl} alt="Playlist cover preview" /> : <><small>ayna</small><span>{text.trim() || title.trim() || 'Your collection'}</span></>}
     </div>
     {mode === 'color' ? <>
       <label htmlFor="am-cover-text">Words on your cover</label>

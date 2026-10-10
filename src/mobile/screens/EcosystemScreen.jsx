@@ -43,10 +43,9 @@ export default function EcosystemScreen({
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
 
     <section className="ayna-cabinet-stage" aria-labelledby="ayna-cabinet-title">
-      <div className="ayna-cabinet-topline"><span>YOUR HEALTH CABINET</span><button type="button" onClick={onRetake}>Update picks</button></div>
-      <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
+      <div className="ay-title-row"><h1 id="ayna-cabinet-title">Your Ecosystem</h1><button type="button" className="ay-text-btn" onClick={onRetake}>Update</button></div>
       {groups.length > 0 && <EcosystemChart groups={groups} />}
-      {currentProducts.length === 0 && <EmptyState compact art="spark" tone="mint" title="No strong matches yet" body="Shop around or update your answers." actionLabel="Shop" onAction={onBrowse} secondaryLabel="Update answers" onSecondary={onRetake} />}
+      {currentProducts.length === 0 && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers or browse the shop." actionLabel="Shop" onAction={onBrowse} secondaryLabel="Update" onSecondary={onRetake} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
       {currentProducts.length > 0 && onReplayStory && (
         <button type="button" className="ay-replay" onClick={onReplayStory}>

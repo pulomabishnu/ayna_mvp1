@@ -14,7 +14,6 @@ export default function EmptyState({ art = 'spark', tone = 'pink', title, body, 
       <div className="ay-empty-art" aria-hidden="true">
         <span className="ay-empty-card" />
         <span className="ay-empty-card is-front"><svg viewBox="0 0 24 24">{ART[art] || ART.spark}</svg></span>
-        <svg className="ay-empty-spark" viewBox="-26 -26 52 52"><path d="M0-24C2-8 8-2 24 0 8 2 2 8 0 24-2 8-8 2-24 0-8-2-2-8 0-24Z" /></svg>
       </div>
       <h2>{title}</h2>
       {body && <p>{body}</p>}

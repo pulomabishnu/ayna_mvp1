@@ -104,7 +104,7 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, savedP
             </article>
           </>
         ) : (
-          <EmptyState art="spark" tone="butter" title="You’ve seen them all" body="Your saves are waiting in Saved." actionLabel="Start over" onAction={() => setIndex(0)} secondaryLabel="Done" onSecondary={onClose} />
+          <EmptyState art="spark" tone="butter" title="That’s all for now" body="Saved products are in Saved." actionLabel="Start over" onAction={() => setIndex(0)} secondaryLabel="Done" onSecondary={onClose} />
         )}
       </div>
 

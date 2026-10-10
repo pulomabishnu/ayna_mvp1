@@ -11,14 +11,14 @@
 .ayna-mobile .ay-btn.is-ghost { background: transparent; color: var(--ay-ink) !important; }
 
 /* empty + error states */
-.ayna-mobile .ay-empty { display: grid; justify-items: center; gap: 10px; padding: 48px 24px 40px; text-align: center; animation: ay-empty-in .5s var(--ay-ease) both; }
+.ayna-mobile .ay-empty { display: grid; justify-items: start; gap: 10px; padding: 40px var(--ay-gutter); text-align: left; animation: ay-empty-in .5s var(--ay-ease) both; }
 .ayna-mobile .ay-empty.is-compact { padding: 28px 16px; }
 @keyframes ay-empty-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-.ay-empty-art { position: relative; width: 132px; height: 132px; margin-bottom: 14px; }
+.ay-empty-art { position: relative; width: 96px; height: 96px; margin-bottom: 8px; }
 .ay-empty-card { position: absolute; inset: 8px 14px 14px 8px; border: 2.5px solid var(--ay-ink); border-radius: 28px; background: var(--ay-peri); rotate: -9deg; }
 .ay-empty-card.is-front { inset: 14px 8px 8px 14px; display: grid; place-items: center; background: var(--tone, var(--ay-pink)); rotate: 5deg; box-shadow: 4px 4px 0 var(--ay-ink); animation: ay-empty-wiggle 4s ease-in-out infinite; }
 @keyframes ay-empty-wiggle { 50% { rotate: -1deg; } }
-.ay-empty-card svg { width: 46px; height: 46px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-empty-card svg { width: 34px; height: 34px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .ay-empty-spark { position: absolute; right: -10px; top: -8px; width: 36px; height: 36px; overflow: visible; }
 .ay-empty-spark path { fill: var(--ay-butter); stroke: var(--ay-ink); stroke-width: 2.4; }
 .ay-empty--pink { --tone: var(--ay-pink); }
@@ -27,7 +27,7 @@
 .ay-empty--peri { --tone: var(--ay-mint); }
 .ayna-mobile .ay-empty h2 { margin: 0; max-width: 16ch; color: var(--ay-ink) !important; font: 800 28px/1 var(--ay-font-display) !important; letter-spacing: -.045em !important; text-wrap: balance; }
 .ayna-mobile .ay-empty p { margin: 0; max-width: 28ch; color: var(--ay-ink-soft); font: 500 14px/1.45 var(--ay-font-ui); }
-.ay-empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 10px; }
+.ay-empty-actions { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px; margin-top: 10px; }
 
 /* skeleton loading */
 .ayna-mobile .ay-skeleton { border-radius: 18px; background: linear-gradient(90deg, var(--ay-ink-faint) 0 40%, rgba(29,26,43,.06) 50%, var(--ay-ink-faint) 60%) 0 0 / 300% 100%; animation: ay-shimmer 1.4s linear infinite; }
@@ -402,3 +402,9 @@
 .ayna-mobile .am-screen > :not(.ayna-figma-header):not(.ayna-bottom-nav) { padding-left: var(--ay-gutter); padding-right: var(--ay-gutter); }
 .ayna-mobile .ay-discover-cta { width: calc(100% - 2 * var(--ay-gutter)); margin: 0 var(--ay-gutter) var(--ay-space-6); }
 .ayna-mobile .ayna-saved-header h1 { flex: 0 1 auto !important; width: fit-content !important; margin-right: auto !important; }
+
+/* Title rows: heading left, one plain text action right (no eyebrow). */
+.ayna-mobile .ay-title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--ay-space-3); }
+.ayna-mobile .ay-text-btn { min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-line); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; flex: none; margin-bottom: 6px; }
+.ayna-mobile .ay-title-row h1 { flex: 0 1 auto; min-width: 0; white-space: nowrap; font-size: calc(clamp(30px, 8.6vw, 40px) * var(--ayna-text-scale, 1)) !important; margin: 0 !important; }
+.ay-replay-art i:nth-child(3) { clip-path: none !important; border-radius: 50%; width: 16px !important; height: 16px !important; background: var(--ay-peri) !important; }

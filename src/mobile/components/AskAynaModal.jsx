@@ -200,9 +200,6 @@ export default function AskAynaModal({
         }}
       >
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
-            PRODUCTS & CARE
-          </div>
           <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>
             {'Ask ayna'}
           </div>
