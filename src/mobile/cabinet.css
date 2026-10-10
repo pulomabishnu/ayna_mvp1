@@ -292,6 +292,7 @@
 /* The cabinet keeps its hierarchy when the user selects dark mode. */
 .ayna-mobile[data-theme='dark'] { --ayna-bg:#16122a; --ayna-bg-alt:#211d30; --ayna-surface:#241f34; --ayna-surface-alt:#282338; --ayna-border:#5b5569; --ayna-chip-bg:#302a3e; --ayna-text:#faf9f3; --ayna-text-muted:#d1cbbd; --ayna-text-faint:#b5ae9f; --ayna-heading:#faf9f3; --ayna-cta-bg:#b8dfcb; --ayna-cta-text:#16122a; background:#16122a; color:#faf9f3; }
 .ayna-mobile[data-theme='dark'] { --ayna-accent-dark:#e5a683; --ayna-figma-berry:#e5a683; --ayna-color-green:#b8dfcb; }
+.ayna-mobile[data-theme='dark'] .ayna-shared-header .ayna-shared-wordmark { color:#faf9f3!important; }
 .ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active { color:#16122a!important; background:#b8dfcb!important; }
 .ayna-mobile[data-theme='dark'] :is(.ayna-figma-header,.ayna-bottom-nav,.ayna-cabinet-cover,.ayna-cabinet-cover .ayna-cover-top,.ayna-cabinet-cover .ayna-cover-actions,.ayna-cabinet-home,.ayna-figma-discover .ayna-shop-heading,.ayna-fresh-product-detail,.ayna-fresh-article,.ayna-fresh-saved,.ayna-fresh-profile-hub,.am-screen,.ayna-fresh-auth,.ayna-fresh-intake) { background:#16122a!important; color:#f7f7fb!important; }
 .ayna-mobile[data-theme='dark'] :is(.ayna-bottom-nav button:not(.is-active),.ayna-cabinet-topline button,.ayna-cabinet-foot button,.ayna-cabinet-more details>button,.ayna-cabinet-suggestion>button,.ayna-cover-secondary button,.ayna-fresh-auth-back,.ayna-fresh-auth-switch,.ayna-shop-filter-head button,.ayna-shop-filter-actions button:first-child) { color:#f7f7fb!important; }
@@ -454,7 +455,7 @@
 .ayna-product-theatre { position:relative; width:100%; height:clamp(220px,37vh,320px); margin:8px 0 24px; isolation:isolate; }
 .ayna-theatre-orbit { position:absolute; inset:20% 7% 13%; border:1px solid var(--ayna-border); border-radius:50%; transform:rotate(-18deg); }
 .ayna-theatre-photo { position:absolute; inset:6% 17% 8%; animation:ayna-product-pop 500ms cubic-bezier(.2,.8,.2,1) both; }
-.ayna-theatre-photo img { object-fit:contain!important; mix-blend-mode:multiply; }
+.ayna-theatre-photo img { object-fit:contain!important; mix-blend-mode:multiply; -webkit-mask-image:radial-gradient(ellipse 72% 72% at center,#000 62%,transparent 100%); mask-image:radial-gradient(ellipse 72% 72% at center,#000 62%,transparent 100%); }
 .ayna-theatre-sticker { position:absolute; right:0; top:8%; z-index:2; display:grid; place-items:center; width:90px; height:90px; padding:15px; box-sizing:border-box; clip-path:polygon(50% 0,61% 14%,78% 6%,81% 25%,100% 30%,89% 47%,100% 64%,81% 69%,78% 90%,60% 84%,50% 100%,39% 85%,20% 93%,18% 74%,0 69%,11% 51%,0 35%,20% 29%,23% 9%,40% 15%); background:var(--ayna-color-pop); color:var(--ayna-color-ink); text-align:center; font:700 13px/1.15 var(--ayna-font-ui); transform:rotate(10deg); }
 .ayna-theatre-name { position:absolute; left:0; bottom:2%; max-width:70%; font-size:11px; color:var(--ayna-text-muted); }
 .ayna-theatre-pause { position:absolute; right:0; bottom:0; display:grid; place-items:center; width:44px; height:44px; padding:0; border:0; border-radius:50%; background:var(--ayna-chip-bg); color:var(--ayna-text); cursor:pointer; }
