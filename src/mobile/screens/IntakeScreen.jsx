@@ -1592,6 +1592,13 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = visibleSteps[currentIndex] || visibleSteps[0];
   const isLast = currentIndex === visibleSteps.length - 1;
+  const sceneMotifs = ['stars', 'arches', 'rays', 'scallop', 'steps'];
+  const sceneBlues = ['#BDC5FF', '#C8CEFF', '#B6C1F5', '#CDD2FF', '#C0C9F8'];
+  const sceneStyle = {
+    '--intake-canvas': sceneBlues[currentIndex % sceneBlues.length],
+    '--scene-offset': `${(currentIndex * 17) % 42}px`,
+    '--scene-tilt': `${(currentIndex % 3 - 1) * 9}deg`,
+  };
 
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
   const toggleExclusive = (key, value, exclusiveValues = []) => setIntake((prev) => {
@@ -1854,9 +1861,10 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   }
 
   return (
-    <div className="ayna-fresh-intake" data-section={step.section} data-step={step.id} data-layout={currentIndex % 4}
+    <div className="ayna-fresh-intake" data-section={step.section} data-step={step.id} data-layout={currentIndex % 4} data-motif={sceneMotifs[currentIndex % sceneMotifs.length]}
       onTouchStart={onStoryTouchStart} onTouchEnd={onStoryTouchEnd} onWheel={onStoryWheel}
       style={{
+        ...sceneStyle,
         flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column',
         background: '#3E2F59',
         color: '#FCFBFB', position: 'relative', overflow: 'hidden',
@@ -1880,11 +1888,11 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       </div>
 
       <div className="ayna-fresh-intake-body" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
-        <div className="ayna-intake-scene" aria-hidden="true">
+        <div className="ayna-intake-scene" key={step.id} aria-hidden="true">
           <span className="ayna-intake-scene-index">{String(currentIndex + 1).padStart(2, '0')} / {String(visibleSteps.length).padStart(2, '0')}</span>
-          <span className="ayna-intake-scene-star" />
+          <span className="ayna-intake-scene-mark"><i /><i /><i /></span>
         </div>
-        <div style={{ padding: '22px 20px 0' }}>
+        <div className="ayna-intake-question-heading" key={`heading-${step.id}`} style={{ padding: '22px 20px 0' }}>
           {countForStep > 0 && <div className="ayna-intake-question-kicker"><strong>{countForStep} picked</strong></div>}
           <div className="ayna-fresh-intake-title" style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.045em', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#FCFBFB' }}>{step.title}</div>
           {step.subtitle && <p className="ayna-fresh-intake-subtitle" style={{ margin: '8px 0 0', fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
@@ -1895,7 +1903,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
             </div>
           )}
         </div>
-        <div style={{ padding: '20px 20px 20px', textAlign: 'left' }}>
+        <div className="ayna-intake-answer-stage" key={`answer-${step.id}`} style={{ padding: '20px 20px 20px', textAlign: 'left' }}>
           {renderBody()}
         </div>
       </div>
