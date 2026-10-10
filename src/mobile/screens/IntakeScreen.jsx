@@ -679,7 +679,7 @@ function SearchBar({ value, onChange, placeholder }) {
 function AddCustomChoice({ query, options, onAdd }) {
   const value = query.trim().replace(/\s+/g, ' ');
   if (value.length < 2 || options.some((item) => item.toLowerCase() === value.toLowerCase())) return null;
-  return <button type="button" className="ayna-intake-add-choice" onClick={() => onAdd(value)}><span aria-hidden="true">+</span><span>Add “{value}”</span><small>Not listed? Add your own</small></button>;
+  return <button type="button" className="ayna-intake-add-choice" onClick={() => onAdd(value)}><span aria-hidden="true">+</span><span>Add “{value}”</span></button>;
 }
 
 function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons, numbered = false }) {
@@ -689,7 +689,7 @@ function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd,
   return <div className="ayna-intake-choice-picker">
     <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />
     {custom.length > 0 && <div className="ayna-intake-custom-selected"><small>ADDED BY YOU</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
-    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} numbered={numbered} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} /> : <p className="ayna-intake-no-results">No suggestions match yet. You can add your own answer below.</p>}
+    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} numbered={numbered} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} /> : <p className="ayna-intake-no-results">No matches</p>}
     <AddCustomChoice query={search} options={[...items, ...selected]} onAdd={onAdd} />
   </div>;
 }
@@ -871,7 +871,7 @@ function AgeCard({ value, onChange, underage, onOpenGate }) {
       </div>
 
       {underage && (
-        <div
+        <button type="button" className="ayna-intake-control"
           onClick={onOpenGate}
           style={{ display: 'flex', gap: 11, alignItems: 'flex-start', marginTop: 14, padding: '14px 15px', borderRadius: 16, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER_SOFT, cursor: 'pointer' }}
         >
@@ -880,7 +880,7 @@ function AgeCard({ value, onChange, underage, onOpenGate }) {
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: WARNING_TITLE }}>ayna is for ages 18 and up</div>
             <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: WARNING_BODY, marginTop: 4 }}>We can't build a profile from this answer. Tap here to see what you can still do.</div>
           </div>
-        </div>
+        </button>
       )}
     </div>
   );
@@ -955,9 +955,9 @@ function ZipDigits({ value, onChange, onSkip }) {
       </div>
       {onSkip && (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
-          <div onClick={onSkip} style={{ cursor: 'pointer', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '10px 14px', borderRadius: 99, background: PANEL_BG, border: '1.5px solid ' + ROW_BORDER, color: MUTED }}>
+          <button type="button" className="ayna-intake-control" onClick={onSkip} style={{ cursor: 'pointer', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '10px 14px', borderRadius: 99, background: PANEL_BG, border: '1.5px solid ' + ROW_BORDER, color: MUTED }}>
             Skip this
-          </div>
+          </button>
         </div>
       )}
     </div>
@@ -1029,19 +1029,20 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
           placeholder={placeholder}
+          aria-label={placeholder}
           style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }}
         />
       </div>
       {draft.trim().length > 0 && (
         <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-          <div onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
+          <button type="button" className="ayna-intake-control" onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
             <span>Add "{draft.trim()}"</span>
-          </div>
+          </button>
           {matches.map((option) => (
-            <div key={option} onClick={() => addValue(option)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>
+            <button type="button" className="ayna-intake-control" key={option} onClick={() => addValue(option)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>
               {option}
-            </div>
+            </button>
           ))}
         </div>
       )}
@@ -1051,9 +1052,9 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
             <div key={`${value}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER }}>
               <span style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT_BG, border: '1px solid ' + ACCENT_BORDER, flex: 'none' }} />
               <span style={{ flex: 1, fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK }}>{value}</span>
-              <span onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
+              <button type="button" className="ayna-intake-control" aria-label={`Remove ${value}`} onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              </span>
+              </button>
             </div>
           ))}
         </div>
@@ -1092,16 +1093,16 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
             <div key={`${value}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER }}>
               <span style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT_BG, border: '1px solid ' + ACCENT_BORDER, flex: 'none' }} />
               <span style={{ flex: 1, fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK }}>{value}</span>
-              <span onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
+              <button type="button" className="ayna-intake-control" aria-label={`Remove ${value}`} onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              </span>
+              </button>
             </div>
           ))}
         </div>
       )}
 
       {!adding ? (
-        <div
+        <button type="button" className="ayna-intake-control"
           onClick={() => setAdding(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
@@ -1111,7 +1112,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C41C72" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           Add a product or brand
-        </div>
+        </button>
       ) : (
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ACCENT_BORDER, borderRadius: 99, padding: '11px 14px' }}>
@@ -1124,20 +1125,20 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
               placeholder="Start typing a product or brand"
               style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }}
             />
-            <span onClick={() => { setAdding(false); setDraft(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
+            <button type="button" className="ayna-intake-control" aria-label="Close search" onClick={() => { setAdding(false); setDraft(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            </span>
+            </button>
           </div>
           {draft.trim().length > 0 && (
             <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-              <div onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
+              <button type="button" className="ayna-intake-control" onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
                 <span>Add "{draft.trim()}"</span>
-              </div>
+              </button>
               {matches.map((option) => (
-                <div key={option} onClick={() => addValue(option)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>
+                <button type="button" className="ayna-intake-control" key={option} onClick={() => addValue(option)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>
                   {option}
-                </div>
+                </button>
               ))}
             </div>
           )}
@@ -1149,7 +1150,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
           <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#C41C72', marginBottom: 10 }}>From your history</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {quickAdd.map((name) => (
-              <div
+              <button type="button" className="ayna-intake-control"
                 key={name}
                 onClick={() => addValue(name)}
                 style={{
@@ -1160,7 +1161,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
               >
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={LABEL_GOLD} strokeWidth="2.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
                 {name}
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -1236,7 +1237,7 @@ function ProductHistoryBuilder({ products, onChange }) {
   return (
     <div>
       {!adding ? (
-        <div
+        <button type="button" className="ayna-intake-control"
           onClick={() => setAdding(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
@@ -1246,24 +1247,24 @@ function ProductHistoryBuilder({ products, onChange }) {
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C41C72" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           Add a product or brand
-        </div>
+        </button>
       ) : (
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ACCENT_BORDER, borderRadius: 99, padding: '11px 14px' }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
             <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
-            <span onClick={() => { setAdding(false); setQuery(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
+            <button type="button" className="ayna-intake-control" aria-label="Close search" onClick={() => { setAdding(false); setQuery(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            </span>
+            </button>
           </div>
           {query.trim().length > 0 && (
             <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-              <div onClick={() => addProduct(query)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
+              <button type="button" className="ayna-intake-control" onClick={() => addProduct(query)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
                 <span>Add "{query.trim()}"</span>
-              </div>
+              </button>
               {suggestions.map((name) => (
-                <div key={name} onClick={() => addProduct(name)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>{name}</div>
+                <button type="button" className="ayna-intake-control" key={name} onClick={() => addProduct(name)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>{name}</button>
               ))}
             </div>
           )}
@@ -1277,7 +1278,7 @@ function ProductHistoryBuilder({ products, onChange }) {
             const summary = [product.current, product.worked, product.reaction].filter(Boolean);
             return (
               <div key={`${product.name}-${index}`} style={{ background: CARD_BG, color: INK, border: '1.5px solid ' + (expanded ? ACCENT_BORDER : ROW_BORDER), borderRadius: 16, overflow: 'hidden', textAlign: 'left' }}>
-                <div onClick={() => { setExpandedIndex(expanded ? null : index); setStopSearch(''); }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '13px 14px', cursor: 'pointer' }}>
+                <button type="button" className="ayna-intake-control" aria-expanded={expanded} onClick={() => { setExpandedIndex(expanded ? null : index); setStopSearch(''); }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '13px 14px', cursor: 'pointer' }}>
                   <div style={{ minWidth: 0 }}>
                     <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{product.name}</div>
                     <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>{summary.length ? summary.join(' · ') : 'Optional details'}</div>
@@ -1285,7 +1286,7 @@ function ProductHistoryBuilder({ products, onChange }) {
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flex: 'none', color: MUTED, transform: expanded ? 'rotate(180deg)' : 'rotate(-90deg)', transition: 'transform .2s' }}>
                     <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                </div>
+                </button>
                 {expanded && (
                   <div style={{ padding: '0 14px 16px', borderTop: '1px solid ' + ROW_BORDER, paddingTop: 14 }}>
                     <div style={{ marginBottom: 14 }}>
@@ -1326,7 +1327,7 @@ function ProductHistoryBuilder({ products, onChange }) {
                       </div>
                     )}
 
-                    <div onClick={() => removeProduct(index)} style={{ marginTop: 10, color: LABEL_GOLD, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, cursor: 'pointer' }}>Remove product</div>
+                    <button type="button" className="ayna-intake-control" onClick={() => removeProduct(index)} style={{ marginTop: 10, color: LABEL_GOLD, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, cursor: 'pointer' }}>Remove product</button>
                   </div>
                 )}
               </div>
@@ -1460,13 +1461,13 @@ function TextAreaField({ value, onChange, placeholder }) {
       />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 12 }}>
         {FREE_TEXT_PROMPTS.map((prompt) => (
-          <div
+          <button type="button" className="ayna-intake-control"
             key={prompt}
             onClick={() => appendPrompt(prompt)}
             style={{ cursor: 'pointer', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', padding: '9px 13px', borderRadius: 99, background: CARD_BG, border: '1.5px dashed ' + ROW_BORDER, color: BODY_TEXT }}
           >
             {prompt}
-          </div>
+          </button>
         ))}
       </div>
     </div>
@@ -1488,12 +1489,12 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
     ['03', 'Come back at 18', "We'll still be here, and the quiz takes about six minutes."],
   ];
   return (
-    <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', color: INK, fontFamily: "'DM Sans',system-ui,sans-serif" }}>
+    <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', color: INK, fontFamily: "var(--ayna-font-ui)" }}>
       <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', borderBottom: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div onClick={onChangeAge} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
+          <button type="button" className="ayna-intake-control" aria-label="Change age" onClick={onChangeAge} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-          </div>
+          </button>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD }}>About you</div>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: MUTED, marginTop: 2 }}>Quiz paused</div>
@@ -1539,12 +1540,12 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
       </div>
 
       <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', borderTop: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
-        <div onClick={onBrowseLibrary} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFFFFF', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
+        <button type="button" className="ayna-intake-control" onClick={onBrowseLibrary} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFFFFF', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
           Browse the reading library
-        </div>
-        <div onClick={onChangeAge} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>
+        </button>
+        <button type="button" className="ayna-intake-control" onClick={onChangeAge} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>
           Change my birthday
-        </div>
+        </button>
       </div>
     </div>
   );
@@ -1773,7 +1774,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       return (
         <>
           <PriceBandList options={priceOnlyBands} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
-          <div
+          <button type="button" className="ayna-intake-control" aria-pressed={notAFactorOn}
             onClick={() => toggleExclusive('priceRange', notAFactor, [notAFactor])}
             style={{
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap', marginTop: 7,
@@ -1787,7 +1788,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
           >
             {notAFactorOn && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
             {notAFactor}
-          </div>
+          </button>
 
           <div style={{ height: 1, background: ROW_BORDER, margin: '24px 0 20px' }} />
 
@@ -1830,7 +1831,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column',
         background: '#16122A',
         color: '#FAFBF8', position: 'relative', overflow: 'hidden',
-        fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out',
+        fontFamily: "var(--ayna-font-ui)", animation: 'ay-page .25s ease-out',
       }}
     >
       <div className="ayna-fresh-intake-header" style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', position: 'relative' }}>

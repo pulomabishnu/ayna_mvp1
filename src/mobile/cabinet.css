@@ -420,3 +420,9 @@
 .ayna-settings-scroll h2 { margin:0 0 8px; color:var(--ayna-text-muted); font:600 11px/1.4 var(--ayna-font-ui); text-transform:uppercase; letter-spacing:.08em; }
 .ayna-settings-scroll section :is(button,a) { display:flex; align-items:center; justify-content:space-between; gap:16px; box-sizing:border-box; width:100%; min-height:56px; padding:12px 0; border:0; border-bottom:1px solid var(--ayna-border); background:transparent; color:var(--ayna-text); text-decoration:none; text-align:left; font-size:calc(15px * var(--ayna-text-scale,1)); }
 .ayna-account-session { display:block; min-height:44px; margin:24px 0; padding:8px 0; border:0; background:transparent; color:var(--ayna-accent-dark); font-size:14px; }
+
+/* Search additions, removal actions, and check-in chips share native control geometry. */
+.ayna-mobile .ayna-intake-control { min-height:44px; min-width:44px; border:0; background:transparent; color:var(--ayna-text); font-family:var(--ayna-font-ui); text-align:left; }
+.ayna-mobile .ayna-intake-control:focus-visible { outline:2px solid var(--ayna-accent-dark); outline-offset:3px; }
+.ayna-mobile .ayna-intake-control[aria-label^="Remove"],
+.ayna-mobile .ayna-intake-control[aria-label="Close search"] { align-items:center; justify-content:center; opacity:1!important; }

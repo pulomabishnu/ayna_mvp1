@@ -239,7 +239,7 @@ function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
       <DividerLabel right={selected.length ? <span style={{ background: ACCENT_BG, color: ACCENT_BORDER, padding: '3px 9px', borderRadius: 99, fontWeight: 600 }}>{selected.length} selected</span> : '0 selected'}>
         Selected
       </DividerLabel>
-      <div
+      <button type="button" className="ayna-intake-control" aria-pressed={selected.length === 0}
         onClick={onClearAll}
         style={{
           display: 'inline-block',
@@ -257,7 +257,7 @@ function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
         }}
       >
         None right now
-      </div>
+      </button>
       {SYMPTOM_GROUPS.map((group) => {
         const groupCount = group.items.filter(([label]) => selected.includes(label)).length;
         return (
@@ -267,7 +267,7 @@ function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
               {group.items.map(([label]) => {
                 const on = selected.includes(label);
                 return (
-                  <div
+                  <button type="button" className="ayna-intake-control" aria-pressed={on}
                     key={label}
                     onClick={() => onToggle(label)}
                     style={{
@@ -283,7 +283,7 @@ function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
                     }}
                   >
                     {label}
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -475,12 +475,12 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
         <Header onBack={onBack} label="Check-in" progress={1} />
         <div style={{ flex: 1, overflowY: 'auto', padding: '10px 20px 30px' }}>
           <CompletionCard month={thisMonth} />
-          <div
+          <button type="button" className="ayna-intake-control"
             onClick={onBack}
             style={{ marginTop: 20, textAlign: 'center', padding: 15, borderRadius: 99, background: NAVY, color: '#FFFFFF', fontWeight: 600, fontFamily: "var(--ayna-font-ui)", cursor: 'pointer' }}
           >
             Back to profile
-          </div>
+          </button>
         </div>
       </div>
     );
@@ -552,13 +552,13 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
                 {['I get periods regularly', 'My periods are irregular', 'I am trying to conceive', 'I am pregnant', 'I am postpartum', 'I am in perimenopause', 'I am in menopause'].map((v) => {
                   const on = lifeStageEditSelections.includes(v);
                   return (
-                    <div
+                    <button type="button" className="ayna-intake-control" aria-pressed={on}
                       key={v}
                       onClick={() => setLifeStageEditSelections((prev) => (prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]))}
                       style={{ padding: '8px 13px', borderRadius: 99, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER), background: on ? ACCENT_BG : CARD_BG, fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}
                     >
                       {v}
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -586,7 +586,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       )}
 
       {stepId === 'uti' && (
-        <StepShell tag="Shown because · recurrent UTIs" title="Any UTI, BV, or yeast symptoms this month?" subtitle="More useful than a lifetime frequency — we want to know if last month's suggestion actually worked." footer={footer}>
+        <StepShell tag="Shown because · recurrent UTIs" title="Any UTI, BV, or yeast symptoms this month?" footer={footer}>
           {UTI_OPTIONS.map(([value, label]) => (
             <OptionCard key={value} selected={answers.utiStatus === value} title={label} onClick={() => set('utiStatus', value)} />
           ))}
@@ -594,7 +594,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       )}
 
       {stepId === 'recs' && (
-        <StepShell title="How did the products we suggested work for you?" subtitle="This is the answer that changes your matches the most — worth the ten seconds." footer={footer}>
+        <StepShell title="How were your product picks?" footer={footer}>
           {myProducts.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, marginBottom: 16 }}>
               <div style={{ width: 36, height: 36, borderRadius: 10, flex: 'none', background: ACCENT_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "var(--ayna-font-display)", fontSize: 'calc(16px * var(--ayna-text-scale, 1))', color: ACCENT_BORDER }}>{myProducts.length}</div>
@@ -611,7 +611,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       )}
 
       {stepId === 'medications' && (
-        <StepShell title="Any changes to what you're taking?" subtitle="Interactions are the one thing we can't guess at." footer={footer}>
+        <StepShell title="Any changes to what you're taking?" footer={footer}>
           {fullHealthIntake?.currentMedicationItems?.length > 0 && (
             <div style={{ padding: '12px 14px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, marginBottom: 16 }}>
               <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: MUTED, marginBottom: 6 }}>On file</div>
@@ -625,7 +625,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
             <input
               value={answers.medicationStarted}
               onChange={(e) => set('medicationStarted', e.target.value)}
-              placeholder="What did you start?"
+              placeholder="What did you start?" aria-label="Medication started"
               style={{ width: '100%', boxSizing: 'border-box', padding: '13px 16px', borderRadius: 14, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none', marginTop: 4 }}
             />
           )}
@@ -634,13 +634,13 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
               {fullHealthIntake.currentMedicationItems.map((item) => {
                 const on = answers.medicationStopped.includes(item);
                 return (
-                  <div
+                  <button type="button" className="ayna-intake-control" aria-pressed={on}
                     key={item}
                     onClick={() => set('medicationStopped', on ? answers.medicationStopped.filter((x) => x !== item) : [...answers.medicationStopped, item])}
                     style={{ padding: '9px 14px', borderRadius: 99, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER), background: on ? ACCENT_BG : CARD_BG, fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}
                   >
                     {item}
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -649,7 +649,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       )}
 
       {stepId === 'safety' && (
-        <StepShell title="Any new, worsening or significant symptoms right now?" subtitle="One question, every month, for the things that shouldn't wait." footer={footer}>
+        <StepShell title="Any new, worsening or significant symptoms right now?" footer={footer}>
           {SAFETY_OPTIONS.map((label) => (
             <OptionCard key={label} selected={answers.safetyConcern === label} title={label} tone={label === 'Yes' ? 'warning' : undefined} onClick={() => set('safetyConcern', label)} />
           ))}
@@ -677,11 +677,11 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       )}
 
       {stepId === 'notes' && (
-        <StepShell title="Anything else going on this month?" subtitle="Optional. Skip it freely — but if something didn't fit our lists, this is where it lands." footer={footer}>
+        <StepShell title="Anything else?" subtitle="Optional" footer={footer}>
           <textarea
             value={answers.notes}
             onChange={(e) => set('notes', e.target.value.slice(0, 600))}
-            placeholder="A person reads these."
+            placeholder="Your notes" aria-label="Additional check-in notes"
             rows={5}
             style={{ width: '100%', boxSizing: 'border-box', padding: 16, borderRadius: 18, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none', resize: 'vertical', minHeight: 120, fontFamily: 'inherit' }}
           />
