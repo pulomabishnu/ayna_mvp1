@@ -594,8 +594,8 @@ export default function MobileApp() {
     // (a monthly check-in, a retaken quiz, an edited profile) already has an
     // account and this same ecosystem attached to it — routing them through
     // "sign in" again after finishing is a dead end, not a next step.
-    onFinish: () => setScreen(authUser ? 'eco' : 'reveal'),
-    onContinue: () => openAuth('signup'),
+    onFinish: () => setScreen('reveal'),
+    onContinue: () => authUser ? setScreen('eco') : openAuth('signup'),
     initialMode: authMode,
     onAuthBack: () => {
       const resume = authResumeRef.current;

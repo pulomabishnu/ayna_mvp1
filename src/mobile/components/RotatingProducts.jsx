@@ -2,8 +2,14 @@ import { useEffect, useState } from 'react';
 import { ALL_PRODUCTS } from '../../data/products.js';
 import ProductImage from './ProductImage.jsx';
 
-const PRODUCTS = ['p-lola-pad', 'p-spearmint-pcos', 'p-portable-heating', 'p-ritual-prenatal']
-  .map((id) => ALL_PRODUCTS.find((product) => product.id === id)).filter(Boolean);
+const product = ALL_PRODUCTS.find((item) => item.id === 'p-lola-pad') || ALL_PRODUCTS[0];
+const second = ALL_PRODUCTS.find((item) => item.id === 'p-portable-heating') || ALL_PRODUCTS[1];
+const FEATURES = [
+  { key: 'match', label: 'MATCH', title: 'Picked for you' },
+  { key: 'cabinet', label: 'ECOSYSTEM', title: 'Your cabinet' },
+  { key: 'ask', label: 'ASK AYNA', title: 'Ask away' },
+  { key: 'shop', label: 'SHOP', title: 'The lineup' },
+];
 
 export default function RotatingProducts() {
   const [index, setIndex] = useState(0);
@@ -16,17 +22,21 @@ export default function RotatingProducts() {
     return () => query.removeEventListener('change', update);
   }, []);
   useEffect(() => {
-    if (paused || reducedMotion || PRODUCTS.length < 2) return;
-    const timer = window.setInterval(() => setIndex((value) => (value + 1) % PRODUCTS.length), 2800);
+    if (paused || reducedMotion) return undefined;
+    const timer = window.setInterval(() => setIndex((value) => (value + 1) % FEATURES.length), 1800);
     return () => window.clearInterval(timer);
   }, [paused, reducedMotion]);
-  const product = PRODUCTS[index];
-  if (!product) return null;
-  return <div className="ayna-product-theatre" aria-label="Products in the ayna catalog" aria-live="off">
-    <span className="ayna-theatre-orbit" aria-hidden="true" />
-    <span className="ayna-theatre-sticker">Find your fit</span>
-    <div key={product.id} className="ayna-theatre-photo"><ProductImage src={product.image || product.imageUrl || product.images?.[0]} alt={product.name} /></div>
-    <span className="ayna-theatre-name">{product.brand || product.name}</span>
-    {!reducedMotion && PRODUCTS.length > 1 && <button className="ayna-theatre-pause" type="button" aria-label={paused ? 'Resume product slideshow' : 'Pause product slideshow'} onClick={() => setPaused((value) => !value)}>{paused ? <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m8 5 11 7-11 7z" /></svg> : <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM14 5h4v14h-4z" /></svg>}</button>}
+  const feature = FEATURES[index];
+
+  return <div className={`ayna-product-theatre ayna-feature-montage ayna-feature-montage--${feature.key}`} aria-label="Ayna app features" aria-live="off">
+    <div className="ayna-feature-head"><span>{feature.label}</span><span>{String(index + 1).padStart(2, '0')} / 04</span></div>
+    <div key={feature.key} className="ayna-feature-stage">
+      {feature.key === 'match' && <div className="ayna-feature-match"><ProductImage src={product?.image || product?.imageUrl || product?.images?.[0]} alt={product?.name || ''} /><span>YOUR MATCH</span></div>}
+      {feature.key === 'cabinet' && <div className="ayna-feature-cabinet" aria-hidden="true"><i /><i /><i /><strong>you</strong></div>}
+      {feature.key === 'ask' && <div className="ayna-feature-ask"><span>What fits my routine?</span><strong>ayna</strong><i /></div>}
+      {feature.key === 'shop' && <div className="ayna-feature-shop"><span><ProductImage src={product?.image || product?.imageUrl || product?.images?.[0]} alt={product?.name || ''} /></span><span><ProductImage src={second?.image || second?.imageUrl || second?.images?.[0]} alt={second?.name || ''} /></span></div>}
+    </div>
+    <div className="ayna-feature-foot"><strong>{feature.title}</strong><div aria-hidden="true">{FEATURES.map((item, step) => <i key={item.key} className={step === index ? 'is-active' : ''} />)}</div></div>
+    {!reducedMotion && <button className="ayna-theatre-pause" type="button" aria-label={paused ? 'Resume feature montage' : 'Pause feature montage'} onClick={() => setPaused((value) => !value)}>{paused ? '▶' : 'Ⅱ'}</button>}
   </div>;
 }

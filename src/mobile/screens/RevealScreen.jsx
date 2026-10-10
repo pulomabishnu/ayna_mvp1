@@ -1,60 +1,100 @@
+import { useEffect, useRef, useState } from 'react';
 import ProductImage from '../components/ProductImage.jsx';
 
-const colors = {
-  cream: 'var(--ayna-bg)',
-  navy: 'var(--ayna-text)',
-  muted: 'var(--ayna-text-muted)',
-};
+const DURATION = 4600;
 
-export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse }) {
-  const preview = myProducts.slice(0, 4);
-  const hasMatches = preview.length > 0;
+export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse, authUser }) {
+  const [index, setIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const progressRef = useRef(0);
+  const touchX = useRef(null);
+  const swipeTime = useRef(0);
+  const products = myProducts.slice(0, 4);
+  const slides = products.length ? ['intro', 'focus', 'collection', 'finish'] : ['intro', 'empty'];
+  const active = slides[index] || slides[0];
+  const first = products[0];
+  const next = () => { progressRef.current = 0; setIndex((current) => Math.min(slides.length - 1, current + 1)); setProgress(0); };
+  const previous = () => { progressRef.current = 0; setIndex((current) => Math.max(0, current - 1)); setProgress(0); };
+
+  useEffect(() => {
+    if (paused || index === slides.length - 1 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const timer = window.setInterval(() => {
+      progressRef.current += 80 / DURATION;
+      if (progressRef.current >= 1) {
+        progressRef.current = 0;
+        setProgress(0);
+        setIndex((current) => Math.min(slides.length - 1, current + 1));
+      } else setProgress(progressRef.current);
+    }, 80);
+    return () => window.clearInterval(timer);
+  }, [index, paused, slides.length]);
+
+  const handleTap = (event) => {
+    if (Date.now() - swipeTime.current < 350 || event.target.closest('button,a')) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    if (event.clientX - bounds.left < bounds.width * .3) previous(); else next();
+  };
+  const handleTouchEnd = (event) => {
+    if (touchX.current == null) return;
+    const distance = touchX.current - event.changedTouches[0].clientX;
+    touchX.current = null;
+    if (Math.abs(distance) < 55) return;
+    swipeTime.current = Date.now();
+    if (distance > 0) next(); else previous();
+  };
 
   return (
-    <main className="ayna-fresh-reveal" style={{ flex: 1, minHeight: 0, overflowY: 'auto', background: colors.cream, color: colors.navy, fontFamily: "var(--ayna-font-ui)", padding: 'max(20px, env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))' }}>
-      <div style={{ maxWidth: 480, margin: '0 auto' }}>
-        <button type="button" onClick={onBack} aria-label="Back to your health answers" style={{ width: 44, height: 44, borderRadius: 10, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', color: colors.navy, fontSize: 23, cursor: 'pointer' }}>
-          <span aria-hidden="true">‹</span>
-        </button>
-
-        <div style={{ marginTop: 24, color: colors.navy, fontSize: 12, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase' }}>Your results</div>
-        <h1 style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(32px * var(--ayna-text-scale, 1))', lineHeight: 1.05, letterSpacing: '-.05em', fontWeight: 700, margin: '8px 0 12px' }}>
-          {hasMatches ? 'Your first matches' : 'Your answers are in'}
-        </h1>
-        <p style={{ margin: 0, color: colors.muted, fontSize: 16, lineHeight: 1.5 }}>
-          {hasMatches
-            ? 'Here are products selected from the needs you shared. See what they are before deciding whether to make an account.'
-            : 'We could not find a confident product match yet. You can revisit your answers or explore the full catalog.'}
-        </p>
-
-        {topAreas.length > 0 && <div aria-label="Areas in your profile" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 20 }}>
-          {topAreas.slice(0, 4).map((area) => <span key={area} style={{ padding: '7px 10px', border: '1px solid var(--ayna-border)', borderRadius: 10, background: 'var(--ayna-surface)', color: colors.navy, fontSize: 13, fontWeight: 600 }}>{area}</span>)}
-        </div>}
-
-        {hasMatches && <section aria-labelledby="reveal-matches-title" style={{ marginTop: 30 }}>
-          <h2 id="reveal-matches-title" style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 22, letterSpacing: '-.04em', fontWeight: 700, margin: '0 0 14px' }}>Picked for your profile</h2>
-          <div className="ayna-fresh-reveal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 13 }}>
-            {preview.map((product) => (
-              <article key={product.id} style={{ minWidth: 0 }}>
-                <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', background: 'var(--ayna-chip-bg)', borderRadius: 14, overflow: 'hidden' }}>
-                  <ProductImage src={product.image || product.imageUrl} alt={product.name} allowBrandLogo={product.type === 'digital'} style={{ objectFit: 'contain', padding: '14%', boxSizing: 'border-box' }} />
-                </div>
-                <div style={{ minWidth: 0, paddingTop: 9 }}>
-                  <div style={{ color: colors.muted, fontSize: 12, lineHeight: 1.3 }}>{product.brand || String(product.category || '').replaceAll('-', ' ')}</div>
-                  <div style={{ color: colors.navy, fontWeight: 700, fontSize: 15, lineHeight: 1.3, marginTop: 4 }}>{product.name}</div>
-                </div>
-              </article>
-            ))}
-          </div>
-          {myProducts.length > preview.length && <p style={{ color: colors.muted, fontSize: 13, margin: '12px 0 0' }}>And {myProducts.length - preview.length} more in your Ecosystem.</p>}
-        </section>}
-
-        <div style={{ marginTop: 30, display: 'grid', gap: 10 }}>
-          {hasMatches && <button type="button" onClick={onContinue} style={{ minHeight: 52, width: '100%', border: 0, borderRadius: 10, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontSize: 16, fontWeight: 700, cursor: 'pointer' }}>Create account</button>}
-          <button type="button" onClick={onGoBrowse} style={{ minHeight: 44, width: '100%', border: '1px solid var(--ayna-border)', borderRadius: 10, background: 'transparent', color: colors.navy, fontSize: 16, fontWeight: 600, cursor: 'pointer' }}>Browse products</button>
-          {!hasMatches && <button type="button" onClick={onBack} style={{ minHeight: 44, width: '100%', border: 0, background: 'transparent', color: colors.navy, fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>Update my answers</button>}
-        </div>
+    <main className={`ayna-fresh-reveal ayna-story ayna-story--${active}`} onClick={handleTap}
+      onTouchStart={(event) => { touchX.current = event.touches[0]?.clientX; }} onTouchEnd={handleTouchEnd}
+      onKeyDown={(event) => { if (event.key === 'ArrowRight') next(); if (event.key === 'ArrowLeft') previous(); }}
+      tabIndex={0} aria-label="Your ecosystem story">
+      <div className="ayna-story-progress" aria-label={`Story ${index + 1} of ${slides.length}`}>
+        {slides.map((slide, stepIndex) => <span key={slide}><i style={{ width: stepIndex < index ? '100%' : stepIndex === index ? `${progress * 100}%` : '0%' }} /></span>)}
       </div>
+      <div className="ayna-story-top">
+        <button type="button" onClick={onBack} aria-label="Back to answers">←</button>
+        <span>ayna / your story</span>
+        <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? 'Play story' : 'Pause story'}>{paused ? '▶' : 'Ⅱ'}</button>
+      </div>
+
+      <div className="ayna-story-stage" key={active}>
+        {active === 'intro' && <>
+          <div className="ayna-story-kicker">YOUR ECOSYSTEM</div>
+          <h1>Made for<br /><em>your</em> body.</h1>
+          <div className="ayna-story-orbit" aria-hidden="true"><span>{myProducts.length}</span><i /><i /></div>
+          <div className="ayna-story-bottomline">{myProducts.length} {myProducts.length === 1 ? 'pick' : 'picks'} · {topAreas.length} {topAreas.length === 1 ? 'area' : 'areas'}</div>
+        </>}
+        {active === 'focus' && first && <>
+          <div className="ayna-story-kicker">FIRST UP / {topAreas[0] || 'YOUR MATCH'}</div>
+          <h1>A good<br />place to start.</h1>
+          <div className="ayna-story-feature-photo"><ProductImage src={first.image || first.imageUrl || first.images?.[0]} alt={first.name} allowBrandLogo={first.type === 'digital'} /></div>
+          <div className="ayna-story-product-name"><span>{first.brand || 'Ayna pick'}</span><strong>{first.name}</strong></div>
+        </>}
+        {active === 'collection' && <>
+          <div className="ayna-story-kicker">THE LINEUP</div>
+          <h1>Your cabinet,<br />your rules.</h1>
+          <div className="ayna-story-product-cloud">
+            {products.map((product, productIndex) => <div key={product.id || productIndex} className="ayna-story-cloud-item" style={{ '--item-index': productIndex }}><ProductImage src={product.image || product.imageUrl || product.images?.[0]} alt={product.name} allowBrandLogo={product.type === 'digital'} /></div>)}
+          </div>
+          <div className="ayna-story-bottomline">{topAreas.join(' · ') || 'Made around you'}</div>
+        </>}
+        {active === 'finish' && <>
+          <div className="ayna-story-kicker">ALL YOURS</div>
+          <h1>Keep what<br /><em>fits.</em></h1>
+          <div className="ayna-story-finish-mark" aria-hidden="true">a</div>
+          <button className="ayna-story-cta" type="button" onClick={onContinue}>{authUser ? 'Open Ecosystem' : 'Save my Ecosystem'} <span>→</span></button>
+          <button className="ayna-story-link" type="button" onClick={onGoBrowse}>Browse instead</button>
+        </>}
+        {active === 'empty' && <>
+          <div className="ayna-story-kicker">YOUR NEXT CHAPTER</div>
+          <h1>Still<br /><em>exploring.</em></h1>
+          <p>No strong match yet.</p>
+          <button className="ayna-story-cta" type="button" onClick={onGoBrowse}>Explore products <span>→</span></button>
+          <button className="ayna-story-link" type="button" onClick={onBack}>Edit answers</button>
+        </>}
+      </div>
+      {index < slides.length - 1 && <div className="ayna-story-nav-hint" aria-hidden="true">tap or swipe →</div>}
     </main>
   );
 }
