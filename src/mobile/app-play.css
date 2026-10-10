@@ -88,10 +88,10 @@
 /* ===== Audit pass 2 ===== */
 
 /* Product photos: one clean tile, no halo blob behind cut-out packshots. */
-.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-image { background: var(--ay-tile) !important; border-radius: var(--ay-radius-lg) !important; overflow: hidden !important; }
-.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-image::before { display: none !important; }
-.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-image img { padding: 12% !important; object-fit: contain !important; mix-blend-mode: multiply; -webkit-mask-image: none !important; mask-image: none !important; }
-.ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { aspect-ratio: 1 !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image { background: var(--ay-tile) !important; border-radius: var(--ay-radius-lg) !important; overflow: hidden !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image::before { display: none !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image img { padding: 12% !important; object-fit: contain !important; mix-blend-mode: multiply; -webkit-mask-image: none !important; mask-image: none !important; }
+.ayna-mobile.ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { aspect-ratio: 1 !important; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) { border-bottom: 0 !important; padding-bottom: 4px !important; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { min-height: 0 !important; }
 .ayna-mobile .ayna-card-save { top: 8px !important; right: 8px !important; bottom: auto !important; }

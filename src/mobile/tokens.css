@@ -51,7 +51,7 @@
   --ay-space-1: 4px; --ay-space-2: 8px; --ay-space-3: 12px; --ay-space-4: 16px; --ay-space-5: 20px; --ay-space-6: 24px; --ay-space-8: 32px;
   --ay-radius-sm: 10px; --ay-radius-md: 14px; --ay-radius-lg: 20px; --ay-radius-pill: 999px;
   --ay-text-xs: 11px; --ay-text-sm: 13px; --ay-text-md: 15px; --ay-text-lg: 18px; --ay-text-xl: 24px;
-  --ay-tile: #f1ede4;
+  --ay-tile: #eeeae0;
   --ay-line: rgba(29, 26, 43, .1);
 }
 .ayna-mobile[data-theme='dark'] { --ay-tile: rgba(255, 255, 255, .06); --ay-line: rgba(255, 255, 255, .12); }
