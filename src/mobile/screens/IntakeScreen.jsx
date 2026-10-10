@@ -1881,8 +1881,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
       <div className="ayna-fresh-intake-body" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
         <div className="ayna-intake-scene" aria-hidden="true">
-          <b>{String(currentIndex + 1).padStart(2, '0')}</b>
-          <span className="ayna-intake-scene-art"><i /><i /><i /></span>
+          <span className="ayna-intake-scene-index">{String(currentIndex + 1).padStart(2, '0')} / {String(visibleSteps.length).padStart(2, '0')}</span>
+          <span className="ayna-intake-scene-star" />
         </div>
         <div style={{ padding: '22px 20px 0' }}>
           {countForStep > 0 && <div className="ayna-intake-question-kicker"><strong>{countForStep} picked</strong></div>}
