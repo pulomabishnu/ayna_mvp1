@@ -478,12 +478,12 @@ export default function BrowseScreen({
           <ModeTab label="Products" active={mode === 'products'} onClick={() => setMode('products')} />
           <ModeTab label="Reads" active={mode === 'reads'} onClick={() => setMode('reads')} />
         </div>
-        {mode === 'products' && (
+        {mode === 'products' && hasProfile && (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
           </div>
         )}
-        {mode === 'reads' && (
+        {mode === 'reads' && hasProfile && (
           <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
         )}
       </div>

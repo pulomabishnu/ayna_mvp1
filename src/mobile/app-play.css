@@ -242,9 +242,9 @@
 .ay-badges-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
 .ay-badges-head strong { font: 800 18px/1 var(--ay-font-display); letter-spacing: -.02em; color: var(--ay-ink); }
 .ay-badges-head span { font: 600 12px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
-.ay-badges ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
-.ay-badge { display: grid; justify-items: center; gap: 6px; padding: 12px 4px 10px; border: 1.5px dashed var(--ay-line); border-radius: 16px; text-align: center; color: var(--ay-ink-soft); animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; animation-delay: calc(var(--i) * 60ms); }
-.ay-badge strong { font: 700 11px/1.15 var(--ay-font-ui); }
+.ay-badges ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ay-badge { display: grid; justify-items: center; align-content:center; min-height:100px; gap: 5px; padding: 12px 8px 10px; border: 1.5px dashed var(--ay-line); border-radius: 16px; text-align: center; color: var(--ay-ink-soft); animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; animation-delay: calc(var(--i) * 60ms); }
+.ay-badge strong { font: 700 12px/1.2 var(--ay-font-ui); }
 .ay-badge small { font: 500 10px/1.2 var(--ay-font-ui); }
 .ay-badge-mark { width: 34px; height: 34px; display: grid; place-items: center; border: 2px dashed currentColor; border-radius: 50%; font: 800 13px/1 var(--ay-font-ui); }
 .ay-badge.is-earned { border: 2px solid var(--ay-ink); color: var(--ay-ink); }
