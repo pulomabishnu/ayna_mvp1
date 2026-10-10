@@ -516,7 +516,7 @@ export default function ProductDetailScreen({
         {Array.isArray(warnings) && warnings.length > 0 && <div className="ayna-detail-warnings" role="note"><strong>Warnings</strong>{warnings.map((warning) => <p key={warning}>{warning}</p>)}</div>}
 
         {sourceCountTotal > 0 ? <div className="ayna-source-index" aria-label="Available product sources">
-          {[['doctor', 'Clinical', 'evidence'], ['scientific', 'Research', 'evidence'], ['community', 'Community', 'reviews']].map(([kind, label, section]) => <button type="button" key={kind} onClick={() => setActiveDetailSection(section)} aria-label={`${label}: ${sourceCounts[kind]} linked sources`}><span>{label}</span><strong>{sourceCounts[kind] || '—'}</strong>{sourceCounts[kind] > 0 && <small>linked</small>}</button>)}
+          {[['doctor', 'Clinical', 'evidence'], ['scientific', 'Research', 'evidence'], ['community', 'Community', 'reviews']].map(([kind, label, section]) => <button type="button" key={kind} onClick={() => setActiveDetailSection(section)} aria-label={`${label}: ${sourceCounts[kind]} linked sources`}><span>{label}</span><strong>{sourceCounts[kind] || 0}</strong><small>{sourceCounts[kind] === 1 ? 'source' : 'sources'}</small></button>)}
         </div> : <div className="ayna-source-empty">No sources linked yet</div>}
 
         <div className="ayna-detail-sections" role="tablist" aria-label="Product information">
