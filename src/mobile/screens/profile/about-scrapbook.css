@@ -1,12 +1,12 @@
 /* About Ayna: an editorial field guide in the new app language. */
-.ayna-scrapbook{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:#fafbf8;color:#16122a;font-family:'DM Sans',sans-serif}
+.ayna-scrapbook{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:#fafbf8;color:#16122a;font-family:var(--ayna-font-ui)}
 .ayna-scrapbook__header{flex:none;display:flex;align-items:center;justify-content:space-between;padding:max(17px,env(safe-area-inset-top)) 20px 15px;background:#fafbf8;border-bottom:1px solid #d8dfdc;color:#16122a;font-size:13px;font-weight:800}
-.ayna-scrapbook__header button{min-height:40px;padding:8px 13px;border:1px solid #d8dfdc;border-radius:12px;background:#fff;color:#16122a;font:700 13px 'DM Sans',sans-serif;cursor:pointer}
+.ayna-scrapbook__header button{min-height:40px;padding:8px 13px;border:1px solid #d8dfdc;border-radius:12px;background:#fff;color:#16122a;font:700 13px var(--ayna-font-ui);cursor:pointer}
 .ayna-scrapbook__scroll{flex:1;min-height:0;overflow-y:auto;padding:0 20px 32px}
 .ayna-scrapbook__scroll>section,.ayna-scrapbook__footer{max-width:520px;margin-left:auto;margin-right:auto}
-.ayna-scrapbook__eyebrow{display:block;color:#16122a;text-transform:uppercase;letter-spacing:.12em;font:800 10px 'DM Sans',sans-serif}
-.ayna-scrapbook h1,.ayna-scrapbook h2{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-weight:900;letter-spacing:-.065em}
-.ayna-scrapbook h1 em,.ayna-scrapbook h2 em{font:italic 500 1.06em 'Playfair Display',serif;color:inherit}
+.ayna-scrapbook__eyebrow{display:block;color:#16122a;text-transform:uppercase;letter-spacing:.12em;font:800 10px var(--ayna-font-ui)}
+.ayna-scrapbook h1,.ayna-scrapbook h2{font-family:'Bricolage Grotesque',var(--ayna-font-ui);font-weight:900;letter-spacing:-.065em}
+.ayna-scrapbook h1 em,.ayna-scrapbook h2 em{font:italic 500 1.06em var(--ayna-font-display);color:inherit}
 .ayna-scrapbook__hero{position:relative;overflow:hidden;min-height:230px;margin:0 -20px 22px!important;padding:31px 23px;background:#16122a;color:#fff}
 .ayna-scrapbook__hero .ayna-scrapbook__eyebrow{color:#9bf0e1}
 .ayna-scrapbook__hero h1{position:relative;z-index:1;max-width:310px;margin:14px 0 14px;color:#9bf0e1;font-size:clamp(38px,10vw,51px);line-height:.99}
@@ -24,7 +24,7 @@
 .ayna-scrapbook__polaroid{overflow:hidden;padding:7px;border-radius:19px;background:#fff;border:1px solid #d8dfdc}
 .ayna-scrapbook__photo{height:clamp(190px,55vw,300px);overflow:hidden;border-radius:13px;background:#e8f0ee}
 .ayna-scrapbook__photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 42%}
-.ayna-scrapbook__handwriting{padding:8px 7px 4px;color:#16122a;font:italic 18px 'Playfair Display',serif}
+.ayna-scrapbook__handwriting{padding:8px 7px 4px;color:#16122a;font:italic 18px var(--ayna-font-display)}
 .ayna-scrapbook__team-note{padding:18px 20px;border-radius:18px;background:#f8e5ef}
 .ayna-scrapbook__team-note h2{margin:7px 0;font-size:27px}
 .ayna-scrapbook__team-note p{margin:0;font-size:13px;line-height:1.5}
@@ -46,7 +46,7 @@
 .ayna-scrapbook__gate p{margin:5px 0 0;font-size:11px;line-height:1.4}
 .ayna-scrapbook__orbit{position:relative;height:220px;margin-top:10px}
 .ayna-scrapbook__orbit::before{content:'';position:absolute;inset:36px 15px;border:2px solid rgba(22,18,42,.27);border-radius:50%;transform:rotate(-15deg)}
-.ayna-scrapbook__orbit-center{position:absolute;top:62px;left:calc(50% - 55px);display:grid;place-items:center;width:110px;height:110px;border-radius:50%;background:#16122a;color:#fff;text-align:center;font:italic 21px/1 'Playfair Display',serif}
+.ayna-scrapbook__orbit-center{position:absolute;top:62px;left:calc(50% - 55px);display:grid;place-items:center;width:110px;height:110px;border-radius:50%;background:#16122a;color:#fff;text-align:center;font:italic 21px/1 var(--ayna-font-display)}
 .ayna-scrapbook__orbit>span{position:absolute;padding:8px 10px;border-radius:20px;background:#fff;color:#16122a;font-size:10px;font-weight:800}
 .ayna-scrapbook__orbit>span:nth-of-type(1){top:7px;left:1%}.ayna-scrapbook__orbit>span:nth-of-type(2){top:7px;right:2%;background:#9bf0e1}.ayna-scrapbook__orbit>span:nth-of-type(3){bottom:0;left:0;background:#f8e5ef}.ayna-scrapbook__orbit>span:nth-of-type(4){bottom:0;right:0;background:#e8f0ee}
 .ayna-scrapbook__sticky{padding:12px 14px;border-radius:12px;background:#16122a;color:#fff;font-size:12px;font-weight:800;line-height:1.4}

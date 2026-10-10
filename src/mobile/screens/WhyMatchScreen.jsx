@@ -80,7 +80,7 @@ function SimpleHeader({ title, onBack }) {
         <button type="button" onClick={onBack} aria-label="Back to product" style={{ width: 44, height: 44, flex: 'none', borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <BackIcon />
         </button>
-        <h1 style={{ flex: 1, minWidth: 0, fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', fontWeight: 400, margin: 0 }}>
+        <h1 style={{ flex: 1, minWidth: 0, fontFamily: "var(--ayna-font-display)", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', fontWeight: 400, margin: 0 }}>
           {title}
         </h1>
       </div>
@@ -105,7 +105,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
           {matchStatus === 'no-profile' && onUpdateHealth && (
             <div
               onClick={onUpdateHealth}
-              style={{ marginTop: 18, display: 'inline-block', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', padding: '12px 20px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
+              style={{ marginTop: 18, display: 'inline-block', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', padding: '12px 20px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
             >
               Complete your health profile
             </div>
@@ -162,7 +162,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
     return (
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)' }}>
         <SimpleHeader title="About this product" onBack={onBack} />
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 40px', fontFamily: "'DM Sans',sans-serif" }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 40px', fontFamily: "var(--ayna-font-ui)" }}>
           <p style={{ margin: 0, fontSize: 16, lineHeight: 1.5, color: 'var(--ayna-text)' }}>This product relates to some of your answers, but we do not have a clear enough fit to display a match percentage.</p>
           {reasonDetails.length > 0 && <section style={{ marginTop: 24 }}><h2 style={{ fontSize: 17, marginBottom: 10 }}>What lines up</h2>{reasonDetails.map((reason) => <p key={reason.text} style={{ fontSize: 15, lineHeight: 1.5, margin: '8px 0' }}>{reason.text}</p>)}</section>}
           {unmetNeeds.length > 0 && <section style={{ marginTop: 24 }}><h2 style={{ fontSize: 17, marginBottom: 10 }}>Other needs this product does not address</h2><ul style={{ paddingLeft: 20, fontSize: 15, lineHeight: 1.5 }}>{unmetNeeds.slice(0, 5).map((need) => <li key={need}>{need}</li>)}</ul></section>}
@@ -191,8 +191,8 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
             <BackIcon />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Match breakdown</div>
-            <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.2 }}>Why {percent}%</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Match breakdown</div>
+            <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.2 }}>Why {percent}%</div>
           </div>
         </div>
       </div>
@@ -210,15 +210,15 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
               }}
             >
               <div style={{ width: 58, height: 58, borderRadius: 99, background: 'var(--ayna-surface)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: t.ink, lineHeight: 1 }}>{percent}</div>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(7.5px * var(--ayna-text-scale, 1))', letterSpacing: 1, color: t.ink, opacity: 0.55, marginTop: 2 }}>PCT</div>
+                <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: t.ink, lineHeight: 1 }}>{percent}</div>
+                <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(7.5px * var(--ayna-text-scale, 1))', letterSpacing: 1, color: t.ink, opacity: 0.55, marginTop: 2 }}>PCT</div>
               </div>
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'inline-block', fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', background: 'var(--ayna-surface)', color: t.ink, borderRadius: 99, padding: '5px 10px' }}>
+              <div style={{ display: 'inline-block', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', background: 'var(--ayna-surface)', color: t.ink, borderRadius: 99, padding: '5px 10px' }}>
                 {t.tier}
               </div>
-              <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.22, marginTop: 9, color: t.ink }}>{t.headline}</div>
+              <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.22, marginTop: 9, color: t.ink }}>{t.headline}</div>
               <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.55, marginTop: 6, color: t.ink, opacity: 0.78 }}>{t.sub}</div>
             </div>
           </div>
@@ -230,7 +230,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
               <div style={{ width: 20, height: 20, borderRadius: 99, background: '#E1EFE2', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#3F6B4A" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
               </div>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#3F6B4A' }}>What matched</div>
+              <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#3F6B4A' }}>What matched</div>
               <div style={{ flex: 1, height: 1, background: 'var(--ayna-border)' }} />
               <div style={{ fontSize: 12, color: '#3F6B4A', background: '#E1EFE2', borderRadius: 10, padding: '3px 8px' }}>{displayedMatches.length} reason{displayedMatches.length === 1 ? '' : 's'}</div>
             </div>
@@ -239,10 +239,10 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: '13px 15px' }}>
                   <div style={{ width: 34, height: 34, borderRadius: 12, flex: 'none', background: m.bg, color: m.fg, fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{m.glyph}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>{m.kind}</div>
+                    <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>{m.kind}</div>
                     <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 500, lineHeight: 1.35, marginTop: 3, color: 'var(--ayna-text)', textTransform: 'capitalize' }}>{m.label}</div>
                   </div>
-                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', textTransform: 'uppercase', color: m.fg, background: m.bg, borderRadius: 99, padding: '5px 8px', flex: 'none' }}>{m.weight}</div>
+                  <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', textTransform: 'uppercase', color: m.fg, background: m.bg, borderRadius: 99, padding: '5px 8px', flex: 'none' }}>{m.weight}</div>
                 </div>
               ))}
             </div>
@@ -251,7 +251,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
 
         {unmetNeeds.length > 0 && (
           <section style={{ marginTop: 24, padding: 16, border: '1px solid var(--ayna-border)', borderRadius: 14, background: 'var(--ayna-surface)' }}>
-            <h2 style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 16, margin: '0 0 8px' }}>Other needs this product does not address</h2>
+            <h2 style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 16, margin: '0 0 8px' }}>Other needs this product does not address</h2>
             <ul style={{ margin: 0, paddingLeft: 20, fontSize: 14, lineHeight: 1.5, color: 'var(--ayna-text-muted)' }}>
               {unmetNeeds.slice(0, 5).map((need) => <li key={need}>{need}</li>)}
             </ul>
@@ -264,7 +264,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
               <div style={{ width: 20, height: 20, borderRadius: 99, background: '#FBE7D6', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9A5B14" strokeWidth="2.6" strokeLinecap="round"><path d="M12 8v5" /><path d="M12 16.4v.1" /></svg>
               </div>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#9A5B14' }}>Worth noting</div>
+              <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#9A5B14' }}>Worth noting</div>
               <div style={{ flex: 1, height: 1, background: 'var(--ayna-border)' }} />
             </div>
             {considerations.map((note, i) => (

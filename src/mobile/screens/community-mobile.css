@@ -235,8 +235,8 @@
 
 /* Editorial feed: let people's photos and words carry the page. */
 .am-top { padding-top: 24px; padding-bottom: 20px; }
-.am-top small { color: #a06234; font: 700 10px 'DM Sans',sans-serif; letter-spacing: .13em; }
-.am-top h1 { font: 700 35px/1.05 'DM Sans',sans-serif; letter-spacing: -.055em; }
+.am-top small { color: #a06234; font: 700 10px var(--ayna-font-ui); letter-spacing: .13em; }
+.am-top h1 { font: 700 35px/1.05 var(--ayna-font-ui); letter-spacing: -.055em; }
 .am-search { border-radius: 14px; box-shadow: none; }
 .am-tabs { gap: 22px; border-bottom: 1px solid var(--ayna-border); padding-bottom: 0; }
 .am-tabs button { padding: 10px 0 13px; border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: none; box-shadow: none; }

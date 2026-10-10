@@ -12,7 +12,7 @@ import { apiUrl } from '../../utils/apiUrl.js';
 import { productHref } from '../../utils/productRoute.js';
 
 const CARD = { background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '16px 0', boxShadow: 'none' };
-const EYEBROW = { fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' };
+const EYEBROW = { fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' };
 const CHIP = { fontSize: 'calc(12px * var(--ayna-text-scale, 1))', background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-chip-border)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '7px 12px', textDecoration: 'none', display: 'inline-block' };
 const PLATFORM_LABELS = { reddit: 'Reddit', tiktok: 'TikTok', youtube: 'YouTube', instagram: 'Instagram', facebook: 'Facebook' };
 
@@ -90,7 +90,7 @@ function SafetyBanner({ text }) {
       style={{ margin: '14px 22px 0', background: '#FEF2F2', border: '1px solid #991B1B', borderLeft: '4px solid #991B1B', borderRadius: 16, padding: '12px 14px', cursor: 'pointer' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#991B1B' }}>Safety note</div>
+        <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#991B1B' }}>Safety note</div>
         <span style={{ color: '#991B1B', fontSize: 12 }}>{expanded ? '▴' : '▾'}</span>
       </div>
       <p style={{ margin: '6px 0 0', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: '#3f3831', display: '-webkit-box', WebkitLineClamp: expanded ? 'unset' : 2, WebkitBoxOrient: 'vertical', overflow: expanded ? 'visible' : 'hidden' }}>
@@ -240,7 +240,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
             border: 'none',
             background: 'var(--ayna-cta-bg)',
             color: 'var(--ayna-cta-text)',
-            fontFamily: "'DM Sans',sans-serif",
+            fontFamily: "var(--ayna-font-ui)",
             fontWeight: 600,
             fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
@@ -450,7 +450,7 @@ export default function ProductDetailScreen({
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'var(--ayna-heading)' }}>
               <path d="M19 12H5M11 18l-6-6 6-6" />
             </svg>
-            <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Back</span>
+            <span style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Back</span>
           </button>
           <button
             type="button"
@@ -488,16 +488,16 @@ export default function ProductDetailScreen({
         <div className="ayna-fresh-detail-title" style={{ padding: '18px 22px 0' }}>
           {eyebrowLine && <div style={EYEBROW}>{eyebrowLine}</div>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
-          <h1 style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(29px * var(--ayna-text-scale, 1))', lineHeight: 1.08, letterSpacing: '-.05em', margin: '12px 0 0', color: 'var(--ayna-heading)', fontWeight: 700 }}>{name}</h1>
-          {price && <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
+          <h1 style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(29px * var(--ayna-text-scale, 1))', lineHeight: 1.08, letterSpacing: '-.05em', margin: '12px 0 0', color: 'var(--ayna-heading)', fontWeight: 700 }}>{name}</h1>
+          {price && <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
           {buyUrl && <p style={{ margin: '10px 0 0', color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>Buying opens the seller’s site. The seller handles payment, shipping, and returns; check the final price and delivery there.</p>}
-          <button type="button" onClick={handleShare} style={{ marginTop: 12, padding: 0, border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 3, cursor: 'pointer' }}>
+          <button type="button" onClick={handleShare} style={{ marginTop: 12, padding: 0, border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontFamily: "var(--ayna-font-ui)", fontSize: 13, fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 3, cursor: 'pointer' }}>
             {shareCopied ? 'Ayna link copied' : 'Share this product with a friend'}
           </button>
           {pillTags.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
               {pillTags.map((t) => (
-                <div key={t} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', textTransform: 'uppercase', background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '5px 9px' }}>
+                <div key={t} style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', textTransform: 'uppercase', background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '5px 9px' }}>
                   {t}
                 </div>
               ))}
@@ -572,7 +572,7 @@ export default function ProductDetailScreen({
                 {badges.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
                     {badges.map((b) => (
-                      <div key={b} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 500, padding: '7px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)' }}>
+                      <div key={b} style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 500, padding: '7px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)' }}>
                         {b}
                       </div>
                     ))}
@@ -604,7 +604,7 @@ export default function ProductDetailScreen({
                 <div style={EYEBROW}>Social media + reviews</div>
                 {communityCitationEntries.length > 0 ? communityCitationEntries.map((entry) => (
                   <a key={entry.url} href={entry.url} target="_blank" rel="noopener noreferrer" style={{ ...CARD, display: 'flex', gap: 12, alignItems: 'flex-start', textDecoration: 'none', color: 'inherit' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 12, flex: 'none', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "'Bricolage Grotesque',serif", fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 12, flex: 'none', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "var(--ayna-font-display)", fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {entry.label.charAt(0)}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -628,7 +628,7 @@ export default function ProductDetailScreen({
                 <div style={EYEBROW}>Who it's for</div>
                 {(whoItsFor || []).map((item, i) => (
                   <div key={item} style={{ ...CARD, display: 'flex', gap: 12, alignItems: 'center', padding: '14px 15px' }}>
-                    <div style={{ width: 34, height: 34, borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "'Bricolage Grotesque',serif", fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "var(--ayna-font-display)", fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
                       {i + 1}
                     </div>
                     <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5 }}>{item}</div>
@@ -690,7 +690,7 @@ export default function ProductDetailScreen({
 
         {reads.length > 0 && (
           <div style={{ padding: '22px 22px 34px' }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', marginBottom: 10 }}>Reads</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', marginBottom: 10 }}>Reads</div>
             {reads.map((r) => (
               <div
                 key={r.id || r.title}
@@ -708,7 +708,7 @@ export default function ProductDetailScreen({
                 }}
               >
                 <div style={{ flex: 1, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.4, fontWeight: 500 }}>{r.title}</div>
-                {r.mins && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
+                {r.mins && <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
               </div>
             ))}
           </div>
@@ -741,7 +741,7 @@ export default function ProductDetailScreen({
             padding: '0 16px',
             borderRadius: 99,
             cursor: 'pointer',
-            fontFamily: "'DM Sans',sans-serif",
+            fontFamily: "var(--ayna-font-ui)",
             fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
             fontWeight: 600,
             background: isInEcosystem ? 'var(--ayna-chip-bg)' : 'var(--ayna-surface)',
@@ -763,7 +763,7 @@ export default function ProductDetailScreen({
               color: 'var(--ayna-cta-text)',
               borderRadius: 99,
               padding: '15px 0',
-              fontFamily: "'DM Sans',sans-serif",
+              fontFamily: "var(--ayna-font-ui)",
               fontWeight: 600,
               fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',
               boxShadow: '0 14px 26px -14px rgba(36,42,82,.7)',
@@ -781,7 +781,7 @@ export default function ProductDetailScreen({
               color: 'var(--ayna-text-muted)',
               borderRadius: 99,
               padding: '15px 0',
-              fontFamily: "'DM Sans',sans-serif",
+              fontFamily: "var(--ayna-font-ui)",
               fontWeight: 600,
               fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',
             }}

@@ -61,7 +61,7 @@ export default function OrbHero({ showYou = true }) {
         }}
       >
         {showYou && (
-          <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontStyle: 'italic', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', color: '#3A2547' }}>
+          <div style={{ fontFamily: "var(--ayna-font-display)", fontStyle: 'italic', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', color: '#3A2547' }}>
             you
           </div>
         )}

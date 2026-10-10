@@ -21,7 +21,7 @@ export default function EcosystemResetDialog({ open, busy, onCancel, onConfirm }
           else if (!event.shiftKey && document.activeElement === buttons.at(-1)) { event.preventDefault(); buttons[0].focus(); }
         }
       }} style={{ width: 'min(360px,calc(100% - 36px))', padding: 22, borderRadius: 12, background: 'var(--ayna-bg)', color: 'var(--ayna-text)', border: '1px solid var(--ayna-border)' }}>
-        <h2 id="ayna-reset-title" style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 25, lineHeight: 1.2, color: 'var(--ayna-heading)', margin: '0 0 10px' }}>Reset your Ecosystem?</h2>
+        <h2 id="ayna-reset-title" style={{ fontFamily: "var(--ayna-font-display)", fontSize: 25, lineHeight: 1.2, color: 'var(--ayna-heading)', margin: '0 0 10px' }}>Reset your Ecosystem?</h2>
         <p id="ayna-reset-description" style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--ayna-text-muted)', margin: '0 0 18px' }}>
           Clears your Ecosystem, its product tracking, and intake answers. Saved products, check-ins, and your account stay.
         </p>

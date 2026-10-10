@@ -96,7 +96,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             boxShadow: '0 12px 26px rgba(36,42,82,.24)',
           }}
         >
-          <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))' }}>{name}</div>
+          <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(25px * var(--ayna-text-scale, 1))' }}>{name}</div>
         </div>
 
         {seats.map((seat, i) => {
@@ -121,7 +121,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
                 padding: 8,
                 boxSizing: 'border-box',
                 cursor: 'pointer',
-                fontFamily: "'DM Sans',sans-serif",
+                fontFamily: "var(--ayna-font-ui)",
                 textAlign: 'center',
                 color: '#1A1714',
                 background: seat.gap ? 'transparent' : isSelected ? '#9BF0E1' : '#FFFFFF',
@@ -135,7 +135,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             >
               <span style={{ fontWeight: 700, fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{seat.gap ? '+ Add' : seat.label}</span>
               {!seat.gap && (
-                <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#5B514D', marginTop: 2 }}>
+                <span style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#5B514D', marginTop: 2 }}>
                   {seat.products.length}
                 </span>
               )}

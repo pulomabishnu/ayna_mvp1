@@ -50,7 +50,7 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
           <span
             style={{
               position: 'relative',
-              fontFamily: "'DM Mono',monospace",
+              fontFamily: "var(--ayna-font-ui)",
               fontSize: 'calc(7.5px * var(--ayna-text-scale, 1))',
               letterSpacing: '.7px',
               textTransform: 'uppercase',
@@ -64,7 +64,7 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
           </span>
         )}
       </div>
-      <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 9, textWrap: 'pretty' }}>
+      <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 9, textWrap: 'pretty' }}>
         {title}
       </div>
     </div>

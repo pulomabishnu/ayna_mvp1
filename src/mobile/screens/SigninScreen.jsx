@@ -31,7 +31,7 @@ function Field({ label, icon, children }) {
     >
       {icon}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <span style={{ display: 'block', fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 700, color: '#5C514C' }}>{label}</span>
+        <span style={{ display: 'block', fontFamily: "var(--ayna-font-ui)", fontSize: 12, fontWeight: 700, color: '#5C514C' }}>{label}</span>
         {children}
       </div>
     </label>
@@ -42,7 +42,7 @@ function Field({ label, icon, children }) {
 // font-size is under 16px, then doesn't reliably zoom back out — the
 // max() floor keeps that from firing without changing the size at any
 // --ayna-text-scale setting that was already >= 16px.
-const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: '#171717', width: '100%', padding: '3px 0 0' };
+const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "var(--ayna-font-ui)", fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: '#171717', width: '100%', padding: '3px 0 0' };
 
 const EmailIcon = (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="1.75" style={{ flex: 'none' }}>
@@ -68,7 +68,7 @@ function PrimaryButton({ onClick, disabled, children }) {
         textAlign: 'center',
         padding: 15,
         borderRadius: 14,
-        fontFamily: "'DM Sans',sans-serif",
+        fontFamily: "var(--ayna-font-ui)",
         fontWeight: 600,
         fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
         cursor: disabled ? 'not-allowed' : 'pointer',
@@ -95,7 +95,7 @@ function GoogleButton({ onClick, disabled }) {
         textAlign: 'center',
         padding: 15,
         borderRadius: 14,
-        fontFamily: "'DM Sans',sans-serif",
+        fontFamily: "var(--ayna-font-ui)",
         fontWeight: 500,
         fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
         cursor: disabled ? 'not-allowed' : 'pointer',
@@ -128,7 +128,7 @@ function AppleButton({ onClick, disabled }) {
         textAlign: 'center',
         padding: 15,
         borderRadius: 14,
-        fontFamily: "'DM Sans',sans-serif",
+        fontFamily: "var(--ayna-font-ui)",
         fontWeight: 500,
         fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
         cursor: disabled ? 'not-allowed' : 'pointer',
@@ -301,13 +301,13 @@ export default function SigninScreen({
         animation: 'ay-page .25s ease-out',
       }}
     >
-      <button className="ayna-fresh-auth-back" type="button" onClick={onAuthBack} style={{ alignSelf: 'flex-start', border: '1px solid rgba(255,255,255,.35)', background: 'rgba(255,255,255,.08)', color: '#FFFFFF', borderRadius: 99, padding: '10px 15px', marginBottom: 20, fontFamily: "'DM Sans',sans-serif", fontSize: 14, cursor: 'pointer' }}>
+      <button className="ayna-fresh-auth-back" type="button" onClick={onAuthBack} style={{ alignSelf: 'flex-start', border: '1px solid rgba(255,255,255,.35)', background: 'rgba(255,255,255,.08)', color: '#FFFFFF', borderRadius: 99, padding: '10px 15px', marginBottom: 20, fontFamily: "var(--ayna-font-ui)", fontSize: 14, cursor: 'pointer' }}>
         ← Back
       </button>
       {mode === 'check-email' ? (
         <>
           <div style={{ flex: 1 }} />
-          <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.3, marginBottom: 12, textAlign: 'center' }}>
+          <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.3, marginBottom: 12, textAlign: 'center' }}>
             Almost there.
           </div>
           <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 20 }}>
@@ -326,17 +326,17 @@ export default function SigninScreen({
         <>
           {AUTH_PRODUCT && <div className="ayna-auth-campaign" aria-hidden="true"><span>ayna</span><div><ProductImage src={AUTH_PRODUCT.image || AUTH_PRODUCT.imageUrl || AUTH_PRODUCT.images?.[0]} alt="" /></div></div>}
 
-          <div className="ayna-fresh-auth-heading" style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.08, marginBottom: 20 }}>
+          <div className="ayna-fresh-auth-heading" style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.08, marginBottom: 20 }}>
             {mode === 'signup' ? (<>Save it under<br />your name.</>) : (<>Welcome<br />back.</>)}
           </div>
 
           {mode === 'signup' && (
             <label className="ayna-fresh-auth-field" style={{ background: '#FFFFFF', borderRadius: 14, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 42, height: 42, borderRadius: 99, background: '#9BF0E1', color: '#171717', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
+              <div style={{ width: 42, height: 42, borderRadius: 99, background: '#9BF0E1', color: '#171717', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "var(--ayna-font-display)", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
                 {initial}
               </div>
               <div style={{ flex: 1 }}>
-                <span style={{ display: 'block', fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 700, color: '#5C514C' }}>First name</span>
+                <span style={{ display: 'block', fontFamily: "var(--ayna-font-ui)", fontSize: 12, fontWeight: 700, color: '#5C514C' }}>First name</span>
                 <input type="text" autoComplete="given-name" placeholder="Your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={{ ...inputStyle, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', fontWeight: 500 }} />
               </div>
             </label>
@@ -396,7 +396,7 @@ export default function SigninScreen({
               <rect x="5" y="11" width="14" height="10" rx="2.5" />
               <path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" />
             </svg>
-            <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '.6px' }}>ENCRYPTED · NEVER SOLD</span>
+            <span style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '.6px' }}>ENCRYPTED · NEVER SOLD</span>
           </div>
         </>
       )}

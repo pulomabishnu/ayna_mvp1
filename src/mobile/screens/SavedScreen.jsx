@@ -141,10 +141,10 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
           </div>
         </div>
         <div style={{ padding: '17px 18px 19px' }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{categoryLabel(item.category)}</div>
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{categoryLabel(item.category)}</div>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, margin: '8px 0 0' }}>
-            <div style={{ flex: 1, minWidth: 0, fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.2, color: 'var(--ayna-heading)' }}>{item.name}</div>
-            {item.price && <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', flex: 'none', color: 'var(--ayna-heading)' }}>{item.price}</div>}
+            <div style={{ flex: 1, minWidth: 0, fontFamily: "var(--ayna-font-display)", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.2, color: 'var(--ayna-heading)' }}>{item.name}</div>
+            {item.price && <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', flex: 'none', color: 'var(--ayna-heading)' }}>{item.price}</div>}
           </div>
           {(item.summary || item.description) && (
             <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginTop: 8 }}>{item.summary || item.description}</div>
@@ -162,7 +162,7 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
               onClick={(e) => { e.stopPropagation(); if (!isInEco && onAddToEcosystem) onAddToEcosystem(item); }}
               style={{
                 flex: 1,
-                fontFamily: "'DM Sans',sans-serif",
+                fontFamily: "var(--ayna-font-ui)",
                 fontWeight: 600,
                 fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
                 padding: 13,
@@ -183,10 +183,10 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
         <div className="ayna-saved-gap-callout" style={{ marginTop: 20, borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#16122A,#16122A)', color: '#FAFBF8', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', right: -56, top: -56, width: 190, height: 190, borderRadius: '50%', border: '1px solid rgba(255,255,255,.16)' }} />
           <div style={{ position: 'absolute', right: -16, top: 18, width: 110, height: 110, borderRadius: '50%', border: '1px solid rgba(255,255,255,.12)' }} />
-          <div style={{ position: 'relative', fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#9BF0E1' }}>Your ecosystem · {gaps.length} gap{gaps.length === 1 ? '' : 's'}</div>
-          <div style={{ position: 'relative', fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '8px 0 9px', maxWidth: 235 }}>Saves become a routine once you fill the gaps.</div>
+          <div style={{ position: 'relative', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#9BF0E1' }}>Your ecosystem · {gaps.length} gap{gaps.length === 1 ? '' : 's'}</div>
+          <div style={{ position: 'relative', fontFamily: "var(--ayna-font-display)", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '8px 0 9px', maxWidth: 235 }}>Saves become a routine once you fill the gaps.</div>
           <div style={{ position: 'relative', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 255 }}>{gaps.join(', ')} {gaps.length === 1 ? 'is' : 'are'} still empty for you.</div>
-          <div onClick={onGoEco} style={{ position: 'relative', display: 'inline-block', marginTop: 15, background: '#9BF0E1', color: '#231A12', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '11px 18px', borderRadius: 99, cursor: 'pointer', animation: 'ay-bob 2.6s ease-in-out infinite' }}>
+          <div onClick={onGoEco} style={{ position: 'relative', display: 'inline-block', marginTop: 15, background: '#9BF0E1', color: '#231A12', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '11px 18px', borderRadius: 99, cursor: 'pointer', animation: 'ay-bob 2.6s ease-in-out infinite' }}>
             See what's missing
           </div>
         </div>
@@ -229,15 +229,15 @@ function SavedCard({ item, status, onOpen, onRemove, quizAnswers, onOpenWhyMatch
         >
           <HeartIcon filled />
         </button>
-        <div style={{ position: 'absolute', left: 8, bottom: 8, fontFamily: "'DM Mono',monospace", fontSize: 'calc(8px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', padding: '4px 7px', borderRadius: 99, background: badge.background, color: badge.color }}>
+        <div style={{ position: 'absolute', left: 8, bottom: 8, fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(8px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', padding: '4px 7px', borderRadius: 99, background: badge.background, color: badge.color }}>
           {badge.label}
         </div>
         <div style={{ position: 'absolute', right: 8, bottom: 8 }}>
           <MatchRing percent={match} size={26} onClick={onOpenWhyMatch ? () => onOpenWhyMatch(item) : undefined} />
         </div>
       </div>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginTop: 9 }}>{categoryLabel(item.category)}</div>
-      <div className="ayna-saved-card-name" style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 4, color: 'var(--ayna-text)' }}>{item.name}</div>
+      <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginTop: 9 }}>{categoryLabel(item.category)}</div>
+      <div className="ayna-saved-card-name" style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 4, color: 'var(--ayna-text)' }}>{item.name}</div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, marginTop: 4 }}>
         {item.price && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{item.price}</div>}
       </div>
@@ -289,15 +289,15 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
             <BackIcon />
           </button>
           <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'baseline', gap: 9 }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(29px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Saved</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(29px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Saved</div>
             {!isEmpty && (
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1px', color: 'var(--ayna-accent-dark)', background: 'var(--ayna-peach)', borderRadius: 99, padding: '4px 8px' }}>
+              <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1px', color: 'var(--ayna-accent-dark)', background: 'var(--ayna-peach)', borderRadius: 99, padding: '4px 8px' }}>
                 {items.length} ITEM{items.length === 1 ? '' : 'S'}
               </div>
             )}
           </div>
           {isSingle && (
-            <div onClick={onBrowse} style={{ flex: 'none', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '10px 17px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}>
+            <div onClick={onBrowse} style={{ flex: 'none', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '10px 17px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}>
               Browse
             </div>
           )}
@@ -365,11 +365,11 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
 
             {notInEcoCount > 0 && (
               <div style={{ margin: '22px 0 0', border: '1px dashed var(--ayna-border)', borderRadius: 22, padding: 18, textAlign: 'center' }}>
-                <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', lineHeight: 1.3, margin: '0 0 5px', color: 'var(--ayna-heading)' }}>Ready to make these a routine?</div>
+                <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', lineHeight: 1.3, margin: '0 0 5px', color: 'var(--ayna-heading)' }}>Ready to make these a routine?</div>
                 <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, margin: '0 0 13px' }}>
                   Move {notInEcoCount} save{notInEcoCount === 1 ? '' : 's'} into your ecosystem to get recall alerts on {notInEcoCount === 1 ? 'it' : 'them'}.
                 </div>
-                <div onClick={onGoEco} style={{ display: 'inline-block', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '11px 18px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}>
+                <div onClick={onGoEco} style={{ display: 'inline-block', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '11px 18px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}>
                   Sort into ecosystem
                 </div>
               </div>

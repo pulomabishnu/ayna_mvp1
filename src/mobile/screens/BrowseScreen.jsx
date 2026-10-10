@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
+import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
@@ -57,7 +58,7 @@ function ModeTab({ label, active, onClick }) {
       aria-pressed={active}
       onClick={onClick}
       style={{
-        fontFamily: "'DM Sans',sans-serif",
+        fontFamily: "var(--ayna-font-ui)",
         fontWeight: 600,
         fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
         cursor: 'pointer',
@@ -117,13 +118,6 @@ function PersonalizedToggle({ on, disabled, onClick }) {
   );
 }
 
-function ShopCategories({ active, onSelect }) {
-  const groups = ['all', 'period', 'intimate', 'hormones', 'fertility', 'pelvic', 'tests-devices']
-    .map((id) => MACRO_GROUPS.find((group) => group.id === id)).filter(Boolean);
-  return <div className="ayna-shop-category-row" aria-label="Shop by category">
-    {groups.map((group) => <button className="ayna-shop-category" type="button" key={group.id} aria-pressed={active === group.id} onClick={() => onSelect(group.id)}>{group.label}</button>)}
-  </div>;
-}
 
 function SkeletonCard() {
   return (
@@ -468,7 +462,7 @@ export default function BrowseScreen({
       </div>
 
       {mode === 'products' && (
-        <ShopCategories active={activeGroup} onSelect={setActiveGroup} />
+        <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} />
       )}
 
       {mode === 'products' && <div style={{ padding: '0 20px 14px' }}>
@@ -498,14 +492,14 @@ export default function BrowseScreen({
             <ProductGrid savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Searching beyond our catalog…
               </div>
               <PixelateGrid />
             </>
           ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Not in our catalog yet — found via AI search
               </div>
               <ProductGrid savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
@@ -519,7 +513,7 @@ export default function BrowseScreen({
             style={{
               margin: '22px 20px 0',
               textAlign: 'center',
-              fontFamily: "'DM Mono',monospace",
+              fontFamily: "var(--ayna-font-ui)",
               fontSize: 'calc(10px * var(--ayna-text-scale, 1))',
               letterSpacing: 0.8,
               color: 'var(--ayna-text-faint)',
@@ -561,7 +555,7 @@ export default function BrowseScreen({
         rows.map((row) => (
           <div key={row.id} style={{ marginBottom: 24 }}>
             <div style={{ padding: '0 20px 11px' }}>
-              <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))' }}>{row.label}</div>
+              <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))' }}>{row.label}</div>
             </div>
             <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
               {row.items.map((a) => (

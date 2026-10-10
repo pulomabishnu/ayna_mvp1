@@ -141,21 +141,21 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
         <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 13 }}>
           <div style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--ayna-accent-dark)' }} />
           {tags[0] && (
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
               {tags[0]}
             </div>
           )}
           <div style={{ flex: 1, height: 1, background: 'var(--ayna-border)' }} />
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: 'var(--ayna-text-faint)' }}>{readMinutes} MIN</div>
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: 'var(--ayna-text-faint)' }}>{readMinutes} MIN</div>
         </div>
 
-        <h1 style={{ fontFamily: "'Bricolage Grotesque',serif", fontWeight: 400, fontSize: 'calc(32px * var(--ayna-text-scale, 1))', lineHeight: 1.13, color: 'var(--ayna-text)', margin: 0 }}>{title}</h1>
+        <h1 style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(32px * var(--ayna-text-scale, 1))', lineHeight: 1.13, color: 'var(--ayna-text)', margin: 0 }}>{title}</h1>
         {teaser && (
-          <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontStyle: 'italic', fontSize: 'calc(16.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-accent-dark)', marginTop: 13 }}>
+          <div style={{ fontFamily: "var(--ayna-font-display)", fontStyle: 'italic', fontSize: 'calc(16.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-accent-dark)', marginTop: 13 }}>
             {teaser}
           </div>
         )}
-        <p style={{ margin: '13px 0 0', color: 'var(--ayna-text-muted)', fontFamily: "'DM Sans',sans-serif", fontSize: 12, lineHeight: 1.5 }}>Ayna guide · Sources listed below</p>
+        <p style={{ margin: '13px 0 0', color: 'var(--ayna-text-muted)', fontFamily: "var(--ayna-font-ui)", fontSize: 12, lineHeight: 1.5 }}>Ayna guide · Sources listed below</p>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '20px 0 24px' }}>
           {[0, 1, 2, 3, 4].map((i) => {
@@ -183,7 +183,7 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
                   alignItems: 'center',
                   justifyContent: 'center',
                   flex: 'none',
-                  fontFamily: "'Bricolage Grotesque',serif",
+                  fontFamily: "var(--ayna-font-display)",
                   fontSize: 'calc(18px * var(--ayna-text-scale, 1))',
                   color: '#FAFBF8',
                 }}
@@ -191,11 +191,11 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
                 A
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>
+                <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>
                   Sources
                 </div>
                 {source && (
-                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', marginTop: 3, color: 'var(--ayna-text)' }}>
+                  <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', marginTop: 3, color: 'var(--ayna-text)' }}>
                     {source}
                   </div>
                 )}
@@ -217,8 +217,8 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext,
         )}
         {nextRead?.article && (
           <section style={{ marginTop: 24, padding: '18px', borderRadius: 22, background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-border)' }} aria-label="Next article">
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{nextRead.label}</div>
-            <div style={{ fontFamily: "'Bricolage Grotesque',serif", fontSize: 22, lineHeight: 1.2, color: 'var(--ayna-heading)', marginTop: 8 }}>{nextRead.article.title}</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 10, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{nextRead.label}</div>
+            <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 22, lineHeight: 1.2, color: 'var(--ayna-heading)', marginTop: 8 }}>{nextRead.article.title}</div>
             {nextRead.article.teaser && <p style={{ margin: '8px 0 14px', color: 'var(--ayna-text-muted)', fontSize: 12.5, lineHeight: 1.5 }}>{nextRead.article.teaser}</p>}
             <button type="button" onClick={() => onNext?.(nextRead.article)} style={{ border: 0, borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', padding: '11px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>Read next →</button>
           </section>

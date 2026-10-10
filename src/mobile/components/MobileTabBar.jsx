@@ -1,9 +1,9 @@
 const tabs = [
-  ['home', 'Home'],
+  ['home', 'Ecosystem'],
   ['browse', 'Shop'],
   ['community', 'Community'],
   ['ask', 'Ask'],
-  ['profile', 'Me'],
+  ['profile', 'You'],
 ];
 
 function TabIcon({ kind }) {

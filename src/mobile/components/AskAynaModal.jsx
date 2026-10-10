@@ -44,12 +44,8 @@ function summarizeProfile(profile) {
   return parts.join(' ');
 }
 
-function buildWelcome(firstName) {
-  const greeting = firstName ? `Hey, ${firstName}.` : 'Hey.';
-  return [{
-    role: 'assistant',
-    text: `${greeting} I'm Ayna. Tell me what you're looking for, what isn't working for you, or what you want to avoid. I can use that context to personalize your profile and help you browse.`,
-  }];
+function buildWelcome() {
+  return [{ role: 'assistant', text: 'What are you looking for?' }];
 }
 
 /**
@@ -200,23 +196,12 @@ export default function AskAynaModal({
           borderBottom: '1px solid var(--ayna-border)',
         }}
       >
-        <div
-          style={{
-            width: 30,
-            height: 30,
-            boxSizing: 'border-box',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg,#16122A,#16122A 55%,#16122A)',
-            animation: 'ay-float 3s ease-in-out infinite',
-            flex: 'none',
-          }}
-        />
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
-            Ask Ayna
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
+            PRODUCTS & CARE
           </div>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>
-            {name ? `Hey, ${name}.` : 'Hey.'}
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>
+            {'Ask ayna'}
           </div>
         </div>
         <button
@@ -261,7 +246,7 @@ export default function AskAynaModal({
                 onClick={onViewRecommendations}
                 style={{
                   marginTop: 6,
-                  fontFamily: "'DM Sans',sans-serif",
+                  fontFamily: "var(--ayna-font-ui)",
                   fontWeight: 600,
                   fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
                   color: 'var(--ayna-accent-dark)',
@@ -317,7 +302,7 @@ export default function AskAynaModal({
             border: 'none',
             background: 'var(--ayna-cta-bg)',
             color: 'var(--ayna-cta-text)',
-            fontFamily: "'DM Sans',sans-serif",
+            fontFamily: "var(--ayna-font-ui)",
             fontWeight: 600,
             fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
