@@ -409,3 +409,5 @@
 .ayna-seller-info { margin-top:12px; color:var(--ayna-text-muted); font-size:12px; line-height:1.5; }
 .ayna-seller-info summary { display:flex; align-items:center; min-height:44px; width:max-content; cursor:pointer; }
 .ayna-seller-info p { margin:4px 0 16px; }
+
+.ayna-product-note summary { min-height:44px; cursor:pointer; font-weight:600; font-size:14px; color:var(--ayna-heading); }

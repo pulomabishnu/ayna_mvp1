@@ -562,8 +562,8 @@ export default function ProductDetailScreen({
             )}
 
             {!!doctorOpinion && (
-              <div style={CARD}>
-                <div style={EYEBROW}>{clinicianOpinionSource === 'brand' ? 'What the brand says' : 'ayna product note'}</div>
+              <details className="ayna-product-note" style={CARD}>
+                <summary>{clinicianOpinionSource === 'brand' ? 'Brand note' : 'ayna product note'}</summary>
                 {doctorOpinion ? (
                   <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: 10, whiteSpace: 'pre-line' }}>{doctorOpinion}</div>
                 ) : (
@@ -582,7 +582,7 @@ export default function ProductDetailScreen({
                   </div>
                 )}
                 <ChipRow chips={[...clinicianChips, ...clinicianCitationChips]} />
-              </div>
+              </details>
             )}
 
             {scientificLiteratureEntries.length > 0 && (
