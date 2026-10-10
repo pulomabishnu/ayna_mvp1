@@ -96,12 +96,12 @@ export function AgeDial({ value, onChange, underage, onOpenGate }) {
     <div className="ip-age">
       <div className="ip-age-readout">
         <button type="button" className="ip-round" aria-label="One year younger" onClick={() => step(-1)} disabled={hasValue && n <= MIN_AGE}>−</button>
-        <output className={`ip-age-number${hasValue ? '' : ' is-empty'}`} aria-live="polite">{hasValue ? n : '—'}</output>
+        <output className={`ip-age-number${hasValue ? '' : ' is-empty'}`} aria-live="polite">{hasValue ? n : '?'}</output>
         <button type="button" className="ip-round" aria-label="One year older" onClick={() => step(1)}>+</button>
       </div>
       <input className="ip-ruler" type="range" min={MIN_AGE} max={MAX_AGE} value={hasValue ? Math.min(MAX_AGE, n) : MIN_AGE}
         onChange={(e) => onChange(e.target.value)} aria-label="Slide to choose your age" style={{ '--fill': `${fill}%` }} />
-      <div className="ip-ruler-ends" aria-hidden="true"><span>18</span><span>{hasValue ? 'years' : 'slide me'}</span><span>90+</span></div>
+      <div className="ip-ruler-ends" aria-hidden="true"><span>18</span><span>{hasValue ? 'years' : 'choose age'}</span><span>90+</span></div>
       {underage && (
         <button type="button" className="ip-warning" onClick={onOpenGate}>
           <strong>ayna is for ages 18 and up</strong>
