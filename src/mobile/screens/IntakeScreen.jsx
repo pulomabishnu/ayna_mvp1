@@ -1592,12 +1592,11 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = visibleSteps[currentIndex] || visibleSteps[0];
   const isLast = currentIndex === visibleSteps.length - 1;
-  const sceneMotifs = ['stars', 'arches', 'rays', 'scallop', 'steps'];
-  const sceneBlues = ['#BDC5FF', '#C8CEFF', '#B6C1F5', '#CDD2FF', '#C0C9F8'];
+  const sceneBlues = ['#C5C9E4', '#CCD0E6', '#C2C8E0', '#D0D2E6', '#C7CBE2'];
   const sceneStyle = {
     '--intake-canvas': sceneBlues[currentIndex % sceneBlues.length],
-    '--scene-offset': `${(currentIndex * 17) % 42}px`,
-    '--scene-tilt': `${(currentIndex % 3 - 1) * 9}deg`,
+    '--wash-x': currentIndex % 2 ? '-12%' : '112%',
+    '--wash-y': `${18 + (currentIndex * 19) % 65}%`,
   };
 
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
@@ -1861,7 +1860,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   }
 
   return (
-    <div className="ayna-fresh-intake" data-section={step.section} data-step={step.id} data-layout={currentIndex % 4} data-motif={sceneMotifs[currentIndex % sceneMotifs.length]}
+    <div className="ayna-fresh-intake" data-section={step.section} data-step={step.id} data-layout={currentIndex % 4}
       onTouchStart={onStoryTouchStart} onTouchEnd={onStoryTouchEnd} onWheel={onStoryWheel}
       style={{
         ...sceneStyle,
@@ -1890,7 +1889,6 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       <div className="ayna-fresh-intake-body" style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
         <div className="ayna-intake-scene" key={step.id} aria-hidden="true">
           <span className="ayna-intake-scene-index">{String(currentIndex + 1).padStart(2, '0')} / {String(visibleSteps.length).padStart(2, '0')}</span>
-          <span className="ayna-intake-scene-mark"><i /><i /><i /></span>
         </div>
         <div className="ayna-intake-question-heading" key={`heading-${step.id}`} style={{ padding: '22px 20px 0' }}>
           {countForStep > 0 && <div className="ayna-intake-question-kicker"><strong>{countForStep} picked</strong></div>}

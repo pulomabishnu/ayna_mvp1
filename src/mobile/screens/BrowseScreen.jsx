@@ -207,7 +207,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
         {visibleProducts.map((p, index) => (
           <Fragment key={p.id}>
             <ProductCard product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} />
-            {showOnboarding && index === Math.min(3, visibleProducts.length - 1) && <section className="ayna-figma-discover-cta"><span>See your match</span><button type="button" onClick={onStartQuiz}>Get matched <span aria-hidden="true">→</span></button></section>}
+            {showOnboarding && index === Math.min(3, visibleProducts.length - 1) && <section className="ayna-figma-discover-cta"><button type="button" onClick={onStartQuiz}>Get matched <span aria-hidden="true">→</span></button></section>}
           </Fragment>
         ))}
         {loadingMore && !isList && (
