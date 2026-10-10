@@ -2,7 +2,7 @@
 
 .ayna-mobile {
   position: relative;
-  --ayna-bottom-nav-height: calc(55px + max(8px, env(safe-area-inset-bottom)));
+  --ayna-bottom-nav-height: calc(62px + max(7px, env(safe-area-inset-bottom)));
   --ayna-bg: #FCFBFB;
   --ayna-bg-alt: #f2eee4;
   --ayna-surface: #FFFFFF;
