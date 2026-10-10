@@ -518,6 +518,11 @@
 .ayna-ecosystem-chart-swatch { display:block; width:10px; height:10px; border-radius:50%; background:var(--area-color); }
 .ayna-ecosystem-chart-name { overflow:hidden; font:700 calc(13px * var(--ayna-text-scale,1))/1.15 var(--ayna-font-ui); text-overflow:ellipsis; }
 .ayna-ecosystem-chart-legend strong { font:800 15px/1 var(--ayna-font-display); }
+.ayna-mobile .ayna-cabinet-collection .ayna-fresh-product-card { display:flex!important; flex-direction:column; }
+.ayna-mobile .ayna-cabinet-collection .ayna-fresh-product-main { flex:1; }
+.ayna-mobile .ayna-cabinet-collection .ayna-fresh-match-badge { position:static!important; display:flex!important; align-self:stretch; justify-content:flex-start; min-height:44px; margin-top:6px; padding:7px 0!important; border-top:1px solid var(--ayna-border)!important; border-radius:0!important; background:transparent!important; color:var(--ayna-heading)!important; }
+.ayna-mobile .ayna-cabinet-collection .ayna-fresh-match-badge strong { font:800 19px/1 var(--ayna-font-display); }
+.ayna-mobile .ayna-cabinet-collection .ayna-fresh-match-badge span { font-size:9px; }
 @keyframes ayna-chart-arrive { from { opacity:0; stroke-dasharray:0 453; } to { opacity:1; } }
 @media (max-width:360px) { .ayna-ecosystem-chart { grid-template-columns:minmax(0,158px) minmax(0,1fr); gap:8px; } .ayna-ecosystem-chart-name { font-size:11px; } }
 .ayna-shop-filter-toggle { position:relative; flex:none; display:grid; place-items:center; width:44px; min-height:44px; padding:0; border:0; border-radius:50%; background:var(--ayna-color-pop); color:var(--ayna-color-ink); cursor:pointer; }
