@@ -49,3 +49,38 @@
 /* Tactile press feedback on everyday controls */
 .ayna-mobile :is(.ayna-bottom-nav button, .ayna-fresh-mode-tab, .ay-btn, .ayna-saved-filters button) { -webkit-tap-highlight-color: transparent; transition: transform .14s var(--ay-ease), background-color .2s, color .2s; }
 .ayna-mobile :is(.ayna-bottom-nav button, .ayna-fresh-mode-tab, .ayna-saved-filters button):active { transform: scale(.94); }
+
+/* ===== Sleek pass: shared components on everyday screens ===== */
+
+/* Category + filter chips: one pill style, one height. */
+.ayna-mobile .ayna-shop-category-row { display: flex !important; gap: var(--ay-space-2) !important; align-items: center !important; }
+.ayna-mobile .ayna-shop-category,
+.ayna-mobile .ayna-category-expanded button {
+  min-height: 38px !important; padding: 0 var(--ay-space-4) !important; border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-radius-pill) !important;
+  background: transparent !important; color: var(--ay-ink) !important; font: 600 var(--ay-text-sm)/1 var(--ay-font-ui) !important; text-align: center !important; box-shadow: none !important;
+  transition: background-color .2s, border-color .2s, transform .14s var(--ay-ease) !important;
+}
+.ayna-mobile :is(.ayna-shop-category, .ayna-category-expanded button)[aria-pressed='true'] { background: var(--ay-ink) !important; border-color: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.ayna-mobile .ayna-shop-filter-toggle { width: 40px !important; height: 40px !important; min-height: 40px !important; border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-radius-pill) !important; background: transparent !important; color: var(--ay-ink) !important; }
+.ayna-mobile .ayna-shop-filter-toggle[aria-expanded='true'] { background: var(--ay-butter) !important; border-color: var(--ay-ink) !important; }
+
+/* Product cards keep the existing halo photo treatment; this only evens out
+   type, press feedback and the save button. */
+.ayna-mobile .ayna-fresh-product-main { transition: transform .16s var(--ay-ease); }
+.ayna-mobile .ayna-fresh-product-main:active { transform: scale(.97); }
+.ayna-mobile .ayna-fresh-product-category { color: var(--ay-ink-soft) !important; font: 600 var(--ay-text-xs)/1.2 var(--ay-font-ui) !important; letter-spacing: .02em !important; }
+.ayna-mobile .ayna-fresh-product-copy > strong { font: 700 var(--ay-text-md)/1.25 var(--ay-font-ui) !important; letter-spacing: -.01em !important; display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
+.ayna-mobile .ayna-fresh-product-foot b { font: 700 var(--ay-text-sm)/1 var(--ay-font-ui) !important; }
+.ayna-mobile .ayna-card-save { width: 36px !important; height: 36px !important; border-radius: var(--ay-radius-pill) !important; background: var(--ay-paper) !important; border: 0 !important; box-shadow: 0 1px 0 var(--ay-line) !important; color: var(--ay-ink) !important; transition: transform .2s var(--ay-pop) !important; }
+.ayna-mobile .ayna-card-save[aria-pressed='true'] { background: var(--ay-butter) !important; animation: ip-pop .32s var(--ay-pop); }
+.ayna-mobile .ayna-fresh-match-badge { border-radius: var(--ay-radius-pill) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; border: 0 !important; }
+
+/* Search fields everywhere: same height and radius. */
+.ayna-mobile .ayna-search-input, .ayna-mobile .am-search { min-height: 48px; border-radius: var(--ay-radius-pill) !important; }
+
+/* Bottom nav: hairline, even spacing, ink-on-butter active pill. */
+.ayna-mobile .ayna-bottom-nav { border-top: 1px solid var(--ay-line) !important; box-shadow: none !important; }
+.ayna-mobile .ayna-bottom-nav button { border-radius: var(--ay-radius-md) !important; }
+
+/* Ecosystem header panel sits on the page colour, not a white slab. */
+.ayna-mobile:not([data-theme='dark']) .ayna-cabinet-home > :first-child { background: transparent !important; }
