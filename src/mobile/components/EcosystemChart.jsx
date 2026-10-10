@@ -1,4 +1,4 @@
-const COLORS = ['#2d7365', '#F4EA54', '#7E8DE7', '#a6a0c5', '#F2B6CF', '#8eab81'];
+const COLORS = ['#7E8DE7', '#F4EA54', '#7E8DE7', '#a6a0c5', '#F2B6CF', '#8eab81'];
 const CIRCUMFERENCE = 2 * Math.PI * 72;
 
 export default function EcosystemChart({ groups }) {

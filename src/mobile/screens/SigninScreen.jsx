@@ -392,7 +392,7 @@ export default function SigninScreen({
           </div>
 
           <div className="ayna-fresh-auth-trust" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FAFBF8" strokeWidth="2" strokeLinecap="round">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F8F4E9" strokeWidth="2" strokeLinecap="round">
               <rect x="5" y="11" width="14" height="10" rx="2.5" />
               <path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" />
             </svg>

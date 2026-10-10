@@ -1,6 +1,6 @@
 /* Brand v2: shared roles and layout across the native app and phone preview. */
 .ayna-mobile {
-  --ayna-bg: #FAFBF8;
+  --ayna-bg: #F8F4E9;
   --ayna-bg-alt: #F1F1EB;
   --ayna-surface: #FFFFFF;
   --ayna-surface-alt: #FFFFFF;
@@ -124,7 +124,7 @@
 @media (max-height: 680px) { .ayna-editorial-welcome-photo { min-height: 30vh; } .ayna-editorial-welcome-content { padding-top: 18px; } }
 
 /* Rebrand entry points: art-directed type and real Ayna photography. */
-.ayna-v2-welcome { flex: 1; min-height: 0; overflow-y: auto; background: #FAFBF8; color: #25214A; }
+.ayna-v2-welcome { flex: 1; min-height: 0; overflow-y: auto; background: #F8F4E9; color: #25214A; }
 .ayna-v2-welcome-hero { min-height: 312px; padding: max(22px,env(safe-area-inset-top)) 22px 24px; display: flex; flex-direction: column; background: #25214A; color: #fff; }
 .ayna-v2-welcome-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: auto; }
 .ayna-v2-wordmark { color: #fff; font: 800 33px/1 var(--ayna-font-ui); letter-spacing: -.095em; }
@@ -150,7 +150,7 @@
 .ayna-v2-welcome-links button,
 .ayna-v2-text-link { min-height: 40px; padding: 4px 0; border: 0; background: transparent; color: #25214A; text-decoration: underline; text-underline-offset: 3px; font: 600 12px var(--ayna-font-ui); cursor: pointer; }
 
-.ayna-v2-eco-intro { flex: 1; min-height: 0; display: flex; flex-direction: column; background: #FAFBF8; }
+.ayna-v2-eco-intro { flex: 1; min-height: 0; display: flex; flex-direction: column; background: #F8F4E9; }
 .ayna-v2-eco-intro-scroll { flex: 1; min-height: 0; overflow-y: auto; }
 .ayna-v2-eco-intro-blue { min-height: 290px; padding: 27px 22px 22px; background: #25214A; color: #fff; display: flex; flex-direction: column; }
 .ayna-v2-eco-intro-blue .ayna-v2-overline { color: #7E8DE7; }
@@ -182,6 +182,6 @@
 .ayna-v2-eco-feature-copy small { color: #7E8DE7; font: 800 10px var(--ayna-font-ui); letter-spacing: .09em; }
 .ayna-v2-eco-feature-copy strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; margin: 10px 0; color: #fff; font: 800 23px/1.05 var(--ayna-font-ui); letter-spacing: -.05em; }
 .ayna-v2-eco-feature-copy > span { color: #fff; font: 700 12px var(--ayna-font-ui); }
-.ayna-v2-eco-feature-image { position: relative; min-height: 206px; background: #e5efe7; }
+.ayna-v2-eco-feature-image { position: relative; min-height: 206px; background: #E8EAF9; }
 .ayna-v2-eco-feature-image img { padding: 10px; box-sizing: border-box; }
 @media (max-height: 690px) { .ayna-v2-welcome-hero { min-height: 285px; } .ayna-v2-team-photo img { aspect-ratio: 2; } }

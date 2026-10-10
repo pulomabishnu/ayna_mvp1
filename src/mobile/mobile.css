@@ -20,7 +20,7 @@
   --ayna-cta-bg: #25214A;
   --ayna-cta-text: #ffffff;
   --ayna-heading: #25214A;
-  --ayna-product-panel: linear-gradient(150deg,#e5efe7,#F6DCC0);
+  --ayna-product-panel: linear-gradient(150deg,#E8EAF9,#F6DCC0);
   --ayna-glass-bg: rgba(255,252,249,.9);
   --ayna-track: #EAE3DA;
   --ayna-chip-bg: #efebe0;
@@ -32,7 +32,7 @@
      bodies from src/components/Articles.jsx, which style their own links
      inline with var(--color-primary)) renders with the correct color when
      reused inside the mobile app, instead of falling back to default blue. */
-  --color-primary: #2d7365;
+  --color-primary: #7E8DE7;
 
   /* Scales OrbHero.jsx's orb+chips so the chips' worst-case reach during
      their orbit (241px from center either way, at the component's native
@@ -166,7 +166,7 @@
   height: 20px;
   border-radius: 50%;
   background: #1A1714;
-  border: 3px solid #e5efe7;
+  border: 3px solid #E8EAF9;
   cursor: pointer;
   margin-top: -8px;
 }

@@ -1136,7 +1136,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
           onClick={() => setAdding(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed #7E8DE7', background: '#f5e3d5',
+            padding: '15px', borderRadius: 16, border: '1.5px dashed #7E8DE7', background: '#F8F4E9',
             fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#25214A',
           }}
         >
@@ -1271,7 +1271,7 @@ function ProductHistoryBuilder({ products, onChange }) {
           onClick={() => setAdding(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed #7E8DE7', background: '#f5e3d5',
+            padding: '15px', borderRadius: 16, border: '1.5px dashed #7E8DE7', background: '#F8F4E9',
             fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#25214A',
           }}
         >
@@ -1893,20 +1893,20 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       style={{
         flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column',
         background: '#25214A',
-        color: '#FAFBF8', position: 'relative', overflow: 'hidden',
+        color: '#F8F4E9', position: 'relative', overflow: 'hidden',
         fontFamily: "var(--ayna-font-ui)", animation: 'ay-page .25s ease-out',
       }}
     >
       <div className="ayna-fresh-intake-header" style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
           <button type="button" aria-label="Go back" onClick={goBack} style={{ width: 32, height: 32, borderRadius: 4, border: '1px solid rgba(255,249,242,.45)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FAFBF8" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F8F4E9" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: '#7E8DE7', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
           </div>
           {step.optional && (
-            <button type="button" onClick={goNext} style={{ padding: '7px 0', border: 0, background: 'transparent', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#FAFBF8', cursor: 'pointer', flex: 'none' }}>Skip</button>
+            <button type="button" onClick={goNext} style={{ padding: '7px 0', border: 0, background: 'transparent', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#F8F4E9', cursor: 'pointer', flex: 'none' }}>Skip</button>
           )}
         </div>
         <div className="ayna-intake-progress-copy"><strong>{String(currentIndex + 1).padStart(2, '0')} / {String(visibleSteps.length).padStart(2, '0')}</strong></div>
@@ -1922,7 +1922,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         </div>
         <div style={{ padding: '22px 20px 0' }}>
           {countForStep > 0 && <div className="ayna-intake-question-kicker"><strong>{countForStep} picked</strong></div>}
-          <div className="ayna-fresh-intake-title" style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.045em', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#FAFBF8' }}>{step.title}</div>
+          <div className="ayna-fresh-intake-title" style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.045em', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#F8F4E9' }}>{step.title}</div>
           {step.subtitle && <p className="ayna-fresh-intake-subtitle" style={{ margin: '8px 0 0', fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
           {flaggedStepIds.has(step.id) && (
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 11, padding: '6px 12px', borderRadius: 99, background: 'rgba(180,64,42,.16)', border: '1px solid rgba(180,64,42,.35)', color: '#FFC9BC', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>
