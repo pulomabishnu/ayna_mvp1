@@ -597,8 +597,6 @@ function rankedSuggestions(query, options = [], limit = 6) {
 const NAVY = 'var(--ayna-heading)';
 const CARD_BG = 'var(--ayna-surface)';
 const ROW_BORDER = 'var(--ayna-border)';
-const ACCENT_BORDER = 'var(--ayna-accent-dark)';
-const ACCENT_BG = 'var(--ayna-accent)';
 const PANEL_BG = 'var(--ayna-chip-bg)';
 const MUTED = 'var(--ayna-text-faint)';
 const LABEL_GOLD = 'var(--ayna-brown)';
@@ -679,8 +677,6 @@ const MINOR_AGE_LIMIT = 18;
 const WARNING_BORDER = '#B4402A';
 const WARNING_BG = '#FAEDE8';
 const WARNING_BORDER_SOFT = '#E8C6B8';
-const WARNING_TITLE = '#8A2F1D';
-const WARNING_BODY = '#7A4234';
 
 function isMinorAge(value) {
   if (value === '' || value === null || value === undefined) return false;
@@ -714,6 +710,30 @@ function isMinorAge(value) {
 // Pattern H1: search-styled input, added items as swatch+title cards (not
 // small chips), a dashed "Add" affordance implicit in the search bar
 // itself, and an × to remove — same values/suggestions/onChange contract.
+function SuggestList({ draft, matches, onPick }) {
+  if (!draft.trim()) return null;
+  return (
+    <div className="ip-suggest" role="listbox">
+      <button type="button" className="is-add" onClick={() => onPick(draft)}>+ Add “{draft.trim()}”</button>
+      {matches.map((option) => <button type="button" key={option} onClick={() => onPick(option)}>{option}</button>)}
+    </div>
+  );
+}
+
+function TokenList({ values, onRemove }) {
+  if (!values.length) return null;
+  return (
+    <div className="ip-tokens">
+      {values.map((value, i) => (
+        <span key={`${value}-${i}`} className="ip-token">
+          <span>{value}</span>
+          <button type="button" aria-label={`Remove ${value}`} onClick={() => onRemove(i)}>×</button>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function TokenInput({ values, onChange, placeholder, suggestions = [], suggestionLimit = 6 }) {
   const [draft, setDraft] = useState('');
   const matches = useMemo(
@@ -727,44 +747,14 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
     setDraft('');
   };
   return (
-    <div style={{ maxWidth: '100%' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 99, padding: '11px 14px' }}>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-        <input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
-          placeholder={placeholder}
-          aria-label={placeholder}
-          style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }}
-        />
-      </div>
-      {draft.trim().length > 0 && (
-        <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-          <button type="button" className="ayna-intake-control" onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: INK, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-            <span>Add "{draft.trim()}"</span>
-          </button>
-          {matches.map((option) => (
-            <button type="button" className="ayna-intake-control" key={option} onClick={() => addValue(option)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>
-              {option}
-            </button>
-          ))}
-        </div>
-      )}
-      {values.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
-          {values.map((value, i) => (
-            <div key={`${value}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER }}>
-              <span style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT_BG, border: '1px solid ' + ACCENT_BORDER, flex: 'none' }} />
-              <span style={{ flex: 1, fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK }}>{value}</span>
-              <button type="button" className="ayna-intake-control" aria-label={`Remove ${value}`} onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="ip-token-input">
+      <label className="ip-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+        <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }} placeholder={placeholder} aria-label={placeholder} />
+        {draft && <button type="button" aria-label="Clear" onClick={() => setDraft('')}>×</button>}
+      </label>
+      <SuggestList draft={draft} matches={matches} onPick={addValue} />
+      <TokenList values={values} onRemove={(index) => onChange(values.filter((_, idx) => idx !== index))} />
     </div>
   );
 }
@@ -782,7 +772,6 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
     [draft, suggestions, values]
   );
   const quickAdd = historyNames.filter((name) => !values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(name)));
-
   const addValue = (raw) => {
     const next = String(raw || '').trim();
     if (!next || values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(next))) return;
@@ -790,92 +779,28 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
     setDraft('');
     setAdding(false);
   };
-
   return (
-    <div>
-      {values.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
-          {values.map((value, i) => (
-            <div key={`${value}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER }}>
-              <span style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT_BG, border: '1px solid ' + ACCENT_BORDER, flex: 'none' }} />
-              <span style={{ flex: 1, fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK }}>{value}</span>
-              <button type="button" className="ayna-intake-control" aria-label={`Remove ${value}`} onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
+    <div className="ip-builder">
+      <TokenList values={values} onRemove={(index) => onChange(values.filter((_, idx) => idx !== index))} />
       {!adding ? (
-        <button type="button" className="ayna-intake-control"
-          onClick={() => setAdding(true)}
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed #F7BADD', background: '#FCFBFB',
-            fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#1D1A2B',
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F7BADD" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-          Add a product or brand
-        </button>
+        <button type="button" className="ip-add-row" onClick={() => setAdding(true)}><span aria-hidden="true">+</span>Add a product or brand</button>
       ) : (
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ACCENT_BORDER, borderRadius: 99, padding: '11px 14px' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-            <input
-              autoFocus
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
-              placeholder="Start typing a product or brand"
-              style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }}
-            />
-            <button type="button" className="ayna-intake-control" aria-label="Close search" onClick={() => { setAdding(false); setDraft(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            </button>
-          </div>
-          {draft.trim().length > 0 && (
-            <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-              <button type="button" className="ayna-intake-control" onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: INK, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-                <span>Add "{draft.trim()}"</span>
-              </button>
-              {matches.map((option) => (
-                <button type="button" className="ayna-intake-control" key={option} onClick={() => addValue(option)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>
-                  {option}
-                </button>
-              ))}
-            </div>
-          )}
+          <label className="ip-search is-active">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+            <input autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }} placeholder="Product or brand" aria-label="Product or brand" />
+            <button type="button" aria-label="Close search" onClick={() => { setAdding(false); setDraft(''); }}>×</button>
+          </label>
+          <SuggestList draft={draft} matches={matches} onPick={addValue} />
         </div>
       )}
-
       {quickAdd.length > 0 && (
-        <div style={{ marginTop: 18 }}>
-          <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#F7BADD', marginBottom: 10 }}>From your history</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-            {quickAdd.map((name) => (
-              <button type="button" className="ayna-intake-control"
-                key={name}
-                onClick={() => addValue(name)}
-                style={{
-                  cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
-                  fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 13px', borderRadius: 99,
-                  background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, color: INK,
-                }}
-              >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={LABEL_GOLD} strokeWidth="2.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-                {name}
-              </button>
-            ))}
-          </div>
+        <div className="ip-custom">
+          <small>From what you tried</small>
+          <div className="ip-chips is-compact">{quickAdd.map((name) => <button type="button" key={name} className="ip-chip is-dashed" onClick={() => addValue(name)}>+ {name}</button>)}</div>
         </div>
       )}
-
-      {footerText && (
-        <p style={{ margin: '18px 0 0', fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'rgba(255,249,242,.6)' }}>{footerText}</p>
-      )}
+      {footerText && <p className="ip-hint ip-hint--foot">{footerText}</p>}
     </div>
   );
 }
@@ -899,93 +824,38 @@ function ProductHistoryBuilder({ products, onChange }) {
     onChange([...products, { name: trimmed, current: '', worked: '', reaction: '', reactionText: '', stopReasons: [], stopOther: '' }]);
     setQuery('');
     setAdding(false);
-    setExpandedIndex(null);
+    setExpandedIndex(products.length);
   };
   const updateProduct = (index, patch) => onChange(products.map((p, i) => (i === index ? { ...p, ...patch } : p)));
   const removeProduct = (index) => {
     onChange(products.filter((_, i) => i !== index));
     setExpandedIndex((cur) => (cur === index ? null : cur > index ? cur - 1 : cur));
   };
+  const one = (value) => (value ? [value] : []);
 
   return (
-    <div>
-      {!adding ? (
-        <button type="button" className="ayna-intake-control"
-          onClick={() => setAdding(true)}
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed #F7BADD', background: '#FCFBFB',
-            fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#1D1A2B',
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F7BADD" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-          Add a product or brand
-        </button>
-      ) : (
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ACCENT_BORDER, borderRadius: 99, padding: '11px 14px' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
-            <button type="button" className="ayna-intake-control" aria-label="Close search" onClick={() => { setAdding(false); setQuery(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            </button>
-          </div>
-          {query.trim().length > 0 && (
-            <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-              <button type="button" className="ayna-intake-control" onClick={() => addProduct(query)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: INK, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)" }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-                <span>Add "{query.trim()}"</span>
-              </button>
-              {suggestions.map((name) => (
-                <button type="button" className="ayna-intake-control" key={name} onClick={() => addProduct(name)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>{name}</button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
+    <div className="ip-builder">
       {products.length > 0 && (
-        <div style={{ display: 'grid', gap: 8, marginTop: 12 }}>
+        <div className="ip-history">
           {products.map((product, index) => {
             const expanded = expandedIndex === index;
-            const summary = [product.current, product.worked, product.reaction].filter(Boolean);
+            const summary = [product.current && (product.current === 'Yes' ? 'Using now' : 'Stopped'), product.worked, product.reaction && product.reaction !== 'No' ? `${product.reaction} reaction` : ''].filter(Boolean);
             return (
-              <div key={`${product.name}-${index}`} style={{ background: CARD_BG, color: INK, border: '1.5px solid ' + (expanded ? ACCENT_BORDER : ROW_BORDER), borderRadius: 16, overflow: 'hidden', textAlign: 'left' }}>
-                <button type="button" className="ayna-intake-control" aria-expanded={expanded} onClick={() => { setExpandedIndex(expanded ? null : index); setStopSearch(''); }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '13px 14px', cursor: 'pointer' }}>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{product.name}</div>
-                    <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>{summary.length ? summary.join(' · ') : 'Optional details'}</div>
-                  </div>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flex: 'none', color: MUTED, transform: expanded ? 'rotate(180deg)' : 'rotate(-90deg)', transition: 'transform .2s' }}>
-                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+              <div key={`${product.name}-${index}`} className={`ip-history-card${expanded ? ' is-open' : ''}`}>
+                <button type="button" className="ip-history-head" aria-expanded={expanded} onClick={() => { setExpandedIndex(expanded ? null : index); setStopSearch(''); }}>
+                  <span><strong>{product.name}</strong><small>{summary.length ? summary.join(' · ') : 'Tap to add details (optional)'}</small></span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
                 </button>
                 {expanded && (
-                  <div style={{ padding: '0 14px 16px', borderTop: '1px solid ' + ROW_BORDER, paddingTop: 14 }}>
-                    <div style={{ marginBottom: 14 }}>
-                      <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 8 }}>Currently using it?</div>
-                      <Segmented options={['Yes', 'No']} value={product.current} onChange={(v) => updateProduct(index, { current: v })} />
-                    </div>
-
-                    <div style={{ marginBottom: 14 }}>
-                      <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 8 }}>How well did it work?</div>
-                      <Pills options={['Helped a lot', 'Helped somewhat', 'No difference', 'Made it worse', 'Not sure']} selected={product.worked ? [product.worked] : []} onToggle={(v) => updateProduct(index, { worked: v })} left compact />
-                    </div>
-
-                    <div style={{ marginBottom: 14 }}>
-                      <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 8 }}>Any side effects or reactions?</div>
-                      <Pills options={['No', 'Mild', 'Serious', 'Not sure']} selected={product.reaction ? [product.reaction] : []} onToggle={(v) => updateProduct(index, { reaction: v })} left compact />
-                    </div>
-
+                  <div className="ip-history-body">
+                    <div className="ip-q"><strong>Using it now?</strong><ChipList compact items={['Yes', 'No']} selected={one(product.current)} onToggle={(v) => updateProduct(index, { current: v })} /></div>
+                    <div className="ip-q"><strong>Did it help?</strong><ChipList compact items={['Helped a lot', 'Helped somewhat', 'No difference', 'Made it worse', 'Not sure']} selected={one(product.worked)} onToggle={(v) => updateProduct(index, { worked: v })} /></div>
+                    <div className="ip-q"><strong>Any reaction?</strong><ChipList compact items={['No', 'Mild', 'Serious', 'Not sure']} selected={one(product.reaction)} onToggle={(v) => updateProduct(index, { reaction: v })} /></div>
                     {['Mild', 'Serious'].includes(product.reaction) && (
-                      <div style={{ marginBottom: 14, padding: '12px 13px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                        <input value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'max(16px, calc(12.5px * var(--ayna-text-scale, 1)))', color: INK, fontFamily: 'inherit' }} />
-                      </div>
+                      <input className="ip-input" value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" aria-label="What happened" />
                     )}
-
                     {product.current === 'No' && (
-                      <div style={{ marginBottom: 8 }}>
-                        <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 8 }}>Why did you stop?</div>
+                      <div className="ip-q"><strong>Why did you stop?</strong>
                         <SearchableChoices
                           items={STOP_REASONS}
                           selected={product.stopReasons || []}
@@ -995,17 +865,29 @@ function ProductHistoryBuilder({ products, onChange }) {
                           search={stopSearch}
                           onSearch={setStopSearch}
                           onAdd={(value) => { updateProduct(index, { stopReasons: [...new Set([...(product.stopReasons || []), value])] }); setStopSearch(''); }}
-                          placeholder="Search why you stopped"
+                          placeholder="Search reasons"
+                          searchable={false}
                         />
                       </div>
                     )}
-
-                    <button type="button" className="ayna-intake-control" onClick={() => removeProduct(index)} style={{ marginTop: 10, color: LABEL_GOLD, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, cursor: 'pointer' }}>Remove product</button>
+                    <button type="button" className="ip-link-danger" onClick={() => removeProduct(index)}>Remove</button>
                   </div>
                 )}
               </div>
             );
           })}
+        </div>
+      )}
+      {!adding ? (
+        <button type="button" className="ip-add-row" onClick={() => setAdding(true)}><span aria-hidden="true">+</span>{products.length ? 'Add another' : 'Add a product or brand'}</button>
+      ) : (
+        <div>
+          <label className="ip-search is-active">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" aria-label="Search products" />
+            <button type="button" aria-label="Close search" onClick={() => { setAdding(false); setQuery(''); }}>×</button>
+          </label>
+          <SuggestList draft={query} matches={suggestions} onPick={addProduct} />
         </div>
       )}
     </div>
