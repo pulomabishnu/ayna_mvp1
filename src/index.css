@@ -1,29 +1,32 @@
 :root {
-  /* Aligned with aynawaitlist: warm paper, terracotta rose, calm neutrals, DM Sans + Inter */
-  --color-bg: #F3EFE9;
-  --color-surface-soft: #FFFCF9;
+  /* Ayna brand system: neutral canvas, Klein Blue identity, spare Citric and Aquamarine. */
+  --color-bg: #F8F8F3;
+  --color-surface-soft: #FFFFFF;
   --color-surface-contrast: #1C1917;
 
-  --color-text-main: #292524;
-  --color-text-muted: #78716C;
+  --color-text-main: #171717;
+  --color-text-muted: #626262;
   --color-text-light: #FFFFFF;
 
-  --color-primary: #FFC774;
-  --color-primary-hover: #E8A94F;
-  --color-secondary: #FFEFD6;
-  --color-secondary-fade: rgba(255, 199, 116, 0.18);
-  --color-primary-fade: rgba(255, 199, 116, 0.18);
+  --color-primary: #4100F5;
+  --color-primary-hover: #3200C2;
+  --color-secondary: #9BF0E1;
+  --color-secondary-fade: rgba(155, 240, 225, 0.25);
+  --color-primary-fade: rgba(65, 0, 245, 0.1);
   --color-surface: #FFFFFF;
 
-  --color-border: #E1D5CE;
+  --color-border: #E0E0D9;
 
-  /* Brand gradient (hero) + accent trio, from the Aug 2026 mockup pass */
-  --color-navy: #242A52;
-  --color-plum: #4E3866;
-  --color-terracotta: #A2603C;
-  --color-amber: #F0A84B;
-  --color-amber-deep: #C0761F;
-  --hero-gradient: linear-gradient(135deg, var(--color-navy) 0%, var(--color-plum) 55%, var(--color-terracotta) 100%);
+  /* Keep legacy variable names for existing components while changing their roles. */
+  --color-navy: #4100F5;
+  --color-plum: #4100F5;
+  --color-terracotta: #4100F5;
+  --color-amber: #CDF500;
+  --color-amber-deep: #4100F5;
+  --color-citric: #CDF500;
+  --color-aquamarine: #9BF0E1;
+  --color-ink: #171717;
+  --hero-gradient: #4100F5;
 
   /* Typography — same feel as the public waitlist (clean, editorial weight) */
   --font-heading: 'DM Sans', system-ui, -apple-system, sans-serif;
@@ -40,9 +43,9 @@
 
   /* Geometry & Shadows */
   --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-  --radius-xl: 28px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-pill: 9999px;
 
   --shadow-sm: 0 2px 12px rgba(28, 25, 23, 0.05);
@@ -1517,13 +1520,13 @@ html {
 :root {
   --mockup-page-width: 1180px;
   --mockup-gutter: 56px;
-  --mockup-cream: #FBF8F4;
-  --mockup-cream-deep: #FAF7F2;
-  --mockup-ink: #171429;
-  --mockup-ink-soft: #6f6880;
-  --mockup-ink-label: #4a4356;
-  --mockup-hero-gradient: linear-gradient(125deg, #242A52 0%, #33305F 32%, #4E3866 58%, #7A4A55 82%, #A2603C 100%);
-  --mockup-hero-gradient-returning: linear-gradient(125deg, #242A52 0%, #33305F 34%, #4E3866 62%, #8A5049 100%);
+  --mockup-cream: #F8F8F3;
+  --mockup-cream-deep: #F1F1EB;
+  --mockup-ink: #171717;
+  --mockup-ink-soft: #626262;
+  --mockup-ink-label: #171717;
+  --mockup-hero-gradient: #4100F5;
+  --mockup-hero-gradient-returning: #4100F5;
 }
 
 .mockup-page {
@@ -1693,7 +1696,7 @@ html {
 
 .ayna-landing-searchbar button {
   flex: none;
-  background: linear-gradient(100deg, #F0A84B, #E5C15C);
+  background: linear-gradient(100deg, #CDF500, #E5C15C);
   color: #2A2140;
   font-family: inherit;
   font-weight: 600;
@@ -1769,7 +1772,7 @@ html {
 }
 
 .ayna-landing-btn--navy {
-  background: #242A52;
+  background: #4100F5;
   color: #fff;
   font-size: 15px;
   padding: 17px 34px;
@@ -1777,8 +1780,8 @@ html {
 }
 
 .ayna-landing-btn--amber {
-  background: #F0A84B;
-  color: #242A52;
+  background: #CDF500;
+  color: #4100F5;
   font-weight: 500;
   font-size: 15px;
   padding: 16px 30px;
@@ -1840,8 +1843,8 @@ html {
 }
 
 .ayna-landing-filters button.is-active {
-  background: #242A52;
-  border-color: #242A52;
+  background: #4100F5;
+  border-color: #4100F5;
   color: #fff;
 }
 
@@ -2065,9 +2068,9 @@ html {
    page you're on. Gold is the established brand accent already used here on
    the hero; the cream-header override that swapped it for lavender is gone. */
 .app-nav__circle--avatar {
-  background: #F0A84B;
-  border-color: #F0A84B;
-  color: #242A52;
+  background: #CDF500;
+  border-color: #CDF500;
+  color: #4100F5;
 }
 
 .app-nav__circle-pill {
@@ -2078,8 +2081,8 @@ html {
   height: 16px;
   padding: 0 4px;
   border-radius: 999px;
-  background: #F0A84B;
-  color: #242A52;
+  background: #CDF500;
+  color: #4100F5;
   font-family: 'DM Mono', ui-monospace, monospace;
   font-size: 9px;
   font-weight: 500;
@@ -2161,7 +2164,7 @@ html {
 }
 
 .app-nav--landing .app-nav__logo {
-  color: #F0A84B !important;
+  color: #CDF500 !important;
 }
 
 .app-nav--landing .app-nav__beta-badge {
@@ -2175,7 +2178,7 @@ html {
 
 .app-nav--landing .app-nav__tab:hover,
 .app-nav--landing .app-nav__tab--active {
-  color: #F0A84B !important;
+  color: #CDF500 !important;
 }
 
 .app-nav--landing .app-nav__circle {
@@ -2183,14 +2186,14 @@ html {
 }
 
 .app-nav--landing .app-nav__circle--avatar {
-  color: #242A52 !important;
+  color: #4100F5 !important;
 }
 
 /* --- Cream nav (every non-landing board) --- */
 
 .app-nav--cream {
   padding: 20px calc(max(var(--mockup-gutter), (100% - var(--mockup-page-width)) / 2 + var(--mockup-gutter)));
-  background: #FAF6F1;
+  background: #F8F8F3;
   border-bottom: 1px solid rgba(26, 23, 20, 0.07);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
@@ -2280,7 +2283,7 @@ html {
 /* ---- Discovery / Shop (mockup board 1h) ---- */
 
 .discovery-shop {
-  background: #FAF6F1;
+  background: #F8F8F3;
   color: var(--mockup-ink-deep, #1A1714);
   font-family: 'DM Sans', system-ui, sans-serif;
   padding-bottom: 52px;
@@ -2332,8 +2335,8 @@ html {
 }
 
 .discovery-shop__filters button.is-active {
-  background: #242A52;
-  border-color: #242A52;
+  background: #4100F5;
+  border-color: #4100F5;
   color: #fff;
 }
 
@@ -2375,12 +2378,12 @@ html {
 }
 
 .discovery-shop__switch.is-on {
-  background: #242A52;
+  background: #4100F5;
 }
 
 .discovery-shop__switch.is-on > span {
   left: 19px;
-  background: #F0A84B;
+  background: #CDF500;
 }
 
 .discovery-shop__search {
@@ -2558,7 +2561,7 @@ html {
 /* ---- About Us / How it works (mockup board 1j) ---- */
 
 .hiw {
-  background: #FAF6F1;
+  background: #F8F8F3;
   color: #1A1714;
   font-family: 'DM Sans', system-ui, sans-serif;
   padding-bottom: 46px;
@@ -2570,7 +2573,7 @@ html {
      background once real content (heading + subtext, shared by both
      How It Works and About, which both use this class) wraps past the
      assumed 342px height. No fixed size/position needed for a gradient. */
-  background: linear-gradient(125deg, #242A52 0%, #33305F 34%, #4E3866 64%, #A2603C 100%);
+  background: linear-gradient(125deg, #4100F5 0%, #33305F 34%, #4100F5 64%, #4100F5 100%);
   color: #F4F0FA;
   padding: 58px 0 64px;
   min-height: 258px;
@@ -2793,7 +2796,7 @@ html {
 .hiw-sources__track > span {
   position: absolute;
   inset: 0 auto 0 0;
-  background: linear-gradient(90deg, #4E3866, #A2603C);
+  background: linear-gradient(90deg, #4100F5, #4100F5);
   border-radius: 999px;
 }
 
@@ -2858,7 +2861,7 @@ html {
 }
 
 .hiw-gate--dark {
-  background: linear-gradient(150deg, #242A52, #5B3A75);
+  background: linear-gradient(150deg, #4100F5, #5B3A75);
   color: #F6EFE6;
   box-shadow: none;
 }
@@ -2904,7 +2907,7 @@ html {
 .hiw-gate__figure {
   margin-top: 8px;
   font: 400 26px 'Playfair Display', serif;
-  color: #242A52;
+  color: #4100F5;
 }
 
 .hiw-gate__figure span {
@@ -2915,7 +2918,7 @@ html {
 
 .hiw-gate--dark .hiw-gate__figure {
   font-size: 34px;
-  color: #F0A84B;
+  color: #CDF500;
 }
 
 /* Comparison table */
@@ -2946,7 +2949,7 @@ html {
 }
 
 .hiw-table__ayna {
-  color: #4E3866;
+  color: #4100F5;
 }
 
 .hiw-mark {
@@ -2955,7 +2958,7 @@ html {
 }
 
 .hiw-mark--yes {
-  color: #4E3866;
+  color: #4100F5;
 }
 
 /* Not-a-doctor band */
@@ -2990,7 +2993,7 @@ html {
   font-size: 13.5px;
   color: #1A1714;
   background: none;
-  border: 1px solid #242A52;
+  border: 1px solid #4100F5;
   padding: 14px 24px;
   border-radius: 999px;
   white-space: nowrap;
@@ -2998,7 +3001,7 @@ html {
 }
 
 .hiw-band__cta:hover {
-  background: #242A52;
+  background: #4100F5;
   color: #fff;
 }
 
@@ -3029,7 +3032,7 @@ html {
 }
 
 .app-nav--landing.app-nav--about {
-  background: linear-gradient(125deg, #242A52 0%, #33305F 34%, #4E3866 64%, #A2603C 100%) !important;
+  background: linear-gradient(125deg, #4100F5 0%, #33305F 34%, #4100F5 64%, #4100F5 100%) !important;
   background-size: 100% 342px !important;
   background-position: 0 0 !important;
   background-repeat: no-repeat !important;
@@ -3135,16 +3138,16 @@ html {
 }
 
 .pdp-btn--navy {
-  background: #242A52;
+  background: #4100F5;
   color: #fff;
-  border: 1px solid #242A52;
+  border: 1px solid #4100F5;
   padding: 16px 34px;
 }
 
 .pdp-btn--outline {
   background: none;
   color: #1A1714;
-  border: 1px solid #242A52;
+  border: 1px solid #4100F5;
   padding: 15px 26px;
 }
 
@@ -3329,8 +3332,8 @@ a.pdp-head__badge:focus-visible {
 }
 
 .pdp-viewswitch__group button.is-active {
-  background: #242A52;
-  border-color: #242A52;
+  background: #4100F5;
+  border-color: #4100F5;
   color: #fff;
 }
 
@@ -3422,7 +3425,7 @@ a.pdp-head__badge:focus-visible {
 }
 
 .pdp-rail__card--why {
-  background: linear-gradient(140deg, #242A52, #5B3A75);
+  background: linear-gradient(140deg, #4100F5, #5B3A75);
   color: #F6EFE6;
 }
 
@@ -3681,7 +3684,7 @@ a.pdp-head__badge:focus-visible {
 }
 
 .pdp-community__star.is-on {
-  color: #F0A84B;
+  color: #CDF500;
 }
 
 .pdp-community__reviewrow {
@@ -3759,7 +3762,7 @@ footer a[href*="career" i],
   appearance: none;
   border: 0;
   background: transparent;
-  color: #242A52;
+  color: #4100F5;
   font: 600 17px 'DM Sans', system-ui, sans-serif;
   padding: 10px 0;
   margin-top: 4px;
@@ -3835,7 +3838,7 @@ footer a[href*="career" i],
 }
 
 .pdp-evidence-head .pdp-rail__card--why {
-  background: linear-gradient(140deg, #242A52, #5B3A75);
+  background: linear-gradient(140deg, #4100F5, #5B3A75);
   color: #F6EFE6;
 }
 
@@ -3850,7 +3853,7 @@ footer a[href*="career" i],
 .pdp-rail__percent {
   margin-top: 14px;
   font: 400 clamp(2.35rem, 4vw, 3rem)/1 'Playfair Display', serif;
-  color: #F0A84B;
+  color: #CDF500;
   letter-spacing: -0.02em;
 }
 
@@ -3937,7 +3940,7 @@ footer a[href*="career" i],
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #242A52, #5B3A75);
+  background: linear-gradient(135deg, #4100F5, #5B3A75);
   color: #F6EFE6;
   display: flex;
   flex-direction: column;
@@ -3982,7 +3985,7 @@ footer a[href*="career" i],
 }
 
 .eco-bubble--selected {
-  box-shadow: 0 0 0 2px #242A52, 0 6px 20px rgba(26, 23, 20, 0.09);
+  box-shadow: 0 0 0 2px #4100F5, 0 6px 20px rgba(26, 23, 20, 0.09);
 }
 
 .eco-bubble--gap {
@@ -4093,7 +4096,7 @@ footer a[href*="career" i],
 }
 
 .eco-bubbles__card-actions button:hover {
-  border-color: #242A52;
+  border-color: #4100F5;
 }
 
 .eco-bubbles__card-remove:hover {
@@ -4409,7 +4412,7 @@ footer a[href*="career" i],
 /* ---- Brands: partnerships ---- */
 
 .brands {
-  background: #FAF6F1;
+  background: #F8F8F3;
   color: #1A1714;
   font-family: 'DM Sans', system-ui, sans-serif;
   padding-bottom: 56px;
@@ -4538,7 +4541,7 @@ footer a[href*="career" i],
 :root {
   /* Inter was the body face; the mockup is DM Sans throughout. */
   --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --color-bg: #FAF6F1;
+  --color-bg: #F8F8F3;
   --color-surface-soft: #FFFFFF;
   --color-text-main: #1A1714;
   --color-text-muted: #8c8078;
@@ -4573,7 +4576,7 @@ h6 {
 /* The boards use a navy pill for the primary action on cream. Amber is the
    hero gradient's accent and stays there. */
 .btn-primary {
-  background-color: #242A52;
+  background-color: #4100F5;
   color: #fff;
   box-shadow: none;
 }
@@ -4583,7 +4586,7 @@ h6 {
 }
 
 .btn-outline {
-  border: 1px solid #242A52;
+  border: 1px solid #4100F5;
   color: #1A1714;
 }
 
@@ -4624,7 +4627,7 @@ textarea {
 
 .ayna-landing-btn--browse {
   background: #FBF8F4;
-  color: #242A52;
+  color: #4100F5;
   font-size: 15px;
   font-weight: 500;
   padding: 15px 28px;
@@ -4650,13 +4653,13 @@ textarea {
   flex: none;
   border: 1px solid rgba(23,20,41,.16);
   background: #fff;
-  color: #242A52;
+  color: #4100F5;
   padding: 9px 16px;
   border-radius: 999px;
   font: 500 12.5px 'DM Sans',sans-serif;
   cursor: pointer;
 }
-.ayna-landing-filter-toggle:hover { border-color: #242A52; }
+.ayna-landing-filter-toggle:hover { border-color: #4100F5; }
 
 .ayna-landing-filter-panel {
   display: grid;
@@ -4683,7 +4686,7 @@ textarea {
   border: 1px solid rgba(23,20,41,.12);
   border-radius: 10px;
   background: #FBF8F4;
-  color: #242A52;
+  color: #4100F5;
   padding: 0 10px;
   font: 500 12.5px 'DM Sans',sans-serif;
 }
@@ -4880,7 +4883,7 @@ textarea {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: linear-gradient(135deg, #242A52 0%, #4E3866 72%, #624270 100%);
+  background: linear-gradient(135deg, #4100F5 0%, #4100F5 72%, #624270 100%);
   color: #FFF8F0;
 }
 
@@ -4888,7 +4891,7 @@ textarea {
   font-family: var(--font-serif);
   font-size: 2.3rem;
   line-height: 1;
-  color: #F0A84B;
+  color: #CDF500;
   font-weight: 400;
   margin-bottom: 0.85rem;
 }
@@ -4937,7 +4940,7 @@ textarea {
 }
 
 .hiw-funnel__bar {
-  background: linear-gradient(135deg, #242A52 0%, #A2603C 100%);
+  background: linear-gradient(135deg, #4100F5 0%, #4100F5 100%);
   border-radius: 10px;
   padding: 0.85rem 0;
   display: flex;
@@ -4996,8 +4999,8 @@ textarea {
 
 .hiw-mockup__disclaimer button {
   flex: 0 0 auto;
-  border: 1.5px solid #242A52;
-  color: #242A52;
+  border: 1.5px solid #4100F5;
+  color: #4100F5;
   background: #FFF;
   padding: 0.9rem 1.8rem;
   border-radius: 999px;
@@ -5007,7 +5010,7 @@ textarea {
 }
 
 .hiw-mockup__disclaimer button:hover {
-  background: #242A52;
+  background: #4100F5;
   color: #FFF;
 }
 
@@ -5041,7 +5044,7 @@ textarea {
 }
 
 .ayna-ask-launcher__label {
-  color: #242A52;
+  color: #4100F5;
   font-weight: 650;
   font-size: 0.92rem;
   white-space: nowrap;
@@ -5069,9 +5072,9 @@ textarea {
   display: inline-block;
   flex: 0 0 auto;
   background:
-    radial-gradient(circle at 70% 25%, #F0A84B 0%, transparent 31%),
-    radial-gradient(circle at 25% 75%, #A2603C 0%, transparent 35%),
-    linear-gradient(135deg, #242A52 5%, #624276 53%, #7C4D78 72%, #E5964C 100%);
+    radial-gradient(circle at 70% 25%, #CDF500 0%, transparent 31%),
+    radial-gradient(circle at 25% 75%, #4100F5 0%, transparent 35%),
+    linear-gradient(135deg, #4100F5 5%, #624276 53%, #7C4D78 72%, #E5964C 100%);
   border-radius: 58% 42% 63% 37% / 46% 59% 41% 54%;
   box-shadow:
     inset 0 0 20px rgba(255,255,255,0.12),
@@ -5130,7 +5133,7 @@ textarea {
 .ayna-ask-panel__header {
   background:
     radial-gradient(circle at 88% 10%, rgba(240,168,75,0.55), transparent 28%),
-    linear-gradient(135deg, #242A52 0%, #503A69 58%, #8B574E 100%);
+    linear-gradient(135deg, #4100F5 0%, #503A69 58%, #8B574E 100%);
   padding: 1.25rem 1.2rem 1.35rem;
   color: #FFF8F0;
   display: flex;
@@ -5205,7 +5208,7 @@ textarea {
 .ayna-ask-message--user {
   align-self: flex-end;
   color: #FFF;
-  background: #242A52;
+  background: #4100F5;
   border-bottom-right-radius: 6px;
 }
 
@@ -5232,7 +5235,7 @@ textarea {
 .ayna-ask-message--system button {
   font-size: 0.78rem;
   font-weight: 600;
-  color: #242A52;
+  color: #4100F5;
   background: #fff;
   border: 1px solid rgba(36, 42, 82, 0.25);
   border-radius: 999px;
@@ -5241,7 +5244,7 @@ textarea {
   white-space: nowrap;
 }
 .ayna-ask-message--system button:hover {
-  border-color: #242A52;
+  border-color: #4100F5;
 }
 
 .ayna-ask-panel__error {
@@ -5269,7 +5272,7 @@ textarea {
   border-radius: 999px;
   background: #FAF7F3;
   padding: 0.8rem 1rem;
-  color: #292524;
+  color: #171717;
   outline: none;
   font-family: var(--font-body);
 }
@@ -5287,7 +5290,7 @@ textarea {
   display: grid;
   place-items: center;
   color: #FFF;
-  background: #242A52;
+  background: #4100F5;
   font-size: 1rem;
 }
 
@@ -5398,7 +5401,7 @@ textarea {
 
 .ayna-ask-mode button.is-active {
   background: #FFF;
-  color: #242A52;
+  color: #4100F5;
   box-shadow: 0 2px 10px rgba(36,42,82,0.09);
 }
 
@@ -5424,9 +5427,9 @@ textarea {
   flex: 0 0 auto;
   border-radius: 58% 42% 60% 40% / 42% 57% 43% 58%;
   background:
-    radial-gradient(circle at 72% 20%, #F0A84B 0%, transparent 33%),
-    radial-gradient(circle at 25% 78%, #A2603C 0%, transparent 35%),
-    linear-gradient(135deg, #242A52, #5A3C73 58%, #B56848);
+    radial-gradient(circle at 72% 20%, #CDF500 0%, transparent 33%),
+    radial-gradient(circle at 25% 78%, #4100F5 0%, transparent 35%),
+    linear-gradient(135deg, #4100F5, #5A3C73 58%, #B56848);
 }
 
 .ayna-voice-state.is-listening .ayna-voice-state__orb {
@@ -5439,7 +5442,7 @@ textarea {
 
 .ayna-voice-state strong {
   display: block;
-  color: #242A52;
+  color: #4100F5;
   font-size: 0.82rem;
 }
 

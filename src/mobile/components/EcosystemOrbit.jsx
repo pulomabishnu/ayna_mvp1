@@ -87,16 +87,16 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             width: 100,
             height: 100,
             borderRadius: '50%',
-            background: 'linear-gradient(140deg,#242A52,#4E3866 60%,#A2603C)',
+            background: 'linear-gradient(140deg,#1D1A2B,#1D1A2B 60%,#1D1A2B)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#FFFCF9',
+            color: '#FFFFFF',
             boxShadow: '0 12px 26px rgba(36,42,82,.24)',
           }}
         >
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(21px * var(--ayna-text-scale, 1))' }}>{name}</div>
+          <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(25px * var(--ayna-text-scale, 1))' }}>{name}</div>
         </div>
 
         {seats.map((seat, i) => {
@@ -121,21 +121,21 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
                 padding: 8,
                 boxSizing: 'border-box',
                 cursor: 'pointer',
-                fontFamily: "'DM Sans',sans-serif",
+                fontFamily: "var(--ayna-font-ui)",
                 textAlign: 'center',
                 color: '#1A1714',
-                background: seat.gap ? 'transparent' : isSelected ? '#FFC774' : '#FFFFFF',
+                background: seat.gap ? 'transparent' : isSelected ? '#F7BADD' : '#FFFFFF',
                 borderWidth: 1.5,
                 borderStyle: seat.gap ? 'dashed' : 'solid',
-                borderColor: seat.gap ? '#DCCFC6' : isSelected ? '#E8A94F' : '#E1D5CE',
+                borderColor: seat.gap ? '#DCCFC6' : isSelected ? '#F7BADD' : '#E0E0D9',
                 boxShadow: isSelected ? '0 12px 24px rgba(232,169,79,.38)' : seat.gap ? 'none' : '0 3px 10px rgba(41,37,36,.07)',
                 transform: isSelected ? 'scale(1.06)' : 'none',
                 transition: 'transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s',
               }}
             >
-              <span style={{ fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{seat.gap ? '+ Add' : seat.label}</span>
+              <span style={{ fontWeight: 700, fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{seat.gap ? '+ Add' : seat.label}</span>
               {!seat.gap && (
-                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', color: '#78716C', marginTop: 2 }}>
+                <span style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#5B514D', marginTop: 2 }}>
                   {seat.products.length}
                 </span>
               )}

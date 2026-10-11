@@ -1,0 +1,93 @@
+/* Ayna's shared visual language: strong type, real imagery, quiet surfaces. */
+:root {
+  --brand-blue: #4100F5;
+  --brand-lime: #CDF500;
+  --brand-mint: #9BF0E1;
+  --brand-paper: #F8F8F3;
+  --brand-ink: #171717;
+  --brand-rule: #E0E0D9;
+}
+
+.mockup-landing { background: var(--brand-paper); color: var(--brand-ink); }
+.mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr);
+  align-items: stretch;
+  gap: 0;
+  min-height: 610px;
+  padding: 0;
+  background: var(--brand-blue);
+}
+.mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero-col {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 0 0 auto;
+  padding: clamp(65px, 8vw, 130px) clamp(24px, 5vw, 80px) 58px max(var(--mockup-gutter), 7vw);
+  align-items: flex-start;
+  justify-content: center;
+  gap: 18px;
+  text-align: left;
+}
+.mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline {
+  max-width: 760px;
+  white-space: normal;
+  color: #fff;
+  font: 800 clamp(64px, 7.3vw, 116px)/.88 'DM Sans', sans-serif;
+  letter-spacing: -.085em;
+}
+.ayna-landing-headline span { color: var(--brand-lime); }
+.ayna-landing-eyebrow { color: var(--brand-lime); font: 700 11px/1 'DM Sans', sans-serif; letter-spacing: .17em; }
+.ayna-landing-sub { max-width: 480px; color: #fff; font: 400 clamp(16px, 1.5vw, 19px)/1.45 'DM Sans', sans-serif; }
+.ayna-landing-hero-photo { position: relative; min-width: 0; min-height: 420px; margin: 0; overflow: hidden; background: #D6D8CF; }
+.ayna-landing-hero-photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 59% 50%; }
+.ayna-landing-hero-photo figcaption { position: absolute; right: 16px; bottom: 16px; max-width: 250px; padding: 9px 12px; background: var(--brand-lime); color: var(--brand-ink); font: 700 12px/1.25 'DM Sans', sans-serif; }
+.ayna-landing-searchbar { width: min(100%, 590px); margin-top: 12px; padding: 5px 5px 5px 17px; border-radius: 10px; box-shadow: none; }
+.ayna-landing-searchbar:focus-within { box-shadow: 0 0 0 3px var(--brand-lime); }
+.ayna-landing-searchbar button { border-radius: 7px; background: var(--brand-lime); color: var(--brand-ink); font-weight: 800; }
+.ayna-landing-chips { justify-content: flex-start; }
+.ayna-landing-chips button { border-radius: 7px; }
+.ayna-landing-band { background: var(--brand-mint); border-bottom: 0; }
+.ayna-landing-band__inner { padding-top: 42px; padding-bottom: 42px; }
+.ayna-landing-band__copy { max-width: 560px; font: 800 clamp(28px, 3vw, 44px)/1.02 'DM Sans', sans-serif; letter-spacing: -.055em; }
+.ayna-landing-band__copy span { max-width: 420px; margin-top: 12px; color: var(--brand-ink); font-size: 16px; font-weight: 500; letter-spacing: normal; }
+.ayna-landing-btn { border-radius: 9px; font-family: 'DM Sans', sans-serif; font-weight: 800; }
+.ayna-landing-btn--navy { background: var(--brand-blue); }
+.ayna-landing-shop { background: var(--brand-paper); padding-top: 58px; }
+.ayna-landing-shop-title { font: 800 clamp(30px, 3vw, 44px)/1 'DM Sans', sans-serif; letter-spacing: -.055em; }
+.ayna-landing-filters button { border-radius: 7px; }
+.ayna-landing-shop-card .ayna-landing-tile { border-radius: 7px; }
+.ayna-landing-shop-card:hover .ayna-landing-tile { transform: none; }
+.ayna-browse-card .ayna-discover-card__tile { border-radius: 7px; background: #F1F1EB; }
+.ayna-browse-card .ayna-discover-card__body { padding-top: 12px; }
+.ayna-browse__heading h2 { font: 800 clamp(34px, 4vw, 56px)/.98 'DM Sans', sans-serif; letter-spacing: -.06em; }
+.ayna-browse__search input { border-radius: 8px; }
+.ayna-browse__categories button, .ayna-browse__filter-button { border-radius: 7px; }
+.ayna-browse__filters { border-radius: 8px; box-shadow: none; background: #fff; }
+.app-nav--cream { background: var(--brand-paper) !important; border-bottom: 1px solid var(--brand-rule); }
+.app-nav--landing { background: var(--brand-blue) !important; }
+.app-nav--landing.app-nav--scrolled { background: var(--brand-blue) !important; }
+.mockup-landing--returning .ayna-landing-hero { padding-top: 65px; padding-bottom: 70px; }
+.mockup-landing--returning .ayna-landing-welcomeback { grid-template-columns: minmax(0,1.3fr) minmax(290px,.7fr); gap: clamp(30px,5vw,80px); }
+.mockup-landing--returning .ayna-landing-headline--returning { max-width: 790px; color: #fff; font: 800 clamp(50px,5.6vw,84px)/.94 'DM Sans', sans-serif; letter-spacing: -.075em; }
+.mockup-landing--returning .ayna-landing-headline--returning span { font: inherit !important; color: var(--brand-lime) !important; }
+.mockup-landing--returning .ayna-landing-ecocard { border-radius: 8px; background: rgba(255,255,255,.1); }
+.mockup-landing--returning .ayna-landing-ecocard > div:last-child span:first-child { font-family: 'DM Sans', sans-serif !important; font-weight: 700 !important; }
+.mockup-landing--returning .ayna-landing-btn--amber { color: var(--brand-ink); font-weight: 800; }
+.mockup-landing--returning .ayna-landing-btn--browse { border-radius: 9px; background: #fff; color: var(--brand-blue); font-weight: 800; }
+.mockup-landing--returning .ayna-landing-shop-title--returning { font-size: clamp(30px,3vw,44px); }
+
+@media (max-width: 860px) {
+  .mockup-landing--returning .ayna-landing-welcomeback { grid-template-columns: 1fr; }
+  .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero { grid-template-columns: 1fr; }
+  .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero-col { max-width: none; padding: 44px var(--mockup-gutter) 36px; }
+  .mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline { font-size: clamp(54px, 11vw, 82px); }
+  .ayna-landing-hero-photo { min-height: 280px; max-height: 390px; }
+  .ayna-landing-band__inner { align-items: flex-start; }
+}
+@media (max-width: 600px) {
+  .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero-col { padding-top: 38px; padding-bottom: 30px; }
+  .mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline { font-size: clamp(52px, 13vw, 72px); }
+  .ayna-landing-hero-photo { min-height: 240px; }
+  .ayna-landing-band__inner { flex-direction: column; gap: 24px; }
+  .ayna-landing-shop-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}

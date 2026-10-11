@@ -119,12 +119,12 @@ const heading = {
   margin: 0,
   fontSize: '1.6rem',
   fontWeight: 700,
-  color: '#292524',
+  color: '#171717',
 };
 
 const muted = {
   margin: 0,
-  color: '#78716C',
+  color: '#626262',
   maxWidth: '380px',
   lineHeight: 1.6,
 };

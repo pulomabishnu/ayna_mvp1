@@ -1,7 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { ALL_PRODUCTS } from '../../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profileCompleteness.js';
+import { ChipList, StickerGrid, SearchField, ChoiceRows, AgeDial, ZipTicket, LevelMeter, TrackLine, PriceStacks, DotScale, BrandSpectrum, AccountCards, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
+import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
+import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/intake/intakeScenes.js';
+import '../intake-play.css';
+import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
+import { normalizeAge, normalizeLifeStages, selectLifeStage } from '../../utils/intakeSelections.js';
 
 // Mirrors the real onboarding form's one-question-per-step wizard from
 // src/components/HealthIntakeForm.jsx (a full redesign — SUPPORT_GROUPS,
@@ -9,18 +15,8 @@ import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profile
 // near-verbatim from that file's `intakeVersion: 'beta-redesign-2026-09'`).
 // Keep in sync if the real intake changes again.
 //
-// Not ported to mobile:
-// - sessionStorage draft persistence (DRAFT_KEY on desktop) — the rest of
-//   this app doesn't persist in-progress screen state either, so a fresh
-//   quiz each time it's opened is consistent with existing mobile behavior.
-// - Server-side save (saveHealthIntakeForCurrentUser) — no real signed-in
-//   session exists in the mobile app yet, same reasoning as elsewhere in
-//   this build. onComplete still receives the exact same
-//   mapIntakeToLegacyQuizProfile(...) shape the recommendation engine
-//   expects, so matching works identically to the web version.
-// - The "what matters to you" trust ranking uses real drag-to-reorder, but
-//   built on Pointer Events rather than HTML5 native drag-and-drop, which
-//   doesn't fire reliably on touchscreens (see TrustRanker below).
+// MobileApp owns account persistence when onComplete receives this snapshot.
+// The wizard itself keeps draft edits separate until completion.
 
 /* ------------------------------- Data ------------------------------- */
 
@@ -47,17 +43,44 @@ const SUPPORT_GROUPS = [
   { label: 'Mood + mental wellbeing', items: ['Mood swings', 'Irritability', 'Anxiety', 'Low mood', 'Cycle-related mood changes'] },
   { label: 'Sleep + energy + cognition', items: ['Fatigue or low energy', 'Trouble sleeping', 'Brain fog', 'Difficulty concentrating'] },
   { label: 'Digestive health', items: ['Constipation', 'Diarrhea', 'Gas', 'Abdominal discomfort', 'Digestive bloating'] },
-  { label: 'Skin + hair', items: ['Acne', 'Hair thinning or hair loss', 'Excess facial or body hair', 'Other hormone-related skin concerns'] },
+  { label: 'Skin + hair', items: ['Acne', 'Hair thinning or hair loss', 'Excess facial or body hair', 'Hormone-related skin concerns'] },
   { label: 'Metabolic + physical wellness', items: ['Metabolism or weight support', 'Strength or fitness', 'Bone health'] },
   { label: 'Care access', items: ['Finding a doctor or specialist', 'Finding a telehealth provider'] },
-  { label: 'Other', items: ['Something else', 'Nothing right now'] },
+  { label: 'Right now', items: ['Nothing right now'] },
 ];
 
 const LIFE_STAGES = [
   'I get periods regularly', 'My periods are irregular', 'I do not currently get periods',
   'I use hormonal birth control', 'I am trying to conceive', 'I am pregnant', 'I am postpartum',
-  'I am in perimenopause', 'I am in menopause', 'I am post-menopause', 'Other',
+  'I am in perimenopause', 'I am in menopause', 'I am post-menopause',
 ];
+const LIFE_STAGE_LABELS = {
+  'I get periods regularly': 'Regular periods',
+  'My periods are irregular': 'Irregular periods',
+  'I do not currently get periods': 'No periods now',
+  'I use hormonal birth control': 'Hormonal birth control',
+  'I am trying to conceive': 'Trying to conceive',
+  'I am pregnant': 'Pregnant',
+  'I am postpartum': 'Postpartum',
+  'I am in perimenopause': 'Perimenopause',
+  'I am in menopause': 'Menopause',
+  'I am post-menopause': 'Post-menopause',
+};
+// Abstract "phase" marks (CSS-drawn) so each stage reads at a glance
+// without leaning on clip-art icons.
+const LIFE_STAGE_GLYPHS = {
+  'I get periods regularly': 'full',
+  'My periods are irregular': 'wobble',
+  'I do not currently get periods': 'empty',
+  'I use hormonal birth control': 'pill',
+  'I am trying to conceive': 'spark',
+  'I am pregnant': 'bump',
+  'I am postpartum': 'pair',
+  'I am in perimenopause': 'half',
+  'I am in menopause': 'crescent',
+  'I am post-menopause': 'ring',
+};
+const MIDLIFE_LIFE_STAGES = ['I am in perimenopause', 'I am in menopause', 'I am post-menopause'];
 
 const PERIOD_FLOW = ['Very light', 'Light', 'Moderate', 'Heavy', 'Very heavy', 'It varies', 'I do not currently get periods', 'Not sure'];
 const PERIOD_PAIN = ['None', 'Mild', 'Moderate', 'Severe', 'Very severe', 'It varies', 'Not sure'];
@@ -69,7 +92,7 @@ const PERIMENOPAUSE_LAST_PERIOD = ['Within the past 3 months', '3–6 months ago
 const CONDITIONS = [
   'PCOS', 'Endometriosis', 'Fibroids', 'Adenomyosis', 'PMS', 'PMDD', 'Infertility', 'Thyroid condition',
   'Diabetes', 'Insulin resistance', 'High blood pressure', 'Migraine with aura', 'Anemia or iron deficiency',
-  'IBS or another digestive condition', 'Autoimmune condition', 'Anxiety', 'Depression', 'Other / not listed',
+  'IBS or another digestive condition', 'Autoimmune condition', 'Anxiety', 'Depression',
   'None that I know of', 'Prefer not to say',
 ];
 
@@ -104,7 +127,7 @@ const PRODUCT_OR_BRAND_SUGGESTIONS = [...new Set([...CATALOG_PRODUCT_NAMES, ...B
 
 const PRODUCT_FORMATS = [
   'Pills or capsules', 'Gummies', 'Powders', 'Drinks or teas', 'Creams, lotions, or gels', 'Patches',
-  'Suppositories', 'Devices or wearables', 'Period-care products', 'No preference', 'Other',
+  'Suppositories', 'Devices or wearables', 'Period-care products', 'No preference',
 ];
 
 // One real icon per product format, keyed to the exact option strings above
@@ -141,17 +164,9 @@ const FORMAT_ICONS = {
   'No preference': (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" /><path d="M6.5 17.5l11-11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
   ),
-  Other: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="6" cy="12" r="1.6" fill="currentColor" /><circle cx="12" cy="12" r="1.6" fill="currentColor" /><circle cx="18" cy="12" r="1.6" fill="currentColor" /></svg>
-  ),
 };
 const PRICE_RANGES = ['Under $25', '$25–$75', '$75–$150', '$150+', 'Price is not a major factor for me'];
-const PRICE_BAND_SUBTITLES = {
-  'Under $25': 'Everyday basics',
-  '$25–$75': 'Most supplements',
-  '$75–$150': 'Devices, longer courses',
-  '$150+': 'Bigger investments',
-};
+
 const LARGE_PURCHASE_FREQUENCY = ['Never', 'Rarely', 'A few times a year', 'About once a month', 'More than once a month'];
 const BRAND_OPENNESS = [
   'I mostly stick with brands I already trust',
@@ -165,14 +180,14 @@ const AVOID_INGREDIENTS = [
   'Animal-derived', 'Added sugar', 'Artificial sweeteners', 'Pregnancy considerations',
   'Fragrance-free', 'Dye-free', 'Paraben-free', 'Sulfate-free', 'Latex-free', 'Vegan', 'Cruelty-free',
   'Black-owned', 'Brown-owned', 'Eco-friendly', 'Reusable', 'Organic', 'Minimal ingredients',
-  'Sensitive skin', 'Unscented', 'Other', 'No preference',
+  'Sensitive skin', 'Unscented', 'No preference',
 ];
 const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
 const TRUST_ITEMS = ['Clinical or scientific evidence', 'Reviews and experiences from other women', 'Brand reputation or expert recommendations'];
 const STOP_REASONS = [
   'It did not help', 'It stopped working', 'I had side effects or a reaction', 'It was too expensive',
   'It was inconvenient', 'I did not like the format', 'I found something better',
-  'A clinician recommended stopping it', 'I simply did not repurchase it', 'Other',
+  'A clinician recommended stopping it', 'I simply did not repurchase it',
 ];
 
 const EMPTY = {
@@ -184,7 +199,7 @@ const EMPTY = {
   allergyStatus: '', allergyItems: [], allergySelections: [], allergyOtherText: '',
   takesCurrent: '', currentMedicationItems: [],
   productHistory: [], avoidRepeat: [], safetyConcern: '',
-  preferredFormats: [], formatOtherText: '', priceRange: [], largePurchaseFrequency: '',
+  preferredFormats: [], formatOtherText: '', recommendedProductsPerArea: 3, priceRange: [], largePurchaseFrequency: '',
   brandOpenness: '', trustedBrands: [], brandSupportPreferences: [],
   avoidIngredients: [], avoidIngredientsOtherText: '', fsaHsaAnswer: '',
   trustRanking: TRUST_ITEMS, trustRankingTouched: false, anythingElse: '',
@@ -207,7 +222,7 @@ const RESUMABLE_PASSTHROUGH_FIELDS = [
   'allergyStatus', 'allergyItems',
   'takesCurrent', 'currentMedicationItems',
   'productHistory', 'avoidRepeat', 'safetyConcern',
-  'preferredFormats', 'formatOtherText', 'priceRange', 'largePurchaseFrequency',
+  'preferredFormats', 'formatOtherText', 'recommendedProductsPerArea', 'priceRange', 'largePurchaseFrequency',
   'brandOpenness', 'trustedBrands',
   'avoidIngredients', 'avoidIngredientsOtherText',
   'anythingElse',
@@ -219,6 +234,25 @@ function reconstructIntakeFromSnapshot(snapshot) {
   RESUMABLE_PASSTHROUGH_FIELDS.forEach((key) => {
     if (snapshot[key] !== undefined && snapshot[key] !== null) next[key] = snapshot[key];
   });
+  [
+    ['lifeStageSelections', 'Other', 'lifeStageOther'],
+    ['supportSelections', 'Something else', 'supportOtherText'],
+    ['diagnosisSelections', 'Other / not listed', 'conditionOtherText'],
+    ['preferredFormats', 'Other', 'formatOtherText'],
+    ['avoidIngredients', 'Other', 'avoidIngredientsOtherText'],
+  ].forEach(([key, legacyOption, textKey]) => {
+    if (!Array.isArray(next[key]) || !next[key].includes(legacyOption)) return;
+    next[key] = next[key].filter((item) => item !== legacyOption);
+    if (String(next[textKey] || '').trim()) next[key].push(String(next[textKey]).trim());
+  });
+  next.supportSelections = (next.supportSelections || []).map((item) => item === 'Other hormone-related skin concerns' ? 'Hormone-related skin concerns' : item);
+  next.productHistory = (next.productHistory || []).map((product) => ({
+    ...product,
+    stopReasons: (product.stopReasons || []).filter((reason) => reason !== 'Other').concat(product.stopOther?.trim() || []),
+  }));
+  if (next.lifeStage === 'Other') next.lifeStage = next.lifeStageSelections[0] || '';
+  next.lifeStageSelections = normalizeLifeStages(next.lifeStageSelections.length ? next.lifeStageSelections : next.lifeStage ? [next.lifeStage] : []);
+  next.lifeStage = next.lifeStageSelections[0] || '';
   if (snapshot.fsaHsa) next.fsaHsaAnswer = FSA_HSA_REVERSE[snapshot.fsaHsa] || '';
   if (Array.isArray(snapshot.trustRanking) && snapshot.trustRanking.length > 0) {
     next.trustRanking = snapshot.trustRanking;
@@ -226,11 +260,6 @@ function reconstructIntakeFromSnapshot(snapshot) {
   }
   return next;
 }
-
-const SECTION_LABELS = {
-  core: 'Core profile', support: 'What you are looking for', safety: 'Health & safety',
-  history: 'What you have tried', preferences: 'Shopping preferences', trust: 'What matters to you',
-};
 
 const PERIOD_TRIGGER = new Set([
   'Period product support', 'Cramps or period pain', 'Pelvic pain', 'Heavy periods', 'Light periods',
@@ -257,8 +286,8 @@ const LEGACY_CONCERN_BY_ITEM = {
   'Cycle-related headaches or migraines': 'Mental health and cycle mood support',
   'PCOS support': 'PCOS management (supplements, telehealth, apps)',
   'Endometriosis support': 'Endometriosis management (supplements, devices, telehealth)',
-  'Fibroid-related concerns': 'Hormone balance (supplements, lifestyle)',
-  'Adenomyosis-related concerns': 'Hormone balance (supplements, lifestyle)',
+  'Fibroid-related concerns': 'Fibroid-related concerns',
+  'Adenomyosis-related concerns': 'Adenomyosis-related concerns',
   'Hormone-related symptoms': 'Hormone balance (supplements, lifestyle)',
   'Cycle-related bloating': 'Hormonal bloating',
   Nausea: 'Hormone balance (supplements, lifestyle)',
@@ -375,14 +404,20 @@ function buildSnapshot(intake) {
   const lifeStageSelections = getLifeStages(intake);
   const primaryLifeStage = intake.lifeStage || lifeStageSelections[0] || '';
   const primaryConcerns = [...new Set((intake.supportSelections || []).map((item) => LEGACY_CONCERN_BY_ITEM[item]).filter(Boolean))];
-  const customConcerns = intake.supportOtherText.trim()
-    ? [intake.supportOtherText.trim()]
-    : [];
+  const knownSupportOptions = new Set(SUPPORT_GROUPS.flatMap((group) => group.items));
+  const customConcerns = [...new Set([
+    ...(intake.supportSelections || []).filter((item) => !knownSupportOptions.has(item) && item !== 'Something else'),
+    intake.supportOtherText.trim(),
+  ].filter(Boolean))];
+  const customLifeStages = lifeStageSelections.filter((item) => !LIFE_STAGES.includes(item) && item !== 'Other');
+  const customConditions = (intake.diagnosisSelections || []).filter((item) => !CONDITIONS.includes(item) && !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(item));
+  const customFormats = (intake.preferredFormats || []).filter((item) => !PRODUCT_FORMATS.includes(item) && item !== 'Other');
+  const customPreferences = (intake.avoidIngredients || []).filter((item) => !AVOID_INGREDIENTS.includes(item) && item !== 'Other');
 
   const conditions = (intake.diagnosisSelections || [])
     .filter((v) => !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(v))
     .map((v) => CONDITION_TO_LEGACY[v] || v.toLowerCase());
-  if (intake.diagnosisSelections.includes('Other / not listed') && intake.conditionOtherText.trim()) conditions.push('other');
+  if (intake.diagnosisSelections.includes('Other / not listed') && intake.conditionOtherText.trim()) conditions.push(intake.conditionOtherText.trim().toLowerCase());
 
   const menstrualCycle = {
     'I get periods regularly': 'yes',
@@ -432,14 +467,14 @@ function buildSnapshot(intake) {
   const fsaHsa = { FSA: 'fsa', HSA: 'hsa', Both: 'both', No: 'none', 'Not sure': 'unsure' }[intake.fsaHsaAnswer] || '';
 
   return {
-    age: intake.age,
+    age: normalizeAge(intake.age),
     zipcode: intake.zipcode.trim(),
     location: '',
     lifeStage: primaryLifeStage,
     lifeStageSelections,
-    lifeStageOther: intake.lifeStageOther.trim(),
+    lifeStageOther: [...new Set([...customLifeStages, intake.lifeStageOther.trim()].filter(Boolean))].join('; '),
     supportSelections: intake.supportSelections,
-    supportOtherText: intake.supportOtherText.trim(),
+    supportOtherText: customConcerns.join('; '),
     primaryConcerns,
     customConcerns,
     concernFollowups: {},
@@ -457,7 +492,7 @@ function buildSnapshot(intake) {
     perimenopauseLastPeriod: hasLifeStage(intake, 'I am in perimenopause') ? intake.perimenopauseLastPeriod : '',
     diagnosisSelections: intake.diagnosisSelections,
     conditions,
-    conditionOtherText: intake.conditionOtherText.trim(),
+    conditionOtherText: [...new Set([...customConditions, intake.conditionOtherText.trim()].filter(Boolean))].join('; '),
     allergyStatus: intake.allergyStatus,
     allergyItems: intake.allergyStatus === 'Yes' ? intake.allergyItems : [],
     allergySelections: legacyAllergySelections,
@@ -477,14 +512,15 @@ function buildSnapshot(intake) {
     brandSupportPreferences: intake.brandSupportPreferences,
     safetyConcern: intake.safetyConcern,
     preferredFormats: intake.preferredFormats,
-    formatOtherText: intake.formatOtherText.trim(),
+    formatOtherText: [...new Set([...customFormats, intake.formatOtherText.trim()].filter(Boolean))].join('; '),
+    recommendedProductsPerArea: intake.recommendedProductsPerArea,
     preferredProductTypes,
     priceRange: intake.priceRange,
     largePurchaseFrequency: intake.largePurchaseFrequency,
     brandOpenness: intake.brandOpenness,
     trustedBrands: intake.trustedBrands,
     avoidIngredients: intake.avoidIngredients,
-    avoidIngredientsOtherText: intake.avoidIngredientsOtherText.trim(),
+    avoidIngredientsOtherText: [...new Set([...customPreferences, intake.avoidIngredientsOtherText.trim()].filter(Boolean))].join('; '),
     productPreferences,
     fsaHsa,
     trustRanking: intake.trustRankingTouched ? intake.trustRanking : [],
@@ -557,23 +593,17 @@ function rankedSuggestions(query, options = [], limit = 6) {
 // accent-dark, peach, chip-bg, brown, navy, text-faint) — reused as CSS vars
 // here rather than re-hardcoded, so this screen gets the app's real dark
 // mode for free instead of staying permanently light like the mockup frame.
-// SELECTED_TEXT (#8A5A1E) is the one color the reference uses that has no
-// existing --ayna-* var; it's a fixed accent-on-peach text tone, not
-// intended to invert in dark mode (the reference's own dark-mode notes only
-// redefine the surface/border/accent tokens, not this one).
-const NAVY = 'var(--ayna-navy)';
+// Choice colors use the app tokens so selection remains legible in both themes.
+const NAVY = 'var(--ayna-heading)';
 const CARD_BG = 'var(--ayna-surface)';
 const ROW_BORDER = 'var(--ayna-border)';
-const ACCENT_BORDER = 'var(--ayna-accent-dark)';
-const ACCENT_BG = 'var(--ayna-peach)';
 const PANEL_BG = 'var(--ayna-chip-bg)';
 const MUTED = 'var(--ayna-text-faint)';
 const LABEL_GOLD = 'var(--ayna-brown)';
-const SELECTED_TEXT = '#8A5A1E';
+const SELECTED_TEXT = 'var(--ayna-color-ink)';
 const INK = 'var(--ayna-text)';
 const BODY_TEXT = 'var(--ayna-text-muted)';
 
-const cardShadow = '0 1px 3px rgba(41,37,36,.04)';
 
 /* ------------------------------ Shared widgets ------------------------------ */
 
@@ -582,77 +612,14 @@ const cardShadow = '0 1px 3px rgba(41,37,36,.04)';
 // `icons` map to render a small rounded-square badge above the label;
 // callers without one (life stages, which have no matching icon set) get the
 // plain label-only tile exactly as before.
-function ChoiceGrid({ items, selected = [], onToggle, icons }) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 9 }}>
-      {items.map((item) => {
-        const on = selected.includes(item);
-        const icon = icons && icons[item];
-        return (
-          <div
-            key={item}
-            onClick={() => onToggle(item)}
-            style={{
-              cursor: 'pointer', position: 'relative', minHeight: 60, display: 'flex',
-              flexDirection: icon ? 'column' : 'row', alignItems: icon ? 'flex-start' : 'center',
-              padding: '13px 26px 13px 13px', borderRadius: 18,
-              background: on ? ACCENT_BG : CARD_BG,
-              border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-              boxShadow: on ? '0 4px 14px rgba(232,169,79,.2)' : cardShadow,
-            }}
-          >
-            {icon && (
-              <span style={{
-                width: 32, height: 32, borderRadius: 10, marginBottom: 10, flex: 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: on ? 'rgba(255,255,255,.55)' : PANEL_BG,
-                color: on ? SELECTED_TEXT : NAVY,
-              }}>
-                {icon}
-              </span>
-            )}
-            <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.25, color: on ? SELECTED_TEXT : INK }}>{item}</span>
-            {on && (
-              <span style={{ position: 'absolute', top: 9, right: 9, width: 16, height: 16, borderRadius: 99, background: ACCENT_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>
-              </span>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
+function ChoiceGrid({ items, selected = [], onToggle, icons, labels, glyphs }) {
+  return <StickerGrid items={items} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} />;
 }
 
 // Chip spec (design pattern C1/G1) — flex-wrapped pills, not vertical rows.
 // Used both flat (conditions) and grouped under a label (SearchableGroups).
-function RowChoiceList({ items, selected = [], onToggle, exclusiveValues = [] }) {
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-      {items.map((item) => {
-        const on = selected.includes(item);
-        const exclusive = exclusiveValues.includes(item);
-        return (
-          <div
-            key={item}
-            onClick={() => onToggle(item)}
-            style={{
-              cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
-              fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1, padding: '10px 14px', borderRadius: 99,
-              fontWeight: on ? 600 : 500,
-              background: on ? ACCENT_BG : (exclusive ? PANEL_BG : CARD_BG),
-              color: on ? SELECTED_TEXT : (exclusive ? MUTED : INK),
-              border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-              boxShadow: on ? '0 2px 8px rgba(232,169,79,.22)' : 'none',
-            }}
-          >
-            {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
-            {item}
-          </div>
-        );
-      })}
-    </div>
-  );
+function RowChoiceList({ items, selected = [], onToggle }) {
+  return <ChipList items={items} selected={selected} onToggle={onToggle} />;
 }
 
 // Shared search-bar chrome (design rule: "search on every list over ~12
@@ -660,12 +627,25 @@ function RowChoiceList({ items, selected = [], onToggle, exclusiveValues = [] })
 // and ProductHistoryBuilder, factored out so conditions/avoidIngredients
 // (previously ungrouped flat lists with no filtering at all) can use it too.
 function SearchBar({ value, onChange, placeholder }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 99, padding: '11px 14px', marginBottom: 14 }}>
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
-    </div>
-  );
+  return <SearchField value={value} onChange={onChange} placeholder={placeholder} />;
+}
+
+function AddCustomChoice({ query, options, onAdd }) {
+  const value = query.trim().replace(/\s+/g, ' ');
+  if (value.length < 2 || options.some((item) => item.toLowerCase() === value.toLowerCase())) return null;
+  return <button type="button" className="ip-chip is-dashed ip-add" onClick={() => onAdd(value)}>+ Add “{value}”</button>;
+}
+
+function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons, labels, glyphs, searchable = true }) {
+  const query = search.trim().toLowerCase();
+  const filtered = query ? items.filter((item) => item.toLowerCase().includes(query) || String(labels?.[item] || '').toLowerCase().includes(query)) : items;
+  const custom = selected.filter((item) => !items.includes(item));
+  return <div className="ip-picker">
+    {searchable && <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />}
+    <AddCustomChoice query={search} options={[...items, ...selected]} onAdd={onAdd} />
+    {filtered.length > 0 ? layout === 'grid' ? <ChoiceGrid items={filtered} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} /> : <RowChoiceList items={filtered} selected={selected} onToggle={onToggle} /> : <p className="ip-empty">No matches</p>}
+    {custom.length > 0 && <div className="ip-custom"><small>Added by you</small><RowChoiceList items={custom} selected={selected} onToggle={onToggle} /></div>}
+  </div>;
 }
 
 // Same chip spec as RowChoiceList — kept as a separate component since
@@ -673,119 +653,21 @@ function SearchBar({ value, onChange, placeholder }) {
 // single-select via toggleExclusive, some genuinely multi), and the
 // `compact`/`left` nested-context variants (inside ProductHistoryBuilder)
 // need a smaller size without becoming a third visual language.
-function Pills({ options, selected, onToggle, left, compact, exclusiveValues = [] }) {
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: compact ? 6 : 7, justifyContent: left ? 'flex-start' : 'center' }}>
-      {options.map((opt) => {
-        const on = selected.includes(opt);
-        const exclusive = exclusiveValues.includes(opt);
-        return (
-          <div
-            key={opt}
-            onClick={() => onToggle(opt)}
-            style={{
-              cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
-              fontFamily: "'DM Sans',sans-serif", padding: compact ? '8px 11px' : '10px 14px', borderRadius: 99,
-              background: on ? ACCENT_BG : (exclusive ? PANEL_BG : CARD_BG), color: on ? SELECTED_TEXT : (exclusive ? MUTED : INK),
-              border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-              fontSize: compact ? 'calc(11.5px * var(--ayna-text-scale, 1))' : 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: on ? 600 : 500,
-              boxShadow: on ? '0 2px 8px rgba(232,169,79,.22)' : 'none',
-            }}
-          >
-            {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
-            {opt}
-          </div>
-        );
-      })}
-    </div>
-  );
+function Pills({ options, selected, onToggle, compact, exclusiveValues = [] }) {
+  return <ChipList items={options} selected={selected} onToggle={onToggle} compact={compact} muted={exclusiveValues} />;
 }
 
 // Vertical single-select radio list (design pattern F1) — the workhorse
 // pattern for every Yes/No/Not-sure-style question, replacing the old
 // horizontal segmented-button bar.
 function Segmented({ options, value, onChange }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-      {options.map((opt) => {
-        const on = value === opt;
-        return (
-          <div
-            key={opt}
-            onClick={() => onChange(opt)}
-            style={{
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 11, padding: '13px 15px', borderRadius: 16,
-              background: on ? ACCENT_BG : CARD_BG, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-            }}
-          >
-            <span style={{
-              width: 19, height: 19, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: on ? ACCENT_BORDER : 'transparent', border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-            }}>
-              {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
-            </span>
-            <span style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.35, fontWeight: on ? 600 : 400, color: on ? SELECTED_TEXT : INK }}>{opt}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
+  return <ChoiceRows options={options} value={value} onChange={onChange} />;
 }
 
 // Pattern K1: price bands as a vertical row list rather than chips — a
 // Playfair price label on the left, a descriptive subtitle right-aligned,
 // and a trailing checkmark instead of a leading radio circle.
-function PriceBandList({ options, selected, onToggle }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-      {options.map((opt) => {
-        const on = selected.includes(opt);
-        const subtitle = PRICE_BAND_SUBTITLES[opt];
-        return (
-          <div
-            key={opt}
-            onClick={() => onToggle(opt)}
-            style={{
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 15px', borderRadius: 16,
-              background: on ? ACCENT_BG : CARD_BG, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-            }}
-          >
-            <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(18px * var(--ayna-text-scale, 1))', flex: 'none', color: on ? SELECTED_TEXT : NAVY }}>{opt}</span>
-            <span style={{ flex: 1, textAlign: 'right', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: on ? SELECTED_TEXT : MUTED }}>{subtitle}</span>
-            <span style={{
-              width: 19, height: 19, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: on ? ACCENT_BORDER : 'transparent', border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-            }}>
-              {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
-function TextInput({ value, onChange, placeholder, inputMode, maxLength }) {
-  return (
-    <input
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      inputMode={inputMode}
-      maxLength={maxLength}
-      style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none' }}
-    />
-  );
-}
-
-function OtherBox({ label, value, onChange, placeholder }) {
-  return (
-    <div style={{ marginTop: 16, textAlign: 'left' }}>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#FFC774', marginBottom: 9 }}>{label}</div>
-      <TextInput value={value} onChange={onChange} placeholder={placeholder} />
-    </div>
-  );
-}
 
 // Under-18 gate (Ayna_Minor_Gate.html design reference) — a fixed warm
 // warning tone rather than a --ayna-* var, same reasoning as SELECTED_TEXT
@@ -795,8 +677,6 @@ const MINOR_AGE_LIMIT = 18;
 const WARNING_BORDER = '#B4402A';
 const WARNING_BG = '#FAEDE8';
 const WARNING_BORDER_SOFT = '#E8C6B8';
-const WARNING_TITLE = '#8A2F1D';
-const WARNING_BODY = '#7A4234';
 
 function isMinorAge(value) {
   if (value === '' || value === null || value === undefined) return false;
@@ -804,224 +684,56 @@ function isMinorAge(value) {
   return Number.isFinite(n) && n < MINOR_AGE_LIMIT;
 }
 
-// A direct numeric age, per product request — replaces the earlier
-// month/year birthday picker. Simpler and one tap faster, at the cost of
-// going stale over time (a typed age isn't recomputed later the way a
-// birth year would be), which is an accepted tradeoff here.
-function AgeCard({ value, onChange, underage, onOpenGate }) {
-  const hasValue = value !== '' && value !== null && value !== undefined;
-  const step = (delta) => {
-    const current = Number(value) || 0;
-    const next = Math.min(120, Math.max(0, current + delta));
-    onChange(String(next));
-  };
-
-  return (
-    <div style={{ background: CARD_BG, borderRadius: 24, padding: 20, boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
-      <div
-        style={{
-          borderRadius: 18,
-          padding: '16px 18px',
-          textAlign: 'center',
-          background: !hasValue ? PANEL_BG : underage ? WARNING_BG : 'linear-gradient(160deg,#FCEBD1,#F7D9A8)',
-          border: '1px solid ' + (!hasValue ? ROW_BORDER : underage ? WARNING_BORDER_SOFT : ACCENT_BORDER),
-        }}
-      >
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: MUTED }}>Your age</div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, marginTop: 10 }}>
-          <div
-            onClick={() => step(-1)}
-            style={{ width: 38, height: 38, borderRadius: 99, border: '1px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 'calc(18px * var(--ayna-text-scale, 1))', color: NAVY, background: '#fff' }}
-          >
-            −
-          </div>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={0}
-            max={120}
-            value={value}
-            onChange={(e) => {
-              const digits = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
-              onChange(digits);
-            }}
-            placeholder="··"
-            style={{
-              width: 74,
-              textAlign: 'center',
-              border: 'none',
-              outline: 'none',
-              background: 'transparent',
-              fontFamily: "'Playfair Display',serif",
-              fontSize: 'calc(30px * var(--ayna-text-scale, 1))',
-              color: underage ? WARNING_BORDER : hasValue ? NAVY : MUTED,
-            }}
-          />
-          <div
-            onClick={() => step(1)}
-            style={{ width: 38, height: 38, borderRadius: 99, border: '1px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 'calc(18px * var(--ayna-text-scale, 1))', color: NAVY, background: '#fff' }}
-          >
-            +
-          </div>
-        </div>
-        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: underage ? WARNING_BODY : BODY_TEXT, marginTop: 8 }}>
-          {hasValue ? (underage ? "That's under our age requirement" : 'Tap the number to type it directly') : 'Type your age, or use the − and +'}
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 20, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 2 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
-        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT }}>
-          We store your age, not a date of birth. It's health data under our policy, and it's never used to advertise to you.
-        </div>
-      </div>
-
-      {underage && (
-        <div
-          onClick={onOpenGate}
-          style={{ display: 'flex', gap: 11, alignItems: 'flex-start', marginTop: 14, padding: '14px 15px', borderRadius: 16, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER_SOFT, cursor: 'pointer' }}
-        >
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
-          <div>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: WARNING_TITLE }}>ayna is for ages 18 and up</div>
-            <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: WARNING_BODY, marginTop: 4 }}>We can't build a profile from this answer. Tap here to see what you can still do.</div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+// A native age picker keeps the first intake step easy to complete without
+// opening the keyboard. Age is optional, but under-18 selections remain gated.
 
 // Five real per-digit inputs (the standard OTP-input pattern), not one
 // invisible input overlaid on decorative boxes — that overlay trick proved
 // unreliable for actually opening the keyboard/accepting taps on real
 // mobile browsers, where each digit box here is itself a genuine,
 // correctly-sized, tappable, typeable <input>.
-function ZipDigits({ value, onChange, onSkip }) {
-  const inputRefs = useRef([]);
-  const chars = String(value || '').split('');
 
-  const setDigit = (index, raw) => {
-    const clean = raw.replace(/\D/g, '');
-    const next = [...chars];
-    if (!clean) {
-      next[index] = '';
-      onChange(next.join('').slice(0, 5));
-      return;
-    }
-    next[index] = clean[clean.length - 1];
-    onChange(next.join('').slice(0, 5));
-    if (index < 4) {
-      const nextInput = inputRefs.current[index + 1];
-      if (nextInput) nextInput.focus();
-    }
-  };
-
-  const handleKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !chars[index] && index > 0) {
-      const prevInput = inputRefs.current[index - 1];
-      if (prevInput) prevInput.focus();
-    }
-  };
-
-  const handlePaste = (e) => {
-    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 5);
-    if (!text) return;
-    e.preventDefault();
-    onChange(text);
-    const lastIndex = Math.max(0, Math.min(text.length, 5) - 1);
-    const el = inputRefs.current[lastIndex];
-    if (el) el.focus();
-  };
-
-  return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 9 }}>
-        {[0, 1, 2, 3, 4].map((i) => (
-          <input
-            key={i}
-            ref={(el) => { inputRefs.current[i] = el; }}
-            value={chars[i] || ''}
-            onChange={(e) => setDigit(i, e.target.value)}
-            onKeyDown={(e) => handleKeyDown(i, e)}
-            onPaste={handlePaste}
-            type="tel"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            maxLength={1}
-            aria-label={`ZIP code digit ${i + 1}`}
-            style={{
-              width: 52, height: 62, borderRadius: 16, background: CARD_BG,
-              border: '1.5px solid ' + (chars[i] ? ACCENT_BORDER : ROW_BORDER),
-              textAlign: 'center', padding: 0, outline: 'none', WebkitAppearance: 'none',
-              fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', color: NAVY,
-            }}
-          />
-        ))}
-      </div>
-      {onSkip && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
-          <div onClick={onSkip} style={{ cursor: 'pointer', fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '10px 14px', borderRadius: 99, background: PANEL_BG, border: '1.5px solid ' + ROW_BORDER, color: MUTED }}>
-            Skip this
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-const SCALE_BAR_HEIGHTS = [18, 31, 44, 57, 70];
 
 // Pattern D2: rising bars for the first up-to-5 ordered levels; any
 // trailing non-ordinal options (e.g. "It varies", "Not sure") render as
 // plain chips below instead of getting an arbitrary bar height — same
 // options, just not force-fit onto a severity scale they don't belong on.
-function Scale({ options, value, onChange }) {
-  const scaleOptions = options.slice(0, 5);
-  const extraOptions = options.slice(5);
-  return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 5 }}>
-        {scaleOptions.map((opt, i) => {
-          const on = value === opt;
-          return (
-            <div key={opt} onClick={() => onChange(opt)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, cursor: 'pointer' }}>
-              <span style={{
-                width: '100%', height: SCALE_BAR_HEIGHTS[i], borderRadius: '10px 10px 4px 4px',
-                background: on ? `linear-gradient(180deg, ${ACCENT_BG}, ${ACCENT_BORDER})` : 'var(--ayna-track)',
-                boxShadow: on ? '0 6px 16px rgba(232,169,79,.35)' : 'none',
-              }} />
-              <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: on ? 600 : 500, fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', lineHeight: 1.2, textAlign: 'center', color: on ? '#FFC774' : 'rgba(255,249,242,.6)' }}>{opt}</span>
-            </div>
-          );
-        })}
-      </div>
-      {extraOptions.length > 0 && (
-        <div style={{ marginTop: 14 }}>
-          <Pills options={extraOptions} selected={value ? [value] : []} onToggle={onChange} left compact />
-        </div>
-      )}
-    </div>
-  );
-}
 
 // Timeline questions (UTI recurrence, postpartum timing, trimester, large-
 // purchase frequency) are single-select among ordered options — pattern F1
 // (the same vertical radio list as Yes/No questions), not a distinct
 // visual language of their own.
-function Timeline({ options, value, onChange }) {
-  return <Segmented options={options} value={value} onChange={onChange} />;
-}
 
 // Brand openness is a single-select among ordered options too — F1 again,
 // swapping in only the option order it already had.
-function BrandSpectrum({ value, onChange }) {
-  return <Segmented options={BRAND_OPENNESS} value={value} onChange={onChange} />;
-}
 
 // Pattern H1: search-styled input, added items as swatch+title cards (not
 // small chips), a dashed "Add" affordance implicit in the search bar
 // itself, and an × to remove — same values/suggestions/onChange contract.
+function SuggestList({ draft, matches, onPick }) {
+  if (!draft.trim()) return null;
+  return (
+    <div className="ip-suggest" role="listbox">
+      <button type="button" className="is-add" onClick={() => onPick(draft)}>+ Add “{draft.trim()}”</button>
+      {matches.map((option) => <button type="button" key={option} onClick={() => onPick(option)}>{option}</button>)}
+    </div>
+  );
+}
+
+function TokenList({ values, onRemove }) {
+  if (!values.length) return null;
+  return (
+    <div className="ip-tokens">
+      {values.map((value, i) => (
+        <span key={`${value}-${i}`} className="ip-token">
+          <span>{value}</span>
+          <button type="button" aria-label={`Remove ${value}`} onClick={() => onRemove(i)}>×</button>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function TokenInput({ values, onChange, placeholder, suggestions = [], suggestionLimit = 6 }) {
   const [draft, setDraft] = useState('');
   const matches = useMemo(
@@ -1035,43 +747,14 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
     setDraft('');
   };
   return (
-    <div style={{ maxWidth: '100%' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 99, padding: '11px 14px' }}>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-        <input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
-          placeholder={placeholder}
-          style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }}
-        />
-      </div>
-      {draft.trim().length > 0 && (
-        <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-          <div onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "'DM Sans',sans-serif" }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-            <span>Add "{draft.trim()}"</span>
-          </div>
-          {matches.map((option) => (
-            <div key={option} onClick={() => addValue(option)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>
-              {option}
-            </div>
-          ))}
-        </div>
-      )}
-      {values.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
-          {values.map((value, i) => (
-            <div key={`${value}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER }}>
-              <span style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT_BG, border: '1px solid ' + ACCENT_BORDER, flex: 'none' }} />
-              <span style={{ flex: 1, fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK }}>{value}</span>
-              <span onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="ip-token-input">
+      <label className="ip-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+        <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }} placeholder={placeholder} aria-label={placeholder} />
+        {draft && <button type="button" aria-label="Clear" onClick={() => setDraft('')}>×</button>}
+      </label>
+      <SuggestList draft={draft} matches={matches} onPick={addValue} />
+      <TokenList values={values} onRemove={(index) => onChange(values.filter((_, idx) => idx !== index))} />
     </div>
   );
 }
@@ -1089,7 +772,6 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
     [draft, suggestions, values]
   );
   const quickAdd = historyNames.filter((name) => !values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(name)));
-
   const addValue = (raw) => {
     const next = String(raw || '').trim();
     if (!next || values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(next))) return;
@@ -1097,129 +779,39 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
     setDraft('');
     setAdding(false);
   };
-
   return (
-    <div>
-      {values.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
-          {values.map((value, i) => (
-            <div key={`${value}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER }}>
-              <span style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT_BG, border: '1px solid ' + ACCENT_BORDER, flex: 'none' }} />
-              <span style={{ flex: 1, fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK }}>{value}</span>
-              <span onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-
+    <div className="ip-builder">
+      <TokenList values={values} onRemove={(index) => onChange(values.filter((_, idx) => idx !== index))} />
       {!adding ? (
-        <div
-          onClick={() => setAdding(true)}
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed rgba(255,249,242,.35)', background: 'transparent',
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#FFC774',
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFC774" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-          Add a product or brand
-        </div>
+        <button type="button" className="ip-add-row" onClick={() => setAdding(true)}><span aria-hidden="true">+</span>Add a product or brand</button>
       ) : (
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ACCENT_BORDER, borderRadius: 99, padding: '11px 14px' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-            <input
-              autoFocus
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
-              placeholder="Start typing a product or brand"
-              style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }}
-            />
-            <span onClick={() => { setAdding(false); setDraft(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            </span>
-          </div>
-          {draft.trim().length > 0 && (
-            <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-              <div onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "'DM Sans',sans-serif" }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-                <span>Add "{draft.trim()}"</span>
-              </div>
-              {matches.map((option) => (
-                <div key={option} onClick={() => addValue(option)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>
-                  {option}
-                </div>
-              ))}
-            </div>
-          )}
+          <label className="ip-search is-active">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+            <input autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }} placeholder="Product or brand" aria-label="Product or brand" />
+            <button type="button" aria-label="Close search" onClick={() => { setAdding(false); setDraft(''); }}>×</button>
+          </label>
+          <SuggestList draft={draft} matches={matches} onPick={addValue} />
         </div>
       )}
-
       {quickAdd.length > 0 && (
-        <div style={{ marginTop: 18 }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: '#FFC774', marginBottom: 10 }}>From your history</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-            {quickAdd.map((name) => (
-              <div
-                key={name}
-                onClick={() => addValue(name)}
-                style={{
-                  cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
-                  fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 13px', borderRadius: 99,
-                  background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, color: INK,
-                }}
-              >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={LABEL_GOLD} strokeWidth="2.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-                {name}
-              </div>
-            ))}
-          </div>
+        <div className="ip-custom">
+          <small>From what you tried</small>
+          <div className="ip-chips is-compact">{quickAdd.map((name) => <button type="button" key={name} className="ip-chip is-dashed" onClick={() => addValue(name)}>+ {name}</button>)}</div>
         </div>
       )}
-
-      {footerText && (
-        <p style={{ margin: '18px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'rgba(255,249,242,.6)' }}>{footerText}</p>
-      )}
+      {footerText && <p className="ip-hint ip-hint--foot">{footerText}</p>}
     </div>
   );
 }
 
 // Pattern C1: search bar + grouped chips, each group header showing a live
 // "n/m" selected count.
-function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
-  const q = search.trim().toLowerCase();
-  const visible = groups
-    .map((group) => ({ ...group, items: group.items.filter((item) => !q || item.toLowerCase().includes(q) || group.label.toLowerCase().includes(q)) }))
-    .filter((group) => group.items.length);
-  return (
-    <div>
-      <SearchBar value={search} onChange={onSearch} placeholder="Search options..." />
-      <div style={{ maxHeight: 400, overflowY: 'auto', textAlign: 'left' }}>
-        {visible.map((group) => {
-          const count = group.items.filter((item) => selected.includes(item)).length;
-          return (
-            <div key={group.label} style={{ marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 11 }}>
-                <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#FFF9F2' }}>{group.label}</span>
-                <span style={{ flex: 1, height: 1, background: 'rgba(255,249,242,.24)' }} />
-                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', color: count > 0 ? '#FFC774' : 'rgba(255,249,242,.55)' }}>{count}/{group.items.length}</span>
-              </div>
-              <RowChoiceList items={group.items} selected={selected} onToggle={onToggle} />
-            </div>
-          );
-        })}
-        {visible.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No matches. Try a different search.</div>}
-      </div>
-    </div>
-  );
-}
 
 function ProductHistoryBuilder({ products, onChange }) {
   const [adding, setAdding] = useState(false);
   const [query, setQuery] = useState('');
+  const [stopSearch, setStopSearch] = useState('');
   const [expandedIndex, setExpandedIndex] = useState(null);
   const suggestions = useMemo(() => {
     const added = new Set(products.map((p) => normalizeSuggestion(p.name)));
@@ -1232,115 +824,70 @@ function ProductHistoryBuilder({ products, onChange }) {
     onChange([...products, { name: trimmed, current: '', worked: '', reaction: '', reactionText: '', stopReasons: [], stopOther: '' }]);
     setQuery('');
     setAdding(false);
-    setExpandedIndex(null);
+    setExpandedIndex(products.length);
   };
   const updateProduct = (index, patch) => onChange(products.map((p, i) => (i === index ? { ...p, ...patch } : p)));
   const removeProduct = (index) => {
     onChange(products.filter((_, i) => i !== index));
     setExpandedIndex((cur) => (cur === index ? null : cur > index ? cur - 1 : cur));
   };
+  const one = (value) => (value ? [value] : []);
 
   return (
-    <div>
-      {!adding ? (
-        <div
-          onClick={() => setAdding(true)}
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed rgba(255,249,242,.35)', background: 'transparent',
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#FFC774',
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFC774" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-          Add a product or brand
-        </div>
-      ) : (
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ACCENT_BORDER, borderRadius: 99, padding: '11px 14px' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
-            <span onClick={() => { setAdding(false); setQuery(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            </span>
-          </div>
-          {query.trim().length > 0 && (
-            <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-              <div onClick={() => addProduct(query)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontFamily: "'DM Sans',sans-serif" }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-                <span>Add "{query.trim()}"</span>
-              </div>
-              {suggestions.map((name) => (
-                <div key={name} onClick={() => addProduct(name)} style={{ padding: '13px 14px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>{name}</div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
+    <div className="ip-builder">
       {products.length > 0 && (
-        <div style={{ display: 'grid', gap: 8, marginTop: 12 }}>
+        <div className="ip-history">
           {products.map((product, index) => {
             const expanded = expandedIndex === index;
-            const summary = [product.current, product.worked, product.reaction].filter(Boolean);
+            const summary = [product.current && (product.current === 'Yes' ? 'Using now' : 'Stopped'), product.worked, product.reaction && product.reaction !== 'No' ? `${product.reaction} reaction` : ''].filter(Boolean);
             return (
-              <div key={`${product.name}-${index}`} style={{ background: CARD_BG, color: INK, border: '1.5px solid ' + (expanded ? ACCENT_BORDER : ROW_BORDER), borderRadius: 16, overflow: 'hidden', textAlign: 'left' }}>
-                <div onClick={() => setExpandedIndex(expanded ? null : index)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '13px 14px', cursor: 'pointer' }}>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{product.name}</div>
-                    <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>{summary.length ? summary.join(' · ') : 'Optional details'}</div>
-                  </div>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flex: 'none', color: MUTED, transform: expanded ? 'rotate(180deg)' : 'rotate(-90deg)', transition: 'transform .2s' }}>
-                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
+              <div key={`${product.name}-${index}`} className={`ip-history-card${expanded ? ' is-open' : ''}`}>
+                <button type="button" className="ip-history-head" aria-expanded={expanded} onClick={() => { setExpandedIndex(expanded ? null : index); setStopSearch(''); }}>
+                  <span><strong>{product.name}</strong><small>{summary.length ? summary.join(' · ') : 'Tap to add details (optional)'}</small></span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                </button>
                 {expanded && (
-                  <div style={{ padding: '0 14px 16px', borderTop: '1px solid ' + ROW_BORDER, paddingTop: 14 }}>
-                    <div style={{ marginBottom: 14 }}>
-                      <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 8 }}>Currently using it?</div>
-                      <Segmented options={['Yes', 'No']} value={product.current} onChange={(v) => updateProduct(index, { current: v })} />
-                    </div>
-
-                    <div style={{ marginBottom: 14 }}>
-                      <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 8 }}>How well did it work?</div>
-                      <Pills options={['Helped a lot', 'Helped somewhat', 'No difference', 'Made it worse', 'Not sure']} selected={product.worked ? [product.worked] : []} onToggle={(v) => updateProduct(index, { worked: v })} left compact />
-                    </div>
-
-                    <div style={{ marginBottom: 14 }}>
-                      <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 8 }}>Any side effects or reactions?</div>
-                      <Pills options={['No', 'Mild', 'Serious', 'Not sure']} selected={product.reaction ? [product.reaction] : []} onToggle={(v) => updateProduct(index, { reaction: v })} left compact />
-                    </div>
-
+                  <div className="ip-history-body">
+                    <div className="ip-q"><strong>Using it now?</strong><ChipList compact items={['Yes', 'No']} selected={one(product.current)} onToggle={(v) => updateProduct(index, { current: v })} /></div>
+                    <div className="ip-q"><strong>Did it help?</strong><ChipList compact items={['Helped a lot', 'Helped somewhat', 'No difference', 'Made it worse', 'Not sure']} selected={one(product.worked)} onToggle={(v) => updateProduct(index, { worked: v })} /></div>
+                    <div className="ip-q"><strong>Any reaction?</strong><ChipList compact items={['No', 'Mild', 'Serious', 'Not sure']} selected={one(product.reaction)} onToggle={(v) => updateProduct(index, { reaction: v })} /></div>
                     {['Mild', 'Serious'].includes(product.reaction) && (
-                      <div style={{ marginBottom: 14, padding: '12px 13px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                        <input value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'max(16px, calc(12.5px * var(--ayna-text-scale, 1)))', color: INK, fontFamily: 'inherit' }} />
-                      </div>
+                      <input className="ip-input" value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" aria-label="What happened" />
                     )}
-
                     {product.current === 'No' && (
-                      <div style={{ marginBottom: 8 }}>
-                        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 8 }}>Why did you stop?</div>
-                        <Pills
-                          options={STOP_REASONS}
+                      <div className="ip-q"><strong>Why did you stop?</strong>
+                        <SearchableChoices
+                          items={STOP_REASONS}
                           selected={product.stopReasons || []}
                           onToggle={(reason) => updateProduct(index, {
                             stopReasons: (product.stopReasons || []).includes(reason) ? product.stopReasons.filter((x) => x !== reason) : [...(product.stopReasons || []), reason],
                           })}
-                          left compact
+                          search={stopSearch}
+                          onSearch={setStopSearch}
+                          onAdd={(value) => { updateProduct(index, { stopReasons: [...new Set([...(product.stopReasons || []), value])] }); setStopSearch(''); }}
+                          placeholder="Search reasons"
+                          searchable={false}
                         />
-                        {(product.stopReasons || []).includes('Other') && (
-                          <div style={{ marginTop: 10, padding: '12px 13px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                            <input value={product.stopOther || ''} onChange={(e) => updateProduct(index, { stopOther: e.target.value })} placeholder="Other reason" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'max(16px, calc(12.5px * var(--ayna-text-scale, 1)))', color: INK, fontFamily: 'inherit' }} />
-                          </div>
-                        )}
                       </div>
                     )}
-
-                    <div onClick={() => removeProduct(index)} style={{ marginTop: 10, color: LABEL_GOLD, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: 'pointer' }}>Remove product</div>
+                    <button type="button" className="ip-link-danger" onClick={() => removeProduct(index)}>Remove</button>
                   </div>
                 )}
               </div>
             );
           })}
+        </div>
+      )}
+      {!adding ? (
+        <button type="button" className="ip-add-row" onClick={() => setAdding(true)}><span aria-hidden="true">+</span>{products.length ? 'Add another' : 'Add a product or brand'}</button>
+      ) : (
+        <div>
+          <label className="ip-search is-active">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" aria-label="Search products" />
+            <button type="button" aria-label="Close search" onClick={() => { setAdding(false); setQuery(''); }}>×</button>
+          </label>
+          <SuggestList draft={query} matches={suggestions} onPick={addProduct} />
         </div>
       )}
     </div>
@@ -1353,134 +900,13 @@ function ProductHistoryBuilder({ products, onChange }) {
 // fixed rect snapshot taken at pointer-down, while the other rows' *live*
 // positions (read fresh on every move) decide when to splice the array —
 // so the list itself reorders live as you drag, not just on release.
-function TrustRanker({ order, onChange, onTouch }) {
-  const itemRefs = useRef({});
-  const [drag, setDrag] = useState(null); // { item, startClientY, top, height, y }
-
-  useEffect(() => {
-    if (!drag) return undefined;
-    const onMove = (e) => {
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      const deltaY = clientY - drag.startClientY;
-      setDrag((d) => (d ? { ...d, y: deltaY } : d));
-
-      const draggedMid = drag.top + drag.height / 2 + deltaY;
-      const others = order.filter((it) => it !== drag.item);
-      let newIndex = 0;
-      others.forEach((it) => {
-        const el = itemRefs.current[it];
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        if (draggedMid > rect.top + rect.height / 2) newIndex += 1;
-      });
-      const currentIndex = order.indexOf(drag.item);
-      if (newIndex !== currentIndex) {
-        const next = order.filter((it) => it !== drag.item);
-        next.splice(newIndex, 0, drag.item);
-        onTouch();
-        onChange(next);
-      }
-    };
-    const onUp = () => setDrag(null);
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
-    window.addEventListener('pointercancel', onUp);
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('pointercancel', onUp);
-    };
-  }, [drag, order, onChange, onTouch]);
-
-  const handlePointerDown = (item, e) => {
-    const el = itemRefs.current[item];
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    e.preventDefault();
-    setDrag({ item, startClientY: e.clientY, top: rect.top, height: rect.height, y: 0 });
-  };
-
-  return (
-    <div style={{ display: 'grid', gap: 10 }}>
-      {order.map((item, index) => {
-        const top = index === 0;
-        const isDragging = drag && drag.item === item;
-        return (
-          <div
-            key={item}
-            ref={(el) => { itemRefs.current[item] = el; }}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 12, borderRadius: 18, padding: 14,
-              background: top ? ACCENT_BG : CARD_BG,
-              border: '1.5px solid ' + (top ? ACCENT_BORDER : ROW_BORDER),
-              boxShadow: isDragging ? '0 18px 32px -12px rgba(41,37,36,.4)' : (top ? '0 8px 20px -10px rgba(232,169,79,.5)' : cardShadow),
-              transform: isDragging ? `translateY(${drag.y}px) scale(1.02)` : 'none',
-              position: 'relative',
-              zIndex: isDragging ? 5 : 1,
-              touchAction: 'none',
-            }}
-          >
-            <span style={{
-              width: 26, height: 26, borderRadius: 9, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: top ? 'rgba(255,255,255,.7)' : PANEL_BG, color: top ? SELECTED_TEXT : NAVY,
-              fontFamily: "'Playfair Display',serif", fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
-            }}>{index + 1}</span>
-            <span style={{ flex: 1, textAlign: 'left', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.3, color: top ? SELECTED_TEXT : INK }}>{item}</span>
-            <span
-              onPointerDown={(e) => handlePointerDown(item, e)}
-              aria-label={`Drag to reorder ${item}`}
-              style={{
-                width: 30, height: 30, borderRadius: 8, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: top ? SELECTED_TEXT : MUTED, cursor: 'grab', touchAction: 'none',
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="9" cy="6" r="1.7" /><circle cx="15" cy="6" r="1.7" />
-                <circle cx="9" cy="12" r="1.7" /><circle cx="15" cy="12" r="1.7" />
-                <circle cx="9" cy="18" r="1.7" /><circle cx="15" cy="18" r="1.7" />
-              </svg>
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 // Pattern M1 — textarea plus dashed "inspiration only" prompt chips: tapping
 // one appends its starter phrase rather than committing an answer, since
 // unlike every selectable option elsewhere in this form, these never
 // represent a stored choice.
-const FREE_TEXT_PROMPTS = ['A goal I have', "Something that hasn't worked", "A concern I haven't mentioned"];
+const FREE_TEXT_PROMPTS = ['A goal', "What hasn't worked", 'Something I missed'];
 
-function TextAreaField({ value, onChange, placeholder }) {
-  const appendPrompt = (prompt) => {
-    const prefix = value && !value.endsWith('\n') && !value.endsWith(' ') ? `${value}\n` : value;
-    onChange(`${prefix}${prompt}: `);
-  };
-  return (
-    <div>
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        rows={5}
-        style={{ width: '100%', boxSizing: 'border-box', padding: 16, borderRadius: 20, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none', resize: 'vertical', minHeight: 150, lineHeight: 1.65, fontFamily: 'inherit' }}
-      />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 12 }}>
-        {FREE_TEXT_PROMPTS.map((prompt) => (
-          <div
-            key={prompt}
-            onClick={() => appendPrompt(prompt)}
-            style={{ cursor: 'pointer', fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', padding: '9px 13px', borderRadius: 99, background: CARD_BG, border: '1.5px dashed ' + ROW_BORDER, color: BODY_TEXT }}
-          >
-            {prompt}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // Under-18 gate, terminal screen (Ayna_Minor_Gate.html design reference).
 // Deliberately not styled with the rest of the quiz's dark hero-gradient
@@ -1497,15 +923,15 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
     ['03', 'Come back at 18', "We'll still be here, and the quiz takes about six minutes."],
   ];
   return (
-    <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', color: INK, fontFamily: "'DM Sans',system-ui,sans-serif" }}>
+    <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', color: INK, fontFamily: "var(--ayna-font-ui)" }}>
       <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', borderBottom: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div onClick={onChangeAge} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
+          <button type="button" className="ayna-intake-control" aria-label="Change age" onClick={onChangeAge} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-          </div>
+          </button>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD }}>About you</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: MUTED, marginTop: 2 }}>Quiz paused</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD }}>About you</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: MUTED, marginTop: 2 }}>Quiz paused</div>
           </div>
         </div>
       </div>
@@ -1515,45 +941,45 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
           <div style={{ width: 54, height: 54, borderRadius: 99, background: CARD_BG, border: '1.5px solid ' + WARNING_BORDER_SOFT, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 20px -10px rgba(180,64,42,.3)' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 4v5c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V7l8-4z" /><path d="M12 10v3.5" /><path d="M12 16.5h.01" /></svg>
           </div>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, marginTop: 20 }}>Age requirement</div>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.12, color: INK, marginTop: 9 }}>We can't take you through the quiz</div>
-          <p style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: BODY_TEXT, margin: '12px 0 0' }}>
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, marginTop: 20 }}>Age requirement</div>
+          <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.12, color: INK, marginTop: 9 }}>We can't take you through the quiz</div>
+          <p style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: BODY_TEXT, margin: '12px 0 0' }}>
             ayna is built for people 18 and over. Because the quiz leads to supplement and product guidance, we don't create profiles for minors — that's a conversation for a parent, guardian or clinician who knows your history.
           </p>
         </div>
 
         <div style={{ padding: '26px 24px 30px' }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK }}>What you can do now</div>
+          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK }}>What you can do now</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 13 }}>
             {whatYouCanDo.map(([num, title, body]) => (
               <div key={num} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '15px 16px', borderRadius: 18, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: LABEL_GOLD, flex: 'none', lineHeight: 1.1 }}>{num}</div>
+                <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: LABEL_GOLD, flex: 'none', lineHeight: 1.1 }}>{num}</div>
                 <div>
-                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK }}>{title}</div>
-                  <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 3 }}>{body}</div>
+                  <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK }}>{title}</div>
+                  <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 3 }}>{body}</div>
                 </div>
               </div>
             ))}
           </div>
 
           <div style={{ marginTop: 22, padding: '15px 16px', borderRadius: 18, background: CARD_BG, border: '1px solid ' + ROW_BORDER }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>Entered the wrong birthday?</div>
-            <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 4 }}>Go back one screen and change it — nothing has been saved yet.</div>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>Entered the wrong birthday?</div>
+            <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 4 }}>Go back one screen and change it — nothing has been saved yet.</div>
           </div>
 
-          <p style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: MUTED, margin: '16px 0 0' }}>
+          <p style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: MUTED, margin: '16px 0 0' }}>
             If you're in immediate distress, contact a local emergency service or a crisis line rather than waiting on an answer here.
           </p>
         </div>
       </div>
 
       <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', borderTop: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
-        <div onClick={onBrowseLibrary} style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFFCF9', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
+        <button type="button" className="ayna-intake-control" onClick={onBrowseLibrary} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFFFFF', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
           Browse the reading library
-        </div>
-        <div onClick={onChangeAge} style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>
+        </button>
+        <button type="button" className="ayna-intake-control" onClick={onChangeAge} style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>
           Change my birthday
-        </div>
+        </button>
       </div>
     </div>
   );
@@ -1561,43 +987,45 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 
 /* --------------------------------- Main screen --------------------------------- */
 
-export default function IntakeScreen({ onBack, onComplete, initialSnapshot = null }) {
+export default function IntakeScreen({ onBack, onComplete, initialSnapshot = null, startAtBeginning = false }) {
   const [intake, setIntake] = useState(() => reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => getFirstIncompleteStepId(initialSnapshot) || 'age');
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtBeginning ? 'age' : getFirstIncompleteStepId(initialSnapshot) || 'age'));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started — not
   // re-derived as answers change, so a step's flag clears only by actually
   // reaching and completing it, not by something else on the page changing.
   const [flaggedStepIds] = useState(() => new Set(getIncompleteStepIds(initialSnapshot)));
   const [minorGate, setMinorGate] = useState(false);
+  const [direction, setDirection] = useState('forward');
 
   const visibleSteps = useMemo(() => {
     const steps = [
-      { id: 'age', section: 'core', title: 'How old are you?', type: 'age', optional: true },
-      { id: 'lifeStage', section: 'core', title: 'Which options best describe you right now?', subtitle: 'Select all that apply.', type: 'lifeStage', optional: true },
-      { id: 'zip', section: 'core', title: 'What is your ZIP code?', subtitle: 'Optional. This helps us personalize local care and availability.', type: 'zip', optional: true },
-      { id: 'support', section: 'support', title: 'What are you currently experiencing or looking for support with?', subtitle: 'Choose anything that feels relevant. You can search or browse by category.', type: 'support', optional: true },
+      { id: 'age', section: 'core', title: 'Your age', type: 'age', optional: true },
+      { id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', optional: true },
+      { id: 'zip', section: 'core', title: 'ZIP code', type: 'zip', optional: true },
+      { id: 'support', section: 'support', title: 'What needs support?', type: 'support', optional: true },
       ...(isPeriodRelevant(intake) ? [
-        { id: 'periodFlow', section: 'support', title: 'How would you describe your typical period flow?', type: 'flow', optional: true },
-        { id: 'periodPain', section: 'support', title: 'How would you describe your typical period pain?', type: 'pain', optional: true },
+        { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', optional: true },
+        { id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', optional: true },
       ] : []),
-      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often do you experience UTI-like symptoms?', type: 'utiFrequency', optional: true }] : []),
-      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago did you give birth?', type: 'postpartumTiming', optional: true }] : []),
+      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', optional: true }] : []),
+      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago?', type: 'postpartumTiming', optional: true }] : []),
       ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', optional: true }] : []),
-      { id: 'conditions', section: 'safety', title: 'Have you been diagnosed with any of the following?', subtitle: 'This is different from what you are experiencing. It helps us separate a diagnosed condition from a symptom or goal.', type: 'conditions', optional: false },
-      { id: 'allergies', section: 'safety', title: 'Do you have any known allergies or sensitivities that affect the products you can use?', subtitle: 'We use this to help flag products that may not be a fit for you.', type: 'allergies', optional: false },
-      { id: 'medications', section: 'safety', title: 'Are you currently taking any medications, supplements, vitamins, or hormonal birth control?', subtitle: 'This helps us avoid duplicate ingredients and flag possible compatibility issues.', type: 'medications', optional: false },
-      { id: 'products', section: 'history', title: 'What health or wellness products have you tried?', subtitle: 'Add any products you’ve tried. You can add more than one.', type: 'products', optional: true },
-      { id: 'avoidRepeat', section: 'history', title: 'Are there any products or brands you definitely do not want recommended again?', type: 'avoidRepeat', optional: true },
-      { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
-      { id: 'formats', section: 'preferences', title: 'Which product formats do you prefer?', type: 'formats', optional: true },
-      { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
-      { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
-      ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'trustedBrands', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Any ingredients or product qualities you prefer?', subtitle: 'Things like fragrance-free, vegan, or eco-friendly. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
-      { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', type: 'trust', optional: false },
-      { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
+      { id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', optional: false },
+      { id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', optional: false },
+      { id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', optional: false },
+      { id: 'products', section: 'history', title: 'What have you tried?', type: 'products', optional: true },
+      { id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', optional: true },
+      { id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', optional: false },
+      { id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', optional: true },
+      { id: 'recommendationCount', section: 'preferences', title: 'How many picks?', type: 'recommendationCount', optional: true },
+      { id: 'priceRange', section: 'preferences', title: 'Your budget', type: 'price', optional: true },
+      { id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', optional: true },
+      ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', type: 'trustedBrands', optional: true }] : []),
+      { id: 'avoidIngredients', section: 'preferences', title: 'On the label', type: 'avoidIngredients', optional: true },
+      { id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', type: 'fsa', optional: true },
+      { id: 'trust', section: 'trust', title: 'Your trust order', type: 'trust', optional: false },
+      { id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', optional: true },
     ];
     return steps;
   }, [intake]);
@@ -1617,13 +1045,25 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   });
   const toggleLifeStage = (value) => setIntake((prev) => {
     const current = getLifeStages(prev);
-    const next = current.includes(value) ? current.filter((item) => item !== value) : [...current, value];
+    const next = selectLifeStage(current, value);
     return { ...prev, lifeStageSelections: next, lifeStage: next[0] || '' };
   });
+  const addCustomSelection = (key, raw, exclusiveValues = []) => {
+    const value = String(raw || '').trim().replace(/\s+/g, ' ').slice(0, 80);
+    if (value.length < 2) return;
+    setIntake((prev) => {
+      const current = Array.isArray(prev[key]) ? prev[key] : [];
+      if (current.some((item) => item.toLowerCase() === value.toLowerCase())) return prev;
+      const next = [...current.filter((item) => !exclusiveValues.includes(item)), value];
+      return key === 'lifeStageSelections' ? { ...prev, [key]: next, lifeStage: next[0] || '' } : { ...prev, [key]: next };
+    });
+    setSearch('');
+  };
 
   const goBack = () => {
     if (currentIndex > 0) {
       setSearch('');
+      setDirection('back');
       setStepId(visibleSteps[currentIndex - 1].id);
     } else if (onBack) onBack();
   };
@@ -1635,71 +1075,55 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       return;
     }
     setSearch('');
+    setDirection('forward');
     setStepId(visibleSteps[currentIndex + 1].id);
   };
 
   const selectedLifeStages = getLifeStages(intake);
+  const showMidlifeFirst = intake.age !== '' && Number(intake.age) >= 40;
+  const lifeStageOptions = showMidlifeFirst
+    ? [...MIDLIFE_LIFE_STAGES, ...LIFE_STAGES.filter((item) => !MIDLIFE_LIFE_STAGES.includes(item))]
+    : LIFE_STAGES;
 
   const renderBody = () => {
     if (step.type === 'age') return (
-      <AgeCard
-        value={intake.age}
-        onChange={(v) => set('age', v)}
-        underage={isMinorAge(intake.age)}
-        onOpenGate={() => setMinorGate(true)}
-      />
+      <AgeDial value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
     );
 
     if (step.type === 'lifeStage') return (
       <>
-        <ChoiceGrid items={LIFE_STAGES} selected={selectedLifeStages} onToggle={toggleLifeStage} />
+        {showMidlifeFirst && <p className="ip-hint">Midlife stages moved up. Pick only what fits.</p>}
+        <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" labels={LIFE_STAGE_LABELS} glyphs={LIFE_STAGE_GLYPHS} searchable={false} />
         {selectedLifeStages.includes('I am postpartum') && (
-          <div style={{ marginTop: 18, padding: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 18, textAlign: 'left' }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: INK, marginBottom: 12 }}>Are you currently breastfeeding?</div>
-            <Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.breastfeedingStatus} onChange={(v) => set('breastfeedingStatus', v)} />
+          <div className="ip-followup">
+            <strong>Breastfeeding right now?</strong>
+            <ChipList items={['Yes', 'No', 'Prefer not to say']} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} compact />
           </div>
         )}
         {selectedLifeStages.includes('I am in perimenopause') && (
-          <div style={{ marginTop: 18, padding: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 18, textAlign: 'left' }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: INK, marginBottom: 12 }}>When was your last period?</div>
-            <Pills options={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} left />
+          <div className="ip-followup">
+            <strong>When was your last period?</strong>
+            <ChipList items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} compact />
           </div>
         )}
-        {selectedLifeStages.includes('Other') && (
-          <OtherBox label="Tell us what best describes you (optional)" value={intake.lifeStageOther} onChange={(v) => set('lifeStageOther', v)} placeholder="Type here..." />
-        )}
       </>
     );
 
-    if (step.type === 'zip') return <ZipDigits value={intake.zipcode} onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))} onSkip={goNext} />;
+    if (step.type === 'zip') return <ZipTicket value={intake.zipcode} onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))} />;
 
     if (step.type === 'support') return (
-      <>
-        <SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />
-        {intake.supportSelections.includes('Something else') && (
-          <OtherBox label="Tell us what else you are looking for support with" value={intake.supportOtherText} onChange={(v) => set('supportOtherText', v)} placeholder="Type here..." />
-        )}
-      </>
+      <TopicPicker groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} onAdd={(value) => addCustomSelection('supportSelections', value, ['Nothing right now'])} />
     );
 
-    if (step.type === 'flow') return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} />;
-    if (step.type === 'pain') return <Scale options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} />;
-    if (step.type === 'utiFrequency') return <Timeline options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
-    if (step.type === 'postpartumTiming') return <Timeline options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />;
-    if (step.type === 'pregnancyTrimester') return <Timeline options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
+    if (step.type === 'flow') return <LevelMeter options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} shape="drop" />;
+    if (step.type === 'pain') return <LevelMeter options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} shape="bar" />;
+    if (step.type === 'utiFrequency') return <TrackLine options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
+    if (step.type === 'postpartumTiming') return <TrackLine options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />;
+    if (step.type === 'pregnancyTrimester') return <TrackLine options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
 
     if (step.type === 'conditions') {
-      const q = search.trim().toLowerCase();
-      const filtered = q ? CONDITIONS.filter((item) => item.toLowerCase().includes(q)) : CONDITIONS;
       return (
-        <>
-          <SearchBar value={search} onChange={setSearch} placeholder="Search conditions..." />
-          <RowChoiceList items={filtered} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} exclusiveValues={['None that I know of', 'Prefer not to say']} />
-          {filtered.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No matches. Try a different search.</div>}
-          {intake.diagnosisSelections.includes('Other / not listed') && (
-            <OtherBox label="What condition was diagnosed?" value={intake.conditionOtherText} onChange={(v) => set('conditionOtherText', v)} placeholder="Type the condition..." />
-          )}
-        </>
+        <SearchableChoices items={['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((item) => !['None that I know of', 'Prefer not to say'].includes(item))]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('diagnosisSelections', value, ['None that I know of', 'Prefer not to say'])} placeholder="Search conditions" />
       );
     }
 
@@ -1711,8 +1135,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
           onChange={(value) => setIntake((prev) => ({ ...prev, allergyStatus: value, allergyItems: value === 'Yes' ? prev.allergyItems : [] }))}
         />
         {intake.allergyStatus === 'Yes' && (
-          <div style={{ marginTop: 16 }}>
-            <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Start typing an allergy or sensitivity" suggestions={ALLERGIES} suggestionLimit={8} />
+          <div className="ip-gap">
+            <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Type an allergy or sensitivity" suggestions={ALLERGIES} suggestionLimit={8} />
           </div>
         )}
       </>
@@ -1722,13 +1146,11 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       <>
         <Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.takesCurrent} onChange={(v) => set('takesCurrent', v)} />
         {intake.takesCurrent === 'Yes' && (
-          <div style={{ marginTop: 16 }}>
-            <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Start typing a medication, supplement, vitamin, or birth control" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
+          <div className="ip-gap">
+            <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medication, supplement, or birth control" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
           </div>
         )}
-        <div style={{ marginTop: 16, padding: '13px 15px', border: '1px solid ' + ROW_BORDER, background: PANEL_BG, borderRadius: 14, color: BODY_TEXT, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.55, textAlign: 'left' }}>
-          Always consult a clinician before starting a new supplement or medication. Ayna surfaces options relevant to the profile you shared, but you should still check product ingredients, labels, and instructions.
-        </div>
+        <p className="ip-callout">Check with a clinician before starting anything new.</p>
       </>
     );
 
@@ -1739,92 +1161,48 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         onChange={(v) => set('avoidRepeat', v)}
         suggestions={PRODUCT_OR_BRAND_SUGGESTIONS}
         historyNames={[...new Set((intake.productHistory || []).map((p) => p.name).filter(Boolean))]}
-        footerText="Excluded items never appear in your ecosystem, search results, or “similar product” rows."
+        footerText="These never show up in your picks."
       />
     );
-    if (step.type === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(v) => set('trustedBrands', v)} placeholder="Start typing a brand" suggestions={BRAND_SUGGESTIONS} />;
+    if (step.type === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(v) => set('trustedBrands', v)} placeholder="Type a brand" suggestions={BRAND_SUGGESTIONS} />;
 
-    // Pattern J1: the conditional alert panel gets its own amber header
-    // band + "!" badge, distinct from the plain informational panels used
-    // elsewhere — this one's meant to read as an escalation, not a note.
     if (step.type === 'safety') return (
       <>
         <Segmented options={['Yes', 'No', 'Not sure']} value={intake.safetyConcern} onChange={(v) => set('safetyConcern', v)} />
         {['Yes', 'Not sure'].includes(intake.safetyConcern) && (
-          <div style={{ marginTop: 14, borderRadius: 20, overflow: 'hidden', border: '1.5px solid ' + ACCENT_BORDER }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '12px 15px', background: ACCENT_BG }}>
-              <span style={{ width: 20, height: 20, borderRadius: 99, background: ACCENT_BORDER, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: '#fff' }}>!</span>
-              <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: SELECTED_TEXT }}>Worth a closer look</span>
-            </div>
-            <div style={{ padding: '14px 15px', background: CARD_BG }}>
-              <p style={{ margin: 0, fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: BODY_TEXT }}>
-                Some new or worsening symptoms may need evaluation by a healthcare professional. Ayna helps with product discovery and education and does not diagnose medical conditions or replace professional medical care. If symptoms feel urgent or severe, seek appropriate medical care promptly.
-              </p>
-            </div>
+          <div className="ip-alert" role="note">
+            <strong><span aria-hidden="true">!</span>Worth a closer look</strong>
+            <p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.</p>
           </div>
         )}
       </>
     );
 
     if (step.type === 'formats') return (
-      <>
-        <ChoiceGrid items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} icons={FORMAT_ICONS} />
-        {intake.preferredFormats.includes('Other') && (
-          <OtherBox label="What format do you prefer?" value={intake.formatOtherText} onChange={(v) => set('formatOtherText', v)} placeholder="Type here..." />
-        )}
-      </>
+      <SearchableChoices items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('preferredFormats', value, ['No preference'])} placeholder="Search formats" layout="grid" icons={FORMAT_ICONS} searchable={false} />
     );
 
     if (step.type === 'price') {
       const selectedPrices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []);
-      const priceOnlyBands = PRICE_RANGES.filter((opt) => opt !== 'Price is not a major factor for me');
       const notAFactor = 'Price is not a major factor for me';
-      const notAFactorOn = selectedPrices.includes(notAFactor);
       return (
         <>
-          <PriceBandList options={priceOnlyBands} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
-          <div
-            onClick={() => toggleExclusive('priceRange', notAFactor, [notAFactor])}
-            style={{
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap', marginTop: 7,
-              fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '10px 14px', borderRadius: 99,
-              fontWeight: notAFactorOn ? 600 : 500,
-              background: notAFactorOn ? ACCENT_BG : PANEL_BG,
-              color: notAFactorOn ? SELECTED_TEXT : MUTED,
-              border: '1.5px solid ' + (notAFactorOn ? ACCENT_BORDER : ROW_BORDER),
-              justifyContent: 'center',
-            }}
-          >
-            {notAFactorOn && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
-            {notAFactor}
-          </div>
-
-          <div style={{ height: 1, background: 'rgba(255,249,242,.24)', margin: '24px 0 20px' }} />
-
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: '#FFF9F2', marginBottom: 4 }}>How often do you spend $75 or more?</div>
-          <p style={{ margin: '0 0 14px', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>This is about purchase frequency, not your usual preferred price per product.</p>
-          <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
+          <PriceStacks options={PRICE_RANGES.filter((opt) => opt !== notAFactor)} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
+          <ChipList items={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} compact />
+          <DotScale label="How often do you spend $75+?" options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
         </>
       );
     }
-    if (step.type === 'brand') return <BrandSpectrum value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
+    if (step.type === 'brand') return <BrandSpectrum options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
     if (step.type === 'avoidIngredients') {
-      const q = search.trim().toLowerCase();
-      const filtered = q ? AVOID_INGREDIENTS.filter((item) => item.toLowerCase().includes(q)) : AVOID_INGREDIENTS;
       return (
-        <>
-          <SearchBar value={search} onChange={setSearch} placeholder="Search preferences..." />
-          <Pills options={filtered} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} exclusiveValues={['No preference']} left />
-          {filtered.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No matches. Try a different search.</div>}
-          {intake.avoidIngredients.includes('Other') && (
-            <OtherBox label="Other preference" value={intake.avoidIngredientsOtherText} onChange={(v) => set('avoidIngredientsOtherText', v)} placeholder="Type here..." />
-          )}
-        </>
+        <SearchableChoices items={AVOID_INGREDIENTS} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('avoidIngredients', value, ['No preference'])} placeholder="Search ingredients or qualities" />
       );
     }
-    if (step.type === 'fsa') return <Pills options={FSA_HSA} selected={intake.fsaHsaAnswer ? [intake.fsaHsaAnswer] : []} onToggle={(v) => set('fsaHsaAnswer', v)} />;
-    if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
-    if (step.type === 'textarea') return <TextAreaField value={intake.anythingElse} onChange={(v) => set('anythingElse', v)} placeholder="Share anything else that could help us personalize your recommendations." />;
+    if (step.type === 'fsa') return <AccountCards options={FSA_HSA} value={intake.fsaHsaAnswer} onChange={(v) => set('fsaHsaAnswer', v)} />;
+    if (step.type === 'recommendationCount') return <RecommendationCountPicker value={intake.recommendedProductsPerArea} onChange={(count) => set('recommendedProductsPerArea', count)} />;
+    if (step.type === 'trust') return <TrustPodium order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
+    if (step.type === 'textarea') return <StickyNote value={intake.anythingElse} onChange={(v) => set('anythingElse', v)} placeholder="A goal, a worry, something that didn’t work…" prompts={FREE_TEXT_PROMPTS} />;
 
     return null;
   };
@@ -1837,75 +1215,83 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
   const ready = requiredReady(step.id, intake) && !minorBlocked;
+  const storyTouch = useRef(null);
+  const storyWheel = useRef(0);
+  const storyAdvance = (direction) => {
+    if (direction > 0 && ready) goNext();
+    if (direction < 0) goBack();
+  };
+  const onStoryTouchStart = (event) => {
+    storyTouch.current = { x: event.touches[0]?.clientX, y: event.touches[0]?.clientY, target: event.target };
+  };
+  const onStoryTouchEnd = (event) => {
+    const start = storyTouch.current;
+    storyTouch.current = null;
+    if (!start || start.y == null || start.target?.closest('input, textarea, select, button, .ayna-intake-timeline, [role="slider"], [contenteditable]')) return;
+    const deltaX = start.x - event.changedTouches[0]?.clientX;
+    const delta = start.y - event.changedTouches[0]?.clientY;
+    if (Math.abs(deltaX) > 75 && Math.abs(deltaX) > Math.abs(delta) * 1.3) { storyAdvance(Math.sign(deltaX)); return; }
+    const body = event.currentTarget.querySelector('.ip-body');
+    if (!body || Math.abs(delta) < 100) return;
+    if (delta > 0 && body.scrollTop + body.clientHeight >= body.scrollHeight - 8) storyAdvance(1);
+    if (delta < 0 && body.scrollTop <= 8) storyAdvance(-1);
+  };
+  const onStoryWheel = (event) => {
+    if (event.target.closest('input, textarea, select, [role="listbox"]')) return;
+    const body = event.currentTarget.querySelector('.ip-body');
+    if (!body) return;
+    const atEnd = event.deltaY > 0 && body.scrollTop + body.clientHeight >= body.scrollHeight - 8;
+    const atStart = event.deltaY < 0 && body.scrollTop <= 8;
+    if (!atEnd && !atStart) { storyWheel.current = 0; return; }
+    storyWheel.current += event.deltaY;
+    if (Math.abs(storyWheel.current) > 220) {
+      storyAdvance(Math.sign(storyWheel.current));
+      storyWheel.current = 0;
+    }
+  };
 
   if (minorGate) {
     return <MinorGateScreen onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBack} />;
   }
 
+  const scene = { tone: SECTION_TONES[step.section] || 'peri', art: INTAKE_SCENES[step.id]?.art || null, label: SECTION_LABELS[step.section] };
+
   return (
-    <div
-      style={{
-        flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column',
-        background: 'var(--ayna-gradient-hero, linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%))',
-        color: '#FFF9F2', position: 'relative', overflow: 'hidden',
-        fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out',
-      }}
-    >
-      <div style={{ position: 'absolute', top: -60, right: -60, width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,199,116,.4),rgba(255,199,116,0) 70%)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(126,84,186,.35),rgba(126,84,186,0) 70%)', pointerEvents: 'none' }} />
-
-      <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', position: 'relative' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-          <div onClick={goBack} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid rgba(255,249,242,.28)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFF9F2" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: '#FFC774', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
-          </div>
-          {step.optional && (
-            <div onClick={goNext} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.65)', cursor: 'pointer', flex: 'none' }}>Skip</div>
-          )}
+    <div className={`ayna-play-intake ip-tone--${scene.tone}`} data-section={step.section} data-step={step.id} data-direction={direction}
+      onTouchStart={onStoryTouchStart} onTouchEnd={onStoryTouchEnd} onWheel={onStoryWheel}>
+      <IntakeSceneArt art={scene.art} key={`art-${step.id}`} />
+      <header className="ip-head">
+        <div className="ip-head-row">
+          <button type="button" className="ip-round" aria-label="Go back" onClick={goBack}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+          </button>
+          <span className="ip-count" aria-label={`Question ${currentIndex + 1} of ${visibleSteps.length}`}>{String(currentIndex + 1).padStart(2, '0')}<i>/{String(visibleSteps.length).padStart(2, '0')}</i></span>
+          {step.optional ? <button type="button" className="ip-skip" onClick={goNext}>Skip</button> : <span className="ip-skip-spacer" />}
         </div>
-        <div style={{ height: 4, borderRadius: 99, background: 'rgba(255,249,242,.24)', overflow: 'hidden' }}>
-          <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#FFC774,#E8A94F)' }} />
+        <div className="ip-progress" aria-hidden="true">
+          {visibleSteps.map((s, i) => <span key={s.id} className={i < currentIndex ? 'is-done' : i === currentIndex ? 'is-now' : ''} />)}
+        </div>
+      </header>
+
+      <div className="ip-body">
+        <div className="ip-question" key={`q-${step.id}`}>
+          {scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
+          <h1 className="ip-title">{step.title}</h1>
+          {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
+          {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
+          <span className="ip-spacer is-top" aria-hidden="true" />
+          <div className="ip-answer">{renderBody()}</div>
+          <span className="ip-spacer is-bottom" aria-hidden="true" />
         </div>
       </div>
 
-      <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
-        <div style={{ padding: '22px 20px 0' }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', lineHeight: 1.17, color: '#FFF9F2' }}>{step.title}</div>
-          {step.subtitle && <p style={{ margin: '8px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
-          {flaggedStepIds.has(step.id) && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 11, padding: '6px 12px', borderRadius: 99, background: 'rgba(180,64,42,.16)', border: '1px solid rgba(180,64,42,.35)', color: '#FFC9BC', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>
-              <span style={{ width: 6, height: 6, borderRadius: 99, background: '#E8846F', flex: 'none' }} />
-              Not answered yet
-            </div>
-          )}
-        </div>
-        <div style={{ padding: '20px 20px 20px', textAlign: 'left' }}>
-          {renderBody()}
-        </div>
-      </div>
-
-      <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', position: 'relative', background: 'linear-gradient(to top,rgba(36,42,82,.35),rgba(36,42,82,0))' }}>
-        <button
-          onClick={goNext}
-          disabled={!ready}
-          style={{
-            width: '100%', padding: 15, border: 'none', borderRadius: 99,
-            background: ready ? 'linear-gradient(140deg,#FFDCA8,#FFC774 46%,#E8843C)' : 'rgba(255,249,242,.18)',
-            color: ready ? NAVY : 'rgba(255,249,242,.5)',
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9,
-            cursor: ready ? 'pointer' : 'not-allowed',
-            boxShadow: ready ? '0 16px 30px -14px rgba(232,132,60,.55)' : 'none',
-          }}
-        >
-          <span>{isLast ? 'Finish profile' : 'Continue'}</span>
-          {countForStep > 0 && <span style={{ background: 'rgba(42,31,78,.16)', borderRadius: 999, padding: '2px 9px', fontSize: 'calc(12px * var(--ayna-text-scale, 1))' }}>{countForStep}</span>}
-          <span aria-hidden="true">→</span>
+      <footer className="ip-foot">
+        <button type="button" className="ip-next" onClick={goNext} disabled={!ready}>
+          <span>{isLast ? 'See my results' : 'Next'}</span>
+          {countForStep > 0 && <b>{countForStep}</b>}
+          <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i>
         </button>
-      </div>
+      </footer>
     </div>
   );
 }

@@ -1,113 +1,81 @@
-import { useState } from 'react';
+import EmptyState from '../components/EmptyState.jsx';
+import { healthAreaLabel } from '../utils/healthAreaLabel.js';
 import MobileHeader from '../components/MobileHeader.jsx';
-import EcosystemOrbit from '../components/EcosystemOrbit.jsx';
 import ProductCard from '../components/ProductCard.jsx';
+import EcosystemChart from '../components/EcosystemChart.jsx';
 import ArticleCard from '../components/ArticleCard.jsx';
-import CtaBanner from '../components/CtaBanner.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
+import { getProductMatchDetailsForProduct } from '../../data/products.js';
+import { ECOSYSTEM_AREAS } from '../data/ecosystemAreas.js';
+import { selectEcosystemProducts } from '../utils/recommendationSelection.js';
 
-function getTimeGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
-}
+const AREA_TONES = ['#F7BADD', '#BDEBD6', '#B9C2F4', '#F7E78E', '#EF9CCB', '#8FDABB'];
 
 export default function EcosystemScreen({
-  myProducts = [],
-  name = 'You',
-  tags = '',
-  relatedReads = [],
-  headerInitial = 'A',
-  onOpenProduct,
-  onOpenArticle,
-  onOpenSaved,
-  onBrowse,
-  onRetake,
-  onOpenMonthlyCheckin,
-  onOpenProfile,
-  quizAnswers = null,
-  onOpenWhyMatch,
+  myProducts = [], authUser = null, suggestedEcosystemProducts = [], 
+  relatedReads = [], savedProducts = {}, headerInitial = 'A', onOpenProduct,
+  onOpenArticle, onOpenSaved, onBrowse, onGoCommunity, onRetake,
+  onRequestEcosystemReset, ecosystemNotice, onOpenMonthlyCheckin, onOpenProfile,
+  quizAnswers = null, onOpenWhyMatch, onAddToEcosystem, onToggleSaved, onReplayStory,
 }) {
-  const [selectedKey, setSelectedKey] = useState(null);
-  const [selectedSeat, setSelectedSeat] = useState(null);
+  const currentProducts = quizAnswers
+    ? selectEcosystemProducts(myProducts, quizAnswers, quizAnswers.fullHealthIntake?.recommendedProductsPerArea)
+    : myProducts;
+  const currentIds = new Set(currentProducts.map((product) => product.id));
+  const earlierProducts = myProducts.filter((product) => !currentIds.has(product.id));
+  const groups = [...currentProducts.reduce((map, product) => {
+    const reason = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers).reasonDetails?.find((r) => ['primaryGoal', 'otherNeeds'].includes(r.component) && r.score > 0) : null;
+    const healthLabel = reason?.text?.replace(/^(Goal: |Another need you selected: )/, '');
+    const fallbackKey = product.areaKey || 'other';
+    const fallback = ECOSYSTEM_AREAS.find((area) => area.key === fallbackKey)?.label;
+    const functions = product.healthFunctions || [];
+    const productNeed = functions.includes('fertility') || product.tags?.includes('fertility') ? 'Fertility'
+      : functions.includes('sleep-energy') || product.tags?.includes('anemia') ? 'Energy' : null;
+    const label = healthAreaLabel(healthLabel || productNeed || fallback || 'More care');
+    const key = `area-${encodeURIComponent(label.toLowerCase())}`;
+    if (!map.has(key)) map.set(key, { key, label, products: [] });
+    map.get(key).products.push(product);
+    return map;
+  }, new Map()).values()];
+  const savedCount = Object.keys(savedProducts || {}).length;
 
-  const showingArea = selectedSeat && !selectedSeat.gap;
-  const gridTitle = showingArea ? selectedSeat.label : 'Matched for you';
-  const gridProducts = showingArea ? selectedSeat.products : myProducts;
+  return <div className="ayna-fresh-ecosystem ayna-cabinet-home">
+    <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
 
-  return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
-      <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onOpenProfile={onOpenProfile} />
-
-      <div style={{ padding: '18px 20px 0' }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.3 }}>
-          {getTimeGreeting()}, {name}
-        </div>
-      </div>
-
-      <div style={{ padding: '18px 20px 0' }}>
-        <EcosystemOrbit
-          products={myProducts}
-          name={name}
-          tags={tags}
-          selectedKey={selectedKey}
-          onSelectKey={setSelectedKey}
-          onSelect={setSelectedSeat}
-          onExploreArea={onBrowse}
-        />
-      </div>
-
-      <div style={{ padding: '18px 20px 0' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>{gridTitle}</div>
-          {showingArea ? (
-            <div onClick={() => setSelectedKey(null)} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: '#A2603C', cursor: 'pointer' }}>
-              Show all
-            </div>
-          ) : (
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: '#78716C' }}>
-              {gridProducts.length} product{gridProducts.length === 1 ? '' : 's'}
-            </div>
-          )}
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11 }}>
-          {gridProducts.map((p) => (
-            <ProductCard key={p.id} product={p} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
-          ))}
-        </div>
-      </div>
-
-      {relatedReads.length > 0 && (
-        <div style={{ padding: '24px 20px 0' }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Reads for you</div>
-          {relatedReads.map((a) => (
-            <ArticleCard key={a.id} article={a} onClick={() => onOpenArticle && onOpenArticle(a)} />
-          ))}
+    <section className="ayna-cabinet-stage ay-eco-hero" aria-labelledby="ayna-cabinet-title">
+      {groups.length > 0 && <div className="ay-eco-cover"><EcosystemChart groups={groups} /></div>}
+      <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
+      {currentProducts.length > 0 && <p className="ay-eco-meta">{currentProducts.length} {currentProducts.length === 1 ? 'pick' : 'picks'} · {groups.length} {groups.length === 1 ? 'area' : 'areas'}</p>}
+      {currentProducts.length > 0 && (
+        <div className="ay-eco-actions">
+          {onReplayStory && <button type="button" className="ay-eco-play" onClick={onReplayStory} aria-label="Replay your Wrapped"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></button>}
+          {onReplayStory && <span className="ay-eco-play-label">Replay Wrapped</span>}
+          <button type="button" className="ay-text-btn" onClick={onRetake}>Update</button>
         </div>
       )}
+      {currentProducts.length === 0 && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers or browse the shop." actionLabel="Shop" onAction={onBrowse} secondaryLabel="Update" onSecondary={onRetake} />}
+      {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
+    </section>
 
-      <div style={{ padding: '20px 20px 0' }}>
-        <CtaBanner title="Update Ayna on your health" buttonLabel="Monthly check-in" onClick={onOpenMonthlyCheckin} />
-      </div>
 
-      <div style={{ padding: '4px 20px 0' }}>
-        <div
-          onClick={onRetake}
-          style={{
-            textAlign: 'center',
-            padding: 14,
-            border: '1px solid #E1D5CE',
-            borderRadius: 99,
-            fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
-            color: '#78716C',
-            cursor: 'pointer',
-          }}
-        >
-          Retake the intake
-        </div>
-      </div>
-      <LegalFooter />
-    </div>
-  );
+    {groups.map((group, index) => <section key={group.key} id={`ayna-area-${group.key}`} className="ayna-cabinet-collection ayna-area-collection" style={{ '--area-tone': AREA_TONES[index % AREA_TONES.length] }} aria-labelledby={`ayna-area-title-${group.key}`}>
+      <div className="ayna-cabinet-section-head"><h2 id={`ayna-area-title-${group.key}`}><small aria-hidden="true">{String(index + 1).padStart(2, '0')}</small>{group.label}</h2><span>{group.products.length} {group.products.length === 1 ? 'pick' : 'picks'}</span></div>
+      <div className="ayna-editorial-product-grid">{group.products.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />)}</div>
+    </section>)}
+
+    {suggestedEcosystemProducts.length > 0 && <section className="ayna-cabinet-collection" aria-labelledby="ayna-cabinet-next-title">
+      <div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-next-title">Worth a look</h2></div>
+      <div className="ayna-editorial-product-grid">{suggestedEcosystemProducts.map((product) => <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to Ecosystem</button></div>)}</div>
+    </section>}
+
+    {relatedReads.length > 0 && <section className="ayna-cabinet-reads" aria-labelledby="ayna-cabinet-reads-title"><div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-reads-title">Read next</h2></div>{relatedReads.slice(0, 3).map((article) => <ArticleCard key={article.id} article={article} compact onClick={() => onOpenArticle?.(article)} />)}</section>}
+
+    <section className="ayna-home-today"><h2>Monthly check-in</h2><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>
+
+    <section className="ayna-cabinet-more" aria-label="More ways to manage your cabinet">
+      {earlierProducts.length > 0 && <details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your Ecosystem outside your current shortlist.</p><div className="ayna-editorial-product-grid">{earlierProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} />)}</div></details>}
+      <details><summary>Manage Ecosystem <span>{savedCount} saved</span></summary><button type="button" onClick={onRetake}>Update recommendations</button><button type="button" className="ayna-destructive-text" onClick={onRequestEcosystemReset}>Reset Ecosystem</button></details>
+    </section>
+    <LegalFooter />
+  </div>;
 }

@@ -1,0 +1,298 @@
+/* Ayna's new app: bold color, stacked stories, real catalog photography. */
+.ayna-mobile {
+  --ayna-bg: #f7f7f5;
+  --ayna-bg-alt: #f0f0ee;
+  --ayna-surface: #fff;
+  --ayna-border: #e8e8e5;
+  --ayna-text: #161616;
+  --ayna-text-muted: #616161;
+  --ayna-heading: #161616;
+  --ayna-cta-bg: #1D1A2B;
+  --ayna-cta-text: #fff;
+  --ayna-fresh-blue: #1D1A2B;
+  --ayna-fresh-lime: #F7BADD;
+  --ayna-fresh-pink: #F7BADD;
+  --ayna-fresh-lilac: #EEF0FD;
+  --ayna-fresh-mint: #F7BADD;
+  --ayna-fresh-black: #1D1A2B;
+  font-family: var(--ayna-font-ui);
+  background: #f7f7f5;
+}
+.ayna-mobile .ayna-bottom-nav,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav {
+  width: calc(100% - 28px);
+  align-self: center;
+  flex: none;
+  margin: 0 14px max(9px,env(safe-area-inset-bottom));
+  padding: 6px;
+  border: 1px solid #dededb;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 9px 24px rgba(20,20,20,.11);
+  z-index: 70;
+}
+.ayna-mobile .ayna-bottom-nav button,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button { min-height: 52px; gap: 4px; border-radius: 18px; color: #575757; font-size: 10px; }
+.ayna-mobile .ayna-bottom-nav button.is-active,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { background: var(--ayna-fresh-blue); color: #fff; border-radius: 18px; }
+.ayna-mobile .ayna-bottom-nav button.is-active::after { display: none; }
+.ayna-mobile .ayna-bottom-nav svg { width: 20px; height: 20px; }
+
+/* Opening: a drawn composition made with CSS, without generated imagery. */
+.ayna-fresh-welcome { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; position: relative; color: #fff; }
+.ayna-fresh-wordmark { font: 800 30px/1 var(--ayna-font-ui); letter-spacing: -.095em; color: #fff; }
+.ayna-fresh-welcome h1 { margin: 14px 0 0; color: var(--ayna-fresh-lime); font: 900 clamp(43px,12.8vw,66px)/.94 var(--ayna-font-ui); letter-spacing: -.07em; }
+.ayna-fresh-welcome h1 em { color: #fff; font-style: normal; }
+.ayna-fresh-browse { width: 100%; min-height: 52px; margin-top: 9px; border: 1.5px solid rgba(255,255,255,.85); border-radius: 15px; background: transparent; color: #fff; font: 800 14px var(--ayna-font-ui); }
+
+/* Signed-out Ecosystem introduction. */
+.ayna-fresh-intro-steps span:nth-child(2) { background: var(--ayna-fresh-pink); }.ayna-fresh-intro-steps span:nth-child(3) { background: var(--ayna-fresh-lilac); }
+
+/* The signed-in home is a stack of useful, tappable stories. */
+.ayna-fresh-ecosystem { flex: 1; min-height: 0; overflow-y: auto; padding: 0 0 45px; }
+
+/* Product tiles are large visual panels with a consistent fact strip. */
+.ayna-fresh-product-card { display: flex; flex-direction: column; width: 100%; height: 100%; min-width: 0; overflow: hidden; padding: 0; border: 1px solid #e5e5e2; border-radius: 18px; background: #fff; color: #1D1A2B; text-align: left; font-family: var(--ayna-font-ui); cursor: pointer; }
+.ayna-fresh-product-card .ayna-fresh-product-image { position: relative; display: block; width: 100%; aspect-ratio: 1 / 1.05; overflow: hidden; background: #e8e8e8; }
+.ayna-fresh-product-card.tone-lime .ayna-fresh-product-image { background: #e6f5b6; }
+.ayna-fresh-product-card.tone-mint .ayna-fresh-product-image { background: #d3f3e9; }
+.ayna-fresh-product-card.tone-pink .ayna-fresh-product-image { background: #f7d8ef; }
+.ayna-fresh-product-card.tone-lilac .ayna-fresh-product-image { background: #dfe4ff; }
+.ayna-fresh-product-image img { box-sizing: border-box; }
+.ayna-fresh-match-badge { position: absolute; z-index: 2; padding: 7px 8px; border-radius: 8px; background: #1D1A2B; color: #fff; font: 800 10px var(--ayna-font-ui); }
+.ayna-fresh-product-copy { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.ayna-fresh-product-category { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #1D1A2B; text-transform: uppercase; letter-spacing: .06em; font: 800 9px var(--ayna-font-ui); }
+.ayna-fresh-product-copy > strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; color: #1D1A2B; font: 800 15px/1.25 var(--ayna-font-ui); }
+.ayna-fresh-product-reason { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 6px; color: #525252; font: 600 11px/1.35 var(--ayna-font-ui); }
+.ayna-fresh-product-foot { display: flex; justify-content: space-between; align-items: center; gap: 5px; margin-top: auto; padding-top: 10px; }
+.ayna-fresh-product-foot span { display: grid; place-items: center; width: 27px; height: 27px; flex: none; border-radius: 50%; background: #1D1A2B; color: #fff; font-size: 18px; }
+.ayna-fresh-product-context { margin-top: 8px; padding-top: 7px; border-top: 1px solid #e8e8e5; color: #545454; font: 700 10px/1.2 var(--ayna-font-ui); }
+.ayna-fresh-product-card.is-list { flex-direction: row; min-height: 112px; }
+.ayna-fresh-product-card.is-list .ayna-fresh-product-image { width: 104px; aspect-ratio: auto; flex: none; }
+.ayna-fresh-product-card.is-list .ayna-fresh-product-copy > strong { min-height: 0; }
+.ayna-fresh-product-card.is-list .ayna-fresh-product-context { display: none; }
+
+/* Browse puts discovery ahead of controls while keeping every filter. */
+.ayna-fresh-browse-screen { flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 46px; }
+.ayna-fresh-browse-heading { position: relative; overflow: hidden; color: #1D1A2B; }
+.ayna-fresh-browse-heading > span { position: relative; z-index: 1; font: 800 10px var(--ayna-font-ui); letter-spacing: .13em; }
+.ayna-fresh-browse-heading h1 { position: relative; z-index: 1; margin: 17px 0 9px; font: 900 clamp(40px,11vw,55px)/.92 var(--ayna-font-ui); letter-spacing: -.07em; }
+.ayna-fresh-browse-heading h1 em { font: italic 500 1.07em var(--ayna-font-display); }
+.ayna-fresh-browse-heading p { position: relative; z-index: 1; max-width: 270px; margin: 0; font: 600 12px/1.4 var(--ayna-font-ui); }
+.ayna-fresh-browse-heading i { position: absolute; background: var(--ayna-fresh-lime); clip-path: polygon(50% 0,61% 28%,89% 9%,72% 40%,100% 50%,72% 60%,89% 91%,61% 72%,50% 100%,39% 72%,11% 91%,28% 60%,0 50%,28% 40%,11% 9%,39% 28%); transform: rotate(-20deg); }
+.ayna-fresh-search-wrap { padding: 17px 20px 12px; }
+.ayna-fresh-search { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 53px; padding: 0 13px; border: 2px solid #1D1A2B; border-radius: 14px; background: #fff; color: #1D1A2B; }
+.ayna-fresh-search:focus-within { outline: 3px solid #F7BADD; outline-offset: 2px; }
+.ayna-fresh-search input { flex: 1; min-width: 0; height: 48px; border: 0; outline: 0; background: transparent; color: #1D1A2B; font: 600 14px var(--ayna-font-ui); }
+.ayna-fresh-search input::placeholder { color: #666; opacity: 1; }
+.ayna-fresh-search button { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border: 0; border-radius: 10px; background: #F7BADD; color: #1D1A2B; }
+.ayna-fresh-browse-screen .ayna-fresh-mode-tab { min-width: 79px; min-height: 44px; padding: 8px 13px !important; margin: 0 !important; border: 0 !important; background: #f0f0ef; color: #1D1A2B !important; font-weight: 800 !important; }
+.ayna-fresh-browse-screen .ayna-fresh-mode-tab[aria-pressed='true'] { background: #1D1A2B; color: #fff !important; }
+.ayna-fresh-browse-screen .ayna-editorial-product-grid { gap: 13px !important; }
+
+/* Community reads like a social space, with a distinct mint masthead. */
+.ayna-mobile .am-scroll { padding-left: 0; padding-right: 0; }
+.ayna-mobile .am-top { min-height: 110px; margin: 0; padding: 16px 20px; background: var(--ayna-fresh-mint); }
+.ayna-mobile .am-top small { color: #1D1A2B; font: 800 10px var(--ayna-font-ui); letter-spacing: .12em; }
+.ayna-mobile .am-top h1 { margin-top: 5px; color: #1D1A2B; font: 900 36px/1 var(--ayna-font-ui); letter-spacing: -.07em; }
+.ayna-mobile .am-top-actions button { background: #fff; border-color: #1D1A2B; }
+.ayna-mobile .am-search { margin: 15px 20px 14px; border: 2px solid #1D1A2B; border-radius: 14px; box-shadow: none; }
+.ayna-mobile .am-tabs { gap: 16px; margin: 0 0 12px; padding: 0 20px; border-bottom: 1px solid #dededb; }
+.ayna-mobile .am-tabs button { min-height: 44px; padding: 10px 0 11px; font-weight: 800; }
+.ayna-mobile .am-share-prompt { margin-left: 20px; margin-right: 20px; border: 1px solid #dededb; border-radius: 15px; background: #f7f7f5; }
+.ayna-mobile .am-card.am-post-card { border-right: 0; border-left: 0; }
+.ayna-mobile .am-post-head { padding-left: 20px; padding-right: 20px; }
+.ayna-mobile .am-postbody { padding-left: 20px; padding-right: 20px; }
+.ayna-mobile .am-empty-state { margin: 14px 20px; border: 0; border-radius: 18px; background: #F7BADD; box-shadow: none; }
+.ayna-mobile .am-empty-art span:nth-child(1) { background: #F7BADD; }.ayna-mobile .am-empty-art span:nth-child(2) { background: #EEF0FD; }.ayna-mobile .am-empty-art span:nth-child(3) { background: #1D1A2B; }
+.ayna-mobile .am-empty-state h2 { max-width: 280px; color: #1D1A2B; font: 800 27px/1.05 var(--ayna-font-ui); letter-spacing: -.06em; }
+.ayna-mobile .am-empty-state p { color: #303030; font-weight: 600; }
+.ayna-mobile .am-empty-state > button { min-height: 45px; border-radius: 12px; background: #1D1A2B; color: #fff; font-weight: 800; }
+.ayna-mobile .am-playlist-grid,.ayna-mobile .am-list-heading,.ayna-mobile .am-playlist-switch,.ayna-mobile .am-search-results,.ayna-mobile .am-more { margin-left: 20px; margin-right: 20px; }
+
+/* Profile: light account sheet with a cobalt identity panel. */
+.ayna-fresh-profile-hero::after { content: ''; position: absolute; width: 170px; height: 170px; right: -45px; top: -48px; clip-path: polygon(50% 0,61% 28%,89% 9%,72% 40%,100% 50%,72% 60%,89% 91%,61% 72%,50% 100%,39% 72%,11% 91%,28% 60%,0 50%,28% 40%,11% 9%,39% 28%); }
+.ayna-fresh-profile-hero > div:first-child > div:first-child { font: 900 28px var(--ayna-font-ui) !important; letter-spacing: -.1em !important; }
+.ayna-fresh-profile-hero > div:nth-child(2) > div:last-child > div:first-child { font-size: 30px !important; font-weight: 900 !important; }
+.ayna-fresh-profile-stats > div:nth-child(1) { background: #F7BADD !important; }.ayna-fresh-profile-stats > div:nth-child(2) { background: #F7BADD !important; }.ayna-fresh-profile-stats > div:nth-child(3) { background: #EEF0FD !important; }
+.ayna-fresh-profile-menu > div:not(:first-child) { border-color: #e0e0dc !important; }
+.ayna-fresh-profile-menu > div:nth-child(2) > div:first-child { background: #F7BADD !important; }.ayna-fresh-profile-menu > div:nth-child(3) > div:first-child { background: #F7BADD !important; }.ayna-fresh-profile-menu > div:nth-child(4) > div:first-child { background: #EEF0FD !important; }
+
+/* Detail pages borrow the layered-card framing from the editorial reference. */
+.ayna-fresh-product-detail { background: #f7f7f5 !important; }
+.ayna-fresh-detail-image { position: relative; border-radius: 20px !important; background: #dedfff !important; }
+.ayna-fresh-detail-image > div { aspect-ratio: 1 / 1.06 !important; border-radius: 20px !important; background: #dedfff !important; }
+.ayna-fresh-detail-image img { padding: 22px; box-sizing: border-box; }
+.ayna-fresh-detail-title { position: relative; z-index: 1; margin: -10px 20px 0; padding: 20px 18px 19px !important; border-radius: 19px; background: #fff; box-shadow: 0 8px 28px rgba(20,20,20,.08); }
+.ayna-fresh-detail-title h1 { font-size: clamp(27px,8vw,38px) !important; font-weight: 900 !important; letter-spacing: -.07em !important; }
+.ayna-fresh-detail-title button { border-radius: 11px !important; }
+.ayna-fresh-detail-title > div:first-child { color: #1D1A2B !important; }
+
+@media (max-height: 700px) { .ayna-fresh-welcome-copy { padding-top: 24px; } .ayna-fresh-welcome h1 { font-size: clamp(40px,10.5vw,55px); } .ayna-fresh-playground { min-height: 175px; } }
+@media (min-width: 700px) {
+  .ayna-mobile[data-preview='true'] .ayna-fresh-profile-overlay,
+  .ayna-mobile[data-preview='true'] .ayna-fresh-detail-overlay { position: absolute !important; }
+}
+@media (prefers-reduced-motion: reduce) { .ayna-fresh-welcome *, .ayna-fresh-stack-card * { animation: none !important; transition: none !important; } }
+
+/* Rebuilt visual language: editorial photography, useful color, breathing room. */
+.ayna-mobile { --ayna-navy:#1D1A2B; --ayna-accent-dark:#1D1A2B; --ayna-peach:#e8edff; --ayna-brown:#1D1A2B; --ayna-chip-bg:#f4f3ff; --ayna-chip-border:#d9d8ec; }
+.ayna-mobile .ayna-bottom-nav { margin-bottom:max(11px,env(safe-area-inset-bottom)); border:1px solid #d9dce7; border-radius:22px; padding:5px; }
+.ayna-mobile .ayna-bottom-nav button { min-width:0; min-height:54px; padding:6px 2px; gap:3px; font-size:10px; line-height:1.1; }
+.ayna-mobile .ayna-bottom-nav button.is-active { background:#1D1A2B; color:#fff; }
+.ayna-mobile .ayna-bottom-nav button.is-active svg { stroke:#F7BADD; }
+.ayna-mobile .ayna-bottom-nav span { white-space:nowrap; }
+
+/* Opening: real founder photography in an overlapping editorial card stack. */
+.ayna-fresh-welcome { background:#1D1A2B; }
+.ayna-fresh-welcome h1 { margin-top:12px; font-size:clamp(43px,11vw,60px); line-height:.96; }
+.ayna-fresh-start,.ayna-fresh-browse { border-radius:15px; min-height:55px; }
+
+/* The introduction uses the orbit motif from the community reference. */
+
+/* Home becomes a photographic story feed with consistent spacing. */
+.ayna-fresh-ecosystem { background:#FCFBFB; }
+
+/* Scannable full-width product stories, instead of cramped two-column tiles. */
+.ayna-fresh-browse-screen .ayna-editorial-product-grid,
+.ayna-fresh-ecosystem .ayna-editorial-product-grid,
+.ayna-fresh-ecosystem section[aria-label='Top matches to add'] > div,
+.ayna-fresh-ecosystem details > div { display:grid!important; grid-template-columns:minmax(0,1fr)!important; gap:16px!important; }
+.ayna-fresh-product-card:not(.is-list) { flex-direction:row; min-height:174px; height:auto; border-color:#dce0e8; border-radius:18px; box-shadow:0 3px 0 #e9e9ef; }
+.ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { flex:none; width:41%; min-height:172px; aspect-ratio:auto; }
+.ayna-fresh-product-image img { padding:14px; }
+.ayna-fresh-product-copy { padding:15px 14px 13px; }
+.ayna-fresh-product-category { font-size:10px; }
+.ayna-fresh-product-copy > strong { min-height:0; margin-top:7px; font-size:17px; line-height:1.15; }
+.ayna-fresh-product-reason { font-size:11px; }
+.ayna-fresh-product-foot { font-size:15px; }
+.ayna-fresh-product-context { font-size:10px; line-height:1.35; }
+.ayna-fresh-match-badge { top:8px; left:8px; font-size:10px; }
+
+/* Browse is a lavender discovery canvas, not the former category grid. */
+.ayna-fresh-browse-screen { background:#FCFBFB; }
+.ayna-fresh-browse-heading { min-height:215px; padding:27px 23px; background:#EEF0FD; }
+.ayna-fresh-browse-heading h1 { max-width:290px; font-size:clamp(44px,11.3vw,58px); line-height:.96; }
+.ayna-fresh-browse-heading i { right:-18px; top:31px; width:125px; height:125px; opacity:.75; }
+.ayna-fresh-search-wrap { padding-top:16px; padding-bottom:16px; }
+.ayna-fresh-browse-screen .ayna-fresh-mode-tab { border-radius:13px!important; }
+
+/* A lighter intake with a blue progress rail and spacious choices. */
+
+@media (max-height:740px) {
+  .ayna-fresh-welcome h1 { font-size:clamp(39px,10vw,52px); }
+}
+
+/* A compact two-up dashboard beneath the photographic feature. */
+.ayna-fresh-home-stack .stack-pink,
+.ayna-fresh-home-stack .stack-pink strong,
+.ayna-fresh-home-stack .stack-pink .ayna-fresh-stack-action,
+
+/* Keep the orbit labels clear of the headline on narrow phones. */
+@media (max-width:375px) { .ayna-fresh-intro-stage { min-height:420px; } .ayna-fresh-intro-stage h1 { font-size:36px; } }
+
+/* Profile is a light personal dashboard instead of the former dark account sheet. */
+.ayna-fresh-profile-hub { background:#FCFBFB; }
+.ayna-fresh-profile-hero { background:#EEF0FD!important; color:#1D1A2B!important; padding-bottom:25px!important; }
+.ayna-fresh-profile-hero::after { background:#EEF0FD; opacity:.55; }
+.ayna-fresh-profile-hero > div:first-child > div:first-child { color:#1D1A2B!important; }
+.ayna-fresh-profile-hero > div:first-child > div:last-child { border:1px solid #1D1A2B!important; background:#fff!important; color:#1D1A2B!important; }
+.ayna-fresh-profile-hero > div:nth-child(2) > div:first-child { background:#F7BADD!important; color:#1D1A2B!important; font-family:var(--ayna-font-ui)!important; font-weight:900!important; }
+.ayna-fresh-profile-hero > div:nth-child(2) > div:last-child > div:last-child { color:#45456a!important; }
+.ayna-fresh-profile-menu { gap:13px!important; padding-top:27px!important; background:#FCFBFB; }
+.ayna-fresh-profile-menu > div:not(:first-child) { min-height:73px; border:1px solid #e1e2ec!important; border-radius:16px!important; background:#fff!important; }
+.ayna-fresh-profile-menu > div:not(:first-child) > div:nth-child(2) > div:first-child { font-weight:800!important; }
+
+/* Reads follow the same clean editorial rhythm and show the real article image. */
+.ayna-fresh-ecosystem .ayna-editorial-read { min-height:145px; grid-template-columns:minmax(0,1fr) 113px; gap:15px; margin:0 0 13px; padding:15px; border:1px solid #e0e2eb; border-radius:18px; background:#fff; box-shadow:0 3px 0 #ececf2; }
+.ayna-fresh-ecosystem .ayna-editorial-read-copy small { color:#1D1A2B; }
+.ayna-fresh-ecosystem .ayna-editorial-read-copy strong { font-size:17px; font-weight:800; line-height:1.17; }
+.ayna-fresh-ecosystem .ayna-editorial-read-image { height:112px; border-radius:12px; background:#EEF0FD; }
+
+/* Account creation is a calm light surface; the intake remains the first step. */
+.ayna-fresh-auth { background:#EEF0FD!important; color:#1D1A2B!important; }
+.ayna-fresh-auth-back { border:1px solid #1D1A2B!important;background:#fff!important;color:#1D1A2B!important;border-radius:12px!important;font-weight:800!important; }
+.ayna-fresh-auth-heading { margin-top:8px; color:#1D1A2B; font-size:calc(42px * var(--ayna-text-scale,1))!important; font-weight:900!important; line-height:1!important; letter-spacing:-.07em!important; }
+.ayna-fresh-auth-field { border:1px solid #d5d8e9; border-radius:15px!important; box-shadow:0 3px 0 rgba(32,60,156,.08)!important; }
+.ayna-fresh-auth-field span { color:#454759!important; }
+.ayna-fresh-auth input[type='checkbox'] { accent-color:#1D1A2B!important; }
+.ayna-fresh-auth input[type='checkbox'] + span { color:#373a4b!important; }
+.ayna-fresh-auth-primary { min-height:55px; background:#1D1A2B!important; color:#fff!important; border-radius:14px!important; font-weight:800!important; }
+.ayna-fresh-auth-primary:disabled { background:#acb5d7!important; }
+.ayna-fresh-auth-primary svg { stroke:#fff!important; }
+.ayna-fresh-auth-social { min-height:54px; border:1px solid #c9cee2!important; border-radius:14px!important; background:#fff!important; color:#1D1A2B!important; font-weight:700!important; }
+.ayna-fresh-auth-social svg path[fill='#FFFFFF'] { fill:#1D1A2B; }
+.ayna-fresh-auth > div[style*='rgba(255, 252, 249'] { color:#414455!important; }
+.ayna-fresh-auth > div[style*='rgba(255, 252, 249'] svg { stroke:#1D1A2B!important; }
+.ayna-fresh-auth > div[style*='flex: 1'] { min-height:0; }
+
+/* Reads open as a photo-led magazine page, with space between paragraphs. */
+.ayna-fresh-article { background:#FCFBFB!important; }
+.ayna-fresh-auth-switch { color:#1D1A2B!important; font-weight:800; text-decoration:underline; text-underline-offset:3px; }
+.ayna-fresh-auth-trust { color:#454759; opacity:1!important; }
+.ayna-fresh-auth-trust svg { stroke:#1D1A2B!important; }
+.ayna-fresh-auth > div:last-child { color:#454759!important; }
+
+/* Saved products use the same bento and image-forward card language. */
+.ayna-fresh-saved { background:#FCFBFB!important; }
+.ayna-fresh-saved > div:first-child { background:#EEF0FD; border-bottom:0!important; padding-bottom:19px!important; }
+.ayna-fresh-saved > div:first-child > div:first-child > div:nth-child(2) > div:first-child { font-size:34px!important; font-weight:900!important; color:#1D1A2B!important; }
+
+/* Community posts and playlists share the new card system with Browse. */
+.ayna-mobile .am-screen { background:#FCFBFB; }
+.ayna-mobile .am-card.am-post-card { margin:0 20px 16px!important; border:1px solid #e1e3eb!important; border-radius:19px!important; background:#fff; box-shadow:0 3px 0 #ebecf2!important; overflow:hidden; }
+.ayna-mobile .am-post-head { padding:16px 16px 0!important; }
+.ayna-mobile .am-postbody { padding:14px 16px 9px!important; font-size:14px; line-height:1.5; }
+.ayna-mobile .am-post-card .am-product { margin-left:16px; margin-right:16px; width:calc(100% - 32px); border-radius:13px; }
+.ayna-mobile .am-playlist-grid { gap:12px; }
+.ayna-mobile .am-playlist { overflow:hidden; border:1px solid #e1e3eb; border-radius:16px; background:#fff; box-shadow:0 3px 0 #ebecf2; }
+.ayna-mobile .am-playlist .am-cover { border-radius:12px; }
+
+/* The vivid light palette is the default; dark surfaces appear only in dark mode. */
+.ayna-mobile[data-theme='dark'] { --ayna-bg:#171719; --ayna-surface:#242429; --ayna-border:#3b3d49; --ayna-text:#FCFBFB; --ayna-text-muted:#c4c5d0; --ayna-heading:#fff; --ayna-chip-bg:#2d2e38; --ayna-chip-border:#464854; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-ecosystem,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-browse-screen,
+.ayna-mobile[data-theme='dark'] .am-screen,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hub,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-saved,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-article { background:#171719!important; }
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav { background:#242429; border-color:#464854; }
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button:not(.is-active) { color:#d0d0d9; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-ecosystem .ayna-editorial-read,
+.ayna-mobile[data-theme='dark'] .am-card.am-post-card,
+.ayna-mobile[data-theme='dark'] .am-playlist { background:#242429; border-color:#464854!important; color:#fff; box-shadow:none!important; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-copy>strong,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-foot,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-ecosystem .ayna-editorial-read-copy strong { color:#fff; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-reason,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-product-context { color:#d0d0d9; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-home-heading h1,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu { background:#171719; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu>button { background:#242429!important; border-color:#464854!important; }
+
+/* Onboarding continues in the same orbit-and-card language. */
+
+/* The returning check-in gets the same large type, blue rail, and quiet cards. */
+
+/* The match explanation emphasizes verified reasons in tidy numbered cards. */
+.ayna-fresh-match-header h1,
+
+/* Community creation and detail screens keep the same type and color rules. */
+.ayna-mobile .am-sheet-head h2,
+.ayna-mobile .am-detail-title,
+.ayna-mobile .am-list-heading h2,
+.ayna-mobile .am-section,
+.ayna-mobile .am-empty-state h2 { font-family:var(--ayna-font-ui)!important; font-weight:900!important; letter-spacing:-.045em; line-height:1.09; }
+.ayna-mobile .am-cover-preview span { font-family:var(--ayna-font-ui)!important; font-style:normal!important; font-weight:900; letter-spacing:-.045em; }
+.ayna-mobile .am-audience label.is-selected { border-color:#1D1A2B; background:#EEF0FD; }
+.ayna-mobile .am-cover-mode button.is-active { background:#1D1A2B; color:#fff; }
+.ayna-mobile .am-avatar { background:#EEF0FD; color:#1D1A2B; }
+.ayna-mobile .am-share-plus { background:#F7BADD; color:#1D1A2B; }
+.ayna-mobile .am-tabs button.is-active { color:#1D1A2B; border-bottom-color:#1D1A2B; }
+
+/* A missing catalog photo remains a designed, plainly labelled placeholder. */
+.ayna-fresh-photo-placeholder { display:grid; place-items:center; overflow:hidden; background:#EEF0FD; color:#1D1A2B; }
+.ayna-fresh-photo-placeholder-shape { position:absolute; width:70%; aspect-ratio:1; border:13px solid #EEF0FD; border-radius:50%; transform:translate(30%,-23%); }
+.ayna-fresh-photo-placeholder-shape::after { content:''; position:absolute; width:55%; height:55%; left:-65%; bottom:-40%; background:#F7BADD; border-radius:18px; transform:rotate(-19deg); }
+.ayna-fresh-photo-placeholder-mark { position:relative; z-index:1; font:900 20px/.9 var(--ayna-font-ui); letter-spacing:-.08em; }

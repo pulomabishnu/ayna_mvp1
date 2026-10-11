@@ -55,6 +55,7 @@ const LOCAL_API_ROUTES = [
   'contact',
   'notification-preferences',
   'export-data',
+  'ask-ayna',
 ]
 
 function apiDevProxy(routes, env) {
@@ -100,9 +101,9 @@ function apiDevProxy(routes, env) {
 }
 
 // https://vite.dev/config/
-export default defineConfig(async ({ mode }) => {
+export default defineConfig(async ({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const port = await pickAllowedPort()
+  const port = command === 'serve' && mode !== 'test' ? await pickAllowedPort() : 5173
   return {
     base: '/',
     plugins: [react(), apiDevProxy(LOCAL_API_ROUTES, env)],

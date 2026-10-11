@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-const LAYOUT_KEY = 'ayna_mobile_card_layout_v1';
+const LAYOUT_KEY = 'ayna_mobile_card_layout_v3';
 
 function loadLayout() {
   try {

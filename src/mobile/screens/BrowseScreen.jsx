@@ -1,16 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
-import CtaBanner from '../components/CtaBanner.jsx';
+import DiscoverDeck from '../components/DiscoverDeck.jsx';
+import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
-import { getPersonalizedProductIds, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
+import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
 import { getArticlesByProfileRelevance } from '../../components/Articles.jsx';
+import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
-import { useCardLayout } from '../hooks/useCardLayout.js';
 
 // Fisher-Yates — uniform shuffle, unlike sort(() => Math.random() - 0.5)
 // (which is biased and not a proper random permutation).
@@ -23,33 +24,64 @@ function fisherYatesShuffle(list) {
   return result;
 }
 
+const FILTER_FIELDS = [
+  ['category', 'Product type', [['all', 'All products']]],
+  ['price', 'Price', [['all', 'Any price'], ['under-25', 'Under $25'], ['25-50', '$25–$50'], ['50-100', '$50–$100'], ['100-plus', '$100+']]],
+  ['rating', 'Rating', [['all', 'Any rating'], ['4-plus', '4+ stars']]],
+  ['ayna', 'Match & sources', [['all', 'Any'], ['best-match', 'Best match'], ['clinician', 'Clinician backed'], ['community', 'Community favorite'], ['ecosystem', 'In my Ecosystem']]],
+  ['preference', 'Preferences', [['all', 'Any'], ['fragrance-free', 'Fragrance free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']]],
+  ['eligibility', 'Eligibility', [['all', 'Any'], ['fsa-hsa', 'FSA/HSA eligible'], ['fsa', 'FSA eligible'], ['hsa', 'HSA eligible']]],
+  ['sustainability', 'Sustainability', [['all', 'Any'], ['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']]],
+  ['lifeStage', 'Life stage', [['all', 'Any'], ['fertility', 'Fertility'], ['pregnancy', 'Pregnancy'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause'], ['menopause', 'Menopause']]],
+];
+const EMPTY_FILTERS = Object.fromEntries(FILTER_FIELDS.map(([key]) => [key, 'all']));
+const PRICE_VALUE = (item) => {
+  const raw = String(item.price || item.priceDisplay || '');
+  const amount = raw.match(/\$\s*([\d,]+(?:\.\d+)?)/);
+  return amount ? Number(amount[1].replaceAll(',', '')) : /^free\b/i.test(raw) ? 0 : null;
+};
+const RATING_VALUE = (item) => item.ratingNote ? null : Number.isFinite(Number(item.userRating)) ? Number(item.userRating) : null;
+const ELIGIBILITY = (item) => {
+  const menstrual = ['pad', 'tampon', 'cup', 'disc'].includes(item.category);
+  const both = menstrual || item.fsaHsaEligible === true || item.fsa_hsa_eligible === true;
+  return { fsa: both || item.fsaEligible === true || item.fsa_eligible === true, hsa: both || item.hsaEligible === true || item.hsa_eligible === true };
+};
+const PREFERENCE_TERMS = { 'fragrance-free': ['fragrance free', 'fragrance-free'], 'sensitive-skin': ['sensitive skin'], vegan: ['vegan'], 'cruelty-free': ['cruelty free', 'cruelty-free'], organic: ['organic'], 'clean-ingredients': ['clean ingredients'] };
+const SUSTAINABILITY_TERMS = { reusable: ['reusable', 'reuse'], recyclable: ['recyclable', 'recycled'], 'low-waste': ['low waste', 'zero waste', 'low-waste'], packaging: ['sustainable packaging', 'plastic-free packaging', 'compostable packaging'] };
+
 const PAGE_SIZE = 20;
 
 function ModeTab({ label, active, onClick }) {
   return (
-    <div
+    <button
+      type="button"
+      className="ayna-fresh-mode-tab"
+      aria-pressed={active}
       onClick={onClick}
       style={{
-        fontFamily: "'DM Sans',sans-serif",
+        fontFamily: "var(--ayna-font-ui)",
         fontWeight: 600,
         fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
         cursor: 'pointer',
         paddingBottom: 10,
         color: active ? 'var(--ayna-text)' : 'var(--ayna-text-faint)',
-        borderBottom: '2px solid ' + (active ? '#FFC774' : 'transparent'),
+        borderBottom: '2px solid ' + (active ? 'var(--ayna-accent)' : 'transparent'),
         marginBottom: -1,
       }}
     >
       {label}
-    </div>
+    </button>
   );
 }
 
 function PersonalizedToggle({ on, disabled, onClick }) {
   return (
-    <div
-      onClick={disabled ? undefined : onClick}
-      title={disabled ? 'Complete your profile to personalize' : undefined}
+    <button
+      type="button"
+      aria-pressed={on}
+      aria-label="Personalized products"
+      disabled={disabled}
+      onClick={onClick}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -57,18 +89,19 @@ function PersonalizedToggle({ on, disabled, onClick }) {
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.45 : 1,
         padding: '5px 5px 5px 10px',
+        border: 0,
         borderRadius: 99,
         background: on ? 'var(--ayna-text)' : 'var(--ayna-chip-bg)',
         transition: 'background .15s',
       }}
     >
-      <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: on ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)' }}>For You</span>
+      <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: on ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)' }}>Personalized</span>
       <div
         style={{
           width: 30,
           height: 17,
           borderRadius: 99,
-          background: on ? '#FFC774' : 'var(--ayna-chip-border)',
+          background: on ? 'var(--ayna-accent)' : 'var(--ayna-chip-border)',
           position: 'relative',
           transition: 'background .15s',
         }}
@@ -86,63 +119,10 @@ function PersonalizedToggle({ on, disabled, onClick }) {
           }}
         />
       </div>
-    </div>
+    </button>
   );
 }
 
-function LayoutToggle({ layout, onToggle }) {
-  return (
-    <div
-      onClick={onToggle}
-      role="button"
-      aria-label={layout === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
-      style={{
-        width: 30,
-        height: 30,
-        borderRadius: 8,
-        border: '1px solid var(--ayna-chip-border)',
-        background: 'var(--ayna-chip-bg)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
-        color: 'var(--ayna-text-muted)',
-        marginLeft: 8,
-      }}
-    >
-      {layout === 'grid' ? '☰' : '▦'}
-    </div>
-  );
-}
-
-function CategoryChipRow({ groups, active, onSelect }) {
-  return (
-    <div style={{ display: 'flex', gap: 7, overflowX: 'auto', padding: '0 20px 12px', scrollbarWidth: 'none' }}>
-      {groups.map((g) => (
-        <div
-          key={g.id}
-          onClick={() => onSelect(g.id)}
-          style={{
-            flex: 'none',
-            padding: '7px 13px',
-            borderRadius: 99,
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 600,
-            fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
-            cursor: 'pointer',
-            whiteSpace: 'nowrap',
-            background: active === g.id ? 'var(--ayna-text)' : 'var(--ayna-chip-bg)',
-            color: active === g.id ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)',
-            border: '1px solid ' + (active === g.id ? 'var(--ayna-text)' : 'var(--ayna-chip-border)'),
-          }}
-        >
-          {g.label}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function SkeletonCard() {
   return (
@@ -188,7 +168,7 @@ function PixelateGrid({ count = 6 }) {
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch }) {
+function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
@@ -218,14 +198,18 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
   return (
     <>
       <div
+        className={`ayna-editorial-product-grid${isList ? ' is-list-layout' : ''}`}
         style={
           isList
-            ? { display: 'flex', flexDirection: 'column', gap: 4, padding: '0 14px' }
+            ? { display: 'flex', flexDirection: 'column', gap: 12, padding: '0 20px' }
             : { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }
         }
       >
-        {visibleProducts.map((p) => (
-          <ProductCard key={p.id} product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
+        {visibleProducts.map((p, index) => (
+          <Fragment key={p.id}>
+            <ProductCard product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} />
+            {showOnboarding && index === Math.min(3, visibleProducts.length - 1) && <section className="ayna-figma-discover-cta"><button type="button" onClick={onStartQuiz}>Get matched <span aria-hidden="true">→</span></button></section>}
+          </Fragment>
         ))}
         {loadingMore && !isList && (
           <>
@@ -247,14 +231,19 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
 export default function BrowseScreen({
   products = [],
   articles = [],
+  authUser = null,
+  savedProducts = {},
+  onToggleSaved,
   ctaVariant = 'gradient',
   headerInitial = 'A',
   onOpenProduct,
   onOpenArticle,
   onOpenSaved,
   onGoEco,
+  onGoCommunity,
   onStartQuiz,
   hasEcosystem = false,
+  myProducts = [],
   quizAnswers = null,
   theme = 'dark',
   onToggleTheme,
@@ -279,7 +268,32 @@ export default function BrowseScreen({
     else setPersonalizedLocal(next);
   };
   const [activeGroup, setActiveGroup] = useState('all');
-  const { layout: cardLayout, toggleLayout } = useCardLayout();
+  const [showFilters, setShowFilters] = useState(false);
+  const [showDeck, setShowDeck] = useState(false);
+  const filterButtonRef = useRef(null);
+  const filterCloseRef = useRef(null);
+  const filterSheetRef = useRef(null);
+  useEffect(() => {
+    if (!showFilters) return undefined;
+    filterCloseRef.current?.focus();
+    const handleFilterKeys = (event) => {
+      if (event.key === 'Escape') {
+        setShowFilters(false);
+        filterButtonRef.current?.focus();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = [...(filterSheetRef.current?.querySelectorAll('button:not(:disabled), select:not(:disabled), input:not(:disabled)') || [])];
+      if (focusable.length < 2) return;
+      if (event.shiftKey && document.activeElement === focusable[0]) { event.preventDefault(); focusable.at(-1).focus(); }
+      if (!event.shiftKey && document.activeElement === focusable.at(-1)) { event.preventDefault(); focusable[0].focus(); }
+    };
+    window.addEventListener('keydown', handleFilterKeys);
+    return () => window.removeEventListener('keydown', handleFilterKeys);
+  }, [showFilters]);
+  const [filters, setFilters] = useState(EMPTY_FILTERS);
+  const [sortBy, setSortBy] = useState('default');
+  const cardLayout = 'grid';
   // AI fallback for a typed search the local catalog scoring found nothing
   // for — same /api/search-suggestions the desktop Discovery page falls
   // back to (see fetchSearchSuggestions.js), not a separate mechanism.
@@ -339,14 +353,51 @@ export default function BrowseScreen({
   if (activeGroup !== 'all') {
     filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
   }
+  filtered = filtered.filter((item) => {
+    if (filters.category !== 'all' && item.category !== filters.category) return false;
+    const price = PRICE_VALUE(item);
+    if (filters.price === 'under-25' && !(price != null && price < 25)) return false;
+    if (filters.price === '25-50' && !(price != null && price >= 25 && price <= 50)) return false;
+    if (filters.price === '50-100' && !(price != null && price > 50 && price <= 100)) return false;
+    if (filters.price === '100-plus' && !(price != null && price > 100)) return false;
+    if (filters.rating === '4-plus' && !(RATING_VALUE(item) >= 4)) return false;
+    if (filters.ayna === 'best-match' && !(getProfileMatchPercentForProduct(item, quizAnswers) >= 50)) return false;
+    if (filters.ayna === 'clinician' && !(item.doctorOpinion || item.clinicianOpinion || getVerificationLinks(item, 'doctor').length)) return false;
+    if (filters.ayna === 'community' && !(item.communityReview || getVerificationLinks(item, 'community').length || RATING_VALUE(item) >= 4)) return false;
+    if (filters.ayna === 'ecosystem' && !myProducts.some((p) => String(p.id) === String(item.id))) return false;
+    const eligibility = ELIGIBILITY(item);
+    if (filters.eligibility === 'fsa' && !eligibility.fsa) return false;
+    if (filters.eligibility === 'hsa' && !eligibility.hsa) return false;
+    if (filters.eligibility === 'fsa-hsa' && !(eligibility.fsa || eligibility.hsa)) return false;
+    const text = productSearchText(item);
+    if (filters.preference !== 'all' && !(PREFERENCE_TERMS[filters.preference] || []).some((term) => text.includes(term))) return false;
+    if (filters.sustainability !== 'all' && !(SUSTAINABILITY_TERMS[filters.sustainability] || []).some((term) => text.includes(term))) return false;
+    if (filters.lifeStage !== 'all' && !itemMatchesMacroGroup(item, filters.lifeStage === 'perimenopause' ? 'menopause' : filters.lifeStage)) return false;
+    return true;
+  });
+  if (sortBy === 'price-asc' || sortBy === 'price-desc') filtered = [...filtered].sort((a, b) => {
+    const pa = PRICE_VALUE(a); const pb = PRICE_VALUE(b);
+    if (pa == null) return pb == null ? 0 : 1;
+    if (pb == null) return -1;
+    return sortBy === 'price-asc' ? pa - pb : pb - pa;
+  });
+  if (sortBy === 'rating') filtered = [...filtered].sort((a, b) => (RATING_VALUE(b) ?? -1) - (RATING_VALUE(a) ?? -1));
+  if (sortBy === 'default' && personalized && hasProfile && !searchTermRaw) {
+    const matchScores = new Map(filtered.map((product) => [
+      product.id,
+      getProfileMatchPercentForProduct(product, quizAnswers) ?? 0,
+    ]));
+    filtered = [...filtered].sort((a, b) =>
+      matchScores.get(b.id) - matchScores.get(a.id));
+  }
   // Brand partners pinned to the top of the default browsing sort — same
   // rule as desktop Discovery.jsx: a partnership buys visibility on the
   // page you browse freely, never placement inside an actual text search
   // or personalized ("For You") recommendation.
-  if (!searchTermRaw && !(personalized && hasProfile)) {
+  if (sortBy === 'default' && !searchTermRaw && !(personalized && hasProfile)) {
     filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
   }
-  const filterKey = `${searchTerm}|${personalized}|${activeGroup}`;
+  const filterKey = `${searchTerm}|${personalized}|${activeGroup}|${JSON.stringify(filters)}|${sortBy}`;
 
   useEffect(() => {
     // Nothing to fetch — and nothing to reset either: the render logic below
@@ -382,6 +433,15 @@ export default function BrowseScreen({
   }, [searchTermRaw, searchScored.length, activeGroup]);
 
   const articlesById = new Map(articles.map((a) => [a.id, a]));
+  const matchingReads = searchTermRaw.length >= 2 ? articles
+    .map((article) => {
+      const title = String(article.title || '').toLowerCase();
+      const details = `${(article.tags || []).join(' ')} ${article.teaser || ''}`.toLowerCase();
+      return { article, score: title.includes(searchTerm) ? 2 : details.includes(searchTerm) ? 1 : 0 };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(({ article }) => article) : [];
   const rows = ARTICLE_CATEGORIES.map((cat) => ({
     ...cat,
     items: cat.articleIds.map((id) => articlesById.get(id)).filter(Boolean),
@@ -396,18 +456,22 @@ export default function BrowseScreen({
   );
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
+    <div className="ayna-fresh-browse-screen ayna-figma-discover">
       <MobileHeader
         variant={theme}
         activeTab="browse"
         initial={headerInitial}
         onOpenSaved={onOpenSaved}
         onGoEco={onGoEco}
+        onGoCommunity={onGoCommunity}
         onToggleTheme={onToggleTheme}
         onOpenProfile={onOpenProfile}
       />
 
-      <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+      <div className="ayna-fresh-browse-heading ayna-shop-heading">
+        <h1>Shop</h1>
+        <SearchBar placeholder={mode === 'products' ? 'Search products or brands' : 'Search reads'} value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+      </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px', borderBottom: '1px solid var(--ayna-border)', margin: '0 0 14px' }}>
         <div style={{ display: 'flex', gap: 18 }}>
@@ -417,7 +481,6 @@ export default function BrowseScreen({
         {mode === 'products' && (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
-            <LayoutToggle layout={cardLayout} onToggle={toggleLayout} />
           </div>
         )}
         {mode === 'reads' && (
@@ -426,33 +489,55 @@ export default function BrowseScreen({
       </div>
 
       {mode === 'products' && (
-        <CategoryChipRow groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} />
+        <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={
+          <button ref={filterButtonRef} className="ayna-shop-filter-toggle" type="button" aria-label="Filters" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}>
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 17h16" /><circle cx="9" cy="7" r="2.5" fill="var(--ayna-bg)" /><circle cx="15" cy="17" r="2.5" fill="var(--ayna-bg)" /></svg>
+            {Object.values(filters).filter((value) => value !== 'all').length > 0 && <span>{Object.values(filters).filter((value) => value !== 'all').length}</span>}
+          </button>
+        } />
       )}
+      {mode === 'products' && !searchValue.trim() && (
+        <button type="button" className="ay-discover-cta" onClick={() => setShowDeck(true)}>
+          <span className="ay-discover-art" aria-hidden="true"><i /><i /><i /></span>
+          <span className="ay-discover-copy"><strong>Swipe to discover</strong><small>{authUser && quizAnswers ? 'Best matches first' : 'Save or skip, one at a time'}</small></span>
+          <span className="ay-discover-go" aria-hidden="true">→</span>
+        </button>
+      )}
+      {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
+      {mode === 'products' && <>
+        {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
+          <div ref={filterSheetRef} className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>
+          <div className="ayna-shop-filter-head"><strong>Filters</strong><button ref={filterCloseRef} type="button" aria-label="Close filters" onClick={() => { setShowFilters(false); filterButtonRef.current?.focus(); }}>Close</button></div>
+          <div className="ayna-shop-filter-fields">
+          <label className="ay-field">Sort<select aria-label="Sort products" value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="default">Featured</option><option value="rating">Highest rated</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label>
+          {FILTER_FIELDS.map(([key, label, options]) => <label key={key} className="ay-field">{label}<select value={filters[key]} onChange={(event) => setFilters((current) => ({ ...current, [key]: event.target.value }))}>{(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, CATEGORY_LABELS[category] || category.replaceAll('-', ' ')])] : options).map(([value, text]) => <option key={value} value={value}>{text}</option>)}</select></label>)}
+          </div>
+          <div className="ayna-shop-filter-actions"><button type="button" onClick={() => { setFilters(EMPTY_FILTERS); setSortBy('default'); }}>Clear</button><button type="button" onClick={() => setShowFilters(false)}>Apply</button></div>
+          </div>
+        </div>}
+      </>}
+
 
       {/* Once the ecosystem exists, Browse stays pure browsing — the
           "update your health" prompt lives on the Ecosystem screen instead,
           after its Reads section. */}
-      {!hasEcosystem && ctaVariant !== 'none' && (ctaVariant === 'gradient' || ctaVariant === 'inline') ? (
-        <CtaBanner variant={ctaVariant} onClick={onStartQuiz} />
-      ) : null}
-
       {mode === 'products' ? (
         <>
           {filtered.length > 0 ? (
-            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
+            <ProductGrid savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Searching beyond our catalog…
               </div>
               <PixelateGrid />
             </>
           ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Not in our catalog yet — found via AI search
               </div>
-              <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
+              <ProductGrid savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
             </>
           ) : (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
@@ -463,15 +548,28 @@ export default function BrowseScreen({
             style={{
               margin: '22px 20px 0',
               textAlign: 'center',
-              fontFamily: "'DM Mono',monospace",
-              fontSize: 'calc(10px * var(--ayna-text-scale, 1))',
+              fontFamily: "var(--ayna-font-ui)",
+              fontSize: 'calc(11px * var(--ayna-text-scale, 1))',
               letterSpacing: 0.8,
               color: 'var(--ayna-text-faint)',
             }}
           >
             ALL OTC · NOT A DIAGNOSIS
           </div>
+          {matchingReads.length > 0 && <section style={{ marginTop: 25 }} aria-label="Related reads">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '0 20px 12px' }}>
+              <strong style={{ fontSize: 18, color: 'var(--ayna-text)' }}>Learn about this</strong>
+              <button type="button" onClick={() => setMode('reads')} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontWeight: 600 }}>See reads →</button>
+            </div>
+            <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 6px' }}>
+              {matchingReads.slice(0, 4).map((article) => <LibraryCard key={article.id} article={article} onClick={() => onOpenArticle?.(article)} />)}
+            </div>
+          </section>}
         </>
+      ) : searchTermRaw.length >= 2 ? (
+        matchingReads.length > 0 ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }}>
+          {matchingReads.map((article) => <LibraryCard key={article.id} article={article} fullWidth onClick={() => onOpenArticle?.(article)} />)}
+        </div> : <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)' }}>No reads match this search.</div>
       ) : personalized && hasProfile ? (
         recommendedReads.length === 0 ? (
           <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
@@ -492,7 +590,7 @@ export default function BrowseScreen({
         rows.map((row) => (
           <div key={row.id} style={{ marginBottom: 24 }}>
             <div style={{ padding: '0 20px 11px' }}>
-              <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))' }}>{row.label}</div>
+              <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))' }}>{row.label}</div>
             </div>
             <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
               {row.items.map((a) => (

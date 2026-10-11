@@ -1,12 +1,10 @@
 const TINT_PALETTE = [
-  ['#F0E6DA', '#DCCBB4'],
-  ['#EDE2D6', '#D6C4AE'],
-  ['#E8D3CC', '#C9A79C'],
-  ['#E6E1EE', '#CFC6E0'],
-  ['#F6E3CE', '#E5C49B'],
-  ['#E4EBDD', '#C7D8BD'],
-  ['#F1DDE2', '#DBB6C0'],
-  ['#F4E0D3', '#DFB89F'],
+  ['#EEF0FD', '#F7BADD'],
+  ['#FCFBFB', '#EEF0FD'],
+  ['#FCFBFB', '#F7BADD'],
+  ['#EEF0FD', '#FCFBFB'],
+  ['#F7BADD', '#FCFBFB'],
+  ['#FCFBFB', '#F7BADD'],
 ];
 
 function tintForId(id) {
@@ -21,7 +19,23 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
   const [c1, c2] = tintForId(id || title);
 
   return (
-    <div onClick={onClick} style={fullWidth ? { cursor: 'pointer' } : { width: 158, flexShrink: 0, cursor: 'pointer' }}>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`Read ${title}`}
+      style={{
+        display: 'block',
+        width: fullWidth ? '100%' : 158,
+        flexShrink: 0,
+        padding: 0,
+        border: 0,
+        background: 'transparent',
+        color: 'var(--ayna-text)',
+        textAlign: 'left',
+        font: 'inherit',
+        cursor: 'pointer',
+      }}
+    >
       <div
         style={{
           position: 'relative',
@@ -50,9 +64,10 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
         )}
         {tags[0] && (
           <span
+            className="ay-libcard-tag"
             style={{
               position: 'relative',
-              fontFamily: "'DM Mono',monospace",
+              fontFamily: "var(--ayna-font-ui)",
               fontSize: 'calc(7.5px * var(--ayna-text-scale, 1))',
               letterSpacing: '.7px',
               textTransform: 'uppercase',
@@ -66,9 +81,9 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
           </span>
         )}
       </div>
-      <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 9, textWrap: 'pretty' }}>
+      <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 9, textWrap: 'pretty' }}>
         {title}
       </div>
-    </div>
+    </button>
   );
 }

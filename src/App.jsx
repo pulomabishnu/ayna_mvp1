@@ -42,6 +42,7 @@ import HowItWorks from './components/HowItWorks';
 import About from './components/About';
 import Contact from './components/Contact';
 import './finalAynaPolish.css';
+import './brand-v2.css';
 import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
 import AuthConfirm from './components/AuthConfirm';

@@ -1,23 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
+import { ChipList, LevelMeter } from '../components/intake/IntakeControls.jsx';
+import '../intake-play.css';
 import { loadMonthlyCheckinStatus, saveMonthlyCheckin, monthKey } from '../../utils/monthlyCheckinStore.js';
 
-// Same visual language as IntakeScreen.jsx's own local constants, but this
-// screen is a light card UI (Ayna_Monthly_Check-in.html design reference),
-// not intake's dark hero-gradient — a recurring quick re-ask reads as
-// "maintenance," not a first-time onboarding moment.
-const CARD_BG = 'var(--ayna-surface)';
-const PAGE_BG = 'var(--ayna-bg)';
-const ROW_BORDER = 'var(--ayna-border)';
-const PANEL_BG = 'var(--ayna-chip-bg)';
-const INK = 'var(--ayna-text)';
-const MUTED = 'var(--ayna-text-faint)';
-const BODY_TEXT = 'var(--ayna-text-muted)';
-const NAVY = 'var(--ayna-navy)';
-const ACCENT_BG = 'var(--ayna-peach)';
-const ACCENT_BORDER = 'var(--ayna-accent-dark)';
-const WARNING_BORDER = '#B4402A';
-const WARNING_BG = '#FAEDE8';
+// Uses the same play system as the intake (intake-play.css): one tone per
+// step, calm paper for medications and safety.
+
+const CHECKIN_TONES = { lifeStage: 'peri', symptoms: 'pink', flow: 'peri', pain: 'butter', uti: 'mint', recs: 'butter', medications: 'mint', safety: 'mint', notes: 'pink' };
 
 // A curated, quick-to-answer subset of intake's own taxonomy (not every one
 // of its ~90 items — this is a monthly maintenance ping, not a re-run of
@@ -117,174 +107,48 @@ function monthLabel(key) {
 // reference's own treatment (a plain radio circle reads identically for
 // "helped" and "made it worse," which are opposite signals for the
 // algorithm and shouldn't look the same while scanning the list).
-const RECS_ICON_STYLE = { width: 28, height: 28, borderRadius: 99, flex: 'none', marginTop: -2, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 13 };
 function RecsIcon({ value }) {
-  if (value === 'helped') {
-    return (
-      <div style={{ ...RECS_ICON_STYLE, background: '#DCEEDD' }}>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3E7A4C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-      </div>
-    );
-  }
-  if (value === 'didnt_help') {
-    return (
-      <div style={{ ...RECS_ICON_STYLE, background: '#E6E4F2', color: NAVY }}>—</div>
-    );
-  }
-  if (value === 'worse') {
-    return (
-      <div style={{ ...RECS_ICON_STYLE, background: WARNING_BG, color: WARNING_BORDER }}>!</div>
-    );
-  }
-  if (value === 'na') {
-    return (
-      <div style={{ ...RECS_ICON_STYLE }}>
-        <div style={{ width: 6, height: 6, borderRadius: 99, background: MUTED }} />
-      </div>
-    );
-  }
-  return <div style={{ ...RECS_ICON_STYLE, border: '2px solid ' + ROW_BORDER }} />;
+  const mark = { helped: '✓', didnt_help: '–', worse: '!', na: '·' }[value] || '';
+  return <span className="ip-mark" data-mark={value} aria-hidden="true">{mark}</span>;
 }
 
 function OptionCard({ selected, title, subtitle, onClick, tone, icon }) {
-  const isWarning = tone === 'warning' && selected;
   return (
-    <div
-      onClick={onClick}
-      style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: 12,
-        padding: '14px 16px',
-        borderRadius: 16,
-        border: '1.5px solid ' + (selected ? (isWarning ? WARNING_BORDER : ACCENT_BORDER) : ROW_BORDER),
-        background: selected ? (isWarning ? WARNING_BG : ACCENT_BG) : CARD_BG,
-        cursor: 'pointer',
-        marginBottom: 10,
-      }}
-    >
-      {icon || (
-        <div
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 99,
-            border: '2px solid ' + (selected ? (isWarning ? WARNING_BORDER : ACCENT_BORDER) : ROW_BORDER),
-            background: selected ? (isWarning ? WARNING_BORDER : ACCENT_BORDER) : 'transparent',
-            flex: 'none',
-            marginTop: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {selected && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFCF9" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>}
-        </div>
-      )}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK }}>{title}</div>
-        {subtitle && <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: BODY_TEXT, marginTop: 3 }}>{subtitle}</div>}
-      </div>
-    </div>
+    <button type="button" role="radio" aria-checked={selected} onClick={onClick} className={`ip-row${tone === 'warning' ? ' is-warning' : ''}${subtitle ? ' has-sub' : ''}`}>
+      {icon ? <span className="ip-row-icon">{icon}</span> : <span className="ip-radio" aria-hidden="true" />}
+      <span className="ip-row-copy"><span>{title}</span>{subtitle && <small>{subtitle}</small>}</span>
+    </button>
   );
 }
 
 function DividerLabel({ children, right }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 9 }}>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: MUTED, flex: 'none' }}>{children}</div>
-      <div style={{ flex: 1, height: 1, background: ROW_BORDER }} />
-      {right != null && (
-        <div style={{ flex: 'none', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: MUTED }}>{right}</div>
-      )}
-    </div>
-  );
+  return <div className="ip-divider"><span>{children}</span>{right != null && <small>{right}</small>}</div>;
 }
 
 // Bar height increases left to right — severity read as a shape, not just
 // a label, same as the design reference's flow/pain scale. Bars are purely
 // visual; the actual hit target is the whole column (bar + label).
-const SCALE_BAR_HEIGHTS = [34, 52, 70, 88, 106];
 
 function ScaleSelector({ options, value, onChange }) {
   const selectedOption = options.find(([label]) => label === value);
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
-        {options.map(([label], i) => {
-          const on = value === label;
-          return (
-            <div key={label} onClick={() => onChange(label)} style={{ flex: 1, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: '100%', height: SCALE_BAR_HEIGHTS[i] || 60, borderRadius: 10, background: on ? ACCENT_BORDER : ROW_BORDER, transition: 'background .15s' }} />
-              <div style={{ textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: on ? 700 : 500, fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: on ? INK : MUTED }}>{label}</div>
-            </div>
-          );
-        })}
-      </div>
-      {selectedOption && (
-        <div style={{ marginTop: 20, padding: '16px 18px', borderRadius: 18, background: CARD_BG, border: '1px solid ' + ROW_BORDER }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', color: NAVY }}>{selectedOption[0]}</div>
-          <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: BODY_TEXT, marginTop: 6 }}>{selectedOption[1]}</div>
-        </div>
-      )}
+      <LevelMeter options={options.map(([label]) => label)} value={value} onChange={onChange} />
+      {selectedOption && <p className="ip-callout">{selectedOption[1]}</p>}
     </div>
   );
 }
 
 function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
   return (
-    <div>
-      <DividerLabel right={selected.length ? <span style={{ background: ACCENT_BG, color: ACCENT_BORDER, padding: '3px 9px', borderRadius: 99, fontWeight: 600 }}>{selected.length} selected</span> : '0 selected'}>
-        Selected
-      </DividerLabel>
-      <div
-        onClick={onClearAll}
-        style={{
-          display: 'inline-block',
-          padding: '8px 14px',
-          borderRadius: 99,
-          border: '1.5px solid ' + (selected.length === 0 ? ACCENT_BORDER : ROW_BORDER),
-          background: selected.length === 0 ? ACCENT_BG : CARD_BG,
-          color: INK,
-          fontFamily: "'DM Sans',sans-serif",
-          fontWeight: 600,
-          fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
-          cursor: 'pointer',
-          marginBottom: 18,
-          marginTop: 4,
-        }}
-      >
-        None right now
-      </div>
+    <div className="ip-groups">
+      <ChipList items={['None right now']} selected={selected.length === 0 ? ['None right now'] : []} onToggle={onClearAll} compact muted={['None right now']} />
       {SYMPTOM_GROUPS.map((group) => {
         const groupCount = group.items.filter(([label]) => selected.includes(label)).length;
         return (
-          <div key={group.label} style={{ marginBottom: 18 }}>
-            <DividerLabel right={`${groupCount}/${group.items.length}`}>{group.label}</DividerLabel>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-              {group.items.map(([label]) => {
-                const on = selected.includes(label);
-                return (
-                  <div
-                    key={label}
-                    onClick={() => onToggle(label)}
-                    style={{
-                      padding: '9px 14px',
-                      borderRadius: 99,
-                      border: '1.5px solid ' + (on ? NAVY : ROW_BORDER),
-                      background: on ? NAVY : CARD_BG,
-                      color: on ? '#FFFCF9' : INK,
-                      fontFamily: "'DM Sans',sans-serif",
-                      fontWeight: 500,
-                      fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {label}
-                  </div>
-                );
-              })}
-            </div>
+          <div key={group.label} className="ip-group">
+            <DividerLabel right={groupCount ? `${groupCount} picked` : null}>{group.label}</DividerLabel>
+            <ChipList items={group.items.map(([label]) => label)} selected={selected} onToggle={onToggle} />
           </div>
         );
       })}
@@ -292,20 +156,21 @@ function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
   );
 }
 
-function StepShell({ title, subtitle, tag, children, footer }) {
+function StepShell({ title, subtitle, tag, children, footer, stepKey }) {
   return (
-    <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-      <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', padding: '4px 20px 20px' }}>
-        {tag && (
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: ACCENT_BORDER, marginBottom: 8 }}>{tag}</div>
-        )}
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.2, color: INK }}>{title}</div>
-        {subtitle && <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 8, marginBottom: 20 }}>{subtitle}</div>}
-        {!subtitle && <div style={{ height: 18 }} />}
-        {children}
+    <>
+      <div className="ip-body">
+        <div className="ip-question" key={stepKey}>
+          {tag && <span className="ip-label">{tag}</span>}
+          <h1 className="ip-title">{title}</h1>
+          {subtitle && <p className="ip-subtitle">{subtitle}</p>}
+          <span className="ip-spacer is-top" aria-hidden="true" />
+          <div className="ip-answer">{children}</div>
+          <span className="ip-spacer is-bottom" aria-hidden="true" />
+        </div>
       </div>
       {footer}
-    </div>
+    </>
   );
 }
 
@@ -461,36 +326,27 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
 
   if (status === 'loading') {
     return (
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: PAGE_BG }}>
-        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: MUTED }}>Loading…</div>
+      <div className="ayna-play-intake ip-tone--peri" role="status" aria-label="Loading check-in">
+        <div className="ip-loading"><span className="ay-skeleton" /><span className="ay-skeleton" /><span className="ay-skeleton" /></div>
       </div>
     );
   }
 
   if (status === 'already-done') {
     return (
-      <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column', background: PAGE_BG }}>
+      <div className="ayna-play-intake ip-tone--mint">
         <Header onBack={onBack} label="Check-in" progress={1} />
-        <div style={{ flex: 1, overflowY: 'auto', padding: '10px 20px 30px' }}>
-          <CompletionCard month={thisMonth} />
-          <div
-            onClick={onBack}
-            style={{ marginTop: 20, textAlign: 'center', padding: 15, borderRadius: 99, background: NAVY, color: '#FFFCF9', fontWeight: 600, fontFamily: "'DM Sans',sans-serif", cursor: 'pointer' }}
-          >
-            Back to profile
-          </div>
-        </div>
+        <div className="ip-body"><CompletionCard month={thisMonth} /></div>
+        <footer className="ip-foot"><button type="button" className="ip-next" onClick={onBack}><span>Back to profile</span><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i></button></footer>
       </div>
     );
   }
 
   if (complete) {
     return (
-      <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column', background: PAGE_BG }}>
+      <div className="ayna-play-intake ip-tone--mint">
         <Header onBack={onBack} label="Check-in" progress={1} />
-        <div style={{ flex: 1, overflowY: 'auto', padding: '10px 20px 30px' }}>
-          <CompletionCard month={thisMonth} justFinished />
-        </div>
+        <div className="ip-body"><CompletionCard month={thisMonth} justFinished /></div>
       </div>
     );
   }
@@ -498,40 +354,23 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
   if (!answers) return null;
 
   const footer = (
-    <div style={{ flex: 'none', padding: '12px 20px max(16px, env(safe-area-inset-bottom))', background: PAGE_BG, borderTop: '1px solid ' + ROW_BORDER }}>
-      <div
-        onClick={saving ? undefined : goNext}
-        style={{
-          textAlign: 'center',
-          padding: 15,
-          borderRadius: 99,
-          background: readyForNext && !saving ? NAVY : ROW_BORDER,
-          color: readyForNext && !saving ? '#FFFCF9' : MUTED,
-          fontWeight: 600,
-          fontFamily: "'DM Sans',sans-serif",
-          fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',
-          cursor: readyForNext && !saving ? 'pointer' : 'not-allowed',
-        }}
-      >
-        {saving ? 'Saving…' : isLast ? 'Finish check-in' : 'Next'}
-      </div>
+    <footer className="ip-foot">
+      <button type="button" className="ip-next" disabled={!readyForNext || saving} onClick={goNext}>
+        <span>{saving ? 'Saving…' : isLast ? 'Finish check-in' : 'Next'}</span>
+        <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></i>
+      </button>
       {stepId !== 'safety' && (
-        <div
-          onClick={() => (isLast ? goNext() : setStepIndex((i) => i + 1))}
-          style={{ textAlign: 'center', marginTop: 10, fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: MUTED, cursor: 'pointer' }}
-        >
-          Skip this step
-        </div>
+        <button type="button" className="ip-skip ip-skip--foot" disabled={saving} onClick={() => (isLast ? goNext() : setStepIndex((i) => i + 1))}>Skip this step</button>
       )}
-    </div>
+    </footer>
   );
 
   return (
-    <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column', background: PAGE_BG }}>
+    <div className={`ayna-play-intake ip-tone--${CHECKIN_TONES[stepId] || 'peri'}`} data-step={stepId}>
       <Header onBack={goBack} label="Monthly check-in" progress={(stepIndex + 1) / steps.length} stepText={`${stepIndex + 1}/${steps.length}`} />
 
       {stepId === 'lifeStage' && (
-        <StepShell title="Has anything changed since your last check-in?" subtitle="We only ask again when something big shifts — starting to try, a pregnancy, postpartum, perimenopause." footer={footer}>
+        <StepShell stepKey={stepId} title="Anything changed?" footer={footer}>
           {LIFE_STAGE_OPTIONS.map(([value, label]) => (
             <OptionCard
               key={value}
@@ -542,47 +381,35 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
             />
           ))}
           {answers.lifeStageChanged === 'changed' && (
-            <div style={{ marginTop: 10, padding: 14, borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-              <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK, marginBottom: 10 }}>What best describes you now?</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-                {['I get periods regularly', 'My periods are irregular', 'I am trying to conceive', 'I am pregnant', 'I am postpartum', 'I am in perimenopause', 'I am in menopause'].map((v) => {
-                  const on = lifeStageEditSelections.includes(v);
-                  return (
-                    <div
-                      key={v}
-                      onClick={() => setLifeStageEditSelections((prev) => (prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]))}
-                      style={{ padding: '8px 13px', borderRadius: 99, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER), background: on ? ACCENT_BG : CARD_BG, fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}
-                    >
-                      {v}
-                    </div>
-                  );
-                })}
-              </div>
+            <div className="ip-followup">
+              <strong>What fits you now?</strong>
+              <ChipList compact items={['I get periods regularly', 'My periods are irregular', 'I am trying to conceive', 'I am pregnant', 'I am postpartum', 'I am in perimenopause', 'I am in menopause']} selected={lifeStageEditSelections}
+                onToggle={(v) => setLifeStageEditSelections((prev) => (prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]))} />
             </div>
           )}
         </StepShell>
       )}
 
       {stepId === 'symptoms' && (
-        <StepShell title="What are you dealing with this month?" subtitle="Carried over from last time — edit what's changed rather than starting over." footer={footer}>
+        <StepShell stepKey={stepId} title="What needs support?" subtitle="Your last answers are selected." footer={footer}>
           <GroupedSymptomPicker selected={answers.symptoms} onToggle={toggleSymptom} onClearAll={() => set('symptoms', [])} />
         </StepShell>
       )}
 
       {stepId === 'flow' && (
-        <StepShell tag="Shown because · a period symptom" title="How was your flow this month?" subtitle={fullHealthIntake?.periodFlow ? `Last time you said ${fullHealthIntake.periodFlow.toLowerCase()}.` : undefined} footer={footer}>
+        <StepShell stepKey={stepId} tag="Shown because · a period symptom" title="How was your flow this month?" subtitle={fullHealthIntake?.periodFlow ? `Last time you said ${fullHealthIntake.periodFlow.toLowerCase()}.` : undefined} footer={footer}>
           <ScaleSelector options={FLOW_OPTIONS} value={answers.flow} onChange={(v) => set('flow', v)} />
         </StepShell>
       )}
 
       {stepId === 'pain' && (
-        <StepShell tag="Shown because · cramps" title="How was your pain this month?" subtitle={fullHealthIntake?.periodPain ? `Last time you said ${fullHealthIntake.periodPain.toLowerCase()}.` : undefined} footer={footer}>
+        <StepShell stepKey={stepId} tag="Shown because · cramps" title="How was your pain this month?" subtitle={fullHealthIntake?.periodPain ? `Last time you said ${fullHealthIntake.periodPain.toLowerCase()}.` : undefined} footer={footer}>
           <ScaleSelector options={PAIN_OPTIONS} value={answers.pain} onChange={(v) => set('pain', v)} />
         </StepShell>
       )}
 
       {stepId === 'uti' && (
-        <StepShell tag="Shown because · recurrent UTIs" title="Any UTI, BV, or yeast symptoms this month?" subtitle="More useful than a lifetime frequency — we want to know if last month's suggestion actually worked." footer={footer}>
+        <StepShell stepKey={stepId} tag="Shown because · recurrent UTIs" title="Any UTI, BV, or yeast symptoms this month?" footer={footer}>
           {UTI_OPTIONS.map(([value, label]) => (
             <OptionCard key={value} selected={answers.utiStatus === value} title={label} onClick={() => set('utiStatus', value)} />
           ))}
@@ -590,15 +417,9 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       )}
 
       {stepId === 'recs' && (
-        <StepShell title="How did the products we suggested work for you?" subtitle="This is the answer that changes your matches the most — worth the ten seconds." footer={footer}>
+        <StepShell stepKey={stepId} title="How were your product picks?" footer={footer}>
           {myProducts.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, marginBottom: 16 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, flex: 'none', background: ACCENT_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 'calc(16px * var(--ayna-text-scale, 1))', color: ACCENT_BORDER }}>{myProducts.length}</div>
-              <div>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: MUTED, marginBottom: 3 }}>In your ecosystem</div>
-                <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>{myProducts.slice(0, 3).map((p) => p.name).join(' · ')}</div>
-              </div>
-            </div>
+            <div className="ip-onfile"><b>{myProducts.length}</b><span><small>In your ecosystem</small>{myProducts.slice(0, 3).map((p) => p.name).join(' · ')}</span></div>
           )}
           {RECS_OPTIONS.map(([value, label, sub]) => (
             <OptionCard key={value} selected={answers.recsVerdict === value} title={label} subtitle={sub} icon={<RecsIcon value={value} />} onClick={() => set('recsVerdict', value)} />
@@ -607,12 +428,9 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       )}
 
       {stepId === 'medications' && (
-        <StepShell title="Any changes to what you're taking?" subtitle="Interactions are the one thing we can't guess at." footer={footer}>
+        <StepShell stepKey={stepId} title="Any changes to what you're taking?" footer={footer}>
           {fullHealthIntake?.currentMedicationItems?.length > 0 && (
-            <div style={{ padding: '12px 14px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, marginBottom: 16 }}>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: MUTED, marginBottom: 6 }}>On file</div>
-              <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>{fullHealthIntake.currentMedicationItems.join(' · ')}</div>
-            </div>
+            <div className="ip-onfile"><span><small>On file</small>{fullHealthIntake.currentMedicationItems.join(' · ')}</span></div>
           )}
           {MEDICATION_OPTIONS.map(([value, label, sub]) => (
             <OptionCard key={value} selected={answers.medicationChange === value} title={label} subtitle={sub} onClick={() => set('medicationChange', value)} />
@@ -621,67 +439,42 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
             <input
               value={answers.medicationStarted}
               onChange={(e) => set('medicationStarted', e.target.value)}
-              placeholder="What did you start?"
-              style={{ width: '100%', boxSizing: 'border-box', padding: '13px 16px', borderRadius: 14, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none', marginTop: 4 }}
+              placeholder="What did you start?" aria-label="Medication started"
+              className="ip-input"
             />
           )}
           {answers.medicationChange === 'stopped' && fullHealthIntake?.currentMedicationItems?.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 4 }}>
-              {fullHealthIntake.currentMedicationItems.map((item) => {
-                const on = answers.medicationStopped.includes(item);
-                return (
-                  <div
-                    key={item}
-                    onClick={() => set('medicationStopped', on ? answers.medicationStopped.filter((x) => x !== item) : [...answers.medicationStopped, item])}
-                    style={{ padding: '9px 14px', borderRadius: 99, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER), background: on ? ACCENT_BG : CARD_BG, fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}
-                  >
-                    {item}
-                  </div>
-                );
-              })}
-            </div>
+            <div className="ip-gap"><ChipList items={fullHealthIntake.currentMedicationItems} selected={answers.medicationStopped}
+              onToggle={(item) => set('medicationStopped', answers.medicationStopped.includes(item) ? answers.medicationStopped.filter((x) => x !== item) : [...answers.medicationStopped, item])} /></div>
           )}
         </StepShell>
       )}
 
       {stepId === 'safety' && (
-        <StepShell title="Any new, worsening or significant symptoms right now?" subtitle="One question, every month, for the things that shouldn't wait." footer={footer}>
+        <StepShell stepKey={stepId} title="Any new, worsening or significant symptoms right now?" footer={footer}>
           {SAFETY_OPTIONS.map((label) => (
             <OptionCard key={label} selected={answers.safetyConcern === label} title={label} tone={label === 'Yes' ? 'warning' : undefined} onClick={() => set('safetyConcern', label)} />
           ))}
           {answers.safetyConcern === 'Yes' && (
-            <div style={{ marginTop: 4, padding: 16, borderRadius: 18, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: WARNING_BORDER }}>Please talk to a clinician</div>
-              </div>
-              <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: '#7A4234' }}>
-                Ayna is a discovery tool, not a diagnosis. We'll keep your check-in, but nothing here should replace being seen — especially for something new or getting worse.
-              </div>
-              <a
-                href="https://www.google.com/maps/search/?api=1&query=urgent+care+near+me"
-                target="_blank"
-                rel="noreferrer"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 14, padding: 14, borderRadius: 99, background: CARD_BG, border: '1px solid ' + WARNING_BORDER, color: WARNING_BORDER, fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', textDecoration: 'none' }}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-                Find urgent care near me
-              </a>
+            <div className="ip-alert" role="note">
+              <strong><span aria-hidden="true">!</span>Please talk to a clinician</strong>
+              <p>ayna is a discovery tool, not a diagnosis. For anything new or getting worse, get seen.</p>
+              <a className="ip-alert-link" href="https://www.google.com/maps/search/?api=1&query=urgent+care+near+me" target="_blank" rel="noreferrer">Find urgent care near me</a>
             </div>
           )}
         </StepShell>
       )}
 
       {stepId === 'notes' && (
-        <StepShell title="Anything else going on this month?" subtitle="Optional. Skip it freely — but if something didn't fit our lists, this is where it lands." footer={footer}>
+        <StepShell stepKey={stepId} title="Anything else?" subtitle="Optional" footer={footer}>
           <textarea
             value={answers.notes}
             onChange={(e) => set('notes', e.target.value.slice(0, 600))}
-            placeholder="A person reads these."
+            placeholder="Your notes" aria-label="Additional check-in notes"
             rows={5}
-            style={{ width: '100%', boxSizing: 'border-box', padding: 16, borderRadius: 18, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none', resize: 'vertical', minHeight: 120, fontFamily: 'inherit' }}
+            className="ip-note"
           />
-          <div style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: MUTED, marginTop: 6 }}>{answers.notes.length} / 600</div>
+          <div className="ip-counter">{answers.notes.length} / 600</div>
         </StepShell>
       )}
     </div>
@@ -689,36 +482,30 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
 }
 
 function Header({ onBack, label, progress, stepText }) {
+  const total = stepText ? Number(stepText.split('/')[1]) : 1;
+  const current = stepText ? Number(stepText.split('/')[0]) : 1;
   return (
-    <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-        <div onClick={onBack} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: MUTED }}>{label}</div>
-        </div>
-        {stepText && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: MUTED }}>{stepText}</div>}
+    <header className="ip-head">
+      <div className="ip-head-row">
+        <button type="button" className="ip-round" aria-label="Back from check-in" onClick={onBack}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+        </button>
+        <span className="ip-count">{stepText ? <>{String(current).padStart(2, '0')}<i>/{String(total).padStart(2, '0')}</i></> : label}</span>
+        <span className="ip-skip-spacer" />
       </div>
-      <div style={{ height: 4, borderRadius: 99, background: ROW_BORDER, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: ACCENT_BORDER, transition: 'width .25s ease' }} />
+      <div className="ip-progress" aria-label={`${label}${stepText ? `, step ${stepText}` : ''}`}>
+        {Array.from({ length: total }, (_, i) => <span key={i} className={progress >= 1 || i < current - 1 ? 'is-done' : i === current - 1 ? 'is-now' : ''} />)}
       </div>
-    </div>
+    </header>
   );
 }
 
 function CompletionCard({ month, justFinished }) {
   return (
-    <div style={{ background: CARD_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 22, padding: 22, textAlign: 'center' }}>
-      <div style={{ width: 48, height: 48, borderRadius: 99, background: ACCENT_BG, border: '1px solid ' + ACCENT_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={ACCENT_BORDER} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-      </div>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: INK }}>
-        {justFinished ? `That's ${monthLabel(month)} logged.` : `${monthLabel(month)} is already logged.`}
-      </div>
-      <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: BODY_TEXT, marginTop: 8 }}>
-        {justFinished ? 'Your matches update overnight.' : 'Come back next month for your next check-in.'}
-      </div>
+    <div className="ip-done">
+      <div className="ip-done-stamp" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" /></svg></div>
+      <h1 className="ip-title">{justFinished ? `${monthLabel(month)}, logged.` : `${monthLabel(month)} is done.`}</h1>
+      <p className="ip-subtitle">{justFinished ? 'Your matches update overnight.' : 'See you next month.'}</p>
     </div>
   );
 }

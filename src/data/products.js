@@ -12,6 +12,7 @@ import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
 import { MENSTRUAL_PHYSICAL } from './menstrualProducts.js';
 import { BRAND_PRODUCTS } from './brands.js';
 import { INCONTINENCE_PHYSICAL } from './incontinenceProducts.js';
+import { RELEASED_STARTUPS } from './startups.js';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 import { getInteractions } from './interactions.js';
 
@@ -72,15 +73,15 @@ export const PHYSICAL_PRODUCTS = [
         safety: {
             fdaStatus: 'FDA-registered medical device',
             materials: 'FlexFoam (polyethylene/polypropylene blend), fragrance-free options available',
-            recalls: '⚠️ 2024 social media concerns about chemical residues. Always has not been subject to FDA recall but independent testing found trace PFAS in some pad brands.',
+            recalls: 'No product-specific recall source is linked in this catalog.',
             allergens: 'Fragrance in scented versions; fragrance-free version available',
             sideEffects: 'Possible contact dermatitis or irritation, especially with scented versions. Rash or itching from synthetic materials.',
-            opinionAlerts: 'Common complaints include the "plastic feel" and environmental concerns regarding non-biodegradability. A 2024 independent lab test (commissioned by Mamavation/EHN) found PFAS ("forever chemical") indicators in some Always pad lines, which drove a wave of social media discussion and pushed a visible share of users toward organic-cotton alternatives — Always disputes that its products pose a health risk, and no regulatory recall has followed, but the concern is real and widely discussed, not fringe.'
+            opinionAlerts: 'Some users report irritation or dislike the synthetic feel. This catalog has no product-specific chemical-residue test result for Always Infinity FlexFoam.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'FlexFoam absorption is reliable for heavy flow; unscented versions minimize irritation risk for sensitive users.',
-        communityReview: 'Community discussions on Reddit r/periods are split: strong praise for absorption and the thin profile during heavy flow, alongside a distinct and growing thread of PFAS/chemical-residue concern that picked up in 2024 and made a real share of users switch to organic-cotton brands or say they no longer feel fully comfortable using it.',
+        communityReview: 'Community discussions on Reddit r/periods include praise for absorption and a thin profile, along with reports of irritation or dislike of the synthetic feel. These are user experiences, not clinical safety findings.',
         ingredients: 'Polyethylene, polypropylene, wood pulp, adhesive. Fragrance-free version omits parfum.',
         effectiveness: 'Highly effective for heavy flow — users consistently report fewer leaks than with standard mainstream pads at a comparable price point.',
         integrations: [],
@@ -94,7 +95,7 @@ export const PHYSICAL_PRODUCTS = [
                 ]
             },
             scientific: {
-                aiSummary: "Independent and regulatory oversight confirms that FlexFoam technology meets FDA safety standards for medical devices. Recent independent research highlights the effectiveness of polyethylene blends in moisture-wicking, though sustainability remains a scientific trade-off.",
+                aiSummary: "The listed FDA guidance explains menstrual product regulation generally; it does not independently test this specific pad or establish product-specific chemical safety.",
                 links: [
                     { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon & Menstrual Product Safety', summary: 'The FDA regulates pads and tampons as medical devices and monitors safety.', justification: 'The FDA is the federal authority for medical device safety in the US.' }
                 ]
@@ -369,7 +370,7 @@ export const PHYSICAL_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['sleep-energy'],
-        tags: ['heavy-flow', 'fatigue', 'cramps', 'pcos'],
+        tags: ['anemia', 'fatigue'],
         price: '$10.59 (180 tablets, 180-day supply)',
         userRating: 4.7,
         url: 'https://www.naturemade.com/products/iron-tablets',
@@ -406,8 +407,8 @@ export const PHYSICAL_PRODUCTS = [
         category: 'supplement',
         type: 'physical',
         internal: false,
-        healthFunctions: ['hormone-balance'],
-        tags: ['pcos', 'irregular', 'safety-concern', 'organic'],
+        healthFunctions: ['supplement'],
+        tags: ['vitamin-d'],
         price: '$10–15 (150 softgels)',
         userRating: 4.8,
         url: 'https://naturesbounty.com/products/vitamin-d3-5000-iu-150-rapid-release-softgels',
@@ -418,22 +419,22 @@ export const PHYSICAL_PRODUCTS = [
             'Amazon': 'https://www.amazon.com/Natures-Bounty-Supplement-Supports-Softgels/dp/B002Y27LLS',
         },
         image: 'https://naturesbounty.com/cdn/shop/products/089377.png',
-        summary: '125 mcg (5000 IU) vitamin D3 cholecalciferol per rapid-release softgel. Supports bone health, immune function, and hormonal balance. Non-GMO, gluten-free, no artificial colors or flavors.',
+        summary: '125 mcg (5,000 IU) vitamin D3 per softgel. This is above the usual adult upper limit of 4,000 IU per day; use this dose only with guidance from a clinician. PCOS alone does not establish a need for high-dose vitamin D.',
         safety: {
             fdaStatus: 'Dietary supplement',
             materials: 'Cholecalciferol (D3), soybean oil, gelatin, vegetable glycerin, corn oil. Non-GMO. Free from gluten, wheat, yeast, fish, artificial colors, flavors, and sweeteners.',
             recalls: 'No known recalls',
             allergens: 'Contains soy (soybean oil). Gelatin (not vegan).',
-            sideEffects: 'At 5000 IU daily, vitamin D toxicity is unlikely but possible with very long-term high-dose use. Do not take additional high-dose D3 supplements concurrently without monitoring blood levels.',
+            sideEffects: 'At 5,000 IU per softgel, this exceeds the usual adult upper limit of 4,000 IU per day. Excess vitamin D can cause high blood calcium and other harms. Check total intake from all supplements with a clinician.',
             opinionAlerts: 'D3 at 5000 IU is a higher dose. Clinicians often recommend confirming deficiency with a 25(OH)D blood test before starting.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of Endocrine Society and NIH ODS guidance on vitamin D supplementation.',
-        doctorOpinion: 'Vitamin D deficiency is widespread and often goes undetected. Confirming your level with a 25(OH)D blood test before starting high-dose supplementation is recommended.',
+        doctorOpinion: 'A high-dose vitamin D supplement should be considered with a clinician after assessing vitamin D status and total daily intake.',
         communityReview: 'Highly rated. Users report improvements in mood, energy, and general wellbeing. Consistently well-reviewed for quality and value.',
         verificationLinks: {
             scientific: { links: [
-                
+                { url: 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/', text: 'NIH Office of Dietary Supplements: Vitamin D', summary: 'Vitamin D intake, upper limits, and risks from excessive supplementation.' }
             ] }
         }
     },
@@ -809,6 +810,23 @@ export const ALL_PRODUCTS = [
 export function getProductById(id) {
     if (!id) return null;
     return ALL_PRODUCTS.find((p) => p.id === id) || null;
+}
+
+// Saved Ecosystem rows are deliberately compact and older rows omit the
+// product's health tags. Restore catalog facts before using a saved row for
+// matching or displaying its evidence; keep user-specific row fields.
+export function hydrateCatalogProduct(product) {
+    if (!product?.id) return product;
+    const catalogProduct = getProductById(product.id)
+        || RELEASED_STARTUPS.find((entry) => entry.id === product.id);
+    if (!catalogProduct) return product;
+    return {
+        ...catalogProduct,
+        ...product,
+        tags: catalogProduct.tags || product.tags,
+        healthFunctions: catalogProduct.healthFunctions || product.healthFunctions,
+        safety: catalogProduct.safety || product.safety,
+    };
 }
 
 /**
@@ -1492,6 +1510,7 @@ function noveltyAdjustment(product, quizAnswers) {
 
 const GOAL_MATCH_WEIGHTS = {
     primaryGoal: 20,
+    otherNeeds: 8,
     periodFlow: 2,
     periodPain: 2,
     utiFrequency: 1,
@@ -1559,16 +1578,24 @@ function tagsForHealthLabel(label) {
     if (/pelvic pain|pain.*sex|sexual wellness|sexual.*comfort|dyspareunia/.test(text)) add('pelvic-floor', 'sexual-health');
     if (/irregular period|missed period|cycle tracking/.test(text)) add('irregular', 'cycle-tracking');
     if (/spotting/.test(text)) add('liner', 'menstrual-collection', 'leak-protection', 'irregular');
-    if (/pms|pmdd|mood swing|irritability|anxiety|low mood|cycle-related mood/.test(text)) add('mental-health');
-    if (/pcos|polycystic/.test(text)) add('pcos', 'pcos-management', 'hormone-balance');
-    if (/endometriosis|adenomyosis/.test(text)) add('endometriosis', 'cramps', 'cramp-relief');
-    if (/fibroid/.test(text)) add('heavy-flow', 'hormone-balance');
-    if (/hormone-related|hormonal|bloating|breast tenderness|nausea/.test(text)) add('hormone-balance', 'bloating');
+    if (/\bpms\b/.test(text)) add('pms');
+    if (/\bpmdd\b/.test(text)) add('pmdd');
+    if (/mood swing|irritability|anxiety|low mood|cycle-related mood/.test(text)) add('mental-health');
+    // A condition does not imply every symptom that can accompany it.
+    // Bleeding and pain products require separately reported symptoms.
+    if (/pcos|polycystic/.test(text)) add('pcos', 'pcos-management');
+    if (/endometriosis/.test(text)) add('endometriosis');
+    if (/adenomyosis/.test(text)) add('adenomyosis');
+    if (/fibroid/.test(text)) add('fibroids');
+    if (/hormone-related|hormonal/.test(text)) add('hormone-balance');
+    if (/bloating/.test(text)) add('bloating');
+    if (/breast tenderness/.test(text)) add('breast-tenderness');
+    if (/nausea/.test(text)) add('nausea');
     if (/fertility|trying to conceive|\bttc\b|ovulation/.test(text)) add('fertility', 'cycle-tracking');
     if (/pregnan|prenatal|trimester/.test(text)) add('pregnancy');
     if (/postpartum|breastfeeding|lactation/.test(text)) add('postpartum');
     if (/vaginal|bv\b|yeast infection/.test(text)) add('vaginal-health');
-    if (/\buti\b|urinary tract|burning with urination|urinary urgency|frequent urination/.test(text)) add('uti', 'uti-prevention');
+    if (/\butis?\b|urinary tract|burning with urination|urinary urgency|frequent urination/.test(text)) add('uti', 'uti-prevention');
     if (/bladder leak|incontinence/.test(text)) add('bladder-leaks', 'bladder-leak-protection');
     if (/contraception|birth control/.test(text)) add('contraception');
     if (/sti/.test(text)) add('sexual-health', 'telehealth');
@@ -1577,6 +1604,11 @@ function tagsForHealthLabel(label) {
     if (/skin|acne/.test(text)) add('skin', 'skin-hair');
     if (/hair thinning|hair loss|excess facial|excess body hair/.test(text)) add('hair', 'skin-hair');
     if (/fitness|strength|exercise/.test(text)) add('fitness-cycle');
+    if (/bone health|joint ache/.test(text)) add('bone-health');
+    if (/low libido|libido change/.test(text)) add('sexual-health');
+    if (/headache|migraine/.test(text)) add('migraine');
+    if (/anemia|iron deficien/.test(text)) add('anemia');
+    if (/metabolism|weight support/.test(text)) add('hormone-balance');
     if (/doctor|specialist|provider|telehealth/.test(text)) add('telehealth');
 
     return [...tags];
@@ -1592,11 +1624,25 @@ function productMatchesAnyHealthLabel(product, labels) {
     return { matched: false, label: null, tag: null };
 }
 
+function evaluateHealthLabels(product, labels) {
+    const selected = [...new Set(labels)].filter((label) => String(label).trim());
+    if (!selected.length) return { score: null, matched: false, label: null, unmapped: [], unmatched: [] };
+    const matches = selected.map((label) => productMatchesAnyHealthLabel(product, [label]));
+    const first = matches.find((result) => result.matched);
+    const matchedCount = matches.filter((result) => result.matched).length;
+    return {
+        // Keep the score conservative until product-specific evidence and
+        // outcome data can support a calibrated product-fit percentage.
+        score: matchedCount / selected.length,
+        matched: Boolean(first),
+        label: first?.label || null,
+        unmapped: selected.filter((label) => tagsForHealthLabel(label).length === 0),
+        unmatched: selected.filter((_, index) => !matches[index].matched),
+    };
+}
+
 function getPrimaryGoalLabels(intake, quizAnswers) {
     const safeIntake = rawIntakeFromProfile(intake);
-
-    const primary = asStringArray(safeIntake.primaryConcerns);
-    if (primary.length) return primary;
 
     const support = asStringArray(safeIntake.supportSelections)
         .filter((item) => !['Nothing right now', 'Something else'].includes(item));
@@ -1604,23 +1650,64 @@ function getPrimaryGoalLabels(intake, quizAnswers) {
     if (supportOther) support.push(supportOther);
     if (support.length) return support;
 
+    const primary = asStringArray(safeIntake.primaryConcerns);
+    if (primary.length) return primary;
+
     const goals = String(
         quizAnswers?.healthGoals
         || safeIntake.healthGoals
         || ''
     ).trim();
 
-    return goals ? [goals] : [];
+    if (goals) return [goals];
+
+    // Older profiles have only frustrations. Treat those as the stated goal
+    // instead of leaving the primary-goal component empty.
+    return getSymptomLabels(safeIntake, quizAnswers);
 }
 
 function getSymptomLabels(intake, quizAnswers) {
     const explicit = asStringArray(intake?.symptoms);
-    if (explicit.length) return explicit;
-    return asStringArray(quizAnswers?.frustrations);
+    // Current intake stores exact answers. Its legacy frustrations are generated
+    // for older screens and can imply symptoms the person never selected.
+    const hasCurrentAnswers = Boolean(quizAnswers?.fullHealthIntake && (
+        asStringArray(intake?.supportSelections).length
+        || asStringArray(intake?.primaryConcerns).length
+        || asStringArray(intake?.diagnosisSelections).length
+    ));
+    return [...new Set([
+        ...explicit,
+        ...(hasCurrentAnswers ? [] : asStringArray(quizAnswers?.frustrations)),
+    ])];
+}
+
+function getOtherNeedLabels(intake, quizAnswers, primaryLabels) {
+    const primary = new Set(primaryLabels.map((label) => String(label).trim().toLowerCase()));
+    const primaryTags = new Set(primaryLabels.flatMap(tagsForHealthLabel));
+    return [...new Set([
+        ...asStringArray(intake?.supportSelections),
+        ...asStringArray(intake?.symptoms),
+        ...asStringArray(intake?.goals),
+        ...asStringArray(intake?.supportOtherText),
+        ...(quizAnswers?.fullHealthIntake && (
+            asStringArray(intake?.supportSelections).length
+            || asStringArray(intake?.primaryConcerns).length
+            || asStringArray(intake?.diagnosisSelections).length
+        ) ? [] : asStringArray(quizAnswers?.frustrations)),
+    ].filter((label) => {
+        const normalized = String(label).trim().toLowerCase();
+        const tags = tagsForHealthLabel(label);
+        return normalized && normalized !== 'nothing right now' && normalized !== 'something else'
+            && !primary.has(normalized) && tags.length > 0
+            && !tags.every((tag) => primaryTags.has(tag));
+    }))];
 }
 
 function getDiagnosisLabels(intake, healthProfile) {
-    const direct = asStringArray(intake?.diagnosisSelections || intake?.conditions);
+    const direct = asStringArray(intake?.diagnosisSelections || intake?.conditions)
+        .filter((label) => !['None that I know of', 'Prefer not to say', 'Other / not listed', 'other'].includes(label));
+    const other = String(intake?.conditionOtherText || '').trim();
+    if (other && tagsForHealthLabel(other).length) direct.push(other);
     const imported = [
         ...asStringArray(healthProfile?.conditions),
         ...asStringArray(healthProfile?.fhirSummary?.conditions),
@@ -1632,6 +1719,7 @@ function getLifeStageLabels(intake) {
     return [
         ...asStringArray(intake?.lifeStageSelections),
         ...asStringArray(intake?.lifeStage),
+        ...asStringArray(intake?.lifeStageOther).filter((label) => tagsForHealthLabel(label).length > 0),
     ];
 }
 
@@ -1841,6 +1929,8 @@ function getExtendedAvoidSet(quizAnswers) {
         ...asStringArray(intake.allergyItems),
         ...asStringArray(intake.allergySelections),
         ...asStringArray(intake.avoidIngredients),
+        ...asStringArray(intake.avoidIngredientsOtherText),
+        ...asStringArray(intake.allergyOtherText),
     ].forEach((label) => {
         const trigger = labelToTrigger[String(label).toLowerCase()];
         if (trigger) out.add(trigger);
@@ -1849,7 +1939,7 @@ function getExtendedAvoidSet(quizAnswers) {
     return out;
 }
 
-function getSafetyAssessment(product, quizAnswers) {
+function getSafetyAssessment(product, quizAnswers, healthProfile = null) {
     const intake = rawIntakeFromProfile(quizAnswers);
     const lifeStages = getLifeStageLabels(intake)
         .map((label) => String(label).toLowerCase());
@@ -1876,6 +1966,17 @@ function getSafetyAssessment(product, quizAnswers) {
 
     const category = String(product?.category || '').toLowerCase();
     const productText = productTextBlob(product);
+
+    // A 65 mg iron tablet exceeds the ordinary adult daily upper limit.
+    // Generic fatigue or heavy periods do not establish iron deficiency.
+    if (product?.id === 'p-nature-made-iron-65mg') {
+        const hasIntake = Object.keys(intake).length > 0;
+        const diagnosedDeficiency = getDiagnosisLabels(intake, healthProfile)
+            .some((label) => /anemia|iron deficien/i.test(String(label)));
+        if (hasIntake && !diagnosedDeficiency) {
+            return { eligible: false, reason: 'High-dose iron is best considered after iron deficiency is confirmed with a clinician or lab test.' };
+        }
+    }
 
     const pregnancySpecific =
         category === 'pregnancy'
@@ -1948,7 +2049,8 @@ function getSafetyAssessment(product, quizAnswers) {
     }
 
     const history = getProductHistoryEntry(product, intake);
-    if (history?.worked === 'Made it worse' || history?.reaction === 'Serious') {
+    if (['Made it worse', 'Made things worse'].includes(history?.worked)
+        || ['Serious', 'Serious or concerning reaction'].includes(history?.reaction)) {
         return { eligible: false, reason: 'You previously reported a negative reaction to this product' };
     }
 
@@ -2171,17 +2273,21 @@ function evaluatePreferenceMatch(product, intake) {
         };
     }
 
-    const fsaAnswer = String(intake?.fsaHsaAnswer || intake?.fsaHsa || '');
-    if (fsaAnswer && !['No', 'Not sure'].includes(fsaAnswer)) {
-        if (product?.fsaHsaEligible === true) {
+    const fsaAnswer = String(intake?.fsaHsaAnswer || intake?.fsaHsa || '').toLowerCase();
+    if (['fsa', 'hsa', 'both'].includes(fsaAnswer)) {
+        const combined = product?.fsaHsaEligible ?? product?.fsa_hsa_eligible;
+        const fsa = product?.fsaEligible ?? product?.fsa_eligible ?? combined;
+        const hsa = product?.hsaEligible ?? product?.hsa_eligible ?? combined;
+        const eligible = fsaAnswer === 'fsa' ? fsa : fsaAnswer === 'hsa' ? hsa : fsa === true || hsa === true ? true : fsa === false && hsa === false ? false : undefined;
+        if (eligible === true) {
             parts.fsaHsa = { score: 1 };
             reasons.push({
                 component: 'fsaHsa',
                 weight: PREFERENCE_WEIGHTS.fsaHsa,
                 score: 1,
-                text: 'FSA/HSA eligible',
+                text: `${fsaAnswer === 'both' ? 'FSA or HSA' : fsaAnswer.toUpperCase()} eligible`,
             });
-        } else if (product?.fsaHsaEligible === false) {
+        } else if (eligible === false) {
             parts.fsaHsa = { score: 0 };
         }
     }
@@ -2217,7 +2323,9 @@ function knownWeightedPoints(parts, weights) {
 }
 
 function getAgeFitScore(product, intake) {
-    const age = Number(intake?.age);
+    const rawAge = String(intake?.age ?? '').trim();
+    if (!rawAge) return null;
+    const age = Number(rawAge);
     if (!Number.isFinite(age)) return null;
 
     const rawMin = product?.minAge ?? product?.minimumAge ?? product?.ageMin ?? product?.age_min;
@@ -2325,13 +2433,15 @@ function getPerimenopauseTimingFitScore(product, intake, lifeStageLabels) {
     return stageRelevant ? 1 : null;
 }
 
-function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
+function getProductRelevanceStats(savedProduct, quizAnswers, healthProfile = null) {
+    const product = hydrateCatalogProduct(savedProduct);
     const intake = rawIntakeFromProfile(quizAnswers);
-    const safety = getSafetyAssessment(product, quizAnswers);
+    const safety = getSafetyAssessment(product, quizAnswers, healthProfile);
 
     if (!safety.eligible) {
         return {
             percent: 0,
+            matchStatus: 'excluded',
             score: 0,
             goalMatch: 0,
             profileFit: 0,
@@ -2358,15 +2468,50 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
     const unknowns = [];
 
     const primaryGoalLabels = getPrimaryGoalLabels(intake, quizAnswers);
+    const otherNeedLabels = getOtherNeedLabels(intake, quizAnswers, primaryGoalLabels);
     const diagnosisLabels = getDiagnosisLabels(intake, healthProfile);
     const lifeStageLabels = getLifeStageLabels(intake);
+    const hasProfileSignals = Boolean(
+        primaryGoalLabels.length || otherNeedLabels.length || diagnosisLabels.length
+        || lifeStageLabels.length || String(intake?.age || '').trim()
+        || String(intake?.periodFlow || '').trim() || String(intake?.periodPain || '').trim()
+        || String(intake?.utiFrequency || '').trim()
+    );
 
-    const goalMatchResult = productMatchesAnyHealthLabel(product, primaryGoalLabels);
-    const diagnosisMatch = productMatchesAnyHealthLabel(product, diagnosisLabels);
+    const goalMatchResult = evaluateHealthLabels(product, primaryGoalLabels);
+    const otherNeedMatch = evaluateHealthLabels(product, otherNeedLabels);
+    const primaryTags = new Set(primaryGoalLabels.flatMap(tagsForHealthLabel));
+    const additionalDiagnoses = diagnosisLabels.filter((label) => {
+        const tags = tagsForHealthLabel(label);
+        return !tags.length || !tags.every((tag) => primaryTags.has(tag));
+    });
+    const diagnosisMatch = evaluateHealthLabels(product, additionalDiagnoses);
+    const unmetNeeds = [...new Set([
+        ...goalMatchResult.unmatched,
+        ...otherNeedMatch.unmatched,
+        ...diagnosisMatch.unmatched,
+    ])];
+    const unmappedNeeds = [...new Set([
+        ...goalMatchResult.unmapped,
+        ...otherNeedMatch.unmapped,
+        ...diagnosisMatch.unmapped,
+    ])];
+    if (unmappedNeeds.length) {
+        unknowns.push(`We do not have enough product data to compare: ${unmappedNeeds.slice(0, 3).join(', ')}${unmappedNeeds.length > 3 ? ', and more' : ''}.`);
+    }
+    if (String(intake?.formatOtherText || '').trim()) {
+        unknowns.push('Your custom format preference is saved, but is not yet included in this score.');
+    }
+    if (String(intake?.anythingElse || '').trim()) {
+        unknowns.push('Your additional note is saved, but is not automatically interpreted in this score.');
+    }
 
     const goalParts = {
-        primaryGoal: primaryGoalLabels.length
-            ? { score: goalMatchResult.matched ? 1 : 0 }
+        primaryGoal: goalMatchResult.score != null
+            ? { score: goalMatchResult.score }
+            : null,
+        otherNeeds: otherNeedMatch.score != null
+            ? { score: otherNeedMatch.score }
             : null,
         periodFlow: null,
         periodPain: null,
@@ -2377,8 +2522,17 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
         reasons.push({
             component: 'primaryGoal',
             weight: GOAL_MATCH_WEIGHTS.primaryGoal,
-            score: 1,
+            score: goalMatchResult.score,
             text: `Goal: ${goalMatchResult.label}`,
+        });
+    }
+
+    if (otherNeedMatch.matched) {
+        reasons.push({
+            component: 'otherNeeds',
+            weight: GOAL_MATCH_WEIGHTS.otherNeeds,
+            score: otherNeedMatch.score,
+            text: `Another need you selected: ${otherNeedMatch.label}`,
         });
     }
 
@@ -2557,18 +2711,18 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
     }
 
     if (
-        diagnosisLabels.length
+        additionalDiagnoses.length
         && productTargetsAnySignal(product, DIAGNOSIS_SPECIFIC_SIGNALS)
     ) {
         profileParts.diagnoses = {
-            score: diagnosisMatch.matched ? 1 : 0,
+            score: diagnosisMatch.score ?? 0,
         };
 
         if (diagnosisMatch.matched) {
             reasons.push({
                 component: 'diagnoses',
                 weight: PROFILE_FIT_WEIGHTS.diagnoses,
-                score: 1,
+                score: diagnosisMatch.score,
                 text: `Relevant to a condition you selected: ${diagnosisMatch.label}`,
             });
         }
@@ -2619,12 +2773,12 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
         : null;
 
     const topLevel = [
-        goalMatch == null ? null : { weight: 25, value: goalMatch },
-        profileFit == null ? null : { weight: 25, value: profileFit },
-        { weight: 25, value: evidenceQuality },
+        goalMatch == null ? null : { weight: 55, value: goalMatch },
+        profileFit == null ? null : { weight: 20, value: profileFit },
+        { weight: 10, value: evidenceQuality },
         preference.percent == null
             ? null
-            : { weight: 25, value: preference.percent },
+            : { weight: 15, value: preference.percent },
     ].filter(Boolean);
 
     const hasPositiveGoalRelevance = Object.values(goalParts)
@@ -2645,14 +2799,14 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
 
     const totalWeight = topLevel.reduce((sum, item) => sum + item.weight, 0);
 
-    const percent = hasHealthRelevance && totalWeight
+    const rawPercent = hasHealthRelevance && totalWeight
         ? Math.round(
             topLevel.reduce(
                 (sum, item) => sum + item.weight * item.value,
                 0
             ) / totalWeight
         )
-        : null;
+        : hasProfileSignals ? 0 : null;
 
     const knownGoalWeight = knownWeightedPoints(goalParts, GOAL_MATCH_WEIGHTS);
     const knownProfileWeight =
@@ -2676,6 +2830,17 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
                 ? 'medium'
                 : 'limited';
 
+    // Evidence quality is useful context, but it cannot turn one matching
+    // intake answer into a claim of near-certain personal fit.
+    const percent = rawPercent == null ? null : Math.min(
+        rawPercent,
+        confidence === 'limited' ? 85 : confidence === 'medium' ? 95 : 100,
+        product.evidenceStrength === 'limited' ? 59 : 100
+    );
+    if (product.evidenceStrength === 'limited' && rawPercent > 59) {
+        unknowns.push('Evidence for this product’s health benefit is limited; the personal match is capped until stronger product-specific evidence is available.');
+    }
+
     const allReasons = hasHealthRelevance
         ? [
             ...reasons,
@@ -2691,6 +2856,7 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
 
     return {
         percent,
+        matchStatus: hasHealthRelevance ? 'scored' : hasProfileSignals ? 'no-relevance' : 'no-profile',
         score: percent == null ? 0 : percent,
         goalMatch,
         profileFit,
@@ -2704,6 +2870,7 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
         reasonDetails: allReasons.slice(0, 4),
         considerations: Array.from(new Map(considerations.map((c) => [c.text, c])).values()),
         unknowns: [...new Set(unknowns)],
+        unmetNeeds,
         components: {
             goal: goalParts,
             profile: profileParts,
@@ -2725,10 +2892,10 @@ export function getProductRelevanceScore(product, quizAnswers, healthProfile = n
 export function getRecommendationMatchesAndRest(quizAnswers, healthProfile = null) {
     const intake = rawIntakeFromProfile(quizAnswers);
     const hasAnyProfileSignal =
-        getPrimaryGoalLabels(quizAnswers).length > 0 ||
-        getSymptomLabels(quizAnswers).length > 0 ||
-        getDiagnosisLabels(quizAnswers, healthProfile).length > 0 ||
-        getLifeStageLabels(quizAnswers).length > 0 ||
+        getPrimaryGoalLabels(intake, quizAnswers).length > 0 ||
+        getSymptomLabels(intake, quizAnswers).length > 0 ||
+        getDiagnosisLabels(intake, healthProfile).length > 0 ||
+        getLifeStageLabels(intake).length > 0 ||
         asStringArray(intake?.preferredFormats).length > 0 ||
         asStringArray(intake?.avoidIngredients).length > 0 ||
         Boolean(String(intake?.priceRange || '').trim()) ||
@@ -3082,43 +3249,37 @@ export const SIMILAR_PROFILES = {
     'heavy-flow': {
         label: 'Users with Heavy Flow',
         topProducts: ['p-saalt-cup', 'p-flex-disc', 'p-always-infinity'],
-        quote: "I was changing my tampon every two hours before I found the right cup and disc combination."
     },
     'cramps': {
         label: 'Users with Period Pain',
         topProducts: ['p-magnesium-glycinate', 'p-honeypot-pad', 'p-thermacare'],
-        quote: "The combination of magnesium glycinate and herbal heat therapy completely changed my day 1 experience."
     },
     'bloating': {
         label: 'Users with Hormonal Bloating',
-        topProducts: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me', 'p-evening-primrose', 'p-magnesium-glycinate'],
-        quote: "Flo gummies and digestive enzymes made a real difference for my cycle-related bloating."
+        topProducts: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me'],
     },
     'uti': {
         label: 'Users with Recurrent UTIs',
         topProducts: ['p-azo-test', 'p-boric-acid', 'p-cranberry-supplement'],
-        quote: "AZO test strips and early intervention with probiotics saved me so many trips to urgent care."
     },
     'irregular': {
         label: 'Users with Irregular Cycles',
         topProducts: ['d-clue', 'd-natural-cycles', 'p-vitex'],
-        quote: "Tracking my basal body temperature with Natural Cycles finally helped me understand when I'm actually ovulating."
     },
     'pcos': {
         label: 'Users with PCOS',
-        topProducts: ['p-zinc', 'p-evening-primrose', 'd-clue'],
-        quote: "Zinc and Chasteberry helped stabilize my hormonal acne and regulate my cycles after years of guessing."
+        topProducts: ['p-inositol-wholesome', 'p-spearmint-pcos', 'd-maven'],
     }
 };
 
 /** Symptom → product IDs for supplement/symptom browse. Used when category=supplement. */
 export const SYMPTOM_TO_SUPPLEMENTS = {
-    cramps: ['p-magnesium-glycinate', 'p-evening-primrose', 'p-fish-oil', 'p-honeypot-pad', 'p-thermacare', 'p-vitex'],
-    bloating: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me', 'p-evening-primrose', 'p-magnesium-glycinate'],
+    cramps: ['p-magnesium-glycinate', 'p-fish-oil', 'p-thermacare'],
+    bloating: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me'],
     uti: ['p-cranberry-supplement', 'p-d-mannose-now', 'p-uqora-control', 'p-probiotics-women', 'p-azo-test', 'p-boric-acid', 'p-cystex'],
-    pcos: ['p-inositol-wholesome', 'p-spearmint-pcos', 'p-zinc', 'p-evening-primrose', 'p-vitex'],
+    pcos: ['p-inositol-wholesome', 'p-spearmint-pcos'],
     menopause: ['p-estroven-mood', 'p-remifemin', 'p-creatine-womens'],
-    irregular: ['p-vitex', 'p-inositol-wholesome', 'p-evening-primrose'],
+    irregular: ['p-inositol-wholesome'],
     fertility: ['p-ubiquinol-thorne'],
 };
 

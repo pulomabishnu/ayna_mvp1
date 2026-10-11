@@ -1,174 +1,66 @@
-import { getProfileMatchPercentForProduct } from '../../data/products.js';
+import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
-import MatchRing from './MatchRing.jsx';
+import { getVerificationLinks } from '../../utils/verificationLinks.js';
+import { getBuyUrl } from '../data/buyUrl.js';
 import ProductImage from './ProductImage.jsx';
-
-const PARTNER_BADGE_STYLE = {
-  position: 'absolute',
-  zIndex: 2,
-  padding: '4px 7px',
-  borderRadius: 999,
-  background: 'var(--ayna-surface)',
-  border: '1px solid var(--ayna-border)',
-  fontSize: 'calc(10px * var(--ayna-text-scale, 1))',
-  fontWeight: 600,
-  lineHeight: 1,
-  color: 'var(--ayna-text-muted)',
-};
 
 function labelForCategory(category) {
   if (!category) return '';
   return category.replace(/-/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
 }
 
-// Catalog `price` strings are often a full descriptive sentence (e.g.
-// "$45.87 for 144 (4 Drop / Moderate Absorbency, Long)") — cards need just
-// the short dollar amount, not the full description, so it never overflows
-// a compact card. Falls back to the first comma/paren-delimited chunk for
-// non-dollar cases like "Free (built into iPhone)" -> "Free".
 function shortPrice(price) {
-  const s = String(price || '').trim();
-  if (!s) return '';
-  const m = s.match(/^(Free|\$[\d,]+(?:\.\d+)?(?:\s*[–-]\s*\$?[\d,]+(?:\.\d+)?)?)/i);
-  if (m) return m[1];
-  return s.split(/[,(]| for /i)[0].trim();
+  const value = String(price || '').trim();
+  if (!value) return '';
+  const amount = value.match(/^(Free|\$[\d,]+(?:\.\d+)?(?:\s*[–-]\s*\$?[\d,]+(?:\.\d+)?)?)/i);
+  return amount ? amount[1] : value.split(/[,(]| for /i)[0].trim();
 }
 
-/**
- * Two layouts, one component (per design: "Nebula" 2-up grid vs "Mission
- * control" dense list), switched via `variant` rather than duplicated —
- * both read the same real product fields, nothing is fetched twice.
- */
-export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, onOpenWhyMatch }) {
-  const { name, category, price, priceDisplay, userRating, image, imageUrl, images } = product || {};
+export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch }) {
+  const { name, brand, category, price, priceDisplay, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   const resolvedPrice = shortPrice(price || priceDisplay);
-  const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
-  const openWhyMatch = onOpenWhyMatch ? () => onOpenWhyMatch(product) : undefined;
-  // Real brand-partnership flag (src/utils/partnerBrands.js) — same
-  // pattern-match desktop's Discovery.jsx uses for its "Affiliate link"
-  // card badge, just labeled "ayna Favorite" here per product's request.
+  const hasDisplayPrice = /[$€£]|^free\b/i.test(resolvedPrice);
+  const categoryLabel = labelForCategory(category);
+  const secondaryLabel = brand || categoryLabel;
+  const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
+  const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
+  const relevantReason = match?.matchStatus === 'scored' && !showMatch
+    ? match.reasonDetails?.find((reason) => ['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency', 'diagnoses', 'lifeStage'].includes(reason.component))
+    : null;
+  const isService = product?.type === 'digital' || category === 'telehealth';
   const isPartner = isPartnerBrandItem(product);
-
-  if (variant === 'list') {
-    return (
-      <div
-        onClick={onClick}
-        style={{
-          display: 'flex',
-          gap: 12,
-          alignItems: 'center',
-          padding: '10px 12px',
-          borderRadius: 16,
-          cursor: 'pointer',
-          background: 'var(--ayna-surface)',
-          border: '1px solid var(--ayna-border)',
-        }}
-      >
-        <div
-          style={{
-            position: 'relative',
-            width: 56,
-            height: 56,
-            flex: 'none',
-            borderRadius: 14,
-            overflow: 'hidden',
-            background: 'var(--ayna-bg-alt)',
-          }}
-        >
-          <ProductImage src={resolvedImage} alt={name} allowBrandLogo={product?.type === 'digital'} compact />
-          <div style={{ position: 'absolute', right: 2, bottom: 2 }}>
-            <MatchRing percent={matchPercent} size={24} onClick={openWhyMatch} />
-          </div>
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-            <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))' }}>{name}</div>
-            {resolvedPrice && (
-              <div style={{ flex: 'none', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)', whiteSpace: 'nowrap' }}>
-                {resolvedPrice}
-              </div>
-            )}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
-            {isPartner && (
-              <div style={{ ...PARTNER_BADGE_STYLE, position: 'static', padding: '3px 7px' }}>ayna Favorite</div>
-            )}
-            {userRating != null && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="#FFC774">
-                  <path d="M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.2L12 17.3 6.4 20.2l1.2-6.2L3 9.6l6.3-.8L12 3Z" />
-                </svg>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{userRating}</div>
-              </div>
-            )}
-            {category && (
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', marginLeft: 'auto' }}>
-                {labelForCategory(category)}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const buyUrl = getBuyUrl(product);
+  const isList = variant === 'list';
+  const contexts = isList ? [['doctor', 'Clinical'], ['scientific', 'Research'], ['community', 'Community']]
+    .filter(([kind]) => getVerificationLinks(product, kind).some((link) => link?.url || link?.href))
+    .map(([, label]) => label) : [];
+  const functions = product?.healthFunctions || [];
+  const tone = functions.some((item) => ['perimenopause', 'hormone-balance'].includes(item)) || ['telehealth', 'digital', 'therapy', 'tracker'].includes(category) || isService ? 'lilac'
+    : functions.includes('fertility') || ['diagnostics', 'supplement', 'vitamin'].includes(category) ? 'lime'
+      : ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'pelvic-floor'].includes(category) ? 'mint' : 'pink';
 
   return (
-    <div
-      onClick={onClick}
-      style={{
-        background: 'var(--ayna-surface)',
-        border: '1px solid var(--ayna-border)',
-        borderRadius: 18,
-        padding: 10,
-        cursor: 'pointer',
-        boxShadow: '0 1px 2px rgba(41,37,36,.04)',
-        transition: 'transform .16s cubic-bezier(.2,.8,.2,1), box-shadow .16s ease',
-      }}
-    >
-      <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          aspectRatio: '1 / 1',
-          borderRadius: 13,
-          overflow: 'hidden',
-          background: 'var(--ayna-bg-alt)',
-        }}
-      >
-        <ProductImage src={resolvedImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
-        {isPartner && <div style={{ ...PARTNER_BADGE_STYLE, top: 10, left: 10 }}>ayna Favorite</div>}
-        <div style={{ position: 'absolute', right: 6, bottom: 6 }}>
-          <MatchRing percent={matchPercent} size={34} onClick={openWhyMatch} />
-        </div>
-      </div>
-
-      <div
-        style={{
-          fontFamily: "'DM Sans',sans-serif",
-          fontWeight: 600,
-          fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
-          lineHeight: 1.25,
-          marginTop: 9,
-          textWrap: 'pretty',
-        }}
-      >
-        {name}
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 6 }}>
-        {resolvedPrice && (
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>{resolvedPrice}</div>
-        )}
-        {userRating != null && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="#FFC774">
-              <path d="M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.2L12 17.3 6.4 20.2l1.2-6.2L3 9.6l6.3-.8L12 3Z" />
-            </svg>
-            <div style={{ fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>{userRating}</div>
-          </div>
-        )}
-      </div>
-    </div>
+    <article className={`ayna-fresh-product-card ${isList ? 'is-list' : ''} tone-${tone}`}>
+      <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}${hasDisplayPrice ? `, ${resolvedPrice}` : ''}${showMatch ? `, ${match.percent} percent match` : ''}. View product details`}>
+      <span className="ayna-fresh-product-image">
+        <ProductImage src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
+      </span>
+      <span className="ayna-fresh-product-copy">
+        <span className="ayna-fresh-product-category">{secondaryLabel}{isList && isPartner ? ' / Partner' : ''}</span>
+        <strong>{name}</strong>
+        {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
+        <span className="ayna-fresh-product-foot">{hasDisplayPrice ? <b>{resolvedPrice}</b> : <b className="is-muted">See details</b>}</span>
+        {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
+      </span>
+      </button>
+      {showMatch && <button type="button" className="ayna-fresh-match-badge ayna-match-action" aria-label={`Why ${match.percent} percent match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()}><strong>{match.percent}%</strong><span>MATCH</span></button>}
+      {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={`${isSaved ? 'Unsave' : 'Save'} ${name}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}><svg viewBox="0 0 24 24" aria-hidden="true" fill={isSaved ? 'currentColor' : 'none'}><path d="M6 4h12v16l-6-4-6 4V4Z" /></svg></button>}
+      {isList && <div className="ayna-fresh-product-actions">
+        <button type="button" onClick={onClick}>Details <span aria-hidden="true">→</span></button>
+        {buyUrl && <a href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" aria-label={`Shop ${name} on the seller's site`}>{isService ? 'Explore care' : 'Shop'} <span aria-hidden="true">↗</span></a>}
+      </div>}
+      {isList && buyUrl && <small className="ayna-fresh-product-seller-note">{isPartner ? 'Partner link · ' : ''}Opens seller site</small>}
+    </article>
   );
 }

@@ -1,37 +1,38 @@
-/* Design tokens extracted from design-reference/ayna-mobile-template.html.
-   Scoped under .ayna-mobile so nothing here can affect the existing website. */
+/* Shared Ayna mobile palette. Screen styles use these semantic colors. */
 
 .ayna-mobile {
-  --ayna-bg: #F3EFE9;
-  --ayna-bg-alt: #FAF6F1;
-  --ayna-surface: #FFFCF9;
-  --ayna-surface-alt: #FFF9F2;
-  --ayna-border: #E1D5CE;
-  --ayna-text: #292524;
-  --ayna-text-muted: #78716C;
-  --ayna-text-faint: #A8A29E;
-  --ayna-accent: #FFC774;
-  --ayna-accent-dark: #E8A94F;
-  --ayna-brown: #A2603C;
-  --ayna-navy: #242A52;
-  --ayna-purple: #4E3866;
-  --ayna-peach: #FFEFD6;
-  --ayna-cta-bg: #242A52;
-  --ayna-cta-text: #FFFCF9;
-  --ayna-heading: #242A52;
-  --ayna-product-panel: linear-gradient(150deg,#FFEFD6,#F6DCC0);
+  position: relative;
+  --ayna-bottom-nav-height: calc(55px + max(8px, env(safe-area-inset-bottom)));
+  --ayna-bg: #FCFBFB;
+  --ayna-bg-alt: #f2eee4;
+  --ayna-surface: #FFFFFF;
+  --ayna-surface-alt: #f2eee4;
+  --ayna-border: #d7d1c4;
+  --ayna-text: #1D1A2B;
+  --ayna-text-muted: #625d55;
+  --ayna-text-faint: #6b635b;
+  --ayna-accent: #F7BADD;
+  --ayna-accent-dark: #F7BADD;
+  --ayna-brown: #1D1A2B;
+  --ayna-navy: #1D1A2B;
+  --ayna-purple: #1D1A2B;
+  --ayna-peach: #F7BADD;
+  --ayna-cta-bg: #1D1A2B;
+  --ayna-cta-text: #ffffff;
+  --ayna-heading: #1D1A2B;
+  --ayna-product-panel: linear-gradient(150deg,#EEF0FD,#F6DCC0);
   --ayna-glass-bg: rgba(255,252,249,.9);
   --ayna-track: #EAE3DA;
-  --ayna-chip-bg: #F3EFE9;
-  --ayna-chip-border: #E1D5CE;
-  --ayna-gradient-hero: linear-gradient(165deg, #2A1F4E 0%, #4E3866 42%, #8A4A3C 74%, #D97A2B 100%);
-  --ayna-gradient-panel: linear-gradient(168deg, #242A52 0%, #4E3866 52%, #A2603C 100%);
+  --ayna-chip-bg: #efebe0;
+  --ayna-chip-border: #d7d1c4;
+  --ayna-gradient-hero: linear-gradient(165deg, #1D1A2B 0%, #1D1A2B 42%, #1D1A2B 74%, #1D1A2B 100%);
+  --ayna-gradient-panel: linear-gradient(168deg, #1D1A2B 0%, #1D1A2B 52%, #1D1A2B 100%);
 
   /* Copied from the real site's src/index.css so real content (e.g. article
      bodies from src/components/Articles.jsx, which style their own links
      inline with var(--color-primary)) renders with the correct color when
      reused inside the mobile app, instead of falling back to default blue. */
-  --color-primary: #FFC774;
+  --color-primary: #F7BADD;
 
   /* Scales OrbHero.jsx's orb+chips so the chips' worst-case reach during
      their orbit (241px from center either way, at the component's native
@@ -58,23 +59,32 @@
   background: var(--ayna-bg);
 }
 
-/* Dark theme — exact tokens from the "Nebula"/"Mission control" reference
-   mockups (design-reference/). Only colors change here; typography (Playfair
-   Display/DM Sans/Inter/DM Mono) is identical in both themes. */
+.ayna-ecosystem-reset-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(36, 42, 82, .56);
+  padding: 18px;
+}
+
+/* The same palette adapted for dark mode. */
 .ayna-mobile[data-theme="dark"] {
-  --ayna-bg: #0B0E1F;
-  --ayna-bg-alt: #111427;
+  --ayna-bg: #1D1A2B;
+  --ayna-bg-alt: #211d30;
   --ayna-surface: rgba(255,255,255,.055);
-  --ayna-surface-alt: #141833;
-  --ayna-border: rgba(255,255,255,.1);
-  --ayna-text: #F5F3FF;
-  --ayna-text-muted: #9E9BC4;
-  --ayna-text-faint: #55527A;
-  --ayna-accent: #FFC774;
-  --ayna-accent-dark: #FFC774;
-  --ayna-cta-bg: #FFC774;
-  --ayna-cta-text: #231A12;
-  --ayna-heading: #F5F3FF;
+  --ayna-surface-alt: #282338;
+  --ayna-border: rgba(255,255,255,.21);
+  --ayna-text: #FCFBFB;
+  --ayna-text-muted: #d1cbbd;
+  --ayna-text-faint: #b5ae9f;
+  --ayna-accent: #F7BADD;
+  --ayna-accent-dark: #F7BADD;
+  --ayna-cta-bg: #F7BADD;
+  --ayna-cta-text: #1D1A2B;
+  --ayna-heading: #FCFBFB;
   --ayna-product-panel: radial-gradient(130% 110% at 28% 0%, rgba(192,118,31,.34), rgba(255,255,255,.03) 68%);
   --ayna-glass-bg: rgba(255,255,255,.09);
   --ayna-track: rgba(255,255,255,.12);
@@ -85,9 +95,9 @@
 .ayna-mobile a { color: var(--ayna-brown); text-decoration: none; }
 .ayna-mobile a:hover { color: #8A4F30; }
 
-.ayna-mobile .font-serif { font-family: 'Playfair Display', serif; }
-.ayna-mobile .font-sans { font-family: 'DM Sans', sans-serif; }
-.ayna-mobile .font-mono { font-family: 'DM Mono', monospace; }
+.ayna-mobile .font-serif { font-family: var(--ayna-font-display); }
+.ayna-mobile .font-sans { font-family: var(--ayna-font-ui); }
+.ayna-mobile .font-mono { font-family: var(--ayna-font-ui); }
 
 @keyframes ay-hero { from { opacity: 0; transform: scale(.93) translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes ay-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
@@ -101,6 +111,8 @@
 @keyframes ay-swap2 { 0% { opacity: 0; transform: translateY(8px); } 14% { opacity: 1; transform: none; } 86% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-8px); } }
 @keyframes ay-page { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes ay-bob { 0%, 100% { transform: translateY(4px); } 50% { transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) {
+}
 @keyframes ay-drift { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(14px,-18px) scale(1.09); } }
 @keyframes ay-skeleton { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
 @keyframes ay-pixelate { 0% { opacity: .15; filter: blur(6px) saturate(0); transform: scale(.94); } 60% { opacity: .7; filter: blur(2px) saturate(.6); transform: scale(.98); } 100% { opacity: 1; filter: blur(0) saturate(1); transform: scale(1); } }
@@ -152,7 +164,7 @@
   height: 20px;
   border-radius: 50%;
   background: #1A1714;
-  border: 3px solid #FFEFD6;
+  border: 3px solid #EEF0FD;
   cursor: pointer;
   margin-top: -8px;
 }
@@ -160,4 +172,80 @@
 /* Product detail screen's sticky tab rail — scrollable but no visible scrollbar. */
 .ay-pdp-rail::-webkit-scrollbar {
   display: none;
+}
+
+/* App-wide navigation: one quiet, familiar bottom row on primary screens. */
+.ayna-mobile .ayna-bottom-nav {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  padding: 7px 8px max(8px, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(78,56,102,.16);
+  background: linear-gradient(180deg,#fffaf3,#f6eee7);
+  z-index: 70;
+}
+.ayna-mobile .ayna-bottom-nav button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  min-width: 0;
+  min-height: 48px;
+  border: 0;
+  padding: 2px 0;
+  background: transparent;
+  color: #766b78;
+  font: 600 10px/1.15 var(--ayna-font-ui);
+  cursor: pointer;
+}
+.ayna-mobile .ayna-bottom-nav button.is-active { color: #1D1A2B; background: rgba(240,168,75,.2); border-radius: 14px; }
+.ayna-mobile .ayna-bottom-nav svg { width: 21px; height: 21px; flex: none; }
+.ayna-mobile .ayna-bottom-nav button.is-active svg { stroke-width: 2.25; }
+.ayna-mobile[data-screen='landing'] .ayna-bottom-nav,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav { background: linear-gradient(110deg,#1D1A2B,#1D1A2B); border-top-color: rgba(255,249,242,.24); }
+.ayna-mobile[data-screen='landing'] .ayna-bottom-nav button,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button { color: rgba(255,249,242,.8); }
+.ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #F7BADD; background: rgba(255,199,116,.15); }
+.ayna-profile-auth-backdrop {
+  position: fixed;
+  inset: 0 0 64px;
+  z-index: 39;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(21, 22, 43, .58);
+}
+.ayna-profile-auth-sheet {
+  position: relative;
+  width: 100%;
+  padding: 30px 24px max(28px, env(safe-area-inset-bottom));
+  border-radius: 26px 26px 0 0;
+  background: #fffaf3;
+  color: #1D1A2B;
+  box-shadow: 0 -12px 40px rgba(20, 20, 40, .2);
+  font-family: var(--ayna-font-ui);
+}
+.ayna-profile-auth-close { position: absolute; top: 14px; right: 18px; border: 0; background: none; color: #1D1A2B; font-size: 28px; cursor: pointer; }
+.ayna-profile-auth-eyebrow { color: #9a5c36; font-size: 11px; font-weight: 700; letter-spacing: .16em; }
+.ayna-profile-auth-sheet h2 { margin: 12px 0 8px; font: 29px/1.15 var(--ayna-font-display); }
+.ayna-profile-auth-sheet p { margin: 0 0 24px; line-height: 1.5; color: #56566e; }
+.ayna-profile-auth-primary, .ayna-profile-auth-secondary { display: block; width: 100%; padding: 15px; border-radius: 99px; font: 600 15px var(--ayna-font-ui); cursor: pointer; }
+.ayna-profile-auth-primary { border: 0; background: #F7BADD; color: #231a12; }
+.ayna-profile-auth-secondary { margin-top: 10px; border: 1px solid #1D1A2B; background: transparent; color: #1D1A2B; }
+
+/* Keep the browser preview at a readable phone width on a large display. */
+@media (min-width: 700px) {
+  .ayna-mobile[data-preview="true"] {
+    position: relative;
+    width: min(100%, 440px);
+    margin-inline: auto;
+    box-shadow: 0 0 0 1px rgba(36,42,82,.08), 0 20px 70px rgba(36,42,82,.14);
+    --ayna-orb-scale: .86;
+  }
+  .ayna-mobile[data-preview="true"] .am-sheet-backdrop { position: absolute; }
+}
+@media (min-width: 700px) {
+  .ayna-mobile[data-preview="true"] .ayna-profile-auth-backdrop { position: absolute; }
 }

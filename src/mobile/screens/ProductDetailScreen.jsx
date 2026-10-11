@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
-import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct } from '../../data/products.js';
+import { CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
-import MatchRing from '../components/MatchRing.jsx';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
+import { productHref } from '../../utils/productRoute.js';
 
-const CARD = { background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18, boxShadow: '0 2px 10px rgba(41,37,36,.04)' };
-const EYEBROW = { fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' };
+const CARD = { background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '16px 0', boxShadow: 'none' };
+const EYEBROW = { fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 700, letterSpacing: '-.01em', color: 'var(--ayna-heading)' };
+const META = { fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ayna-text-muted)' };
 const CHIP = { fontSize: 'calc(12px * var(--ayna-text-scale, 1))', background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-chip-border)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '7px 12px', textDecoration: 'none', display: 'inline-block' };
 const PLATFORM_LABELS = { reddit: 'Reddit', tiktok: 'TikTok', youtube: 'YouTube', instagram: 'Instagram', facebook: 'Facebook' };
 
@@ -33,40 +34,27 @@ function firstSentence(text, max = 140) {
   return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
 
-/**
- * First `maxSentences` sentences, so the Evidence mode's condensed Clinician
- * opinion card gets a short note even for products with no authored
- * doctorOpinionShort — falls back to slicing the full doctorOpinion, which
- * for some products runs 4-5 paragraphs and blew out this card. Flagged
- * live by a user 2026-09-24: "way too long."
- */
-function firstSentences(text, maxSentences = 3, maxChars = 480) {
-  const t = String(text || '').trim().replace(/\n+/g, ' ');
-  if (!t) return '';
-  const sentences = t.match(/[^.!?]+[.!?]+(\s|$)/g) || [t];
-  let out = sentences.slice(0, maxSentences).join('').trim();
-  if (!out) out = t;
-  if (out.length > maxChars) {
-    const truncated = out.slice(0, maxChars);
-    const lastSpace = truncated.lastIndexOf(' ');
-    out = `${(lastSpace > maxChars * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
-  } else if (sentences.length > maxSentences) {
-    out = `${out}…`;
-  }
-  return out;
+const TAG_ACRONYMS = { pcos: 'PCOS', ibs: 'IBS', uti: 'UTI', ivf: 'IVF', pms: 'PMS', pmdd: 'PMDD', hrt: 'HRT', iud: 'IUD', bv: 'BV' };
+function humanizeTag(tag) {
+  const text = String(tag || '').replace(/[-_]/g, ' ').toLowerCase();
+  return text.split(' ').map((word, i) => TAG_ACRONYMS[word] || (i === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word)).join(' ');
 }
 
-function humanizeTag(tag) {
-  return String(tag || '').replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+function meaningfulDetail(value) {
+  const text = String(value || '').trim();
+  return text && !/^(n\/?a|none|not applicable|unknown)$/i.test(text) ? text : '';
 }
 
 function buildFactRows(product) {
   const bestFor = (product.healthFunctions || []).concat(product.tags || []).slice(0, 3).map(humanizeTag).join(', ');
-  const materials = (product.safety?.materials || '').trim();
-  const skipIf = firstSentence(product.safety?.sideEffects, 90) || firstSentence(product.safety?.allergens, 90);
+  const materials = meaningfulDetail(product.safety?.materials);
+  const ingredients = meaningfulDetail(product.ingredients);
+  const sameAsIngredients = materials && ingredients
+    && materials.toLowerCase().replace(/[^a-z0-9]/g, '') === ingredients.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const skipIf = firstSentence(meaningfulDetail(product.safety?.sideEffects), 90) || firstSentence(meaningfulDetail(product.safety?.allergens), 90);
   return [
     bestFor ? { label: 'Best for', value: bestFor } : null,
-    materials ? { label: 'Materials', value: materials } : null,
+    materials && !sameAsIngredients ? { label: 'Materials', value: materials } : null,
     skipIf ? { label: 'Skip if', value: skipIf } : null,
   ].filter(Boolean);
 }
@@ -97,30 +85,15 @@ function SpecRow({ label, value, last = false }) {
   );
 }
 
-function LinkRow({ label, value, onClick }) {
-  return (
-    <div
-      onClick={onClick}
-      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '13px 0', borderTop: '1px solid var(--ayna-chip-bg)', cursor: onClick ? 'pointer' : 'default' }}
-    >
-      <div style={{ flex: 1, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{label}</div>
-      <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', fontWeight: 600 }}>{value}</div>
-      {onClick && (
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-text-faint)" strokeWidth="2.2" strokeLinecap="round"><path d="M9 6l6 6-6 6" /></svg>
-      )}
-    </div>
-  );
-}
-
 function SafetyBanner({ text }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div
       onClick={() => setExpanded((v) => !v)}
-      style={{ margin: '14px 22px 0', background: '#FEF2F2', border: '1px solid #991B1B', borderLeft: '4px solid #991B1B', borderRadius: 16, padding: '12px 14px', cursor: 'pointer' }}
+      style={{ margin: '14px var(--ay-gutter, 20px) 0', background: '#FEF2F2', border: '1px solid #991B1B', borderLeft: '4px solid #991B1B', borderRadius: 16, padding: '12px 14px', cursor: 'pointer' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#991B1B' }}>⚠️ Safety note</div>
+        <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#991B1B' }}>Safety note</div>
         <span style={{ color: '#991B1B', fontSize: 12 }}>{expanded ? '▴' : '▾'}</span>
       </div>
       <p style={{ margin: '6px 0 0', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: '#3f3831', display: '-webkit-box', WebkitLineClamp: expanded ? 'unset' : 2, WebkitBoxOrient: 'vertical', overflow: expanded ? 'visible' : 'hidden' }}>
@@ -137,7 +110,7 @@ function SafetyBanner({ text }) {
  * changed (mobile's own inline-style patterns instead of the desktop
  * pdp-* classes).
  */
-function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
+function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -166,6 +139,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
   const ask = async (question) => {
     const q = String(question || '').trim();
     if (!q || sending) return;
+    if (!session?.access_token) { onRequireAuth?.('Ask Ayna'); return; }
     setError('');
     setInput('');
     const nextMessages = [...messages, { role: 'user', text: q }];
@@ -192,7 +166,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
       setMessages((prev) => [...prev, { role: 'assistant', text: data.answer }]);
     } catch (e) {
       if (e?.code === 'not_signed_in') {
-        setError('Sign in to ask Ayna about this product — free accounts get a few AI chats per week.');
+        onRequireAuth?.('Ask Ayna');
       } else if (e?.code === 'weekly_limit_reached') {
         setError("You've used your free chats for this week. They reset weekly.");
       } else {
@@ -209,17 +183,19 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
       {messages.length === 0 && (
         <>
           <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'var(--ayna-text-muted)' }}>
-            New to this kind of product, or not sure what it's actually for? Ask Ayna anything about it.
+            Ask ayna
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {suggestions.map((s) => (
-              <div
+              <button
+                type="button"
+                disabled={sending}
                 key={s}
                 onClick={() => ask(s)}
-                style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 500, padding: '8px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', cursor: 'pointer' }}
+                style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 500, minHeight: 44, border: 0, padding: '8px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', cursor: 'pointer' }}
               >
                 {s}
-              </div>
+              </button>
             ))}
           </div>
         </>
@@ -258,7 +234,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
           onChange={(e) => setInput(e.target.value)}
           placeholder={session === undefined ? 'Loading…' : 'Ask about this product…'}
           disabled={sending || session === undefined}
-          style={{ flex: 1, padding: '11px 14px', borderRadius: 99, border: '1px solid var(--ayna-border)', fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))', background: 'var(--ayna-surface)', color: 'var(--ayna-text)' }}
+          style={{ flex: 1, minWidth: 0, padding: '11px 14px', borderRadius: 99, border: '1px solid var(--ayna-border)', fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))', background: 'var(--ayna-surface)', color: 'var(--ayna-text)' }}
         />
         <button
           type="submit"
@@ -269,7 +245,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
             border: 'none',
             background: 'var(--ayna-cta-bg)',
             color: 'var(--ayna-cta-text)',
-            fontFamily: "'DM Sans',sans-serif",
+            fontFamily: "var(--ayna-font-ui)",
             fontWeight: 600,
             fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
@@ -292,14 +268,17 @@ export default function ProductDetailScreen({
   onToggleSaved,
   isInEcosystem = false,
   onAddToEcosystem,
+  onCommunityAction,
+  onRequireAuth,
+  onStartQuiz,
   whyMatched,
   reads = [],
   quizAnswers = null,
   ecosystemProducts = [],
 }) {
-  const [mode, setMode] = useState('summary'); // 'summary' | 'evidence'
-  const [activeTab, setActiveTab] = useState('summary');
   const [partnerOpen, setPartnerOpen] = useState(false);
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [activeDetailSection, setActiveDetailSection] = useState('fit');
   const [shareCopied, setShareCopied] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
   // only holds one layer) so "back" from here returns to this product
@@ -314,9 +293,8 @@ export default function ProductDetailScreen({
   const [seenProductId, setSeenProductId] = useState(product?.id);
   if (product?.id !== seenProductId) {
     setSeenProductId(product?.id);
-    setMode('summary');
-    setActiveTab('summary');
     setPartnerOpen(false);
+    setSummaryExpanded(false);
   }
 
   if (!product) {
@@ -333,13 +311,13 @@ export default function ProductDetailScreen({
         product={product}
         quizAnswers={quizAnswers}
         onBack={() => setShowWhyMatch(false)}
-        onViewDetails={() => { setShowWhyMatch(false); setMode('summary'); setActiveTab('summary'); }}
+        onViewDetails={() => setShowWhyMatch(false)}
       />
     );
   }
 
-  const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
-  const matchLabels = getProfileMatchLabelsForProduct(product, quizAnswers) || [];
+  const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers);
+  const matchPercent = quizAnswers && matchDetails.matchStatus === 'scored' && Number.isFinite(matchDetails.percent) ? matchDetails.percent : null;
   const openWhyMatch = () => setShowWhyMatch(true);
 
   const {
@@ -352,7 +330,7 @@ export default function ProductDetailScreen({
     ingredients,
     effectiveness,
     doctorOpinion,
-    doctorOpinionShort,
+    clinicianOpinionSource,
     doctorOpinionCitations = [],
     clinicianAttribution,
     safety = {},
@@ -376,7 +354,10 @@ export default function ProductDetailScreen({
   const pillTags = tags.slice(0, 4).map(humanizeTag);
 
   const handleShare = async () => {
-    const shareData = { title: name, text: `${name} on ayna`, url: product.url || buyUrl || undefined };
+    const origin = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
+      ? 'https://www.aynahealth.co'
+      : window.location.origin;
+    const shareData = { title: name, text: `Take a look at ${name} on ayna`, url: new URL(productHref(product.id), origin).toString() };
     if (navigator.share) {
       try { await navigator.share(shareData); } catch { /* user cancelled the share sheet */ }
       return;
@@ -466,118 +447,58 @@ export default function ProductDetailScreen({
 
   const factRows = buildFactRows(product);
 
-  const tabDefs = [
-    { id: 'summary', label: 'ayna Summary', show: true },
-    { id: 'clinician', label: 'Clinician Opinion', show: !!doctorOpinion },
-    { id: 'scientific', label: 'Scientific Literature', show: scientificLiteratureEntries.length > 0 },
-    { id: 'social', label: 'Social Media + Reviews', show: communityCitationEntries.length > 0 || !!communityReview },
-    { id: 'whoitsfor', label: "Who it's for", show: Array.isArray(whoItsFor) && whoItsFor.length > 0 },
-    { id: 'howtouse', label: 'How to use', show: howToUse?.steps?.length > 0 },
-    { id: 'inside', label: "What's inside", show: Array.isArray(ingredientScience) && ingredientScience.length > 0 },
-    { id: 'ask', label: 'Ask Ayna', show: true },
-  ].filter((t) => t.show);
-
-  const goTab = (id) => { setMode('summary'); setActiveTab(id); };
-  const hasWhoItsFor = tabDefs.some((t) => t.id === 'whoitsfor');
-  const hasHowToUse = tabDefs.some((t) => t.id === 'howtouse');
-
   return (
-    <div style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
+    <div className="ayna-fresh-product-detail" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
       <div style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out', paddingBottom: 104 }}>
         <div style={{ paddingTop: 'max(24px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-          <div onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer', flex: 'none' }}>
+          <button type="button" onClick={onBack} aria-label="Back to products" style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer', flex: 'none', minHeight: 44, border: 0, background: 'transparent', padding: 0 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'var(--ayna-heading)' }}>
               <path d="M19 12H5M11 18l-6-6 6-6" />
             </svg>
-            <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Back</span>
-          </div>
-          <div style={{ display: 'flex', background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: 3, flex: 'none' }}>
-            {['summary', 'evidence'].map((m) => (
-              <div
-                key={m}
-                onClick={() => setMode(m)}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: 99,
-                  background: mode === m ? 'var(--ayna-cta-bg)' : 'transparent',
-                  color: mode === m ? 'var(--ayna-cta-text)' : 'var(--ayna-text-muted)',
-                  fontFamily: "'DM Sans',sans-serif",
-                  fontWeight: mode === m ? 600 : 500,
-                  fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
-                  cursor: 'pointer',
-                  textTransform: 'capitalize',
-                  transition: 'background .16s ease',
-                }}
-              >
-                {m}
-              </div>
-            ))}
-          </div>
-          <div
+            <span style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Back</span>
+          </button>
+          <button
+            type="button"
+            aria-label={`Share ${name} with a friend`}
             onClick={handleShare}
-            style={{ width: 36, height: 36, borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', cursor: 'pointer' }}
+            style={{ width: 44, height: 44, borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', cursor: 'pointer' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-heading)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 15V3" /><path d="M7 8l5-5 5 5" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
             </svg>
-          </div>
+          </button>
         </div>
         {shareCopied && (
           <div style={{ textAlign: 'right', paddingRight: 20, marginTop: 4, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Link copied</div>
         )}
 
-        <div style={{ margin: '14px 20px 0', borderRadius: 24, padding: 24, background: 'var(--ayna-product-panel)' }}>
+        <div className="ayna-fresh-detail-image" style={{ margin: '14px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
           <div
             style={{
               position: 'relative',
               width: '100%',
-              aspectRatio: '1 / 1',
+              aspectRatio: '4 / 5',
               background: 'var(--ayna-surface)',
-              borderRadius: 14,
-              boxShadow: '0 10px 26px -16px rgba(41,37,36,.35)',
+              borderRadius: 17,
+              boxShadow: 'none',
               overflow: 'hidden',
             }}
           >
             <ProductImage src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
-            {matchPercent != null && (
-              <div
-                onClick={openWhyMatch}
-                style={{ position: 'absolute', right: 14, bottom: 14, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer' }}
-              >
-                <MatchRing percent={matchPercent} size={56} />
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', color: 'var(--ayna-accent-dark)', background: 'rgba(255,255,255,.9)', borderRadius: 99, padding: '3px 8px' }}>
-                  WHY {matchPercent}%
-                </div>
-              </div>
-            )}
+            {matchPercent != null && <button type="button" className="ayna-figma-detail-score" onClick={openWhyMatch} aria-label={`${matchPercent} percent match. See why`}><strong>{matchPercent}%</strong><span>PROFILE MATCH</span></button>}
           </div>
         </div>
 
-        {isPartner && (
-          <div style={{ margin: '10px 22px 0' }}>
-            <div onClick={() => setPartnerOpen((v) => !v)} style={{ display: 'flex', alignItems: 'center', gap: 9, cursor: 'pointer' }}>
-              <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', fontWeight: 500, background: 'var(--ayna-chip-bg)', borderRadius: 99, padding: '6px 11px', flex: 'none' }}>ayna Partner</div>
-              <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.4 }}>
-                {partnerOpen ? 'Hide the disclosure' : 'Reviewed by us · we may earn a commission'}
-              </div>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-text-faint)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', transform: partnerOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s ease' }}>
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </div>
-            {partnerOpen && (
-              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.6, marginTop: 8 }}>{partnerDisclosure}</div>
-            )}
-          </div>
-        )}
-
-        <div style={{ padding: '18px 22px 0' }}>
-          {eyebrowLine && <div style={EYEBROW}>{eyebrowLine}</div>}
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.1, margin: '9px 0 0', color: 'var(--ayna-heading)' }}>{name}</div>
-          {price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginTop: 11 }}>{price}</div>}
+        <div className="ayna-fresh-detail-title" style={{ padding: '18px var(--ay-gutter, 20px) 0' }}>
+          {eyebrowLine && <div style={META}>{eyebrowLine}</div>}
+          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
+          <h1 style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(29px * var(--ayna-text-scale, 1))', lineHeight: 1.08, letterSpacing: '-.05em', margin: '12px 0 0', color: 'var(--ayna-heading)', fontWeight: 700 }}>{name}</h1>
+          {price && <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: /[$€£]|^free\b/i.test(price) ? 700 : 500, fontSize: /[$€£]|^free\b/i.test(price) ? 'calc(20px * var(--ayna-text-scale, 1))' : 'calc(13px * var(--ayna-text-scale, 1))', color: /[$€£]|^free\b/i.test(price) ? 'var(--ayna-heading)' : 'var(--ayna-text-muted)', marginTop: 11 }}>{price}</div>}
+          {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>See your match <span aria-hidden="true">↗</span></button>}
           {pillTags.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
               {pillTags.map((t) => (
-                <div key={t} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', textTransform: 'uppercase', background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '5px 9px' }}>
+                <div key={t} className="ay-pdp-tag" style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, background: 'var(--ay-tile, #eeeae0)', color: 'var(--ay-ink, #1d1a2b)', borderRadius: 99, padding: '6px 11px' }}>
                   {t}
                 </div>
               ))}
@@ -585,40 +506,37 @@ export default function ProductDetailScreen({
           )}
         </div>
 
+        {isPartner && (
+          <div className="ayna-figma-partner-disclosure">
+            <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
+              <span>Partner</span><span>{partnerOpen ? 'Hide disclosure' : 'We may earn a commission'}</span><span aria-hidden="true">{partnerOpen ? '−' : '+'}</span>
+            </button>
+            {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships →</a></div>}
+          </div>
+        )}
+
         {safetyAlertText && <SafetyBanner text={safetyAlertText} />}
+        {Array.isArray(warnings) && warnings.length > 0 && <div className="ayna-detail-warnings" role="note"><strong>Warnings</strong>{warnings.map((warning) => <p key={warning}>{warning}</p>)}</div>}
 
-        {mode === 'summary' ? (
-          <div style={{ padding: '18px 22px 0' }}>
-            <div
-              className="ay-pdp-rail"
-              style={{ position: 'sticky', top: -4, zIndex: 2, margin: '0 -22px', padding: '0 22px 10px', background: 'var(--ayna-bg)', display: 'flex', gap: 7, overflowX: 'auto', scrollbarWidth: 'none' }}
-            >
-              {tabDefs.map((tab) => {
-                const on = activeTab === tab.id;
-                return (
-                  <div
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    style={{
-                      flex: 'none',
-                      whiteSpace: 'nowrap',
-                      fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
-                      fontWeight: on ? 600 : 500,
-                      padding: '9px 14px',
-                      borderRadius: 99,
-                      cursor: 'pointer',
-                      background: on ? 'var(--ayna-cta-bg)' : 'var(--ayna-surface)',
-                      color: on ? 'var(--ayna-cta-text)' : 'var(--ayna-text-muted)',
-                      border: '1px solid ' + (on ? 'var(--ayna-cta-bg)' : 'var(--ayna-border)'),
-                    }}
-                  >
-                    {tab.label}
-                  </div>
-                );
-              })}
-            </div>
+        {sourceCountTotal > 0 ? <div className="ayna-source-index" aria-label="Available product sources">
+          {[['doctor', 'Clinical', 'evidence'], ['scientific', 'Research', 'evidence'], ['community', 'Community', 'reviews']].map(([kind, label, section]) => <button type="button" key={kind} onClick={() => setActiveDetailSection(section)} aria-label={`${label}: ${sourceCounts[kind]} linked sources`}><span>{label}</span><strong>{sourceCounts[kind] || 0}</strong><small>{sourceCounts[kind] === 1 ? 'source' : 'sources'}</small></button>)}
+        </div> : <div className="ayna-source-empty">No sources linked yet</div>}
 
-            {activeTab === 'summary' && (
+        <div className="ayna-detail-sections" role="tablist" aria-label="Product information">
+          {[['fit', 'Fit'], ['evidence', 'Sources'], ['ingredients', 'Details'], ['reviews', 'Community']].map(([section, label]) => <button key={section} type="button" role="tab" aria-selected={activeDetailSection === section} onClick={() => setActiveDetailSection(section)}>{label}</button>)}
+        </div>
+
+        {activeDetailSection === 'reviews' && onCommunityAction && <div style={{ display: 'flex', gap: 8, padding: '18px var(--ay-gutter, 20px) 0', overflowX: 'auto' }}>
+          <button type="button" onClick={() => onCommunityAction('review')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Write a review</button>
+          <button type="button" onClick={() => onCommunityAction('post')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Mention in a post</button>
+          <button type="button" onClick={() => onCommunityAction('playlist')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Add to playlist</button>
+          <button type="button" onClick={() => onCommunityAction('recommend')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Recommend to friend</button>
+        </div>}
+
+        <div style={{ padding: '18px var(--ay-gutter, 20px) 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {activeDetailSection === 'fit' && whyMatched && <div style={{ ...CARD, background: 'var(--ayna-chip-bg)' }}><div style={EYEBROW}>Why this fits you</div><p style={{ fontSize: 13, lineHeight: 1.55, margin: '8px 0 0' }}>{whyMatched}</p></div>}
+          {activeDetailSection === 'evidence' && <>
+            {(
               <div style={CARD}>
                 {sourceCountTotal > 0 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -627,7 +545,14 @@ export default function ProductDetailScreen({
                   </div>
                 )}
                 {summary ? (
-                  <div style={{ fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: sourceCountTotal > 0 ? 12 : 0 }}>{summary}</div>
+                  <>
+                    <div style={{ fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: sourceCountTotal > 0 ? 12 : 0, ...(!summaryExpanded && String(summary).length > 320 ? { display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' } : {}) }}>{summary}</div>
+                    {String(summary).length > 320 && <button type="button" onClick={() => setSummaryExpanded((value) => !value)} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', padding: '8px 0 0', fontWeight: 600 }}>{summaryExpanded ? 'Show less' : 'Read full summary'}</button>}
+                    <details style={{ marginTop: 12, borderTop: '1px solid var(--ayna-border)', paddingTop: 10, color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>
+                      <summary style={{ cursor: 'pointer', color: 'var(--ayna-accent-dark)', fontWeight: 600 }}>How to read this summary</summary>
+                      <p style={{ margin: '8px 0 0' }}>This is a short overview of the product information available to Ayna. Linked sources appear below when available. Check the original sources and product label for details; a personal match is about fit with your profile, not a health or safety rating.</p>
+                    </details>
+                  </>
                 ) : (
                   <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>No summary yet.</div>
                 )}
@@ -638,9 +563,9 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {activeTab === 'clinician' && (
-              <div style={CARD}>
-                <div style={EYEBROW}>Clinician opinion</div>
+            {!!doctorOpinion && (
+              <details className="ayna-product-note" style={CARD}>
+                <summary>{clinicianOpinionSource === 'brand' ? 'Brand note' : 'ayna product note'}</summary>
                 {doctorOpinion ? (
                   <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: 10, whiteSpace: 'pre-line' }}>{doctorOpinion}</div>
                 ) : (
@@ -652,18 +577,19 @@ export default function ProductDetailScreen({
                 {badges.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
                     {badges.map((b) => (
-                      <div key={b} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 500, padding: '7px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)' }}>
+                      <div key={b} style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 500, padding: '7px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)' }}>
                         {b}
                       </div>
                     ))}
                   </div>
                 )}
                 <ChipRow chips={[...clinicianChips, ...clinicianCitationChips]} />
-              </div>
+              </details>
             )}
 
-            {activeTab === 'scientific' && (
+            {scientificLiteratureEntries.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                <div style={EYEBROW}>Sources and further reading</div>
                 {scientificLiteratureEntries.map((entry) => (
                   <a key={entry.url} href={entry.url} target="_blank" rel="noopener noreferrer" style={{ ...CARD, display: 'block', textDecoration: 'none', color: 'inherit' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -676,12 +602,14 @@ export default function ProductDetailScreen({
                 ))}
               </div>
             )}
+          </>}
 
-            {activeTab === 'social' && (
+            {activeDetailSection === 'reviews' && (communityCitationEntries.length > 0 || communityReview) && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                <div style={EYEBROW}>Social media + reviews</div>
                 {communityCitationEntries.length > 0 ? communityCitationEntries.map((entry) => (
                   <a key={entry.url} href={entry.url} target="_blank" rel="noopener noreferrer" style={{ ...CARD, display: 'flex', gap: 12, alignItems: 'flex-start', textDecoration: 'none', color: 'inherit' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 12, flex: 'none', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "'Playfair Display',serif", fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 12, flex: 'none', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "var(--ayna-font-display)", fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {entry.label.charAt(0)}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -700,11 +628,12 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {activeTab === 'whoitsfor' && (
+            {activeDetailSection === 'fit' && whoItsFor?.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                <div style={EYEBROW}>Who it's for</div>
                 {(whoItsFor || []).map((item, i) => (
                   <div key={item} style={{ ...CARD, display: 'flex', gap: 12, alignItems: 'center', padding: '14px 15px' }}>
-                    <div style={{ width: 34, height: 34, borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "'Playfair Display',serif", fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "var(--ayna-font-display)", fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
                       {i + 1}
                     </div>
                     <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5 }}>{item}</div>
@@ -713,8 +642,9 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {activeTab === 'howtouse' && (
+            {activeDetailSection === 'ingredients' && howToUse?.steps?.length > 0 && (
               <div style={CARD}>
+                <div style={EYEBROW}>How to use</div>
                 {howToUse?.intro && (
                   <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-heading)', background: 'var(--ayna-chip-bg)', borderRadius: 16, padding: 14, marginBottom: 14 }}>
                     {howToUse.intro}
@@ -735,15 +665,16 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {activeTab === 'inside' && (
+            {activeDetailSection === 'ingredients' && (ingredientScience?.length > 0 || meaningfulDetail(safety.materials)) && (
               <div style={{ ...CARD, padding: '6px 18px' }}>
+                <div style={{ ...EYEBROW, paddingTop: 12 }}>What's inside</div>
                 {(ingredientScience || []).map((item, i) => (
                   <div key={item.name} style={{ padding: '14px 0', borderTop: i ? '1px solid var(--ayna-chip-bg)' : 'none' }}>
                     <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{item.name}</div>
                     <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.58, color: 'var(--ayna-text-muted)', marginTop: 5 }}>{item.text}</div>
                   </div>
                 ))}
-                {safety.materials && (
+                {meaningfulDetail(safety.materials) && (
                   <div style={{ padding: '14px 0', borderTop: (ingredientScience || []).length ? '1px solid var(--ayna-chip-bg)' : 'none', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.58, color: 'var(--ayna-text-muted)', whiteSpace: 'pre-line' }}>
                     {safety.materials}
                   </div>
@@ -751,118 +682,17 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {activeTab === 'ask' && (
-              <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} />
-            )}
+            {activeDetailSection === 'ingredients' && meaningfulDetail(safety.fdaStatus) && <div style={CARD}><div style={EYEBROW}>FDA status</div><p style={{ fontSize: 13, lineHeight: 1.55 }}>{safety.fdaStatus}</p></div>}
+            {activeDetailSection === 'ingredients' && factRows.length > 0 && <div style={{ ...CARD, padding: '6px 18px' }}>{factRows.map((row, i) => <SpecRow key={row.label} label={row.label} value={row.value} last={i === factRows.length - 1} />)}</div>}
+            {activeDetailSection === 'ingredients' && meaningfulDetail(ingredients) && <div style={CARD}><div style={EYEBROW}>Ingredients</div><p style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{ingredients}</p></div>}
+            {activeDetailSection === 'ingredients' && !buyUrl && whereToBuy.length > 0 && <div style={CARD}><SpecRow label="Where to buy" value={whereToBuy.join(' · ')} last /></div>}
+            {activeDetailSection === 'fit' && <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />}
           </div>
-        ) : (
-          <div style={{ padding: '18px 22px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ borderRadius: 20, padding: '17px 18px', background: 'linear-gradient(120deg,#242A52,#4E3866 70%,#5D3F73)', color: '#FFFCF9', display: 'flex', alignItems: 'center', gap: 15 }}>
-              {matchPercent != null && (
-                <div style={{ width: 62, height: 62, borderRadius: 99, flex: 'none', border: '5px solid rgba(255,252,249,.16)', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 19, color: '#F0A84B', lineHeight: 1 }}>{matchPercent}%</div>
-                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 7, letterSpacing: 1, color: '#C9C1DE', marginTop: 2 }}>MATCH</div>
-                </div>
-              )}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', opacity: 0.62 }}>Why you're seeing this</div>
-                <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, marginTop: 8 }}>
-                  {whyMatched || (matchLabels.length > 0 ? matchLabels.slice(0, 3).join(' · ') : 'Based on your ecosystem.')}
-                </div>
-              </div>
-            </div>
 
-            {(summary || effectiveness) && (
-              <div style={CARD}>
-                {summary && <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.62 }}>{summary}</div>}
-                {effectiveness && <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginTop: summary ? 8 : 0 }}>{effectiveness}</div>}
-              </div>
-            )}
-
-            {(doctorOpinionShort || doctorOpinion) && (
-              <div style={CARD}>
-                <div style={EYEBROW}>Clinician opinion</div>
-                <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.62, marginTop: 10 }}>{doctorOpinionShort || firstSentences(doctorOpinion, 3)}</div>
-                {clinicianAttribution && <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', marginTop: 11 }}>{clinicianAttribution}</div>}
-                <ChipRow chips={[...clinicianChips, ...clinicianCitationChips]} />
-              </div>
-            )}
-
-            {Array.isArray(warnings) && warnings.length > 0 && (
-              <div style={{ background: '#FEF2F2', border: '1px solid #991B1B', borderLeft: '4px solid #991B1B', borderRadius: 22, padding: '17px 18px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#991B1B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l9 16H3z" /><path d="M12 9v4" /><path d="M12 16.4v.1" /></svg>
-                  <div style={{ ...EYEBROW, color: '#991B1B' }}>Warnings</div>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 12 }}>
-                  {warnings.map((w) => (
-                    <div key={w} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                      <div style={{ width: 6, height: 6, borderRadius: 99, background: '#DC2626', flex: 'none', marginTop: 7 }} />
-                      <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: '#3f3831' }}>{w}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div style={{ ...CARD, padding: '6px 18px' }}>
-              {(scientificLiteratureEntries.length > 0) && (
-                <LinkRow label="Scientific" value={`${scientificLiteratureEntries.length} source${scientificLiteratureEntries.length === 1 ? '' : 's'}`} onClick={() => goTab('scientific')} />
-              )}
-              {(communityCitationEntries.length > 0 || communityReview) && (
-                <LinkRow label="Social Media + Reviews" value={communityCitationEntries.length > 0 ? `${communityCitationEntries.length} link${communityCitationEntries.length === 1 ? '' : 's'}` : '1 note'} onClick={() => goTab('social')} />
-              )}
-              {safety.fdaStatus && (
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 0', borderTop: '1px solid var(--ayna-chip-bg)' }}>
-                  <div style={{ flex: 'none', width: 60, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>FDA</div>
-                  <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-text-muted)', textAlign: 'right' }}>{firstSentence(safety.fdaStatus, 100)}</div>
-                </div>
-              )}
-            </div>
-
-            {factRows.length > 0 && (
-              <div style={{ ...CARD, padding: '6px 18px' }}>
-                {factRows.map((row, i) => <SpecRow key={row.label} label={row.label} value={row.value} last={i === factRows.length - 1} />)}
-              </div>
-            )}
-
-            {(hasWhoItsFor || hasHowToUse) && (
-              <div style={{ display: 'grid', gridTemplateColumns: hasWhoItsFor && hasHowToUse ? 'repeat(2,minmax(0,1fr))' : '1fr', gap: 9 }}>
-                {hasWhoItsFor && (
-                  <div onClick={() => goTab('whoitsfor')} style={{ ...CARD, cursor: 'pointer' }}>
-                    <div style={{ ...EYEBROW, color: 'var(--ayna-accent-dark)' }}>Who it's for</div>
-                    <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'var(--ayna-text-muted)', marginTop: 6 }}>{whoItsFor.length} group{whoItsFor.length === 1 ? '' : 's'} →</div>
-                  </div>
-                )}
-                {hasHowToUse && (
-                  <div onClick={() => goTab('howtouse')} style={{ ...CARD, cursor: 'pointer' }}>
-                    <div style={{ ...EYEBROW, color: 'var(--ayna-accent-dark)' }}>How to use</div>
-                    <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'var(--ayna-text-muted)', marginTop: 6 }}>{howToUse.steps.length} step{howToUse.steps.length === 1 ? '' : 's'} →</div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {!buyUrl && whereToBuy.length > 0 && (
-              <div style={CARD}><SpecRow label="Where to buy" value={whereToBuy.join(' · ')} last /></div>
-            )}
-
-            {ingredients && (
-              <div style={CARD}>
-                <div style={EYEBROW}>Inside</div>
-                <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: 8, whiteSpace: 'pre-line' }}>{ingredients}</div>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div style={{ padding: '18px 22px 0' }}>
-          <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55 }}>Research + review summary. Not medical advice.</div>
-        </div>
 
         {reads.length > 0 && (
-          <div style={{ padding: '22px 22px 34px' }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', marginBottom: 10 }}>Reads</div>
+          <div style={{ padding: '22px var(--ay-gutter, 20px) 34px' }}>
+            <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', marginBottom: 10 }}>Reads</div>
             {reads.map((r) => (
               <div
                 key={r.id || r.title}
@@ -880,7 +710,7 @@ export default function ProductDetailScreen({
                 }}
               >
                 <div style={{ flex: 1, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.4, fontWeight: 500 }}>{r.title}</div>
-                {r.mins && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
+                {r.mins && <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
               </div>
             ))}
           </div>
@@ -888,18 +718,22 @@ export default function ProductDetailScreen({
         <LegalFooter />
       </div>
 
-      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'linear-gradient(to top, var(--ayna-bg) 72%, transparent)', display: 'flex', gap: 8, alignItems: 'center' }}>
-        <div
+      <div className="ayna-product-purchase-bar" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'var(--ayna-surface)', borderTop: '1px solid var(--ayna-border)', display: 'flex', gap: 8, alignItems: 'center' }}>
+        <button
+          type="button"
           onClick={onToggleSaved}
-          role="button"
+          aria-label={isSaved ? 'Unsave product' : 'Save product'}
           aria-pressed={isSaved}
           style={{ width: 50, height: 50, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--ayna-surface)', border: '1px solid ' + (isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)') }}
         >
           <svg width="19" height="19" viewBox="0 0 24 24" fill={isSaved ? 'var(--ayna-accent-dark)' : 'none'} stroke={isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-heading)'} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 20s-7-4.4-8.9-8.4A4.9 4.9 0 0 1 12 6.3a4.9 4.9 0 0 1 8.9 5.3C19 15.6 12 20 12 20z" />
           </svg>
-        </div>
-        <div
+        </button>
+        <button
+          type="button"
+          aria-pressed={isInEcosystem}
+          aria-label={isInEcosystem ? 'Remove' : 'Add to Ecosystem'}
           onClick={onAddToEcosystem}
           style={{
             flex: 'none',
@@ -910,7 +744,7 @@ export default function ProductDetailScreen({
             padding: '0 16px',
             borderRadius: 99,
             cursor: 'pointer',
-            fontFamily: "'DM Sans',sans-serif",
+            fontFamily: "var(--ayna-font-ui)",
             fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
             fontWeight: 600,
             background: isInEcosystem ? 'var(--ayna-chip-bg)' : 'var(--ayna-surface)',
@@ -918,8 +752,8 @@ export default function ProductDetailScreen({
             border: '1px solid ' + (isInEcosystem ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)'),
           }}
         >
-          {isInEcosystem ? '✓ In ecosystem' : '+ Ecosystem'}
-        </div>
+          {isInEcosystem ? 'Remove' : 'Add to Ecosystem'}
+        </button>
         {buyUrl ? (
           <a
             href={buyUrl}
@@ -932,14 +766,14 @@ export default function ProductDetailScreen({
               color: 'var(--ayna-cta-text)',
               borderRadius: 99,
               padding: '15px 0',
-              fontFamily: "'DM Sans',sans-serif",
+              fontFamily: "var(--ayna-font-ui)",
               fontWeight: 600,
               fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',
               boxShadow: '0 14px 26px -14px rgba(36,42,82,.7)',
               textDecoration: 'none',
             }}
           >
-            Buy Now
+            {category === 'telehealth' ? 'Explore' : product.type === 'digital' ? 'View app' : 'Shop'}
           </a>
         ) : (
           <div
@@ -950,12 +784,12 @@ export default function ProductDetailScreen({
               color: 'var(--ayna-text-muted)',
               borderRadius: 99,
               padding: '15px 0',
-              fontFamily: "'DM Sans',sans-serif",
+              fontFamily: "var(--ayna-font-ui)",
               fontWeight: 600,
               fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))',
             }}
           >
-            {whereToBuy.length > 0 ? whereToBuy[0] : 'No link yet'}
+            <span className="ayna-seller-unavailable">No shop link</span>
           </div>
         )}
       </div>

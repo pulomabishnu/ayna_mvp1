@@ -1,0 +1,103 @@
+/* Brand v2: shared roles and layout across the native app and phone preview. */
+.ayna-mobile {
+  --ayna-bg: #FCFBFB;
+  --ayna-bg-alt: #F1F1EB;
+  --ayna-surface: #FFFFFF;
+  --ayna-surface-alt: #FFFFFF;
+  --ayna-border: #E0E0D9;
+  --ayna-text: #1D1A2B;
+  --ayna-text-muted: #5F5F5F;
+  --ayna-text-faint: #777777;
+  --ayna-heading: #1D1A2B;
+  --ayna-accent: #F7BADD;
+  --ayna-accent-dark: #1D1A2B;
+  --ayna-peach: #DDF8F2;
+  --ayna-brown: #1D1A2B;
+  --ayna-navy: #1D1A2B;
+  --ayna-cta-bg: #1D1A2B;
+  --ayna-cta-text: #FFFFFF;
+  --ayna-chip-bg: #FFFFFF;
+  --ayna-chip-border: #E0E0D9;
+  --color-primary: #1D1A2B;
+  background: var(--ayna-bg);
+}
+.ayna-mobile[data-theme="dark"] {
+  --ayna-bg: #151515;
+  --ayna-bg-alt: #242424;
+  --ayna-surface: #242424;
+  --ayna-surface-alt: #242424;
+  --ayna-border: #414141;
+  --ayna-text: #FFFFFF;
+  --ayna-text-muted: #C4C4C4;
+  --ayna-text-faint: #A9A9A9;
+  --ayna-heading: #FFFFFF;
+  --ayna-chip-bg: #242424;
+  --ayna-chip-border: #414141;
+}
+.ayna-mobile button { -webkit-tap-highlight-color: transparent; }
+.ayna-mobile button:focus-visible { outline: 3px solid #1D1A2B; outline-offset: 2px; }
+.ayna-mobile .ayna-bottom-nav,
+.ayna-mobile[data-screen='landing'] .ayna-bottom-nav,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav {
+  background: var(--ayna-surface);
+  border-top: 1px solid var(--ayna-border);
+  padding: 8px 8px max(8px, env(safe-area-inset-bottom));
+}
+.ayna-mobile .ayna-bottom-nav button,
+.ayna-mobile[data-screen='landing'] .ayna-bottom-nav button,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button {
+  color: var(--ayna-text-muted);
+  font-size: 11px;
+  gap: 3px;
+}
+.ayna-mobile .ayna-bottom-nav button.is-active,
+.ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active {
+  background: transparent;
+  border-radius: 0;
+}
+.ayna-mobile .ayna-bottom-nav button.is-active::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  height: 3px;
+  border-radius: 3px;
+}
+.ayna-mobile .ayna-bottom-nav button { position: relative; }
+.ayna-mobile[data-theme="dark"] .ayna-bottom-nav button.is-active { color: #F7BADD; }
+
+.ayna-editorial-welcome-photo > img,
+.ayna-editorial-welcome-photo::after,
+.ayna-editorial-welcome h1,
+.ayna-editorial-welcome h1 em,
+.ayna-editorial-intro,
+.ayna-editorial-welcome-links button,
+
+.ayna-editorial-product-grid { column-gap: 12px !important; row-gap: 22px !important; }
+.ayna-editorial-product-grid > * { min-width: 0; }
+.ayna-editorial-read { width: 100%; min-height: 132px; display: grid; grid-template-columns: minmax(0,1fr) 104px; gap: 14px; padding: 13px 0; border: 0; border-bottom: 1px solid var(--ayna-border); background: transparent; color: var(--ayna-text); text-align: left; cursor: pointer; }
+.ayna-editorial-read-copy { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.ayna-editorial-read-copy small { margin-bottom: 7px; text-transform: uppercase; font: 700 10px var(--ayna-font-ui); letter-spacing: .08em; }
+.ayna-editorial-read-copy strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font: 700 16px/1.2 var(--ayna-font-ui); letter-spacing: -.02em; }
+.ayna-editorial-read-copy > span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 6px; color: var(--ayna-text-muted); font: 12px/1.35 var(--ayna-font-ui); }
+.ayna-editorial-read-image { height: 106px; overflow: hidden; background: #e9ded0; display: grid; place-items: center; }
+.ayna-editorial-read-image img { width: 100%; height: 100%; object-fit: cover; }
+.ayna-editorial-read-image > span { color: #1D1A2B; font: italic 24px var(--ayna-font-display); }
+@media (max-height: 680px) { .ayna-editorial-welcome-photo { min-height: 30vh; } .ayna-editorial-welcome-content { padding-top: 18px; } }
+
+/* Rebrand entry points: art-directed type and real Ayna photography. */
+.ayna-v2-welcome-hero h1,
+.ayna-v2-welcome-hero h1 span,
+.ayna-v2-welcome-links button,
+
+
+/* Shared chrome: no glass, no shadows, visible active state and tap targets. */
+.ayna-mobile .ayna-bottom-nav { box-shadow: none; }
+.ayna-mobile .ayna-bottom-nav button { min-height: 52px; font-weight: 700; }
+.ayna-mobile .ayna-bottom-nav button.is-active,
+.ayna-mobile[data-screen='landing'] .ayna-bottom-nav button.is-active,
+.ayna-mobile[data-screen='ecointro'] .ayna-bottom-nav button.is-active { color: #1D1A2B; }
+.ayna-mobile .ayna-bottom-nav button.is-active::after { background: #F7BADD; width: 22px; }
+.ayna-editorial-read-copy small { color: #1D1A2B; }
+.ayna-editorial-read-image { border-radius: 8px; }
+@media (max-height: 690px) { .ayna-v2-welcome-hero { min-height: 285px; } .ayna-v2-team-photo img { aspect-ratio: 2; } }

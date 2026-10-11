@@ -87,36 +87,38 @@ describe('generateTieredRecommendations — every CONCERN_AREAS checkbox produce
 // be prioritized when a user has one. Aditi said it should already be
 // integrated — it wasn't. scoreProduct had zero FSA/HSA logic at all.
 describe('scoreProduct — FSA/HSA prioritization', () => {
-  const concern = { key: 'test', tags: [] };
+  const concern = { key: 'Period care', tags: ['heavy-flow'] };
+  const relevant = { id: 'pad', name: 'Flow pad', category: 'pad', tags: ['heavy-flow'], healthFunctions: ['menstrual-collection'] };
+  const profile = { supportSelections: ['Heavy periods'] };
 
   it('scores an FSA-eligible product higher when the user has an FSA', () => {
-    const eligible = { tags: [], fsaEligible: true };
-    const notEligible = { tags: [] };
-    const intake = { fsaHsa: 'fsa' };
+    const eligible = { ...relevant, fsaEligible: true };
+    const notEligible = { ...relevant };
+    const intake = { ...profile, fsaHsa: 'fsa' };
     expect(scoreProduct(eligible, intake, concern)).toBeGreaterThan(scoreProduct(notEligible, intake, concern));
   });
 
   it('does not boost an FSA-only-eligible product for a user who only has an HSA', () => {
-    const fsaOnly = { tags: [], fsaEligible: true };
-    const intake = { fsaHsa: 'hsa' };
-    expect(scoreProduct(fsaOnly, intake, concern)).toBe(scoreProduct({ tags: [] }, intake, concern));
+    const fsaOnly = { ...relevant, fsaEligible: true };
+    const intake = { ...profile, fsaHsa: 'hsa' };
+    expect(scoreProduct(fsaOnly, intake, concern)).toBe(scoreProduct({ ...relevant }, intake, concern));
   });
 
   it('"both" matches a product eligible for either', () => {
-    const hsaOnly = { tags: [], hsaEligible: true };
-    const intake = { fsaHsa: 'both' };
-    expect(scoreProduct(hsaOnly, intake, concern)).toBeGreaterThan(scoreProduct({ tags: [] }, intake, concern));
+    const hsaOnly = { ...relevant, hsaEligible: true };
+    const intake = { ...profile, fsaHsa: 'both' };
+    expect(scoreProduct(hsaOnly, intake, concern)).toBeGreaterThan(scoreProduct({ ...relevant }, intake, concern));
   });
 
   it('does not boost anything when the user never answered the FSA/HSA question', () => {
-    const eligible = { tags: [], fsaHsaEligible: true };
-    const intake = { fsaHsa: '' };
-    expect(scoreProduct(eligible, intake, concern)).toBe(scoreProduct({ tags: [] }, intake, concern));
+    const eligible = { ...relevant, fsaHsaEligible: true };
+    const intake = { ...profile, fsaHsa: '' };
+    expect(scoreProduct(eligible, intake, concern)).toBe(scoreProduct({ ...relevant }, intake, concern));
   });
 
   it('respects the snake_case field variant the catalog also uses', () => {
-    const eligible = { tags: [], fsa_eligible: true };
-    const intake = { fsaHsa: 'fsa' };
-    expect(scoreProduct(eligible, intake, concern)).toBeGreaterThan(scoreProduct({ tags: [] }, intake, concern));
+    const eligible = { ...relevant, fsa_eligible: true };
+    const intake = { ...profile, fsaHsa: 'fsa' };
+    expect(scoreProduct(eligible, intake, concern)).toBeGreaterThan(scoreProduct({ ...relevant }, intake, concern));
   });
 });

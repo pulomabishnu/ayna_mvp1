@@ -1,0 +1,604 @@
+/* App-wide pieces of the ayna play system (shared buttons, empty states,
+   nav polish). Loaded last so it wins over the older layered sheets. */
+
+.ayna-mobile .ay-btn {
+  min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 0 22px; border: 2px solid var(--ay-ink); border-radius: 99px;
+  background: var(--ay-ink); color: var(--ay-paper) !important; font: 700 15px/1 var(--ay-font-ui); cursor: pointer;
+  transition: transform .14s var(--ay-ease), box-shadow .2s;
+}
+.ayna-mobile .ay-btn:active { transform: scale(.96); }
+.ayna-mobile .ay-btn.is-ghost { background: transparent; color: var(--ay-ink) !important; }
+
+/* empty + error states */
+.ayna-mobile .ay-empty { display: grid; justify-items: start; gap: 10px; padding: 40px var(--ay-gutter); text-align: left; animation: ay-empty-in .5s var(--ay-ease) both; }
+.ayna-mobile .ay-empty.is-compact { padding: 28px 16px; }
+@keyframes ay-empty-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.ay-empty-art { position: relative; width: 96px; height: 96px; margin-bottom: 8px; }
+.ay-empty-card { position: absolute; inset: 8px 14px 14px 8px; border: 2.5px solid var(--ay-ink); border-radius: 28px; background: var(--ay-peri); rotate: -9deg; }
+.ay-empty-card.is-front { inset: 14px 8px 8px 14px; display: grid; place-items: center; background: var(--tone, var(--ay-pink)); rotate: 5deg; box-shadow: 4px 4px 0 var(--ay-ink); animation: ay-empty-wiggle 4s ease-in-out infinite; }
+@keyframes ay-empty-wiggle { 50% { rotate: -1deg; } }
+.ay-empty-card svg { width: 34px; height: 34px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-empty-spark { position: absolute; right: -10px; top: -8px; width: 36px; height: 36px; overflow: visible; }
+.ay-empty-spark path { fill: var(--ay-butter); stroke: var(--ay-ink); stroke-width: 2.4; }
+.ay-empty--pink { --tone: var(--ay-pink); }
+.ay-empty--mint { --tone: var(--ay-mint); }
+.ay-empty--butter { --tone: var(--ay-butter); }
+.ay-empty--peri { --tone: var(--ay-mint); }
+.ayna-mobile .ay-empty h2 { margin: 0; max-width: 16ch; color: var(--ay-ink) !important; font: 800 28px/1 var(--ay-font-display) !important; letter-spacing: -.045em !important; text-wrap: balance; }
+.ayna-mobile .ay-empty p { margin: 0; max-width: 28ch; color: var(--ay-ink-soft); font: 500 14px/1.45 var(--ay-font-ui); }
+.ay-empty-actions { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px; margin-top: 10px; }
+
+/* skeleton loading */
+.ayna-mobile .ay-skeleton { border-radius: 18px; background: linear-gradient(90deg, var(--ay-ink-faint) 0 40%, rgba(29,26,43,.06) 50%, var(--ay-ink-faint) 60%) 0 0 / 300% 100%; animation: ay-shimmer 1.4s linear infinite; }
+@keyframes ay-shimmer { to { background-position: -300% 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ay-empty-card.is-front, .ayna-mobile .ay-skeleton { animation: none; }
+}
+
+/* Play surfaces (intake, check-in, wrapped, empty states) use the display
+   face; everyday screens keep the quieter UI type. */
+.ayna-mobile :is(.ayna-play-intake, .ayna-wrapped) :is(h1, h2, h3) { font-family: var(--ay-font-display) !important; font-weight: 800 !important; letter-spacing: -.05em !important; }
+
+/* Shop / Reads mode tabs: ink text, chunky underline (was low-contrast periwinkle text). */
+.ayna-mobile .ayna-figma-discover .ayna-fresh-mode-tab { color: var(--ay-ink-soft) !important; transition: color .2s, border-color .2s; }
+.ayna-mobile .ayna-figma-discover .ayna-fresh-mode-tab[aria-pressed='true'] { color: var(--ay-ink) !important; border-bottom: 3px solid var(--ay-ink) !important; }
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-fresh-mode-tab[aria-pressed='true'] { color: #fffdfa !important; border-bottom-color: var(--ay-butter) !important; }
+
+/* Tactile press feedback on everyday controls */
+.ayna-mobile :is(.ayna-bottom-nav button, .ayna-fresh-mode-tab, .ay-btn, .ayna-saved-filters button) { -webkit-tap-highlight-color: transparent; transition: transform .14s var(--ay-ease), background-color .2s, color .2s; }
+.ayna-mobile :is(.ayna-bottom-nav button, .ayna-fresh-mode-tab, .ayna-saved-filters button):active { transform: scale(.94); }
+
+/* ===== Sleek pass: shared components on everyday screens ===== */
+
+/* Category + filter chips: one pill style, one height. */
+.ayna-mobile .ayna-shop-category-row { display: flex !important; gap: var(--ay-space-2) !important; align-items: center !important; }
+.ayna-mobile .ayna-shop-category,
+.ayna-mobile .ayna-category-expanded button {
+  min-height: 38px !important; padding: 0 13px !important; border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-radius-pill) !important;
+  background: transparent !important; color: var(--ay-ink) !important; font: 600 var(--ay-text-sm)/1 var(--ay-font-ui) !important; text-align: center !important; box-shadow: none !important;
+  transition: background-color .2s, border-color .2s, transform .14s var(--ay-ease) !important;
+}
+.ayna-mobile :is(.ayna-shop-category, .ayna-category-expanded button)[aria-pressed='true'] { background: var(--ay-ink) !important; border-color: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.ayna-mobile .ayna-shop-filter-toggle { width: 40px !important; height: 40px !important; min-height: 40px !important; border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-radius-pill) !important; background: transparent !important; color: var(--ay-ink) !important; }
+.ayna-mobile .ayna-shop-filter-toggle[aria-expanded='true'] { background: var(--ay-butter) !important; border-color: var(--ay-ink) !important; }
+
+/* Product cards keep the existing halo photo treatment; this only evens out
+   type, press feedback and the save button. */
+.ayna-mobile .ayna-fresh-product-main { transition: transform .16s var(--ay-ease); }
+.ayna-mobile .ayna-fresh-product-main:active { transform: scale(.97); }
+.ayna-mobile .ayna-fresh-product-category { color: var(--ay-ink-soft) !important; font: 600 var(--ay-text-xs)/1.2 var(--ay-font-ui) !important; letter-spacing: .02em !important; }
+.ayna-mobile .ayna-fresh-product-copy > strong { font: 700 var(--ay-text-md)/1.25 var(--ay-font-ui) !important; letter-spacing: -.01em !important; display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
+.ayna-mobile .ayna-fresh-product-foot b { font: 700 var(--ay-text-sm)/1 var(--ay-font-ui) !important; }
+.ayna-mobile .ayna-card-save { width: 36px !important; height: 36px !important; border-radius: var(--ay-radius-pill) !important; background: var(--ay-paper) !important; border: 0 !important; box-shadow: 0 1px 0 var(--ay-line) !important; color: var(--ay-ink) !important; transition: transform .2s var(--ay-pop) !important; }
+.ayna-mobile .ayna-card-save[aria-pressed='true'] { background: var(--ay-butter) !important; animation: ip-pop .32s var(--ay-pop); }
+.ayna-mobile .ayna-fresh-match-badge { border-radius: var(--ay-radius-pill) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; border: 0 !important; }
+
+/* Search fields everywhere: same height and radius. */
+.ayna-mobile .ayna-search-input, .ayna-mobile .am-search { min-height: 48px; border-radius: var(--ay-radius-pill) !important; }
+
+/* Bottom nav: hairline, even spacing, ink-on-butter active pill. */
+.ayna-mobile .ayna-bottom-nav { border-top: 1px solid var(--ay-line) !important; box-shadow: none !important; }
+.ayna-mobile .ayna-bottom-nav button { border-radius: var(--ay-radius-md) !important; }
+
+/* Ecosystem header panel sits on the page colour, not a white slab. */
+.ayna-mobile:not([data-theme='dark']) .ayna-cabinet-home > :first-child { background: transparent !important; }
+
+/* ===== Audit pass 2 ===== */
+
+/* Product photos: one clean tile, no halo blob behind cut-out packshots. */
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image { background: var(--ay-tile) !important; border-radius: var(--ay-radius-lg) !important; overflow: hidden !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image::before { display: none !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image img { padding: 12% !important; object-fit: contain !important; mix-blend-mode: multiply; -webkit-mask-image: none !important; mask-image: none !important; }
+.ayna-mobile.ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { aspect-ratio: 1 !important; }
+.ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) { border-bottom: 0 !important; padding-bottom: 4px !important; }
+.ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { min-height: 0 !important; }
+.ayna-mobile .ayna-card-save { top: 8px !important; right: 8px !important; bottom: auto !important; }
+
+/* Form fields: labels above, custom select chevron, same radius as search. */
+.ayna-mobile .ay-field { display: grid; gap: 6px; min-width: 0; color: var(--ay-ink-soft); font: 600 var(--ay-text-xs)/1.2 var(--ay-font-ui); letter-spacing: .02em; }
+.ayna-mobile .ay-field select {
+  width: 100%; min-width: 0; min-height: 46px; padding: 0 36px 0 14px; border: 1.5px solid var(--ay-line); border-radius: var(--ay-radius-md);
+  background: var(--ay-paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d1a2b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 16px;
+  color: var(--ay-ink); font: 600 var(--ay-text-sm)/1 var(--ay-font-ui); appearance: none; -webkit-appearance: none;
+}
+.ayna-mobile .ay-field select:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 1px; }
+.ayna-mobile .ayna-shop-filter-fields { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: var(--ay-space-4) var(--ay-space-3) !important; }
+.ayna-mobile .ayna-shop-filter-sheet { border-radius: 24px 24px 0 0 !important; }
+.ayna-mobile .ayna-shop-filter-actions button:last-child { border-radius: var(--ay-radius-pill) !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; min-height: 48px; padding: 0 28px !important; }
+
+/* Auth inputs: same rounded field as everywhere else. */
+.ayna-mobile .ayna-fresh-auth-field { border: 1.5px solid var(--ay-line) !important; border-radius: var(--ay-radius-md) !important; background: var(--ay-paper) !important; }
+.ayna-mobile .ayna-fresh-auth-field:focus-within { border-color: var(--ay-ink) !important; }
+
+/* Partner disclosure: readable label. */
+.ayna-mobile .ayna-figma-partner-disclosure > button span:first-child { padding: 4px 9px; border-radius: 99px; background: var(--ay-peri) !important; color: var(--ay-ink) !important; font-size: 11px !important; letter-spacing: 0 !important; font-weight: 700 !important; }
+.ayna-mobile .ayna-figma-partner-disclosure > button { padding-inline: var(--ay-gutter) !important; }
+.ayna-mobile .ayna-figma-partner-disclosure > button span:nth-child(2) { font-size: 12px !important; color: var(--ay-ink-soft) !important; }
+
+/* Community: one header row aligned to the page gutter, readable tabs. */
+.ayna-mobile .am-top { padding: 4px 0 8px !important; border-bottom: 0 !important; align-items: center; }
+.ayna-mobile :is(.am-top-actions button, .am-icon-button) { border-radius: var(--ay-radius-pill) !important; border: 1.5px solid var(--ay-line) !important; background: var(--ay-paper) !important; }
+.ayna-mobile .am-top .am-title h1 { margin-left: 0 !important; }
+.ayna-mobile .am-tabs { gap: var(--ay-space-5) !important; padding: 0 var(--ay-space-4) !important; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--ay-line); }
+.ayna-mobile .am-tabs::-webkit-scrollbar { display: none; }
+.ayna-mobile .am-tabs button { flex: none; min-height: 44px !important; padding: 0 !important; border: 0 !important; border-bottom: 3px solid transparent !important; border-radius: 0 !important; background: transparent !important; color: var(--ay-ink-soft) !important; font: 600 var(--ay-text-sm)/1 var(--ay-font-ui) !important; box-shadow: none !important; }
+.ayna-mobile .am-tabs button.is-active { color: var(--ay-ink) !important; border-bottom-color: var(--ay-ink) !important; }
+.ayna-mobile:not([data-theme='dark']) .ayna-cabinet-stage { background: transparent !important; }
+/* Card rows line up: titles always reserve two lines, price sits a fixed step below. */
+.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { min-height: 2.5em !important; margin-top: 4px !important; }
+.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { margin-top: 6px !important; }
+
+/* Welcome cover headline: one size up so the cover reads as a cover. */
+.ayna-mobile.ayna-mobile .ayna-cabinet-cover .ayna-cover-intro h1 { font-size: calc(clamp(38px, 10.8vw, 52px) * var(--ayna-text-scale, 1)) !important; text-wrap: balance; line-height: .98 !important; letter-spacing: -.055em !important; }
+
+/* ===== Play layer for the main tabs (kept light on purpose) ===== */
+
+/* Screens slide up a touch when they open; motion explains the change. */
+@keyframes ay-screen-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.ayna-mobile > :is(.ayna-figma-discover, .ayna-cabinet-home, .am-screen, .ayna-saved-collection, .ayna-ecosystem-start) { animation: ay-screen-in var(--ay-dur-2) var(--ay-ease) both; }
+
+/* Tab bar: active pill takes the tab's colour; icon gives a small hop. */
+.ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-bottom-nav button.is-active { background: var(--ay-section) !important; }
+.ayna-mobile .ayna-bottom-nav button.is-active svg { animation: ay-hop .42s var(--ay-pop); }
+@keyframes ay-hop { 40% { transform: translateY(-4px) scale(1.08); } 100% { transform: none; } }
+
+/* Page titles get a marker swash in the tab colour. */
+.ayna-mobile :is(.ayna-figma-discover .ayna-shop-heading h1, .ayna-cabinet-stage h1, .am-top .am-title h1, .ayna-saved-header h1) {
+  display: inline-block; background: linear-gradient(transparent 55%, var(--ay-section) 55%, var(--ay-section) 90%, transparent 90%) no-repeat 0 0 / 100% 100%;
+  animation: ay-swash .6s var(--ay-ease) .1s both; padding-right: 2px;
+}
+@keyframes ay-swash { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
+
+/* Product grids arrive in a short stagger. */
+.ayna-mobile .ayna-editorial-product-grid > * { animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; }
+.ayna-mobile .ayna-editorial-product-grid > :nth-child(2) { animation-delay: 50ms; }
+.ayna-mobile .ayna-editorial-product-grid > :nth-child(3) { animation-delay: 100ms; }
+.ayna-mobile .ayna-editorial-product-grid > :nth-child(4) { animation-delay: 150ms; }
+
+/* Shop: swipe-to-discover entry card */
+.ayna-mobile .ay-discover-cta {
+  display: flex; align-items: center; gap: var(--ay-space-3); width: calc(100% - 40px); margin: 0 20px var(--ay-space-4); padding: 12px 12px 12px 14px;
+  border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-pink); color: var(--ay-ink); text-align: left; cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ay-ink); transition: transform var(--ay-dur-1) var(--ay-ease), box-shadow var(--ay-dur-1);
+}
+.ayna-mobile .ay-discover-cta:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ay-ink); }
+.ay-discover-art { position: relative; display: block; width: 44px; height: 44px; flex: none; }
+.ay-discover-art i { position: absolute; display: block; left: 9px; top: 5px; width: 26px; height: 34px; border: 2px solid var(--ay-ink); border-radius: 8px; background: var(--ay-paper); }
+.ay-discover-art i:nth-child(1) { rotate: -16deg; translate: -5px 1px; background: var(--ay-butter); }
+.ay-discover-art i:nth-child(2) { rotate: 12deg; translate: 6px 1px; background: var(--ay-mint); }
+.ayna-mobile .ay-discover-cta:hover .ay-discover-art i:nth-child(3) { rotate: 6deg; }
+.ay-discover-art i:nth-child(3) { transition: rotate var(--ay-dur-2) var(--ay-pop); }
+.ay-discover-copy { flex: 1; display: grid; gap: 2px; min-width: 0; }
+.ay-discover-copy strong { font: 800 16px/1.1 var(--ay-font-display); letter-spacing: -.02em; }
+.ay-discover-copy small { font: 500 12px/1.2 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ay-discover-go { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--ay-ink); color: var(--ay-paper); font-weight: 700; }
+
+/* Discover deck */
+.ay-deck { position: fixed; inset: 0; z-index: 80; display: flex; flex-direction: column; padding: max(14px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom)); background: var(--ay-peri); color: var(--ay-ink); animation: ay-deck-in var(--ay-dur-2) var(--ay-ease) both; }
+@keyframes ay-deck-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.ay-deck-head { display: flex; align-items: center; justify-content: space-between; }
+.ay-deck-head strong { font: 800 20px/1 var(--ay-font-display); letter-spacing: -.03em; }
+.ay-deck-head span { min-width: 40px; text-align: right; font: 700 13px/1 var(--ay-font-ui); font-variant-numeric: tabular-nums; }
+.ay-deck-close { width: 40px; height: 40px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); font: 600 22px/1 var(--ay-font-ui); color: var(--ay-ink); cursor: pointer; }
+.ay-deck-stage { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; margin: 14px 0; }
+.ay-deck-card {
+  position: absolute; inset: 0; margin: auto; width: min(100%, 340px); height: min(100%, 470px); display: flex; flex-direction: column;
+  border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 5px 5px 0 var(--ay-ink); overflow: hidden;
+  touch-action: pan-y; user-select: none; cursor: grab; transition: transform var(--ay-dur-2) var(--ay-ease);
+}
+.ay-deck-card.is-dragging { transition: none; cursor: grabbing; }
+.ay-deck-card.is-behind { transform: translateY(calc(var(--depth) * 10px)) scale(calc(1 - var(--depth) * .04)); box-shadow: none; pointer-events: none; }
+.ay-deck-photo { position: relative; flex: 1; min-height: 0; margin: 12px 12px 0; border-radius: 18px; background: var(--ay-tile); overflow: hidden; }
+.ay-deck-photo img { padding: 10% !important; object-fit: contain !important; mix-blend-mode: multiply; }
+.ay-deck-copy { display: grid; gap: 4px; padding: 14px 16px 16px; }
+.ay-deck-copy span { font: 600 12px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ay-deck-copy strong { font: 800 20px/1.12 var(--ay-font-display); letter-spacing: -.025em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ay-deck-meta { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.ay-deck-meta b { font: 700 14px/1 var(--ay-font-ui); }
+.ay-deck-meta em { padding: 5px 9px; border-radius: 99px; background: var(--ay-butter); font: 700 11px/1 var(--ay-font-ui); font-style: normal; }
+.ay-deck-stamp { position: absolute; z-index: 2; top: 22px; padding: 6px 14px; border: 3px solid currentColor; border-radius: 10px; background: var(--ay-paper); font: 800 22px/1 var(--ay-font-display); text-transform: uppercase; letter-spacing: .04em; }
+.ay-deck-stamp.is-save { left: 22px; color: #2f7a52; rotate: -10deg; }
+.ay-deck-stamp.is-skip { right: 22px; color: var(--ay-alert); rotate: 10deg; }
+.ay-deck-actions { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.ay-deck-btn { display: grid; place-items: center; border: 2px solid var(--ay-ink); background: var(--ay-paper); color: var(--ay-ink); cursor: pointer; transition: transform var(--ay-dur-1) var(--ay-ease); }
+.ay-deck-btn:active { transform: scale(.9); }
+.ay-deck-btn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.ay-deck-btn.is-skip, .ay-deck-btn.is-save { width: 64px; height: 64px; border-radius: 50%; box-shadow: 3px 3px 0 var(--ay-ink); }
+.ay-deck-btn.is-save { background: var(--ay-pink); }
+.ay-deck-btn.is-view { min-height: 44px; padding: 0 18px; border-radius: 99px; font: 700 14px/1 var(--ay-font-ui); }
+.ay-deck-hint { margin: 12px 0 0; text-align: center; font: 500 12px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
+
+/* Ecosystem: replay card + coloured area numbers */
+.ayna-mobile .ay-replay { display: flex; align-items: center; gap: var(--ay-space-3); width: 100%; margin: var(--ay-space-5) 0 var(--ay-space-2); padding: 12px; border: 0; border-radius: var(--ay-radius-lg); background: var(--ay-ink); color: var(--ay-paper); text-align: left; cursor: pointer; transition: transform var(--ay-dur-1) var(--ay-ease); }
+.ayna-mobile .ay-replay:active { transform: scale(.98); }
+.ay-replay > span:nth-child(2) { flex: 1; display: grid; gap: 3px; }
+.ay-replay strong { font: 800 16px/1.1 var(--ay-font-display); letter-spacing: -.02em; }
+.ay-replay small { font: 500 12px/1 var(--ay-font-ui); opacity: .7; }
+.ay-replay-art { position: relative; display: block; width: 46px; height: 46px; flex: none; }
+.ay-replay-art i { position: absolute; display: block; width: 22px; height: 22px; border-radius: 50%; }
+.ay-replay-art i:nth-child(1) { left: 0; top: 2px; background: var(--ay-pink); }
+.ay-replay-art i:nth-child(2) { right: 0; top: 10px; background: var(--ay-butter); border-radius: 6px; rotate: 14deg; }
+.ay-replay-art i:nth-child(3) { left: 10px; bottom: 0; background: var(--ay-mint); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+.ay-replay-play { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--ay-butter); }
+.ay-replay-play svg { width: 16px; height: 16px; fill: var(--ay-ink); }
+.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { display: inline-grid; place-items: center; width: 30px; height: 30px; margin-right: 10px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--area-tone, var(--ay-butter)); color: var(--ay-ink); font: 800 11px/1 var(--ay-font-ui); vertical-align: middle; }
+
+/* You: colour hero, badges, tinted menu icons */
+.ayna-mobile .ayna-fresh-profile-hero { background: var(--ay-peri) !important; color: var(--ay-ink) !important; }
+.ayna-mobile .ayna-fresh-profile-hero * { color: inherit; }
+.ayna-mobile .ayna-fresh-profile-hero button[aria-label='Close profile'] { border: 2px solid var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
+.ay-hub-shapes { position: absolute; inset: 0; pointer-events: none; }
+.ay-hub-shapes i { position: absolute; display: block; border: 2px solid var(--ay-ink); }
+.ay-hub-shapes i:nth-child(1) { width: 120px; height: 120px; right: -40px; top: -34px; border-radius: 50%; background: var(--ay-butter); }
+.ay-hub-shapes i:nth-child(2) { width: 36px; height: 36px; right: 92px; top: 74px; border-radius: 10px; background: var(--ay-pink); rotate: 14deg; }
+.ay-hub-shapes i:nth-child(3) { width: 26px; height: 26px; right: 44px; top: 102px; border: 0; background: var(--ay-paper); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+.ayna-mobile .ay-hub-icon { background: var(--ay-butter); }
+.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(2) .ay-hub-icon { background: var(--ay-pink); }
+.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(3) .ay-hub-icon { background: var(--ay-mint); }
+.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(4) .ay-hub-icon { background: var(--ay-peri); }
+.ayna-mobile .ayna-fresh-profile-menu > button { transition: transform var(--ay-dur-1) var(--ay-ease); }
+.ayna-mobile .ayna-fresh-profile-menu > button:active { transform: scale(.98); }
+.ay-badges { padding: 20px 20px 0; }
+.ay-badges-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+.ay-badges-head strong { font: 800 18px/1 var(--ay-font-display); letter-spacing: -.02em; color: var(--ay-ink); }
+.ay-badges-head span { font: 600 12px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ay-badges ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ay-badge { display: grid; justify-items: center; gap: 6px; padding: 12px 4px 10px; border: 1.5px dashed var(--ay-line); border-radius: 16px; text-align: center; color: var(--ay-ink-soft); animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; animation-delay: calc(var(--i) * 60ms); }
+.ay-badge strong { font: 700 11px/1.15 var(--ay-font-ui); }
+.ay-badge small { font: 500 10px/1.2 var(--ay-font-ui); }
+.ay-badge-mark { width: 34px; height: 34px; display: grid; place-items: center; border: 2px dashed currentColor; border-radius: 50%; font: 800 13px/1 var(--ay-font-ui); }
+.ay-badge.is-earned { border: 2px solid var(--ay-ink); color: var(--ay-ink); }
+.ay-badge.is-earned .ay-badge-mark { border-style: solid; border-color: var(--ay-ink); animation: ayw-stamp .5s var(--ay-pop) both; animation-delay: calc(.2s + var(--i) * 80ms); }
+.ay-badge--butter.is-earned { background: var(--ay-butter); }
+.ay-badge--pink.is-earned { background: var(--ay-pink); }
+.ay-badge--mint.is-earned { background: var(--ay-mint); }
+.ay-badge--peri.is-earned { background: var(--ay-peri); }
+.ay-badge.is-earned .ay-badge-mark { background: var(--ay-paper); }
+@keyframes ayw-stamp { from { scale: 1.8; opacity: 0; } to { scale: 1; opacity: 1; } }
+
+/* Ask: starter chips + typing dots */
+.ay-ask-starters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.ay-ask-starter { min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 13px/1.2 var(--ay-font-ui); cursor: pointer; animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; animation-delay: calc(var(--i) * 70ms); transition: background-color var(--ay-dur-1); }
+.ay-ask-starter:nth-child(1) { background: var(--ay-butter); }
+.ay-ask-starter:nth-child(2) { background: var(--ay-mint); }
+.ay-ask-starter:nth-child(3) { background: var(--ay-pink); }
+.ay-ask-starter:active { transform: scale(.96); }
+.ay-typing { align-self: flex-start; display: inline-flex; gap: 5px; padding: 12px 14px; border-radius: 16px; background: var(--ayna-chip-bg); }
+.ay-typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--ay-ink); animation: ay-dot 1s ease-in-out infinite; }
+.ay-typing i:nth-child(2) { animation-delay: .15s; }
+.ay-typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes ay-dot { 0%, 60%, 100% { transform: none; opacity: .35; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+/* Community: helpful / save give a little pop */
+.ayna-mobile .am-actions button[aria-pressed='true'] svg { animation: ip-pop .36s var(--ay-pop); }
+.ayna-mobile .am-actions button[aria-pressed='true'] { color: var(--ay-ink) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ay-deck-card { transition: none; }
+  .ayna-mobile :is(.ayna-figma-discover .ayna-shop-heading h1, .ayna-cabinet-stage h1, .am-top .am-title h1, .ayna-saved-header h1) { animation: none; }
+}
+
+/* ===== Welcome cover ===== */
+.ay-cover { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; padding: max(14px, env(safe-area-inset-top)) 20px max(16px, env(safe-area-inset-bottom)); background: var(--ay-peri); color: var(--ay-ink); }
+.ay-cover-art { position: absolute; inset: 0; pointer-events: none; }
+.ay-cover-art i { position: absolute; display: block; }
+.ay-cover-art i:nth-child(1) { width: 200px; height: 200px; right: -80px; top: 26%; border-radius: 50%; background: var(--ay-peri-deep); }
+.ay-cover-art i:nth-child(2) { width: 30px; height: 30px; left: 26px; top: 84px; background: var(--ay-butter); border: 0; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); animation: ip-twinkle 3.6s ease-in-out infinite; }
+.ay-cover-art i:nth-child(3) { display: none; }
+.ay-cover-top { position: relative; display: flex; align-items: center; justify-content: space-between; }
+.ay-cover-mark { font: 800 30px/1 var(--ay-font-display); letter-spacing: -.07em; }
+.ay-cover-top button { min-height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); cursor: pointer; }
+.ay-cover-reel { position: relative; flex: 1 1 auto; min-height: 250px; display: grid; place-items: center; padding: 22px 0 18px; }
+.ay-cover-stack { position: relative; width: 100%; max-width: 360px; }
+.ay-cover-behind { position: absolute; inset: 0; border: 2px solid var(--ay-ink); border-radius: 26px; }
+.ay-cover-behind.is-pink { background: var(--ay-pink); rotate: 5deg; translate: 8px 6px; animation: ay-fan-a 6s ease-in-out infinite; }
+.ay-cover-behind.is-butter { background: var(--ay-butter); rotate: -6deg; translate: -6px 10px; animation: ay-fan-b 6s ease-in-out infinite; }
+@keyframes ay-fan-a { 50% { rotate: 7deg; } }
+@keyframes ay-fan-b { 50% { rotate: -8deg; } }
+.ay-cover-badge { position: absolute; z-index: 2; right: -14px; top: -38px; width: 96px; height: 96px; animation: ip-spin 18s linear infinite; }
+.ay-cover-badge circle { fill: var(--ay-ink); }
+.ay-cover-badge text { font: 800 10.5px var(--ay-font-display); letter-spacing: .05em; fill: var(--ay-paper); }
+.ay-cover-badge-star { fill: var(--ay-butter); }
+.ay-cover-card { position: relative; width: 100%; max-width: 360px; padding: 0; overflow: hidden; border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 6px 6px 0 var(--ay-ink); rotate: -1.5deg; }
+@media (prefers-reduced-motion: reduce) { .ay-cover-badge, .ay-cover-behind { animation: none; } }
+.ayna-mobile .ay-cover-card .ayna-feature-montage { background: transparent !important; }
+.ay-cover-copy { position: relative; }
+.ayna-mobile .ay-cover-copy h1 { margin: 0; color: var(--ay-ink) !important; font: 800 calc(clamp(40px, 11.4vw, 54px) * var(--ayna-text-scale, 1))/.92 var(--ay-font-display) !important; letter-spacing: -.055em !important; }
+.ayna-mobile .ay-cover-copy h1 em { font-style: normal; background: linear-gradient(transparent 58%, var(--ay-butter) 58%, var(--ay-butter) 92%, transparent 92%); }
+.ay-cover-copy p { max-width: 30ch; margin: 12px 0 0; font: 500 15px/1.4 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ay-cover-actions { position: relative; display: grid; gap: 6px; margin-top: 22px; }
+.ay-cover-actions > div { display: flex; justify-content: space-between; }
+.ay-cover-actions > div button { min-height: 44px; padding: 0 2px; border: 0; background: none; color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.ayna-mobile .ay-cover .ayna-slide-start { border: 2px solid var(--ay-ink); }
+@media (max-height: 700px) { .ay-cover-reel { min-height: 210px; padding: 12px 0; } .ay-cover-card { max-width: 320px; } .ay-cover-copy p { display: none; } }
+
+
+/* ===== Welcome reel: 'now playing' cards ===== */
+.ay-reel { --reel-bg: var(--ay-butter); position: relative; height: 290px; display: flex; flex-direction: column; padding: 16px 18px 14px; background: var(--reel-bg); color: var(--ay-ink); transition: background-color .45s var(--ay-ease); }
+.ay-reel.is-pink { --reel-bg: var(--ay-pink); }
+.ay-reel.is-mint { --reel-bg: var(--ay-mint); }
+.ay-reel.is-peri { --reel-bg: #cfd5f7; }
+.ay-reel-head { display: flex; justify-content: space-between; font: 800 12px/1 var(--ay-font-ui); letter-spacing: .06em; text-transform: uppercase; }
+.ay-reel-next { position: absolute; inset: 0; z-index: 1; border: 0; background: transparent; cursor: pointer; }
+.ay-reel-stage { flex: 1; min-height: 0; display: grid; place-items: center; animation: ay-reel-in .5s var(--ay-ease) both; }
+@keyframes ay-reel-in { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+.ay-reel-foot { position: relative; z-index: 2; display: flex; align-items: center; gap: 12px; }
+.ay-reel-progress { flex: 1; display: flex; gap: 5px; }
+.ay-reel-progress i { flex: 1; height: 4px; border-radius: 4px; background: rgba(29, 26, 43, .18); overflow: hidden; position: relative; }
+.ay-reel-progress i.is-done { background: var(--ay-ink); }
+.ay-reel-progress i.is-now::after { content: ''; position: absolute; inset: 0; background: var(--ay-ink); transform-origin: left; animation: ay-reel-fill var(--dur, 0ms) linear both; }
+@keyframes ay-reel-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.ay-reel-pause { width: 32px; height: 32px; display: grid; place-items: center; border: 2px solid var(--ay-ink); border-radius: 50%; background: transparent; cursor: pointer; }
+.ay-reel-pause svg { width: 12px; height: 12px; fill: var(--ay-ink); stroke: var(--ay-ink); stroke-width: 2.6; stroke-linecap: round; }
+
+/* Ecosystem: playlist rows with equalizers */
+.ay-reel-eco { width: 100%; display: grid; gap: 8px; }
+.ay-reel-track { display: flex; align-items: center; gap: 12px; padding: 8px 10px 8px 8px; border: 2px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); animation: ay-reel-in .45s var(--ay-ease) both; animation-delay: calc(.08s + var(--i) * .09s); }
+.ay-reel-track:first-child { background: var(--ay-ink); color: var(--ay-paper); }
+.ay-reel-cover { width: 34px; height: 34px; flex: none; border: 2px solid var(--ay-ink); border-radius: 8px; }
+.ay-reel-cover.is-pink { background: var(--ay-pink); } .ay-reel-cover.is-mint { background: var(--ay-mint); } .ay-reel-cover.is-peri { background: var(--ay-peri); }
+.ay-reel-track:first-child .ay-reel-cover { border-color: var(--ay-paper); }
+.ay-reel-track strong { flex: 1; font: 800 16px/1 var(--ay-font-display); letter-spacing: -.02em; }
+.ay-reel-eq { display: flex; align-items: flex-end; gap: 3px; height: 16px; }
+.ay-reel-eq i { width: 4px; height: 100%; border-radius: 2px; background: currentColor; transform-origin: bottom; animation: ay-eq .9s ease-in-out infinite; }
+.ay-reel-eq i:nth-child(2) { animation-delay: -.3s; } .ay-reel-eq i:nth-child(3) { animation-delay: -.6s; }
+.ay-reel-track:not(:first-child) .ay-reel-eq { opacity: .25; }
+.ay-reel-track:not(:first-child) .ay-reel-eq i { animation: none; transform: scaleY(.4); }
+@keyframes ay-eq { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+
+/* Match: big ring that fills */
+.ay-reel-match { position: relative; display: grid; place-items: center; width: 100%; }
+.ay-reel-match svg { width: 168px; height: 168px; rotate: -90deg; }
+.ay-reel-match circle { fill: none; stroke-width: 14; }
+.ay-reel-match .track { stroke: rgba(29, 26, 43, .14); }
+.ay-reel-match .fill { stroke: var(--ay-ink); stroke-linecap: round; stroke-dasharray: 302; stroke-dashoffset: 42; animation: ay-ring 1.1s var(--ay-ease) both; }
+@keyframes ay-ring { from { stroke-dashoffset: 302; } }
+.ay-reel-score { position: absolute; top: 50%; left: 50%; translate: -50% -62%; display: grid; justify-items: center; }
+.ay-reel-score strong { font: 800 52px/.9 var(--ay-font-display); letter-spacing: -.06em; }
+.ay-reel-score span { font: 700 11px/1 var(--ay-font-ui); text-transform: uppercase; letter-spacing: .06em; }
+.ay-reel-tags { display: flex; gap: 6px; margin-top: 8px; }
+.ay-reel-tags span { padding: 5px 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); font: 700 11px/1 var(--ay-font-ui); animation: ay-reel-in .4s var(--ay-pop) both; }
+.ay-reel-tags span:nth-child(2) { animation-delay: .12s; } .ay-reel-tags span:nth-child(3) { animation-delay: .24s; }
+
+/* Ask: chat bubbles in sequence */
+.ay-reel-ask { width: 100%; display: grid; gap: 10px; }
+.ay-reel-ask p { margin: 0; max-width: 80%; padding: 12px 15px; border: 2px solid var(--ay-ink); font: 700 16px/1.25 var(--ay-font-ui); }
+.ay-reel-ask .q { justify-self: end; border-radius: 20px 20px 6px 20px; background: var(--ay-ink); color: var(--ay-paper); animation: ay-reel-in .4s var(--ay-ease) both; }
+.ay-reel-ask .a { position: relative; justify-self: start; min-width: 84px; min-height: 48px; border-radius: 20px 20px 20px 6px; background: var(--ay-paper); animation: ay-reel-in .4s var(--ay-ease) .35s both; }
+.ay-reel-dots { position: absolute; left: 16px; top: 50%; translate: 0 -50%; display: flex; gap: 4px; animation: ay-fade-out .2s 1.3s both; }
+.ay-reel-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--ay-ink); animation: ay-dot 1s ease-in-out infinite; }
+.ay-reel-dots i:nth-child(2) { animation-delay: .15s; } .ay-reel-dots i:nth-child(3) { animation-delay: .3s; }
+.ay-reel-ask .txt { display: block; animation: ay-fade-in .3s 1.45s both; }
+@keyframes ay-fade-out { to { opacity: 0; } }
+@keyframes ay-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Discover: fanned swipe deck, top card flicks right */
+.ay-reel-deck { position: relative; width: 150px; height: 180px; }
+.ay-reel-deck span { position: absolute; inset: 0; border: 2.5px solid var(--ay-ink); border-radius: 20px; }
+.ay-reel-deck .c1 { background: var(--ay-butter); rotate: -10deg; }
+.ay-reel-deck .c2 { background: var(--ay-mint); rotate: 6deg; }
+.ay-reel-deck .c3 { display: grid; place-items: center; background: var(--ay-paper); box-shadow: 4px 4px 0 var(--ay-ink); animation: ay-flick 3s var(--ay-ease) infinite; }
+.ay-reel-deck .c3 svg { width: 46px; height: 46px; fill: var(--ay-pink); stroke: var(--ay-ink); stroke-width: 2; stroke-linejoin: round; }
+@keyframes ay-flick { 0%, 35% { transform: none; } 60% { transform: translateX(90px) rotate(16deg); opacity: 0; } 61% { transform: none; opacity: 0; } 80%, 100% { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ay-reel *, .ay-reel *::after { animation: none !important; }
+  .ay-reel-ask .txt { opacity: 1; } .ay-reel-dots { display: none; }
+}
+@media (max-height: 700px) { .ay-reel { height: 236px; } .ay-reel-match svg { width: 130px; height: 130px; } .ay-reel-score strong { font-size: 40px; } }
+
+/* ===== Spacing: one page gutter (20px) and an 8-pt rhythm everywhere ===== */
+.ayna-mobile :is(.ayna-figma-header, .ayna-saved-header) { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
+.ayna-mobile .ayna-figma-discover .ayna-shop-heading { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
+.ayna-mobile .ayna-figma-discover .ayna-shop-heading h1 { margin: var(--ay-space-2) 0 var(--ay-space-4) !important; }
+.ayna-mobile .ayna-shop-category-row { padding: 0 var(--ay-gutter) var(--ay-space-4) !important; }
+.ayna-mobile .ayna-shop-filter-toggle { margin-left: auto !important; flex: none; }
+.ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid, .ayna-mobile .ayna-cabinet-collection, .ayna-mobile .ayna-cabinet-reads, .ayna-mobile .ayna-cabinet-stage, .ayna-mobile .ayna-cabinet-more, .ayna-mobile .ayna-home-today { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
+.ayna-mobile .ayna-editorial-product-grid { column-gap: var(--ay-space-3) !important; row-gap: var(--ay-space-6) !important; }
+.ayna-mobile .ayna-cabinet-collection { margin-top: var(--ay-space-8) !important; }
+.ayna-mobile .ayna-cabinet-section-head { margin-bottom: var(--ay-space-4) !important; }
+.ayna-mobile .ayna-ecosystem-start-scroll { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
+.ayna-mobile .am-scroll { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
+.ayna-mobile .ay-discover-cta { width: calc(100% - 2 * var(--ay-gutter)); margin: 0 var(--ay-gutter) var(--ay-space-6); }
+.ayna-mobile .ayna-saved-header h1 { flex: 0 1 auto !important; width: fit-content !important; margin-right: auto !important; }
+
+/* Title rows: heading left, one plain text action right (no eyebrow). */
+.ayna-mobile .ay-title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--ay-space-3); }
+.ayna-mobile .ay-text-btn { min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-line); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; flex: none; margin-bottom: 6px; }
+.ayna-mobile .ay-title-row h1 { flex: 0 1 auto; min-width: 0; white-space: nowrap; font-size: calc(clamp(30px, 8.6vw, 40px) * var(--ayna-text-scale, 1)) !important; margin: 0 !important; }
+.ay-replay-art i:nth-child(3) { clip-path: none !important; border-radius: 50%; width: 16px !important; height: 16px !important; background: var(--ay-peri) !important; }
+
+/* ===== Polish pass: product card info, community, ecosystem ===== */
+
+/* Product card: brand (quiet) / name / price. Same on Shop, Ecosystem, Saved. */
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { display: grid !important; gap: 4px !important; padding: 10px 2px 0 !important; text-align: left !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category { display: block !important; margin: 0 !important; color: var(--ay-ink-soft) !important; font: 500 12px/1.2 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category::before { display: none !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { margin: 0 !important; color: var(--ay-ink) !important; font: 700 15px/1.25 var(--ay-font-ui) !important; min-height: 2.5em !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { margin: 2px 0 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b { color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-match-badge { right: auto !important; bottom: auto !important; display: inline-flex !important; gap: 3px !important; align-items: baseline !important; padding: 5px 9px !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; box-shadow: none !important; border: 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-match-badge { position: absolute !important; top: 8px !important; left: 8px !important; }
+.ayna-mobile .ayna-fresh-match-badge strong { font: 800 12px/1 var(--ay-font-ui) !important; color: inherit !important; }
+.ayna-mobile .ayna-fresh-match-badge span { font: 600 9px/1 var(--ay-font-ui) !important; letter-spacing: .04em !important; color: inherit !important; }
+
+/* Community: tabs sit inside the gutter, fit the width, line under them only. */
+.ayna-mobile.ayna-mobile .am-tabs { display: flex !important; justify-content: space-between !important; gap: 10px !important; margin: 0 0 var(--ay-space-4) !important; padding: 0 !important; border-bottom: 1px solid var(--ay-line) !important; }
+.ayna-mobile.ayna-mobile .am-tabs button { font-size: 13px !important; padding: 0 0 2px !important; }
+.ayna-mobile.ayna-mobile .am-top { margin-bottom: var(--ay-space-3) !important; }
+.ayna-mobile .am-search { margin-bottom: var(--ay-space-3) !important; }
+
+/* Whole-page empty states sit in the middle; inline (compact) ones stay left. */
+.ayna-mobile .ay-empty:not(.is-compact) { justify-items: center; text-align: center; padding-top: 56px; }
+.ayna-mobile .ay-empty:not(.is-compact) .ay-empty-actions { justify-content: center; }
+.ayna-mobile .ay-empty:not(.is-compact) p { margin-inline: auto; }
+
+/* Ecosystem: each area opens with a colour banner, like a playlist header. */
+.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px;
+  margin: 0 0 var(--ay-space-4) !important; padding: 16px 16px 16px 14px !important; border: 2px solid var(--ay-ink) !important; border-radius: 20px !important;
+  background: var(--area-tone, var(--ay-butter)) !important; box-shadow: 4px 4px 0 var(--ay-ink);
+}
+.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { display: flex; align-items: center; margin: 0 !important; font: 800 26px/1 var(--ay-font-display) !important; letter-spacing: -.04em !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { background: var(--ay-paper) !important; }
+.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head > span { padding: 6px 10px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper) !important; font: 700 12px/1 var(--ay-font-ui) !important; }
+.ayna-mobile .ayna-cabinet-collection { border-top: 0 !important; padding-top: 0 !important; }
+.ayna-mobile .ayna-cabinet-stage { padding-bottom: var(--ay-space-2) !important; border-bottom: 0 !important; }
+.ayna-mobile .ayna-ecosystem-chart { margin-top: var(--ay-space-5) !important; }
+
+
+/* ===== Polish pass 4 ===== */
+
+/* Ecosystem hero, playlist-page style: colour band with the ring as the
+   cover, title, meta line, then a round play button for the Wrapped. */
+.ayna-mobile .ayna-cabinet-stage.ay-eco-hero { margin: 0 0 var(--ay-space-2); padding: var(--ay-space-6) var(--ay-gutter) var(--ay-space-6) !important; border-radius: 0 0 32px 32px; background: var(--ay-butter) !important; }
+.ay-eco-cover { padding: var(--ay-space-4); border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 5px 5px 0 var(--ay-ink); margin-bottom: var(--ay-space-5); }
+.ayna-mobile .ay-eco-hero h1 { display: block !important; margin: 0 !important; background: none !important; font-size: calc(clamp(32px, 9vw, 40px) * var(--ayna-text-scale, 1)) !important; line-height: 1 !important; }
+.ay-eco-meta { margin: 6px 0 0; font: 600 14px/1.3 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ay-eco-actions { display: flex; align-items: center; gap: var(--ay-space-3); margin-top: var(--ay-space-4); }
+.ay-eco-play { width: 56px; height: 56px; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--ay-ink); cursor: pointer; transition: transform var(--ay-dur-1) var(--ay-ease); }
+.ay-eco-play:active { transform: scale(.92); }
+.ay-eco-play svg { width: 22px; height: 22px; fill: var(--ay-butter); margin-left: 3px; }
+.ay-eco-play-label { flex: 1; font: 700 14px/1.2 var(--ay-font-ui); }
+.ayna-mobile .ay-eco-actions .ay-text-btn { margin: 0; background: transparent; border-color: var(--ay-ink); }
+
+/* Readable minimum sizes from the lint: nav labels, chips, small labels. */
+.ayna-mobile .ayna-bottom-nav button span { font-size: 11px !important; }
+.ip-label { font-size: 11px; }
+.ayna-mobile .ayna-ecosystem-chart-center span { font-size: 11px !important; }
+.ayna-mobile .ayna-fresh-product-detail [class*='tag'] div, .ayna-mobile .ayna-fresh-product-detail [class*='tags'] > * { font-size: 11px !important; }
+.ip-dot { width: 40px; height: 40px; }
+
+/* Empty states: centred block, as on the rest of the play surfaces. */
+.ayna-mobile .ay-empty { justify-items: center !important; text-align: center !important; }
+.ay-empty-actions { justify-content: center !important; }
+
+/* Community tabs fit the width without cutting off the last one. */
+.ayna-mobile .am-tabs { gap: var(--ay-space-4) !important; justify-content: space-between; }
+
+/* Welcome: reel floats on the colour field, no white card behind it. */
+.ay-cover-behind { display: none !important; }
+.ay-cover-card { background: transparent !important; border: 0 !important; box-shadow: none !important; rotate: 0deg !important; overflow: visible !important; }
+.ay-reel, .ay-reel.is-pink, .ay-reel.is-mint, .ay-reel.is-peri { --reel-bg: transparent; padding-left: 0; padding-right: 0; }
+.ay-cover-badge { top: -26px; right: -6px; }
+.ayna-mobile button[aria-label='Personalized products'] { min-height: 40px !important; }
+.ayna-mobile .ayna-fresh-product-detail [role='tablist'] { gap: var(--ay-space-5) !important; }
+.ayna-mobile .ayna-fresh-product-detail [role='tab'] { min-width: 44px; min-height: 44px; padding: 0 2px !important; font-size: 14px !important; }
+
+/* Product card copy, album-card order: name first, brand under it, price last. */
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { display: flex !important; flex-direction: column !important; gap: 2px !important; padding: 10px 2px 0 !important; }
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { order: 1; margin: 0 !important; }
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category { order: 2; font-size: 12px !important; font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; }
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category::before { display: none !important; }
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { order: 3; margin-top: 6px !important; }
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-context { display: none !important; }
+.ayna-mobile .ay-eco-cover .ayna-ecosystem-chart { margin: 0 !important; padding: 0 !important; border: 0 !important; }
+
+/* Reads: same type system as the rest of the app. */
+.ayna-mobile .ay-read-title { margin: 0; color: var(--ay-ink) !important; font: 800 calc(30px * var(--ayna-text-scale, 1))/1.05 var(--ay-font-ui) !important; letter-spacing: -.035em !important; text-wrap: balance; }
+.ayna-mobile .ay-read-teaser { color: var(--ay-ink-soft) !important; font: 500 calc(16px * var(--ayna-text-scale, 1))/1.5 var(--ay-font-ui) !important; font-style: normal !important; }
+.ayna-mobile .ayna-read-photo { margin: 0 var(--ay-gutter) var(--ay-space-5) !important; border-radius: var(--ay-radius-lg) !important; overflow: hidden !important; background: var(--ay-tile) !important; aspect-ratio: 4 / 3; }
+.ayna-mobile .ayna-read-photo img { width: 100% !important; height: 100% !important; object-fit: cover !important; }
+.ayna-mobile .ayna-read-content { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
+.ayna-mobile .ayna-read-sources h2 { font: 800 20px/1.1 var(--ay-font-ui) !important; letter-spacing: -.02em; }
+
+/* About: let the headlines lead; drop the small caps eyebrows. */
+.ayna-mobile .ayna-scrapbook__eyebrow { display: none !important; }
+/* Taller phones: the reel grows instead of leaving a gap above the headline. */
+@media (min-height: 780px) {
+  .ay-reel { height: 340px; }
+  .ay-reel-eco { gap: 10px; } .ay-reel-track { padding: 11px 12px 11px 10px; } .ay-reel-track strong { font-size: 18px; } .ay-reel-cover { width: 40px; height: 40px; }
+  .ay-reel-match svg { width: 200px; height: 200px; } .ay-reel-score strong { font-size: 62px; }
+  .ay-reel-ask p { font-size: 18px; } .ay-reel-deck { width: 176px; height: 214px; }
+}
+@media (min-height: 880px) { .ay-reel { height: 380px; } }
+@media (max-height: 700px) { .ay-reel-eco { gap: 5px; } .ay-reel-track { padding: 5px 8px 5px 6px; } .ay-reel-cover { width: 28px; height: 28px; } .ay-reel-track strong { font-size: 15px; } .ay-reel-deck { width: 120px; height: 146px; } }
+
+/* PDP tags + sheet polish */
+.ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-fresh-detail-title div.ay-pdp-tag[style] { background: var(--ay-tile) !important; border: 0 !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-detail-title .ay-pdp-tag { background: rgba(255,255,255,.1) !important; color: var(--ay-paper) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-detail-title { padding: 18px var(--ay-gutter) 20px !important; }
+.ayna-mobile.ayna-mobile .ayna-source-empty { margin: 16px var(--ay-gutter) 4px; padding: 12px 14px; border: 0; border-radius: var(--ay-radius-md, 16px); background: var(--ay-tile); color: var(--ay-ink-soft); font-size: 13px; }
+.ayna-mobile.ayna-mobile .ayna-profile-auth-sheet { position: relative; padding: 30px var(--ay-gutter) max(20px, env(safe-area-inset-bottom)); border-top: 0; border-radius: 28px 28px 0 0; box-shadow: 0 -10px 40px rgba(29,26,43,.18); }
+.ayna-mobile.ayna-mobile .ayna-profile-auth-sheet::before { content: ''; position: absolute; top: 10px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 99px; background: var(--ay-line, rgba(29,26,43,.15)); }
+.ayna-mobile.ayna-mobile .ayna-profile-auth-sheet h2 { margin: 4px 44px 20px 0; font-size: 28px; line-height: 1.05; }
+.ayna-mobile.ayna-mobile .ayna-profile-auth-sheet :is(.ayna-profile-auth-primary,.ayna-profile-auth-secondary) { border-radius: 99px !important; min-height: 50px; font-size: 15px; }
+.ayna-mobile.ayna-mobile .ayna-profile-auth-close { top: 18px; right: 14px; width: 40px; height: 40px; }
+.ayna-mobile.ayna-mobile .ayna-fresh-photo-placeholder-shape { display: none; }
+
+/* Ecosystem check-in + reads kicker */
+.ayna-mobile.ayna-mobile .ayna-home-today { margin: 32px var(--ay-gutter) 24px !important; padding: 18px 18px 18px 20px !important; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg, 24px); background: var(--ay-mint); box-shadow: 4px 4px 0 var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ayna-home-today h2 { margin: 0; font: 800 20px/1.1 var(--ay-font-display); letter-spacing: -.03em; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ayna-home-today button { min-height: 44px; padding: 0 20px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font-size: 14px; font-weight: 700; }
+.ayna-mobile.ayna-mobile .ayna-editorial-read-copy small { font-size: 12px !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ay-ink-soft) !important; }
+.ayna-mobile.ayna-mobile .ayna-cabinet-more { padding-bottom: 24px !important; }
+.ayna-mobile.ayna-mobile .ayna-cabinet-reads { padding-bottom: 4px !important; }
+
+/* ===================== Sweep 5 (full-app polish) ===================== */
+
+/* Photo placeholders: same neutral tile everywhere, no border, quiet mark. */
+.ayna-mobile.ayna-mobile .ayna-fresh-photo-placeholder { background: var(--ay-tile) !important; border: 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-photo-placeholder-mark { color: rgba(29, 26, 43, .28); font-size: 18px; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-photo-placeholder-mark { color: rgba(255, 255, 255, .3); }
+
+/* Product cards: centred copy under the photo (title, brand, price). */
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { align-items: center !important; text-align: center !important; padding: 12px 6px 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { width: 100%; text-align: center !important; }
+.ayna-mobile .ayna-fresh-product-foot b.is-muted { font-weight: 600 !important; color: var(--ay-ink-soft) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-match-badge { left: 50% !important; right: auto !important; translate: -50% 0; }
+
+/* Ecosystem areas become horizontal shelves (one row per area). */
+.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) > .ayna-editorial-product-grid {
+  display: flex !important; gap: var(--ay-space-3) !important; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-left: var(--ay-gutter);
+  margin: 0 calc(-1 * var(--ay-gutter)) !important; padding: 0 var(--ay-gutter) var(--ay-space-2) !important; scrollbar-width: none;
+}
+.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) > .ayna-editorial-product-grid::-webkit-scrollbar { display: none; }
+.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) > .ayna-editorial-product-grid > * { flex: 0 0 42%; min-width: 0; scroll-snap-align: start; }
+.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head { margin-bottom: var(--ay-space-3) !important; }
+
+/* Saved header: title left, count as a small pill, Shop as a text button. */
+.ayna-mobile.ayna-mobile .ayna-saved-header { display: flex !important; align-items: center !important; gap: var(--ay-space-3) !important; }
+.ayna-mobile.ayna-mobile .ayna-saved-header h1 { display: inline-flex !important; align-items: center; gap: 8px; background: none !important; animation: none !important; font-size: 28px !important; }
+.ayna-mobile.ayna-mobile .ayna-saved-header h1 small { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 8px; border-radius: 99px; background: var(--ay-pink); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); vertical-align: middle; position: static !important; }
+.ayna-mobile.ayna-mobile .ayna-saved-header > button:last-child { margin-left: auto; min-height: 40px; padding: 0 16px; border: 1.5px solid var(--ay-line); border-radius: 99px; background: var(--ay-paper); font: 600 13px/1 var(--ay-font-ui); }
+
+/* Empty states sit in the middle of the space they have. */
+.ayna-mobile .ay-empty:not(.is-compact) { padding-top: 12vh !important; }
+
+/* Checkboxes: ayna style instead of the browser default. */
+.ayna-mobile input[type='checkbox']:not([role='switch']) {
+  appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 0; border: 2px solid var(--ay-ink); border-radius: 7px; background: var(--ay-paper);
+  display: inline-grid; place-content: center; cursor: pointer; transition: background-color var(--ay-dur-1, 140ms);
+}
+.ayna-mobile input[type='checkbox']:not([role='switch'])::after { content: ''; width: 10px; height: 6px; border: solid var(--ay-paper); border-width: 0 0 2.5px 2.5px; rotate: -45deg; translate: 0 -1px; scale: 0; transition: scale .2s var(--ay-pop); }
+.ayna-mobile input[type='checkbox']:not([role='switch']):checked { background: var(--ay-ink); }
+.ayna-mobile input[type='checkbox']:not([role='switch']):checked::after { scale: 1; }
+.ayna-mobile input[type='checkbox']:focus-visible { outline: 3px solid var(--ay-peri-deep); outline-offset: 2px; }
+
+/* Small all-caps labels set inline across older screens read as sentence case. */
+.ayna-mobile [style*='text-transform: uppercase'] { text-transform: none !important; letter-spacing: 0 !important; font-size: max(12px, 1em) !important; font-weight: 600 !important; }
+/* Display-font headings set inline were rendering thin; make them bold like the rest. */
+.ayna-mobile [style*='font-family: var(--ayna-font-display)'] { font-weight: 700 !important; letter-spacing: -.03em !important; }
+
+/* Reads shelves: the topic is already the row heading, so drop the tiny tag on each cover. */
+.ayna-mobile .ay-libcard-tag { display: none !important; }
+
+/* Legal footer links get a comfortable tap height. */
+.ayna-mobile .ay-legal a { padding: 8px 0; }
+
+/* Badges: readable sizes. */
+.ay-badge strong { font-size: 12px !important; }
+.ay-badge small { font-size: 11px !important; }
+
+.ayna-mobile .ayna-fresh-profile-hero > :not(.ay-hub-shapes) { position: relative; z-index: 1; }
+.ay-hub-shapes { z-index: 0; }
+.ayna-mobile .ayna-profile-progress i { background: linear-gradient(to right, var(--ay-ink) var(--profile-progress), rgba(29,26,43,.16) var(--profile-progress)) !important; height: 6px !important; border-radius: 6px; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { display: flex !important; justify-content: center !important; padding: 0 !important; min-height: 0 !important; width: 100%; text-align: center !important; }
+.ayna-mobile input[type='checkbox']:not([role='switch']) { width: 22px !important; height: 22px !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero > div:nth-child(2) > div:first-child { border-radius: 50% !important; border: 2px solid var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 800 26px/1 var(--ay-font-display) !important; }
+/* Minimum readable size on the cover slider and About page details. */
+.ayna-mobile .ayna-slide-start-label span { font-size: 11px !important; letter-spacing: .02em !important; text-transform: none !important; opacity: .7; }
+.ayna-mobile :is(.ayna-scrapbook__paper small, .ayna-scrapbook__gate span, .ayna-scrapbook__orbit > span, .ayna-scrapbook__intro-stamp) { font-size: 12px !important; text-transform: none !important; letter-spacing: 0 !important; }
+.ay-reel-head { text-transform: none !important; letter-spacing: 0 !important; font-size: 14px !important; }
