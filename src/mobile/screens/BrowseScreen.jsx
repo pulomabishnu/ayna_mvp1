@@ -527,14 +527,14 @@ export default function BrowseScreen({
             <ProductGrid savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Searching beyond our catalog…
               </div>
               <PixelateGrid />
             </>
           ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Not in our catalog yet — found via AI search
               </div>
               <ProductGrid savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
@@ -549,7 +549,7 @@ export default function BrowseScreen({
               margin: '22px 20px 0',
               textAlign: 'center',
               fontFamily: "var(--ayna-font-ui)",
-              fontSize: 'calc(10px * var(--ayna-text-scale, 1))',
+              fontSize: 'calc(11px * var(--ayna-text-scale, 1))',
               letterSpacing: 0.8,
               color: 'var(--ayna-text-faint)',
             }}

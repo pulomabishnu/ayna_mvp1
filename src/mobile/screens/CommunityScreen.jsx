@@ -15,7 +15,7 @@ import PlaylistAudiencePicker from '../components/PlaylistAudiencePicker.jsx';
 import { makePlaylistCoverFile } from '../components/playlistCoverImage.js';
 import './community-mobile.css';
 
-const TABS = [ ['for-you', 'Personalized'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'] ];
+const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'] ];
 const timeLabel = (value) => value ? new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
 
 function CommunityIcon({ name, size = 20 }) {

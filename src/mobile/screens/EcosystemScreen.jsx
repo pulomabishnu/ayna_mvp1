@@ -9,7 +9,7 @@ import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import { ECOSYSTEM_AREAS } from '../data/ecosystemAreas.js';
 import { selectEcosystemProducts } from '../utils/recommendationSelection.js';
 
-const AREA_TONES = ['#F7E78E', '#F7BADD', '#BDEBD6', '#B9C2F4', '#EED45A', '#EF9CCB'];
+const AREA_TONES = ['#F7BADD', '#BDEBD6', '#B9C2F4', '#F7E78E', '#EF9CCB', '#8FDABB'];
 
 export default function EcosystemScreen({
   myProducts = [], authUser = null, suggestedEcosystemProducts = [], 
@@ -42,18 +42,19 @@ export default function EcosystemScreen({
   return <div className="ayna-fresh-ecosystem ayna-cabinet-home">
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
 
-    <section className="ayna-cabinet-stage" aria-labelledby="ayna-cabinet-title">
-      <div className="ay-title-row"><h1 id="ayna-cabinet-title">Your Ecosystem</h1><button type="button" className="ay-text-btn" onClick={onRetake}>Update</button></div>
-      {groups.length > 0 && <EcosystemChart groups={groups} />}
+    <section className="ayna-cabinet-stage ay-eco-hero" aria-labelledby="ayna-cabinet-title">
+      {groups.length > 0 && <div className="ay-eco-cover"><EcosystemChart groups={groups} /></div>}
+      <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
+      {currentProducts.length > 0 && <p className="ay-eco-meta">{currentProducts.length} {currentProducts.length === 1 ? 'pick' : 'picks'} · {groups.length} {groups.length === 1 ? 'area' : 'areas'}</p>}
+      {currentProducts.length > 0 && (
+        <div className="ay-eco-actions">
+          {onReplayStory && <button type="button" className="ay-eco-play" onClick={onReplayStory} aria-label="Replay your Wrapped"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></button>}
+          {onReplayStory && <span className="ay-eco-play-label">Replay Wrapped</span>}
+          <button type="button" className="ay-text-btn" onClick={onRetake}>Update</button>
+        </div>
+      )}
       {currentProducts.length === 0 && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers or browse the shop." actionLabel="Shop" onAction={onBrowse} secondaryLabel="Update" onSecondary={onRetake} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
-      {currentProducts.length > 0 && onReplayStory && (
-        <button type="button" className="ay-replay" onClick={onReplayStory}>
-          <span className="ay-replay-art" aria-hidden="true"><i /><i /><i /></span>
-          <span><strong>Replay your Wrapped</strong><small>{currentProducts.length} picks · {groups.length} {groups.length === 1 ? 'area' : 'areas'}</small></span>
-          <span className="ay-replay-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
-        </button>
-      )}
     </section>
 
 

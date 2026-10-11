@@ -298,7 +298,7 @@
 @keyframes ay-fan-b { 50% { rotate: -8deg; } }
 .ay-cover-badge { position: absolute; z-index: 2; right: -14px; top: -38px; width: 96px; height: 96px; animation: ip-spin 18s linear infinite; }
 .ay-cover-badge circle { fill: var(--ay-ink); }
-.ay-cover-badge text { font: 800 10px var(--ay-font-display); letter-spacing: .06em; fill: var(--ay-paper); }
+.ay-cover-badge text { font: 800 10.5px var(--ay-font-display); letter-spacing: .05em; fill: var(--ay-paper); }
 .ay-cover-badge-star { fill: var(--ay-butter); }
 .ay-cover-card { position: relative; width: 100%; max-width: 360px; padding: 0; overflow: hidden; border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 6px 6px 0 var(--ay-ink); rotate: -1.5deg; }
 @media (prefers-reduced-motion: reduce) { .ay-cover-badge, .ay-cover-behind { animation: none; } }
@@ -399,7 +399,7 @@
 .ayna-mobile .ayna-cabinet-collection { margin-top: var(--ay-space-8) !important; }
 .ayna-mobile .ayna-cabinet-section-head { margin-bottom: var(--ay-space-4) !important; }
 .ayna-mobile .ayna-ecosystem-start-scroll { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
-.ayna-mobile .am-screen > :not(.ayna-figma-header):not(.ayna-bottom-nav) { padding-left: var(--ay-gutter); padding-right: var(--ay-gutter); }
+.ayna-mobile .am-scroll { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
 .ayna-mobile .ay-discover-cta { width: calc(100% - 2 * var(--ay-gutter)); margin: 0 var(--ay-gutter) var(--ay-space-6); }
 .ayna-mobile .ayna-saved-header h1 { flex: 0 1 auto !important; width: fit-content !important; margin-right: auto !important; }
 
@@ -408,3 +408,89 @@
 .ayna-mobile .ay-text-btn { min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-line); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; flex: none; margin-bottom: 6px; }
 .ayna-mobile .ay-title-row h1 { flex: 0 1 auto; min-width: 0; white-space: nowrap; font-size: calc(clamp(30px, 8.6vw, 40px) * var(--ayna-text-scale, 1)) !important; margin: 0 !important; }
 .ay-replay-art i:nth-child(3) { clip-path: none !important; border-radius: 50%; width: 16px !important; height: 16px !important; background: var(--ay-peri) !important; }
+
+/* ===== Polish pass: product card info, community, ecosystem ===== */
+
+/* Product card: brand (quiet) / name / price. Same on Shop, Ecosystem, Saved. */
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { display: grid !important; gap: 4px !important; padding: 10px 2px 0 !important; text-align: left !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category { display: block !important; margin: 0 !important; color: var(--ay-ink-soft) !important; font: 500 12px/1.2 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category::before { display: none !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { margin: 0 !important; color: var(--ay-ink) !important; font: 700 15px/1.25 var(--ay-font-ui) !important; min-height: 2.5em !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { margin: 2px 0 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b { color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-match-badge { right: auto !important; bottom: auto !important; display: inline-flex !important; gap: 3px !important; align-items: baseline !important; padding: 5px 9px !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; box-shadow: none !important; border: 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-match-badge { position: absolute !important; top: 8px !important; left: 8px !important; }
+.ayna-mobile .ayna-fresh-match-badge strong { font: 800 12px/1 var(--ay-font-ui) !important; color: inherit !important; }
+.ayna-mobile .ayna-fresh-match-badge span { font: 600 9px/1 var(--ay-font-ui) !important; letter-spacing: .04em !important; color: inherit !important; }
+
+/* Community: tabs sit inside the gutter, fit the width, line under them only. */
+.ayna-mobile.ayna-mobile .am-tabs { display: flex !important; justify-content: space-between !important; gap: 10px !important; margin: 0 0 var(--ay-space-4) !important; padding: 0 !important; border-bottom: 1px solid var(--ay-line) !important; }
+.ayna-mobile.ayna-mobile .am-tabs button { font-size: 13px !important; padding: 0 0 2px !important; }
+.ayna-mobile.ayna-mobile .am-top { margin-bottom: var(--ay-space-3) !important; }
+.ayna-mobile .am-search { margin-bottom: var(--ay-space-3) !important; }
+
+/* Whole-page empty states sit in the middle; inline (compact) ones stay left. */
+.ayna-mobile .ay-empty:not(.is-compact) { justify-items: center; text-align: center; padding-top: 56px; }
+.ayna-mobile .ay-empty:not(.is-compact) .ay-empty-actions { justify-content: center; }
+.ayna-mobile .ay-empty:not(.is-compact) p { margin-inline: auto; }
+
+/* Ecosystem: each area opens with a colour banner, like a playlist header. */
+.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px;
+  margin: 0 0 var(--ay-space-4) !important; padding: 16px 16px 16px 14px !important; border: 2px solid var(--ay-ink) !important; border-radius: 20px !important;
+  background: var(--area-tone, var(--ay-butter)) !important; box-shadow: 4px 4px 0 var(--ay-ink);
+}
+.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { display: flex; align-items: center; margin: 0 !important; font: 800 26px/1 var(--ay-font-display) !important; letter-spacing: -.04em !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 small { background: var(--ay-paper) !important; }
+.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head > span { padding: 6px 10px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper) !important; font: 700 12px/1 var(--ay-font-ui) !important; }
+.ayna-mobile .ayna-cabinet-collection { border-top: 0 !important; padding-top: 0 !important; }
+.ayna-mobile .ayna-cabinet-stage { padding-bottom: var(--ay-space-2) !important; border-bottom: 0 !important; }
+.ayna-mobile .ayna-ecosystem-chart { margin-top: var(--ay-space-5) !important; }
+
+
+/* ===== Polish pass 4 ===== */
+
+/* Ecosystem hero, playlist-page style: colour band with the ring as the
+   cover, title, meta line, then a round play button for the Wrapped. */
+.ayna-mobile .ayna-cabinet-stage.ay-eco-hero { margin: 0 0 var(--ay-space-2); padding: var(--ay-space-6) var(--ay-gutter) var(--ay-space-6) !important; border-radius: 0 0 32px 32px; background: var(--ay-butter) !important; }
+.ay-eco-cover { padding: var(--ay-space-4); border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 5px 5px 0 var(--ay-ink); margin-bottom: var(--ay-space-5); }
+.ayna-mobile .ay-eco-hero h1 { display: block !important; margin: 0 !important; background: none !important; font-size: calc(clamp(32px, 9vw, 40px) * var(--ayna-text-scale, 1)) !important; line-height: 1 !important; }
+.ay-eco-meta { margin: 6px 0 0; font: 600 14px/1.3 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ay-eco-actions { display: flex; align-items: center; gap: var(--ay-space-3); margin-top: var(--ay-space-4); }
+.ay-eco-play { width: 56px; height: 56px; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--ay-ink); cursor: pointer; transition: transform var(--ay-dur-1) var(--ay-ease); }
+.ay-eco-play:active { transform: scale(.92); }
+.ay-eco-play svg { width: 22px; height: 22px; fill: var(--ay-butter); margin-left: 3px; }
+.ay-eco-play-label { flex: 1; font: 700 14px/1.2 var(--ay-font-ui); }
+.ayna-mobile .ay-eco-actions .ay-text-btn { margin: 0; background: transparent; border-color: var(--ay-ink); }
+
+/* Readable minimum sizes from the lint: nav labels, chips, small labels. */
+.ayna-mobile .ayna-bottom-nav button span { font-size: 11px !important; }
+.ip-label { font-size: 11px; }
+.ayna-mobile .ayna-ecosystem-chart-center span { font-size: 11px !important; }
+.ayna-mobile .ayna-fresh-product-detail [class*='tag'] div, .ayna-mobile .ayna-fresh-product-detail [class*='tags'] > * { font-size: 11px !important; }
+.ip-dot { width: 40px; height: 40px; }
+
+/* Empty states: centred block, as on the rest of the play surfaces. */
+.ayna-mobile .ay-empty { justify-items: center !important; text-align: center !important; }
+.ay-empty-actions { justify-content: center !important; }
+
+/* Community tabs fit the width without cutting off the last one. */
+.ayna-mobile .am-tabs { gap: var(--ay-space-4) !important; justify-content: space-between; }
+
+/* Welcome: reel floats on the colour field, no white card behind it. */
+.ay-cover-behind { display: none !important; }
+.ay-cover-card { background: transparent !important; border: 0 !important; box-shadow: none !important; rotate: 0deg !important; overflow: visible !important; }
+.ay-reel, .ay-reel.is-pink, .ay-reel.is-mint, .ay-reel.is-peri { --reel-bg: transparent; padding-left: 0; padding-right: 0; }
+.ay-cover-badge { top: -26px; right: -6px; }
+.ayna-mobile button[aria-label='Personalized products'] { min-height: 40px !important; }
+.ayna-mobile .ayna-fresh-product-detail [role='tablist'] { gap: var(--ay-space-5) !important; }
+.ayna-mobile .ayna-fresh-product-detail [role='tab'] { min-width: 44px; min-height: 44px; padding: 0 2px !important; font-size: 14px !important; }
+
+/* Product card copy, album-card order: name first, brand under it, price last. */
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { display: flex !important; flex-direction: column !important; gap: 2px !important; padding: 10px 2px 0 !important; }
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { order: 1; margin: 0 !important; }
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category { order: 2; font-size: 12px !important; font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; }
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category::before { display: none !important; }
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { order: 3; margin-top: 6px !important; }
+.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-context { display: none !important; }
+.ayna-mobile .ay-eco-cover .ayna-ecosystem-chart { margin: 0 !important; padding: 0 !important; border: 0 !important; }
