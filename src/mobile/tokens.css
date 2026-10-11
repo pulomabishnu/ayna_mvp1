@@ -372,3 +372,63 @@
   background: var(--ay-pink) !important;
   color: #050506 !important;
 }
+
+/* Carry the You page's black-card palette through Ecosystem and Shop. */
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-stage,
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head,
+.ayna-mobile[data-theme='dark'] .ayna-home-today {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head h2,
+.ayna-mobile[data-theme='dark'] .ayna-home-today h2 {
+  color: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head h2 small {
+  background: var(--ay-pink) !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head > span {
+  background: var(--ayna-chip-bg) !important;
+  color: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-home-today > button {
+  background: var(--ay-mint) !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-eco-play {
+  background: var(--ay-butter) !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-eco-play svg {
+  fill: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-home .ayna-fresh-product-image {
+  background: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-home .ayna-fresh-product-image img {
+  mix-blend-mode: normal !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-shop-category[aria-pressed='true'],
+.ayna-mobile[data-theme='dark'] .ayna-category-expanded button[aria-pressed='true'] {
+  background: var(--ay-pink) !important;
+  border-color: var(--ay-pink) !important;
+  color: #050506 !important;
+}
+
+/* Keep decorative stars visible on the black canvas. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover-stars i:nth-child(2),
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover-stars i:nth-child(5) {
+  background: var(--ay-pink) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover .ayna-slide-start {
+  background: var(--ayna-surface) !important;
+  border: 1px solid var(--ayna-border) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover .ayna-slide-start-label {
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover .ayna-slide-start-handle {
+  color: #050506 !important;
+}
