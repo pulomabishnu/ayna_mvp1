@@ -77,3 +77,12 @@
 /* Sparkles live in the space under the header, clear of every control */
 .ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(1) { left: auto !important; right: 28% !important; top: 76px !important; width: 18px !important; height: 18px !important; }
 .ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(2) { right: 20px !important; top: 92px !important; width: 12px !important; height: 12px !important; }
+/* Match frame: sticker ring (ink edge, paper track, butter fill) + palette tags */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match .edge { fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 18; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match .track { stroke: var(--ay-paper); stroke-width: 14; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match .fill { stroke: var(--ay-pink); stroke-width: 14; stroke-linecap: butt; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span:nth-child(1) { background: var(--ay-mint); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span:nth-child(2) { background: var(--ay-butter); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span:nth-child(3) { background: var(--ay-pink); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags { margin-top: 16px; gap: 8px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span { padding: 7px 12px; font-size: 12px; }
