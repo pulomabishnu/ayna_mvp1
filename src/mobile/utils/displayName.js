@@ -15,6 +15,7 @@ export function displayName(product) {
   // Must end on a word boundary: "Saalt Cup" yes, "Saaltwater" no.
   if (next && !/[\s:–—\-|,®™'’]/.test(next)) return name;
   const rest = name.slice(brand.length).replace(/^[\s:–—\-|,®™]+/, '').replace(/^['’]s\s+/i, '').trim();
-  if (rest.length < 3) return name;
+  // Keep the brand if trimming would leave a single generic word ("Uqora Control" → "Control").
+  if (rest.length < 3 || rest.split(/\s+/).length < 2) return name;
   return rest.charAt(0).toUpperCase() + rest.slice(1);
 }

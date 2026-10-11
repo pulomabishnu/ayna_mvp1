@@ -652,3 +652,15 @@
 .ayna-mobile .ayna-ask-drawer[data-open='false'] { visibility: hidden; transition: transform 240ms cubic-bezier(.2,.8,.2,1), visibility 0s 240ms; }
 .ayna-mobile .ay-ask-title { margin: 0; font-family: var(--ayna-font-ui); font-weight: 700; font-size: calc(30px * var(--ayna-text-scale, 1)); letter-spacing: -.04em; line-height: 1.1; color: var(--ay-ink); }
 .ayna-mobile .ay-hub-avatar { overflow: hidden !important; } .ayna-mobile .ay-hub-avatar.has-photo { background: var(--ay-paper) !important; }
+
+/* Product card copy — name, brand right under it, price pinned to the bottom so every card in a row lines up. */
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) { display: flex !important; flex-direction: column !important; height: 100%; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-main { flex: 1 1 auto !important; display: flex !important; flex-direction: column !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { flex: 1 1 auto !important; display: flex !important; flex-direction: column !important; align-items: center !important; gap: 3px !important; padding: 10px 6px 2px !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { order: 1; min-height: 0 !important; font: 700 15px/1.25 var(--ay-font-ui) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-category { order: 2; max-width: 100%; font: 500 12.5px/1.3 var(--ay-font-ui) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-reason { order: 3; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { order: 4; margin-top: auto !important; padding-top: 8px !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { border-bottom: 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { background: var(--ay-paper) !important; border: 1.5px solid var(--ay-line) !important; border-radius: 18px !important; overflow: hidden !important; aspect-ratio: 1 !important; width: 100% !important; margin: 0 !important; box-sizing: border-box; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image img { width: 100% !important; height: 100% !important; object-fit: contain !important; padding: 8% !important; box-sizing: border-box !important; background: transparent !important; }

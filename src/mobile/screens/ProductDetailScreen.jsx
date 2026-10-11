@@ -298,7 +298,7 @@ export default function ProductDetailScreen({
 }) {
   const [partnerOpen, setPartnerOpen] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
-  const [activeDetailSection, setActiveDetailSection] = useState('fit');
+  const [activeDetailSection, setActiveDetailSection] = useState('summary');
   const [shareCopied, setShareCopied] = useState(false);
   const [warningsOpen, setWarningsOpen] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
@@ -317,6 +317,7 @@ export default function ProductDetailScreen({
     setPartnerOpen(false);
     setSummaryExpanded(false);
     setWarningsOpen(false);
+    setActiveDetailSection('summary');
   }
 
   if (!product) {
@@ -473,6 +474,16 @@ export default function ProductDetailScreen({
   const perUnit = getPricePerUnitLabel(product);
   const hasDisplayPrice = /[$€£]|^free\b/i.test(String(price || ''));
   const checks = trustChecks(product);
+  const detailTabs = [
+    ['summary', 'ayna summary'],
+    ['clinician', 'Clinician opinion'],
+    ['scientific', 'Scientific literature'],
+    ['community', 'Social media + reviews'],
+    ...(whoItsFor?.length > 0 ? [['whoitsfor', 'Who it’s for']] : []),
+    ...(howToUse?.steps?.length > 0 ? [['howtouse', 'How to use']] : []),
+    ['ask', 'Ask ayna'],
+  ];
+  const currentSection = detailTabs.some(([id]) => id === activeDetailSection) ? activeDetailSection : 'summary';
 
   return (
     <div className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
@@ -520,16 +531,6 @@ export default function ProductDetailScreen({
           )}
         </div>
 
-        {(summary || checks.length > 0 || factRows.length > 0) && <section className="ay-pdp-glance" aria-label="At a glance">
-          {summary && <>
-            <h2>The short version</h2>
-            <p className={summaryExpanded ? '' : 'is-clamped'}>{summary}</p>
-            {String(summary).length > 220 && <button type="button" className="ay-pdp-more" onClick={() => setSummaryExpanded((v) => !v)}>{summaryExpanded ? 'Less' : 'More'}</button>}
-          </>}
-          {checks.length > 0 && <ul className="ay-pdp-checks">{checks.map((c) => <li key={c}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>{c}</li>)}</ul>}
-          {factRows.length > 0 && <dl className="ay-pdp-facts">{factRows.map((row) => <div key={row.label}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}</dl>}
-        </section>}
-
         {isPartner && (
           <div className="ayna-figma-partner-disclosure">
             <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
@@ -546,165 +547,78 @@ export default function ProductDetailScreen({
           {warnings.length > 2 && <button type="button" onClick={() => setWarningsOpen((v) => !v)} aria-expanded={warningsOpen}>{warningsOpen ? 'Show less' : `Show all ${warnings.length}`}</button>}
         </div>}
 
-        {sourceCountTotal > 0 ? <div className="ayna-source-index ay-pdp-sources" aria-label="Available product sources">
-          {[['doctor', 'Clinical', 'evidence'], ['scientific', 'Research', 'evidence'], ['community', 'Community', 'reviews']].map(([kind, label, section]) => <button type="button" key={kind} onClick={() => setActiveDetailSection(section)} aria-label={`${label}: ${sourceCounts[kind]} linked sources`}><span>{label}</span><strong>{sourceCounts[kind] || 0}</strong><small>{sourceCounts[kind] === 1 ? 'source' : 'sources'}</small></button>)}
-        </div> : <div className="ayna-source-empty">No sources linked yet</div>}
-
-        <div className="ayna-detail-sections ay-pdp-tabs" role="tablist" aria-label="Product information">
-          {[['fit', 'Fit'], ['evidence', 'Sources'], ['ingredients', 'Details'], ['reviews', 'Community']].map(([section, label]) => <button key={section} type="button" role="tab" aria-selected={activeDetailSection === section} onClick={() => setActiveDetailSection(section)}>{label}</button>)}
-        </div>
-
-        {activeDetailSection === 'reviews' && onCommunityAction && <div style={{ display: 'flex', gap: 8, padding: '18px var(--ay-gutter, 20px) 0', overflowX: 'auto' }}>
-          <button type="button" onClick={() => onCommunityAction('review')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Write a review</button>
-          <button type="button" onClick={() => onCommunityAction('post')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Mention in a post</button>
-          <button type="button" onClick={() => onCommunityAction('playlist')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Add to playlist</button>
-          <button type="button" onClick={() => onCommunityAction('recommend')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Recommend to friend</button>
+        {sourceCountTotal > 0 && <div className="ayna-source-index ay-pdp-sources" aria-label="Available product sources">
+          {[['doctor', 'Clinical', 'clinician'], ['scientific', 'Research', 'scientific'], ['community', 'Community', 'community']].map(([kind, label, section]) => <button type="button" key={kind} onClick={() => setActiveDetailSection(section)} aria-label={`${label}: ${sourceCounts[kind]} linked sources`}><span>{label}</span><strong>{sourceCounts[kind] || 0}</strong><small>{sourceCounts[kind] === 1 ? 'source' : 'sources'}</small></button>)}
         </div>}
 
-        <div style={{ padding: '18px var(--ay-gutter, 20px) 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {activeDetailSection === 'fit' && whyMatched && <div style={{ ...CARD, background: 'var(--ayna-chip-bg)' }}><div style={EYEBROW}>Why this fits you</div><p style={{ fontSize: 13, lineHeight: 1.55, margin: '8px 0 0' }}>{whyMatched}</p></div>}
-          {activeDetailSection === 'evidence' && <>
-            {(
-              <div style={CARD}>
-                {sourceCountTotal > 0 && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--ayna-accent-dark)' }} />
-                    <div style={EYEBROW}>{sourceCountTotal} linked source{sourceCountTotal === 1 ? '' : 's'}</div>
-                  </div>
-                )}
-                {!effectiveness && summarySourceChips.length === 0 && <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', marginTop: 8 }}>No summary sources yet.</div>}
-                {effectiveness && (
-                  <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text)', marginTop: 10 }}>{effectiveness}</div>
-                )}
-                <ChipRow chips={summarySourceChips} />
-              </div>
-            )}
+        <div className="ayna-detail-sections ay-pdp-tabs" role="tablist" aria-label="Product information">
+          {detailTabs.map(([section, label]) => <button key={section} type="button" role="tab" aria-selected={currentSection === section} onClick={() => setActiveDetailSection(section)}>{label}</button>)}
+        </div>
 
-            {!!doctorOpinion && (
-              <details className="ayna-product-note" style={CARD}>
-                <summary>{clinicianOpinionSource === 'brand' ? 'Brand note' : 'ayna product note'}</summary>
-                {doctorOpinion ? (
-                  <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: 10, whiteSpace: 'pre-line' }}>{doctorOpinion}</div>
-                ) : (
-                  <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', marginTop: 10 }}>No clinician note yet.</div>
-                )}
-                {clinicianAttribution && (
-                  <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', marginTop: 11 }}>{clinicianAttribution}</div>
-                )}
-                {badges.length > 0 && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
-                    {badges.map((b) => (
-                      <div key={b} style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 500, padding: '7px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)' }}>
-                        {b}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <ChipRow chips={[...clinicianChips, ...clinicianCitationChips]} />
-              </details>
-            )}
-
-            {scientificLiteratureEntries.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                <div style={EYEBROW}>Sources and further reading</div>
-                {scientificLiteratureEntries.map((entry) => (
-                  <a key={entry.url} href={entry.url} target="_blank" rel="noopener noreferrer" style={{ ...CARD, display: 'block', textDecoration: 'none', color: 'inherit' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div style={{ ...EYEBROW, color: 'var(--ayna-text-faint)' }}>{entry.kind}</div>
-                      <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{entry.label}</div>
-                    </div>
-                    {entry.text && <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 500, lineHeight: 1.4, marginTop: 8 }}>{entry.text}</div>}
-                    {entry.summary && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.58, color: 'var(--ayna-text-muted)', marginTop: 6 }}>{entry.summary}</div>}
-                  </a>
-                ))}
-              </div>
-            )}
+        <div className="ay-pdp-panel" role="tabpanel">
+          {currentSection === 'summary' && <>
+            {whyMatched && <section className="ay-pdp-card is-tint"><h2>Why this fits you</h2><p>{whyMatched}</p></section>}
+            <section className="ay-pdp-card">
+              <div className="ay-pdp-card-meta"><i aria-hidden="true" />ayna summary{sourceCountTotal > 0 ? ` · ${sourceCountTotal} source${sourceCountTotal === 1 ? '' : 's'}` : ''}</div>
+              {summary ? <>
+                <p className={summaryExpanded || String(summary).length <= 260 ? '' : 'is-clamped'}>{summary}</p>
+                {String(summary).length > 260 && <button type="button" className="ay-pdp-more" onClick={() => setSummaryExpanded((v) => !v)}>{summaryExpanded ? 'Less' : 'More'}</button>}
+              </> : <p className="is-empty">No summary yet.</p>}
+              {effectiveness && <p className="is-sub">{effectiveness}</p>}
+              {checks.length > 0 && <ul className="ay-pdp-checks">{checks.map((c) => <li key={c}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>{c}</li>)}</ul>}
+              <ChipRow chips={summarySourceChips} />
+            </section>
+            {factRows.length > 0 && <dl className="ay-pdp-card ay-pdp-facts">{factRows.map((row) => <div key={row.label}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}</dl>}
+            {(ingredientScience?.length > 0 || (meaningfulDetail(safety.materials) && !factRows.some((r) => r.label === 'Materials'))) && <section className="ay-pdp-card">
+              <h2>What’s inside</h2>
+              {(ingredientScience || []).map((item) => <div key={item.name} className="ay-pdp-row"><strong>{item.name}</strong><p>{item.text}</p></div>)}
+              {meaningfulDetail(safety.materials) && !factRows.some((r) => r.label === 'Materials') && <p className="is-sub" style={{ whiteSpace: 'pre-line' }}>{safety.materials}</p>}
+            </section>}
+            {meaningfulDetail(ingredients) && <section className="ay-pdp-card"><h2>Ingredients</h2><p className="is-sub" style={{ whiteSpace: 'pre-line' }}>{ingredients}</p></section>}
+            {meaningfulDetail(safety.fdaStatus) && <section className="ay-pdp-card"><h2>FDA status</h2><p className="is-sub">{safety.fdaStatus}</p></section>}
+            {!buyUrl && whereToBuy.length > 0 && <section className="ay-pdp-card"><h2>Where to buy</h2><p className="is-sub">{whereToBuy.join(' · ')}</p></section>}
           </>}
 
-            {activeDetailSection === 'reviews' && (communityCitationEntries.length > 0 || communityReview) && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                <div style={EYEBROW}>Social media + reviews</div>
-                {communityCitationEntries.length > 0 ? communityCitationEntries.map((entry) => (
-                  <a key={entry.url} href={entry.url} target="_blank" rel="noopener noreferrer" style={{ ...CARD, display: 'flex', gap: 12, alignItems: 'flex-start', textDecoration: 'none', color: 'inherit' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 12, flex: 'none', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "var(--ayna-font-display)", fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {entry.label.charAt(0)}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 'calc(11px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text-muted)' }}>{entry.label}</div>
-                      {entry.text && <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 500, lineHeight: 1.4, marginTop: 3 }}>{entry.text}</div>}
-                      {entry.summary && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'var(--ayna-text-muted)', marginTop: 5 }}>{entry.summary}</div>}
-                    </div>
-                  </a>
-                )) : communityReview ? (
-                  <div style={CARD}>
-                    <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6 }}>{communityReview}</div>
-                  </div>
-                ) : (
-                  <div style={CARD}><div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>No community notes yet.</div></div>
-                )}
-              </div>
-            )}
+          {currentSection === 'clinician' && <section className="ay-pdp-card">
+            <h2>{clinicianOpinionSource === 'brand' ? 'Brand note' : 'Clinician opinion'}</h2>
+            {doctorOpinion ? <p style={{ whiteSpace: 'pre-line' }}>{doctorOpinion}</p> : <p className="is-empty">No clinician opinion yet.</p>}
+            {clinicianAttribution && <p className="is-meta">{clinicianAttribution}</p>}
+            {badges.length > 0 && <div className="ay-pdp-tags">{badges.map((b) => <span key={b} className="ay-pdp-tag">{b}</span>)}</div>}
+            <ChipRow chips={[...clinicianChips, ...clinicianCitationChips]} />
+          </section>}
 
-            {activeDetailSection === 'fit' && whoItsFor?.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                <div style={EYEBROW}>Who it's for</div>
-                {(whoItsFor || []).map((item, i) => (
-                  <div key={item} className="ay-pdp-who" style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                    <div className="ay-pdp-who-n">
-                      {i + 1}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5 }}>{item}</div>
-                  </div>
-                ))}
-              </div>
-            )}
+          {currentSection === 'scientific' && (scientificLiteratureEntries.length > 0
+            ? scientificLiteratureEntries.map((entry) => <a key={entry.url} className="ay-pdp-card ay-pdp-link" href={entry.url} target="_blank" rel="noopener noreferrer">
+                <span className="ay-pdp-card-meta">{entry.kind} · {entry.label}</span>
+                {entry.text && <strong>{entry.text}</strong>}
+                {entry.summary && <p className="is-sub">{entry.summary}</p>}
+              </a>)
+            : <section className="ay-pdp-card"><p className="is-empty">No studies linked yet.</p></section>)}
 
-            {activeDetailSection === 'ingredients' && howToUse?.steps?.length > 0 && (
-              <div style={CARD}>
-                <div style={EYEBROW}>How to use</div>
-                {howToUse?.intro && (
-                  <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-heading)', background: 'var(--ayna-chip-bg)', borderRadius: 16, padding: 14, marginBottom: 14 }}>
-                    {howToUse.intro}
-                  </div>
-                )}
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {(howToUse?.steps || []).map((step, i, arr) => (
-                    <div key={step} style={{ display: 'flex', gap: 13 }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 'none' }}>
-                        <div style={{ width: 10, height: 10, borderRadius: 99, marginTop: 4, background: 'var(--ayna-accent-dark)' }} />
-                        {i < arr.length - 1 && <div style={{ width: 2, flex: 1, background: 'var(--ayna-chip-bg)', marginTop: 3 }} />}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0, paddingBottom: 15, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55 }}>{step}</div>
-                    </div>
-                  ))}
-                </div>
-                {howToUse?.sourceUrl && <ChipRow chips={[{ url: howToUse.sourceUrl, label: hostLabel(howToUse.sourceUrl) || 'Source', text: howToUse.sourceLabel }]} />}
-              </div>
-            )}
+          {currentSection === 'community' && <>
+            {onCommunityAction && <div className="ay-pdp-actions">
+              {[['review', 'Write a review'], ['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend']].map(([kind, label]) => <button key={kind} type="button" onClick={() => onCommunityAction(kind)}>{label}</button>)}
+            </div>}
+            {communityCitationEntries.length > 0 ? communityCitationEntries.map((entry) => <a key={entry.url} className="ay-pdp-card ay-pdp-link is-social" href={entry.url} target="_blank" rel="noopener noreferrer">
+              <span className="ay-pdp-avatar" aria-hidden="true">{entry.label.charAt(0)}</span>
+              <span>
+                <span className="ay-pdp-card-meta">{entry.label}</span>
+                {entry.text && <strong>{entry.text}</strong>}
+                {entry.summary && <p className="is-sub">{entry.summary}</p>}
+              </span>
+            </a>) : communityReview ? <section className="ay-pdp-card"><p>{communityReview}</p></section> : <section className="ay-pdp-card"><p className="is-empty">No reviews linked yet.</p></section>}
+          </>}
 
-            {activeDetailSection === 'ingredients' && (ingredientScience?.length > 0 || meaningfulDetail(safety.materials)) && (
-              <div style={{ ...CARD, padding: '6px 18px' }}>
-                <div style={{ ...EYEBROW, paddingTop: 12 }}>What's inside</div>
-                {(ingredientScience || []).map((item, i) => (
-                  <div key={item.name} style={{ padding: '14px 0', borderTop: i ? '1px solid var(--ayna-chip-bg)' : 'none' }}>
-                    <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{item.name}</div>
-                    <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.58, color: 'var(--ayna-text-muted)', marginTop: 5 }}>{item.text}</div>
-                  </div>
-                ))}
-                {meaningfulDetail(safety.materials) && (
-                  <div style={{ padding: '14px 0', borderTop: (ingredientScience || []).length ? '1px solid var(--ayna-chip-bg)' : 'none', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.58, color: 'var(--ayna-text-muted)', whiteSpace: 'pre-line' }}>
-                    {safety.materials}
-                  </div>
-                )}
-              </div>
-            )}
+          {currentSection === 'whoitsfor' && (whoItsFor || []).map((item, i) => <div key={item} className="ay-pdp-who" style={{ display: 'flex', gap: 12, alignItems: 'center' }}><div className="ay-pdp-who-n">{i + 1}</div><div style={{ flex: 1, minWidth: 0 }}>{item}</div></div>)}
 
-            {activeDetailSection === 'ingredients' && meaningfulDetail(safety.fdaStatus) && <div style={CARD}><div style={EYEBROW}>FDA status</div><p style={{ fontSize: 13, lineHeight: 1.55 }}>{safety.fdaStatus}</p></div>}
-            {activeDetailSection === 'ingredients' && meaningfulDetail(ingredients) && <div style={CARD}><div style={EYEBROW}>Ingredients</div><p style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{ingredients}</p></div>}
-            {activeDetailSection === 'ingredients' && !buyUrl && whereToBuy.length > 0 && <div style={CARD}><SpecRow label="Where to buy" value={whereToBuy.join(' · ')} last /></div>}
-            {activeDetailSection === 'fit' && <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />}
-          </div>
+          {currentSection === 'howtouse' && <section className="ay-pdp-card">
+            {howToUse?.intro && <p className="ay-pdp-intro">{howToUse.intro}</p>}
+            <ol className="ay-pdp-steps">{(howToUse?.steps || []).map((step) => <li key={step}>{step}</li>)}</ol>
+            {howToUse?.sourceUrl && <ChipRow chips={[{ url: howToUse.sourceUrl, label: hostLabel(howToUse.sourceUrl) || 'Source', text: howToUse.sourceLabel }]} />}
+          </section>}
 
+          {currentSection === 'ask' && <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />}
+        </div>
 
         {reads.length > 0 && (
           <div style={{ padding: '22px var(--ay-gutter, 20px) 34px' }}>

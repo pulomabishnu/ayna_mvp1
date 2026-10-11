@@ -12,5 +12,6 @@ describe('displayName', () => {
     expect(displayName({ name: 'Floraboost', brand: 'Flora' })).toBe('Floraboost');
     expect(displayName({ name: 'Thinx', brand: 'Thinx' })).toBe('Thinx');
     expect(displayName({ name: 'Flex Disc' })).toBe('Flex Disc');
+    expect(displayName({ name: 'Uqora Control', brand: 'Uqora' })).toBe('Uqora Control');
   });
 });

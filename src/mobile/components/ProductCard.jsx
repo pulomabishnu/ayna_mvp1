@@ -5,11 +5,6 @@ import { getBuyUrl } from '../data/buyUrl.js';
 import ProductImage from './ProductImage.jsx';
 import { displayName } from '../utils/displayName.js';
 
-function labelForCategory(category) {
-  if (!category) return '';
-  return category.replace(/-/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
-}
-
 function shortPrice(price) {
   const value = String(price || '').trim();
   if (!value) return '';
@@ -22,9 +17,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   const resolvedPrice = shortPrice(price || priceDisplay);
   const hasDisplayPrice = /[$€£]|^free\b/i.test(resolvedPrice);
-  const categoryLabel = labelForCategory(category);
   const brandRepeatsName = brand && String(name || '').trim().toLowerCase() === String(brand).trim().toLowerCase();
-  const secondaryLabel = (!brandRepeatsName && brand) || categoryLabel;
+  // Brand only — never fall back to the category word ("Pad") in the brand slot.
+  const secondaryLabel = !brandRepeatsName && brand ? brand : '';
   const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
   const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   const relevantReason = match?.matchStatus === 'scored' && !showMatch
@@ -49,7 +44,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         <ProductImage src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
       </span>
       <span className="ayna-fresh-product-copy">
-        <span className="ayna-fresh-product-category">{secondaryLabel}{isList && isPartner ? ' / Partner' : ''}</span>
+        <span className="ayna-fresh-product-category" aria-hidden={secondaryLabel ? undefined : true}>{secondaryLabel || '\u00a0'}{isList && isPartner ? ' / Partner' : ''}</span>
         <strong>{brand ? displayName(product) : name}</strong>
         {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
         <span className="ayna-fresh-product-foot">{hasDisplayPrice ? <b>{resolvedPrice}</b> : <b className="is-muted">See details</b>}</span>
