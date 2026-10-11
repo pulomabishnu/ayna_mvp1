@@ -664,3 +664,19 @@
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { border-bottom: 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { background: var(--ay-paper) !important; border: 1.5px solid var(--ay-line) !important; border-radius: 18px !important; overflow: hidden !important; aspect-ratio: 1 !important; width: 100% !important; margin: 0 !important; box-sizing: border-box; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image img { width: 100% !important; height: 100% !important; object-fit: contain !important; padding: 8% !important; box-sizing: border-box !important; background: transparent !important; }
+
+/* You menu icons: same family as Settings (ink stroke 1.8, 18px) and a palette tone on every row */
+.ayna-mobile .ay-hub-svg { width: 20px; height: 20px; fill: none; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button > div:first-child { width: 40px !important; height: 40px !important; border-radius: 12px !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(5) > div:first-child { background: var(--ay-butter) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(6) > div:first-child { background: var(--ay-pink) !important; }
+.ayna-mobile.ayna-mobile .ay-hub-badge { padding: 4px 10px !important; border: 1.5px solid var(--ay-ink); border-radius: 99px !important; background: var(--ay-butter) !important; color: var(--ay-ink) !important; font: 700 12px/1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
+
+/* Ecosystem sections (8pt): header → 16 → product row → 40 → next header */
+.ayna-mobile.ayna-mobile .ayna-area-collection { margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-area-collection + .ayna-area-collection,
+.ayna-mobile.ayna-mobile .ayna-area-collection + .ayna-cabinet-collection,
+.ayna-mobile.ayna-mobile .ayna-area-collection ~ .ayna-cabinet-reads { margin-top: 40px !important; }
+.ayna-mobile.ayna-mobile .ayna-area-collection:first-of-type { margin-top: 32px !important; }
+.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head { margin-bottom: 16px !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) > .ayna-editorial-product-grid { padding-top: 0 !important; padding-bottom: 4px !important; margin-bottom: 0 !important; }

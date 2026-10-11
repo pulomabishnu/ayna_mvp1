@@ -81,6 +81,16 @@ function ChevronIcon() {
 // Line icons for the "Your account" rows, replacing the original emoji
 // placeholders (🛍️ ✨ 🔔 ⚙️) with the same stroke-icon language used
 // everywhere else in this screen (BackIcon, ChevronIcon).
+// You-menu icons — same stroke system as the Settings icons (24 grid, 1.8 stroke, round caps).
+const HUB_ICONS = {
+  ecosystem: <><circle cx="12" cy="13" r="3" /><circle cx="12" cy="4.5" r="1.8" /><circle cx="5" cy="18" r="1.8" /><circle cx="19" cy="18" r="1.8" /><path d="M12 10V6.3M9.5 14.6l-3 2.2M14.5 14.6l3 2.2" /></>,
+  saved: <><path d="M7 4h10v16l-5-3.5L7 20V4Z" /></>,
+  checkin: <><rect x="4" y="5" width="16" height="15" rx="2.5" /><path d="M8 3v4M16 3v4M4 10h16M9 14.5l2 2 4-4" /></>,
+  shopper: <><circle cx="12" cy="12" r="8" /><path d="M12 7.5V12l3 2" /></>,
+  startups: <><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /><path d="M18.5 17.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z" /></>,
+  settings: <><path d="M4 7h9M17 7h3M4 17h3M11 17h9" /><circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" /></>,
+};
+
 function AccountIcon({ type }) {
   const props = {
     width: 19,
@@ -345,7 +355,7 @@ function ProfileHub({ authUserId, onOpen, onClose, name, initial, memberSince, e
           { key: 'ecosystem', title: `Ecosystem · ${ecosystemCount}`, onClick: onOpenEcosystem },
           { key: 'saved', title: `Saved · ${savedCount}`, onClick: onOpenSaved },
           { key: 'checkin', title: 'Check-ins', sub: "What's changed since last time", onClick: onOpenMonthlyCheckin },
-          { key: 'shopper', title: 'Routine', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} NEW` : null },
+          { key: 'shopper', title: 'Routine', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} new` : null },
           { key: 'startups', title: 'New brands', sub: 'Emerging brands worth backing' },
           { key: 'settings', title: 'Settings', sub: IS_NATIVE_APP ? 'Preferences, notifications and privacy' : 'Preferences, account and privacy' },
         ].map((row) => (
@@ -366,13 +376,13 @@ function ProfileHub({ authUserId, onOpen, onClose, name, initial, memberSince, e
             }}
           >
             <div className="ay-hub-icon" style={{ width: 42, height: 42, borderRadius: 14, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <AccountIcon type={row.key} />
+              <svg className="ay-hub-svg" viewBox="0 0 24 24" aria-hidden="true">{HUB_ICONS[row.key]}</svg>
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 600, fontSize: 'calc(15.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{row.title}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 'none' }}>
-              {row.badge && <div style={{ background: 'var(--ayna-accent)', color: '#231A12', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.5px', padding: '3px 7px', borderRadius: 99 }}>{row.badge}</div>}
+              {row.badge && <div className="ay-hub-badge" style={{ background: 'var(--ayna-accent)', color: '#231A12', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.5px', padding: '3px 7px', borderRadius: 99 }}>{row.badge}</div>}
               <ChevronIcon />
             </div>
           </button>
