@@ -432,3 +432,30 @@
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover .ayna-slide-start-handle {
   color: #050506 !important;
 }
+
+/* Later mobile layout rules use more specific selectors for these panels. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-stage.ay-eco-hero,
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head h2 {
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head h2 small {
+  background: var(--ay-pink) !important;
+  border-color: #050506 !important;
+  color: #050506 !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head > span {
+  background: var(--ayna-chip-bg) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image {
+  background: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image img {
+  mix-blend-mode: normal !important;
+}
