@@ -70,7 +70,7 @@
 @keyframes ip-in-forward { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 @keyframes ip-in-back { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
 
-.ip-label { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; padding: 5px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); font: 700 10.5px/1 var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; }
+.ip-label { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; padding: 5px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); font: 700 11px/1 var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; }
 .ip-label::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--ay-peri-deep); }
 .ip-title {
   margin: 0; max-width: 13ch;
@@ -306,7 +306,7 @@
 .ip-dots-head strong { font: 800 22px/1.1 var(--ay-font-display); letter-spacing: -.03em; }
 .ip-dots-row { position: relative; display: flex; justify-content: space-between; margin-top: 16px; }
 .ip-dots-row::before { content: ''; position: absolute; left: 16px; right: 16px; top: 50%; height: 3px; translate: 0 -50%; background: var(--ay-ink); }
-.ip-dot { position: relative; width: 34px; height: 34px; padding: 0; border: 2.5px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); cursor: pointer; transition: background-color .2s, transform .2s var(--ay-pop); }
+.ip-dot { position: relative; width: 40px; height: 40px; padding: 0; border: 2.5px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); cursor: pointer; transition: background-color .2s, transform .2s var(--ay-pop); }
 .ip-dot.is-on { background: var(--ip-bg); }
 .ip-dot[aria-checked='true'] { background: var(--ay-ink); transform: scale(1.15); }
 

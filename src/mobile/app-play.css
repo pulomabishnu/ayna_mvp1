@@ -113,7 +113,8 @@
 .ayna-mobile .ayna-fresh-auth-field:focus-within { border-color: var(--ay-ink) !important; }
 
 /* Partner disclosure: readable label. */
-.ayna-mobile .ayna-figma-partner-disclosure > button span:first-child { color: var(--ay-peri-ink) !important; font-size: 10px !important; }
+.ayna-mobile .ayna-figma-partner-disclosure > button span:first-child { padding: 4px 9px; border-radius: 99px; background: var(--ay-peri) !important; color: var(--ay-ink) !important; font-size: 11px !important; letter-spacing: 0 !important; font-weight: 700 !important; }
+.ayna-mobile .ayna-figma-partner-disclosure > button { padding-inline: var(--ay-gutter) !important; }
 .ayna-mobile .ayna-figma-partner-disclosure > button span:nth-child(2) { font-size: 12px !important; color: var(--ay-ink-soft) !important; }
 
 /* Community: one header row aligned to the page gutter, readable tabs. */
@@ -514,3 +515,23 @@
 }
 @media (min-height: 880px) { .ay-reel { height: 380px; } }
 @media (max-height: 700px) { .ay-reel-eco { gap: 5px; } .ay-reel-track { padding: 5px 8px 5px 6px; } .ay-reel-cover { width: 28px; height: 28px; } .ay-reel-track strong { font-size: 15px; } .ay-reel-deck { width: 120px; height: 146px; } }
+
+/* PDP tags + sheet polish */
+.ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-fresh-detail-title div.ay-pdp-tag[style] { background: var(--ay-tile) !important; border: 0 !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-detail-title .ay-pdp-tag { background: rgba(255,255,255,.1) !important; color: var(--ay-paper) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-detail-title { padding: 18px var(--ay-gutter) 20px !important; }
+.ayna-mobile.ayna-mobile .ayna-source-empty { margin: 16px var(--ay-gutter) 4px; padding: 12px 14px; border: 0; border-radius: var(--ay-radius-md, 16px); background: var(--ay-tile); color: var(--ay-ink-soft); font-size: 13px; }
+.ayna-mobile.ayna-mobile .ayna-profile-auth-sheet { position: relative; padding: 30px var(--ay-gutter) max(20px, env(safe-area-inset-bottom)); border-top: 0; border-radius: 28px 28px 0 0; box-shadow: 0 -10px 40px rgba(29,26,43,.18); }
+.ayna-mobile.ayna-mobile .ayna-profile-auth-sheet::before { content: ''; position: absolute; top: 10px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 99px; background: var(--ay-line, rgba(29,26,43,.15)); }
+.ayna-mobile.ayna-mobile .ayna-profile-auth-sheet h2 { margin: 4px 44px 20px 0; font-size: 28px; line-height: 1.05; }
+.ayna-mobile.ayna-mobile .ayna-profile-auth-sheet :is(.ayna-profile-auth-primary,.ayna-profile-auth-secondary) { border-radius: 99px !important; min-height: 50px; font-size: 15px; }
+.ayna-mobile.ayna-mobile .ayna-profile-auth-close { top: 18px; right: 14px; width: 40px; height: 40px; }
+.ayna-mobile.ayna-mobile .ayna-fresh-photo-placeholder-shape { display: none; }
+
+/* Ecosystem check-in + reads kicker */
+.ayna-mobile.ayna-mobile .ayna-home-today { margin: 32px var(--ay-gutter) 24px !important; padding: 18px 18px 18px 20px !important; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg, 24px); background: var(--ay-mint); box-shadow: 4px 4px 0 var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ayna-home-today h2 { margin: 0; font: 800 20px/1.1 var(--ay-font-display); letter-spacing: -.03em; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ayna-home-today button { min-height: 44px; padding: 0 20px; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font-size: 14px; font-weight: 700; }
+.ayna-mobile.ayna-mobile .ayna-editorial-read-copy small { font-size: 12px !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ay-ink-soft) !important; }
+.ayna-mobile.ayna-mobile .ayna-cabinet-more { padding-bottom: 24px !important; }
+.ayna-mobile.ayna-mobile .ayna-cabinet-reads { padding-bottom: 4px !important; }

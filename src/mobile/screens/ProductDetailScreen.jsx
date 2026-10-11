@@ -12,7 +12,8 @@ import { apiUrl } from '../../utils/apiUrl.js';
 import { productHref } from '../../utils/productRoute.js';
 
 const CARD = { background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '16px 0', boxShadow: 'none' };
-const EYEBROW = { fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' };
+const EYEBROW = { fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 700, letterSpacing: '-.01em', color: 'var(--ayna-heading)' };
+const META = { fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ayna-text-muted)' };
 const CHIP = { fontSize: 'calc(12px * var(--ayna-text-scale, 1))', background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-chip-border)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '7px 12px', textDecoration: 'none', display: 'inline-block' };
 const PLATFORM_LABELS = { reddit: 'Reddit', tiktok: 'TikTok', youtube: 'YouTube', instagram: 'Instagram', facebook: 'Facebook' };
 
@@ -33,8 +34,10 @@ function firstSentence(text, max = 140) {
   return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
 
+const TAG_ACRONYMS = { pcos: 'PCOS', ibs: 'IBS', uti: 'UTI', ivf: 'IVF', pms: 'PMS', pmdd: 'PMDD', hrt: 'HRT', iud: 'IUD', bv: 'BV' };
 function humanizeTag(tag) {
-  return String(tag || '').replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  const text = String(tag || '').replace(/[-_]/g, ' ').toLowerCase();
+  return text.split(' ').map((word, i) => TAG_ACRONYMS[word] || (i === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word)).join(' ');
 }
 
 function meaningfulDetail(value) {
@@ -87,7 +90,7 @@ function SafetyBanner({ text }) {
   return (
     <div
       onClick={() => setExpanded((v) => !v)}
-      style={{ margin: '14px 22px 0', background: '#FEF2F2', border: '1px solid #991B1B', borderLeft: '4px solid #991B1B', borderRadius: 16, padding: '12px 14px', cursor: 'pointer' }}
+      style={{ margin: '14px var(--ay-gutter, 20px) 0', background: '#FEF2F2', border: '1px solid #991B1B', borderLeft: '4px solid #991B1B', borderRadius: 16, padding: '12px 14px', cursor: 'pointer' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
         <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#991B1B' }}>Safety note</div>
@@ -486,8 +489,8 @@ export default function ProductDetailScreen({
           </div>
         </div>
 
-        <div className="ayna-fresh-detail-title" style={{ padding: '18px 22px 0' }}>
-          {eyebrowLine && <div style={EYEBROW}>{eyebrowLine}</div>}
+        <div className="ayna-fresh-detail-title" style={{ padding: '18px var(--ay-gutter, 20px) 0' }}>
+          {eyebrowLine && <div style={META}>{eyebrowLine}</div>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
           <h1 style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(29px * var(--ayna-text-scale, 1))', lineHeight: 1.08, letterSpacing: '-.05em', margin: '12px 0 0', color: 'var(--ayna-heading)', fontWeight: 700 }}>{name}</h1>
           {price && <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: /[$€£]|^free\b/i.test(price) ? 700 : 500, fontSize: /[$€£]|^free\b/i.test(price) ? 'calc(20px * var(--ayna-text-scale, 1))' : 'calc(13px * var(--ayna-text-scale, 1))', color: /[$€£]|^free\b/i.test(price) ? 'var(--ayna-heading)' : 'var(--ayna-text-muted)', marginTop: 11 }}>{price}</div>}
@@ -495,7 +498,7 @@ export default function ProductDetailScreen({
           {pillTags.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
               {pillTags.map((t) => (
-                <div key={t} style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', textTransform: 'uppercase', background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '5px 9px' }}>
+                <div key={t} className="ay-pdp-tag" style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, background: 'var(--ay-tile, #eeeae0)', color: 'var(--ay-ink, #1d1a2b)', borderRadius: 99, padding: '6px 11px' }}>
                   {t}
                 </div>
               ))}
@@ -506,7 +509,7 @@ export default function ProductDetailScreen({
         {isPartner && (
           <div className="ayna-figma-partner-disclosure">
             <button type="button" onClick={() => setPartnerOpen((v) => !v)} aria-expanded={partnerOpen}>
-              <span>AYNA PARTNER</span><span>{partnerOpen ? 'Hide disclosure' : 'We may earn a commission'}</span><span aria-hidden="true">{partnerOpen ? '−' : '+'}</span>
+              <span>Partner</span><span>{partnerOpen ? 'Hide disclosure' : 'We may earn a commission'}</span><span aria-hidden="true">{partnerOpen ? '−' : '+'}</span>
             </button>
             {partnerOpen && <div className="ayna-figma-partner-copy">{partnerDisclosure}<a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships →</a></div>}
           </div>
@@ -523,14 +526,14 @@ export default function ProductDetailScreen({
           {[['fit', 'Fit'], ['evidence', 'Sources'], ['ingredients', 'Details'], ['reviews', 'Community']].map(([section, label]) => <button key={section} type="button" role="tab" aria-selected={activeDetailSection === section} onClick={() => setActiveDetailSection(section)}>{label}</button>)}
         </div>
 
-        {activeDetailSection === 'reviews' && onCommunityAction && <div style={{ display: 'flex', gap: 8, padding: '18px 22px 0', overflowX: 'auto' }}>
+        {activeDetailSection === 'reviews' && onCommunityAction && <div style={{ display: 'flex', gap: 8, padding: '18px var(--ay-gutter, 20px) 0', overflowX: 'auto' }}>
           <button type="button" onClick={() => onCommunityAction('review')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Write a review</button>
           <button type="button" onClick={() => onCommunityAction('post')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Mention in a post</button>
           <button type="button" onClick={() => onCommunityAction('playlist')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Add to playlist</button>
           <button type="button" onClick={() => onCommunityAction('recommend')} style={{ border: '1px solid var(--ayna-border)', borderRadius: 99, background: 'var(--ayna-surface)', color: 'var(--ayna-heading)', padding: '10px 14px', whiteSpace: 'nowrap', fontSize: 12 }}>Recommend to friend</button>
         </div>}
 
-        <div style={{ padding: '18px 22px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ padding: '18px var(--ay-gutter, 20px) 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
           {activeDetailSection === 'fit' && whyMatched && <div style={{ ...CARD, background: 'var(--ayna-chip-bg)' }}><div style={EYEBROW}>Why this fits you</div><p style={{ fontSize: 13, lineHeight: 1.55, margin: '8px 0 0' }}>{whyMatched}</p></div>}
           {activeDetailSection === 'evidence' && <>
             {(
@@ -688,7 +691,7 @@ export default function ProductDetailScreen({
 
 
         {reads.length > 0 && (
-          <div style={{ padding: '22px 22px 34px' }}>
+          <div style={{ padding: '22px var(--ay-gutter, 20px) 34px' }}>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', marginBottom: 10 }}>Reads</div>
             {reads.map((r) => (
               <div
