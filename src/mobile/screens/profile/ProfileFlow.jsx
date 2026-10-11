@@ -356,7 +356,7 @@ function ProfileHub({ authUserId, onOpen, onClose, name, initial, memberSince, e
           { key: 'saved', title: `Saved · ${savedCount}`, onClick: onOpenSaved },
           { key: 'checkin', title: 'Check-ins', sub: "What's changed since last time", onClick: onOpenMonthlyCheckin },
           { key: 'shopper', title: 'Routine', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} new` : null },
-          { key: 'startups', title: 'New brands', sub: 'Emerging brands worth backing' },
+          { key: 'startups', title: 'Startups', sub: 'Emerging brands worth backing' },
           { key: 'settings', title: 'Settings', sub: IS_NATIVE_APP ? 'Preferences, notifications and privacy' : 'Preferences, account and privacy' },
         ].map((row) => (
           <button
@@ -455,7 +455,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
             </div>
           ) : (
             <div style={{ borderRadius: 18, padding: 15, border: '1px dashed var(--ayna-border)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
-              No active alerts. We'll watch your ecosystem for recalls and check it against what you flagged during intake.
+              No alerts. We’ll flag recalls and anything that clashes with your intake.
             </div>
           )}
           {dismissedAlerts.length > 0 && (
@@ -494,7 +494,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
 
             {!myProducts.length ? (
               <div style={{ padding: '10px 2px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
-                Nothing in your ecosystem yet — add products so you can sort them into a routine.
+                Add products to build a routine.
                 {onBrowse && (
                   <div onClick={onBrowse} style={{ display: 'inline-block', marginTop: 10, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Browse products</div>
                 )}
@@ -547,7 +547,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
         <div>
           <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Brand affinity</div>
           <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16 }}>
-            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 13 }}>Drawn from what matters to you in intake and what you actually keep in your ecosystem.</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 13 }}>Based on your intake and your picks.</div>
             {affinityChips.length ? (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
                 {affinityChips.map((chip) => {
@@ -599,7 +599,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
             </div>
           ) : (
             <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 16, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
-              Save or add a product to start building this out.
+              Save a product to fill this in.
             </div>
           )}
         </div>
@@ -607,7 +607,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
         {lowCategories.length > 0 && (
           <div>
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
-              <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>Least-represented</div>
+              <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(16px * var(--ayna-text-scale, 1))', color: 'var(--ay-ink)' }}>Least-represented</div>
               <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>Blind spots</div>
             </div>
             <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: '6px 16px' }}>
@@ -714,34 +714,19 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <BackHeader title="New brands" onBack={onBack} />
+      <BackHeader title="Startups" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
-        <div style={{ borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#1D1A2B,#1D1A2B)', color: '#FCFBFB', position: 'relative', overflow: 'hidden', marginBottom: 20 }}>
-          <div style={{ position: 'absolute', right: -50, top: -50, width: 180, height: 180, borderRadius: '50%', border: '1px solid rgba(255,255,255,.16)' }} />
-          <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ay-ink-soft)' }}>Founder-first</div>
-          <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '8px 0 7px', maxWidth: 250 }}>Real founders, not ad spend.</div>
-          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 265 }}>Ranked by what you told us during intake — never by who paid for placement.</div>
+        <div className="ay-startups-hero">
+          <span className="ay-startups-art" aria-hidden="true"><i /><i /><i /></span>
+          <h2>Real founders, not ad spend.</h2>
+          <p>Ranked by what you told us during intake — never by who paid for placement.</p>
         </div>
 
-        <div style={{ display: 'flex', gap: 7, overflowX: 'auto', paddingBottom: 16, scrollbarWidth: 'none' }}>
+        <div className="ay-startups-filters" role="group" aria-label="Filter startups">
           {['all', 'women', 'preseed', 'clinical'].map((key) => (
-            <div
-              key={key}
-              onClick={() => setFilter(key)}
-              style={{
-                fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
-                fontWeight: filter === key ? 500 : 400,
-                padding: '7px 13px',
-                borderRadius: 99,
-                flex: 'none',
-                cursor: 'pointer',
-                background: filter === key ? 'var(--ayna-cta-bg)' : 'transparent',
-                color: filter === key ? 'var(--ayna-cta-text)' : 'var(--ayna-text-muted)',
-                border: filter === key ? 'none' : '1px solid var(--ayna-border)',
-              }}
-            >
+            <button type="button" key={key} aria-pressed={filter === key} onClick={() => setFilter(key)}>
               {key === 'all' ? 'All' : key === 'women' ? 'Women-founded' : key === 'preseed' ? 'Pre-seed' : 'Clinical'}
-            </div>
+            </button>
           ))}
         </div>
 
@@ -750,7 +735,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
             <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading startups…</div>
           )}
           {loadState === 'error' && (
-            <EmptyState compact art="offline" tone="butter" title="New brands aren’t loading" body="Try again in a moment." />
+            <EmptyState compact art="offline" tone="butter" title="Startups aren’t loading" body="Try again in a moment." />
           )}
           {loadState === 'ready' && filtered.length === 0 && (
             <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No startups match that filter yet.</div>

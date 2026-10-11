@@ -90,3 +90,27 @@
 
 /* About (scrapbook) uses the shared header; its own top bar is gone. */
 .ayna-scrapbook > .ay-set-head { flex: none; background: var(--ay-cream); }
+
+/* Startups: palette banner (not a dark slab) + real pill buttons */
+.ay-startups-hero { position: relative; margin-bottom: 16px; padding: 20px 96px 20px 20px; border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-peri); box-shadow: 0 4px 0 var(--ay-ink); color: var(--ay-ink); overflow: hidden; }
+.ay-startups-hero h2 { margin: 0; font: 800 calc(24px * var(--ayna-text-scale, 1))/1.1 var(--ay-font-display); letter-spacing: -.035em; }
+.ay-startups-hero p { margin: 8px 0 0; font: 500 14px/1.45 var(--ay-font-ui); opacity: .8; }
+.ay-startups-art { position: absolute; right: 16px; top: 16px; width: 72px; height: 72px; }
+.ay-startups-art i { position: absolute; display: block; border: 1.5px solid var(--ay-ink); }
+.ay-startups-art i:nth-child(1) { width: 44px; height: 44px; right: 0; top: 0; border-radius: 50%; background: var(--ay-butter); animation: ay-startups-bob 4.5s ease-in-out infinite; }
+.ay-startups-art i:nth-child(2) { width: 30px; height: 30px; left: 4px; top: 30px; border-radius: 9px; background: var(--ay-pink); rotate: -12deg; animation: ay-startups-bob 4.5s ease-in-out -1.5s infinite; }
+.ay-startups-art i:nth-child(3) { width: 20px; height: 20px; right: 6px; top: 50px; border: 0; background: var(--ay-paper); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+@keyframes ay-startups-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .ay-startups-art i { animation: none; } }
+.ay-startups-filters { display: flex; gap: 8px; overflow-x: auto; margin: 0 calc(-1 * var(--ay-gutter)) 16px; padding: 0 var(--ay-gutter) 2px; scrollbar-width: none; }
+.ay-startups-filters::-webkit-scrollbar { display: none; }
+.ay-startups-filters button { flex: none; min-height: 40px; padding: 0 16px; border: 1.5px solid var(--ay-line); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; }
+.ay-startups-filters button[aria-pressed='true'] { border-color: var(--ay-ink); background: var(--ay-ink); color: var(--ay-paper); }
+
+/* Routine: solid cards instead of dashed boxes; consistent text */
+.ay-set-page[data-page='shopper'] [style*='dashed'] { border: 1.5px solid var(--ay-line) !important; background: var(--ay-paper) !important; border-radius: 18px !important; color: var(--ay-ink) !important; font-size: 14px !important; }
+.ay-set-page[data-page='shopper'] [style*='dashed'] [style*='dashed'] { border: 0 !important; }
+/* Saved header matches the other subpages: round back button, title, count chip, Shop pill */
+.ayna-mobile.ayna-mobile .ayna-saved-header > button:first-child { width: 44px !important; height: 44px !important; flex: none; display: grid !important; place-items: center !important; padding: 0 !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ayna-saved-header > button:first-child svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile.ayna-mobile .ayna-saved-header h1 small { background: var(--ay-pink) !important; color: var(--ay-ink) !important; border: 1.5px solid var(--ay-ink); }
