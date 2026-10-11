@@ -54,3 +54,49 @@
   .ay-intro-note { min-height: 0; font-size: 14px; }
   .ayna-mobile.ayna-mobile .ay-intro-head p { margin-top: 4px; }
 }
+
+/* ---- Motion: entrance, idle life, and feedback on tap (all off for reduced motion) ---- */
+/* Entrance: "you" pops, spokes draw out, parts pop in one by one, copy rises */
+.ay-intro-you { animation: ay-intro-pop .5s var(--ay-pop, cubic-bezier(.34,1.56,.64,1)) both; }
+.ay-intro-diagram line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: ay-intro-draw .5s var(--ay-ease) forwards; }
+.ay-intro-diagram line.is-goals { animation-delay: .25s; } .ay-intro-diagram line.is-health { animation-delay: .35s; } .ay-intro-diagram line.is-preferences { animation-delay: .45s; }
+.ay-intro-part { animation: ay-intro-pop .5s var(--ay-pop, cubic-bezier(.34,1.56,.64,1)) both, ay-intro-bob 4.5s ease-in-out 1.2s infinite; }
+.ay-intro-part.is-goals { animation-delay: .45s, 1.2s; } .ay-intro-part.is-health { animation-delay: .55s, 2.6s; } .ay-intro-part.is-preferences { animation-delay: .65s, 4s; }
+.ay-intro-part[aria-pressed='true'] { animation: ay-intro-pop .5s var(--ay-pop, cubic-bezier(.34,1.56,.64,1)) both; }
+.ay-intro-part.is-goals[aria-pressed='true'] { animation-delay: .45s; }
+.ay-intro-head h1, .ay-intro-head p, .ay-intro-actions { animation: ay-intro-rise .45s var(--ay-ease) both; }
+.ay-intro-head p { animation-delay: .08s; } .ay-intro-actions { animation-delay: .7s; }
+
+/* Idle: soft ripple behind "you" */
+.ay-intro-ripple { position: absolute; left: 50%; top: 54%; width: 28%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; border: 1.5px solid var(--ay-ink); opacity: 0; animation: ay-intro-ripple 3.2s ease-out 1s infinite; pointer-events: none; }
+
+/* Active spoke is bold; a dot travels out to the part you tapped */
+.ay-intro-diagram[data-focus='goals'] line.is-goals,
+.ay-intro-diagram[data-focus='health'] line.is-health,
+.ay-intro-diagram[data-focus='preferences'] line.is-preferences { stroke-width: 3; }
+.ay-intro-pulse { position: absolute; left: 50%; top: 54%; width: 10px; height: 10px; translate: -50% -50%; border-radius: 50%; background: var(--ay-ink); z-index: 1; opacity: 0; animation: .6s var(--ay-ease) .05s both; pointer-events: none; }
+.ay-intro-pulse.to-goals { animation-name: ay-pulse-goals; }
+.ay-intro-pulse.to-health { animation-name: ay-pulse-health; }
+.ay-intro-pulse.to-preferences { animation-name: ay-pulse-prefs; }
+
+/* Note swaps with a quick rise */
+.ay-intro-note { animation: ay-intro-rise .3s var(--ay-ease) both; }
+
+@keyframes ay-intro-pop { from { opacity: 0; scale: .4; } to { opacity: 1; scale: 1; } }
+@keyframes ay-intro-draw { to { stroke-dashoffset: 0; } }
+@keyframes ay-intro-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes ay-intro-ripple { 0% { opacity: .35; scale: 1; } 100% { opacity: 0; scale: 1.7; } }
+@keyframes ay-pulse-goals { 0% { opacity: 1; left: 50%; top: 54%; } 100% { opacity: 0; left: 50%; top: 20%; } }
+@keyframes ay-pulse-health { 0% { opacity: 1; left: 50%; top: 54%; } 100% { opacity: 0; left: 78%; top: 73%; } }
+@keyframes ay-pulse-prefs { 0% { opacity: 1; left: 50%; top: 54%; } 100% { opacity: 0; left: 22%; top: 73%; } }
+@media (prefers-reduced-motion: reduce) {
+  .ay-intro-you, .ay-intro-part, .ay-intro-head h1, .ay-intro-head p, .ay-intro-actions, .ay-intro-note, .ay-intro-ripple, .ay-intro-pulse { animation: none !important; }
+  .ay-intro-diagram line { animation: none !important; stroke-dashoffset: 0; }
+  .ay-intro-pulse, .ay-intro-ripple { display: none; }
+}
+/* Spokes in viewBox units (square box): ~0.5 = 1.5px; lengths ≤ 41 */
+.ay-intro-diagram line { vector-effect: none !important; stroke-width: .5 !important; stroke-dasharray: 42; stroke-dashoffset: 42; }
+.ay-intro-diagram[data-focus='goals'] line.is-goals,
+.ay-intro-diagram[data-focus='health'] line.is-health,
+.ay-intro-diagram[data-focus='preferences'] line.is-preferences { stroke-width: 1 !important; }
+@media (prefers-reduced-motion: reduce) { .ay-intro-diagram line { stroke-dashoffset: 0; } }

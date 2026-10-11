@@ -50,3 +50,4 @@
 .ay-auth-check-copy { max-width: 32ch; margin: 0 auto 16px; text-align: center; font: 500 15px/1.55 var(--ay-font-ui); color: var(--ay-ink); opacity: .8; }
 .ay-auth-check-msg { margin-bottom: 8px; text-align: center; font: 600 13.5px/1.4 var(--ay-font-ui); color: var(--ay-ink); }
 .ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field > div:first-child:not(:last-child) { width: 22px !important; height: 22px !important; font: 700 11px/1 var(--ay-font-ui) !important; background: var(--ay-peri) !important; color: var(--ay-ink) !important; }
+.ay-auth-head { min-height: 64px; display: flex; align-items: center; }

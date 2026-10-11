@@ -23,18 +23,20 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
       <section className="ay-intro-map" aria-label="What shapes your Ecosystem">
         <div className="ay-intro-diagram" data-focus={focus}>
           <svg aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <line x1="50" y1="54" x2="50" y2="15" />
-            <line x1="50" y1="54" x2="83" y2="77" />
-            <line x1="50" y1="54" x2="17" y2="77" />
+            <line className="is-goals" x1="50" y1="54" x2="50" y2="15" />
+            <line className="is-health" x1="50" y1="54" x2="83" y2="77" />
+            <line className="is-preferences" x1="50" y1="54" x2="17" y2="77" />
           </svg>
+          <span className="ay-intro-ripple" aria-hidden="true" />
           <span className="ay-intro-you" aria-hidden="true">you</span>
+          <span className={`ay-intro-pulse to-${focus}`} key={focus} aria-hidden="true" />
           {PARTS.map((part) => (
             <button key={part.key} type="button" className={`ay-intro-part is-${part.key} tone-${part.tone}`} aria-pressed={focus === part.key} onClick={() => setFocus(part.key)}>
               {part.label}
             </button>
           ))}
         </div>
-        <p className="ay-intro-note" aria-live="polite"><strong>{active.label}</strong>{active.note}</p>
+        <p className="ay-intro-note" aria-live="polite" key={active.key}><strong>{active.label}</strong>{active.note}</p>
       </section>
 
       <div className="ayna-ecosystem-start-actions ay-intro-actions">

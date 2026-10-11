@@ -320,8 +320,7 @@ export default function SigninScreen({
         <>
           <header className="ay-auth-head">
             <span className="ay-auth-art" aria-hidden="true"><i /><i /><i /></span>
-            <h1>{mode === 'signup' ? 'Save it under your name.' : 'Welcome back.'}</h1>
-            <p>{mode === 'signup' ? 'Keep your Ecosystem, saves and check-ins.' : 'Sign in to pick up where you left off.'}</p>
+            <h1>{mode === 'signup' ? 'Sign up' : 'Sign in'}</h1>
           </header>
 
           <div className="ay-auth-form">
