@@ -20,6 +20,8 @@ import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportA
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
 import './about-scrapbook.css';
+import { getMyCommunityProfile } from '../../../utils/community/communityStore.js';
+import { publicMediaUrl } from '../../../utils/community/imageUpload.js';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
 
@@ -253,7 +255,25 @@ function ProfileBadges({ savedCount = 0, ecosystemCount = 0, profileFilledPct = 
   );
 }
 
-function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
+/** The Community profile photo, if the person has set one. Falls back to the initial. */
+function useCommunityAvatar(userId) {
+  const [avatar, setAvatar] = useState({ userId: null, path: null });
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+    if (!supabase || !userId) return undefined;
+    let cancelled = false;
+    getMyCommunityProfile(supabase, userId)
+      .then((profile) => { if (!cancelled) setAvatar({ userId, path: profile?.avatar_url || null }); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [userId]);
+  return avatar.userId === userId ? avatar.path : null;
+}
+
+function ProfileHub({ authUserId, onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
+  const avatarPath = useCommunityAvatar(authUserId);
+  const [avatarFailed, setAvatarFailed] = useState(false);
+  const showPhoto = avatarPath && !avatarFailed;
   return (
     <div className="ayna-fresh-profile-hub" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
@@ -302,9 +322,11 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               fontSize: 'calc(26px * var(--ayna-text-scale, 1))',
               color: '#3A2410',
               boxShadow: 'none',
+              overflow: 'hidden',
             }}
+            className={showPhoto ? 'ay-hub-avatar has-photo' : 'ay-hub-avatar'}
           >
-            {initial}
+            {showPhoto ? <img src={publicMediaUrl(avatarPath)} alt="" onError={() => setAvatarFailed(true)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : initial}
           </div>
           <div style={{ minWidth: 0 }}>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.04em', fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{name}</div>
@@ -3184,6 +3206,7 @@ export default function ProfileFlow({
   if (screen === 'hub') {
     body = (
       <ProfileHub
+        authUserId={authUser?.id}
         onOpen={pushScreen}
         onClose={onClose}
         name={name}

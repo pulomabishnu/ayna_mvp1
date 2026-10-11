@@ -647,3 +647,8 @@
 .ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(5) > div:first-child { background: var(--ay-butter) !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(6) > div:first-child { background: var(--ay-cream) !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ay-ink); }
+
+/* Ask is a tab: no edge handle, hidden when another tab is active */
+.ayna-mobile .ayna-ask-drawer[data-open='false'] { visibility: hidden; transition: transform 240ms cubic-bezier(.2,.8,.2,1), visibility 0s 240ms; }
+.ayna-mobile .ay-ask-title { margin: 0; font-family: var(--ayna-font-ui); font-weight: 700; font-size: calc(30px * var(--ayna-text-scale, 1)); letter-spacing: -.04em; line-height: 1.1; color: var(--ay-ink); }
+.ayna-mobile .ay-hub-avatar { overflow: hidden !important; } .ayna-mobile .ay-hub-avatar.has-photo { background: var(--ay-paper) !important; }

@@ -1,0 +1,90 @@
+/* Product detail — same card language as the rest of the app (ink border, flat shadow, palette tints). */
+.ayna-mobile .ay-pdp { background: var(--ay-cream) !important; }
+.ay-pdp-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: max(18px, env(safe-area-inset-top)) var(--ay-gutter) 0; }
+.ay-pdp-round { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 50%; border: 1.5px solid var(--ay-ink); background: var(--ay-paper); color: var(--ay-ink); cursor: pointer; padding: 0; }
+.ay-pdp-round:active { transform: scale(.94); }
+.ay-pdp-copied { font-size: 12px; font-weight: 600; color: var(--ay-ink); background: var(--ay-mint); border-radius: 99px; padding: 6px 10px; }
+
+/* Hero */
+.ayna-mobile.ayna-mobile .ay-pdp-hero { margin: 14px var(--ay-gutter) 0 !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 24px !important; box-shadow: 0 4px 0 var(--ay-ink); overflow: hidden; position: relative; }
+.ayna-mobile.ayna-mobile .ay-pdp-hero > div { aspect-ratio: 1 / 1 !important; border-radius: 0 !important; background: transparent !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-hero img { object-fit: contain !important; padding: 28px !important; box-sizing: border-box; }
+.ayna-mobile.ayna-mobile .ay-pdp-hero.tone-peri, .ayna-mobile.ayna-mobile .ay-pdp-hero.tone-peri > div { background: var(--ay-peri) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-hero.tone-butter, .ayna-mobile.ayna-mobile .ay-pdp-hero.tone-butter > div { background: var(--ay-butter) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-hero.tone-mint, .ayna-mobile.ayna-mobile .ay-pdp-hero.tone-mint > div { background: var(--ay-mint) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-hero.tone-pink, .ayna-mobile.ayna-mobile .ay-pdp-hero.tone-pink > div { background: var(--ay-pink) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-hero:has(img) > div { background: var(--ay-paper) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-hero .ayna-figma-detail-score { left: 12px; bottom: 12px; border: 1.5px solid var(--ay-ink) !important; border-radius: 16px !important; background: var(--ay-paper) !important; box-shadow: 0 3px 0 var(--ay-ink); }
+
+/* Title */
+.ay-pdp-title { padding: 20px var(--ay-gutter) 0; }
+.ay-pdp-eyebrow { font-size: 13px; font-weight: 600; color: var(--ay-ink); opacity: .62; }
+.ay-pdp-title h1 { margin: 6px 0 0; font-family: var(--ayna-font-ui); font-weight: 700; font-size: calc(30px * var(--ayna-text-scale, 1)); line-height: 1.05; letter-spacing: -.04em; color: var(--ay-ink); text-wrap: balance; }
+.ay-pdp-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-top: 10px; }
+.ay-pdp-price .is-price { font-size: 20px; font-weight: 700; color: var(--ay-ink); }
+.ay-pdp-price .is-note { font-size: 14px; font-weight: 500; color: var(--ay-ink); opacity: .7; }
+.ay-pdp-price small { font-size: 13px; font-weight: 600; color: var(--ay-ink); background: var(--ay-tile); border-radius: 99px; padding: 3px 9px; }
+.ay-pdp-fitnote { display: inline-flex; gap: 6px; align-items: center; margin-top: 12px; min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font-weight: 700; font-size: 13px; cursor: pointer; }
+.ay-pdp-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.ay-pdp-tag { font-size: 12px; font-weight: 600; padding: 6px 11px; border-radius: 99px; background: var(--ay-tile); color: var(--ay-ink); }
+
+/* At a glance */
+.ay-pdp-glance { margin: 20px var(--ay-gutter) 0; padding: 18px; border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-paper); box-shadow: 0 3px 0 var(--ay-ink); display: grid; gap: 14px; }
+.ay-pdp-glance h2, .ay-pdp-ask h2 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -.02em; color: var(--ay-ink); }
+.ay-pdp-glance > p { margin: -6px 0 0; font-size: 15px; line-height: 1.55; color: var(--ay-ink); }
+.ay-pdp-glance > p.is-clamped { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.ay-pdp-more { justify-self: start; margin-top: -8px; border: 0; background: none; padding: 4px 0; font-weight: 700; font-size: 14px; color: var(--ay-ink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ay-pdp-checks { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.ay-pdp-checks li { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px 6px 8px; border-radius: 99px; background: var(--ay-mint); color: var(--ay-ink); font-size: 12.5px; font-weight: 700; }
+.ay-pdp-checks svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.ay-pdp-facts { margin: 0; display: grid; border-top: 1px solid var(--ay-line); }
+.ay-pdp-facts > div { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--ay-line); }
+.ay-pdp-facts > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.ay-pdp-facts dt { font-size: 13px; font-weight: 700; color: var(--ay-ink); }
+.ay-pdp-facts dd { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--ay-ink); opacity: .82; }
+
+/* Warnings: calm, readable, still distinct */
+.ay-pdp-warn { margin: 14px var(--ay-gutter) 0; padding: 16px 18px; border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-butter); color: var(--ay-ink); }
+.ay-pdp-warn > strong { display: block; font-size: 15px; font-weight: 700; }
+.ay-pdp-warn ul { margin: 8px 0 0; padding: 0 0 0 18px; display: grid; gap: 6px; }
+.ay-pdp-warn li { font-size: 13.5px; line-height: 1.45; }
+.ay-pdp-warn > button { margin-top: 10px; min-height: 36px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font-weight: 700; font-size: 13px; cursor: pointer; }
+.ayna-mobile .ay-pdp .ayna-figma-partner-disclosure { margin-inline: var(--ay-gutter) !important; }
+
+/* Source counts as three tinted tiles */
+.ayna-mobile.ayna-mobile .ay-pdp-sources { margin: 18px var(--ay-gutter) 0 !important; gap: 8px !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-sources button { align-items: flex-start !important; padding: 12px !important; min-height: 92px; border: 1.5px solid var(--ay-ink) !important; border-radius: 18px !important; color: var(--ay-ink) !important; cursor: pointer; }
+.ayna-mobile.ayna-mobile .ay-pdp-sources button:nth-child(1) { background: var(--ay-mint) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-sources button:nth-child(2) { background: var(--ay-peri) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-sources button:nth-child(3) { background: var(--ay-pink) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-sources span { font-size: 12.5px !important; font-weight: 700; }
+.ayna-mobile.ayna-mobile .ay-pdp-sources strong { color: var(--ay-ink) !important; font-size: 28px !important; margin-top: auto; }
+.ayna-mobile.ayna-mobile .ay-pdp-sources small { color: var(--ay-ink) !important; opacity: .7; }
+
+/* Tabs as a segmented pill row */
+.ayna-mobile.ayna-mobile .ay-pdp-tabs { margin: 22px var(--ay-gutter) 0 !important; padding: 4px !important; gap: 4px !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button { min-height: 40px !important; padding: 0 4px !important; border: 0 !important; border-radius: 99px !important; font-size: 13px !important; font-weight: 700 !important; color: var(--ay-ink) !important; background: transparent !important; transition: background var(--ay-dur-1) var(--ay-ease); }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button[aria-selected='true'] { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+
+/* Who it's for */
+.ay-pdp-who { padding: 12px 14px; border: 1.5px solid var(--ay-line); border-radius: 18px; background: var(--ay-paper); font-size: 14px; line-height: 1.45; }
+.ay-pdp-who-n { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 50%; border: 1.5px solid var(--ay-ink); background: var(--ay-butter); color: var(--ay-ink); font-weight: 800; font-size: 14px; }
+.ay-pdp-who:nth-child(3n) .ay-pdp-who-n { background: var(--ay-mint); }
+.ay-pdp-who:nth-child(3n+1) .ay-pdp-who-n { background: var(--ay-pink); }
+
+/* Ask card */
+.ay-pdp-ask { margin-top: 8px; padding: 18px; border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-peri); }
+.ay-pdp-ask button:not([type='submit']) { background: var(--ay-paper) !important; color: var(--ay-ink) !important; border: 1.5px solid var(--ay-ink) !important; font-weight: 600 !important; text-align: left; }
+.ay-pdp-ask input { border: 1.5px solid var(--ay-ink) !important; background: var(--ay-paper) !important; }
+.ay-pdp-ask button[type='submit'] { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.ay-pdp-ask > div:last-child { color: var(--ay-ink) !important; opacity: .7; }
+
+/* Purchase bar */
+.ayna-mobile.ayna-mobile .ay-pdp-bar { background: var(--ay-cream) !important; border-top: 1.5px solid var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-bar > button { border: 1.5px solid var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-bar > button[aria-pressed='true'] { background: var(--ay-pink) !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-bar > button[aria-pressed='true'] svg { fill: var(--ay-ink); stroke: var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ay-pdp-bar > a { background: var(--ay-ink) !important; color: var(--ay-paper) !important; border: 1.5px solid var(--ay-ink); box-shadow: none !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-bar > div { background: var(--ay-tile) !important; color: var(--ay-ink) !important; opacity: .7; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs { display: flex !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-tabs button { flex: 1 1 auto; font-size: 12.5px !important; padding: 0 10px !important; }

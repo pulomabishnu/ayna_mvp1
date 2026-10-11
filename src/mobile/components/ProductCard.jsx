@@ -3,6 +3,7 @@ import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import ProductImage from './ProductImage.jsx';
+import { displayName } from '../utils/displayName.js';
 
 function labelForCategory(category) {
   if (!category) return '';
@@ -22,7 +23,8 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const resolvedPrice = shortPrice(price || priceDisplay);
   const hasDisplayPrice = /[$€£]|^free\b/i.test(resolvedPrice);
   const categoryLabel = labelForCategory(category);
-  const secondaryLabel = brand || categoryLabel;
+  const brandRepeatsName = brand && String(name || '').trim().toLowerCase() === String(brand).trim().toLowerCase();
+  const secondaryLabel = (!brandRepeatsName && brand) || categoryLabel;
   const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
   const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   const relevantReason = match?.matchStatus === 'scored' && !showMatch
@@ -48,7 +50,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       </span>
       <span className="ayna-fresh-product-copy">
         <span className="ayna-fresh-product-category">{secondaryLabel}{isList && isPartner ? ' / Partner' : ''}</span>
-        <strong>{name}</strong>
+        <strong>{brand ? displayName(product) : name}</strong>
         {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
         <span className="ayna-fresh-product-foot">{hasDisplayPrice ? <b>{resolvedPrice}</b> : <b className="is-muted">See details</b>}</span>
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}

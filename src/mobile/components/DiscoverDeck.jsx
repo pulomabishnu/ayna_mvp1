@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import ProductImage from './ProductImage.jsx';
 import EmptyState from './EmptyState.jsx';
 import { getProfileMatchPercentForProduct } from '../../data/products.js';
+import { displayName } from '../utils/displayName.js';
 
 // One-card-at-a-time product discovery. Drag right (or tap Save) to save,
 // left (or tap Skip) to pass. Uses the same products the Shop grid is
@@ -95,7 +96,7 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, savedP
               <div className="ay-deck-photo"><ProductImage src={imageFor(current.product)} alt={current.product.name} allowBrandLogo={current.product.type === 'digital'} /></div>
               <div className="ay-deck-copy">
                 {current.product.brand && <span>{current.product.brand}</span>}
-                <strong>{current.product.name}</strong>
+                <strong>{displayName(current.product)}</strong>
                 <div className="ay-deck-meta">
                   {current.product.price && <b>{String(current.product.price)}</b>}
                   {Number.isFinite(current.match) && current.match > 0 && <em>{Math.round(current.match)}% match</em>}

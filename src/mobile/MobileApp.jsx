@@ -687,11 +687,11 @@ export default function MobileApp() {
       />
       {showTabBar && <MobileTabBar
         active={askAynaOpen ? 'ask' : activeTab}
-        onHome={() => { setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
-        onBrowse={() => { setOverlay(null); setScreen('browse'); }}
-        onCommunity={() => { setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
+        onHome={() => { setAskAynaOpen(false); setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
+        onBrowse={() => { setAskAynaOpen(false); setOverlay(null); setScreen('browse'); }}
+        onCommunity={() => { setAskAynaOpen(false); setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
         onAskAyna={() => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
-        onProfile={openProfile}
+        onProfile={() => { setAskAynaOpen(false); openProfile(); }}
       />}
       <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
       {(overlay?.type === 'profile-auth' || authPrompt) && (
@@ -796,8 +796,6 @@ export default function MobileApp() {
         key={authUser?.id || 'anonymous'}
         open={askAynaOpen}
         enabled={!!authUser}
-        onOpen={() => setAskAynaOpen(true)}
-        onClose={() => setAskAynaOpen(false)}
         profile={effectiveQuizAnswers}
         onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}
         chatHistory={askAynaHistory}

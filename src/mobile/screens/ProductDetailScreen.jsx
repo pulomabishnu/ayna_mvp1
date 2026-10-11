@@ -10,6 +10,9 @@ import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
 import { productHref } from '../../utils/productRoute.js';
+import { getPricePerUnitLabel } from '../../utils/pricePerUnit.js';
+import { displayName } from '../utils/displayName.js';
+import '../pdp.css';
 
 const CARD = { background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '16px 0', boxShadow: 'none' };
 const EYEBROW = { fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 700, letterSpacing: '-.01em', color: 'var(--ayna-heading)' };
@@ -46,7 +49,7 @@ function meaningfulDetail(value) {
 }
 
 function buildFactRows(product) {
-  const bestFor = (product.healthFunctions || []).concat(product.tags || []).slice(0, 3).map(humanizeTag).join(', ');
+  const bestFor = [...new Set((product.healthFunctions || []).concat(product.tags || []).map(humanizeTag))].slice(0, 3).join(', ');
   const materials = meaningfulDetail(product.safety?.materials);
   const ingredients = meaningfulDetail(product.ingredients);
   const sameAsIngredients = materials && ingredients
@@ -57,6 +60,25 @@ function buildFactRows(product) {
     materials && !sameAsIngredients ? { label: 'Materials', value: materials } : null,
     skipIf ? { label: 'Skip if', value: skipIf } : null,
   ].filter(Boolean);
+}
+
+function toneFor(product) {
+  const functions = product?.healthFunctions || [];
+  const category = product?.category;
+  if (functions.some((item) => ['perimenopause', 'hormone-balance'].includes(item)) || ['telehealth', 'digital', 'therapy', 'tracker'].includes(category) || product?.type === 'digital') return 'peri';
+  if (functions.includes('fertility') || ['diagnostics', 'supplement', 'vitamin'].includes(category)) return 'butter';
+  if (['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'pelvic-floor'].includes(category)) return 'mint';
+  return 'pink';
+}
+
+/** Short trust checks from data already on file — same two the website card shows. */
+function trustChecks(product) {
+  const out = [];
+  const recalls = String(product?.safety?.recalls || '');
+  if (recalls && !recalls.includes('⚠️')) out.push('No recalls on file');
+  if (String(product?.privacy?.sellsData || '').includes('❌')) out.push('Doesn’t sell your data');
+  if (product?.clinicianOpinionSource === 'independent' && String(product?.clinicianAttribution || '').trim()) out.push('Clinician reviewed');
+  return out;
 }
 
 function ChipLink({ chip }) {
@@ -179,12 +201,10 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
   };
 
   return (
-    <div style={{ ...CARD, display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div className="ay-pdp-ask" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {messages.length === 0 && (
         <>
-          <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'var(--ayna-text-muted)' }}>
-            Ask ayna
-          </div>
+          <h2>Ask ayna</h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {suggestions.map((s) => (
               <button
@@ -280,6 +300,7 @@ export default function ProductDetailScreen({
   const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [activeDetailSection, setActiveDetailSection] = useState('fit');
   const [shareCopied, setShareCopied] = useState(false);
+  const [warningsOpen, setWarningsOpen] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
   // only holds one layer) so "back" from here returns to this product
   // instead of closing straight through to whatever screen sits underneath.
@@ -295,6 +316,7 @@ export default function ProductDetailScreen({
     setSeenProductId(product?.id);
     setPartnerOpen(false);
     setSummaryExpanded(false);
+    setWarningsOpen(false);
   }
 
   if (!product) {
@@ -346,7 +368,7 @@ export default function ProductDetailScreen({
   } = product;
 
   const categoryLabel = CATEGORY_LABELS[category] || (category ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '');
-  const eyebrowLine = [categoryLabel, brand].filter(Boolean).join(' · ');
+  const eyebrowLine = [categoryLabel, brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : null].filter(Boolean).join(' · ');
   const buyUrl = getBuyUrl(product);
   const safetyAlertText = getSafetyAlertText(product);
   const isPartner = isPartnerBrandItem(product);
@@ -446,33 +468,26 @@ export default function ProductDetailScreen({
   const clinicianCitationChips = doctorOpinionCitations.map((c) => ({ url: c.url, label: hostLabel(c.url) || c.label, text: c.label }));
 
   const factRows = buildFactRows(product);
+  const tone = toneFor(product);
+  const shownName = displayName(product);
+  const perUnit = getPricePerUnitLabel(product);
+  const hasDisplayPrice = /[$€£]|^free\b/i.test(String(price || ''));
+  const checks = trustChecks(product);
 
   return (
-    <div className="ayna-fresh-product-detail" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
+    <div className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
       <div style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out', paddingBottom: 104 }}>
-        <div style={{ paddingTop: 'max(24px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-          <button type="button" onClick={onBack} aria-label="Back to products" style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer', flex: 'none', minHeight: 44, border: 0, background: 'transparent', padding: 0 }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'var(--ayna-heading)' }}>
-              <path d="M19 12H5M11 18l-6-6 6-6" />
-            </svg>
-            <span style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Back</span>
+        <div className="ay-pdp-top">
+          <button type="button" className="ay-pdp-round" onClick={onBack} aria-label="Back to products">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
-          <button
-            type="button"
-            aria-label={`Share ${name} with a friend`}
-            onClick={handleShare}
-            style={{ width: 44, height: 44, borderRadius: 99, border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', cursor: 'pointer' }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ayna-heading)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 15V3" /><path d="M7 8l5-5 5 5" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
-            </svg>
+          {shareCopied && <span className="ay-pdp-copied" role="status">Link copied</span>}
+          <button type="button" className="ay-pdp-round" aria-label={`Share ${name} with a friend`} onClick={handleShare}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 15V3" /><path d="M7 8l5-5 5 5" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
           </button>
         </div>
-        {shareCopied && (
-          <div style={{ textAlign: 'right', paddingRight: 20, marginTop: 4, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Link copied</div>
-        )}
 
-        <div className={`ayna-fresh-detail-image${image ? '' : ' is-missing-image'}`} style={{ margin: '14px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
+        <div className={`ayna-fresh-detail-image ay-pdp-hero tone-${tone}${image ? '' : ' is-missing-image'}`} style={{ margin: '14px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
           <div
             style={{
               position: 'relative',
@@ -489,22 +504,31 @@ export default function ProductDetailScreen({
           </div>
         </div>
 
-        <div className="ayna-fresh-detail-title" style={{ padding: '18px var(--ay-gutter, 20px) 0' }}>
-          {eyebrowLine && <div style={META}>{eyebrowLine}</div>}
-          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" onClick={openWhyMatch} style={{ display: 'block', width: '100%', margin: '12px 0 2px', padding: '11px 13px', textAlign: 'left', borderRadius: 15, border: '1px solid var(--ayna-chip-border)', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-heading)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600 }}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} · See why →</button>}
-          <h1 style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(29px * var(--ayna-text-scale, 1))', lineHeight: 1.08, letterSpacing: '-.05em', margin: '12px 0 0', color: 'var(--ayna-heading)', fontWeight: 700 }}>{name}</h1>
-          {price && <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: /[$€£]|^free\b/i.test(price) ? 700 : 500, fontSize: /[$€£]|^free\b/i.test(price) ? 'calc(20px * var(--ayna-text-scale, 1))' : 'calc(13px * var(--ayna-text-scale, 1))', color: /[$€£]|^free\b/i.test(price) ? 'var(--ayna-heading)' : 'var(--ayna-text-muted)', marginTop: 11 }}>{price}</div>}
+        <div className="ayna-fresh-detail-title ay-pdp-title">
+          {eyebrowLine && <div className="ay-pdp-eyebrow">{eyebrowLine}</div>}
+          <h1>{shownName}</h1>
+          {(price || perUnit) && <div className="ay-pdp-price">
+            {price && <span className={hasDisplayPrice ? 'is-price' : 'is-note'}>{price}</span>}
+            {perUnit && <small>{perUnit}</small>}
+          </div>}
+          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} <span aria-hidden="true">→</span></button>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>See your match <span aria-hidden="true">↗</span></button>}
           {pillTags.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
-              {pillTags.map((t) => (
-                <div key={t} className="ay-pdp-tag" style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, background: 'var(--ay-tile, #eeeae0)', color: 'var(--ay-ink, #1d1a2b)', borderRadius: 99, padding: '6px 11px' }}>
-                  {t}
-                </div>
-              ))}
+            <div className="ay-pdp-tags">
+              {pillTags.map((t) => <span key={t} className="ay-pdp-tag">{t}</span>)}
             </div>
           )}
         </div>
+
+        {(summary || checks.length > 0 || factRows.length > 0) && <section className="ay-pdp-glance" aria-label="At a glance">
+          {summary && <>
+            <h2>The short version</h2>
+            <p className={summaryExpanded ? '' : 'is-clamped'}>{summary}</p>
+            {String(summary).length > 220 && <button type="button" className="ay-pdp-more" onClick={() => setSummaryExpanded((v) => !v)}>{summaryExpanded ? 'Less' : 'More'}</button>}
+          </>}
+          {checks.length > 0 && <ul className="ay-pdp-checks">{checks.map((c) => <li key={c}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>{c}</li>)}</ul>}
+          {factRows.length > 0 && <dl className="ay-pdp-facts">{factRows.map((row) => <div key={row.label}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}</dl>}
+        </section>}
 
         {isPartner && (
           <div className="ayna-figma-partner-disclosure">
@@ -516,13 +540,17 @@ export default function ProductDetailScreen({
         )}
 
         {safetyAlertText && <SafetyBanner text={safetyAlertText} />}
-        {Array.isArray(warnings) && warnings.length > 0 && <div className="ayna-detail-warnings" role="note"><strong>Warnings</strong>{warnings.map((warning) => <p key={warning}>{warning}</p>)}</div>}
+        {Array.isArray(warnings) && warnings.length > 0 && <div className="ay-pdp-warn" role="note">
+          <strong>Before you use</strong>
+          <ul>{(warningsOpen ? warnings : warnings.slice(0, 2)).map((warning) => <li key={warning}>{warning}</li>)}</ul>
+          {warnings.length > 2 && <button type="button" onClick={() => setWarningsOpen((v) => !v)} aria-expanded={warningsOpen}>{warningsOpen ? 'Show less' : `Show all ${warnings.length}`}</button>}
+        </div>}
 
-        {sourceCountTotal > 0 ? <div className="ayna-source-index" aria-label="Available product sources">
+        {sourceCountTotal > 0 ? <div className="ayna-source-index ay-pdp-sources" aria-label="Available product sources">
           {[['doctor', 'Clinical', 'evidence'], ['scientific', 'Research', 'evidence'], ['community', 'Community', 'reviews']].map(([kind, label, section]) => <button type="button" key={kind} onClick={() => setActiveDetailSection(section)} aria-label={`${label}: ${sourceCounts[kind]} linked sources`}><span>{label}</span><strong>{sourceCounts[kind] || 0}</strong><small>{sourceCounts[kind] === 1 ? 'source' : 'sources'}</small></button>)}
         </div> : <div className="ayna-source-empty">No sources linked yet</div>}
 
-        <div className="ayna-detail-sections" role="tablist" aria-label="Product information">
+        <div className="ayna-detail-sections ay-pdp-tabs" role="tablist" aria-label="Product information">
           {[['fit', 'Fit'], ['evidence', 'Sources'], ['ingredients', 'Details'], ['reviews', 'Community']].map(([section, label]) => <button key={section} type="button" role="tab" aria-selected={activeDetailSection === section} onClick={() => setActiveDetailSection(section)}>{label}</button>)}
         </div>
 
@@ -541,23 +569,12 @@ export default function ProductDetailScreen({
                 {sourceCountTotal > 0 && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--ayna-accent-dark)' }} />
-                    <div style={EYEBROW}>ayna summary · {sourceCountTotal} source{sourceCountTotal === 1 ? '' : 's'}</div>
+                    <div style={EYEBROW}>{sourceCountTotal} linked source{sourceCountTotal === 1 ? '' : 's'}</div>
                   </div>
                 )}
-                {summary ? (
-                  <>
-                    <div style={{ fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: sourceCountTotal > 0 ? 12 : 0, ...(!summaryExpanded && String(summary).length > 320 ? { display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' } : {}) }}>{summary}</div>
-                    {String(summary).length > 320 && <button type="button" onClick={() => setSummaryExpanded((value) => !value)} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', padding: '8px 0 0', fontWeight: 600 }}>{summaryExpanded ? 'Show less' : 'Read full summary'}</button>}
-                    <details style={{ marginTop: 12, borderTop: '1px solid var(--ayna-border)', paddingTop: 10, color: 'var(--ayna-text-muted)', fontSize: 12, lineHeight: 1.5 }}>
-                      <summary style={{ cursor: 'pointer', color: 'var(--ayna-accent-dark)', fontWeight: 600 }}>How to read this summary</summary>
-                      <p style={{ margin: '8px 0 0' }}>This is a short overview of the product information available to Ayna. Linked sources appear below when available. Check the original sources and product label for details; a personal match is about fit with your profile, not a health or safety rating.</p>
-                    </details>
-                  </>
-                ) : (
-                  <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>No summary yet.</div>
-                )}
+                {!effectiveness && summarySourceChips.length === 0 && <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', marginTop: 8 }}>No summary sources yet.</div>}
                 {effectiveness && (
-                  <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginTop: 10 }}>{effectiveness}</div>
+                  <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text)', marginTop: 10 }}>{effectiveness}</div>
                 )}
                 <ChipRow chips={summarySourceChips} />
               </div>
@@ -632,8 +649,8 @@ export default function ProductDetailScreen({
               <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
                 <div style={EYEBROW}>Who it's for</div>
                 {(whoItsFor || []).map((item, i) => (
-                  <div key={item} style={{ ...CARD, display: 'flex', gap: 12, alignItems: 'center', padding: '14px 15px' }}>
-                    <div style={{ width: 34, height: 34, borderRadius: 12, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "var(--ayna-font-display)", fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>
+                  <div key={item} className="ay-pdp-who" style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <div className="ay-pdp-who-n">
                       {i + 1}
                     </div>
                     <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5 }}>{item}</div>
@@ -683,7 +700,6 @@ export default function ProductDetailScreen({
             )}
 
             {activeDetailSection === 'ingredients' && meaningfulDetail(safety.fdaStatus) && <div style={CARD}><div style={EYEBROW}>FDA status</div><p style={{ fontSize: 13, lineHeight: 1.55 }}>{safety.fdaStatus}</p></div>}
-            {activeDetailSection === 'ingredients' && factRows.length > 0 && <div style={{ ...CARD, padding: '6px 18px' }}>{factRows.map((row, i) => <SpecRow key={row.label} label={row.label} value={row.value} last={i === factRows.length - 1} />)}</div>}
             {activeDetailSection === 'ingredients' && meaningfulDetail(ingredients) && <div style={CARD}><div style={EYEBROW}>Ingredients</div><p style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{ingredients}</p></div>}
             {activeDetailSection === 'ingredients' && !buyUrl && whereToBuy.length > 0 && <div style={CARD}><SpecRow label="Where to buy" value={whereToBuy.join(' · ')} last /></div>}
             {activeDetailSection === 'fit' && <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />}
@@ -718,7 +734,7 @@ export default function ProductDetailScreen({
         <LegalFooter />
       </div>
 
-      <div className="ayna-product-purchase-bar" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'var(--ayna-surface)', borderTop: '1px solid var(--ayna-border)', display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div className="ayna-product-purchase-bar ay-pdp-bar" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '12px 20px max(20px, env(safe-area-inset-bottom))', background: 'var(--ayna-surface)', borderTop: '1px solid var(--ayna-border)', display: 'flex', gap: 8, alignItems: 'center' }}>
         <button
           type="button"
           onClick={onToggleSaved}

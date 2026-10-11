@@ -61,8 +61,6 @@ function buildWelcome() {
  */
 export default function AskAynaModal({
   open,
-  onClose,
-  onOpen,
   enabled = true,
   profile,
   onProfileUpdate,
@@ -185,7 +183,6 @@ export default function AskAynaModal({
         flexDirection: 'column',
       }}
     >
-      <button type="button" className="ayna-ask-drawer-handle" onClick={onOpen} aria-label="Reopen Ask Ayna" tabIndex={open ? -1 : 0} aria-hidden={open}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" /></svg></button>
       <div className="ayna-ask-drawer-content" role="dialog" aria-label="Ask Ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       <div
         style={{
@@ -200,28 +197,8 @@ export default function AskAynaModal({
         }}
       >
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>
-            {'Ask ayna'}
-          </div>
+          <h1 className="ay-ask-title">Ask ayna</h1>
         </div>
-        <button
-          type="button" aria-label="Collapse Ask Ayna to the screen edge" onClick={onClose}
-          style={{
-            width: 44,
-            height: 44,
-            border: 0,
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            fontSize: 'calc(20px * var(--ayna-text-scale, 1))',
-            color: 'var(--ayna-text-muted)',
-            background: 'var(--ayna-chip-bg)',
-          }}
-        >
-          ›
-        </button>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>

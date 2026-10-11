@@ -15,6 +15,7 @@ import PlaylistAudiencePicker from '../components/PlaylistAudiencePicker.jsx';
 import { makePlaylistCoverFile } from '../components/playlistCoverImage.js';
 import './community-mobile.css';
 import '../community-play.css';
+import { displayName } from '../utils/displayName.js';
 
 const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'] ];
 const timeLabel = (value) => value ? new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
@@ -47,7 +48,7 @@ function ProductMention({ productId, productsById, quizAnswers, onOpenProduct })
   const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   return <button type="button" className="am-product" onClick={() => onOpenProduct(product)}>
     <span className="am-product-photo"><ProductImage src={product.image || product.imageUrl || product.images?.[0]} alt="" allowBrandLogo={product.type === 'digital'} style={{ objectFit: 'contain' }} /></span>
-    <span><strong>{product.name}</strong><small>{product.brand || 'ayna product'}</small></span>
+    <span><strong>{displayName(product)}</strong><small>{product.brand || 'ayna product'}</small></span>
     <em>{showMatch ? `${match.percent}% match` : 'View'}</em>
   </button>;
 }
