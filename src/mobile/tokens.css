@@ -196,8 +196,7 @@
   color: var(--ayna-text) !important;
 }
 .ayna-mobile[data-theme='dark'] :is(
-  .ay-cover, .ay-reel, .ay-deck, .ay-discover-banner,
-  .ayna-fresh-profile-hero, .ay-startups-hero, .ay-set-signedout
+  .ay-reel, .ay-discover-banner, .ay-startups-hero, .ay-set-signedout
 ) {
   --ay-ink: #050506;
   --ay-paper: #ffffff;
@@ -218,4 +217,80 @@
 }
 .ayna-mobile[data-theme='dark'] .ayna-bottom-nav button:not(.is-active) svg {
   stroke: currentColor !important;
+}
+
+/* Black full-screen sections; reserve neon for smaller accent surfaces. */
+.ayna-mobile[data-theme='dark'] :is(.ay-cover, .ay-deck, .ayna-fresh-profile-hero) {
+  --ay-ink: #ffffff;
+  --ay-paper: #151519;
+  background: var(--ayna-bg) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero *,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero > div:first-child > div:first-child,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero > div:nth-child(2) > div:last-child > div:first-child {
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero > div:nth-child(2) > div:last-child > div:last-child {
+  color: var(--ayna-text-muted) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero button[aria-label='Close profile'] {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero .ay-hub-avatar {
+  background: var(--ay-peri) !important;
+  border-color: #ffffff !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-profile-progress {
+  color: #ffffff !important;
+  border-color: var(--ayna-border) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-profile-progress i {
+  background: linear-gradient(to right, var(--ay-mint) var(--profile-progress), var(--ayna-border) var(--profile-progress)) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-badge.is-earned {
+  color: #050506 !important;
+  border-color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-badge--butter.is-earned { background: var(--ay-butter) !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge--pink.is-earned { background: var(--ay-pink) !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge--mint.is-earned { background: var(--ay-mint) !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge--peri.is-earned { background: var(--ay-peri) !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge.is-earned small { color: #303036 !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge.is-earned .ay-badge-mark {
+  border-color: #050506 !important;
+  background: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu > button > div:first-child {
+  --ay-ink: #050506;
+  color: #050506 !important;
+  border-color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu > button:nth-of-type(6) > div:first-child {
+  background: var(--ay-pink) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-hub-badge {
+  background: var(--ay-butter) !important;
+  border-color: #050506 !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-cover-copy h1,
+.ayna-mobile[data-theme='dark'] .ay-cover-copy p,
+.ayna-mobile[data-theme='dark'] .ay-cover-actions > div button,
+.ayna-mobile[data-theme='dark'] .ay-cover-mark,
+.ayna-mobile[data-theme='dark'] .ay-cover-top button {
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-cover-widget .ay-reel {
+  --ay-ink: #050506;
+  --ay-paper: #ffffff;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-deck-card {
+  --ay-ink: #050506;
+  --ay-paper: #ffffff;
+  color: #050506 !important;
 }
