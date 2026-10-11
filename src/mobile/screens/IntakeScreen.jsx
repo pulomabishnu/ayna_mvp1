@@ -1279,7 +1279,9 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
           <h1 className="ip-title">{step.title}</h1>
           {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
           {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
+          <span className="ip-spacer is-top" aria-hidden="true" />
           <div className="ip-answer">{renderBody()}</div>
+          <span className="ip-spacer is-bottom" aria-hidden="true" />
         </div>
       </div>
 

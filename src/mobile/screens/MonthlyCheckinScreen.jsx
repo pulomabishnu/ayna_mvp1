@@ -164,7 +164,9 @@ function StepShell({ title, subtitle, tag, children, footer, stepKey }) {
           {tag && <span className="ip-label">{tag}</span>}
           <h1 className="ip-title">{title}</h1>
           {subtitle && <p className="ip-subtitle">{subtitle}</p>}
+          <span className="ip-spacer is-top" aria-hidden="true" />
           <div className="ip-answer">{children}</div>
+          <span className="ip-spacer is-bottom" aria-hidden="true" />
         </div>
       </div>
       {footer}

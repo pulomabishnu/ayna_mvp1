@@ -242,8 +242,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
           flex: 'none',
         }}
       >
-        <span className="ay-hub-shapes" aria-hidden="true"><i /><i /><i /></span>
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', letterSpacing: 0.5 }}>ayna</div>
           <button
             type="button" aria-label="Close profile"
@@ -290,6 +289,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
           </div>
         </div>
         <button type="button" className="ayna-profile-progress" onClick={onEditProfile} aria-label="Edit health profile"><span>Health profile</span><span>{profileFilledPct}%</span><i aria-hidden="true" style={{ '--profile-progress': `${profileFilledPct}%` }} /></button>
+        <span className="ay-hub-shapes" aria-hidden="true"><i /><i /><i /></span>
       </div>
 
       <ProfileBadges savedCount={savedCount} ecosystemCount={ecosystemCount} profileFilledPct={profileFilledPct} />
@@ -659,7 +659,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <BackHeader title="Early Stage" onBack={onBack} />
+      <BackHeader title="New brands" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
         <div style={{ borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#1D1A2B,#1D1A2B)', color: '#FCFBFB', position: 'relative', overflow: 'hidden', marginBottom: 20 }}>
           <div style={{ position: 'absolute', right: -50, top: -50, width: 180, height: 180, borderRadius: '50%', border: '1px solid rgba(255,255,255,.16)' }} />
@@ -2716,21 +2716,6 @@ function PasswordScreen({ onBack, authUser }) {
 // different: that's the actual content update this pass shipped, not a
 // mismatch to fix.
 
-function PlainBackLink({ onBack, color = 'var(--ayna-text-muted)' }) {
-  return (
-    <div
-      onClick={onBack}
-      role="button"
-      aria-label="Back"
-      style={{ display: 'flex', alignItems: 'center', gap: 7, color, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 500, cursor: 'pointer', padding: 'max(20px, env(safe-area-inset-top)) 20px 0' }}
-    >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: color }}>
-        <path d="M15 18l-6-6 6-6" />
-      </svg>
-      Back
-    </div>
-  );
-}
 
 // Real numbers from HowItWorksFunnel.jsx: a plain linear scale would make
 // the 14-product final stage nearly invisible next to 3,140 (a real problem
@@ -2810,9 +2795,8 @@ function HowItWorksScreen({ onBack }) {
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <PlainBackLink onBack={onBack} />
+      <BackHeader title="How it works" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 36px' }}>
-        <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.6px', textTransform: 'uppercase', color: 'var(--ayna-text-muted)', marginTop: 18 }}>How it works</div>
         <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(30px * var(--ayna-text-scale, 1))', lineHeight: 1.2, color: 'var(--ayna-heading)', margin: '9px 0 10px' }}>Nothing reaches you unchecked.</div>
         <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginBottom: 24 }}>
           ayna filters the open market against your profile, then against published research. Anything that fails a step never reaches your shop.
@@ -3044,9 +3028,8 @@ function ContactScreen({ onBack }) {
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: '#FCFBFB' }}>
-      <PlainBackLink onBack={onBack} color="#53545A" />
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '18px 20px 40px' }}>
-        <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.7px', textTransform: 'uppercase', color: '#F7BADD' }}>Contact</div>
+      <BackHeader title="Contact" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '4px 20px 40px' }}>
         <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#1D1A2B', margin: '11px 0 0' }}>How can we help?</div>
         <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: '#53545A', marginTop: 13 }}>
           Send us a note and we'll make sure it reaches the right person on the ayna team.
@@ -3157,7 +3140,7 @@ export default function ProfileFlow({
   // reachable from more than one place (ProfileHub's own row, and Settings'
   // "Notifications" row), so "back" has to return to wherever the user
   // actually came from, not a fixed screen.
-  const [screenStack, setScreenStack] = useState(['hub']);
+  const [screenStack, setScreenStack] = useState(() => { const sub = import.meta.env.DEV && new URLSearchParams(window.location.search).get('pscreen'); return sub ? ['hub', sub] : ['hub']; });
   const screen = screenStack[screenStack.length - 1];
   const pushScreen = (next) => setScreenStack((stack) => [...stack, next]);
   const initial = (name || 'Y').trim().charAt(0).toUpperCase() || 'Y';

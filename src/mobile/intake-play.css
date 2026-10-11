@@ -245,12 +245,11 @@
 
 /* ---------- zip ticket ---------- */
 
-.ip-ticket {
-  --notch: 14px;
-  position: relative; padding: 16px 16px 14px; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); box-shadow: var(--ay-shadow-lg);
-  -webkit-mask: radial-gradient(circle var(--notch) at 0 58%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle var(--notch) at 100% 58%, #0000 98%, #000) right / 51% 100% no-repeat;
-  mask: radial-gradient(circle var(--notch) at 0 58%, #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle var(--notch) at 100% 58%, #0000 98%, #000) right / 51% 100% no-repeat;
-}
+.ip-ticket { position: relative; padding: 16px 16px 14px; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); box-shadow: var(--ay-shadow-lg); }
+/* Ticket notches: scene-coloured half circles with an ink edge. */
+.ip-ticket::before, .ip-ticket::after { content: ''; position: absolute; top: calc(50% - 4px); width: 26px; height: 26px; translate: 0 -50%; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ip-bg); }
+.ip-ticket::before { left: -15px; clip-path: inset(-2px -2px -2px 50%); }
+.ip-ticket::after { right: -15px; clip-path: inset(-2px 50% -2px -2px); }
 .ip-ticket-top { display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 2px dashed var(--ay-ink-faint); font: 800 11px/1 var(--ay-font-display); letter-spacing: .14em; }
 .ip-ticket-digits { display: flex; justify-content: center; gap: 7px; padding: 18px 0; }
 .ip-ticket-digits input {
@@ -470,3 +469,13 @@
 .ip-q { display: grid; gap: 8px; }
 .ip-q > strong { font: 700 13px/1.2 var(--ay-font-ui); }
 .ip-link-danger { justify-self: start; min-height: 36px; padding: 0; border: 0; background: none; color: var(--ay-alert); font: 700 13px/1 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+
+/* Short answers sit a little below the title instead of leaving the whole
+   bottom of the screen empty; long ones scroll from the top as before. */
+.ayna-play-intake .ip-question { min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; }
+.ayna-play-intake .ip-question > * { flex: none; }
+.ayna-play-intake .ip-spacer.is-top { flex: 1 1 0; max-height: 9vh; }
+.ayna-play-intake .ip-spacer.is-bottom { flex: 2 1 0; }
+.ayna-play-intake .ip-question > .ip-title, .ayna-play-intake .ip-question > .ip-label { align-self: flex-start; }
+.ip-art-sparkle--a { bottom: 14% !important; }

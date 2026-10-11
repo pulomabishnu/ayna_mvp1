@@ -132,3 +132,12 @@
 .ayw-building-copy span { font: 700 12px/1 var(--ay-font-ui); letter-spacing: .1em; opacity: .6; }
 .ayw-building-copy strong { color: var(--ay-paper) !important; font: 800 clamp(34px, 10vw, 44px)/.95 var(--ay-font-display); letter-spacing: -.045em; animation: ayw-up .45s var(--ay-ease) both; }
 @media (prefers-reduced-motion: reduce) { .ayw-deck i { animation: none; transform: rotate(var(--r)); } }
+
+/* Background motifs per slide (same art as the intake scenes). */
+.ayna-wrapped { --ip-bg: var(--w-bg); --ip-deep: var(--ay-peri-deep); --ip-select: var(--ay-butter); }
+.ayw--focus { --ip-deep: var(--ay-peri-deep); }
+.ayw--match { --ip-deep: var(--ay-pink-deep); --ip-select: var(--ay-butter); }
+.ayw--persona { --ip-deep: var(--ay-butter-deep); }
+.ayw--lineup { --ip-deep: var(--ay-mint-deep); }
+.ayna-wrapped > :not(.ip-art) { position: relative; z-index: 1; }
+.ayna-wrapped > .ip-art { z-index: 0; }

@@ -172,7 +172,7 @@ export default function MobileApp() {
   // state (search text, personalized toggle, scroll position, infinite-
   // scroll pagination) is exactly as the user left it, not reset to a
   // fresh mount. Closing the overlay just reveals it again.
-  const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
+  const [overlay, setOverlay] = useState(() => { const t = import.meta.env.DEV && new URLSearchParams(window.location.search).get('overlay'); return t ? { type: t } : null; }); // { type: 'product' | 'article', item }
   const [readArticleIds, setReadArticleIds] = useState([]);
   const [intakeMode, setIntakeMode] = useState('new');
   const [ecosystemNotice, setEcosystemNotice] = useState('');

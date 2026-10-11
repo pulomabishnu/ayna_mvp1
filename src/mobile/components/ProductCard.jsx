@@ -50,7 +50,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         <span className="ayna-fresh-product-category">{secondaryLabel}{isList && isPartner ? ' / Partner' : ''}</span>
         <strong>{name}</strong>
         {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
-        <span className="ayna-fresh-product-foot"><b>{hasDisplayPrice ? resolvedPrice : 'Details'}</b></span>
+        <span className="ayna-fresh-product-foot">{hasDisplayPrice ? <b>{resolvedPrice}</b> : <b className="is-muted">See details</b>}</span>
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
       </button>

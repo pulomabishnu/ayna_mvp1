@@ -64,6 +64,7 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
         )}
         {tags[0] && (
           <span
+            className="ay-libcard-tag"
             style={{
               position: 'relative',
               fontFamily: "var(--ayna-font-ui)",

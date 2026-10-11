@@ -231,9 +231,9 @@
 .ayna-mobile .ayna-fresh-profile-hero button[aria-label='Close profile'] { border: 2px solid var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
 .ay-hub-shapes { position: absolute; inset: 0; pointer-events: none; }
 .ay-hub-shapes i { position: absolute; display: block; border: 2px solid var(--ay-ink); }
-.ay-hub-shapes i:nth-child(1) { width: 110px; height: 110px; right: -34px; bottom: -40px; border-radius: 50%; background: var(--ay-butter); }
-.ay-hub-shapes i:nth-child(2) { width: 46px; height: 46px; right: 70px; bottom: 28px; border-radius: 12px; background: var(--ay-pink); rotate: 14deg; }
-.ay-hub-shapes i:nth-child(3) { width: 30px; height: 30px; right: 24px; top: 86px; border: 0; background: var(--ay-paper); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+.ay-hub-shapes i:nth-child(1) { width: 120px; height: 120px; right: -40px; top: -34px; border-radius: 50%; background: var(--ay-butter); }
+.ay-hub-shapes i:nth-child(2) { width: 36px; height: 36px; right: 92px; top: 74px; border-radius: 10px; background: var(--ay-pink); rotate: 14deg; }
+.ay-hub-shapes i:nth-child(3) { width: 26px; height: 26px; right: 44px; top: 102px; border: 0; background: var(--ay-paper); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
 .ayna-mobile .ay-hub-icon { background: var(--ay-butter); }
 .ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(2) .ay-hub-icon { background: var(--ay-pink); }
 .ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(3) .ay-hub-icon { background: var(--ay-mint); }
@@ -535,3 +535,70 @@
 .ayna-mobile.ayna-mobile .ayna-editorial-read-copy small { font-size: 12px !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ay-ink-soft) !important; }
 .ayna-mobile.ayna-mobile .ayna-cabinet-more { padding-bottom: 24px !important; }
 .ayna-mobile.ayna-mobile .ayna-cabinet-reads { padding-bottom: 4px !important; }
+
+/* ===================== Sweep 5 (full-app polish) ===================== */
+
+/* Photo placeholders: same neutral tile everywhere, no border, quiet mark. */
+.ayna-mobile.ayna-mobile .ayna-fresh-photo-placeholder { background: var(--ay-tile) !important; border: 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-photo-placeholder-mark { color: rgba(29, 26, 43, .28); font-size: 18px; }
+.ayna-mobile[data-theme='dark'] .ayna-fresh-photo-placeholder-mark { color: rgba(255, 255, 255, .3); }
+
+/* Product cards: centred copy under the photo (title, brand, price). */
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { align-items: center !important; text-align: center !important; padding: 12px 6px 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { width: 100%; text-align: center !important; }
+.ayna-mobile .ayna-fresh-product-foot b.is-muted { font-weight: 600 !important; color: var(--ay-ink-soft) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-match-badge { left: 50% !important; right: auto !important; translate: -50% 0; }
+
+/* Ecosystem areas become horizontal shelves (one row per area). */
+.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) > .ayna-editorial-product-grid {
+  display: flex !important; gap: var(--ay-space-3) !important; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-left: var(--ay-gutter);
+  margin: 0 calc(-1 * var(--ay-gutter)) !important; padding: 0 var(--ay-gutter) var(--ay-space-2) !important; scrollbar-width: none;
+}
+.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) > .ayna-editorial-product-grid::-webkit-scrollbar { display: none; }
+.ayna-mobile.ayna-mobile :is(.ayna-area-collection, .ayna-cabinet-collection) > .ayna-editorial-product-grid > * { flex: 0 0 42%; min-width: 0; scroll-snap-align: start; }
+.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head { margin-bottom: var(--ay-space-3) !important; }
+
+/* Saved header: title left, count as a small pill, Shop as a text button. */
+.ayna-mobile.ayna-mobile .ayna-saved-header { display: flex !important; align-items: center !important; gap: var(--ay-space-3) !important; }
+.ayna-mobile.ayna-mobile .ayna-saved-header h1 { display: inline-flex !important; align-items: center; gap: 8px; background: none !important; animation: none !important; font-size: 28px !important; }
+.ayna-mobile.ayna-mobile .ayna-saved-header h1 small { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 8px; border-radius: 99px; background: var(--ay-pink); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); vertical-align: middle; position: static !important; }
+.ayna-mobile.ayna-mobile .ayna-saved-header > button:last-child { margin-left: auto; min-height: 40px; padding: 0 16px; border: 1.5px solid var(--ay-line); border-radius: 99px; background: var(--ay-paper); font: 600 13px/1 var(--ay-font-ui); }
+
+/* Empty states sit in the middle of the space they have. */
+.ayna-mobile .ay-empty:not(.is-compact) { padding-top: 12vh !important; }
+
+/* Checkboxes: ayna style instead of the browser default. */
+.ayna-mobile input[type='checkbox']:not([role='switch']) {
+  appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 0; border: 2px solid var(--ay-ink); border-radius: 7px; background: var(--ay-paper);
+  display: inline-grid; place-content: center; cursor: pointer; transition: background-color var(--ay-dur-1, 140ms);
+}
+.ayna-mobile input[type='checkbox']:not([role='switch'])::after { content: ''; width: 10px; height: 6px; border: solid var(--ay-paper); border-width: 0 0 2.5px 2.5px; rotate: -45deg; translate: 0 -1px; scale: 0; transition: scale .2s var(--ay-pop); }
+.ayna-mobile input[type='checkbox']:not([role='switch']):checked { background: var(--ay-ink); }
+.ayna-mobile input[type='checkbox']:not([role='switch']):checked::after { scale: 1; }
+.ayna-mobile input[type='checkbox']:focus-visible { outline: 3px solid var(--ay-peri-deep); outline-offset: 2px; }
+
+/* Small all-caps labels set inline across older screens read as sentence case. */
+.ayna-mobile [style*='text-transform: uppercase'] { text-transform: none !important; letter-spacing: 0 !important; font-size: max(12px, 1em) !important; font-weight: 600 !important; }
+/* Display-font headings set inline were rendering thin; make them bold like the rest. */
+.ayna-mobile [style*='font-family: var(--ayna-font-display)'] { font-weight: 700 !important; letter-spacing: -.03em !important; }
+
+/* Reads shelves: the topic is already the row heading, so drop the tiny tag on each cover. */
+.ayna-mobile .ay-libcard-tag { display: none !important; }
+
+/* Legal footer links get a comfortable tap height. */
+.ayna-mobile .ay-legal a { padding: 8px 0; }
+
+/* Badges: readable sizes. */
+.ay-badge strong { font-size: 12px !important; }
+.ay-badge small { font-size: 11px !important; }
+
+.ayna-mobile .ayna-fresh-profile-hero > :not(.ay-hub-shapes) { position: relative; z-index: 1; }
+.ay-hub-shapes { z-index: 0; }
+.ayna-mobile .ayna-profile-progress i { background: linear-gradient(to right, var(--ay-ink) var(--profile-progress), rgba(29,26,43,.16) var(--profile-progress)) !important; height: 6px !important; border-radius: 6px; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { display: flex !important; justify-content: center !important; width: 100%; text-align: center !important; }
+.ayna-mobile input[type='checkbox']:not([role='switch']) { width: 22px !important; height: 22px !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero > div:nth-child(2) > div:first-child { border-radius: 50% !important; border: 2px solid var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 800 26px/1 var(--ay-font-display) !important; }
+/* Minimum readable size on the cover slider and About page details. */
+.ayna-mobile .ayna-slide-start-label span { font-size: 11px !important; letter-spacing: .02em !important; text-transform: none !important; opacity: .7; }
+.ayna-mobile :is(.ayna-scrapbook__paper small, .ayna-scrapbook__gate span, .ayna-scrapbook__orbit > span, .ayna-scrapbook__intro-stamp) { font-size: 12px !important; text-transform: none !important; letter-spacing: 0 !important; }
+.ay-reel-head { text-transform: none !important; letter-spacing: 0 !important; font-size: 14px !important; }

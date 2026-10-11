@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import ProductImage from '../components/ProductImage.jsx';
 import { getProfileMatchPercentForProduct } from '../../data/products.js';
+import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import '../wrapped.css';
+
+const SLIDE_ART = { focus: 'scallop', match: 'bloom', persona: 'sparkle', lineup: 'arch', empty: 'scallop' };
 
 // "Wrapped"-style story shown right after the intake. Every slide is built
 // from what the person actually answered and the products the real matcher
@@ -102,6 +105,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
       onTouchStart={(event) => { touchX.current = event.touches[0]?.clientX; }} onTouchEnd={handleTouchEnd}
       onKeyDown={(event) => { if (event.key === 'ArrowRight') next(); if (event.key === 'ArrowLeft') previous(); }}
       tabIndex={0} aria-label="Your ayna story">
+      {SLIDE_ART[active] && <IntakeSceneArt art={SLIDE_ART[active]} key={`art-${active}`} />}
       <div className="ayw-progress" aria-label={`Story ${index + 1} of ${slides.length}`}>
         {slides.map((slide, i) => <span key={slide}><i style={{ width: i < index ? '100%' : i === index ? `${progress * 100}%` : '0%' }} /></span>)}
       </div>
@@ -134,7 +138,6 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <ol className="ayw-ranks">
             {topAreas.slice(0, 3).map((area, i) => <li key={area} style={{ '--i': i }}><span>{i + 1}</span><strong>{area}</strong></li>)}
           </ol>
-          <p className="ayw-foot">Your top areas, ranked by your picks.</p>
         </>}
 
         {active === 'match' && first && <>
