@@ -86,3 +86,18 @@
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span:nth-child(3) { background: var(--ay-pink); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags { margin-top: 16px; gap: 8px; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span { padding: 7px 12px; font-size: 12px; }
+/* Tap-to-advance overlay: no ring on tap; rounded ring only for keyboard users */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-next { outline: none; border-radius: 20px; -webkit-tap-highlight-color: transparent; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-next:focus-visible { outline: 2px solid var(--ay-ink); outline-offset: 8px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause:focus:not(:focus-visible) { outline: none; }
+/* Ask frame: answer in mint so it isn't just ink and cream */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-ask .a { background: var(--ay-mint); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-ask p { font-size: 17px; }
+/* Centre the score on the ring itself (not on ring + tags) */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match { display: grid; grid-template-columns: auto; justify-content: center; justify-items: center; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match > svg,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { grid-area: 1 / 1; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { position: static !important; translate: none !important; align-self: center; justify-self: center; display: grid; justify-items: center; gap: 4px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags { grid-row: 2; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { position: relative !important; z-index: 1; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { top: auto !important; left: auto !important; }
