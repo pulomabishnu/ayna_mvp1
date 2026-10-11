@@ -213,7 +213,7 @@ export function DotScale({ options, value, onChange, label }) {
   const index = options.indexOf(value);
   return (
     <div className="ip-dots">
-      <div className="ip-dots-head"><span>{label}</span><strong>{value || '—'}</strong></div>
+      <div className="ip-dots-head"><span>{label}</span><strong className={value ? '' : 'is-empty'}>{value || 'Tap one'}</strong></div>
       <div className="ip-dots-row" role="radiogroup" aria-label={label}>
         {options.map((opt, i) => (
           <button type="button" key={opt} role="radio" aria-checked={value === opt} aria-label={opt}

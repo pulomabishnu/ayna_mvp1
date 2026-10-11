@@ -479,3 +479,4 @@
 .ayna-play-intake .ip-spacer.is-bottom { flex: 2 1 0; }
 .ayna-play-intake .ip-question > .ip-title, .ayna-play-intake .ip-question > .ip-label { align-self: flex-start; }
 .ip-art-sparkle--a { bottom: 14% !important; }
+.ip-dots-head strong.is-empty { color: var(--ay-ink-soft); font-weight: 600; font-size: 16px; }
