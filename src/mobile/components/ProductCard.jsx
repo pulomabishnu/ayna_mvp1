@@ -5,6 +5,7 @@ import { getBuyUrl } from '../data/buyUrl.js';
 import ProductImage from './ProductImage.jsx';
 import '../shop-card.css';
 import { displayName } from '../utils/displayName.js';
+import { brandOf } from '../data/brandFallback.js';
 
 function shortPrice(price) {
   const value = String(price || '').trim();
@@ -14,13 +15,14 @@ function shortPrice(price) {
 }
 
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch }) {
-  const { name, brand, category, price, priceDisplay, image, imageUrl, images } = product || {};
+  const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   const resolvedPrice = shortPrice(price || priceDisplay);
   const hasDisplayPrice = /[$€£]|^free\b/i.test(resolvedPrice);
-  const brandRepeatsName = brand && String(name || '').trim().toLowerCase() === String(brand).trim().toLowerCase();
+  const shownBrand = brandOf(product);
+  const brandRepeatsName = shownBrand && String(name || '').trim().toLowerCase() === shownBrand.toLowerCase();
   // Brand only — never fall back to the category word ("Pad") in the brand slot.
-  const secondaryLabel = !brandRepeatsName && brand ? brand : '';
+  const secondaryLabel = shownBrand || '';
   const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
   const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   const relevantReason = match?.matchStatus === 'scored' && !showMatch
@@ -46,9 +48,10 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
       </span>
       <span className="ayna-fresh-product-copy">
         {isList && <span className="ayna-fresh-product-category" aria-hidden={secondaryLabel ? undefined : true}>{secondaryLabel || '\u00a0'}{isPartner ? ' / Partner' : ''}</span>}
-        <strong>{brand ? displayName(product) : name}</strong>
+        <strong>{brandRepeatsName ? name : displayName(product)}</strong>
         {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
-        <span className="ayna-fresh-product-foot">{!isList && secondaryLabel && <small className="ayna-card-brand">{secondaryLabel}</small>}{hasDisplayPrice ? <b>{resolvedPrice}</b> : <b className="is-muted">See details</b>}</span>
+        {!isList && <small className="ayna-card-brand" aria-hidden={secondaryLabel && !brandRepeatsName ? undefined : true}>{secondaryLabel && !brandRepeatsName ? secondaryLabel : '\u00a0'}</small>}
+        <span className="ayna-fresh-product-foot">{hasDisplayPrice ? <b>{resolvedPrice}</b> : <b className="is-muted">See details</b>}</span>
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
       </button>

@@ -1,3 +1,5 @@
+import { brandOf } from '../data/brandFallback.js';
+
 /**
  * Product name for display next to a visible brand label.
  * "Neycher Odor Be Gone" + brand "Neycher" → "Odor Be Gone".
@@ -6,7 +8,7 @@
  */
 export function displayName(product) {
   const name = String(product?.name || '').trim();
-  const brand = String(product?.brand || '').trim();
+  const brand = brandOf(product);
   if (!name || !brand) return name;
   const lowerName = name.toLowerCase();
   const lowerBrand = brand.toLowerCase();
