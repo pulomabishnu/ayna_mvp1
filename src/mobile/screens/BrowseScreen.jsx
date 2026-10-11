@@ -76,49 +76,9 @@ function ModeTab({ label, active, onClick }) {
 
 function PersonalizedToggle({ on, disabled, onClick }) {
   return (
-    <button
-      type="button"
-      aria-pressed={on}
-      aria-label="Personalized products"
-      disabled={disabled}
-      onClick={onClick}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 6,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.45 : 1,
-        padding: '5px 5px 5px 10px',
-        border: 0,
-        borderRadius: 99,
-        background: on ? 'var(--ayna-text)' : 'var(--ayna-chip-bg)',
-        transition: 'background .15s',
-      }}
-    >
-      <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: on ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)' }}>Personalized</span>
-      <div
-        style={{
-          width: 30,
-          height: 17,
-          borderRadius: 99,
-          background: on ? 'var(--ayna-accent)' : 'var(--ayna-chip-border)',
-          position: 'relative',
-          transition: 'background .15s',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: 2,
-            left: on ? 15 : 2,
-            width: 13,
-            height: 13,
-            borderRadius: 99,
-            background: '#FFFFFF',
-            transition: 'left .15s',
-          }}
-        />
-      </div>
+    <button type="button" className="ay-for-me" role="switch" aria-checked={on} aria-label="Personalized products" disabled={disabled} onClick={onClick}>
+      <span>For me</span>
+      <i aria-hidden="true"><b /></i>
     </button>
   );
 }

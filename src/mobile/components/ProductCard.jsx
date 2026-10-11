@@ -3,6 +3,7 @@ import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import ProductImage from './ProductImage.jsx';
+import '../shop-card.css';
 import { displayName } from '../utils/displayName.js';
 
 function shortPrice(price) {
@@ -44,10 +45,10 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         <ProductImage src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
       </span>
       <span className="ayna-fresh-product-copy">
-        <span className="ayna-fresh-product-category" aria-hidden={secondaryLabel ? undefined : true}>{secondaryLabel || '\u00a0'}{isList && isPartner ? ' / Partner' : ''}</span>
+        {isList && <span className="ayna-fresh-product-category" aria-hidden={secondaryLabel ? undefined : true}>{secondaryLabel || '\u00a0'}{isPartner ? ' / Partner' : ''}</span>}
         <strong>{brand ? displayName(product) : name}</strong>
         {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
-        <span className="ayna-fresh-product-foot">{hasDisplayPrice ? <b>{resolvedPrice}</b> : <b className="is-muted">See details</b>}</span>
+        <span className="ayna-fresh-product-foot">{!isList && secondaryLabel && <small className="ayna-card-brand">{secondaryLabel}</small>}{hasDisplayPrice ? <b>{resolvedPrice}</b> : <b className="is-muted">See details</b>}</span>
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
       </button>
