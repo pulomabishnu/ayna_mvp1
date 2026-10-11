@@ -44,6 +44,7 @@ import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import EcosystemResetDialog from './components/EcosystemResetDialog.jsx';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
+import LibraryScreen from './screens/LibraryScreen.jsx';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
 
@@ -72,6 +73,7 @@ const SCREENS = {
   saved: SavedScreen,
   community: CommunityScreen,
   checkin: MonthlyCheckinScreen,
+  library: LibraryScreen,
 };
 
 // Same catalog desktop's Discovery page browses: prescription-only items
@@ -638,6 +640,7 @@ export default function MobileApp() {
     .slice(0, 3);
   const activeTab = ['profile', 'profile-auth'].includes(overlay?.type) ? 'profile'
     : screen === 'browse' ? 'browse'
+      : screen === 'library' ? 'library'
       : screen === 'community' ? 'community'
         : ['eco', 'ecointro'].includes(screen) ? 'home' : null;
 
@@ -653,6 +656,7 @@ export default function MobileApp() {
         seedKind={communitySeed?.kind}
         seedProductId={communitySeed?.productId}
         onGoBrowse={() => setScreen('browse')}
+        onGoLibrary={() => setScreen('library')}
         onGoEco={() => setScreen(hasEcosystem ? 'eco' : 'ecointro')}
         authUser={authUser}
         theme={theme}
@@ -661,6 +665,7 @@ export default function MobileApp() {
         onPersonalizedChange={setPersonalized}
         products={browseProducts}
         articles={ARTICLES}
+        readArticleIds={readArticleIds}
         savedProducts={savedMap}
         onToggleSaved={(product) => authUser ? toggleSaved(product) : requestAuth('Saved products')}
         onAddToEcosystem={handleAddToEcosystem}
@@ -686,11 +691,11 @@ export default function MobileApp() {
         ]}
       />
       {showTabBar && <MobileTabBar
-        active={askAynaOpen ? 'ask' : activeTab}
+        active={askAynaOpen ? 'library' : activeTab}
         onHome={() => { setAskAynaOpen(false); setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
         onBrowse={() => { setAskAynaOpen(false); setOverlay(null); setScreen('browse'); }}
         onCommunity={() => { setAskAynaOpen(false); setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
-        onAskAyna={() => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); })}
+        onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setScreen('library'); }}
         onProfile={() => { setAskAynaOpen(false); openProfile(); }}
       />}
       <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />

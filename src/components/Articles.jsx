@@ -5,7 +5,7 @@ import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import { RELEASED_STARTUPS } from '../data/startups';
 
 /** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort) — only tags that match the article heading. */
-const ARTICLE_TOPIC_TAGS = {
+export const ARTICLE_TOPIC_TAGS = {
   'intimate-wash': ['vaginal-health', 'intimate-care'],
   'heavy-bleeding': ['heavy-flow', 'cramps'],
   'menopause-basics': ['menopause'],

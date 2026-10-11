@@ -5,9 +5,7 @@ import DiscoverDeck from '../components/DiscoverDeck.jsx';
 import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
-import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
-import { getArticlesByProfileRelevance } from '../../components/Articles.jsx';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
@@ -50,29 +48,6 @@ const PREFERENCE_TERMS = { 'fragrance-free': ['fragrance free', 'fragrance-free'
 const SUSTAINABILITY_TERMS = { reusable: ['reusable', 'reuse'], recyclable: ['recyclable', 'recycled'], 'low-waste': ['low waste', 'zero waste', 'low-waste'], packaging: ['sustainable packaging', 'plastic-free packaging', 'compostable packaging'] };
 
 const PAGE_SIZE = 20;
-
-function ModeTab({ label, active, onClick }) {
-  return (
-    <button
-      type="button"
-      className="ayna-fresh-mode-tab"
-      aria-pressed={active}
-      onClick={onClick}
-      style={{
-        fontFamily: "var(--ayna-font-ui)",
-        fontWeight: 600,
-        fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
-        cursor: 'pointer',
-        paddingBottom: 10,
-        color: active ? 'var(--ayna-text)' : 'var(--ayna-text-faint)',
-        borderBottom: '2px solid ' + (active ? 'var(--ayna-accent)' : 'transparent'),
-        marginBottom: -1,
-      }}
-    >
-      {label}
-    </button>
-  );
-}
 
 function PersonalizedToggle({ on, disabled, onClick }) {
   return (
@@ -215,8 +190,9 @@ export default function BrowseScreen({
   // turns it off, not reset just because they left the tab.
   personalized: personalizedProp,
   onPersonalizedChange,
+  onGoLibrary,
 }) {
-  const [mode, setMode] = useState('products');
+  const mode = 'products'; // Reads moved to the Library tab
   const [searchValue, setSearchValue] = useState('');
   // Falls back to local state only if no controlled value is passed in
   // (keeps this component usable/testable standalone).
@@ -392,7 +368,6 @@ export default function BrowseScreen({
     };
   }, [searchTermRaw, searchScored.length, activeGroup]);
 
-  const articlesById = new Map(articles.map((a) => [a.id, a]));
   const matchingReads = searchTermRaw.length >= 2 ? articles
     .map((article) => {
       const title = String(article.title || '').toLowerCase();
@@ -402,18 +377,7 @@ export default function BrowseScreen({
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score)
     .map(({ article }) => article) : [];
-  const rows = ARTICLE_CATEGORIES.map((cat) => ({
-    ...cat,
-    items: cat.articleIds.map((id) => articlesById.get(id)).filter(Boolean),
-  })).filter((row) => row.items.length > 0);
 
-  // Same personalization logic as the "Recommended" filter on the desktop
-  // Health Articles Library (Articles.jsx's getArticlesByProfileRelevance) —
-  // not a separate/weaker mobile-only scoring system. Falls back to the
-  // category-grouped `rows` above when off or when there's no profile yet.
-  const recommendedReads = getArticlesByProfileRelevance(quizAnswers || {}, null).filter((a) =>
-    articlesById.has(a.id)
-  );
 
   return (
     <div className="ayna-fresh-browse-screen ayna-figma-discover">
@@ -429,22 +393,15 @@ export default function BrowseScreen({
       />
 
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
-        <h1>{mode === 'products' ? 'Shop' : 'Reads'}</h1>
-        <SearchBar placeholder={mode === 'products' ? 'Search products or brands' : 'Search reads'} value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+        <h1>Shop</h1>
+        <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px', borderBottom: '1px solid var(--ayna-border)', margin: '0 0 14px' }}>
-        <div style={{ display: 'flex', gap: 18 }}>
-          <ModeTab label="Products" active={mode === 'products'} onClick={() => setMode('products')} />
-          <ModeTab label="Reads" active={mode === 'reads'} onClick={() => setMode('reads')} />
-        </div>
         {mode === 'products' && hasProfile && (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
           </div>
-        )}
-        {mode === 'reads' && hasProfile && (
-          <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
         )}
       </div>
 
@@ -519,47 +476,14 @@ export default function BrowseScreen({
           {matchingReads.length > 0 && <section style={{ marginTop: 25 }} aria-label="Related reads">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '0 20px 12px' }}>
               <strong style={{ fontSize: 18, color: 'var(--ayna-text)' }}>Learn about this</strong>
-              <button type="button" onClick={() => setMode('reads')} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontWeight: 600 }}>See reads →</button>
+              <button type="button" onClick={() => onGoLibrary?.()} style={{ border: 0, background: 'transparent', color: 'var(--ayna-accent-dark)', fontWeight: 600 }}>Library →</button>
             </div>
             <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 6px' }}>
               {matchingReads.slice(0, 4).map((article) => <LibraryCard key={article.id} article={article} onClick={() => onOpenArticle?.(article)} />)}
             </div>
           </section>}
         </>
-      ) : searchTermRaw.length >= 2 ? (
-        matchingReads.length > 0 ? <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }}>
-          {matchingReads.map((article) => <LibraryCard key={article.id} article={article} fullWidth onClick={() => onOpenArticle?.(article)} />)}
-        </div> : <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)' }}>No reads match this search.</div>
-      ) : personalized && hasProfile ? (
-        recommendedReads.length === 0 ? (
-          <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
-            No reads match your profile yet.
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }}>
-            {recommendedReads.map((a) => (
-              <LibraryCard key={a.id} article={a} fullWidth onClick={() => onOpenArticle && onOpenArticle(a)} />
-            ))}
-          </div>
-        )
-      ) : rows.length === 0 ? (
-        <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
-          No reads yet.
-        </div>
-      ) : (
-        rows.map((row) => (
-          <div key={row.id} style={{ marginBottom: 24 }}>
-            <div style={{ padding: '0 20px 11px' }}>
-              <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))' }}>{row.label}</div>
-            </div>
-            <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
-              {row.items.map((a) => (
-                <LibraryCard key={a.id} article={a} onClick={() => onOpenArticle && onOpenArticle(a)} />
-              ))}
-            </div>
-          </div>
-        ))
-      )}
+      ) : null}
     </div>
   );
 }
