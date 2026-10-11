@@ -179,3 +179,7 @@
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause svg { width: 10px !important; height: 10px !important; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-foot { gap: 12px !important; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { height: 3px !important; }
+/* Compact progress: four short segments + pause, centred under the art */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-foot { justify-content: center; gap: 12px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress { flex: none !important; gap: 4px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { flex: none !important; width: 24px; height: 3px !important; }
