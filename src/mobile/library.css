@@ -24,3 +24,8 @@
 .ay-lib-empty { padding: 40px var(--ay-gutter); text-align: center; opacity: .6; }
 .ay-lib-head .ayna-fresh-search-wrap { padding: 0 !important; }
 .ayna-mobile .ay-lib-head .ayna-fresh-search { min-height: 46px; border: 1.5px solid var(--ay-line) !important; border-radius: 14px !important; background: var(--ay-paper) !important; box-shadow: none !important; }
+/* Dark mode: follow the app's dark heading/text tokens */
+.ayna-mobile[data-theme='dark'] .ay-lib { background: var(--ayna-bg) !important; color: var(--ayna-heading, #fff); }
+.ayna-mobile[data-theme='dark'] .ay-lib-head h1, .ayna-mobile[data-theme='dark'] .ay-lib-row-head h2, .ayna-mobile[data-theme='dark'] .ay-lib-progress { color: var(--ayna-heading, #fff) !important; }
+.ayna-mobile[data-theme='dark'] .ay-lib-progress i { background: rgba(255,255,255,.18); }
+.ayna-mobile[data-theme='dark'] .ay-lib-progress i::after { background: var(--ayna-heading, #fff); }
