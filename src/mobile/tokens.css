@@ -482,3 +482,10 @@
   border-color: var(--ayna-chip-border) !important;
   color: #ffffff !important;
 }
+
+/* Product title chips have a later theme rule with the same priority. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-detail .ayna-fresh-detail-title .ay-pdp-tag {
+  background: var(--ayna-chip-bg) !important;
+  border-color: var(--ayna-chip-border) !important;
+  color: #ffffff !important;
+}
