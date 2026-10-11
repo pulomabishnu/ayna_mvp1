@@ -72,3 +72,4 @@
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot b { font-size: 15px !important; }
 .ayna-mobile.ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid:not(.is-list-layout) { row-gap: 12px !important; column-gap: 12px !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; margin: 0 !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { align-content: center !important; -webkit-box-pack: center; }
