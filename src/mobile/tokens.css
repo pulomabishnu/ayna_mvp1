@@ -72,25 +72,46 @@
 .ayna-mobile[data-theme='dark']::after { mix-blend-mode: screen !important; opacity: .06 !important; }
 @media (prefers-reduced-transparency: reduce) { .ayna-mobile.ayna-mobile::after { display: none; } }
 
-/* Dark mode uses the same ink and surface values across every mobile screen. */
+/* Dark mode: black canvas, white type, neon versions of the four accents. */
 .ayna-mobile[data-theme='dark'] {
   color-scheme: dark;
-  --ayna-bg: #1d1a2b;
-  --ayna-bg-alt: #211d30;
-  --ayna-surface: #241f34;
-  --ayna-surface-alt: #282338;
-  --ayna-border: #5b5569;
-  --ayna-chip-bg: #302a3e;
-  --ayna-chip-border: #5b5569;
-  --ayna-text: #fffcf5;
-  --ayna-text-muted: #d7d3dc;
-  --ayna-text-faint: #bcb5c6;
-  --ayna-heading: #fffcf5;
-  --ayna-cta-bg: #f7badd;
-  --ayna-cta-text: #1d1a2b;
-  --ay-ink-soft: rgba(255, 252, 245, .72);
-  --ay-ink-faint: rgba(255, 252, 245, .2);
-  --ay-line: rgba(255, 252, 245, .16);
+  --ay-ink: #ffffff;
+  --ay-ink-soft: rgba(255, 255, 255, .74);
+  --ay-ink-faint: rgba(255, 255, 255, .22);
+  --ay-paper: #151519;
+  --ay-cream: #050506;
+  --ay-peri: #a8b5ff;
+  --ay-peri-deep: #8294ff;
+  --ay-butter: #f5ff68;
+  --ay-butter-deep: #e6f83b;
+  --ay-pink: #ff78cf;
+  --ay-pink-deep: #ff4bbb;
+  --ay-mint: #69ffc1;
+  --ay-mint-deep: #34ef9d;
+  --ay-alert: #ff806f;
+  --ay-line: rgba(255, 255, 255, .2);
+  --ay-shadow: 3px 3px 0 rgba(255, 255, 255, .5);
+  --ay-shadow-lg: 5px 5px 0 rgba(255, 255, 255, .5);
+  --ayna-bg: #050506;
+  --ayna-bg-alt: #101014;
+  --ayna-surface: #151519;
+  --ayna-surface-alt: #1c1c22;
+  --ayna-border: #46464f;
+  --ayna-chip-bg: #222229;
+  --ayna-chip-border: #53535d;
+  --ayna-text: #ffffff;
+  --ayna-text-muted: #d5d5dc;
+  --ayna-text-faint: #b7b7c2;
+  --ayna-heading: #ffffff;
+  --ayna-cta-bg: var(--ay-pink);
+  --ayna-cta-text: #050506;
+  --ayna-accent: var(--ay-pink);
+  --ayna-accent-dark: var(--ay-pink);
+  --ayna-figma-mint: var(--ay-mint);
+  --ayna-figma-berry: var(--ay-pink);
+  --ayna-figma-mist: var(--ayna-chip-bg);
+  --ayna-figma-paper: var(--ayna-bg);
+  --ayna-brown: var(--ayna-text);
   background: var(--ayna-bg);
   color: var(--ayna-text);
 }
@@ -134,8 +155,8 @@
 .ayna-mobile[data-theme='dark'] .ay-set-signedout,
 .ayna-mobile[data-theme='dark'] .ay-startups-hero,
 .ayna-mobile[data-theme='dark'] .ay-startups-hero :is(h2, p) {
-  color: #1d1a2b !important;
-  stroke: #1d1a2b;
+  color: #050506 !important;
+  stroke: #050506;
 }
 
 .ayna-mobile[data-theme='dark'] .ay-set-session {
@@ -145,8 +166,8 @@
 }
 .ayna-mobile[data-theme='dark'] .ay-set-session.is-out {
   background: transparent !important;
-  border-color: #f7badd !important;
-  color: #f7badd !important;
+  border-color: var(--ay-pink) !important;
+  color: var(--ay-pink) !important;
 }
 .ayna-mobile[data-theme='dark'] .ay-switch {
   background: var(--ayna-chip-bg) !important;
@@ -156,8 +177,45 @@
   background: var(--ayna-text) !important;
 }
 .ayna-mobile[data-theme='dark'] .ay-switch[aria-checked='true'] > div {
-  background: #1d1a2b !important;
+  background: #050506 !important;
 }
 .ayna-mobile[data-theme='dark'] .ay-set-page a[href^='mailto:'] {
   color: var(--ayna-text) !important;
+}
+
+/* Dark surfaces stay black; accent panels keep dark ink for contrast. */
+.ayna-mobile[data-theme='dark'] :is(
+  .ayna-figma-header, .ayna-bottom-nav, .am-top, .am-sheet,
+  .ayna-fresh-product-card, .ayna-figma-routine, .ayna-figma-routine > button,
+  .am-post-card, .ayna-figma-partner-disclosure, .ayna-fresh-article-paper,
+  .ayna-fresh-profile-menu, .ayna-saved-card, .ayna-saved-feature,
+  .ayna-shop-filter-sheet, .ay-eco-cover, .ay-badge, .ay-ask-starter
+) {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] :is(
+  .ay-cover, .ay-reel, .ay-deck, .ay-discover-banner,
+  .ayna-fresh-profile-hero, .ay-startups-hero, .ay-set-signedout
+) {
+  --ay-ink: #050506;
+  --ay-paper: #ffffff;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] :is(
+  .ay-set-icon, .ayna-bottom-nav button.is-active,
+  .ayna-shop-category[aria-pressed='true'],
+  .ayna-category-expanded button[aria-pressed='true']
+) {
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active {
+  background: var(--ay-butter) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button:not(.is-active) {
+  color: var(--ayna-text-muted) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button:not(.is-active) svg {
+  stroke: currentColor !important;
 }
