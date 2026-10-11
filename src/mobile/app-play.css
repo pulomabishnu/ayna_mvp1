@@ -141,7 +141,7 @@
 
 /* Screens slide up a touch when they open; motion explains the change. */
 @keyframes ay-screen-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-.ayna-mobile > :is(.ayna-figma-discover, .ayna-cabinet-home, .am-screen, .ayna-saved-collection, .ayna-ecosystem-start) { animation: ay-screen-in var(--ay-dur-2) var(--ay-ease) both; }
+.ayna-mobile > :is(.ayna-figma-discover, .ayna-cabinet-home, .am-screen, .ayna-saved-collection, .ayna-ecosystem-start) { animation: ay-screen-in var(--ay-dur-2) var(--ay-ease) backwards; }
 
 /* Tab bar: active pill takes the tab's colour; icon gives a small hop. */
 .ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-bottom-nav button.is-active { background: var(--ay-butter) !important; }
@@ -635,3 +635,15 @@
 .ayna-mobile .ay-cover-widget .ay-reel.is-pink { --reel-bg: var(--ay-pink); }
 .ayna-mobile .ay-cover-widget .ay-reel.is-mint { --reel-bg: var(--ay-mint); }
 .ayna-mobile .ay-cover-widget .ay-reel.is-peri { --reel-bg: var(--ay-paper); }
+
+/* You hub menu — same card language as Settings */
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu { gap: 10px !important; padding: 20px var(--ay-gutter) 26px !important; background: transparent !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button { min-height: 64px !important; padding: 12px 14px !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 18px !important; background: var(--ay-paper) !important; box-shadow: 0 3px 0 var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button > div:first-child { display: flex !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; border: 1.5px solid var(--ay-ink); color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(1) > div:first-child { background: var(--ay-butter) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(2) > div:first-child { background: var(--ay-pink) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(3) > div:first-child { background: var(--ay-mint) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(4) > div:first-child { background: var(--ay-peri) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(5) > div:first-child { background: var(--ay-butter) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:nth-of-type(6) > div:first-child { background: var(--ay-cream) !important; }
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ay-ink); }

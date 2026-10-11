@@ -33,6 +33,7 @@
   --ayna-reference-paper: var(--ay-cream);
 }
 .ayna-mobile:not([data-theme='dark']) {
+  --ayna-brown: var(--ay-ink); /* only ever used for text/link colour; pink text failed contrast */
   --ayna-figma-berry: var(--ay-peri-ink);
   --ayna-color-ink: var(--ay-ink);
   --ayna-figma-ink: var(--ay-ink);
