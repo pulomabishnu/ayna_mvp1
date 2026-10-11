@@ -39,7 +39,7 @@ export default function SlideToStart({ onComplete }) {
   };
 
   return <div className="ayna-slide-start" ref={trackRef}>
-    <span className="ayna-slide-start-fill" style={{ width: `${distance + 58}px` }} aria-hidden="true" />
+    <span className="ayna-slide-start-fill" style={{ width: distance > 0 ? `${distance + 56}px` : 0 }} aria-hidden="true" />
     <span className="ayna-slide-start-label" aria-hidden="true">Get matched <span>slide to start</span></span>
     <button
       type="button"

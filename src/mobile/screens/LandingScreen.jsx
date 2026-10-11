@@ -1,5 +1,6 @@
 import RotatingProducts from '../components/RotatingProducts.jsx';
 import SlideToStart from '../components/SlideToStart.jsx';
+import '../landing.css';
 
 export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, onAboutAyna }) {
   return <main className="ay-cover">
@@ -12,7 +13,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAcco
       <div className="ay-cover-widget"><RotatingProducts /></div>
     </section>
     <section className="ay-cover-copy" aria-labelledby="ay-cover-title">
-      <h1 id="ay-cover-title">Health,<br /><em>matched to you.</em></h1>
+      <h1 id="ay-cover-title">Health,<br />matched to you.</h1>
       <p>Products · care · answers</p>
     </section>
     <section className="ay-cover-actions" aria-label="Get started">
