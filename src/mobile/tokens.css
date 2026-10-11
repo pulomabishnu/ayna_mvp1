@@ -459,3 +459,8 @@
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image img {
   mix-blend-mode: normal !important;
 }
+
+/* The profile's four-point star was dark on the black hero. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero .ay-hub-shapes i:nth-child(3) {
+  background: var(--ay-peri) !important;
+}
