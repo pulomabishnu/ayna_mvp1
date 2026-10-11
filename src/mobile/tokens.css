@@ -358,3 +358,17 @@
   border-color: var(--ayna-border) !important;
   box-shadow: none !important;
 }
+
+/* Bright action cards use dark ink; the auth sheet uses a neon primary action. */
+.ayna-mobile[data-theme='dark'] .ay-discover-cta {
+  --ay-ink: #050506;
+  --ay-paper: #ffffff;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-discover-cta .ay-discover-copy strong {
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-profile-auth-sheet .ayna-profile-auth-primary {
+  background: var(--ay-pink) !important;
+  color: #050506 !important;
+}
