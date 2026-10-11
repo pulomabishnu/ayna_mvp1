@@ -137,3 +137,27 @@
   color: #1d1a2b !important;
   stroke: #1d1a2b;
 }
+
+.ayna-mobile[data-theme='dark'] .ay-set-session {
+  background: var(--ayna-cta-bg) !important;
+  border-color: var(--ayna-cta-bg) !important;
+  color: var(--ayna-cta-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-set-session.is-out {
+  background: transparent !important;
+  border-color: #f7badd !important;
+  color: #f7badd !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-switch {
+  background: var(--ayna-chip-bg) !important;
+  border-color: var(--ayna-border) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-switch > div {
+  background: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-switch[aria-checked='true'] > div {
+  background: #1d1a2b !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-set-page a[href^='mailto:'] {
+  color: var(--ayna-text) !important;
+}
