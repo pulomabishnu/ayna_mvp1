@@ -100,3 +100,23 @@
 .ay-intro-diagram[data-focus='health'] line.is-health,
 .ay-intro-diagram[data-focus='preferences'] line.is-preferences { stroke-width: 1 !important; }
 @media (prefers-reduced-motion: reduce) { .ay-intro-diagram line { stroke-dashoffset: 0; } }
+
+/* Consistent motion: every part runs the SAME animation list in every state, so tapping never restarts anything.
+   - entrance uses `scale` + opacity (plays once)
+   - idle bob uses `transform` (always on, evenly staggered)
+   - centring stays on `translate`
+   - selection is a static shadow + bold spoke (no extra animation, no scale jump) */
+.ayna-mobile .ay-intro-part,
+.ayna-mobile .ay-intro-part[aria-pressed='true'],
+.ayna-mobile .ay-intro-part:not([aria-pressed='true']) {
+  transform: none;
+  animation: ay-intro-pop .5s cubic-bezier(.34,1.56,.64,1) both, ay-intro-bob 4.5s ease-in-out infinite !important;
+  transition: box-shadow .2s var(--ay-ease), background-color .2s var(--ay-ease);
+}
+.ayna-mobile .ay-intro-part.is-goals { animation-delay: .45s, 0s !important; }
+.ayna-mobile .ay-intro-part.is-health { animation-delay: .55s, -1.5s !important; }
+.ayna-mobile .ay-intro-part.is-preferences { animation-delay: .65s, -3s !important; }
+.ayna-mobile .ay-intro-part[aria-pressed='true'] { box-shadow: 0 4px 0 var(--ay-ink); border-width: 2px; }
+.ayna-mobile .ay-intro-part:active { box-shadow: 0 1px 0 var(--ay-ink); }
+@keyframes ay-intro-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile .ay-intro-part { animation: none !important; } }
