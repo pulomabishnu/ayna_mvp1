@@ -80,9 +80,9 @@ export default function ArticleDetailScreen({ article, onBack, nextRead, onNext 
       </header>
       {image && <div className="ayna-read-photo"><img src={image} alt="" /></div>}
       <div className="ayna-read-content">
-        <h1 style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(32px * var(--ayna-text-scale, 1))', lineHeight: 1.13, color: 'var(--ayna-text)', margin: 0 }}>{title}</h1>
+        <h1 className="ay-read-title">{title}</h1>
         {teaser && (
-          <div style={{ fontFamily: "var(--ayna-font-display)", fontStyle: 'italic', fontSize: 'calc(16.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-accent-dark)', marginTop: 13 }}>
+          <div className="ay-read-teaser" style={{ marginTop: 13 }}>
             {teaser}
           </div>
         )}

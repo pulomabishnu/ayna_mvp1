@@ -494,3 +494,14 @@
 .ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-foot { order: 3; margin-top: 6px !important; }
 .ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-context { display: none !important; }
 .ayna-mobile .ay-eco-cover .ayna-ecosystem-chart { margin: 0 !important; padding: 0 !important; border: 0 !important; }
+
+/* Reads: same type system as the rest of the app. */
+.ayna-mobile .ay-read-title { margin: 0; color: var(--ay-ink) !important; font: 800 calc(30px * var(--ayna-text-scale, 1))/1.05 var(--ay-font-ui) !important; letter-spacing: -.035em !important; text-wrap: balance; }
+.ayna-mobile .ay-read-teaser { color: var(--ay-ink-soft) !important; font: 500 calc(16px * var(--ayna-text-scale, 1))/1.5 var(--ay-font-ui) !important; font-style: normal !important; }
+.ayna-mobile .ayna-read-photo { margin: 0 var(--ay-gutter) var(--ay-space-5) !important; border-radius: var(--ay-radius-lg) !important; overflow: hidden !important; background: var(--ay-tile) !important; aspect-ratio: 4 / 3; }
+.ayna-mobile .ayna-read-photo img { width: 100% !important; height: 100% !important; object-fit: cover !important; }
+.ayna-mobile .ayna-read-content { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
+.ayna-mobile .ayna-read-sources h2 { font: 800 20px/1.1 var(--ay-font-ui) !important; letter-spacing: -.02em; }
+
+/* About: let the headlines lead; drop the small caps eyebrows. */
+.ayna-mobile .ayna-scrapbook__eyebrow { display: none !important; }
