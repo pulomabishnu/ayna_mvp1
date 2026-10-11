@@ -71,3 +71,421 @@
 .ayna-mobile.ayna-mobile::after { background: url('/images/ayna-grain-mobile.svg') repeat !important; background-size: 180px 180px !important; opacity: .09 !important; mix-blend-mode: multiply !important; z-index: 2147483000 !important; pointer-events: none !important; }
 .ayna-mobile[data-theme='dark']::after { mix-blend-mode: screen !important; opacity: .06 !important; }
 @media (prefers-reduced-transparency: reduce) { .ayna-mobile.ayna-mobile::after { display: none; } }
+
+/* Dark mode: black canvas, white type, neon versions of the four accents. */
+.ayna-mobile[data-theme='dark'] {
+  color-scheme: dark;
+  --ay-ink: #ffffff;
+  --ay-ink-soft: rgba(255, 255, 255, .74);
+  --ay-ink-faint: rgba(255, 255, 255, .22);
+  --ay-paper: #151519;
+  --ay-cream: #050506;
+  --ay-peri: #a8b5ff;
+  --ay-peri-deep: #8294ff;
+  --ay-butter: #f5ff68;
+  --ay-butter-deep: #e6f83b;
+  --ay-pink: #ff78cf;
+  --ay-pink-deep: #ff4bbb;
+  --ay-mint: #69ffc1;
+  --ay-mint-deep: #34ef9d;
+  --ay-alert: #ff806f;
+  --ay-line: rgba(255, 255, 255, .2);
+  --ay-shadow: 3px 3px 0 rgba(255, 255, 255, .5);
+  --ay-shadow-lg: 5px 5px 0 rgba(255, 255, 255, .5);
+  --ayna-bg: #050506;
+  --ayna-bg-alt: #101014;
+  --ayna-surface: #151519;
+  --ayna-surface-alt: #1c1c22;
+  --ayna-border: #46464f;
+  --ayna-chip-bg: #222229;
+  --ayna-chip-border: #53535d;
+  --ayna-text: #ffffff;
+  --ayna-text-muted: #d5d5dc;
+  --ayna-text-faint: #b7b7c2;
+  --ayna-heading: #ffffff;
+  --ayna-cta-bg: var(--ay-pink);
+  --ayna-cta-text: #050506;
+  --ayna-accent: var(--ay-pink);
+  --ayna-accent-dark: var(--ay-pink);
+  --ayna-figma-mint: var(--ay-mint);
+  --ayna-figma-berry: var(--ay-pink);
+  --ayna-figma-mist: var(--ayna-chip-bg);
+  --ayna-figma-paper: var(--ayna-bg);
+  --ayna-brown: var(--ayna-text);
+  background: var(--ayna-bg);
+  color: var(--ayna-text);
+}
+.ayna-mobile[data-theme='dark'] :is(
+  .ayna-ecosystem-start, .ayna-cabinet-home, .ayna-fresh-saved,
+  .ayna-fresh-profile-hub, .ayna-fresh-product-detail, .ayna-fresh-article,
+  .ayna-figma-discover, .am-screen
+) {
+  background: var(--ayna-bg) !important;
+  color: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-set-page,
+.ayna-mobile[data-theme='dark'] .ayna-scrapbook > .ay-set-head {
+  background: var(--ayna-bg) !important;
+  color: var(--ayna-text);
+}
+.ayna-mobile[data-theme='dark'] .ay-set-page :is(h1, h2, h3, p),
+.ayna-mobile[data-theme='dark'] .ay-set-card .ay-set-row,
+.ayna-mobile[data-theme='dark'] .ay-set-head-title {
+  color: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-set-card,
+.ayna-mobile[data-theme='dark'] .ay-set-head > button,
+.ayna-mobile[data-theme='dark'] .ay-startups-filters button:not([aria-pressed='true']),
+.ayna-mobile[data-theme='dark'] .ay-set-page [style*='background: var(--ayna-surface)'][style*='border'] {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: var(--ayna-text) !important;
+  box-shadow: none !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-startups-filters button[aria-pressed='true'] {
+  background: var(--ayna-cta-bg);
+  border-color: var(--ayna-cta-bg);
+  color: var(--ayna-cta-text);
+}
+.ayna-mobile[data-theme='dark'] .ay-set-card .ay-set-row:active {
+  background: var(--ayna-chip-bg) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-set-icon,
+.ayna-mobile[data-theme='dark'] .ay-set-icon svg,
+.ayna-mobile[data-theme='dark'] .ay-set-signedout,
+.ayna-mobile[data-theme='dark'] .ay-startups-hero,
+.ayna-mobile[data-theme='dark'] .ay-startups-hero :is(h2, p) {
+  color: #050506 !important;
+  stroke: #050506;
+}
+
+.ayna-mobile[data-theme='dark'] .ay-set-session {
+  background: var(--ayna-cta-bg) !important;
+  border-color: var(--ayna-cta-bg) !important;
+  color: var(--ayna-cta-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-set-session.is-out {
+  background: transparent !important;
+  border-color: var(--ay-pink) !important;
+  color: var(--ay-pink) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-switch {
+  background: var(--ayna-chip-bg) !important;
+  border-color: var(--ayna-border) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-switch > div {
+  background: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-switch[aria-checked='true'] > div {
+  background: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-set-page a[href^='mailto:'] {
+  color: var(--ayna-text) !important;
+}
+
+/* Dark surfaces stay black; accent panels keep dark ink for contrast. */
+.ayna-mobile[data-theme='dark'] :is(
+  .ayna-figma-header, .ayna-bottom-nav, .am-top, .am-sheet,
+  .ayna-fresh-product-card, .ayna-figma-routine, .ayna-figma-routine > button,
+  .am-post-card, .ayna-figma-partner-disclosure, .ayna-fresh-article-paper,
+  .ayna-fresh-profile-menu, .ayna-saved-card, .ayna-saved-feature,
+  .ayna-shop-filter-sheet, .ay-eco-cover, .ay-badge, .ay-ask-starter
+) {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] :is(
+  .ay-reel, .ay-discover-banner, .ay-startups-hero, .ay-set-signedout
+) {
+  --ay-ink: #050506;
+  --ay-paper: #ffffff;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] :is(
+  .ay-set-icon, .ayna-bottom-nav button.is-active,
+  .ayna-shop-category[aria-pressed='true'],
+  .ayna-category-expanded button[aria-pressed='true']
+) {
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active {
+  background: var(--ay-butter) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button:not(.is-active) {
+  color: var(--ayna-text-muted) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button:not(.is-active) svg {
+  stroke: currentColor !important;
+}
+
+/* Black full-screen sections; reserve neon for smaller accent surfaces. */
+.ayna-mobile[data-theme='dark'] :is(.ay-cover, .ay-deck, .ayna-fresh-profile-hero) {
+  --ay-ink: #ffffff;
+  --ay-paper: #151519;
+  background: var(--ayna-bg) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero *,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero > div:first-child > div:first-child,
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero > div:nth-child(2) > div:last-child > div:first-child {
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero > div:nth-child(2) > div:last-child > div:last-child {
+  color: var(--ayna-text-muted) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero button[aria-label='Close profile'] {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero .ay-hub-avatar {
+  background: var(--ay-peri) !important;
+  border-color: #ffffff !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-profile-progress {
+  color: #ffffff !important;
+  border-color: var(--ayna-border) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-profile-progress i {
+  background: linear-gradient(to right, var(--ay-mint) var(--profile-progress), var(--ayna-border) var(--profile-progress)) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-badge.is-earned {
+  color: #050506 !important;
+  border-color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-badge--butter.is-earned { background: var(--ay-butter) !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge--pink.is-earned { background: var(--ay-pink) !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge--mint.is-earned { background: var(--ay-mint) !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge--peri.is-earned { background: var(--ay-peri) !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge.is-earned small { color: #303036 !important; }
+.ayna-mobile[data-theme='dark'] .ay-badge.is-earned .ay-badge-mark {
+  border-color: #050506 !important;
+  background: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu > button > div:first-child {
+  --ay-ink: #050506;
+  color: #050506 !important;
+  border-color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu > button:nth-of-type(6) > div:first-child {
+  background: var(--ay-pink) !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-hub-badge {
+  background: var(--ay-butter) !important;
+  border-color: #050506 !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-cover-copy h1,
+.ayna-mobile[data-theme='dark'] .ay-cover-copy p,
+.ayna-mobile[data-theme='dark'] .ay-cover-actions > div button,
+.ayna-mobile[data-theme='dark'] .ay-cover-mark,
+.ayna-mobile[data-theme='dark'] .ay-cover-top button {
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-cover-widget .ay-reel {
+  --ay-ink: #050506;
+  --ay-paper: #ffffff;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-deck-card {
+  --ay-ink: #050506;
+  --ay-paper: #ffffff;
+  color: #050506 !important;
+}
+
+/* Shop and community: remove pale surfaces and keep neon controls legible. */
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-shop-heading {
+  background: var(--ayna-bg) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-shop-heading h1 {
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-shop-heading .ayna-fresh-search {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-shop-heading .ayna-fresh-search input {
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-shop-heading .ayna-fresh-search input::placeholder {
+  color: var(--ayna-text-muted) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-fresh-product-image {
+  background: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-fresh-product-image img {
+  mix-blend-mode: normal !important;
+}
+.ayna-mobile[data-theme='dark'] .am-card.am-post-card {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .am-product em {
+  background: var(--ay-butter) !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active svg {
+  stroke: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-set-page [style*='background: rgb(255, 255, 255)'][style*='border-radius'],
+.ayna-mobile[data-theme='dark'] .ay-set-page [style*='background: #fff'] {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+}
+
+/* Match the higher-specificity mobile layout rules loaded after tokens. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover {
+  background: var(--ayna-bg) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-hub-badge {
+  background: var(--ay-butter) !important;
+  border-color: #050506 !important;
+  color: #050506 !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero {
+  background: var(--ayna-bg) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu > button {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  box-shadow: none !important;
+}
+
+/* Bright action cards use dark ink; the auth sheet uses a neon primary action. */
+.ayna-mobile[data-theme='dark'] .ay-discover-cta {
+  --ay-ink: #050506;
+  --ay-paper: #ffffff;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-discover-cta .ay-discover-copy strong {
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-profile-auth-sheet .ayna-profile-auth-primary {
+  background: var(--ay-pink) !important;
+  color: #050506 !important;
+}
+
+/* Carry the You page's black-card palette through Ecosystem and Shop. */
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-stage,
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head,
+.ayna-mobile[data-theme='dark'] .ayna-home-today {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head h2,
+.ayna-mobile[data-theme='dark'] .ayna-home-today h2 {
+  color: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head h2 small {
+  background: var(--ay-pink) !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-section-head > span {
+  background: var(--ayna-chip-bg) !important;
+  color: var(--ayna-text) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-home-today > button {
+  background: var(--ay-mint) !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-eco-play {
+  background: var(--ay-butter) !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-eco-play svg {
+  fill: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-home .ayna-fresh-product-image {
+  background: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-cabinet-home .ayna-fresh-product-image img {
+  mix-blend-mode: normal !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-shop-category[aria-pressed='true'],
+.ayna-mobile[data-theme='dark'] .ayna-category-expanded button[aria-pressed='true'] {
+  background: var(--ay-pink) !important;
+  border-color: var(--ay-pink) !important;
+  color: #050506 !important;
+}
+
+/* Keep decorative stars visible on the black canvas. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover-stars i:nth-child(2),
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover-stars i:nth-child(5) {
+  background: var(--ay-pink) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover .ayna-slide-start {
+  background: var(--ayna-surface) !important;
+  border: 1px solid var(--ayna-border) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover .ayna-slide-start-label {
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover .ayna-slide-start-handle {
+  color: #050506 !important;
+}
+
+/* Later mobile layout rules use more specific selectors for these panels. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-stage.ay-eco-hero,
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head h2 {
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head h2 small {
+  background: var(--ay-pink) !important;
+  border-color: #050506 !important;
+  color: #050506 !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection .ayna-cabinet-section-head > span {
+  background: var(--ayna-chip-bg) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image {
+  background: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image img {
+  mix-blend-mode: normal !important;
+}
+
+/* The profile's four-point star was dark on the black hero. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero .ay-hub-shapes i:nth-child(3) {
+  background: var(--ay-peri) !important;
+}
+
+/* Keep text legible in the Ecosystem reading cards and product detail chips. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-reads .ayna-editorial-read {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-reads .ayna-editorial-read-copy strong {
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-reads .ayna-editorial-read-copy small {
+  color: var(--ayna-text-muted) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-detail .ay-pdp-tag {
+  background: var(--ayna-chip-bg) !important;
+  border-color: var(--ayna-chip-border) !important;
+  color: #ffffff !important;
+}
+
+/* Product title chips have a later theme rule with the same priority. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-detail .ayna-fresh-detail-title .ay-pdp-tag {
+  background: var(--ayna-chip-bg) !important;
+  border-color: var(--ayna-chip-border) !important;
+  color: #ffffff !important;
+}
