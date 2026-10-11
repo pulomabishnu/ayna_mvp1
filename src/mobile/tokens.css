@@ -294,3 +294,47 @@
   --ay-paper: #ffffff;
   color: #050506 !important;
 }
+
+/* Shop and community: remove pale surfaces and keep neon controls legible. */
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-shop-heading {
+  background: var(--ayna-bg) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-shop-heading h1 {
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-shop-heading .ayna-fresh-search {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-shop-heading .ayna-fresh-search input {
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-shop-heading .ayna-fresh-search input::placeholder {
+  color: var(--ayna-text-muted) !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-fresh-product-image {
+  background: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-figma-discover .ayna-fresh-product-image img {
+  mix-blend-mode: normal !important;
+}
+.ayna-mobile[data-theme='dark'] .am-card.am-post-card {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile[data-theme='dark'] .am-product em {
+  background: var(--ay-butter) !important;
+  color: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active svg {
+  stroke: #050506 !important;
+}
+.ayna-mobile[data-theme='dark'] .ay-set-page [style*='background: rgb(255, 255, 255)'][style*='border-radius'],
+.ayna-mobile[data-theme='dark'] .ay-set-page [style*='background: #fff'] {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+}
