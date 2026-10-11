@@ -81,6 +81,45 @@ function trustChecks(product) {
   return out;
 }
 
+const PANEL_ICONS = {
+  summary: <path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" />,
+  clinician: <><path d="M6 4v5a4 4 0 0 0 8 0V4M10 13v2a5 5 0 0 0 10 0v-1.5" /><circle cx="20" cy="11" r="2" /></>,
+  scientific: <path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3M7.5 15h9" />,
+  community: <><path d="M4 5h12v9H8l-4 3V5Z" /><path d="M20 9v10l-3-2h-7v-1" /></>,
+};
+const PANEL_TONES = { summary: 'butter', clinician: 'mint', scientific: 'peri', community: 'pink' };
+
+/** One "game card" per evidence tab: sticker header with count, a clamped summary with Read more, then link cards (3, then Show all). */
+function SourcePanel({ kind, title, count, countLabel = 'source', countPlural, summary, meta, children, links = [], emptyText }) {
+  const [open, setOpen] = useState(false);
+  const [all, setAll] = useState(false);
+  const long = String(summary || '').length > 220;
+  const shown = all ? links : links.slice(0, 3);
+  return (
+    <section className={`ay-src tone-${PANEL_TONES[kind]}`}>
+      <header className="ay-src-head">
+        <span className="ay-src-sticker" aria-hidden="true"><svg viewBox="0 0 24 24">{PANEL_ICONS[kind]}</svg></span>
+        <h2>{title}</h2>
+        {count > 0 && <span className="ay-src-count">{count} {count === 1 ? countLabel : (countPlural || `${countLabel}s`)}</span>}
+      </header>
+      {summary ? <>
+        <p className={`ay-src-summary${long && !open ? ' is-clamped' : ''}`}>{summary}</p>
+        {long && <button type="button" className="ay-src-more" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : 'Read more'}</button>}
+      </> : (!links.length && <p className="ay-src-empty">{emptyText}</p>)}
+      {meta}
+      {children}
+      {links.length > 0 && <ul className="ay-src-links">
+        {shown.map((link) => <li key={link.url}><a href={link.url} target="_blank" rel="noopener noreferrer">
+          <span className="ay-src-avatar" aria-hidden="true">{String(link.label || '?').charAt(0).toUpperCase()}</span>
+          <span className="ay-src-link-text"><small>{link.kind ? `${link.kind} · ` : ''}{link.label}</small><strong>{link.text || link.label}</strong>{link.summary && <em>{link.summary}</em>}</span>
+          <span className="ay-src-go" aria-hidden="true">↗</span>
+        </a></li>)}
+      </ul>}
+      {links.length > 3 && <button type="button" className="ay-src-more" aria-expanded={all} onClick={() => setAll((v) => !v)}>{all ? 'Show fewer' : `Show all ${links.length}`}</button>}
+    </section>
+  );
+}
+
 function ChipLink({ chip }) {
   return chip.url ? (
     <a href={chip.url} target="_blank" rel="noopener noreferrer" title={chip.text || chip.url} style={CHIP}>{chip.label}</a>
@@ -297,7 +336,6 @@ export default function ProductDetailScreen({
   ecosystemProducts = [],
 }) {
   const [partnerOpen, setPartnerOpen] = useState(false);
-  const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [activeDetailSection, setActiveDetailSection] = useState('summary');
   const [shareCopied, setShareCopied] = useState(false);
   const [warningsOpen, setWarningsOpen] = useState(false);
@@ -315,7 +353,6 @@ export default function ProductDetailScreen({
   if (product?.id !== seenProductId) {
     setSeenProductId(product?.id);
     setPartnerOpen(false);
-    setSummaryExpanded(false);
     setWarningsOpen(false);
     setActiveDetailSection('summary');
   }
@@ -552,22 +589,15 @@ export default function ProductDetailScreen({
         </div>}
 
         <div className="ayna-detail-sections ay-pdp-tabs" role="tablist" aria-label="Product information">
-          {detailTabs.map(([section, label]) => <button key={section} type="button" role="tab" aria-selected={currentSection === section} onClick={() => setActiveDetailSection(section)}>{label}</button>)}
+          {detailTabs.map(([section, label]) => <button key={section} type="button" role="tab" data-tone={PANEL_TONES[section] || 'ink'} aria-selected={currentSection === section} onClick={() => setActiveDetailSection(section)}>{PANEL_ICONS[section] && <svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS[section]}</svg>}{label}</button>)}
         </div>
 
         <div className="ay-pdp-panel" role="tabpanel">
           {currentSection === 'summary' && <>
             {whyMatched && <section className="ay-pdp-card is-tint"><h2>Why this fits you</h2><p>{whyMatched}</p></section>}
-            <section className="ay-pdp-card">
-              <div className="ay-pdp-card-meta"><i aria-hidden="true" />ayna summary{sourceCountTotal > 0 ? ` · ${sourceCountTotal} source${sourceCountTotal === 1 ? '' : 's'}` : ''}</div>
-              {summary ? <>
-                <p className={summaryExpanded || String(summary).length <= 260 ? '' : 'is-clamped'}>{summary}</p>
-                {String(summary).length > 260 && <button type="button" className="ay-pdp-more" onClick={() => setSummaryExpanded((v) => !v)}>{summaryExpanded ? 'Less' : 'More'}</button>}
-              </> : <p className="is-empty">No summary yet.</p>}
-              {effectiveness && <p className="is-sub">{effectiveness}</p>}
-              {checks.length > 0 && <ul className="ay-pdp-checks">{checks.map((c) => <li key={c}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>{c}</li>)}</ul>}
-              <ChipRow chips={summarySourceChips} />
-            </section>
+            <SourcePanel kind="summary" key={`s-${product.id}`} title="ayna summary" count={sourceCountTotal} summary={summary} emptyText="No summary yet."
+              links={summarySourceChips.filter((c) => c.url).map((c) => ({ url: c.url, label: c.label, text: c.text }))}
+              meta={checks.length > 0 && <ul className="ay-pdp-checks">{checks.map((c) => <li key={c}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>{c}</li>)}</ul>} />
             {factRows.length > 0 && <dl className="ay-pdp-card ay-pdp-facts">{factRows.map((row) => <div key={row.label}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}</dl>}
             {(ingredientScience?.length > 0 || (meaningfulDetail(safety.materials) && !factRows.some((r) => r.label === 'Materials'))) && <section className="ay-pdp-card">
               <h2>What’s inside</h2>
@@ -579,35 +609,19 @@ export default function ProductDetailScreen({
             {!buyUrl && whereToBuy.length > 0 && <section className="ay-pdp-card"><h2>Where to buy</h2><p className="is-sub">{whereToBuy.join(' · ')}</p></section>}
           </>}
 
-          {currentSection === 'clinician' && <section className="ay-pdp-card">
-            <h2>{clinicianOpinionSource === 'brand' ? 'Brand note' : 'Clinician opinion'}</h2>
-            {doctorOpinion ? <p style={{ whiteSpace: 'pre-line' }}>{doctorOpinion}</p> : <p className="is-empty">No clinician opinion yet.</p>}
-            {clinicianAttribution && <p className="is-meta">{clinicianAttribution}</p>}
-            {badges.length > 0 && <div className="ay-pdp-tags">{badges.map((b) => <span key={b} className="ay-pdp-tag">{b}</span>)}</div>}
-            <ChipRow chips={[...clinicianChips, ...clinicianCitationChips]} />
-          </section>}
+          {currentSection === 'clinician' && <SourcePanel kind="clinician" key={`c-${product.id}`} title={clinicianOpinionSource === 'brand' ? 'Brand note' : 'Clinician opinion'} count={sourceCounts.doctor} summary={doctorOpinion} emptyText="No clinician opinion yet."
+            links={[...clinicianChips, ...clinicianCitationChips].filter((c) => c.url).map((c) => ({ url: c.url, label: c.label, text: c.text }))}
+            meta={<>{clinicianAttribution && <p className="ay-src-meta">{clinicianAttribution}</p>}{badges.length > 0 && <div className="ay-pdp-tags">{badges.map((b) => <span key={b} className="ay-pdp-tag">{b}</span>)}</div>}</>} />}
 
-          {currentSection === 'scientific' && (scientificLiteratureEntries.length > 0
-            ? scientificLiteratureEntries.map((entry) => <a key={entry.url} className="ay-pdp-card ay-pdp-link" href={entry.url} target="_blank" rel="noopener noreferrer">
-                <span className="ay-pdp-card-meta">{entry.kind} · {entry.label}</span>
-                {entry.text && <strong>{entry.text}</strong>}
-                {entry.summary && <p className="is-sub">{entry.summary}</p>}
-              </a>)
-            : <section className="ay-pdp-card"><p className="is-empty">No studies linked yet.</p></section>)}
+          {currentSection === 'scientific' && <SourcePanel kind="scientific" key={`r-${product.id}`} title="Scientific literature" count={scientificLiteratureEntries.length} countLabel="study" countPlural="studies" summary={effectiveness} emptyText="No studies linked yet."
+            links={scientificLiteratureEntries.map((e) => ({ url: e.url, label: e.label, kind: e.kind, text: e.text, summary: e.summary }))} />}
 
-          {currentSection === 'community' && <>
+          {currentSection === 'community' && <SourcePanel kind="community" key={`m-${product.id}`} title="Social media + reviews" count={communityCitationEntries.length} countLabel="link" summary={communityReview} emptyText="No reviews linked yet."
+            links={communityCitationEntries.map((e) => ({ url: e.url, label: e.label, text: e.text, summary: e.summary }))}>
             {onCommunityAction && <div className="ay-pdp-actions">
               {[['review', 'Write a review'], ['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend']].map(([kind, label]) => <button key={kind} type="button" onClick={() => onCommunityAction(kind)}>{label}</button>)}
             </div>}
-            {communityCitationEntries.length > 0 ? communityCitationEntries.map((entry) => <a key={entry.url} className="ay-pdp-card ay-pdp-link is-social" href={entry.url} target="_blank" rel="noopener noreferrer">
-              <span className="ay-pdp-avatar" aria-hidden="true">{entry.label.charAt(0)}</span>
-              <span>
-                <span className="ay-pdp-card-meta">{entry.label}</span>
-                {entry.text && <strong>{entry.text}</strong>}
-                {entry.summary && <p className="is-sub">{entry.summary}</p>}
-              </span>
-            </a>) : communityReview ? <section className="ay-pdp-card"><p>{communityReview}</p></section> : <section className="ay-pdp-card"><p className="is-empty">No reviews linked yet.</p></section>}
-          </>}
+          </SourcePanel>}
 
           {currentSection === 'whoitsfor' && (whoItsFor || []).map((item, i) => <div key={item} className="ay-pdp-who" style={{ display: 'flex', gap: 12, alignItems: 'center' }}><div className="ay-pdp-who-n">{i + 1}</div><div style={{ flex: 1, minWidth: 0 }}>{item}</div></div>)}
 
