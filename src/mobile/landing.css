@@ -156,3 +156,20 @@
 @media (prefers-reduced-motion: reduce) { .ayna-mobile.ayna-mobile .ay-cover-stars i { animation: none; } }
 /* Narrow phones: keep the headline to two lines */
 .ayna-mobile.ayna-mobile .ay-cover-copy h1 { font-size: calc(clamp(32px, 10.2vw, 48px) * var(--ayna-text-scale, 1)) !important; }
+
+/* Proximity (Figma UI principles): the reel is one tight group — title, art, progress —
+   and leftover height becomes equal white space around the group, never inside it. */
+.ayna-mobile.ayna-mobile .ay-cover-reel { flex: 1 1 auto; display: flex !important; flex-direction: column; justify-content: center; margin: 0 !important; padding: 32px 0 40px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget { flex: 0 0 auto !important; display: block; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-pink,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-mint,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-peri { flex: none !important; height: auto !important; min-height: 0 !important; max-height: none !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { flex: none !important; height: clamp(232px, 34vh, 312px); padding-block: 24px !important; box-sizing: border-box; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match > svg { width: clamp(136px, 21vh, 196px) !important; height: clamp(136px, 21vh, 196px) !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags { margin-top: 16px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track { min-height: clamp(48px, 7vh, 64px) !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-eco { gap: 8px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck { width: clamp(124px, 19vh, 168px) !important; height: clamp(150px, 23vh, 200px) !important; }
+/* Stars follow the groups: one by the reel title, one at each side of the art, two by the headline */
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(1) { top: 76px !important; right: 34% !important; }
