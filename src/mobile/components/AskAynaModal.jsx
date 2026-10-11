@@ -178,7 +178,7 @@ export default function AskAynaModal({
       data-open={open ? 'true' : 'false'}
       style={{
         position: 'absolute',
-        inset: 0,
+        inset: '0 0 var(--ayna-bottom-nav-height) 0',
         zIndex: 60,
         background: 'var(--ayna-bg)',
         display: 'flex',

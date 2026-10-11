@@ -183,11 +183,6 @@
   .ayna-fresh-welcome h1 { font-size:clamp(39px,10vw,52px); }
 }
 
-/* A compact two-up dashboard beneath the photographic feature. */
-.ayna-fresh-home-stack .stack-pink,
-.ayna-fresh-home-stack .stack-pink strong,
-.ayna-fresh-home-stack .stack-pink .ayna-fresh-stack-action,
-
 /* Keep the orbit labels clear of the headline on narrow phones. */
 @media (max-width:375px) { .ayna-fresh-intro-stage { min-height:420px; } .ayna-fresh-intro-stage h1 { font-size:36px; } }
 

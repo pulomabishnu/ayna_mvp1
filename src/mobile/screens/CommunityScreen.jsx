@@ -226,7 +226,9 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   };
   const openPlaylist = async (playlist) => {
     setEditingPlaylist(false); setProductId(null); setPage({ type: 'playlist', id: playlist.id }); setDetails(playlist); setError('');
-    try { setItems(await community.listPlaylistItems(supabase, playlist.id)); } catch (e) { notifyError(e); }
+    setItems((playlist.preview_product_ids || []).map((product_id) => ({ product_id })));
+    try { setItems(await community.listPlaylistItems(supabase, playlist.id)); }
+    catch (e) { if (!playlist.preview_product_ids?.length) notifyError(e); }
   };
   const refreshPlaylist = async (id) => {
     const [next, nextItems] = await Promise.all([community.getPlaylist(supabase, id), community.listPlaylistItems(supabase, id)]);
@@ -492,12 +494,12 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   const renderEmpty = () => {
     const copy = {
       'for-you': ['No posts yet', 'Be the first to post.', 'Post', 'post', 'chat', 'pink'],
-      following: ['Not following anyone', 'Follow people to see their posts here.', 'Explore', null, 'spark', 'peri'],
+      following: ['No posts yet', 'Follow someone to see their posts.', 'Explore', null, 'spark', 'peri'],
       question: ['No questions yet', null, 'Ask', 'question', 'chat', 'butter'],
       review: ['No reviews yet', null, 'Review', 'review', 'spark', 'mint'],
-      playlists: ['No playlists yet', 'Group products you’d recommend.', 'Create', 'playlist', 'bookmark', 'pink'],
+      playlists: ['No playlists yet', 'Collect your favorites.', 'Create', 'playlist', 'bookmark', 'pink'],
     }[tab];
-    return <EmptyState art={copy[4]} tone={copy[5]} title={copy[0]} body={copy[1]} actionLabel={copy[2]} onAction={() => copy[3] ? openCompose(copy[3]) : setTab('for-you')} />;
+    return <div className="am-community-empty-slot"><EmptyState art={copy[4]} tone={copy[5]} title={copy[0]} body={copy[1]} actionLabel={copy[2]} onAction={() => copy[3] ? openCompose(copy[3]) : setTab('for-you')} /></div>;
   };
 
   if (!supabase) return <div className="am-screen"><MobileHeader activeTab="community" onGoBrowse={onGoBrowse} onGoEco={onGoEco} /><EmptyState art="offline" tone="butter" title="Community isn’t loading" body="Try again later." actionLabel="Shop" onAction={onGoBrowse} /></div>;
@@ -511,17 +513,17 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
         {!details && <p className="am-empty" role="status">Loading…</p>}
         {page.type === 'post' && details && <>{renderPost(details)}<h2 className="am-section">Replies</h2>{comments.map((c) => <div className="am-comment" key={c.id}><div className="am-meta"><div className="am-author"><CommunityAvatar name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><span>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</span></div><span>{timeLabel(c.created_at)}</span></div><p>{c.body}</p>{c.product_id && <ProductMention productId={c.product_id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />}<button type="button" onClick={() => setReplyTo(c.id)}>Reply</button></div>)}<div className="am-compose-inline">{replyTo && <button type="button" onClick={() => setReplyTo(null)}>Replying · cancel</button>}<textarea value={commentBody} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" /><ProductPicker products={products} value={productId} onChange={setProductId} /><button type="button" className="am-primary" disabled={busy || !commentBody.trim()} onClick={submitComment}>Post reply</button></div></>}
         {page.type === 'playlist' && details && <section className="am-playlist-detail">
-          <div className="am-playlist-detail-hero">{details.cover_url && <img className="am-cover-detail" src={publicMediaUrl(details.cover_url)} alt="Playlist cover" />}<div className="am-playlist-detail-copy"><small>{items.length} {items.length === 1 ? 'PICK' : 'PICKS'}</small><h2 className="am-detail-title">{details.title}</h2>{details.description && <p className="am-detail-copy">{details.description}</p>}</div></div>
+          <div className="am-playlist-detail-hero">{details.cover_url && <img className="am-cover-detail" src={publicMediaUrl(details.cover_url)} alt="Playlist cover" />}<div className="am-playlist-detail-copy"><small>{details.item_count ?? items.length} {(details.item_count ?? items.length) === 1 ? 'PICK' : 'PICKS'}</small><h2 className="am-detail-title">{details.title}</h2>{details.description && <p className="am-detail-copy">{details.description}</p>}</div></div>
           {authUser?.id === details.owner_id && <div className="am-playlist-owner-actions">
             <button type="button" className="am-secondary" onClick={startPlaylistEdit}>Edit</button>
             <button type="button" className="am-secondary" onClick={() => setDeletePlaylistTarget(details)}>Delete</button>
           </div>}
-          <div className="am-playlist-section-heading"><span>Products</span><strong>{items.length}</strong></div>
+          <div className="am-playlist-section-heading"><span>Products</span><strong>{details.item_count ?? items.length}</strong></div>
           {items.map((item) => <div className="am-playlist-item" key={item.product_id}>
             <ProductMention productId={item.product_id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />
             {authUser?.id === details.owner_id && <button type="button" disabled={busy} onClick={() => removePlaylistProduct(item.product_id)}>Remove</button>}
           </div>)}
-          {items.length === 0 && <p className="am-empty">No products added yet.</p>}
+          {items.length === 0 && !error && <p className="am-empty">No products added yet.</p>}
           {authUser?.id === details.owner_id && <div className="am-card am-playlist-add">
             <h3>Add a product</h3><ProductPicker products={products.filter((item) => !items.some((saved) => String(saved.product_id) === String(item.id)))} value={productId} onChange={setProductId} />
             <button type="button" className="am-primary" disabled={busy || !productId} onClick={addPlaylistProduct}>Add to playlist</button>
@@ -540,7 +542,7 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
           {!searchResults.people.length && !searchResults.posts.length && !searchResults.playlists.length && <EmptyState compact art="search" tone="mint" title="No results" body="Try a name, topic, or playlist." />}
         </>}</div> : <>
           <div className="am-tabs" role="tablist" aria-label="Community sections">{TABS.map(([key, label]) => <button type="button" role="tab" aria-selected={tab === key} key={key} className={tab === key ? 'is-active' : ''} onClick={() => key === 'following' && !authUser ? requireAccount('your following feed') : setTab(key)}>{label}</button>)}</div>
-          {tab === 'for-you' && posts.length === 0 && !loading && <EmptyState art="chat" tone="pink" title="No posts yet" body="Be the first to post." actionLabel={authUser ? 'Post' : 'See questions'} onAction={() => authUser ? openCompose('post') : setTab('question')} />}
+          {tab === 'for-you' && posts.length === 0 && !loading && <div className="am-community-empty-slot"><EmptyState art="chat" tone="pink" title="No posts yet" body="Be the first to post." actionLabel={authUser ? 'Post' : 'See questions'} onAction={() => authUser ? openCompose('post') : setTab('question')} /></div>}
           {tab === 'for-you' && posts.length > 0 && <button type="button" className="am-share-prompt" onClick={() => openCompose('post')}><CommunityAvatar name={profile?.display_name || 'You'} path={profile?.avatar_url} /><span>Share with the community</span><span className="am-share-plus"><CommunityIcon name="plus" size={18} /></span></button>}
           {tab === 'playlists' ? <><div className="am-list-heading"><h2>{playlistSection === 'mine' ? 'My playlists' : playlistSection === 'friends' ? 'Shared by friends' : 'Made by the community'}</h2><button type="button" onClick={() => openCompose('playlist')}>Create playlist</button></div><div className="am-playlist-switch"><button type="button" aria-pressed={playlistSection === 'recent'} onClick={() => setPlaylistSection('recent')}>Community</button><button type="button" aria-pressed={playlistSection === 'friends'} onClick={() => authUser ? setPlaylistSection('friends') : requireAccount('friends-only playlists')}>Friends</button><button type="button" aria-pressed={playlistSection === 'mine'} onClick={() => authUser ? setPlaylistSection('mine') : requireAccount('your playlists')}>My playlists</button></div><div className="am-playlist-grid">{playlists.map((p) => <button type="button" className="am-playlist" key={p.id} onClick={() => openPlaylist(p)}><span className="am-cover">{p.cover_url ? <img src={publicMediaUrl(p.cover_url)} alt="" loading="lazy" /> : <span>ayna</span>}</span><span className="am-playlist-copy"><strong>{p.title}</strong><small>{p.item_count || 0} products</small><small>by {p.owner_display_name || 'ayna community'}</small></span></button>)}</div>{!loading && playlists.length === 0 && renderEmpty()}</> : <>{posts.map(renderPost)}{!loading && posts.length === 0 && tab !== 'for-you' && renderEmpty()}{cursor && <button type="button" className="am-more" disabled={loading} onClick={loadMore}>Show more posts</button>}</>}
           {loading && <p className="am-empty">Loading…</p>}

@@ -469,7 +469,7 @@ export default function BrowseScreen({
       />
 
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
-        <h1>Shop</h1>
+        <h1>{mode === 'products' ? 'Shop' : 'Reads'}</h1>
         <SearchBar placeholder={mode === 'products' ? 'Search products or brands' : 'Search reads'} value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
       </div>
 
@@ -478,12 +478,12 @@ export default function BrowseScreen({
           <ModeTab label="Products" active={mode === 'products'} onClick={() => setMode('products')} />
           <ModeTab label="Reads" active={mode === 'reads'} onClick={() => setMode('reads')} />
         </div>
-        {mode === 'products' && (
+        {mode === 'products' && hasProfile && (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
           </div>
         )}
-        {mode === 'reads' && (
+        {mode === 'reads' && hasProfile && (
           <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
         )}
       </div>
@@ -499,7 +499,7 @@ export default function BrowseScreen({
       {mode === 'products' && !searchValue.trim() && (
         <button type="button" className="ay-discover-cta" onClick={() => setShowDeck(true)}>
           <span className="ay-discover-art" aria-hidden="true"><i /><i /><i /></span>
-          <span className="ay-discover-copy"><strong>Swipe to discover</strong><small>{authUser && quizAnswers ? 'Best matches first' : 'Save or skip, one at a time'}</small></span>
+          <span className="ay-discover-copy"><strong>Swipe to discover</strong></span>
           <span className="ay-discover-go" aria-hidden="true">→</span>
         </button>
       )}

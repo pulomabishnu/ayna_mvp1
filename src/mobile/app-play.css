@@ -88,9 +88,10 @@
 /* ===== Audit pass 2 ===== */
 
 /* Product photos: one clean tile, no halo blob behind cut-out packshots. */
-.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image { background: var(--ay-tile) !important; border-radius: var(--ay-radius-lg) !important; overflow: hidden !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image { background: transparent !important; border-bottom: 1px solid var(--ay-line); border-radius: 0 !important; overflow: hidden !important; }
 .ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image::before { display: none !important; }
-.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image img { padding: 12% !important; object-fit: contain !important; mix-blend-mode: multiply; -webkit-mask-image: none !important; mask-image: none !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card .ayna-fresh-product-image img { padding: 3% !important; object-fit: contain !important; mix-blend-mode: multiply; -webkit-mask-image: none !important; mask-image: none !important; }
+.ayna-mobile.ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-photo-placeholder { background: var(--ay-peri) !important; border: 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { aspect-ratio: 1 !important; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) { border-bottom: 0 !important; padding-bottom: 4px !important; }
 .ayna-mobile .ayna-figma-discover .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { min-height: 0 !important; }
@@ -125,6 +126,9 @@
 .ayna-mobile .am-tabs::-webkit-scrollbar { display: none; }
 .ayna-mobile .am-tabs button { flex: none; min-height: 44px !important; padding: 0 !important; border: 0 !important; border-bottom: 3px solid transparent !important; border-radius: 0 !important; background: transparent !important; color: var(--ay-ink-soft) !important; font: 600 var(--ay-text-sm)/1 var(--ay-font-ui) !important; box-shadow: none !important; }
 .ayna-mobile .am-tabs button.is-active { color: var(--ay-ink) !important; border-bottom-color: var(--ay-ink) !important; }
+.ayna-mobile .am-list-heading button { min-height: 44px; padding: 8px 0 8px 12px; color: var(--ay-ink) !important; font: 700 13px/1 var(--ay-font-ui); }
+.ayna-mobile .am-playlist-detail-hero { padding-block: var(--ay-space-5) var(--ay-space-6); }
+.ayna-mobile .am-playlist-section-heading { margin-top: var(--ay-space-6); }
 .ayna-mobile:not([data-theme='dark']) .ayna-cabinet-stage { background: transparent !important; }
 /* Card rows line up: titles always reserve two lines, price sits a fixed step below. */
 .ayna-mobile :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-saved-collection) .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { min-height: 2.5em !important; margin-top: 4px !important; }
@@ -140,16 +144,15 @@
 .ayna-mobile > :is(.ayna-figma-discover, .ayna-cabinet-home, .am-screen, .ayna-saved-collection, .ayna-ecosystem-start) { animation: ay-screen-in var(--ay-dur-2) var(--ay-ease) both; }
 
 /* Tab bar: active pill takes the tab's colour; icon gives a small hop. */
-.ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-bottom-nav button.is-active { background: var(--ay-section) !important; }
+.ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-bottom-nav button.is-active { background: var(--ay-butter) !important; }
 .ayna-mobile .ayna-bottom-nav button.is-active svg { animation: ay-hop .42s var(--ay-pop); }
 @keyframes ay-hop { 40% { transform: translateY(-4px) scale(1.08); } 100% { transform: none; } }
 
-/* Page titles get a marker swash in the tab colour. */
+/* Page titles share one quiet weight and baseline across the main tabs. */
 .ayna-mobile :is(.ayna-figma-discover .ayna-shop-heading h1, .ayna-cabinet-stage h1, .am-top .am-title h1, .ayna-saved-header h1) {
-  display: inline-block; background: linear-gradient(transparent 55%, var(--ay-section) 55%, var(--ay-section) 90%, transparent 90%) no-repeat 0 0 / 100% 100%;
-  animation: ay-swash .6s var(--ay-ease) .1s both; padding-right: 2px;
+  display: inline-block; background: none; font-family: var(--ay-font-ui) !important;
+  font-weight: 700 !important; line-height: 1.12 !important; letter-spacing: -.045em !important;
 }
-@keyframes ay-swash { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
 
 /* Product grids arrive in a short stagger. */
 .ayna-mobile .ayna-editorial-product-grid > * { animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; }
@@ -160,8 +163,8 @@
 /* Shop: swipe-to-discover entry card */
 .ayna-mobile .ay-discover-cta {
   display: flex; align-items: center; gap: var(--ay-space-3); width: calc(100% - 40px); margin: 0 20px var(--ay-space-4); padding: 12px 12px 12px 14px;
-  border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-pink); color: var(--ay-ink); text-align: left; cursor: pointer;
-  box-shadow: 3px 3px 0 var(--ay-ink); transition: transform var(--ay-dur-1) var(--ay-ease), box-shadow var(--ay-dur-1);
+  border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-peri); color: var(--ay-ink); text-align: left; cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ay-ink); transition: transform var(--ay-dur-1) var(--ay-ease), box-shadow var(--ay-dur-1);
 }
 .ayna-mobile .ay-discover-cta:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ay-ink); }
 .ay-discover-art { position: relative; display: block; width: 44px; height: 44px; flex: none; }
@@ -244,10 +247,10 @@
 .ay-badges-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
 .ay-badges-head strong { font: 800 18px/1 var(--ay-font-display); letter-spacing: -.02em; color: var(--ay-ink); }
 .ay-badges-head span { font: 600 12px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
-.ay-badges ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
-.ay-badge { display: grid; justify-items: center; gap: 6px; padding: 12px 4px 10px; border: 1.5px dashed var(--ay-line); border-radius: 16px; text-align: center; color: var(--ay-ink-soft); animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; animation-delay: calc(var(--i) * 60ms); }
-.ay-badge strong { font: 700 11px/1.15 var(--ay-font-ui); }
-.ay-badge small { font: 500 10px/1.2 var(--ay-font-ui); }
+.ay-badges ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ay-badge { display: grid; justify-items: center; align-content:center; min-height:100px; gap: 5px; padding: 12px 8px 10px; border: 1.5px dashed var(--ay-line); border-radius: 16px; text-align: center; color: var(--ay-ink); animation: ay-screen-in var(--ay-dur-3) var(--ay-ease) both; animation-delay: calc(var(--i) * 60ms); }
+.ay-badge strong { font: 700 12px/1.2 var(--ay-font-ui); }
+.ay-badge small { color:var(--ay-ink-soft); font: 500 10px/1.2 var(--ay-font-ui); }
 .ay-badge-mark { width: 34px; height: 34px; display: grid; place-items: center; border: 2px dashed currentColor; border-radius: 50%; font: 800 13px/1 var(--ay-font-ui); }
 .ay-badge.is-earned { border: 2px solid var(--ay-ink); color: var(--ay-ink); }
 .ay-badge.is-earned .ay-badge-mark { border-style: solid; border-color: var(--ay-ink); animation: ayw-stamp .5s var(--ay-pop) both; animation-delay: calc(.2s + var(--i) * 80ms); }
@@ -277,7 +280,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ay-deck-card { transition: none; }
-  .ayna-mobile :is(.ayna-figma-discover .ayna-shop-heading h1, .ayna-cabinet-stage h1, .am-top .am-title h1, .ayna-saved-header h1) { animation: none; }
+  .ayna-mobile :is(.ayna-figma-discover .ayna-shop-heading h1, .ayna-cabinet-stage h1, .am-top .am-title h1, .ayna-saved-header h1) { transition: none; }
 }
 
 /* ===== Welcome cover ===== */
@@ -389,14 +392,39 @@
 }
 @media (max-height: 700px) { .ay-reel { height: 236px; } .ay-reel-match svg { width: 130px; height: 130px; } .ay-reel-score strong { font-size: 40px; } }
 
+/* Landing: one actual app preview on the blue story canvas. */
+.ay-cover { padding: max(22px, env(safe-area-inset-top)) 24px max(22px, env(safe-area-inset-bottom)); }
+.ay-cover-art i:nth-child(1), .ay-cover-art i:nth-child(2) { width: 23px; height: 23px; border: 0; border-radius: 0; background: var(--ay-butter); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+.ay-cover-art i:nth-child(1) { left: 14px; right: auto; top: 20%; }
+.ay-cover-art i:nth-child(2) { left: auto; right: 15px; top: 55%; width: 29px; height: 29px; animation-delay: 1.5s; }
+.ay-cover-top button { min-height: 44px; padding: 0 2px; border: 0; border-bottom: 1px solid currentColor; border-radius: 0; background: transparent; }
+.ay-cover-reel { min-height: 250px; padding: 30px 0 24px; }
+.ay-cover-widget { width: 100%; max-width: 350px; filter: drop-shadow(0 8px 0 rgba(29,26,43,.12)); }
+.ayna-mobile .ay-cover-widget .ay-reel { border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--reel-bg); }
+.ay-cover-widget .ay-reel-track { border-width: 1px; }
+.ay-cover-widget .ay-reel-track:first-child { background: var(--ay-ink); color: var(--ay-paper); }
+.ay-cover-widget .ay-reel-track:first-child .ay-reel-cover { border-color: var(--ay-paper); }
+.ayna-mobile .ay-cover-copy h1 { font-size: calc(clamp(36px, 10vw, 48px) * var(--ayna-text-scale, 1)) !important; line-height: .98 !important; letter-spacing: -.045em !important; }
+.ayna-mobile .ay-cover-copy h1 em { background: linear-gradient(transparent 64%, var(--ay-butter) 64%, var(--ay-butter) 91%, transparent 91%); }
+.ay-cover-copy p { margin-top: 14px; font-size: 13px; font-weight: 600; }
+.ay-cover-actions { margin-top: 28px; gap: 10px; }
+.ay-cover-actions > div button { font-size: 13px; }
+.ayna-mobile .ay-cover .ayna-slide-start { border-width: 1.5px; }
+@media (max-height: 700px) { .ay-cover-reel { min-height: 210px; padding: 16px 0; } .ay-cover-widget { max-width: 320px; } }
+
 /* ===== Spacing: one page gutter (20px) and an 8-pt rhythm everywhere ===== */
 .ayna-mobile :is(.ayna-figma-header, .ayna-saved-header) { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
 .ayna-mobile .ayna-figma-discover .ayna-shop-heading { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
 .ayna-mobile .ayna-figma-discover .ayna-shop-heading h1 { margin: var(--ay-space-2) 0 var(--ay-space-4) !important; }
+.ayna-mobile .ayna-fresh-detail-image:is(.is-missing-image,:has(.ayna-fresh-photo-placeholder)) > div { aspect-ratio: 16 / 9 !important; }
 .ayna-mobile .ayna-shop-category-row { padding: 0 var(--ay-gutter) var(--ay-space-4) !important; }
 .ayna-mobile .ayna-shop-filter-toggle { margin-left: auto !important; flex: none; }
 .ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid, .ayna-mobile .ayna-cabinet-collection, .ayna-mobile .ayna-cabinet-reads, .ayna-mobile .ayna-cabinet-stage, .ayna-mobile .ayna-cabinet-more, .ayna-mobile .ayna-home-today { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }
 .ayna-mobile .ayna-editorial-product-grid { column-gap: var(--ay-space-3) !important; row-gap: var(--ay-space-6) !important; }
+.ayna-mobile .ayna-saved-collection .ayna-editorial-product-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--ay-space-5) var(--ay-space-3) !important; }
+.ayna-mobile .ayna-saved-collection .ayna-editorial-product-grid > div { min-width:0; }
+.ayna-mobile .ayna-saved-collection .ayna-editorial-product-grid .ayna-fresh-product-image { aspect-ratio:1 !important; }
+.ayna-mobile .ayna-saved-collection .ayna-saved-ecosystem-action { width:100%; min-height:44px; margin:6px 0 0; padding:8px 2px; font:600 12px/1.2 var(--ay-font-ui); text-align:left; }
 .ayna-mobile .ayna-cabinet-collection { margin-top: var(--ay-space-8) !important; }
 .ayna-mobile .ayna-cabinet-section-head { margin-bottom: var(--ay-space-4) !important; }
 .ayna-mobile .ayna-ecosystem-start-scroll { padding-left: var(--ay-gutter) !important; padding-right: var(--ay-gutter) !important; }

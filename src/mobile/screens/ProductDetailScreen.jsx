@@ -472,7 +472,7 @@ export default function ProductDetailScreen({
           <div style={{ textAlign: 'right', paddingRight: 20, marginTop: 4, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Link copied</div>
         )}
 
-        <div className="ayna-fresh-detail-image" style={{ margin: '14px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
+        <div className={`ayna-fresh-detail-image${image ? '' : ' is-missing-image'}`} style={{ margin: '14px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
           <div
             style={{
               position: 'relative',

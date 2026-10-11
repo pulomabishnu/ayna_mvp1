@@ -88,7 +88,7 @@ export function AgeDial({ value, onChange, underage, onOpenGate }) {
   const hasValue = value !== '' && value !== null && value !== undefined;
   const n = hasValue ? Number(value) : null;
   const step = (delta) => {
-    const base = n ?? 28;
+    const base = n ?? MIN_AGE;
     onChange(String(Math.min(120, Math.max(MIN_AGE, base + delta))));
   };
   const fill = hasValue ? ((Math.min(MAX_AGE, n) - MIN_AGE) / (MAX_AGE - MIN_AGE)) * 100 : 0;
@@ -96,12 +96,12 @@ export function AgeDial({ value, onChange, underage, onOpenGate }) {
     <div className="ip-age">
       <div className="ip-age-readout">
         <button type="button" className="ip-round" aria-label="One year younger" onClick={() => step(-1)} disabled={hasValue && n <= MIN_AGE}>−</button>
-        <output className={`ip-age-number${hasValue ? '' : ' is-empty'}`} aria-live="polite">{hasValue ? n : '00'}</output>
+        <output className={`ip-age-number${hasValue ? '' : ' is-empty'}`} aria-live="polite">{hasValue ? n : '?'}</output>
         <button type="button" className="ip-round" aria-label="One year older" onClick={() => step(1)}>+</button>
       </div>
       <input className="ip-ruler" type="range" min={MIN_AGE} max={MAX_AGE} value={hasValue ? Math.min(MAX_AGE, n) : MIN_AGE}
         onChange={(e) => onChange(e.target.value)} aria-label="Slide to choose your age" style={{ '--fill': `${fill}%` }} />
-      <div className="ip-ruler-ends" aria-hidden="true"><span>18</span><span>{hasValue ? 'years' : 'slide me'}</span><span>90+</span></div>
+      <div className="ip-ruler-ends" aria-hidden="true"><span>18</span><span>{hasValue ? 'years' : 'choose age'}</span><span>90+</span></div>
       {underage && (
         <button type="button" className="ip-warning" onClick={onOpenGate}>
           <strong>ayna is for ages 18 and up</strong>
@@ -220,7 +220,7 @@ export function DotScale({ options, value, onChange, label }) {
             className={`ip-dot${index >= i ? ' is-on' : ''}`} onClick={() => onChange(opt)} />
         ))}
       </div>
-      <div className="ip-meter-ends" aria-hidden="true"><span>{options[0]}</span><span>{options[options.length - 1]}</span></div>
+      <div className="ip-dots-ends" aria-hidden="true"><span>{options[0]}</span><span>{options[options.length - 1]}</span></div>
     </div>
   );
 }
@@ -397,8 +397,17 @@ export function TopicPicker({ groups, selected, onToggle, search, onSearch, onAd
             {groups.map((g) => {
               const count = g.items.filter((i) => selected.includes(i)).length;
               return (
-                <button type="button" role="tab" key={g.label} aria-selected={g.label === active} className="ip-tab" onClick={() => setActive(g.label)}>
-                  <span>{g.label}</span>{count > 0 && <b>{count}</b>}
+                <button type="button" role="tab" key={g.label} aria-label={g.label} aria-selected={g.label === active} className="ip-tab" onClick={() => setActive(g.label)}>
+                  <span>{({
+                    'Period + cycle': 'Period',
+                    'Hormonal + reproductive': 'Hormones',
+                    'Sexual + reproductive health': 'Sexual health',
+                    'Perimenopause + menopause + post-menopause': 'Menopause',
+                    'Mood + mental wellbeing': 'Mood',
+                    'Sleep + energy + cognition': 'Sleep + energy',
+                    'Metabolic + physical wellness': 'Wellness',
+                    'Care access': 'Care',
+                  })[g.label] || g.label}</span>{count > 0 && <b>{count}</b>}
                 </button>
               );
             })}
