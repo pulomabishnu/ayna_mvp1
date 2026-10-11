@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
-import ProductImage from '../components/ProductImage.jsx';
-import { ALL_PRODUCTS } from '../../data/products.js';
-
-const AUTH_PRODUCT = ALL_PRODUCTS.find((product) => product.id === 'p-lola-pad') || ALL_PRODUCTS.find((product) => product.image);
+import '../auth.css';
 
 // Same three statements, same order, same required-before-signup gate as
 // src/components/AuthGate.jsx's CONSENT_ITEMS — this is a real compliance
@@ -286,7 +283,7 @@ export default function SigninScreen({
   };
 
   return (
-    <div className="ayna-fresh-auth"
+    <div className="ayna-fresh-auth ay-auth"
       style={{
         flex: 1,
         overflowY: 'auto',
@@ -301,35 +298,33 @@ export default function SigninScreen({
         animation: 'ay-page .25s ease-out',
       }}
     >
-      <button className="ayna-fresh-auth-back" type="button" onClick={onAuthBack} style={{ alignSelf: 'flex-start', border: '1px solid rgba(255,255,255,.35)', background: 'rgba(255,255,255,.08)', color: '#FFFFFF', borderRadius: 99, padding: '10px 15px', marginBottom: 20, fontFamily: "var(--ayna-font-ui)", fontSize: 14, cursor: 'pointer' }}>
-        ← Back
+      <button className="ayna-fresh-auth-back ay-auth-back" type="button" onClick={onAuthBack} aria-label="Back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
       </button>
       {mode === 'check-email' ? (
         <>
           <div style={{ flex: 1 }} />
-          <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.3, marginBottom: 12, textAlign: 'center' }}>
+          <div className="ay-auth-check-title">
             Almost there.
           </div>
-          <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 20 }}>
+          <div className="ay-auth-check-copy">
             A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. Once confirmed, come back here — this screen updates on its own.
           </div>
-          {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginBottom: 14 }}>{resendMsg}</div>}
-          <div className="ayna-fresh-auth-switch"
-            onClick={resending ? undefined : handleResend}
-            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#F7BADD', cursor: resending ? 'default' : 'pointer' }}
-          >
+          {resendMsg && <div className="ay-auth-check-msg" role="status">{resendMsg}</div>}
+          <button type="button" className="ay-auth-link" disabled={resending} onClick={handleResend}>
             {resending ? 'Sending…' : 'Resend confirmation email'}
-          </div>
+          </button>
           <div style={{ flex: 1 }} />
         </>
       ) : (
         <>
-          {AUTH_PRODUCT && <div className="ayna-auth-campaign" aria-hidden="true"><span>ayna</span><div><ProductImage src={AUTH_PRODUCT.image || AUTH_PRODUCT.imageUrl || AUTH_PRODUCT.images?.[0]} alt="" /></div></div>}
+          <header className="ay-auth-head">
+            <span className="ay-auth-art" aria-hidden="true"><i /><i /><i /></span>
+            <h1>{mode === 'signup' ? 'Save it under your name.' : 'Welcome back.'}</h1>
+            <p>{mode === 'signup' ? 'Keep your Ecosystem, saves and check-ins.' : 'Sign in to pick up where you left off.'}</p>
+          </header>
 
-          <div className="ayna-fresh-auth-heading" style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, letterSpacing: '-.05em', fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.08, marginBottom: 20 }}>
-            {mode === 'signup' ? (<>Save it under<br />your name.</>) : (<>Welcome<br />back.</>)}
-          </div>
-
+          <div className="ay-auth-form">
           {mode === 'signup' && (
             <label className="ayna-fresh-auth-field" style={{ background: '#FFFFFF', borderRadius: 14, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 42, height: 42, borderRadius: 99, background: '#F7BADD', color: '#171717', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "var(--ayna-font-display)", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
@@ -351,21 +346,19 @@ export default function SigninScreen({
           </Field>
 
           {mode === 'signup' && (
-            <div style={{ marginTop: 6, marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="ay-auth-consent">
               {CONSENT_ITEMS.map((text, i) => (
                 <label key={i} style={{ display: 'flex', gap: 10, cursor: 'pointer', alignItems: 'flex-start' }}>
                   <input type="checkbox" checked={checked[i]} onChange={() => toggleCheck(i)} style={{ width: 18, height: 18, flex: 'none', marginTop: 1, accentColor: '#F7BADD' }} />
-                  <span style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'rgba(255,252,249,.9)' }}>{text}</span>
+                  <span className="ay-auth-consent-text">{text}</span>
                 </label>
               ))}
             </div>
           )}
 
-          {error && <div style={{ color: '#FFC9BC', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', marginTop: 10 }}>{error}</div>}
+          {error && <div className="ay-auth-error" role="alert">{error}</div>}
 
-          <div style={{ flex: 1, minHeight: 14 }} />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
             {mode === 'signup' ? (
               <PrimaryButton onClick={handleSignUp} disabled={loading}>
                 <span>{loading ? 'Creating account…' : 'Create my account'}</span>
@@ -380,16 +373,18 @@ export default function SigninScreen({
                 <span>{loading ? 'Signing in…' : 'Sign in'}</span>
               </PrimaryButton>
             )}
+          </div>
+
+          <div className="ay-auth-or" aria-hidden="true"><span>or</span></div>
+
+          <div className="ay-auth-social">
             <GoogleButton onClick={handleGoogle} disabled={googleLoading || appleLoading || loading} />
             <AppleButton onClick={handleApple} disabled={appleLoading || googleLoading || loading} />
           </div>
 
-          <div className="ayna-fresh-auth-switch"
-            onClick={() => { if (mode === 'signin' && onStartEcosystem) onStartEcosystem(); else setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); }}
-            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'rgba(255,252,249,.72)', marginTop: 16, cursor: 'pointer' }}
-          >
-            {mode === 'signup' ? 'Already have an account? Sign in' : "New here? Create an account"}
-          </div>
+          <button type="button" className="ayna-fresh-auth-switch ay-auth-link" onClick={() => { if (mode === 'signin' && onStartEcosystem) onStartEcosystem(); else setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); }}>
+            {mode === 'signup' ? 'Already have an account? Sign in' : 'New here? Create an account'}
+          </button>
 
           <div className="ayna-fresh-auth-trust" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FCFBFB" strokeWidth="2" strokeLinecap="round">

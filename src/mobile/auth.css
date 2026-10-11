@@ -1,0 +1,52 @@
+/* Sign in / sign up — head, form (fields + primary), or, social, switch, trust. 8pt grid, one left edge. */
+.ayna-mobile.ayna-mobile .ay-auth { background: var(--ay-cream) !important; color: var(--ay-ink) !important; padding: max(16px, env(safe-area-inset-top)) var(--ay-gutter) 32px !important; }
+.ayna-mobile.ayna-mobile .ay-auth-back { width: 44px; height: 44px; margin: 0 0 24px !important; padding: 0 !important; display: grid; place-items: center; border: 1.5px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
+
+/* Head with a small sticker cluster (no product photos here) */
+.ay-auth-head { position: relative; padding-right: 72px; }
+.ay-auth-head h1 { margin: 0; font: 800 calc(clamp(32px, 9.4vw, 40px) * var(--ayna-text-scale, 1))/1.02 var(--ay-font-display); letter-spacing: -.045em; color: var(--ay-ink); text-wrap: balance; }
+.ay-auth-head p { margin: 8px 0 0; font: 500 15px/1.4 var(--ay-font-ui); opacity: .7; }
+.ay-auth-art { position: absolute; right: 0; top: 0; width: 64px; height: 64px; }
+.ay-auth-art i { position: absolute; display: block; border: 1.5px solid var(--ay-ink); }
+.ay-auth-art i:nth-child(1) { width: 40px; height: 40px; right: 0; top: 0; border-radius: 50%; background: var(--ay-butter); }
+.ay-auth-art i:nth-child(2) { width: 28px; height: 28px; left: 4px; top: 26px; border-radius: 8px; background: var(--ay-pink); rotate: -12deg; }
+.ay-auth-art i:nth-child(3) { width: 18px; height: 18px; right: 6px; top: 44px; border: 0; background: var(--ay-peri-ink, #4652b0); clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+
+/* Form: fields and their button stay together */
+.ay-auth-form { display: grid; gap: 8px; margin-top: 32px; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field { margin: 0 !important; min-height: 64px; padding: 10px 16px !important; border: 1.5px solid var(--ay-line) !important; border-radius: 16px !important; background: var(--ay-paper) !important; box-shadow: none !important; transition: border-color .15s; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field:focus-within { border-color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field svg { stroke: var(--ay-ink); opacity: .55; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field span { color: var(--ay-ink) !important; font-size: 12.5px !important; opacity: .7; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field input { color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field input::placeholder { color: var(--ay-ink); opacity: .4; }
+.ay-auth-consent { display: grid; gap: 12px; margin: 8px 0; }
+.ay-auth-consent label { align-items: flex-start; }
+.ayna-mobile.ayna-mobile .ay-auth-consent input[type='checkbox'] { accent-color: var(--ay-ink) !important; width: 20px !important; height: 20px !important; }
+.ay-auth-consent-text { font: 500 13px/1.45 var(--ay-font-ui); color: var(--ay-ink); }
+.ay-auth-error { padding: 10px 14px; border-radius: 12px; background: var(--ay-pink); color: var(--ay-ink); font: 600 13.5px/1.4 var(--ay-font-ui); }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary { min-height: 56px; margin-top: 8px; padding: 0 20px !important; border-radius: 99px !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; font: 700 16px/1 var(--ay-font-ui) !important; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary svg { stroke: var(--ay-paper) !important; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-primary:disabled { opacity: .55; }
+
+/* or */
+.ay-auth-or { display: flex; align-items: center; gap: 12px; margin: 24px 0; font: 600 13px/1 var(--ay-font-ui); opacity: .6; }
+.ay-auth-or::before, .ay-auth-or::after { content: ''; flex: 1; height: 1px; background: var(--ay-ink); opacity: .2; }
+
+/* Social */
+.ay-auth-social { display: grid; gap: 8px; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-social { min-height: 52px; padding: 0 20px !important; border: 1.5px solid var(--ay-line) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 600 15px/1 var(--ay-font-ui) !important; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-social svg path[fill='#FFFFFF'] { fill: var(--ay-ink); }
+
+/* Switch + trust + legal */
+.ay-auth-link { display: block; margin: 24px auto 0; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px; cursor: pointer; }
+.ay-auth-link:disabled { opacity: .5; cursor: default; }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-trust { margin-top: 8px !important; opacity: .6 !important; color: var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-trust svg { stroke: var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ay-auth .ay-legal { margin-top: 32px; }
+
+/* Check-email state */
+.ay-auth-check-title { margin-bottom: 8px; text-align: center; font: 800 calc(30px * var(--ayna-text-scale, 1))/1.1 var(--ay-font-display); letter-spacing: -.04em; color: var(--ay-ink); }
+.ay-auth-check-copy { max-width: 32ch; margin: 0 auto 16px; text-align: center; font: 500 15px/1.55 var(--ay-font-ui); color: var(--ay-ink); opacity: .8; }
+.ay-auth-check-msg { margin-bottom: 8px; text-align: center; font: 600 13.5px/1.4 var(--ay-font-ui); color: var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ay-auth .ayna-fresh-auth-field > div:first-child:not(:last-child) { width: 22px !important; height: 22px !important; font: 700 11px/1 var(--ay-font-ui) !important; background: var(--ay-peri) !important; color: var(--ay-ink) !important; }
