@@ -783,6 +783,10 @@ export const DIGITAL_PRODUCTS = [
 // devices like IUDs, etc.) are filtered out here so no surface in the app can
 // ever show one, rather than relying on each consumer to remember to gate them.
 // See isRxOnlyProduct below.
+// Hidden for now (team decision, Oct 11 2026): a clinician teaching model, not a
+// consumer product. Bring back once there's a clinician-facing surface.
+const TEMPORARILY_HIDDEN_IDS = new Set(['p-mypelvicbra-prolapse-chicken']);
+
 export const ALL_PRODUCTS = [
     ...PHYSICAL_PRODUCTS,
     ...DIGITAL_PRODUCTS,
@@ -797,7 +801,7 @@ export const ALL_PRODUCTS = [
     ...MENSTRUAL_PHYSICAL,
     ...BRAND_PRODUCTS,
     ...INCONTINENCE_PHYSICAL
-].filter((p) => !isRxOnlyProduct(p));
+].filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id));
 
 /**
  * Look up a catalog product by id. Returns null for ids that don't exist in

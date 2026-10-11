@@ -110,7 +110,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         {slides.map((slide, i) => <span key={slide}><i style={{ width: i < index ? '100%' : i === index ? `${progress * 100}%` : '0%' }} /></span>)}
       </div>
       <div className="ayw-top">
-        <button type="button" onClick={onBack} aria-label="Back to answers">
+        <button type="button" onClick={(event) => { event.stopPropagation(); if (index > 0) previous(); else onBack?.(); }} aria-label={index > 0 ? 'Previous slide' : 'Back to answers'}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
         </button>
         <span>ayna Wrapped</span>

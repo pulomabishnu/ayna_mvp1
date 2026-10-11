@@ -718,8 +718,8 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
         <div className="ay-startups-hero">
           <span className="ay-startups-art" aria-hidden="true"><i /><i /><i /></span>
-          <h2>Real founders, not ad spend.</h2>
-          <p>Ranked by what you told us during intake — never by who paid for placement.</p>
+          <h2>Explore startups</h2>
+          <p>Ranked by your answers, not ad spend.</p>
         </div>
 
         <div className="ay-startups-filters" role="group" aria-label="Filter startups">

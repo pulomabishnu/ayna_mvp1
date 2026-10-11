@@ -510,3 +510,10 @@
 .ip-cards > .ip-chips { justify-content: center; }
 .ayna-mobile.ayna-mobile .ip-age-input { border: 0 !important; box-shadow: none !important; background: transparent !important; border-radius: 0 !important; height: auto !important; min-height: 0 !important; }
 .ayna-mobile.ayna-mobile .ip-age-input:focus, .ayna-mobile.ayna-mobile .ip-age-input:focus-visible { outline: none !important; }
+
+/* "Worth a closer look": on-theme butter card instead of the off-palette red box */
+.ayna-mobile.ayna-mobile .ip-alert { border: 1.5px solid var(--ay-ink) !important; border-radius: 18px !important; background: var(--ay-butter) !important; box-shadow: 0 3px 0 var(--ay-ink); }
+.ayna-mobile.ayna-mobile .ip-alert strong { color: var(--ay-ink) !important; font: 800 15px/1.2 var(--ay-font-ui) !important; }
+.ayna-mobile.ayna-mobile .ip-alert strong span { background: var(--ay-ink) !important; color: var(--ay-butter) !important; }
+.ayna-mobile.ayna-mobile .ip-alert p { color: var(--ay-ink) !important; opacity: .85; font-size: 14px !important; }
+.ayna-mobile.ayna-mobile .ip-alert-link { border: 1.5px solid var(--ay-ink) !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
