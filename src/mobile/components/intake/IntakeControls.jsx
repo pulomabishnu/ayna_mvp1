@@ -84,6 +84,17 @@ export function ChoiceRows({ options, value, onChange }) {
 const MIN_AGE = 18;
 const MAX_AGE = 90;
 
+/** Type your age, or use −/+ and the ruler. Commits on 2+ digits or blur so "2…" doesn't flash the under-18 note. */
+function AgeInput({ value, onCommit }) {
+  const [draft, setDraft] = useState(value);
+  const [seen, setSeen] = useState(value);
+  if (value !== seen) { setSeen(value); setDraft(value); }
+  return <input className={`ip-age-number ip-age-input${draft ? '' : ' is-empty'}`} type="text" inputMode="numeric" pattern="[0-9]*" maxLength={3}
+    placeholder="?" aria-label="Your age" value={draft}
+    onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 3); setDraft(v); if (v.length >= 2) onCommit(v); }}
+    onBlur={() => { if (draft && draft !== value) onCommit(draft); }} />;
+}
+
 export function AgeDial({ value, onChange, underage, onOpenGate }) {
   const hasValue = value !== '' && value !== null && value !== undefined;
   const n = hasValue ? Number(value) : null;
@@ -96,7 +107,7 @@ export function AgeDial({ value, onChange, underage, onOpenGate }) {
     <div className="ip-age">
       <div className="ip-age-readout">
         <button type="button" className="ip-round" aria-label="One year younger" onClick={() => step(-1)} disabled={hasValue && n <= MIN_AGE}>−</button>
-        <output className={`ip-age-number${hasValue ? '' : ' is-empty'}`} aria-live="polite">{hasValue ? n : '?'}</output>
+        <AgeInput value={hasValue ? String(n) : ''} onCommit={onChange} />
         <button type="button" className="ip-round" aria-label="One year older" onClick={() => step(1)}>+</button>
       </div>
       <input className="ip-ruler" type="range" min={MIN_AGE} max={MAX_AGE} value={hasValue ? Math.min(MAX_AGE, n) : MIN_AGE}

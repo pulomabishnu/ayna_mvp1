@@ -183,6 +183,12 @@ const AVOID_INGREDIENTS = [
   'Sensitive skin', 'Unscented', 'No preference',
 ];
 const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
+const AVOID_PAIRS = { Fragrance: 'Fragrance-free', Dyes: 'Dye-free', Parabens: 'Paraben-free', Sulfates: 'Sulfate-free', Latex: 'Latex-free' };
+// Same values as AVOID_INGREDIENTS, grouped so "Fragrance" (leave out) and "Vegan" (should be) don't read as one list.
+const AVOID_GROUPS = {
+  avoid: ['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived', 'Added sugar', 'Artificial sweeteners'],
+  want: ['Unscented', 'Organic', 'Vegan', 'Cruelty-free', 'Minimal ingredients', 'Sensitive skin', 'Reusable', 'Eco-friendly', 'Pregnancy considerations', 'Black-owned', 'Brown-owned'],
+};
 const TRUST_ITEMS = ['Clinical or scientific evidence', 'Reviews and experiences from other women', 'Brand reputation or expert recommendations'];
 const STOP_REASONS = [
   'It did not help', 'It stopped working', 'I had side effects or a reaction', 'It was too expensive',
@@ -997,6 +1003,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const [flaggedStepIds] = useState(() => new Set(getIncompleteStepIds(initialSnapshot)));
   const [minorGate, setMinorGate] = useState(false);
   const [direction, setDirection] = useState('forward');
+  const [infoOpen, setInfoOpen] = useState(null);
 
   const visibleSteps = useMemo(() => {
     const steps = [
@@ -1018,13 +1025,13 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       { id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', optional: true },
       { id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', optional: false },
       { id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', optional: true },
-      { id: 'recommendationCount', section: 'preferences', title: 'How many picks?', type: 'recommendationCount', optional: true },
-      { id: 'priceRange', section: 'preferences', title: 'Your budget', type: 'price', optional: true },
+      { id: 'recommendationCount', section: 'preferences', title: 'Picks per need', subtitle: 'For each area you want support with', info: 'This is how many products we show for each thing you picked earlier — for example 3 for cramps and 3 for sleep.', type: 'recommendationCount', optional: true },
+      { id: 'priceRange', section: 'preferences', title: 'Budget per item', info: 'What you’d usually spend on one item — not your total.', type: 'price', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', type: 'trustedBrands', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'On the label', type: 'avoidIngredients', optional: true },
-      { id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'Your trust order', type: 'trust', optional: false },
+      { id: 'avoidIngredients', section: 'preferences', title: 'Avoid or must-have?', info: 'Pick what your products should leave out, and what they should be. Both are optional.', type: 'avoidIngredients', optional: true },
+      { id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'FSA and HSA are pre-tax health accounts, often through work. If you have one, we can flag eligible products.', type: 'fsa', optional: true },
+      { id: 'trust', section: 'trust', title: 'What matters most?', subtitle: 'When choosing a product', type: 'trust', optional: false },
       { id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', optional: true },
     ];
     return steps;
@@ -1195,8 +1202,23 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     }
     if (step.type === 'brand') return <BrandSpectrum options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
     if (step.type === 'avoidIngredients') {
+      // "Leave out: Fragrance" also stores "Fragrance-free" — the value the match engine already scores — so logic is unchanged.
+      const selected = intake.avoidIngredients || [];
+      const isOn = (v) => selected.includes(v) || (AVOID_PAIRS[v] && selected.includes(AVOID_PAIRS[v]));
+      const toggleAvoid = (v) => setIntake((prev) => {
+        const cur = (Array.isArray(prev.avoidIngredients) ? prev.avoidIngredients : []).filter((x) => x !== 'No preference');
+        const pair = AVOID_PAIRS[v];
+        if (v === 'No preference') return { ...prev, avoidIngredients: selected.includes('No preference') ? [] : ['No preference'] };
+        const on = cur.includes(v) || (pair && cur.includes(pair));
+        const next = on ? cur.filter((x) => x !== v && x !== pair) : [...cur, v, ...(pair ? [pair] : [])];
+        return { ...prev, avoidIngredients: next };
+      });
       return (
-        <SearchableChoices items={AVOID_INGREDIENTS} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('avoidIngredients', value, ['No preference'])} placeholder="Search ingredients or qualities" />
+        <div className="ip-split">
+          <div className="ip-split-group"><strong className="is-avoid">Leave out</strong><ChipList items={AVOID_GROUPS.avoid} selected={AVOID_GROUPS.avoid.filter(isOn)} onToggle={toggleAvoid} compact /></div>
+          <div className="ip-split-group"><strong className="is-want">Should be</strong><ChipList items={AVOID_GROUPS.want} selected={AVOID_GROUPS.want.filter(isOn)} onToggle={toggleAvoid} compact /></div>
+          <ChipList items={['No preference']} selected={selected.includes('No preference') ? ['No preference'] : []} onToggle={toggleAvoid} compact />
+        </div>
       );
     }
     if (step.type === 'fsa') return <AccountCards options={FSA_HSA} value={intake.fsaHsaAnswer} onChange={(v) => set('fsaHsaAnswer', v)} />;
@@ -1276,8 +1298,9 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       <div className="ip-body">
         <div className="ip-question" key={`q-${step.id}`}>
           {scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
-          <h1 className="ip-title">{step.title}</h1>
+          <h1 className="ip-title">{step.title}{step.info && <button type="button" className="ip-info" aria-label={`About: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}</h1>
           {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
+          {step.info && infoOpen === step.id && <p className="ip-info-pop" role="note">{step.info}</p>}
           {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
           <span className="ip-spacer is-top" aria-hidden="true" />
           <div className="ip-answer">{renderBody()}</div>

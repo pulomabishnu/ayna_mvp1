@@ -486,3 +486,27 @@
 .ayna-play-intake .ip-question > .ip-title, .ayna-play-intake .ip-question > .ip-label { align-self: flex-start; }
 .ip-art-sparkle--a { bottom: 14% !important; }
 .ip-dots-head strong.is-empty { color: var(--ay-ink-soft); font-weight: 600; font-size: 16px; }
+
+/* "i" detail — keeps titles short; extra context only on tap */
+.ip-info { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-left: 8px; vertical-align: .35em; padding: 0; border: 1.5px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); color: var(--ay-ink); font: 800 13px/1 var(--ay-font-ui); font-style: italic; cursor: pointer; position: relative; }
+.ip-info::before { content: ''; position: absolute; inset: -10px; }
+.ip-info[aria-expanded='true'] { background: var(--ay-ink); color: var(--ay-paper); }
+.ip-info-pop { margin: 8px 0 0; padding: 12px 14px; border: 1.5px solid var(--ay-ink); border-radius: 16px; background: var(--ay-paper); font: 500 14px/1.45 var(--ay-font-ui); color: var(--ay-ink); box-shadow: 0 3px 0 var(--ay-ink); animation: ip-pop-in .22s var(--ay-ease) both; }
+@keyframes ip-pop-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* Age: typeable number with a visible caret */
+.ip-age-input { width: 3ch; min-width: 0; padding: 0; border: 0; background: transparent; color: var(--ay-ink); text-align: center; caret-color: var(--ay-ink); outline: none; }
+.ip-age-input::placeholder { color: var(--ay-ink-faint, rgba(29,26,43,.3)); opacity: 1; }
+.ip-age-input:focus { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 8px; }
+
+/* Avoid / should-be split */
+.ip-split { display: grid; gap: 16px; }
+.ip-split-group { display: grid; gap: 8px; }
+.ip-split-group > strong { justify-self: start; padding: 4px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; font: 700 12.5px/1 var(--ay-font-ui); }
+.ip-split-group > strong.is-avoid { background: var(--ay-pink); }
+.ip-split-group > strong.is-want { background: var(--ay-mint); }
+
+/* FSA/HSA: "No" / "Not sure" centred under the cards */
+.ip-cards > .ip-chips { justify-content: center; }
+.ayna-mobile.ayna-mobile .ip-age-input { border: 0 !important; box-shadow: none !important; background: transparent !important; border-radius: 0 !important; height: auto !important; min-height: 0 !important; }
+.ayna-mobile.ayna-mobile .ip-age-input:focus, .ayna-mobile.ayna-mobile .ip-age-input:focus-visible { outline: none !important; }
