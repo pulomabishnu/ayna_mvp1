@@ -338,3 +338,23 @@
   border-color: var(--ayna-border) !important;
   color: #ffffff !important;
 }
+
+/* Match the higher-specificity mobile layout rules loaded after tokens. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-cover {
+  background: var(--ayna-bg) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-hub-badge {
+  background: var(--ay-butter) !important;
+  border-color: #050506 !important;
+  color: #050506 !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero {
+  background: var(--ayna-bg) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-menu > button {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  box-shadow: none !important;
+}
