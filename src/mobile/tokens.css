@@ -464,3 +464,21 @@
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero .ay-hub-shapes i:nth-child(3) {
   background: var(--ay-peri) !important;
 }
+
+/* Keep text legible in the Ecosystem reading cards and product detail chips. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-reads .ayna-editorial-read {
+  background: var(--ayna-surface) !important;
+  border-color: var(--ayna-border) !important;
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-reads .ayna-editorial-read-copy strong {
+  color: #ffffff !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-reads .ayna-editorial-read-copy small {
+  color: var(--ayna-text-muted) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-product-detail .ay-pdp-tag {
+  background: var(--ayna-chip-bg) !important;
+  border-color: var(--ayna-chip-border) !important;
+  color: #ffffff !important;
+}
