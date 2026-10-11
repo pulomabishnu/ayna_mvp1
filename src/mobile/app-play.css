@@ -505,3 +505,12 @@
 
 /* About: let the headlines lead; drop the small caps eyebrows. */
 .ayna-mobile .ayna-scrapbook__eyebrow { display: none !important; }
+/* Taller phones: the reel grows instead of leaving a gap above the headline. */
+@media (min-height: 780px) {
+  .ay-reel { height: 340px; }
+  .ay-reel-eco { gap: 10px; } .ay-reel-track { padding: 11px 12px 11px 10px; } .ay-reel-track strong { font-size: 18px; } .ay-reel-cover { width: 40px; height: 40px; }
+  .ay-reel-match svg { width: 200px; height: 200px; } .ay-reel-score strong { font-size: 62px; }
+  .ay-reel-ask p { font-size: 18px; } .ay-reel-deck { width: 176px; height: 214px; }
+}
+@media (min-height: 880px) { .ay-reel { height: 380px; } }
+@media (max-height: 700px) { .ay-reel-eco { gap: 5px; } .ay-reel-track { padding: 5px 8px 5px 6px; } .ay-reel-cover { width: 28px; height: 28px; } .ay-reel-track strong { font-size: 15px; } .ay-reel-deck { width: 120px; height: 146px; } }
