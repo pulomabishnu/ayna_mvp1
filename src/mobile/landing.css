@@ -173,3 +173,9 @@
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck { width: clamp(124px, 19vh, 168px) !important; height: clamp(150px, 23vh, 200px) !important; }
 /* Stars follow the groups: one by the reel title, one at each side of the art, two by the headline */
 .ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(1) { top: 76px !important; right: 34% !important; }
+/* Play/pause: 28px visual, 44px tap target */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause { position: relative; width: 28px !important; height: 28px !important; border-width: 1.5px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause::before { content: ''; position: absolute; inset: -8px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause svg { width: 10px !important; height: 10px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-foot { gap: 12px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { height: 3px !important; }
