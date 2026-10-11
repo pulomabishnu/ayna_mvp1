@@ -109,7 +109,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         <button type="button" onClick={onBack} aria-label="Back to answers">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
         </button>
-        <span>ayna wrapped</span>
+        <span>ayna Wrapped</span>
         {!last ? (
           <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? 'Play story' : 'Pause story'}>
             {paused ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg> : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14" /></svg>}
@@ -198,7 +198,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           </div>
         </>}
       </div>
-      {!last && <div className="ayw-hint" aria-hidden="true">tap to continue</div>}
+      {!last && <div className="ayw-hint" aria-hidden="true">Tap to continue</div>}
     </main>
   );
 }

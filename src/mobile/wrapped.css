@@ -22,7 +22,7 @@
 .ayw-progress span { flex: 1; height: 4px; border-radius: 4px; background: color-mix(in srgb, var(--w-fg) 22%, transparent); overflow: hidden; }
 .ayw-progress i { display: block; height: 100%; background: var(--w-fg); transition: width .08s linear; }
 .ayw-top { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
-.ayw-top > span { font: 800 13px/1 var(--ay-font-display); letter-spacing: .1em; text-transform: uppercase; }
+.ayw-top > span { font: 800 13px/1 var(--ay-font-display); letter-spacing: -.01em; }
 .ayw-top button { width: 40px; height: 40px; display: grid; place-items: center; border: 2px solid currentColor; border-radius: 50%; background: transparent; }
 .ayw-top svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .ayw-top button[aria-label='Play story'] svg { fill: currentColor; }
@@ -35,7 +35,7 @@
 .ayw-stage > *:nth-child(4) { animation-delay: .24s; }
 @keyframes ayw-up { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
 
-.ayw-kicker { margin: 0 0 14px; font: 700 13px/1 var(--ay-font-ui); letter-spacing: .1em; text-transform: uppercase; }
+.ayw-kicker { margin: 0 0 14px; font: 700 16px/1.1 var(--ay-font-ui); }
 .ayna-wrapped .ayw-title { color: var(--w-fg) !important; }
 .ayw-title { margin: 0; font: 800 clamp(52px, 16vw, 72px)/.88 var(--ay-font-display); letter-spacing: -.055em; }
 .ayw-title em { font-style: normal; color: var(--w-accent); }
@@ -74,13 +74,13 @@
 .ayw-badge strong { display: block; font: 800 27px/.95 var(--ay-font-display); letter-spacing: -.04em; }
 @keyframes ayw-stamp { from { scale: 1.8; opacity: 0; } to { scale: 1; opacity: 1; } }
 .ayw-product { margin-top: 22px; text-align: center; }
-.ayw-product span { display: block; font: 700 12px/1 var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; }
+.ayw-product span { display: block; font: 700 12px/1 var(--ay-font-ui);  }
 .ayw-product strong { display: block; margin-top: 8px; font: 800 clamp(24px, 7vw, 30px)/1.02 var(--ay-font-display); letter-spacing: -.035em; text-wrap: balance; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* persona */
 .ayw-facts { display: grid; gap: 10px; margin: 28px 0 0; }
 .ayw-facts div { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 14px 16px; border: 2px solid var(--ay-ink); border-radius: 18px; background: var(--ay-paper); animation: ayw-up .5s var(--ay-ease) both; animation-delay: calc(.2s + var(--i) * .1s); }
-.ayw-facts dt { font: 700 12px/1 var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; opacity: .65; }
+.ayw-facts dt { font: 700 12px/1 var(--ay-font-ui);  opacity: .65; }
 .ayw-facts dd { margin: 0; font: 800 20px/1.1 var(--ay-font-display); letter-spacing: -.02em; text-align: right; }
 
 /* lineup */
@@ -109,7 +109,7 @@
 .ayw--empty .ayw-cta i { background: var(--ay-butter); color: var(--ay-ink); }
 .ayw-link { min-height: 44px; padding: 0 6px; border: 0; background: none; font: 600 14px/1 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 4px; }
 
-.ayw-hint { text-align: center; font: 600 11px/1 var(--ay-font-ui); letter-spacing: .1em; text-transform: uppercase; opacity: .55; }
+.ayw-hint { text-align: center; font: 600 12px/1 var(--ay-font-ui); opacity: .55; }
 
 @media (prefers-reduced-motion: reduce) {
   .ayna-wrapped *, .ayna-wrapped *::before, .ayna-wrapped *::after { animation: none !important; transition: none !important; }
