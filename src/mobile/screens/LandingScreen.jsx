@@ -4,7 +4,7 @@ import '../landing.css';
 
 export default function LandingScreen({ onStartQuiz, onBrowse, onAlreadyHaveAccount, onAboutAyna }) {
   return <main className="ay-cover">
-    <span className="ay-cover-art" aria-hidden="true"><i /><i /></span>
+    <span className="ay-cover-art ay-cover-stars" aria-hidden="true"><i /><i /><i /><i /><i /></span>
     <header className="ay-cover-top">
       <span className="ay-cover-mark">ayna</span>
       <button type="button" onClick={onAlreadyHaveAccount}>Sign in</button>

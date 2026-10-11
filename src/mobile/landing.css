@@ -131,3 +131,28 @@
   .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck span, .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck svg { animation: none !important; }
   .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c3 svg { fill: var(--ay-pink); }
 }
+
+/* Spacing system (8pt): header 48 → 32 → reel title → [stage: the only flexible space] → progress → 40 → headline → 8 → line → 32 → slider → 8 → links */
+.ayna-mobile.ayna-mobile .ay-cover-reel { flex: 1 1 auto; display: flex !important; flex-direction: column; align-items: stretch !important; min-height: 0 !important; padding: 0 !important; margin: 32px 0 40px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-pink,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-mint,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-peri { flex: 1 1 auto; height: auto !important; min-height: 248px; max-height: 520px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { flex: 1 1 auto; min-height: 0; padding-block: 24px; display: grid; place-items: center; }
+.ayna-mobile.ayna-mobile .ay-cover-reel { justify-content: center; }
+.ayna-mobile.ayna-mobile .ay-cover-actions { margin-top: 32px !important; }
+/* One small sparkle in the 32px band under the header; the second sits by the headline */
+.ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(1) { right: 30% !important; top: 72px !important; width: 16px !important; height: 16px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(2) { display: none !important; }
+/* Stars: a loose constellation around the edges — varied size/colour, staggered twinkle, never over controls */
+.ayna-mobile.ayna-mobile .ay-cover-stars i { display: block !important; position: absolute; border: 0 !important; border-radius: 0 !important; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); background: var(--ay-butter) !important; animation: lp-twinkle 3.6s ease-in-out infinite; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(1) { left: auto !important; right: 30% !important; top: 70px !important; width: 18px !important; height: 18px !important; animation-delay: 0s; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(2) { display: block !important; left: 6px !important; right: auto !important; top: 30% !important; width: 14px !important; height: 14px !important; background: var(--ay-paper) !important; animation-delay: -1.2s; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(3) { right: 5px !important; left: auto !important; top: 47% !important; width: 22px !important; height: 22px !important; animation-delay: -2.1s; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(4) { right: 64px; bottom: 262px; width: 26px; height: 26px; animation-delay: -.6s; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(5) { right: 40px; bottom: 300px; width: 11px; height: 11px; background: var(--ay-paper) !important; animation-delay: -2.8s; }
+@keyframes lp-twinkle { 0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; } 50% { transform: scale(.7) rotate(20deg); opacity: .7; } }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile.ayna-mobile .ay-cover-stars i { animation: none; } }
+/* Narrow phones: keep the headline to two lines */
+.ayna-mobile.ayna-mobile .ay-cover-copy h1 { font-size: calc(clamp(32px, 10.2vw, 48px) * var(--ayna-text-scale, 1)) !important; }
