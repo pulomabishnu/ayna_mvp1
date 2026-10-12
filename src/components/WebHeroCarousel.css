@@ -101,3 +101,8 @@
 .whc-split { width: auto; justify-content: center; text-align: left; }
 .whc-controls { justify-content: center; }
 .whc-dots { margin-right: 8px; }
+
+/* HO03: crossfade instead of sliding, so no slide ever shows half clipped */
+.whc .whc-track { display: grid !important; transform: none !important; transition: none !important; }
+.whc .whc-slide { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility 0s .45s; }
+.whc .whc-slide.is-on { opacity: 1; visibility: visible; transition: opacity .45s ease, visibility 0s; }

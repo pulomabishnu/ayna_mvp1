@@ -1446,7 +1446,9 @@ function App() {
             onViewCommunity={() => setCurrentView('community')}
             user={user}
             myProducts={myProducts}
-            ecosystemCount={ecosystemCount}
+            savedProducts={savedProducts}
+            onToggleSaved={toggleSavedProduct}
+            loading={authLoading || (!!user && dataLoading)}
             hasProfile={!!quizResults}
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
@@ -1858,7 +1860,7 @@ function App() {
             <NotFoundState
               title="Product not found"
               subtitle="This product may have been removed, or the link may be incorrect."
-              ctaLabel="Browse products"
+              ctaLabel="Go to Shop"
               onCta={() => handleViewDiscovery('')}
             />
           )

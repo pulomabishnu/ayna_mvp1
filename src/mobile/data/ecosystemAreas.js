@@ -22,7 +22,7 @@ export const ECOSYSTEM_AREAS = [
   { key: 'sleep-stress', label: 'Sleep + Stress' },
   { key: 'pain-recovery', label: 'Pain + Recovery' },
   { key: 'tests-devices', label: 'Tests + Devices' },
-  { key: 'care', label: 'Clinicians' },
+  { key: 'care', label: 'Virtual care' },
   { key: 'supplements', label: 'Supplements' },
 ];
 

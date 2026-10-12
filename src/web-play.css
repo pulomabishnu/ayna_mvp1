@@ -542,10 +542,11 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
   --ay-cream: #0c0b11;
   --ay-tile: #22212c;
   --ay-line: rgba(244, 242, 255, .14);
-  --ay-peri: #343c78;
-  --ay-pink: #6e2a55;
-  --ay-mint: #1d5a45;
-  --ay-butter: #5e5520;
+  /* DK03: dark pastels at controlled saturation, tested against light ink */
+  --ay-peri: #2e3270;
+  --ay-pink: #5a2a4a;
+  --ay-mint: #1f4a44;
+  --ay-butter: #5a4a1a;
   --ay-shadow: 3px 3px 0 rgba(244, 242, 255, .55);
   --ay-shadow-lg: 5px 5px 0 rgba(244, 242, 255, .55);
   --color-text-main: var(--ay-ink);
@@ -563,7 +564,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container[data-theme='dark'] :is(.ayna-landing-shop, .ayna-landing-shop--returning) { background: var(--ay-cream) !important; }
 .app-container[data-theme='dark'] img { filter: none; }
 .app-container[data-theme='dark'] :is(.ayna-landing-tile, .ayna-discover-card__tile, .discovery-card__tile, .pdp-head__tile, .ay-web-lib-card__img) img { mix-blend-mode: normal; }
-.app-container[data-theme='dark'] .wq-page { --ink: #f4f2ff; --soft: rgba(244, 242, 255, .72); --faint: rgba(244, 242, 255, .22); --paper: #17161f; --cream: #0c0b11; --peri: #343c78; --pink: #6e2a55; --mint: #1d5a45; --butter: #5e5520; }
+.app-container[data-theme='dark'] .wq-page { --ink: #f4f2ff; --soft: rgba(244, 242, 255, .72); --faint: rgba(244, 242, 255, .22); --paper: #17161f; --cream: #0c0b11; --peri: #2e3270; --pink: #5a2a4a; --mint: #1f4a44; --butter: #5a4a1a; }
 .app-container[data-theme='dark'] .wq-btn:not(:disabled) { color: #0c0b11; }
 
 /* ---------- Audit fixes ---------- */
@@ -1216,3 +1217,121 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 .app-container .eco-bubbles__title, .app-container .eco-shelf__addrow-label { color: var(--ay-ink) !important; }
 .app-container .eco-shelf__addrow-label { opacity: .7; }
 .app-container .ayna-browse-card__labels { justify-content: flex-start !important; text-align: left; }
+
+/* ---------- Home, logged in (HI01–HI08) ---------- */
+.app-container .ay-home2-hero { background: var(--ay-peri) !important; border-bottom: 2px solid var(--ay-ink); overflow-x: clip; }
+.app-container .ay-home2-hero__inner { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 32px; min-height: 520px; padding-top: 48px !important; padding-bottom: 48px !important; }
+.app-container .ay-home2-hero__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.app-container .ay-home2-hero__copy .ayna-landing-eyebrow { display: block !important; margin: 0; color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
+.app-container .ay-home2-title { margin: 0 !important; color: var(--ay-ink) !important; font: 800 clamp(48px, 5.6vw, 88px)/.92 var(--ay-font-display) !important; letter-spacing: -.05em !important; }
+.app-container .ay-home2-title span { white-space: nowrap; color: var(--ay-paper); -webkit-text-stroke: 2px var(--ay-ink); }
+.app-container .ay-home2-sub { margin: 0; color: var(--ay-ink); font: 600 16px/1.4 var(--ay-font-ui); }
+.app-container .ay-home2-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.app-container .ay-home2-next { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px; border: 2px dashed var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 14px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .ay-home2-next b { font-weight: 800; }
+.app-container .ay-home2-next__dot { width: 10px; height: 10px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-butter); }
+.app-container .ay-home2-hero__visual { display: grid; place-items: center; }
+.app-container .ay-for-you { padding: 3px 8px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-mint); color: var(--ay-ink); font: 700 11px/1 var(--ay-font-ui); }
+.app-container .ay-home2-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px !important; }
+.app-container .ayna-landing-shop-grid:not(.ay-home2-grid) { gap: 20px !important; }
+.app-container .ayna-landing-shop-title { margin: 0; }
+@media (max-width: 1000px) { .app-container .ay-home2-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+  .app-container .ay-home2-hero__inner { grid-template-columns: minmax(0, 1fr); min-height: 0; padding: 32px 16px !important; }
+  .app-container .ay-home2-grid { gap: 12px !important; }
+}
+/* HI06: chip rows wrap on desktop, scroll with both edge fades on phones */
+@media (min-width: 900px) { .app-container .ayna-landing-filters { flex-wrap: wrap !important; overflow: visible !important; -webkit-mask-image: none !important; mask-image: none !important; } }
+@media (max-width: 899px) { .app-container .ayna-landing-filters { flex-wrap: nowrap !important; overflow-x: auto !important; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 24px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 24px), transparent 100%); padding-inline: 4px; } }
+/* HO04 / HO05 */
+.app-container .ay-personalize-cta { min-height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .ay-see-all { display: flex; justify-content: center; margin-top: 32px; }
+.app-container .ay-see-all button { min-height: 48px; padding: 0 24px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 700 15px/1 var(--ay-font-ui); cursor: pointer; transition: transform .15s var(--ay-pop), box-shadow .15s; }
+.app-container .ay-see-all button:hover { transform: translate(-2px, -2px); box-shadow: var(--ay-shadow); }
+/* HO02: No mystery box strip */
+.app-container .ay-steps { padding: 56px 0; background: var(--ay-cream); }
+.app-container .ay-steps__title { margin: 0 0 24px !important; color: var(--ay-ink) !important; font: 800 clamp(32px, 3.2vw, 44px)/1 var(--ay-font-display) !important; letter-spacing: -.04em !important; }
+.app-container .ay-steps__row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; counter-reset: none; }
+.app-container .ay-steps__row li { position: relative; display: grid; align-content: start; gap: 8px; padding: 20px; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); }
+.app-container .ay-steps__row li b { display: grid; place-items: center; width: 32px; height: 32px; border: 2px solid var(--ay-ink); border-radius: 50%; color: var(--ay-ink); font: 800 15px/1 var(--ay-font-display); }
+.app-container .ay-steps__row li.tone-pink b { background: var(--ay-pink); } .app-container .ay-steps__row li.tone-butter b { background: var(--ay-butter); } .app-container .ay-steps__row li.tone-mint b { background: var(--ay-mint); } .app-container .ay-steps__row li.tone-peri b { background: var(--ay-peri); }
+.app-container .ay-steps__row li strong { color: var(--ay-ink); font: 700 16px/1.2 var(--ay-font-ui); }
+.app-container .ay-steps__row li span { color: var(--ay-ink-soft); font: 500 14px/1.4 var(--ay-font-ui); }
+.app-container .ay-steps__row li:not(:last-child)::after { content: '→'; position: absolute; right: -14px; top: 50%; translate: 0 -50%; z-index: 1; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ay-cream); color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); }
+.app-container .ay-reveal.is-in .ay-steps__row li { animation: ayCardIn .5s cubic-bezier(.22, 1, .36, 1) both; }
+.app-container .ay-reveal.is-in .ay-steps__row li:nth-child(2) { animation-delay: .08s; } .app-container .ay-reveal.is-in .ay-steps__row li:nth-child(3) { animation-delay: .16s; } .app-container .ay-reveal.is-in .ay-steps__row li:nth-child(4) { animation-delay: .24s; }
+@media (max-width: 900px) { .app-container .ay-steps__row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .app-container .ay-steps__row li::after { display: none; } .app-container .ay-steps { padding: 40px 0; } }
+/* HI01 skeleton */
+.app-container .ay-home-skeleton i { display: block; border-radius: 12px; background: var(--ay-ink-faint); animation: aySkel 1.2s ease-in-out infinite alternate; }
+.app-container .ay-home-skeleton__hero { background: var(--ay-peri); border-bottom: 2px solid var(--ay-ink); }
+.app-container .ay-home-skeleton__hero .mockup-page { display: grid; gap: 16px; padding-top: 72px; padding-bottom: 72px; min-height: 440px; align-content: center; }
+.app-container .ay-home-skeleton .is-eyebrow { width: 120px; height: 14px; } .app-container .ay-home-skeleton .is-title { width: min(560px, 80%); height: 88px; } .app-container .ay-home-skeleton .is-sub { width: 280px; height: 16px; } .app-container .ay-home-skeleton .is-btn { width: 200px; height: 48px; border-radius: 99px; }
+.app-container .ay-home-skeleton__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; padding-top: 48px !important; padding-bottom: 48px !important; }
+.app-container .ay-home-skeleton__grid i { aspect-ratio: 3 / 4; border-radius: 20px; }
+@keyframes aySkel { from { opacity: .5; } to { opacity: 1; } }
+
+/* ---------- Polish pass: micro items + one set of borders, radii, shadows (G15, G16) ---------- */
+.app-container { --ay-r-sm: 8px; --ay-r-md: 16px; --ay-r-pill: 99px; }
+/* Header: everything 40px tall, one lifted shadow */
+.app-container .app-nav.app-nav .app-nav__tab--active { box-shadow: var(--ay-shadow) !important; }
+.app-container .app-nav__logo-beta, .app-container .app-nav .beta, .app-container [class*='beta-tag'] { align-self: center; transform: translateY(-2px); }
+.app-container .mobile-nav-drawer .ay-badge, .app-container .ay-drawer .ay-badge { vertical-align: middle; margin-left: 6px; transform: translateY(-1px); }
+/* Product cards: 12px padding, inner radius = outer minus padding, fixed eyebrow row */
+.app-container .ayna-browse-card { padding: 12px !important; border-radius: 20px !important; }
+.app-container .ayna-browse-card .ayna-discover-card__tile { border-radius: 8px !important; overflow: hidden; }
+.app-container .ayna-browse-card .ayna-discover-card__tile img { border-radius: 0 !important; }
+.app-container .ayna-browse-card__labels { min-height: 20px; align-items: center; gap: 6px; }
+.app-container .ayna-browse-card .ayna-discover-card__category { color: var(--ay-ink-soft) !important; font: 600 12px/1.2 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-container .ayna-browse-card__ecosystem { left: 8px !important; bottom: 8px !important; top: auto !important; }
+.app-container .ayna-browse-card .ayna-discover-card__body { padding: 12px 0 0 !important; }
+/* Shop toolbar: 40px controls, one label style */
+.app-container .ayna-browse__toolbar :is(select, button) { min-height: 40px; height: 40px; box-sizing: border-box; }
+.app-container :is(.ayna-browse__sort > span, .ayna-browse__personalized-toggle > span:not([class*='track'])) { color: var(--ay-ink) !important; font: 600 14px/1 var(--ay-font-ui) !important; text-transform: none !important; letter-spacing: 0 !important; }
+.app-container .ayna-browse__filters-row, .app-container .ayna-browse__filter-actions { align-items: center !important; }
+.app-container :is(.ayna-browse, .ayna-landing-shop) [class*='filter'] :is(label, legend, .label) { font-family: var(--ay-font-ui) !important; }
+.app-container :is(.ayna-browse__search, .ayna-landing-searchbar) button[aria-label*='lear'] { color: var(--ay-ink) !important; }
+.app-container .ayna-browse__categories { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 24px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 24px), transparent 100%); padding-inline: 8px; }
+/* MW04: phones get one row: Filters + Sort; Personalized lives inside Filters */
+@media (max-width: 767px) {
+  .app-container .ayna-browse__toolbar { display: flex !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: space-between !important; gap: 8px !important; }
+  .app-container .ayna-browse__toolbar-left .ayna-browse__personalized-toggle { display: none !important; }
+  .app-container .ayna-browse__sort > span { display: none !important; }
+  .app-container .ayna-browse__sort select { max-width: 160px; }
+}
+/* MW05: one gutter on phones */
+@media (max-width: 767px) {
+  .app-container { --mockup-gutter: 20px; --ay-web-gutter: 20px; }
+  .app-container main .container { padding-left: 20px !important; padding-right: 20px !important; }
+  .app-container .mockup-landing--first .ayna-landing-hero, .app-container .ay-home2-hero__inner { padding-inline: 20px !important; }
+}
+/* MW06: Filters left, Personalize right */
+.app-container .ayna-landing-shop-controls { justify-content: flex-start !important; }
+.app-container .ayna-landing-shop-controls > :is(.ayna-landing-personalize, .ay-personalize-cta) { margin-left: auto; }
+/* Ecosystem: dashed only for empty slots, one dash pattern */
+.app-container :is(.eco-bubbles__ring, .eco-bubble--gap, .eco-shelf__addchip, .ay-home2-next) { border-style: dashed !important; }
+.app-container .eco2-sidebar__legend--gap .eco2-dot--empty { border-style: dashed; }
+.app-container .eco-bubbles__card-product button, .app-container .eco-bubbles__card-actions button { border-style: solid !important; }
+/* Hero carousel dots: uniform, active is a bar, equal gaps */
+.app-container .whc-dots { gap: 6px !important; }
+.app-container .whc-dots > * { width: 8px; height: 8px; border-radius: 99px; transition: width .2s; }
+.app-container .whc-dots > :is([aria-current='true'], [aria-selected='true'], .is-on) { width: 20px; }
+/* Search pill shadow is the standard token */
+.app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-searchbar { box-shadow: var(--ay-shadow) !important; }
+/* Type scale: snap the odd sizes */
+.app-container :is(small, .ay-card-meta, .ayna-browse-card__eligibility, .ayna-browse-card__sponsored) { font-size: 12px !important; }
+/* G15: grey-bordered boxes become ink outlines (objects) or plain dividers */
+.app-container :is(.ayna-landing-filter-panel, .ayna-browse__filter-panel) { border: 2px solid var(--ay-ink) !important; border-radius: var(--ay-r-md) !important; background: var(--ay-paper) !important; }
+/* G14: one page surface; section backgrounds only for deliberate colour blocks */
+.app-container :is(.ayna-landing-shop, .ayna-landing-shop--returning, .ayna-landing-news, .ay-steps, main) { background: var(--ay-cream) !important; }
+.app-container .ayna-landing-shop-controls { flex-wrap: wrap !important; min-width: 0; max-width: 100%; }
+.app-container .ayna-landing-shop-head { min-width: 0; max-width: 100%; flex-wrap: wrap; }
+.app-container .ayna-landing-filters { flex: 1 1 100% !important; min-width: 0 !important; max-width: 100% !important; width: auto !important; }
+@media (min-width: 900px) { .app-container .mockup-landing .ayna-landing-shop-head .ayna-landing-filters { flex-wrap: wrap !important; overflow: visible !important; -webkit-mask-image: none !important; mask-image: none !important; } }
+.app-container .ayna-landing-filters .ay-chip-more { border-color: transparent !important; background: transparent !important; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 767px) {
+  .app-container .ayna-browse .ayna-browse__toolbar, .app-container main .ayna-browse__toolbar { display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; grid-template-columns: none !important; align-items: center !important; justify-content: space-between !important; gap: 8px !important; }
+  .app-container main .ayna-browse__toolbar-left { display: flex !important; flex: none !important; width: auto !important; justify-content: flex-start !important; gap: 8px; }
+  .app-container main .ayna-browse__sort { display: flex !important; flex: 0 1 auto !important; width: auto !important; margin: 0 !important; }
+  .app-container main .ayna-browse__sort select { width: auto !important; min-width: 0; max-width: 170px; }
+}
+.app-container .ay-web-discover__go { background: var(--ay-ink) !important; color: var(--ay-cream) !important; }

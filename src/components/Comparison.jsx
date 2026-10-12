@@ -37,7 +37,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                             e.currentTarget.style.background = 'var(--color-surface-soft)';
                         }}
                     >
-                        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem' }}>Browse products</h3>
+                        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem' }}>Go to Shop</h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
                             Search Discovery and add products from the full catalog.
                         </p>

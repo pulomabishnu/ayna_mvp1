@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import WebHeroCarousel from './WebHeroCarousel';
 import HeroOrbit from './HeroOrbit';
 import useReveal from '../utils/useReveal';
-import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } from '../data/products';
+import ProductCard from './ProductCard';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
 
@@ -43,19 +44,10 @@ const CHIP_SETS = [
   ['Fertility', 'Intimate care', 'Hot flashes', 'Cycle support'],
 ];
 
-const SHOP_FILTERS = [
-  { key: 'all', label: 'All', categories: [], keywords: [] },
-  { key: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'], keywords: ['period', 'menstrual'] },
-  { key: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'intimate', 'moisturizer', 'ph'] },
-  { key: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['intimacy', 'lubricant', 'lube'] },
-  { key: 'postpartum', label: 'Postpartum', categories: ['postpartum', 'pregnancy'], keywords: ['postpartum', 'nursing', 'lactation'] },
-  { key: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health'], keywords: ['pelvic', 'kegel'] },
-  { key: 'hormones', label: 'Hormones', categories: ['supplement', 'hormone-monitoring'], keywords: ['pms', 'pcos', 'hormone', 'cycle'] },
-  { key: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
-  { key: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation'] },
-  { key: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'spf', 'acne'] },
-  { key: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo'] },
-];
+// One category list everywhere (HI05): the same chips as Shop.
+// Home shows the first few (same order as Shop); the rest are one tap away.
+const HOME_CHIPS = 9;
+const SHOP_FILTERS = MACRO_GROUPS.map((g) => ({ key: g.id, label: g.label }));
 
 function productText(product) {
   return [product?.name, product?.brand, product?.category, product?.summary, product?.description, ...(product?.tags || [])]
@@ -63,12 +55,7 @@ function productText(product) {
 }
 
 function matchesShopFilter(product, key) {
-  if (!key || key === 'all') return true;
-  const filter = SHOP_FILTERS.find((item) => item.key === key);
-  if (!filter) return true;
-  if (filter.categories.includes(product?.category)) return true;
-  const text = productText(product);
-  return filter.keywords.some((keyword) => text.includes(keyword));
+  return itemMatchesMacroGroup(product, key);
 }
 
 function priceNumber(product) {
@@ -257,25 +244,21 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
   );
 }
 
-/** Board 1a's Shop grid: 4-up, cream tiles, DM Mono eyebrow, Playfair name, muted price. */
 function ShopGrid({ items, onOpenProduct }) {
   return (
     <div className="ayna-landing-shop-grid">
-      {items.map(({ product, label, badge }) => (
-        <button
-          key={product.id}
-          type="button"
-          className="ayna-landing-shop-card"
-          onClick={() => onOpenProduct?.(product)}
-        >
-          <ProductTile product={product} badge={badge} />
-          <div className="ay-card-text">
-            {label && <span className="ay-card-meta">{label}</span>}
-            <strong className="ay-card-name">{product.name}</strong>
-            {product.price && <span className="ay-card-price">{product.price}</span>}
-          </div>
-        </button>
+      {items.map(({ product }) => (
+        <ProductCard key={product.id} product={product} onOpen={onOpenProduct} />
       ))}
+    </div>
+  );
+}
+
+function HomeSkeleton() {
+  return (
+    <div className="mockup-landing ay-home-skeleton" aria-busy="true" aria-label="Loading">
+      <section className="ay-home-skeleton__hero"><div className="mockup-page"><i className="is-eyebrow" /><i className="is-title" /><i className="is-sub" /><i className="is-btn" /></div></section>
+      <section className="mockup-page ay-home-skeleton__grid">{Array.from({ length: 4 }, (_, i) => <i key={i} />)}</section>
     </div>
   );
 }
@@ -318,7 +301,7 @@ function Toggle({ on, offTrack = '#DCD5CB', onTrack = 'var(--color-primary)', on
 /* 1c — returning user                                                 */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
+function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null, savedProducts = {}, onToggleSaved }) {
   const name = displayNameFromUser(user) || 'there';
   const [filter, setFilter] = useState(initialCategory || 'all');
   // A shop category pick was pure local state with no URL round-trip —
@@ -376,7 +359,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
   const availableProductTypes = useMemo(() => productTypeOptions(), []);
 
   const shownProducts = useMemo(() => {
-    let list = ALL_PRODUCTS.filter((product) => product?.id && product?.name && matchesShopFilter(product, filter));
+    let list = ALL_PRODUCTS.filter((product) => product?.id && product?.name && !ownedIds.has(product.id) && matchesShopFilter(product, filter));
 
     if (productTypeFilter !== 'all') list = list.filter((product) => product.category === productTypeFilter);
     if (aynaFilter !== 'all') list = list.filter((product) => matchesAyna(product, aynaFilter, { ownedIds, recommendedIds }));
@@ -435,83 +418,62 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
     setRatingFilter('all');
   };
 
-  return (
-    <div className="mockup-landing mockup-landing--returning">
-      <section className="ayna-landing-hero ayna-landing-hero--returning">
-        <div className="mockup-page ayna-landing-welcomeback">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div className="ayna-landing-eyebrow">Hello, {name}</div>
-            <h1 className="ayna-landing-headline ayna-landing-headline--returning">
-              {ecosystemCount > 0 ? (
-                <>
-                  Your ecosystem is{' '}
-                  <span style={{ fontStyle: 'italic', color: 'var(--color-citric)' }}>
-                    {ecosystemCount} product{ecosystemCount === 1 ? '' : 's'}
-                  </span>{' '}
-                  strong.
-                </>
-              ) : (
-                <>Build your <span style={{ fontStyle: 'italic', color: 'var(--color-citric)' }}>ecosystem</span>.</>
-              )}
-            </h1>
-            <p style={{
-              fontSize: '16px',
-              lineHeight: 1.55,
-              color: 'rgba(244,240,250,0.78)',
-              maxWidth: '420px',
-              margin: 0,
-            }}>
-              Personalized products, all in one place.
-            </p>
-            <div style={{ display: 'flex', gap: '13px', marginTop: '6px', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                className="ayna-landing-btn ayna-landing-btn--amber"
-                onClick={ecosystemCount > 0 ? onViewEcosystem : onStartQuiz}
-              >
-                {ecosystemCount > 0 ? 'Edit ecosystem' : 'Build your ecosystem'}
-              </button>
-              <button type="button" className="ayna-landing-btn ayna-landing-btn--browse" onClick={() => onViewDiscovery?.('')}>
-                Browse
-              </button>
-            </div>
-          </div>
+  // HI03: the one next step. First core area with nothing in it.
+  const nextArea = useMemo(() => {
+    const owned = Object.values(myProducts || {});
+    const core = ['period', 'intimate', 'hormones', 'pelvic', 'sleep-stress', 'skin'];
+    const group = MACRO_GROUPS.filter((g) => core.includes(g.id)).find((g) => !owned.some((p) => itemMatchesMacroGroup(p, g.id)));
+    return group || null;
+  }, [myProducts]);
+  const picks = Object.keys(myProducts || {}).length;
 
-          <button type="button" className="ayna-landing-ecocard" onClick={onViewEcosystem}>
-            <div className="ayna-landing-ecocard__label">Your ecosystem</div>
-            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '12px' }}>
-              {areas.length === 0 ? (
-                <div className="ayna-landing-ecocard__empty">Start here</div>
-              ) : areas.map((a, i) => (
-                <div
-                  key={a.category}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '12px 0',
-                    borderBottom: i === areas.length - 1 ? 'none' : '1px solid rgba(244,240,250,0.14)',
-                  }}
-                >
-                  <span style={{ font: "400 15px 'Playfair Display', serif" }}>{a.label}</span>
-                  <span style={{ fontSize: '11.5px', color: 'var(--color-citric)' }}>
-                    {a.count} {a.count === 1 ? 'pick' : 'picks'}
-                  </span>
-                </div>
-              ))}
+  return (
+    <div className="mockup-landing mockup-landing--returning mockup-landing--home2">
+      <section className="ayna-landing-hero ayna-landing-hero--returning ay-home2-hero">
+        <div className="mockup-page ay-home2-hero__inner">
+          <div className="ay-home2-hero__copy">
+            <p className="ayna-landing-eyebrow">Hello, {name}</p>
+            <h1 className="ay-home2-title">
+              {picks > 0 ? <>Your <span>ecosystem.</span></> : <>Build your <span>ecosystem.</span></>}
+            </h1>
+            <p className="ay-home2-sub">
+              {picks > 0
+                ? `${picks} pick${picks === 1 ? '' : 's'} · ${areas.length} area${areas.length === 1 ? '' : 's'} of care`
+                : 'Six questions, then a shop matched to you.'}
+            </p>
+            <div className="ay-home2-actions">
+              <button type="button" className="ayna-landing-btn ayna-landing-btn--navy" onClick={picks > 0 ? onViewEcosystem : onStartQuiz}>
+                {picks > 0 ? 'Open my ecosystem' : 'Build my ecosystem'}
+              </button>
+              <button type="button" className="ayna-landing-btn ayna-landing-btn--browse" onClick={() => onViewDiscovery?.('')}>Shop</button>
             </div>
-          </button>
+            {picks > 0 && nextArea && (
+              <button type="button" className="ay-home2-next" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
+                <span className="ay-home2-next__dot" aria-hidden="true" />
+                Your {nextArea.label} shelf is empty <b>Add →</b>
+              </button>
+            )}
+          </div>
+          <div className="ay-home2-hero__visual">
+            <HeroOrbit
+              areas={picks > 0 ? areas.map((a) => ({ label: a.label, count: a.count, category: a.category })) : null}
+              centre={picks > 0 ? String(picks) : 'you'}
+              hint={picks > 0 ? (picks === 1 ? 'pick' : 'picks') : 'your ecosystem'}
+              addLabel={picks > 0 ? '+ Add' : null}
+              onAdd={() => onViewDiscovery?.('')}
+              onPick={(label) => (picks > 0 ? onViewEcosystem?.() : onViewDiscovery?.(discoveryTargetFor(label)))}
+            />
+          </div>
         </div>
       </section>
 
       <section className="ayna-landing-shop ayna-landing-shop--returning">
         <div className="mockup-page">
           <div className="ayna-landing-shop-head">
-            <div className="ayna-landing-shop-title ayna-landing-shop-title--returning">Trending on ayna</div>
+            <h2 className="ayna-landing-shop-title ayna-landing-shop-title--returning">{personalize ? 'Picked for you' : 'Explore'}</h2>
             <div className="ayna-landing-shop-controls">
               <div className="ayna-landing-filters">
-                {availableShopFilters.map((item) => (
+                {availableShopFilters.slice(0, HOME_CHIPS).map((item) => (
                   <button
                     key={item.key}
                     type="button"
@@ -521,6 +483,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
                     {item.label}
                   </button>
                 ))}
+                <button type="button" className="ay-chip-more" onClick={() => onViewDiscovery?.('')}>More in Shop →</button>
               </div>
               <button
                 type="button"
@@ -621,26 +584,17 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
             </div>
           )}
 
-          <div className="ayna-landing-shop-grid ayna-landing-shop-grid--returning">
-            {shownProducts.map((product) => {
-              const badge = ownedIds.has(product.id)
-                ? 'IN YOUR ECOSYSTEM'
-                : (personalize && recommendedIds.has(product.id) ? 'FOR YOU' : null);
-              return (
-                <button
-                  key={product.id}
-                  type="button"
-                  className="ayna-landing-shop-card"
-                  onClick={() => onOpenProduct?.(product)}
-                >
-                  <ProductTile product={product} aspectRatio={1.1} badge={badge} />
-                  <div className="ay-card-text">
-                    <strong className="ay-card-name">{product.name}</strong>
-                    {product.price && <span className="ay-card-price">{product.price}</span>}
-                  </div>
-                </button>
-              );
-            })}
+          <div className="ayna-landing-shop-grid ayna-landing-shop-grid--returning ay-home2-grid">
+            {shownProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                isSaved={!!savedProducts?.[product.id]}
+                onOpen={onOpenProduct}
+                onToggleSaved={onToggleSaved}
+                labels={personalize && recommendedIds.has(product.id) ? <span className="ay-for-you">For you</span> : null}
+              />
+            ))}
           </div>
           {shownProducts.length === 0 && (
             <div className="ayna-landing-shop-empty">No matches yet. Try another filter.</div>
@@ -783,6 +737,18 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
         </div>
       </section>
 
+      <section className="ay-steps ay-reveal" aria-labelledby="ay-steps-title">
+        <div className="mockup-page">
+          <h2 id="ay-steps-title" className="ay-steps__title">No mystery box.</h2>
+          <ol className="ay-steps__row">
+            <li className="tone-pink"><b>1</b><strong>Your profile</strong><span>Six questions about your body and what you avoid.</span></li>
+            <li className="tone-butter"><b>2</b><strong>The market</strong><span>We look across products, apps and care.</span></li>
+            <li className="tone-mint"><b>3</b><strong>The evidence</strong><span>Each pick shows its sources.</span></li>
+            <li className="tone-peri"><b>4</b><strong>Your shop</strong><span>Ranked for you. You decide.</span></li>
+          </ol>
+        </div>
+      </section>
+
       <section className="ayna-landing-band ay-reveal">
         <div className="mockup-page ayna-landing-band__inner">
           <div className="ayna-landing-band__copy">
@@ -804,10 +770,10 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
       <section className="ayna-landing-shop ay-reveal">
         <div className="mockup-page">
           <div className="ayna-landing-shop-head">
-            <div className="ayna-landing-shop-title">Trending on ayna</div>
+            <h2 className="ayna-landing-shop-title">Popular on ayna</h2>
             <div className="ayna-landing-shop-controls">
               <div className="ayna-landing-filters">
-                {availableShopFilters.map((f) => (
+                {availableShopFilters.slice(0, HOME_CHIPS).map((f) => (
                   <button
                     key={f.key}
                     type="button"
@@ -817,26 +783,19 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
                     {f.label}
                   </button>
                 ))}
+                <button type="button" className="ay-chip-more" onClick={() => onViewDiscovery?.('')}>More in Shop →</button>
               </div>
               <button type="button" className="ayna-landing-filter-toggle" onClick={() => setShowShopFilters((value) => !value)} aria-expanded={showShopFilters}>
                 Filters
               </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '11px', fontSize: '12.5px', color: '#6f6880' }}>
-                Personalize
-                <Toggle
-                  on={personalize}
-                  onClick={() => {
-                    if (!hasProfile) { onStartQuiz?.(); return; }
-                    setPersonalize((v) => !v);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key !== 'Enter' && e.key !== ' ') return;
-                    e.preventDefault();
-                    if (!hasProfile) { onStartQuiz?.(); return; }
-                    setPersonalize((v) => !v);
-                  }}
-                />
-              </div>
+              {hasProfile ? (
+                <div className="ayna-landing-personalize">
+                  <span>{personalize ? 'Personalized' : 'Personalize'}</span>
+                  <Toggle on={personalize} onClick={() => setPersonalize((v) => !v)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPersonalize((v) => !v); } }} />
+                </div>
+              ) : (
+                <button type="button" className="ay-personalize-cta" onClick={onStartQuiz}>Personalize →</button>
+              )}
             </div>
           </div>
 
@@ -928,6 +887,7 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
           )}
 
           <ShopGrid items={shown} onOpenProduct={onOpenProduct} />
+          <div className="ay-see-all"><button type="button" onClick={() => onViewDiscovery?.('')}>See all in Shop →</button></div>
         </div>
       </section>
     </div>
@@ -943,18 +903,24 @@ export default function AynaLanding({
   onViewCommunity,
   user,
   myProducts,
-  ecosystemCount = 0,
   hasProfile = false,
   profileCategories,
   recommendedProductIds = [],
   initialCategory = null,
+  loading = false,
+  savedProducts = {},
+  onToggleSaved,
 }) {
+  // HI01: hold a skeleton until the session and profile resolve, so a
+  // returning user never sees the new-visitor page flash first.
+  if (loading) return <HomeSkeleton />;
   if (user) {
     return (
       <WelcomeBack
         user={user}
         myProducts={myProducts}
-        ecosystemCount={ecosystemCount}
+        savedProducts={savedProducts}
+        onToggleSaved={onToggleSaved}
         recommendedProductIds={recommendedProductIds}
         onStartQuiz={onStartQuiz}
         onViewDiscovery={onViewDiscovery}

@@ -1,38 +1,38 @@
 :root {
   /* Ayna brand system: neutral canvas, Klein Blue identity, spare Citric and Aquamarine. */
-  --color-bg: #F8F8F3;
-  --color-surface-soft: #FFFFFF;
-  --color-surface-contrast: #1C1917;
+  --color-bg: #faf8f1;
+  --color-surface-soft: #fffcf5;
+  --color-surface-contrast: #1d1a2b;
 
-  --color-text-main: #171717;
-  --color-text-muted: #626262;
+  --color-text-main: #1d1a2b;
+  --color-text-muted: rgba(29, 26, 43, .62);
   --color-text-light: #FFFFFF;
 
-  --color-primary: #4100F5;
-  --color-primary-hover: #3200C2;
-  --color-secondary: #9BF0E1;
-  --color-secondary-fade: rgba(155, 240, 225, 0.25);
-  --color-primary-fade: rgba(65, 0, 245, 0.1);
-  --color-surface: #FFFFFF;
+  --color-primary: #1d1a2b;
+  --color-primary-hover: #000;
+  --color-secondary: #bdebd6;
+  --color-secondary-fade: rgba(189, 235, 214, .35);
+  --color-primary-fade: rgba(185, 194, 244, .35);
+  --color-surface: #fffcf5;
 
-  --color-border: #E0E0D9;
+  --color-border: rgba(29, 26, 43, .16);
 
   /* Keep legacy variable names for existing components while changing their roles. */
-  --color-navy: #4100F5;
-  --color-plum: #4100F5;
-  --color-terracotta: #4100F5;
-  --color-amber: #CDF500;
-  --color-amber-deep: #4100F5;
-  --color-citric: #CDF500;
-  --color-aquamarine: #9BF0E1;
-  --color-ink: #171717;
-  --hero-gradient: #4100F5;
+  --color-navy: #1d1a2b;
+  --color-plum: #1d1a2b;
+  --color-terracotta: #1d1a2b;
+  --color-amber: #f7e78e;
+  --color-amber-deep: #1d1a2b;
+  --color-citric: #f7e78e;
+  --color-aquamarine: #bdebd6;
+  --color-ink: #1d1a2b;
+  --hero-gradient: #b9c2f4;
 
   /* Typography — same feel as the public waitlist (clean, editorial weight) */
-  --font-heading: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  --font-label: 'DM Mono', ui-monospace, 'SF Mono', monospace;
+  --font-heading: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
+  --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
+  --font-label: 'Poppins', system-ui, sans-serif;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -43,9 +43,9 @@
 
   /* Geometry & Shadows */
   --radius-sm: 8px;
-  --radius-md: 12px;
+  --radius-md: 16px;
   --radius-lg: 16px;
-  --radius-xl: 20px;
+  --radius-xl: 16px;
   --radius-pill: 9999px;
 
   --shadow-sm: 0 2px 12px rgba(28, 25, 23, 0.05);
@@ -1520,13 +1520,13 @@ html {
 :root {
   --mockup-page-width: 1180px;
   --mockup-gutter: 56px;
-  --mockup-cream: #F8F8F3;
+  --mockup-cream: #faf8f1;
   --mockup-cream-deep: #F1F1EB;
-  --mockup-ink: #171717;
+  --mockup-ink: #1d1a2b;
   --mockup-ink-soft: #626262;
-  --mockup-ink-label: #171717;
-  --mockup-hero-gradient: #4100F5;
-  --mockup-hero-gradient-returning: #4100F5;
+  --mockup-ink-label: #1d1a2b;
+  --mockup-hero-gradient: #b9c2f4;
+  --mockup-hero-gradient-returning: #b9c2f4;
 }
 
 .mockup-page {
@@ -1549,7 +1549,7 @@ html {
   background: var(--mockup-cream);
   border-top: 1px solid rgba(23, 20, 41, 0.08);
   padding: 56px 0 34px;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   color: var(--mockup-ink);
 }
 
@@ -1618,7 +1618,7 @@ html {
 
 .mockup-landing {
   background: var(--mockup-cream-deep);
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   color: var(--mockup-ink);
 }
 
@@ -1757,7 +1757,7 @@ html {
   display: block;
   margin-top: 10px;
   color: var(--mockup-ink-soft);
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.5;
 }
@@ -2012,7 +2012,7 @@ html {
 }
 
 .app-nav__tab {
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: normal;
@@ -2285,7 +2285,7 @@ html {
 .discovery-shop {
   background: #F8F8F3;
   color: var(--mockup-ink-deep, #1A1714);
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   padding-bottom: 52px;
 }
 
@@ -2563,7 +2563,7 @@ html {
 .hiw {
   background: #F8F8F3;
   color: #1A1714;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   padding-bottom: 46px;
 }
 
@@ -2912,7 +2912,7 @@ html {
 
 .hiw-gate__figure span {
   font-size: 12px;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   color: #8c8078;
 }
 
@@ -3046,7 +3046,7 @@ html {
   gap: 52px;
   align-items: start;
   padding: 44px clamp(1rem, 5vw, 56px) 32px;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   color: #1A1714;
 }
 
@@ -3289,7 +3289,7 @@ a.pdp-head__badge:focus-visible {
   cursor: pointer;
   padding: 1.25rem clamp(1rem, 5vw, 56px) 0;
   margin: 0;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--color-navy);
@@ -3304,7 +3304,7 @@ a.pdp-head__badge:focus-visible {
   align-items: center;
   gap: 12px;
   padding: 0 clamp(1rem, 5vw, 56px) 4px;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
 }
 
 .pdp-viewswitch__label {
@@ -3351,7 +3351,7 @@ a.pdp-head__badge:focus-visible {
   gap: 38px;
   align-items: start;
   padding: 44px clamp(1rem, 5vw, 56px) 52px;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   color: #1A1714;
 }
 
@@ -3763,7 +3763,7 @@ footer a[href*="career" i],
   border: 0;
   background: transparent;
   color: var(--color-primary);
-  font: 600 17px 'DM Sans', system-ui, sans-serif;
+  font: 600 17px 'Poppins', system-ui, sans-serif;
   padding: 10px 0;
   margin-top: 4px;
   text-decoration: underline;
@@ -3795,7 +3795,7 @@ footer a[href*="career" i],
 }
 
 .pdp-retailers__link {
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   font-size: 12.5px;
   color: #1A1714;
   background: #F5F0E8;
@@ -3908,7 +3908,7 @@ footer a[href*="career" i],
   align-items: start;
   padding-top: 44px;
   padding-bottom: 52px;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   color: #1A1714;
 }
 
@@ -4117,7 +4117,7 @@ footer a[href*="career" i],
 .eco-saved {
   padding-top: 8px;
   padding-bottom: 52px;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
 }
 
 .eco-saved__head {
@@ -4156,7 +4156,7 @@ footer a[href*="career" i],
 .eco-shelf {
   padding-top: 44px;
   padding-bottom: 52px;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   color: #1A1714;
   max-width: 900px;
   margin: 0 auto;
@@ -4314,7 +4314,7 @@ footer a[href*="career" i],
 .eco-view-toggle button {
   padding: 0.4rem 1rem;
   border-radius: 999px;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   font-size: 0.82rem;
   font-weight: 500;
   color: #6f6880;
@@ -4414,7 +4414,7 @@ footer a[href*="career" i],
 .brands {
   background: #F8F8F3;
   color: #1A1714;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   padding-bottom: 56px;
 }
 
@@ -4539,15 +4539,15 @@ footer a[href*="career" i],
    ============================================================ */
 
 :root {
-  /* Inter was the body face; the mockup is DM Sans throughout. */
-  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --color-bg: #F8F8F3;
-  --color-surface-soft: #FFFFFF;
-  --color-text-main: #1A1714;
-  --color-text-muted: #8c8078;
-  --color-border: rgba(26, 23, 20, 0.12);
-  --radius-lg: 14px;
-  --radius-xl: 14px;
+  /* Kept in step with the base tokens at the top of this file. */
+  --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
+  --color-bg: #faf8f1;
+  --color-surface-soft: #fffcf5;
+  --color-text-main: #1d1a2b;
+  --color-text-muted: rgba(29, 26, 43, .62);
+  --color-border: rgba(29, 26, 43, .16);
+  --radius-lg: 16px;
+  --radius-xl: 16px;
   --shadow-sm: 0 1px 3px rgba(26, 23, 20, 0.06);
   --shadow-md: 0 6px 20px rgba(26, 23, 20, 0.09);
   --shadow-lg: 0 14px 40px rgba(26, 23, 20, 0.12);

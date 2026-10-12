@@ -102,7 +102,7 @@ const BUBBLE = 128;
  */
 const AREAS = [
   ...MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => ({ key: g.id, label: g.label, categories: g.categories })),
-  { key: 'care', label: 'Clinicians', categories: ['telehealth'] },
+  { key: 'care', label: 'Virtual care', categories: ['telehealth'] },
   // MACRO_GROUPS deliberately excludes the bare 'supplement' category from every
   // area (see its own comment: one flat "Supplements" chip would be useless for
   // FILTERING ~40 unrelated supplements down by what they treat). That reasoning

@@ -363,6 +363,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
               type="button"
               className={mode === 'chat' ? 'is-active' : ''}
               onClick={() => setMode('chat')}
+              title="Type your question"
             >
               Chat
             </button>
@@ -372,6 +373,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
               className={mode === 'talk' ? 'is-active' : ''}
               onClick={() => setMode('talk')}
               disabled={!canTalk}
+              title={canTalk ? 'Speak out loud and hear the answer' : 'Voice isn’t available in this browser'}
             >
               Talk
             </button>

@@ -876,7 +876,7 @@ export const CATEGORY_LABELS = {
     'supplement': 'Supplements',
     'supplements': 'Supplements',
     'tracker': 'Trackers & Wearables',
-    'telehealth': 'Virtual Care',
+    'telehealth': 'Virtual care',
     'mental-health': 'Mental Wellness',
     'fitness': 'Fitness',
     'fitness-cycle': 'Cycle Fitness',

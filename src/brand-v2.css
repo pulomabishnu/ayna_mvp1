@@ -1,11 +1,12 @@
 /* Ayna's shared visual language: strong type, real imagery, quiet surfaces. */
 :root {
-  --brand-blue: #4100F5;
-  --brand-lime: #CDF500;
-  --brand-mint: #9BF0E1;
-  --brand-paper: #F8F8F3;
-  --brand-ink: #171717;
-  --brand-rule: #E0E0D9;
+  /* Same palette as the shipped design (see web-play.css --ay-*). */
+  --brand-blue: #b9c2f4;
+  --brand-lime: #f7e78e;
+  --brand-mint: #bdebd6;
+  --brand-paper: #faf8f1;
+  --brand-ink: #1d1a2b;
+  --brand-rule: rgba(29, 26, 43, .16);
 }
 
 .mockup-landing { background: var(--brand-paper); color: var(--brand-ink); }

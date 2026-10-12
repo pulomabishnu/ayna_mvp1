@@ -107,8 +107,8 @@ export default function SiteFooter({
 
         <FooterColumn title="Explore">
           <button type="button" className="ay-footer-link" onClick={onViewHowItWorks}>How It Works</button>
-          <button type="button" className="ay-footer-link" onClick={() => onViewDiscovery?.('')}>Browse</button>
-          <button type="button" className="ay-footer-link" onClick={onViewArticles}>My Health Library</button>
+          <button type="button" className="ay-footer-link" onClick={() => onViewDiscovery?.('')}>Shop</button>
+          <button type="button" className="ay-footer-link" onClick={onViewArticles}>Library</button>
         </FooterColumn>
 
         <FooterColumn title="Company">
