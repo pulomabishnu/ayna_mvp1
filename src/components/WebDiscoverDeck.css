@@ -11,7 +11,7 @@
 .wdeck-card.is-dragging { transition: none; cursor: grabbing; }
 .wdeck-card.is-behind { transform: translateY(calc(var(--depth) * 10px)) scale(calc(1 - var(--depth) * .04)); background: var(--cream); }
 .wdeck-photo { position: relative; flex: 1; min-height: 0; margin: 12px 12px 0; border-radius: 18px; background: #f7badd; overflow: hidden; }
-.wdeck-photo img { mix-blend-mode: multiply; }
+.wdeck-photo img { mix-blend-mode: normal; border-radius: 12px; }
 .wdeck-copy { display: grid; gap: 4px; padding: 14px 16px 18px; }
 .wdeck-copy span { color: rgba(29, 26, 43, .62); font: 600 13px/1 'Poppins', sans-serif; }
 .wdeck-copy strong { font: 800 22px/1.12 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.025em; }

@@ -169,7 +169,8 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container :is(.ayna-landing-shop-card, .ayna-discover-card, .discovery-card):nth-child(4n+2) :is(.ayna-landing-tile, .ayna-discover-card__tile, .discovery-card__tile) { background: var(--ay-pink) !important; }
 .app-container :is(.ayna-landing-shop-card, .ayna-discover-card, .discovery-card):nth-child(4n+3) :is(.ayna-landing-tile, .ayna-discover-card__tile, .discovery-card__tile) { background: var(--ay-mint) !important; }
 .app-container :is(.ayna-landing-shop-card, .ayna-discover-card, .discovery-card):nth-child(4n+4) :is(.ayna-landing-tile, .ayna-discover-card__tile, .discovery-card__tile) { background: var(--ay-butter) !important; }
-.app-container :is(.ayna-landing-tile, .ayna-discover-card__tile, .discovery-card__tile) img { mix-blend-mode: multiply; }
+/* Colour sits behind the photo as a frame; the photo itself is never tinted. */
+.app-container :is(.ayna-landing-tile, .ayna-discover-card__tile, .discovery-card__tile) img { mix-blend-mode: normal !important; padding: 10% !important; object-fit: contain !important; border-radius: 12px; }
 .app-container :is(.ayna-discover-card__letter, .ayna-landing-tile [class*='fallback'], .discovery-card__tile [class*='fallback']) { color: var(--ay-ink) !important; opacity: .28; font-family: var(--ay-font-display) !important; font-weight: 800 !important; letter-spacing: -.08em !important; }
 
 /* landing card text (inline-styled in the component) */
@@ -292,7 +293,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .pdp-viewswitch__group button { min-height: 34px; padding: 0 16px !important; border: 0 !important; border-radius: 99px !important; background: transparent !important; color: var(--ay-ink) !important; font: 700 13px/1 var(--ay-font-ui) !important; }
 .app-container .pdp-viewswitch__group button.is-active { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
 .app-container .pdp-head__tile { border: 2px solid var(--ay-ink); border-radius: 24px !important; background: var(--ay-pink) !important; }
-.app-container .pdp-head__tile img { mix-blend-mode: multiply; }
+.app-container .pdp-head__tile img { mix-blend-mode: normal !important; padding: 10% !important; object-fit: contain !important; border-radius: 16px; }
 .app-container .pdp-head__eyebrow { display: inline-block; align-self: flex-start; justify-self: start; width: max-content; padding: 5px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink) !important; font: 700 11px/1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
 .app-container .pdp-head__name { color: var(--ay-ink) !important; font: 800 clamp(34px, 3.4vw, 48px)/1 var(--ay-font-display) !important; letter-spacing: -.05em !important; }
 .app-container .pdp-head__price { color: var(--ay-ink) !important; font: 700 22px/1 var(--ay-font-ui) !important; }
