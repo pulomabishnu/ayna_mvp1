@@ -3,6 +3,8 @@ import Disclaimer from './Disclaimer';
 import { ALL_PRODUCTS, getPersonalizedProductIds } from '../data/products';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import { RELEASED_STARTUPS } from '../data/startups';
+import { buildLibrary } from '../mobile/utils/personalReads.js';
+import { getNextArticle } from '../mobile/utils/nextArticle.js';
 
 /** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort) — only tags that match the article heading. */
 export const ARTICLE_TOPIC_TAGS = {
@@ -756,7 +758,7 @@ export function getArticlesByProfileRelevance(quizAnswers, healthProfile = null)
 
 export { ARTICLES };
 
-function renderArticleCard(art, setSelectedId) {
+function renderArticleCard(art, setSelectedId, progress = 0) {
   return (
     <button
       type="button"
@@ -785,6 +787,7 @@ function renderArticleCard(art, setSelectedId) {
       {art.image && <img className="ay-web-lib-card__img" src={art.image} alt="" loading="lazy" />}
       <h3 style={{ fontSize: '1.2rem', marginBottom: '0.4rem', color: 'var(--color-text-main)', fontWeight: '600' }}>{art.title}</h3>
       <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.5, margin: 0 }}>{art.teaser}</p>
+      <ReadState value={progress} />
       <div className="ay-web-lib-card__meta" style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
         <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: '600' }}>{art.source}</span>
         {art.tags.map((t) => (
@@ -823,128 +826,103 @@ const ARTICLE_CATEGORIES = [
   },
 ];
 
+const READ_PROGRESS_KEY = 'ayna_read_progress_v1'; // same key as the app, so progress carries over
+function loadReadProgress() {
+  try { return JSON.parse(localStorage.getItem(READ_PROGRESS_KEY) || '{}') || {}; } catch { return {}; }
+}
+
+function ReadState({ value = 0 }) {
+  const done = value >= 1;
+  return <span className={`ay-web-read-state${done ? ' is-done' : value > 0 ? ' is-mid' : ''}`}>
+    <i aria-hidden="true"><b style={{ width: `${Math.round(value * 100)}%` }} /></i>
+    <small>{done ? 'Finished' : value > 0 ? `${Math.round(value * 100)}% read` : 'New'}</small>
+  </span>;
+}
+
+function minutesFor(article) {
+  const words = String(article?.teaser || '').split(/\s+/).length + 900;
+  return Math.max(3, Math.round(words / 220));
+}
+
 export default function Articles({ initialArticleId, onOpenProduct, quizResults, healthProfile = null }) {
   const [selectedId, setSelectedId] = useState(null);
-  const [filter, setFilter] = useState('all');
+  const [query, setQuery] = useState('');
+  const [topic, setTopic] = useState('all');
+  const [progress, setProgress] = useState(loadReadProgress);
   const selected = ARTICLES.find((a) => a.id === selectedId);
 
-  const recommendedArticles = useMemo(
-    () => getArticlesByProfileRelevance(quizResults || {}, healthProfile),
-    [quizResults, healthProfile]
-  );
-  const hasProfile =
-    !!(quizResults?.frustrations?.length) || inferTagsFromHealthProfile(healthProfile).length > 0;
-  const articlesToShow = filter === 'recommended' ? (hasProfile ? recommendedArticles : []) : ARTICLES;
+  // Same personalised shelves as the app's Library: reads matched to the
+  // quiz answers first, then each topic with no repeats.
+  const { forYou, rows, hasProfile } = useMemo(() => {
+    const lib = buildLibrary(ARTICLES, quizResults);
+    if (lib.forYou.length) return lib;
+    // Older website profiles: fall back to the website's own relevance ranking.
+    const legacy = getArticlesByProfileRelevance(quizResults || {}, healthProfile);
+    const legacyHas = !!(quizResults?.frustrations?.length) || inferTagsFromHealthProfile(healthProfile).length > 0;
+    return legacyHas ? { ...lib, forYou: legacy.slice(0, 6), hasProfile: true } : lib;
+  }, [quizResults, healthProfile]);
+
+  const progressOf = (a) => progress[a.id] || 0;
+  const finished = ARTICLES.filter((a) => progressOf(a) >= 1).length;
+  const keepReading = ARTICLES.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);
+  const topics = [['all', 'All'], ...(hasProfile && forYou.length ? [['foryou', 'For you']] : []), ...rows.map((r) => [r.id, r.label])];
 
   React.useEffect(() => {
-    if (initialArticleId && ARTICLES.some((a) => a.id === initialArticleId)) {
-      setSelectedId(initialArticleId);
-    }
+    if (initialArticleId && ARTICLES.some((a) => a.id === initialArticleId)) setSelectedId(initialArticleId);
   }, [initialArticleId]);
 
-  return (
-    <section className="container animate-fade-in-up ay-web-library" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '900px', margin: '0 auto' }}>
-      <div className="ay-web-lib-head" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Health Articles Library</h1>
-        <p style={{ fontSize: '1rem', color: 'var(--color-text-muted)' }}>
-          Click a headline to read the full article. Always discuss your care with your own clinician. Can&apos;t reach your doctor? See alternatives below each article.
-        </p>
-        <Disclaimer compact style={{ marginTop: '1.5rem', textAlign: 'left', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }} />
-      </div>
+  const record = React.useCallback((id, value) => setProgress((prev) => {
+    const v = Math.round(Math.min(1, value) * 20) / 20;
+    if (!id || (prev[id] || 0) >= v) return prev;
+    const next = { ...prev, [id]: v };
+    try { localStorage.setItem(READ_PROGRESS_KEY, JSON.stringify(next)); } catch { /* storage blocked */ }
+    return next;
+  }), []);
 
-      <div className="ay-web-lib-filter" style={{ marginBottom: '1.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginRight: '0.25rem' }}>Show:</span>
-        <button
-          type="button"
-          className={filter === 'all' ? 'is-on' : ''}
-          onClick={() => setFilter('all')}
-          style={{
-            padding: '0.4rem 0.85rem',
-            fontSize: '0.9rem',
-            fontWeight: '500',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--color-border)',
-            background: filter === 'all' ? 'var(--color-primary)' : 'var(--color-surface-soft)',
-            color: filter === 'all' ? 'var(--color-bg)' : 'var(--color-text-main)',
-            cursor: 'pointer',
-          }}
-        >
-          All articles
-        </button>
-        <button
-          type="button"
-          className={filter === 'recommended' ? 'is-on' : ''}
-          onClick={() => hasProfile && setFilter('recommended')}
-          disabled={!hasProfile}
-          title={!hasProfile ? 'Complete the quiz to see articles recommended for your health profile' : ''}
-          style={{
-            padding: '0.4rem 0.85rem',
-            fontSize: '0.9rem',
-            fontWeight: '500',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--color-border)',
-            background: filter === 'recommended' ? 'var(--color-primary)' : 'var(--color-surface-soft)',
-            color: filter === 'recommended' ? 'var(--color-bg)' : (hasProfile ? 'var(--color-text-main)' : 'var(--color-text-muted)'),
-            cursor: hasProfile ? 'pointer' : 'not-allowed',
-            opacity: hasProfile ? 1 : 0.7,
-          }}
-        >
-          Recommended for you
-        </button>
-        {filter === 'recommended' && hasProfile && (
-          <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-            {recommendedArticles.length} {recommendedArticles.length === 1 ? 'article' : 'articles'} match your profile
-          </span>
-        )}
-      </div>
+  // Reading progress: how far down the article you've scrolled.
+  const bodyRef = React.useRef(null);
+  const [scrolled, setScrolled] = useState(0);
+  React.useEffect(() => {
+    if (!selected) return undefined;
+    window.scrollTo(0, 0);
+    setScrolled(progress[selected.id] || 0);
+    const onScroll = () => {
+      const el = bodyRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const total = rect.height - window.innerHeight * 0.6;
+      const value = total <= 0 ? 1 : Math.min(1, Math.max(0, -rect.top / total));
+      setScrolled((s) => Math.max(s, value));
+      if (value > 0.02) record(selected.id, value);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [selected, record]); // eslint-disable-line react-hooks/exhaustive-deps
 
-      {filter === 'recommended' && !hasProfile && (
-        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
-          Complete your health profile in the quiz to see articles recommended for your concerns and goals.
-        </p>
-      )}
+  const open = (id) => setSelectedId(id);
+  const card = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a))}</li>;
+  const shelf = (id, label, items) => items.length > 0 && <div key={id} className="ay-web-lib-cat">
+    <h2>{label}</h2>
+    <ul className="ay-web-lib-grid">{items.map(card)}</ul>
+  </div>;
 
-      {selected ? (
-        <article
-          className="ay-web-lib-article"
-          style={{
-            background: 'var(--color-surface-soft)',
-            padding: '2.5rem 2rem',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--color-border)',
-            boxShadow: 'var(--shadow-sm)'
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => setSelectedId(null)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--color-primary)',
-              fontSize: '0.95rem',
-              fontWeight: '600',
-              cursor: 'pointer',
-              marginBottom: '1.5rem',
-              padding: 0,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.35rem'
-            }}
-          >
-            ← Back to articles
-          </button>
+  if (selected) {
+    const next = getNextArticle(selected, ARTICLES, Object.keys(progress).filter((id) => progress[id] >= 1), forYou);
+    const done = scrolled >= 0.98;
+    return (
+      <section className="container animate-fade-in-up ay-web-library">
+        <div className="ay-web-read-status" role="status" aria-live="polite">
+          <button type="button" onClick={() => setSelectedId(null)}>← Library</button>
+          <span className="ay-web-read-bar" aria-hidden="true"><b style={{ width: `${Math.round(scrolled * 100)}%` }} /></span>
+          <small>{done ? 'Finished' : scrolled > 0.02 ? `${Math.round(scrolled * 100)}% read` : `${minutesFor(selected)} min read`}</small>
+        </div>
+        <article className="ay-web-lib-article" ref={bodyRef}>
           <h2 style={{ fontSize: '1.85rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', lineHeight: 1.3 }}>{selected.title}</h2>
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-            <span style={{ padding: '0.25rem 0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-primary)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: '600' }}>
-              Sources: {selected.source}
-            </span>
-            {selected.tags.map((t) => (
-              <span key={t} style={{ padding: '0.25rem 0.65rem', background: 'var(--color-surface)', color: 'var(--color-text-muted)', border: '1px solid var(--color-border)', borderRadius: '1rem', fontSize: '0.8rem' }}>
-                {t}
-              </span>
-            ))}
+            <span className="ay-web-pill is-strong">Sources: {selected.source}</span>
+            {selected.tags.map((t) => <span key={t} className="ay-web-pill">{t}</span>)}
           </div>
+          {selected.image && <img className="ay-web-lib-article__img" src={selected.image} alt="" />}
           <div className="article-body" style={{ lineHeight: '1.85', fontSize: '1.05rem', color: 'var(--color-text-main)' }}>
             {selected.body}
           </div>
@@ -952,35 +930,49 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
           <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
           <DiagnosticProductsAndStartups articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
+          {next && <button type="button" className="ay-web-next-read" onClick={() => open(next.article.id)}>
+            <small>{next.label}</small><strong>{next.article.title}</strong><span aria-hidden="true">→</span>
+          </button>}
         </article>
-      ) : (
-        <>
-          {filter === 'recommended' ? (
-            <ul className="ay-web-lib-grid" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {articlesToShow.map((art) => (
-                <li key={art.id}>{renderArticleCard(art, setSelectedId)}</li>
-              ))}
-            </ul>
-          ) : (
-            ARTICLE_CATEGORIES.map((cat) => {
-              const catArticles = cat.articleIds.map((id) => ARTICLES.find((a) => a.id === id)).filter(Boolean);
-              if (catArticles.length === 0) return null;
-              return (
-                <div key={cat.id} className="ay-web-lib-cat" style={{ marginBottom: '2rem' }}>
-                  <h2 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem', paddingBottom: '0.4rem', borderBottom: '1px solid var(--color-border)' }}>
-                    {cat.label}
-                  </h2>
-                  <ul className="ay-web-lib-grid" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {catArticles.map((art) => (
-                      <li key={art.id}>{renderArticleCard(art, setSelectedId)}</li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })
-          )}
-        </>
-      )}
+      </section>
+    );
+  }
+
+  const q = query.trim().toLowerCase();
+  let body;
+  if (q.length >= 2) {
+    const results = ARTICLES.filter((a) => `${a.title} ${(a.tags || []).join(' ')} ${a.teaser || ''}`.toLowerCase().includes(q));
+    body = results.length ? <ul className="ay-web-lib-grid">{results.map(card)}</ul> : <p className="ay-web-lib-empty">No reads match.</p>;
+  } else if (topic !== 'all') {
+    const items = topic === 'foryou' ? forYou : (rows.find((r) => r.id === topic)?.items || []);
+    body = <ul className="ay-web-lib-grid">{items.map(card)}</ul>;
+  } else {
+    body = <>
+      {shelf('keep', 'Keep reading', keepReading)}
+      {hasProfile ? shelf('foryou', 'For you', forYou) : <a className="ay-web-lib-match" href="/quiz">Get reads for you <span aria-hidden="true">→</span></a>}
+      {rows.map((r) => shelf(r.id, r.label, r.items))}
+    </>;
+  }
+
+  return (
+    <section className="container animate-fade-in-up ay-web-library">
+      <div className="ay-web-lib-head">
+        <div className="ay-web-lib-titlerow">
+          <h1>Library</h1>
+          <span className="ay-web-lib-total" aria-label={`${finished} of ${ARTICLES.length} finished`}>
+            <i aria-hidden="true"><b style={{ width: `${ARTICLES.length ? Math.round((finished / ARTICLES.length) * 100) : 0}%` }} /></i>{finished}/{ARTICLES.length} read
+          </span>
+        </div>
+        <label className="ay-web-lib-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search reads" aria-label="Search reads" />
+        </label>
+      </div>
+      {q.length < 2 && <div className="ay-web-lib-filter" role="group" aria-label="Topics">
+        {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
+      </div>}
+      {body}
+      <Disclaimer compact style={{ marginTop: '2rem' }} />
     </section>
   );
 }
