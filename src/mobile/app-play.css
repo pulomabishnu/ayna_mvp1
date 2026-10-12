@@ -817,3 +817,6 @@
 .ayna-area-collection.is-arrived { animation: ay-area-arrive 1.1s var(--ay-ease, ease) both; }
 @keyframes ay-area-arrive { 0% { transform: scale(.985); filter: brightness(1.04); } 35% { transform: scale(1.01); } 100% { transform: none; filter: none; } }
 @media (prefers-reduced-motion: reduce) { .ayna-area-collection.is-arrived { animation: none; } }
+
+/* Swipe to discover: front card pink */
+.ayna-mobile .ay-discover-art i:nth-child(3) { background: var(--ay-pink) !important; }
