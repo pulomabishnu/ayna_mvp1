@@ -541,8 +541,9 @@
 .ip-chip.has-term span { text-decoration: none !important; }
 .ip-label-row { margin-bottom: 10px; align-self: stretch; width: 100%; }
 
-/* Quiz: a steady black canvas with alternating ayna-color choices. */
-.ayna-play-intake {
+/* Dark mode quiz: a steady black canvas with alternating ayna-color choices.
+   Light mode keeps the coloured scenes with white answer bubbles. */
+.ayna-mobile[data-theme='dark'] .ayna-play-intake {
   --ip-bg: #050506;
   --ay-ink: #fff;
   --ay-ink-soft: rgba(255, 255, 255, .76);
@@ -554,63 +555,63 @@
   background: #050506;
   color: #fff;
 }
-.ayna-play-intake:is(.ip-tone--peri, .ip-tone--butter, .ip-tone--pink, .ip-tone--mint, .ip-tone--calm) { --ip-bg: #050506; }
-.ayna-play-intake .ip-art { opacity: .16 !important; }
-.ayna-play-intake :is(button, input, textarea):focus-visible { outline-color: #fff; }
-.ayna-play-intake .ip-next { background: #fff; color: #050506 !important; }
-.ayna-play-intake .ip-next:disabled { background: transparent; color: var(--ay-ink-soft) !important; }
-.ayna-play-intake .ip-next i svg { stroke: #1d1a2b; }
-.ayna-play-intake .ip-label { color: #fff; }
-.ayna-play-intake .ip-answer { color: #fff; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake:is(.ip-tone--peri, .ip-tone--butter, .ip-tone--pink, .ip-tone--mint, .ip-tone--calm) { --ip-bg: #050506; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-art { opacity: .16 !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(button, input, textarea):focus-visible { outline-color: #fff; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next { background: #fff; color: #050506 !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next:disabled { background: transparent; color: var(--ay-ink-soft) !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next i svg { stroke: #1d1a2b; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-label { color: #fff; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-answer { color: #fff; }
 
 /* Repeat pink, mint, butter and periwinkle across answer sets. */
-.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 1),
-.ayna-play-intake .ayna-count-choices button:nth-child(4n + 1) { background: var(--ay-pink) !important; color: #1d1a2b !important; }
-.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 2),
-.ayna-play-intake .ayna-count-choices button:nth-child(4n + 2) { background: var(--ay-mint) !important; color: #1d1a2b !important; }
-.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 3),
-.ayna-play-intake .ayna-count-choices button:nth-child(4n + 3) { background: var(--ay-butter) !important; color: #1d1a2b !important; }
-.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n),
-.ayna-play-intake .ayna-count-choices button:nth-child(4n) { background: var(--ay-peri) !important; color: #1d1a2b !important; }
-.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab)[aria-pressed='true'],
-.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-card, .ip-tab)[aria-checked='true'],
-.ayna-play-intake .ayna-count-choices button[aria-pressed='true'] { box-shadow: 0 0 0 2px #050506, 0 0 0 4px #fff !important; }
-.ayna-play-intake .ip-row .ip-radio { border-color: #1d1a2b; background: #fff; }
-.ayna-play-intake .ip-row[aria-checked='true'] .ip-radio { box-shadow: inset 0 0 0 4px #fff, inset 0 0 0 12px #1d1a2b; }
-.ayna-play-intake .ip-sticker-icon { color: #1d1a2b; border-color: #1d1a2b; }
-.ayna-play-intake .ip-sticker-icon svg { color: #1d1a2b; }
-.ayna-play-intake .ip-card small, .ayna-play-intake .ip-row-copy small { color: rgba(29, 26, 43, .72); }
-.ayna-play-intake .ip-sticker-icon { background: rgba(255, 255, 255, .72); }
-.ayna-play-intake .ip-sticker-glyph { border-color: #1d1a2b; background: #fff; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 1),
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button:nth-child(4n + 1) { background: var(--ay-pink) !important; color: #1d1a2b !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 2),
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button:nth-child(4n + 2) { background: var(--ay-mint) !important; color: #1d1a2b !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 3),
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button:nth-child(4n + 3) { background: var(--ay-butter) !important; color: #1d1a2b !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n),
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button:nth-child(4n) { background: var(--ay-peri) !important; color: #1d1a2b !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab)[aria-pressed='true'],
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-card, .ip-tab)[aria-checked='true'],
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button[aria-pressed='true'] { box-shadow: 0 0 0 2px #050506, 0 0 0 4px #fff !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-row .ip-radio { border-color: #1d1a2b; background: #fff; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-row[aria-checked='true'] .ip-radio { box-shadow: inset 0 0 0 4px #fff, inset 0 0 0 12px #1d1a2b; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-icon { color: #1d1a2b; border-color: #1d1a2b; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-icon svg { color: #1d1a2b; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-card small, .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-row-copy small { color: rgba(29, 26, 43, .72); }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-icon { background: rgba(255, 255, 255, .72); }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-glyph { border-color: #1d1a2b; background: #fff; }
 
 /* Keep text legible on the quiz's dark fields and light accent surfaces. */
-.ayna-mobile.ayna-mobile .ayna-play-intake .ip-answer input:not(.ip-note),
-.ayna-mobile.ayna-mobile .ayna-play-intake .ip-answer textarea:not(.ip-note) {
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-answer input:not(.ip-note),
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-answer textarea:not(.ip-note) {
   color: #fff !important;
   -webkit-text-fill-color: #fff;
   caret-color: #fff;
 }
-.ayna-mobile.ayna-mobile .ayna-play-intake .ip-age-input::placeholder,
-.ayna-mobile.ayna-mobile .ayna-play-intake .ip-ticket-digits input::placeholder { color: rgba(255, 255, 255, .55) !important; }
-.ayna-mobile.ayna-mobile .ayna-play-intake .ip-note {
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-age-input::placeholder,
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-ticket-digits input::placeholder { color: rgba(255, 255, 255, .55) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-note {
   color: #1d1a2b !important;
   -webkit-text-fill-color: #1d1a2b;
   caret-color: #1d1a2b;
 }
-.ayna-mobile.ayna-mobile .ayna-play-intake .ip-note::placeholder { color: rgba(29, 26, 43, .65) !important; }
-.ayna-mobile.ayna-mobile .ayna-play-intake .ip-alert strong,
-.ayna-mobile.ayna-mobile .ayna-play-intake .ip-alert p { color: #1d1a2b !important; }
-.ayna-mobile.ayna-mobile .ayna-play-intake .ip-alert strong span { background: #1d1a2b !important; color: var(--ay-butter) !important; }
-.ayna-play-intake .ip-split-group > strong,
-.ayna-play-intake .ip-tab[aria-selected='true'] b { color: #1d1a2b !important; }
-.ayna-play-intake .ip-add-row,
-.ayna-play-intake .ip-onfile { background: var(--ay-paper); color: #fff !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-note::placeholder { color: rgba(29, 26, 43, .65) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-alert strong,
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-alert p { color: #1d1a2b !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-alert strong span { background: #1d1a2b !important; color: var(--ay-butter) !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-split-group > strong,
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-tab[aria-selected='true'] b { color: #1d1a2b !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-add-row,
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-onfile { background: var(--ay-paper); color: #fff !important; }
 
-.ayna-play-intake .ip-suggest button.is-add { color: #1d1a2b !important; }
-.ayna-play-intake .ip-podium-rank { color: #fff; }
-.ayna-play-intake .ip-mark { color: #fff; }
-.ayna-play-intake .ip-mark:is([data-mark='helped'], [data-mark='didnt_help']) { color: #1d1a2b; }
-.ayna-play-intake .ip-done-stamp svg { stroke: #1d1a2b; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-suggest button.is-add { color: #1d1a2b !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-podium-rank { color: #fff; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-mark { color: #fff; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-mark:is([data-mark='helped'], [data-mark='didnt_help']) { color: #1d1a2b; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-done-stamp svg { stroke: #1d1a2b; }
 
 
 /* Cyber treatment for the dark-mode quiz; choices keep their alternating colors. */
