@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { defineOption } from '../data/glossary.js';
 import { ALL_PRODUCTS } from '../../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
@@ -1007,14 +1007,32 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 
 /* --------------------------------- Main screen --------------------------------- */
 
-export default function IntakeScreen({ onBack, onComplete, initialSnapshot = null, startAtBeginning = false }) {
-  const [intake, setIntake] = useState(() => reconstructIntakeFromSnapshot(initialSnapshot));
-  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || (startAtBeginning ? 'age' : getFirstIncompleteStepId(initialSnapshot) || 'age'));
+const INTAKE_DRAFT_KEY = 'ayna_intake_draft_v1';
+function readIntakeDraft() {
+  try {
+    const draft = JSON.parse(localStorage.getItem(INTAKE_DRAFT_KEY) || 'null');
+    return draft?.version === 1 && draft.intake && typeof draft.intake === 'object' && typeof draft.stepId === 'string' ? draft : null;
+  } catch { return null; }
+}
+
+export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false }) {
+  const [savedDraft] = useState(() => !initialSnapshot && !startAtBeginning ? readIntakeDraft() : null);
+  const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
+  const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || savedDraft?.stepId || (startAtBeginning ? 'age' : getFirstIncompleteStepId(initialSnapshot) || 'age'));
   const [search, setSearch] = useState('');
   // Computed once, from how things stood when this resume started — not
   // re-derived as answers change, so a step's flag clears only by actually
   // reaching and completing it, not by something else on the page changing.
-  const [flaggedStepIds] = useState(() => new Set(getIncompleteStepIds(initialSnapshot)));
+  const [flaggedStepIds] = useState(() => new Set(savedDraft ? [] : getIncompleteStepIds(initialSnapshot)));
+  useEffect(() => {
+    if (initialSnapshot || startAtBeginning) return;
+    const hasProgress = stepId !== 'age' || JSON.stringify(intake) !== JSON.stringify(EMPTY);
+    try {
+      if (hasProgress) localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ version: 1, intake, stepId }));
+      else localStorage.removeItem(INTAKE_DRAFT_KEY);
+    } catch { /* storage unavailable */ }
+    onDraftChange?.(hasProgress);
+  }, [intake, stepId, initialSnapshot, startAtBeginning, onDraftChange]);
   const [minorGate, setMinorGate] = useState(false);
   const [direction, setDirection] = useState('forward');
   const [infoOpen, setInfoOpen] = useState(null);
@@ -1109,6 +1127,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     if (step.id === 'age' && isMinorAge(intake.age)) return;
     if (!requiredReady(step.id, intake)) return;
     if (currentIndex >= visibleSteps.length - 1) {
+      try { localStorage.removeItem(INTAKE_DRAFT_KEY); } catch { /* storage unavailable */ }
+      onDraftChange?.(false);
       onComplete(mapIntakeToLegacyQuizProfile(buildSnapshot(intake)));
       return;
     }
