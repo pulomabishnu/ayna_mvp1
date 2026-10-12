@@ -694,3 +694,121 @@
 .ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center:active .ay-nav-center { transform: translateY(2px); box-shadow: 0 2px 0 var(--ay-ink); }
 .ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active { font-weight: 800 !important; }
 .ayna-mobile .ay-header-actions { display: flex; align-items: center; gap: 8px; }
+
+
+/* Dark mode: Ayna's neon palette on a quiet cyber grid. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] {
+  --ay-cyber-edge: rgba(168, 181, 255, .42);
+  --ay-cyber-panel: #101116;
+  --ay-cyber-grid:
+    linear-gradient(rgba(168, 181, 255, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 181, 255, .045) 1px, transparent 1px),
+    radial-gradient(circle at 85% 4%, rgba(168, 181, 255, .14), transparent 32%),
+    radial-gradient(circle at 8% 58%, rgba(105, 255, 193, .07), transparent 38%);
+  background-color: #050506 !important;
+  background-image: var(--ay-cyber-grid) !important;
+  background-size: 28px 28px, 28px 28px, auto, auto !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] :is(
+  .ayna-ecosystem-start, .ayna-cabinet-home, .ayna-figma-discover,
+  .ayna-fresh-browse-screen, .ayna-fresh-ecosystem, .ayna-fresh-saved,
+  .ayna-fresh-profile-hub, .ayna-fresh-product-detail, .ayna-fresh-article,
+  .am-screen
+) {
+  background-color: #050506 !important;
+  background-image: var(--ay-cyber-grid) !important;
+  background-size: 28px 28px, 28px 28px, auto, auto !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] :is(
+  .ayna-cabinet-stage, .ay-eco-cover, .ayna-cabinet-section-head,
+  .ayna-home-today, .ayna-saved-card, .ayna-saved-feature,
+  .ayna-fresh-profile-menu > button, .am-playlist, .am-product
+) {
+  background: var(--ay-cyber-panel) !important;
+  border: 1px solid var(--ay-cyber-edge) !important;
+  box-shadow: inset 0 0 0 1px rgba(168, 181, 255, .05), 0 0 20px rgba(130, 148, 255, .08) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-stage.ay-eco-hero {
+  background: radial-gradient(circle at 50% 40%, rgba(168, 181, 255, .14), transparent 60%), var(--ay-cyber-panel) !important;
+  border-color: var(--ay-peri) !important;
+  box-shadow: inset 0 0 22px rgba(168, 181, 255, .12), 0 0 24px rgba(168, 181, 255, .13) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection:nth-of-type(4n + 1) .ayna-cabinet-section-head { border-color: var(--ay-pink) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection:nth-of-type(4n + 2) .ayna-cabinet-section-head { border-color: var(--ay-mint) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection:nth-of-type(4n + 3) .ayna-cabinet-section-head { border-color: var(--ay-butter) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-area-collection:nth-of-type(4n + 4) .ayna-cabinet-section-head { border-color: var(--ay-peri) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-fresh-product-card:not(.is-list), .am-card.am-post-card) {
+  background: var(--ay-cyber-panel) !important;
+  border: 1px solid var(--ay-cyber-edge) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 0 18px rgba(168, 181, 255, .09) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-editorial-product-grid > .ayna-fresh-product-card:nth-child(4n + 1) { border-color: rgba(255, 120, 207, .65) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-editorial-product-grid > .ayna-fresh-product-card:nth-child(4n + 2) { border-color: rgba(105, 255, 193, .65) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-editorial-product-grid > .ayna-fresh-product-card:nth-child(4n + 3) { border-color: rgba(245, 255, 104, .65) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-editorial-product-grid > .ayna-fresh-product-card:nth-child(4n + 4) { border-color: rgba(168, 181, 255, .65) !important; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-fresh-search, .am-search, .am-product-search) {
+  background: #101116 !important;
+  border: 1px solid rgba(105, 255, 193, .55) !important;
+  box-shadow: 0 0 14px rgba(105, 255, 193, .09) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-fresh-search, .am-search, .am-product-search) :is(input, input::placeholder) {
+  color: #f5f5fa !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-fresh-mode-tab[aria-pressed='true'], .am-tabs button[aria-selected='true'], .am-tabs button.is-active) {
+  color: var(--ay-mint) !important;
+  border-bottom-color: var(--ay-mint) !important;
+  text-shadow: 0 0 12px rgba(105, 255, 193, .4);
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav {
+  background: rgba(9, 9, 13, .97) !important;
+  border-top: 1px solid rgba(168, 181, 255, .55) !important;
+  box-shadow: 0 -6px 24px rgba(130, 148, 255, .14) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active:not(.is-center) {
+  background: var(--ay-butter) !important;
+  color: #050506 !important;
+  box-shadow: 0 0 16px rgba(245, 255, 104, .34) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav .ay-nav-center {
+  border-color: var(--ay-butter) !important;
+  color: #050506 !important;
+  box-shadow: 0 0 18px rgba(245, 255, 104, .42) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-center.is-active .ay-nav-center {
+  border-color: var(--ay-pink) !important;
+  box-shadow: 0 0 20px rgba(255, 120, 207, .46) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-figma-header, .am-top) {
+  background: rgba(9, 9, 13, .96) !important;
+  border-bottom: 1px solid rgba(168, 181, 255, .42) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ay-eco-play, .ayna-home-today > button, .am-share-plus) {
+  box-shadow: 0 0 16px rgba(105, 255, 193, .35) !important;
+}
+
+
+/* Library continues the same dark-mode grid and luminous edges. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib {
+  background-color: #050506 !important;
+  background-image: var(--ay-cyber-grid) !important;
+  background-size: 28px 28px, 28px 28px, auto, auto !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-item button > div:first-child {
+  border: 1px solid rgba(168, 181, 255, .7);
+  box-shadow: 0 0 17px rgba(168, 181, 255, .16) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-item:nth-child(4n + 1) button > div:first-child { border-color: rgba(255, 120, 207, .75); }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-item:nth-child(4n + 2) button > div:first-child { border-color: rgba(105, 255, 193, .75); }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-item:nth-child(4n + 3) button > div:first-child { border-color: rgba(245, 255, 104, .75); }
+
+
+/* Search affordances stay readable against cyber-dark fields. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-fresh-search, .am-search, .am-product-search) svg {
+  color: #f5f5fa !important;
+  stroke: currentColor !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ayna-fresh-search, .am-search, .am-product-search) input::placeholder {
+  color: rgba(245, 245, 250, .66) !important;
+  opacity: 1 !important;
+}
