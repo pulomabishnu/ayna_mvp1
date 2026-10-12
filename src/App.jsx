@@ -3,7 +3,7 @@ import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
-import HealthIntakeForm from './components/HealthIntakeForm';
+import WebIntake from './components/WebIntake';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import PhoneVerification from './components/PhoneVerification';
 import Recommendations from './components/Recommendations';
@@ -1420,14 +1420,15 @@ function App() {
           />
         )}
         {currentView === 'quiz' && (
-          <HealthIntakeForm onComplete={handleQuizComplete} />
+          <WebIntake onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} />
         )}
         {currentView === 'profile-edit' && (
-          <HealthProfileEditor
-            currentProfile={quizResults}
-            onSave={handleHealthProfileEditorSave}
-            onCancel={() => setCurrentView('ecosystem')}
-            onOpenPhoneVerify={handleOpenPhoneVerification}
+          // Same as the app: editing your profile reopens the quiz with your answers filled in.
+          <WebIntake
+            key="profile-edit"
+            initialSnapshot={quizResults?.fullHealthIntake || null}
+            onComplete={handleHealthProfileEditorSave}
+            onBrowseLibrary={handleViewArticles}
           />
         )}
         {currentView === 'phone-verify' && (
