@@ -605,3 +605,9 @@
 .ayna-play-intake .ip-tab[aria-selected='true'] b { color: #1d1a2b !important; }
 .ayna-play-intake .ip-add-row,
 .ayna-play-intake .ip-onfile { background: var(--ay-paper); color: #fff !important; }
+
+.ayna-play-intake .ip-suggest button.is-add { color: #1d1a2b !important; }
+.ayna-play-intake .ip-podium-rank { color: #fff; }
+.ayna-play-intake .ip-mark { color: #fff; }
+.ayna-play-intake .ip-mark:is([data-mark='helped'], [data-mark='didnt_help']) { color: #1d1a2b; }
+.ayna-play-intake .ip-done-stamp svg { stroke: #1d1a2b; }
