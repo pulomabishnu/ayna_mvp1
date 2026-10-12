@@ -21,6 +21,7 @@ import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLi
 import LegalFooter from '../../components/LegalFooter.jsx';
 import './about-scrapbook.css';
 import { buildShopperProfile } from '../../utils/shopperProfile.js';
+import { ShelfDonut, TrustBars } from '../../components/ShopperCharts.jsx';
 import { getMyCommunityProfile } from '../../../utils/community/communityStore.js';
 import { publicMediaUrl } from '../../../utils/community/imageUpload.js';
 
@@ -371,6 +372,10 @@ function ProfileHub({ shopperProfile, authUserId, onOpen, onClose, name, initial
           <h2>{shopperProfile.title}</h2>
           <p>{shopperProfile.tagline}</p>
         </header>
+        <div className="ay-shopper-charts">
+          <ShelfDonut shelf={shopperProfile.shelf} total={shopperProfile.total} />
+          <TrustBars trust={shopperProfile.trust} />
+        </div>
         <dl>{shopperProfile.rows.map((r, i) => <div key={r.key} className={`tone-${r.tone}`} style={{ '--i': i }}>
           <span className="ay-shopper-ico" aria-hidden="true"><svg viewBox="0 0 24 24">{SHOPPER_ROW_ICONS[r.key]}</svg></span>
           <dt>{r.label}</dt><dd>{r.value}</dd>

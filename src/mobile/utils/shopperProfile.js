@@ -55,5 +55,12 @@ export function buildShopperProfile(intake, myProducts = []) {
   if (!persona && !rows.length) return null;
   const kind = { 'The Researcher': 'researcher', 'The Listener': 'listener', 'The Curator': 'curator', 'The Explorer': 'explorer' }[persona?.title] || 'original';
   const tagline = { researcher: 'You follow the evidence.', listener: 'You trust real experiences.', curator: 'You go with expert picks.', explorer: 'You love finding new brands.', original: 'You shop your own way.' }[kind];
-  return { title: persona?.title || 'Your shelf', kind, tagline, rows };
+  // Chart data: real counts from the Ecosystem, real order from the trust ranking.
+  const mix = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const shelf = mix.slice(0, 4).map(([cat, n]) => ({ label: prettyCategory(cat), value: n }));
+  const rest = mix.slice(4).reduce((sum, [, n]) => sum + n, 0);
+  if (rest) shelf.push({ label: 'Other', value: rest });
+  const TRUST_SHORT = { 'Clinical or scientific evidence': 'Evidence', 'Reviews and experiences from other women': 'Real reviews', 'Brand reputation or expert recommendations': 'Experts + brands' };
+  const trust = (intake.trustRanking || []).map((t) => TRUST_SHORT[t] || t).slice(0, 3);
+  return { title: persona?.title || 'Your shelf', kind, tagline, rows, shelf, total: myProducts.length, trust };
 }
