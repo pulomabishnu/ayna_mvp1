@@ -30,7 +30,6 @@ const EMAIL_CONFIRM_REDIRECT = 'https://www.aynahealth.co/confirmed';
 // user into a screen built for an ecosystem that only exists locally on
 // whatever device originally built it).
 export const MOBILE_OAUTH_PENDING_KEY = 'ayna_mobile_oauth_pending';
-export const OAUTH_RETURN_PATH_KEY = 'ayna_oauth_return_path';
 const NATIVE_OAUTH_REDIRECT = 'co.aynahealth.app://auth/callback';
 
 // On native, point email confirmation at the exact same custom-scheme URL as
@@ -216,9 +215,6 @@ export function useSupabaseAuth() {
 
     try {
       localStorage.setItem(MOBILE_OAUTH_PENDING_KEY, '1');
-      // Where to land after the redirect: the phone preview, or the website
-      // page the person signed in from.
-      localStorage.setItem(OAUTH_RETURN_PATH_KEY, window.location.pathname || '/');
     } catch {
       // Storage unavailable.
     }
@@ -279,9 +275,6 @@ export function useSupabaseAuth() {
 
     try {
       localStorage.setItem(MOBILE_OAUTH_PENDING_KEY, '1');
-      // Where to land after the redirect: the phone preview, or the website
-      // page the person signed in from.
-      localStorage.setItem(OAUTH_RETURN_PATH_KEY, window.location.pathname || '/');
     } catch {
       // Storage unavailable.
     }

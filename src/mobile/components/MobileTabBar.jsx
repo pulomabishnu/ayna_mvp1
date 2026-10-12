@@ -19,8 +19,6 @@ function TabIcon({ kind }) {
 export default function MobileTabBar({ active, onHome, onBrowse, onCommunity, onLibrary, onProfile }) {
   const actions = { library: onLibrary, home: onHome, browse: onBrowse, community: onCommunity, profile: onProfile };
   return <nav className="ayna-bottom-nav" aria-label="Main navigation">
-    {/* Wordmark only shows on the website's top bar (web-shell.css). */}
-    <button type="button" className="ay-nav-mark" onClick={onHome} aria-label="ayna home">ayna</button>
     {tabs.map(([key, label]) => <button type="button" key={key} className={`${active === key ? 'is-active' : ''}${key === 'home' ? ' is-center' : ''}`} onClick={actions[key]} aria-label={label} aria-current={active === key ? 'page' : undefined}>
       {key === 'home' ? <span className="ay-nav-center" aria-hidden="true"><TabIcon kind={key} /></span> : <TabIcon kind={key} />}
       <span>{label}</span>

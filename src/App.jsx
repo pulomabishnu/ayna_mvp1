@@ -57,7 +57,6 @@ import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchL
 import posthog from 'posthog-js';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, parseProductIdFromPath } from './utils/productRoute';
-import { isLegacyWebPath } from './webRoutes.js';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
@@ -225,14 +224,6 @@ function App() {
     return VIEW_TO_PATH[view] || '/';
   }, []);
   const setCurrentView = useCallback((view, { replace = false } = {}) => {
-    // This shell now only serves the standalone pages (webRoutes.js). Any
-    // move to a main page (shop, ecosystem, quiz, library...) loads the
-    // website's app-style experience instead.
-    const target = pathForView(view, null);
-    if (!isLegacyWebPath(target) && window.location.pathname !== '/mobile-preview') {
-      if (replace) window.location.replace(target); else window.location.assign(target);
-      return;
-    }
     currentViewRef.current = view;
     setCurrentViewRaw(view);
     if (view !== 'product') setProductRouteId(null);
@@ -245,11 +236,6 @@ function App() {
   /** Navigate to a specific product's dedicated page — a real URL, not modal state. */
   const navigateToProduct = useCallback((id, { replace = false } = {}) => {
     if (!id) return;
-    if (window.location.pathname !== '/mobile-preview') {
-      const target = productHref(id);
-      if (replace) window.location.replace(target); else window.location.assign(target);
-      return;
-    }
     currentViewRef.current = 'product';
     setCurrentViewRaw('product');
     setProductRouteId(id);
