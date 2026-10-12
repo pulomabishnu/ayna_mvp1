@@ -161,3 +161,29 @@ div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var
   div.wq-count { grid-template-columns: repeat(2, 1fr); }
   .wq-foot .wq-btn { flex: 1; justify-content: center; }
 }
+
+/* Avoid or must-have: one list at a time */
+.wq-avoid { display: grid; gap: 24px; }
+.wq-avoid-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; max-width: 440px; padding: 4px; border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 99px; background: var(--ay-paper, #fffcf5); }
+.wq-avoid-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border: 0; border-radius: 99px; background: transparent; color: var(--ay-ink, #1d1a2b); font: 700 15px/1 'Poppins', system-ui, sans-serif; cursor: pointer; }
+.wq-avoid-tabs button.is-on.is-avoid { background: var(--ay-pink, #f7badd); }
+.wq-avoid-tabs button.is-on.is-want { background: var(--ay-mint, #bfe8cf); }
+.wq-avoid-tabs button span { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 99px; background: var(--ay-ink, #1d1a2b); color: #fff; font: 700 12px/1 'Poppins', system-ui, sans-serif; }
+.wq-avoid-panel { display: grid; gap: 16px; animation: wq-avoid-in .25s ease-out both; }
+.wq-avoid-none { padding-top: 20px; border-top: 1.5px dashed rgba(29, 26, 43, .3); }
+@keyframes wq-avoid-in { from { opacity: 0; transform: translateY(8px); } }
+
+/* What needs support: topic tabs, one group at a time */
+.wq-topic-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.wq-topic-tabs button { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border: 1.5px solid var(--faint, rgba(29,26,43,.16)); border-radius: 99px; background: transparent; color: var(--ink, #1d1a2b); font: 600 13px/1 'Poppins', system-ui, sans-serif; }
+.wq-topic-tabs button.is-on { border-color: var(--ink, #1d1a2b); background: var(--tone, var(--butter, #f7e78e)); font-weight: 700; }
+.wq-topic-tabs button b { display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 99px; background: var(--ink, #1d1a2b); color: #fff; font: 700 11px/1 'Poppins', system-ui, sans-serif; }
+.wq-topic-panel { padding: 20px; border: 2px solid var(--ink, #1d1a2b); border-radius: 22px; background: var(--cream, #faf8f1); animation: wq-avoid-in .25s ease-out both; }
+
+/* Breathing room for every step */
+.wq-card { padding: 36px clamp(24px, 5vw, 56px) 32px !important; }
+.wq-head { margin-bottom: 32px !important; }
+.wq-answer { gap: 20px !important; margin-top: 32px !important; }
+.wq-chips { gap: 10px !important; }
+.wq-group + .wq-group { margin-top: 8px; }
+.wq-foot { margin-top: 40px !important; }

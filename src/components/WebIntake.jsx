@@ -204,6 +204,17 @@ function MinorGate({ onChangeAge, onBrowseLibrary }) {
 
 /* ------------------------------ Quiz ------------------------------ */
 
+const TOPIC_SHORT = {
+  'Period + cycle': 'Period',
+  'Hormonal + reproductive': 'Hormones',
+  'Sexual + reproductive health': 'Sexual health',
+  'Perimenopause + menopause + post-menopause': 'Menopause',
+  'Mood + mental wellbeing': 'Mood',
+  'Sleep + energy + cognition': 'Sleep + energy',
+  'Metabolic + physical wellness': 'Wellness',
+  'Care access': 'Care',
+};
+
 export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null }) {
   const [savedDraft] = useState(() => (initialSnapshot ? null : readIntakeDraft()));
   const [intake, setIntake] = useState(() => (savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot)));
@@ -214,6 +225,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const [minorGate, setMinorGate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [avoidTab, setAvoidTab] = useState('avoid');
+  const [supportTab, setSupportTab] = useState(null);
 
   // Same draft the app keeps, so an unfinished quiz resumes on either.
   useEffect(() => {
@@ -307,15 +320,30 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         return <>
           <Search value={search} onChange={setSearch} placeholder="Search, e.g. cramps, sleep, acne" />
           <AddCustom query={search} options={[...known, ...intake.supportSelections]} onAdd={(v) => addCustom('supportSelections', v, ['Nothing right now'])} />
-          <div className="wq-groups">
-            {SUPPORT_GROUPS.map((g) => {
-              const items = q ? g.items.filter((i) => i.toLowerCase().includes(q)) : g.items;
-              if (!items.length) return null;
-              const count = g.items.filter((i) => intake.supportSelections.includes(i)).length;
-              return <section key={g.label} className="wq-group"><h3>{g.label}{count > 0 && <em>{count}</em>}</h3><Chips small items={items} selected={intake.supportSelections} onToggle={(v) => toggleExclusive('supportSelections', v, ['Nothing right now'])} /></section>;
-            })}
-            {custom.length > 0 && <section className="wq-group"><h3>Added by you</h3><Chips small items={custom} selected={custom} onToggle={(v) => toggleExclusive('supportSelections', v)} /></section>}
-          </div>
+          {q ? (
+            <div className="wq-groups">
+              {SUPPORT_GROUPS.map((g) => {
+                const items = g.items.filter((i) => i.toLowerCase().includes(q));
+                if (!items.length) return null;
+                return <section key={g.label} className="wq-group"><h3>{g.label}</h3><Chips items={items} selected={intake.supportSelections} onToggle={(v) => toggleExclusive('supportSelections', v, ['Nothing right now'])} /></section>;
+              })}
+            </div>
+          ) : (() => {
+            const activeLabel = supportTab || SUPPORT_GROUPS.find((g) => g.items.some((i) => intake.supportSelections.includes(i)))?.label || SUPPORT_GROUPS[0]?.label;
+            const group = SUPPORT_GROUPS.find((g) => g.label === activeLabel) || SUPPORT_GROUPS[0];
+            return <>
+              <div className="wq-topic-tabs" role="tablist" aria-label="Topics">
+                {SUPPORT_GROUPS.map((g) => {
+                  const count = g.items.filter((i) => intake.supportSelections.includes(i)).length;
+                  return <button type="button" role="tab" key={g.label} aria-selected={g.label === group.label} className={g.label === group.label ? 'is-on' : ''} onClick={() => setSupportTab(g.label)}>{TOPIC_SHORT[g.label] || g.label}{count > 0 && <b>{count}</b>}</button>;
+                })}
+              </div>
+              <div className="wq-topic-panel" role="tabpanel" key={group.label}>
+                <Chips items={group.items} selected={intake.supportSelections} onToggle={(v) => toggleExclusive('supportSelections', v, ['Nothing right now'])} />
+              </div>
+            </>;
+          })()}
+          {custom.length > 0 && <section className="wq-group"><h3>Added by you</h3><Chips small items={custom} selected={custom} onToggle={(v) => toggleExclusive('supportSelections', v)} /></section>}
         </>;
       }
       case 'flow': return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} />;
@@ -381,10 +409,20 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
           const on = cur.includes(v) || (pair && cur.includes(pair));
           return { ...prev, avoidIngredients: on ? cur.filter((x) => x !== v && x !== pair) : [...cur, v, ...(pair ? [pair] : [])] };
         });
-        return <div className="wq-split">
-          <section className="is-avoid"><h3>Leave out</h3><Chips small items={[...AVOID_GROUPS.avoid, ...customAvoid]} selected={[...AVOID_GROUPS.avoid.filter(isOn), ...customAvoid]} onToggle={toggle} /><AddOwn placeholder="Add something to leave out" onAdd={(v) => addCustom('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference'])} /></section>
-          <section className="is-want"><h3>Should be</h3><Chips small items={[...AVOID_GROUPS.want, ...customWant]} selected={[...AVOID_GROUPS.want.filter(isOn), ...customWant]} onToggle={toggle} /><AddOwn placeholder="Add a must-have" onAdd={(v) => addCustom('avoidIngredients', v, ['No preference'])} /></section>
-          <Chips small items={['No preference']} selected={sel.includes('No preference') ? ['No preference'] : []} onToggle={toggle} />
+        const avoidSel = [...AVOID_GROUPS.avoid.filter(isOn), ...customAvoid];
+        const wantSel = [...AVOID_GROUPS.want.filter(isOn), ...customWant];
+        const onAvoid = avoidTab === 'avoid';
+        return <div className="wq-avoid">
+          <div className="wq-avoid-tabs" role="tablist" aria-label="Leave out or should be">
+            <button type="button" role="tab" aria-selected={onAvoid} className={`is-avoid${onAvoid ? ' is-on' : ''}`} onClick={() => setAvoidTab('avoid')}>Leave out{avoidSel.length > 0 && <span>{avoidSel.length}</span>}</button>
+            <button type="button" role="tab" aria-selected={!onAvoid} className={`is-want${!onAvoid ? ' is-on' : ''}`} onClick={() => setAvoidTab('want')}>Should be{wantSel.length > 0 && <span>{wantSel.length}</span>}</button>
+          </div>
+          <div className="wq-avoid-panel" role="tabpanel" key={avoidTab}>
+            {onAvoid
+              ? <><Chips items={[...AVOID_GROUPS.avoid, ...customAvoid]} selected={avoidSel} onToggle={toggle} /><AddOwn placeholder="Add something to leave out" onAdd={(v) => addCustom('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference'])} /></>
+              : <><Chips items={[...AVOID_GROUPS.want, ...customWant]} selected={wantSel} onToggle={toggle} /><AddOwn placeholder="Add a must-have" onAdd={(v) => addCustom('avoidIngredients', v, ['No preference'])} /></>}
+          </div>
+          <div className="wq-avoid-none"><Chips small items={['No preference']} selected={sel.includes('No preference') ? ['No preference'] : []} onToggle={toggle} /></div>
         </div>;
       }
       case 'fsa': return <div className="wq-fsa">{FSA_HSA.map((o) => <button type="button" key={o} className={intake.fsaHsaAnswer === o ? 'is-on' : ''} aria-pressed={intake.fsaHsaAnswer === o} onClick={() => set('fsaHsaAnswer', o)}>{o}</button>)}</div>;

@@ -98,6 +98,28 @@ const FORMAT_ICONS = {
   ),
 };
 /** Small "type your own" field: shows as a + chip, opens to an input. */
+// Avoid or must-have: one list at a time (Leave out / Should be) so the
+// screen isn't a wall of chips. Same values and toggle logic as before.
+function AvoidMustHave({ avoidItems, avoidSelected, wantItems, wantSelected, onToggle, onAddAvoid, onAddWant, noPref, onNoPref }) {
+  const [tab, setTab] = useState('avoid');
+  const isAvoid = tab === 'avoid';
+  return (
+    <div className="ip-avoid">
+      <div className="ip-avoid-tabs" role="tablist" aria-label="Leave out or should be">
+        <button type="button" role="tab" aria-selected={isAvoid} className={`is-avoid${isAvoid ? ' is-on' : ''}`} onClick={() => setTab('avoid')}>Leave out{avoidSelected.length > 0 && <span>{avoidSelected.length}</span>}</button>
+        <button type="button" role="tab" aria-selected={!isAvoid} className={`is-want${!isAvoid ? ' is-on' : ''}`} onClick={() => setTab('want')}>Should be{wantSelected.length > 0 && <span>{wantSelected.length}</span>}</button>
+      </div>
+      <div className="ip-avoid-panel" role="tabpanel" key={tab}>
+        <ChipList items={isAvoid ? avoidItems : wantItems} selected={isAvoid ? avoidSelected : wantSelected} onToggle={onToggle} compact />
+        <AddOwn placeholder={isAvoid ? 'Add something to leave out' : 'Add a must-have'} onAdd={isAvoid ? onAddAvoid : onAddWant} />
+      </div>
+      <div className="ip-avoid-none">
+        <ChipList items={['No preference']} selected={noPref ? ['No preference'] : []} onToggle={onNoPref} compact />
+      </div>
+    </div>
+  );
+}
+
 function AddOwn({ placeholder, onAdd }) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
@@ -727,11 +749,17 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         return { ...prev, avoidIngredients: next };
       });
       return (
-        <div className="ip-split">
-          <div className="ip-split-group"><strong className="is-avoid">Leave out</strong><ChipList items={[...AVOID_GROUPS.avoid, ...customAvoid]} selected={[...AVOID_GROUPS.avoid.filter(isOn), ...customAvoid]} onToggle={toggleAvoid} compact /><AddOwn placeholder="Add something to leave out" onAdd={(v) => addCustomSelection('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference'])} /></div>
-          <div className="ip-split-group"><strong className="is-want">Should be</strong><ChipList items={[...AVOID_GROUPS.want, ...customWant]} selected={[...AVOID_GROUPS.want.filter(isOn), ...customWant]} onToggle={toggleAvoid} compact /><AddOwn placeholder="Add a must-have" onAdd={(v) => addCustomSelection('avoidIngredients', v, ['No preference'])} /></div>
-          <ChipList items={['No preference']} selected={selected.includes('No preference') ? ['No preference'] : []} onToggle={toggleAvoid} compact />
-        </div>
+        <AvoidMustHave
+          avoidItems={[...AVOID_GROUPS.avoid, ...customAvoid]}
+          avoidSelected={[...AVOID_GROUPS.avoid.filter(isOn), ...customAvoid]}
+          wantItems={[...AVOID_GROUPS.want, ...customWant]}
+          wantSelected={[...AVOID_GROUPS.want.filter(isOn), ...customWant]}
+          onToggle={toggleAvoid}
+          onAddAvoid={(v) => addCustomSelection('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference'])}
+          onAddWant={(v) => addCustomSelection('avoidIngredients', v, ['No preference'])}
+          noPref={selected.includes('No preference')}
+          onNoPref={toggleAvoid}
+        />
       );
     }
     if (step.type === 'fsa') return <AccountCards options={FSA_HSA} value={intake.fsaHsaAnswer} onChange={(v) => set('fsaHsaAnswer', v)} />;

@@ -633,3 +633,16 @@
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next:not(:disabled) {
   box-shadow: 0 0 18px rgba(245, 255, 104, .25);
 }
+
+/* Avoid or must-have: one list at a time, roomier */
+.ip-avoid { display: grid; gap: 20px; }
+.ip-avoid-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border: 1.5px solid currentColor; border-radius: 99px; }
+.ip-avoid-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border: 0; border-radius: 99px; background: transparent; color: inherit; font: 700 15px/1 var(--ay-font-ui); cursor: pointer; transition: background-color .2s, color .2s; }
+.ip-avoid-tabs button.is-on.is-avoid { background: var(--ay-pink); color: #1d1a2b !important; }
+.ip-avoid-tabs button.is-on.is-want { background: var(--ay-mint); color: #1d1a2b !important; }
+.ip-avoid-tabs button span { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 99px; background: #1d1a2b; color: #fff; font: 700 12px/1 var(--ay-font-ui); }
+.ip-avoid-panel { display: grid; gap: 16px; animation: ip-avoid-in .25s ease-out both; }
+.ip-avoid-panel .ip-chips, .ip-avoid-panel > div:first-child { row-gap: 10px !important; column-gap: 8px !important; }
+.ip-avoid-none { padding-top: 16px; border-top: 1.5px dashed currentColor; opacity: .95; }
+@keyframes ip-avoid-in { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) { .ip-avoid-panel { animation: none; } }
