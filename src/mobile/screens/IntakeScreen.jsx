@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { findTerm } from '../data/glossary.js';
+import { defineOption } from '../data/glossary.js';
 import { ALL_PRODUCTS } from '../../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profileCompleteness.js';
@@ -67,6 +67,7 @@ const LIFE_STAGE_LABELS = {
   'I am in menopause': 'Menopause',
   'I am post-menopause': 'Post-menopause',
 };
+const LIFE_STAGE_VALUE_BY_LABEL = Object.fromEntries(Object.entries(LIFE_STAGE_LABELS).map(([value, label]) => [label, value]));
 // Abstract "phase" marks (CSS-drawn) so each stage reads at a glance
 // without leaning on clip-art icons.
 const LIFE_STAGE_GLYPHS = {
@@ -963,7 +964,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
           <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, marginTop: 20 }}>Age requirement</div>
           <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.12, color: INK, marginTop: 9 }}>We can't take you through the quiz</div>
           <p style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: BODY_TEXT, margin: '12px 0 0' }}>
-            ayna is built for people 18 and over. Because the quiz leads to supplement and product guidance, we don't create profiles for minors — that's a conversation for a parent, guardian or clinician who knows your history.
+            ayna is built for people 18 and over. Because the quiz leads to supplement and product guidance, we don't create profiles for minors. That's a conversation for a parent, guardian or clinician who knows your history.
           </p>
         </div>
 
@@ -983,7 +984,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 
           <div style={{ marginTop: 22, padding: '15px 16px', borderRadius: 18, background: CARD_BG, border: '1px solid ' + ROW_BORDER }}>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>Entered the wrong birthday?</div>
-            <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 4 }}>Go back one screen and change it — nothing has been saved yet.</div>
+            <div style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 4 }}>Go back one screen and change it. Nothing has been saved yet.</div>
           </div>
 
           <p style={{ fontFamily: 'var(--ayna-font-ui)', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: MUTED, margin: '16px 0 0' }}>
@@ -1022,11 +1023,13 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const holdRef = useRef({ timer: null, fired: false });
   const startHold = (event) => {
     const el = event.target.closest('button, label, [role="radio"]');
-    const hit = el && findTerm(el.textContent);
+    const raw = el ? el.textContent.replace(/\s+/g, ' ').trim() : '';
+    const value = LIFE_STAGE_VALUE_BY_LABEL[raw] || raw;
+    const hit = el && (defineOption(value, step.type) || (step.type === 'price' && defineOption(value, 'largePurchase')));
     clearTimeout(holdRef.current.timer);
     holdRef.current.fired = false;
     if (!hit) return;
-    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary(hit); navigator.vibrate?.(8); }, 450);
+    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); navigator.vibrate?.(8); }, 450);
   };
   const endHold = () => clearTimeout(holdRef.current.timer);
   const swallowClickAfterHold = (event) => {
@@ -1035,32 +1038,32 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
   const visibleSteps = useMemo(() => {
     const steps = [
-      { id: 'age', section: 'core', title: 'Your age', type: 'age', optional: true, info: 'Some products are only right for certain ages. Type it or use the ruler.' },
-      { id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', optional: true, info: 'Pick everything that fits right now. Hold a word to see what it means.' },
-      { id: 'zip', section: 'core', title: 'ZIP code', type: 'zip', optional: true, info: 'Only used to find care and stores near you. Never shared.' },
-      { id: 'support', section: 'support', title: 'What needs support?', type: 'support', optional: true, info: 'Pick what you’d like help with. Each one becomes a shelf in your Ecosystem.' },
+      { id: 'age', section: 'core', title: 'Your age', type: 'age', optional: true, info: 'We use your age to skip products that are not meant for you, like menopause supplements in your 20s. Type it, tap plus or minus, or slide the ruler.' },
+      { id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', optional: true, info: 'Pick every stage that fits right now. It changes what we show, for example pregnancy-safe picks only, or midlife support. Hold any option to see what it means.' },
+      { id: 'zip', section: 'core', title: 'ZIP code', type: 'zip', optional: true, info: 'Only used to find clinics, telehealth and stores that serve your area. We never sell it or show it to anyone.' },
+      { id: 'support', section: 'support', title: 'What needs support?', type: 'support', optional: true, info: 'Pick everything you want help with. Each one becomes its own shelf of products in your Ecosystem. Use the tabs or search to find more. Hold any option to see what it means.' },
       ...(isPeriodRelevant(intake) ? [
-        { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', optional: true, info: 'How much you usually bleed. It helps us pick the right absorbency.' },
-        { id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', optional: true, info: 'How much cramps or pain affect you on a typical period.' },
+        { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', optional: true, info: 'How much you bleed on a typical heavy day. We use it to match pad, tampon, cup and underwear absorbency. Hold any option to see what it means.' },
+        { id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', optional: true, info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list. Hold any option to see what it means.' },
       ] : []),
-      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', optional: true, info: 'How often UTI-like symptoms come back.' }] : []),
-      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago?', type: 'postpartumTiming', optional: true, info: 'How long since you gave birth — needs change over time.' }] : []),
-      ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', optional: true, info: 'So we only show pregnancy-safe picks for where you are.' }] : []),
-      { id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', optional: false, info: 'Only conditions a clinician has diagnosed. We use this to filter out products that aren’t a good fit.' },
-      { id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', optional: false, info: 'So we can keep ingredients you react to out of your picks.' },
-      { id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', optional: false, info: 'Some supplements interact with medicines. We use this to flag them.' },
-      { id: 'products', section: 'history', title: 'What have you tried?', type: 'products', optional: true, info: 'Products you’ve used before, so we don’t repeat what didn’t work.' },
-      { id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', optional: true, info: 'Anything here never shows up in your picks.' },
-      { id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', optional: false, info: 'ayna doesn’t diagnose. If something feels urgent or severe, please get care.' },
-      { id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', optional: true, info: 'The kinds of products you like using, like pads, cups or apps.' },
-      { id: 'recommendationCount', section: 'preferences', title: 'Picks per need', subtitle: 'For each area you want support with', info: 'This is how many products we show for each thing you picked earlier — for example 3 for cramps and 3 for sleep.', type: 'recommendationCount', optional: true },
-      { id: 'priceRange', section: 'preferences', title: 'Budget per item', info: 'What you’d usually spend on one item — not your total.', type: 'price', optional: true },
-      { id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', optional: true, info: 'How open you are to trying brands you haven’t used before.' },
-      ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', info: 'Brands you already like. We’ll lean toward them.', type: 'trustedBrands', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Avoid or must-have?', info: 'Pick what your products should leave out, and what they should be. Both are optional.', type: 'avoidIngredients', optional: true },
-      { id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'FSA and HSA are pre-tax health accounts, often through work. If you have one, we can flag eligible products.', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'What matters most?', subtitle: 'When choosing a product', info: 'Drag to rank. We weigh your top pick most when matching.', type: 'trust', optional: false },
-      { id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', optional: true, info: 'Anything else you want us to keep in mind. Optional.' },
+      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', optional: true, info: 'How often UTI-type symptoms come back. It decides whether we show prevention products, testing strips or care options first. Hold any option to see what it means.' }] : []),
+      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago?', type: 'postpartumTiming', optional: true, info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year. Hold any option to see what it means.' }] : []),
+      ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', optional: true, info: 'Which part of pregnancy you are in. We only show products generally considered safe for that stage. Hold any option to see what it means.' }] : []),
+      { id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', optional: false, info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out. Hold any option to see what it means.' },
+      { id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', optional: false, info: 'Anything you react to. Products with these ingredients or materials will not show up in your picks. Hold any option to see what it means.' },
+      { id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', optional: false, info: 'Some supplements interact with medicines, for example St. John’s wort with birth control. We use this to flag those combinations.' },
+      { id: 'products', section: 'history', title: 'What have you tried?', type: 'products', optional: true, info: 'Products you have used before. We use what worked and what did not to avoid repeats and find better fits.' },
+      { id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', optional: true, info: 'Anything you add here will never show up in your picks.' },
+      { id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', optional: false, info: 'ayna does not diagnose. If you have new or quickly worsening symptoms, we point you to care before products. Hold any option to see what it means.' },
+      { id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', optional: true, info: 'The kinds of products you like using. We rank these formats higher in your picks. Hold any option to see what it means.' },
+      { id: 'recommendationCount', section: 'preferences', title: 'Picks per need', subtitle: 'For each area you want support with', info: 'How many products we show for each thing you picked. For example, 3 means 3 for cramps and 3 for sleep.', type: 'recommendationCount', optional: true },
+      { id: 'priceRange', section: 'preferences', title: 'Budget per item', info: 'What you usually spend on one item, not your total. We use it to rank picks within your range first. Hold any option to see what it means.', type: 'price', optional: true },
+      { id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', optional: true, info: 'How open you are to brands you have not tried. It shifts your picks between familiar names and newer startups. Hold any option to see what it means.' },
+      ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', info: 'Brands you already like. We show them first when they fit what you need.', type: 'trustedBrands', optional: true }] : []),
+      { id: 'avoidIngredients', section: 'preferences', title: 'Avoid or must-have?', info: 'Leave out removes products with those ingredients. Should be favors products that match. Both are optional. Hold any option to see what it means.', type: 'avoidIngredients', optional: true },
+      { id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'If you have a pre-tax health account, we can point out products that are usually eligible. Hold any option to see what it means.', type: 'fsa', optional: true },
+      { id: 'trust', section: 'trust', title: 'What matters most?', subtitle: 'When choosing a product', info: 'Drag to rank what you trust most. We weigh your top pick most when matching. Hold any option to see what it means.', type: 'trust', optional: false },
+      { id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', optional: true, info: 'Anything else you want us to keep in mind, like a goal, a budget limit or a product you love. Optional.' },
     ];
     return steps;
   }, [intake]);
@@ -1329,8 +1332,11 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
       <div className="ip-body">
         <div className="ip-question" key={`q-${step.id}`}>
-          {scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
-          <h1 className="ip-title">{step.title}{step.info && <button type="button" className="ip-info" aria-label={`About: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}</h1>
+          <div className="ip-label-row">
+            {scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
+            {step.info && <button type="button" className="ip-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}
+          </div>
+          <h1 className="ip-title">{step.title}</h1>
           {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
           {step.info && infoOpen === step.id && <p className="ip-info-pop" role="note">{step.info}</p>}
           {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
