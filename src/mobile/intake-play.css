@@ -647,3 +647,8 @@
 .ip-avoid-none { padding-top: 16px; border-top: 1.5px dashed currentColor; opacity: .95; }
 @keyframes ip-avoid-in { from { opacity: 0; transform: translateY(8px); } }
 @media (prefers-reduced-motion: reduce) { .ip-avoid-panel { animation: none; } }
+
+/* Tighter top: answers start just under the title; "Not answered yet" is a small quiet tag */
+.ayna-play-intake .ip-spacer.is-top { max-height: 28px !important; }
+.ayna-play-intake .ip-question > .ip-flag { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; width: auto; margin-top: 12px; padding: 6px 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 12px/1 var(--ay-font-ui); }
+.ayna-play-intake .ip-question > .ip-flag::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--ay-pink); border: 1.5px solid var(--ay-ink); }
