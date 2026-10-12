@@ -102,3 +102,29 @@
 .wyou-seg { display: inline-flex; padding: 3px; border: 2px solid var(--ay-ink); border-radius: 99px; }
 .wyou-rows .wyou-seg button { min-height: 30px; padding: 0 12px; border-radius: 99px; text-decoration: none; }
 .wyou-rows .wyou-seg button[aria-pressed='true'] { background: var(--ay-ink); color: var(--ay-paper); }
+
+/* Calmer layout: one centred column, one thing per row, more air */
+.wyou { max-width: 860px !important; padding-top: 48px !important; }
+.wyou-hero { padding: 32px !important; }
+.wyou-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 32px !important; margin-top: 32px !important; }
+.wyou-col { display: contents !important; }
+.wyou-links { order: 1; }
+.wyou-shopper, .wyou-card.is-shopper-empty { order: 2; }
+.wyou-card.is-safety { order: 3; }
+.wyou-grid > .wyou-col > .wyou-card:not(.is-badges):not(.is-safety):not(.is-account):not(.is-shopper-empty) { order: 4; }
+.wyou-card.is-badges { order: 5; }
+.wyou-card.is-account { order: 6; }
+.wyou-card { padding: 28px !important; }
+.wyou-card-head { margin-bottom: 20px !important; }
+.wyou-card.is-shopper-empty { display: grid; gap: 8px; justify-items: start; }
+.wyou-card.is-shopper-empty .wyou-btn { margin-top: 12px; }
+.wyou-badges { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 12px !important; }
+.wyou-links { gap: 12px !important; }
+.wyou-links button { padding: 20px !important; }
+.wyou-rows > div { padding-top: 16px !important; padding-bottom: 16px !important; }
+@media (max-width: 760px) {
+  .wyou { padding-top: 24px !important; }
+  .wyou-grid { gap: 20px !important; margin-top: 20px !important; }
+  .wyou-badges, .wyou-links { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .wyou-card { padding: 20px !important; }
+}

@@ -38,7 +38,7 @@ function Badges({ savedCount, ecosystemCount, pct }) {
     { key: 'profile', label: 'Profile complete', hint: `${pct}% done`, earned: pct >= 100, tone: 'mint' },
     { key: 'collector', label: 'Collector', hint: `${Math.min(savedCount, 10)}/10 saved`, earned: savedCount >= 10, tone: 'peri' },
   ];
-  return <section className="wyou-card">
+  return <section className="wyou-card is-badges">
     <div className="wyou-card-head"><h2>Badges</h2><span>{badges.filter((b) => b.earned).length} of {badges.length}</span></div>
     <ul className="wyou-badges">{badges.map((b, i) => <li key={b.key} className={`tone-${b.tone}${b.earned ? ' is-earned' : ''}`}>
       <span aria-hidden="true">{b.earned ? '✓' : i + 1}</span><strong>{b.label}</strong><small>{b.earned ? 'Earned' : b.hint}</small>
@@ -124,7 +124,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           </header>
           <div className="wyou-charts"><ShelfDonut shelf={shopper.shelf} total={shopper.total} /><TrustBars trust={shopper.trust} /></div>
           <dl>{shopper.rows.map((r) => <div key={r.key} className={`tone-${r.tone}`}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}</dl>
-        </section> : <section className="wyou-card"><h2>Your shopper type</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
+        </section> : <section className="wyou-card is-shopper-empty"><h2>Your shopper type</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
         <Badges savedCount={savedCount} ecosystemCount={products.length} pct={pct} />
       </div>
 
@@ -136,7 +136,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           <button type="button" className="tone-peri" onClick={onOpenStartups}><strong>★</strong><span>Startups</span></button>
         </nav>
 
-        <section className="wyou-card">
+        <section className="wyou-card is-safety">
           <div className="wyou-card-head"><h2>Safety alerts</h2><span>{alerts.length} active</span></div>
           {alerts.length ? <ul className="wyou-alerts">{alerts.map((a) => <li key={a.id} className={`is-${a.kind}`}><strong>{a.title}</strong><p>{a.body}</p>{a.product && <button type="button" onClick={() => onOpenProduct?.(a.product)}>View product</button>}</li>)}</ul> : <p className="wyou-muted">No alerts on your ecosystem.</p>}
         </section>
@@ -150,7 +150,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           {low.length > 0 && <p className="wyou-muted">Not explored yet: {low.map((l) => l.name).join(', ')}</p>}
         </section>}
 
-        <section className="wyou-card">
+        <section className="wyou-card is-account">
           <div className="wyou-card-head"><h2>Account</h2></div>
           <div className="wyou-rows">
             <div><span>Name</span>{nameDraft === null ? <><b>{name || 'Not set'}</b><button type="button" onClick={() => setNameDraft(name)}>Edit</button></> : <form onSubmit={(e) => { e.preventDefault(); saveName(); }}><input autoFocus value={nameDraft} onChange={(e) => setNameDraft(e.target.value)} maxLength={40} aria-label="First name" /><button type="submit">Save</button></form>}</div>
