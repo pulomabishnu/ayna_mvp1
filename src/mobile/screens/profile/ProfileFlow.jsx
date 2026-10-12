@@ -1039,16 +1039,15 @@ function DrillRow({ title, sub, onClick, first }) {
 }
 
 const THEME_SWATCHES = [
-  { key: 'system', label: 'Match device' },
   { key: 'light', label: 'Light' },
   { key: 'dark', label: 'Dark' },
 ];
 
 function ThemeSwatch({ mode, selected, onClick }) {
-  const bg = mode === 'system' ? 'linear-gradient(90deg, #fffcf5 50%, #1B1B22 50%)' : mode === 'light' ? 'var(--ayna-bg-alt)' : '#1B1B22';
-  const barColor = mode === 'dark' ? 'rgba(255,249,242,.55)' : 'rgba(41,37,36,.4)';
+  const bg = mode === 'light' ? 'var(--ayna-bg-alt)' : '#1B1B22';
+  const barColor = mode === 'dark' ? 'rgba(255,249,242,.35)' : 'rgba(41,37,36,.25)';
   return (
-    <button type="button" aria-label={mode === 'system' ? 'Match device theme' : mode === 'dark' ? 'Dark theme' : 'Light theme'} aria-pressed={selected} onClick={onClick} style={{ border: 0, padding: 0, background: 'transparent', color: 'var(--ayna-text)', cursor: 'pointer', textAlign: 'center' }}>
+    <button type="button" aria-label={mode === 'dark' ? 'Dark theme' : 'Light theme'} aria-pressed={selected} onClick={onClick} style={{ border: 0, padding: 0, background: 'transparent', color: 'var(--ayna-text)', cursor: 'pointer', textAlign: 'center' }}>
       <div
         style={{
           height: 58,
@@ -1283,7 +1282,7 @@ function PreferencesScreen({
         <SectionLabel>Appearance</SectionLabel>
         <div style={{ background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '18px 0' }}>
           <div style={{ fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Theme</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
             {THEME_SWATCHES.map((s) => (
               <ThemeSwatch key={s.key} mode={s.key} selected={theme === s.key} onClick={() => onToggleTheme(s.key)} />
             ))}
