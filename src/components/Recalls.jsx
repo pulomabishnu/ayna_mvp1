@@ -45,7 +45,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
     );
 
     return (
-        <div className="container animate-fade-in" style={{ padding: 'var(--spacing-lg) var(--spacing-md)' }}>
+        <div className="container animate-fade-in ay-recalls" style={{ padding: 'var(--spacing-lg) var(--spacing-md)' }}>
             <div style={{ marginBottom: '3rem' }}>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Safety & Recall Center</h2>
                 <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
@@ -66,7 +66,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                 />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '3rem' }}>
+            <div className="ay-recalls__grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '3rem' }}>
                 {/* Active Alerts */}
                 <div>
                     <h3 style={{ fontSize: '1.3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -90,7 +90,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                                 </a>.
                             </p>
                         ) : filteredRecalls.map(recall => (
-                            <div key={recall.id} style={{
+                            <div key={recall.id} className={`ay-recall ay-recall--${recall.severity}`} style={{
                                 padding: '1.5rem',
                                 background: recall.severity === 'critical' ? '#FEF2F2' : 'var(--color-surface)',
                                 border: `1px solid ${recall.severity === 'critical' ? '#FEE2E2' : 'var(--color-border)'}`,
@@ -123,9 +123,9 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                         {ecosystemList.length === 0 ? (
                             <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Add products to your Ecosystem to monitor them for safety recalls.</p>
                         ) : (
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div className="ay-recalls__mon" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                 {ecosystemList.map(p => (
-                                    <div key={p.id} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '1rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface)' }}>
+                                    <div key={p.id} className="ay-recalls__item" style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '1rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface)' }}>
                                         <ProductTileImage
                                             product={p}
                                             alt={p.name}

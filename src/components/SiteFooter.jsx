@@ -67,7 +67,7 @@ export default function SiteFooter({
     <footer className="site-footer">
       <div className="site-footer__columns">
         <div style={{ maxWidth: '320px' }}>
-          <div style={{
+          <div className="site-footer__logo" style={{
             font: "italic 400 22px/1 'Playfair Display', serif",
             color: '#1A1714',
           }}>

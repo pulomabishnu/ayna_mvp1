@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import WebHeroCarousel from './WebHeroCarousel';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
@@ -671,7 +672,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
 /* 1a — first visit                                                    */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
+function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState(initialCategory || 'all');
   // See the matching effect in WelcomeBack for why — same fix, same pattern.
@@ -793,10 +794,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
             ))}
           </div>
         </div>
-        <figure className="ayna-landing-hero-photo">
-          <img src="/team/ayna-founders.jpg" alt="The Ayna team together outdoors" />
-          <figcaption>Built by women who wanted better answers.</figcaption>
-        </figure>
+        <WebHeroCarousel onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
       </section>
 
       <section className="ayna-landing-band">
@@ -949,6 +947,8 @@ export default function AynaLanding({
   onViewDiscovery,
   onOpenProduct,
   onViewEcosystem,
+  onViewArticles,
+  onViewCommunity,
   user,
   myProducts,
   ecosystemCount = 0,
@@ -976,6 +976,8 @@ export default function AynaLanding({
   return (
     <FirstVisitLanding
       onStartQuiz={onStartQuiz}
+      onViewArticles={onViewArticles}
+      onViewCommunity={onViewCommunity}
       onViewDiscovery={onViewDiscovery}
       onOpenProduct={onOpenProduct}
       hasProfile={hasProfile}

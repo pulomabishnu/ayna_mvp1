@@ -197,9 +197,10 @@ function ViewLoadingFallback() {
  */
 function NotFoundState({ title, subtitle, ctaLabel, onCta }) {
   return (
-    <div className="mockup-page" style={{ textAlign: 'center', padding: '5rem 1.5rem' }}>
-      <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', margin: '0 0 0.5rem' }}>{title}</p>
-      <p style={{ color: 'var(--color-text-muted)', margin: '0 0 1.75rem' }}>{subtitle}</p>
+    <div className="mockup-page ay-404">
+      <span className="ay-404__badge" aria-hidden="true">404</span>
+      <h1>{title}</h1>
+      <p>{subtitle}</p>
       <button type="button" className="btn btn-navy" onClick={onCta}>{ctaLabel}</button>
     </div>
   );
@@ -1259,7 +1260,7 @@ function App() {
         )}
         <EcosystemGenerationBar intakeFingerprint={ecosystemIntakeFingerprint} onViewEcosystem={handleViewEcosystem} hasEcosystem={ecosystemCount > 0} />
       </div>
-      <main>
+      <main data-view={currentView}>
         <div style={{ position: 'relative', zIndex: 1001 }}>
         <nav
           className={`app-nav ${navOnGradient ? `app-nav--landing${navGradientVariant}` : 'app-nav--cream'}${isScrolled ? ' app-nav--scrolled' : ''}`}
@@ -1451,6 +1452,8 @@ function App() {
             onViewDiscovery={handleViewDiscovery}
             onOpenProduct={handleOpenProduct}
             onViewEcosystem={handleViewEcosystem}
+            onViewArticles={handleViewArticles}
+            onViewCommunity={() => setCurrentView('community')}
             user={user}
             myProducts={myProducts}
             ecosystemCount={ecosystemCount}
