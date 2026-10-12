@@ -48,6 +48,9 @@ import Contact from './components/Contact';
 import './finalAynaPolish.css';
 import './brand-v2.css';
 import './web-play.css';
+import './styles/verify-core.css';
+import { installScrollMemory, isRestoringScroll } from './utils/scrollMemory';
+import { avatarInitials } from './utils/avatarInitials';
 import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
 import AuthConfirm from './components/AuthConfirm';
@@ -65,16 +68,6 @@ import { productHref, parseProductIdFromPath } from './utils/productRoute';
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
 const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about'];
-
-/** Initials for the account circle. Prefer the real profile name; never expose the email handle as a "name". */
-function accountMonogram(user) {
-  const meta = user?.user_metadata || {};
-  const rawName = meta.full_name || meta.name || meta.first_name || meta.given_name || '';
-  const parts = String(rawName).trim().split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return 'A';
-}
 
 const ecosystemResetKey = (userId) => `ayna_ecosystem_reset_at:${userId || 'anon'}`;
 
@@ -123,6 +116,21 @@ const VIEW_TITLES = {
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
 };
+
+const DEFAULT_DESCRIPTION = "Personalized women's health product recommendations, matched to your body and backed by real research, doctor input, and other women's experiences.";
+const VIEW_DESCRIPTIONS = {
+  discovery: "Shop women's health products ranked by how well they fit you: period care, intimate care, fertility, menopause and more.",
+  articles: "Plain-language guides to women's health topics, with sources, from the ayna Library.",
+  ecosystem: 'Your ecosystem: the products and care you use, what each one is for and what fits next.',
+  community: 'Real experiences with women\'s health products from the ayna community.',
+  'how-it-works': 'How ayna matches products to you: your profile, the market, the evidence and your shop.',
+  'not-found': "This page doesn't exist on ayna.",
+};
+function setMetaDescription(text) {
+  let el = document.querySelector('meta[name="description"]');
+  if (!el) { el = document.createElement('meta'); el.setAttribute('name', 'description'); document.head.appendChild(el); }
+  el.setAttribute('content', text);
+}
 
 const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
@@ -225,6 +233,10 @@ function NotFoundState({ title, subtitle, ctaLabel, onCta }) {
   );
 }
 
+// G09: push = top of page, Back/Forward = where she was. Installed before the
+// first render so the initial history entry gets its key.
+installScrollMemory();
+
 function App() {
   const [currentView, setCurrentViewRaw] = useState(getInitialView);
   // Only meaningful when currentView === 'product' — the :id segment of
@@ -283,7 +295,9 @@ function App() {
     else setCurrentView('welcome', { replace: true });
   }, [setCurrentView]);
   useEffect(() => {
-    const path = viewFromSubPath(window.location.pathname) === currentView ? window.location.pathname : pathForView(currentView, productRouteId);
+    // A 404 keeps the URL she typed (it used to be rewritten to '/').
+    const keepPath = currentView === 'not-found' || viewFromSubPath(window.location.pathname) === currentView;
+    const path = keepPath ? window.location.pathname : pathForView(currentView, productRouteId);
     const initialUrl = currentView === 'auth-callback'
       ? `${path}${window.location.search}${window.location.hash}`
       : path;
@@ -326,12 +340,11 @@ function App() {
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
+  // Scroll memory (utils/scrollMemory.js) owns history.scrollRestoration and
+  // the Back/Forward restore; a view change only resets to the top when it
+  // is not a Back/Forward restore in progress.
   useEffect(() => {
-    const previous = window.history.scrollRestoration;
-    window.history.scrollRestoration = 'manual';
-    return () => { window.history.scrollRestoration = previous; };
-  }, []);
-  useEffect(() => {
+    if (isRestoringScroll()) return;
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   }, [currentView, productRouteId]);
   const [quizResults, setQuizResults] = useState(null);
@@ -874,7 +887,7 @@ function App() {
   const checkinDue = !!checkinCompletedAt && (Date.now() - new Date(checkinCompletedAt).getTime() > CHECKIN_INTERVAL_MS);
   const isScrolled = scrollY > 20;
   const navOnGradient = GRADIENT_NAV_VIEWS.includes(currentView);
-  const accountInitials = accountMonogram(user);
+  const accountInitials = avatarInitials(user);
 
 
   const handleStartQuiz = () => setCurrentView('quiz');
@@ -1282,7 +1295,23 @@ function App() {
     }
     const label = VIEW_TITLES[currentView];
     document.title = label ? `${label} | ayna` : base;
-  }, [currentView, resolvedProduct, productStillResolving]);
+    setMetaDescription(VIEW_DESCRIPTIONS[currentView] || DEFAULT_DESCRIPTION);
+    // G10: an article and a community profile each get their own title and
+    // description (Articles is lazy, so its data is read from the same chunk).
+    let cancelled = false;
+    if (currentView === 'articles' && selectedArticleId) {
+      import('./components/Articles').then((m) => {
+        const a = (m.ARTICLES || []).find((x) => x.id === selectedArticleId);
+        if (cancelled || !a) return;
+        document.title = `${a.title} | Library | ayna`;
+        if (a.teaser) setMetaDescription(a.teaser);
+      }).catch(() => {});
+    } else if (currentView === 'community' && communityHandle) {
+      document.title = `@${communityHandle} | Community | ayna`;
+      setMetaDescription(`@${communityHandle} on the ayna community: product reviews, saves and questions.`);
+    }
+    return () => { cancelled = true; };
+  }, [currentView, resolvedProduct, productStillResolving, selectedArticleId, communityHandle]);
 
   const handleRateProduct = (product, rating) => {
     const next = addRating(product.id, rating);
@@ -1369,17 +1398,30 @@ function App() {
               {user && savedCount > 0 && <span className="ay-badge is-corner">{savedCount}</span>}
             </a>
             <div ref={accountMenuRef} className="app-nav__account desktop-only">
-              <button
-                type="button"
-                className={`app-nav__circle app-nav__circle--account ${user ? 'app-nav__circle--avatar ay-avatar' : 'ay-login'}`}
-                onClick={() => { if (user) { setShowAccountMenu(false); setCurrentView('you'); } else setShowAccountMenu(v => !v); }}
-                aria-haspopup={user ? undefined : 'menu'}
-                aria-expanded={user ? undefined : showAccountMenu}
-                aria-label={user ? 'Your profile' : 'Log in or sign up'}
-              >
-                {user ? <span className="ay-avatar__text">{accountInitials}</span> : <span className="ay-login-text">Log in</span>}
-                {user && checkinDue && <span className="app-nav__circle-dot" aria-hidden />}
-              </button>
+              {user ? (
+                // Going to You is navigation, so it is a real link (G02); "Log in" opens a menu, so it stays a button.
+                <a
+                  href="/you"
+                  className="app-nav__circle app-nav__circle--account app-nav__circle--avatar ay-avatar"
+                  aria-label="Your profile"
+                  aria-current={currentView === 'you' ? 'page' : undefined}
+                  {...linkProps(() => { setShowAccountMenu(false); setCurrentView('you'); })}
+                >
+                  <span className="ay-avatar__text">{accountInitials}</span>
+                  {checkinDue && <span className="app-nav__circle-dot" aria-hidden />}
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  className="app-nav__circle app-nav__circle--account ay-login"
+                  onClick={() => setShowAccountMenu(v => !v)}
+                  aria-haspopup="menu"
+                  aria-expanded={showAccountMenu}
+                  aria-label="Log in or sign up"
+                >
+                  <span className="ay-login-text">Log in</span>
+                </button>
+              )}
               {showAccountMenu && !user && (
                 <div className="nav-account-menu" role="menu">
                   <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); setCurrentView('quiz'); }}>Sign up</button>
@@ -1406,7 +1448,10 @@ function App() {
         {/* Mobile menu: full-height sheet with backdrop (MW02). Delete account lives only in You → Account (MW01). */}
         {mobileMenuOpen && (
           <div className="mobile-nav-drawer" onClick={() => setMobileMenuOpen(false)}>
-            <div className="mobile-nav-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-nav-sheet" role="dialog" aria-modal="true" aria-label="Menu" onClick={(e) => e.stopPropagation()}>
+              <button type="button" className="mobile-nav-close" aria-label="Close menu" onClick={() => setMobileMenuOpen(false)}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+              </button>
               {[
                 ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
                 ['discovery', '/shop', 'Shop', () => handleViewDiscovery('')],

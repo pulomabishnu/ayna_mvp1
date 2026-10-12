@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import Disclaimer from './Disclaimer';
 import ProductCard from './ProductCard';
 import '../styles/audit-library.css';
+import '../styles/verify-content.css';
 import { ALL_PRODUCTS, getPersonalizedProductIds } from '../data/products';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import { RELEASED_STARTUPS } from '../data/startups';
@@ -646,11 +646,12 @@ export function getArticlesByProfileRelevance(quizAnswers, healthProfile = null)
 export { ARTICLES };
 
 /**
- * Website covers. Illustrations are kept only where they clearly show the
- * topic; every other read gets a typographic cover (short topic word on a
- * token pastel). Website-only: the app keeps its own art via ARTICLES.image.
+ * Website covers: every read gets a typographic cover (short topic word on a
+ * token pastel) so the shelves stay in one palette. Website-only: the app
+ * keeps its own art via ARTICLES.image. Add an id here only for art drawn in
+ * the ayna palette and style.
  */
-const KEEP_ILLUSTRATION = new Set(['period-pain-when-to-seek-care', 'uti-prevention']);
+const KEEP_ILLUSTRATION = new Set();
 const COVERS = {
   'intimate-wash': ['Intimate care', 'mint'],
   'heavy-bleeding': ['Heavy flow', 'pink'],
@@ -887,7 +888,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <div className="article-body" ref={bodyRef}>
             {selected.body}
           </div>
-          <Disclaimer compact style={{ marginTop: '1.5rem' }} />
 
           <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
           <ArticleProducts articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
@@ -934,7 +934,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
       </div>}
       {body}
-      <Disclaimer compact style={{ marginTop: '2rem' }} />
     </section>
   );
 }

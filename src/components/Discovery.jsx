@@ -9,7 +9,6 @@ import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
-import Disclaimer from './Disclaimer';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
@@ -17,6 +16,7 @@ import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } f
 import { ProductImageFallback } from './ProductTileImage';
 import MatchGauge from './MatchGauge';
 import ProductCard from './ProductCard';
+import { edgeFadeRef } from '../utils/edgeFade';
 import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
 import { isPlainLeftClick } from '../utils/productRoute';
@@ -287,6 +287,7 @@ function applyColdStartFloor(rankedList, pageSize) {
 
 // 'Highest rated' is hidden until cards show ratings (S18).
 const PERSONALIZED_KEY = 'ayna_shop_personalized_v1';
+const LIVE_SEARCH_TIMEOUT_MS = 25000;
 const SORT_OPTIONS = [
     { value: 'default', label: 'Best match' },
     { value: 'price-asc', label: 'Price: low to high' },
@@ -439,6 +440,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [, setAiError] = useState(null);
     const [searchSubmitted, setSearchSubmitted] = useState(false);
     const aiAbortRef = useRef(null);
+    const inferredCategoryRef = useRef(null);
     const debounceRef = useRef(null);
     // Browse-mode AI extension (no-query browsing): fully separate from the
     // aiSuggestions/runAiSearch state above so the typed-search flow can't be
@@ -935,6 +937,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (aiAbortRef.current) aiAbortRef.current.abort();
         const ac = new AbortController();
         aiAbortRef.current = ac;
+        // S03: live search never spins forever; after the timeout it stops quietly
+        // (catalog matches are already on screen).
+        let timedOut = false;
+        const timer = setTimeout(() => { timedOut = true; ac.abort(); }, LIVE_SEARCH_TIMEOUT_MS);
         setAiLoading(true);
         setAiSuggestions([]);
         setAiRelatedSearches([]);
@@ -958,7 +964,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 // keystroke search.
                 maxResults: personalizationFilter ? 6 : 8,
             });
-            if (ac.signal.aborted) return;
+            if (ac.signal.aborted) {
+                if (timedOut && aiAbortRef.current === ac) { setAiLoading(false); setAiError('timeout'); }
+                return;
+            }
             setAiLoading(false);
             const filteredSuggestions = (Array.isArray(suggestions) ? suggestions : []).filter(s => {
                 const nameAndBrand = `${s.name || ''} ${s.brand || ''}`.toLowerCase();
@@ -969,9 +978,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             setAiRelatedSearches(Array.isArray(relatedSearches) ? relatedSearches : []);
             setAiError(error || null);
         } catch (e) {
-            if (e?.name === 'AbortError') return;
+            if (e?.name === 'AbortError' || ac.signal.aborted) {
+                if (timedOut && aiAbortRef.current === ac) { setAiLoading(false); setAiError('timeout'); }
+                return;
+            }
             setAiLoading(false);
             setAiError(e?.message || 'Could not load suggestions');
+        } finally {
+            clearTimeout(timer);
         }
     }, [personalizationFilter, quizResults]);
 
@@ -1006,6 +1020,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (browseAiAbortRef.current) browseAiAbortRef.current.abort();
         const ac = new AbortController();
         browseAiAbortRef.current = ac;
+        let roundTimedOut = false;
+        const roundTimer = setTimeout(() => { roundTimedOut = true; ac.abort(); }, LIVE_SEARCH_TIMEOUT_MS);
         setBrowseAiLoading(true);
         const { profileSummary, dislikedProducts, dislikedTerms } = buildAiProfileContext(personalizationFilter, quizResults);
         try {
@@ -1019,7 +1035,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 dislikedProducts,
                 maxResults: personalizationFilter ? 6 : 8,
             });
-            if (ac.signal.aborted) return;
+            if (ac.signal.aborted) {
+                if (roundTimedOut && browseAiContextKeyRef.current === contextKeyAtCallTime) {
+                    setBrowseAiLoading(false);
+                    setBrowseAiErrorCode('request_failed');
+                    setBrowseAiRounds(MAX_BROWSE_AI_ROUNDS);
+                }
+                return;
+            }
             // The context may have changed (user switched category/group) while
             // this request was in flight — discard stale results instead of
             // leaking them into a different scope's accumulator. The reset
@@ -1081,7 +1104,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 setBrowseAiRounds((r) => (dryRoundStreakRef.current >= 2 ? MAX_BROWSE_AI_ROUNDS : r + 1));
             }
         } catch (e) {
-            if (e?.name === 'AbortError') return;
+            if (e?.name === 'AbortError' && !roundTimedOut) return;
             setBrowseAiLoading(false);
             // Count a failed round against the cap too, so a persistent server
             // error can't cause the trigger effect below to retry indefinitely —
@@ -1093,6 +1116,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 setBrowseAiRounds((r) => r + 1);
             }
         } finally {
+            clearTimeout(roundTimer);
             browseAiInFlightRef.current = false;
         }
     }, [categoryFilter, macroGroup, personalizationFilter, quizResults, filtered, enrichedAiSuggestions, qTrimForAi, symptomFilter]);
@@ -1173,10 +1197,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             { test: (s) => s.includes('tracker') || s.includes('tracking') || s.includes('wearable'), cat: 'tracker' },
         ];
 
-        let resolvedCategory = categoryFilter;
+        // A category inferred from an EARLIER search is not sticky (S05): a new
+        // search starts from the category the shopper chose herself.
+        const prevInferred = inferredCategoryRef.current;
+        const baseCategory = prevInferred && categoryFilter === prevInferred.cat ? prevInferred.prev : categoryFilter;
+        let resolvedCategory = baseCategory;
+        inferredCategoryRef.current = null;
         for (const { test, cat } of categoryNudges) {
-            if (test(qLower)) { setCategoryFilter(cat); resolvedCategory = cat; break; }
+            if (test(qLower)) { resolvedCategory = cat; if (cat !== baseCategory) inferredCategoryRef.current = { cat, prev: baseCategory }; break; }
         }
+        if (resolvedCategory !== categoryFilter) setCategoryFilter(resolvedCategory);
 
         if (qLower.includes('waitlist') || qLower.includes('startup')) {
             if (setCurrentView) setCurrentView('waitlist');
@@ -1297,7 +1327,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </div>
             )}
 
-            <div className="ayna-browse__categories" aria-label="Product categories">
+            <div className="ayna-browse__categories" aria-label="Product categories" ref={edgeFadeRef}>
                 {availableMacroGroups.map((group) => (
                     <button
                         key={group.id}
@@ -1507,7 +1537,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         Finding more…
                     </button>
                 </div>
-            ) : (qTrimForAi || !(macroGroup === 'all' && categoryFilter === 'all')) && browseAiRounds >= MAX_BROWSE_AI_ROUNDS ? (
+            ) : gridItems.length > 0 && (qTrimForAi || !(macroGroup === 'all' && categoryFilter === 'all')) && browseAiRounds >= MAX_BROWSE_AI_ROUNDS ? (
                 // The round budget is used up — say so explicitly rather than
                 // the button just vanishing with no explanation, which reads
                 // as broken/stuck. Two different reasons land here, and they
@@ -1518,7 +1548,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 // checked and this is everything," it's "we couldn't check."
                 <p style={{ textAlign: 'center', marginTop: '2rem', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
                     {browseAiErrorCode === 'rate_limited'
-                        ? "Couldn't check for more right now — too many searches recently. Try again in a bit."
+                        ? "Couldn't check for more right now. Too many searches recently, try again in a bit."
                         : browseAiErrorCode
                             ? "Couldn't check for more products right now."
                             : `That's everything we could find${qTrimForAi ? ` for "${qTrimForAi}"` : ''}.`}
@@ -1602,7 +1632,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </div>
                 </div>
             )}
-            <Disclaimer compact style={{ marginTop: '2rem', textAlign: 'center' }} />
         </section>
     );
 }

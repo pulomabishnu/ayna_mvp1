@@ -228,7 +228,7 @@ export default function EcosystemBubbles({
       </div>
 
       <div className="eco-bubbles__side">
-        <h2 className="eco-bubbles__title">This is your ecosystem.</h2>
+        <h1 className="eco-bubbles__title">This is your ecosystem.</h1>
         <p className="eco-bubbles__lede">
           Tap a circle to see why it&apos;s there.
         </p>

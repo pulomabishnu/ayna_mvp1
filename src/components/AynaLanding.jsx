@@ -4,6 +4,7 @@ import HeroOrbit from './HeroOrbit';
 import useReveal from '../utils/useReveal';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } from '../data/products';
 import ProductCard from './ProductCard';
+import { edgeFadeRef } from '../utils/edgeFade';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
 
@@ -472,7 +473,7 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
           <div className="ayna-landing-shop-head">
             <h2 className="ayna-landing-shop-title ayna-landing-shop-title--returning">{personalize ? 'Picked for you' : 'Explore'}</h2>
             <div className="ayna-landing-shop-controls">
-              <div className="ayna-landing-filters">
+              <div className="ayna-landing-filters" ref={edgeFadeRef}>
                 {availableShopFilters.slice(0, HOME_CHIPS).map((item) => (
                   <button
                     key={item.key}
@@ -772,7 +773,7 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
           <div className="ayna-landing-shop-head">
             <h2 className="ayna-landing-shop-title">Popular on ayna</h2>
             <div className="ayna-landing-shop-controls">
-              <div className="ayna-landing-filters">
+              <div className="ayna-landing-filters" ref={edgeFadeRef}>
                 {availableShopFilters.slice(0, HOME_CHIPS).map((f) => (
                   <button
                     key={f.key}

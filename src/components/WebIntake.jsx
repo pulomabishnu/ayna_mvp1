@@ -290,6 +290,22 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const [glossary, setGlossary] = useState(null);
   const [holdTipSeen, setHoldTipSeen] = useState(() => { try { return localStorage.getItem('ayna_hold_tip_seen_v1') === '1'; } catch { return false; } });
   const dismissHoldTip = () => { setHoldTipSeen(true); try { localStorage.setItem('ayna_hold_tip_seen_v1', '1'); } catch { /* storage unavailable */ } };
+  // Escape closes the meaning card, like every other dialog on the site.
+  useEffect(() => {
+    if (!glossary) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setGlossary(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [glossary]);
+  // One-time tip: once it has been shown on a step, leaving that step counts as seen.
+  const tipStepRef = useRef(null);
+  useEffect(() => {
+    if (tipStepRef.current && tipStepRef.current !== stepId) {
+      tipStepRef.current = null;
+      setHoldTipSeen(true);
+      try { localStorage.setItem('ayna_hold_tip_seen_v1', '1'); } catch { /* storage unavailable */ }
+    }
+  }, [stepId]);
   const [minorGate, setMinorGate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
@@ -572,7 +588,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       {step.subtitle && <p className="wq-subtitle">{step.subtitle}</p>}
       {infoOpen && step.info && <p className="wq-info-pop" role="note">{step.info}</p>}
       {!holdTipSeen && holdable && (
-        <p className="wq-holdtip" role="note">Press and hold any answer to see what it means.<button type="button" onClick={dismissHoldTip}>Got it</button></p>
+        <p className="wq-holdtip" role="note" ref={(el) => { if (el && !tipStepRef.current) tipStepRef.current = stepId; }}>Press and hold any answer to see what it means.<button type="button" onClick={dismissHoldTip}>Got it</button></p>
       )}
 
       <div className="wq-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold}

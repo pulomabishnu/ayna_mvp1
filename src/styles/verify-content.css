@@ -1,0 +1,28 @@
+/* Verify pass (content area): product page, community, library, article.
+   Website only, every rule scoped under .app-container. */
+
+/* Product page */
+.app-container .pdp-page .pdp-ask { margin-top: 24px !important; }
+.app-container .pdp-page .pdp-panel__foot--end { justify-content: flex-end !important; }
+/* Match dial: site tokens so it reads in dark mode too. */
+.app-container .pdp-page .pdp-dial .ayna-match-gauge { --gauge-hole: var(--ay-paper) !important; --gauge-text: var(--ay-ink) !important; --gauge-track: var(--ay-line) !important; }
+
+/* Community */
+/* Dark mode: ghost and pressed buttons stay outlined (web-play makes every .wc-btn a light pill). */
+.app-container[data-theme='dark'] :is(.wc-btn.is-ghost, .wc-btn[aria-pressed='true']) { background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
+/* Profile hero on phones: avatar beside the name, left aligned. */
+@media (max-width: 900px) {
+  .app-container .wc-prof-hero { flex-direction: row !important; align-items: center !important; gap: 16px; }
+  .app-container .wc-prof-hero .wc-avatar { width: 64px !important; height: 64px !important; font-size: 22px !important; }
+  .app-container .wc-prof-hero h1 { font-size: 32px !important; }
+}
+@media (max-width: 560px) {
+  /* Feed tabs in one scrolling row instead of two wrapped rows. */
+  .app-container .wc-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; }
+  .app-container .wc-tabs::-webkit-scrollbar { display: none; }
+  .app-container .wc-tabs button { flex: none; }
+  /* Compact "me" card: one row. */
+  .app-container .wc-me { grid-template-columns: auto 1fr auto; padding: 12px 16px; }
+  .app-container .wc-me .wc-avatar { width: 40px !important; height: 40px !important; }
+  .app-container .wc-me .wc-link { grid-column: 3; justify-self: end; }
+}

@@ -15,6 +15,7 @@ import { getVerificationLinks, hostLabel } from '../utils/verificationLinks';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import posthog from 'posthog-js';
 import '../styles/audit-pdp.css';
+import '../styles/verify-content.css';
 
 /**
  * Product Q&A — for a user who doesn't know what a product actually IS (a
@@ -1058,14 +1059,13 @@ export default function ProductModal({
                     </section>
                   )}
 
-                  <div className="pdp-panel__foot">
-                    <span>Research and review summary. Not medical advice.</span>
-                    {onOmit && (
+                  {onOmit && (
+                    <div className="pdp-panel__foot pdp-panel__foot--end">
                       <button type="button" className="pdp-head__link" onClick={() => onOmit(product)}>
                         {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
                       </button>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </>
               )}
 

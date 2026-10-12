@@ -12,6 +12,7 @@ import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProd
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import './WebCommunity.css';
 import '../styles/audit-community.css';
+import '../styles/verify-content.css';
 
 // The app's Community, built for the website. Same data and rules (shared
 // community store, ranking, topics, guest posting); the layout is a two
@@ -445,7 +446,14 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   // follow the handle the parent passes in (deep link, back/forward).
   const reportedHandle = useRef(initialProfileHandle ? String(initialProfileHandle).replace(/^@/, '').toLowerCase() : null);
   const currentHandle = page?.type === 'profile' ? page.id : null;
+  // A deep link opens its profile on mount; until that page is set, don't
+  // report "no profile" up (that rewrote /community/@handle to /community).
+  const pendingHandle = useRef(reportedHandle.current);
   useEffect(() => {
+    if (pendingHandle.current) {
+      if (!currentHandle) return;
+      pendingHandle.current = null;
+    }
     if (currentHandle === reportedHandle.current) return;
     reportedHandle.current = currentHandle;
     onProfileChange?.(currentHandle);
@@ -453,7 +461,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   useEffect(() => {
     const wanted = initialProfileHandle ? String(initialProfileHandle).replace(/^@/, '').toLowerCase() : null;
     if (wanted === currentHandle) return;
-    if (wanted) { reportedHandle.current = wanted; openProfile(wanted); }
+    if (wanted) { reportedHandle.current = wanted; pendingHandle.current = wanted; openProfile(wanted); }
     else if (currentHandle) { reportedHandle.current = null; closePage(); }
   }, [initialProfileHandle, supabase]); // eslint-disable-line react-hooks/exhaustive-deps
 

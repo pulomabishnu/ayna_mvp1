@@ -1,0 +1,17 @@
+/* Verify pass (round 2), area "people": You, quiz, auth, About, How It Works, footer.
+   Website only: every rule is scoped under .app-container. */
+
+/* You hero: the decorative shapes no longer take a grid cell (they added an
+   empty row and 20px of dead space under the progress card). */
+.app-container .wyou-hero > .wyou-shapes { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; overflow: hidden; }
+
+/* You cards: the small right-hand note drops under the title on narrow screens
+   instead of squeezing it onto two lines. */
+.app-container .wyou-card-head { flex-wrap: wrap; row-gap: 8px; }
+
+/* Quiz: the coloured quiz band runs straight into the footer (no cream strip). */
+.app-container main:has(> .wq-page) + .site-footer { margin-top: 0 !important; }
+
+/* Quiz hold tip: "Got it" stays on one line at 360px. */
+.app-container .wq-holdtip button { flex: none; white-space: nowrap; }
+@media (max-width: 480px) { .app-container .wq-holdtip { border-radius: 20px; } }

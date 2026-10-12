@@ -1925,7 +1925,7 @@ export default function MyEcosystem({
                                         </>
                                     ) : (
                                         <>
-                                            <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get Ayna by text. Verify your number</p>
+                                            <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get ayna by text.</p>
                                             <button type="button" className="btn btn-primary" onClick={onOpenPhoneVerify}>Verify your number</button>
                                         </>
                                     )}
@@ -1937,7 +1937,7 @@ export default function MyEcosystem({
                             <details className="eco2-details__item" ref={careNearYouDetailsRef}>
                                 <summary>
                                     <span>Care near you</span>
-                                    <span className="eco2-details__hint">Find a clinician, HRSA/Planned Parenthood links, and matching telehealth</span>
+                                    <span className="eco2-details__hint">Find a clinician, HRSA/Planned Parenthood links, and matching virtual care</span>
                                 </summary>
                                 <div className="eco2-details__body">
                                     <CareNearYouPanel
@@ -1959,8 +1959,8 @@ export default function MyEcosystem({
                                 </summary>
                                 <div className="eco2-details__body">
                                     <p style={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--color-text-main)' }}>
-                                        ayna scores products against your intake answers — stage, goals, sensitivities,
-                                        and life stage — plus published clinical, community, and safety sources per
+                                        ayna scores products against your intake answers (stage, goals, sensitivities
+                                        and life stage) plus published clinical, community, and safety sources per
                                         product. When the catalog has no strong fit for a concern, ayna searches for and
                                         adds a real, currently-sold product rather than leaving the shelf empty. Update
                                         your profile any time and your shelves recompute against the new answers.

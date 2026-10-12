@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import posthog from 'posthog-js';
 import { getStoredConsent, denyConsent, grantConsent } from '../utils/analyticsConsent';
 import '../styles/audit-info.css';
+import '../styles/verify-people.css';
 
 /**
  * Site footer: brand blurb + Explore / Company / Get in touch columns, a

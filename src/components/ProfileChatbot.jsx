@@ -50,7 +50,7 @@ function getFirstName(user) {
     meta.full_name,
   ].find((value) => typeof value === 'string' && value.trim());
 
-  return raw ? raw.trim().split(/\\s+/)[0] : '';
+  return raw ? raw.trim().split(/\s+/)[0] : '';
 }
 
 const STARTERS = ['What helps with period cramps?', 'What fits heavy periods?', 'Fragrance-free options for sensitive skin'];
@@ -298,7 +298,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       onChatHistoryUpdate?.(newMessages);
     } catch (err) {
       if (err?.code === 'not_signed_in') {
-        setSendError('Sign in to ask Ayna anything — free accounts get a few AI chats per week.');
+        setSendError('Sign in to ask ayna anything. Free accounts get a few chats each week.');
       } else if (err?.code === 'weekly_limit_reached') {
         setSendError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
       } else {
@@ -336,7 +336,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       )}
 
       {open && (
-        <section className="ayna-ask-panel" aria-label="Ask Ayna">
+        <section className="ayna-ask-panel" aria-label="Ask ayna">
           <header className="ayna-ask-panel__header">
             <div className="ayna-ask-panel__identity">
               <span className="ayna-ask-orb ayna-ask-orb--small" aria-hidden="true" />
@@ -351,7 +351,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             <button
               type="button"
               className="ayna-ask-panel__close"
-              aria-label="Close Ask Ayna"
+              aria-label="Close Ask ayna"
               onClick={() => setOpen(false)}
             >
               ×
@@ -394,8 +394,8 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                   {speech.isRecording
                     ? 'Listening…'
                     : speaking
-                      ? 'Ayna is speaking…'
-                      : 'Talk to Ayna'}
+                      ? 'ayna is speaking…'
+                      : 'Talk to ayna'}
                 </strong>
 
                 <span>
@@ -461,7 +461,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={mode === 'talk'
                   ? 'Or type while in Talk mode…'
-                  : 'Ask Ayna anything…'}
+                  : 'Ask ayna anything…'}
                 disabled={disabled || sending || speech.isRecording}
               />
 
