@@ -4,6 +4,7 @@ import SiteFooter from './components/SiteFooter';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import WebIntake from './components/WebIntake';
+import WebYou from './components/WebYou';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import PhoneVerification from './components/PhoneVerification';
 import Recommendations from './components/Recommendations';
@@ -92,7 +93,7 @@ function clearPendingEcosystemReset(userId) {
 }
 
 const VIEW_TO_PATH = {
-  welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem',
+  welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem', you: '/you',
   discovery: '/discovery', waitlist: '/startups',
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
@@ -110,7 +111,7 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view — 'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Browse',
+  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Browse', you: 'You',
   waitlist: 'Startups', articles: 'Health Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
@@ -467,7 +468,7 @@ function App() {
     // production. (PROTECTED_VIEWS below is what actually guards private ones.)
     const STATIC_VIEWS = [
       'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
-      'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles',
+      'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles', 'you',
       'how-it-works', 'how-we-make-money',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -1320,8 +1321,8 @@ function App() {
               <button
                 type="button"
                 className={`app-nav__circle app-nav__circle--account ${user ? 'app-nav__circle--avatar' : ''}`}
-                onClick={() => setShowAccountMenu(v => !v)}
-                aria-haspopup="menu"
+                onClick={() => { if (user) { setShowAccountMenu(false); setCurrentView('you'); } else setShowAccountMenu(v => !v); }}
+                aria-haspopup={user ? undefined : 'menu'}
                 aria-expanded={showAccountMenu}
                 aria-label="Account"
                 title={user ? user.email : 'Account'}
@@ -1417,6 +1418,23 @@ function App() {
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
             initialCategory={homeCategory}
+          />
+        )}
+        {currentView === 'you' && (
+          <WebYou
+            user={user}
+            quizResults={quizResults}
+            myProducts={myProducts}
+            savedProducts={savedProducts}
+            onEditProfile={() => setCurrentView(quizResults ? 'profile-edit' : 'quiz')}
+            onStartQuiz={handleStartQuiz}
+            onOpenEcosystem={() => handleViewEcosystem()}
+            onOpenSaved={handleViewWishlist}
+            onOpenCheckin={() => setShowCheckin(true)}
+            onOpenStartups={() => setCurrentView('waitlist')}
+            onOpenProduct={handleOpenProduct}
+            onSignOut={() => { getSupabaseClient()?.auth.signOut(); setCurrentView('welcome'); }}
+            onDeleteAccount={() => setShowDeleteModal(true)}
           />
         )}
         {currentView === 'quiz' && (

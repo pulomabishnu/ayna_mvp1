@@ -147,26 +147,3 @@
 
 /* Shopper charts */
 .ay-shopper-charts { display: grid; gap: 12px; padding: 14px 14px 0; }
-.ay-chart { margin: 0; padding: 14px; border: 1.5px solid var(--ay-ink); border-radius: 18px; background: var(--ay-cream); }
-.ay-chart figcaption { margin-bottom: 10px; font: 800 14px/1 var(--ay-font-ui); letter-spacing: -.01em; }
-.ay-donut-body { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: center; }
-.ay-donut svg { width: 112px; height: 112px; rotate: -90deg; overflow: visible; }
-.ay-donut-track { fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 7.6; }
-.ay-donut-seg { fill: none; stroke-width: 6; stroke-linecap: butt; animation: ay-donut-grow .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(.2s + var(--i) * .12s); }
-.ay-donut-num, .ay-donut-cap { rotate: 90deg; transform-origin: 21px 21px; text-anchor: middle; fill: var(--ay-ink); }
-.ay-donut-num { font: 800 10px/1 var(--ay-font-display); }
-.ay-donut-cap { font: 700 3.6px/1 var(--ay-font-ui); opacity: .7; }
-.ay-donut ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.ay-donut li { display: flex; align-items: center; gap: 8px; font: 600 13px/1.2 var(--ay-font-ui); min-width: 0; animation: ay-shopper-tile .4s var(--ay-ease) both; animation-delay: calc(.4s + var(--i) * .08s); }
-.ay-donut li i { width: 12px; height: 12px; flex: none; border: 1.5px solid var(--ay-ink); border-radius: 4px; }
-.ay-donut li b { margin-left: auto; font-weight: 800; font-variant-numeric: tabular-nums; }
-.ay-trust ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.ay-trust li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px; align-items: center; }
-.ay-trust-rank { width: 28px; height: 28px; display: grid; place-items: center; border: 1.5px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); font: 800 13px/1 var(--ay-font-ui); }
-.ay-trust-bar { display: block; width: var(--w); min-width: fit-content; height: 32px; border: 1.5px solid var(--ay-ink); border-radius: 10px; background: var(--tone); transform-origin: left; animation: ay-bar-grow .7s cubic-bezier(.34,1.56,.64,1) both; animation-delay: calc(.3s + var(--i) * .12s); overflow: hidden; }
-.ay-trust li:nth-child(2) .ay-trust-bar { background: var(--ay-paper); }
-.ay-trust li:nth-child(3) .ay-trust-bar { background: var(--ay-tile); }
-.ay-trust-bar b { display: block; padding: 0 10px; font: 700 13px/29px var(--ay-font-ui); white-space: nowrap; }
-@keyframes ay-donut-grow { from { stroke-dasharray: 0 100; } }
-@keyframes ay-bar-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@media (prefers-reduced-motion: reduce) { .ay-donut-seg, .ay-donut li, .ay-trust-bar { animation: none; } }
