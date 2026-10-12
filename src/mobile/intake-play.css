@@ -652,3 +652,23 @@
 .ayna-play-intake .ip-spacer.is-top { max-height: 28px !important; }
 .ayna-play-intake .ip-question > .ip-flag { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; width: auto; margin-top: 12px; padding: 6px 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 12px/1 var(--ay-font-ui); }
 .ayna-play-intake .ip-question > .ip-flag::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--ay-pink); border: 1.5px solid var(--ay-ink); }
+
+/* One-time "hold an answer" tip */
+.ayna-mobile .ip-holdtip { display: flex; align-items: center; gap: 8px; align-self: flex-start; margin: 10px 0 0; padding: 7px 7px 7px 12px; border: 2px solid var(--ayna-ink, #1d1a2b); border-radius: 99px; background: #fffcf5; color: #1d1a2b; font: 600 12.5px/1.2 'Poppins', sans-serif; animation: ipTipIn .35s cubic-bezier(.3, 1.5, .5, 1) both; }
+.ayna-mobile .ip-holdtip button { margin-left: 2px; padding: 6px 10px; border: 0; border-radius: 99px; background: #1d1a2b; color: #fffcf5; font: 700 11.5px/1 'Poppins', sans-serif; cursor: pointer; }
+@keyframes ipTipIn { from { opacity: 0; transform: translateY(6px) scale(.96); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile .ip-holdtip { animation: none; } }
+
+/* Calmer life stage (team review 12 Oct): straight cards, one line each,
+   small mark on the left instead of a big sticker. */
+.ayna-mobile .ip-stickers:has(.ip-sticker-glyph) { gap: 8px; }
+.ayna-mobile .ip-stickers:has(.ip-sticker-glyph) .ip-sticker { --tilt: 0deg; min-height: 56px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; padding: 10px 12px; border-radius: 16px; }
+.ayna-mobile .ip-stickers:has(.ip-sticker-glyph) .ip-sticker-glyph { flex: none; width: 18px; height: 18px; border-width: 1.5px; }
+.ayna-mobile .ip-stickers:has(.ip-sticker-glyph) .ip-sticker-glyph[data-glyph='pill'] { width: 22px; height: 11px; margin: 0; }
+.ayna-mobile .ip-stickers:has(.ip-sticker-glyph) .ip-sticker-glyph[data-glyph='crescent']::after { left: 5px; }
+.ayna-mobile .ip-stickers:has(.ip-sticker-glyph) .ip-sticker-glyph[data-glyph='ring']::after { inset: 3px; border-width: 1.5px; }
+.ayna-mobile .ip-stickers:has(.ip-sticker-glyph) .ip-sticker-label { font-size: 13.5px; }
+.ayna-mobile .ip-stickers:has(.ip-sticker-glyph) .ip-sticker-badge { top: 50%; translate: 0 -50%; right: 8px; width: 20px; height: 20px; }
+.ayna-mobile .ip-holdtip { font-size: 12px; padding: 5px 5px 5px 10px; }
+.ayna-mobile .ip-holdtip button { padding: 5px 9px; font-size: 11px; white-space: nowrap; }
+.ayna-mobile .ip-stickers:has(.ip-sticker-glyph) .ip-sticker:not([aria-pressed='true']) { transform: none !important; }

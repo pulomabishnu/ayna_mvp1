@@ -187,3 +187,21 @@ div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var
 .wq-chips { gap: 10px !important; }
 .wq-group + .wq-group { margin-top: 8px; }
 .wq-foot { margin-top: 40px !important; }
+
+/* One-time "hold an answer" tip */
+.wq-holdtip { display: inline-flex; align-items: center; gap: 10px; margin: 12px 0 0; padding: 8px 8px 8px 14px; border: 2px solid var(--ink, #1d1a2b); border-radius: 99px; background: var(--paper, #fffcf5); color: var(--ink, #1d1a2b); font: 600 14px/1.2 'Poppins', sans-serif; animation: wqTipIn .35s cubic-bezier(.3, 1.5, .5, 1) both; }
+.wq-holdtip button { padding: 7px 12px; border: 0; border-radius: 99px; background: var(--ink, #1d1a2b); color: var(--paper, #fffcf5); font: 700 12px/1 'Poppins', sans-serif; cursor: pointer; }
+@keyframes wqTipIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .wq-holdtip { animation: none; } }
+
+/* Calmer quiz (team review 12 Oct): one progress track, quieter tiles */
+.wq-progress { gap: 0; height: 10px; border: 1.5px solid var(--ink); border-radius: 99px; background: var(--paper); overflow: hidden; }
+.wq-progress span { height: auto; border: 0; border-radius: 0; background: transparent; transition: background-color .3s; }
+.wq-progress span.is-done, .wq-progress span.is-now { background: var(--ink); }
+.wq-tile { min-height: 64px; align-items: center; padding: 12px 44px 12px 16px; border-color: var(--faint, rgba(29, 26, 43, .22)); }
+.wq-tile:hover { border-color: var(--ink); }
+.wq-tile .wq-check { top: 50%; translate: 0 -50%; border-color: var(--faint, rgba(29, 26, 43, .3)); }
+.wq-tile.is-on { border-color: var(--ink); }
+.wq-tile.is-on .wq-check { border-color: var(--ink); }
+.wq-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 10px !important; }
+@media (max-width: 640px) { .wq-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }

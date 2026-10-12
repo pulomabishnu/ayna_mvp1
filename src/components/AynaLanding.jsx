@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import WebHeroCarousel from './WebHeroCarousel';
+import HeroOrbit from './HeroOrbit';
+import useReveal from '../utils/useReveal';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
@@ -654,6 +656,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
 /* ------------------------------------------------------------------ */
 
 function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
+  const revealRef = useReveal();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState(initialCategory || 'all');
   // See the matching effect in WelcomeBack for why — same fix, same pattern.
@@ -745,7 +748,7 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
   };
 
   return (
-    <div className="mockup-landing">
+    <div className="mockup-landing mockup-landing--first" ref={revealRef}>
       <section className="ayna-landing-hero">
         <div className="ayna-landing-hero-col">
           <div className="ayna-landing-eyebrow">Your health, your rules</div>
@@ -775,10 +778,12 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
             ))}
           </div>
         </div>
-        <WebHeroCarousel onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
+        <div className="ayna-landing-hero-visual">
+          <HeroOrbit onPick={(label) => onViewDiscovery?.(discoveryTargetFor(label))} />
+        </div>
       </section>
 
-      <section className="ayna-landing-band">
+      <section className="ayna-landing-band ay-reveal">
         <div className="mockup-page ayna-landing-band__inner">
           <div className="ayna-landing-band__copy">
             Tell us about your body once.
@@ -790,7 +795,13 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
         </div>
       </section>
 
-      <section className="ayna-landing-shop">
+      <section className="ayna-landing-news ay-reveal" aria-label="What's new">
+        <div className="mockup-page">
+          <WebHeroCarousel onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
+        </div>
+      </section>
+
+      <section className="ayna-landing-shop ay-reveal">
         <div className="mockup-page">
           <div className="ayna-landing-shop-head">
             <div className="ayna-landing-shop-title">Trending on ayna</div>

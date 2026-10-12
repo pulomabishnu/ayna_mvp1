@@ -2729,7 +2729,7 @@ function getProductRelevanceStats(savedProduct, quizAnswers, healthProfile = nul
                 component: 'diagnoses',
                 weight: PROFILE_FIT_WEIGHTS.diagnoses,
                 score: diagnosisMatch.score,
-                text: `Relevant to a condition you selected: ${diagnosisMatch.label}`,
+                text: `You told us about ${diagnosisMatch.label}`,
             });
         }
     }

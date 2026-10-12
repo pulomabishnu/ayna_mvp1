@@ -550,12 +550,17 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
   --ay-shadow-lg: 5px 5px 0 rgba(244, 242, 255, .55);
   --color-text-main: var(--ay-ink);
   --color-text-muted: var(--ay-ink-soft);
+  --brand-paper: var(--ay-cream);
+  --brand-ink: var(--ay-ink);
+  --mockup-cream: var(--ay-cream);
 }
 :root[data-ay-theme='dark'] body:has(.app-container) { background: #0c0b11 !important; color: #f4f2ff; }
 .app-container[data-theme='dark'] :is(h1, h2, h3, h4, p, li, span, label, small, strong, b, dt, dd, a):not(.site-footer *) { color: inherit; }
 .app-container[data-theme='dark'] main { color: var(--ay-ink); }
 .app-container[data-theme='dark'] :is(.btn-primary, .btn-navy, .ayna-landing-btn, .pdp-btn--navy, .wyou-btn, .wc-btn, .wq-btn, .ay-web-lib-match) { background: var(--ay-ink) !important; color: #0c0b11 !important; }
-.app-container[data-theme='dark'] .site-footer { background: #000 !important; }
+.app-container[data-theme='dark'] .site-footer { background: #000 !important; color: #f4f2ff !important; }
+.app-container[data-theme='dark'] .site-footer * { color: inherit; }
+.app-container[data-theme='dark'] :is(.ayna-landing-shop, .ayna-landing-shop--returning) { background: var(--ay-cream) !important; }
 .app-container[data-theme='dark'] img { filter: none; }
 .app-container[data-theme='dark'] :is(.ayna-landing-tile, .ayna-discover-card__tile, .discovery-card__tile, .pdp-head__tile, .ay-web-lib-card__img) img { mix-blend-mode: normal; }
 .app-container[data-theme='dark'] .wq-page { --ink: #f4f2ff; --soft: rgba(244, 242, 255, .72); --faint: rgba(244, 242, 255, .22); --paper: #17161f; --cream: #0c0b11; --peri: #343c78; --pink: #6e2a55; --mint: #1d5a45; --butter: #5e5520; }
@@ -772,7 +777,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
    one card text style, aligned control rows.
    ========================================================================== */
 @media (min-width: 761px) {
-  .app-container main .container { max-width: 1180px; padding-left: var(--mockup-gutter, 56px) !important; padding-right: var(--mockup-gutter, 56px) !important; }
+  .app-container main .container { max-width: var(--mockup-page-width, 1320px); padding-left: var(--mockup-gutter, 56px) !important; padding-right: var(--mockup-gutter, 56px) !important; }
 }
 @media (max-width: 760px) {
   .app-container main .container { padding-left: 16px !important; padding-right: 16px !important; }
@@ -800,7 +805,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 /* Returning home: ecosystem card */
 .app-container .ayna-landing-ecocard__label { color: var(--ay-ink); font: 700 15px/1 var(--ay-font-ui); }
 .app-container .mockup-landing--returning .ayna-landing-ecocard__empty { margin-top: 12px; padding: 14px 16px !important; border: 2px dashed var(--ay-ink) !important; border-radius: 14px !important; background: var(--ay-cream) !important; color: var(--ay-ink) !important; font: 700 15px/1 var(--ay-font-ui) !important; }
-.app-container main .container:has(> .ay-web-lib-head, .ay-web-lib) { max-width: 1180px !important; }
+.app-container main .container:has(> .ay-web-lib-head, .ay-web-lib) { max-width: var(--mockup-page-width, 1320px) !important; }
 .app-container .contact-page__grid { padding-left: 0 !important; padding-right: 0 !important; }
 
 /* Ecosystem: shelves sit flush with their heading */
@@ -835,7 +840,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
    Summary view: two columns from 1100px, otherwise one centred column.
    Evidence view: three columns from 1320px, two from 900px, else one.
    ========================================================================== */
-.app-container .mockup-page:has(> div > .pdp-topbar) > div { max-width: 1180px !important; }
+.app-container .mockup-page:has(> div > .pdp-topbar) > div { max-width: var(--mockup-page-width, 1320px) !important; }
 .app-container .pdp-topbar { padding: 32px 40px 0 !important; }
 .app-container .pdp-head { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) !important; gap: 56px !important; padding: 40px 40px 56px !important; }
 .app-container .pdp-tabs { flex-wrap: wrap !important; overflow: visible !important; margin: 0 !important; padding: 0 0 4px !important; -webkit-mask-image: none !important; mask-image: none !important; gap: 8px !important; }
@@ -1105,3 +1110,109 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
   .app-container .ayna-browse__categories { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 24px), transparent); }
   .app-container .ayna-browse__categories button { flex: none; }
 }
+
+/* ---------- Launch audit: Ecosystem (E03–E09) ---------- */
+.app-container .eco2-notice { margin: 0 0 24px; padding: 12px 16px; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-md); background: var(--ay-butter); color: var(--ay-ink); font: 500 14px/1.4 var(--ay-font-ui); text-align: left; }
+.app-container .eco2-notice button { margin-left: 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+.app-container .eco2-details__soon { margin: 0 0 12px; padding: 14px 16px; border: 2px solid var(--ay-ink-faint); border-radius: var(--ay-radius-md); color: var(--ay-ink-soft); font: 500 14px/1.4 var(--ay-font-ui); }
+.app-container .eco2-sidebar__legend--gap button { color: var(--ay-ink) !important; text-decoration: underline !important; text-underline-offset: 3px; font-weight: 700 !important; background: none !important; border: 0 !important; }
+.app-container .eco-shelf__addrow { display: grid; gap: 12px; padding: 16px 0 0; border-top: 2px solid var(--ay-line); }
+.app-container .eco-shelf__addrow-label { color: var(--ay-ink-soft); font: 600 12px/1 var(--ay-font-ui); }
+.app-container .eco-shelf__addrow-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.app-container .eco-shelf__addchip { min-height: 40px; padding: 0 16px; border: 2px dashed var(--ay-ink-faint); border-radius: 99px; background: transparent; color: var(--ay-ink); font: 600 14px/1 var(--ay-font-ui); cursor: pointer; transition: border-color .15s, background .15s; }
+.app-container .eco-shelf__addchip:hover { border-style: solid; border-color: var(--ay-ink); background: var(--ay-paper); }
+.app-container .eco-bubble { cursor: pointer; }
+.app-container .eco-bubble--gap .eco-bubble__count { font: 700 14px/1.1 var(--ay-font-ui) !important; }
+.app-container .eco-bubbles__ring, .app-container .eco-bubble.eco-bubble--gap { border-style: dashed !important; border-width: 2px !important; }
+/* Saved: the Shop card */
+.app-container .eco-saved { margin-top: 40px; }
+.app-container .eco-saved__head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.app-container .eco-saved__head h2 { margin: 0; font: 800 28px/1.1 var(--ay-font-display) !important; letter-spacing: -.03em; }
+.app-container .eco-saved__count { display: inline-grid; place-items: center; min-width: 28px; height: 28px; padding: 0 8px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-pink); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); }
+.app-container .eco-saved__grid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+.app-container .ayna-browse-card__action { padding: 8px 4px 2px; }
+.app-container .ay-card-add { width: 100%; min-height: 40px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .ay-card-add:hover { background: var(--ay-butter); }
+.app-container .wishlist-empty { display: grid; justify-items: start; gap: 12px; padding: 24px; border: 2px dashed var(--ay-ink-faint); border-radius: var(--ay-radius-lg); }
+.app-container .wishlist-empty p { margin: 0; color: var(--ay-ink-soft); }
+
+/* ---------- Ask ayna: always visible, can be tucked to the side ---------- */
+.app-container .ayna-ask-dock { position: fixed; right: 24px; bottom: 24px; z-index: 1400; display: flex; align-items: center; gap: 6px; }
+.app-container .ayna-ask-dock .ayna-ask-launcher { position: static !important; }
+.app-container .ayna-ask-tuck { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); color: var(--ay-ink); font: 700 16px/1 var(--ay-font-ui); cursor: pointer; opacity: .75; transition: opacity .15s, transform .15s; }
+.app-container .ayna-ask-tuck:hover, .app-container .ayna-ask-tuck:focus-visible { opacity: 1; transform: translateX(2px); }
+.app-container .ayna-ask-tab { position: fixed; right: 0; bottom: 96px; z-index: 1400; display: flex; align-items: center; gap: 2px; padding: 6px 6px 6px 8px; border: 2px solid var(--ay-ink); border-right: 0; border-radius: 99px 0 0 99px; background: var(--ay-butter); color: var(--ay-ink); box-shadow: var(--ay-shadow); cursor: pointer; animation: ayTabIn .3s var(--ay-pop) both; }
+.app-container .ayna-ask-tab .ayna-ask-orb--small { width: 28px; height: 28px; }
+.app-container .ayna-ask-tab__chev { font: 700 16px/1 var(--ay-font-ui); padding: 0 2px; }
+.app-container .ayna-ask-tab:hover { padding-left: 12px; }
+@keyframes ayTabIn { from { transform: translateX(100%); } to { transform: none; } }
+body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role='dialog'][aria-modal='true']) .app-container :is(.ayna-ask-dock, .ayna-ask-tab) { display: none !important; }
+@media (max-width: 767px) {
+  .app-container .ayna-ask-dock { right: 14px; bottom: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { .app-container .ayna-ask-tab { animation: none; } }
+
+/* ---------- Wider content (team review 12 Oct): more width, smaller side margins ---------- */
+@media (min-width: 900px) {
+  :root:has(.app-container), .app-container { --mockup-page-width: 1320px; --mockup-gutter: 40px; --ay-web-max: 1320px; --ay-web-gutter: 40px; }
+}
+
+/* ---------- Product tiles without color backgrounds (team review 12 Oct) ---------- */
+.app-container { --ay-product-tile: #ffffff; }
+.app-container[data-theme='dark'] { --ay-product-tile: #23222d; }
+.app-container :is(.ayna-landing-shop-card, .ayna-discover-card, .discovery-card, .pdp-suggest__card):nth-child(n) :is(.ayna-landing-tile, .ayna-discover-card__tile, .discovery-card__tile, .pdp-suggest__tile),
+.app-container :is(.pdp-head__tile, .wdeck-card__tile, .eco-shelf__tile-swatch) { background: var(--ay-product-tile) !important; box-shadow: inset 0 0 0 1.5px var(--ay-line); }
+.app-container :is(.ayna-discover-card__letter, .ayna-landing-tile [class*='fallback'], .discovery-card__tile [class*='fallback']) { opacity: .16; }
+
+/* ---------- Logged-out home, calmer (team review 12 Oct) ----------
+   One focus: headline + search on the left, the orbit on the right on one
+   colour, no split. The carousel moves down into its own "What's new" card. */
+.app-container .mockup-landing--first .ayna-landing-hero { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; align-items: center !important; max-width: none; min-height: min(640px, calc(100vh - 76px)); padding-inline: max(var(--mockup-gutter, 40px), calc((100vw - var(--mockup-page-width, 1320px)) / 2 + var(--mockup-gutter, 40px))) !important; }
+.app-container .mockup-landing--first .ayna-landing-hero-col { padding-left: 0 !important; padding-right: 0 !important; margin: 0 !important; }
+.app-container .mockup-landing--first .ayna-landing-hero-visual { display: grid; place-items: center; padding: 40px 0; }
+.app-container .mockup-landing--first .ayna-landing-hero-col > * { animation: ayHeroIn .6s cubic-bezier(.22, 1, .36, 1) both; }
+.app-container .mockup-landing--first .ayna-landing-hero-col > :nth-child(2) { animation-delay: .06s; }
+.app-container .mockup-landing--first .ayna-landing-hero-col > :nth-child(3) { animation-delay: .12s; }
+.app-container .mockup-landing--first .ayna-landing-hero-col > :nth-child(4) { animation-delay: .18s; }
+.app-container .mockup-landing--first .ayna-landing-hero-col > :nth-child(5) { animation-delay: .24s; }
+.app-container .mockup-landing--first .ayna-landing-hero-visual { animation: ayHeroPop .7s .15s var(--ay-pop) both; }
+@keyframes ayHeroIn { from { opacity: 0; transform: translateY(16px); } }
+@keyframes ayHeroPop { from { opacity: 0; transform: scale(.9); } }
+.app-container .ayna-landing-news { padding: 64px 0 8px; background: var(--ay-cream); }
+.app-container .ayna-landing-news .whc { min-height: 420px; border: 2px solid var(--ay-ink); border-radius: 28px; box-shadow: var(--ay-shadow-lg); }
+/* Sections fade up as they scroll in */
+.app-container .ay-reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.22, 1, .36, 1); }
+.app-container .ay-reveal.is-in { opacity: 1; transform: none; }
+.app-container .ay-reveal.is-in .ayna-landing-shop-card { animation: ayCardIn .5s cubic-bezier(.22, 1, .36, 1) both; }
+.app-container .ay-reveal.is-in .ayna-landing-shop-card:nth-child(2) { animation-delay: .05s; }
+.app-container .ay-reveal.is-in .ayna-landing-shop-card:nth-child(3) { animation-delay: .1s; }
+.app-container .ay-reveal.is-in .ayna-landing-shop-card:nth-child(4) { animation-delay: .15s; }
+.app-container .ay-reveal.is-in .ayna-landing-shop-card:nth-child(n+5) { animation-delay: .2s; }
+@keyframes ayCardIn { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+.app-container :is(.ayna-landing-shop-card, .ayna-browse-card) { transition: transform .18s var(--ay-pop), box-shadow .18s !important; }
+.app-container :is(.ayna-landing-shop-card, .ayna-browse-card):hover { transform: translate(-2px, -3px) !important; box-shadow: var(--ay-shadow-lg) !important; }
+@media (max-width: 900px) {
+  .app-container .mockup-landing--first .ayna-landing-hero { grid-template-columns: minmax(0, 1fr) !important; min-height: 0; padding-inline: 16px !important; }
+  .app-container .mockup-landing--first .ayna-landing-hero-visual { padding: 0 0 40px; }
+  .app-container .ayna-landing-news { padding-top: 40px; }
+  .app-container .ayna-landing-news .whc { min-height: 380px; border-radius: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-container .ay-reveal { opacity: 1; transform: none; transition: none; }
+  .app-container .mockup-landing--first :is(.ayna-landing-hero-col > *, .ayna-landing-hero-visual), .app-container .ay-reveal.is-in .ayna-landing-shop-card { animation: none; }
+}
+.app-container .mockup-landing--first .ayna-landing-hero-col .ayna-landing-headline { font-size: clamp(52px, 5.6vw, 88px) !important; }
+.app-container .hero-orbit__centre { gap: 8px; }
+.app-container .mockup-landing--first .ayna-landing-hero { overflow-x: clip; }
+@media (max-width: 900px) { .app-container .hero-orbit { --size: min(330px, 80vw); --r: calc(var(--size) * .38); } }
+
+/* ---------- Profile circle (team review 12 Oct) ---------- */
+.app-container .app-nav.app-nav .app-nav__circle.ay-avatar { position: relative; width: 40px; height: 40px; padding: 0 !important; border: 2px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-pink) !important; color: var(--ay-ink) !important; box-shadow: 2px 2px 0 var(--ay-ink) !important; transition: transform .15s var(--ay-pop), box-shadow .15s !important; }
+.app-container .app-nav.app-nav .app-nav__circle.ay-avatar:hover { transform: translate(-1px, -1px) rotate(-6deg); box-shadow: 3px 3px 0 var(--ay-ink) !important; }
+.app-container .ay-avatar__text { font: 800 15px/1 var(--ay-font-display) !important; letter-spacing: -.04em; color: var(--ay-ink) !important; }
+.app-container .app-nav.app-nav .app-nav__circle.ay-login { width: auto !important; height: 40px; padding: 0 16px !important; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-ink) !important; }
+.app-container .ay-login-text { color: var(--ay-paper) !important; font: 700 14px/1 var(--ay-font-ui) !important; white-space: nowrap; }
+.app-container .app-nav__circle-dot { position: absolute; top: -3px; right: -3px; width: 12px; height: 12px; border: 2px solid var(--ay-paper); border-radius: 50%; background: var(--ay-ink); }
+.app-container .eco-bubbles__title, .app-container .eco-shelf__addrow-label { color: var(--ay-ink) !important; }
+.app-container .eco-shelf__addrow-label { opacity: .7; }
+.app-container .ayna-browse-card__labels { justify-content: flex-start !important; text-align: left; }

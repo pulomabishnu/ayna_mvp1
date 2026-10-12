@@ -65,7 +65,7 @@ function buildWelcome() {
   }];
 }
 
-export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '' }) {
+export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', onRequireAuth }) {
   const firstName = getFirstName(user);
   const [open, setOpen] = useState(false);
   // The header's Ask ayna button bumps openSignal to open the chat.
@@ -160,18 +160,12 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     window.speechSynthesis.speak(utterance);
   };
 
-  // A fixed-position launcher this size inevitably risks sitting over
-  // something in the bottom-right corner on some page somewhere — found
-  // live, 2026-08-24 bug bash, partially covering product-card corners and
-  // (before an unrelated layout fix) a Wishlist button. Shrinking to an
-  // icon-only state once the page is scrolled keeps its footprint small
-  // for most of a session instead of a permanent full-width pill.
-  const [compact, setCompact] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setCompact(window.scrollY > 200);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  // Always visible (testers missed it when it shrank on scroll). It can be
+  // tucked to the right edge as a small tab if it's in the way; that choice
+  // is remembered per browser.
+  const TUCK_KEY = 'ayna_ask_tucked_v1';
+  const [tucked, setTucked] = useState(() => { try { return localStorage.getItem(TUCK_KEY) === '1'; } catch { return false; } });
+  const setTuck = (v) => { setTucked(v); try { localStorage.setItem(TUCK_KEY, v ? '1' : '0'); } catch { /* storage unavailable */ } };
 
   useEffect(() => {
     let cancelled = false;
@@ -317,17 +311,29 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
 
   return (
     <>
-      <button
-        type="button"
-        className={`ayna-ask-launcher${compact && !open ? ' is-compact' : ''}`}
-        aria-label="Ask Ayna"
-        aria-expanded={open}
-        onClick={() => setOpen(!open)}
-        disabled={disabled}
-      >
-        <span className="ayna-ask-orb" aria-hidden="true" />
-        <span className="ayna-ask-launcher__label">Ask Ayna</span>
-      </button>
+      {tucked && !open ? (
+        <button type="button" className="ayna-ask-tab" aria-label="Show Ask ayna" onClick={() => setTuck(false)}>
+          <span className="ayna-ask-orb ayna-ask-orb--small" aria-hidden="true" />
+          <span className="ayna-ask-tab__chev" aria-hidden="true">‹</span>
+        </button>
+      ) : (
+        <div className="ayna-ask-dock">
+          <button
+            type="button"
+            className="ayna-ask-launcher"
+            aria-label="Ask ayna"
+            aria-expanded={open}
+            onClick={() => (onRequireAuth && !user ? onRequireAuth() : setOpen(!open))}
+            disabled={disabled}
+          >
+            <span className="ayna-ask-orb" aria-hidden="true" />
+            <span className="ayna-ask-launcher__label">Ask ayna</span>
+          </button>
+          {!open && (
+            <button type="button" className="ayna-ask-tuck" aria-label="Move Ask ayna to the side" title="Move to the side" onClick={() => setTuck(true)}>›</button>
+          )}
+        </div>
+      )}
 
       {open && (
         <section className="ayna-ask-panel" aria-label="Ask Ayna">

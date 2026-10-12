@@ -171,7 +171,7 @@ export default function EcosystemBubbles({
     // should instead be a single affordance to Browse and pick anything,
     // not the app pre-choosing which gaps look most fillable). Only shown
     // when there's an actual empty seat in the ring to put it in.
-    const addMoreSeat = { key: '__add-more__', label: 'Add More', products: [], gap: true };
+    const addMoreSeat = { key: '__add-more__', label: '+ Add more', products: [], gap: true };
     const seats = filledCapped.length < MAX_SATELLITES ? [...filledCapped, addMoreSeat] : filledCapped;
 
     return { seats, covered: filled.length };
@@ -230,8 +230,7 @@ export default function EcosystemBubbles({
       <div className="eco-bubbles__side">
         <h2 className="eco-bubbles__title">This is your ecosystem.</h2>
         <p className="eco-bubbles__lede">
-          Each circle is an area of care. Tap one to see what&apos;s in it and why. The dashed
-          circle adds more.
+          Tap a circle to see why it&apos;s there.
         </p>
 
         {selected && !selected.gap && selected.products.length > 0 ? (
@@ -242,7 +241,10 @@ export default function EcosystemBubbles({
               // used to show only products[0], so a "2 picks" area silently
               // hid its second product with no way to see or act on it here.
               const labels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
-              const line = labels.length ? `Matched on ${labels.slice(0, 3).join(', ')}.` : '';
+              // Conditions stay behind "Why this?" rather than printed in plain view.
+              const open = labels.filter((l) => !/^You told us about/i.test(l));
+              const first = open[0] ? open[0].replace(/\.$/, '') : '';
+              const line = first ? `${first}.` : (labels.length ? 'Matched to your health answers.' : '');
               return (
                 <div key={product.id} className="eco-bubbles__card-product">
                   <button

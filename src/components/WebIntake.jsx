@@ -222,6 +222,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const [search, setSearch] = useState('');
   const [infoOpen, setInfoOpen] = useState(false);
   const [glossary, setGlossary] = useState(null);
+  const [holdTipSeen, setHoldTipSeen] = useState(() => { try { return localStorage.getItem('ayna_hold_tip_seen_v1') === '1'; } catch { return false; } });
+  const dismissHoldTip = () => { setHoldTipSeen(true); try { localStorage.setItem('ayna_hold_tip_seen_v1', '1'); } catch { /* storage unavailable */ } };
   const [minorGate, setMinorGate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
@@ -296,7 +298,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     clearTimeout(hold.current.timer);
     hold.current.fired = false;
     if (!hit) return;
-    hold.current.timer = setTimeout(() => { hold.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); }, 450);
+    hold.current.timer = setTimeout(() => { hold.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); dismissHoldTip(); }, 450);
   };
   const endHold = () => clearTimeout(hold.current.timer);
   const swallow = (e) => { if (hold.current.fired) { e.preventDefault(); e.stopPropagation(); hold.current.fired = false; } };
@@ -456,6 +458,9 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       <h1 className="wq-title">{step.title}</h1>
       {step.subtitle && <p className="wq-subtitle">{step.subtitle}</p>}
       {infoOpen && step.info && <p className="wq-info-pop" role="note">{step.info}</p>}
+      {!holdTipSeen && !['age', 'zip'].includes(step.type) && (
+        <p className="wq-holdtip" role="note">Press and hold any answer to see what it means.<button type="button" onClick={dismissHoldTip}>Got it</button></p>
+      )}
 
       <div className="wq-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold}
         onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallow}

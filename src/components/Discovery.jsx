@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import WebDiscoverDeck from './WebDiscoverDeck';
-import { formatPrice } from '../utils/formatPrice';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
@@ -17,9 +16,10 @@ import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscov
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
 import MatchGauge from './MatchGauge';
+import ProductCard from './ProductCard';
 import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
-import { productHref, isPlainLeftClick } from '../utils/productRoute';
+import { isPlainLeftClick } from '../utils/productRoute';
 
 // MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, and
 // NEGATED_CONCERN_PHRASES all now live in ../data/products (see the comments
@@ -1423,9 +1423,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];
                     const isInEcosystem = !!myProducts[item.id];
-                    const categoryLabel = CATEGORY_LABELS[item.category] || (item.category ? item.category.replace(/-/g, ' ') : 'Product');
-
-                    const price = formatPrice(item);
                     return (
                         <React.Fragment key={item.id}>
                         {idx === firstWebIndex && (
@@ -1434,68 +1431,40 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 <span>Found live by ayna. Prices and details are checked less often.</span>
                             </div>
                         )}
-                        <article
-                            className="ayna-discover-card ayna-browse-card"
+                        <ProductCard
+                            product={item}
                             style={{ animation: `fadeInUp 0.4s ${Math.min(idx * 0.04, 0.24)}s backwards` }}
-                        >
-                            <a
-                                className="ayna-browse-card__link"
-                                href={productHref(item.id)}
-                                onClick={(e) => {
-                                    if (!isPlainLeftClick(e)) return;
-                                    e.preventDefault();
-                                    onOpenProduct?.(item);
-                                }}
-                            >
-                                <div className="ayna-discover-card__tile">
-                                    {cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
-                                        <>
-                                            <img
-                                                src={cardImageSrc}
-                                                alt={item.name}
-                                                loading="lazy"
-                                                onError={(e) => {
-                                                    e.currentTarget.style.display = 'none';
-                                                    const fallback = e.currentTarget.nextElementSibling;
-                                                    if (fallback) fallback.style.display = 'flex';
-                                                }}
-                                            />
-                                            <span className="ayna-discover-card__letter" style={{ display: 'none', position: 'absolute', inset: 0 }}>
-                                                <ProductImageFallback />
-                                            </span>
-                                        </>
-                                    ) : imageStillLoading ? (
-                                        <div className="skeleton-shimmer" style={{ position: 'absolute', inset: 0 }} aria-hidden="true" />
-                                    ) : (
+                            matchPercent={matchPercent}
+                            isSaved={isWishlisted}
+                            inEcosystem={isInEcosystem}
+                            onOpen={onOpenProduct}
+                            onToggleSaved={onToggleSaved}
+                            labels={<>
+                                {isSponsoredItem(item) && <span className="ayna-browse-card__sponsored">Sponsored</span>}
+                                {eligibilityLabel && <span className="ayna-browse-card__eligibility">{eligibilityLabel}</span>}
+                            </>}
+                            tile={cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
+                                <>
+                                    <img
+                                        src={cardImageSrc}
+                                        alt={item.name}
+                                        loading="lazy"
+                                        onError={(e) => {
+                                            e.currentTarget.style.display = 'none';
+                                            const fallback = e.currentTarget.nextElementSibling;
+                                            if (fallback) fallback.style.display = 'flex';
+                                        }}
+                                    />
+                                    <span className="ayna-discover-card__letter" style={{ display: 'none', position: 'absolute', inset: 0 }}>
                                         <ProductImageFallback />
-                                    )}
-                                    {matchPercent != null && (
-                                        <span className="ayna-browse-card__match">
-                                            <MatchGauge percent={matchPercent} size={24} theme="light" label="match" />
-                                        </span>
-                                    )}
-                                    {isInEcosystem && <span className="ayna-browse-card__ecosystem">In ecosystem</span>}
-                                </div>
-                                <div className="ayna-discover-card__body">
-                                    <div className="ayna-browse-card__labels">
-                                        <span className="ayna-discover-card__category">{item.brand || categoryLabel}</span>
-                                        {isSponsoredItem(item) && <span className="ayna-browse-card__sponsored">Sponsored</span>}
-                                        {eligibilityLabel && <span className="ayna-browse-card__eligibility">{eligibilityLabel}</span>}
-                                    </div>
-                                    <h3 className="ayna-discover-card__name">{item.name}</h3>
-                                    <span className="ayna-discover-card__price">{price.main}{price.sub && <small>{price.sub}</small>}</span>
-                                </div>
-                            </a>
-                            <button
-                                type="button"
-                                className={`ayna-browse-card__wishlist ${isWishlisted ? 'is-saved' : ''}`}
-                                aria-label={isWishlisted ? `Remove ${item.name} from Saved` : `Save ${item.name}`}
-                                aria-pressed={isWishlisted}
-                                onClick={() => onToggleSaved?.(item)}
-                            >
-                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" /></svg>
-                            </button>
-                        </article>
+                                    </span>
+                                </>
+                            ) : imageStillLoading ? (
+                                <div className="skeleton-shimmer" style={{ position: 'absolute', inset: 0 }} aria-hidden="true" />
+                            ) : (
+                                <ProductImageFallback />
+                            )}
+                        />
                         </React.Fragment>
                     );
                 })}

@@ -1348,18 +1348,13 @@ function App() {
             <div ref={accountMenuRef} className="app-nav__account desktop-only">
               <button
                 type="button"
-                className={`app-nav__circle app-nav__circle--account ${user ? 'app-nav__circle--avatar' : ''}`}
+                className={`app-nav__circle app-nav__circle--account ${user ? 'app-nav__circle--avatar ay-avatar' : 'ay-login'}`}
                 onClick={() => { if (user) { setShowAccountMenu(false); setCurrentView('you'); } else setShowAccountMenu(v => !v); }}
                 aria-haspopup={user ? undefined : 'menu'}
                 aria-expanded={user ? undefined : showAccountMenu}
-                aria-label="Account"
+                aria-label={user ? 'Your profile' : 'Log in or sign up'}
               >
-                {user ? accountInitials : (
-                  <svg viewBox="0 0 24 24" aria-hidden="true" className="app-nav__account-icon">
-                    <circle cx="12" cy="8" r="3.25" />
-                    <path d="M5.8 19c.7-3.5 3-5.3 6.2-5.3s5.5 1.8 6.2 5.3" />
-                  </svg>
-                )}
+                {user ? <span className="ay-avatar__text">{accountInitials}</span> : <span className="ay-login-text">Log in</span>}
                 {user && checkinDue && <span className="app-nav__circle-dot" aria-hidden />}
               </button>
               {showAccountMenu && !user && (
@@ -1749,8 +1744,9 @@ function App() {
           />
         )}
 
-        {quizResults && (
+        {currentView !== 'quiz' && (
           <ProfileChatbot
+            onRequireAuth={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             openSignal={askOpenSignal}
             prefill={askPrefill}
             profile={quizResults}
@@ -1758,7 +1754,7 @@ function App() {
             onProfileUpdate={setQuizResults}
             chatHistory={chatHistory}
             onChatHistoryUpdate={setChatHistory}
-            disabled={!quizResults}
+            disabled={false}
             onNavigateToDiscovery={handleViewDiscovery}
             onViewRecommendations={() => handleViewEcosystem()}
           />

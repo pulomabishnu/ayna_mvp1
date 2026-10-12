@@ -546,6 +546,9 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const [infoOpen, setInfoOpen] = useState(null);
   // Hold a word (e.g. "Perimenopause", "PMDD") for a plain-language definition.
   const [glossary, setGlossary] = useState(null);
+  // One-time tip: people in testing didn't know answers can be held.
+  const [holdTipSeen, setHoldTipSeen] = useState(() => { try { return localStorage.getItem('ayna_hold_tip_seen_v1') === '1'; } catch { return false; } });
+  const dismissHoldTip = () => { setHoldTipSeen(true); try { localStorage.setItem('ayna_hold_tip_seen_v1', '1'); } catch { /* storage unavailable */ } };
   const holdRef = useRef({ timer: null, fired: false });
   const startHold = (event) => {
     const el = event.target.closest('button, label, [role="radio"]');
@@ -555,7 +558,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     clearTimeout(holdRef.current.timer);
     holdRef.current.fired = false;
     if (!hit) return;
-    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); navigator.vibrate?.(8); }, 450);
+    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); dismissHoldTip(); navigator.vibrate?.(8); }, 450);
   };
   const endHold = () => clearTimeout(holdRef.current.timer);
   const swallowClickAfterHold = (event) => {
@@ -846,6 +849,9 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
           {step.info && infoOpen === step.id && <p className="ip-info-pop" role="note">{step.info}</p>}
           {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
+          {!holdTipSeen && !['age', 'zip'].includes(step.type) && (
+            <p className="ip-holdtip" role="note">Hold any answer for its meaning.<button type="button" onClick={dismissHoldTip} aria-label="Got it">Got it</button></p>
+          )}
           <span className="ip-spacer is-top" aria-hidden="true" />
           <div className="ip-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold} onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallowClickAfterHold} onContextMenu={(e) => { if (holdRef.current.fired) e.preventDefault(); }}>{renderBody()}</div>
           <span className="ip-spacer is-bottom" aria-hidden="true" />

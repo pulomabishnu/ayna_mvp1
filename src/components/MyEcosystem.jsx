@@ -938,7 +938,7 @@ export default function MyEcosystem({
     onOpenPhoneVerify,
     user = null,
     userSession = null,
-    isPremium = false,
+    isPremium: _isPremium = false,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
     useEscapeToClose(showAddModal, () => setShowAddModal(false));
@@ -1232,6 +1232,9 @@ export default function MyEcosystem({
                             .catch(e => {
                                 console.error(`[Ayna LLM] batch ${i} error:`, e?.status || '', e?.message);
                                 if (e?.status === 429) {
+                                    // One 429 means every batch will get one: stop the rest
+                                    // instead of firing six more doomed requests.
+                                    if (!limitReached) { try { rec.controller.abort(); } catch { /* already done */ } }
                                     limitReached = true;
                                 } else if (e?.status === 401) {
                                     authFailed = true;
@@ -1259,6 +1262,25 @@ export default function MyEcosystem({
                         // The app already has a vetted local recommendation engine;
                         // use it as an immediate fallback for network/5xx/404/timeouts.
                         if (limitReached) {
+                            // Quota used: keep the instant local ecosystem quietly and
+                            // cache it, so later visits make no requests at all.
+                            const prior = previousLlmTieredRef.current;
+                            if (bypassCache) {
+                                // She tapped refresh: keep what she had and say why.
+                                if (Array.isArray(prior) && prior.length > 0) rec.tiered = prior;
+                                rec.error = "You've already built your ecosystem. Rebuilding is coming to premium.";
+                                notifyGeneration(rec);
+                                return;
+                            }
+                            const localRecs = generateTieredRecommendations(intake);
+                            if (Array.isArray(localRecs) && localRecs.length > 0) {
+                                rec.tiered = localRecs;
+                                rec.error = '';
+                                notifyGeneration(rec);
+                                if (saveCachedLlmRecommendations(intakeFingerprint, localRecs)) saveFetchedLlmFingerprint(intakeFingerprint);
+                                previousLlmTieredRef.current = localRecs;
+                                return;
+                            }
                             rec.error = "You've already generated your ayna ecosystem. Regenerating is a premium feature. Email puloma@aynahealth.co to upgrade.";
                             notifyGeneration(rec);
                             return;
@@ -1778,8 +1800,10 @@ export default function MyEcosystem({
                 />
 
                 {llmError && !llmLoading && (
-                    <div style={{ textAlign: 'center', padding: '0.75rem', margin: '0 auto 1.5rem', maxWidth: '900px', background: '#FEF2F2', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: '#991B1B', border: '1px solid #FCA5A5' }}>
-                        Couldn&apos;t refresh your matches. <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
+                    <div className="eco2-notice" role="status">
+                        {/premium/i.test(llmError) ? llmError : (
+                            <>Couldn&apos;t refresh your matches. <button type="button" onClick={handleRefreshRecommendations}>Try again</button></>
+                        )}
                     </div>
                 )}
 
@@ -1792,14 +1816,11 @@ export default function MyEcosystem({
                             ) : (
                                 <>
                                     <h2 className="eco2-sidebar__count">
-                                        {myProductList.length} product{myProductList.length === 1 ? '' : 's'}
+                                        {myProductList.length} pick{myProductList.length === 1 ? '' : 's'}
                                     </h2>
-                                    {(shelfAreaBreakdown.clinicianCount > 0 || estimatedMonthlyTotal.counted > 0) && (
+                                    {estimatedMonthlyTotal.counted > 0 && (
                                         <p className="eco2-sidebar__sub">
-                                            {[
-                                                shelfAreaBreakdown.clinicianCount > 0 ? `${shelfAreaBreakdown.clinicianCount} clinician${shelfAreaBreakdown.clinicianCount === 1 ? '' : 's'}` : null,
-                                                estimatedMonthlyTotal.counted > 0 ? `~$${estimatedMonthlyTotal.total.toFixed(0)}${estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}/mo` : null,
-                                            ].filter(Boolean).join(' · ')}
+                                            About ${estimatedMonthlyTotal.total.toFixed(0)}{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''} a month
                                         </p>
                                     )}
                                 </>
@@ -1911,42 +1932,7 @@ export default function MyEcosystem({
                                 </div>
                             )}
 
-                            <details className="eco2-details__item" open>
-                                <summary>
-                                    <span>Sync wearable &amp; app data</span>
-                                    <span className="eco2-details__hint">Sharpens your matches. Nothing is shared.</span>
-                                </summary>
-                                <div className="eco2-details__body">
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.85rem' }}>
-                                        {SYNC_SOURCES.map((src) => (
-                                            <button
-                                                key={src.id}
-                                                type="button"
-                                                onClick={() => !isPremium && setShowSyncPaywall(true)}
-                                                title={isPremium ? `Connect ${src.label}` : `${src.label}. Requires ayna Premium`}
-                                                style={{
-                                                    display: 'flex', alignItems: 'center', gap: '0.4rem',
-                                                    padding: '0.4rem 0.85rem',
-                                                    border: '1px solid var(--color-border)',
-                                                    borderRadius: 'var(--radius-pill)',
-                                                    background: 'var(--color-surface)',
-                                                    fontSize: '0.82rem', fontWeight: '500',
-                                                    color: isPremium ? 'var(--color-text-main)' : 'var(--color-text-muted)',
-                                                    cursor: isPremium ? 'default' : 'pointer',
-                                                    opacity: isPremium ? 0.7 : 1,
-                                                }}
-                                            >
-                                                <span>{src.label}</span>
-                                                {!isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· Premium</span>}
-                                                {isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· coming soon</span>}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem', opacity: 0.6, cursor: 'default' }} disabled>
-                                        Coming soon
-                                    </button>
-                                </div>
-                            </details>
+                            <p className="eco2-details__soon">Wearable sync is coming.</p>
 
                             <details className="eco2-details__item" ref={careNearYouDetailsRef}>
                                 <summary>
