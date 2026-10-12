@@ -540,3 +540,45 @@
 .ip-label-row .ip-label { margin: 0; }
 .ip-chip.has-term span { text-decoration: none !important; }
 .ip-label-row { margin-bottom: 10px; align-self: stretch; width: 100%; }
+
+/* Quiz: a steady black canvas with alternating ayna-color choices. */
+.ayna-play-intake {
+  --ip-bg: #050506;
+  --ay-ink: #fff;
+  --ay-ink-soft: rgba(255, 255, 255, .76);
+  --ay-ink-faint: rgba(255, 255, 255, .24);
+  --ay-paper: #1a1a20;
+  --ay-cream: #111115;
+  --ay-shadow: 3px 3px 0 rgba(255, 255, 255, .72);
+  --ay-shadow-lg: 5px 5px 0 rgba(255, 255, 255, .72);
+  background: #050506;
+  color: #fff;
+}
+.ayna-play-intake:is(.ip-tone--peri, .ip-tone--butter, .ip-tone--pink, .ip-tone--mint, .ip-tone--calm) { --ip-bg: #050506; }
+.ayna-play-intake .ip-art { opacity: .16 !important; }
+.ayna-play-intake :is(button, input, textarea):focus-visible { outline-color: #fff; }
+.ayna-play-intake .ip-next { background: #fff; color: #050506 !important; }
+.ayna-play-intake .ip-next:disabled { background: transparent; color: var(--ay-ink-soft) !important; }
+.ayna-play-intake .ip-next i svg { stroke: #1d1a2b; }
+.ayna-play-intake .ip-label { color: #fff; }
+.ayna-play-intake .ip-answer { color: #fff; }
+
+/* Repeat pink, mint, butter and periwinkle across answer sets. */
+.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 1),
+.ayna-play-intake .ayna-count-choices button:nth-child(4n + 1) { background: var(--ay-pink) !important; color: #1d1a2b !important; }
+.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 2),
+.ayna-play-intake .ayna-count-choices button:nth-child(4n + 2) { background: var(--ay-mint) !important; color: #1d1a2b !important; }
+.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n + 3),
+.ayna-play-intake .ayna-count-choices button:nth-child(4n + 3) { background: var(--ay-butter) !important; color: #1d1a2b !important; }
+.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab):nth-child(4n),
+.ayna-play-intake .ayna-count-choices button:nth-child(4n) { background: var(--ay-peri) !important; color: #1d1a2b !important; }
+.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab)[aria-pressed='true'],
+.ayna-play-intake :is(.ip-sticker, .ip-row, .ip-card, .ip-tab)[aria-checked='true'],
+.ayna-play-intake .ayna-count-choices button[aria-pressed='true'] { box-shadow: 0 0 0 2px #050506, 0 0 0 4px #fff !important; }
+.ayna-play-intake .ip-row .ip-radio { border-color: #1d1a2b; background: #fff; }
+.ayna-play-intake .ip-row[aria-checked='true'] .ip-radio { box-shadow: inset 0 0 0 4px #fff, inset 0 0 0 12px #1d1a2b; }
+.ayna-play-intake .ip-sticker-icon { color: #1d1a2b; border-color: #1d1a2b; }
+.ayna-play-intake .ip-sticker-icon svg { color: #1d1a2b; }
+.ayna-play-intake .ip-card small, .ayna-play-intake .ip-row-copy small { color: rgba(29, 26, 43, .72); }
+.ayna-play-intake .ip-sticker-icon { background: rgba(255, 255, 255, .72); }
+.ayna-play-intake .ip-sticker-glyph { border-color: #1d1a2b; background: #fff; }
