@@ -9,15 +9,15 @@ const PARTS = [
   { key: 'preferences', label: 'Preferences', tone: 'mint', note: 'Formats, budget, brands and what to avoid.' },
 ];
 
-export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, onAboutAyna, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile }) {
+export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, onAboutAyna, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile, hasIntakeDraft = false }) {
   const [focus, setFocus] = useState('goals');
   const active = PARTS.find((part) => part.key === focus) || PARTS[0];
   return <main className="ayna-ecosystem-start ay-intro">
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
     <div className="ayna-ecosystem-start-scroll ay-intro-body">
       <header className="ay-intro-head">
-        <h1>Make it yours.</h1>
-        <p>A few questions in three parts.</p>
+        <h1>{hasIntakeDraft ? 'Your Ecosystem is taking shape.' : 'Make it yours.'}</h1>
+        <p>{hasIntakeDraft ? 'Pick up where you left off.' : 'A few questions in three parts.'}</p>
       </header>
 
       <section className="ay-intro-map" aria-label="What shapes your Ecosystem">
@@ -40,7 +40,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
       </section>
 
       <div className="ayna-ecosystem-start-actions ay-intro-actions">
-        <button type="button" className="ayna-ecosystem-start-primary" onClick={onStartQuiz}>Start</button>
+        <button type="button" className="ayna-ecosystem-start-primary" onClick={onStartQuiz}>{hasIntakeDraft ? 'Continue' : 'Start'}</button>
         <div>{!authUser && <button type="button" onClick={onAlreadyHaveAccount}>Sign in</button>}<button type="button" onClick={onAboutAyna}>About us</button></div>
       </div>
     </div>
