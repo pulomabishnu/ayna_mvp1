@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { PANEL_ICONS, PANEL_TONES } from '../mobile/components/pdpIcons.jsx';
 import ProductEvidenceRail from './ProductEvidenceRail';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
@@ -464,6 +465,9 @@ export default function ProductModal({
   // real routes (/product/:id) reachable via direct/shared links, so unlike
   // a nested modal there's no other on-screen way back to Discovery.
   onBack = null,
+  // Opens Community with this product attached ('post' | 'review' |
+  // 'playlist' | 'recommend'), same four actions as the app.
+  onCommunityAction = null,
 }) {
   // The mockup draws the product page two ways — 1f, tabs with the Ayna
   // summary, and 1g, an evidence rail beside the specs. Both are built, and
@@ -994,12 +998,22 @@ export default function ProductModal({
                       role="tab"
                       aria-selected={activeTab === tab.id}
                       className={activeTab === tab.id ? 'is-active' : undefined}
+                      data-tone={PANEL_TONES[tab.id] || 'cream'}
                       onClick={() => setActiveTab(tab.id)}
                     >
+                      {PANEL_ICONS[tab.id] && <svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS[tab.id]}</svg>}
                       {tab.label}
                     </button>
                   ))}
                 </div>
+                {(() => {
+                  const current = visibleTabs.find((t) => t.id === activeTab);
+                  return current && <div className="pdp-panel-head" data-tone={PANEL_TONES[current.id] || 'cream'}>
+                    <span className="pdp-panel-head__icon">{PANEL_ICONS[current.id] ? <svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS[current.id]}</svg> : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14" /></svg>}</span>
+                    <strong>{current.label}</strong>
+                    {current.id === 'summary' && sourceCounts.total > 0 && <small>{sourceCounts.total} source{sourceCounts.total === 1 ? '' : 's'}</small>}
+                  </div>;
+                })()}
 
                 {activeTab === 'summary' && (
                   <div className="pdp-summary-card">
@@ -1255,6 +1269,20 @@ export default function ProductModal({
                   </div>
                 )}
               </div>
+
+              {onCommunityAction && (
+                <section className="pdp-community-actions" aria-label="Community">
+                  <div className="pdp-community-actions__head">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS.community}</svg>
+                    <h3>Community</h3>
+                  </div>
+                  <div className="pdp-community-actions__grid">
+                    {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
+                      <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
           </div>
 

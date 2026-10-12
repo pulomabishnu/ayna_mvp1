@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { PANEL_ICONS, PANEL_TONES } from '../components/pdpIcons.jsx';
 import { CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
@@ -81,13 +82,6 @@ function trustChecks(product) {
   return out;
 }
 
-const PANEL_ICONS = {
-  summary: <path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" />,
-  clinician: <><path d="M6 4v5a4 4 0 0 0 8 0V4M10 13v2a5 5 0 0 0 10 0v-1.5" /><circle cx="20" cy="11" r="2" /></>,
-  scientific: <path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3M7.5 15h9" />,
-  community: <><path d="M4 5h12v9H8l-4 3V5Z" /><path d="M20 9v10l-3-2h-7v-1" /></>,
-};
-const PANEL_TONES = { summary: 'butter', clinician: 'mint', scientific: 'peri', community: 'pink' };
 
 /** One "game card" per evidence tab: sticker header with count, a clamped summary with Read more, then link cards (3, then Show all). */
 function SourcePanel({ kind, title, count, countLabel = 'source', countPlural, summary, meta, children, links = [], emptyText }) {
@@ -616,16 +610,8 @@ export default function ProductDetailScreen({
           {currentSection === 'scientific' && <SourcePanel kind="scientific" key={`r-${product.id}`} title="Scientific literature" count={scientificLiteratureEntries.length} countLabel="study" countPlural="studies" summary={effectiveness} emptyText="No studies linked yet."
             links={scientificLiteratureEntries.map((e) => ({ url: e.url, label: e.label, kind: e.kind, text: e.text, summary: e.summary }))} />}
 
-          {currentSection === 'community' && <>
-            <SourcePanel kind="community" key={`m-${product.id}`} title="Reviews" count={communityCitationEntries.length} countLabel="link" summary={communityReview} emptyText="No review summary yet."
-              links={communityCitationEntries.map((e) => ({ url: e.url, label: e.label, text: e.text, summary: e.summary }))} />
-            {onCommunityAction && <div className="ay-pdp-community-actions" aria-label="Community actions">
-              <h2>Join the conversation</h2>
-              <div className="ay-pdp-actions">
-                {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend']].map(([kind, label]) => <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>)}
-              </div>
-            </div>}
-          </>}
+          {currentSection === 'community' && <SourcePanel kind="community" key={`m-${product.id}`} title="Reviews" count={communityCitationEntries.length} countLabel="link" summary={communityReview} emptyText="No review summary yet."
+            links={communityCitationEntries.map((e) => ({ url: e.url, label: e.label, text: e.text, summary: e.summary }))} />}
 
           {currentSection === 'whoitsfor' && (whoItsFor || []).map((item, i) => <div key={item} className="ay-pdp-who" style={{ display: 'flex', gap: 12, alignItems: 'center' }}><div className="ay-pdp-who-n">{i + 1}</div><div style={{ flex: 1, minWidth: 0 }}>{item}</div></div>)}
 
@@ -637,6 +623,13 @@ export default function ProductDetailScreen({
 
           {currentSection === 'ask' && <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />}
         </div>
+
+        {onCommunityAction && <section className="ay-pdp-community-actions" aria-label="Community">
+          <div className="ay-pdp-community-head"><svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS.community}</svg><h2>Community</h2></div>
+          <div className="ay-pdp-community-grid">
+            {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>)}
+          </div>
+        </section>}
 
         {reads.length > 0 && (
           <div style={{ padding: '22px var(--ay-gutter, 20px) 34px' }}>

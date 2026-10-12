@@ -1,6 +1,6 @@
-import { GLOSSARY } from '../../data/glossary.js';
+import { GLOSSARY } from './glossary.js';
 
-// Shared content for the welcome carousel on the website and the app.
+// Content for the website welcome carousel.
 // The daily fact is a plain-language definition from the reviewed glossary,
 // picked by date so everyone sees the same one on a given day.
 

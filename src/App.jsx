@@ -320,6 +320,11 @@ function App() {
   // Stable insertion-order array of product IDs — prevents cards from reordering on swap/add
   const [ecosystemOrder, setEcosystemOrder] = useState([]);
   const [omittedProducts, setOmittedProducts] = useState({});
+  // Product page → Community: which composer to open and for which product.
+  const [communitySeed, setCommunitySeed] = useState(null);
+  useEffect(() => {
+    if (currentView !== 'community' && communitySeed) setCommunitySeed(null);
+  }, [currentView, communitySeed]);
   const [compareList, setCompareList] = useState([]);
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinData, setCheckinData] = useState(null);
@@ -1473,6 +1478,9 @@ function App() {
         )}
         {currentView === 'community' && (
           <WebCommunity
+            key={communitySeed?.token || 'community'}
+            seedKind={communitySeed?.kind || null}
+            seedProductId={communitySeed?.productId || null}
             user={user}
             products={ALL_PRODUCTS}
             quizResults={quizResults}
@@ -1818,6 +1826,16 @@ function App() {
               userSession={userSession}
               onOpenProduct={handleOpenProduct}
               onBack={handleBackFromProduct}
+              onCommunityAction={(kind) => {
+                const seed = { kind, productId: resolvedProduct?.id || null, token: Date.now() };
+                if (!user && kind !== 'post') {
+                  setCommunitySeed(null);
+                  setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
+                  return;
+                }
+                setCommunitySeed(seed);
+                setCurrentView('community');
+              }}
             />
           ) : productStillResolving ? (
             <ViewLoadingFallback />

@@ -174,8 +174,12 @@
 .ayna-mobile .ay-src-links a, .ayna-mobile .ay-src-links a:visited, .ayna-mobile .ay-src-links a * { color: var(--ay-ink) !important; }
 
 /* Community actions sit outside the Reviews source card. */
-.ay-pdp-community-actions { display: grid; gap: 10px; padding: 16px 0 4px; }
-.ay-pdp-community-actions h2 { margin: 0; color: var(--ay-ink); font: 700 16px/1.2 var(--ay-font-ui); }
-.ay-pdp-community-actions .ay-pdp-actions { flex-wrap: wrap; overflow: visible; margin-inline: 0; padding: 0; }
-.ay-pdp-community-actions .ay-pdp-actions button { background: var(--ay-paper); }
-.ay-pdp-community-actions .ay-pdp-actions button.is-primary { background: var(--ay-ink); color: var(--ay-paper); }
+
+.ay-pdp-community-actions { display: grid; gap: 12px; margin: 18px var(--ay-gutter, 20px) 0; padding: 16px; border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-pink); box-shadow: 3px 3px 0 var(--ay-ink); }
+.ay-pdp-community-head { display: flex; align-items: center; gap: 10px; }
+.ay-pdp-community-head svg { width: 22px; height: 22px; fill: none; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linejoin: round; }
+.ay-pdp-community-head h2 { margin: 0; color: var(--ay-ink); font: 800 20px/1 var(--ay-font-display); letter-spacing: -.03em; }
+.ay-pdp-community-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ay-pdp-community-grid button { min-height: 44px; padding: 8px 10px; border: 1.5px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); color: var(--ay-ink); font: 700 13px/1.15 var(--ay-font-ui); cursor: pointer; }
+.ay-pdp-community-grid button.is-primary { background: var(--ay-ink); color: var(--ay-paper); }
+.ay-pdp-community-grid button:active { transform: scale(.97); }

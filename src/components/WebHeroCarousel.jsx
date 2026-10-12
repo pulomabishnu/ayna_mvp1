@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { TEAM_PHOTO, TEAM_CAPTION, getDailyFact } from '../mobile/data/welcomeSlides.js';
+import { TEAM_PHOTO, TEAM_CAPTION, getDailyFact } from '../data/welcomeSlides.js';
 import './WebHeroCarousel.css';
 
 // Website welcome carousel: us, what ayna does, the app, today's fact and

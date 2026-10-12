@@ -112,7 +112,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .btn:disabled, .app-container button:disabled { opacity: .45; transform: none !important; box-shadow: none !important; }
 
 /* ---------- Fields ---------- */
-.app-container main :is(input[type='text'], input[type='search'], input[type='email'], input[type='number'], input[type='tel'], input[type='password'], input:not([type]), textarea, select):not(.wq-page *):not(.ay-web-lib-search *):not(.wc-search *) {
+.app-container main :is(input[type='text'], input[type='search'], input[type='email'], input[type='number'], input[type='tel'], input[type='password'], input:not([type]), textarea, select):not(.wq-page *):not(.ay-web-lib-search *):not(.wc-search *):not(.ayna-landing-searchbar *) {
   border: 2px solid var(--ay-ink) !important; border-radius: var(--ay-radius-md) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 500 15px/1.3 var(--ay-font-ui) !important;
 }
 .app-container main :is(input, textarea)::placeholder { color: var(--ay-ink-soft) !important; opacity: 1; }
@@ -504,11 +504,6 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .pdp-why-btn:hover { box-shadow: var(--ay-shadow); }
 .app-container .pdp-trust { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
 .app-container .pdp-trust li { padding: 6px 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-mint); color: var(--ay-ink); font: 600 12px/1 var(--ay-font-ui); }
-.app-container .pdp-tabs button.is-active:nth-child(4n+1) { background: var(--ay-ink) !important; }
-.app-container .pdp-tabpanel:has(.pdp-tabs button:nth-child(2).is-active) .pdp-summary-card { background: rgba(189, 235, 214, .35) !important; }
-.app-container .pdp-tabpanel:has(.pdp-tabs button:nth-child(3).is-active) .pdp-summary-card { background: rgba(185, 194, 244, .3) !important; }
-.app-container .pdp-tabpanel:has(.pdp-tabs button:nth-child(4).is-active) .pdp-summary-card { background: rgba(247, 186, 221, .3) !important; }
-.app-container .pdp-tabpanel:has(.pdp-tabs button:nth-child(1).is-active) .pdp-summary-card { background: rgba(247, 231, 142, .35) !important; }
 
 .ay-why-backdrop { position: fixed; inset: 0; z-index: 3000; display: flex; justify-content: flex-end; background: rgba(29, 26, 43, .45); }
 .ay-why { width: min(480px, 100%); height: 100%; overflow-y: auto; padding: 28px; border-left: 2px solid #1d1a2b; background: #fffcf5; color: #1d1a2b; font-family: 'Poppins', system-ui, sans-serif; animation: ay-why-in .25s ease-out both; }
@@ -630,3 +625,44 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .hiw-card__label { display: inline-block; margin-bottom: 10px; padding: 5px 11px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink) !important; font: 700 12px/1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
 .app-container .hiw-band__title { font: 800 clamp(28px, 3vw, 40px)/1 var(--ay-font-display) !important; font-style: normal !important; letter-spacing: -.045em !important; }
 .app-container .mockup-page [style*='Playfair'] { font-family: var(--ay-font-display) !important; font-style: normal !important; font-weight: 800 !important; letter-spacing: -.04em !important; }
+
+/* Home hero: keep the copy centred in its half on wide screens */
+.app-container .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero-col { margin: 0 auto !important; padding-left: clamp(24px, 5vw, 80px) !important; padding-right: clamp(24px, 5vw, 80px) !important; }
+.app-container .mockup-landing .ayna-landing-searchbar input { outline: none; }
+
+/* ---------- Product page: same tabs, panels and Community card as the app ---------- */
+.app-container .pdp-tabs { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; gap: 8px !important; margin: 0 -4px; padding: 20px 4px 8px !important; }
+.app-container .pdp-tabs::-webkit-scrollbar { display: none; }
+.app-container .pdp-tabs button { flex: none; display: inline-flex; align-items: center; gap: 7px; min-height: 42px; padding: 0 16px !important; font: 700 14px/1 var(--ay-font-ui) !important; white-space: nowrap; transition: transform .15s, box-shadow .15s; }
+.app-container .pdp-tabs button svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .pdp-tabs button.is-active { background: var(--tone, var(--ay-butter)) !important; color: var(--ay-ink) !important; box-shadow: 3px 3px 0 var(--ay-ink) !important; transform: translate(-1px, -1px); }
+.app-container :is(.pdp-tabs button, .pdp-panel-head)[data-tone='butter'] { --tone: var(--ay-butter); }
+.app-container :is(.pdp-tabs button, .pdp-panel-head)[data-tone='mint'] { --tone: var(--ay-mint); }
+.app-container :is(.pdp-tabs button, .pdp-panel-head)[data-tone='peri'] { --tone: var(--ay-peri); }
+.app-container :is(.pdp-tabs button, .pdp-panel-head)[data-tone='pink'] { --tone: var(--ay-pink); }
+.app-container :is(.pdp-tabs button, .pdp-panel-head)[data-tone='cream'] { --tone: var(--ay-cream); }
+.app-container .pdp-panel-head { position: relative; display: flex; align-items: center; gap: 12px; margin-top: 10px; padding: 14px 16px; border: 2px solid var(--ay-ink); border-bottom: 0; border-radius: 22px 22px 0 0; background: var(--tone, var(--ay-butter)); overflow: hidden; }
+.app-container .pdp-panel-head::after { content: ''; position: absolute; right: -24px; top: -34px; width: 96px; height: 96px; border: 1.5px solid rgba(29, 26, 43, .12); border-radius: 50%; }
+.app-container .pdp-panel-head__icon { display: grid; place-items: center; width: 38px; height: 38px; flex: none; border: 1.5px solid var(--ay-ink); border-radius: 12px; background: var(--ay-paper); }
+.app-container .pdp-panel-head__icon svg { width: 18px; height: 18px; fill: none; stroke: var(--ay-ink); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .pdp-panel-head strong { color: var(--ay-ink); font: 800 20px/1 var(--ay-font-display); letter-spacing: -.03em; }
+.app-container .pdp-panel-head small { margin-left: auto; padding: 5px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 12px/1 var(--ay-font-ui); }
+.app-container .pdp-panel-head + .pdp-summary-card,
+.app-container .pdp-panel-head ~ .pdp-summary-card { margin-top: 0 !important; border-top-left-radius: 0 !important; border-top-right-radius: 0 !important; background: var(--ay-paper) !important; box-shadow: 3px 3px 0 var(--ay-ink) !important; }
+.app-container .pdp-panel-head ~ .pdp-summary-card .pdp-summary-card__meta { display: none !important; }
+.app-container .pdp-tabpanel > :not(.pdp-tabs):not(.pdp-panel-head):not(.pdp-summary-card) { margin-top: 0; }
+.app-container .pdp-tabpanel:has(.pdp-panel-head) > :last-child:not(.pdp-summary-card):not(.pdp-panel-head):not(.pdp-tabs) { padding: 16px; border: 2px solid var(--ay-ink); border-top: 0; border-radius: 0 0 22px 22px; background: var(--ay-paper); }
+
+.app-container .pdp-community-actions { display: grid; gap: 12px; margin-top: 20px; padding: 16px; border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-pink); box-shadow: 3px 3px 0 var(--ay-ink); }
+.app-container .pdp-community-actions__head { display: flex; align-items: center; gap: 10px; }
+.app-container .pdp-community-actions__head svg { width: 22px; height: 22px; fill: none; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linejoin: round; }
+.app-container .pdp-community-actions h3 { margin: 0; color: var(--ay-ink); font: 800 20px/1 var(--ay-font-display) !important; letter-spacing: -.03em !important; }
+.app-container .pdp-community-actions__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.app-container .pdp-community-actions__grid button { min-height: 48px; padding: 8px 10px; border: 1.5px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); color: var(--ay-ink); font: 700 13px/1.15 var(--ay-font-ui); cursor: pointer; }
+.app-container .pdp-community-actions__grid button.is-primary { background: var(--ay-ink); color: var(--ay-paper); }
+.app-container .pdp-community-actions__grid button:hover { transform: translate(-1px, -1px); box-shadow: 2px 2px 0 var(--ay-ink); }
+.app-container .pdp-community-actions__grid button.is-primary:hover { box-shadow: 2px 2px 0 var(--ay-butter); }
+@media (max-width: 900px) { .app-container .pdp-community-actions__grid { grid-template-columns: 1fr 1fr; } }
+.app-container .pdp-tabs { flex-wrap: wrap !important; overflow: visible; }
+.app-container :is(.pdp-panel-head, .pdp-panel-head ~ .pdp-summary-card) { box-sizing: border-box; width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; }
+.app-container .pdp-community-actions__grid { grid-template-columns: 1fr 1fr !important; }
