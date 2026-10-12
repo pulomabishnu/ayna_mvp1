@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { TEAM_PHOTO, TEAM_CAPTION, getDailyFact } from '../data/welcomeSlides.js';
+import { getDailyFact } from '../data/welcomeSlides.js';
 
 // Welcome-page feature reel. Four "now playing"-style cards, one per thing
 // ayna does, each a full colour block with one big graphic. Numbers here are
 // illustrative UI (labelled as a preview), not anyone's real data.
 const FEATURES = [
-  { key: 'team', label: 'Meet ayna', tone: 'peri' },
   { key: 'ecosystem', label: 'Your Ecosystem', tone: 'butter' },
   { key: 'match', label: 'Your match', tone: 'pink' },
   { key: 'ask', label: 'Ask ayna', tone: 'mint' },
@@ -51,13 +50,6 @@ function DiscoverArt() {
   </div>;
 }
 
-function TeamArt() {
-  return <figure className="ay-reel-team">
-    <img src={TEAM_PHOTO} alt="The ayna team together outdoors" draggable="false" />
-    <figcaption>{TEAM_CAPTION}</figcaption>
-  </figure>;
-}
-
 function FactArt() {
   const fact = getDailyFact();
   if (!fact) return null;
@@ -71,7 +63,7 @@ function NewsArt() {
   </div>;
 }
 
-const ART = { team: TeamArt, fact: FactArt, news: NewsArt, ecosystem: EcosystemArt, match: MatchArt, ask: AskArt, discover: DiscoverArt };
+const ART = { fact: FactArt, news: NewsArt, ecosystem: EcosystemArt, match: MatchArt, ask: AskArt, discover: DiscoverArt };
 
 export default function RotatingProducts() {
   const [index, setIndex] = useState(0);
