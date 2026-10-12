@@ -61,7 +61,7 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
     <div className="pdp-rail__cards">
       <div className="pdp-rail__card pdp-rail__card--why">
         <div className="pdp-rail__label">Why you&apos;re seeing this</div>
-        {Number.isFinite(matchPercent) ? (
+        {Number.isFinite(matchPercent) && matchPercent > 0 ? (
           <div className="pdp-rail__match-wrap">
             <div
               className="pdp-rail__match-ring"

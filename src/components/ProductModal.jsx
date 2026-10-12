@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { PANEL_ICONS, PANEL_TONES } from '../mobile/components/pdpIcons.jsx';
 import ProductEvidenceRail from './ProductEvidenceRail';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { isPartnerBrandItem } from '../utils/partnerBrands';
@@ -474,19 +474,9 @@ export default function ProductModal({
   // summary, and 1g, an evidence rail beside the specs. Both are built, and
   // this toggle switches between them so MVP users can tell us which one
   // they prefer. The choice is remembered per browser and reported to PostHog.
-  const [detailView, setDetailView] = useState(() => {
-    try {
-      const stored = localStorage.getItem(PRODUCT_VIEW_KEY);
-      return stored === 'rail' || stored === 'tabs' ? stored : 'tabs';
-    } catch {
-      return 'tabs';
-    }
-  });
-  const chooseDetailView = (next) => {
-    setDetailView(next);
-    try { localStorage.setItem(PRODUCT_VIEW_KEY, next); } catch { /* private mode */ }
-    posthog.capture('product_detail_view_changed', { view: next, productId: product?.id });
-  };
+  // Single layout now; the old Evidence layout is replaced by the Match score popup.
+  const detailView = 'tabs';
+
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState('summary');
@@ -560,17 +550,32 @@ export default function ProductModal({
   // sample products — this uses the signed-in user's own tracked products
   // instead, so it's never invented. Hidden entirely when she has none yet,
   // rather than backfilling with catalog filler that isn't actually "hers".
-  const pairsWithEcosystem = useMemo(() => {
-    if (!Array.isArray(ecosystemProducts) || !product) return [];
-    return ecosystemProducts
-      .filter((p) => p && p.id && p.id !== product.id && p.name)
-      .slice(0, 4);
-  }, [ecosystemProducts, product]);
+
+  // Bottom of the page: products that fit this person (when they have a
+  // profile), then more from the same category. Never this product or ones
+  // already in their ecosystem.
+  const suggestions = useMemo(() => {
+    if (!product) return { matches: [], similar: [] };
+    const owned = new Set((ecosystemProducts || []).map((p) => p?.id).filter(Boolean));
+    const pool = ALL_PRODUCTS.filter((p) => p && p.id && p.name && p.id !== product.id && !owned.has(p.id));
+    let matches = [];
+    if (quizResults) {
+      matches = pool
+        .map((p) => ({ p, m: getProfileMatchPercentForProduct(p, quizResults) }))
+        .filter((x) => Number.isFinite(x.m) && x.m > 0)
+        .sort((x, y) => y.m - x.m)
+        .slice(0, 4)
+        .map((x) => ({ ...x.p, _match: Math.round(x.m) }));
+    }
+    const used = new Set(matches.map((p) => p.id));
+    const similar = pool.filter((p) => !used.has(p.id) && p.category === product.category).slice(0, 4);
+    return { matches, similar };
+  }, [product, ecosystemProducts, quizResults]);
 
   const eyebrow = useMemo(() => {
     if (!product) return '';
     const categoryLabel = String(CATEGORY_LABELS[product.category] || product.type || '').replace(/^[^\w]+\s*/, '');
-    return [categoryLabel, product.brand].filter(Boolean).join(' · ').toUpperCase();
+    return [categoryLabel, product.brand].filter(Boolean).join(' · ');
   }, [product]);
 
   // ayna summary card: the catalog's own short, single-sentence fields —
@@ -750,6 +755,12 @@ export default function ProductModal({
 
   const wishlistBtnLabel = isSaved ? 'Wishlisted' : 'Wishlist';
 
+  const partnerBadge = isPartnerBrandItem(product) ? (
+    <span className="pdp-partner" title="ayna has a partnership with this brand. It does not affect your recommendation.">
+      ayna partner
+    </span>
+  ) : null;
+
   const actionButtons = (
     <div className="pdp-actions">
       <div className="pdp-actions__primary">
@@ -795,11 +806,6 @@ export default function ProductModal({
           </button>
         )}
       </div>
-      {isPartnerBrandItem(product) && (
-        <span className="pdp-head__badge" title="ayna has a partnership with this brand. It does not affect your recommendation.">
-          ayna Partner
-        </span>
-      )}
     </div>
   );
 
@@ -850,48 +856,41 @@ export default function ProductModal({
     </div>
   );
 
-  const relatedGrid = pairsWithEcosystem.length > 0 && (
-    <div style={{ padding: '0 clamp(1rem, 5vw, 2.5rem) 2.5rem' }}>
-      <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1.4rem', marginBottom: '1.25rem' }}>
-        Pairs with your ecosystem
-      </h3>
-      <div className="pdp-related-grid">
-        {pairsWithEcosystem.map((related) => (
-          <button
-            key={related.id}
-            type="button"
-            onClick={() => onOpenProduct && onOpenProduct(related)}
-            style={{
-              background: 'none', border: 'none', padding: 0, textAlign: 'left', cursor: 'pointer',
-              display: 'flex', flexDirection: 'column', gap: 0,
-            }}
-          >
-            <span style={{
-              aspectRatio: '1.2', borderRadius: '8px',
-              background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '2rem', color: '#D9A96B',
-              overflow: 'hidden',
-            }} aria-hidden="true">
-              <ProductTileImage
-                product={related}
-                imgStyle={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }}
-                letterNode={<ProductImageFallback compact />}
-              />
-            </span>
-            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', lineHeight: 1.3, marginTop: '0.6rem', color: 'var(--color-text-main)' }}>
-              {related.name}
-            </span>
-            {related.price && (
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.15rem' }}>
-                {related.price}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
+  const suggestionCard = (item) => (
+    <button key={item.id} type="button" className="pdp-suggest__card" onClick={() => onOpenProduct && onOpenProduct(item)}>
+      <span className="pdp-suggest__tile">
+        <ProductTileImage
+          product={item}
+          imgStyle={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10%', boxSizing: 'border-box' }}
+          letterNode={<ProductImageFallback compact />}
+        />
+        {item._match > 0 && <span className="pdp-suggest__match">{item._match}% match</span>}
+      </span>
+      <span className="ay-card-text">
+        {item.brand && <span className="ay-card-meta">{item.brand}</span>}
+        <strong className="ay-card-name">{item.name}</strong>
+        {item.price && <span className="ay-card-price">{item.price}</span>}
+      </span>
+    </button>
+  );
+
+  const relatedGrid = (suggestions.matches.length > 0 || suggestions.similar.length > 0) && (
+    <div className="pdp-suggest">
+      {suggestions.matches.length > 0 && (
+        <section>
+          <h3>Matches your ecosystem</h3>
+          <div className="pdp-suggest__grid">{suggestions.matches.map(suggestionCard)}</div>
+        </section>
+      )}
+      {suggestions.similar.length > 0 && (
+        <section>
+          <h3>{suggestions.matches.length > 0 ? 'More like this' : 'You might also like'}</h3>
+          <div className="pdp-suggest__grid">{suggestions.similar.map(suggestionCard)}</div>
+        </section>
+      )}
     </div>
   );
+
 
   return (
     <div className="mockup-page" style={{ marginTop: '2rem', marginBottom: '3rem' }}>
@@ -911,24 +910,10 @@ export default function ProductModal({
             </button>
           ) : <span />}
           <div className="pdp-topbar__right">
-            <div className="pdp-viewswitch__group" role="group" aria-label="Product detail layout">
-              <button
-                type="button"
-                className={detailView === 'tabs' ? 'is-active' : undefined}
-                aria-pressed={detailView === 'tabs'}
-                onClick={() => chooseDetailView('tabs')}
-              >
-                Summary
-              </button>
-              <button
-                type="button"
-                className={detailView === 'rail' ? 'is-active' : undefined}
-                aria-pressed={detailView === 'rail'}
-                onClick={() => chooseDetailView('rail')}
-              >
-                Evidence
-              </button>
-            </div>
+            <button type="button" className="pdp-matchscore" onClick={() => setShowWhy(true)}>
+              {matchPercent > 0 && <MatchGauge percent={matchPercent} size={24} theme="light" />}
+              Match score
+            </button>
             <button type="button" className="pdp-share" onClick={handleShare} aria-label={`Share ${product?.name || 'this product'}`}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
               {shareNote || 'Share'}
@@ -974,7 +959,7 @@ export default function ProductModal({
                 {(product.price || product.stage) && (
                   <span className="pdp-head__price">{product.price || product.stage}</span>
                 )}
-                {matchPercent != null ? (
+                {matchPercent > 0 ? (
                   <button type="button" className="pdp-head__match pdp-head__match--gauge pdp-why-btn" onClick={() => setShowWhy(true)} aria-label={`${matchPercent} percent match. See why`}>
                     <MatchGauge percent={matchPercent} size={28} theme="light" />
                     match · why?
@@ -986,8 +971,8 @@ export default function ProductModal({
                 ) : null}
               </div>
 
-              {Array.isArray(product.tags) && product.tags.length > 0 && (
-                <div className="pdp-tags">{[...new Set(product.tags.map(humanizeTag))].slice(0, 4).map((t) => <span key={t}>{t}</span>)}</div>
+              {((Array.isArray(product.tags) && product.tags.length > 0) || partnerBadge) && (
+                <div className="pdp-tags">{partnerBadge}{[...new Set((product.tags || []).map(humanizeTag))].slice(0, 4).map((t) => <span key={t}>{t}</span>)}</div>
               )}
 
               {trustChecks.length > 0 && <ul className="pdp-trust">{trustChecks.map((t) => <li key={t}>✓ {t}</li>)}</ul>}
@@ -997,6 +982,10 @@ export default function ProductModal({
 
               {/* Small tabs, matching mockup 1f — dark underline on the active
                   tab, muted text on the rest, one compact card below. */}
+            </div>
+          </div>
+
+          <div className="pdp-below">
               <div className="pdp-tabpanel">
                 <div className="pdp-tabs" role="tablist" aria-label="Product information">
                   {visibleTabs.map((tab) => (
@@ -1291,7 +1280,6 @@ export default function ProductModal({
                   </div>
                 </section>
               )}
-            </div>
           </div>
 
           {relatedGrid}
@@ -1360,10 +1348,11 @@ export default function ProductModal({
 
             <div className="pdp-evidence-head__info">
               <div className="pdp-head__eyebrow">{eyebrow}</div>
-              <h2 className="pdp-head__name" style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)' }}>{product.name}</h2>
+              <h2 className="pdp-head__name">{product.name}</h2>
               {(product.price || product.stage) && (
                 <span className="pdp-head__price">{product.price || product.stage}</span>
               )}
+              {partnerBadge && <div className="pdp-tags">{partnerBadge}</div>}
               {summarySentences[0] && (
                 <p className="pdp-evidence-head__desc">{summarySentences[0]}</p>
               )}

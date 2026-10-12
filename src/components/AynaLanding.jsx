@@ -768,7 +768,7 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
           </form>
 
           <div key={chipSetIndex} className="ayna-landing-chips ayna-landing-chips--rotating" aria-label="Popular searches">
-            {CHIP_SETS[chipSetIndex].map((chip) => (
+            {CHIP_SETS[chipSetIndex].slice(0, 3).map((chip) => (
               <button key={chip} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(chip))}>
                 {chip}
               </button>
