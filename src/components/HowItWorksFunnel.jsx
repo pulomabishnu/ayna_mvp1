@@ -1,7 +1,8 @@
 import React from 'react';
+import { getSampleFunnel } from '../utils/sampleFunnel';
 
 /**
- * The 3,140 -> 212 -> 14 narrowing story, drawn to scale (audit HW03).
+ * The narrowing story, drawn to scale (audit HW03), with live numbers.
  *
  * Bar widths are linear: 212 is 6.8% of 3,140 and 14 is 0.4%, so the small
  * stages are thin slivers on purpose. That IS the story. A minimum width keeps
@@ -9,13 +10,13 @@ import React from 'react';
  * bar, so nothing depends on reading the bar length. The numbers are an
  * example run (audit HW02), labelled as such.
  */
-const STAGES = [
-  { label: 'Pulled in from the open market', value: 3140 },
-  { label: 'Relevant to your profile', value: 212 },
-  { label: 'In your ecosystem', value: 14 },
-];
-
 export default function HowItWorksFunnel() {
+  const f = getSampleFunnel();
+  const STAGES = [
+    { label: 'In the ayna catalog today', value: f.catalog },
+    { label: 'Matched to this profile', value: f.matched },
+    { label: 'Strong matches (90+)', value: f.strong },
+  ];
   const max = STAGES[0].value;
   return (
     <figure className="ay-info-funnel">
@@ -23,7 +24,7 @@ export default function HowItWorksFunnel() {
       <div
         className="ay-info-funnel__rows"
         role="img"
-        aria-label="Example: 3,140 products narrowed down to 212 relevant to the profile, then to 14 in the ecosystem"
+        aria-label={`Sample profile: ${STAGES[0].value} products in the catalog, ${STAGES[1].value} matched, ${STAGES[2].value} strong matches`}
       >
         {STAGES.map((stage) => {
           const pct = (stage.value / max) * 100;
@@ -40,7 +41,7 @@ export default function HowItWorksFunnel() {
           );
         })}
       </div>
-      <figcaption className="ay-info-funnel__note">Example numbers. Bars drawn to scale.</figcaption>
+      <figcaption className="ay-info-funnel__note">A sample profile, run live on today's catalog. Bars drawn to scale.</figcaption>
     </figure>
   );
 }

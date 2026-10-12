@@ -1,10 +1,12 @@
 import React from 'react';
 import HowItWorksFunnel from './HowItWorksFunnel';
+import { getSampleFunnel, SAMPLE_PROFILE_CHIPS } from '../utils/sampleFunnel';
 import { InfoPage, InfoSection } from './InfoPage';
 
 const SIGNALS = ['Published research', 'Clinical guidance', 'Clinician input', 'Community experience'];
 
 export default function HowItWorks({ onBack, onViewSources }) {
+  const funnel = getSampleFunnel();
   const openSources = () => {
     if (onViewSources) onViewSources();
     else if (onBack) onBack();
@@ -21,7 +23,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
       <InfoSection
         eyebrow="The method"
         title="Four steps, one example."
-        intro="The numbers below are an example run, not your results."
+        intro="The numbers below are a sample profile run live on today's catalog, not your results."
       >
         <ol className="ay-info-steps">
           <li className="ay-info-card ay-info-step">
@@ -29,9 +31,9 @@ export default function HowItWorks({ onBack, onViewSources }) {
             <h3 className="ay-info-step__title">You tell us</h3>
             <p className="ay-info-step__body">Stage of life, goals, sensitivities, city.</p>
             <div className="ay-info-step__demo">
-              <span className="ay-info-example">Example</span>
+              <span className="ay-info-example">Sample profile</span>
               <div className="ay-info-chip-row">
-                {['Postpartum', '8 weeks', 'Sensitive skin', 'NYC'].map((t) => <span key={t} className="ay-info-chip">{t}</span>)}
+                {SAMPLE_PROFILE_CHIPS.map((t) => <span key={t} className="ay-info-chip">{t}</span>)}
               </div>
             </div>
           </li>
@@ -40,9 +42,9 @@ export default function HowItWorks({ onBack, onViewSources }) {
             <h3 className="ay-info-step__title">We scan the market</h3>
             <p className="ay-info-step__body">Everything pulled in, then cut down.</p>
             <div className="ay-info-step__demo">
-              <span className="ay-info-example">Example</span>
-              <div className="ay-info-metric"><span>Pulled in</span><strong>3,140</strong></div>
-              <div className="ay-info-metric"><span>Relevant to you</span><strong>212</strong></div>
+              <span className="ay-info-example">Sample profile</span>
+              <div className="ay-info-metric"><span>In the catalog</span><strong>{funnel.catalog.toLocaleString()}</strong></div>
+              <div className="ay-info-metric"><span>Matched to this profile</span><strong>{funnel.matched}</strong></div>
             </div>
           </li>
           <li className="ay-info-card ay-info-step">
@@ -60,8 +62,8 @@ export default function HowItWorks({ onBack, onViewSources }) {
             <h3 className="ay-info-step__title">Your ecosystem</h3>
             <p className="ay-info-step__body">What's left is ranked, with the reason attached.</p>
             <div className="ay-info-step__demo">
-              <span className="ay-info-example">Example</span>
-              <div className="ay-info-metric ay-info-metric--big"><strong>14</strong><span>products, each with its match reason</span></div>
+              <span className="ay-info-example">Sample profile</span>
+              <div className="ay-info-metric ay-info-metric--big"><strong>{funnel.strong}</strong><span>strong matches, each with its match reason</span></div>
             </div>
           </li>
         </ol>

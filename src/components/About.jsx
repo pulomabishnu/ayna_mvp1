@@ -10,7 +10,13 @@ import { TEAM_PHOTO, TEAM_CAPTION } from '../data/welcomeSlides.js';
  * the founders' names, and the advisor list this page already carried.
  */
 
-const FOUNDERS = ['Puloma Bishnu', 'Ameera Omar', 'Eliz Celik'];
+const FOUNDERS = [
+  { name: 'Puloma Bishnu', role: 'Co-founder & CEO' },
+  { name: 'Ameera Omar', role: 'Co-founder, CMO & interim CTO' },
+  { name: 'Eliz Celik', role: 'Co-founder' },
+];
+// Advisors in discussion stay off the public page until confirmed.
+const SHOW_ADVISOR_IN_DISCUSSION = false;
 
 const PRINCIPLES = [
   { title: 'Matched to you', body: 'Your profile shapes what you see.' },
@@ -74,7 +80,7 @@ export default function About({ onBack }) {
           <div className="ay-info-card ay-info-team__card">
             <span className="ay-info__pill">Founders</span>
             <ul className="ay-info-team__names">
-              {FOUNDERS.map((name) => <li key={name}>{name}</li>)}
+              {FOUNDERS.map((f) => <li key={f.name}><strong>{f.name}</strong><span className="ay-info-team__role">{f.role}</span></li>)}
             </ul>
             <p className="ay-info__body">
               Real people building a place to explore women's health with more clarity, care and community.
@@ -113,13 +119,13 @@ export default function About({ onBack }) {
             </li>
           ))}
         </ul>
-        <div className="ay-info-advisor-note">
+        {SHOW_ADVISOR_IN_DISCUSSION && <div className="ay-info-advisor-note">
           <AdvisorPhoto advisor={ADVISOR_IN_DISCUSSION} small />
           <div>
             <strong>{ADVISOR_IN_DISCUSSION.name}</strong>, {ADVISOR_IN_DISCUSSION.title}
             <div className="ay-info-advisor-note__label">In conversation with ayna, not yet a confirmed advisor</div>
           </div>
-        </div>
+        </div>}
       </InfoSection>
     </InfoPage>
   );
