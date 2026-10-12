@@ -611,3 +611,25 @@
 .ayna-play-intake .ip-mark { color: #fff; }
 .ayna-play-intake .ip-mark:is([data-mark='helped'], [data-mark='didnt_help']) { color: #1d1a2b; }
 .ayna-play-intake .ip-done-stamp svg { stroke: #1d1a2b; }
+
+
+/* Cyber treatment for the dark-mode quiz; choices keep their alternating colors. */
+.ayna-mobile[data-theme='dark'] .ayna-play-intake {
+  background-color: #050506 !important;
+  background-image:
+    linear-gradient(rgba(168, 181, 255, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 181, 255, .05) 1px, transparent 1px),
+    radial-gradient(circle at 80% 14%, rgba(255, 120, 207, .12), transparent 38%) !important;
+  background-size: 28px 28px, 28px 28px, auto !important;
+}
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-progress span.is-now {
+  background: var(--ay-mint);
+  box-shadow: 0 0 10px rgba(105, 255, 193, .65);
+}
+.ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab) {
+  border-color: rgba(255, 255, 255, .8) !important;
+  box-shadow: 0 0 18px rgba(168, 181, 255, .14);
+}
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next:not(:disabled) {
+  box-shadow: 0 0 18px rgba(245, 255, 104, .25);
+}
