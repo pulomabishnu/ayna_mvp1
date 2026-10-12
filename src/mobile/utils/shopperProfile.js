@@ -53,5 +53,7 @@ export function buildShopperProfile(intake, myProducts = []) {
     ERA[stage] && { key: 'era', label: 'Health era', value: ERA[stage], tone: 'pink' },
   ].filter(Boolean);
   if (!persona && !rows.length) return null;
-  return { title: persona?.title || 'Your shelf', rows };
+  const kind = { 'The Researcher': 'researcher', 'The Listener': 'listener', 'The Curator': 'curator', 'The Explorer': 'explorer' }[persona?.title] || 'original';
+  const tagline = { researcher: 'You follow the evidence.', listener: 'You trust real experiences.', curator: 'You go with expert picks.', explorer: 'You love finding new brands.', original: 'You shop your own way.' }[kind];
+  return { title: persona?.title || 'Your shelf', kind, tagline, rows };
 }

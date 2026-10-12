@@ -281,6 +281,21 @@ function useCommunityAvatar(userId) {
   return avatar.userId === userId ? avatar.path : null;
 }
 
+const SHOPPER_EMBLEMS = {
+  researcher: <path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3M7.5 15h9" />,
+  listener: <><path d="M4 5h12v9H8l-4 3V5Z" /><path d="M20 9v10l-3-2h-7v-1" /></>,
+  curator: <path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.8Z" />,
+  explorer: <><circle cx="12" cy="12" r="8.5" /><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" /></>,
+  original: <path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" />,
+};
+const SHOPPER_ROW_ICONS = {
+  focus: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4" /><circle cx="12" cy="12" r=".8" /></>,
+  priority: <path d="M12 20s-7-4.4-8.9-8.4A4.9 4.9 0 0 1 12 6.3a4.9 4.9 0 0 1 8.9 5.3C19 15.6 12 20 12 20Z" />,
+  type: <><rect x="5" y="4" width="14" height="16" rx="3" /><path d="M9 9h6M9 13h6" /></>,
+  non: <><circle cx="12" cy="12" r="8" /><path d="m6.5 6.5 11 11" /></>,
+  era: <><circle cx="12" cy="12" r="8" /><path d="M12 7v5l3 2" /></>,
+};
+
 function ProfileHub({ shopperProfile, authUserId, onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
   const avatarPath = useCommunityAvatar(authUserId);
   const [avatarFailed, setAvatarFailed] = useState(false);
@@ -348,9 +363,18 @@ function ProfileHub({ shopperProfile, authUserId, onOpen, onClose, name, initial
         <span className="ay-hub-shapes" aria-hidden="true"><i /><i /><i /></span>
       </div>
 
-      {shopperProfile && <section className="ay-shopper" aria-label="Shopper profile">
-        <header><span>Shopper profile</span><h2>{shopperProfile.title}</h2></header>
-        <dl>{shopperProfile.rows.map((r) => <div key={r.key} className={`tone-${r.tone}`}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}</dl>
+      {shopperProfile && <section className={`ay-shopper is-${shopperProfile.kind}`} aria-label="Shopper profile">
+        <header className="ay-shopper-head">
+          <span className="ay-shopper-shapes" aria-hidden="true"><i /><i /><i /></span>
+          <span className="ay-shopper-emblem" aria-hidden="true"><svg viewBox="0 0 24 24">{SHOPPER_EMBLEMS[shopperProfile.kind]}</svg></span>
+          <span className="ay-shopper-kicker">Your shopper type</span>
+          <h2>{shopperProfile.title}</h2>
+          <p>{shopperProfile.tagline}</p>
+        </header>
+        <dl>{shopperProfile.rows.map((r, i) => <div key={r.key} className={`tone-${r.tone}`} style={{ '--i': i }}>
+          <span className="ay-shopper-ico" aria-hidden="true"><svg viewBox="0 0 24 24">{SHOPPER_ROW_ICONS[r.key]}</svg></span>
+          <dt>{r.label}</dt><dd>{r.value}</dd>
+        </div>)}</dl>
       </section>}
 
       <ProfileBadges savedCount={savedCount} ecosystemCount={ecosystemCount} profileFilledPct={profileFilledPct} />
