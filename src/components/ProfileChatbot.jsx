@@ -61,9 +61,11 @@ function buildWelcome(firstName) {
   }];
 }
 
-export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations }) {
+export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0 }) {
   const firstName = getFirstName(user);
   const [open, setOpen] = useState(false);
+  // The header's Ask ayna button bumps openSignal to open the chat.
+  useEffect(() => { if (openSignal) setOpen(true); }, [openSignal]);
   const [messages, setMessages] = useState(
     chatHistory?.length > 0 ? chatHistory : buildWelcome(firstName)
   );

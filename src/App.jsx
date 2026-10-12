@@ -6,6 +6,7 @@ import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import WebIntake from './components/WebIntake';
 import WebYou from './components/WebYou';
 import WebCommunity from './components/WebCommunity';
+import WebWrapped from './components/WebWrapped';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import PhoneVerification from './components/PhoneVerification';
 import Recommendations from './components/Recommendations';
@@ -364,6 +365,9 @@ function App() {
     return () => window.removeEventListener('beforeunload', handler);
   }, [pendingQuizResults]);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+  // From the app: Wrapped story after the quiz, and an Ask ayna button in the header.
+  const [showWrapped, setShowWrapped] = useState(false);
+  const [askOpenSignal, setAskOpenSignal] = useState(0);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   useEscapeToClose(showDeleteModal, () => setShowDeleteModal(false));
   const [saveError, setSaveError] = useState(null);
@@ -701,6 +705,7 @@ function App() {
       const rawIntake = pendingQuizResults?.fullHealthIntake || pendingQuizResults;
       saveHealthIntakeForCurrentUser(rawIntake).catch(e => reportSaveFailure('Could not save your health profile', e));
       setPendingQuizResults(null);
+      setShowWrapped(true);
     } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
     } else if (pendingAction === 'login') {
@@ -917,6 +922,7 @@ function App() {
       conditionsCount: Array.isArray(completedResults.conditions) ? completedResults.conditions.length : 0,
     });
     setCurrentView('ecosystem');
+    setShowWrapped(true);
   };
 
   const handleHealthProfileEditorSave = async (updatedResults) => {
@@ -1319,6 +1325,19 @@ function App() {
           <div className="app-nav__actions desktop-only">
             <button
               type="button"
+              className="app-nav__circle app-nav__circle--ask"
+              onClick={() => {
+                if (!user) { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); return; }
+                if (!quizResults) { setCurrentView('quiz'); return; }
+                setAskOpenSignal((n) => n + 1);
+              }}
+              aria-label="Ask ayna"
+              title="Ask ayna"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="app-nav__wishlist-icon"><path d="M4 5h16v12H9l-5 3V5Z" /><path d="M10 9.5a2 2 0 1 1 3.4 1.4c-.9.6-1.4 1-1.4 2.1M12 15h.01" /></svg>
+            </button>
+            <button
+              type="button"
               className="app-nav__circle app-nav__circle--wishlist"
               onClick={handleViewWishlist}
               aria-label={`Wishlist${Object.keys(savedProducts || {}).length ? ` (${Object.keys(savedProducts || {}).length})` : ''}`}
@@ -1435,6 +1454,14 @@ function App() {
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
             initialCategory={homeCategory}
+          />
+        )}
+        {showWrapped && (
+          <WebWrapped
+            products={Object.values(myProducts || {})}
+            quizResults={quizResults}
+            onClose={() => setShowWrapped(false)}
+            onBrowse={() => { setShowWrapped(false); handleViewDiscovery(''); }}
           />
         )}
         {currentView === 'community' && (
@@ -1739,6 +1766,7 @@ function App() {
 
         {quizResults && (
           <ProfileChatbot
+            openSignal={askOpenSignal}
             profile={quizResults}
             user={user}
             onProfileUpdate={setQuizResults}
