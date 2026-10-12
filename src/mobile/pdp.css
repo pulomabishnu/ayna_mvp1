@@ -172,3 +172,10 @@
 @keyframes ay-src-pop { from { scale: .5; opacity: 0; } to { scale: 1; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .ay-src, .ay-src-sticker { animation: none; } }
 .ayna-mobile .ay-src-links a, .ayna-mobile .ay-src-links a:visited, .ayna-mobile .ay-src-links a * { color: var(--ay-ink) !important; }
+
+/* Community actions sit outside the Reviews source card. */
+.ay-pdp-community-actions { display: grid; gap: 10px; padding: 16px 0 4px; }
+.ay-pdp-community-actions h2 { margin: 0; color: var(--ay-ink); font: 700 16px/1.2 var(--ay-font-ui); }
+.ay-pdp-community-actions .ay-pdp-actions { flex-wrap: wrap; overflow: visible; margin-inline: 0; padding: 0; }
+.ay-pdp-community-actions .ay-pdp-actions button { background: var(--ay-paper); }
+.ay-pdp-community-actions .ay-pdp-actions button.is-primary { background: var(--ay-ink); color: var(--ay-paper); }
