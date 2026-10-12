@@ -13,10 +13,10 @@ import React from 'react';
 export default function MatchGauge({ percent, size = 44, theme = 'light', label = 'match' }) {
   if (!Number.isFinite(percent)) return null;
   const pct = Math.max(0, Math.min(100, percent));
-  const ringColor = '#CDF500';
+  const ringColor = 'var(--color-citric)';
   const trackColor = theme === 'dark' ? 'rgba(255,255,255,.16)' : 'rgba(36,42,82,0.12)';
   const holeColor = theme === 'dark' ? '#2E315D' : '#FFFFFF';
-  const textColor = theme === 'dark' ? '#CDF500' : '#4100F5';
+  const textColor = theme === 'dark' ? 'var(--color-citric)' : 'var(--color-primary)';
 
   return (
     <div

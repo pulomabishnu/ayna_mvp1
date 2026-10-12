@@ -52,7 +52,7 @@ const SCREEN_ORDER = ['basics', 'concerns', 'period', 'health', 'products', 'hea
 
 function ScreenHeader({ title, subtitle }) {
   return (
-    <div style={{ marginBottom: '1.5rem' }}>
+    <div className="ay-wq-head" style={{ marginBottom: '1.5rem' }}>
       <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.85rem', fontWeight: 400, color: 'var(--color-text-main)', marginBottom: '0.35rem', lineHeight: 1.2 }}>
         {title}
       </h2>
@@ -63,7 +63,7 @@ function ScreenHeader({ title, subtitle }) {
 
 function FieldLabel({ children, optional }) {
   return (
-    <p style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-main)', marginBottom: '0.6rem', marginTop: '1.25rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+    <p className="ay-wq-label" style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-main)', marginBottom: '0.6rem', marginTop: '1.25rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
       {children}
       {optional && <span style={{ fontWeight: 400, textTransform: 'none', color: 'var(--color-text-muted)', marginLeft: '0.4rem' }}>optional</span>}
     </p>
@@ -76,6 +76,8 @@ function Chip({ label, selected, onClick, small, title }) {
       type="button"
       onClick={onClick}
       title={title || undefined}
+      className={`ay-wq-chip${selected ? ' is-on' : ''}`}
+      aria-pressed={selected}
       style={{
         padding: small ? '0.35rem 0.8rem' : '0.45rem 1rem',
         borderRadius: 'var(--radius-pill)',
@@ -316,6 +318,7 @@ function ContinueButton({ onClick, disabled, children }) {
       type="button"
       onClick={onClick}
       disabled={disabled}
+      className="ay-wq-continue"
       style={{
         marginTop: '1.75rem', width: '100%', padding: '0.85rem',
         background: disabled ? 'var(--color-border)' : 'var(--color-primary)',
@@ -511,7 +514,7 @@ export default function HealthIntakeForm({ onComplete }) {
         <div style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
             {currentIndex > 0 && (
-              <button type="button" onClick={goBack} style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', fontSize: '0.82rem', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)' }}>
+              <button type="button" className="ay-wq-back" onClick={goBack} style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', fontSize: '0.82rem', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)' }}>
                 ← Back
               </button>
             )}
@@ -519,7 +522,7 @@ export default function HealthIntakeForm({ onComplete }) {
               {currentIndex + 1} of {total}
             </span>
           </div>
-          <div style={{ height: '4px', background: 'var(--color-border)', borderRadius: 'var(--radius-pill)', overflow: 'hidden' }}>
+          <div className="ay-wq-progress" style={{ height: '4px', background: 'var(--color-border)', borderRadius: 'var(--radius-pill)', overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${progressPct}%`, background: 'var(--color-primary)', borderRadius: 'var(--radius-pill)', transition: 'width 0.3s ease' }} />
           </div>
         </div>

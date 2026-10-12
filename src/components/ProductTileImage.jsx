@@ -38,7 +38,7 @@ export function ProductImageFallback({ compact = false, style, className }) {
           fontStyle: 'italic',
           fontWeight: 400,
           fontSize: compact ? '0.95rem' : '1.6rem',
-          color: '#4100F5',
+          color: 'var(--color-primary)',
           opacity: 0.16,
           userSelect: 'none',
         }}

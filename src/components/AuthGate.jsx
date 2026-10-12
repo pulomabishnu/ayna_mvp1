@@ -317,12 +317,12 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       style={overlayStyle}
       onClick={isModal && onSkip ? (e) => { if (e.target === e.currentTarget) onSkip(); } : undefined}
     >
-      <div style={styles.card}>
+      <div className="ay-auth-card" style={styles.card}>
         {isModal && onSkip && (
           <button type="button" onClick={onSkip} style={styles.closeBtn} aria-label="Skip for now">×</button>
         )}
 
-        <div style={styles.logo}>ayna</div>
+        <div className="ay-auth-logo" style={styles.logo}>ayna</div>
         <p style={styles.tagline}>{subtitle}</p>
 
         {!supabase && (
@@ -339,9 +339,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           </p>
         )}
 
-        <div style={styles.toggleRow}>
+        <div className="ay-auth-toggle" style={styles.toggleRow}>
           <button
             type="button"
+            className={isSignup ? 'is-on' : ''}
             style={{ ...styles.toggleBtn, ...(isSignup ? styles.toggleBtnActive : {}) }}
             onClick={() => switchMode('signup')}
           >
@@ -349,6 +350,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           </button>
           <button
             type="button"
+            className={!isSignup ? 'is-on' : ''}
             style={{ ...styles.toggleBtn, ...(!isSignup ? styles.toggleBtnActive : {}) }}
             onClick={() => switchMode('signin')}
           >
@@ -570,6 +572,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
           <button
             type="submit"
+            className="ay-auth-submit"
             disabled={loading || !supabase}
             style={{
               ...styles.primaryBtn,
@@ -589,7 +592,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           <span style={styles.dividerLine} />
         </div>
 
-        <div style={styles.oauthRow}>
+        <div className="ay-auth-oauth" style={styles.oauthRow}>
           <button
             type="button"
             onClick={handleGoogle}

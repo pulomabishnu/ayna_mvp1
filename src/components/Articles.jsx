@@ -760,6 +760,7 @@ function renderArticleCard(art, setSelectedId) {
   return (
     <button
       type="button"
+      className="ay-web-lib-card"
       onClick={() => setSelectedId(art.id)}
       style={{
         width: '100%',
@@ -781,9 +782,10 @@ function renderArticleCard(art, setSelectedId) {
         e.currentTarget.style.boxShadow = '';
       }}
     >
+      {art.image && <img className="ay-web-lib-card__img" src={art.image} alt="" loading="lazy" />}
       <h3 style={{ fontSize: '1.2rem', marginBottom: '0.4rem', color: 'var(--color-text-main)', fontWeight: '600' }}>{art.title}</h3>
       <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.5, margin: 0 }}>{art.teaser}</p>
-      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
+      <div className="ay-web-lib-card__meta" style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
         <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: '600' }}>{art.source}</span>
         {art.tags.map((t) => (
           <span key={t} style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>· {t}</span>
@@ -841,8 +843,8 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   }, [initialArticleId]);
 
   return (
-    <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '900px', margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+    <section className="container animate-fade-in-up ay-web-library" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '900px', margin: '0 auto' }}>
+      <div className="ay-web-lib-head" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Health Articles Library</h1>
         <p style={{ fontSize: '1rem', color: 'var(--color-text-muted)' }}>
           Click a headline to read the full article. Always discuss your care with your own clinician. Can&apos;t reach your doctor? See alternatives below each article.
@@ -850,10 +852,11 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         <Disclaimer compact style={{ marginTop: '1.5rem', textAlign: 'left', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }} />
       </div>
 
-      <div style={{ marginBottom: '1.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
+      <div className="ay-web-lib-filter" style={{ marginBottom: '1.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
         <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginRight: '0.25rem' }}>Show:</span>
         <button
           type="button"
+          className={filter === 'all' ? 'is-on' : ''}
           onClick={() => setFilter('all')}
           style={{
             padding: '0.4rem 0.85rem',
@@ -870,6 +873,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         </button>
         <button
           type="button"
+          className={filter === 'recommended' ? 'is-on' : ''}
           onClick={() => hasProfile && setFilter('recommended')}
           disabled={!hasProfile}
           title={!hasProfile ? 'Complete the quiz to see articles recommended for your health profile' : ''}
@@ -902,6 +906,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
       {selected ? (
         <article
+          className="ay-web-lib-article"
           style={{
             background: 'var(--color-surface-soft)',
             padding: '2.5rem 2rem',
@@ -951,7 +956,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       ) : (
         <>
           {filter === 'recommended' ? (
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <ul className="ay-web-lib-grid" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {articlesToShow.map((art) => (
                 <li key={art.id}>{renderArticleCard(art, setSelectedId)}</li>
               ))}
@@ -961,11 +966,11 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
               const catArticles = cat.articleIds.map((id) => ARTICLES.find((a) => a.id === id)).filter(Boolean);
               if (catArticles.length === 0) return null;
               return (
-                <div key={cat.id} style={{ marginBottom: '2rem' }}>
+                <div key={cat.id} className="ay-web-lib-cat" style={{ marginBottom: '2rem' }}>
                   <h2 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem', paddingBottom: '0.4rem', borderBottom: '1px solid var(--color-border)' }}>
                     {cat.label}
                   </h2>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  <ul className="ay-web-lib-grid" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                     {catArticles.map((art) => (
                       <li key={art.id}>{renderArticleCard(art, setSelectedId)}</li>
                     ))}

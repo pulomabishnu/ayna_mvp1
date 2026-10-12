@@ -269,7 +269,7 @@ function ShopGrid({ items, onOpenProduct }) {
           <div style={{
             font: "500 9.5px 'DM Mono', monospace",
             letterSpacing: '0.1em',
-            color: '#4100F5',
+            color: 'var(--color-primary)',
             marginTop: '12px',
           }}>
             {label}
@@ -291,7 +291,7 @@ function ShopGrid({ items, onOpenProduct }) {
 }
 
 /** The mockup's 38×22 pill toggle. Off = grey track, knob left; on = knob right. */
-function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#4100F5', onKnob = '#CDF500', ...rest }) {
+function Toggle({ on, offTrack = '#DCD5CB', onTrack = 'var(--color-primary)', onKnob = 'var(--color-citric)', ...rest }) {
   return (
     <span
       role="switch"
@@ -455,13 +455,13 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
               {ecosystemCount > 0 ? (
                 <>
                   Your ecosystem is{' '}
-                  <span style={{ fontStyle: 'italic', color: '#CDF500' }}>
+                  <span style={{ fontStyle: 'italic', color: 'var(--color-citric)' }}>
                     {ecosystemCount} product{ecosystemCount === 1 ? '' : 's'}
                   </span>{' '}
                   strong.
                 </>
               ) : (
-                <>Build your <span style={{ fontStyle: 'italic', color: '#CDF500' }}>ecosystem</span>.</>
+                <>Build your <span style={{ fontStyle: 'italic', color: 'var(--color-citric)' }}>ecosystem</span>.</>
               )}
             </h1>
             <p style={{
@@ -511,7 +511,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
                   }}
                 >
                   <span style={{ font: "400 15px 'Playfair Display', serif" }}>{a.label}</span>
-                  <span style={{ fontSize: '11.5px', color: '#CDF500' }}>
+                  <span style={{ fontSize: '11.5px', color: 'var(--color-citric)' }}>
                     {a.count} {a.count === 1 ? 'pick' : 'picks'}
                   </span>
                 </div>
@@ -548,7 +548,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
               </button>
               <div className="ayna-landing-personalize">
                 <span>{personalize ? 'Personalized' : 'Personalize'}</span>
-                <Toggle on={personalize} onTrack="#4100F5" onClick={() => setPersonalize((value) => !value)} />
+                <Toggle on={personalize} onTrack="var(--color-primary)" onClick={() => setPersonalize((value) => !value)} />
               </div>
             </div>
           </div>
