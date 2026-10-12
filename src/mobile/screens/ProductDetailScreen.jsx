@@ -515,7 +515,7 @@ export default function ProductDetailScreen({
     ['summary', 'ayna summary'],
     ['clinician', 'Clinician opinion'],
     ['scientific', 'Scientific literature'],
-    ['community', 'Social media + reviews'],
+    ['community', 'Reviews'],
     ...(whoItsFor?.length > 0 ? [['whoitsfor', 'Who it’s for']] : []),
     ...(howToUse?.steps?.length > 0 ? [['howtouse', 'How to use']] : []),
     ['ask', 'Ask ayna'],
@@ -616,12 +616,16 @@ export default function ProductDetailScreen({
           {currentSection === 'scientific' && <SourcePanel kind="scientific" key={`r-${product.id}`} title="Scientific literature" count={scientificLiteratureEntries.length} countLabel="study" countPlural="studies" summary={effectiveness} emptyText="No studies linked yet."
             links={scientificLiteratureEntries.map((e) => ({ url: e.url, label: e.label, kind: e.kind, text: e.text, summary: e.summary }))} />}
 
-          {currentSection === 'community' && <SourcePanel kind="community" key={`m-${product.id}`} title="Social media + reviews" count={communityCitationEntries.length} countLabel="link" summary={communityReview} emptyText="No reviews linked yet."
-            links={communityCitationEntries.map((e) => ({ url: e.url, label: e.label, text: e.text, summary: e.summary }))}>
-            {onCommunityAction && <div className="ay-pdp-actions">
-              {[['review', 'Write a review'], ['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend']].map(([kind, label]) => <button key={kind} type="button" onClick={() => onCommunityAction(kind)}>{label}</button>)}
+          {currentSection === 'community' && <>
+            <SourcePanel kind="community" key={`m-${product.id}`} title="Reviews" count={communityCitationEntries.length} countLabel="link" summary={communityReview} emptyText="No review summary yet."
+              links={communityCitationEntries.map((e) => ({ url: e.url, label: e.label, text: e.text, summary: e.summary }))} />
+            {onCommunityAction && <div className="ay-pdp-community-actions" aria-label="Community actions">
+              <h2>Join the conversation</h2>
+              <div className="ay-pdp-actions">
+                {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend']].map(([kind, label]) => <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>)}
+              </div>
             </div>}
-          </SourcePanel>}
+          </>}
 
           {currentSection === 'whoitsfor' && (whoItsFor || []).map((item, i) => <div key={item} className="ay-pdp-who" style={{ display: 'flex', gap: 12, alignItems: 'center' }}><div className="ay-pdp-who-n">{i + 1}</div><div style={{ flex: 1, minWidth: 0 }}>{item}</div></div>)}
 
