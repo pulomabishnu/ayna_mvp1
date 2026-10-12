@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 
-const THEME_KEY = 'ayna_mobile_theme_v1';
+const THEME_KEY = 'ayna_mobile_theme_v2';
+const LEGACY_THEME_KEY = 'ayna_mobile_theme_v1';
 const MODES = new Set(['system', 'light', 'dark']);
 
 function loadMode() {
   try {
     const stored = localStorage.getItem(THEME_KEY);
-    return MODES.has(stored) ? stored : 'system';
+    if (MODES.has(stored)) return stored;
+    // v1 wrote Light automatically on first launch, so migrate that default to device matching.
+    return localStorage.getItem(LEGACY_THEME_KEY) === 'dark' ? 'dark' : 'system';
   } catch {
     return 'system';
   }
