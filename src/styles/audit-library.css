@@ -1,0 +1,128 @@
+/* ==========================================================================
+   Website Library + article (audit LB01-LB05, AR01-AR05, Library/Article micro)
+   Scoped to .app-container so the mobile app is untouched.
+   ========================================================================== */
+
+/* ---- LB01: 4 across on desktop, fewer on smaller screens ---------------- */
+.app-container .ay-web-library .ay-web-lib-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 24px !important; margin: 0; padding: 0; list-style: none; }
+@media (max-width: 1099px) { .app-container .ay-web-library .ay-web-lib-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+@media (max-width: 819px) { .app-container .ay-web-library .ay-web-lib-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 16px !important; } }
+@media (max-width: 559px) {
+  .app-container .ay-web-library .ay-web-lib-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  /* shelves become swipeable rows, like the app */
+  .app-container .ay-web-library .ay-web-lib-grid.ay-lib-shelf {
+    grid-template-columns: none !important; grid-auto-flow: column; grid-auto-columns: 78%;
+    overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin-inline: calc(-1 * var(--ay-web-gutter)); padding: 4px var(--ay-web-gutter) 8px; scroll-padding-inline: var(--ay-web-gutter);
+  }
+  .app-container .ay-web-library .ay-lib-shelf::-webkit-scrollbar { display: none; }
+  .app-container .ay-web-library .ay-lib-shelf > li { scroll-snap-align: start; }
+}
+
+/* ---- Card ---------------------------------------------------------------- */
+.app-container .ay-lib-card { width: 100%; text-align: left; cursor: pointer; color: var(--ay-ink); }
+.app-container .ay-lib-card::before { content: none !important; display: none !important; }
+.app-container .ay-lib-card h3 { margin: 0 0 8px !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.5em; /* micro: reserve 2 title lines */ }
+.app-container .ay-lib-card p { margin: 0 !important; -webkit-line-clamp: 2 !important; min-height: 2.9em; }
+.app-container .ay-lib-card__foot { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding: 16px 6px 0; }
+.app-container .ay-lib-card__tags { display: flex; flex-wrap: nowrap; gap: 8px; min-width: 0; overflow: hidden; }
+.app-container .ay-lib-card__tags .ay-lib-tag { display: block; line-height: 21px; white-space: nowrap; flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+/* LB05: sources on their own line */
+.app-container .ay-lib-card__src { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ay-ink-soft); font: 600 12px/16px var(--ay-font-ui); }
+
+.app-container .ay-lib-tag { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 11px/1 var(--ay-font-ui); white-space: nowrap; }
+
+/* ---- LB02: typographic covers ------------------------------------------- */
+.app-container .ay-lib-cover {
+  container-type: inline-size; display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
+  aspect-ratio: 4 / 3; margin-bottom: 16px; padding: 16px; border-radius: var(--ay-radius-md);
+  background: var(--ay-peri); color: var(--ay-ink); overflow: hidden; position: relative;
+}
+.app-container .ay-lib-cover.is-mint { background: var(--ay-mint); }
+.app-container .ay-lib-cover.is-butter { background: var(--ay-butter); }
+.app-container .ay-lib-cover.is-pink { background: var(--ay-pink); }
+.app-container .ay-lib-cover.is-peri { background: var(--ay-peri); }
+.app-container .ay-lib-cover::after { content: ''; position: absolute; top: 16px; right: 16px; width: 24px; height: 24px; border: 2px solid var(--ay-ink); border-radius: 50%; }
+.app-container .ay-lib-cover small { align-self: flex-start; padding: 4px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 11px/1.2 var(--ay-font-ui); }
+.app-container .ay-lib-cover strong { display: block; color: var(--ay-ink); font-family: var(--ay-font-display); font-weight: 800; font-size: clamp(28px, 16cqi, 64px); line-height: .92; letter-spacing: -.045em; overflow-wrap: anywhere; }
+.app-container .ay-web-lib-card__img { margin-bottom: 16px !important; }
+
+/* ---- LB03: one progress style -------------------------------------------- */
+.app-container .ay-lib-bar { position: relative; display: block; flex: none; width: 64px; height: 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); overflow: hidden; box-sizing: border-box; }
+.app-container .ay-lib-bar b { position: absolute; inset: 0 auto 0 0; background: var(--ay-mint); transition: width .3s ease; }
+.app-container .ay-lib-state { display: flex; align-items: center; gap: 8px; min-height: 24px; }
+.app-container .ay-lib-state small { color: var(--ay-ink); font: 700 12px/16px var(--ay-font-ui); }
+.app-container .ay-lib-new { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font: 700 11px/1 var(--ay-font-ui); }
+
+/* header "3/15 read": bar centred on the label */
+.app-container .ay-lib-total { display: inline-flex; align-items: center; gap: 8px; color: var(--ay-ink); font: 700 14px/20px var(--ay-font-ui); white-space: nowrap; }
+.app-container .ay-lib-total .ay-lib-bar { width: 96px; }
+
+/* ---- micro: chip gap 8px ------------------------------------------------- */
+.app-container .ay-web-lib-filter.ay-lib-chips { display: flex; gap: 8px !important; }
+.app-container .ay-web-lib-filter.ay-lib-chips > button { margin: 0 !important; }
+
+/* ---- LB04: inline secondary button --------------------------------------- */
+.app-container a.ay-lib-personalize {
+  display: inline-flex; align-items: center; gap: 8px; width: fit-content; min-height: 44px; margin: 0 0 48px; padding: 0 20px;
+  border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink) !important;
+  font: 700 15px/1 var(--ay-font-ui); text-decoration: none !important; transition: transform .18s var(--ay-pop), box-shadow .18s;
+}
+.app-container a.ay-lib-personalize:hover { transform: translate(-2px, -2px); box-shadow: var(--ay-shadow); }
+
+/* ---- AR01: full-width sticky read bar ------------------------------------ */
+.app-container .ay-web-library.ay-lib-reading { padding-top: 0 !important; }
+.app-container .ay-lib-status {
+  position: sticky; top: var(--ay-lib-sticky-top, 0px); z-index: 900; margin: 0 0 32px; padding: 12px 0;
+  /* paper band that bleeds to both screen edges without causing horizontal scroll */
+  border-image: linear-gradient(to top, var(--ay-ink) 0 2px, var(--ay-paper) 2px) fill 0 // 0 100vw;
+}
+.app-container .ay-lib-status__in { display: flex; align-items: center; gap: 16px; max-width: 760px; margin: 0 auto; }
+.app-container .ay-lib-status button { flex: none; min-height: 36px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .ay-lib-status .ay-lib-bar--wide { flex: 1; width: auto; }
+.app-container .ay-lib-status small { flex: none; min-width: 84px; text-align: right; color: var(--ay-ink); font: 700 13px/20px var(--ay-font-ui); }
+
+/* ---- Article ------------------------------------------------------------- */
+.app-container .ay-lib-reading .ay-web-lib-article { box-shadow: var(--ay-shadow) !important; /* micro: one shadow token with the next-read card */ }
+.app-container .ay-lib-reading .ay-web-lib-article > h2 { margin: 0 0 16px !important; color: var(--ay-ink) !important; }
+.app-container .ay-lib-article__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.app-container .ay-lib-article__src { margin: 0 0 24px !important; color: var(--ay-ink-soft) !important; font: 600 13px/1.4 var(--ay-font-ui) !important; }
+.app-container .ay-lib-reading .article-body { color: var(--ay-ink) !important; }
+/* micro: sources align to the text edge */
+.app-container .ay-web-lib-article .article-body ul.ay-lib-sources { padding-left: 0 !important; margin-left: 0 !important; }
+.app-container .ay-web-lib-article .article-body ul.ay-lib-sources li { margin-bottom: 4px; }
+/* outbound links get an arrow */
+.app-container .ay-web-lib-article a[target='_blank']::after { content: '\00a0\2197'; display: inline-block; text-decoration: none; }
+.app-container .ay-web-next-read { box-shadow: var(--ay-shadow) !important; margin-top: 40px !important; }
+
+/* ---- AR04 + AR05: care rows straight on the article, 1px dividers ------- */
+.app-container .ay-lib-care, .app-container .ay-lib-products { margin-top: 40px; }
+.app-container .ay-lib-care h3, .app-container .ay-lib-products h3 { margin: 0 0 16px !important; color: var(--ay-ink) !important; font: 800 24px/1.1 var(--ay-font-display) !important; letter-spacing: -.03em !important; }
+.app-container .ay-web-lib-article details.ay-lib-row { margin: 0 !important; padding: 0 !important; border: 0 !important; border-top: 1px solid var(--ay-line) !important; border-radius: 0 !important; background: none !important; }
+.app-container .ay-web-lib-article details.ay-lib-row:last-of-type { border-bottom: 1px solid var(--ay-line) !important; }
+.app-container .ay-lib-row > summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; list-style: none; cursor: pointer; color: var(--ay-ink) !important; font: 700 15px/1.3 var(--ay-font-ui) !important; }
+.app-container .ay-lib-row > summary::-webkit-details-marker { display: none; }
+.app-container .ay-lib-row__chev { flex: none; width: 20px; height: 20px; fill: none; stroke: var(--ay-ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease; }
+.app-container .ay-lib-row[open] .ay-lib-row__chev { transform: rotate(180deg); }
+.app-container .ay-lib-row__body { padding: 0 0 16px; }
+.app-container .ay-lib-row__body p { margin: 0 0 8px !important; color: var(--ay-ink-soft) !important; font: 500 15px/1.6 var(--ay-font-ui) !important; }
+.app-container .ay-lib-row__body ul { margin: 0; padding: 0; list-style: none; }
+.app-container .ay-lib-row__body li { margin: 0 0 8px; }
+.app-container .ay-lib-row__body a { font: 600 15px/1.5 var(--ay-font-ui); }
+.app-container .ay-lib-row__link { padding: 0; border: 0; background: none; color: var(--ay-ink); font: 600 15px/1.5 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left; }
+.app-container .ay-lib-row__sub { display: block; color: var(--ay-ink-soft); font: 500 14px/1.5 var(--ay-font-ui); }
+
+/* ---- AR03: products for this topic --------------------------------------- */
+.app-container .ay-lib-products__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 640px) { .app-container .ay-lib-products__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }
+.app-container .ay-lib-why { display: inline-flex; align-items: center; min-height: 20px; padding: 0 8px; border-radius: 99px; background: var(--ay-mint); color: var(--ay-ink); font: 600 11px/1 var(--ay-font-ui); white-space: nowrap; }
+
+@media (max-width: 559px) {
+  .app-container .ay-lib-status__in { gap: 8px; }
+  .app-container .ay-lib-status small { min-width: 0; }
+}
+
+/* shared Shop card inside the narrow article column */
+.app-container .ay-lib-products .ayna-browse-card { min-width: 0; }
+.app-container .ay-lib-products .ayna-browse-card__labels { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
+.app-container .ay-lib-products .ayna-discover-card__price { white-space: normal !important; overflow-wrap: anywhere; }

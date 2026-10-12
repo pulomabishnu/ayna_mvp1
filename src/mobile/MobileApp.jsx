@@ -49,6 +49,8 @@ import LibraryScreen from './screens/LibraryScreen.jsx';
 import { AskContext } from './askContext.js';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
+// Launch-audit overrides; imported last so it loads after every screen's CSS.
+import './audit-app.css';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -690,7 +692,7 @@ export default function MobileApp() {
         readArticleIds={readArticleIds}
         readProgress={readProgress}
         savedProducts={savedMap}
-        onToggleSaved={(product) => authUser ? toggleSaved(product) : requestAuth('Saved products')}
+        onToggleSaved={(product) => authUser ? toggleSaved(product) : requestAuth('Saved')}
         onAddToEcosystem={handleAddToEcosystem}
         myProducts={myProducts}
         suggestedEcosystemProducts={suggestedEcosystemProducts}
@@ -797,6 +799,7 @@ export default function MobileApp() {
         </div>
       )}
       {overlay?.type === 'profile' && (
+        <AskContext.Provider value={nav.onAskAyna}>
         <ProfileFlow
           onClose={() => setOverlay(null)}
           theme={theme}
@@ -824,6 +827,7 @@ export default function MobileApp() {
           onEditProfile={() => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
           onOpenMonthlyCheckin={() => setScreen('checkin')}
         />
+        </AskContext.Provider>
       )}
       <AskAynaModal
         key={authUser?.id || 'anonymous'}

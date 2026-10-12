@@ -131,9 +131,26 @@ PATH_TO_VIEW['/'] = 'welcome';
 // Old Shop URL keeps working (bookmarks, shared links); it is replaced with /shop on load.
 PATH_TO_VIEW['/discovery'] = 'discovery';
 
+// Deep links inside a view: /library/:articleId and /community/@handle.
+function articleIdFromPath(path) {
+  const m = String(path || '').match(/^\/library\/([a-z0-9-]+)\/?$/i);
+  return m ? m[1].toLowerCase() : null;
+}
+function communityHandleFromPath(path) {
+  const m = String(path || '').match(/^\/community\/@([a-z0-9_]+)\/?$/i);
+  return m ? m[1].toLowerCase() : null;
+}
+function viewFromSubPath(path) {
+  if (articleIdFromPath(path)) return 'articles';
+  if (communityHandleFromPath(path)) return 'community';
+  return null;
+}
+
 function getInitialView() {
   const path = window.location.pathname;
   if (parseProductIdFromPath(path)) return 'product';
+  const sub = viewFromSubPath(path);
+  if (sub) return sub;
   // An unrecognized path used to silently resolve to 'welcome' — a typo'd
   // or stale-bookmarked URL landed on the homepage with zero indication
   // anything was wrong (found live, 2026-08-24 bug bash). The root path
@@ -266,7 +283,7 @@ function App() {
     else setCurrentView('welcome', { replace: true });
   }, [setCurrentView]);
   useEffect(() => {
-    const path = pathForView(currentView, productRouteId);
+    const path = viewFromSubPath(window.location.pathname) === currentView ? window.location.pathname : pathForView(currentView, productRouteId);
     const initialUrl = currentView === 'auth-callback'
       ? `${path}${window.location.search}${window.location.hash}`
       : path;
@@ -276,7 +293,9 @@ function App() {
   useEffect(() => {
     const onPop = (e) => {
       const pathProductId = parseProductIdFromPath(window.location.pathname);
-      const view = pathProductId ? 'product' : (e.state?.view || PATH_TO_VIEW[window.location.pathname] || 'not-found');
+      const view = pathProductId ? 'product' : (viewFromSubPath(window.location.pathname) || e.state?.view || PATH_TO_VIEW[window.location.pathname] || 'not-found');
+      setSelectedArticleId(articleIdFromPath(window.location.pathname));
+      setCommunityHandle(communityHandleFromPath(window.location.pathname));
       currentViewRef.current = view;
       setCurrentViewRaw(view);
       setProductRouteId(pathProductId);
@@ -337,7 +356,11 @@ function App() {
   const [discoveryInitial, setDiscoveryInitial] = useState(null); // { initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase }
   const [userZipCode, setUserZipCode] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
-  const [selectedArticleId, setSelectedArticleId] = useState(null);
+  const [selectedArticleId, setSelectedArticleId] = useState(() => articleIdFromPath(window.location.pathname));
+  const [communityHandle, setCommunityHandle] = useState(() => communityHandleFromPath(window.location.pathname));
+  // Product page: the post/review composer opens over the page (P07).
+  const [composerSeed, setComposerSeed] = useState(null);
+  useEffect(() => { if (currentView !== 'product') setComposerSeed(null); }, [currentView]);
   const [aynaReviews, setAynaReviews] = useState({});
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
   const [savedProducts, setSavedProducts] = useState(() => loadSavedProducts());
@@ -1443,6 +1466,12 @@ function App() {
             key={communitySeed?.token || 'community'}
             seedKind={communitySeed?.kind || null}
             seedProductId={communitySeed?.productId || null}
+            initialProfileHandle={communityHandle}
+            onProfileChange={(h) => {
+              setCommunityHandle(h);
+              const next = h ? `/community/@${h}` : '/community';
+              if (window.location.pathname !== next) window.history.pushState({ view: 'community' }, '', next);
+            }}
             user={user}
             products={ALL_PRODUCTS}
             quizResults={quizResults}
@@ -1470,7 +1499,7 @@ function App() {
           />
         )}
         {currentView === 'quiz' && (
-          <WebIntake onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} />
+          <WebIntake initialSnapshot={quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} />
         )}
         {currentView === 'profile-edit' && (
           // Same as the app: editing your profile reopens the quiz with your answers filled in.
@@ -1533,7 +1562,14 @@ function App() {
         )}
         {currentView === 'articles' && (
           <Suspense fallback={<ViewLoadingFallback />}>
-            <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} healthProfile={healthProfile} />
+            <Articles
+              initialArticleId={selectedArticleId}
+              onArticleChange={(id) => {
+                setSelectedArticleId(id);
+                const next = id ? `/library/${id}` : '/library';
+                if (window.location.pathname !== next) window.history.pushState({ view: 'articles' }, '', next);
+              }}
+              onOpenProduct={handleOpenProduct} quizResults={quizResults} healthProfile={healthProfile} />
           </Suspense>
         )}
         {currentView === 'privacy-policy' && (
@@ -1552,7 +1588,7 @@ function App() {
           />
         )}
         {currentView === 'about' && (
-          <About onBack={handleBackFromStandalonePage} onViewSources={handleViewArticles} />
+          <About onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'contact' && (
           <Contact onBack={handleBackFromStandalonePage} />
@@ -1760,6 +1796,20 @@ function App() {
           />
         )}
 
+        {currentView === 'product' && composerSeed && (
+          <WebCommunity
+            composeOnly
+            key={composerSeed.token}
+            seedKind={composerSeed.kind}
+            seedProductId={composerSeed.productId}
+            user={user}
+            products={ALL_PRODUCTS}
+            quizResults={quizResults}
+            onOpenProduct={handleOpenProduct}
+            onRequireAuth={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onDone={() => setComposerSeed(null)}
+          />
+        )}
         {currentView === 'product' && (
           resolvedProduct ? (
             // Keying by id forces a clean remount when navigating from one
@@ -1780,6 +1830,7 @@ function App() {
               isInEcosystem={!!myProducts[resolvedProduct.id]}
               onToggleSaved={toggleSavedProduct}
               isSaved={!!savedProducts[resolvedProduct.id]}
+              savedProducts={savedProducts}
               userZipCode={userZipCode || undefined}
               aynaReviews={aynaReviews}
               onRate={handleRateProduct}
@@ -1798,8 +1849,7 @@ function App() {
                   setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
                   return;
                 }
-                setCommunitySeed(seed);
-                setCurrentView('community');
+                setComposerSeed(seed);
               }}
             />
           ) : productStillResolving ? (

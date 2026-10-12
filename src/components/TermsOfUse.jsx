@@ -1,4 +1,5 @@
 import React from 'react';
+import { InfoPage } from './InfoPage';
 
 const TERMS_HTML = `
 <style>
@@ -378,20 +379,17 @@ const TERMS_HTML = `
 </div>
 `;
 
+// The embedded document carries its own <h1>; the page header below owns the
+// single H1 (audit G19), so the document's title is demoted to a hidden h2.
+const DOC_HTML = TERMS_HTML.replace(/<h1>/, '<h2 class="ay-info-legal__doc-title">').replace(/<\/h1>/, '</h2>');
+
 export default function TermsOfUse({ onBack }) {
   return (
-    <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '860px', margin: '0 auto' }}>
-      <button
-        type="button"
-        onClick={onBack}
-        style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', cursor: 'pointer', color: 'var(--color-text-main)', fontFamily: 'var(--font-body)', fontSize: '0.9rem', fontWeight: 600, marginBottom: '1.25rem', padding: '0.65rem 0.95rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', boxShadow: 'var(--shadow-sm)' }}
-      >
-        ← Back
-      </button>
+    <InfoPage eyebrow="Legal" title="Terms of Use" onBack={onBack} width="read">
       <div
-        className="terms-of-use-body"
-        dangerouslySetInnerHTML={{ __html: TERMS_HTML }}
+        className="terms-of-use-body ay-info-card ay-info-card--pad ay-info-legal"
+        dangerouslySetInnerHTML={{ __html: DOC_HTML }}
       />
-    </section>
+    </InfoPage>
   );
 }

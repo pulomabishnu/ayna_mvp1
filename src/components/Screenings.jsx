@@ -1,5 +1,6 @@
 import React from 'react';
 import { findGlossaryTermInText } from '../data/glossary';
+import { InfoPage } from './InfoPage';
 
 // Common helpful digital services for screenings
 const TELEHEALTH_SERVICES = [
@@ -35,22 +36,14 @@ const GUIDELINE_LINKS = {
 export default function Screenings({ checkinData, onNavigate }) {
     if (!checkinData) {
         return (
-            <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', textAlign: 'center' }}>
-                <span style={{
-                    fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-primary)',
-                    background: 'var(--color-secondary-fade)', padding: '0.3rem 0.8rem',
-                    borderRadius: 'var(--radius-pill)', display: 'inline-block', marginBottom: '1rem'
-                }}>
-                    Health Maintenance
-                </span>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--color-surface-contrast)' }}>Recommended Screenings</h2>
-                <div className="card" style={{ maxWidth: '600px', margin: '2rem auto', padding: '3rem 2rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>No Check-In Yet</h3>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '1rem', lineHeight: '1.6' }}>
+            <InfoPage eyebrow="Health maintenance" title="Recommended screenings" width="read">
+                <div className="ay-info-card ay-info-card--pad ay-info-empty">
+                    <h2 className="ay-info__h3">No check-in yet</h2>
+                    <p className="ay-info__body">
                         Do your <strong>Monthly Check-in</strong> to get screening and doctor visit tips based on your symptoms and history.
                     </p>
                 </div>
-            </section>
+            </InfoPage>
         );
     }
 
@@ -118,77 +111,44 @@ export default function Screenings({ checkinData, onNavigate }) {
     }
 
     return (
-        <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-            <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
-                <span style={{
-                    fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-primary)',
-                    background: 'var(--color-secondary-fade)', padding: '0.3rem 0.8rem',
-                    borderRadius: 'var(--radius-pill)', display: 'inline-block', marginBottom: '1rem'
-                }}>
-                    Health Maintenance
-                </span>
-                <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '1rem', color: 'var(--color-surface-contrast)' }}>
-                    Recommended Screenings
-                </h1>
-                <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-                    Care reminders made just for you, based on your health data and recent check-ins.
-                </p>
-            </div>
-
-            <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <InfoPage
+            eyebrow="Health maintenance"
+            title="Recommended screenings"
+            lede="Care reminders based on your health data and recent check-ins."
+            width="read"
+        >
+            <div className="ay-info-stack">
                 {recommendations.length === 0 ? (
-                    <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-                        <h3 style={{ fontSize: '1.25rem', color: 'var(--color-text-main)', marginBottom: '0.5rem' }}>You're all up to date!</h3>
-                        <p style={{ color: 'var(--color-text-muted)' }}>You have no screening reminders right now, based on your last check-in.</p>
-                        <button className="btn btn-outline" style={{ marginTop: '1.5rem' }} onClick={() => onNavigate('discovery')}>
-                            Browse General Wellness
+                    <div className="ay-info-card ay-info-card--pad ay-info-empty">
+                        <h2 className="ay-info__h3">You're all up to date</h2>
+                        <p className="ay-info__body">No screening reminders right now, based on your last check-in.</p>
+                        <button type="button" className="ay-info-btn ay-info-btn--ghost" onClick={() => onNavigate?.('discovery')}>
+                            Browse general wellness
                         </button>
                     </div>
                 ) : (
                     recommendations.map((rec, i) => {
                         const isHigh = rec.urgency === 'high';
-                        const isMedium = rec.urgency === 'medium';
-                        const borderColor = isHigh ? '#D65A49' : (isMedium ? 'var(--color-primary)' : '#7C9885');
-                        const badgeBg = isHigh ? '#FDECEC' : (isMedium ? 'var(--color-secondary-fade)' : '#F0F5F1');
-                        const badgeColor = isHigh ? '#D65A49' : (isMedium ? 'var(--color-primary)' : '#496B54');
-
                         return (
-                            <div key={i} className={`card stagger-${(i % 4) + 1}`} style={{
-                                display: 'flex', flexDirection: 'column', gap: '1.25rem',
-                                borderLeft: `6px solid ${borderColor}`,
-                                padding: '2rem'
-                            }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                                    <h3 style={{ fontSize: '1.4rem', color: 'var(--color-surface-contrast)' }} title={findGlossaryTermInText(rec.type) || undefined}>{rec.type}</h3>
-                                    <span style={{
-                                        fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
-                                        background: badgeBg, color: badgeColor,
-                                        padding: '0.4rem 0.8rem', borderRadius: 'var(--radius-pill)'
-                                    }}>
-                                        {isHigh ? 'High Priority' : 'Recommended'}
-                                    </span>
+                            <article key={i} className={`ay-info-card ay-info-card--pad ay-info-screen ay-info-screen--${isHigh ? 'high' : 'medium'}`}>
+                                <div className="ay-info-screen__head">
+                                    <h2 className="ay-info__h3" title={findGlossaryTermInText(rec.type) || undefined}>{rec.type}</h2>
+                                    <span className="ay-info__pill ay-info-screen__badge">{isHigh ? 'High priority' : 'Recommended'}</span>
                                 </div>
 
-                                <p style={{ fontSize: '1.1rem', color: 'var(--color-text-main)', lineHeight: '1.6' }}>{rec.message}</p>
+                                <p className="ay-info__body">{rec.message}</p>
 
-                                <div style={{
-                                    background: '#F9FAF3', border: '1px solid #E5E7EB', borderLeft: '3px solid var(--color-primary)',
-                                    padding: '1rem', borderRadius: 'var(--radius-md)',
-                                    display: 'flex', alignItems: 'center', gap: '0.75rem'
-                                }}>
-                                    <span style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--color-text-main)' }} title={findGlossaryTermInText(rec.action) || undefined}>
-                                        {rec.action}
-                                    </span>
+                                <div className="ay-info-screen__action" title={findGlossaryTermInText(rec.action) || undefined}>
+                                    {rec.action}
                                 </div>
 
                                 {rec.links && rec.links.length >= 3 && (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                        <p style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>More info & care options:</p>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+                                    <div>
+                                        <div className="ay-info-label">More info and care options</div>
+                                        <div className="ay-info-chip-row">
                                             {rec.links.map(link => (
-                                                <a key={link.name} href={link.url} target="_blank" rel="noopener noreferrer"
-                                                    className="btn btn-outline" style={{ padding: '0.6rem 1rem', fontSize: '0.85rem', borderStyle: 'dashed' }}>
-                                                    {link.benefit ? `Visit ${link.name}` : link.name} ↗
+                                                <a key={link.name} href={link.url} target="_blank" rel="noopener noreferrer" className="ay-info-chip ay-info-chip--link">
+                                                    {link.benefit ? `Visit ${link.name}` : link.name} <span aria-hidden="true">↗</span>
                                                 </a>
                                             ))}
                                         </div>
@@ -196,40 +156,28 @@ export default function Screenings({ checkinData, onNavigate }) {
                                 )}
 
                                 {rec.suggestedProduct && (
-                                    <div style={{
-                                        marginTop: '0.5rem', padding: '1rem',
-                                        background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-md)',
-                                        border: '1px solid var(--color-primary)'
-                                    }}>
-                                        <p style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '0.4rem' }}>TRY THIS AT-HOME TOOL</p>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <div>
-                                                <div style={{ fontWeight: '700', fontSize: '1rem' }}>{rec.suggestedProduct.name}</div>
-                                                <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>{rec.suggestedProduct.desc}</div>
-                                            </div>
-                                            <button className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }} onClick={() => onNavigate('discovery')}>
-                                                Find in Discovery
-                                            </button>
+                                    <div className="ay-info-screen__tool">
+                                        <div>
+                                            <div className="ay-info-label">Try this at-home tool</div>
+                                            <strong>{rec.suggestedProduct.name}</strong>
+                                            <div className="ay-info__small">{rec.suggestedProduct.desc}</div>
                                         </div>
+                                        <button type="button" className="ay-info-btn" onClick={() => onNavigate?.('discovery')}>
+                                            Find in Shop
+                                        </button>
                                     </div>
                                 )}
 
                                 {rec.linkType === 'discovery' && (
-                                    <button className="btn btn-outline" style={{ alignSelf: 'flex-start' }} onClick={() => onNavigate('discovery')}>
-                                        {rec.linkText} →
+                                    <button type="button" className="ay-info-btn ay-info-btn--ghost" onClick={() => onNavigate?.('discovery')}>
+                                        {rec.linkText} <span aria-hidden="true">→</span>
                                     </button>
                                 )}
-                            </div>
+                            </article>
                         )
                     })
                 )}
             </div>
-
-            <div style={{ marginTop: '4rem', textAlign: 'center', padding: '2rem', background: '#F4F5F7', borderRadius: 'var(--radius-lg)' }}>
-                <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-                    <strong>Disclaimer:</strong> ayna does not diagnose medical conditions. Always talk to a doctor or nurse about any health concern.
-                </p>
-            </div>
-        </section>
+        </InfoPage>
     );
 }

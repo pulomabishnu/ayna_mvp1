@@ -1,7 +1,10 @@
+import { HEART_PATH } from '../utils/heart.js';
+
 // Shared empty / error state: one sticker-style illustration, one line,
 // one action. Used wherever a list can be empty or a feed can fail.
 const ART = {
   bookmark: <path d="M8 4h8v16l-4-3-4 3V4Z" />,
+  heart: <path d={HEART_PATH} />,
   chat: <path d="M4 6h16v10H10l-5 4v-4H4V6Z" />,
   search: <><circle cx="11" cy="11" r="6" /><path d="M20 20l-4.5-4.5" /></>,
   offline: <><path d="M3 9a14 14 0 0 1 18 0M6.5 12.5a9 9 0 0 1 11 0M10 16a4 4 0 0 1 4 0" /><path d="M4 4l16 16" /></>,

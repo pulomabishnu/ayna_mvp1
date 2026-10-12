@@ -1,0 +1,117 @@
+/* Launch audit, area "qya": quiz (Q01 to Q05), You page (Y01 to Y05), auth modal (AU01 to AU04).
+   Website only: every rule is scoped under .app-container. */
+
+/* ---------------- Quiz ---------------- */
+.app-container .wq-label-tools { display: inline-flex; align-items: center; gap: 16px; }
+.app-container .wq-to-results { font-size: 14px !important; }
+.app-container .wq-skip:disabled { opacity: .4; cursor: default; }
+.app-container .wq-required { color: var(--soft); font: 600 13px/1.2 var(--ay-font-ui, 'Poppins'), sans-serif; }
+.app-container .wq-page .wq-btn:disabled, .app-container[data-theme='dark'] .wq-page .wq-btn:disabled { background: var(--cream) !important; color: var(--soft) !important; border-color: var(--faint) !important; box-shadow: none !important; transform: none !important; }
+
+/* Q02: age is a plain number field */
+.app-container .wq-age { gap: 8px; padding: 24px; }
+.app-container .wq-age-field { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; align-items: end; justify-content: start; column-gap: 12px; row-gap: 8px; }
+.app-container .wq-age-field > span { grid-column: 1 / -1; font: 700 15px/1.2 'Poppins', system-ui, sans-serif; }
+.app-container .wq-age-field input { width: 160px; min-height: 72px; padding: 0 16px; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper); color: var(--ink); font: 800 48px/1 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.03em; outline: none; box-sizing: border-box; }
+.app-container .wq-age-field input::placeholder { color: var(--soft); opacity: .5; font-size: 32px; }
+.app-container .wq-age-field input:focus-visible { box-shadow: 3px 3px 0 var(--ink); }
+.app-container .wq-age-field small { padding-bottom: 12px; color: var(--soft); font: 600 15px/1 'Poppins', system-ui, sans-serif; }
+.app-container[data-theme='dark'] .wq-age.is-under { background: var(--cream); border-color: #ff9b85; }
+.app-container[data-theme='dark'] .wq-alert { color: #ff9b85; }
+.app-container .wq-sub-q { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin: 8px 0 -8px; font: 700 15px/1.2 'Poppins', system-ui, sans-serif; }
+.app-container .wq-sub-q small { color: var(--soft); font-weight: 500; font-size: 13px; }
+
+/* Q03: square checkboxes, 56px tiles, "i" for definitions */
+.app-container .wq-tile-wrap { position: relative; display: flex; min-width: 0; }
+.app-container .wq-tile { flex: 1; min-width: 0; min-height: 56px !important; display: flex; align-items: center; gap: 12px; padding: 8px 16px 8px 12px !important; }
+.app-container .wq-tile-wrap.has-info .wq-tile { padding-right: 48px !important; }
+.app-container .wq-tile .wq-check { position: static !important; translate: none !important; flex: none; width: 20px; height: 20px; border-radius: 6px !important; }
+.app-container .wq-tile-text { min-width: 0; }
+.app-container .wq-tile-info { position: absolute; top: 50%; right: 12px; translate: 0 -50%; width: 28px; height: 28px; padding: 0; border: 1.5px solid var(--faint); border-radius: 50%; background: var(--paper); color: var(--ink); font: italic 700 13px/1 Georgia, serif; cursor: pointer; }
+.app-container .wq-tile-info:hover, .app-container .wq-tile-info:focus-visible { border-color: var(--ink); }
+.app-container .wq-chip[role='checkbox'] { position: relative; }
+
+/* Q01: checkpoint after the six core questions */
+.app-container .wq-checkpoint .wq-title { margin-top: 16px; }
+.app-container .wq-checkpoint-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.app-container .wq-checkpoint .wq-note { margin-top: 16px; }
+@media (max-width: 600px) {
+  .app-container .wq-checkpoint-actions .wq-btn { flex: 1 1 100%; justify-content: center; }
+  .app-container .wq-label-tools { gap: 8px; }
+  .app-container .wq-age-field input { width: 136px; }
+}
+
+/* ---------------- You ---------------- */
+/* Y04: two numbers, then actions as plain buttons */
+.app-container .wyou-links.wyou-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+.app-container .wyou-stats .wyou-quick { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 12px; }
+.app-container .wyou-stats .wyou-quick .wyou-btn { display: inline-flex; align-items: center; justify-content: center; padding: 0 24px !important; min-height: 48px; border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 15px/1 var(--ay-font-ui); }
+.app-container .wyou-stats .wyou-quick .wyou-btn:hover { transform: translate(-2px, -2px); box-shadow: var(--ay-shadow); }
+.app-container[data-theme='dark'] .wyou-stats .wyou-quick .wyou-btn { background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
+@media (max-width: 600px) { .app-container .wyou-stats .wyou-quick .wyou-btn { flex: 1 1 100%; } }
+
+/* Y03: shelf card without a persona */
+.app-container .wyou-shopper.is-shelf header { background: var(--ay-mint); }
+/* micro: a lone last row spans the full width instead of sitting at half width */
+.app-container .wyou-shopper dl > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+/* micro: donut starts at 12 o'clock (no tick at 9) */
+.app-container .wyou .ay-donut svg { rotate: 0deg; }
+.app-container .wyou .ay-donut-num, .app-container .wyou .ay-donut-cap { rotate: 0deg; }
+
+/* ---------------- Auth modal ---------------- */
+.app-container .ay-auth-card { --qya-err: #b4402a; background: var(--ay-paper) !important; border-color: var(--ay-ink) !important; box-shadow: 6px 6px 0 var(--ay-ink) !important; color: var(--ay-ink); gap: 16px !important; padding: 32px !important; }
+.app-container[data-theme='dark'] .ay-auth-card { --qya-err: #ff9b85; }
+.app-container .ay-auth-logo { color: var(--ay-ink) !important; }
+.app-container .ay-auth-tagline { margin: -8px 0 0 !important; color: var(--ay-ink-soft) !important; font: 600 15px/1.4 var(--ay-font-ui) !important; }
+.app-container .ay-auth-close { top: 12px !important; right: 12px !important; display: grid !important; place-items: center; align-items: center !important; justify-content: center !important; padding: 0 0 2px !important; width: 36px !important; height: 36px !important; border: 2px solid var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 500 22px/1 var(--ay-font-ui) !important; }
+.app-container .ay-auth-toggle { border-color: var(--ay-ink) !important; background: var(--ay-paper) !important; }
+.app-container .ay-auth-toggle button { color: var(--ay-ink) !important; }
+.app-container .ay-auth-toggle button.is-on { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.app-container .ay-auth-card form { gap: 16px !important; }
+.app-container .ay-auth-field { display: grid; gap: 8px; }
+.app-container .ay-auth-field > label { color: var(--ay-ink); font: 700 14px/1.2 var(--ay-font-ui) !important; }
+.app-container .ay-auth-card input:not([type='checkbox']) { min-height: 48px; border-color: var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font-size: 16px !important; }
+.app-container .ay-auth-card input[aria-invalid='true'] { border-color: var(--qya-err) !important; }
+.app-container .ay-auth-card input:focus-visible { outline: 2px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .ay-auth-show { color: var(--ay-ink-soft) !important; font: 600 13px/1 var(--ay-font-ui) !important; }
+.app-container .ay-auth-err { margin: 0; color: var(--qya-err) !important; font: 600 13px/1.4 var(--ay-font-ui) !important; }
+.app-container .ay-auth-hint { margin: 0; color: var(--ay-ink-soft); font: 500 12px/1.4 var(--ay-font-ui) !important; }
+.app-container .ay-auth-consent { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.app-container .ay-auth-consent legend { margin-bottom: 8px; padding: 0; color: var(--ay-ink); font: 700 14px/1.2 var(--ay-font-ui) !important; }
+.app-container .ay-auth-check { display: grid; grid-template-columns: 20px minmax(0, 1fr); align-items: start; gap: 8px; color: var(--ay-ink-soft); font: 500 12px/1.45 var(--ay-font-ui) !important; cursor: pointer; }
+.app-container .ay-auth-check span { font: inherit !important; }
+.app-container .ay-auth-card .ay-auth-check input { appearance: none; -webkit-appearance: none; display: grid; place-items: center; width: 20px !important; height: 20px !important; min-height: 0 !important; margin: 0; padding: 0 !important; border: 2px solid var(--ay-ink) !important; border-radius: 6px !important; background: var(--ay-paper) !important; cursor: pointer; }
+.app-container .ay-auth-check input::after { content: ''; width: 10px; height: 6px; margin-top: -3px; border: 2px solid var(--ay-paper); border-top: 0; border-right: 0; rotate: -45deg; opacity: 0; }
+.app-container .ay-auth-card .ay-auth-check input:checked { background: var(--ay-ink) !important; }
+.app-container .ay-auth-check input:checked::after { opacity: 1; }
+.app-container .ay-auth-check input:focus-visible { outline: 2px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .ay-auth-card .ay-auth-check input[aria-invalid='true'] { border-color: var(--qya-err) !important; }
+.app-container .ay-auth-linkbtn { padding: 0; border: 0; background: none; color: var(--ay-ink) !important; font: 600 13px/1.4 var(--ay-font-ui) !important; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.app-container .ay-auth-legal { margin: -4px 0 0; color: var(--ay-ink-soft); text-align: center; font: 500 12px/1.5 var(--ay-font-ui) !important; }
+.app-container .ay-auth-legal .ay-auth-linkbtn { font-size: 12px !important; }
+.app-container .ay-auth-card a { color: var(--ay-ink) !important; text-decoration: underline !important; text-underline-offset: 2px; }
+/* micro: no terracotta glow on the main button */
+.app-container .ay-auth-submit { box-shadow: none !important; margin-top: 0 !important; border-color: var(--ay-ink) !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.app-container .ay-auth-submit:disabled { background: var(--ay-cream) !important; color: var(--ay-ink-soft) !important; border-color: var(--ay-ink-faint) !important; }
+.app-container .ay-auth-oauth button { border-color: var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
+.app-container .ay-auth-oauth svg path[fill='#000000'] { fill: var(--ay-ink); }
+.app-container .ay-auth-card > div:has(> span + span + span) > span:not(:nth-child(2)) { background: var(--ay-line) !important; }
+.app-container .ay-auth-card > div:has(> span + span + span) > span:nth-child(2),
+.app-container .ay-auth-card > p, .app-container .ay-auth-card > button:last-child:not(.ay-auth-new) { color: var(--ay-ink-soft) !important; }
+.app-container .ay-auth-new, .app-container .ay-auth-new b { color: var(--ay-ink) !important; }
+@media (max-width: 480px) {
+  .app-container .ay-auth-card { padding: 24px 16px !important; }
+  .app-container .ay-auth-overlay { padding-top: 72px !important; }
+}
+
+/* Quiz tile checkbox states, both themes */
+.app-container .wq-page .wq-tile .wq-check { background: var(--paper) !important; color: transparent !important; border-color: var(--faint) !important; }
+.app-container .wq-page .wq-tile.is-on .wq-check { background: var(--ink) !important; color: var(--paper) !important; border-color: var(--ink) !important; }
+@media (max-width: 480px) {
+  .app-container .wq-tiles { grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; }
+}
+/* Earned badge tick readable in both themes */
+.app-container .wyou-badges li.is-earned span { background: var(--ay-ink) !important; color: var(--ay-paper) !important; border-color: var(--ay-ink) !important; }
+/* One category only: a full ring with no separator gap */
+.app-container .wyou .ay-donut-seg:nth-of-type(2):last-of-type { stroke-dasharray: 100 0 !important; }
+.app-container .ay-auth-legal .ay-auth-linkbtn { display: block; margin: 8px auto 0; }

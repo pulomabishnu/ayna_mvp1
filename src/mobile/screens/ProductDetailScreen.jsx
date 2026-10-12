@@ -12,6 +12,8 @@ import ProductImage from '../components/ProductImage.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
 import { productHref } from '../../utils/productRoute.js';
 import { getPricePerUnitLabel } from '../../utils/pricePerUnit.js';
+import { HEART_PATH } from '../utils/heart.js';
+import { formatPrice } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
 import '../pdp.css';
 
@@ -503,7 +505,9 @@ export default function ProductDetailScreen({
   const tone = toneFor(product);
   const shownName = displayName(product);
   const perUnit = getPricePerUnitLabel(product);
-  const hasDisplayPrice = /[$€£]|^free\b/i.test(String(price || ''));
+  // Same price model as the cards (and the website): short main + detail line.
+  const shownPrice = formatPrice(product);
+  const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
   const checks = trustChecks(product);
   const detailTabs = [
     ['summary', 'ayna summary'],
@@ -550,7 +554,8 @@ export default function ProductDetailScreen({
           {eyebrowLine && <div className="ay-pdp-eyebrow">{eyebrowLine}</div>}
           <h1>{shownName}</h1>
           {(price || perUnit) && <div className="ay-pdp-price">
-            {price && <span className={hasDisplayPrice ? 'is-price' : 'is-note'}>{price}</span>}
+            {price && <span className={hasDisplayPrice ? 'is-price' : 'is-note'}>{shownPrice.main}</span>}
+            {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
             {perUnit && <small>{perUnit}</small>}
           </div>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} <span aria-hidden="true">→</span></button>}
@@ -663,12 +668,12 @@ export default function ProductDetailScreen({
         <button
           type="button"
           onClick={onToggleSaved}
-          aria-label={isSaved ? 'Unsave product' : 'Save product'}
+          aria-label={isSaved ? 'Remove from Saved' : 'Save'}
           aria-pressed={isSaved}
           style={{ width: 50, height: 50, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--ayna-surface)', border: '1px solid ' + (isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)') }}
         >
           <svg width="19" height="19" viewBox="0 0 24 24" fill={isSaved ? 'var(--ayna-accent-dark)' : 'none'} stroke={isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-heading)'} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 20s-7-4.4-8.9-8.4A4.9 4.9 0 0 1 12 6.3a4.9 4.9 0 0 1 8.9 5.3C19 15.6 12 20 12 20z" />
+            <path d={HEART_PATH} />
           </svg>
         </button>
         <button

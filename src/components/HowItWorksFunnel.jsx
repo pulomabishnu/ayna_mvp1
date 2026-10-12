@@ -1,18 +1,13 @@
 import React from 'react';
 
 /**
- * The 3,140 -> 212 -> 14 narrowing story used to be three flat number cards
- * side by side, spread across separate step cards with no visual connection
- * between them — the actual "narrowing down" story (the whole point of this
- * page) never landed as a shape (found live, 2026-08-24 bug bash: "an actual
- * funnel/waterfall chart would make that narrowing-down story land much
- * harder").
+ * The 3,140 -> 212 -> 14 narrowing story, drawn to scale (audit HW03).
  *
- * Widths use a square-root scale, not linear — a linear scale would make the
- * 14-product stage nearly invisible next to 3,140 and read as "basically
- * nothing," when the actual number is still clearly labeled either way. Sqrt
- * keeps every stage visible as a real bar while still showing a dramatic,
- * honest narrowing.
+ * Bar widths are linear: 212 is 6.8% of 3,140 and 14 is 0.4%, so the small
+ * stages are thin slivers on purpose. That IS the story. A minimum width keeps
+ * them visible, and every value is printed, centred on the same axis as its
+ * bar, so nothing depends on reading the bar length. The numbers are an
+ * example run (audit HW02), labelled as such.
  */
 const STAGES = [
   { label: 'Pulled in from the open market', value: 3140 },
@@ -21,23 +16,31 @@ const STAGES = [
 ];
 
 export default function HowItWorksFunnel() {
-  const maxWidth = Math.sqrt(STAGES[0].value);
+  const max = STAGES[0].value;
   return (
-    <div className="hiw-funnel" role="img" aria-label="3,140 products narrowed down to 212 relevant to you, then to 14 in your ecosystem">
-      {STAGES.map((stage, i) => {
-        const widthPct = Math.max(14, (Math.sqrt(stage.value) / maxWidth) * 100);
-        return (
-          <div key={stage.label} className="hiw-funnel__row">
-            <div className="hiw-funnel__bar-track">
-              <div className="hiw-funnel__bar" style={{ width: `${widthPct}%` }}>
-                <span className="hiw-funnel__value">{stage.value.toLocaleString()}</span>
+    <figure className="ay-info-funnel">
+      <span className="ay-info-example">Example</span>
+      <div
+        className="ay-info-funnel__rows"
+        role="img"
+        aria-label="Example: 3,140 products narrowed down to 212 relevant to the profile, then to 14 in the ecosystem"
+      >
+        {STAGES.map((stage) => {
+          const pct = (stage.value / max) * 100;
+          return (
+            <div key={stage.label} className="ay-info-funnel__row" aria-hidden="true">
+              <div className="ay-info-funnel__text">
+                <strong>{stage.value.toLocaleString()}</strong>
+                <span>{stage.label}</span>
+              </div>
+              <div className="ay-info-funnel__track">
+                <div className="ay-info-funnel__bar" style={{ width: `max(6px, ${pct.toFixed(2)}%)` }} />
               </div>
             </div>
-            <span className="hiw-funnel__label">{stage.label}</span>
-            {i < STAGES.length - 1 && <span className="hiw-funnel__arrow" aria-hidden="true">↓</span>}
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+      <figcaption className="ay-info-funnel__note">Example numbers. Bars drawn to scale.</figcaption>
+    </figure>
   );
 }

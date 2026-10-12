@@ -2,14 +2,21 @@ import React, { useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { CONSENT_VERSION, stashPendingConsent } from '../utils/pendingConsent.js';
+import '../styles/audit-qya.css';
 
-const SUBTITLES = {
-  quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
-  browse: 'Create an account to save your discoveries and track products over time.',
-  login: 'Welcome back. Sign in to access your health ecosystem.',
-  personalize: 'Personalized results are matched to your health profile — sign in or create an account to turn this on.',
-  default: 'Your personal women\'s health manager',
-};
+// One short line per tab (audit AU01).
+const SUBTITLES = { signup: 'Make your shop yours.', signin: 'Welcome back.' };
+
+/** Visible label above an input, with its error underneath (audit AU03). */
+function Field({ id, label, error, children }) {
+  return <div className="ay-auth-field">
+    <label htmlFor={id}>{label}</label>
+    {children}
+    {error && <p id={`${id}-err`} className="ay-auth-err" role="alert">{error}</p>}
+  </div>;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const CONSENT_ITEMS = [
   'The health information I share with ayna is self-reported wellness information, not a clinical record.',
@@ -17,9 +24,10 @@ const CONSENT_ITEMS = [
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
 ];
 
-export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem }) {
+export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem, initialMode }) {
   useEscapeToClose(isModal, onSkip);
-  const [mode, setMode] = useState('signin');
+  // 'signup' | 'signin'. After the quiz, creating an account is the likely next step.
+  const [mode, setMode] = useState(() => (initialMode === 'signup' || initialMode === 'signin' ? initialMode : context === 'quiz' ? 'signup' : 'signin'));
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,9 +35,9 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [googleLoading, setGoogleLoading] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConsentDetails, setShowConsentDetails] = useState(false);
   const [checked, setChecked] = useState([false, false, false]);
   // Two real signups reported never getting a confirmation email
   // (2026-08-25) — Supabase's built-in email sender has a very low rate
@@ -57,19 +65,35 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [phoneSending, setPhoneSending] = useState(false);
 
   const supabase = getSupabaseClient();
-  const subtitle = SUBTITLES[context] || SUBTITLES.default;
   const allConsented = checked.every(Boolean);
   const isSignup = mode === 'signup';
+  const subtitle = SUBTITLES[mode];
 
-  const toggleCheck = (i) =>
-    setChecked(prev => prev.map((v, idx) => (idx === i ? !v : v)));
+  // Health-data consent stays explicit: one checkbox per statement.
+  const toggleCheck = (i) => {
+    setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
+    setFieldErrors((prev) => (prev.consent ? { ...prev, consent: '' } : prev));
+  };
+  const clearFieldError = (key) => setFieldErrors((prev) => (prev[key] ? { ...prev, [key]: '' } : prev));
+  const fieldProps = (key) => ({
+    'aria-invalid': fieldErrors[key] ? true : undefined,
+    'aria-describedby': fieldErrors[key] ? `auth-${key}-err` : undefined,
+  });
+  const validate = () => {
+    const next = {};
+    if (isSignup && !firstName.trim()) next.firstName = 'Add your first name.';
+    if (!email.trim()) next.email = 'Add your email.';
+    else if (!EMAIL_RE.test(email.trim())) next.email = 'That email doesn’t look right.';
+    if (!password) next.password = 'Add your password.';
+    else if (isSignup && password.length < 8) next.password = 'Use at least 8 characters.';
+    if (isSignup && !allConsented) next.consent = 'Please tick all three to continue.';
+    setFieldErrors(next);
+    return Object.values(next).every((v) => !v);
+  };
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
-    if (isSignup && !allConsented) {
-      setError("Please agree to the three statements above before creating your account.");
-      return;
-    }
+    if (!validate()) return;
     setError('');
     setSuccessMsg('');
     setResendMsg('');
@@ -142,7 +166,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       if (error) throw error;
       setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
     } catch (err) {
-      setResendMsg(err.message || 'Could not resend right now — try again in a moment.');
+      setResendMsg(err.message || 'Could not resend right now. Try again in a moment.');
     } finally {
       setResending(false);
     }
@@ -214,7 +238,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
   const handleGoogle = async () => {
     if (isSignup && !allConsented) {
-      setError("Please agree to the three statements above before continuing.");
+      setFieldErrors((prev) => ({ ...prev, consent: 'Please tick all three to continue.' }));
       return;
     }
     if (!supabase) {
@@ -248,7 +272,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
   const handleApple = async () => {
     if (isSignup && !allConsented) {
-      setError("Please agree to the three statements above before continuing.");
+      setFieldErrors((prev) => ({ ...prev, consent: 'Please tick all three to continue.' }));
       return;
     }
     if (!supabase) {
@@ -279,6 +303,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const switchMode = (next) => {
     setMode(next);
     setError('');
+    setFieldErrors({});
     setSuccessMsg('');
     setAuthMethod('email');
     setPhoneStep('number');
@@ -299,10 +324,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     alignItems: 'flex-start',
     justifyContent: 'center',
     overflowY: 'auto',
-    background: 'linear-gradient(135deg, rgba(36, 42, 82, 0.94) 0%, rgba(78, 56, 102, 0.94) 58%, rgba(162, 96, 60, 0.88) 100%)',
-    backdropFilter: 'blur(5px)',
-    zIndex: 1000,
-    padding: '7.5rem 1rem 1.5rem',
+    // Ink at 60% over everything, header included (audit AU04).
+    background: 'rgba(29, 26, 43, 0.6)',
+    zIndex: 1700,
+    padding: '96px 16px 24px',
   } : {
     minHeight: '100dvh',
     display: 'flex',
@@ -314,16 +339,17 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
   return (
     <div
+      className={isModal ? 'ay-auth-overlay' : undefined}
       style={overlayStyle}
       onClick={isModal && onSkip ? (e) => { if (e.target === e.currentTarget) onSkip(); } : undefined}
     >
       <div className="ay-auth-card" style={styles.card}>
         {isModal && onSkip && (
-          <button type="button" onClick={onSkip} style={styles.closeBtn} aria-label="Skip for now">×</button>
+          <button type="button" className="ay-auth-close" onClick={onSkip} style={styles.closeBtn} aria-label="Close">×</button>
         )}
 
         <div className="ay-auth-logo" style={styles.logo}>ayna</div>
-        <p style={styles.tagline}>{subtitle}</p>
+        <p className="ay-auth-tagline" style={styles.tagline}>{subtitle}</p>
 
         {!supabase && (
           // Without this, a missing/blank .env.local silently disabled the
@@ -395,64 +421,8 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               : handleEmailAuth
           }
           style={styles.form}
+          noValidate
         >
-          {isSignup && (
-            <>
-              <div style={styles.consentSection}>
-                <button
-                  type="button"
-                  onClick={() => setShowConsentDetails(v => !v)}
-                  style={styles.consentToggle}
-                  aria-expanded={showConsentDetails}
-                >
-                  <span>How we handle your data</span>
-                  <span style={{ transform: showConsentDetails ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>⌄</span>
-                </button>
-
-                {showConsentDetails && (
-                  <div style={styles.consentDetails}>
-                    {CONSENT_ITEMS.map((text, i) => (
-                      <label key={i} style={styles.consentItem}>
-                        <input
-                          type="checkbox"
-                          checked={checked[i]}
-                          onChange={() => toggleCheck(i)}
-                          style={styles.checkbox}
-                        />
-                        <span style={styles.consentText}>{text}</span>
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <p style={styles.legalNotice}>
-                By creating an account you agree to ayna's{' '}
-                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={styles.link}>Privacy Policy</a>
-                {' '}and{' '}
-                <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={styles.link}>Terms of Service</a>.
-              </p>
-
-              {authMethod === 'email' ? (
-                <button
-                  type="button"
-                  onClick={() => setShowPhoneNotice(true)}
-                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
-                >
-                  Use my phone number instead
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => switchAuthMethod('email')}
-                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
-                >
-                  Use email instead
-                </button>
-              )}
-            </>
-          )}
-
           {isSignup && authMethod === 'phone' && (
             <input
               type="text"
@@ -507,49 +477,78 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           ) : (
             <>
           {isSignup && (
-            <input
-              type="text"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-              style={styles.input}
-              autoComplete="given-name"
-              maxLength={50}
-            />
+            <Field id="auth-firstName" label="First name" error={fieldErrors.firstName}>
+              <input
+                id="auth-firstName"
+                name="firstName"
+                type="text"
+                value={firstName}
+                onChange={(e) => { setFirstName(e.target.value); clearFieldError('firstName'); }}
+                style={styles.input}
+                autoComplete="given-name"
+                maxLength={50}
+                {...fieldProps('firstName')}
+              />
+            </Field>
           )}
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={styles.input}
-            autoComplete="email"
-          />
-          <div style={{ position: 'relative' }}>
+          <Field id="auth-email" label="Email" error={fieldErrors.email}>
             <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{
-                ...styles.input,
-                width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem',
-              }}
-              autoComplete={isSignup ? 'new-password' : 'current-password'}
-              minLength={isSignup ? 8 : undefined}
+              id="auth-email"
+              name="email"
+              type="email"
+              inputMode="email"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); clearFieldError('email'); }}
+              style={styles.input}
+              autoComplete="email"
+              {...fieldProps('email')}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(v => !v)}
-              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1 }}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
+          </Field>
+          <Field id="auth-password" label="Password" error={fieldErrors.password}>
+            <div style={{ position: 'relative' }}>
+              <input
+                id="auth-password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); clearFieldError('password'); }}
+                style={{
+                  ...styles.input,
+                  width: '100%', boxSizing: 'border-box', paddingRight: '4rem',
+                }}
+                autoComplete={isSignup ? 'new-password' : 'current-password'}
+                {...fieldProps('password')}
+              />
+              <button
+                type="button"
+                className="ay-auth-show"
+                onClick={() => setShowPassword(v => !v)}
+                style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '0.85rem', padding: '0.25rem', lineHeight: 1 }}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+            {isSignup && !fieldErrors.password && <p className="ay-auth-hint">At least 8 characters.</p>}
+          </Field>
+          {isSignup && (
+            <fieldset className="ay-auth-consent" aria-describedby={fieldErrors.consent ? 'auth-consent-err' : undefined}>
+              <legend>How we handle your data</legend>
+              {CONSENT_ITEMS.map((text, i) => (
+                <label key={text} className="ay-auth-check">
+                  <input
+                    type="checkbox"
+                    name={`consent-${i + 1}`}
+                    checked={checked[i]}
+                    onChange={() => toggleCheck(i)}
+                    aria-invalid={fieldErrors.consent && !checked[i] ? true : undefined}
+                  />
+                  <span>{text}</span>
+                </label>
+              ))}
+              {fieldErrors.consent && <p id="auth-consent-err" className="ay-auth-err" role="alert">{fieldErrors.consent}</p>}
+            </fieldset>
+          )}
             </>
           )}
 
@@ -584,6 +583,20 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
                 ? (phoneStep === 'number' ? 'Send code' : 'Verify')
                 : isSignup ? 'Create account' : 'Sign in'}
           </button>
+          {isSignup && (
+            <p className="ay-auth-legal">
+              By creating an account you agree to our{' '}
+              <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+              {' '}and{' '}
+              <a href="/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of Use</a>.
+              {' '}
+              {authMethod === 'email' ? (
+                <button type="button" className="ay-auth-linkbtn" onClick={() => setShowPhoneNotice(true)}>Use my phone number instead</button>
+              ) : (
+                <button type="button" className="ay-auth-linkbtn" onClick={() => switchAuthMethod('email')}>Use email instead</button>
+              )}
+            </p>
+          )}
         </form>
 
         <div style={styles.divider}>
@@ -671,7 +684,7 @@ const styles = {
     border: '1px solid rgba(255,255,255,0.18)',
     boxShadow: '0 34px 80px rgba(24, 18, 36, 0.34)',
     padding: '1.65rem 2rem 1.6rem',
-    margin: 'auto',
+    margin: '0 auto',
     width: '100%',
     maxWidth: '440px',
     maxHeight: 'calc(100dvh - 2rem)',
@@ -682,8 +695,8 @@ const styles = {
   },
   closeBtn: {
     position: 'absolute',
-    top: '0.75rem',
-    right: '0.75rem',
+    top: '12px',
+    right: '12px',
     width: '36px',
     height: '36px',
     display: 'flex',
@@ -843,7 +856,6 @@ const styles = {
     color: '#1E1430',
     border: 'none',
     borderRadius: '12px',
-    boxShadow: '0 8px 20px rgba(209, 154, 62, 0.18)',
     cursor: 'pointer',
     transition: 'background var(--transition-fast)',
     marginTop: '0.25rem',

@@ -37,7 +37,6 @@ export default function EcosystemScreen({
     map.get(key).products.push(product);
     return map;
   }, new Map()).values()];
-  const savedCount = Object.keys(savedProducts || {}).length;
 
   return <div className="ayna-fresh-ecosystem ayna-cabinet-home">
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
@@ -45,7 +44,6 @@ export default function EcosystemScreen({
     <section className="ayna-cabinet-stage ay-eco-hero" aria-labelledby="ayna-cabinet-title">
       {groups.length > 0 && <div className="ay-eco-cover"><EcosystemChart groups={groups} /></div>}
       <h1 id="ayna-cabinet-title">Your Ecosystem</h1>
-      {currentProducts.length > 0 && <p className="ay-eco-meta">{currentProducts.length} {currentProducts.length === 1 ? 'pick' : 'picks'} · {groups.length} {groups.length === 1 ? 'area' : 'areas'}</p>}
       {currentProducts.length > 0 && (
         <div className="ay-eco-actions">
           {onReplayStory && <button type="button" className="ay-eco-play" onClick={onReplayStory} aria-label="Replay your Wrapped"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></button>}
@@ -59,7 +57,7 @@ export default function EcosystemScreen({
 
 
     {groups.map((group, index) => <section key={group.key} id={`ayna-area-${group.key}`} className="ayna-cabinet-collection ayna-area-collection" style={{ '--area-tone': AREA_TONES[index % AREA_TONES.length] }} aria-labelledby={`ayna-area-title-${group.key}`}>
-      <div className="ayna-cabinet-section-head"><h2 id={`ayna-area-title-${group.key}`}><small aria-hidden="true">{String(index + 1).padStart(2, '0')}</small>{group.label}</h2><span>{group.products.length} {group.products.length === 1 ? 'pick' : 'picks'}</span></div>
+      <div className="ayna-cabinet-section-head"><h2 id={`ayna-area-title-${group.key}`}><small aria-hidden="true">{String(index + 1).padStart(2, '0')}</small>{group.label}</h2></div>
       <div className="ayna-editorial-product-grid">{group.products.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />)}</div>
     </section>)}
 
@@ -74,7 +72,7 @@ export default function EcosystemScreen({
 
     <section className="ayna-cabinet-more" aria-label="More ways to manage your cabinet">
       {earlierProducts.length > 0 && <details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your Ecosystem outside your current shortlist.</p><div className="ayna-editorial-product-grid">{earlierProducts.map((product) => <ProductCard key={product.id} product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} />)}</div></details>}
-      <details><summary>Manage Ecosystem <span>{savedCount} saved</span></summary><button type="button" onClick={onRetake}>Update recommendations</button><button type="button" className="ayna-destructive-text" onClick={onRequestEcosystemReset}>Reset Ecosystem</button></details>
+      <details><summary>Manage Ecosystem</summary><button type="button" onClick={onRetake}>Update recommendations</button><button type="button" className="ayna-destructive-text" onClick={onRequestEcosystemReset}>Reset Ecosystem</button></details>
     </section>
     <LegalFooter />
   </div>;

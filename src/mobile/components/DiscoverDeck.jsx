@@ -1,3 +1,4 @@
+import { HEART_PATH } from '../utils/heart.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ProductImage from './ProductImage.jsx';
 import EmptyState from './EmptyState.jsx';
@@ -116,7 +117,7 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, savedP
           </button>
           <button type="button" className="ay-deck-btn is-view" onClick={() => onOpenProduct?.(current.product)}>Details</button>
           <button type="button" className="ay-deck-btn is-save" onClick={() => act('save')} aria-label={savedProducts[current.product.id] ? 'Already saved, next' : 'Save'}>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16l-6-4-6 4V4Z" /></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg>
           </button>
         </div>
       )}

@@ -9,6 +9,7 @@ import { getProfileCompletionPct } from '../../utils/profileCompleteness.js';
 import { TEXT_SIZE_STEPS } from '../../hooks/useTextSize.js';
 import '../../settings.css';
 import EmptyState from '../../components/EmptyState.jsx';
+import MobileHeader from '../../components/MobileHeader.jsx';
 import {
   NotSignedInError,
   fetchNotificationPreferences,
@@ -86,7 +87,7 @@ function ChevronIcon() {
 // You-menu icons — same stroke system as the Settings icons (24 grid, 1.8 stroke, round caps).
 const HUB_ICONS = {
   ecosystem: <><circle cx="12" cy="13" r="3" /><circle cx="12" cy="4.5" r="1.8" /><circle cx="5" cy="18" r="1.8" /><circle cx="19" cy="18" r="1.8" /><path d="M12 10V6.3M9.5 14.6l-3 2.2M14.5 14.6l3 2.2" /></>,
-  saved: <><path d="M7 4h10v16l-5-3.5L7 20V4Z" /></>,
+  saved: <><path d="M12 19.5s-7-4.3-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.2c0 5-7 9.3-7 9.3Z" /></>,
   checkin: <><rect x="4" y="5" width="16" height="15" rx="2.5" /><path d="M8 3v4M16 3v4M4 10h16M9 14.5l2 2 4-4" /></>,
   shopper: <><circle cx="12" cy="12" r="8" /><path d="M12 7.5V12l3 2" /></>,
   startups: <><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /><path d="M18.5 17.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z" /></>,
@@ -297,12 +298,13 @@ const SHOPPER_ROW_ICONS = {
   era: <><circle cx="12" cy="12" r="8" /><path d="M12 7v5l3 2" /></>,
 };
 
-function ProfileHub({ shopperProfile, authUserId, onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
+function ProfileHub({ shopperProfile, authUserId, onOpen, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
   const avatarPath = useCommunityAvatar(authUserId);
   const [avatarFailed, setAvatarFailed] = useState(false);
   const showPhoto = avatarPath && !avatarFailed;
   return (
     <div className="ayna-fresh-profile-hub" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <MobileHeader onOpenSaved={onOpenSaved} />
       <div
         className="ayna-fresh-profile-hero"
         style={{
@@ -312,28 +314,9 @@ function ProfileHub({ shopperProfile, authUserId, onOpen, onClose, name, initial
           flex: 'none',
         }}
       >
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', letterSpacing: 0.5 }}>ayna</div>
-          <button
-            type="button" aria-label="Close profile"
-            onClick={onClose}
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 99,
-              border: '1px solid rgba(255,255,255,.28)',
-              background: 'rgba(255,249,242,.12)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              fontSize: 'calc(18px * var(--ayna-text-scale, 1))',
-              lineHeight: 1,
-            }}
-          >
-            ×
-          </button>
-        </div>
+        {/* You is a tab root: the standard header (above) replaces the old close button.
+            This empty first child keeps the hero's positional styles (div:nth-child) intact. */}
+        <div aria-hidden="true" style={{ display: 'none' }} />
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 14, marginTop: 24 }}>
           <div
             style={{

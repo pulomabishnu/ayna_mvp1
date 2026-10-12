@@ -1,4 +1,5 @@
 import React from 'react';
+import { InfoPage } from './InfoPage';
 
 const SECTIONS = [
     {
@@ -38,69 +39,31 @@ const SECTIONS = [
 
 export default function HowWeMakeMoney({ onBack }) {
     return (
-        <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '720px', margin: '0 auto' }}>
-            <button
-                type="button"
-                onClick={onBack}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#92400E', fontSize: '0.9rem', marginBottom: '1.5rem', padding: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
-            >
-                ← Back
-            </button>
-
-            <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
-                <span style={{
-                    fontSize: '0.85rem', fontWeight: '600', color: '#92400E',
-                    background: 'var(--color-secondary-fade)', padding: '0.3rem 0.8rem',
-                    borderRadius: 'var(--radius-pill)', display: 'inline-block', marginBottom: '1rem'
-                }}>
-                    Transparency
-                </span>
-                <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '1.25rem', color: 'var(--color-surface-contrast)' }}>
-                    How We Make Money
-                </h1>
-                <p style={{ fontSize: '1.15rem', color: 'var(--color-text-main)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.65, fontWeight: 500 }}>
-                    We think you deserve to know how a health platform gets paid, especially one that's telling you what to do about your own body. So here it is, plainly.
-                </p>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                {SECTIONS.map((section) => (
-                    <div key={section.eyebrow}>
-                        <h2 style={{
-                            fontSize: '0.78rem', fontWeight: '700', color: '#92400E',
-                            textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem',
-                        }}>
-                            {section.eyebrow}
-                        </h2>
-                        {section.paragraphs.map((p, i) => (
-                            <p key={i} style={{
-                                fontSize: '1rem', color: 'var(--color-text-main)', lineHeight: 1.75,
-                                marginBottom: i === section.paragraphs.length - 1 ? 0 : '1rem',
-                            }}>
-                                {p}
-                            </p>
-                        ))}
-                    </div>
-                ))}
-            </div>
-
-            <div className="card" style={{
-                marginTop: '2.5rem', padding: '1.75rem 2rem',
-                background: 'var(--color-secondary-fade)', border: '1px solid var(--color-primary)',
-            }}>
-                <h2 style={{
-                    fontSize: '0.78rem', fontWeight: '700', color: '#92400E',
-                    textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem',
-                }}>
-                    The bottom line
-                </h2>
-                <p style={{ fontSize: '1.05rem', color: 'var(--color-surface-contrast)', lineHeight: 1.75, fontWeight: 500, margin: 0 }}>
+        <InfoPage
+            eyebrow="Transparency"
+            title="How we make money"
+            lede="You deserve to know how a health platform gets paid, especially one that talks about your body. So here it is, plainly."
+            onBack={onBack}
+            width="read"
+        >
+            <div className="ay-info-card ay-info-card--pad ay-info-card--butter ay-info-summary">
+                <h2 className="ay-info__h3">The bottom line</h2>
+                <p className="ay-info__body">
                     We make money when you find the right product. We do not make money by pointing you toward the wrong one. If those two things were ever in conflict, that would be the day to stop trusting us, and we intend to never let that day come.
                 </p>
-                <p style={{ fontSize: '1.05rem', color: 'var(--color-surface-contrast)', lineHeight: 1.75, fontWeight: 500, margin: '0.75rem 0 0' }}>
+                <p className="ay-info__body">
                     Brand partnerships help support ayna, but they never decide what we recommend to you.
                 </p>
             </div>
-        </section>
+
+            {SECTIONS.map((section) => (
+                <section key={section.eyebrow} className="ay-info__section ay-info__section--prose">
+                    <h2 className="ay-info__h2 ay-info__h2--sm">{section.eyebrow}</h2>
+                    {section.paragraphs.map((p, i) => (
+                        <p key={i} className="ay-info__body">{p}</p>
+                    ))}
+                </section>
+            ))}
+        </InfoPage>
     );
 }

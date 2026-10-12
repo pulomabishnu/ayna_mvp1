@@ -3,6 +3,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
+import { InfoPage } from './InfoPage';
 
 /**
  * Brands — the partnership page.
@@ -79,7 +80,7 @@ const PARTNERS = [
     logo: '',
     url: 'https://pelvic-bra.myshopify.com/nlbs3u',
     blurb:
-      'A discreet, adjustable compression garment for pelvic heaviness, pressure, bulging, and leakage — worn during daily activity, not a corrective device.',
+      'A discreet, adjustable compression garment for pelvic heaviness, pressure, bulging, and leakage, worn during daily activity, not a corrective device.',
   },
   {
     // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
@@ -149,20 +150,15 @@ function BrandMark({ partner }) {
 
 export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem }) {
   return (
-    <section className="brands">
-      <div className="mockup-page brands__head">
-        <div className="brands__kicker">Partnerships</div>
-        <h1 className="brands__title">
-          {PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
-        </h1>
-        <p className="brands__lede">
-          {PARTNERS.length > 0
-            ? "Partner brands may receive added visibility in Browse, but partnerships never affect personalized matching or recommendations."
-            : "Something exciting is brewing — check back soon. Partner brands may receive added visibility in Browse, but partnerships never affect personalized matching or recommendations."}
-        </p>
-      </div>
-
-      <div className="mockup-page">
+    <InfoPage
+      eyebrow="Partnerships"
+      title={PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
+      lede={PARTNERS.length > 0
+        ? 'Partner brands may get added visibility in Browse. Partnerships never affect your personal matches or recommendations.'
+        : 'Check back soon. Partner brands may get added visibility in Browse. Partnerships never affect your personal matches or recommendations.'}
+      width="wide"
+    >
+      <div className="ay-info-partners">
         {PARTNERS.map((partner) => {
           const products = ALL_PRODUCTS.filter((p) => p.brand === partner.brand);
           return (
@@ -227,8 +223,8 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
           );
         })}
 
-        {PARTNERS.length > 0 && <p className="brands__more">More coming soon</p>}
+        {PARTNERS.length > 0 && <p className="ay-info-partners__more">More coming soon</p>}
       </div>
-    </section>
+    </InfoPage>
   );
 }

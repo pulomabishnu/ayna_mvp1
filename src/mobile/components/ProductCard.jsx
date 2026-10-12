@@ -6,19 +6,15 @@ import ProductImage from './ProductImage.jsx';
 import '../shop-card.css';
 import { displayName } from '../utils/displayName.js';
 import { brandOf } from '../data/brandFallback.js';
-
-function shortPrice(price) {
-  const value = String(price || '').trim();
-  if (!value) return '';
-  const amount = value.match(/^(Free|\$[\d,]+(?:\.\d+)?(?:\s*[–-]\s*\$?[\d,]+(?:\.\d+)?)?)/i);
-  return amount ? amount[1] : value.split(/[,(]| for /i)[0].trim();
-}
+import { formatPrice } from '../../utils/formatPrice.js';
+import { HEART_PATH } from '../utils/heart.js';
 
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch }) {
   const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
-  const resolvedPrice = shortPrice(price || priceDisplay);
-  const hasDisplayPrice = /[$€£]|^free\b/i.test(resolvedPrice);
+  // Same price model as the website card: short main line + optional detail line.
+  const shownPrice = formatPrice({ ...product, price: price || priceDisplay });
+  const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
   const shownBrand = brandOf(product);
   const brandRepeatsName = shownBrand && String(name || '').trim().toLowerCase() === shownBrand.toLowerCase();
   // Brand only — never fall back to the category word ("Pad") in the brand slot.
@@ -42,7 +38,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
 
   return (
     <article className={`ayna-fresh-product-card ${isList ? 'is-list' : ''} tone-${tone}`}>
-      <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}${hasDisplayPrice ? `, ${resolvedPrice}` : ''}${showMatch ? `, ${match.percent} percent match` : ''}. View product details`}>
+      <button type="button" className="ayna-fresh-product-main" onClick={onClick} aria-label={`${name}, ${shownPrice.main}${shownPrice.sub ? ` ${shownPrice.sub}` : ''}${showMatch ? `, ${match.percent} percent match` : ''}. View product details`}>
       <span className="ayna-fresh-product-image">
         <ProductImage product={product} src={resolvedImage} alt="" allowBrandLogo={isService} style={{ objectFit: 'contain' }} />
       </span>
@@ -51,12 +47,13 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         <strong>{brandRepeatsName ? name : displayName(product)}</strong>
         {isList && relevantReason && <span className="ayna-fresh-product-reason">{relevantReason.text}</span>}
         {!isList && <small className="ayna-card-brand" aria-hidden={secondaryLabel && !brandRepeatsName ? undefined : true}>{secondaryLabel && !brandRepeatsName ? secondaryLabel : '\u00a0'}</small>}
-        <span className="ayna-fresh-product-foot">{hasDisplayPrice ? <b>{resolvedPrice}</b> : <b className="is-muted">See details</b>}</span>
+        <span className="ayna-fresh-product-foot">{hasDisplayPrice ? <b>{shownPrice.main}</b> : <b className="is-muted">{shownPrice.main}</b>}</span>
+        {!isList && <small className="ayna-card-price-sub" aria-hidden={shownPrice.sub ? undefined : true}>{shownPrice.sub || '\u00a0'}</small>}
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
       </button>
       {showMatch && <button type="button" className="ayna-fresh-match-badge ayna-match-action" aria-label={`Why ${match.percent} percent match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()}><strong>{match.percent}%</strong><span>MATCH</span></button>}
-      {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={`${isSaved ? 'Unsave' : 'Save'} ${name}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}><svg viewBox="0 0 24 24" aria-hidden="true" fill={isSaved ? 'currentColor' : 'none'}><path d="M6 4h12v16l-6-4-6 4V4Z" /></svg></button>}
+      {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
       {isList && <div className="ayna-fresh-product-actions">
         <button type="button" onClick={onClick}>Details <span aria-hidden="true">→</span></button>
         {buyUrl && <a href={buyUrl} target="_blank" rel="noopener noreferrer sponsored" aria-label={`Shop ${name} on the seller's site`}>{isService ? 'Explore care' : 'Shop'} <span aria-hidden="true">↗</span></a>}

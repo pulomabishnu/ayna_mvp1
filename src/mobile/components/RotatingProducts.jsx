@@ -1,3 +1,4 @@
+import { HEART_PATH } from '../utils/heart.js';
 import { useEffect, useState } from 'react';
 
 // Welcome-page feature reel. Four "now playing"-style cards, one per thing
@@ -43,7 +44,7 @@ function AskArt() {
 
 function DiscoverArt() {
   return <div className="ay-reel-deck">
-    <span className="c1" /><span className="c2" /><span className="c3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16l-6-4-6 4V4Z" /></svg></span>
+    <span className="c1" /><span className="c2" /><span className="c3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></span>
   </div>;
 }
 

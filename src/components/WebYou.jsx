@@ -2,16 +2,18 @@ import { useMemo, useState } from 'react';
 import { ALL_PRODUCTS } from '../data/products';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { buildShopperProfile } from '../mobile/utils/shopperProfile.js';
-import { getBrandAffinity, getCategoryInsights, getSafetyAlerts } from '../mobile/utils/shopperProfileData.js';
+import { getBrandAffinity, getSafetyAlerts } from '../mobile/utils/shopperProfileData.js';
 import { getProfileCompletionPct } from '../mobile/utils/profileCompleteness.js';
 import { ROUTINE_BUCKETS, ROUTINE_BUCKET_LABELS, useRoutine } from '../mobile/hooks/useRoutine.js';
 import { fetchDataExport } from '../mobile/utils/dataExportApi.js';
 import { ShelfDonut, TrustBars } from '../mobile/components/ShopperCharts.jsx';
 import './WebYou.css';
+import '../styles/audit-qya.css';
 
-// The app's "You" tab, built for the website: profile progress, shopper
-// type card with charts, badges, routine + safety alerts, and account
-// settings. All numbers come from the same helpers the app uses.
+// The app's "You" tab, built for the website: profile progress, your shelf
+// (charts from real data), badges, routine + safety alerts, and account
+// settings. Every count on this page comes from one source: the myProducts
+// (Ecosystem) and savedProducts props.
 
 function firstName(user) {
   const m = user?.user_metadata || {};
@@ -23,13 +25,25 @@ function memberSince(iso) {
   return Number.isNaN(d.getTime()) ? '' : `Member since ${d.toLocaleString('en-US', { month: 'short', year: 'numeric' })}`;
 }
 
-const EMBLEMS = {
-  researcher: <path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3M7.5 15h9" />,
-  listener: <><path d="M4 5h12v9H8l-4 3V5Z" /><path d="M20 9v10l-3-2h-7v-1" /></>,
-  curator: <path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.8Z" />,
-  explorer: <><circle cx="12" cy="12" r="8.5" /><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" /></>,
-  original: <path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" />,
+const PRODUCT_BY_ID = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
+const CATEGORY_LABEL = (c) => String(c || '').replace(/-/g, ' ').replace(/^\w/, (m) => m.toUpperCase());
+// Routine is for things you use up (pads, supplements...). Telehealth, apps and other services are left out.
+const isConsumable = (p) => {
+  const full = PRODUCT_BY_ID.get(p?.id) || p || {};
+  return (full.type || p?.type) === 'physical' && full.category !== 'telehealth';
 };
+
+/** Category counts from the Ecosystem only, so they always match the Ecosystem number. */
+function ecosystemInsights(products) {
+  const counts = new Map();
+  products.forEach((p) => { const c = p?.category || PRODUCT_BY_ID.get(p?.id)?.category; if (c) counts.set(c, (counts.get(c) || 0) + 1); });
+  const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  const max = sorted.length ? sorted[0][1] : 0;
+  const top = sorted.slice(0, 4).map(([cat, n], i) => ({ rank: String(i + 1).padStart(2, '0'), name: CATEGORY_LABEL(cat), count: n, pct: max ? Math.round((n / max) * 100) : 0 }));
+  const allCats = [...new Set(ALL_PRODUCTS.map((p) => p?.category).filter(Boolean))];
+  const missing = allCats.filter((c) => !counts.has(c)).slice(0, 3).map(CATEGORY_LABEL);
+  return { top, missing };
+}
 
 function Badges({ savedCount, ecosystemCount, pct }) {
   const badges = [
@@ -47,6 +61,7 @@ function Badges({ savedCount, ecosystemCount, pct }) {
 }
 
 function Routine({ products }) {
+  // Only things you use up get a routine slot (services like telehealth are left out).
   const [bucket, setBucket] = useState('morning');
   const { routineMap, setProductBucket, removeFromRoutine } = useRoutine();
   const inBucket = products.filter((p) => routineMap[p.id] === bucket);
@@ -62,14 +77,18 @@ function Routine({ products }) {
 
 export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenStartups, onOpenProduct, onSignOut, onDeleteAccount, onStartQuiz, theme = 'light', onThemeChange }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
+  const consumables = useMemo(() => products.filter(isConsumable), [products]);
   const intake = quizResults?.fullHealthIntake || null;
   const pct = getProfileCompletionPct(intake);
   const shopper = buildShopperProfile(intake, products);
   const alerts = getSafetyAlerts(products, quizResults);
   const affinity = getBrandAffinity(quizResults, products);
-  const { top, low } = getCategoryInsights(products, savedProducts, ALL_PRODUCTS);
-  const savedCount = Object.keys(savedProducts || {}).length;
-  const [name, setName] = useState(firstName(user));
+  const { top, missing } = useMemo(() => ecosystemInsights(products), [products]);
+  const savedCount = Object.values(savedProducts || {}).filter(Boolean).length;
+  // Same source as the header greeting (user_metadata), read on every render so a
+  // late-arriving session (after a reload) shows the name instead of "Not set".
+  const [savedName, setName] = useState('');
+  const name = savedName || firstName(user);
   const [nameDraft, setNameDraft] = useState(null);
   const [note, setNote] = useState('');
 
@@ -117,23 +136,24 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
 
     <div className="wyou-grid">
       <div className="wyou-col">
-        {shopper ? <section className={`wyou-shopper is-${shopper.kind}`}>
+        {shopper ? <section className="wyou-shopper is-shelf">
           <header>
-            <span className="wyou-emblem" aria-hidden="true"><svg viewBox="0 0 24 24">{EMBLEMS[shopper.kind]}</svg></span>
-            <small>Your shopper type</small><h2>{shopper.title}</h2><p>{shopper.tagline}</p>
+            <small>From your answers and your Ecosystem</small><h2>At a glance</h2>
           </header>
           <div className="wyou-charts"><ShelfDonut shelf={shopper.shelf} total={shopper.total} /><TrustBars trust={shopper.trust} /></div>
           <dl>{shopper.rows.map((r) => <div key={r.key} className={`tone-${r.tone}`}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}</dl>
-        </section> : <section className="wyou-card is-shopper-empty"><h2>Your shopper type</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
+        </section> : <section className="wyou-card is-shopper-empty"><h2>At a glance</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
         <Badges savedCount={savedCount} ecosystemCount={products.length} pct={pct} />
       </div>
 
       <div className="wyou-col">
-        <nav className="wyou-links" aria-label="Your things">
-          <button type="button" className="tone-butter" onClick={onOpenEcosystem}><strong>{products.length}</strong><span>Ecosystem</span></button>
+        <nav className="wyou-links wyou-stats" aria-label="Your things">
+          <button type="button" className="tone-butter" onClick={onOpenEcosystem}><strong>{products.length}</strong><span>In your Ecosystem</span></button>
           <button type="button" className="tone-pink" onClick={onOpenSaved}><strong>{savedCount}</strong><span>Saved</span></button>
-          <button type="button" className="tone-mint" onClick={onOpenCheckin}><strong>✓</strong><span>Check-in</span></button>
-          <button type="button" className="tone-peri" onClick={onOpenStartups}><strong>★</strong><span>Startups</span></button>
+          <div className="wyou-quick">
+            <button type="button" className="wyou-btn is-ghost" onClick={onOpenCheckin}>Do a check-in</button>
+            <button type="button" className="wyou-btn is-ghost" onClick={onOpenStartups}>Meet the startups</button>
+          </div>
         </nav>
 
         <section className="wyou-card is-safety">
@@ -141,13 +161,13 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           {alerts.length ? <ul className="wyou-alerts">{alerts.map((a) => <li key={a.id} className={`is-${a.kind}`}><strong>{a.title}</strong><p>{a.body}</p>{a.product && <button type="button" onClick={() => onOpenProduct?.(a.product)}>View product</button>}</li>)}</ul> : <p className="wyou-muted">No alerts on your ecosystem.</p>}
         </section>
 
-        {products.length > 0 && <Routine products={products} />}
+        {consumables.length > 0 && <Routine products={consumables} />}
 
         {(affinity.length > 0 || top.length > 0) && <section className="wyou-card">
-          <div className="wyou-card-head"><h2>What you’re into</h2></div>
-          {top.length > 0 && <ol className="wyou-top">{top.map((t) => <li key={t.name}><b>{t.rank}</b><span>{t.name}</span><i aria-hidden="true"><em style={{ width: `${t.pct}%` }} /></i><small>{t.count}</small></li>)}</ol>}
+          <div className="wyou-card-head"><h2>What you’re into</h2>{top.length > 0 && <span>From your Ecosystem</span>}</div>
+          {top.length > 0 && <ol className="wyou-top">{top.map((t) => <li key={t.name}><b>{t.rank}</b><span>{t.name}</span><i aria-hidden="true"><em style={{ width: `${t.pct}%` }} /></i><small>{t.count} {t.count === 1 ? 'item' : 'items'}</small></li>)}</ol>}
           {affinity.length > 0 && <div className="wyou-chips">{affinity.map((a) => <span key={a.tag}>{a.label} · {a.score}%</span>)}</div>}
-          {low.length > 0 && <p className="wyou-muted">Not explored yet: {low.map((l) => l.name).join(', ')}</p>}
+          {top.length > 0 && missing.length > 0 && <p className="wyou-muted">Not in your Ecosystem yet: {missing.join(', ')}</p>}
         </section>}
 
         <section className="wyou-card is-account">

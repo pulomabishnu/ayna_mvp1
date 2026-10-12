@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { InfoPage } from './InfoPage';
 
 const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
 
@@ -79,36 +80,34 @@ export default function PhoneVerification({ userSession, onVerified, onCancel })
   };
 
   return (
-    <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '560px' }}>
-      <div className="card" style={{ padding: '1.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-          <h2 style={{ margin: 0, fontSize: '1.4rem' }}>Text Ayna</h2>
-          <button type="button" className="btn btn-outline" onClick={onCancel}>Back</button>
-        </div>
-
+    <InfoPage
+      eyebrow="By text"
+      title="Text ayna"
+      lede="Get personalized health texts from ayna anytime, without opening the app."
+      onBack={onCancel}
+      width="narrow"
+    >
+      <div className="ay-info-card ay-info-card--pad ay-info-form">
         {step === 'phone' && (
           <>
-            <p style={{ color: 'var(--color-text-muted)' }}>
-              Get personalized health texts from Ayna anytime, without opening the app. Enter your phone number to get started.
-            </p>
-            <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <span>Phone number</span>
+            <div className="ay-info-field">
+              <label htmlFor="text-ayna-phone">Phone number</label>
               <input
+                id="text-ayna-phone"
                 type="tel"
+                autoComplete="tel"
                 placeholder="(555) 555-5555"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                style={{ padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '1rem' }}
               />
-            </label>
-            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.75rem' }}>{CONSENT_TEXT}</p>
-            {error && <p style={{ color: '#b42318', fontSize: '0.85rem' }}>{error}</p>}
+            </div>
+            <p className="ay-info__small">{CONSENT_TEXT}</p>
+            {error && <div role="alert" className="ay-info-notice ay-info-notice--err">{error}</div>}
             <button
               type="button"
-              className="btn btn-primary"
+              className="ay-info-btn ay-info-btn--block"
               onClick={handleSendCode}
               disabled={sending || !phoneNumber.trim()}
-              style={{ marginTop: '0.75rem' }}
             >
               {sending ? 'Sending…' : 'Send code'}
             </button>
@@ -117,24 +116,23 @@ export default function PhoneVerification({ userSession, onVerified, onCancel })
 
         {step === 'code' && (
           <>
-            <p style={{ color: 'var(--color-text-muted)' }}>
-              We texted a code to {phoneNumber}. Enter it below.
-            </p>
-            <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <span>Verification code</span>
+            <p className="ay-info__body">We texted a code to {phoneNumber}. Enter it below.</p>
+            <div className="ay-info-field">
+              <label htmlFor="text-ayna-code">Verification code</label>
               <input
+                id="text-ayna-code"
                 type="text"
                 inputMode="numeric"
+                autoComplete="one-time-code"
                 placeholder="123456"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                style={{ padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '1rem' }}
               />
-            </label>
-            {error && <p style={{ color: '#b42318', fontSize: '0.85rem' }}>{error}</p>}
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
-              <button type="button" className="btn btn-outline" onClick={() => setStep('phone')}>Change number</button>
-              <button type="button" className="btn btn-primary" onClick={handleConfirmCode} disabled={sending || !code.trim()}>
+            </div>
+            {error && <div role="alert" className="ay-info-notice ay-info-notice--err">{error}</div>}
+            <div className="ay-info-btn-row">
+              <button type="button" className="ay-info-btn ay-info-btn--ghost" onClick={() => setStep('phone')}>Change number</button>
+              <button type="button" className="ay-info-btn" onClick={handleConfirmCode} disabled={sending || !code.trim()}>
                 {sending ? 'Verifying…' : 'Verify'}
               </button>
             </div>
@@ -143,19 +141,13 @@ export default function PhoneVerification({ userSession, onVerified, onCancel })
 
         {step === 'done' && (
           <>
-            <p style={{ color: 'var(--color-text-main)', fontWeight: 600 }}>You're all set!</p>
-            {AYNA_SMS_NUMBER && (
-              <p style={{ fontSize: '1.1rem', margin: '0.5rem 0' }}>{AYNA_SMS_NUMBER}</p>
-            )}
-            <p style={{ color: 'var(--color-text-muted)' }}>
-              Try texting: "what helps with PCOS bloating"
-            </p>
-            <button type="button" className="btn btn-primary" onClick={onCancel} style={{ marginTop: '0.75rem' }}>
-              Done
-            </button>
+            <h2 className="ay-info__h3">You're all set</h2>
+            {AYNA_SMS_NUMBER && <p className="ay-info-sms-number">{AYNA_SMS_NUMBER}</p>}
+            <p className="ay-info__body">Try texting: "what helps with PCOS bloating"</p>
+            <button type="button" className="ay-info-btn" onClick={onCancel}>Done</button>
           </>
         )}
       </div>
-    </section>
+    </InfoPage>
   );
 }

@@ -24,7 +24,12 @@ export default function LibraryCard({ article, onClick, fullWidth = false }) {
       onClick={onClick}
       aria-label={`Read ${title}`}
       style={{
-        display: 'block',
+        // Column flex, top-aligned: a plain block <button> centres its content
+        // vertically when the row stretches it, which pushed cards with
+        // shorter titles a few px lower than their neighbours.
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
         width: fullWidth ? '100%' : 158,
         flexShrink: 0,
         padding: 0,

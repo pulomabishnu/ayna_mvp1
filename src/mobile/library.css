@@ -67,3 +67,5 @@
 .ayna-mobile[data-theme='dark'] .ay-lib-state i b { background: var(--ayna-heading, #fff); }
 .ayna-mobile[data-theme='dark'] .ay-lib-topics button { background: transparent; color: var(--ayna-heading, #fff); border-color: rgba(255,255,255,.25); }
 .ayna-mobile[data-theme='dark'] .ay-lib-topics button[aria-pressed='true'] { background: var(--ayna-heading, #fff); color: #000; }
+/* Row cards line up at the top; the read-state bar sits on one shared baseline under them */
+.ay-lib-item { grid-template-rows: 1fr auto; }

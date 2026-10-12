@@ -16,20 +16,15 @@
 .wc-me { grid-template-columns: auto 1fr; align-items: center; }
 .wc-me strong { display: block; font: 700 16px/1.2 var(--ay-font-ui); } .wc-me small { color: var(--ay-ink-soft); font: 500 13px/1 var(--ay-font-ui); }
 .wc-me .wc-link { grid-column: 1 / 3; justify-self: start; }
-.wc-create { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.wc-create button { min-height: 44px; border: 2px solid var(--ay-ink); border-radius: 14px; color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); }
-.wc-create .tone-0 { background: var(--ay-pink); } .wc-create .tone-1 { background: var(--ay-butter); } .wc-create .tone-2 { background: var(--ay-mint); } .wc-create .tone-3 { background: var(--ay-peri); }
-.wc-create button:last-child { grid-column: 1 / 3; background: var(--ay-paper); }
 .wc-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
 .wc-tabs button, .wc-seg button { min-height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 14px/1 var(--ay-font-ui); }
 .wc-tabs button.is-on, .wc-seg button[aria-pressed='true'] { background: var(--ay-ink); color: var(--ay-paper); }
 .wc-seg { display: flex; flex-wrap: wrap; gap: 6px; }
 .wc-share { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink-soft); font: 600 15px/1 var(--ay-font-ui); text-align: left; box-shadow: var(--ay-shadow); }
-.wc-share > span:not(.wc-avatar) { flex: 1; } .wc-share b { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--ay-butter); border: 2px solid var(--ay-ink); color: var(--ay-ink); font-size: 18px; }
+.wc-share > span:not(.wc-avatar) { flex: 1; } .wc-share b { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--ay-ink); border: 2px solid var(--ay-ink); color: var(--ay-paper); font-size: 18px; }
 .wc-avatar { display: grid; place-items: center; flex: none; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-peri); color: var(--ay-ink); font: 800 14px/1 var(--ay-font-ui); overflow: hidden; }
 .wc-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .wc-post { display: grid; gap: 12px; padding: 18px; border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-paper); }
-.wc-post.kind-question { box-shadow: inset 6px 0 0 var(--ay-butter); } .wc-post.kind-review { box-shadow: inset 6px 0 0 var(--ay-mint); }
 .wc-post header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
 .wc-post header strong, .wc-name { display: block; padding: 0; border: 0; background: none; color: var(--ay-ink); font: 700 15px/1.2 var(--ay-font-ui); text-align: left; }
 .wc-post header small { color: var(--ay-ink-soft); font: 500 12px/1 var(--ay-font-ui); }
@@ -42,7 +37,7 @@
 .wc-post footer button { min-height: 34px; padding: 0 14px; border: 1.5px solid var(--ay-ink-faint); border-radius: 99px; background: none; color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); }
 .wc-post footer button[aria-pressed='true'] { border-color: var(--ay-ink); background: var(--ay-pink); }
 .wc-mention { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 12px; padding: 8px 12px 8px 8px; border: 2px solid var(--ay-ink); border-radius: 16px; background: var(--ay-cream); color: var(--ay-ink); text-align: left; }
-.wc-mention-photo { position: relative; width: 52px; height: 52px; border-radius: 10px; background: var(--ay-pink); overflow: hidden; }
+.wc-mention-photo { position: relative; width: 52px; height: 52px; border-radius: 10px; background: var(--ay-product-tile, #fff); box-shadow: inset 0 0 0 1.5px var(--ay-line); overflow: hidden; }
 .wc-mention strong { display: block; font: 700 14px/1.2 var(--ay-font-ui); } .wc-mention small { color: var(--ay-ink-soft); font: 500 12px/1 var(--ay-font-ui); }
 .wc-mention em { padding: 5px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); font: 700 12px/1 var(--ay-font-ui); font-style: normal; }
 .wc-h2 { margin: 12px 0 0; font-size: 22px !important; }
@@ -51,7 +46,7 @@
 .wc-comment p { margin: 0; font: 500 15px/1.5 var(--ay-font-ui); }
 .wc-reply { display: grid; gap: 10px; padding: 16px; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); }
 .wc textarea, .wc-sheet textarea, .wc-sheet input:not([type]), .wc-sheet select, .wc-card input:not([type]), .wc-picker input { width: 100%; padding: 12px 14px; border: 2px solid var(--ay-ink) !important; border-radius: 14px !important; background: var(--ay-paper) !important; color: var(--ay-ink); font: 500 15px/1.4 var(--ay-font-ui) !important; box-sizing: border-box; }
-.wc textarea, .wc-sheet textarea { min-height: 110px; resize: vertical; }
+.wc textarea, .wc-sheet textarea { min-height: 96px; resize: none; overflow: hidden; }
 .wc-btn { justify-self: start; min-height: 44px; padding: 0 20px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 700 14px/1 var(--ay-font-ui); }
 .wc-btn:disabled { opacity: .45; cursor: default; } .wc-btn.is-ghost { background: var(--ay-paper); color: var(--ay-ink); }
 .wc-more-btn { justify-self: center; }
@@ -88,8 +83,7 @@
 .wc-results small { display: block; color: var(--ay-ink-soft); font-weight: 500; }
 
 .wc-sheet-backdrop { position: fixed; inset: 0; z-index: 3000; display: grid; place-items: center; padding: 16px; background: rgba(29, 26, 43, .45); }
-.wc-sheet { --ay-ink: #1d1a2b; --ay-ink-soft: rgba(29, 26, 43, .62); --ay-ink-faint: rgba(29,26,43,.16); --ay-paper: #fffcf5; --ay-cream: #faf8f1; --ay-mint: #bdebd6; --ay-butter: #f7e78e; --ay-line: rgba(29,26,43,.1); --ay-font-ui: 'Poppins', system-ui, sans-serif; --ay-font-display: 'Bricolage Grotesque', 'Poppins', sans-serif;
-  display: grid; gap: 14px; width: min(560px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; padding: 24px; border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 6px 6px 0 var(--ay-ink); color: var(--ay-ink); font-family: var(--ay-font-ui); }
+.wc-sheet { display: grid; gap: 14px; width: min(560px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; padding: 24px; border: 2px solid var(--ay-ink); border-radius: 26px; background: var(--ay-paper); box-shadow: 6px 6px 0 var(--ay-ink); color: var(--ay-ink); font-family: var(--ay-font-ui); }
 .wc-sheet header { display: flex; align-items: center; justify-content: space-between; }
 .wc-sheet h2 { margin: 0; font: 800 26px/1 var(--ay-font-display); letter-spacing: -.035em; }
 .wc-sheet header button { width: 38px; height: 38px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); font-size: 20px; cursor: pointer; }
@@ -100,8 +94,8 @@
 .wc-sheet .wc-check { display: flex; align-items: center; gap: 8px; font: 600 14px/1 var(--ay-font-ui); }
 .wc-sheet .wc-muted { margin: 0; color: var(--ay-ink-soft); font: 500 14px/1.45 var(--ay-font-ui); }
 .wc-sheet .wc-error { margin: 0; padding: 10px 14px; border-radius: 12px; background: #faede8; color: #b4402a; font: 600 14px/1.4 var(--ay-font-ui); }
-.wc-sheet textarea, .wc-sheet input, .wc-sheet select { width: 100%; padding: 12px 14px; border: 2px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); color: var(--ay-ink); font: 500 15px/1.4 var(--ay-font-ui); box-sizing: border-box; }
-.wc-sheet textarea { min-height: 120px; resize: vertical; }
+.wc-sheet textarea, .wc-sheet input:not([type='checkbox']):not([type='file']), .wc-sheet select { width: 100%; padding: 12px 14px; border: 2px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); color: var(--ay-ink); font: 500 15px/1.4 var(--ay-font-ui); box-sizing: border-box; }
+.wc-sheet textarea { min-height: 120px; resize: none; overflow: hidden; }
 .wc-sheet .wc-picked { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; border: 2px solid var(--ay-ink); border-radius: 14px; background: var(--ay-mint); font: 600 14px/1.3 var(--ay-font-ui); }
 .wc-sheet .wc-results { display: grid; border: 2px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); overflow: hidden; }
 .wc-sheet .wc-results button { padding: 10px 14px; border: 0; border-bottom: 1px solid var(--ay-line); background: none; color: var(--ay-ink); font: 600 14px/1.3 var(--ay-font-ui); text-align: left; cursor: pointer; }
