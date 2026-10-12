@@ -17,7 +17,7 @@ const CONSENT_ITEMS = [
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
 ];
 
-export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
+export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem }) {
   useEscapeToClose(isModal, onSkip);
   const [mode, setMode] = useState('signin');
   const [firstName, setFirstName] = useState('');
@@ -625,6 +625,12 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
             {' '}and{' '}
             <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Terms of Use</a>.
           </p>
+        )}
+
+        {!isSignup && onStartEcosystem && (
+          <button type="button" className="ay-auth-new" onClick={onStartEcosystem}>
+            Don’t have an account? <b>Build your ecosystem</b>
+          </button>
         )}
 
         {isModal && onSkip && context !== 'login' && (

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
+import ProductImage from '../components/ProductImage.jsx';
 import '../auth.css';
 
 // Same three statements, same order, same required-before-signup gate as
@@ -156,7 +157,11 @@ export default function SigninScreen({
   onAuthenticated,
   onAuthBack,
   onStartEcosystem,
+  myProducts = [],
+  topAreas = [],
 }) {
+  const ecoPicks = (myProducts || []).filter(Boolean);
+  const showEcoSummary = ecoPicks.length > 0 && !authUser;
   const [mode, setMode] = useState(initialMode); // 'signup' | 'signin' | 'check-email'
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
@@ -320,8 +325,21 @@ export default function SigninScreen({
         <>
           <header className="ay-auth-head">
             <span className="ay-auth-art" aria-hidden="true"><i /><i /><i /></span>
-            <h1>{mode === 'signup' ? 'Sign up' : 'Sign in'}</h1>
+            <h1>{mode === 'signup' ? (showEcoSummary ? 'Save your Ecosystem' : 'Sign up') : 'Sign in'}</h1>
+            {mode === 'signup' && showEcoSummary && <p>Create an account to keep it.</p>}
           </header>
+
+          {mode === 'signup' && showEcoSummary && (
+            <section className="ay-auth-eco" aria-label="Your Ecosystem">
+              <div className="ay-auth-eco-thumbs" aria-hidden="true">
+                {ecoPicks.slice(0, 3).map((p, i) => <span key={p.id || i} className={`tone-${i}`}><ProductImage product={p} src={p.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /></span>)}
+              </div>
+              <div className="ay-auth-eco-copy">
+                <strong>{ecoPicks.length} {ecoPicks.length === 1 ? 'pick' : 'picks'}{topAreas.length ? ` · ${topAreas.length} ${topAreas.length === 1 ? 'area' : 'areas'}` : ''}</strong>
+                {topAreas.length > 0 && <span>{topAreas.slice(0, 3).join(', ')}</span>}
+              </div>
+            </section>
+          )}
 
           <div className="ay-auth-form">
           {mode === 'signup' && (
@@ -382,7 +400,7 @@ export default function SigninScreen({
           </div>
 
           <button type="button" className="ayna-fresh-auth-switch ay-auth-link" onClick={() => { if (mode === 'signin' && onStartEcosystem) onStartEcosystem(); else setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); }}>
-            {mode === 'signup' ? 'Already have an account? Sign in' : 'New here? Create an account'}
+            {mode === 'signup' ? 'Already have an account? Sign in' : onStartEcosystem ? <>Don’t have an account? <b>Build your Ecosystem</b></> : <>Don’t have an account? <b>Sign up</b></>}
           </button>
 
           <div className="ayna-fresh-auth-trust" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>

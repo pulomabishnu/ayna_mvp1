@@ -1915,6 +1915,7 @@ function App() {
         {showAuthModal && (
           <AuthGate
             isModal
+            onStartEcosystem={quizResults ? null : () => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setCurrentView('quiz'); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
             onBeforeOAuthRedirect={() => {
               try {
