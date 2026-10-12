@@ -786,3 +786,18 @@
 .ayna-mobile.ayna-mobile[data-theme='dark'] :is(.ay-eco-play, .ayna-home-today > button, .am-share-plus) {
   box-shadow: 0 0 16px rgba(105, 255, 193, .35) !important;
 }
+
+
+/* Library continues the same dark-mode grid and luminous edges. */
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib {
+  background-color: #050506 !important;
+  background-image: var(--ay-cyber-grid) !important;
+  background-size: 28px 28px, 28px 28px, auto, auto !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-item button > div:first-child {
+  border: 1px solid rgba(168, 181, 255, .7);
+  box-shadow: 0 0 17px rgba(168, 181, 255, .16) !important;
+}
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-item:nth-child(4n + 1) button > div:first-child { border-color: rgba(255, 120, 207, .75); }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-item:nth-child(4n + 2) button > div:first-child { border-color: rgba(105, 255, 193, .75); }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib-item:nth-child(4n + 3) button > div:first-child { border-color: rgba(245, 255, 104, .75); }
