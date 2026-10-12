@@ -634,14 +634,7 @@
   box-shadow: 0 0 18px rgba(245, 255, 104, .25);
 }
 
-/* Light quiz follows Light or the device's light appearance. */
-.ayna-mobile:not([data-theme='dark']) .ayna-play-intake,
-.ayna-mobile:not([data-theme='dark']) .ayna-play-intake:is(.ip-tone--peri, .ip-tone--butter, .ip-tone--pink, .ip-tone--mint, .ip-tone--calm) {
-  --ip-bg: var(--ay-cream);
-  background: var(--ay-cream);
-  color: var(--ay-ink);
-}
-.ayna-mobile:not([data-theme='dark']) .ayna-play-intake .ip-art { opacity: .12 !important; }
+/* Light quiz retains each scene's original color and artwork. */
 .ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-play-intake .ip-answer input:not(.ip-note),
 .ayna-mobile.ayna-mobile:not([data-theme='dark']) .ayna-play-intake .ip-answer textarea:not(.ip-note) {
   color: var(--ay-ink) !important;
