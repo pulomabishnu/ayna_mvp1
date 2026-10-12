@@ -93,3 +93,11 @@
 @media (prefers-reduced-motion: reduce) { .whc-track { transition: none; } .whc * { animation: none !important; } }
 .ayna-landing-hero-photo.whc { min-height: 520px; max-height: none !important; }
 @media (max-width: 760px) { .ayna-landing-hero-photo.whc { min-height: 480px; } }
+
+/* Center every slide */
+.whc-slide { align-items: center; text-align: center; }
+.whc-tiles, .whc-fact, .whc-posts { margin-left: auto; margin-right: auto; }
+.whc-tiles li { align-items: center; }
+.whc-split { width: auto; justify-content: center; text-align: left; }
+.whc-controls { justify-content: center; }
+.whc-dots { margin-right: 8px; }

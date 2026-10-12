@@ -5,7 +5,7 @@ import './WebHeroCarousel.css';
 // Website welcome carousel: us, what ayna does, the app, today's fact and
 // what's new. Swipe, arrows, dots or keyboard. Pauses on hover.
 
-const DURATION = 5000;
+const DURATION = 3500;
 
 function TeamSlide() {
   return <figure className="whc-team">
