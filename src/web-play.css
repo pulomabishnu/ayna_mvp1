@@ -482,3 +482,54 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .ay-web-next-read small { color: var(--ay-ink-soft) !important; font: 700 12px/1 var(--ay-font-ui) !important; }
 .app-container .ay-web-next-read strong { grid-row: 2; font: 800 20px/1.15 var(--ay-font-display); letter-spacing: -.02em; }
 .app-container .ay-web-next-read span { grid-row: 1 / 3; grid-column: 2; font-size: 24px; }
+
+/* Swipe to discover banner (Shop) */
+.app-container .ay-web-discover { display: flex; align-items: center; gap: 18px; width: 100%; margin: 0 0 24px; padding: 16px 20px; border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-peri); color: var(--ay-ink); text-align: left; cursor: pointer; box-shadow: var(--ay-shadow); transition: transform .15s var(--ay-pop), box-shadow .15s; }
+.app-container .ay-web-discover:hover { transform: translate(-2px, -2px); box-shadow: var(--ay-shadow-lg); }
+.app-container .ay-web-discover__cards { position: relative; width: 44px; height: 48px; flex: none; }
+.app-container .ay-web-discover__cards i { position: absolute; inset: 0; border: 2px solid var(--ay-ink); border-radius: 10px; background: var(--ay-paper); }
+.app-container .ay-web-discover__cards i:first-child { rotate: -12deg; background: var(--ay-butter); }
+.app-container .ay-web-discover__cards i:last-child { rotate: 6deg; }
+.app-container .ay-web-discover__copy { display: grid; gap: 4px; flex: 1; }
+.app-container .ay-web-discover__copy strong { font: 800 20px/1 var(--ay-font-display); letter-spacing: -.02em; }
+.app-container .ay-web-discover__copy small { color: var(--ay-ink-soft); font: 500 14px/1.3 var(--ay-font-ui); }
+.app-container .ay-web-discover__go { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ay-ink); color: var(--ay-paper); font-size: 18px; }
+
+/* ---------- Product page: app features ---------- */
+.app-container .pdp-share { position: absolute; top: 20px; right: 20px; z-index: 2; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .pdp-share svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .pdp-viewswitch { padding-right: 120px; }
+.app-container .pdp-why-btn { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .pdp-why-btn:hover { box-shadow: var(--ay-shadow); }
+.app-container .pdp-trust { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.app-container .pdp-trust li { padding: 6px 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-mint); color: var(--ay-ink); font: 600 12px/1 var(--ay-font-ui); }
+.app-container .pdp-tabs button.is-active:nth-child(4n+1) { background: var(--ay-ink) !important; }
+.app-container .pdp-tabpanel:has(.pdp-tabs button:nth-child(2).is-active) .pdp-summary-card { background: rgba(189, 235, 214, .35) !important; }
+.app-container .pdp-tabpanel:has(.pdp-tabs button:nth-child(3).is-active) .pdp-summary-card { background: rgba(185, 194, 244, .3) !important; }
+.app-container .pdp-tabpanel:has(.pdp-tabs button:nth-child(4).is-active) .pdp-summary-card { background: rgba(247, 186, 221, .3) !important; }
+.app-container .pdp-tabpanel:has(.pdp-tabs button:nth-child(1).is-active) .pdp-summary-card { background: rgba(247, 231, 142, .35) !important; }
+
+.ay-why-backdrop { position: fixed; inset: 0; z-index: 3000; display: flex; justify-content: flex-end; background: rgba(29, 26, 43, .45); }
+.ay-why { width: min(480px, 100%); height: 100%; overflow-y: auto; padding: 28px; border-left: 2px solid #1d1a2b; background: #fffcf5; color: #1d1a2b; font-family: 'Poppins', system-ui, sans-serif; animation: ay-why-in .25s ease-out both; }
+@keyframes ay-why-in { from { transform: translateX(40px); opacity: 0; } }
+.ay-why header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.ay-why h2 { margin: 0; font: 800 32px/1 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.045em; }
+.ay-why header button { width: 40px; height: 40px; border: 2px solid #1d1a2b; border-radius: 50%; background: #fffcf5; font-size: 22px; cursor: pointer; }
+.ay-why section { margin-top: 22px; }
+.ay-why h3 { margin: 0 0 10px; font: 700 15px/1.2 'Poppins', sans-serif; }
+.ay-why p { margin: 0 0 8px; font: 500 14px/1.55 'Poppins', sans-serif; }
+.ay-why-hero { display: flex; align-items: center; gap: 18px; padding: 18px; border: 2px solid #1d1a2b; border-radius: 22px; background: #bdebd6; box-shadow: 3px 3px 0 #1d1a2b; }
+.ay-why-hero.is-good { background: #f7e78e; } .ay-why-hero.is-partial { background: #f7badd; }
+.ay-why-hero strong { font: 800 22px/1 'Bricolage Grotesque', 'Poppins', sans-serif; }
+.ay-why-ring { display: grid; place-items: center; width: 84px; height: 84px; flex: none; border-radius: 50%; background: conic-gradient(#1d1a2b var(--a), #fffcf5 0); }
+.ay-why-ring span { display: grid; place-items: center; width: 62px; height: 62px; border-radius: 50%; background: #fffcf5; font: 800 22px/1 'Bricolage Grotesque', 'Poppins', sans-serif; }
+.ay-why-ring small { font-size: 12px; }
+.ay-why-reasons { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ay-why-reasons li { padding: 12px 14px; border: 2px solid #1d1a2b; border-radius: 16px; }
+.ay-why-reasons span { display: inline-block; margin-bottom: 6px; padding: 3px 8px; border-radius: 99px; background: #b9c2f4; font: 700 11px/1 'Poppins', sans-serif; }
+.ay-why-reasons p { margin: 0; }
+.ay-why-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ay-why-chips li { padding: 6px 12px; border: 1.5px dashed #1d1a2b; border-radius: 99px; font: 600 13px/1.2 'Poppins', sans-serif; }
+.ay-why-cautions { padding: 14px; border: 2px solid #1d1a2b; border-radius: 16px; background: #faede8; }
+.ay-why-cta { margin-top: 20px; min-height: 48px; padding: 0 22px; border: 2px solid #1d1a2b; border-radius: 99px; background: #1d1a2b; color: #fffcf5; font: 700 15px/1 'Poppins', sans-serif; cursor: pointer; }
+.ay-why-fine { margin-top: 24px !important; color: rgba(29, 26, 43, .62); font-size: 12px !important; }

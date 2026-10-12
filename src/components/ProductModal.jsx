@@ -9,6 +9,7 @@ import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
+import WhyMatchPanel from './WhyMatchPanel';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
@@ -484,6 +485,23 @@ export default function ProductModal({
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState('summary');
+  // From the app: "Why this match" panel, share link and quick trust checks.
+  const [showWhy, setShowWhy] = useState(false);
+  const [shareNote, setShareNote] = useState('');
+  const handleShare = async () => {
+    const url = `${window.location.origin}/product/${encodeURIComponent(product?.id || '')}`;
+    try {
+      if (navigator.share) { await navigator.share({ title: product?.name, url }); return; }
+      await navigator.clipboard.writeText(url);
+      setShareNote('Link copied');
+    } catch { setShareNote(''); return; }
+    window.setTimeout(() => setShareNote(''), 1800);
+  };
+  const trustChecks = [
+    String(product?.safety?.recalls || '') && !String(product?.safety?.recalls || '').includes('⚠️') ? 'No recalls on file' : null,
+    String(product?.privacy?.sellsData || '').includes('❌') ? 'Doesn’t sell your data' : null,
+    product?.clinicianOpinionSource === 'independent' && String(product?.clinicianAttribution || '').trim() ? 'Clinician reviewed' : null,
+  ].filter(Boolean);
   const [reviewInput, setReviewInput] = useState('');
   const [hoverRating, setHoverRating] = useState(0);
   const [resolvedModalImage, setResolvedModalImage] = useState('');
@@ -882,6 +900,11 @@ export default function ProductModal({
             ← Back
           </button>
         )}
+        <button type="button" className="pdp-share" onClick={handleShare} aria-label={`Share ${product?.name || 'this product'}`}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
+          {shareNote || 'Share'}
+        </button>
+        {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} />}
 
         {/* Which of the mockup's two product layouts to show (1f / 1g). */}
         <div className="pdp-viewswitch" style={{ paddingTop: '1.5rem' }}>
@@ -944,10 +967,10 @@ export default function ProductModal({
                   <span className="pdp-head__price">{product.price || product.stage}</span>
                 )}
                 {matchPercent != null ? (
-                  <span className="pdp-head__match pdp-head__match--gauge">
+                  <button type="button" className="pdp-head__match pdp-head__match--gauge pdp-why-btn" onClick={() => setShowWhy(true)} aria-label={`${matchPercent} percent match. See why`}>
                     <MatchGauge percent={matchPercent} size={28} theme="light" />
-                    match
-                  </span>
+                    match · why?
+                  </button>
                 ) : isInEcosystem ? (
                   <span className="pdp-head__match">In your ecosystem</span>
                 ) : headMatchLabel ? (
@@ -955,6 +978,7 @@ export default function ProductModal({
                 ) : null}
               </div>
 
+              {trustChecks.length > 0 && <ul className="pdp-trust">{trustChecks.map((t) => <li key={t}>✓ {t}</li>)}</ul>}
               {safetyAlert && <SafetyAlert text={safetyAlert} />}
 
               {actionButtons}

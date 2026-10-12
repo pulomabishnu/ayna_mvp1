@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import WebDiscoverDeck from './WebDiscoverDeck';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
@@ -404,6 +405,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // visitor, regardless of any of those other signals somehow being truthy.
     const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (Boolean(recommendedProductIds?.length) || hasQuizFrustrations || hasHealthImport));
     const [showFilters, setShowFilters] = useState(false);
+    const [showDeck, setShowDeck] = useState(false);
     const [priceFilter, setPriceFilter] = useState('all');
     const [ratingFilter, setRatingFilter] = useState('all');
     const [eligibilityFilter, setEligibilityFilter] = useState('all');
@@ -1422,6 +1424,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </>
             )}
 
+            {/* Swipe to discover (from the app): one product at a time, save or skip. */}
+            {gridItems.length > 0 && (
+                <button type="button" className="ay-web-discover" onClick={() => setShowDeck(true)}>
+                    <span className="ay-web-discover__cards" aria-hidden="true"><i /><i /></span>
+                    <span className="ay-web-discover__copy"><strong>Swipe to discover</strong><small>One product at a time. Save what you like.</small></span>
+                    <span className="ay-web-discover__go" aria-hidden="true">→</span>
+                </button>
+            )}
+            {showDeck && (
+                <WebDiscoverDeck
+                    products={gridItems}
+                    quizResults={user ? quizResults : null}
+                    savedProducts={savedProducts}
+                    onToggleSaved={onToggleSaved}
+                    onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }}
+                    onClose={() => setShowDeck(false)}
+                />
+            )}
             {/* Product Grid */}
             {(!searchSubmitted || !aiLoading) && (
             <>
