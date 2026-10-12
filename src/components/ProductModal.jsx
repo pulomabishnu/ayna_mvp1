@@ -302,10 +302,11 @@ function firstSentence(text, max = 140) {
   return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
 
+const TAG_ACRONYMS = { pcos: 'PCOS', ibs: 'IBS', uti: 'UTI', ivf: 'IVF', pms: 'PMS', pmdd: 'PMDD', hrt: 'HRT', iud: 'IUD', bv: 'BV' };
+// Same wording as the app: sentence case, health acronyms kept.
 function humanizeTag(tag) {
-  return String(tag || '')
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  const text = String(tag || '').replace(/[-_]/g, ' ').toLowerCase();
+  return text.split(' ').map((word, i) => TAG_ACRONYMS[word] || (i === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word)).join(' ');
 }
 
 /**
@@ -747,7 +748,6 @@ export default function ProductModal({
 
   if (!product) return null;
 
-  const ecosystemBtnLabel = isInEcosystem ? 'In ecosystem' : 'Add to ecosystem';
   const wishlistBtnLabel = isSaved ? 'Wishlisted' : 'Wishlist';
 
   const actionButtons = (
@@ -765,34 +765,36 @@ export default function ProductModal({
               destination: buyUrl,
             })}
           >
-            Buy Now
+            Buy now
           </a>
         ) : (
           <button type="button" className="pdp-btn pdp-btn--navy pdp-btn--buy" disabled>
-            Buy Now
+            Buy now
+          </button>
+        )}
+        {onAddToEcosystem && (
+          <button
+            type="button"
+            className={`pdp-btn pdp-actions__ecosystem${isInEcosystem ? ' is-on' : ''}`}
+            aria-pressed={isInEcosystem}
+            onClick={() => onAddToEcosystem(product)}
+          >
+            {isInEcosystem ? '✓ In ecosystem' : 'Add to ecosystem'}
           </button>
         )}
         {onToggleSaved && (
           <button
             type="button"
-            className={`pdp-btn ${isSaved ? 'pdp-btn--outline-on' : 'pdp-btn--outline'}`}
+            className={`pdp-actions__heart${isSaved ? ' is-on' : ''}`}
             aria-pressed={isSaved}
+            aria-label={wishlistBtnLabel}
+            title={wishlistBtnLabel}
             onClick={() => onToggleSaved(product)}
           >
-            {wishlistBtnLabel}
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" /></svg>
           </button>
         )}
       </div>
-      {onAddToEcosystem && (
-        <button
-          type="button"
-          className="pdp-actions__ecosystem"
-          aria-pressed={isInEcosystem}
-          onClick={() => onAddToEcosystem(product)}
-        >
-          {ecosystemBtnLabel}
-        </button>
-      )}
       {isPartnerBrandItem(product) && (
         <span className="pdp-head__badge" title="ayna has a partnership with this brand. It does not affect your recommendation.">
           ayna Partner
@@ -899,35 +901,37 @@ export default function ProductModal({
         boxShadow: 'var(--shadow-lg)', position: 'relative'
       }}>
 
-        {onBack && (
-          <button type="button" className="pdp-back" onClick={onBack}>
-            ← Back
-          </button>
-        )}
-        <button type="button" className="pdp-share" onClick={handleShare} aria-label={`Share ${product?.name || 'this product'}`}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
-          {shareNote || 'Share'}
-        </button>
         {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} />}
 
-        {/* Which of the mockup's two product layouts to show (1f / 1g). */}
-        <div className="pdp-viewswitch" style={{ paddingTop: '1.5rem' }}>
-          <div className="pdp-viewswitch__group" role="group" aria-label="Product detail layout">
-            <button
-              type="button"
-              className={detailView === 'tabs' ? 'is-active' : undefined}
-              aria-pressed={detailView === 'tabs'}
-              onClick={() => chooseDetailView('tabs')}
-            >
-              Summary
+        {/* One aligned row: back on the left; layout switch (1f / 1g) and share on the right. */}
+        <div className="pdp-topbar">
+          {onBack ? (
+            <button type="button" className="pdp-back" onClick={onBack}>
+              ← Back
             </button>
-            <button
-              type="button"
-              className={detailView === 'rail' ? 'is-active' : undefined}
-              aria-pressed={detailView === 'rail'}
-              onClick={() => chooseDetailView('rail')}
-            >
-              Evidence
+          ) : <span />}
+          <div className="pdp-topbar__right">
+            <div className="pdp-viewswitch__group" role="group" aria-label="Product detail layout">
+              <button
+                type="button"
+                className={detailView === 'tabs' ? 'is-active' : undefined}
+                aria-pressed={detailView === 'tabs'}
+                onClick={() => chooseDetailView('tabs')}
+              >
+                Summary
+              </button>
+              <button
+                type="button"
+                className={detailView === 'rail' ? 'is-active' : undefined}
+                aria-pressed={detailView === 'rail'}
+                onClick={() => chooseDetailView('rail')}
+              >
+                Evidence
+              </button>
+            </div>
+            <button type="button" className="pdp-share" onClick={handleShare} aria-label={`Share ${product?.name || 'this product'}`}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
+              {shareNote || 'Share'}
             </button>
           </div>
         </div>
@@ -981,6 +985,10 @@ export default function ProductModal({
                   <span className="pdp-head__match">{headMatchLabel}</span>
                 ) : null}
               </div>
+
+              {Array.isArray(product.tags) && product.tags.length > 0 && (
+                <div className="pdp-tags">{[...new Set(product.tags.map(humanizeTag))].slice(0, 4).map((t) => <span key={t}>{t}</span>)}</div>
+              )}
 
               {trustChecks.length > 0 && <ul className="pdp-trust">{trustChecks.map((t) => <li key={t}>✓ {t}</li>)}</ul>}
               {safetyAlert && <SafetyAlert text={safetyAlert} />}

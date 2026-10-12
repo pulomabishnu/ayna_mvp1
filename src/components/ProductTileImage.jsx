@@ -34,9 +34,9 @@ export function ProductImageFallback({ compact = false, style, className }) {
       <span
         aria-hidden="true"
         style={{
-          fontFamily: "'Playfair Display', serif",
-          fontStyle: 'italic',
-          fontWeight: 400,
+          fontFamily: "'Bricolage Grotesque', 'Poppins', sans-serif",
+          fontWeight: 800,
+          letterSpacing: '-0.06em',
           fontSize: compact ? '0.95rem' : '1.6rem',
           color: 'var(--color-primary)',
           opacity: 0.16,

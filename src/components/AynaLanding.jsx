@@ -267,23 +267,10 @@ function ShopGrid({ items, onOpenProduct }) {
           onClick={() => onOpenProduct?.(product)}
         >
           <ProductTile product={product} badge={badge} />
-          <div style={{
-            font: "500 9.5px 'DM Mono', monospace",
-            letterSpacing: '0.1em',
-            color: 'var(--color-primary)',
-            marginTop: '12px',
-          }}>
-            {label}
-          </div>
-          <div style={{
-            font: "400 16px/1.3 'Playfair Display', serif",
-            marginTop: '4px',
-            color: '#171429',
-          }}>
-            {product.name}
-          </div>
-          <div style={{ fontSize: '12.5px', color: '#6f6880', marginTop: '3px' }}>
-            {product.price}
+          <div className="ay-card-text">
+            {label && <span className="ay-card-meta">{label}</span>}
+            <strong className="ay-card-name">{product.name}</strong>
+            {product.price && <span className="ay-card-price">{product.price}</span>}
           </div>
         </button>
       ))}
@@ -489,13 +476,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
           </div>
 
           <button type="button" className="ayna-landing-ecocard" onClick={onViewEcosystem}>
-            <div style={{
-              font: "500 10px 'DM Mono', monospace",
-              letterSpacing: '0.1em',
-              color: 'rgba(244,240,250,0.6)',
-            }}>
-              YOUR ECOSYSTEM
-            </div>
+            <div className="ayna-landing-ecocard__label">Your ecosystem</div>
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: '12px' }}>
               {areas.length === 0 ? (
                 <div className="ayna-landing-ecocard__empty">Start here</div>
@@ -651,10 +632,10 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
                   onClick={() => onOpenProduct?.(product)}
                 >
                   <ProductTile product={product} aspectRatio={1.1} badge={badge} />
-                  <div style={{ font: "400 15px/1.3 'Playfair Display', serif", marginTop: '10px', color: '#171429' }}>
-                    {product.name}
+                  <div className="ay-card-text">
+                    <strong className="ay-card-name">{product.name}</strong>
+                    {product.price && <span className="ay-card-price">{product.price}</span>}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#6f6880', marginTop: '3px' }}>{product.price}</div>
                 </button>
               );
             })}

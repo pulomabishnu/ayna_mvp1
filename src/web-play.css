@@ -287,7 +287,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .ay-web-lib-head > * { margin-left: 0 !important; margin-right: 0 !important; }
 
 /* ---------- Product page ---------- */
-.app-container .mockup-page:has(> div > .pdp-back) > div { border: 2px solid var(--ay-ink); border-radius: 28px !important; background: var(--ay-paper) !important; box-shadow: var(--ay-shadow-lg) !important; }
+.app-container .mockup-page:has(> div > .pdp-topbar) > div { border: 2px solid var(--ay-ink); border-radius: 28px !important; background: var(--ay-paper) !important; box-shadow: var(--ay-shadow-lg) !important; }
 .app-container .pdp-back { position: absolute; top: 20px; left: 20px; z-index: 2; min-height: 40px; padding: 0 16px !important; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important; }
 .app-container .pdp-viewswitch__group { padding: 3px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); gap: 0 !important; }
 .app-container .pdp-viewswitch__group button { min-height: 34px; padding: 0 16px !important; border: 0 !important; border-radius: 99px !important; background: transparent !important; color: var(--ay-ink) !important; font: 700 13px/1 var(--ay-font-ui) !important; }
@@ -425,7 +425,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
   .app-container .mockup-landing :is(.ayna-landing-sub, .ayna-landing-searchbar) { max-width: 100% !important; width: 100% !important; }
   .app-container .mockup-landing .ayna-landing-hero-photo { border-left: 0; border-top: 2px solid var(--ay-ink); }
   .app-container .mockup-landing .ayna-landing-headline { font-size: clamp(48px, 14vw, 64px) !important; }
-  .app-container .mockup-page:has(> div > .pdp-back) > div { border-radius: 24px !important; box-shadow: var(--ay-shadow) !important; }
+  .app-container .mockup-page:has(> div > .pdp-topbar) > div { border-radius: 24px !important; box-shadow: var(--ay-shadow) !important; }
   .app-container .ay-web-lib-article { padding: 24px 16px !important; }
   .app-container .brand-partner { padding: 16px !important; }
 }
@@ -666,3 +666,168 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .pdp-tabs { flex-wrap: wrap !important; overflow: visible; }
 .app-container :is(.pdp-panel-head, .pdp-panel-head ~ .pdp-summary-card) { box-sizing: border-box; width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; }
 .app-container .pdp-community-actions__grid { grid-template-columns: 1fr 1fr !important; }
+
+/* ==========================================================================
+   Product page layout. One spacing scale (8 · 16 · 24 · 32 · 48), one grid:
+   image left (sticky), details right. Proximity groups: identity
+   (category, name, price), fit (tags, trust), actions, evidence.
+   ========================================================================== */
+.app-container .pdp-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 32px 0; }
+.app-container .pdp-topbar__right { display: flex; align-items: center; gap: 8px; }
+.app-container .pdp-topbar :is(.pdp-back, .pdp-share) { position: static !important; display: inline-flex; align-items: center; gap: 8px; height: 40px; min-height: 40px; margin: 0 !important; padding: 0 16px !important; }
+.app-container .pdp-topbar .pdp-viewswitch__group { display: inline-flex; height: 40px; box-sizing: border-box; align-items: center; }
+.app-container .pdp-topbar .pdp-viewswitch__group button { min-height: 30px; height: 30px; }
+.app-container .pdp-viewswitch { display: none !important; }
+
+.app-container .pdp-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; gap: 48px !important; align-items: start !important; padding: 32px 32px 48px !important; }
+.app-container .pdp-head > div:first-child { position: sticky; top: 96px; }
+.app-container .pdp-head__tile { width: 100%; max-width: none !important; }
+.app-container .pdp-head__detail { display: flex !important; flex-direction: column; align-items: stretch; gap: 0; min-width: 0; }
+.app-container .pdp-head__detail > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+.app-container .pdp-head__eyebrow { align-self: flex-start; padding: 6px 12px !important; font: 700 12px/1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
+.app-container .pdp-head__eyebrow::first-letter { text-transform: uppercase; }
+.app-container .pdp-head__name { margin-top: 16px !important; line-height: 1.02 !important; letter-spacing: -.035em !important; text-wrap: balance; }
+.app-container .pdp-head__pricerow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; margin-top: 16px !important; }
+.app-container .pdp-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px !important; }
+.app-container .pdp-tags span { padding: 8px 12px; border-radius: 99px; background: var(--ay-cream); border: 1.5px solid var(--ay-line, rgba(29, 26, 43, .14)); color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); }
+.app-container .pdp-trust { margin-top: 8px !important; gap: 8px; }
+.app-container .pdp-tags + .pdp-trust { margin-top: 8px !important; }
+.app-container .pdp-head__pricerow + .pdp-trust { margin-top: 24px !important; }
+
+.app-container .pdp-actions { display: flex; flex-direction: column; align-items: stretch; gap: 16px; margin-top: 32px !important; padding-top: 32px; border-top: 1.5px solid var(--ay-line, rgba(29, 26, 43, .14)); }
+.app-container .pdp-actions__primary { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 48px; gap: 8px !important; width: 100%; }
+.app-container .pdp-actions__primary .pdp-btn { min-width: 0 !important; height: 48px; padding: 0 16px !important; text-decoration: none !important; }
+.app-container .pdp-actions__primary .pdp-actions__ecosystem { margin: 0 !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; text-decoration: none !important; }
+.app-container .pdp-actions__primary .pdp-actions__ecosystem.is-on { background: var(--ay-mint) !important; }
+.app-container .pdp-actions__heart { display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); color: var(--ay-ink); cursor: pointer; transition: transform .15s, box-shadow .15s; }
+.app-container .pdp-actions__heart svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.app-container .pdp-actions__heart.is-on { background: var(--ay-pink); }
+.app-container .pdp-actions__heart.is-on svg { fill: var(--ay-ink); }
+.app-container .pdp-actions__heart:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ay-ink); }
+.app-container .pdp-actions > .pdp-head__badge { align-self: flex-start; }
+
+.app-container .pdp-tabpanel { margin-top: 48px !important; padding-top: 0 !important; border-top: 0 !important; }
+.app-container .pdp-tabs { padding: 0 0 8px !important; margin: 0 !important; }
+.app-container .pdp-panel-head { margin-top: 16px !important; }
+.app-container .pdp-summary-card { padding: 24px !important; }
+.app-container .pdp-summary-card__body { margin: 0 !important; }
+.app-container .pdp-summary-card__foot { margin-top: 24px !important; padding-top: 16px !important; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.app-container .pdp-community-actions { margin-top: 32px !important; padding: 24px !important; gap: 16px !important; }
+
+@media (max-width: 860px) {
+  .app-container .pdp-topbar { padding: 16px 16px 0; }
+  .app-container .pdp-head { grid-template-columns: minmax(0, 1fr) !important; gap: 24px !important; padding: 16px 16px 32px !important; }
+  .app-container .pdp-head > div:first-child { position: static; }
+  .app-container .pdp-head__tile { max-width: 100% !important; aspect-ratio: 4 / 3; }
+  .app-container .pdp-actions { margin-top: 24px !important; padding-top: 24px; }
+  .app-container .pdp-tabpanel { margin-top: 32px !important; }
+  .app-container .pdp-summary-card { padding: 16px !important; }
+  .app-container .pdp-community-actions { padding: 16px !important; }
+}
+
+/* ==========================================================================
+   Home hero: one column of copy on the 8px scale, readable letter-spacing,
+   search sized to the copy width.
+   ========================================================================== */
+.app-container .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero-col { display: flex !important; flex-direction: column; justify-content: center; align-items: flex-start; gap: 0 !important; max-width: 640px !important; padding-top: 64px !important; padding-bottom: 64px !important; }
+.app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-headline { margin: 0 !important; font-size: clamp(56px, 6.4vw, 96px) !important; line-height: .92 !important; letter-spacing: -.035em !important; word-spacing: .04em; }
+.app-container .mockup-landing .ayna-landing-headline span { -webkit-text-stroke: 2.5px var(--ay-ink) !important; }
+.app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-sub { margin-bottom: 0 !important; margin-top: 24px !important; max-width: 30em !important; font: 500 18px/1.5 var(--ay-font-ui) !important; }
+.app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-searchbar { margin-bottom: 0 !important; width: 100% !important; max-width: 520px !important; height: 56px; box-sizing: border-box; margin-top: 32px !important; padding: 4px 4px 4px 20px !important; box-shadow: 4px 4px 0 var(--ay-ink) !important; }
+.app-container .mockup-landing .ayna-landing-searchbar input { height: 100%; font: 500 16px/1 var(--ay-font-ui) !important; }
+.app-container .mockup-landing .ayna-landing-searchbar button { height: 44px; min-height: 44px; padding: 0 20px !important; }
+.app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-chips { margin-bottom: 0 !important; margin-top: 16px !important; max-width: 520px; gap: 8px !important; }
+.app-container .mockup-landing .ayna-landing-chips button { min-height: 36px; padding: 0 14px !important; font: 600 14px/1 var(--ay-font-ui) !important; }
+@media (max-width: 760px) {
+  .app-container .mockup-landing:not(.mockup-landing--returning) .ayna-landing-hero-col { padding: 40px 16px !important; }
+  .app-container .mockup-landing .ayna-landing-headline { font-size: clamp(44px, 13vw, 60px) !important; }
+  .app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-sub { margin-top: 16px !important; font-size: 16px !important; }
+  .app-container .mockup-landing .ayna-landing-hero-col .ayna-landing-searchbar { margin-top: 24px !important; height: 52px; }
+}
+
+.app-container .pdp-head__eyebrow { text-transform: lowercase !important; }
+.app-container .pdp-tabs { flex-wrap: nowrap !important; overflow-x: auto !important; margin: 0 -32px 0 0 !important; padding: 4px 32px 8px 2px !important; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+@media (max-width: 860px) { .app-container .pdp-tabs { margin-right: -16px !important; padding-right: 16px !important; } }
+.app-container .pdp-panel-head strong { white-space: nowrap; }
+.app-container .pdp-panel-head small { white-space: nowrap; }
+.app-container .pdp-back { white-space: nowrap; }
+@media (max-width: 860px) {
+  .app-container .pdp-topbar__right { gap: 8px; }
+  .app-container .pdp-share { width: 40px; padding: 0 !important; justify-content: center; font-size: 0 !important; }
+  .app-container .pdp-share svg { width: 18px; height: 18px; flex: none; min-width: 18px; }
+  .app-container .pdp-topbar .pdp-viewswitch__group button { padding: 0 12px !important; }
+  .app-container .pdp-actions__primary { grid-template-columns: minmax(0, 1fr) 48px; }
+  .app-container .pdp-actions__primary .pdp-btn--buy { grid-column: 1; grid-row: 1; }
+  .app-container .pdp-actions__primary .pdp-actions__heart { grid-column: 2; grid-row: 1; }
+  .app-container .pdp-actions__primary .pdp-actions__ecosystem { grid-column: 1 / -1; grid-row: 2; }
+  .app-container .pdp-panel-head { padding: 12px !important; gap: 10px; }
+  .app-container .pdp-panel-head strong { font-size: 18px; }
+}
+@media (max-width: 860px) {
+  .app-container .pdp-topbar { padding: 16px 12px 0; gap: 8px; }
+  .app-container .pdp-topbar .pdp-back { padding: 0 12px !important; }
+  .app-container .pdp-topbar .pdp-viewswitch__group button { padding: 0 10px !important; font-size: 12px !important; }
+}
+
+/* ==========================================================================
+   Site-wide layout pass: one content edge for every page (matches the nav),
+   one card text style, aligned control rows.
+   ========================================================================== */
+@media (min-width: 761px) {
+  .app-container main .container { max-width: 1180px; padding-left: var(--mockup-gutter, 56px) !important; padding-right: var(--mockup-gutter, 56px) !important; }
+}
+@media (max-width: 760px) {
+  .app-container main .container { padding-left: 16px !important; padding-right: 16px !important; }
+}
+
+/* Product card text: left aligned, category · name · price, 4px rhythm */
+.app-container .ay-card-text { display: grid; gap: 4px; margin-top: 12px; padding: 0 4px 4px; text-align: left; }
+.app-container .ay-card-meta { color: var(--ay-ink-soft); font: 600 12px/1.2 var(--ay-font-ui); }
+.app-container .ay-card-name { color: var(--ay-ink); font: 700 15px/1.25 var(--ay-font-ui); letter-spacing: -.01em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .ay-card-price { margin-top: 4px; color: var(--ay-ink); font: 700 14px/1.3 var(--ay-font-ui); }
+.app-container .ayna-landing-shop-card { text-align: left !important; }
+.app-container .ayna-discover-card__body { justify-items: start !important; text-align: left !important; padding: 12px 4px 4px !important; }
+.app-container .ayna-discover-card__name { min-height: 0 !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .ayna-discover-card__price { margin-top: 4px !important; line-height: 1.3 !important; }
+
+/* Home: "Trending" header — title, then filters and the toggle on one aligned row */
+.app-container .ayna-landing-shop-head { display: grid !important; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center !important; gap: 16px !important; margin-bottom: 24px !important; }
+.app-container .ayna-landing-shop-head .ayna-landing-shop-title { grid-column: 1 / -1; margin: 0 !important; }
+.app-container .ayna-landing-shop-controls { display: contents !important; }
+.app-container .ayna-landing-shop-controls .ayna-landing-filters { justify-content: flex-start !important; flex-wrap: wrap; }
+.app-container .ayna-landing-shop-controls > :not(.ayna-landing-filters) { justify-self: end; }
+.app-container .ayna-landing-shop-head .ayna-landing-filter-panel { grid-column: 1 / -1; }
+@media (max-width: 760px) { .app-container .ayna-landing-shop-head { grid-template-columns: auto auto; justify-content: space-between; } .app-container .ayna-landing-shop-controls .ayna-landing-filters { grid-column: 1 / -1; flex-wrap: nowrap; overflow-x: auto; } }
+
+/* Returning home: ecosystem card */
+.app-container .ayna-landing-ecocard__label { color: var(--ay-ink); font: 700 15px/1 var(--ay-font-ui); }
+.app-container .mockup-landing--returning .ayna-landing-ecocard__empty { margin-top: 12px; padding: 14px 16px !important; border: 2px dashed var(--ay-ink) !important; border-radius: 14px !important; background: var(--ay-cream) !important; color: var(--ay-ink) !important; font: 700 15px/1 var(--ay-font-ui) !important; }
+.app-container main .container:has(> .ay-web-lib-head, .ay-web-lib) { max-width: 1180px !important; }
+.app-container .contact-page__grid { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* Ecosystem: shelves sit flush with their heading */
+.app-container .eco2-main .eco-shelf.mockup-page { max-width: none !important; margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+.app-container .eco2-main .eco-shelf__lede { margin: 8px 0 24px !important; }
+.app-container .eco2-main__head { margin-bottom: 0 !important; }
+
+/* Home (returning): filters stay on one scrollable row */
+.app-container .ayna-landing-shop-controls .ayna-landing-filters { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; padding: 2px 2px 4px; }
+.app-container .ayna-landing-shop-controls .ayna-landing-filters::-webkit-scrollbar { display: none; }
+.app-container .ayna-landing-shop-controls .ayna-landing-filters button { flex: none; }
+
+/* You: shopper card rhythm (title 8, line 16, button) */
+.app-container .wyou-card > h2 + .wyou-muted { margin-top: 8px !important; }
+.app-container .wyou-card > .wyou-muted + .wyou-btn { margin-top: 16px; }
+
+/* Contact */
+.app-container main[data-view='contact'] .mockup-page > div > button:first-child { display: inline-flex; align-items: center; min-height: 40px; margin-bottom: 32px !important; padding: 0 16px !important; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important; }
+.app-container main[data-view='contact'] .mockup-page > div > button:first-child::before { content: '←'; margin-right: 6px; }
+.app-container main[data-view='contact'] .contact-page__grid > section:first-child > div:first-child { display: none; }
+.app-container main[data-view='contact'] .contact-page__grid form { border: 2px solid var(--ay-ink) !important; border-radius: 24px !important; background: var(--ay-paper) !important; box-shadow: var(--ay-shadow-lg) !important; }
+.app-container main[data-view='contact'] .contact-page__grid label { color: var(--ay-ink) !important; font: 700 13px/1.2 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
+.app-container main[data-view='contact'] .mockup-page { padding-left: var(--mockup-gutter, 56px) !important; padding-right: var(--mockup-gutter, 56px) !important; }
+.app-container main[data-view='contact'] .mockup-page > div { max-width: none !important; }
+
+/* Recalls: section headings carry weight */
+.app-container main[data-view='recalls'] h3 { font: 700 20px/1.2 var(--ay-font-ui) !important; letter-spacing: -.01em; }
+.app-container main[data-view='recalls'] .card h3 { font-size: 18px !important; }
