@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { Capacitor } from '@capacitor/core'
 import MobileApp from './mobile/MobileApp.jsx'
+import { isLegacyWebPath } from './webRoutes.js'
 import './index.css'
 import posthog from 'posthog-js'
 import { tagInternalUserIfNeeded } from './utils/posthogInternal'
@@ -149,6 +150,10 @@ class ErrorBoundary extends React.Component {
 // check — they always show the mobile UI. The web build still gates it
 // behind the path, so the live website's normal routing is unaffected.
 const isMobilePreview = window.location.pathname === '/mobile-preview' || Capacitor.isNativePlatform();
+// Everything else on the website runs the app's own screens, laid out for
+// the browser ("web" mode). Only the standalone pages in webRoutes.js keep
+// the older desktop shell.
+const useLegacyWeb = !isMobilePreview && isLegacyWebPath(window.location.pathname);
 
 // Lock pinch-zoom in the native app only. The WKWebView has no browser chrome
 // to reset an accidental pinch, so once someone zooms in there is no way
@@ -168,7 +173,7 @@ if (Capacitor.isNativePlatform()) {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
-      {isMobilePreview ? <MobileApp /> : <App />}
+      {isMobilePreview ? <MobileApp /> : useLegacyWeb ? <App /> : <MobileApp web />}
     </ErrorBoundary>
   </React.StrictMode>,
 )

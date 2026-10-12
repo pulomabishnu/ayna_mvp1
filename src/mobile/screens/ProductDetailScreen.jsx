@@ -547,7 +547,7 @@ export default function ProductDetailScreen({
               overflow: 'hidden',
             }}
           >
-            <ProductImage src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
+            <ProductImage product={product} src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
             {matchPercent != null && <button type="button" className="ayna-figma-detail-score" onClick={openWhyMatch} aria-label={`${matchPercent} percent match. See why`}><strong>{matchPercent}%</strong><span>PROFILE MATCH</span></button>}
           </div>
         </div>

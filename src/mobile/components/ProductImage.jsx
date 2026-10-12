@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
+import { useEffect, useState } from 'react';
+import { safeProductImageSrc, resolveProductImage } from '../../utils/resolveProductImage.js';
 
 function PhotoPlaceholder({ style }) {
   return (
@@ -22,8 +22,23 @@ function PhotoPlaceholder({ style }) {
  * so a prop change to a different src is automatically treated as
  * untried/not-errored during render, with no effect needed to clear it.
  */
-export default function ProductImage({ src, alt, allowBrandLogo = false, style }) {
-  const safeSrc = safeProductImageSrc(src, allowBrandLogo);
+export default function ProductImage({ src, alt, allowBrandLogo = false, style, product }) {
+  const directSrc = safeProductImageSrc(src, allowBrandLogo);
+  // Same live photo lookup the website always used (/api/product-image via
+  // resolveProductImage) when the catalog has no usable photo, so cards
+  // stop showing the placeholder for products that do have a real image.
+  const [looked, setLooked] = useState({ key: '', url: '' });
+  const lookupKey = product?.name ? `${product.brand || ''}|${product.name}` : '';
+  const needsLookup = !!lookupKey && !directSrc;
+  useEffect(() => {
+    if (!needsLookup) return undefined;
+    let active = true;
+    resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '')
+      .then((url) => { if (active && url) setLooked({ key: lookupKey, url }); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [needsLookup, lookupKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const safeSrc = directSrc || (looked.key === lookupKey ? looked.url : '');
   const [erroredSrc, setErroredSrc] = useState(null);
 
   if (!safeSrc || erroredSrc === safeSrc) {

@@ -50,7 +50,12 @@ export default function AuthCallback({ onAuthenticated }) {
       let returnToMobile = false;
       try { returnToMobile = localStorage.getItem('ayna_mobile_oauth_pending') === '1'; } catch { /* ignore */ }
       if (returnToMobile) {
-        const mobileUrl = new URL('/mobile-preview', window.location.origin);
+        // The app's screens also run the website now, so go back to the page
+        // sign-in started from (falls back to the phone preview).
+        let returnPath = '/mobile-preview';
+        try { returnPath = localStorage.getItem('ayna_oauth_return_path') || returnPath; } catch { /* ignore */ }
+        if (!returnPath.startsWith('/') || returnPath.startsWith('/auth/')) returnPath = '/';
+        const mobileUrl = new URL(returnPath, window.location.origin);
         const currentParams = new URLSearchParams(window.location.search);
 
         for (const key of ['x-vercel-protection-bypass', 'x-vercel-set-bypass-cookie']) {

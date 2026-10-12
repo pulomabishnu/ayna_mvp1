@@ -129,7 +129,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         {active === 'match' && first && <>
           <p className="ayw-kicker">Your #1 match</p>
           <div className="ayw-arch">
-            <div className="ayw-arch-clip"><ProductImage src={imageFor(first)} alt={first.name} allowBrandLogo={first.type === 'digital'} /></div>
+            <div className="ayw-arch-clip"><ProductImage product={first} src={imageFor(first)} alt={first.name} allowBrandLogo={first.type === 'digital'} /></div>
             {firstMatch && <span className="ayw-badge"><strong>{firstMatch}%</strong>match</span>}
           </div>
           <div className="ayw-product">
@@ -152,7 +152,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <div className="ayw-grid">
             {products.map((product, i) => (
               <div key={product.id || i} className="ayw-tile" style={{ '--i': i }}>
-                <ProductImage src={imageFor(product)} alt={product.name} allowBrandLogo={product.type === 'digital'} />
+                <ProductImage product={product} src={imageFor(product)} alt={product.name} allowBrandLogo={product.type === 'digital'} />
               </div>
             ))}
           </div>

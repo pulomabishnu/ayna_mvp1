@@ -1,0 +1,96 @@
+/* Website shell for the app's screens (MobileApp web mode, data-web).
+   Phone widths look exactly like the app. From tablet width up, the bottom
+   tab bar becomes a top bar and screens sit in a wider, centred column. */
+
+/* The wordmark in the tab bar exists only for the website's top bar. */
+.ayna-mobile .ayna-bottom-nav .ay-nav-mark { display: none !important; }
+
+.ay-web-footer { display: none; }
+.ayna-mobile[data-web='true'][data-screen='landing'] .ay-web-footer {
+  display: grid; gap: 12px; justify-items: center; padding: 20px 20px 24px; flex: none;
+  border-top: 1px solid var(--ay-line); background: var(--ay-cream); color: var(--ay-ink-soft); text-align: center; font: 500 13px/1.4 var(--ay-font-ui);
+}
+.ayna-mobile[data-web='true'] .ay-web-footer__mark { color: var(--ay-ink); font: 800 24px/1 var(--ay-font-display); letter-spacing: -.085em; }
+.ayna-mobile[data-web='true'] .ay-web-footer nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 20px; }
+.ayna-mobile[data-web='true'] .ay-web-footer a { color: var(--ay-ink); font-weight: 600; text-decoration: none; }
+.ayna-mobile[data-web='true'] .ay-web-footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.ayna-mobile[data-web='true'] .ay-web-footer p { margin: 0; }
+
+@media (min-width: 900px) {
+  .ayna-mobile[data-web='true'] { --ay-web-max: 1180px; --ay-web-top: 76px; --ayna-bottom-nav-height: 0px; }
+
+  /* Top bar */
+  .ayna-mobile[data-web='true'] .ayna-bottom-nav {
+    position: fixed !important; inset: 0 0 auto 0 !important; z-index: 90 !important;
+    display: flex !important; align-items: center !important; justify-content: center; gap: 6px !important;
+    width: auto !important; height: var(--ay-web-top); margin: 0 !important; padding: 0 max(24px, calc((100vw - var(--ay-web-max)) / 2)) !important;
+    border: 0 !important; border-bottom: 2px solid var(--ay-ink) !important; border-radius: 0 !important;
+    background: var(--ay-cream) !important; box-shadow: none !important; transform: none !important;
+  }
+  .ayna-mobile[data-web='true'] .ayna-bottom-nav .ay-nav-mark {
+    display: block !important; margin-right: auto !important; padding: 0 !important; min-height: 0 !important; border: 0 !important; background: none !important;
+    color: var(--ay-ink) !important; font: 800 32px/1 var(--ay-font-display) !important; letter-spacing: -.085em !important; cursor: pointer;
+  }
+  .ayna-mobile[data-web='true'] .ayna-bottom-nav button:not(.ay-nav-mark) {
+    flex-direction: row !important; gap: 8px !important; min-height: 44px !important; height: 44px; padding: 0 18px !important;
+    border: 2px solid transparent !important; border-radius: 99px !important; background: transparent !important;
+    color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important;
+  }
+  .ayna-mobile[data-web='true'] .ayna-bottom-nav button:not(.ay-nav-mark):hover { border-color: var(--ay-ink) !important; }
+  .ayna-mobile[data-web='true'] .ayna-bottom-nav button.is-active { border-color: var(--ay-ink) !important; background: var(--ay-butter) !important; box-shadow: 3px 3px 0 var(--ay-ink) !important; }
+  .ayna-mobile[data-web='true'] .ayna-bottom-nav button svg { width: 18px !important; height: 18px !important; transform: none !important; }
+  .ayna-mobile[data-web='true'] .ayna-bottom-nav button.is-center .ay-nav-center { width: auto !important; height: auto !important; margin: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+  .ayna-mobile[data-web='true'] .ayna-bottom-nav button.is-center .ay-nav-center svg { width: 18px !important; height: 18px !important; }
+  .ayna-mobile[data-web='true'] .ayna-bottom-nav button:last-child { margin-left: 8px; }
+
+  /* Room for the top bar, and every screen centred in a 1180px column
+     while its background still runs edge to edge. */
+  .ayna-mobile[data-web='true']:has(> .ayna-bottom-nav) { padding-top: var(--ay-web-top) !important; }
+  .ayna-mobile[data-web='true'] > :first-child { --ay-web-pad: max(0px, calc((100% - var(--ay-web-max)) / 2)); padding-inline: var(--ay-web-pad) !important; }
+  .ayna-mobile[data-web='true'][data-screen='quiz'] > :first-child,
+  .ayna-mobile[data-web='true'][data-screen='checkin'] > :first-child,
+  .ayna-mobile[data-web='true'][data-screen='signin'] > :first-child { --ay-web-max: 720px; }
+
+  /* More columns for the same cards */
+  .ayna-mobile[data-web='true'] :is(.ayna-figma-discover, .ayna-cabinet-collection, .ayna-cabinet-more, .ayna-saved-collection) .ayna-editorial-product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 28px 20px !important; }
+  .ayna-mobile[data-web='true'] .ay-lib-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+  .ayna-mobile[data-web='true'] .am-playlist-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  .ayna-mobile[data-web='true'] .ip-stickers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  /* Product, read, why-match and profile panels: a centred sheet */
+  .ayna-mobile[data-web='true'] .ayna-fresh-detail-overlay { inset: 0 !important; padding: 32px 0 0 !important; background: rgba(29, 26, 43, .45) !important; justify-content: center; }
+  .ayna-mobile[data-web='true'] .ayna-fresh-detail-overlay > * { width: min(860px, 100%) !important; max-width: 860px; flex: none !important; border: 2px solid var(--ay-ink); border-bottom: 0; border-radius: 28px 28px 0 0; background: var(--ay-cream); overflow: hidden; }
+}
+
+
+@media (min-width: 900px) {
+  /* The top bar carries the wordmark, so screen headers drop theirs. */
+  .ayna-mobile[data-web='true'] .ayna-shared-header .ayna-shared-wordmark { visibility: hidden; }
+
+  /* Landing: headline and actions on the left, the live ecosystem reel on the right. */
+  .ayna-mobile[data-web='true'] .ay-cover {
+    display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 64px;
+    grid-template-areas: 'top top' 'copy reel' 'actions reel'; grid-template-rows: auto auto 1fr; align-content: center;
+    padding-block: 28px 40px !important;
+  }
+  .ayna-mobile[data-web='true'] .ay-cover-top { grid-area: top; align-self: start; margin-bottom: 24px; }
+  .ayna-mobile[data-web='true'] .ay-cover-reel { grid-area: reel; align-self: center; padding: 0 !important; }
+  .ayna-mobile[data-web='true'] .ay-cover-copy { grid-area: copy; align-self: end; }
+  .ayna-mobile[data-web='true'] .ay-cover-actions { grid-area: actions; align-self: start; max-width: 520px; }
+  .ayna-mobile[data-web='true'] .ay-cover-copy h1 { font-size: clamp(56px, 6vw, 88px) !important; line-height: .92 !important; }
+  .ayna-mobile[data-web='true'] .ay-cover-copy p { font-size: 18px !important; }
+  .ayna-mobile[data-web='true'] .ay-cover-widget { width: 100%; max-width: 520px; }
+
+  /* Sign-in prompt: a centred card instead of a bottom sheet. */
+  .ayna-mobile[data-web='true'] .ayna-profile-auth-backdrop { inset: 0 !important; align-items: center !important; justify-content: center; z-index: 100 !important; }
+  .ayna-mobile[data-web='true'] .ayna-profile-auth-sheet { width: min(440px, calc(100% - 48px)) !important; padding: 36px 32px 32px !important; border: 2px solid var(--ay-ink); border-radius: 28px !important; box-shadow: 6px 6px 0 var(--ay-ink) !important; }
+}
+
+@media (min-width: 900px) {
+  /* You (profile): same centred column as the other screens, under the top bar. */
+  .ayna-mobile[data-web='true'] .ayna-fresh-profile-overlay { top: var(--ay-web-top) !important; bottom: 0 !important; padding-inline: max(0px, calc((100% - 860px) / 2)) !important; }
+
+  /* Product page: photo sized for a desktop screen, not a phone. */
+  .ayna-mobile[data-web='true'] .ayna-fresh-detail-overlay > * { width: min(780px, 100%) !important; max-width: 780px; }
+  .ayna-mobile[data-web='true'] .ayna-fresh-detail-overlay [style*='aspect-ratio: 4 / 5'] { max-width: 340px; margin-inline: auto !important; }
+}

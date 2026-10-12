@@ -86,14 +86,14 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, savedP
           <>
             {deck.slice(index + 1, index + 3).reverse().map(({ product }, i, arr) => (
               <div key={product.id} className="ay-deck-card is-behind" style={{ '--depth': arr.length - i }} aria-hidden="true">
-                <div className="ay-deck-photo"><ProductImage src={imageFor(product)} alt="" allowBrandLogo={product.type === 'digital'} /></div>
+                <div className="ay-deck-photo"><ProductImage product={product} src={imageFor(product)} alt="" allowBrandLogo={product.type === 'digital'} /></div>
               </div>
             ))}
             <article key={current.product.id} className={`ay-deck-card${drag !== null ? ' is-dragging' : ''}`}
               style={{ transform: `translateX(${dx}px) rotate(${dx / 18}deg)` }}
               onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={() => setDrag(null)}>
               {hint && <span className={`ay-deck-stamp is-${hint}`} aria-hidden="true">{hint === 'save' ? 'Save' : 'Skip'}</span>}
-              <div className="ay-deck-photo"><ProductImage src={imageFor(current.product)} alt={current.product.name} allowBrandLogo={current.product.type === 'digital'} /></div>
+              <div className="ay-deck-photo"><ProductImage product={current.product} src={imageFor(current.product)} alt={current.product.name} allowBrandLogo={current.product.type === 'digital'} /></div>
               <div className="ay-deck-copy">
                 {current.product.brand && <span>{current.product.brand}</span>}
                 <strong>{displayName(current.product)}</strong>

@@ -49,6 +49,9 @@ import LibraryScreen from './screens/LibraryScreen.jsx';
 import { AskContext } from './askContext.js';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
+import WebFooter from './components/WebFooter.jsx';
+import { pathForWebState, webStateFromPath } from '../webRoutes.js';
+import './web-shell.css';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -162,13 +165,22 @@ function seedEcosystemFromAnswers(quizAnswers) {
   );
 }
 
-export default function MobileApp() {
+// Website ("web" mode): the starting screen and any product/read/profile
+// overlay come from the URL, so links and the browser back button work.
+const initialWebState = (web) => (web ? webStateFromPath(window.location.pathname) : null);
+
+function findArticleById(id) {
+  return ARTICLES.find((a) => a.id === id) || null;
+}
+
+export default function MobileApp({ web = false }) {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName } = session;
   const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
+  const [webStart] = useState(() => initialWebState(web));
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
-  const [screen, setScreen] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('screen')) || 'landing');
+  const [screen, setScreen] = useState(() => (webStart?.screen === 'eco' && !hasEcosystem ? 'ecointro' : webStart?.screen) || (import.meta.env.DEV && new URLSearchParams(window.location.search).get('screen')) || 'landing');
   // Product/article detail render as an overlay ON TOP of whichever base
   // screen (Browse, My Ecosystem, Saved) is currently mounted, instead of
   // replacing it — `screen` never changes when one opens. That's what makes
@@ -176,7 +188,15 @@ export default function MobileApp() {
   // state (search text, personalized toggle, scroll position, infinite-
   // scroll pagination) is exactly as the user left it, not reset to a
   // fresh mount. Closing the overlay just reveals it again.
-  const [overlay, setOverlay] = useState(() => { const t = import.meta.env.DEV && new URLSearchParams(window.location.search).get('overlay'); return t ? { type: t } : null; }); // { type: 'product' | 'article', item }
+  const [overlay, setOverlay] = useState(() => {
+    if (webStart?.productId) {
+      const item = ALL_PRODUCTS.find((p) => p.id === webStart.productId) || RELEASED_STARTUPS.find((p) => p.id === webStart.productId);
+      return item ? { type: 'product', item } : null;
+    }
+    if (webStart?.articleId) { const item = findArticleById(webStart.articleId); return item ? { type: 'article', item } : null; }
+    if (webStart?.profile) return { type: 'profile-pending' };
+    const t = import.meta.env.DEV && new URLSearchParams(window.location.search).get('overlay'); return t ? { type: t } : null;
+  }); // { type: 'product' | 'article', item }
   const [readArticleIds, setReadArticleIds] = useState([]);
   // How far each read has been scrolled (0–1). Per-device convenience, so localStorage is fine.
   const [readProgress, setReadProgress] = useState(() => { try { return JSON.parse(localStorage.getItem('ayna_read_progress_v1') || '{}') || {}; } catch { return {}; } });
@@ -238,6 +258,47 @@ export default function MobileApp() {
     setScreen('signin');
   };
   const openProfile = () => { authResumeRef.current = null; setOverlay({ type: authUser ? 'profile' : 'profile-auth' }); };
+
+  // Web: a /you link opens the profile once we know whether someone is signed in.
+  useEffect(() => {
+    if (!web || authLoading || overlay?.type !== 'profile-pending') return;
+    Promise.resolve().then(() => setOverlay({ type: authUser ? 'profile' : 'profile-auth' }));
+  }, [web, authLoading, authUser, overlay]);
+
+  // Web: keep the address bar in step with the screen, and let the browser
+  // back/forward buttons move between screens.
+  // After a back/forward the address already matches, so nothing is pushed.
+  useEffect(() => {
+    if (!web || overlay?.type === 'profile-pending') return;
+    const path = pathForWebState(screen, overlay);
+    if (window.location.pathname !== path) window.history.pushState({ ayna: true }, '', path + window.location.search);
+    window.scrollTo(0, 0);
+    const WEB_TITLES = { browse: 'Shop', quiz: 'Health Quiz', eco: 'My Ecosystem', ecointro: 'My Ecosystem', library: 'Library', community: 'Community', saved: 'Saved', checkin: 'Check-in' };
+    const title = overlay?.type === 'product' ? overlay.item?.name : overlay?.type === 'article' ? overlay.item?.title : ['profile', 'profile-auth'].includes(overlay?.type) ? 'You' : WEB_TITLES[screen];
+    document.title = title ? `${title} | ayna` : 'ayna';
+  }, [web, screen, overlay]);
+  useEffect(() => {
+    if (!web) return undefined;
+    const onPop = () => {
+      const next = webStateFromPath(window.location.pathname);
+      let nextOverlay = null;
+      if (next.productId) {
+        const item = ALL_PRODUCTS.find((p) => p.id === next.productId) || RELEASED_STARTUPS.find((p) => p.id === next.productId);
+        if (item) nextOverlay = { type: 'product', item };
+      } else if (next.articleId) {
+        const item = findArticleById(next.articleId);
+        if (item) nextOverlay = { type: 'article', item };
+      } else if (next.profile) {
+        nextOverlay = { type: authUser ? 'profile' : 'profile-auth' };
+      }
+      setOverlay(nextOverlay);
+      // Overlays sit on top of whichever screen was open, so only move the
+      // base screen when the URL names a screen of its own.
+      if (!nextOverlay) setScreen(next.screen === 'eco' && !hasEcosystem ? 'ecointro' : next.screen);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, [web, authUser, hasEcosystem]);
 
   // Backend-only state used to keep mobile ecosystem writes consistent with
   // the same Supabase user_ecosystems rows used by the website.
@@ -349,7 +410,8 @@ export default function MobileApp() {
         lastQuizAnswers: restoredQuizAnswers || (Array.isArray(pending) ? prev.lastQuizAnswers : null),
       }));
 
-      if (remoteProducts.length > 0) setScreen('eco');
+      // On the website a deep link (e.g. /library) should stay put.
+      if (remoteProducts.length > 0) setScreen((s) => (!web || ['landing', 'ecointro', 'signin'].includes(s) ? 'eco' : s));
       setLoadedAccountId(userId);
     })().catch((error) => {
       console.warn('[Ayna] mobile ecosystem sync failed:', error);
@@ -660,7 +722,7 @@ export default function MobileApp() {
   }
 
   return (
-    <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
+    <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-web={web ? 'true' : undefined} data-overlay={overlay?.type || undefined} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
       <AskContext.Provider value={nav.onAskAyna}>
       <Screen
         key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen}
@@ -712,6 +774,7 @@ export default function MobileApp() {
         onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setScreen('library'); }}
         onProfile={() => { setAskAynaOpen(false); openProfile(); }}
       />}
+      {web && !['quiz', 'building', 'reveal', 'signin', 'checkin'].includes(screen) && <WebFooter />}
       <EcosystemResetDialog open={resetDialogOpen} busy={resettingEcosystem} onCancel={() => setResetDialogOpen(false)} onConfirm={handleResetEcosystem} />
       {(overlay?.type === 'profile-auth' || authPrompt) && (
         <div className="ayna-profile-auth-backdrop" style={authPrompt ? { zIndex: 100, bottom: 0 } : undefined} onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>

@@ -2689,7 +2689,7 @@ function PasswordScreen({ onBack, authUser }) {
       const supabase = getSupabaseClient();
       if (!supabase || !authUser?.email) throw new Error('no_email');
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(authUser.email, {
-        redirectTo: `${window.location.origin}/mobile-preview`,
+        redirectTo: `${window.location.origin}${window.location.pathname === '/mobile-preview' ? '/mobile-preview' : '/you'}`,
       });
       if (resetError) throw resetError;
       setResetSent(true);
