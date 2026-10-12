@@ -7,6 +7,7 @@ import './cabinet.css';
 import './reference-system.css';
 import './tokens.css';
 import './app-play.css';
+import './no-focus-ring.css';
 import { ALL_PRODUCTS, getEcosystemAlternatives, getRecommendationMatchesAndRest, filterPrescriptionCareGate, hydrateCatalogProduct } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
