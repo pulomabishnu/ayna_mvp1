@@ -517,3 +517,9 @@
 .ayna-mobile.ayna-mobile .ip-alert strong span { background: var(--ay-ink) !important; color: var(--ay-butter) !important; }
 .ayna-mobile.ayna-mobile .ip-alert p { color: var(--ay-ink) !important; opacity: .85; font-size: 14px !important; }
 .ayna-mobile.ayna-mobile .ip-alert-link { border: 1.5px solid var(--ay-ink) !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.ip-addown { justify-self: start; min-height: 36px; padding: 0 14px; border: 1.5px dashed var(--ay-ink); border-radius: 99px; background: transparent; color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); cursor: pointer; }
+.ip-addown-form { display: flex; gap: 8px; }
+.ip-addown-form input { flex: 1; min-width: 0; min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 500 16px/1 var(--ay-font-ui); }
+.ip-addown-form button { min-height: 40px; padding: 0 16px; border: 0; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 700 13px/1 var(--ay-font-ui); }
+.ip-addown-form button:disabled { opacity: .4; }
+.ip-tabs { scroll-padding-inline: var(--ay-gutter); }

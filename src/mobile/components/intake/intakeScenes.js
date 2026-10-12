@@ -22,7 +22,7 @@ export const SECTION_LABELS = {
 
 export const INTAKE_SCENES = {
   age: { art: 'scallop' },
-  lifeStage: { art: 'sparkle' },
+  lifeStage: { art: null }, // grid fills the page; art peeked out behind the last card
   zip: { art: 'arch' },
   support: { art: 'bloom' },
   periodFlow: { art: 'drops' },

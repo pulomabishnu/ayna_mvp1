@@ -182,7 +182,19 @@ const AVOID_INGREDIENTS = [
   'Black-owned', 'Brown-owned', 'Eco-friendly', 'Reusable', 'Organic', 'Minimal ingredients',
   'Sensitive skin', 'Unscented', 'No preference',
 ];
-const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
+const FSA_HSA = ['FSA', 'HSA', 'Both', 'No'];
+/** Small "type your own" field: shows as a + chip, opens to an input. */
+function AddOwn({ placeholder, onAdd }) {
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState('');
+  const submit = () => { if (text.trim().length >= 2) onAdd(text.trim()); setText(''); setOpen(false); };
+  if (!open) return <button type="button" className="ip-addown" onClick={() => setOpen(true)}>+ Add your own</button>;
+  return <form className="ip-addown-form" onSubmit={(e) => { e.preventDefault(); submit(); }}>
+    <input autoFocus value={text} onChange={(e) => setText(e.target.value)} placeholder={placeholder} maxLength={60} onBlur={() => { if (!text.trim()) setOpen(false); }} />
+    <button type="submit" disabled={text.trim().length < 2}>Add</button>
+  </form>;
+}
+
 const AVOID_PAIRS = { Fragrance: 'Fragrance-free', Dyes: 'Dye-free', Parabens: 'Paraben-free', Sulfates: 'Sulfate-free', Latex: 'Latex-free' };
 // Same values as AVOID_INGREDIENTS, grouped so "Fragrance" (leave out) and "Vegan" (should be) don't read as one list.
 const AVOID_GROUPS = {
@@ -1205,6 +1217,10 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       // "Leave out: Fragrance" also stores "Fragrance-free" — the value the match engine already scores — so logic is unchanged.
       const selected = intake.avoidIngredients || [];
       const isOn = (v) => selected.includes(v) || (AVOID_PAIRS[v] && selected.includes(AVOID_PAIRS[v]));
+      const known = new Set([...AVOID_INGREDIENTS, ...Object.values(AVOID_PAIRS)]);
+      const customs = selected.filter((v) => !known.has(v) && v !== 'Other');
+      const customAvoid = customs.filter((v) => /^No /.test(v));
+      const customWant = customs.filter((v) => !/^No /.test(v));
       const toggleAvoid = (v) => setIntake((prev) => {
         const cur = (Array.isArray(prev.avoidIngredients) ? prev.avoidIngredients : []).filter((x) => x !== 'No preference');
         const pair = AVOID_PAIRS[v];
@@ -1215,8 +1231,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       });
       return (
         <div className="ip-split">
-          <div className="ip-split-group"><strong className="is-avoid">Leave out</strong><ChipList items={AVOID_GROUPS.avoid} selected={AVOID_GROUPS.avoid.filter(isOn)} onToggle={toggleAvoid} compact /></div>
-          <div className="ip-split-group"><strong className="is-want">Should be</strong><ChipList items={AVOID_GROUPS.want} selected={AVOID_GROUPS.want.filter(isOn)} onToggle={toggleAvoid} compact /></div>
+          <div className="ip-split-group"><strong className="is-avoid">Leave out</strong><ChipList items={[...AVOID_GROUPS.avoid, ...customAvoid]} selected={[...AVOID_GROUPS.avoid.filter(isOn), ...customAvoid]} onToggle={toggleAvoid} compact /><AddOwn placeholder="Add something to leave out" onAdd={(v) => addCustomSelection('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference'])} /></div>
+          <div className="ip-split-group"><strong className="is-want">Should be</strong><ChipList items={[...AVOID_GROUPS.want, ...customWant]} selected={[...AVOID_GROUPS.want.filter(isOn), ...customWant]} onToggle={toggleAvoid} compact /><AddOwn placeholder="Add a must-have" onAdd={(v) => addCustomSelection('avoidIngredients', v, ['No preference'])} /></div>
           <ChipList items={['No preference']} selected={selected.includes('No preference') ? ['No preference'] : []} onToggle={toggleAvoid} compact />
         </div>
       );
