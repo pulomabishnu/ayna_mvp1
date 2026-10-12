@@ -5,6 +5,7 @@ import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import WebIntake from './components/WebIntake';
 import WebYou from './components/WebYou';
+import WebCommunity from './components/WebCommunity';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import PhoneVerification from './components/PhoneVerification';
 import Recommendations from './components/Recommendations';
@@ -24,7 +25,7 @@ const BrandPartners = React.lazy(() => import('./components/BrandPartners'));
 const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
 const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
-import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById } from './data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById } from './data/products';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -93,7 +94,7 @@ function clearPendingEcosystemReset(userId) {
 }
 
 const VIEW_TO_PATH = {
-  welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem', you: '/you',
+  welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem', you: '/you', community: '/community',
   discovery: '/discovery', waitlist: '/startups',
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
@@ -111,7 +112,7 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view — 'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Browse', you: 'You',
+  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Browse', you: 'You', community: 'Community',
   waitlist: 'Startups', articles: 'Health Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
@@ -468,7 +469,7 @@ function App() {
     // production. (PROTECTED_VIEWS below is what actually guards private ones.)
     const STATIC_VIEWS = [
       'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
-      'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles', 'you',
+      'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles', 'you', 'community',
       'how-it-works', 'how-we-make-money',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -1284,8 +1285,21 @@ function App() {
               Ecosystem · Browse. Brands / My Health Library / About Us are real
               routes still, just relocated to the footer's secondary nav. */}
           <div className="app-nav__links desktop-only">
+            {/* Same order as the app's tab bar: Library · Shop · Ecosystem · Community · You (account button). */}
             <button
-              className={`app-nav__tab ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`}
+              className={`app-nav__tab ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`}
+              onClick={() => { setSelectedArticleId(null); setCurrentView('articles'); }}
+            >
+              Library
+            </button>
+            <button
+              className={`app-nav__tab ${(currentView === 'discovery' || currentView === 'hero') ? 'app-nav__tab--active' : ''}`}
+              onClick={() => handleViewDiscovery('')}
+            >
+              Shop
+            </button>
+            <button
+              className={`app-nav__tab app-nav__tab--center ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`}
               onClick={() => handleViewEcosystem()}
             >
               My Ecosystem
@@ -1294,10 +1308,10 @@ function App() {
               )}
             </button>
             <button
-              className={`app-nav__tab ${(currentView === 'discovery' || currentView === 'hero') ? 'app-nav__tab--active' : ''}`}
-              onClick={() => handleViewDiscovery('')}
+              className={`app-nav__tab ${currentView === 'community' ? 'app-nav__tab--active' : ''}`}
+              onClick={() => setCurrentView('community')}
             >
-              Browse
+              Community
             </button>
           </div>
 
@@ -1386,10 +1400,13 @@ function App() {
         {/* Mobile drawer */}
         {mobileMenuOpen && (
           <div className="mobile-nav-drawer" onClick={() => setMobileMenuOpen(false)}>
+            <button className="mobile-drawer-item" onClick={() => { setSelectedArticleId(null); setCurrentView('articles'); setMobileMenuOpen(false); }}>Library</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewDiscovery(''); setMobileMenuOpen(false); }}>Shop</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewEcosystem(); setMobileMenuOpen(false); }}>
               My Ecosystem {ecosystemCount > 0 && <span className="nav-ecosystem__pill">{ecosystemCount}</span>}
             </button>
-            <button className="mobile-drawer-item" onClick={() => { handleViewDiscovery(''); setMobileMenuOpen(false); }}>Browse</button>
+            <button className="mobile-drawer-item" onClick={() => { setCurrentView('community'); setMobileMenuOpen(false); }}>Community</button>
+            {user && <button className="mobile-drawer-item" onClick={() => { setCurrentView('you'); setMobileMenuOpen(false); }}>You</button>}
             <button className="mobile-drawer-item" onClick={() => { handleViewWishlist(); setMobileMenuOpen(false); }}>
               Wishlist {Object.keys(savedProducts || {}).length > 0 ? `(${Object.keys(savedProducts || {}).length})` : ''}
             </button>
@@ -1418,6 +1435,15 @@ function App() {
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
             initialCategory={homeCategory}
+          />
+        )}
+        {currentView === 'community' && (
+          <WebCommunity
+            user={user}
+            products={ALL_PRODUCTS}
+            quizResults={quizResults}
+            onOpenProduct={handleOpenProduct}
+            onRequireAuth={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
           />
         )}
         {currentView === 'you' && (
