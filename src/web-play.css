@@ -535,3 +535,32 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .ay-why-fine { margin-top: 24px !important; color: rgba(29, 26, 43, .62); font-size: 12px !important; }
 /* Centre tab (Ecosystem) gets the app's raised-button emphasis */
 .app-container .app-nav.app-nav .app-nav__tab--center { border-color: var(--ay-ink) !important; }
+
+/* ---------- Dark mode (same setting as the app) ---------- */
+:root[data-ay-theme='dark']:has(.app-container), .app-container[data-theme='dark'] {
+  color-scheme: dark;
+  --ay-ink: #f4f2ff;
+  --ay-ink-soft: rgba(244, 242, 255, .72);
+  --ay-ink-faint: rgba(244, 242, 255, .22);
+  --ay-paper: #17161f;
+  --ay-cream: #0c0b11;
+  --ay-tile: #22212c;
+  --ay-line: rgba(244, 242, 255, .14);
+  --ay-peri: #343c78;
+  --ay-pink: #6e2a55;
+  --ay-mint: #1d5a45;
+  --ay-butter: #5e5520;
+  --ay-shadow: 3px 3px 0 rgba(244, 242, 255, .55);
+  --ay-shadow-lg: 5px 5px 0 rgba(244, 242, 255, .55);
+  --color-text-main: var(--ay-ink);
+  --color-text-muted: var(--ay-ink-soft);
+}
+:root[data-ay-theme='dark'] body:has(.app-container) { background: #0c0b11 !important; color: #f4f2ff; }
+.app-container[data-theme='dark'] :is(h1, h2, h3, h4, p, li, span, label, small, strong, b, dt, dd, a):not(.site-footer *) { color: inherit; }
+.app-container[data-theme='dark'] main { color: var(--ay-ink); }
+.app-container[data-theme='dark'] :is(.btn-primary, .btn-navy, .ayna-landing-btn, .pdp-btn--navy, .wyou-btn, .wc-btn, .wq-btn, .ay-web-lib-match) { background: var(--ay-ink) !important; color: #0c0b11 !important; }
+.app-container[data-theme='dark'] .site-footer { background: #000 !important; }
+.app-container[data-theme='dark'] img { filter: none; }
+.app-container[data-theme='dark'] :is(.ayna-landing-tile, .ayna-discover-card__tile, .discovery-card__tile, .pdp-head__tile, .ay-web-lib-card__img) img { mix-blend-mode: normal; }
+.app-container[data-theme='dark'] .wq-page { --ink: #f4f2ff; --soft: rgba(244, 242, 255, .72); --faint: rgba(244, 242, 255, .22); --paper: #17161f; --cream: #0c0b11; --peri: #343c78; --pink: #6e2a55; --mint: #1d5a45; --butter: #5e5520; }
+.app-container[data-theme='dark'] .wq-btn:not(:disabled) { color: #0c0b11; }

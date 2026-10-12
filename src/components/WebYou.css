@@ -99,3 +99,6 @@
   .wyou-links { grid-template-columns: 1fr 1fr; }
   .wyou-charts { grid-template-columns: 1fr; }
 }
+.wyou-seg { display: inline-flex; padding: 3px; border: 2px solid var(--ay-ink); border-radius: 99px; }
+.wyou-rows .wyou-seg button { min-height: 30px; padding: 0 12px; border-radius: 99px; text-decoration: none; }
+.wyou-rows .wyou-seg button[aria-pressed='true'] { background: var(--ay-ink); color: var(--ay-paper); }

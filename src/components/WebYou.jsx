@@ -60,7 +60,7 @@ function Routine({ products }) {
   </section>;
 }
 
-export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenStartups, onOpenProduct, onSignOut, onDeleteAccount, onStartQuiz }) {
+export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenStartups, onOpenProduct, onSignOut, onDeleteAccount, onStartQuiz, theme = 'light', onThemeChange }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const intake = quizResults?.fullHealthIntake || null;
   const pct = getProfileCompletionPct(intake);
@@ -157,6 +157,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
             <div><span>Email</span><b>{user.email}</b></div>
             <div><span>Health profile</span><b>{pct}% complete</b><button type="button" onClick={onEditProfile}>Update</button></div>
             <div><span>Password</span><b>••••••••</b><button type="button" onClick={resetPassword}>Send reset link</button></div>
+            {onThemeChange && <div><span>Appearance</span><b>{theme === 'dark' ? 'Dark' : 'Light'}</b><span className="wyou-seg">{['light', 'dark'].map((m) => <button type="button" key={m} aria-pressed={theme === m} onClick={() => onThemeChange(m)}>{m === 'dark' ? 'Dark' : 'Light'}</button>)}</span></div>}
             <div><span>Your data</span><b>Everything we store about you</b><button type="button" onClick={downloadData}>Download</button></div>
           </div>
           {note && <p className="wyou-note" role="status">{note}</p>}

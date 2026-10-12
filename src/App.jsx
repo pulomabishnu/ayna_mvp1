@@ -7,6 +7,7 @@ import WebIntake from './components/WebIntake';
 import WebYou from './components/WebYou';
 import WebCommunity from './components/WebCommunity';
 import WebWrapped from './components/WebWrapped';
+import { useThemeMode } from './mobile/hooks/useThemeMode.js';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import PhoneVerification from './components/PhoneVerification';
 import Recommendations from './components/Recommendations';
@@ -368,6 +369,9 @@ function App() {
   // From the app: Wrapped story after the quiz, and an Ask ayna button in the header.
   const [showWrapped, setShowWrapped] = useState(false);
   const [askOpenSignal, setAskOpenSignal] = useState(0);
+  // Light / dark, shared with the app's own setting on this browser.
+  const { theme, setThemeMode } = useThemeMode();
+  useEffect(() => { document.documentElement.dataset.ayTheme = theme; }, [theme]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   useEscapeToClose(showDeleteModal, () => setShowDeleteModal(false));
   const [saveError, setSaveError] = useState(null);
@@ -1226,7 +1230,7 @@ function App() {
 
 
   return (
-    <div className="app-container">
+    <div className="app-container" data-theme={theme}>
       {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
           save-error banner and the ecosystem-generation bar stack instead of
           overlapping if both are showing at once — neither sets its own
@@ -1488,6 +1492,8 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onSignOut={() => { getSupabaseClient()?.auth.signOut(); setCurrentView('welcome'); }}
             onDeleteAccount={() => setShowDeleteModal(true)}
+            theme={theme}
+            onThemeChange={setThemeMode}
           />
         )}
         {currentView === 'quiz' && (
