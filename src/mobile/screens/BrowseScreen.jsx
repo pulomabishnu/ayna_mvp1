@@ -393,16 +393,8 @@ export default function BrowseScreen({
       />
 
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
-        <h1>Shop</h1>
+        <div className="ay-shop-titlebar"><h1>Shop</h1>{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
         <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px', borderBottom: '1px solid var(--ayna-border)', margin: '0 0 14px' }}>
-        {mode === 'products' && hasProfile && (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
-          </div>
-        )}
       </div>
 
       {mode === 'products' && (
