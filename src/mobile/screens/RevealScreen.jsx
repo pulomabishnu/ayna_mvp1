@@ -4,6 +4,8 @@ import { getProfileMatchPercentForProduct } from '../../data/products.js';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import '../wrapped.css';
 import { buildPersona } from '../utils/shopperProfile.js';
+import { shareWrappedImage } from '../utils/wrappedImage.js';
+import { displayName } from '../utils/displayName.js';
 
 const SLIDE_ART = { focus: 'scallop', match: 'bloom', persona: 'sparkle', lineup: 'arch', empty: 'scallop' };
 
@@ -71,9 +73,17 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
     swipeTime.current = Date.now();
     if (distance > 0) next(); else previous();
   };
+  const [shareState, setShareState] = useState('');
   const share = async () => {
-    const text = `My ayna: ${myProducts.length} picks across ${areaCount || topAreas.length} areas${persona ? ` · ${persona.title}` : ''}.`;
-    try { if (navigator.share) await navigator.share({ title: 'My ayna', text }); else await navigator.clipboard?.writeText(text); } catch { /* dismissed */ }
+    setShareState('Making your card…');
+    const result = await shareWrappedImage({
+      title: persona?.title || 'My ecosystem',
+      picks: myProducts.length,
+      areas: areaCount || topAreas.length,
+      topAreas,
+      productNames: products.map((p) => displayName(p)),
+    });
+    setShareState(result === 'downloaded' ? 'Saved to your downloads' : result === 'failed' ? 'Couldn’t make the image' : '');
   };
 
   return (
@@ -161,7 +171,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           <div className="ayw-actions">
             <button className="ayw-cta" type="button" onClick={onContinue}>{authUser ? 'Open my Ecosystem' : 'Save my Ecosystem'}<i aria-hidden="true">→</i></button>
             <div>
-              <button className="ayw-link" type="button" onClick={share}>Share</button>
+              <button className="ayw-link" type="button" onClick={share}>Share</button>{shareState && <small className="ayw-share-state" role="status">{shareState}</small>}
               <button className="ayw-link" type="button" onClick={onGoBrowse}>Browse instead</button>
             </div>
           </div>
