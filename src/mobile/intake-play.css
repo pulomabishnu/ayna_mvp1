@@ -582,3 +582,26 @@
 .ayna-play-intake .ip-card small, .ayna-play-intake .ip-row-copy small { color: rgba(29, 26, 43, .72); }
 .ayna-play-intake .ip-sticker-icon { background: rgba(255, 255, 255, .72); }
 .ayna-play-intake .ip-sticker-glyph { border-color: #1d1a2b; background: #fff; }
+
+/* Keep text legible on the quiz's dark fields and light accent surfaces. */
+.ayna-mobile.ayna-mobile .ayna-play-intake .ip-answer input:not(.ip-note),
+.ayna-mobile.ayna-mobile .ayna-play-intake .ip-answer textarea:not(.ip-note) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
+}
+.ayna-mobile.ayna-mobile .ayna-play-intake .ip-age-input::placeholder,
+.ayna-mobile.ayna-mobile .ayna-play-intake .ip-ticket-digits input::placeholder { color: rgba(255, 255, 255, .55) !important; }
+.ayna-mobile.ayna-mobile .ayna-play-intake .ip-note {
+  color: #1d1a2b !important;
+  -webkit-text-fill-color: #1d1a2b;
+  caret-color: #1d1a2b;
+}
+.ayna-mobile.ayna-mobile .ayna-play-intake .ip-note::placeholder { color: rgba(29, 26, 43, .65) !important; }
+.ayna-mobile.ayna-mobile .ayna-play-intake .ip-alert strong,
+.ayna-mobile.ayna-mobile .ayna-play-intake .ip-alert p { color: #1d1a2b !important; }
+.ayna-mobile.ayna-mobile .ayna-play-intake .ip-alert strong span { background: #1d1a2b !important; color: var(--ay-butter) !important; }
+.ayna-play-intake .ip-split-group > strong,
+.ayna-play-intake .ip-tab[aria-selected='true'] b { color: #1d1a2b !important; }
+.ayna-play-intake .ip-add-row,
+.ayna-play-intake .ip-onfile { background: var(--ay-paper); color: #fff !important; }
