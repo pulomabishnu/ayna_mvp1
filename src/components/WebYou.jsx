@@ -1,3 +1,4 @@
+import { avatarInitials } from '../utils/avatarInitials';
 import { useMemo, useState } from 'react';
 import { ALL_PRODUCTS } from '../data/products';
 import { getSupabaseClient } from '../utils/supabaseClient';
@@ -123,7 +124,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
     return <section className="wyou"><div className="wyou-card wyou-signedout"><h1>You</h1><p>Sign in to see your shopper profile, badges, routine and settings.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></div></section>;
   }
 
-  const initial = (name || user.email || 'Y').charAt(0).toUpperCase();
+  const initial = avatarInitials(user, (name || 'Y').charAt(0).toUpperCase());
   return <section className="wyou">
     <header className="wyou-hero">
       <div className="wyou-avatar" aria-hidden="true">{initial}</div>

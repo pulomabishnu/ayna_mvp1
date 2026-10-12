@@ -84,7 +84,7 @@
 
 /* ---- Article ------------------------------------------------------------- */
 .app-container .ay-lib-reading .ay-web-lib-article { box-shadow: var(--ay-shadow) !important; /* micro: one shadow token with the next-read card */ }
-.app-container .ay-lib-reading .ay-web-lib-article > h2 { margin: 0 0 16px !important; color: var(--ay-ink) !important; }
+.app-container .ay-lib-reading .ay-web-lib-article > :is(h1, h2) { margin: 0 0 16px !important; color: var(--ay-ink) !important; }
 .app-container .ay-lib-article__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .app-container .ay-lib-article__src { margin: 0 0 24px !important; color: var(--ay-ink-soft) !important; font: 600 13px/1.4 var(--ay-font-ui) !important; }
 .app-container .ay-lib-reading .article-body { color: var(--ay-ink) !important; }

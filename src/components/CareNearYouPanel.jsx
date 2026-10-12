@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { getCareResourceBundle } from '../data/careResources';
-import Disclaimer from './Disclaimer';
 
 /**
  * Care near you + telehealth — driven by quiz, chat-updated profile, imported records, and wearable summary.
@@ -130,7 +129,7 @@ export default function CareNearYouPanel({
       {bundle.catalogTelehealth.length > 0 && onOpenProduct && (
         <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--color-border)' }}>
           <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
-            Telehealth platforms in our catalog (matched to your profile when possible)
+            Virtual care in our catalog, matched to you when possible
           </h4>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {bundle.catalogTelehealth.map((p) => (
@@ -148,7 +147,6 @@ export default function CareNearYouPanel({
         </div>
       )}
 
-      <Disclaimer compact style={{ marginTop: '1rem' }} />
     </div>
   );
 }

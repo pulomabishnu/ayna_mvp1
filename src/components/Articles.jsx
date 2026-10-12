@@ -879,7 +879,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           </div>
         </div>
         <article className="ay-web-lib-article">
-          <h2>{selected.title}</h2>
+          <h1 className="ay-article-title">{selected.title}</h1>
           <div className="ay-lib-article__tags">
             {selected.tags.map((t) => <span key={t} className="ay-lib-tag">{t}</span>)}
           </div>

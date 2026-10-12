@@ -84,3 +84,20 @@ body:has(.mobile-nav-drawer) .app-container :is(.ayna-ask-dock, .ayna-ask-tab) {
 
 /* Header is the same 82px on every page (Home used 90px, so the nav jumped 4px between pages) */
 .app-container .app-nav.app-nav--landing { padding-top: 20px !important; padding-bottom: 20px !important; }
+
+/* Article and product titles are now the page H1 (G19); keep their look */
+.app-container .ay-web-lib-article > h1.ay-article-title { font: 800 clamp(32px, 3vw, 44px)/1.02 var(--ay-font-display) !important; letter-spacing: -.035em !important; color: var(--ay-ink) !important; }
+/* Footer text on the type scale */
+.app-container .site-footer :is(p, a, button, span, li) { font-size: 14px; }
+.app-container .site-footer .site-footer__legal, .app-container .site-footer .site-footer__legal * { font-size: 12px !important; }
+/* Ask ayna on the product page: compact orb so it can't cover the Community column */
+@media (min-width: 768px) {
+  .app-container:has(.pdp-page) .ayna-ask-dock .ayna-ask-launcher__label { display: none !important; }
+  .app-container:has(.pdp-page) .ayna-ask-dock .ayna-ask-launcher { width: 52px; height: 52px; padding: 0 !important; justify-content: center; }
+}
+/* Phones: keep page content clear of the floating button */
+@media (max-width: 767px) {
+  .app-container main { padding-bottom: 88px !important; }
+}
+/* Care near you headings: site display type, not Bricolage 400 */
+.app-container .eco2-details__body :is(h3, h4) { font-family: var(--ay-font-ui) !important; font-weight: 700 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ay-ink) !important; }

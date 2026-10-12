@@ -80,6 +80,13 @@ function FooterColumn({ title, children }) {
   );
 }
 
+// Real links (open in a new tab, copy, crawl) that still route in-app on a plain click.
+function footerGo(e, fn) {
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  fn?.();
+}
+
 export default function SiteFooter({
   onViewHowItWorks,
   onViewAbout,
@@ -107,18 +114,18 @@ export default function SiteFooter({
         </div>
 
         <FooterColumn title="Explore">
-          <button type="button" className="ay-footer-link" onClick={onViewHowItWorks}>How It Works</button>
-          <button type="button" className="ay-footer-link" onClick={() => onViewDiscovery?.('')}>Shop</button>
-          <button type="button" className="ay-footer-link" onClick={onViewArticles}>Library</button>
+          <a className="ay-footer-link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How It Works</a>
+          <a className="ay-footer-link" href="/shop" onClick={(e) => footerGo(e, () => onViewDiscovery?.(''))}>Shop</a>
+          <a className="ay-footer-link" href="/library" onClick={(e) => footerGo(e, onViewArticles)}>Library</a>
         </FooterColumn>
 
         <FooterColumn title="Company">
-          <button type="button" className="ay-footer-link" onClick={onViewAbout}>About</button>
-          <button type="button" className="ay-footer-link" onClick={onViewWaitlist}>Brand Partnerships</button>
+          <a className="ay-footer-link" href="/about" onClick={(e) => footerGo(e, onViewAbout)}>About</a>
+          <a className="ay-footer-link" href="/startups" onClick={(e) => footerGo(e, onViewWaitlist)}>Brand Partnerships</a>
         </FooterColumn>
 
         <FooterColumn title="Get in touch">
-          <button type="button" className="ay-footer-link" onClick={onViewContact}>Contact</button>
+          <a className="ay-footer-link" href="/contact" onClick={(e) => footerGo(e, onViewContact)}>Contact</a>
           <a className="ay-footer-link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.substack.com" target="_blank" rel="noreferrer">Give us Feedback</a>
           <a className="ay-footer-link" href="https://www.instagram.com/ayna.health/" target="_blank" rel="noreferrer">Instagram</a>
           <a className="ay-footer-link" href="https://www.tiktok.com/@aynahealth" target="_blank" rel="noreferrer">TikTok</a>

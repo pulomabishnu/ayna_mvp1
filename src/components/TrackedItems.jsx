@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import Disclaimer from './Disclaimer';
 import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
@@ -94,7 +93,6 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                     </button>
                     {userZipCode && <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Saved: {userZipCode}</span>}
                 </div>
-                <Disclaimer compact style={{ marginTop: '1rem' }} />
             </div>
 
             <HealthDataImport onUpdate={onHealthProfileUpdate} />

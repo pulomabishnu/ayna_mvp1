@@ -948,7 +948,7 @@ export default function ProductModal({
             <div className="pdp-head__eyebrow">{eyebrow}{partnerBadge && <> · {partnerBadge}</>}</div>
 
             <div className="pdp-head__titlerow">
-              <h2 className="pdp-head__name">{product.name}</h2>
+              <h1 className="pdp-head__name">{product.name}</h1>
               {matchPercent > 0 && (
                 <button type="button" className="pdp-dial" onClick={() => setShowWhy(true)} aria-label={`${matchPercent} percent match. Why?`}>
                   <MatchGauge percent={matchPercent} size={40} theme="light" />
