@@ -114,3 +114,15 @@
 .ayna-mobile.ayna-mobile .ayna-saved-header > button:first-child { width: 44px !important; height: 44px !important; flex: none; display: grid !important; place-items: center !important; padding: 0 !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
 .ayna-mobile.ayna-mobile .ayna-saved-header > button:first-child svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round; }
 .ayna-mobile.ayna-mobile .ayna-saved-header h1 small { background: var(--ay-pink) !important; color: var(--ay-ink) !important; border: 1.5px solid var(--ay-ink); }
+
+/* You → Shopper profile */
+.ay-shopper { margin: 20px var(--ay-gutter) 0; padding: 16px; border: 1.5px solid var(--ay-ink); border-radius: 22px; background: var(--ay-paper); box-shadow: 0 4px 0 var(--ay-ink); color: var(--ay-ink); }
+.ay-shopper header span { font: 700 12.5px/1 var(--ay-font-ui); opacity: .62; }
+.ay-shopper header h2 { margin: 6px 0 12px; font: 800 calc(24px * var(--ayna-text-scale, 1))/1.05 var(--ay-font-display); letter-spacing: -.035em; }
+.ay-shopper dl { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ay-shopper dl > div { padding: 10px 12px; border: 1.5px solid var(--ay-ink); border-radius: 14px; min-width: 0; }
+.ay-shopper dl > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.ay-shopper .tone-pink { background: var(--ay-pink); } .ay-shopper .tone-mint { background: var(--ay-mint); }
+.ay-shopper .tone-peri { background: var(--ay-peri); } .ay-shopper .tone-butter { background: var(--ay-butter); }
+.ay-shopper dt { font: 600 11.5px/1.2 var(--ay-font-ui); opacity: .7; }
+.ay-shopper dd { margin: 4px 0 0; font: 700 14px/1.25 var(--ay-font-ui); overflow-wrap: anywhere; }

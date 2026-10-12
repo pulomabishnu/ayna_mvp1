@@ -20,6 +20,7 @@ import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportA
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
 import './about-scrapbook.css';
+import { buildShopperProfile } from '../../utils/shopperProfile.js';
 import { getMyCommunityProfile } from '../../../utils/community/communityStore.js';
 import { publicMediaUrl } from '../../../utils/community/imageUpload.js';
 
@@ -280,7 +281,7 @@ function useCommunityAvatar(userId) {
   return avatar.userId === userId ? avatar.path : null;
 }
 
-function ProfileHub({ authUserId, onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
+function ProfileHub({ shopperProfile, authUserId, onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
   const avatarPath = useCommunityAvatar(authUserId);
   const [avatarFailed, setAvatarFailed] = useState(false);
   const showPhoto = avatarPath && !avatarFailed;
@@ -346,6 +347,11 @@ function ProfileHub({ authUserId, onOpen, onClose, name, initial, memberSince, e
         <button type="button" className="ayna-profile-progress" onClick={onEditProfile} aria-label="Edit health profile"><span>Health profile</span><span>{profileFilledPct}%</span><i aria-hidden="true" style={{ '--profile-progress': `${profileFilledPct}%` }} /></button>
         <span className="ay-hub-shapes" aria-hidden="true"><i /><i /><i /></span>
       </div>
+
+      {shopperProfile && <section className="ay-shopper" aria-label="Shopper profile">
+        <header><span>Shopper profile</span><h2>{shopperProfile.title}</h2></header>
+        <dl>{shopperProfile.rows.map((r) => <div key={r.key} className={`tone-${r.tone}`}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}</dl>
+      </section>}
 
       <ProfileBadges savedCount={savedCount} ecosystemCount={ecosystemCount} profileFilledPct={profileFilledPct} />
 
@@ -3201,6 +3207,7 @@ export default function ProfileFlow({
   if (screen === 'hub') {
     body = (
       <ProfileHub
+        shopperProfile={buildShopperProfile(quizAnswers?.fullHealthIntake, myProducts)}
         authUserId={authUser?.id}
         onOpen={pushScreen}
         onClose={onClose}

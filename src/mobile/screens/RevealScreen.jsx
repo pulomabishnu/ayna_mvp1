@@ -3,6 +3,7 @@ import ProductImage from '../components/ProductImage.jsx';
 import { getProfileMatchPercentForProduct } from '../../data/products.js';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import '../wrapped.css';
+import { buildPersona } from '../utils/shopperProfile.js';
 
 const SLIDE_ART = { focus: 'scallop', match: 'bloom', persona: 'sparkle', lineup: 'arch', empty: 'scallop' };
 
@@ -12,35 +13,10 @@ const SLIDE_ART = { focus: 'scallop', match: 'bloom', persona: 'sparkle', lineup
 
 const DURATION = 5200;
 
-const TRUST_TYPES = {
-  'Clinical or scientific evidence': { title: 'The Researcher', line: 'Evidence first' },
-  'Reviews and experiences from other women': { title: 'The Listener', line: 'Real reviews first' },
-  'Brand reputation or expert recommendations': { title: 'The Curator', line: 'Expert picks first' },
-};
-const BRAND_SHORT = {
-  'I mostly stick with brands I already trust': 'Loyalist',
-  'I prefer trusted brands but am open to something new': 'Mostly loyal',
-  'I like a mix of familiar and new brands': 'Mix it up',
-  'I enjoy discovering new brands': 'Explorer',
-};
-
 function imageFor(product) {
   return product?.image || product?.imageUrl || product?.images?.[0];
 }
 
-function buildPersona(intake) {
-  if (!intake) return null;
-  const trust = TRUST_TYPES[intake.trustRanking?.[0]];
-  const brand = BRAND_SHORT[intake.brandOpenness];
-  const format = (intake.preferredFormats || []).find((f) => f !== 'No preference');
-  const facts = [
-    trust && ['Trusts', trust.line],
-    brand && ['Brands', brand],
-    format && ['Format', format],
-  ].filter(Boolean);
-  if (!facts.length) return null;
-  return { title: trust?.title || (brand === 'Explorer' ? 'The Explorer' : 'The Original'), facts };
-}
 
 export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse, authUser, quizAnswers, lastQuizAnswers }) {
   const [index, setIndex] = useState(0);

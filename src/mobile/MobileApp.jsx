@@ -46,6 +46,7 @@ import EcosystemResetDialog from './components/EcosystemResetDialog.jsx';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
 import LibraryScreen from './screens/LibraryScreen.jsx';
+import { AskContext } from './askContext.js';
 import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
 
@@ -177,6 +178,15 @@ export default function MobileApp() {
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(() => { const t = import.meta.env.DEV && new URLSearchParams(window.location.search).get('overlay'); return t ? { type: t } : null; }); // { type: 'product' | 'article', item }
   const [readArticleIds, setReadArticleIds] = useState([]);
+  // How far each read has been scrolled (0–1). Per-device convenience, so localStorage is fine.
+  const [readProgress, setReadProgress] = useState(() => { try { return JSON.parse(localStorage.getItem('ayna_read_progress_v1') || '{}') || {}; } catch { return {}; } });
+  const recordReadProgress = (id, value) => setReadProgress((prev) => {
+    const v = Math.round(Math.min(1, value) * 20) / 20;
+    if (!id || (prev[id] || 0) >= v) return prev;
+    const next = { ...prev, [id]: v };
+    try { localStorage.setItem('ayna_read_progress_v1', JSON.stringify(next)); } catch { /* storage blocked */ }
+    return next;
+  });
   const [intakeMode, setIntakeMode] = useState('new');
   const [ecosystemNotice, setEcosystemNotice] = useState('');
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
@@ -651,6 +661,7 @@ export default function MobileApp() {
 
   return (
     <div className="ayna-mobile" data-theme={resolvedTheme} data-screen={screen} data-preview={window.location.pathname === '/mobile-preview' ? 'true' : undefined} style={{ '--ayna-text-scale': textScale }} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
+      <AskContext.Provider value={nav.onAskAyna}>
       <Screen
         key={screen === 'community' ? communitySeed?.token || 'community' : screen === 'signin' ? `signin-${authMode}` : screen}
         {...nav}
@@ -667,6 +678,7 @@ export default function MobileApp() {
         products={browseProducts}
         articles={ARTICLES}
         readArticleIds={readArticleIds}
+        readProgress={readProgress}
         savedProducts={savedMap}
         onToggleSaved={(product) => authUser ? toggleSaved(product) : requestAuth('Saved products')}
         onAddToEcosystem={handleAddToEcosystem}
@@ -691,6 +703,7 @@ export default function MobileApp() {
           { label: 'Pillars', value: topAreaLabels.length },
         ]}
       />
+      </AskContext.Provider>
       {showTabBar && <MobileTabBar
         active={askAynaOpen ? 'library' : activeTab}
         onHome={() => { setAskAynaOpen(false); setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
@@ -749,6 +762,8 @@ export default function MobileApp() {
             key={overlay.item.id}
             article={overlay.item}
             onBack={() => setOverlay(null)}
+            savedProgress={readProgress[overlay.item.id] || 0}
+            onProgress={(value) => recordReadProgress(overlay.item.id, value)}
             nextRead={getNextArticle(overlay.item, ARTICLES, readArticleIds, getArticlesByProfileRelevance(effectiveQuizAnswers || {}, null))}
             onNext={(article) => {
               setReadArticleIds((ids) => ids.includes(article.id) ? ids : [...ids, article.id]);

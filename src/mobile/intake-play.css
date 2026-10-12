@@ -523,3 +523,13 @@
 .ip-addown-form button { min-height: 40px; padding: 0 16px; border: 0; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 700 13px/1 var(--ay-font-ui); }
 .ip-addown-form button:disabled { opacity: .4; }
 .ip-tabs { scroll-padding-inline: var(--ay-gutter); }
+
+/* Glossary: dotted underline on chips with a hard word; hold to define */
+.ip-answer { -webkit-touch-callout: none; }
+.ip-answer :is(button, label) { -webkit-user-select: none; user-select: none; }
+.ip-chip.has-term span { text-decoration: underline dotted; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+.ip-glossary { position: absolute; inset: 0; z-index: 40; display: flex; align-items: flex-end; padding: 0 var(--ay-gutter) 104px; background: rgba(29, 26, 43, .18); animation: ip-pop-in .18s var(--ay-ease) both; }
+.ip-glossary-card { width: 100%; padding: 16px; border: 1.5px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); color: var(--ay-ink); box-shadow: 0 4px 0 var(--ay-ink); }
+.ip-glossary-card strong { display: block; font: 800 18px/1.1 var(--ay-font-ui); letter-spacing: -.02em; }
+.ip-glossary-card p { margin: 8px 0 12px; font: 500 14.5px/1.45 var(--ay-font-ui); }
+.ip-glossary-card button { min-height: 40px; padding: 0 18px; border: 0; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 700 13px/1 var(--ay-font-ui); }

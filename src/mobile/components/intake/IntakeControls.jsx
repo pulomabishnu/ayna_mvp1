@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { findTerm } from '../../data/glossary.js';
 
 // Game-style answer controls for the mobile intake. Every control keeps the
 // exact value contract of the widget it replaced (same option strings, same
@@ -17,7 +18,7 @@ export function ChipList({ items, selected = [], onToggle, compact = false, mute
       {items.map((item) => {
         const on = selected.includes(item);
         return (
-          <button type="button" key={item} aria-pressed={on} className={`ip-chip${muted.includes(item) ? ' is-muted' : ''}`} onClick={() => onToggle(item)}>
+          <button type="button" key={item} aria-pressed={on} className={`ip-chip${muted.includes(item) ? ' is-muted' : ''}${findTerm(item) ? ' has-term' : ''}`} onClick={() => onToggle(item)}>
             {on && <Check />}<span>{item}</span>
           </button>
         );

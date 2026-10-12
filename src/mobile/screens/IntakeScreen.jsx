@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { findTerm } from '../data/glossary.js';
 import { ALL_PRODUCTS } from '../../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profileCompleteness.js';
@@ -1016,35 +1017,50 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const [minorGate, setMinorGate] = useState(false);
   const [direction, setDirection] = useState('forward');
   const [infoOpen, setInfoOpen] = useState(null);
+  // Hold a word (e.g. "Perimenopause", "PMDD") for a plain-language definition.
+  const [glossary, setGlossary] = useState(null);
+  const holdRef = useRef({ timer: null, fired: false });
+  const startHold = (event) => {
+    const el = event.target.closest('button, label, [role="radio"]');
+    const hit = el && findTerm(el.textContent);
+    clearTimeout(holdRef.current.timer);
+    holdRef.current.fired = false;
+    if (!hit) return;
+    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary(hit); navigator.vibrate?.(8); }, 450);
+  };
+  const endHold = () => clearTimeout(holdRef.current.timer);
+  const swallowClickAfterHold = (event) => {
+    if (holdRef.current.fired) { event.preventDefault(); event.stopPropagation(); holdRef.current.fired = false; }
+  };
 
   const visibleSteps = useMemo(() => {
     const steps = [
-      { id: 'age', section: 'core', title: 'Your age', type: 'age', optional: true },
-      { id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', optional: true },
-      { id: 'zip', section: 'core', title: 'ZIP code', type: 'zip', optional: true },
-      { id: 'support', section: 'support', title: 'What needs support?', type: 'support', optional: true },
+      { id: 'age', section: 'core', title: 'Your age', type: 'age', optional: true, info: 'Some products are only right for certain ages. Type it or use the ruler.' },
+      { id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', optional: true, info: 'Pick everything that fits right now. Hold a word to see what it means.' },
+      { id: 'zip', section: 'core', title: 'ZIP code', type: 'zip', optional: true, info: 'Only used to find care and stores near you. Never shared.' },
+      { id: 'support', section: 'support', title: 'What needs support?', type: 'support', optional: true, info: 'Pick what you’d like help with. Each one becomes a shelf in your Ecosystem.' },
       ...(isPeriodRelevant(intake) ? [
-        { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', optional: true },
-        { id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', optional: true },
+        { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', optional: true, info: 'How much you usually bleed. It helps us pick the right absorbency.' },
+        { id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', optional: true, info: 'How much cramps or pain affect you on a typical period.' },
       ] : []),
-      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', optional: true }] : []),
-      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago?', type: 'postpartumTiming', optional: true }] : []),
-      ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', optional: true }] : []),
-      { id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', optional: false },
-      { id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', optional: false },
-      { id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', optional: false },
-      { id: 'products', section: 'history', title: 'What have you tried?', type: 'products', optional: true },
-      { id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', optional: true },
-      { id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', optional: false },
-      { id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', optional: true },
+      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', optional: true, info: 'How often UTI-like symptoms come back.' }] : []),
+      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago?', type: 'postpartumTiming', optional: true, info: 'How long since you gave birth — needs change over time.' }] : []),
+      ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', optional: true, info: 'So we only show pregnancy-safe picks for where you are.' }] : []),
+      { id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', optional: false, info: 'Only conditions a clinician has diagnosed. We use this to filter out products that aren’t a good fit.' },
+      { id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', optional: false, info: 'So we can keep ingredients you react to out of your picks.' },
+      { id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', optional: false, info: 'Some supplements interact with medicines. We use this to flag them.' },
+      { id: 'products', section: 'history', title: 'What have you tried?', type: 'products', optional: true, info: 'Products you’ve used before, so we don’t repeat what didn’t work.' },
+      { id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', optional: true, info: 'Anything here never shows up in your picks.' },
+      { id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', optional: false, info: 'ayna doesn’t diagnose. If something feels urgent or severe, please get care.' },
+      { id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', optional: true, info: 'The kinds of products you like using, like pads, cups or apps.' },
       { id: 'recommendationCount', section: 'preferences', title: 'Picks per need', subtitle: 'For each area you want support with', info: 'This is how many products we show for each thing you picked earlier — for example 3 for cramps and 3 for sleep.', type: 'recommendationCount', optional: true },
       { id: 'priceRange', section: 'preferences', title: 'Budget per item', info: 'What you’d usually spend on one item — not your total.', type: 'price', optional: true },
-      { id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', optional: true },
-      ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', type: 'trustedBrands', optional: true }] : []),
+      { id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', optional: true, info: 'How open you are to trying brands you haven’t used before.' },
+      ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', info: 'Brands you already like. We’ll lean toward them.', type: 'trustedBrands', optional: true }] : []),
       { id: 'avoidIngredients', section: 'preferences', title: 'Avoid or must-have?', info: 'Pick what your products should leave out, and what they should be. Both are optional.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'FSA and HSA are pre-tax health accounts, often through work. If you have one, we can flag eligible products.', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'What matters most?', subtitle: 'When choosing a product', type: 'trust', optional: false },
-      { id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', optional: true },
+      { id: 'trust', section: 'trust', title: 'What matters most?', subtitle: 'When choosing a product', info: 'Drag to rank. We weigh your top pick most when matching.', type: 'trust', optional: false },
+      { id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', optional: true, info: 'Anything else you want us to keep in mind. Optional.' },
     ];
     return steps;
   }, [intake]);
@@ -1319,11 +1335,18 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
           {step.info && infoOpen === step.id && <p className="ip-info-pop" role="note">{step.info}</p>}
           {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
           <span className="ip-spacer is-top" aria-hidden="true" />
-          <div className="ip-answer">{renderBody()}</div>
+          <div className="ip-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold} onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallowClickAfterHold} onContextMenu={(e) => { if (holdRef.current.fired) e.preventDefault(); }}>{renderBody()}</div>
           <span className="ip-spacer is-bottom" aria-hidden="true" />
         </div>
       </div>
 
+      {glossary && <div className="ip-glossary" role="dialog" aria-label={glossary.term} onClick={() => setGlossary(null)}>
+        <div className="ip-glossary-card" onClick={(e) => e.stopPropagation()}>
+          <strong>{glossary.term}</strong>
+          <p>{glossary.definition}</p>
+          <button type="button" onClick={() => setGlossary(null)}>Got it</button>
+        </div>
+      </div>}
       <footer className="ip-foot">
         <button type="button" className="ip-next" onClick={goNext} disabled={!ready}>
           <span>{isLast ? 'See my results' : 'Next'}</span>

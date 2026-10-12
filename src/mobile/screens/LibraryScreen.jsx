@@ -5,43 +5,59 @@ import LibraryCard from '../components/LibraryCard.jsx';
 import { buildLibrary } from '../utils/personalReads.js';
 import '../library.css';
 
-export default function LibraryScreen({ articles = [], quizAnswers = null, readArticleIds = [], onOpenArticle, onOpenSaved, onAskAyna, onStartQuiz }) {
+function ReadState({ value = 0 }) {
+  const done = value >= 1;
+  return <span className={`ay-lib-state${done ? ' is-done' : value > 0 ? ' is-mid' : ''}`}>
+    <i aria-hidden="true"><b style={{ width: `${Math.round(value * 100)}%` }} /></i>
+    <small>{done ? 'Finished' : value > 0 ? `${Math.round(value * 100)}%` : 'New'}</small>
+  </span>;
+}
+
+export default function LibraryScreen({ articles = [], quizAnswers = null, readProgress = {}, onOpenArticle, onOpenSaved, onStartQuiz }) {
   const [query, setQuery] = useState('');
+  const [topic, setTopic] = useState('all');
   const q = query.trim().toLowerCase();
   const { forYou, rows, hasProfile } = buildLibrary(articles, quizAnswers);
-  const results = q.length >= 2 ? articles.filter((a) => `${a.title} ${(a.tags || []).join(' ')} ${a.teaser || ''}`.toLowerCase().includes(q)) : null;
-  const readCount = forYou.filter((a) => readArticleIds.includes(a.id)).length;
-  const card = (a) => <div className="ay-lib-item" key={a.id}>
-    <LibraryCard article={a} fullWidth onClick={() => onOpenArticle?.(a)} />
-    {readArticleIds.includes(a.id) && <span className="ay-lib-read">Read</span>}
+  const progressOf = (a) => readProgress[a.id] || 0;
+  const finished = articles.filter((a) => progressOf(a) >= 1).length;
+  const keepReading = articles.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);
+  const topics = [['all', 'All'], ...(hasProfile && forYou.length ? [['foryou', 'For you']] : []), ...rows.map((r) => [r.id, r.label])];
+
+  const tile = (a, small = false) => <div className={`ay-lib-item${small ? ' is-small' : ''}`} key={a.id}>
+    <LibraryCard article={a} fullWidth={!small} onClick={() => onOpenArticle?.(a)} />
+    <ReadState value={progressOf(a)} />
   </div>;
+  const row = (id, label, items, extra) => items.length > 0 && <section className="ay-lib-section" key={id}>
+    <div className="ay-lib-row-head"><h2>{label}</h2>{extra}</div>
+    <div className="ay-lib-scroll">{items.map((a) => tile(a, true))}</div>
+  </section>;
+
+  let body;
+  if (q.length >= 2) {
+    const results = articles.filter((a) => `${a.title} ${(a.tags || []).join(' ')} ${a.teaser || ''}`.toLowerCase().includes(q));
+    body = results.length ? <div className="ay-lib-grid">{results.map((a) => tile(a))}</div> : <p className="ay-lib-empty">No reads match.</p>;
+  } else if (topic !== 'all') {
+    const items = topic === 'foryou' ? forYou : (rows.find((r) => r.id === topic)?.items || []);
+    body = <div className="ay-lib-grid">{items.map((a) => tile(a))}</div>;
+  } else {
+    body = <>
+      {row('keep', 'Keep reading', keepReading)}
+      {hasProfile ? row('foryou', 'For you', forYou) : onStartQuiz && <button type="button" className="ay-lib-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
+      {rows.map((r) => row(r.id, r.label, r.items))}
+    </>;
+  }
 
   return <main className="ay-lib">
     <MobileHeader onOpenSaved={onOpenSaved} />
     <header className="ay-lib-head">
-      <h1>Library</h1>
+      <div className="ay-lib-title"><h1>Library</h1>
+        <span className="ay-lib-total" aria-label={`${finished} of ${articles.length} finished`}><i style={{ '--p': `${articles.length ? Math.round((finished / articles.length) * 100) : 0}%` }} />{finished}/{articles.length}</span>
+      </div>
       <SearchBar placeholder="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
     </header>
-
-    {results ? <section className="ay-lib-section">
-      {results.length ? <div className="ay-lib-grid">{results.map(card)}</div> : <p className="ay-lib-empty">No reads match.</p>}
-    </section> : <>
-      <button type="button" className="ay-lib-ask" onClick={onAskAyna}>
-        <span className="ay-lib-ask-art" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H9l-5 3V5Z" /><path d="M10 10a2 2 0 1 1 3.4 1.4c-.9.6-1.4 1-1.4 2.1m0 2h.01" /></svg></span>
-        <strong>Ask ayna</strong>
-        <span className="ay-lib-ask-go" aria-hidden="true">→</span>
-      </button>
-
-      {hasProfile && forYou.length > 0 && <section className="ay-lib-section">
-        <div className="ay-lib-row-head"><h2>For you</h2><span className="ay-lib-progress" aria-label={`${readCount} of ${forYou.length} read`}><i style={{ '--p': `${Math.round((readCount / forYou.length) * 100)}%` }} />{readCount}/{forYou.length}</span></div>
-        <div className="ay-lib-grid">{forYou.map(card)}</div>
-      </section>}
-      {!hasProfile && onStartQuiz && <button type="button" className="ay-lib-match" onClick={onStartQuiz}>Get reads for you <span aria-hidden="true">→</span></button>}
-
-      {rows.map((row) => <section className="ay-lib-section" key={row.id}>
-        <div className="ay-lib-row-head"><h2>{row.label}</h2></div>
-        <div className="ay-lib-scroll">{row.items.map((a) => <div className="ay-lib-item is-small" key={a.id}><LibraryCard article={a} onClick={() => onOpenArticle?.(a)} />{readArticleIds.includes(a.id) && <span className="ay-lib-read">Read</span>}</div>)}</div>
-      </section>)}
-    </>}
+    {q.length < 2 && <div className="ay-lib-topics" role="group" aria-label="Topics">
+      {topics.map(([id, label]) => <button type="button" key={id} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
+    </div>}
+    {body}
   </main>;
 }

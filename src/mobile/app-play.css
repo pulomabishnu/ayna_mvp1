@@ -693,3 +693,4 @@
 .ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active .ay-nav-center { background: var(--ay-pink); }
 .ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center:active .ay-nav-center { transform: translateY(2px); box-shadow: 0 2px 0 var(--ay-ink); }
 .ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active { font-weight: 800 !important; }
+.ayna-mobile .ay-header-actions { display: flex; align-items: center; gap: 8px; }
