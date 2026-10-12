@@ -1,7 +1,8 @@
 import { createPortal } from 'react-dom';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import { getProfileMatchPercentForProduct } from '../data/products';
+import { getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct } from '../data/products';
+import { formatPrice } from '../utils/formatPrice';
 import './WebDiscoverDeck.css';
 
 // "Swipe to discover" from the app, for the website: one product at a time.
@@ -11,12 +12,19 @@ import './WebDiscoverDeck.css';
 const SWIPE = 90;
 const DECK_SIZE = 30;
 
-export default function WebDiscoverDeck({ products = [], quizResults = null, savedProducts = {}, onToggleSaved, onOpenProduct, onClose }) {
-  const deck = useMemo(() => {
-    const rows = products.slice(0, 200).map((product) => ({ product, match: quizResults ? getProfileMatchPercentForProduct(product, quizResults) : null }));
+export default function WebDiscoverDeck({ products = [], quizResults = null, savedProducts = {}, ownedIds = null, onToggleSaved, onOpenProduct, onClose }) {
+  // Snapshot when the deck opens, so saving a card doesn't reshuffle the stack.
+  const [deck] = useState(() => {
+    // Only things she hasn't saved or added yet (D01).
+    const fresh = products.filter((p) => p && !savedProducts[p.id] && !(ownedIds && ownedIds.has(p.id)));
+    const rows = fresh.slice(0, 200).map((product) => {
+      const match = quizResults ? getProfileMatchPercentForProduct(product, quizResults) : null;
+      const reasons = quizResults && match > 0 ? (getProfileMatchLabelsForProduct(product, quizResults) || []).slice(0, 2) : [];
+      return { product, match, reasons };
+    });
     if (quizResults) rows.sort((a, b) => (b.match || 0) - (a.match || 0));
     return rows.slice(0, DECK_SIZE);
-  }, [products, quizResults]);
+  });
   const [index, setIndex] = useState(0);
   const [drag, setDrag] = useState(null);
   const [leaving, setLeaving] = useState(null);
@@ -71,7 +79,8 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
             <div className="wdeck-copy">
               {current.product.brand && <span>{current.product.brand}</span>}
               <strong>{current.product.name}</strong>
-              <div>{current.product.price && <b>{String(current.product.price)}</b>}{Number.isFinite(current.match) && current.match > 0 && <em>{Math.round(current.match)}% match</em>}</div>
+              <div><b>{formatPrice(current.product).main}</b>{Number.isFinite(current.match) && current.match > 0 && current.reasons.length > 0 && <em>{Math.round(current.match)}% match</em>}</div>
+              {current.reasons.length > 0 && <small className="wdeck-why">Fits: {current.reasons.join(', ').toLowerCase()}</small>}
             </div>
           </article>
         </> : <div className="wdeck-done">
@@ -85,7 +94,7 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
         <button type="button" className="wdeck-view" onClick={() => onOpenProduct?.(current.product)}>Details</button>
         <button type="button" className="wdeck-round is-save" onClick={() => act('save')} aria-label="Save">♥</button>
       </div>}
-      {current && <p className="wdeck-hint">Drag the card, or use your arrow keys</p>}
+      {current && <p className="wdeck-hint"><kbd>←</kbd> Skip · <kbd>→</kbd> Save</p>}
     </div>
   </div>, document.body);
 }

@@ -957,3 +957,151 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 }
 .ay-auth-new { display: block; width: 100%; margin-top: 16px; padding: 8px 0; border: 0; background: none; color: #1d1a2b; font: 600 14px/1.4 'Poppins', system-ui, sans-serif; text-align: center; cursor: pointer; } .ay-auth-new b { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 .app-container .ay-web-discover__cards i:last-child { background: var(--ay-pink) !important; }
+
+/* ==========================================================================
+   Ask ayna: flat and on-brand (no glossy orb, no glow gradient). Audit A04.
+   ========================================================================== */
+.app-container .ayna-ask-launcher { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 18px 0 8px !important; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-butter) !important; background-image: none !important; color: var(--ay-ink) !important; box-shadow: var(--ay-shadow) !important; }
+.app-container .ayna-ask-launcher:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ay-ink) !important; }
+.app-container .ayna-ask-launcher__label { color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important; text-shadow: none !important; }
+.app-container .ayna-ask-orb { width: 32px !important; height: 32px !important; border: 2px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; background-image: none !important; box-shadow: none !important; animation: none !important; position: relative; }
+.app-container .ayna-ask-orb::before, .app-container .ayna-ask-orb::after { content: '' !important; position: absolute; inset: auto; background: none !important; }
+.app-container .ayna-ask-orb::before { left: 50%; top: 50%; width: 14px; height: 14px; translate: -50% -50%; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); background: var(--ay-ink) !important; }
+.app-container .ayna-ask-orb::after { display: none; }
+.app-container .ayna-ask-panel { border: 2px solid var(--ay-ink) !important; border-radius: 24px !important; background: var(--ay-paper) !important; box-shadow: var(--ay-shadow-lg) !important; overflow: hidden; }
+.app-container .ayna-ask-panel__header { background: var(--ay-peri) !important; background-image: none !important; border-bottom: 2px solid var(--ay-ink) !important; color: var(--ay-ink) !important; }
+.app-container .ayna-ask-panel__header :is(h3, p, .ayna-ask-panel__eyebrow) { color: var(--ay-ink) !important; }
+.app-container .ayna-ask-panel__eyebrow { display: none !important; }
+.app-container .ayna-ask-panel__header h3 { font: 800 24px/1 var(--ay-font-display) !important; letter-spacing: -.03em !important; }
+.app-container .ayna-ask-panel__header p { font: 500 14px/1.4 var(--ay-font-ui) !important; opacity: .75; }
+.app-container .ayna-ask-panel__close { width: 40px; height: 40px; border: 2px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font-size: 20px !important; }
+.app-container .ayna-ask-message--ayna { border: 1.5px solid var(--ay-ink) !important; background: var(--ay-cream) !important; color: var(--ay-ink) !important; }
+.app-container .ayna-ask-message--user { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.app-container .ayna-ask-message--system { border: 1.5px dashed var(--ay-ink) !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
+.app-container .ayna-ask-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.app-container .ayna-ask-actions:empty { display: none; }
+.app-container .ayna-ask-actions button, .app-container .ayna-ask-starters button { min-height: 36px; padding: 0 14px; border: 1.5px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 700 13px/1 var(--ay-font-ui) !important; cursor: pointer; }
+.app-container .ayna-ask-actions button.is-primary { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.app-container .ayna-ask-starters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.app-container .ayna-ask-mode button.is-active { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.app-container .ayna-ask-send { border: 2px solid var(--ay-ink) !important; background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.app-container .ayna-voice-state__orb { background: var(--ay-mint) !important; background-image: none !important; border: 2px solid var(--ay-ink); box-shadow: none !important; }
+.app-container .ayna-ask-panel__inputrow input { border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; box-shadow: none !important; }
+/* Hide the launcher while any modal or drawer is open (G17) */
+body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role='dialog'][aria-modal='true']) .app-container .ayna-ask-launcher { display: none !important; }
+@media (max-width: 767px) {
+  .app-container .ayna-ask-launcher { width: 52px; height: 52px; padding: 0 !important; justify-content: center; }
+  .app-container .ayna-ask-launcher__label { display: none !important; }
+  .app-container main { padding-bottom: 72px; }
+}
+
+/* ==========================================================================
+   Header round 2 (audit G01, G03, G04, G05, G06, G08, G18, MW01-03, micro header)
+   ========================================================================== */
+.app-container .app-nav-wrap { position: sticky; top: 0; z-index: 1001; }
+.app-container .app-nav.app-nav { position: relative !important; top: auto !important; }
+.ay-skip { position: absolute; left: 12px; top: -60px; z-index: 3000; padding: 10px 16px; border: 2px solid #1d1a2b; border-radius: 99px; background: #f7e78e; color: #1d1a2b; font: 700 14px/1 'Poppins', sans-serif; text-decoration: none; }
+.ay-skip:focus { top: 12px; }
+#ay-content:focus { outline: none; }
+.app-container a.app-nav__logo { display: inline-flex; align-items: center; text-decoration: none !important; }
+.app-container .app-nav.app-nav .app-nav__beta-badge { align-self: center; translate: 0 -1px; }
+.app-container .app-nav.app-nav a.app-nav__tab { display: inline-flex; align-items: center; gap: 8px; height: 40px; box-sizing: border-box; }
+/* My Ecosystem looks like every other item; only the current page gets the butter pill */
+.app-container .app-nav.app-nav .app-nav__tab--center:not(.app-nav__tab--active) { border-color: transparent !important; background: transparent !important; box-shadow: none !important; }
+.app-container .app-nav.app-nav .app-nav__tab--center:not(.app-nav__tab--active):hover { border-color: var(--ay-ink) !important; }
+/* One badge: 16px min, 11px/700 tabular digits, ink on butter */
+.app-container .ay-badge { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font: 700 11px/1 var(--ay-font-ui); font-variant-numeric: tabular-nums; }
+.app-container .ay-badge.is-empty { visibility: hidden; }
+.app-container .ay-badge.is-corner { position: absolute; top: -6px; right: -6px; box-shadow: 0 0 0 2px var(--ay-paper); }
+.app-container .app-nav__circle--wishlist { position: relative; }
+.app-container .app-nav__wishlist-count { display: none !important; }
+/* Icon buttons: 40px circles, same height as the pills */
+.app-container .app-nav.app-nav .app-nav__circle { width: 40px !important; height: 40px !important; border-radius: 50% !important; display: inline-grid !important; place-items: center; text-decoration: none !important; }
+.app-container .app-nav__actions { display: flex; align-items: center; gap: 8px; }
+.app-container .nav-account-menu { border: 2px solid var(--ay-ink) !important; border-radius: 16px !important; background: var(--ay-paper) !important; box-shadow: var(--ay-shadow) !important; padding: 8px !important; }
+.app-container .nav-account-menu button { border-radius: 10px !important; color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important; }
+.app-container .nav-account-menu button:hover { background: var(--ay-butter) !important; }
+/* Focus you can see (G18) */
+.app-container :is(a, button, input, select, textarea, [tabindex]):focus-visible { outline: 3px solid var(--ay-peri-ink) !important; outline-offset: 2px !important; }
+@media (min-width: 901px) { .app-container .mobile-menu-btn { display: none !important; } }
+@media (max-width: 900px) {
+  .app-container .app-nav.app-nav { display: flex !important; align-items: center; justify-content: space-between; }
+  .app-container .mobile-menu-btn { display: inline-grid !important; place-items: center; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0 !important; border: 2px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; }
+  .app-container .mobile-menu-btn svg { width: 20px; height: 20px; }
+  .app-container .mobile-nav-drawer { position: fixed !important; inset: 0 !important; top: 0 !important; z-index: 1500 !important; display: block !important; padding: 0 !important; border: 0 !important; background: rgba(29, 26, 43, .5) !important; box-shadow: none !important; }
+  .app-container .mobile-nav-sheet { position: absolute; top: 0; right: 0; bottom: 0; width: min(340px, 86vw); display: flex; flex-direction: column; gap: 4px; padding: 88px 16px 24px; border-left: 2px solid var(--ay-ink); background: var(--ay-cream); overflow-y: auto; animation: ay-sheet-in .22s ease-out both; }
+  .app-container .mobile-drawer-item { display: flex !important; align-items: center; justify-content: space-between; min-height: 52px; padding: 0 16px !important; border: 2px solid transparent !important; border-radius: 99px !important; background: transparent; text-decoration: none !important; }
+  .app-container .mobile-drawer-item.is-active { border-color: var(--ay-ink) !important; background: var(--ay-butter) !important; box-shadow: var(--ay-shadow); }
+  .app-container .mobile-drawer-item.is-quiet { font-size: 15px !important; color: var(--ay-ink-soft) !important; }
+  .app-container .app-nav-wrap:has(.mobile-nav-drawer) .mobile-menu-btn { position: relative; z-index: 1600; }
+}
+@keyframes ay-sheet-in { from { transform: translateX(24px); opacity: 0; } }
+
+/* ==========================================================================
+   Shop round 2 (S05-S19, MW04, D04, micro shop/card)
+   ========================================================================== */
+.app-container .ayna-browse__heading { margin-bottom: 24px !important; }
+.app-container .ayna-browse__heading h1 { margin: 0 !important; }
+.app-container .ayna-browse__disclosure { margin: 8px 0 0; color: var(--ay-ink-soft); font: 500 14px/1.45 var(--ay-font-ui); }
+.app-container .ayna-browse__disclosure a { color: var(--ay-ink); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.app-container .ayna-browse__search { position: relative; }
+.app-container main .ayna-browse__search input { padding-left: 48px !important; }
+.app-container .ayna-browse__search-icon { position: absolute; left: 18px; top: 50%; translate: 0 -50%; width: 20px; height: 20px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+.app-container .ayna-browse__search input::-webkit-search-cancel-button { filter: grayscale(1) brightness(.2); }
+.app-container .ayna-browse__inferred { margin: 12px 0 0; }
+.app-container .ayna-browse__inferred button { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .ayna-browse__categories { gap: 8px !important; }
+.app-container .ayna-browse__toolbar { display: flex !important; align-items: center !important; justify-content: space-between; gap: 12px; margin: 16px 0 !important; }
+.app-container .ayna-browse__toolbar-left { display: flex; align-items: center; gap: 12px; }
+.app-container .ayna-browse__filter-button { height: 40px; min-height: 40px; padding: 0 16px !important; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important; }
+.app-container .ayna-browse__filter-button.is-active, .app-container .ayna-browse__filter-button.is-open { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.app-container .ayna-browse__personalize-cta { height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-butter); color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .ayna-browse__personalized-toggle > span:first-child, .app-container .ayna-browse__sort > span { color: var(--ay-ink) !important; font: 600 14px/1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
+.app-container .ayna-browse__sort { display: inline-flex; align-items: center; gap: 8px; }
+.app-container .ayna-browse__sort select { height: 40px !important; min-height: 40px; padding: 0 36px 0 14px !important; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background-color: var(--ay-paper) !important; font: 600 14px/1 var(--ay-font-ui) !important; }
+.app-container .ayna-browse__filters { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px 24px !important; margin: 0 0 24px !important; padding: 24px !important; border: 2px solid var(--ay-ink) !important; border-radius: 20px !important; background: var(--ay-paper) !important; box-shadow: none !important; }
+.app-container .ayna-browse__filter-group { margin: 0; padding: 0; border: 0; min-width: 0; }
+.app-container .ayna-browse__filter-group legend { margin-bottom: 10px; padding: 0; color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); }
+.app-container .ayna-browse__filter-group > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.app-container .ayna-browse__filter-group button { min-height: 36px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .ayna-browse__filter-group button.is-on { background: var(--ay-ink); color: var(--ay-paper); }
+.app-container .ayna-browse__filter-group.is-mobile-only { display: none; }
+.app-container .ayna-browse__clear { align-self: end; justify-self: start; min-height: 36px; padding: 0 14px; border: 0 !important; background: none !important; color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.app-container .ayna-browse__searching { margin: 0 0 16px; color: var(--ay-ink-soft); font: 600 14px/1.4 var(--ay-font-ui); }
+.app-container .ayna-browse__divider { grid-column: 1 / -1; display: grid; gap: 4px; margin: 16px 0 0; padding-top: 24px; border-top: 1.5px solid var(--ay-line); }
+.app-container .ayna-browse__divider strong { font: 800 24px/1.1 var(--ay-font-display); letter-spacing: -.03em; color: var(--ay-ink); }
+.app-container .ayna-browse__divider span { color: var(--ay-ink-soft); font: 500 14px/1.4 var(--ay-font-ui); }
+.app-container .ayna-browse__empty { display: grid; justify-items: center; gap: 16px; padding: 56px 16px; text-align: center; }
+.app-container .ayna-browse__empty strong { font: 800 28px/1.1 var(--ay-font-display); letter-spacing: -.03em; color: var(--ay-ink); }
+.app-container .ayna-browse__empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.app-container .ayna-browse__empty-actions button { min-height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .ayna-browse__empty-actions button.is-dark { background: var(--ay-ink); color: var(--ay-paper); }
+
+/* One product card: whole card clickable, 44px heart, fixed eyebrow, 2-line title, price at the bottom */
+.app-container .ayna-browse-card { position: relative; display: flex !important; flex-direction: column; padding: 10px !important; }
+.app-container .ayna-browse-card__link { position: static !important; display: flex !important; flex-direction: column; flex: 1; color: inherit; text-decoration: none !important; }
+.app-container .ayna-browse-card__link::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+.app-container .ayna-browse-card .ayna-discover-card__tile { border-radius: 12px !important; }
+.app-container .ayna-browse-card .ayna-discover-card__tile img { border-radius: 0 !important; }
+.app-container .ayna-browse-card__wishlist { position: absolute !important; z-index: 2; top: 10px !important; right: 10px !important; width: 44px !important; height: 44px !important; padding: 0 !important; border: 0 !important; background: transparent !important; box-shadow: none !important; }
+.app-container .ayna-browse-card__wishlist svg { box-sizing: border-box; width: 36px !important; height: 36px !important; padding: 8px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); fill: none; stroke-width: 2; }
+.app-container .ayna-browse-card__wishlist.is-saved { background: transparent !important; }
+.app-container .ayna-browse-card__wishlist.is-saved svg { background: var(--ay-pink); fill: var(--ay-ink); }
+.app-container .ayna-browse-card .ayna-discover-card__body { flex: 1; display: flex !important; flex-direction: column; justify-items: start; gap: 4px !important; padding: 12px 4px 4px !important; }
+.app-container .ayna-browse-card__labels { display: flex; align-items: center; gap: 6px; height: 20px; overflow: hidden; }
+.app-container .ayna-browse-card .ayna-discover-card__name { display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.5em; }
+.app-container .ayna-browse-card .ayna-discover-card__price { display: grid; gap: 2px; margin-top: auto !important; padding-top: 6px; white-space: nowrap; }
+.app-container .ayna-browse-card .ayna-discover-card__price small { overflow: hidden; text-overflow: ellipsis; color: var(--ay-ink-soft); font: 500 12px/1.3 var(--ay-font-ui); }
+.app-container .ayna-browse-card__ecosystem { position: absolute; left: 8px; bottom: 8px; padding: 5px 9px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-mint) !important; color: var(--ay-ink) !important; font: 700 11px/1 var(--ay-font-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
+.app-container .ayna-browse-card__affiliate { display: none !important; }
+.app-container .ayna-browse-card.is-skeleton .ayna-discover-card__tile { aspect-ratio: 1 / 1; background: var(--ay-tile) !important; }
+.app-container .ay-skel-line { display: block; height: 12px; border-radius: 99px; background: var(--ay-tile); }
+.app-container .ay-skel-line.is-lg { height: 16px; }
+@media (max-width: 760px) {
+  .app-container .ayna-browse__toolbar .ayna-browse__personalized-toggle { display: none; }
+  .app-container .ayna-browse__filter-group.is-mobile-only { display: block; }
+  .app-container .ayna-browse__sort > span { display: none; }
+  .app-container .ayna-browse__filters { padding: 16px !important; }
+  .app-container .ayna-browse__categories { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 24px), transparent); }
+  .app-container .ayna-browse__categories button { flex: none; }
+}

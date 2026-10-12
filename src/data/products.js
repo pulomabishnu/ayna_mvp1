@@ -926,7 +926,9 @@ export const CATEGORY_LABELS = {
 // "Sleep" bubble, not fall into "Other").
 export const MACRO_GROUPS = [
     { id: 'all', label: 'All', categories: [], keywords: [] },
-    { id: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief', 'cup-steamer'], keywords: ['period', 'menstrual'] },
+    // Virtual care clinics mention periods in their copy but aren't period products;
+    // they have their own home under Virtual care.
+    { id: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief', 'cup-steamer'], keywords: ['period', 'menstrual'], excludeCategories: ['telehealth'] },
     // 'ph' used to be a bare keyword here and matched any product whose copy happened to
     // contain the substring "ph" — e.g. Nature Made Iron ("#1 pharmacist recommended"), Wisp
     // ("pharmacy pickup"), and Apple Health ("built into iPhone") all satisfied it despite

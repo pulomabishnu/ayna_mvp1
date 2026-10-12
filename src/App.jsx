@@ -97,7 +97,7 @@ function clearPendingEcosystemReset(userId) {
 
 const VIEW_TO_PATH = {
   welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem', you: '/you', community: '/community',
-  discovery: '/discovery', waitlist: '/startups',
+  discovery: '/shop', waitlist: '/startups',
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
@@ -114,7 +114,7 @@ const VIEW_TO_PATH = {
 // Friendly document.title per view — 'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
-  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Browse', you: 'You', community: 'Community',
+  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
   waitlist: 'Startups', articles: 'Health Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
@@ -128,6 +128,8 @@ const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
 );
 PATH_TO_VIEW['/'] = 'welcome';
+// Old Shop URL keeps working (bookmarks, shared links); it is replaced with /shop on load.
+PATH_TO_VIEW['/discovery'] = 'discovery';
 
 function getInitialView() {
   const path = window.location.pathname;
@@ -235,7 +237,7 @@ function App() {
     const path = pathForView(view, null);
     if (window.location.pathname !== path) {
       if (replace) window.history.replaceState({ view }, '', path);
-      else { window.history.pushState({ view }, '', path); inAppPushCountRef.current += 1; }
+      else { window.history.pushState({ view }, '', path); inAppPushCountRef.current += 1; window.scrollTo(0, 0); }
     }
   }, [pathForView]);
   /** Navigate to a specific product's dedicated page — a real URL, not modal state. */
@@ -247,7 +249,7 @@ function App() {
     const path = productHref(id);
     if (window.location.pathname !== path) {
       if (replace) window.history.replaceState({ view: 'product', productId: id }, '', path);
-      else { window.history.pushState({ view: 'product', productId: id }, '', path); inAppPushCountRef.current += 1; }
+      else { window.history.pushState({ view: 'product', productId: id }, '', path); inAppPushCountRef.current += 1; window.scrollTo(0, 0); }
     }
   }, []);
   /** Back control for the product page: real in-app back if we got here by
@@ -375,6 +377,15 @@ function App() {
   // From the app: Wrapped story after the quiz, and an Ask ayna button in the header.
   const [showWrapped, setShowWrapped] = useState(false);
   const [askOpenSignal, setAskOpenSignal] = useState(0);
+  const [askPrefill, setAskPrefill] = useState('');
+  // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
+  const openAsk = useCallback((text = '') => {
+    if (!user) { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); return; }
+    if (!quizResults) { setCurrentView('quiz'); return; }
+    setAskPrefill(text);
+    setAskOpenSignal((n) => n + 1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, quizResults]);
   // Light / dark, shared with the app's own setting on this browser.
   const { theme, setThemeMode } = useThemeMode();
   useEffect(() => { document.documentElement.dataset.ayTheme = theme; }, [theme]);
@@ -736,10 +747,13 @@ function App() {
   // Discovery's "Personalized" toggle is visible to everyone, but clicking it
   // while logged out opens the same AuthGate modal used everywhere else in
   // the app, instead of silently doing nothing or being invisible.
+  // Signed out, "Personalize" starts the quiz (account comes after the matches).
   const handleRequirePersonalizeAuth = useCallback(() => {
+    if (!user) { setCurrentView('quiz'); return; }
     setPendingAction('personalize'); pendingActionRef.current = 'personalize';
     setShowAuthModal(true);
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings'];
   useEffect(() => {
@@ -892,6 +906,35 @@ function App() {
   const handleViewComparison = () => setCurrentView('comparison');
   const handleViewRecalls = () => setCurrentView('recalls');
   const handleViewDoctorPrep = () => setCurrentView('doctor-prep');
+  // Explicit log out: clear every user-scoped thing right away (header
+  // badges, ecosystem, saved, profile) instead of waiting for the debounced
+  // auth event, then land on the top of Home (audit G20, G09).
+  const handleSignOut = () => {
+    getSupabaseClient()?.auth.signOut();
+    setMyProducts({});
+    setTrackedProducts({});
+    setOmittedProducts({});
+    setQuizResults(null);
+    setAynaReviews({});
+    setHealthProfile(null);
+    setSavedProducts({});
+    clearSavedProducts();
+    setShowAccountMenu(false);
+    setCurrentView('welcome');
+    window.scrollTo(0, 0);
+  };
+
+  // Nav targets are real links (cmd/middle-click open a tab); a plain click
+  // stays in the app (audit G02).
+  const linkProps = (go) => ({
+    onClick: (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      go();
+    },
+  });
+  const savedCount = Object.keys(savedProducts || {}).length;
+
   const navigateHome = () => {
     setDiscoverySearch('');
     setCurrentView('welcome');
@@ -1266,27 +1309,71 @@ function App() {
         <EcosystemGenerationBar intakeFingerprint={ecosystemIntakeFingerprint} onViewEcosystem={handleViewEcosystem} hasEcosystem={ecosystemCount > 0} />
       </div>
       <main data-view={currentView}>
-        <div style={{ position: 'relative', zIndex: 1001 }}>
+        <a className="ay-skip" href="#ay-content">Skip to content</a>
+        <div className="app-nav-wrap">
         <nav
           className={`app-nav ${navOnGradient ? `app-nav--landing${navGradientVariant}` : 'app-nav--cream'}${isScrolled ? ' app-nav--scrolled' : ''}`}
           aria-label="Primary"
         >
           <div className="app-nav__brand">
-            <div
-              className="app-nav__logo"
-              role="button"
-              tabIndex={0}
-              onClick={navigateHome}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigateHome(); } }}
-            >
+            <a className="app-nav__logo" href="/" aria-label="ayna home" {...linkProps(navigateHome)}>
               ayna
               <span className="app-nav__beta-badge">beta</span>
-            </div>
+            </a>
+          </div>
 
-            {/* Hamburger — mobile only */}
+          {/* Same order as the app's tab bar: Library · Shop · Ecosystem · Community. Real links (G02). */}
+          <div className="app-nav__links desktop-only">
+            <a href="/library" className={`app-nav__tab ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => { setSelectedArticleId(null); setCurrentView('articles'); })}>Library</a>
+            <a href="/shop" className={`app-nav__tab ${['discovery', 'hero', 'product'].includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'discovery' ? 'page' : undefined} {...linkProps(() => handleViewDiscovery(''))}>Shop</a>
+            <a href="/ecosystem" className={`app-nav__tab ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewEcosystem())}>
+              My Ecosystem
+              <span className={`ay-badge${user && ecosystemCount > 0 ? '' : ' is-empty'}`} aria-hidden={!(user && ecosystemCount > 0)}>{user && ecosystemCount > 0 ? ecosystemCount : ''}</span>
+            </a>
+            <a href="/community" className={`app-nav__tab ${currentView === 'community' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
+          </div>
+
+          <div className="app-nav__actions">
+            <a
+              href="/ecosystem"
+              className="app-nav__circle app-nav__circle--wishlist"
+              {...linkProps(handleViewWishlist)}
+              aria-label={`Saved${user && savedCount ? `, ${savedCount}` : ''}`}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="app-nav__wishlist-icon">
+                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
+              </svg>
+              {user && savedCount > 0 && <span className="ay-badge is-corner">{savedCount}</span>}
+            </a>
+            <div ref={accountMenuRef} className="app-nav__account desktop-only">
+              <button
+                type="button"
+                className={`app-nav__circle app-nav__circle--account ${user ? 'app-nav__circle--avatar' : ''}`}
+                onClick={() => { if (user) { setShowAccountMenu(false); setCurrentView('you'); } else setShowAccountMenu(v => !v); }}
+                aria-haspopup={user ? undefined : 'menu'}
+                aria-expanded={user ? undefined : showAccountMenu}
+                aria-label="Account"
+              >
+                {user ? accountInitials : (
+                  <svg viewBox="0 0 24 24" aria-hidden="true" className="app-nav__account-icon">
+                    <circle cx="12" cy="8" r="3.25" />
+                    <path d="M5.8 19c.7-3.5 3-5.3 6.2-5.3s5.5 1.8 6.2 5.3" />
+                  </svg>
+                )}
+                {user && checkinDue && <span className="app-nav__circle-dot" aria-hidden />}
+              </button>
+              {showAccountMenu && !user && (
+                <div className="nav-account-menu" role="menu">
+                  <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); setCurrentView('quiz'); }}>Sign up</button>
+                  <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}>Log in</button>
+                </div>
+              )}
+            </div>
+            {/* Hamburger — mobile only, on the right with Saved (MW03) */}
             <button
               className="mobile-menu-btn"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileMenuOpen}
               onClick={() => setMobileMenuOpen(v => !v)}
             >
               {mobileMenuOpen ? (
@@ -1296,160 +1383,40 @@ function App() {
               )}
             </button>
           </div>
+        </nav>
 
-          {/* Exactly three primary concepts, per spec: ayna (logo, above) · My
-              Ecosystem · Browse. Brands / My Health Library / About Us are real
-              routes still, just relocated to the footer's secondary nav. */}
-          <div className="app-nav__links desktop-only">
-            {/* Same order as the app's tab bar: Library · Shop · Ecosystem · Community · You (account button). */}
-            <button
-              className={`app-nav__tab ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`}
-              onClick={() => { setSelectedArticleId(null); setCurrentView('articles'); }}
-            >
-              Library
-            </button>
-            <button
-              className={`app-nav__tab ${(currentView === 'discovery' || currentView === 'hero') ? 'app-nav__tab--active' : ''}`}
-              onClick={() => handleViewDiscovery('')}
-            >
-              Shop
-            </button>
-            <button
-              className={`app-nav__tab app-nav__tab--center ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`}
-              onClick={() => handleViewEcosystem()}
-            >
-              My Ecosystem
-              {ecosystemCount > 0 && (
-                <span className="nav-ecosystem__pill" style={{ marginLeft: '0.4rem' }}>{ecosystemCount}</span>
-              )}
-            </button>
-            <button
-              className={`app-nav__tab ${currentView === 'community' ? 'app-nav__tab--active' : ''}`}
-              onClick={() => setCurrentView('community')}
-            >
-              Community
-            </button>
-          </div>
-
-          {/* Account stays a subtle utility; primary navigation is only Ayna, My Ecosystem and Browse. */}
-          <div className="app-nav__actions desktop-only">
-            <button
-              type="button"
-              className="app-nav__circle app-nav__circle--ask"
-              onClick={() => {
-                if (!user) { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); return; }
-                if (!quizResults) { setCurrentView('quiz'); return; }
-                setAskOpenSignal((n) => n + 1);
-              }}
-              aria-label="Ask ayna"
-              title="Ask ayna"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="app-nav__wishlist-icon"><path d="M4 5h16v12H9l-5 3V5Z" /><path d="M10 9.5a2 2 0 1 1 3.4 1.4c-.9.6-1.4 1-1.4 2.1M12 15h.01" /></svg>
-            </button>
-            <button
-              type="button"
-              className="app-nav__circle app-nav__circle--wishlist"
-              onClick={handleViewWishlist}
-              aria-label={`Wishlist${Object.keys(savedProducts || {}).length ? ` (${Object.keys(savedProducts || {}).length})` : ''}`}
-              title="Wishlist"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="app-nav__wishlist-icon">
-                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
-              </svg>
-              {Object.keys(savedProducts || {}).length > 0 && (
-                <span className="app-nav__wishlist-count">{Object.keys(savedProducts || {}).length}</span>
-              )}
-            </button>
-            <div ref={accountMenuRef} className="app-nav__account">
-              <button
-                type="button"
-                className={`app-nav__circle app-nav__circle--account ${user ? 'app-nav__circle--avatar' : ''}`}
-                onClick={() => { if (user) { setShowAccountMenu(false); setCurrentView('you'); } else setShowAccountMenu(v => !v); }}
-                aria-haspopup={user ? undefined : 'menu'}
-                aria-expanded={showAccountMenu}
-                aria-label="Account"
-                title={user ? user.email : 'Account'}
-              >
-                {user ? accountInitials : (
-                  <svg viewBox="0 0 24 24" aria-hidden="true" className="app-nav__account-icon">
-                    <circle cx="12" cy="8" r="3.25" />
-                    <path d="M5.8 19c.7-3.5 3-5.3 6.2-5.3s5.5 1.8 6.2 5.3" />
-                  </svg>
-                )}
-                {checkinDue && <span className="app-nav__circle-dot" aria-hidden />}
-              </button>
-              {showAccountMenu && (
-                <div className="nav-account-menu">
-                  {user && (
-                    <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', wordBreak: 'break-all', lineHeight: 1.4 }}>
-                      {user.email}
-                    </span>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => { setShowAccountMenu(false); setShowCheckin(true); }}
-                    title={checkinDue ? "It's been a month — a quick check-in helps keep your recommendations current." : undefined}
-                  >
-                    Check-in
-                  </button>
-                  {user ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => { getSupabaseClient()?.auth.signOut(); setShowAccountMenu(false); }}
-                      >
-                        Log out
-                      </button>
-                      <button
-                        type="button"
-                        className="nav-account-menu__muted"
-                        onClick={() => { setShowDeleteModal(true); setShowAccountMenu(false); }}
-                      >
-                        Delete account
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowAccountMenu(false);
-                        setPendingAction('login'); pendingActionRef.current = 'login';
-                        setShowAuthModal(true);
-                      }}
-                    >
-                      Log in
-                    </button>
-                  )}
-                </div>
+        {/* Mobile menu: full-height sheet with backdrop (MW02). Delete account lives only in You → Account (MW01). */}
+        {mobileMenuOpen && (
+          <div className="mobile-nav-drawer" onClick={() => setMobileMenuOpen(false)}>
+            <div className="mobile-nav-sheet" onClick={(e) => e.stopPropagation()}>
+              {[
+                ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
+                ['discovery', '/shop', 'Shop', () => handleViewDiscovery('')],
+                ['ecosystem', '/ecosystem', 'My Ecosystem', () => handleViewEcosystem()],
+                ['community', '/community', 'Community', () => setCurrentView('community')],
+                ...(user ? [['you', '/you', 'You', () => setCurrentView('you')]] : []),
+              ].map(([view, href, label, go]) => (
+                <a key={view} href={href} className={`mobile-drawer-item${(view === 'ecosystem' ? ECOSYSTEM_NAV_VIEWS.includes(currentView) : currentView === view) ? ' is-active' : ''}`} {...linkProps(() => { go(); setMobileMenuOpen(false); })}>
+                  {label}
+                  {view === 'ecosystem' && user && ecosystemCount > 0 && <span className="ay-badge">{ecosystemCount}</span>}
+                </a>
+              ))}
+              <a href="/ecosystem" className="mobile-drawer-item" {...linkProps(() => { handleViewWishlist(); setMobileMenuOpen(false); })}>
+                Saved {user && savedCount > 0 && <span className="ay-badge">{savedCount}</span>}
+              </a>
+              {user ? (
+                <button className="mobile-drawer-item is-quiet" onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}>Log out</button>
+              ) : (
+                <>
+                  <button className="mobile-drawer-item" onClick={() => { setCurrentView('quiz'); setMobileMenuOpen(false); }}>Sign up</button>
+                  <button className="mobile-drawer-item is-quiet" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); setMobileMenuOpen(false); }}>Log in</button>
+                </>
               )}
             </div>
           </div>
-        </nav>
-
-        {/* Mobile drawer */}
-        {mobileMenuOpen && (
-          <div className="mobile-nav-drawer" onClick={() => setMobileMenuOpen(false)}>
-            <button className="mobile-drawer-item" onClick={() => { setSelectedArticleId(null); setCurrentView('articles'); setMobileMenuOpen(false); }}>Library</button>
-            <button className="mobile-drawer-item" onClick={() => { handleViewDiscovery(''); setMobileMenuOpen(false); }}>Shop</button>
-            <button className="mobile-drawer-item" onClick={() => { handleViewEcosystem(); setMobileMenuOpen(false); }}>
-              My Ecosystem {ecosystemCount > 0 && <span className="nav-ecosystem__pill">{ecosystemCount}</span>}
-            </button>
-            <button className="mobile-drawer-item" onClick={() => { setCurrentView('community'); setMobileMenuOpen(false); }}>Community</button>
-            {user && <button className="mobile-drawer-item" onClick={() => { setCurrentView('you'); setMobileMenuOpen(false); }}>You</button>}
-            <button className="mobile-drawer-item" onClick={() => { handleViewWishlist(); setMobileMenuOpen(false); }}>
-              Wishlist {Object.keys(savedProducts || {}).length > 0 ? `(${Object.keys(savedProducts || {}).length})` : ''}
-            </button>
-            {user ? (
-              <>
-                <button className="mobile-drawer-item" onClick={() => { getSupabaseClient()?.auth.signOut(); setMobileMenuOpen(false); }}>Log out</button>
-                <button className="mobile-drawer-item" onClick={() => { setShowDeleteModal(true); setMobileMenuOpen(false); }} style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>Delete account</button>
-              </>
-            ) : (
-              <button className="mobile-drawer-item" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); setMobileMenuOpen(false); }}>Log in</button>
-            )}
-          </div>
         )}
         </div>
+        <div id="ay-content" tabIndex={-1} />
 
         {(currentView === 'welcome' || currentView === 'hero') && (
           <AynaLanding
@@ -1501,7 +1468,7 @@ function App() {
             onOpenCheckin={() => setShowCheckin(true)}
             onOpenStartups={() => setCurrentView('waitlist')}
             onOpenProduct={handleOpenProduct}
-            onSignOut={() => { getSupabaseClient()?.auth.signOut(); setCurrentView('welcome'); }}
+            onSignOut={handleSignOut}
             onDeleteAccount={() => setShowDeleteModal(true)}
             theme={theme}
             onThemeChange={setThemeMode}
@@ -1701,6 +1668,7 @@ function App() {
             healthProfile={healthProfile}
             user={user}
             onRequirePersonalizeAuth={handleRequirePersonalizeAuth}
+            onAsk={(q) => openAsk(`Help me find ${q}`)}
           />
           </Suspense>
         )}
@@ -1784,6 +1752,7 @@ function App() {
         {quizResults && (
           <ProfileChatbot
             openSignal={askOpenSignal}
+            prefill={askPrefill}
             profile={quizResults}
             user={user}
             onProfileUpdate={setQuizResults}
@@ -1791,7 +1760,7 @@ function App() {
             onChatHistoryUpdate={setChatHistory}
             disabled={!quizResults}
             onNavigateToDiscovery={handleViewDiscovery}
-            onViewRecommendations={() => setCurrentView('recommendations')}
+            onViewRecommendations={() => handleViewEcosystem()}
           />
         )}
 

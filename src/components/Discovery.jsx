@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import WebDiscoverDeck from './WebDiscoverDeck';
+import { formatPrice } from '../utils/formatPrice';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
@@ -284,11 +285,12 @@ function applyColdStartFloor(rankedList, pageSize) {
     return [...newPage, ...remainingRest];
 }
 
+// 'Highest rated' is hidden until cards show ratings (S18).
+const PERSONALIZED_KEY = 'ayna_shop_personalized_v1';
 const SORT_OPTIONS = [
-    { value: 'default', label: 'Best Match' },
-    { value: 'rating', label: 'Highest Rated' },
-    { value: 'price-asc', label: 'Price: Low to High' },
-    { value: 'price-desc', label: 'Price: High to Low' },
+    { value: 'default', label: 'Best match' },
+    { value: 'price-asc', label: 'Price: low to high' },
+    { value: 'price-desc', label: 'Price: high to low' },
 ];
 
 // Pad sub-filters: flow, preference, use case
@@ -381,7 +383,7 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         // initialMacroGroup (a whole care area, e.g. from "Swap" in the
         // ecosystem view) sets ONLY the broader group, leaving every
@@ -403,7 +405,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Personalization requires an actual account (quiz results / health import /
     // real recommendations all live behind login) -- never on for a logged-out
     // visitor, regardless of any of those other signals somehow being truthy.
-    const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (Boolean(recommendedProductIds?.length) || hasQuizFrustrations || hasHealthImport));
+    // Remembered choice wins, so a reload never flips the toggle after first paint (S02).
+    const storedPersonalized = (() => { try { return localStorage.getItem(PERSONALIZED_KEY); } catch { return null; } })();
+    const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (storedPersonalized === null ? true : storedPersonalized === '1'));
     const [showFilters, setShowFilters] = useState(false);
     const [showDeck, setShowDeck] = useState(false);
     const [priceFilter, setPriceFilter] = useState('all');
@@ -414,13 +418,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [aynaFilter, setAynaFilter] = useState('all');
     const [preferenceFilter, setPreferenceFilter] = useState('all');
 
-    const personalizationInitialized = useRef(false);
+    // Signing in mid-visit applies her remembered choice once; nothing flips after that.
+    const hadUser = useRef(Boolean(user));
     useEffect(() => {
-        if (!personalizationInitialized.current && user && (recommendedProductIds?.length || hasQuizFrustrations || hasHealthImport)) {
-            setPersonalizationFilter(true);
-            personalizationInitialized.current = true;
+        if (user && !hadUser.current) {
+            hadUser.current = true;
+            let stored = null;
+            try { stored = localStorage.getItem(PERSONALIZED_KEY); } catch { /* private mode */ }
+            setPersonalizationFilter(stored === null ? true : stored === '1');
         }
-    }, [recommendedProductIds, hasQuizFrustrations, hasHealthImport]);
+    }, [user]);
     const [padFlowFilter, setPadFlowFilter] = useState(initialPadFlow || 'all');
     const [padPreferenceFilter, setPadPreferenceFilter] = useState(initialPadPreference || 'all');
     const [padUseCaseFilter, setPadUseCaseFilter] = useState(initialPadUseCase || 'all');
@@ -620,22 +627,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     );
 
 
-    const availableSubcategories = useMemo(() => {
-        const categories = new Set(
-            combined
-                .filter((item) => itemMatchesMacroGroup(item, macroGroup))
-                .map((item) => item.category)
-                .filter(Boolean)
-        );
-        return Array.from(categories).sort((a, b) => (CATEGORY_LABELS[a] || a).localeCompare(CATEGORY_LABELS[b] || b));
-    }, [combined, macroGroup]);
 
     const filtered = useMemo(() => {
         const applyFilters = (items, skipCategory = false) => items.filter((item) => {
             if (omittedProducts[item.id]) return false;
             // An explicit FSA/HSA filter should search the full eligible catalog,
             // not only the user's personalized subset.
-            if (personalizationFilter && eligibilityFilter === 'all' && !personalizedSet.has(item.id)) return false;
+            // Personalized RANKS the catalog (best matches first); it never hides
+            // products. Hiding left Shop with 1 to 4 items for most profiles.
             // Major Browse category chips. Match explicit categories first and
             // fall back to real catalog wording so newer Skin/Hair/etc. products
             // can participate without changing the data schema.
@@ -759,6 +758,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const ra = recommendedRank.has(a.id) ? recommendedRank.get(a.id) : Number.MAX_SAFE_INTEGER;
                     const rb = recommendedRank.has(b.id) ? recommendedRank.get(b.id) : Number.MAX_SAFE_INTEGER;
                     if (ra !== rb) return ra - rb;
+                    const sa = combinedRelevance.get(a.id) ?? 0;
+                    const sb = combinedRelevance.get(b.id) ?? 0;
+                    if (sa !== sb) return sb - sa;
                 }
                 // Brand partners are pinned to the top of the default browsing sort
                 // (but not when personalized results are on — a partnership doesn't
@@ -780,7 +782,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             }
         }
         return list;
-    }, [combined, macroGroup, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, myProducts]);
+    }, [combined, macroGroup, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, myProducts]);
 
     // Back to the first page whenever the underlying result set actually
     // changes (new filter/search/sort) — not when AI suggestions arrive later
@@ -881,10 +883,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 score: scoreQueryAgainstProduct(qTrimForAi, buildSearchTextForItem(item, CATEGORY_LABELS), buildIdentityTextForItem(item, CATEGORY_LABELS)),
             }));
             scored.sort((a, b) => (b.score - a.score) || (a.idx - b.idx));
-            return scored.map((x) => x.item);
+            const ranked = scored.map((x) => x.item);
+            // Catalog first; live results go in their own labelled group after it (A02).
+            return [...ranked.filter((p) => !p.llmGenerated), ...ranked.filter((p) => p.llmGenerated)];
         }
-        return out;
+        return [...out.filter((p) => !p.llmGenerated), ...out.filter((p) => p.llmGenerated)];
     }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi]);
+    const firstWebIndex = useMemo(() => gridItems.findIndex((p) => p.llmGenerated), [gridItems]);
 
     useEffect(() => {
         // Only resolve images for what's actually rendered (visibleCount),
@@ -1217,12 +1222,37 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setAiRelatedSearches([]);
     };
 
+    const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0);
+    const personalizedToggle = (
+        <label className="ayna-browse__personalized-toggle">
+            <span>Personalized</span>
+            <span className="ayna-browse__personalized-switch">
+                <input
+                    type="checkbox"
+                    checked={personalizationFilter}
+                    onChange={(e) => {
+                        setPersonalizationFilter(e.target.checked);
+                        // A fresh scope: drop any live-search state from the old one (S03).
+                        setAiSuggestions([]);
+                        setAiRelatedSearches([]);
+                        try { localStorage.setItem(PERSONALIZED_KEY, e.target.checked ? '1' : '0'); } catch { /* private mode */ }
+                    }}
+                />
+                <span className="ayna-browse__personalized-track" aria-hidden="true" />
+            </span>
+        </label>
+    );
+
     return (
         <section className="container animate-fade-in-up ayna-browse" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
             <div className="ayna-browse__heading">
                 <div>
-                    <p className="ayna-browse__eyebrow">{personalizationFilter && recommendedSet.size > 0 ? 'For you' : 'Browse'}</p>
-                    <h2>Shop</h2>
+                    <h1>Shop</h1>
+                    {/* One disclosure for the whole page instead of a pill on every card (S09). */}
+                    <p className="ayna-browse__disclosure">
+                        Some links earn ayna a commission. It never changes your matches.{' '}
+                        <a href="/how-we-make-money" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setCurrentView?.('how-we-make-money'); }}>How we make money</a>
+                    </p>
                 </div>
             </div>
 
@@ -1257,7 +1287,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     placeholder="Search products"
                     aria-label="Search products"
                 />
+                <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
             </form>
+            {submittedQuery && categoryFilter !== 'all' && (
+                <div className="ayna-browse__inferred">
+                    <button type="button" onClick={() => setCategoryFilter('all')} aria-label={`Remove ${CATEGORY_LABELS[categoryFilter] || categoryFilter} filter`}>
+                        {CATEGORY_LABELS[categoryFilter] || categoryFilter.replace(/-/g, ' ')} <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+            )}
 
             <div className="ayna-browse__categories" aria-label="Product categories">
                 {availableMacroGroups.map((group) => (
@@ -1282,120 +1320,42 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             <div className="ayna-browse__toolbar">
                 <div className="ayna-browse__toolbar-left">
-                    <button type="button" className="ayna-browse__filter-button" onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
-                        Filters
+                    <button type="button" className={`ayna-browse__filter-button${activeFilterCount ? ' is-active' : ''}${showFilters ? ' is-open' : ''}`} onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
+                        Filters{activeFilterCount ? ` · ${activeFilterCount}` : ''}
                     </button>
-                    <label className="ayna-browse__personalized-toggle">
-                        <span>Personalized</span>
-                        <span className="ayna-browse__personalized-switch">
-                            <input
-                                type="checkbox"
-                                checked={personalizationFilter}
-                                onChange={(e) => {
-                                    if (!user) {
-                                        // Checkbox visually can't move without a real change event,
-                                        // but there's nothing to personalize without an account —
-                                        // send them to sign in/up instead of silently flipping state
-                                        // that has no effect (or, worse, none they can see why).
-                                        onRequirePersonalizeAuth?.();
-                                        return;
-                                    }
-                                    setPersonalizationFilter(e.target.checked);
-                                }}
-                            />
-                            <span className="ayna-browse__personalized-track" aria-hidden="true" />
-                        </span>
-                    </label>
+                    {user ? personalizedToggle : (
+                        <button type="button" className="ayna-browse__personalize-cta" onClick={() => onRequirePersonalizeAuth?.()}>Personalize →</button>
+                    )}
                 </div>
                 <label className="ayna-browse__sort">
                     <span>Sort</span>
                     <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                        {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.value === 'default' && recommendedSet.size === 0 ? 'Featured' : option.label}</option>)}
+                        {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                     </select>
                 </label>
             </div>
 
             {showFilters && (
                 <div className="ayna-browse__filters">
-                    <label>
-                        <span>Product type</span>
-                        <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-                            <option value="all">All</option>
-                            {availableSubcategories.map((category) => (
-                                <option key={category} value={category}>{CATEGORY_LABELS[category] || category.replace(/-/g, ' ')}</option>
-                            ))}
-                        </select>
-                    </label>
-                    <label>
-                        <span>Price</span>
-                        <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
-                            <option value="all">Any</option>
-                            <option value="under-25">Under $25</option>
-                            <option value="25-50">$25–$50</option>
-                            <option value="50-100">$50–$100</option>
-                            <option value="100-plus">$100+</option>
-                        </select>
-                    </label>
-                    <label>
-                        <span>Rating</span>
-                        <select value={ratingFilter} onChange={(e) => setRatingFilter(e.target.value)}>
-                            <option value="all">Any</option>
-                            <option value="4-plus">4+ stars</option>
-                        </select>
-                    </label>
-                    <label>
-                        <span>ayna</span>
-                        <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
-                            <option value="all">Any</option>
-                            <option value="best-match">Best Match</option>
-                            <option value="clinician">Clinician Backed</option>
-                            <option value="community">Community Favorite</option>
-                            <option value="ecosystem">In My Ecosystem</option>
-                        </select>
-                    </label>
-                    <label>
-                        <span>Preferences</span>
-                        <select value={preferenceFilter} onChange={(e) => setPreferenceFilter(e.target.value)}>
-                            <option value="all">Any</option>
-                            <option value="fragrance-free">Fragrance Free</option>
-                            <option value="sensitive-skin">Sensitive Skin</option>
-                            <option value="vegan">Vegan</option>
-                            <option value="cruelty-free">Cruelty Free</option>
-                            <option value="organic">Organic</option>
-                            <option value="clean-ingredients">Clean Ingredients</option>
-                        </select>
-                    </label>
-                    <label>
-                        <span>Eligibility</span>
-                        <select value={eligibilityFilter} onChange={(e) => setEligibilityFilter(e.target.value)}>
-                            <option value="all">Any</option>
-                            <option value="fsa-hsa">FSA/HSA Eligible</option>
-                            <option value="fsa">FSA Eligible</option>
-                            <option value="hsa">HSA Eligible</option>
-                        </select>
-                    </label>
-                    <label>
-                        <span>Sustainability</span>
-                        <select value={sustainabilityFilter} onChange={(e) => setSustainabilityFilter(e.target.value)}>
-                            <option value="all">Any</option>
-                            <option value="reusable">Reusable</option>
-                            <option value="recyclable">Recyclable</option>
-                            <option value="low-waste">Low Waste</option>
-                            <option value="packaging">Sustainable Packaging</option>
-                        </select>
-                    </label>
-                    <label>
-                        <span>Life stage</span>
-                        <select value={lifeStageFilter} onChange={(e) => setLifeStageFilter(e.target.value)}>
-                            <option value="all">Any</option>
-                            <option value="fertility">Fertility</option>
-                            <option value="pregnancy">Pregnancy</option>
-                            <option value="postpartum">Postpartum</option>
-                            <option value="perimenopause">Perimenopause</option>
-                            <option value="menopause">Menopause</option>
-                        </select>
-                    </label>
-                    <button type="button" className="ayna-browse__clear" onClick={clearBrowseFilters}>Clear</button>
+                    {[
+                        ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–50'], ['50-100', '$50–100'], ['100-plus', '$100+']]],
+                        ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']]],
+                        ['Eligibility', eligibilityFilter, setEligibilityFilter, [['fsa-hsa', 'FSA or HSA'], ['fsa', 'FSA'], ['hsa', 'HSA']]],
+                        ['Life stage', lifeStageFilter, setLifeStageFilter, [['fertility', 'Fertility'], ['pregnancy', 'Pregnancy'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause'], ['menopause', 'Menopause']]],
+                        ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Better packaging']]],
+                        ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favourite'], ...(user ? [['best-match', 'Best matches'], ['ecosystem', 'In my ecosystem']] : [])]],
+                    ].map(([label, value, set, options]) => (
+                        <fieldset key={label} className="ayna-browse__filter-group">
+                            <legend>{label}</legend>
+                            <div>
+                                {options.map(([v, l]) => (
+                                    <button key={v} type="button" className={value === v ? 'is-on' : ''} aria-pressed={value === v} onClick={() => set(value === v ? 'all' : v)}>{l}</button>
+                                ))}
+                            </div>
+                        </fieldset>
+                    ))}
+                    {user && <div className="ayna-browse__filter-group is-mobile-only">{personalizedToggle}</div>}
+                    <button type="button" className="ayna-browse__clear" onClick={clearBrowseFilters}>Clear all</button>
                 </div>
             )}
 
@@ -1403,20 +1363,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 explanation for several seconds read as stuck/broken (found live,
                 2026-08-24 bug bash), since a query with no catalog matches has to
                 wait on a real LLM search, not an instant lookup. */}
-            {searchSubmitted && aiLoading && (
+            {searchSubmitted && aiLoading && gridItems.length === 0 && (
                 <>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: '0 0 1rem' }}>
-                        Searching live for real products that match &ldquo;{submittedQuery}&rdquo;…
-                    </p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(252px, 1fr))', gap: '1.5rem' }}>
+                    <p className="ayna-browse__searching" role="status">Searching more stores…</p>
+                    <div className="ayna-browse__grid ayna-browse__grid--skeleton">
                         {Array.from({ length: 8 }, (_, i) => (
-                            <div key={i} className="card" style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--color-border)' }} aria-hidden="true">
-                                <div className="skeleton-shimmer" style={{ height: '118px', width: '100%' }} />
-                                <div style={{ padding: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <div className="skeleton-shimmer" style={{ height: '0.7rem', width: '40%', borderRadius: '4px' }} />
-                                    <div className="skeleton-shimmer" style={{ height: '1rem', width: '85%', borderRadius: '4px' }} />
-                                    <div className="skeleton-shimmer" style={{ height: '0.8rem', width: '100%', borderRadius: '4px' }} />
-                                    <div className="skeleton-shimmer" style={{ height: '0.8rem', width: '70%', borderRadius: '4px' }} />
+                            <div key={i} className="ayna-discover-card ayna-browse-card is-skeleton" aria-hidden="true">
+                                <div className="ayna-discover-card__tile skeleton-shimmer" />
+                                <div className="ayna-discover-card__body">
+                                    <span className="ay-skel-line" style={{ width: '40%' }} />
+                                    <span className="ay-skel-line is-lg" style={{ width: '85%' }} />
+                                    <span className="ay-skel-line" style={{ width: '30%' }} />
                                 </div>
                             </div>
                         ))}
@@ -1437,13 +1394,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     products={gridItems}
                     quizResults={user ? quizResults : null}
                     savedProducts={savedProducts}
+                    ownedIds={new Set(Object.keys(myProducts || {}))}
                     onToggleSaved={onToggleSaved}
                     onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }}
                     onClose={() => setShowDeck(false)}
                 />
             )}
             {/* Product Grid */}
-            {(!searchSubmitted || !aiLoading) && (
+            {(!searchSubmitted || !aiLoading || gridItems.length > 0) && (
             <>
             <div className="ayna-browse__grid">
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
@@ -1467,9 +1425,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const isInEcosystem = !!myProducts[item.id];
                     const categoryLabel = CATEGORY_LABELS[item.category] || (item.category ? item.category.replace(/-/g, ' ') : 'Product');
 
+                    const price = formatPrice(item);
                     return (
+                        <React.Fragment key={item.id}>
+                        {idx === firstWebIndex && (
+                            <div className="ayna-browse__divider" role="separator">
+                                <strong>From around the web</strong>
+                                <span>Found live by ayna. Prices and details are checked less often.</span>
+                            </div>
+                        )}
                         <article
-                            key={item.id}
                             className="ayna-discover-card ayna-browse-card"
                             style={{ animation: `fadeInUp 0.4s ${Math.min(idx * 0.04, 0.24)}s backwards` }}
                         >
@@ -1483,9 +1448,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 }}
                             >
                                 <div className="ayna-discover-card__tile">
-                                    {isPartnerBrandItem(item) && (
-                                        <span className="ayna-browse-card__affiliate">Affiliate link</span>
-                                    )}
                                     {cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
                                         <>
                                             <img
@@ -1516,39 +1478,38 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 </div>
                                 <div className="ayna-discover-card__body">
                                     <div className="ayna-browse-card__labels">
-                                        <span className="ayna-discover-card__category">{categoryLabel}</span>
+                                        <span className="ayna-discover-card__category">{item.brand || categoryLabel}</span>
                                         {isSponsoredItem(item) && <span className="ayna-browse-card__sponsored">Sponsored</span>}
                                         {eligibilityLabel && <span className="ayna-browse-card__eligibility">{eligibilityLabel}</span>}
                                     </div>
                                     <h3 className="ayna-discover-card__name">{item.name}</h3>
-                                    <span className="ayna-discover-card__price">{item.price || item.stage || ''}</span>
+                                    <span className="ayna-discover-card__price">{price.main}{price.sub && <small>{price.sub}</small>}</span>
                                 </div>
                             </a>
                             <button
                                 type="button"
                                 className={`ayna-browse-card__wishlist ${isWishlisted ? 'is-saved' : ''}`}
-                                aria-label={isWishlisted ? `Remove ${item.name} from wishlist` : `Add ${item.name} to wishlist`}
+                                aria-label={isWishlisted ? `Remove ${item.name} from Saved` : `Save ${item.name}`}
                                 aria-pressed={isWishlisted}
                                 onClick={() => onToggleSaved?.(item)}
                             >
                                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" /></svg>
                             </button>
                         </article>
+                        </React.Fragment>
                     );
                 })}
             </div>
-            {gridItems.length === 0 && (
+            {gridItems.length === 0 && !(searchSubmitted && aiLoading) && (
                 <div className="ayna-browse__empty">
-                    <p>No matches.</p>
-                    <button type="button" onClick={clearBrowseFilters}>Clear filters</button>
-                    {personalizationFilter && (
-                        <p className="ayna-browse__empty-hint">
-                            Still nothing?{' '}
-                            <button type="button" onClick={() => setPersonalizationFilter(false)}>
-                                Try turning the personalized toggle off
-                            </button>
-                        </p>
-                    )}
+                    <p><strong>{submittedQuery ? `Nothing for “${submittedQuery}”.` : 'Nothing here with these filters.'}</strong></p>
+                    <div className="ayna-browse__empty-actions">
+                        {availableMacroGroups.filter((g) => g.id !== 'all' && g.id !== macroGroup).slice(0, 3).map((g) => (
+                            <button key={g.id} type="button" onClick={() => { clearBrowseFilters(); setMacroGroup(g.id); }}>{g.label}</button>
+                        ))}
+                        {submittedQuery && onAsk && <button type="button" className="is-dark" onClick={() => onAsk(submittedQuery)}>Ask ayna about “{submittedQuery}”</button>}
+                        {activeFilterCount > 0 && <button type="button" onClick={clearBrowseFilters}>Clear filters</button>}
+                    </div>
                 </div>
             )}
             {gridItems.length > visibleCount ? (

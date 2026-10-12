@@ -53,21 +53,25 @@ function getFirstName(user) {
   return raw ? raw.trim().split(/\\s+/)[0] : '';
 }
 
-function buildWelcome(firstName) {
-  const greeting = firstName ? `Hey, ${firstName}.` : 'Hey.';
+const STARTERS = ['What helps with period cramps?', 'What fits heavy periods?', 'Fragrance-free options for sensitive skin'];
+
+function buildWelcome() {
+  // Name is already in the panel header; the first bubble goes straight to
+  // what she can ask. Starter prompts render under it.
   return [{
     role: 'assistant',
-    text: `${greeting} I'm Ayna. Tell me what you're looking for, what isn't working for you, or what you want to avoid. I can use that context to personalize your profile and help you browse.`,
+    text: 'Ask about a symptom, a product or something you want to avoid. I can point you to products and, if you say so, add it to your profile.',
+    starters: true,
   }];
 }
 
-export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0 }) {
+export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '' }) {
   const firstName = getFirstName(user);
   const [open, setOpen] = useState(false);
   // The header's Ask ayna button bumps openSignal to open the chat.
-  useEffect(() => { if (openSignal) setOpen(true); }, [openSignal]);
+  useEffect(() => { if (openSignal) { setOpen(true); if (prefill) setInput(prefill); } }, [openSignal]); // eslint-disable-line react-hooks/exhaustive-deps
   const [messages, setMessages] = useState(
-    chatHistory?.length > 0 ? chatHistory : buildWelcome(firstName)
+    chatHistory?.length > 0 ? chatHistory : buildWelcome()
   );
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -186,9 +190,25 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     if (chatHistory?.length > 0) setMessages(chatHistory);
   }, [chatHistory?.length]);
 
+  const messagesRef = useRef(null);
+  // New answer: bring the TOP of the answer into view so she reads from the
+  // start; her own message or "Thinking…" just scrolls to the bottom.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    const box = messagesRef.current;
+    const last = messages[messages.length - 1];
+    if (box && last && last.role !== 'user') {
+      const answers = box.querySelectorAll('.ayna-ask-message--ayna:not(.ayna-ask-message--typing)');
+      const target = answers[answers.length - 1];
+      if (target) { box.scrollTo({ top: target.offsetTop - box.offsetTop - 8, behavior: 'smooth' }); return; }
+    }
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages, sending]);
+
+  const updateMessage = (index, patch) => setMessages((prev) => {
+    const next = prev.map((m, i) => (i === index ? { ...m, ...patch } : m));
+    onChatHistoryUpdate?.(next);
+    return next;
+  });
 
   useEffect(() => {
     if (
@@ -260,25 +280,24 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
 
       const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer }];
 
-      // Fold any profile update in AND say exactly what changed, as its own
-      // message — not baked wordlessly into the prose answer — with a way to
-      // actually see the effect (found live, 2026-08-24 bug bash: chat
-      // updates used to happen silently). Never adds a PRODUCT to her
-      // ecosystem on its own — only her health profile, same as retaking
-      // the quiz; adding a product is still always her own separate choice.
+      // Nothing happens without her tap: a profile change is OFFERED with
+      // Add / Not now, and a browse suggestion is a button, never an
+      // automatic page change (launch audit A01).
       const merged = mergeProfileUpdate(profile || {}, data.profileUpdate || {});
-      if (merged) {
-        onProfileUpdate(merged.profile);
+      const category = data.browseIntent?.category && onNavigateToDiscovery ? data.browseIntent.category : null;
+      if (merged || category) {
         const parts = [];
-        if (merged.added.frustrations.length) parts.push(`Concerns: ${merged.added.frustrations.join(', ')}`);
-        if (merged.added.sensitivities.length) parts.push(`Sensitivities: ${merged.added.sensitivities.join(', ')}`);
-        if (merged.added.productsToAvoid.length) parts.push(`Avoiding: ${merged.added.productsToAvoid.join(', ')}`);
-        if (merged.added.preference) parts.push(`Priority: ${merged.added.preference}`);
-        newMessages.push({ role: 'system', text: `Updated your profile — ${parts.join(' · ')}.`, showViewRecommendations: true });
-      }
-
-      if (data.browseIntent?.category && onNavigateToDiscovery) {
-        onNavigateToDiscovery({ initialCategory: data.browseIntent.category });
+        if (merged?.added.frustrations.length) parts.push(merged.added.frustrations.join(', '));
+        if (merged?.added.sensitivities.length) parts.push(`sensitive to ${merged.added.sensitivities.join(', ')}`);
+        if (merged?.added.productsToAvoid.length) parts.push(`avoid ${merged.added.productsToAvoid.join(', ')}`);
+        if (merged?.added.preference) parts.push(`priority: ${merged.added.preference}`);
+        newMessages.push({
+          role: 'system',
+          text: parts.length ? `Add “${parts.join(' · ')}” to your profile so Shop can match it?` : '',
+          pendingProfile: merged ? merged.profile : null,
+          browseCategory: category,
+          browseLabel: category ? (data.browseIntent.label || String(category).replace(/[-_]/g, ' ')) : '',
+        });
       }
 
       setMessages(newMessages);
@@ -382,14 +401,19 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             </div>
           )}
 
-          <div className="ayna-ask-panel__messages">
+          <div className="ayna-ask-panel__messages" ref={messagesRef}>
             {messages.map((m, i) => (
               m.role === 'system' ? (
                 <div key={i} className="ayna-ask-message ayna-ask-message--system">
-                  <span>{m.text}</span>
-                  {m.showViewRecommendations && onViewRecommendations && (
-                    <button type="button" onClick={onViewRecommendations}>View Recommendations</button>
-                  )}
+                  {m.text && <span>{m.text}</span>}
+                  <div className="ayna-ask-actions">
+                    {m.pendingProfile && !m.decided && <>
+                      <button type="button" className="is-primary" onClick={() => { onProfileUpdate(m.pendingProfile); updateMessage(i, { decided: 'added', text: 'Added to your profile.' }); }}>Add</button>
+                      <button type="button" onClick={() => updateMessage(i, { decided: 'skipped', text: 'Okay, nothing changed.' })}>Not now</button>
+                    </>}
+                    {m.decided === 'added' && onViewRecommendations && <button type="button" onClick={onViewRecommendations}>See my matches</button>}
+                    {m.browseCategory && <button type="button" onClick={() => onNavigateToDiscovery({ initialCategory: m.browseCategory })}>See {m.browseLabel} →</button>}
+                  </div>
                 </div>
               ) : (
                 <div
@@ -401,6 +425,11 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                   }`}
                 >
                   {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
+                  {m.starters && messages.length === 1 && (
+                    <div className="ayna-ask-starters">
+                      {STARTERS.map((q) => <button type="button" key={q} onClick={() => setInput(q)}>{q}</button>)}
+                    </div>
+                  )}
                 </div>
               )
             ))}

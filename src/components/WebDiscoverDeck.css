@@ -34,3 +34,4 @@
 .wdeck-done button { min-height: 44px; padding: 0 18px; border: 2px solid var(--ink); border-radius: 99px; background: var(--paper); color: var(--ink); font: 700 14px/1 'Poppins', sans-serif; }
 .wdeck-done button.is-dark { background: var(--ink); color: var(--paper); }
 @media (prefers-reduced-motion: reduce) { .wdeck, .wdeck-card { animation: none; transition: none; } }
+.wdeck-why { display: block; margin-top: 6px; color: rgba(29,26,43,.7); font: 600 13px/1.3 'Poppins', sans-serif; } .wdeck-hint kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1.5px solid #1d1a2b; border-radius: 6px; background: #fffcf5; font: 700 12px/1 'Poppins', sans-serif; }
