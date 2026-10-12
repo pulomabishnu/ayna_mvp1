@@ -162,13 +162,21 @@ function seedEcosystemFromAnswers(quizAnswers) {
   );
 }
 
+function hasSavedIntakeDraft() {
+  try {
+    const draft = JSON.parse(localStorage.getItem('ayna_intake_draft_v1') || 'null');
+    return draft?.version === 1 && !!draft.intake;
+  } catch { return false; }
+}
+
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
   const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName } = session;
   const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
-  const [screen, setScreen] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('screen')) || 'landing');
+  const [screen, setScreen] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('screen')) || (!hasEcosystem && hasSavedIntakeDraft() ? 'ecointro' : 'landing'));
+  const [hasIntakeDraft, setHasIntakeDraft] = useState(hasSavedIntakeDraft);
   // Product/article detail render as an overlay ON TOP of whichever base
   // screen (Browse, My Ecosystem, Saved) is currently mounted, instead of
   // replacing it — `screen` never changes when one opens. That's what makes
@@ -509,6 +517,8 @@ export default function MobileApp() {
       ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
       updateSession({ myProducts: [], lastQuizAnswers: null, hasEcosystem: false, pendingIntakeSync: false });
       setEcosystemNotice('');
+      try { localStorage.removeItem('ayna_intake_draft_v1'); } catch { /* storage unavailable */ }
+      setHasIntakeDraft(false);
       setIntakeMode('new');
       setEditingHealthProfile(false);
       setResetDialogOpen(false);
@@ -557,7 +567,7 @@ export default function MobileApp() {
         setScreen('quiz');
         return;
       }
-      setScreen(['quiz', 'ecointro'].includes(screen) ? (hasEcosystem ? 'eco' : 'landing') : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
+      setScreen(screen === 'quiz' ? (hasEcosystem ? 'eco' : 'ecointro') : screen === 'ecointro' ? 'landing' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
     },
     onRetake: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onRequestEcosystemReset: () => setResetDialogOpen(true),
@@ -686,6 +696,8 @@ export default function MobileApp() {
         suggestedEcosystemProducts={suggestedEcosystemProducts}
         quizAnswers={effectiveQuizAnswers}
         lastQuizAnswers={lastQuizAnswers}
+        hasIntakeDraft={hasIntakeDraft && !hasEcosystem}
+        onDraftChange={setHasIntakeDraft}
         initialSnapshot={editingHealthProfile ? lastQuizAnswers?.fullHealthIntake || null : null}
         startAtBeginning={intakeMode === 'add'}
         ecosystemNotice={ecosystemNotice}
