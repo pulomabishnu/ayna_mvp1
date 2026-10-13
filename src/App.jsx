@@ -168,6 +168,9 @@ function setMetaDescription(text) {
 const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
 );
+// The redesign previews linked the ecosystem page as /my-ecosystem; keep it working.
+PATH_TO_VIEW['/my-ecosystem'] = 'ecosystem';
+
 PATH_TO_VIEW['/'] = 'welcome';
 // Old Shop URL keeps working (bookmarks, shared links); it is replaced with /shop on load.
 PATH_TO_VIEW['/discovery'] = 'discovery';
@@ -941,9 +944,10 @@ function App() {
   // signup form) must confirm 18+ / consent / referral before going further. Waits briefly so a
   // signup-form Google account, whose consent is written right after the redirect, never flashes it.
   useEffect(() => {
-    const isGoogle = user?.app_metadata?.provider === 'google'
-      || (Array.isArray(user?.identities) && user.identities.some((i) => i?.provider === 'google'));
-    const missingConsent = Boolean(user) && isGoogle && !user.user_metadata?.consent_given_at;
+    const OAUTH_PROVIDERS = ['google', 'apple'];
+    const isOauth = OAUTH_PROVIDERS.includes(user?.app_metadata?.provider)
+      || (Array.isArray(user?.identities) && user.identities.some((i) => OAUTH_PROVIDERS.includes(i?.provider)));
+    const missingConsent = Boolean(user) && isOauth && !user.user_metadata?.consent_given_at;
     if (!missingConsent || authLoading || currentView === 'auth-callback' || currentView === 'campus-resources') {
       setConsentGateOpen(false);
       return undefined;

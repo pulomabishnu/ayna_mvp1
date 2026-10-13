@@ -31,8 +31,9 @@ describe('buildGlance', () => {
   });
 
   it('never shows a rating without real ayna member ratings', () => {
-    const p = byId('p-vitex');
-    expect(p.userRating).toBeTruthy(); // catalog has an unsourced number
+    // The live catalog now nulls unsourced userRating numbers itself, so the
+    // unsourced case is pinned with a synthetic product.
+    const p = { ...byId('p-vitex'), userRating: 4.4 };
     expect(allText(buildGlance(p, {}))).not.toContain('"type":"rating"');
     const g = buildGlance(p, { aynaData: { ratings: [4, 5], reviews: [] }, aynaRating: 4.5 });
     expect(allText(g)).toContain('"type":"rating"');
@@ -59,14 +60,16 @@ describe('commerce', () => {
   });
 
   it('compare rows use real fields and drop all-unknown rows', () => {
-    const p = byId('p-cora-organic-pads');
+    // Cora moved to retailer variant pricing, so pin the price row with a
+    // product that still states a plain price.
+    const p = { ...byId('p-cora-organic-pads'), price: '$10 for 32' };
     const rows = compareRows([p, ...similarProducts(p)]);
     expect(rows.find((r) => r.label === 'Price').values[0]).toBe('$10 for 32');
     rows.forEach((r) => expect(r.values.every((v) => v === NOT_ON_FILE)).toBe(false));
   });
 
   it('JSON-LD has no rating unless real ratings exist, and offers only for a plain price', () => {
-    const p = byId('p-cora-organic-pads');
+    const p = { ...byId('p-cora-organic-pads'), price: '$10 for 32' };
     const ld = productJsonLd(p, { buyUrl: 'https://cora.life/products/pads' });
     expect(ld['@type']).toBe('Product');
     expect(ld.aggregateRating).toBeUndefined();

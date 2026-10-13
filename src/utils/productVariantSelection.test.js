@@ -11,7 +11,7 @@ describe('exact variant purchase selection', () => {
       const choice = getVariantSelection(product, v.id);
       expect(choice.buyUrl).toBe(v.url);
       expect(choice.image).toBe(v.image);
-      expect(choice.displayName).toContain(v.label);
+      expect(choice.displayName).toContain(v.label.replace(/\s*\u2014\s*/g, ', ')); // labels render dash-free
       expect(existsSync(`public${choice.image}`)).toBe(true);
     }
     expect(getVariantSelection(product, 'target-76155166')).toMatchObject({ buyUrl: 'https://www.target.com/p/-/A-76155166', image: '/products/packaging/cora-76155166.jpg' });

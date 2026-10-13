@@ -13,7 +13,9 @@
 // the sign-in and sign-up UI modes, since a first-time visitor clicking
 // "Sign in" still gets a real new account provisioned with no record of
 // having agreed to anything if this were skipped.
-export const CONSENT_VERSION = 'v1';
+// v2: the consent text now includes the 18+ confirmation and the Consumer
+// Health Data notice. Records written before the change stay on v1.
+export const CONSENT_VERSION = 'v2-18plus';
 const STORAGE_KEY = 'ayna_pending_consent';
 
 const SIGNUP_META_KEY = 'ayna_pending_signup_meta';

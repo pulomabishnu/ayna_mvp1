@@ -37,7 +37,7 @@ export default function ProductCard({
     <article className={`ayna-discover-card ayna-browse-card ${className}`.trim()} style={style}>
       <a
         className="ayna-browse-card__link"
-        href={productHref(product.id)}
+        href={productHref(product)}
         onClick={(e) => {
           if (!isPlainLeftClick(e)) return;
           e.preventDefault();
