@@ -1,0 +1,25 @@
+/* You: shopper type card, calm version (round 5). Paper card, one accent,
+   no tilted tiles: emblem + name + one line, a single-hue shelf bar, then up
+   to three plain facts. 8pt spacing, ink type. */
+.ayna-mobile .ay-shopper2 { display: grid; gap: 16px; margin: 24px var(--ay-gutter, 20px) 0; padding: 16px; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); color: var(--ay-ink); font-family: var(--ay-font-ui); }
+.ayna-mobile .ay-shopper2__head { display: flex; align-items: center; gap: 12px; }
+.ayna-mobile .ay-shopper2__emblem { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid #1d1a2b; border-radius: 50%; background: var(--ay-peri); color: #1d1a2b; }
+.ayna-mobile .ay-shopper2__emblem svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile .ay-shopper2__kicker { display: block; font: 600 12px/1.2 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ayna-mobile .ay-shopper2 h2 { margin: 2px 0 0 !important; font: 800 24px/1.05 var(--ay-font-display) !important; letter-spacing: -.04em !important; color: var(--ay-ink) !important; }
+.ayna-mobile .ay-shopper2__head p { margin: 4px 0 0; font: 500 14px/1.35 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ayna-mobile .ay-shopper2__shelf { display: grid; gap: 8px; padding-top: 16px; border-top: 1px solid var(--ay-line); }
+.ayna-mobile .ay-shopper2__shelf-head { display: flex; justify-content: space-between; align-items: baseline; font: 600 13px/1 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ayna-mobile .ay-shopper2__shelf-head b { font: 800 14px/1 var(--ay-font-ui); color: var(--ay-ink); }
+.ayna-mobile .ay-shopper2__bar { display: flex; gap: 3px; height: 12px; }
+.ayna-mobile .ay-shopper2__bar i { min-width: 6px; border-radius: 99px; background: var(--ay-ink); opacity: var(--o, 1); }
+.ayna-mobile .ay-shopper2__mix { margin: 0; font: 500 13px/1.4 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ayna-mobile .ay-shopper2__facts { display: grid; margin: 0; border-top: 1px solid var(--ay-line); }
+.ayna-mobile .ay-shopper2__facts > div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--ay-line); }
+.ayna-mobile .ay-shopper2__facts > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.ayna-mobile .ay-shopper2__facts dt { flex: none; font: 500 13px/1.3 var(--ay-font-ui); color: var(--ay-ink-soft); }
+.ayna-mobile .ay-shopper2__facts dd { margin: 0; min-width: 0; font: 700 14px/1.3 var(--ay-font-ui); color: var(--ay-ink); text-align: right; }
+
+.ayna-mobile[data-theme='dark'] .ay-shopper2 { background: #101116; border: 1px solid rgba(168, 181, 255, .5); box-shadow: 0 0 18px rgba(168, 181, 255, .09); }
+.ayna-mobile[data-theme='dark'] .ay-shopper2__emblem { background: #101116; border-color: var(--ay-peri); color: var(--ay-peri); box-shadow: 0 0 12px rgba(168, 181, 255, .35); }
+.ayna-mobile[data-theme='dark'] .ay-shopper2__bar i { background: var(--ay-peri); }

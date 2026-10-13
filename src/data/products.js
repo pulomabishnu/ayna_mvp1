@@ -19,6 +19,7 @@ import {
 } from '../matching/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
 import { getCareResourceBundle } from './careResources.js';
+import { withImageOverride } from './productImageOverrides.js';
 
 // Tags used for quiz → product matching
 // frustrations: heavy-flow, cramps, bloating, irregular, leaks, discomfort, safety-concern, uti, pcos, pelvic-floor
@@ -805,7 +806,7 @@ export const ALL_PRODUCTS = [
     ...MENSTRUAL_PHYSICAL,
     ...BRAND_PRODUCTS,
     ...INCONTINENCE_PHYSICAL
-].filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id));
+].filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id)).map(withImageOverride);
 
 /**
  * Look up a catalog product by id. Returns null for ids that don't exist in

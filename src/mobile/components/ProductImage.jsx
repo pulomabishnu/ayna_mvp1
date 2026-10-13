@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { safeProductImageSrc, resolveProductImage } from '../../utils/resolveProductImage.js';
+import { productImageOverride } from '../../data/productImageOverrides.js';
 
 function PhotoPlaceholder({ style }) {
   return (
@@ -23,7 +24,8 @@ function PhotoPlaceholder({ style }) {
  * untried/not-errored during render, with no effect needed to clear it.
  */
 export default function ProductImage({ src, alt, allowBrandLogo = false, style, product }) {
-  const directSrc = safeProductImageSrc(src, allowBrandLogo);
+  // Cleaned white-background studio photo (by catalog id) wins over `src`.
+  const directSrc = productImageOverride(product) || safeProductImageSrc(src, allowBrandLogo);
   // Same live photo lookup the website always used (/api/product-image via
   // resolveProductImage) when the catalog has no usable photo, so cards
   // stop showing the placeholder for products that do have a real image.

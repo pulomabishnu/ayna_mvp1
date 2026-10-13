@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import { PANEL_ICONS, PANEL_TONES } from '../components/pdpIcons.jsx';
+import { PANEL_ICONS } from '../components/pdpIcons.jsx';
 import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import ProductCard from '../components/ProductCard.jsx';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
-import { getVerificationLinks, toSourceChips, hostLabel } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
-import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, isClaimBlocked } from '../../utils/matchDisplay.js';
+import { exclusionLines } from '../../utils/matchDisplay.js';
+import MatchPill from '../../components/MatchPill.jsx';
+import ProductSections from '../../components/passport/ProductSections.jsx';
+import { buildProductSections, headerFacts, matchLine } from '../../data/passport/content.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
@@ -20,52 +22,11 @@ import { displayName } from '../utils/displayName.js';
 import '../pdp.css';
 import '../eco-needs.css';
 
-const CARD = { background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '16px 0', boxShadow: 'none' };
-const EYEBROW = { fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 700, letterSpacing: '-.01em', color: 'var(--ayna-heading)' };
-const META = { fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ayna-text-muted)' };
-const CHIP = { fontSize: 'calc(12px * var(--ayna-text-scale, 1))', background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-chip-border)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '7px 12px', textDecoration: 'none', display: 'inline-block' };
-const PLATFORM_LABELS = { reddit: 'Reddit', tiktok: 'TikTok', youtube: 'YouTube', instagram: 'Instagram', facebook: 'Facebook' };
-
 /** Same '⚠️'-flag convention as getSafetyAlertText in src/components/ProductModal.jsx — surfaces a real, already-on-file safety concern regardless of which tab is open. */
 function getSafetyAlertText(product) {
   const recalls = product?.safety?.recalls;
   if (!recalls || !String(recalls).includes('⚠️')) return null;
   return product?.safety?.opinionAlerts || recalls;
-}
-
-function firstSentence(text, max = 140) {
-  const t = String(text || '').trim();
-  if (!t) return '';
-  const cut = t.split(/(?<=[.!?])\s/)[0] || t;
-  if (cut.length <= max) return cut;
-  const truncated = cut.slice(0, max);
-  const lastSpace = truncated.lastIndexOf(' ');
-  return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
-}
-
-const TAG_ACRONYMS = { pcos: 'PCOS', ibs: 'IBS', uti: 'UTI', ivf: 'IVF', pms: 'PMS', pmdd: 'PMDD', hrt: 'HRT', iud: 'IUD', bv: 'BV' };
-function humanizeTag(tag) {
-  const text = String(tag || '').replace(/[-_]/g, ' ').toLowerCase();
-  return text.split(' ').map((word, i) => TAG_ACRONYMS[word] || (i === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word)).join(' ');
-}
-
-function meaningfulDetail(value) {
-  const text = String(value || '').trim();
-  return text && !/^(n\/?a|none|not applicable|unknown)$/i.test(text) ? text : '';
-}
-
-function buildFactRows(product) {
-  const bestFor = [...new Set((product.healthFunctions || []).concat(product.tags || []).map(humanizeTag))].slice(0, 3).join(', ');
-  const materials = meaningfulDetail(product.safety?.materials);
-  const ingredients = meaningfulDetail(product.ingredients);
-  const sameAsIngredients = materials && ingredients
-    && materials.toLowerCase().replace(/[^a-z0-9]/g, '') === ingredients.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const skipIf = firstSentence(meaningfulDetail(product.safety?.sideEffects), 90) || firstSentence(meaningfulDetail(product.safety?.allergens), 90);
-  return [
-    bestFor ? { label: 'Best for', value: bestFor } : null,
-    materials && !sameAsIngredients ? { label: 'Materials', value: materials } : null,
-    skipIf ? { label: 'Skip if', value: skipIf } : null,
-  ].filter(Boolean);
 }
 
 function toneFor(product) {
@@ -75,74 +36,6 @@ function toneFor(product) {
   if (functions.includes('fertility') || ['diagnostics', 'supplement', 'vitamin'].includes(category)) return 'butter';
   if (['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'pelvic-floor'].includes(category)) return 'mint';
   return 'pink';
-}
-
-/** Short trust checks from data already on file — same two the website card shows. */
-function trustChecks(product) {
-  const out = [];
-  const recalls = String(product?.safety?.recalls || '');
-  if (recalls && !recalls.includes('⚠️')) out.push('No recalls on file');
-  if (String(product?.privacy?.sellsData || '').includes('❌')) out.push('Doesn’t sell your data');
-  if (product?.clinicianOpinionSource === 'independent' && String(product?.clinicianAttribution || '').trim()) out.push('Clinician reviewed');
-  return out;
-}
-
-
-/** One "game card" per evidence tab: sticker header with count, a clamped summary with Read more, then link cards (3, then Show all). */
-function SourcePanel({ kind, title, count, countLabel = 'source', countPlural, summary, meta, children, links = [], emptyText }) {
-  const [open, setOpen] = useState(false);
-  const [all, setAll] = useState(false);
-  const long = String(summary || '').length > 220;
-  const shown = all ? links : links.slice(0, 3);
-  return (
-    <section className={`ay-src tone-${PANEL_TONES[kind]}`}>
-      <header className="ay-src-head">
-        <span className="ay-src-sticker" aria-hidden="true"><svg viewBox="0 0 24 24">{PANEL_ICONS[kind]}</svg></span>
-        <h2>{title}</h2>
-        {count > 0 && <span className="ay-src-count">{count} {count === 1 ? countLabel : (countPlural || `${countLabel}s`)}</span>}
-      </header>
-      {summary ? <>
-        <p className={`ay-src-summary${long && !open ? ' is-clamped' : ''}`}>{summary}</p>
-        {long && <button type="button" className="ay-src-more" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : 'Read more'}</button>}
-      </> : (!links.length && <p className="ay-src-empty">{emptyText}</p>)}
-      {meta}
-      {children}
-      {links.length > 0 && <ul className="ay-src-links">
-        {shown.map((link) => <li key={link.url}><a href={link.url} target="_blank" rel="noopener noreferrer">
-          <span className="ay-src-avatar" aria-hidden="true">{String(link.label || '?').charAt(0).toUpperCase()}</span>
-          <span className="ay-src-link-text"><small>{link.kind ? `${link.kind} · ` : ''}{link.label}</small><strong>{link.text || link.label}</strong>{link.summary && <em>{link.summary}</em>}</span>
-          <span className="ay-src-go" aria-hidden="true">↗</span>
-        </a></li>)}
-      </ul>}
-      {links.length > 3 && <button type="button" className="ay-src-more" aria-expanded={all} onClick={() => setAll((v) => !v)}>{all ? 'Show fewer' : `Show all ${links.length}`}</button>}
-    </section>
-  );
-}
-
-function ChipLink({ chip }) {
-  return chip.url ? (
-    <a href={chip.url} target="_blank" rel="noopener noreferrer" title={chip.text || chip.url} style={CHIP}>{chip.label}</a>
-  ) : (
-    <span style={CHIP}>{chip.label}</span>
-  );
-}
-
-function ChipRow({ chips }) {
-  if (!chips?.length) return null;
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
-      {chips.map((c) => <ChipLink key={c.url || c.label} chip={c} />)}
-    </div>
-  );
-}
-
-function SpecRow({ label, value, last = false }) {
-  return (
-    <div style={{ padding: '13px 0', borderTop: last ? undefined : undefined, borderBottom: last ? 'none' : '1px solid var(--ayna-chip-bg)' }}>
-      <div style={EYEBROW}>{label}</div>
-      <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, marginTop: 5, color: 'var(--ayna-text)' }}>{value}</div>
-    </div>
-  );
 }
 
 function SafetyBanner({ text }) {
@@ -242,7 +135,6 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth }) 
     <div className="ay-pdp-ask" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {messages.length === 0 && (
         <>
-          <h2>Ask ayna</h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {suggestions.map((s) => (
               <button
@@ -340,9 +232,7 @@ export default function ProductDetailScreen({
   onToggleOmit,
 }) {
   const [partnerOpen, setPartnerOpen] = useState(false);
-  const [activeDetailSection, setActiveDetailSection] = useState('summary');
   const [shareCopied, setShareCopied] = useState(false);
-  const [warningsOpen, setWarningsOpen] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
   // only holds one layer) so "back" from here returns to this product
   // instead of closing straight through to whatever screen sits underneath.
@@ -357,8 +247,6 @@ export default function ProductDetailScreen({
   if (product?.id !== seenProductId) {
     setSeenProductId(product?.id);
     setPartnerOpen(false);
-    setWarningsOpen(false);
-    setActiveDetailSection('summary');
   }
 
   // Bottom suggestions, same rules as the website product page: picks that
@@ -400,12 +288,8 @@ export default function ProductDetailScreen({
 
   const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts);
   const matchPercent = quizAnswers && matchDetails.matchStatus === 'scored' && Number.isFinite(matchDetails.percent) && matchDetails.percent > 0 ? matchDetails.percent : null;
-  // Lead with the need ("82% for period cramps"), then every selected need's
-  // own score, the separate access label and confidence notes.
-  const needRows = quizAnswers && matchDetails.matchStatus === 'scored' ? needBreakdown(matchDetails) : [];
-  const bestNeedRow = needRows.find((r) => r.needId === matchDetails.needId) || needRows[0] || null;
-  const matchHeadline = matchPercent != null && bestNeedRow ? needHeadline(matchPercent, bestNeedRow.phrase) : '';
-  const matchNotes = matchPercent != null ? confidenceNotes(matchDetails, product) : [];
+  // One pill + one short line. Per-need numbers live in the Why view only.
+  const headLine = matchPercent != null ? matchLine(matchDetails) : '';
   const exclusions = quizAnswers && matchDetails.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
   const openWhyMatch = () => setShowWhyMatch(true);
 
@@ -415,23 +299,6 @@ export default function ProductDetailScreen({
     brand,
     price,
     image,
-    summary,
-    ingredients,
-    effectiveness,
-    doctorOpinion,
-    clinicianOpinionSource,
-    doctorOpinionCitations = [],
-    clinicianAttribution,
-    safety = {},
-    badges = [],
-    tags = [],
-    whereToBuy = [],
-    warnings,
-    whoItsFor,
-    howToUse,
-    communityReview,
-    ingredientScience,
-    scientificCitations = [],
   } = product;
 
   const categoryLabel = CATEGORY_LABELS[category] || (category ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '');
@@ -440,8 +307,13 @@ export default function ProductDetailScreen({
   const safetyAlertText = getSafetyAlertText(product);
   const isPartner = isPartnerBrandItem(product);
   const partnerDisclosure = getPartnerDisclosureText(product);
-  // Never show a claim-style tag ("hormone-free") the engine could not confirm for her.
-  const pillTags = tags.slice(0, 4).map(humanizeTag).filter((t) => !isClaimBlocked(t, matchDetails.blockedClaims));
+  // At most four facts; never a claim the engine could not confirm for her.
+  const facts = headerFacts(product, { blockedClaims: matchDetails.blockedClaims || [] });
+  const sections = buildProductSections(product, { details: quizAnswers ? matchDetails : null, whyMatched });
+  const openProductByName = (target) => {
+    const found = ALL_PRODUCTS.find((p) => String(p?.name || '').toLowerCase() === String(target || '').toLowerCase());
+    if (found && onOpenProduct) onOpenProduct(found);
+  };
 
   const handleShare = async () => {
     const origin = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
@@ -453,106 +325,18 @@ export default function ProductDetailScreen({
       return;
     }
     try {
-      await navigator.clipboard.writeText(shareData.url ? `${shareData.text} — ${shareData.url}` : shareData.text);
+      await navigator.clipboard.writeText(shareData.url ? `${shareData.text}: ${shareData.url}` : shareData.text);
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 1800);
-    } catch { /* clipboard unavailable — nothing more we can do */ }
+    } catch { /* clipboard unavailable, nothing more we can do */ }
   };
 
-  // Scientific literature: doctor + scientific verification links, plus
-  // curated scientificCitations and per-ingredient citations — same three
-  // sources and same dedupe-by-URL logic as the desktop Scientific
-  // literature tab (src/components/ProductModal.jsx).
-  const scientificLiteratureEntries = (() => {
-    const seenUrls = new Set();
-    const entries = [];
-    for (const [key, kind] of [['scientific', 'Scientific'], ['doctor', 'Clinical']]) {
-      for (const link of getVerificationLinks(product, key)) {
-        const url = link?.url || link?.href;
-        if (!url || seenUrls.has(url)) continue;
-        const label = hostLabel(url);
-        if (!label) continue;
-        seenUrls.add(url);
-        entries.push({ url, label, kind, text: link.text || null, summary: link.summary || null });
-      }
-    }
-    for (const c of scientificCitations) {
-      if (!c.url || seenUrls.has(c.url)) continue;
-      const label = hostLabel(c.url);
-      if (!label) continue;
-      seenUrls.add(c.url);
-      entries.push({ url: c.url, label, kind: 'Scientific', text: c.text || null, summary: c.summary || null });
-    }
-    for (const item of ingredientScience || []) {
-      const multi = (item.citations || []).length > 1;
-      for (const c of item.citations || []) {
-        if (!c.url || seenUrls.has(c.url)) continue;
-        const label = hostLabel(c.url);
-        if (!label) continue;
-        seenUrls.add(c.url);
-        entries.push({ url: c.url, label, kind: 'Scientific', text: multi ? c.label : item.name, summary: item.text });
-      }
-    }
-    return entries;
-  })();
-
-  const communityCitationEntries = (() => {
-    const seenUrls = new Set();
-    const entries = [];
-    for (const link of getVerificationLinks(product, 'community')) {
-      const url = link?.url || link?.href;
-      if (!url || seenUrls.has(url)) continue;
-      const label = PLATFORM_LABELS[link.platform] || hostLabel(url);
-      if (!label) continue;
-      seenUrls.add(url);
-      entries.push({ url, label, text: link.text || null, summary: link.summary || null });
-    }
-    return entries;
-  })();
-
-  const sourceCounts = {
-    doctor: getVerificationLinks(product, 'doctor').length,
-    scientific: getVerificationLinks(product, 'scientific').length,
-    community: getVerificationLinks(product, 'community').length,
-  };
-  const sourceCountTotal = sourceCounts.doctor + sourceCounts.scientific + sourceCounts.community;
-
-  const summarySourceChips = (() => {
-    const chips = [];
-    const seenLabels = new Set();
-    for (const chip of toSourceChips([...getVerificationLinks(product, 'doctor'), ...getVerificationLinks(product, 'scientific')])) {
-      if (seenLabels.has(chip.label)) continue;
-      seenLabels.add(chip.label);
-      chips.push(chip);
-      if (chips.length >= 3) break;
-    }
-    return chips;
-  })();
-
-  // Doctor + scientific links both back clinical claims, so both show on the
-  // Clinician Opinion chip row — same as desktop's clinicianSourceLinks.
-  // Kept separate from the Scientific Literature tab's full-card list.
-  const clinicianChips = toSourceChips([...getVerificationLinks(product, 'doctor'), ...getVerificationLinks(product, 'scientific')]);
-  const clinicianCitationChips = doctorOpinionCitations.map((c) => ({ url: c.url, label: hostLabel(c.url) || c.label, text: c.label }));
-
-  const factRows = buildFactRows(product);
   const tone = toneFor(product);
   const shownName = displayName(product);
   const perUnit = getPricePerUnitLabel(product);
   // Same price model as the cards (and the website): short main + detail line.
   const shownPrice = formatPrice(product);
   const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
-  const checks = trustChecks(product);
-  const detailTabs = [
-    ['summary', 'ayna summary'],
-    ['clinician', 'Clinician opinion'],
-    ['scientific', 'Scientific literature'],
-    ['community', 'Reviews'],
-    ...(whoItsFor?.length > 0 ? [['whoitsfor', 'Who it’s for']] : []),
-    ...(howToUse?.steps?.length > 0 ? [['howtouse', 'How to use']] : []),
-    ['ask', 'Ask ayna'],
-  ];
-  const currentSection = detailTabs.some(([id]) => id === activeDetailSection) ? activeDetailSection : 'summary';
 
   return (
     <div className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
@@ -567,7 +351,7 @@ export default function ProductDetailScreen({
           </button>
         </div>
 
-        <div className={`ayna-fresh-detail-image ay-pdp-hero tone-${tone}${image ? '' : ' is-missing-image'}`} style={{ margin: '14px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
+        <div className={`ayna-fresh-detail-image ay-pdp-hero tone-${tone}${image ? '' : ' is-missing-image'}`} style={{ margin: '16px 20px 0', borderRadius: 17, padding: 0, background: 'var(--ayna-bg-alt)', overflow: 'hidden' }}>
           <div
             style={{
               position: 'relative',
@@ -580,32 +364,27 @@ export default function ProductDetailScreen({
             }}
           >
             <ProductImage product={product} src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
-            {matchPercent != null && <button type="button" className="ayna-figma-detail-score" onClick={openWhyMatch} aria-label={`${matchHeadline || `${matchPercent} percent match`}. See why`}><strong>{matchPercent}%</strong><span>PROFILE MATCH</span></button>}
           </div>
         </div>
 
-        <div className="ayna-fresh-detail-title ay-pdp-title">
+        <div className="ayna-fresh-detail-title ay-pdp-title ay-pdp-head2">
           {eyebrowLine && <div className="ay-pdp-eyebrow">{eyebrowLine}</div>}
           <h1>{shownName}</h1>
           {(price || perUnit) && <div className="ay-pdp-price">
             {price && <span className={hasDisplayPrice ? 'is-price' : 'is-note'}>{shownPrice.main}</span>}
+            {perUnit && <small className="is-unit">{perUnit}</small>}
             {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
-            {perUnit && <small>{perUnit}</small>}
           </div>}
-          {matchHeadline && <div className="ay-pdp-need">
-            <button type="button" className="ay-pdp-need__lead" onClick={openWhyMatch}><strong>{matchHeadline}</strong><span className={`ay-pdp-need__tier is-${matchDetails.tier}`}>{tierWord(matchDetails.tier, matchPercent)}</span></button>
-            {needRows.length > 1 && <ul className="ay-pdp-need__rows" aria-label="Match for each of your needs">{needRows.map((r) => <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'}>{r.short} <b>{r.score}</b></li>)}</ul>}
-            {(matchDetails.access?.label || matchNotes.length > 0) && <div className="ay-pdp-need__meta">
-              {matchDetails.access?.label && <span className="ay-pdp-need__access">{matchDetails.access.label}</span>}
-              {matchNotes.map((n) => <span key={n} className="ay-pdp-need__note">{n}</span>)}
-            </div>}
+          {matchPercent != null && <div className="ay-pdp-match">
+            <MatchPill percent={matchPercent} onClick={openWhyMatch} label={`${matchPercent}% match${headLine ? `. ${headLine}` : ''}. See why`} />
+            {headLine && <span>{headLine}</span>}
           </div>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'} <span aria-hidden="true">→</span></button>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>See your match <span aria-hidden="true">↗</span></button>}
-          {pillTags.length > 0 && (
-            <div className="ay-pdp-tags">
-              {pillTags.map((t) => <span key={t} className="ay-pdp-tag">{t}</span>)}
-            </div>
+          {facts.length > 0 && (
+            <ul className="ay-pdp-facts2" aria-label="About this product">
+              {facts.map((f) => <li key={f.label} className={`is-${f.type}`}>{f.type === 'check' && <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>}{f.label}</li>)}
+            </ul>
           )}
         </div>
 
@@ -619,57 +398,16 @@ export default function ProductDetailScreen({
         )}
 
         {safetyAlertText && <SafetyBanner text={safetyAlertText} />}
-        {Array.isArray(warnings) && warnings.length > 0 && <div className="ay-pdp-warn" role="note">
-          <strong>Before you use</strong>
-          <ul>{(warningsOpen ? warnings : warnings.slice(0, 2)).map((warning) => <li key={warning}>{warning}</li>)}</ul>
-          {warnings.length > 2 && <button type="button" onClick={() => setWarningsOpen((v) => !v)} aria-expanded={warningsOpen}>{warningsOpen ? 'Show less' : `Show all ${warnings.length}`}</button>}
-        </div>}
 
-        {sourceCountTotal > 0 && <div className="ayna-source-index ay-pdp-sources" aria-label="Available product sources">
-          {[['doctor', 'Clinical', 'clinician'], ['scientific', 'Research', 'scientific'], ['community', 'Community', 'community']].map(([kind, label, section]) => <button type="button" key={kind} onClick={() => setActiveDetailSection(section)} aria-label={`${label}: ${sourceCounts[kind]} linked sources`}><span>{label}</span><strong>{sourceCounts[kind] || 0}</strong><small>{sourceCounts[kind] === 1 ? 'source' : 'sources'}</small></button>)}
-        </div>}
-
-        <div className="ayna-detail-sections ay-pdp-tabs" role="tablist" aria-label="Product information">
-          {detailTabs.map(([section, label]) => <button key={section} type="button" role="tab" data-tone={PANEL_TONES[section] || 'ink'} aria-selected={currentSection === section} onClick={() => setActiveDetailSection(section)}>{PANEL_ICONS[section] && <svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS[section]}</svg>}{label}</button>)}
-        </div>
-
-        <div className="ay-pdp-panel" role="tabpanel">
-          {currentSection === 'summary' && <>
-            {whyMatched && <section className="ay-pdp-card is-tint"><h2>Why this fits you</h2><p>{whyMatched}</p></section>}
-            <SourcePanel kind="summary" key={`s-${product.id}`} title="ayna summary" count={sourceCountTotal} summary={summary} emptyText="No summary yet."
-              links={summarySourceChips.filter((c) => c.url).map((c) => ({ url: c.url, label: c.label, text: c.text }))}
-              meta={checks.length > 0 && <ul className="ay-pdp-checks">{checks.map((c) => <li key={c}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>{c}</li>)}</ul>} />
-            {factRows.length > 0 && <dl className="ay-pdp-card ay-pdp-facts">{factRows.map((row) => <div key={row.label}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}</dl>}
-            {(ingredientScience?.length > 0 || (meaningfulDetail(safety.materials) && !factRows.some((r) => r.label === 'Materials'))) && <section className="ay-pdp-card">
-              <h2>What’s inside</h2>
-              {(ingredientScience || []).map((item) => <div key={item.name} className="ay-pdp-row"><strong>{item.name}</strong><p>{item.text}</p></div>)}
-              {meaningfulDetail(safety.materials) && !factRows.some((r) => r.label === 'Materials') && <p className="is-sub" style={{ whiteSpace: 'pre-line' }}>{safety.materials}</p>}
-            </section>}
-            {meaningfulDetail(ingredients) && <section className="ay-pdp-card"><h2>Ingredients</h2><p className="is-sub" style={{ whiteSpace: 'pre-line' }}>{ingredients}</p></section>}
-            {meaningfulDetail(safety.fdaStatus) && <section className="ay-pdp-card"><h2>FDA status</h2><p className="is-sub">{safety.fdaStatus}</p></section>}
-            {!buyUrl && whereToBuy.length > 0 && <section className="ay-pdp-card"><h2>Where to buy</h2><p className="is-sub">{whereToBuy.join(' · ')}</p></section>}
-            {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
-          </>}
-
-          {currentSection === 'clinician' && <SourcePanel kind="clinician" key={`c-${product.id}`} title={clinicianOpinionSource === 'brand' ? 'Brand note' : 'Clinician opinion'} count={sourceCounts.doctor} summary={doctorOpinion} emptyText="No clinician opinion yet."
-            links={[...clinicianChips, ...clinicianCitationChips].filter((c) => c.url).map((c) => ({ url: c.url, label: c.label, text: c.text }))}
-            meta={<>{clinicianAttribution && <p className="ay-src-meta">{clinicianAttribution}</p>}{badges.length > 0 && <div className="ay-pdp-tags">{badges.map((b) => <span key={b} className="ay-pdp-tag">{b}</span>)}</div>}</>} />}
-
-          {currentSection === 'scientific' && <SourcePanel kind="scientific" key={`r-${product.id}`} title="Scientific literature" count={scientificLiteratureEntries.length} countLabel="study" countPlural="studies" summary={effectiveness} emptyText="No studies linked yet."
-            links={scientificLiteratureEntries.map((e) => ({ url: e.url, label: e.label, kind: e.kind, text: e.text, summary: e.summary }))} />}
-
-          {currentSection === 'community' && <SourcePanel kind="community" key={`m-${product.id}`} title="Reviews" count={communityCitationEntries.length} countLabel="link" summary={communityReview} emptyText="No review summary yet."
-            links={communityCitationEntries.map((e) => ({ url: e.url, label: e.label, text: e.text, summary: e.summary }))} />}
-
-          {currentSection === 'whoitsfor' && (whoItsFor || []).map((item, i) => <div key={item} className="ay-pdp-who" style={{ display: 'flex', gap: 12, alignItems: 'center' }}><div className="ay-pdp-who-n">{i + 1}</div><div style={{ flex: 1, minWidth: 0 }}>{item}</div></div>)}
-
-          {currentSection === 'howtouse' && <section className="ay-pdp-card">
-            {howToUse?.intro && <p className="ay-pdp-intro">{howToUse.intro}</p>}
-            <ol className="ay-pdp-steps">{(howToUse?.steps || []).map((step) => <li key={step}>{step}</li>)}</ol>
-            {howToUse?.sourceUrl && <ChipRow chips={[{ url: howToUse.sourceUrl, label: hostLabel(howToUse.sourceUrl) || 'Source', text: howToUse.sourceLabel }]} />}
-          </section>}
-
-          {currentSection === 'ask' && <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />}
+        <div className="ay-pdp-passport">
+          <ProductSections
+            key={product.id}
+            sections={sections}
+            onXref={openProductByName}
+            extras={{ match: <button type="button" className="ay-psec-action" onClick={openWhyMatch}>See the full breakdown</button> }}
+            extraSections={[{ id: 'ask', title: 'Ask ayna', preview: 'Ask a question', node: <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} /> }]}
+          />
+          {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
         </div>
 
         {onCommunityAction && <section className="ay-pdp-community-actions" aria-label="Community">

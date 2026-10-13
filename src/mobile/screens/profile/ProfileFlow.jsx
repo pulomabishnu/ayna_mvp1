@@ -22,7 +22,8 @@ import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLi
 import LegalFooter from '../../components/LegalFooter.jsx';
 import './about-scrapbook.css';
 import { buildShopperProfile } from '../../utils/shopperProfile.js';
-import { ShelfDonut, TrustBars } from '../../components/ShopperCharts.jsx';
+import BadgesPanel from '../../../components/BadgesPanel.jsx';
+import './shopper-card.css';
 import { getMyCommunityProfile } from '../../../utils/community/communityStore.js';
 import { publicMediaUrl } from '../../../utils/community/imageUpload.js';
 
@@ -242,32 +243,6 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 /* ---------------------------- Profile hub ---------------------------- */
 
-// Small, earned-only milestones built from the account's real counts. No
-// streaks or points: just a friendly nudge toward the next useful step.
-function ProfileBadges({ savedCount = 0, ecosystemCount = 0, profileFilledPct = 0 }) {
-  const badges = [
-    { key: 'eco', label: 'Ecosystem built', hint: 'Finish the quiz', earned: ecosystemCount > 0, tone: 'butter' },
-    { key: 'save', label: 'First save', hint: 'Save a product', earned: savedCount > 0, tone: 'pink' },
-    { key: 'profile', label: 'Profile complete', hint: `${profileFilledPct}% done`, earned: profileFilledPct >= 100, tone: 'mint' },
-    { key: 'collector', label: 'Collector', hint: `${Math.min(savedCount, 10)}/10 saved`, earned: savedCount >= 10, tone: 'peri' },
-  ];
-  const earned = badges.filter((b) => b.earned).length;
-  return (
-    <section className="ay-badges" aria-label="Badges">
-      <div className="ay-badges-head"><strong>Badges</strong><span>{earned} of {badges.length}</span></div>
-      <ul>
-        {badges.map((b, i) => (
-          <li key={b.key} className={`ay-badge ay-badge--${b.tone}${b.earned ? ' is-earned' : ''}`} style={{ '--i': i }}>
-            <span className="ay-badge-mark" aria-hidden="true">{b.earned ? '✓' : i + 1}</span>
-            <strong>{b.label}</strong>
-            <small>{b.earned ? 'Earned' : b.hint}</small>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
 /** The Community profile photo, if the person has set one. Falls back to the initial. */
 function useCommunityAvatar(userId) {
   const [avatar, setAvatar] = useState({ userId: null, path: null });
@@ -290,15 +265,41 @@ const SHOPPER_EMBLEMS = {
   explorer: <><circle cx="12" cy="12" r="8.5" /><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" /></>,
   original: <path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" />,
 };
-const SHOPPER_ROW_ICONS = {
-  focus: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4" /><circle cx="12" cy="12" r=".8" /></>,
-  priority: <path d="M12 20s-7-4.4-8.9-8.4A4.9 4.9 0 0 1 12 6.3a4.9 4.9 0 0 1 8.9 5.3C19 15.6 12 20 12 20Z" />,
-  type: <><rect x="5" y="4" width="14" height="16" rx="3" /><path d="M9 9h6M9 13h6" /></>,
-  non: <><circle cx="12" cy="12" r="8" /><path d="m6.5 6.5 11 11" /></>,
-  era: <><circle cx="12" cy="12" r="8" /><path d="M12 7v5l3 2" /></>,
-};
 
-function ProfileHub({ shopperProfile, authUserId, onOpen, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
+/** Shopper type, calm: emblem + name + one line, a single-hue shelf bar, up to three facts. Real data only. */
+function ShopperCard({ profile }) {
+  const shelf = profile.shelf || [];
+  const total = profile.total || 0;
+  const rows = (profile.rows || []).filter((r) => r.key !== 'type').slice(0, 3);
+  return (
+    <section className={`ay-shopper2 is-${profile.kind}`} aria-labelledby="ay-shopper2-title">
+      <header className="ay-shopper2__head">
+        <span className="ay-shopper2__emblem" aria-hidden="true"><svg viewBox="0 0 24 24">{SHOPPER_EMBLEMS[profile.kind]}</svg></span>
+        <div>
+          <span className="ay-shopper2__kicker">Shopper type</span>
+          <h2 id="ay-shopper2-title">{profile.kind === 'original' ? 'The Original' : profile.title}</h2>
+          <p>{profile.tagline}</p>
+        </div>
+      </header>
+      {total > 0 && shelf.length > 0 && (
+        <div className="ay-shopper2__shelf">
+          <div className="ay-shopper2__shelf-head"><span>Your shelf</span><b>{total} pick{total === 1 ? '' : 's'}</b></div>
+          <div className="ay-shopper2__bar" role="img" aria-label={shelf.map((x) => `${x.label} ${x.value}`).join(', ')}>
+            {shelf.map((x, i) => <i key={x.label} style={{ flexGrow: x.value, '--o': Math.max(0.35, 1 - i * 0.18) }} />)}
+          </div>
+          <p className="ay-shopper2__mix">{shelf.map((x) => `${x.label} ${x.value}`).join(' · ')}</p>
+        </div>
+      )}
+      {rows.length > 0 && (
+        <dl className="ay-shopper2__facts">
+          {rows.map((r) => <div key={r.key}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}
+        </dl>
+      )}
+    </section>
+  );
+}
+
+function ProfileHub({ shopperProfile, authUserId, myProducts = [], quizAnswers = null, onOpen, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
   const avatarPath = useCommunityAvatar(authUserId);
   const [avatarFailed, setAvatarFailed] = useState(false);
   const showPhoto = avatarPath && !avatarFailed;
@@ -347,25 +348,9 @@ function ProfileHub({ shopperProfile, authUserId, onOpen, name, initial, memberS
         <span className="ay-hub-shapes" aria-hidden="true"><i /><i /><i /></span>
       </div>
 
-      {shopperProfile && <section className={`ay-shopper is-${shopperProfile.kind}`} aria-label="Shopper profile">
-        <header className="ay-shopper-head">
-          <span className="ay-shopper-shapes" aria-hidden="true"><i /><i /><i /></span>
-          <span className="ay-shopper-emblem" aria-hidden="true"><svg viewBox="0 0 24 24">{SHOPPER_EMBLEMS[shopperProfile.kind]}</svg></span>
-          <span className="ay-shopper-kicker">Your shopper type</span>
-          <h2>{shopperProfile.title}</h2>
-          <p>{shopperProfile.tagline}</p>
-        </header>
-        <div className="ay-shopper-charts">
-          <ShelfDonut shelf={shopperProfile.shelf} total={shopperProfile.total} />
-          <TrustBars trust={shopperProfile.trust} />
-        </div>
-        <dl>{shopperProfile.rows.map((r, i) => <div key={r.key} className={`tone-${r.tone}`} style={{ '--i': i }}>
-          <span className="ay-shopper-ico" aria-hidden="true"><svg viewBox="0 0 24 24">{SHOPPER_ROW_ICONS[r.key]}</svg></span>
-          <dt>{r.label}</dt><dd>{r.value}</dd>
-        </div>)}</dl>
-      </section>}
+      {shopperProfile && <ShopperCard profile={shopperProfile} />}
 
-      <ProfileBadges savedCount={savedCount} ecosystemCount={ecosystemCount} profileFilledPct={profileFilledPct} />
+      <BadgesPanel userId={authUserId} myProducts={myProducts} quizAnswers={quizAnswers} variant="app" />
 
       <div className="ayna-fresh-profile-menu" style={{ flex: 1, padding: '22px 20px 26px', display: 'flex', flexDirection: 'column', gap: 10 }}>
 
@@ -3221,6 +3206,8 @@ export default function ProfileFlow({
       <ProfileHub
         shopperProfile={buildShopperProfile(quizAnswers?.fullHealthIntake, myProducts)}
         authUserId={authUser?.id}
+        myProducts={myProducts}
+        quizAnswers={quizAnswers}
         onOpen={pushScreen}
         onClose={onClose}
         name={name}

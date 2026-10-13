@@ -10,6 +10,8 @@ import { getProductMatchDetailsForProduct, getEcosystemSeedFromQuiz, getSelected
 import { ECOSYSTEM_AREAS } from '../data/ecosystemAreas.js';
 import { selectEcosystemProducts } from '../utils/recommendationSelection.js';
 import { careNotes, shortNeedLabel } from '../../utils/matchDisplay.js';
+import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
+import CareNote from '../../components/CareNote.jsx';
 import '../eco-needs.css';
 
 const AREA_TONES = ['#F7BADD', '#BDEBD6', '#B9C2F4', '#F7E78E', '#EF9CCB', '#8FDABB'];
@@ -120,9 +122,17 @@ export default function EcosystemScreen({
     <CareLinks care={seed.care} limit={5} />
   </section>;
 
-  const careBanner = !careFirst && notes.length > 0 && <section className={`ay-care-banner${careFlags?.careProminent ? ' is-prominent' : ''}`} role="note" aria-label="Care notes">
-    {notes.map((n) => <p key={n}>{n}</p>)}
-  </section>;
+  // Calm care note: one combined sentence, placed after her first shelf.
+  const careLines = summarizeCareNotes(careFlags);
+  const careShelfKey = sections.find((s) => s.shelf?.care)?.key;
+  const careHref = firstCareLink(seed?.care)?.href;
+  const findCare = careShelfKey
+    ? () => {
+      const el = document.querySelector(`#ayna-area-${CSS.escape(careShelfKey)} .ay-shelf-care`);
+      if (el) { el.open = true; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    }
+    : undefined;
+  const careBanner = !careFirst && careLines.length > 0 && <CareNote className="ay-care-banner" lines={careLines} prominent={Boolean(careFlags?.careProminent)} onFindCare={findCare} findCareHref={findCare ? undefined : careHref} />;
 
   return <div className={`ayna-fresh-ecosystem ayna-cabinet-home${careFirst ? ' is-care-first' : ''}`}>
     <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
@@ -142,8 +152,6 @@ export default function EcosystemScreen({
       {!hasAnything && <EmptyState compact art="spark" tone="mint" title="No matches yet" body="Update your answers or browse the shop." actionLabel="Shop" onAction={onBrowse} secondaryLabel="Update" onSecondary={onRetake} />}
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>
-
-    {careBanner}
 
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
 
@@ -165,7 +173,8 @@ export default function EcosystemScreen({
             : <div className="ayna-cabinet-suggestion" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={authUser ? quizAnswers : null} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}>Add to Ecosystem</button></div>)}</div>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;
-      })}
+      }).flatMap((node, index) => (index === 0 && careBanner ? [node, <div key="care-note" className="ay-carenote-slot">{careBanner}</div>] : [node]))}
+      {sections.length === 0 && careBanner}
 
       {worthALook.length > 0 && <section className="ayna-cabinet-collection" aria-labelledby="ayna-cabinet-next-title">
         <div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-next-title">Worth a look</h2></div>

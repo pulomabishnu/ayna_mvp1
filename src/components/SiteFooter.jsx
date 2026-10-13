@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import posthog from 'posthog-js';
 import { getStoredConsent, denyConsent, grantConsent } from '../utils/analyticsConsent';
 import '../styles/audit-info.css';
 import '../styles/verify-people.css';
+import '../styles/site-footer.css';
+import { getSupabaseClient } from '../utils/supabaseClient';
+import { installBuyClickTracking, installReferralCapture } from '../utils/badges';
 
 /**
  * Site footer: brand blurb + Explore / Company / Get in touch columns, a
@@ -98,6 +101,14 @@ export default function SiteFooter({
   onViewTermsOfUse,
   onViewHowWeMakeMoney,
 }) {
+  // The footer is on every website page: capture ?ref invite codes and
+  // retailer click-outs here (both idempotent, both no-ops without Supabase).
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+    installReferralCapture(supabase);
+    installBuyClickTracking(supabase);
+  }, []);
+
   const openConsumerHealth = () => {
     onViewPrivacyPolicy?.();
     scrollToWhenReady(CONSUMER_HEALTH_ANCHOR);

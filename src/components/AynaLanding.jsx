@@ -589,12 +589,15 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
     return list.slice(0, 8);
   }, [filter, filters, personalize, ownedIds, recommendedIds, ownedCategories]);
 
-  // HI03: the one next step. First core area with nothing in it.
+  // HI03: the one next step. A random empty core area, picked once per page load
+  // (seed fixed at mount so it does not flicker when her shelf changes).
+  const [nextSeed] = useState(() => Math.random());
   const nextArea = useMemo(() => {
     const owned = Object.values(myProducts || {});
     const core = ['period', 'intimate', 'hormones', 'pelvic', 'sleep-stress', 'skin'];
-    return MACRO_GROUPS.filter((g) => core.includes(g.id)).find((g) => !owned.some((p) => itemMatchesMacroGroup(p, g.id))) || null;
-  }, [myProducts]);
+    const empty = MACRO_GROUPS.filter((g) => core.includes(g.id) && !owned.some((p) => itemMatchesMacroGroup(p, g.id)));
+    return empty.length ? empty[Math.floor(nextSeed * empty.length)] : null;
+  }, [myProducts, nextSeed]);
   const picks = Object.keys(myProducts || {}).length;
   // Same area grouping and ring as the Ecosystem page.
   const ecoGroups = useMemo(() => {

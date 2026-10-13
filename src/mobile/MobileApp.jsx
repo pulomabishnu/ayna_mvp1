@@ -28,7 +28,7 @@ import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAu
 import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import { getNextArticle } from './utils/nextArticle.js';
-import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './data/intakeModel.js';
+import { INTAKE_DRAFT_KEY, getIntakeSteps, isStepAnswered, reconstructIntakeFromSnapshot } from './data/intakeModel.js';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
 import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx';
@@ -308,7 +308,9 @@ export default function MobileApp() {
       try {
         const intake = reconstructIntakeFromSnapshot(snapshot);
         const steps = getIntakeSteps(intake);
-        const stepId = steps[steps.length - 1]?.id;
+        // Only the required minimum done: back to the checkpoint (results or "more personal").
+        const didMore = steps.some((s) => !s.required && isStepAnswered(s.id, intake));
+        const stepId = didMore ? steps[steps.length - 1]?.id : 'checkpoint';
         if (stepId) {
           localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ version: 1, intake, stepId }));
           resumed = true;

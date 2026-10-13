@@ -203,6 +203,12 @@ function parseAge(raw) {
 }
 
 const NOT_SURE_RE = /not sure|unsure|don't know|do not know/i;
+// Life-stage answers that are not a stage (intakeModel LIFE_STAGE_EXCLUSIVE).
+// They record the answer state and never imply or rule out any stage.
+const LIFE_STAGE_NOT_SURE_OPTIONS = new Set(['None of these / not sure', 'None of these', 'Not sure']);
+const LIFE_STAGE_PREFER_NOT_OPTIONS = new Set(['Prefer not to say']);
+// "Should be" display wording that differs from the ontology option.
+const VALUE_ALIASES = { 'Sensitive-skin friendly': 'Sensitive skin' };
 const PREFER_NOT_RE = /prefer not/i;
 
 /** Answer state for a single-choice question. */
@@ -358,7 +364,11 @@ export function buildUserProfile(intakeInput, options = {}) {
   const lifeStageRaw = arr(intake.lifeStageSelections).length ? arr(intake.lifeStageSelections) : arr(intake.lifeStage);
   const lifeStages = [];
   const customLifeStages = [];
+  let lifeStageNotSure = false;
+  let lifeStagePreferNot = false;
   for (const option of lifeStageRaw) {
+    if (LIFE_STAGE_NOT_SURE_OPTIONS.has(option)) { lifeStageNotSure = true; continue; }
+    if (LIFE_STAGE_PREFER_NOT_OPTIONS.has(option)) { lifeStagePreferNot = true; continue; }
     const id = LIFE_STAGE_ID_BY_OPTION[option];
     if (id) { if (!lifeStages.includes(id)) lifeStages.push(id); continue; }
     const c = canonicalize(option, { kinds: ['life_stage'] });
@@ -369,7 +379,8 @@ export function buildUserProfile(intakeInput, options = {}) {
     if (c.canonical_id && c.confidence >= 0.9 && c.canonical_id !== 'breastfeeding') { if (!lifeStages.includes(c.canonical_id)) lifeStages.push(c.canonical_id); } else customLifeStages.push(c);
   }
   lifeStages.forEach((id) => signal('life_stage', id, 'selected', true, 1));
-  const lifeStageState = lifeStages.length || customLifeStages.length ? 'answered' : 'skipped';
+  const lifeStageState = lifeStages.length || customLifeStages.length ? 'answered'
+    : lifeStagePreferNot ? 'prefer_not' : lifeStageNotSure ? 'not_sure' : 'skipped';
   const breastfeeding = intake.breastfeedingStatus === 'Yes' ? 'yes' : intake.breastfeedingStatus === 'No' ? 'no' : 'unknown';
   const stageSet = new Set([...lifeStages, ...(breastfeeding === 'yes' ? ['breastfeeding'] : [])]);
 
@@ -445,7 +456,8 @@ export function buildUserProfile(intakeInput, options = {}) {
 
   // ── Safety ───────────────────────────────────────────────────────────
   const allergyStatus = intake.allergyStatus === 'Yes' ? 'yes' : intake.allergyStatus === 'No' ? 'no'
-    : NOT_SURE_RE.test(String(intake.allergyStatus || '')) ? 'unsure' : 'unknown';
+    : NOT_SURE_RE.test(String(intake.allergyStatus || '')) ? 'unsure'
+      : PREFER_NOT_RE.test(String(intake.allergyStatus || '')) ? 'prefer_not' : 'unknown';
   const allergies = [];
   const unresolvedAllergies = [];
   const allergyItems = allergyStatus === 'yes' ? arr(intake.allergyItems).length ? arr(intake.allergyItems) : arr(intake.allergies) : [];
@@ -590,7 +602,7 @@ export function buildUserProfile(intakeInput, options = {}) {
       if (!leaveOut.some((x) => x.attr === lo.attr)) leaveOut.push({ attr: lo.attr, raw, strength: allergyAttrs.has(lo.attr) ? 'allergy_equivalent' : 'strong', source: 'selected' });
       continue;
     }
-    const v = VALUE_ID_BY_OPTION[raw];
+    const v = VALUE_ID_BY_OPTION[raw] || VALUE_ID_BY_OPTION[VALUE_ALIASES[raw]];
     if (v) { if (!shouldBe.some((x) => x.id === v)) shouldBe.push({ id: v, raw, weight: 1, source: 'selected' }); continue; }
     const c = canonicalize(raw, { kinds: ['value', 'allergen'] });
     if (c.kind === 'value' && c.confidence >= 0.85) shouldBe.push({ id: c.canonical_id, raw, weight: 1, source: 'custom' });
@@ -679,8 +691,13 @@ export function buildUserProfile(intakeInput, options = {}) {
     utiFrequency: singleState(intake.utiFrequency, { notSure: ['Not sure'] }),
     pregnancyTrimester: singleState(intake.pregnancyTrimester, { notSure: ['Not sure'], preferNot: ['Prefer not to say'] }),
     breastfeeding: singleState(intake.breastfeedingStatus, { no: ['No'], preferNot: ['Prefer not to say'] }),
+    ttcDuration: singleState(intake.ttcDuration, { no: ['Not trying yet'], preferNot: ['Prefer not to say'] }),
+    postpartumTiming: singleState(intake.postpartumTiming),
+    perimenopauseLastPeriod: singleState(intake.perimenopauseLastPeriod, { notSure: ["I'm not sure"], preferNot: ['Prefer not to say'] }),
+    avoid: avoidEntries.length ? 'answered' : 'skipped',
+    anythingElse: String(intake.anythingElse || '').trim() ? 'answered' : 'skipped',
     conditions: conditionsState,
-    allergies: allergyStatus === 'yes' ? 'answered' : allergyStatus === 'no' ? 'explicit_no' : allergyStatus === 'unsure' ? 'not_sure' : allergies.length ? 'answered' : 'skipped',
+    allergies: allergyStatus === 'yes' ? 'answered' : allergyStatus === 'no' ? 'explicit_no' : allergyStatus === 'unsure' ? 'not_sure' : allergyStatus === 'prefer_not' ? 'prefer_not' : allergies.length ? 'answered' : 'skipped',
     medications: medicationsState,
     history: history.length ? 'answered' : 'skipped',
     urgent: urgent === 'yes' || urgent === 'no' ? 'answered' : urgent === 'not_sure' ? 'not_sure' : 'skipped',
@@ -706,6 +723,8 @@ export function buildUserProfile(intakeInput, options = {}) {
     version: 2,
     answers,
     completeness,
+    // Required minimum answered (snapshot flag from the quiz; null for older profiles).
+    minimumComplete: typeof intake.minimumComplete === 'boolean' ? intake.minimumComplete : null,
     signals,
     contradictions,
     contexts,
@@ -729,9 +748,14 @@ export function buildUserProfile(intakeInput, options = {}) {
       reactionHistory: [...history.filter((h) => h.reaction && h.reaction !== 'none').map((h) => ({ product: h.name, reaction: h.reaction, details: h.reactionDetails })),
         ...freeText.reaction_history.map((r) => ({ product: null, reaction: 'reported', details: [r] }))],
       urgent,
+      // Urgent = Yes: care information first, products secondary (results
+      // screens read careFirst). Not sure: care is shown prominently.
       careFirst: urgent === 'yes',
+      productsSecondary: urgent === 'yes',
       careProminent: urgent === 'yes' || urgent === 'not_sure',
       age,
+      // Under the supported age (18): no product recommendations.
+      underSupportedAge: age != null && age < 18,
     },
     physiology: {
       age,

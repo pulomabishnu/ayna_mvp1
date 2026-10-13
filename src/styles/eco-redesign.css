@@ -219,3 +219,14 @@
 .app-container .care-near-panel--compact label, .app-container .care-near-panel--compact li { color: var(--ay-ink) !important; }
 .app-container .care-near-panel--compact .btn { min-height: 36px; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; font: 700 13px/1 var(--ay-font-ui) !important; }
 .app-container .care-near-panel--compact button[style*='underline'] { color: var(--ay-ink) !important; }
+
+/* ---------- Care note (round 5): calm, one icon, one combined sentence ---------- */
+.app-container .ay-carenote.eco3-carenote2 { display: flex; align-items: center; gap: 16px; max-width: 760px; margin: 32px auto; padding: 16px 24px 16px 16px; border: 2px solid var(--ay-ink); border-radius: var(--ay-radius-lg); background: var(--ay-paper); color: var(--ay-ink); }
+.app-container .ay-carenote__icon { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-pink); color: var(--ay-ink); }
+.app-container .ay-carenote__icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .ay-carenote__body { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-width: 0; flex: 1; }
+.app-container .ay-carenote__body p { flex: 1 1 320px; margin: 0 !important; color: var(--ay-ink) !important; font: 500 16px/1.5 var(--ay-font-ui) !important; }
+.app-container .ay-carenote__link { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: transparent; color: var(--ay-ink) !important; font: 700 14px/1 var(--ay-font-ui) !important; text-decoration: none !important; cursor: pointer; transition: transform .15s, box-shadow .15s; }
+.app-container .ay-carenote__link:hover { transform: translate(-1px, -1px); box-shadow: var(--ay-shadow); }
+@media (prefers-reduced-motion: reduce) { .app-container .ay-carenote__link { transition: none; } .app-container .ay-carenote__link:hover { transform: none; } }
+@media (max-width: 600px) { .app-container .ay-carenote.eco3-carenote2 { align-items: flex-start; padding: 16px; } .app-container .ay-carenote__icon { width: 40px; height: 40px; } }

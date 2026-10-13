@@ -36,7 +36,6 @@ const FIELDS = [
   { stepId: 'trustedBrands', check: (i) => !trustedBrandsRelevant(i) || (Array.isArray(i.trustedBrands) && i.trustedBrands.length > 0) },
   { stepId: 'avoidIngredients', check: (i) => Array.isArray(i.avoidIngredients) && i.avoidIngredients.length > 0 },
   { stepId: 'fsaHsa', check: (i) => !!i.fsaHsa },
-  { stepId: 'trust', check: (i) => Array.isArray(i.trustRanking) && i.trustRanking.length > 0 },
   { stepId: 'anythingElse', check: (i) => !!(i.anythingElse && i.anythingElse.trim()) },
 ];
 

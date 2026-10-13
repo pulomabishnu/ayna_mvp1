@@ -141,3 +141,44 @@
 }
 .app-container .pdp-toast-region { margin: 0; }
 .app-container .pdp-toast { display: block; }
+
+/* ---------- Round 5: calm header (passport) ----------
+   eyebrow, name, price, ONE match pill + one line, up to 4 facts, buy box.
+   8pt rhythm: 8 between eyebrow and name, 16 between groups, 24 before the buy box. */
+.app-container .pdp-page .pdp-head__detail.pdp-h2 { gap: 16px !important; }
+.app-container .pdp-page .pdp-h2 > .pdp-head__name { margin-top: -8px !important; }
+.app-container .pdp-page .pdp-h2 > .pdp-buybox { margin-top: 8px !important; }
+.app-container .pdp-page .pdp-h2-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; color: var(--ay-ink); }
+.app-container .pdp-page .pdp-h2-price__main { font: 700 24px/1.2 var(--ay-font-ui); letter-spacing: -.01em; }
+.app-container .pdp-page .pdp-h2-price__unit { padding: 4px 8px; border-radius: 99px; background: var(--ay-cream); color: var(--ay-ink); font: 600 14px/1.2 var(--ay-font-ui); }
+.app-container .pdp-page .pdp-h2-price small { flex-basis: 100%; color: var(--ay-ink-soft); font: 500 14px/1.4 var(--ay-font-ui); }
+.app-container .pdp-page .pdp-h2-match { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.app-container .pdp-page .pdp-h2-match__line { color: var(--ay-ink-soft); font: 500 15px/1.4 var(--ay-font-ui); }
+.app-container .pdp-page .pdp-h2-match .ay-match-pill { background: var(--ay-ink) !important; color: var(--ay-paper) !important; border: 0 !important; min-height: 0 !important; }
+.app-container .pdp-page .pdp-h2-fitnote { justify-self: start; align-self: flex-start; padding: 0; border: 0; background: none; color: var(--ay-ink-soft); font: 500 15px/1.4 var(--ay-font-ui); text-align: left; cursor: pointer; }
+.app-container .pdp-page button.pdp-h2-fitnote:hover { color: var(--ay-ink); text-decoration: underline; text-underline-offset: 3px; }
+.app-container .pdp-page .pdp-h2-fitnote.is-static { cursor: default; }
+.app-container .pdp-page .pdp-h2-facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.app-container .pdp-page .pdp-h2-facts li { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 12px; border: 1.5px solid var(--ay-line); border-radius: 99px; color: var(--ay-ink); font: 600 14px/1.2 var(--ay-font-ui); }
+.app-container .pdp-page .pdp-h2-facts li.is-fit { border-color: var(--ay-ink); background: var(--ay-peri); color: var(--ay-ink); }
+.app-container .pdp-page .pdp-h2-facts svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .pdp-page .pdp-h2-facts a { color: inherit; }
+.app-container .pdp-page .pdp-h2 .pdp-safety-alert { margin: 0 !important; }
+
+/* Body: the shared passport sections, one readable column. */
+.app-container .pdp-page .pdp-below.pdp-below--passport { display: grid !important; grid-template-columns: minmax(0, 760px) !important; gap: 48px !important; justify-content: start; }
+.app-container .pdp-page .pdp-below--passport .pdp-community-actions--flat { display: grid; gap: 16px; }
+.app-container .pdp-page .pdp-omit-link { justify-self: start; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ay-ink-soft); font: 600 14px/1.4 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.app-container .pdp-page .pdp-rate { display: grid; gap: 8px; }
+.app-container .pdp-page .ay-psec h2 { font-size: inherit; }
+.app-container .pdp-page .ay-psec-introsec > h2 { font: 800 24px/1.15 var(--ay-font-display) !important; letter-spacing: -.02em !important; }
+.app-container .pdp-page .ay-psec-introsec.is-helps > h2 { font: 700 16px/1.3 var(--ay-font-ui) !important; letter-spacing: 0 !important; }
+.app-container .pdp-page .ay-psec-item > h2 > button { min-height: 56px !important; }
+@media (max-width: 767px) {
+  .app-container .pdp-page .pdp-h2-price__main { font-size: 22px; }
+  .app-container .pdp-page .pdp-below.pdp-below--passport { gap: 32px !important; }
+}
+/* One column, nothing sticky: Community sits after the sections. */
+.app-container .pdp-page .pdp-below--passport > * { grid-column: 1 !important; grid-row: auto !important; position: static !important; max-width: 760px; width: 100%; justify-self: start !important; }
+.app-container .pdp-page .pdp-below--passport .pdp-community-actions__grid { display: flex !important; flex-wrap: wrap; gap: 8px !important; }
+.app-container .pdp-page .pdp-below--passport .pdp-community-actions__grid button { flex: 0 1 auto; padding: 0 24px; }

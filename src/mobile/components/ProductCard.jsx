@@ -9,6 +9,7 @@ import { brandOf } from '../data/brandFallback.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { matchBadge } from '../../utils/matchDisplay.js';
+import MatchPill from '../../components/MatchPill.jsx';
 
 export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null }) {
   const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
@@ -55,7 +56,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
       </button>
-      {showMatch && <button type="button" className="ayna-fresh-match-badge ayna-match-action" aria-label={`${badge.label}. Why this match for ${name}`} title={badge.label} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()}><strong>{badge.percent ?? match.percent}%</strong><span>MATCH</span></button>}
+      {showMatch && <MatchPill percent={badge.percent ?? match.percent} size="sm" className="ayna-fresh-match-badge ayna-match-action" label={`${badge.label}. Why this match for ${name}`} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()} />}
       {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
       {isList && <div className="ayna-fresh-product-actions">
         <button type="button" onClick={onClick}>Details <span aria-hidden="true">→</span></button>

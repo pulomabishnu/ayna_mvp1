@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import WebDiscoverDeck from './WebDiscoverDeck';
+import { createPortal } from 'react-dom';
+import SuggestBox from './SuggestBox';
+import './Discovery.css';
 import PartnerStrip from './PartnerStrip';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
 import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
@@ -16,7 +18,6 @@ import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
-import MatchGauge from './MatchGauge';
 import ProductCard from './ProductCard';
 import { edgeFadeRef } from '../utils/edgeFade';
 import posthog from 'posthog-js';
@@ -386,6 +387,58 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
+/** Shop filters as a side sheet (bottom sheet on phones). Rendered into the
+ * page shell so it sits above the Ask ayna dock and is never cut off by it.
+ * Filters apply live; the footer button just closes and shows the count. */
+function FilterSheet({ groups, personalizedToggle, resultCount, activeCount, onClear, onClose }) {
+    const closeRef = useRef(null);
+    const onCloseRef = useRef(onClose);
+    useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
+    useEffect(() => {
+        const onKey = (e) => { if (e.key === 'Escape') onCloseRef.current?.(); };
+        window.addEventListener('keydown', onKey);
+        const prev = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        closeRef.current?.focus({ preventScroll: true });
+        return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prev; };
+    }, []);
+    const host = typeof document !== 'undefined' ? (document.querySelector('.app-container') || document.body) : null;
+    if (!host) return null;
+    return createPortal(
+        <div className="ay-shopfilters" role="presentation">
+            <button type="button" className="ay-shopfilters__scrim" aria-label="Close filters" tabIndex={-1} onClick={onClose} />
+            <div className="ay-shopfilters__sheet" role="dialog" aria-modal="true" aria-labelledby="ay-shopfilters-title">
+                <header className="ay-shopfilters__head">
+                    <h2 id="ay-shopfilters-title">Filters{activeCount ? <span className="ay-shopfilters__count">{activeCount}</span> : null}</h2>
+                    <button type="button" ref={closeRef} className="ay-shopfilters__close" aria-label="Close filters" onClick={onClose}>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+                    </button>
+                </header>
+                <div className="ay-shopfilters__body">
+                    {personalizedToggle && <div className="ay-shopfilters__group is-mobile-only">{personalizedToggle}</div>}
+                    {groups.map(([label, value, set, options]) => (
+                        <fieldset key={label} className="ay-shopfilters__group">
+                            <legend>{label}</legend>
+                            <div className="ay-shopfilters__chips">
+                                {options.map(([v, l]) => (
+                                    <button key={v} type="button" className={value === v ? 'is-on' : ''} aria-pressed={value === v} onClick={() => set(value === v ? 'all' : v)}>{l}</button>
+                                ))}
+                            </div>
+                        </fieldset>
+                    ))}
+                </div>
+                <footer className="ay-shopfilters__foot">
+                    <button type="button" className="ay-shopfilters__clear" onClick={onClear} disabled={!activeCount}>Clear all</button>
+                    <button type="button" className="ay-shopfilters__apply" onClick={onClose}>
+                        {resultCount === 1 ? 'Show 1 product' : `Show ${resultCount} products`}
+                    </button>
+                </footer>
+            </div>
+        </div>,
+        host,
+    );
+}
+
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         // initialMacroGroup (a whole care area, e.g. from "Swap" in the
@@ -412,7 +465,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const storedPersonalized = (() => { try { return localStorage.getItem(PERSONALIZED_KEY); } catch { return null; } })();
     const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (storedPersonalized === null ? true : storedPersonalized === '1'));
     const [showFilters, setShowFilters] = useState(false);
-    const [showDeck, setShowDeck] = useState(false);
     const [priceFilter, setPriceFilter] = useState('all');
     const [ratingFilter, setRatingFilter] = useState('all');
     const [eligibilityFilter, setEligibilityFilter] = useState('all');
@@ -1262,6 +1314,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setAiRelatedSearches([]);
     };
 
+    // Only the values inside the Filters sheet (not search, category or sort).
+    const clearSheetFilters = () => {
+        setPriceFilter('all');
+        setEligibilityFilter('all');
+        setLifeStageFilter('all');
+        setPreferenceFilter('all');
+        setSustainabilityFilter('all');
+        setAynaFilter('all');
+    };
+    const sheetFilterCount = [priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length;
     const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0);
     const personalizedToggle = (
         <label className="ayna-browse__personalized-toggle">
@@ -1379,27 +1441,21 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             </div>
 
             {showFilters && (
-                <div className="ayna-browse__filters">
-                    {[
+                <FilterSheet
+                    groups={[
                         ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–50'], ['50-100', '$50–100'], ['100-plus', '$100+']]],
-                        ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']]],
                         ['Eligibility', eligibilityFilter, setEligibilityFilter, [['fsa-hsa', 'FSA or HSA'], ['fsa', 'FSA'], ['hsa', 'HSA']]],
                         ['Life stage', lifeStageFilter, setLifeStageFilter, [['fertility', 'Fertility'], ['pregnancy', 'Pregnancy'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause'], ['menopause', 'Menopause']]],
+                        ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']]],
                         ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Better packaging']]],
                         ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favourite'], ...(user ? [['best-match', 'Best matches'], ['ecosystem', 'In my ecosystem']] : [])]],
-                    ].map(([label, value, set, options]) => (
-                        <fieldset key={label} className="ayna-browse__filter-group">
-                            <legend>{label}</legend>
-                            <div>
-                                {options.map(([v, l]) => (
-                                    <button key={v} type="button" className={value === v ? 'is-on' : ''} aria-pressed={value === v} onClick={() => set(value === v ? 'all' : v)}>{l}</button>
-                                ))}
-                            </div>
-                        </fieldset>
-                    ))}
-                    {user && <div className="ayna-browse__filter-group is-mobile-only">{personalizedToggle}</div>}
-                    <button type="button" className="ayna-browse__clear" onClick={clearBrowseFilters}>Clear all</button>
-                </div>
+                    ]}
+                    personalizedToggle={user ? personalizedToggle : null}
+                    resultCount={gridItems.length}
+                    activeCount={sheetFilterCount}
+                    onClear={clearSheetFilters}
+                    onClose={() => setShowFilters(false)}
+                />
             )}
 
             {/* Loading state for explicit search — a bare skeleton grid with no
@@ -1424,25 +1480,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </>
             )}
 
-            {/* Swipe to discover (from the app): one product at a time, save or skip. */}
-            {gridItems.length > 0 && (
-                <button type="button" className="ay-web-discover" onClick={() => setShowDeck(true)}>
-                    <span className="ay-web-discover__cards" aria-hidden="true"><i /><i /></span>
-                    <span className="ay-web-discover__copy"><strong>Swipe to discover</strong><small>One product at a time. Save what you like.</small></span>
-                    <span className="ay-web-discover__go" aria-hidden="true">→</span>
-                </button>
-            )}
-            {showDeck && (
-                <WebDiscoverDeck
-                    products={gridItems}
-                    quizResults={user ? quizResults : null}
-                    savedProducts={savedProducts}
-                    ownedIds={new Set(Object.keys(myProducts || {}))}
-                    onToggleSaved={onToggleSaved}
-                    onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }}
-                    onClose={() => setShowDeck(false)}
-                />
-            )}
             {/* Product Grid */}
             {(!searchSubmitted || !aiLoading || gridItems.length > 0) && (
             <>
@@ -1523,6 +1560,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         {submittedQuery && onAsk && <button type="button" className="is-dark" onClick={() => onAsk(submittedQuery)}>Ask ayna about “{submittedQuery}”</button>}
                         {activeFilterCount > 0 && <button type="button" onClick={clearBrowseFilters}>Clear filters</button>}
                     </div>
+                    <SuggestBox context="shop-empty" prefill={submittedQuery} className="ayna-browse__suggest" />
                 </div>
             )}
             {gridItems.length > visibleCount ? (
@@ -1645,6 +1683,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         ))}
                     </div>
                 </div>
+            )}
+
+            {gridItems.length > 0 && !(searchSubmitted && aiLoading) && (
+                <SuggestBox context="shop" prefill={submittedQuery} className="ayna-browse__suggest" />
             )}
         </section>
     );

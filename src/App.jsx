@@ -28,6 +28,8 @@ const BrandPartners = React.lazy(() => import('./components/BrandPartners'));
 const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
 const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
+// Internal, read-only product passport audit (dev, or ?internal=1 opt-in).
+const ProductAudit = React.lazy(() => import('./components/ProductAudit'));
 import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById } from './data/products';
 import { behaviorFrom } from './utils/matchDisplay';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
@@ -68,6 +70,7 @@ import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, parseProductIdFromPath } from './utils/productRoute';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
 import './styles/flow.css';
+import './styles/web-neon-dark.css';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
@@ -108,6 +111,7 @@ const VIEW_TO_PATH = {
   'auth-callback': '/auth/callback',
   'auth-confirm': '/auth/confirm',
   'confirmed': '/confirmed',
+  'product-audit': '/internal/product-audit',
 };
 // Friendly document.title per view — 'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
@@ -1574,6 +1578,7 @@ function App() {
             products={ALL_PRODUCTS}
             quizResults={quizResults}
             onOpenProduct={handleOpenProduct}
+            onOpenArticle={(a) => { setSelectedArticleId(a.id); setCurrentView('articles'); }}
             onRequireAuth={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
           />
         )}
@@ -1972,6 +1977,11 @@ function App() {
               onCta={() => handleViewDiscovery('')}
             />
           )
+        )}
+        {currentView === 'product-audit' && (
+          <Suspense fallback={<ViewLoadingFallback />}>
+            <ProductAudit />
+          </Suspense>
         )}
         {currentView === 'not-found' && (
           <NotFoundState

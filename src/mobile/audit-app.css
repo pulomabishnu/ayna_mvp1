@@ -223,3 +223,27 @@
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-question { padding-top: 16px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-answer { margin-top: 16px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile .ayna-play-intake .ip-ruler { margin-top: 16px !important; }
+
+/* ===== Shop agent (r5): Ecosystem "Read next" breathing room + cleaner list ===== */
+/* The last shelf's "Care options for ..." box (and the empty-state card) sat
+   flush against the Read next heading: give the section its own 48px gap. */
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads { margin-top: 48px !important; padding-bottom: 32px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-shelf-care { margin-bottom: 8px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head { margin-bottom: 8px !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2 { font-size: 24px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact {
+  display: grid !important; grid-template-columns: minmax(0, 1fr) 32px; align-items: center; gap: 16px;
+  min-height: 72px; padding: 16px 0 !important; justify-items: stretch; text-align: left !important; border: 0 !important; border-bottom: 1px solid var(--ay-line, rgba(29, 26, 43, .1)) !important;
+  border-radius: 0 !important; background: transparent !important; box-shadow: none !important;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact:last-child { border-bottom: 0 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact::after {
+  content: ''; width: 32px; height: 32px; border: 2px solid var(--ay-ink); border-radius: 50%;
+  background: var(--ay-paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d1a2b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E") center / 16px no-repeat;
+}
+.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-cabinet-reads .ayna-editorial-read.is-compact::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
+}
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact .ayna-editorial-read-copy { display: grid !important; justify-content: stretch !important; justify-items: start; gap: 4px; width: 100%; padding: 0 !important; text-align: left !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact small { margin: 0 !important; font: 600 13px/1.2 var(--ay-font-ui) !important; color: var(--ay-ink-soft) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-editorial-read.is-compact strong { max-width: none !important; margin: 0 !important; font: 700 17px/1.25 var(--ay-font-ui) !important; letter-spacing: -.01em !important; color: var(--ay-ink) !important; }

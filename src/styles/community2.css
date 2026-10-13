@@ -170,3 +170,109 @@
 .app-container .wc3 .wc-mention.is-custom:hover { border-color: var(--ay-ink); background: var(--ay-cream); }
 .app-container .wc-mention.is-custom .wc-mention-photo { display: grid; place-items: center; background: #fff; color: #1d1a2b; font: 800 18px/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); }
 .app-container .wc-mention.is-custom small { display: block; color: var(--ay-ink-soft); font-size: 12px; }
+
+/* ===== Round 5: rules, announcements, calmer composer, clean playlist page ===== */
+
+/* Side columns scroll with the page (no sticky sidebars). */
+.app-container .wc3 :is(.wc-nav, .wc-side), .app-container .wc-side { position: static; top: auto; }
+
+/* Community rules entry in the left column */
+.app-container .wc3 .wc-rules-btn { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 0; border-radius: 99px; background: none; color: var(--ay-ink-soft); font: 600 14px/1 var(--ay-font-ui); text-align: left; cursor: pointer; }
+.app-container .wc3 .wc-rules-btn span { display: grid; place-items: center; width: 24px; height: 24px; border: 1.5px solid currentColor; border-radius: 50%; font: 700 12px/1 var(--ay-font-ui); }
+.app-container .wc3 .wc-rules-btn:hover { background: var(--ay-tile); color: var(--ay-ink); }
+@media (max-width: 1179px) { .app-container .wc3 .wc-nav .wc-rules-btn { display: none; } }
+.app-container .wc-rules-sheet { width: min(600px, 100%); gap: 24px; padding: 32px; }
+
+/* Verified names */
+.app-container .wc3 .wc-post-who { align-items: center; flex-wrap: wrap; row-gap: 2px; }
+.app-container .wc-comment header .cr-verified { margin-right: auto; }
+.app-container .wc-comment header small { margin-left: 0; }
+.app-container .wc-prof-handle { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+/* Match display standard: ink pill, bold percent + lighter "match", no underline */
+.app-container .wc-mention em.wc-match { display: inline-flex; align-items: baseline; gap: 4px; padding: 6px 12px; border: 0; border-radius: 99px; background: var(--ay-ink); color: var(--ay-paper); font: 500 12px/1 var(--ay-font-ui); font-style: normal; text-decoration: none; white-space: nowrap; }
+.app-container .wc-mention em.wc-match b { font-weight: 800; font-size: 13px; }
+.app-container[data-theme='dark'] .wc-mention em.wc-match { color: #0c0b11; }
+.app-container .wc-mention em.wc-view { background: var(--ay-paper); text-decoration: none; }
+
+/* Composer dialog: bigger, grouped, 8pt spacing */
+.app-container .wc-sheet.wc-compose { width: min(680px, 100%); gap: 24px; padding: 32px; }
+.app-container .wc-sheet.wc-compose > header h2 { font-size: 30px; }
+.app-container .wc-compose .wc-kinds { margin-top: -8px; }
+.app-container .wc-compose .wc-group { display: grid; gap: 12px; padding-top: 24px; border-top: 1px solid var(--ay-line); }
+.app-container .wc-compose .wc-kinds + .wc-group, .app-container .wc-compose .wc-join + .wc-group { padding-top: 0; border-top: 0; }
+.app-container .wc-compose .wc-label { display: flex; align-items: baseline; gap: 8px; margin: 0; color: var(--ay-ink); font: 700 16px/1.2 var(--ay-font-ui) !important; letter-spacing: 0 !important; }
+.app-container .wc-compose .wc-label small { color: var(--ay-ink-soft); font: 500 13px/1 var(--ay-font-ui); }
+.app-container .wc-compose :is(input:not([type='checkbox']):not([type='file']), textarea) { min-height: 52px; padding: 12px 16px; font-size: 16px; }
+.app-container .wc-compose .wc-seg-fill { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.app-container .wc-compose .wc-seg-fill button { min-height: 44px; padding: 0 12px; font-size: 14px; }
+.app-container .wc-cover-pick { display: flex; align-items: center; gap: 24px; }
+.app-container .wc-cover-preview { display: grid; place-items: center; flex: none; width: 112px; height: 112px; padding: 12px; border: 2px solid var(--ay-ink); border-radius: 18px; overflow: hidden; box-sizing: border-box; text-align: center; font: 800 18px/1.05 var(--ay-font-display); letter-spacing: -.03em; overflow-wrap: anywhere; }
+.app-container .wc-cover-preview img { width: calc(100% + 24px); height: calc(100% + 24px); margin: -12px; object-fit: cover; }
+.app-container .wc-cover-preview span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.app-container .wc-cover-opts { display: grid; gap: 16px; justify-items: start; min-width: 0; }
+.app-container .wc-compose .wc-colors { gap: 12px; }
+.app-container .wc-compose .wc-colors > button { width: 36px; height: 36px; }
+.app-container .wc-upload { position: relative; display: inline-flex; align-items: center; overflow: hidden; cursor: pointer; }
+.app-container .wc-upload:focus-within { outline: 3px solid var(--ay-peri); outline-offset: 2px; }
+.app-container .wc-file { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.app-container .wc-photo-pick { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.app-container .wc-photo-pick small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ay-ink-soft); font: 500 13px/1.3 var(--ay-font-ui); }
+.app-container .wc-compose .wc-rating { margin-top: -4px; }
+.app-container .wc-compose-foot { display: grid; gap: 16px; padding-top: 24px; border-top: 1px solid var(--ay-line); }
+.app-container .wc-compose-actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.app-container .wc-compose .wc-compose-actions .wc-btn { min-height: 48px; padding: 0 28px; }
+.app-container .wc-rules-link { color: var(--ay-ink-soft) !important; font-weight: 600 !important; }
+.app-container .wc-compose .cr-field .cr-note { margin-top: 8px; }
+@media (max-width: 560px) {
+  .app-container .wc-sheet-backdrop:has(.wc-compose) { align-items: end; padding: 0; }
+  .app-container .wc-sheet.wc-compose { width: 100%; max-height: 94dvh; padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px)); border-radius: 28px 28px 0 0; border-bottom: 0; box-shadow: none; }
+  .app-container .wc-sheet.wc-compose > header h2 { font-size: 24px; }
+  .app-container .wc-cover-pick { gap: 16px; }
+  .app-container .wc-cover-preview { width: 88px; height: 88px; font-size: 15px; }
+  .app-container .wc-compose-actions .wc-btn { flex: 1; }
+  .app-container .wc-rules-sheet { padding: 24px 20px; }
+}
+
+/* Playlist detail: one clean list, inline add row */
+.app-container .wc3 .wc-pl-detail { display: grid; gap: 24px; }
+.app-container .wc3 .wc-pl-hero { display: flex; align-items: center; gap: 24px; margin: 0; }
+.app-container .wc3 .wc-pl-hero-copy { display: grid; gap: 8px; justify-items: start; min-width: 0; }
+.app-container .wc3 .wc-pl-hero-copy h1 { margin: 0; font-size: clamp(32px, 3.2vw, 44px) !important; line-height: 1 !important; overflow-wrap: anywhere; }
+.app-container .wc3 .wc-pl-hero-copy p { margin: 0; max-width: 56ch; color: var(--ay-ink); font: 500 16px/1.5 var(--ay-font-ui); }
+.app-container .wc3 .wc-pl-hero-copy small { color: var(--ay-ink-soft); font: 600 14px/1.2 var(--ay-font-ui); }
+.app-container .wc3 .wc-pl-list { display: grid; margin: 0; padding: 0; list-style: none; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); overflow: hidden; }
+.app-container .wc3 .wc-pl-row, .app-container .wc3 .wc-pl-add { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 8px 16px 8px 8px; border-bottom: 1px solid var(--ay-line); }
+.app-container .wc3 .wc-pl-list > li:last-child { border-bottom: 0; }
+.app-container .wc3 .wc-pl-row .wc-mention { max-width: none; margin: 0; padding: 8px; border: 0; border-radius: 14px; background: none; }
+.app-container .wc3 .wc-pl-row .wc-mention:hover { background: var(--ay-tile); }
+.app-container .wc3 .wc-pl-row .wc-mention-photo { width: 52px; height: 52px; }
+.app-container .wc3 .wc-pl-row .wc-mention strong { font-size: 15px; }
+.app-container .wc3 .wc-pl-row .wc-mention small { font-size: 13px; }
+.app-container .wc3 .wc-pl-remove { min-height: 40px; padding: 0 16px; border: 1.5px solid var(--ay-line); border-radius: 99px; background: none; color: var(--ay-ink-soft); font: 600 13px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container .wc3 .wc-pl-remove:hover:not(:disabled) { border-color: var(--ay-ink); color: var(--ay-ink); }
+.app-container .wc3 .wc-pl-add { grid-template-columns: 52px minmax(0, 1fr) auto; padding: 12px 16px 12px 16px; background: var(--ay-cream); }
+.app-container .wc3 .wc-pl-add-mark { display: grid; place-items: center; width: 52px; height: 44px; color: var(--ay-ink-soft); }
+.app-container .wc3 .wc-pl-add .wc-picker { position: relative; }
+.app-container .wc3 .wc-pl-add .wc-picker input { min-height: 44px; padding: 8px 16px; border: 1.5px solid var(--ay-line) !important; border-radius: 99px !important; background: var(--ay-paper) !important; font-size: 15px !important; }
+.app-container .wc3 .wc-pl-add .wc-picker input:focus { border-color: var(--ay-ink) !important; }
+.app-container .wc3 .wc-pl-add .wc-results { position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 30; max-height: 320px; overflow-y: auto; box-shadow: var(--ay-shadow); }
+.app-container .wc3 .wc-pl-add .wc-picked { min-height: 44px; align-items: center; padding: 8px 16px; border-width: 1.5px; border-radius: 99px; }
+.app-container .wc3 .wc-pl-owner { display: flex; justify-content: flex-start; }
+@media (max-width: 560px) {
+  .app-container .wc3 .wc-pl-hero { flex-direction: row; align-items: center; gap: 16px; }
+  .app-container .wc3 .wc-cover.is-big { width: 104px; }
+  .app-container .wc3 .wc-pl-hero-copy h1 { font-size: 28px !important; }
+  .app-container .wc3 .wc-pl-row { padding: 4px 12px 4px 4px; gap: 8px; }
+  .app-container .wc3 .wc-pl-row .wc-mention { grid-template-columns: 44px minmax(0, 1fr) auto; gap: 8px; }
+  .app-container .wc3 .wc-pl-row .wc-mention-photo { width: 44px; height: 44px; }
+  .app-container .wc3 .wc-pl-add { grid-template-columns: minmax(0, 1fr) auto; padding: 12px; }
+  .app-container .wc3 .wc-pl-add-mark { display: none; }
+}
+
+/* Announcements in the feed column */
+.app-container .wc3 .cr-ann { gap: 12px; }
+.app-container .wc3 .wc-pl-row .wc-mention { grid-template-columns: 52px minmax(0, 1fr) auto; gap: 16px; }
+.app-container .wc-sheet .wc-btn.is-ghost { background: var(--ay-paper); color: var(--ay-ink); }
+.app-container .wc-compose .wc-seg-fill button { white-space: nowrap; }
+@media (max-width: 560px) { .app-container .wc-compose .wc-seg-fill button { padding: 0 6px; font-size: 13px; } }

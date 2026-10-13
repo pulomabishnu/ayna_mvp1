@@ -155,3 +155,58 @@ describe('older saved profiles (step 2)', () => {
     expect(up.shopping.declinesInternal).toBe(true);
   });
 });
+
+describe('intake spec answer states (2026-10)', () => {
+  it('life stage "Prefer not to say" / "None of these / not sure" are answer states, never a stage, and never "not pregnant"', () => {
+    const pn = buildUserProfile(buildSnapshot(intake({ lifeStageSelections: ['Prefer not to say'] })));
+    expect(pn.answers.lifeStage).toBe('prefer_not');
+    expect(pn.physiology.lifeStages).toEqual([]);
+    expect(pn.physiology.customLifeStages).toEqual([]);
+    expect(pn.safety.pregnancyStatus).toBe('unknown');
+    const ns = buildUserProfile(intake({ lifeStageSelections: ['None of these / not sure'] }));
+    expect(ns.answers.lifeStage).toBe('not_sure');
+    expect(ns.safety.pregnancyStatus).toBe('unknown');
+    expect(buildUserProfile(intake({ lifeStageSelections: ['I get periods regularly'] })).safety.pregnancyStatus).toBe('not_indicated');
+  });
+
+  it('medications "I\'m not sure" and allergies "Prefer not to say" keep their own states', () => {
+    const up = buildUserProfile(buildSnapshot(intake({ takesCurrent: "I'm not sure", allergyStatus: 'Prefer not to say' })));
+    expect(up.answers.medications).toBe('not_sure');
+    expect(up.safety.medications).toEqual([]);
+    expect(up.answers.allergies).toBe('prefer_not');
+    expect(up.safety.allergyStatus).toBe('prefer_not');
+  });
+
+  it('records follow-up states and skipped optional answers', () => {
+    const up = buildUserProfile(buildSnapshot(intake({
+      lifeStageSelections: ['I am in perimenopause'], perimenopauseLastPeriod: 'Prefer not to say',
+      supportSelections: ['Trying to conceive'], ttcDuration: 'Less than 6 months',
+    })));
+    expect(up.answers.perimenopauseLastPeriod).toBe('prefer_not');
+    expect(up.answers.ttcDuration).toBe('answered');
+    expect(up.answers.formats).toBe('skipped');
+    expect(up.answers.budget).toBe('skipped');
+    expect(up.answers.avoid).toBe('skipped');
+    expect(up.shopping.picksPerNeed).toBe(3);
+    expect(up.trust.touched).toBe(false);
+  });
+
+  it('"Sensitive-skin friendly" maps to the sensitive-skin value', () => {
+    const up = buildUserProfile(intake({ avoidIngredients: ['Sensitive-skin friendly'] }));
+    expect(up.shopping.shouldBe.map((v) => v.id)).toContain('sensitive_skin');
+  });
+
+  it('urgent Yes puts care first and products second; Not sure makes care prominent', () => {
+    const yes = buildUserProfile(intake({ safetyConcern: 'Yes' }));
+    expect(yes.safety).toMatchObject({ careFirst: true, productsSecondary: true, careProminent: true });
+    const unsure = buildUserProfile(intake({ safetyConcern: 'Not sure' }));
+    expect(unsure.safety).toMatchObject({ careFirst: false, productsSecondary: false, careProminent: true });
+  });
+
+  it('flags an under-supported age and carries the minimum-complete flag', () => {
+    expect(buildUserProfile(intake({ age: '16' })).safety.underSupportedAge).toBe(true);
+    expect(buildUserProfile(intake({ age: '30' })).safety.underSupportedAge).toBe(false);
+    const snap = buildSnapshot(intake({ age: '22', lifeStageSelections: ['I get periods regularly'], supportSelections: ['Acne'], diagnosisSelections: ['None that I know of'], allergyStatus: 'No', takesCurrent: 'No', safetyConcern: 'No' }));
+    expect(buildUserProfile(snap).minimumComplete).toBe(true);
+  });
+});

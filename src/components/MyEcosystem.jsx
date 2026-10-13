@@ -13,6 +13,8 @@ import { behaviorFrom, careNotes, shortNeedLabel, tierWord } from '../utils/matc
 import '../styles/match-ui.css';
 import ProductTileImage, { resolveCatalogProductImage, ProductImageFallback } from './ProductTileImage';
 import CareNearYouPanel from './CareNearYouPanel';
+import CareNote from './CareNote';
+import { summarizeCareNotes } from '../utils/careSummary';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import ProductCard from './ProductCard';
 import WebEcosystemChart from './WebEcosystemChart';
@@ -1100,6 +1102,7 @@ export default function MyEcosystem({
     const careFlags = needSeed?.careFlags || null;
     const careFirst = Boolean(careFlags?.careFirst);
     const careNoteLines = careNotes(careFlags);
+    const careSummaryLines = useMemo(() => summarizeCareNotes(careFlags), [careFlags]);
     // Care links keyed to the needs she actually chose (the engine's reading),
     // not the older broad concern mapping.
     const careQuizResults = useMemo(
@@ -1892,11 +1895,6 @@ export default function MyEcosystem({
                         />
                     </section>
                 )}
-                {!careFirst && careNoteLines.length > 0 && (
-                    <div className={`eco3-carenote${careFlags?.careProminent ? ' is-prominent' : ''}`} role="note">
-                        {careNoteLines.map((n) => <p key={n}>{n}</p>)}
-                    </div>
-                )}
 
                 <div className={careFirst ? 'eco3-secondary' : undefined}>
                 {careFirst && <p className="eco3-secondary__label">Products, when you are ready</p>}
@@ -2055,6 +2053,22 @@ export default function MyEcosystem({
                             })}
                         </ul>
                     </section>
+                )}
+
+                {/* Care note sits after her first shelf block (never on top unless urgent; urgent uses the care-first panel above). */}
+                {!careFirst && !ecoQueryTrimmed && careSummaryLines.length > 0 && (
+                    <CareNote
+                        className="eco3-carenote2"
+                        lines={careSummaryLines}
+                        prominent={Boolean(careFlags?.careProminent)}
+                        onFindCare={() => {
+                            const el = careNearYouDetailsRef.current;
+                            if (el) {
+                                el.open = true;
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }}
+                    />
                 )}
 
                 {visibleAreaGroups.map((group) => {

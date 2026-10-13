@@ -126,3 +126,10 @@
 .app-container .ay-lib-products .ayna-browse-card { min-width: 0; }
 .app-container .ay-lib-products .ayna-browse-card__labels { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
 .app-container .ay-lib-products .ayna-discover-card__price { white-space: normal !important; overflow-wrap: anywhere; }
+
+/* Read next (web article): its own 48px block, 16px padding grid, readable label. */
+.app-container .ay-web-lib-article .ay-lib-care + .ay-lib-products,
+.app-container .ay-web-lib-article .ay-lib-care { margin-top: 48px !important; }
+.app-container .ay-web-next-read { margin-top: 48px !important; padding: 16px 24px !important; gap: 8px 16px !important; min-height: 72px; }
+.app-container .ay-web-next-read small { font: 600 14px/1.2 var(--ay-font-ui) !important; }
+.app-container .ay-web-next-read span { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ay-ink); color: var(--ay-paper) !important; font-size: 20px !important; }

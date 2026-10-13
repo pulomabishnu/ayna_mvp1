@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { ALL_PRODUCTS, getProductById } from '../data/products';
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
+import { productImageOverride } from '../data/productImageOverrides';
 
 /**
  * The honest "we couldn't find a real photo" state. Previously a literal
@@ -73,9 +74,13 @@ const CATALOG_BY_NORMALIZED_NAME = new Map(
  */
 export function resolveCatalogProductImage(product) {
   const allowBrandLogo = product?.type === 'digital';
+  // Cleaned white-background studio photo wins over any stored/catalog image.
+  const override = productImageOverride(product);
+  if (override) return override;
   const byId = product?.id ? getProductById(product.id) : null;
   if (byId && !isPlaceholderProductImage(byId.image, byId.type === 'digital' || allowBrandLogo)) return byId.image;
   const byName = CATALOG_BY_NORMALIZED_NAME.get(String(product?.name || '').trim().toLowerCase());
+  if (byName && productImageOverride(byName)) return productImageOverride(byName);
   if (byName && !isPlaceholderProductImage(byName.image, byName.type === 'digital' || allowBrandLogo)) return byName.image;
   return product?.image;
 }

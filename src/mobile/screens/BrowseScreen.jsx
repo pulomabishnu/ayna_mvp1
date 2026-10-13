@@ -6,6 +6,7 @@ import DiscoverDeck from '../components/DiscoverDeck.jsx';
 import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
+import SuggestBox from '../../components/SuggestBox.jsx';
 import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
@@ -461,6 +462,11 @@ export default function BrowseScreen({
           ) : (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
               No products match.
+            </div>
+          )}
+          {!(searchTermRaw.length >= 2 && aiState.loading) && (
+            <div className="ay-app-suggest-wrap">
+              <SuggestBox variant="app" context="app-shop" prefill={searchTermRaw} />
             </div>
           )}
           <div

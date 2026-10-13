@@ -1,0 +1,41 @@
+/* Profile-match pill (website + app). Tokens flip in dark mode: ink is light
+   there, so the pill stays the high-contrast inverse of the page. */
+.ay-match-pill {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ay-ink, #1d1a2b);
+  color: var(--ay-paper, #fffcf5);
+  font-family: var(--ay-font-ui, Poppins, system-ui, sans-serif);
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  box-shadow: none;
+}
+.ay-match-pill strong { font-weight: 800; letter-spacing: -.02em; color: inherit; }
+.ay-match-pill span { font-weight: 500; opacity: .78; color: inherit; text-transform: none; letter-spacing: 0; }
+.ay-match-pill.is-sm { padding: 6px 10px; }
+.ay-match-pill.is-sm strong { font-size: 13px; }
+.ay-match-pill.is-sm span { font-size: 12px; }
+.ay-match-pill.is-md { padding: 8px 14px; }
+.ay-match-pill.is-md strong { font-size: 18px; }
+.ay-match-pill.is-md span { font-size: 15px; }
+button.ay-match-pill { cursor: pointer; transition: transform 150ms ease, box-shadow 150ms ease; }
+button.ay-match-pill::after { content: ''; position: absolute; inset: -8px -4px; } /* 44px tap area */
+button.ay-match-pill:hover { transform: translateY(-1px); }
+button.ay-match-pill:active { transform: scale(.98); }
+button.ay-match-pill:focus-visible { outline: 3px solid var(--ay-peri, #b9c2f4); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { button.ay-match-pill { transition: none; } button.ay-match-pill:hover, button.ay-match-pill:active { transform: none; } }
+/* Page-level button/text rules (cabinet.css, web-play.css) must not recolor the pill. */
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-match-pill.ay-match-pill,
+.app-container.app-container .ay-match-pill.ay-match-pill { background: #1d1a2b !important; color: #fff !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-match-pill.ay-match-pill,
+.app-container.app-container[data-theme='dark'] .ay-match-pill.ay-match-pill,
+:root[data-ay-theme='dark'] .app-container.app-container .ay-match-pill.ay-match-pill { background: #fff !important; color: #1d1a2b !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-match-pill.ay-match-pill > :is(strong, span),
+.app-container.app-container .ay-match-pill.ay-match-pill > :is(strong, span) { color: inherit !important; }

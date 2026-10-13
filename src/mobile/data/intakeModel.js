@@ -3,7 +3,7 @@
 // (src/components/WebIntake.jsx), so both always ask the same questions and
 // save the same answers. Change questions here, not in either screen.
 import { ALL_PRODUCTS } from '../../data/products.js';
-import { normalizeAge, normalizeLifeStages } from '../../utils/intakeSelections.js';
+import { normalizeAge, normalizeLifeStages, selectLifeStage } from '../../utils/intakeSelections.js';
 
 export const SUPPORT_GROUPS = [
   {
@@ -67,6 +67,19 @@ export const LIFE_STAGE_GLYPHS = {
   'I am post-menopause': 'ring',
 };
 export const MIDLIFE_LIFE_STAGES = ['I am in perimenopause', 'I am in menopause', 'I am post-menopause'];
+// Answers to the life-stage question that are not a stage. Each one is
+// exclusive (it clears the stages, and picking a stage clears it), so nobody
+// has to pick a stage that is not true for them. Stored as-is; they never
+// imply a stage.
+export const LIFE_STAGE_NOT_SURE = 'None of these / not sure';
+export const LIFE_STAGE_PREFER_NOT = 'Prefer not to say';
+export const LIFE_STAGE_EXCLUSIVE = [LIFE_STAGE_NOT_SURE, LIFE_STAGE_PREFER_NOT];
+/** Toggle one life-stage answer: real stages keep their own conflict rules, the two non-stage answers are exclusive. */
+export function toggleLifeStageSelection(current = [], value) {
+  const list = Array.isArray(current) ? current : [];
+  if (LIFE_STAGE_EXCLUSIVE.includes(value)) return list.includes(value) ? [] : [value];
+  return selectLifeStage(list.filter((item) => !LIFE_STAGE_EXCLUSIVE.includes(item)), value);
+}
 
 export const PERIOD_FLOW = ['Very light', 'Light', 'Moderate', 'Heavy', 'Very heavy', 'It varies', 'I do not currently get periods', 'Not sure'];
 export const PERIOD_PAIN = ['None', 'Mild', 'Moderate', 'Severe', 'Very severe', 'It varies', 'Not sure'];
@@ -75,6 +88,9 @@ export const POSTPARTUM_TIMING = ['Less than 6 weeks ago', '6 weeks–3 months a
 export const PREGNANCY_TRIMESTER = ['First trimester', 'Second trimester', 'Third trimester', 'Not sure', 'Prefer not to say'];
 export const PERIMENOPAUSE_LAST_PERIOD = ['Within the past 3 months', '3–6 months ago', '6–12 months ago', 'More than 12 months ago', "I'm not sure", 'Prefer not to say'];
 export const TTC_DURATION = ['Not trying yet', 'Less than 6 months', '6–12 months', 'More than 12 months', 'Prefer not to say'];
+export const MEDICATION_STATUS = ['Yes', 'No', "I'm not sure", 'Prefer not to say'];
+export const ALLERGY_STATUS = ['Yes', 'No', "I'm not sure", 'Prefer not to say'];
+export const URGENT_STATUS = ['Yes', 'No', 'Not sure'];
 export const BREASTFEEDING_STATUS = ['Yes', 'No', 'Prefer not to say'];
 // Follow-up question copy, shared so the app and the website ask the same thing.
 export const FOLLOWUP_QUESTIONS = {
@@ -141,7 +157,7 @@ export const AVOID_INGREDIENTS = [
   'Black-owned', 'Brown-owned', 'Eco-friendly', 'Reusable', 'Organic', 'Minimal ingredients',
   'Sensitive skin', 'Unscented', 'No preference',
 ];
-export const FSA_HSA = ['FSA', 'HSA', 'Both', 'No'];
+export const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
 
 export const AVOID_PAIRS = { Fragrance: 'Fragrance-free', Dyes: 'Dye-free', Parabens: 'Paraben-free', Sulfates: 'Sulfate-free', Latex: 'Latex-free' };
 // Same values as AVOID_INGREDIENTS, grouped so "Fragrance" (leave out) and "Vegan" (should be) don't read as one list.
@@ -149,6 +165,10 @@ export const AVOID_GROUPS = {
   avoid: ['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived', 'Added sugar', 'Artificial sweeteners'],
   want: ['Unscented', 'Organic', 'Vegan', 'Cruelty-free', 'Minimal ingredients', 'Sensitive skin', 'Reusable', 'Eco-friendly', 'Pregnancy considerations', 'Black-owned', 'Brown-owned'],
 };
+// Display wording for a few stored values (the stored value is what the
+// matching engine already reads).
+export const AVOID_LABELS = { 'Sensitive skin': 'Sensitive-skin friendly' };
+export const AVOID_VALUE_BY_LABEL = Object.fromEntries(Object.entries(AVOID_LABELS).map(([v, l]) => [l, v]));
 export const TRUST_ITEMS = ['Clinical or scientific evidence', 'Reviews and experiences from other women', 'Brand reputation or expert recommendations'];
 export const STOP_REASONS = [
   'It did not help', 'It stopped working', 'I had side effects or a reaction', 'It was too expensive',
@@ -169,6 +189,7 @@ export const EMPTY = {
   brandOpenness: '', trustedBrands: [], brandSupportPreferences: [],
   avoidIngredients: [], avoidIngredientsOtherText: '', fsaHsaAnswer: '',
   trustRanking: TRUST_ITEMS, trustRankingTouched: false, anythingElse: '',
+  skippedSteps: [], recommendationCountTouched: false,
 };
 
 // Field-name map from the legacy snapshot shape (buildSnapshot()'s output,
@@ -191,7 +212,7 @@ export const RESUMABLE_PASSTHROUGH_FIELDS = [
   'preferredFormats', 'formatOtherText', 'recommendedProductsPerArea', 'priceRange', 'largePurchaseFrequency',
   'brandOpenness', 'trustedBrands', 'brandSupportPreferences',
   'avoidIngredients', 'avoidIngredientsOtherText',
-  'anythingElse',
+  'anythingElse', 'skippedSteps', 'recommendationCountTouched',
 ];
 
 export function reconstructIntakeFromSnapshot(snapshot) {
@@ -354,54 +375,91 @@ export function getLifeStages(intake) {
 export function hasLifeStage(intake, value) {
   return getLifeStages(intake).includes(value);
 }
-export function isPeriodRelevant(intake) {
-  const lifeStages = getLifeStages(intake);
+const hasNeed = (intake, value) => (intake.supportSelections || []).includes(value);
 
-  if (
-    lifeStages.includes('I am in menopause')
-    || lifeStages.includes('I am post-menopause')
-  ) {
-    return false;
-  }
-
-  return lifeStages.some((value) =>
-    ['I get periods regularly', 'My periods are irregular'].includes(value)
-  ) || arrayHasAny(intake.supportSelections, PERIOD_TRIGGER);
+// CONDITIONAL QUESTIONS (founder intake spec). "required" means the person
+// must answer it before the first matches; "optional" means it is offered in
+// the optional refinements and skipping it is neutral.
+// Flow: required for period products, heavy or light periods. Optional for
+// any other period or cycle need. Never asked because of a life stage alone.
+export const FLOW_REQUIRED_TRIGGER = new Set(['Period product support', 'Heavy periods', 'Light periods']);
+export function flowRequired(intake) {
+  return arrayHasAny(intake.supportSelections, FLOW_REQUIRED_TRIGGER);
 }
-export function isUtiRelevant(intake) {
+export function flowOptional(intake) {
+  return !flowRequired(intake) && arrayHasAny(intake.supportSelections, PERIOD_TRIGGER);
+}
+// Pain: only for cramps or period pain (pelvic pain is not period pain).
+export function painRequired(intake) {
+  return hasNeed(intake, 'Cramps or period pain');
+}
+// TTC duration: required when she says she is actively trying (stage or
+// need). Optional, with "Not trying yet", for fertility support or ovulation
+// tracking alone.
+export function ttcRequired(intake) {
+  return hasLifeStage(intake, 'I am trying to conceive') || hasNeed(intake, 'Trying to conceive');
+}
+export function ttcOptional(intake) {
+  return !ttcRequired(intake) && (hasNeed(intake, 'Fertility support') || hasNeed(intake, 'Ovulation tracking or support'));
+}
+// UTI frequency: the four UTI-like symptoms only, never bladder leakage.
+export function utiRequired(intake) {
   return arrayHasAny(intake.supportSelections, UTI_TRIGGER);
 }
+// Postpartum timing: postpartum stage or any postpartum need.
+export function postpartumRequired(intake) {
+  return hasLifeStage(intake, 'I am postpartum') || arrayHasAny(intake.supportSelections, POSTPARTUM_TRIGGER);
+}
+// Trimester: required only when she selected "Pregnant". A pregnancy need
+// without the stage gets it as an optional question.
+export function trimesterRequired(intake) {
+  return hasLifeStage(intake, 'I am pregnant');
+}
+export function trimesterOptional(intake) {
+  return !trimesterRequired(intake) && arrayHasAny(intake.supportSelections, PREGNANCY_TRIGGER);
+}
+// Kept for callers that only need "is this question shown at all".
+export function isPeriodRelevant(intake) {
+  return flowRequired(intake) || flowOptional(intake);
+}
+export function isPainRelevant(intake) {
+  return painRequired(intake);
+}
+export function isUtiRelevant(intake) {
+  return utiRequired(intake);
+}
 export function isTtcRelevant(intake) {
-  return hasLifeStage(intake, 'I am trying to conceive') || arrayHasAny(intake.supportSelections, TTC_TRIGGER);
+  return ttcRequired(intake) || ttcOptional(intake);
 }
 export function isPregnancyRelevant(intake) {
-  return hasLifeStage(intake, 'I am pregnant') || arrayHasAny(intake.supportSelections, PREGNANCY_TRIGGER);
+  return trimesterRequired(intake) || trimesterOptional(intake);
 }
-/** "Not trying yet" only makes sense when trying to conceive was not picked as a life stage. */
+export function isPostpartumRelevant(intake) {
+  return postpartumRequired(intake);
+}
+export function isPerimenopauseRelevant(intake) {
+  return hasLifeStage(intake, 'I am in perimenopause');
+}
+/** "Not trying yet" only makes sense when she has not said she is trying. */
 export function ttcDurationOptions(intake) {
-  return hasLifeStage(intake, 'I am trying to conceive') ? TTC_DURATION.filter((x) => x !== 'Not trying yet') : TTC_DURATION;
+  return ttcRequired(intake) ? TTC_DURATION.filter((x) => x !== 'Not trying yet') : TTC_DURATION;
 }
 /** Breastfeeding is asked with the life stage; anyone postpartum only through a need gets it on the timing step. */
 export function asksBreastfeedingOnTiming(intake) {
   return isPostpartumRelevant(intake) && !hasLifeStage(intake, 'I am postpartum');
 }
-export function isPerimenopauseRelevant(intake) {
-  return hasLifeStage(intake, 'I am in perimenopause');
-}
-export function isPostpartumRelevant(intake) {
-  return hasLifeStage(intake, 'I am postpartum') || arrayHasAny(intake.supportSelections, POSTPARTUM_TRIGGER);
-}
 
 export function buildSnapshot(intake) {
   const lifeStageSelections = getLifeStages(intake);
-  const primaryLifeStage = intake.lifeStage || lifeStageSelections[0] || '';
+  const realLifeStages = lifeStageSelections.filter((item) => !LIFE_STAGE_EXCLUSIVE.includes(item));
+  const primaryLifeStage = (LIFE_STAGE_EXCLUSIVE.includes(intake.lifeStage) ? '' : intake.lifeStage) || realLifeStages[0] || '';
   const primaryConcerns = [...new Set((intake.supportSelections || []).flatMap((item) => LEGACY_CONCERN_BY_ITEM[item] || []))];
   const knownSupportOptions = new Set(SUPPORT_GROUPS.flatMap((group) => group.items));
   const customConcerns = [...new Set([
     ...(intake.supportSelections || []).filter((item) => !knownSupportOptions.has(item) && item !== 'Something else'),
     intake.supportOtherText.trim(),
   ].filter(Boolean))];
-  const customLifeStages = lifeStageSelections.filter((item) => !LIFE_STAGES.includes(item) && item !== 'Other');
+  const customLifeStages = lifeStageSelections.filter((item) => !LIFE_STAGES.includes(item) && !LIFE_STAGE_EXCLUSIVE.includes(item) && item !== 'Other');
   const customConditions = (intake.diagnosisSelections || []).filter((item) => !CONDITIONS.includes(item) && !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(item));
   const customFormats = (intake.preferredFormats || []).filter((item) => !PRODUCT_FORMATS.includes(item) && item !== 'Other');
   const customPreferences = (intake.avoidIngredients || []).filter((item) => !AVOID_INGREDIENTS.includes(item) && item !== 'Other');
@@ -475,7 +533,7 @@ export function buildSnapshot(intake) {
     painLevel,
     symptoms: symptomTokens,
     periodFlow: isPeriodRelevant(intake) ? intake.periodFlow : '',
-    periodPain: isPeriodRelevant(intake) ? intake.periodPain : '',
+    periodPain: isPainRelevant(intake) ? intake.periodPain : '',
     utiFrequency: isUtiRelevant(intake) ? intake.utiFrequency : '',
     ttcDuration: isTtcRelevant(intake) ? (intake.ttcDuration || '') : '',
     postpartumTiming: isPostpartumRelevant(intake) ? intake.postpartumTiming : '',
@@ -495,7 +553,10 @@ export function buildSnapshot(intake) {
     currentMedications: intake.takesCurrent === 'Yes' ? intake.currentMedicationItems.join(', ') : '',
     hormonalBirthControl: hasLifeStage(intake, 'I use hormonal birth control') ? 'Yes' : '',
     hormonalBirthControlType: '',
-    tryingToConceive: !isTtcRelevant(intake) ? 'No' : intake.ttcDuration === 'Not trying yet' ? 'Not right now' : 'Yes',
+    // Only what she said: "Yes" when she is actively trying, "Not right now"
+    // for "Not trying yet", otherwise unknown (never an assumed "No").
+    tryingToConceive: ttcRequired(intake) || (isTtcRelevant(intake) && intake.ttcDuration && !['Not trying yet', 'Prefer not to say'].includes(intake.ttcDuration)) ? 'Yes'
+      : isTtcRelevant(intake) && intake.ttcDuration === 'Not trying yet' ? 'Not right now' : '',
     productHistory: intake.productHistory,
     currentProducts: usedNames,
     avoidRepeat: intake.avoidRepeat,
@@ -522,9 +583,16 @@ export function buildSnapshot(intake) {
     trustRanking: intake.trustRankingTouched ? intake.trustRanking : [],
     anythingElse: intake.anythingElse.trim(),
     goals: [],
+    // Steps she chose to skip, and every question's answer state
+    // (answered / explicit_no / not_sure / prefer_not / skipped / not_asked).
+    // Skipped is neutral: it never lowers a match.
+    skippedSteps: [...new Set(intake.skippedSteps || [])],
+    recommendationCountTouched: intake.recommendationCountTouched === true,
+    answerStates: getAnswerStates(intake),
+    minimumComplete: minimumComplete(intake),
     personalizationCompleted: true,
     personalizationCompletedAt: new Date().toISOString(),
-    intakeVersion: 'beta-redesign-2026-09',
+    intakeVersion: 'spec-2026-10',
   };
 }
 
@@ -534,12 +602,135 @@ export function isValidUsZip(value) {
   return /^\d{5}$/.test(zip) && zip !== '00000';
 }
 
+// ─── Answer checks ─────────────────────────────────────────────────────────
+const filled = (v) => (Array.isArray(v) ? v.filter((x) => String(x ?? '').trim() !== '').length > 0 : String(v ?? '').trim() !== '');
+
+/** Age is answered when it is a whole number we can use (18+ continues; under 18 is gated separately). */
+export function isAgeAnswered(intake) {
+  const raw = String(intake.age ?? '').trim();
+  if (!/^\d{1,3}$/.test(raw)) return false;
+  const n = Number(raw);
+  return n >= 1 && n <= 120;
+}
+
+/**
+ * Has this step been answered (including its inline follow-ups)? For the
+ * required steps this is exactly "may continue"; "None that I know of",
+ * "Prefer not to say", "Not sure" and "Nothing right now" all count.
+ */
+export function isStepAnswered(stepId, intake) {
+  switch (stepId) {
+    case 'age': return isAgeAnswered(intake) && !isMinorAge(intake.age);
+    case 'lifeStage': {
+      const stages = getLifeStages(intake);
+      if (!stages.length) return false;
+      if (stages.includes('I am postpartum') && !filled(intake.breastfeedingStatus)) return false;
+      if (stages.includes('I am in perimenopause') && !filled(intake.perimenopauseLastPeriod)) return false;
+      return true;
+    }
+    case 'aboutYou': return isStepAnswered('age', intake) && isStepAnswered('lifeStage', intake);
+    case 'zip': return isValidUsZip(intake.zipcode);
+    case 'support': return filled(intake.supportSelections) || filled(intake.supportOtherText);
+    case 'periodFlow': return filled(intake.periodFlow);
+    case 'periodPain': return filled(intake.periodPain);
+    case 'ttcDuration': return filled(intake.ttcDuration);
+    case 'utiFrequency': return filled(intake.utiFrequency);
+    case 'postpartumTiming': return filled(intake.postpartumTiming) && (!asksBreastfeedingOnTiming(intake) || filled(intake.breastfeedingStatus));
+    case 'pregnancyTrimester': return filled(intake.pregnancyTrimester);
+    case 'conditions': return filled(intake.diagnosisSelections) || filled(intake.conditionOtherText);
+    case 'allergies': return filled(intake.allergyStatus) && (intake.allergyStatus !== 'Yes' || filled(intake.allergyItems));
+    case 'medications': return filled(intake.takesCurrent) && (intake.takesCurrent !== 'Yes' || filled(intake.currentMedicationItems));
+    case 'safety': return filled(intake.safetyConcern);
+    case 'products': return filled(intake.productHistory);
+    case 'avoidRepeat': return filled(intake.avoidRepeat);
+    case 'formats': return filled(intake.preferredFormats);
+    case 'recommendationCount': return intake.recommendationCountTouched === true || Number(intake.recommendedProductsPerArea) !== 3;
+    case 'priceRange': return filled(intake.priceRange) || filled(intake.largePurchaseFrequency);
+    case 'brandOpenness': return filled(intake.brandOpenness);
+    case 'trustedBrands': return filled(intake.trustedBrands);
+    case 'avoidIngredients': return filled(intake.avoidIngredients);
+    case 'fsaHsa': return filled(intake.fsaHsaAnswer);
+    case 'trust': return intake.trustRankingTouched === true;
+    case 'anythingElse': return filled(intake.anythingElse);
+    default: return true;
+  }
+}
+
+/** May she continue past this step? Optional steps never block; required ones need an answer. */
 export function requiredReady(stepId, intake) {
-  if (stepId === 'conditions') return intake.diagnosisSelections.length > 0;
-  if (stepId === 'allergies') return !!intake.allergyStatus && (intake.allergyStatus !== 'Yes' || intake.allergyItems.length > 0);
-  if (stepId === 'medications') return !!intake.takesCurrent && (intake.takesCurrent !== 'Yes' || intake.currentMedicationItems.length > 0);
-  if (stepId === 'safety') return !!intake.safetyConcern;
-  return true;
+  if (stepId === 'aboutYou') return isStepAnswered('aboutYou', intake);
+  const step = getIntakeSteps(intake).find((s) => s.id === stepId);
+  if (!step || !step.required) return true;
+  return isStepAnswered(stepId, intake);
+}
+
+/** Every required question (including the conditional ones that apply) is answered: enough for a first, safe match. */
+export function minimumComplete(intake) {
+  return isAgeAnswered(intake) && !isMinorAge(intake.age)
+    && getIntakeSteps(intake).filter((s) => s.required).every((s) => isStepAnswered(s.id, intake));
+}
+
+const singleAnswerState = (value, { no = [], notSure = [], preferNot = [] } = {}) => {
+  const v = String(value ?? '').trim();
+  if (!v) return null;
+  if (no.includes(v)) return 'explicit_no';
+  if (preferNot.includes(v) || /prefer not/i.test(v)) return 'prefer_not';
+  if (notSure.includes(v) || /not sure/i.test(v)) return 'not_sure';
+  return 'answered';
+};
+
+/**
+ * Per question: answered | explicit_no | not_sure | prefer_not | skipped | not_asked.
+ * "skipped" covers both a tapped Skip and optional questions she never
+ * opened (she went straight to her results). Neutral for matching.
+ */
+export function getAnswerStates(intake) {
+  const shown = new Set(getIntakeSteps(intake).map((s) => s.id));
+  const out = {};
+  const put = (id, state) => { out[id] = shown.has(id) ? (state || 'skipped') : 'not_asked'; };
+  const stages = getLifeStages(intake);
+  put('age', isAgeAnswered(intake) ? 'answered' : null);
+  put('lifeStage', !stages.length ? null : stages.includes(LIFE_STAGE_PREFER_NOT) ? 'prefer_not' : stages.includes(LIFE_STAGE_NOT_SURE) ? 'not_sure' : 'answered');
+  out.breastfeedingStatus = postpartumRequired(intake) ? (singleAnswerState(intake.breastfeedingStatus, { no: ['No'] }) || 'skipped') : 'not_asked';
+  out.perimenopauseLastPeriod = isPerimenopauseRelevant(intake) ? (singleAnswerState(intake.perimenopauseLastPeriod) || 'skipped') : 'not_asked';
+  put('zip', isValidUsZip(intake.zipcode) ? 'answered' : null);
+  const support = intake.supportSelections || [];
+  put('support', support.length === 1 && support[0] === 'Nothing right now' ? 'explicit_no' : isStepAnswered('support', intake) ? 'answered' : null);
+  put('periodFlow', singleAnswerState(intake.periodFlow));
+  put('periodPain', singleAnswerState(intake.periodPain, { no: ['None'] }));
+  put('ttcDuration', singleAnswerState(intake.ttcDuration, { no: ['Not trying yet'] }));
+  put('utiFrequency', singleAnswerState(intake.utiFrequency));
+  put('postpartumTiming', singleAnswerState(intake.postpartumTiming));
+  put('pregnancyTrimester', singleAnswerState(intake.pregnancyTrimester));
+  const dx = intake.diagnosisSelections || [];
+  put('conditions', dx.includes('Prefer not to say') ? 'prefer_not' : dx.includes('None that I know of') ? 'explicit_no' : isStepAnswered('conditions', intake) ? 'answered' : null);
+  put('allergies', intake.allergyStatus === 'Yes' ? (filled(intake.allergyItems) ? 'answered' : null) : singleAnswerState(intake.allergyStatus, { no: ['No'] }));
+  put('medications', intake.takesCurrent === 'Yes' ? (filled(intake.currentMedicationItems) ? 'answered' : null) : singleAnswerState(intake.takesCurrent, { no: ['No'] }));
+  put('safety', singleAnswerState(intake.safetyConcern, { no: ['No'] }));
+  put('products', filled(intake.productHistory) ? 'answered' : null);
+  put('avoidRepeat', filled(intake.avoidRepeat) ? 'answered' : null);
+  const formats = intake.preferredFormats || [];
+  put('formats', formats.length === 1 && formats[0] === 'No preference' ? 'explicit_no' : formats.length ? 'answered' : null);
+  // 3 is the default, so it only counts as answered once she picks a number.
+  put('recommendationCount', intake.recommendationCountTouched || Number(intake.recommendedProductsPerArea) !== 3 ? 'answered' : null);
+  const prices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []);
+  put('priceRange', prices.includes('Price is not a major factor for me') ? 'explicit_no' : prices.length ? 'answered' : null);
+  out.largePurchaseFrequency = singleAnswerState(intake.largePurchaseFrequency) || 'skipped';
+  put('brandOpenness', intake.brandOpenness === 'No preference' ? 'explicit_no' : singleAnswerState(intake.brandOpenness));
+  put('trustedBrands', filled(intake.trustedBrands) ? 'answered' : null);
+  const avoid = intake.avoidIngredients || [];
+  put('avoidIngredients', avoid.length === 1 && avoid[0] === 'No preference' ? 'explicit_no' : avoid.length ? 'answered' : null);
+  put('fsaHsa', singleAnswerState(intake.fsaHsaAnswer, { no: ['No'] }));
+  put('trust', intake.trustRankingTouched ? 'answered' : null);
+  put('anythingElse', filled(intake.anythingElse) ? 'answered' : null);
+  return out;
+}
+
+/** Remember a tapped Skip (only when the step is still unanswered). */
+export function markSkipped(intake, stepId) {
+  if (isStepAnswered(stepId, intake)) return intake;
+  const list = intake.skippedSteps || [];
+  return list.includes(stepId) ? intake : { ...intake, skippedSteps: [...list, stepId] };
 }
 
 export function normalizeSuggestion(value) {
@@ -608,35 +799,65 @@ export function readIntakeDraft() {
   } catch { return null; }
 }
 
-/** Every question, in order. Some only appear when earlier answers make them relevant. */
+export const CHECKPOINT_STEP = 'checkpoint';
+
+/**
+ * Every question, in order: the required minimum first (with the
+ * conditional follow-ups that apply), then the optional refinements.
+ * Each step: { id, section, phase: 'required' | 'optional', required, optional, ... }.
+ * Both quizzes read this list, so they cannot drift apart.
+ */
 export function getIntakeSteps(intake) {
+  const req = (step) => ({ ...step, phase: 'required', required: true, optional: false });
+  const opt = (step) => ({ ...step, phase: 'optional', required: false, optional: true });
+  const flowStep = { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', info: 'How much you bleed on a typical heavy day. We use it to match pad, tampon, cup and underwear absorbency.' };
+  const ttcStep = { id: 'ttcDuration', section: 'support', title: 'How long have you been trying?', type: 'ttcDuration', info: 'How long you have been trying to get pregnant. It changes whether we lead with tracking and prenatal basics, or with fertility care options.' };
+  const trimesterStep = { id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', info: 'Which part of pregnancy you are in. We only show products generally considered safe for that stage.' };
   return [
-      { id: 'age', section: 'core', title: 'Your age', type: 'age', optional: true, info: 'We use your age to skip products that are not meant for you, like menopause supplements in your 20s. Type it, tap plus or minus, or slide the ruler.' },
-      { id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', optional: true, info: 'Pick every stage that fits right now. It changes what we show, for example pregnancy-safe picks only, or midlife support.' },
-      { id: 'zip', section: 'core', title: 'ZIP code', type: 'zip', optional: true, info: 'Only used to find clinics, telehealth and stores that serve your area. We never sell it or show it to anyone.' },
-      { id: 'support', section: 'support', title: 'What needs support?', type: 'support', optional: true, info: 'Pick everything you want help with. Each one becomes its own shelf of products in your Ecosystem. Use the tabs or search to find more.' },
-      ...(isPeriodRelevant(intake) ? [
-        { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', optional: true, info: 'How much you bleed on a typical heavy day. We use it to match pad, tampon, cup and underwear absorbency.' },
-        { id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', optional: true, info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' },
-      ] : []),
-      ...(isTtcRelevant(intake) ? [{ id: 'ttcDuration', section: 'support', title: 'How long have you been trying?', type: 'ttcDuration', optional: true, info: 'How long you have been trying to get pregnant. It changes whether we lead with tracking and prenatal basics, or with fertility care options.' }] : []),
-      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', optional: true, info: 'How often UTI-type symptoms come back. It decides whether we show prevention products, testing strips or care options first.' }] : []),
-      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago?', type: 'postpartumTiming', optional: true, info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year.' }] : []),
-      ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', optional: true, info: 'Which part of pregnancy you are in. We only show products generally considered safe for that stage.' }] : []),
-      { id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', optional: false, info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out.' },
-      { id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', optional: false, info: 'Anything you react to. Products with these ingredients or materials will not show up in your picks.' },
-      { id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', optional: false, info: 'Some supplements interact with medicines, for example St. John’s wort with birth control. We use this to flag those combinations.' },
-      { id: 'products', section: 'history', title: 'What have you tried?', type: 'products', optional: true, info: 'Products you have used before. We use what worked and what did not to avoid repeats and find better fits.' },
-      { id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', optional: true, info: 'Anything you add here will never show up in your picks.' },
-      { id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', optional: false, info: 'ayna does not diagnose. If you have new or quickly worsening symptoms, we point you to care before products.' },
-      { id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', optional: true, info: 'The kinds of products you like using. We rank these formats higher in your picks.' },
-      { id: 'recommendationCount', section: 'preferences', title: 'Picks per need', subtitle: 'For each area you want support with', info: 'How many products we show for each thing you picked. For example, 3 means 3 for cramps and 3 for sleep.', type: 'recommendationCount', optional: true },
-      { id: 'priceRange', section: 'preferences', title: 'Budget per item', info: 'What you usually spend on one item, not your total. We use it to rank picks within your range first.', type: 'price', optional: true },
-      { id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', optional: true, info: 'How open you are to brands you have not tried. It shifts your picks between familiar names and newer startups.' },
-      ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', info: 'Brands you already like. We show them first when they fit what you need.', type: 'trustedBrands', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Avoid or must-have?', info: 'Leave out removes products with those ingredients. Should be favors products that match. Both are optional.', type: 'avoidIngredients', optional: true },
-      { id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'If you have a pre-tax health account, we can point out products that are usually eligible.', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'What matters most?', subtitle: 'When choosing a product', info: 'Drag to rank what you trust most. We weigh your top pick most when matching.', type: 'trust', optional: false },
-      { id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', optional: true, info: 'Anything else you want us to keep in mind, like a goal, a budget limit or a product you love. Optional.' },
+    // Required minimum
+    req({ id: 'age', section: 'core', title: 'Your age', type: 'age', info: 'We use your age to skip products that are not meant for you, like menopause supplements in your 20s. Type it, tap plus or minus, or slide the ruler.' }),
+    req({ id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', info: 'Pick every stage that fits right now. It changes what we show, for example pregnancy-safe picks only, or midlife support. Not sure, or rather not say? Those count too.' }),
+    req({ id: 'support', section: 'support', title: 'What needs support?', type: 'support', info: 'Pick everything you want help with. Each one becomes its own shelf of products in your Ecosystem. Use the tabs or search to find more. "Nothing right now" counts too.' }),
+    ...(flowRequired(intake) ? [req(flowStep)] : []),
+    ...(painRequired(intake) ? [req({ id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' })] : []),
+    ...(ttcRequired(intake) ? [req(ttcStep)] : []),
+    ...(utiRequired(intake) ? [req({ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', info: 'How often UTI-type symptoms come back. Symptoms right now point you to testing and care first; repeat symptoms bring prevention forward.' })] : []),
+    ...(postpartumRequired(intake) ? [req({ id: 'postpartumTiming', section: 'support', title: 'How long ago did you give birth?', type: 'postpartumTiming', info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year.' })] : []),
+    ...(trimesterRequired(intake) ? [req(trimesterStep)] : []),
+    req({ id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out. "None that I know of" and "Prefer not to say" both count.' }),
+    req({ id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', info: 'Anything you react to. Products with these ingredients or materials will not show up in your picks.' }),
+    req({ id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', info: 'Some supplements interact with medicines, for example St. John’s wort with birth control. We use this to flag those combinations.' }),
+    req({ id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', info: 'ayna does not diagnose. If you have new or quickly worsening symptoms, we point you to care before products.' }),
+    // Optional refinements ("Make my matches more personal")
+    opt({ id: 'zip', section: 'core', title: 'ZIP code', type: 'zip', info: 'Only used to find clinics, telehealth and stores that serve your area. It never changes your match. We never sell it or show it to anyone.' }),
+    ...(flowOptional(intake) ? [opt(flowStep)] : []),
+    ...(ttcOptional(intake) ? [opt(ttcStep)] : []),
+    ...(trimesterOptional(intake) ? [opt(trimesterStep)] : []),
+    opt({ id: 'products', section: 'history', title: 'What have you tried?', type: 'products', info: 'Products you have used before. We use what worked and what did not to avoid repeats and find better fits.' }),
+    opt({ id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', info: 'Anything you add here will never show up in your picks.' }),
+    opt({ id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', info: 'The kinds of products you like using. We rank these formats higher in your picks. Skip it and every format counts the same.' }),
+    opt({ id: 'recommendationCount', section: 'preferences', title: 'Picks per need', subtitle: 'For each area you want support with', info: 'How many products we show for each thing you picked, 3 if you skip. We never lower the bar to fill a slot.', type: 'recommendationCount' }),
+    opt({ id: 'priceRange', section: 'preferences', title: 'Budget per item', info: 'What you usually spend on one item, not your total. We use it to rank picks within your range first. Skip it and we assume nothing.', type: 'price' }),
+    opt({ id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', info: 'How open you are to brands you have not tried. It shifts your picks between familiar names and newer startups.' }),
+    ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [opt({ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', info: 'Brands you already like, in our shop or not. We show them first when they fit what you need.', type: 'trustedBrands' })] : []),
+    opt({ id: 'avoidIngredients', section: 'preferences', title: 'Avoid or must-have?', info: 'Preferences, not allergies. Leave out removes products with those ingredients. Should be favors products that match.', type: 'avoidIngredients' }),
+    opt({ id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'If you have a pre-tax health account, we can point out products that are usually eligible.', type: 'fsa' }),
+    opt({ id: 'trust', section: 'trust', title: 'What matters most?', subtitle: 'When choosing a product', info: 'Drag to rank what you trust most. Skip it and we use ayna’s default: evidence first.', type: 'trust' }),
+    opt({ id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', info: 'Anything else you want us to keep in mind, like a goal, a budget limit or a product you love.' }),
   ];
+}
+
+/** { required, optional } step lists for the two parts of the quiz. */
+export function splitIntakeSteps(intake) {
+  const all = getIntakeSteps(intake);
+  return { required: all.filter((s) => s.required), optional: all.filter((s) => !s.required) };
+}
+
+/**
+ * Where to land when reopening a saved profile: the first required step
+ * still missing an answer, else the checkpoint (results or refinements).
+ */
+export function firstUnansweredStepId(intake) {
+  const missing = getIntakeSteps(intake).find((s) => s.required && !isStepAnswered(s.id, intake));
+  return missing ? missing.id : CHECKPOINT_STEP;
 }

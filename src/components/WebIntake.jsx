@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
-import { selectLifeStage } from '../utils/intakeSelections.js';
 import { defineOption } from '../mobile/data/glossary.js';
 import {
+  ALLERGY_STATUS, AVOID_LABELS, CHECKPOINT_STEP, LIFE_STAGE_EXCLUSIVE, MEDICATION_STATUS, URGENT_STATUS,
+  firstUnansweredStepId, isStepAnswered, markSkipped, splitIntakeSteps, toggleLifeStageSelection,
   ALLERGIES, AVOID_GROUPS, AVOID_INGREDIENTS, AVOID_PAIRS, BRAND_OPENNESS, BRAND_SUGGESTIONS, BREASTFEEDING_STATUS, CATALOG_PRODUCT_NAMES,
   CONDITIONS, EMPTY, FOLLOWUP_QUESTIONS, FREE_TEXT_PROMPTS, FSA_HSA, INTAKE_DRAFT_KEY, LARGE_PURCHASE_FREQUENCY, LIFE_STAGES,
   LIFE_STAGE_LABELS, LIFE_STAGE_VALUE_BY_LABEL, MEDICATION_SUGGESTIONS, MIDLIFE_LIFE_STAGES, PERIMENOPAUSE_LAST_PERIOD,
   PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
-  PRODUCT_OR_BRAND_SUGGESTIONS, STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot, getIntakeSteps,
+  PRODUCT_OR_BRAND_SUGGESTIONS, STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot,
   getLifeStages, isMinorAge, normalizeSuggestion, rankedSuggestions, readIntakeDraft, reconstructIntakeFromSnapshot,
   requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions, isValidUsZip,
 } from '../mobile/data/intakeModel.js';
@@ -223,59 +224,26 @@ const TOPIC_SHORT = {
   'Care access': 'Care',
 };
 
-// Website flow: six core questions for a first match (the home page promises
-// six), then an optional "more detail" part the person can skip straight to
-// results. Uses the shared step list from intakeModel.js without changing it;
-// age and life stage share one screen here.
-const CORE_IDS = ['age', 'support', 'conditions', 'allergies', 'medications', 'safety'];
-const CHECKPOINT = 'checkpoint';
-
-function stepAnswered(id, intake) {
-  const has = (v) => (Array.isArray(v) ? v.length > 0 : String(v ?? '').trim() !== '');
-  switch (id) {
-    case 'age': return has(intake.age) || has(getLifeStages(intake));
-    case 'lifeStage': return has(getLifeStages(intake));
-    case 'zip': return String(intake.zipcode || '').length === 5;
-    case 'support': return has(intake.supportSelections);
-    case 'periodFlow': return has(intake.periodFlow);
-    case 'periodPain': return has(intake.periodPain);
-    case 'utiFrequency': return has(intake.utiFrequency);
-    case 'ttcDuration': return has(intake.ttcDuration);
-    case 'postpartumTiming': return has(intake.postpartumTiming);
-    case 'pregnancyTrimester': return has(intake.pregnancyTrimester);
-    case 'conditions': case 'allergies': case 'medications': case 'safety': return requiredReady(id, intake);
-    case 'products': return has(intake.productHistory);
-    case 'avoidRepeat': return has(intake.avoidRepeat);
-    case 'formats': return has(intake.preferredFormats);
-    case 'recommendationCount': return Number(intake.recommendedProductsPerArea) > 0;
-    case 'priceRange': return has(intake.priceRange);
-    case 'brandOpenness': return has(intake.brandOpenness);
-    case 'trustedBrands': return has(intake.trustedBrands);
-    case 'avoidIngredients': return has(intake.avoidIngredients);
-    case 'fsaHsa': return has(intake.fsaHsaAnswer);
-    case 'trust': return true;
-    case 'anythingElse': return has(intake.anythingElse);
-    default: return true;
-  }
-}
+// Website flow: the required minimum first (age and life stage share one
+// screen here), then a checkpoint (see results, or make the matches more
+// personal), then the optional refinements, each one skippable. The steps,
+// required/optional rules and follow-ups come from intakeModel.js, the same
+// list the app uses.
+const CHECKPOINT = CHECKPOINT_STEP;
 
 function splitSteps(intake) {
-  const all = getIntakeSteps(intake);
-  const byId = Object.fromEntries(all.map((s) => [s.id, s]));
-  const core = CORE_IDS.map((id) => (id === 'age'
-    ? { ...byId.age, title: 'About you', type: 'aboutYou', info: 'Your age and life stage. We use them to skip products that are not meant for you, for example pregnancy-safe picks only, or midlife support.' }
-    : byId[id])).filter(Boolean);
-  const more = all.filter((s) => !CORE_IDS.includes(s.id) && s.id !== 'lifeStage');
-  return { core, more };
+  const { required, optional } = splitIntakeSteps(intake);
+  const core = required.filter((s) => s.id !== 'lifeStage').map((s) => (s.id === 'age'
+    ? { ...s, title: 'About you', type: 'aboutYou', info: 'Your age and life stage. We use them to skip products that are not meant for you, for example pregnancy-safe picks only, or midlife support. Not sure, or rather not say? Those count too.' }
+    : s));
+  return { core, more: optional };
 }
 
-// Where to start when editing an existing profile: the first unanswered step.
+// Where to start when editing an existing profile: the first required step
+// still missing an answer, else the checkpoint.
 function firstUnansweredStep(intake) {
-  const { core, more } = splitSteps(intake);
-  const firstCore = core.find((s) => !stepAnswered(s.id, intake));
-  if (firstCore) return firstCore.id;
-  const firstMore = more.find((s) => !stepAnswered(s.id, intake) && !(s.id === 'trust' && intake.trustRankingTouched));
-  return firstMore ? firstMore.id : 'age';
+  const id = firstUnansweredStepId(intake);
+  return id === 'lifeStage' ? 'age' : id;
 }
 
 export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null, introEnabled = true }) {
@@ -321,7 +289,13 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const step = steps[index] || steps[0];
   const isLast = index === steps.length - 1;
 
+  // Age and life stage share one screen here, so that screen checks both.
+  const answerId = step.type === 'aboutYou' ? 'aboutYou' : step.id;
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
+  const toggleLifeStage = (value) => setIntake((prev) => {
+    const n = toggleLifeStageSelection(getLifeStages(prev), value);
+    return { ...prev, lifeStageSelections: n, lifeStage: n.find((v) => !LIFE_STAGE_EXCLUSIVE.includes(v)) || '' };
+  });
   const toggleExclusive = (key, value, exclusive = []) => setIntake((prev) => {
     const cur = Array.isArray(prev[key]) ? prev[key] : (prev[key] ? [prev[key]] : []);
     const next = cur.includes(value) ? cur.filter((x) => x !== value) : exclusive.includes(value) ? [value] : [...cur.filter((x) => !exclusive.includes(x)), value];
@@ -346,12 +320,12 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     else if (phase === 'more') go(CHECKPOINT);
   };
   // After the six core questions: a checkpoint. In "more detail", the last step finishes.
-  const advance = () => {
+  const advance = (answers = intake) => {
     if (!isLast) { go(steps[index + 1].id); return; }
-    if (phase === 'core') go(CHECKPOINT); else finish();
+    if (phase === 'core') go(CHECKPOINT); else finish(answers);
   };
-  const finish = async () => {
-    const snapshot = buildSnapshot(intake);
+  const finish = async (answers = intake) => {
+    const snapshot = buildSnapshot(answers);
     setSaving(true);
     try {
       const result = await saveHealthIntakeForCurrentUser(snapshot);
@@ -374,13 +348,15 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       advance();
       return;
     }
-    if (!requiredReady(step.id, intake) || !stepAnswered(step.id, intake)) return;
+    if (!requiredReady(answerId, intake) || !isStepAnswered(answerId, intake)) return;
     advance();
   };
-  // Skip never validates; a half-typed ZIP is dropped rather than saved.
+  // Skip (optional steps only) never validates; a half-typed ZIP is dropped
+  // rather than saved. The step is stored as skipped, which is neutral.
   const skip = () => {
-    if (step.id === 'zip' && !isValidUsZip(intake.zipcode)) set('zipcode', '');
-    advance();
+    const next = markSkipped(step.id === 'zip' && !isValidUsZip(intake.zipcode) ? { ...intake, zipcode: '' } : intake, step.id);
+    setIntake(next);
+    advance(next);
   };
 
   // Hold any option for its plain-language meaning (same definitions as the app).
@@ -408,7 +384,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       case 'lifeStage': return <>
         <AgeField value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
         <p className="wq-sub-q" id="wq-stage-q">Your life stage <small>Pick every stage that fits</small></p>
-        <Tiles label="Your life stage" items={lifeStageOptions} selected={lifeStages} labels={LIFE_STAGE_LABELS} onToggle={(v) => setIntake((prev) => { const n = selectLifeStage(getLifeStages(prev), v); return { ...prev, lifeStageSelections: n, lifeStage: n[0] || '' }; })} />
+        <Tiles label="Your life stage" items={lifeStageOptions} selected={lifeStages} labels={LIFE_STAGE_LABELS} onToggle={toggleLifeStage} />
+        <Chips small label="Other answers" items={LIFE_STAGE_EXCLUSIVE} selected={lifeStages} onToggle={toggleLifeStage} />
         {lifeStages.includes('I am postpartum') && <div className="wq-follow"><b>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</b><Chips small single items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} /></div>}
         {lifeStages.includes('I am in perimenopause') && <div className="wq-follow"><b>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</b><Chips small single items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} /></div>}
       </>;
@@ -472,11 +449,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         </>;
       }
       case 'allergies': return <>
-        <Rows options={['Yes', 'No', "I'm not sure", 'Prefer not to say']} value={intake.allergyStatus} onChange={(v) => setIntake((prev) => ({ ...prev, allergyStatus: v, allergyItems: v === 'Yes' ? prev.allergyItems : [] }))} />
+        <Rows options={ALLERGY_STATUS} value={intake.allergyStatus} onChange={(v) => setIntake((prev) => ({ ...prev, allergyStatus: v, allergyItems: v === 'Yes' ? prev.allergyItems : [] }))} />
         {intake.allergyStatus === 'Yes' && <Tokens values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Type an allergy or sensitivity" suggestions={ALLERGIES} />}
       </>;
       case 'medications': return <>
-        <Rows options={['Yes', 'No', 'Prefer not to say']} value={intake.takesCurrent} onChange={(v) => set('takesCurrent', v)} />
+        <Rows options={MEDICATION_STATUS} value={intake.takesCurrent} onChange={(v) => setIntake((prev) => ({ ...prev, takesCurrent: v, currentMedicationItems: v === 'Yes' ? prev.currentMedicationItems : [] }))} />
         {intake.takesCurrent === 'Yes' && <Tokens values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medication, supplement, or birth control" suggestions={MEDICATION_SUGGESTIONS} limit={10} />}
         <p className="wq-note">Check with a clinician before starting anything new.</p>
       </>;
@@ -491,11 +468,20 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       }
       case 'trustedBrands': return <Tokens values={intake.trustedBrands} onChange={(v) => set('trustedBrands', v)} placeholder="Type a brand" suggestions={BRAND_SUGGESTIONS} />;
       case 'safety': return <>
-        <Rows options={['Yes', 'No', 'Not sure']} value={intake.safetyConcern} onChange={(v) => set('safetyConcern', v)} />
-        {['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="wq-alert-card" role="note"><b>Worth a closer look</b><p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.</p></div>}
+        <Rows options={URGENT_STATUS} value={intake.safetyConcern} onChange={(v) => set('safetyConcern', v)} />
+        {['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="wq-alert-card" role="note"><b>Worth a closer look</b><p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.{intake.safetyConcern === 'Yes' ? ' We’ll show care options first.' : ''}</p></div>}
       </>;
-      case 'formats': return <Tiles label={step.title} items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} />;
-      case 'recommendationCount': return <div className="wq-count">{[1, 2, 3, 5].map((c) => <button type="button" key={c} className={Number(intake.recommendedProductsPerArea) === c ? 'is-on' : ''} aria-pressed={Number(intake.recommendedProductsPerArea) === c} onClick={() => set('recommendedProductsPerArea', c)}><strong>{c}</strong><span>{c === 1 ? 'pick' : 'picks'}</span></button>)}</div>;
+      case 'formats': {
+        const custom = intake.preferredFormats.filter((f) => !PRODUCT_FORMATS.includes(f));
+        return <>
+          <Tiles label={step.title} items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} />
+          <div className="wq-chips is-small wq-format-own">
+            {custom.length > 0 && <Chips small items={custom} selected={custom} onToggle={(v) => toggleExclusive('preferredFormats', v)} />}
+            <AddOwn placeholder="Add a format" onAdd={(v) => addCustom('preferredFormats', v, ['No preference'])} />
+          </div>
+        </>;
+      }
+      case 'recommendationCount': return <div className="wq-count">{[1, 2, 3, 5].map((c) => <button type="button" key={c} className={Number(intake.recommendedProductsPerArea) === c ? 'is-on' : ''} aria-pressed={Number(intake.recommendedProductsPerArea) === c} onClick={() => setIntake((prev) => ({ ...prev, recommendedProductsPerArea: c, recommendationCountTouched: true }))}><strong>{c}</strong><span>{c === 1 ? 'pick' : 'picks'}</span></button>)}</div>;
       case 'price': {
         const sel = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []);
         const notAFactor = 'Price is not a major factor for me';
@@ -528,7 +514,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
             <button type="button" role="tab" aria-selected={!onAvoid} className={`is-want${!onAvoid ? ' is-on' : ''}`} onClick={() => setAvoidTab('want')}>Should be{wantSel.length > 0 && <span>{wantSel.length}</span>}</button>
           </div>
           <div className="wq-avoid-panel" role="tabpanel" key={avoidTab}>
-            <Chips label={onAvoid ? 'Leave out' : 'Should be'} items={onAvoid ? [...AVOID_GROUPS.avoid, ...customAvoid] : [...AVOID_GROUPS.want, ...customWant]} selected={onAvoid ? avoidSel : wantSel} onToggle={toggle} />
+            <Chips label={onAvoid ? 'Leave out' : 'Should be'} items={onAvoid ? [...AVOID_GROUPS.avoid, ...customAvoid] : [...AVOID_GROUPS.want, ...customWant]} selected={onAvoid ? avoidSel : wantSel} onToggle={toggle} labels={AVOID_LABELS} />
           </div>
           <div className="wq-avoid-foot">
             {onAvoid
@@ -551,7 +537,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   if (minorGate) return <div className="wq-page"><MinorGate onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBrowseLibrary} /></div>;
 
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
-  const ready = step.id === 'zip' ? String(intake.zipcode || '').length > 0 : requiredReady(step.id, intake) && stepAnswered(step.id, intake) && !minorBlocked;
+  const ready = step.id === 'zip' ? String(intake.zipcode || '').length > 0 : requiredReady(answerId, intake) && isStepAnswered(answerId, intake) && !minorBlocked;
   const tone = atCheckpoint ? 'mint' : (SECTION_TONES[step.section] || 'peri');
 
   if (atCheckpoint) {
@@ -563,12 +549,12 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
           <span className="wq-count">{coreSteps.length}<i>/{coreSteps.length}</i></span>
         </header>
         <span className="wq-section">Done</span>
-        <h1 className="wq-title">Your first match is ready</h1>
-        <p className="wq-subtitle">That’s enough for your first picks. Add more detail now for sharper ones, or any time later from your profile.</p>
+        <h1 className="wq-title">Your first matches are ready</h1>
+        <p className="wq-subtitle">{intake.safetyConcern === 'Yes' ? 'You said something may be urgent, so care options come first.' : 'That’s enough for safe, personal picks. Add more now for closer ones, or any time later from your profile.'}</p>
         {saveError && <p className="wq-alert">{saveError}</p>}
         <div className="wq-checkpoint-actions">
-          <button type="button" className="wq-btn" onClick={finish} disabled={saving}>{saving ? 'Saving…' : 'See my results'} <span aria-hidden="true">→</span></button>
-          <button type="button" className="wq-btn is-ghost" onClick={() => go(moreSteps[0].id)} disabled={saving || !moreSteps.length}>Add more detail</button>
+          <button type="button" className="wq-btn" onClick={() => finish()} disabled={saving}>{saving ? 'Saving…' : 'See my results'} <span aria-hidden="true">→</span></button>
+          <button type="button" className="wq-btn is-ghost" onClick={() => go(moreSteps[0].id)} disabled={saving || !moreSteps.length}>Make my matches more personal</button>
         </div>
         <p className="wq-note">{moreSteps.length} more quick questions, all optional. Skip any of them.</p>
       </div>
@@ -580,13 +566,13 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       <header className="wq-head">
         <button type="button" className="wq-round" aria-label="Previous question" onClick={back} disabled={index === 0 && phase === 'core'}>←</button>
         <div className="wq-progress" aria-hidden="true">{steps.map((s, i) => <span key={s.id} className={i < index ? 'is-done' : i === index ? 'is-now' : ''} />)}</div>
-        <span className="wq-count" aria-label={`${phase === 'more' ? 'More detail, question' : 'Question'} ${index + 1} of ${steps.length}`}>{index + 1}<i>/{steps.length}</i></span>
+        <span className="wq-count" aria-label={`${phase === 'more' ? 'Optional question' : 'Question'} ${index + 1} of ${steps.length}`}>{index + 1}<i>/{steps.length}</i></span>
       </header>
 
       <div className="wq-label-row">
-        <span className="wq-section">{phase === 'more' ? `More detail · ${SECTION_NAMES[step.section]}` : SECTION_NAMES[step.section]}</span>
+        <span className="wq-section">{phase === 'more' ? 'Optional' : SECTION_NAMES[step.section]}</span>
         <span className="wq-label-tools">
-          {phase === 'more' && <button type="button" className="wq-skip wq-to-results" onClick={finish} disabled={saving}>See my results</button>}
+          {phase === 'more' && <button type="button" className="wq-skip wq-to-results" onClick={() => finish()} disabled={saving}>See my results</button>}
           {step.info && <button type="button" className="wq-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen} onClick={() => setInfoOpen((v) => !v)}>i</button>}
         </span>
       </div>
@@ -602,7 +588,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
 
       {saveError && <p className="wq-alert">{saveError}</p>}
       <footer className="wq-foot">
-        {(step.optional || phase === 'more') ? <button type="button" className="wq-skip" onClick={skip} disabled={saving}>Skip</button> : <span className="wq-required">Needed for safety</span>}
+        {step.optional ? <button type="button" className="wq-skip" onClick={skip} disabled={saving}>Skip</button> : <span className="wq-required">{step.section === 'safety' ? 'Needed for safety' : 'Needed for your matches'}</span>}
         <button type="button" className="wq-btn" onClick={next} disabled={!ready || saving}>{saving ? 'Saving…' : (isLast && phase === 'more') ? 'See my results' : 'Next'} <span aria-hidden="true">→</span></button>
       </footer>
     </div>

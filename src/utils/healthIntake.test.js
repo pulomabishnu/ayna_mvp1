@@ -34,3 +34,23 @@ describe('mapIntakeToLegacyQuizProfile: UI categories are not causes (ASK2)', ()
       .toEqual(expect.arrayContaining(['Heavy flow', 'Painful cramps', 'Recurrent UTIs', 'Pelvic pain']));
   });
 });
+
+describe('mapIntakeToLegacyQuizProfile: new intake answers', () => {
+  it('keeps "Prefer not to say" / "not sure" answers out of frustrations and legacy fields', () => {
+    const snap = buildSnapshot({ ...EMPTY, lifeStageSelections: ['Prefer not to say'], takesCurrent: "I'm not sure", supportSelections: ['Nothing right now'] });
+    const legacyProfile = mapIntakeToLegacyQuizProfile(snap);
+    expect(legacyProfile.frustrations).toEqual([]);
+    expect(legacyProfile.fullHealthIntake.lifeStage).toBe('');
+    expect(legacyProfile.fullHealthIntake.currentMedications).toBe('');
+    expect(legacyProfile.fullHealthIntake.tryingToConceive).toBe('');
+  });
+
+  it('carries skipped steps and answer states on the saved intake', () => {
+    const snap = buildSnapshot({ ...EMPTY, skippedSteps: ['zip'], fsaHsaAnswer: 'Not sure' });
+    const full = mapIntakeToLegacyQuizProfile(snap).fullHealthIntake;
+    expect(full.skippedSteps).toEqual(['zip']);
+    expect(full.answerStates.zip).toBe('skipped');
+    expect(full.answerStates.fsaHsa).toBe('not_sure');
+    expect(full.fsaHsa).toBe('unsure');
+  });
+});

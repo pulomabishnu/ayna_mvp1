@@ -3,6 +3,7 @@ import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { buildLibrary } from '../utils/personalReads.js';
+import SuggestBox from '../../components/SuggestBox.jsx';
 import '../library.css';
 
 function ReadState({ value = 0 }) {
@@ -59,5 +60,8 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, readP
       {topics.map(([id, label]) => <button type="button" key={id} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
     </div>}
     {body}
+    <div className="ay-app-suggest-wrap">
+      <SuggestBox variant="app" mode="read" context="app-library" />
+    </div>
   </main>;
 }

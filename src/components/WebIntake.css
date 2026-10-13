@@ -103,9 +103,10 @@ div.wq-count button { display: grid; gap: 4px; justify-items: center; padding: 1
 div.wq-count strong { font: 800 36px/1 'Bricolage Grotesque', 'Poppins', sans-serif; }
 div.wq-count span { font: 600 13px/1 'Poppins', system-ui, sans-serif; color: var(--soft); }
 div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var(--ink); }
-.wq-fsa { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.wq-fsa { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.wq-fsa button { grid-column: span 2; }
+.wq-fsa button:nth-child(n+4) { grid-column: span 3; min-height: 56px; font-size: 17px; }
 .wq-fsa button { min-height: 72px; border: 2px solid var(--ink); border-radius: 18px; background: var(--paper); color: var(--ink); font: 800 20px/1 'Bricolage Grotesque', 'Poppins', sans-serif; }
-.wq-fsa button:last-child { grid-column: 2 / 4; }
 .wq-fsa button.is-on { background: var(--mint); box-shadow: 3px 3px 0 var(--ink); }
 .wq-rank { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .wq-rank li { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 2px solid var(--ink); border-radius: 18px; background: var(--paper); font: 600 15px/1.3 'Poppins', system-ui, sans-serif; cursor: grab; }
@@ -156,8 +157,7 @@ div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var
   .wq-card { padding: 20px 16px; box-shadow: 4px 4px 0 var(--ink); }
   .wq-scale-bars { gap: 6px; }
   .wq-bar { font-size: 11px; }
-  .wq-fsa { grid-template-columns: 1fr 1fr; }
-  .wq-fsa button:last-child { grid-column: 1 / 3; }
+  .wq-fsa button:nth-child(n+4) { grid-column: span 3; }
   div.wq-count { grid-template-columns: repeat(2, 1fr); }
   .wq-foot .wq-btn { flex: 1; justify-content: center; }
 }
@@ -220,3 +220,6 @@ div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var
 .app-container[data-theme='dark'] .wq-page .wq-zip-err { --zip-err: #ff9b85; }
 .app-container[data-theme='dark'] .wq-page .wq-zip-err::before { color: #17161f; }
 .app-container[data-theme='dark'] .wq-zip-wrap .wq-zip[aria-invalid='true'] { border-color: #ff9b85; }
+
+/* Formats: your own format, under the tiles */
+.wq-format-own { margin-top: 16px; align-items: center; }

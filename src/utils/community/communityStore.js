@@ -28,6 +28,7 @@ const FRIENDLY_ERRORS = {
   community_media_full: 'You can add up to 4 photos.',
   community_media_not_found: "That photo didn't finish uploading. Try again.",
   community_guest_unavailable: "Posting without an account isn't available right now. Log in to post.",
+  community_rules_violation: 'This breaks our community rules. Remove contact info, links or promo and try again.',
 };
 
 export function friendlyError(error) {

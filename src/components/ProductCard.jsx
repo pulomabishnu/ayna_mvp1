@@ -3,8 +3,9 @@ import { CATEGORY_LABELS } from '../data/products';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { formatPrice } from '../utils/formatPrice';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import MatchGauge from './MatchGauge';
+import MatchPill from './MatchPill';
 import '../styles/match-ui.css';
+import '../styles/verify-content.css';
 
 const HEART = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z';
 
@@ -17,7 +18,7 @@ const HEART = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7
 export default function ProductCard({
   product,
   matchPercent = null,
-  // "82% for period cramps": tooltip and accessible name for the badge.
+  // "82% for period cramps": accessible name for the match pill (no tooltip).
   matchLabel = '',
   isSaved = false,
   inEcosystem = false,
@@ -37,7 +38,6 @@ export default function ProductCard({
       <a
         className="ayna-browse-card__link"
         href={productHref(product.id)}
-        title={matchLabel && matchPercent != null && matchPercent > 0 ? matchLabel : undefined}
         onClick={(e) => {
           if (!isPlainLeftClick(e)) return;
           e.preventDefault();
@@ -47,9 +47,7 @@ export default function ProductCard({
         <div className="ayna-discover-card__tile">
           {tile || <ProductTileImage product={product} alt={product.name} letterNode={<ProductImageFallback />} />}
           {matchPercent != null && matchPercent > 0 && (
-            <span className="ayna-browse-card__match" title={matchLabel || undefined}>
-              <MatchGauge percent={matchPercent} size={24} theme="light" label={matchLabel ? matchLabel.replace(/^\d+%\s*/, '') : 'match'} />
-            </span>
+            <MatchPill percent={matchPercent} size="sm" className="ayna-browse-card__pill" label={matchLabel || `${Math.round(matchPercent)}% match`} />
           )}
           {inEcosystem && <span className="ayna-browse-card__ecosystem">In ecosystem</span>}
         </div>

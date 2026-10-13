@@ -8,6 +8,7 @@ import { getProfileCompletionPct } from '../mobile/utils/profileCompleteness.js'
 import { ROUTINE_BUCKETS, ROUTINE_BUCKET_LABELS, useRoutine } from '../mobile/hooks/useRoutine.js';
 import { fetchDataExport } from '../mobile/utils/dataExportApi.js';
 import { ShelfDonut, TrustBars } from '../mobile/components/ShopperCharts.jsx';
+import BadgesPanel from './BadgesPanel';
 import './WebYou.css';
 import '../styles/audit-qya.css';
 
@@ -44,21 +45,6 @@ function ecosystemInsights(products) {
   const allCats = [...new Set(ALL_PRODUCTS.map((p) => p?.category).filter(Boolean))];
   const missing = allCats.filter((c) => !counts.has(c)).slice(0, 3).map(CATEGORY_LABEL);
   return { top, missing };
-}
-
-function Badges({ savedCount, ecosystemCount, pct }) {
-  const badges = [
-    { key: 'eco', label: 'Ecosystem built', hint: 'Finish the quiz', earned: ecosystemCount > 0, tone: 'butter' },
-    { key: 'save', label: 'First save', hint: 'Save a product', earned: savedCount > 0, tone: 'pink' },
-    { key: 'profile', label: 'Profile complete', hint: `${pct}% done`, earned: pct >= 100, tone: 'mint' },
-    { key: 'collector', label: 'Collector', hint: `${Math.min(savedCount, 10)}/10 saved`, earned: savedCount >= 10, tone: 'peri' },
-  ];
-  return <section className="wyou-card is-badges">
-    <div className="wyou-card-head"><h2>Badges</h2><span>{badges.filter((b) => b.earned).length} of {badges.length}</span></div>
-    <ul className="wyou-badges">{badges.map((b, i) => <li key={b.key} className={`tone-${b.tone}${b.earned ? ' is-earned' : ''}`}>
-      <span aria-hidden="true">{b.earned ? '✓' : i + 1}</span><strong>{b.label}</strong><small>{b.earned ? 'Earned' : b.hint}</small>
-    </li>)}</ul>
-  </section>;
 }
 
 function Routine({ products }) {
@@ -144,7 +130,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
           <div className="wyou-charts"><ShelfDonut shelf={shopper.shelf} total={shopper.total} /><TrustBars trust={shopper.trust} /></div>
           <dl>{shopper.rows.map((r) => <div key={r.key} className={`tone-${r.tone}`}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}</dl>
         </section> : <section className="wyou-card is-shopper-empty"><h2>At a glance</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
-        <Badges savedCount={savedCount} ecosystemCount={products.length} pct={pct} />
+        <BadgesPanel userId={user.id} myProducts={products} quizAnswers={quizResults} variant="web" />
       </div>
 
       <div className="wyou-col">

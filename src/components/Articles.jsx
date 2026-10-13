@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import ProductCard from './ProductCard';
+import SuggestBox from './SuggestBox';
 import '../styles/audit-library.css';
 import '../styles/verify-content.css';
 import { ALL_PRODUCTS, getPersonalizedProductIds } from '../data/products';
@@ -934,6 +935,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
       </div>}
       {body}
+      <SuggestBox mode="read" context="library" className="ay-web-lib-suggest" />
     </section>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
+import MatchPill from './MatchPill';
 
 /**
  * The right-hand rail on the evidence layout (mockup board 1g): three small
@@ -63,14 +64,7 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
         <div className="pdp-rail__label">Why you&apos;re seeing this</div>
         {Number.isFinite(matchPercent) && matchPercent > 0 ? (
           <div className="pdp-rail__match-wrap">
-            <div
-              className="pdp-rail__match-ring"
-              style={{ '--match-pct': `${Math.max(0, Math.min(100, matchPercent))}%` }}
-              aria-label={`${matchPercent}% profile match`}
-            >
-              <span>{matchPercent}%</span>
-              <small>match</small>
-            </div>
+            <MatchPill percent={matchPercent} size="sm" />
             <div className="pdp-rail__body">
               {matchLabels.length > 0
                 ? matchLabels.slice(0, 3).join(' · ')

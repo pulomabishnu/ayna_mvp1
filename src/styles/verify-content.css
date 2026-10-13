@@ -74,3 +74,6 @@
 }
 .app-container .ayna-browse-card h3.ayna-discover-card__name { margin: 0 !important; color: var(--ay-ink) !important; font: 700 15px/1.25 var(--ay-font-ui) !important; letter-spacing: 0 !important; }
 .app-container .pdp-panel[data-tone] .pdp-panel__title { margin: 0 0 16px !important; padding: 12px 14px !important; border: 2px solid var(--ay-ink) !important; border-radius: 14px !important; }
+
+/* Round 5: website product card shows the ink "NN% match" pill (no ring, no tooltip). */
+.app-container .ayna-browse-card .ayna-browse-card__pill { position: absolute; top: 8px; left: 8px; z-index: 2; background: var(--ay-ink) !important; color: var(--ay-paper) !important; border: 0 !important; pointer-events: none; }
