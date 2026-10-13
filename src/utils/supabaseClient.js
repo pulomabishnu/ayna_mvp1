@@ -12,8 +12,14 @@ export function getSupabaseClient() {
   try {
     client = createClient(url, anonKey, {
       auth: {
-        flowType: 'implicit',   // avoids PKCE verifier storage, Chrome bounce tracking deletes it
-        detectSessionInUrl: false, // AuthCallback.jsx handles implicit OAuth tokens explicitly
+        flowType: 'implicit',
+        // Web OAuth can legitimately return to either /auth/callback or the
+        // configured SITE_URL. Let supabase-js consume the implicit grant from
+        // the URL wherever it lands so a successful Google sign-in never comes
+        // back to ayna with tokens in the hash while the app still thinks she is
+        // signed out. Native Capacitor handles its custom-scheme callback itself.
+        detectSessionInUrl: !Capacitor.isNativePlatform(),
+        persistSession: true,
         // GoTrueClient auto-selects the browser's navigator.locks API to
         // serialize auth calls whenever it's merely present, true in a
         // WKWebView, but not necessarily reliable there. processLock is
