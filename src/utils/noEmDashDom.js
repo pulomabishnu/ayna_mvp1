@@ -3,14 +3,14 @@
 // (community posts, catalog data from APIs). It rewrites visible text nodes
 // and a few text attributes. Inputs and textareas are left alone so typing is
 // never changed under someone's cursor.
-const EM = '—';
+const EM = '\u2014';
 const ATTRS = ['title', 'aria-label', 'placeholder', 'alt'];
 
 export function stripEmDash(text) {
   if (typeof text !== 'string' || !text.includes(EM)) return text;
   return text
-    .replace(/[ \t]*—[ \t]*(?=[.,;:!?)\]]|$)/gm, '')
-    .replace(/[ \t]*—[ \t]*/g, ', ');
+    .replace(/[ \t]*\u2014[ \t]*(?=[.,;:!?)\]]|$)/gm, '')
+    .replace(/[ \t]*\u2014[ \t]*/g, ', ');
 }
 
 function fixNode(node) {
