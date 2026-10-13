@@ -37,13 +37,16 @@
 /* Compare table */
 .ay-compare { display: grid; gap: 16px; min-width: 0; scroll-margin-top: 96px; }
 .ay-compare:focus { outline: none; }
-.ay-compare__scroll { overflow-x: auto; border: 1.5px solid var(--ay-line); border-radius: 20px; background: var(--ay-paper); scrollbar-width: thin; }
+.ay-compare__scroll { overflow-x: auto; border: 2px solid var(--ay-ink); border-radius: 20px; background: var(--ay-paper); scrollbar-width: thin; }
 .ay-compare__scroll:focus-visible { outline: 3px solid var(--ay-peri); outline-offset: 2px; }
-.ay-compare table { width: 100%; min-width: 560px; border-collapse: collapse; color: var(--ay-ink); font: 500 15px/1.45 var(--ay-font-ui); }
-.ay-compare :is(th, td) { padding: 12px 16px; border-top: 1px solid var(--ay-line); text-align: left; vertical-align: top; }
+.ay-compare table { width: 100%; min-width: 560px; border-collapse: collapse; color: var(--ay-ink); font: 500 16px/1.5 var(--ay-font-ui); }
+.ay-compare :is(th, td) { padding: 14px 18px; border-top: 1.5px solid var(--ay-line); text-align: left; vertical-align: top; }
+.ay-compare tbody tr:nth-child(even) :is(th, td) { background: color-mix(in srgb, var(--ay-cream) 55%, transparent); }
+.ay-compare thead tr :is(th, td) { border-bottom: 2px solid var(--ay-ink); }
 .ay-compare thead :is(th, td) { border-top: 0; vertical-align: bottom; }
-.ay-compare tbody th { width: 160px; color: var(--ay-ink-soft); font: 600 14px/1.45 var(--ay-font-ui); }
-.ay-compare td.is-this, .ay-compare th.is-this { background: var(--ay-cream); }
+.ay-compare tbody th { width: 170px; color: var(--ay-ink); font: 700 13px/1.4 var(--ay-font-ui); letter-spacing: .04em; text-transform: uppercase; }
+.ay-compare td.is-this, .ay-compare th.is-this { background: var(--ay-butter) !important; }
+.ay-compare thead th.is-this .ay-compare__name small { font-weight: 800; }
 .ay-compare td.is-unknown { color: var(--ay-ink-soft); }
 .ay-compare__thumb { display: block; width: 72px; height: 72px; margin-bottom: 8px; padding: 4px; border-radius: 12px; background: #fff; overflow: hidden; }
 .ay-compare__thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
