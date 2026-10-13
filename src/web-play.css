@@ -1163,3 +1163,10 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 
 /* Swipe deck percents use the one ink match pill. */
 .app-container .wdeck-copy em, .app-container .ay-deck-meta em { display: inline-flex; align-items: baseline; padding: 5px 10px; border-radius: 99px; background: var(--ay-ink) !important; color: var(--ay-paper) !important; font-style: normal; font-weight: 700; font-size: 12px; line-height: 1; }
+
+/* Shop cards: price sits right under the name, no stretched gap (founder). */
+.app-container .ayna-browse-card .ayna-discover-card__name { min-height: 0 !important; }
+.app-container .ayna-browse-card .ayna-discover-card__price { margin-top: 6px !important; }
+.app-container .ayna-browse-card .ayna-discover-card__body { justify-content: start; }
+.app-container .ayna-browse-card .ayna-discover-card__price { padding-top: 0 !important; margin-top: 4px !important; }
+.app-container .ayna-browse-card .ayna-discover-card__labels { margin-bottom: 0 !important; }

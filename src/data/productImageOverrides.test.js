@@ -12,6 +12,11 @@ describe('product image overrides', () => {
   const entries = Object.entries(PRODUCT_IMAGE_OVERRIDES);
   const allPaths = entries.flatMap(([, e]) => (typeof e === 'string' ? [e] : [e.cover, ...(e.gallery || [])]));
 
+  it('covers every physical catalog product (digital products keep brand imagery)', () => {
+    const missing = ALL_PRODUCTS.filter((p) => p.type !== 'digital' && !PRODUCT_IMAGE_OVERRIDES[p.id]);
+    expect(missing.map((p) => p.id)).toEqual([]);
+  });
+
   it('only maps ids that exist in the catalog', () => {
     const ids = new Set(ALL_PRODUCTS.map((p) => p.id));
     expect(entries.map(([id]) => id).filter((id) => !ids.has(id))).toEqual([]);
