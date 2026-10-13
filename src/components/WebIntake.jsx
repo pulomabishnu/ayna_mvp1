@@ -119,7 +119,9 @@ function AddOwn({ placeholder, onAdd }) {
 }
 
 function AgeField({ value, onChange, underage, onOpenGate }) {
-  // Plain number field with the numeric keypad: no steppers, no slider.
+  // Type it or slide it, like the app's dial (founder meeting note).
+  const n = Number.parseInt(value, 10);
+  const slider = Number.isFinite(n) ? Math.min(80, Math.max(18, n)) : 29;
   return <div className={`wq-age${underage ? ' is-under' : ''}`}>
     <label className="wq-age-field">
       <span>Your age</span>
@@ -127,6 +129,11 @@ function AgeField({ value, onChange, underage, onOpenGate }) {
         onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 2))} />
       <small>years</small>
     </label>
+    <div className="wq-age-slide">
+      <span aria-hidden="true">18</span>
+      <input type="range" min={18} max={80} step={1} value={slider} aria-label="Slide to pick your age" onChange={(e) => onChange(String(e.target.value))} />
+      <span aria-hidden="true">80</span>
+    </div>
     {underage && <p className="wq-alert" id="wq-age-alert">ayna is for people 18 and over. <button type="button" onClick={onOpenGate}>What you can do instead</button></p>}
   </div>;
 }

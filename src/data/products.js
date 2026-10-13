@@ -845,7 +845,16 @@ export const DIGITAL_PRODUCTS = [
 // See isRxOnlyProduct below.
 // Hidden for now (team decision, Oct 11 2026): a clinician teaching model, not a
 // consumer product. Bring back once there's a clinician-facing surface.
-const TEMPORARILY_HIDDEN_IDS = new Set(['p-mypelvicbra-prolapse-chicken']);
+const TEMPORARILY_HIDDEN_IDS = new Set([
+    'p-mypelvicbra-prolapse-chicken',
+    // Removed 2026-10-13 (founder): no photo anywhere and apparently discontinued.
+    // June Cup's domain now belongs to a soccer tournament; Pink Stork Bloat
+    // capsules no longer exist (only gummies); Queen V "The Pop It" is not sold
+    // by any retailer we could find.
+    'p-june-cup',
+    'p-pink-stork-bloat',
+    'p-queen-v-pop',
+]);
 
 // Main's catalog corrections/packaging can rename a product (e.g. to its exact
 // packaged SKU name). Users' saved intake history and avoid lists store the
