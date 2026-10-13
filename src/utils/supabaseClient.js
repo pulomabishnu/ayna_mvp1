@@ -2,6 +2,43 @@ import { createClient } from '@supabase/supabase-js';
 import { processLock } from '@supabase/auth-js';
 import { Capacitor } from '@capacitor/core';
 
+// Supabase's implicit OAuth flow can fall back to SITE_URL when a requested
+// redirect is not allowed. In that case Google may successfully return to
+// `/#access_token=...&refresh_token=...` instead of `/auth/callback#...`.
+// App.jsx normalizes the initial route immediately after React mounts, which
+// can erase that fragment before AuthCallback or supabase-js sees it. Claim
+// any auth-shaped return here, while modules are still evaluating and before
+// React renders, and send it through the callback route that already knows how
+// to establish the session. This only changes browser history; no account or
+// user data is touched.
+function normalizeWebOAuthReturnPath() {
+  if (typeof window === 'undefined' || Capacitor.isNativePlatform()) return;
+  if (window.location.pathname === '/auth/callback') return;
+
+  try {
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+    const search = new URLSearchParams(window.location.search);
+    const isAuthReturn = Boolean(
+      hash.get('access_token')
+      || hash.get('refresh_token')
+      || hash.get('error')
+      || hash.get('error_description')
+      || search.get('code')
+      || search.get('error')
+      || search.get('error_description')
+    );
+
+    if (!isAuthReturn) return;
+
+    const callbackUrl = `/auth/callback${window.location.search}${window.location.hash}`;
+    window.history.replaceState(window.history.state, '', callbackUrl);
+  } catch (_) {
+    // If URL parsing is unavailable for any reason, leave routing untouched.
+  }
+}
+
+normalizeWebOAuthReturnPath();
+
 let client = null;
 
 export function getSupabaseClient() {
