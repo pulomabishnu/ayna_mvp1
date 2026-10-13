@@ -10,6 +10,7 @@ import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts } from 
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS, publicMediaUrl } from '../../utils/community/imageUpload.js';
 import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../../data/products.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
+import { customProductId, customProductName } from '../../utils/customProductTag.js';
 import PlaylistCoverPicker from '../components/PlaylistCoverPicker.jsx';
 import PlaylistAudiencePicker from '../components/PlaylistAudiencePicker.jsx';
 import { makePlaylistCoverFile } from '../components/playlistCoverImage.js';
@@ -44,7 +45,14 @@ function CommunityAvatar({ name, path, anonymous = false }) {
 
 function ProductMention({ productId, productsById, quizAnswers, onOpenProduct }) {
   const product = productsById.get(String(productId));
-  if (!product) return null;
+  if (!product) {
+    const customName = customProductName(String(productId || ''));
+    if (!customName) return null;
+    return <span className="am-product is-custom">
+      <span className="am-product-photo" aria-hidden="true">{customName.slice(0, 1).toUpperCase()}</span>
+      <span><strong>{customName}</strong><small>Not in the ayna catalog yet</small></span>
+    </span>;
+  }
   const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers) : null;
   const showMatch = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   return <button type="button" className="am-product" onClick={() => onOpenProduct(product)}>
@@ -65,12 +73,18 @@ function ProductPicker({ products, value, onChange }) {
     })).filter(({ score }) => score > 0).sort((a, b) => b.score - a.score).slice(0, 10).map(({ product }) => product);
   }, [products, query]);
   const selected = products.find((p) => String(p.id) === String(value));
+  const selectedName = selected?.name || customProductName(String(value || ''));
+  const draft = query.trim().replace(/\s+/g, ' ');
+  const exact = matches.some((p) => String(p.name || '').trim().toLowerCase() === draft.toLowerCase());
+  const addCustom = () => { const id = customProductId(draft); if (id) { onChange(id); setQuery(''); } };
   return <div className="am-picker">
-    <label htmlFor="am-product-query">{selected ? 'Product' : 'Find a product'}</label>
-    {selected ? <div className="am-picked"><span>{selected.name}</span><button type="button" onClick={() => { onChange(null); setQuery(''); }}>Remove</button></div> : <>
-      <div className="am-product-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 5 5" /></svg><input id="am-product-query" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search products" /></div>
-      {matches.length > 0 && <div className="am-results">{matches.map((p) => <button type="button" key={p.id} onClick={() => { onChange(p.id); setQuery(''); }}>{p.name}<small>{[p.brand, p.category?.replace(/-/g, ' ')].filter(Boolean).join(' · ')}</small></button>)}</div>}
-      {query.trim().length >= 2 && matches.length === 0 && <small className="am-picker-empty">No products found. Try another name or concern.</small>}
+    <label htmlFor="am-product-query">{selectedName ? 'Product' : 'Find a product'}</label>
+    {selectedName ? <div className="am-picked"><span>{selectedName}</span><button type="button" onClick={() => { onChange(null); setQuery(''); }}>Remove</button></div> : <>
+      <div className="am-product-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 5 5" /></svg><input id="am-product-query" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.length >= 2) { e.preventDefault(); if (matches.length && exact) { onChange(matches[0].id); setQuery(''); } else addCustom(); } }} placeholder="Search products" /></div>
+      {draft.length >= 2 && <div className="am-results">
+        {!exact && <button type="button" className="is-add" onClick={addCustom}>+ Add “{draft}”<small>{matches.length ? 'Not listed? Tag it anyway' : 'Not in the ayna catalog yet'}</small></button>}
+        {matches.map((p) => <button type="button" key={p.id} onClick={() => { onChange(p.id); setQuery(''); }}>{p.name}<small>{[p.brand, p.category?.replace(/-/g, ' ')].filter(Boolean).join(' · ')}</small></button>)}
+      </div>}
     </>}
   </div>;
 }

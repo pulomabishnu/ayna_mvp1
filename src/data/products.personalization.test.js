@@ -191,15 +191,21 @@ describe('personalized relevance scoring', () => {
         expect(getProductMatchDetailsForProduct(product, { fullHealthIntake: { supportSelections: ['Cramps or period pain', 'Recurrent UTIs'] } }).unmetNeeds).toContain('Recurrent UTIs');
     });
 
-    it('keeps a broad-profile percentage conservative while explaining a real match', () => {
+    it('a broad profile neither lowers nor inflates a real match, and confidence stays separate', () => {
+        // ASK2 (spec C): the old test asserted < 85 because sparse profiles
+        // used to drag every match down. Missing data must never equal a bad
+        // match: the cramp warmer matches cramps as well as it did for a
+        // one-need profile, and what we do not know shows up as confidence.
         const product = { id: 'cramp-support', name: 'Cramp warmer', category: 'cramp-relief', tags: ['cramps'], healthFunctions: ['cramp-relief'] };
         const quiz = { fullHealthIntake: { supportSelections: [
             'Cramps or period pain', 'Sleep support', 'Skin or acne concerns',
             'Fertility support', 'Bladder leakage', 'Hair thinning',
         ] } };
         const match = getProductMatchDetailsForProduct(product, quiz);
+        const single = getProductMatchDetailsForProduct(product, { fullHealthIntake: { supportSelections: ['Cramps or period pain'] } });
         expect(match.percent).toBeGreaterThan(0);
-        expect(match.percent).toBeLessThan(85);
+        expect(match.percent).toBe(single.percent);
+        expect(match.confidence).not.toBe('high');
         expect(match.reasons.some((reason) => /cramp/i.test(reason))).toBe(true);
     });
 
@@ -217,10 +223,15 @@ describe('personalized relevance scoring', () => {
         expect(getProductRelevanceScore(savedProduct, quiz)).toBeGreaterThan(0);
     });
 
-    it('does not let evidence alone claim a strong personal match', () => {
+    it('does not let evidence alone change a personal match', () => {
+        // ASK2: evidence is a separate output; it only counts in the match
+        // when she ranked what she trusts, and never creates relevance.
         const product = { id: 'single-need', name: 'Cramp warmer', category: 'cramp-relief', tags: ['cramps'], healthFunctions: ['cramp-relief'], scientificCitations: Array(8).fill('source') };
+        const plain = { id: 'single-need-2', name: 'Cramp warmer', category: 'cramp-relief', tags: ['cramps'], healthFunctions: ['cramp-relief'] };
         const details = getProductMatchDetailsForProduct(product, { frustrations: ['Painful cramps'] });
-        expect(details.percent).toBeLessThanOrEqual(85);
+        expect(details.percent).toBe(getProductMatchDetailsForProduct(plain, { frustrations: ['Painful cramps'] }).percent);
+        const unrelated = { ...product, id: 'evidence-only', name: 'Plain notebook', category: 'other', tags: [], healthFunctions: [] };
+        expect(getProductMatchDetailsForProduct(unrelated, { frustrations: ['Painful cramps'] }).percent).toBe(0);
     });
 
     it('honors a negative product history from the current intake wording', () => {
@@ -284,7 +295,7 @@ describe('matching engine integration', () => {
         expect(cramps.score).toBeGreaterThanOrEqual(80);
         expect(perNeed.find((m) => m.needId === 'mood.general_anxiety').score).toBe(0);
         expect(getProfileMatchPercentForProduct(heat, spec)).toBe(cramps.score);
-        expect(getProfileMatchLabelsForProduct(heat, spec)[0]).toBe('Made for period cramps');
+        expect(getProfileMatchLabelsForProduct(heat, spec)[0]).toBe('Matches the period cramps you selected');
         for (const m of perNeed) {
             expect(m).toEqual(expect.objectContaining({ needId: expect.any(String), label: expect.any(String), score: expect.any(Number), tier: expect.any(String), explanations: expect.any(Array), confidence: expect.any(Number) }));
             expect(m.safety).toEqual(expect.objectContaining({ eligible: true }));
@@ -389,5 +400,64 @@ describe('matching engine integration', () => {
         const iron = byId('p-nature-made-iron-65mg');
         expect(getProductMatchDetailsForProduct(iron, quiz, { conditions: ['Iron deficiency anemia'] }).eligible).toBe(true);
         expect(getPersonalizedProductIds({}, { conditions: ['PCOS'] })).toEqual([]);
+    });
+});
+
+// ─── ASK2 adapters ──────────────────────────────────────────────────────────
+describe('ASK2 adapters', () => {
+    const byId = (id) => ALL_PRODUCTS.find((p) => p.id === id);
+
+    it('opts.needId focuses the percent on that need (shelf badges never name another need)', () => {
+        const quiz = { fullHealthIntake: { supportSelections: ['Cramps or period pain', 'Pelvic pain'] } };
+        const heat = byId('p-thermacare');
+        const best = getProductMatchDetailsForProduct(heat, quiz);
+        const pelvic = getProductMatchDetailsForProduct(heat, quiz, null, { needId: 'pain.pelvic' });
+        expect(best.needId).toBe('pain.menstrual_cramp');
+        expect(pelvic.needId).toBe('pain.pelvic');
+        expect(pelvic.percent).toBeLessThan(best.percent);
+        expect(getProductMatchDetailsForProduct(heat, quiz).needId).toBe('pain.menstrual_cramp');
+    });
+
+    it('a restricted product keeps its percent but is never recommended', () => {
+        const quiz = { fullHealthIntake: { supportSelections: ['Cramps or period pain'] } };
+        const mag = byId('p-magnesium-glycinate');
+        const d = getProductMatchDetailsForProduct(mag, quiz);
+        expect(d.eligibility).toBe('restricted');
+        expect(d.percent).toBeGreaterThan(0);
+        expect(d.missingSafetyText.join(' ')).toMatch(/medicines/);
+        expect(d.considerations[0].text).toMatch(/Safety not checked yet/);
+        expect(getPersonalizedProductIds(quiz)).not.toContain('p-magnesium-glycinate');
+        const answered = { fullHealthIntake: { supportSelections: ['Cramps or period pain'], takesCurrent: 'No' } };
+        expect(getProductMatchDetailsForProduct(mag, answered).eligibility).toBe('eligible');
+        expect(getProductMatchDetailsForProduct(mag, answered).percent).toBe(d.percent);
+    });
+
+    it('details list the actual inputs used and a soft hint when confidence is limited', () => {
+        const quiz = { fullHealthIntake: { supportSelections: ['Night sweats'], lifeStageSelections: ['I am in perimenopause'], preferredFormats: ['Devices or wearables'] } };
+        const d = getProductMatchDetailsForProduct(byId('d-eight-sleep'), quiz);
+        expect(d.basedOn.map((b) => b.text)).toEqual(expect.arrayContaining(['Night sweats (you selected)', 'Perimenopause (you shared)']));
+        expect(d.reasons[0]).toBe('Matches your night sweats and the perimenopause stage you shared');
+        expect(d.profileHint).toBe('Add more to your health profile for more personal picks');
+    });
+
+    it('night sweats at 24 with regular periods: no menopause product is personalized', () => {
+        const quiz = { fullHealthIntake: { age: '24', supportSelections: ['Night sweats'], lifeStageSelections: ['I get periods regularly'] } };
+        const ids = getPersonalizedProductIds(quiz);
+        for (const id of ['p-womaness-me', 'd-midi-health', 'p-gennev-care', 'p-remifemin', 'p-estroven-mood']) expect(ids).not.toContain(id);
+        const seed = getEcosystemSeedFromQuiz(quiz);
+        expect(seed.shelves[0].needId).toBe('vasomotor.night_sweats');
+        expect(seed.shelves[0].picks.every((p) => !['p-womaness-me', 'd-midi-health'].includes(p.productId))).toBe(true);
+    });
+
+    it('old stored need ids still resolve for alternatives', () => {
+        const quiz = { fullHealthIntake: { supportSelections: ['Night sweats'], lifeStageSelections: ['I am in perimenopause'] } };
+        const alts = getEcosystemAlternatives('d-eight-sleep', 'menopause.night_sweats', quiz);
+        expect(alts.length).toBeGreaterThan(0);
+    });
+
+    it('check-in picks never infer menopause or irregular cycles from tracker use', async () => {
+        const { getCheckinRecommendations } = await import('./products');
+        const recs = getCheckinRecommendations({ frustrations: [] }, { focusAreas: [] }, [{ date: '2026-10-01' }], [{ symptoms: ['hot flashes'] }]);
+        expect(recs).toEqual([]);
     });
 });

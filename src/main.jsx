@@ -4,6 +4,7 @@ import App from './App.jsx'
 import { Capacitor } from '@capacitor/core'
 import MobileApp from './mobile/MobileApp.jsx'
 import './index.css'
+import './styles/search-focus.css'
 import posthog from 'posthog-js'
 import { tagInternalUserIfNeeded } from './utils/posthogInternal'
 

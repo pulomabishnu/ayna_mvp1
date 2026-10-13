@@ -1,8 +1,12 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import LegalFooter from '../components/LegalFooter.jsx';
-import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines } from '../../utils/matchDisplay.js';
+import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, whyMatch, BASED_ON_LINE } from '../../utils/matchDisplay.js';
 import '../match.css';
 import '../eco-needs.css';
+import '../../styles/match-ui.css';
+
+// Why this matches: what matched and the inputs it used. It never says why
+// she has a symptom; missing answers lower confidence, never the percent.
 
 const GOAL_COMPONENTS = new Set(['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency']);
 const PROFILE_COMPONENTS = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'perimenopauseLastPeriod', 'diagnoses', 'triedBefore']);
@@ -27,12 +31,13 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
   const { percent, eligible, matchStatus, reasonDetails = [], considerations = [], unknowns = [], unmetNeeds = [], tier, access } = details;
   const hasScore = eligible !== false && matchStatus === 'scored' && Number.isFinite(percent) && percent > 0;
   const excluded = matchStatus === 'excluded' || eligible === false;
+  const why = whyMatch(details);
   const rows = matchStatus === 'no-profile' ? [] : needBreakdown(details);
   const best = rows.find((r) => r.needId === details.needId) || rows[0];
   const notes = hasScore ? confidenceNotes(details, product) : [];
   const exclusionReasons = excluded ? exclusionLines(details) : [];
   const exclusions = exclusionReasons.length ? exclusionReasons : excluded ? considerations.map((c) => c.text).filter(Boolean) : [];
-  const title = excluded ? 'Not in your matches' : hasScore ? 'Your match' : matchStatus === 'no-profile' ? 'About this match' : 'No clear match';
+  const title = excluded ? 'Not in your matches' : hasScore ? 'Why this matches' : matchStatus === 'no-profile' ? 'About this match' : 'No clear match';
 
   return (
     <main className="ayna-match-page">
@@ -49,6 +54,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
             <div>
               <span className="ay-match-tier">{tierWord(tier, percent)}</span>
               <h2>{needHeadline(percent, best?.phrase)}</h2>
+              <p className="ay-match-based">{BASED_ON_LINE}</p>
               {access?.label && <p className="ay-match-access"><span aria-hidden="true">●</span> {access.label}</p>}
             </div>
           </section>
@@ -62,8 +68,32 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
               : 'This product does not clearly line up with your selected needs. We leave the percentage blank instead of guessing.'}</p>
         )}
 
-        {notes.length > 0 && <ul className="ay-match-notes" aria-label="What lowers our confidence">{notes.map((n) => <li key={n}>{n}</li>)}</ul>}
-        {rows.length > 0 && !excluded && (
+        {hasScore && why.restricted && (
+          <section className="ayna-match-section ay-match-restricted">
+            <h2>Safety not checked yet</h2>
+            <p>{why.missing.length ? `Add ${why.missing.join(' and ')} so we can check this product for you.` : 'Add a safety detail so we can check this product for you.'}</p>
+            {onUpdateHealth && <button type="button" className="ayna-match-update" onClick={onUpdateHealth}>Update health profile</button>}
+          </section>
+        )}
+        {hasScore && reasonDetails.length > 0 && (
+          <section className="ayna-match-section">
+            <h2>What matches</h2>
+            <ul className="ayna-match-reasons">{reasonDetails.map((reason, index) => <li key={`${reason.component}-${index}`}><span>{reasonKind(reason.component)}</span><p>{tidy(reason.text)}</p></li>)}</ul>
+          </section>
+        )}
+        {hasScore && why.basedOn.length > 0 && (
+          <section className="ayna-match-section">
+            <h2>Based on</h2>
+            <ul className="ay-why-inputs">{why.basedOn.map((line) => <li key={line}>{tidy(line)}</li>)}</ul>
+          </section>
+        )}
+        {hasScore && why.hint && (
+          <section className="ay-why-hint">
+            <p>{why.hint}</p>
+            {onUpdateHealth && <button type="button" onClick={onUpdateHealth}>Add to profile</button>}
+          </section>
+        )}
+        {rows.length > 1 && !excluded && (
           <section className="ayna-match-section">
             <h2>Your needs</h2>
             <ul className="ay-need-rows">{rows.map((r) => <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'}>
@@ -74,23 +104,20 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
             </li>)}</ul>
           </section>
         )}
-        {hasScore && reasonDetails.length > 0 && (
-          <section className="ayna-match-section">
-            <h2>What lines up</h2>
-            <ul className="ayna-match-reasons">{reasonDetails.map((reason, index) => <li key={`${reason.component}-${index}`}><span>{reasonKind(reason.component)}</span><p>{tidy(reason.text)}</p></li>)}</ul>
-          </section>
-        )}
         {unmetNeeds.length > 0 && rows.length === 0 && (
           <section className="ayna-match-section"><h2>Not addressed by this product</h2><ul className="ay-match-chips">{unmetNeeds.map((need) => <li key={need}>{tidy(need)}</li>)}</ul></section>
         )}
-        {!excluded && considerations.length > 0 && (
-          <section className="ayna-match-section ayna-match-cautions"><h2>Before you choose</h2>{considerations.map((note, index) => <div key={index}><p>{tidy(note.text)}</p>{note.cta && onViewDetails && <button type="button" onClick={onViewDetails}>{note.cta}</button>}</div>)}</section>
+        {!excluded && why.considerations.length > 0 && (
+          <section className="ayna-match-section ayna-match-cautions"><h2>Before you choose</h2>{why.considerations.map((note, index) => <div key={index}><p>{tidy(note.text)}</p>{note.cta && onViewDetails && <button type="button" onClick={onViewDetails}>{note.cta}</button>}</div>)}</section>
         )}
-        {unknowns.length > 0 && (
-          <section className="ayna-match-section"><h2>What we could not confirm</h2>{unknowns.map((note) => <p key={note}>{tidy(note)}</p>)}</section>
+        {(notes.length > 0 || unknowns.length > 0) && (
+          <section className="ayna-match-section"><h2>What we could not confirm</h2>
+            {notes.length > 0 && <ul className="ay-match-notes" aria-label="What lowers our confidence">{notes.map((n) => <li key={n}>{n}</li>)}</ul>}
+            {unknowns.map((note) => <p key={note}>{tidy(note)}</p>)}
+          </section>
         )}
         {matchStatus === 'no-profile' && onUpdateHealth && <button type="button" className="ayna-match-update" onClick={onUpdateHealth}>Complete health profile</button>}
-        <p className="ayna-match-disclaimer">A relevance score from your answers, not a diagnosis or a promise of results. Availability is shown separately and never changes the score.</p>
+        <p className="ayna-match-disclaimer">A match to what you shared, not a diagnosis or a promise of results. We never guess why you have a symptom. Availability is shown separately and never changes the score.</p>
         <LegalFooter />
       </div>
     </main>

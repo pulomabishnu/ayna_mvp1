@@ -1,25 +1,53 @@
 // Per-need scoring.
 //
-// FINAL NEED MATCH (0..100) =
-//   ( health 40 + specificity 15 + context 10 + experience 10
-//     + preference 8 + evidence/trust 7 + price 5 + behavior 5 )   each part 0..1 x weight
-//   x safety eligibility (0 or 1)
-//   x confidence factor, where factor = 0.7 + 0.3 x confidence (confidence 0..1)
-//   x cosmetic leave-out factor (0.85 when a product has something she prefers to avoid, else 1)
+// THE RULE (founder spec C): missing data must never equal a bad match.
+// Score only on signals that are both KNOWN and APPLICABLE to the product.
+// Missing information lowers confidence, not relevance, except when it is
+// required to establish safety (then the product is "restricted", it does
+// not get a low number).
+//
+// Separate outputs per product x need (spec C):
+//   relevance      does it address what she asked for? (0..100)
+//   preferenceFit  does it fit how she likes to shop/use products? (0..1, null when nothing known)
+//   safety         eligible / restricted (insufficient information) / excluded, cautions, blocked claims
+//   evidence       product-specific vs ingredient-only vs guideline, matched to THIS need (claim level)
+//   confidence     how much useful information we had (0..1 + level). NEVER multiplied into the match.
+//   access         separate (computeAccess), never in the match.
+//
+// DISPLAYED MATCH (0..100) =
+//   R x (1 - PREFERENCE_SPAN x (1 - P))       relevance-anchored, preferences conditional
+//   + experience points (her history with this or truly similar products, max +-20)
+//   + behavior points (saves / purchases / reorders, time-decayed, max +-2)
+//   then x eligibility (excluded = 0). Clamped 0..99.
+// where
+//   R = 95 x health x (0.9 + 0.1 x focus)     health 0..1.05 (relevance level + explicit-context
+//                                             multipliers + flow / pain / UTI / postpartum modifiers)
+//   P = weighted average over KNOWN preference dimensions only (dynamic denominator):
+//       context fit, format, values, brand, trust-weighted evidence, price, effort.
+//       A skipped question is not in the denominator. When none are known, P = 1
+//       (no penalty), so skipping budget, brands or formats never lowers a match.
+// Profile completeness is never part of the match.
 //
 // Tiers: excellent >= 80, strong >= 65, exploratory >= 50, browse < 50.
-// ZIP never enters this score. Access is computed separately (computeAccess).
-// FSA/HSA never enters this score; it is a tie-break in ecosystem.js.
+// ZIP never enters this score. FSA/HSA never enters this score (tie-break only).
 
-import { NEED_BY_ID, needPhrase, CONDITION_PATHWAYS, CONDITION_SUPPORT_NEED, URINARY_UTI_NEEDS, MENSTRUAL_PRODUCT_NEEDS, ATTRIBUTE_PHRASE, LIFE_STAGE_BY_ID } from './ontology.js';
-import { buildProductProfile, normalizeBrand } from './productProfile.js';
-import { checkMedicationInteractions } from './medications.js';
+import { NEED_BY_ID, needPhrase, canonicalNeedId, CONDITION_PATHWAYS, CONDITION_SUPPORT_NEED, URINARY_UTI_NEEDS, MENSTRUAL_PRODUCT_NEEDS, ATTRIBUTE_PHRASE, LIFE_STAGE_BY_ID, CONTEXTS } from './ontology.js';
+import { buildProductProfile, normalizeBrand, CONTEXT_BONUS, productSimilarity } from './productProfile.js';
+import { checkMedicationInteractions, INTERACTION_TABLE } from './medications.js';
 import { normalizeName } from './userProfile.js';
 
-export const WEIGHTS = { health: 40, specificity: 15, context: 10, experience: 10, preference: 8, evidence: 7, price: 5, behavior: 5 };
-// Value used when the user gave no signal for a component, so products are
-// compared on what she did tell us. Documented in ENGINE.md.
-export const NEUTRAL = { context: 0.6, experience: 0.6, preference: 0.6, price: 0.8, behavior: 0.6 };
+// Preference dimension weights (only known + applicable ones count).
+export const DIMENSION_WEIGHTS = { context: 3, format: 2, values: 2, price: 2, evidence: 2, brand: 1, effort: 1 };
+/** @deprecated kept for older imports; the match is no longer a fixed-weight sum. */
+export const WEIGHTS = DIMENSION_WEIGHTS;
+export const PREFERENCE_SPAN = 0.35;
+export const RELEVANCE_SCALE = 95;
+export const MAX_SCORE = 99;
+export const EXPERIENCE_POINTS = { scale: 20, cap: 20, similarCap: 6, minFacetSimilarity: 0.5 };
+export const BEHAVIOR_POINTS = 2;
+/** @deprecated no neutral values are used any more: unknown dimensions are left out. */
+export const NEUTRAL = {};
+
 export const TIERS = [
   { id: 'excellent', min: 80 },
   { id: 'strong', min: 65 },
@@ -27,32 +55,45 @@ export const TIERS = [
   { id: 'browse', min: 0 },
 ];
 export function tierFor(score) { return TIERS.find((t) => score >= t.min).id; }
-export function confidenceFactor(confidence) { return 0.7 + 0.3 * Math.max(0, Math.min(1, confidence)); }
-export const COSMETIC_LEAVE_OUT_FACTOR = 0.85;
+export function confidenceLevel(c) { return c >= 0.75 ? 'high' : c >= 0.5 ? 'medium' : 'limited'; }
 
-// Confidence penalty factors (multiplied together, floor 0.2).
+// Confidence factors (multiplied together, floor 0.2). They describe how
+// sure we are; they never change the displayed match.
 export const CONFIDENCE_PENALTIES = {
   allergen_unknown: 0.85,
   allergen_variant: 0.85,
   broad_allergy_class: 0.85,
   unresolved_allergy: 0.9,
   allergy_status_unsure: 0.95,
+  allergy_status_unknown: 0.95,
   leave_out_unknown: 0.92,
   medication_caution: 0.85,
   medication_unknown: 0.9,
+  medications_not_shared: 0.85,
   pregnancy_unknown: 0.8,
   pregnancy_caution: 0.85,
+  pregnancy_status_unknown: 0.85,
+  pregnancy_reported: 0.85,
   ttc_pregnancy_contraindicated: 0.85,
   ttc_pregnancy_unknown: 0.92,
   breastfeeding_caution: 0.85,
   breastfeeding_unknown: 0.9,
   urgent_not_sure_high_risk: 0.9,
   low_metadata: 0.9,
+  catalog_freshness_unknown: 0.97,
+  catalog_stale: 0.9,
   unusual_combination: 0.97,
   stage_needs_clarification: 0.9,
   pain_varies: 0.95,
   similar_reaction_caution: 0.95,
   flow_contradiction: 0.85,
+  answer_contradiction: 0.9,
+  stale_answers: 0.92,
+  stale_pregnancy: 0.8,
+  stale_medications: 0.9,
+  interpretation_uncertain: 0.9,
+  age_unknown_age_limited: 0.95,
+  restricted: 0.6,
 };
 
 // Specificity by relationship of the product to this exact need.
@@ -77,8 +118,39 @@ export const UTI_ROLE_MULTIPLIER = {
   right_now: { care: 1.2, testing: 1.2, symptom_relief: 0.8, prevention: 0.35 },
 };
 
+// CATEGORY-SPECIFIC TRUST (spec B): "clinical evidence first" matters more
+// for things she ingests or that treat something than for period underwear,
+// where fit, comfort and other women's reviews carry more information.
+// Multipliers on her trust weights, renormalized.
+export const CATEGORY_TRUST = {
+  ingested: { clinical: 1.5, community: 0.8, expert: 1 },
+  treatment: { clinical: 1.4, community: 0.8, expert: 1.1 },
+  period_care: { clinical: 0.6, community: 1.4, expert: 0.9 },
+  apparel: { clinical: 0.6, community: 1.4, expert: 0.9 },
+  device: { clinical: 1.1, community: 1.1, expert: 1 },
+  service: { clinical: 1, community: 1.1, expert: 1.1 },
+  other: { clinical: 1, community: 1, expert: 1 },
+};
+
+// MINIMUM REQUIRED FIELDS (spec C): safety-critical answers a product class
+// needs before we personalize it. Missing -> "restricted" (insufficient
+// information), never a low match. Optional unknowns never restrict.
+const INTERACTION_INGREDIENTS = new Set(INTERACTION_TABLE.map((r) => r.product_ingredient));
+export function requiredFieldsFor(pp) {
+  const req = [];
+  if (pp.ingested && pp.ingredient_keys.some((k) => INTERACTION_INGREDIENTS.has(k))) req.push('medications');
+  const pregnancyConcern = ['contraindicated', 'caution'].includes(pp.pregnancy.overall) || pp.safety.hormones === 'yes';
+  if (pregnancyConcern && (pp.ingested || pp.formats.includes('suppository') || (pp.safety.hormones === 'yes' && pp.formats.includes('topical')))) req.push('pregnancy_status');
+  return req;
+}
+export const REQUIRED_FIELD_TEXT = {
+  medications: 'what medicines or supplements you take',
+  pregnancy_status: 'whether you are pregnant (your life stage)',
+};
+
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
 const clean = (s) => String(s).replace(/\s*[—–]\s*/g, ', ');
+const round3 = (x) => (x == null ? null : Math.round(x * 1000) / 1000);
 
 function asProfile(productOrProfile) {
   if (productOrProfile && productOrProfile.health_need_relevance) return productOrProfile;
@@ -86,6 +158,27 @@ function asProfile(productOrProfile) {
 }
 
 function bodyContact(pp) { return !pp.is_digital; }
+
+function productClass(pp) {
+  if (pp.is_digital || pp.access?.is_care_service) return 'service';
+  if (pp.ingested) return 'ingested';
+  if (pp.formats.includes('suppository') || pp.care_roles.includes('symptom_relief')) return 'treatment';
+  if (pp.formats.includes('period_care')) return 'period_care';
+  if (pp.formats.includes('apparel_support')) return 'apparel';
+  if (pp.formats.includes('device') || pp.formats.includes('patch')) return 'device';
+  return 'other';
+}
+
+// Which profile answers apply to a product class (for confidence coverage).
+const APPLICABLE_ANSWERS = {
+  ingested: ['lifeStage', 'medications', 'conditions', 'allergies', 'formats', 'budget', 'trust'],
+  treatment: ['lifeStage', 'medications', 'allergies', 'formats', 'budget', 'trust'],
+  period_care: ['lifeStage', 'allergies', 'formats', 'budget', 'values'],
+  apparel: ['formats', 'budget', 'values'],
+  device: ['allergies', 'formats', 'budget', 'lifeStage'],
+  service: ['budget', 'zip', 'trust'],
+  other: ['formats', 'budget', 'allergies'],
+};
 
 // ─── Safety ─────────────────────────────────────────────────────────────────
 function sameProduct(entry, pp) {
@@ -106,7 +199,9 @@ function avoidMatches(entry, pp) {
 
 /**
  * Product-level safety for this user. Need-independent.
- * @returns {{ eligible: boolean, reasons: object[], cautions: object[], penalties: object[], confirmed: object[], blockedClaims: string[], interaction: object }}
+ * @returns {{ eligible: boolean, status: 'clear'|'caution'|'insufficient_information'|'excluded', restricted: boolean,
+ *   missingFields: string[], reasons: object[], cautions: object[], penalties: object[], confirmed: object[],
+ *   blockedClaims: string[], interaction: object, confidence: number }}
  */
 export function evaluateSafety(productOrProfile, up) {
   const pp = asProfile(productOrProfile);
@@ -116,7 +211,11 @@ export function evaluateSafety(productOrProfile, up) {
   const penalties = [];
   const confirmed = [];
   const blockedClaims = new Set();
+  const missingFields = [];
   const penalize = (code, text) => penalties.push({ code, factor: CONFIDENCE_PENALTIES[code], text });
+
+  // 0. Recalled / removed listings: suppressed regardless of personalization.
+  if (pp.status && pp.status.state !== 'active') reasons.push({ code: `status_${pp.status.state}`, text: pp.status.state === 'recalled' ? 'This product has an active recall' : 'This listing is no longer available' });
 
   // 1. Avoid list: absolute.
   for (const entry of s.avoid) {
@@ -166,11 +265,12 @@ export function evaluateSafety(productOrProfile, up) {
       cautions.push({ code: 'unresolved_allergy', text: `Check the label for ${u.raw_user_text}.` });
     }
     if (s.allergyStatus === 'unsure') penalize('allergy_status_unsure', 'Allergy status not sure');
+    else if (s.allergyStatus === 'unknown' && !s.allergies.length) penalize('allergy_status_unknown', 'Allergies not shared');
   }
 
   // 4. Leave out (allergy-equivalent or strong = hard filter on a confirmed 'yes').
   for (const l of s.leaveOut) {
-    if (l.strength === 'cosmetic') continue; // handled as a preference penalty
+    if (l.strength === 'cosmetic') continue; // handled as a preference value
     const d = pp.safety.details[l.attr] || { status: 'unknown' };
     const phrase = ATTRIBUTE_PHRASE[l.attr] || l.attr;
     if (d.status === 'yes') reasons.push({ code: 'leave_out_conflict', attr: l.attr, text: `Contains ${phrase}, which you asked us to leave out` });
@@ -180,11 +280,13 @@ export function evaluateSafety(productOrProfile, up) {
     }
   }
 
-  // 5. Age outside stated range.
+  // 5. Age outside stated range. Unknown age on an age-limited product lowers confidence only.
   if (up.physiology.age != null) {
     const { minimum, maximum } = pp.age;
     if (minimum != null && up.physiology.age < minimum) reasons.push({ code: 'age_below_minimum', text: `Intended for ages ${minimum} and up` });
     if (maximum != null && up.physiology.age > maximum) reasons.push({ code: 'age_above_maximum', text: `Intended for ages up to ${maximum}` });
+  } else if (pp.age.minimum != null || pp.age.maximum != null) {
+    penalize('age_unknown_age_limited', 'Age not shared for an age-limited product');
   }
 
   // 5b. Confirmation-first products (e.g. high-dose iron) need the condition confirmed.
@@ -206,10 +308,18 @@ export function evaluateSafety(productOrProfile, up) {
     penalize('medication_unknown', 'Interaction with your medicines not reviewed');
     blockedClaims.add('medication_compatible');
   }
+  const required = requiredFieldsFor(pp);
+  const medsUnknown = !['answered', 'explicit_no'].includes(s.medicationsState) && !s.medications.some((m) => m.source !== 'life_stage');
+  if (pp.interaction_relevant && medsUnknown) {
+    blockedClaims.add('medication_compatible');
+    if (required.includes('medications')) missingFields.push('medications');
+    else if (pp.ingested) penalize('medications_not_shared', 'Medicines not shared');
+  }
 
-  // 7. Pregnancy, TTC, breastfeeding.
+  // 7. Pregnancy, TTC, breastfeeding. Status: pregnant | reported | not_indicated | unknown.
   const preg = pp.pregnancy;
-  if (s.pregnant && preg.overall !== 'not_applicable') {
+  const pStatus = s.pregnancyStatus || (s.pregnant ? 'pregnant' : 'unknown');
+  if (pStatus === 'pregnant' && preg.overall !== 'not_applicable') {
     const tKey = s.trimester ? `trimester_${s.trimester}` : null;
     const status = tKey && preg[tKey] ? preg[tKey] : preg.overall;
     if (status === 'contraindicated' || preg.overall === 'contraindicated') reasons.push({ code: 'pregnancy_contraindicated', text: 'Not for use during pregnancy' });
@@ -222,7 +332,24 @@ export function evaluateSafety(productOrProfile, up) {
       cautions.push({ code: 'pregnancy_unknown', text: 'Pregnancy safety is not confirmed for this product. Check with your clinician.' });
       blockedClaims.add('pregnancy_safe');
     }
-  } else if (s.ttc && !s.pregnant && preg.overall !== 'not_applicable') {
+  } else if (pStatus === 'reported' && preg.overall !== 'not_applicable') {
+    // Pregnancy came from free text or a pregnancy-related need, not the
+    // life-stage answer: hold contraindicated products back as restricted
+    // (not a low match) and ask her to confirm her stage.
+    blockedClaims.add('pregnancy_safe');
+    if (['contraindicated', 'caution'].includes(preg.overall)) {
+      missingFields.push('pregnancy_status');
+      cautions.push({ code: 'pregnancy_reported', text: preg.overall === 'contraindicated' ? 'Not for use during pregnancy. Confirm your life stage so we can check this for you.' : 'Check with your clinician before using this in pregnancy.' });
+    } else penalize('pregnancy_reported', 'Pregnancy mentioned, not confirmed in your life stage');
+  } else if (pStatus === 'unknown' && preg.overall !== 'not_applicable') {
+    blockedClaims.add('pregnancy_safe');
+    if (required.includes('pregnancy_status')) missingFields.push('pregnancy_status');
+    else if (preg.overall === 'contraindicated') {
+      penalize('pregnancy_status_unknown', 'Not for pregnancy, and your life stage was not shared');
+      cautions.push({ code: 'pregnancy_status_unknown', text: 'Not for use during pregnancy.' });
+    } else if (pp.ingested) penalize('pregnancy_status_unknown', 'Life stage not shared');
+  }
+  if (s.ttc && pStatus !== 'pregnant' && preg.overall !== 'not_applicable') {
     if (preg.overall === 'contraindicated') {
       penalize('ttc_pregnancy_contraindicated', 'Not for use in pregnancy');
       cautions.push({ code: 'ttc_pregnancy', text: 'Not for use during pregnancy. Stop if you become pregnant.' });
@@ -244,17 +371,29 @@ export function evaluateSafety(productOrProfile, up) {
     penalize('urgent_not_sure_high_risk', 'You were not sure if something is urgent');
   }
 
-  // 9. Data quality and profile flags.
+  // 9. Data quality, freshness, recency and profile flags.
   if (pp.metadata_confidence < 0.5) penalize('low_metadata', 'Limited product data');
+  if (pp.freshness?.state === 'unknown') penalize('catalog_freshness_unknown', 'Catalog data has no verification date');
+  else if (pp.freshness?.state === 'stale') penalize('catalog_stale', 'Catalog data not verified recently');
   if (up.physiology.confidenceFlags.includes('unusual_combination')) penalize('unusual_combination', 'Unusual age and life stage combination');
   const conflicting = up.physiology.compatibility.conflictingStages;
   if (conflicting.some((st) => ['designed_for', 'not_relevant', 'relevant'].includes(pp.life_stage[st]))) {
     penalize('stage_needs_clarification', 'Life stages that need clarification');
   }
+  const rec = up.recency?.stale || {};
+  if (rec.pregnancy && pStatus === 'pregnant' && preg.overall !== 'not_applicable') penalize('stale_pregnancy', 'Your pregnancy answer is from a while ago');
+  if (rec.medications && s.medications.length && pp.interaction_relevant) penalize('stale_medications', 'Your medicine list is from a while ago');
+  if (up.contradictions?.some((c) => c.affects.includes('safety')) && bodyContact(pp)) penalize('answer_contradiction', 'Some safety answers conflict');
 
+  const restricted = reasons.length === 0 && missingFields.length > 0;
+  if (restricted) penalize('restricted', 'Safety details missing');
   const confidence = Math.max(0.2, penalties.reduce((c, p) => c * p.factor, 1));
+  const status = reasons.length ? 'excluded' : restricted ? 'insufficient_information' : cautions.length ? 'caution' : 'clear';
   return {
     eligible: reasons.length === 0,
+    status,
+    restricted,
+    missingFields: [...new Set(missingFields)],
     reasons,
     cautions,
     penalties,
@@ -267,7 +406,45 @@ export function evaluateSafety(productOrProfile, up) {
 
 function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : s; }
 
-// ─── Components ─────────────────────────────────────────────────────────────
+// ─── Relevance (with explicit contexts) ─────────────────────────────────────
+/**
+ * Effective relevance of a product for a need for THIS user: the
+ * unconditional level, or a contextual level when she gave the context.
+ * @returns {{ base: number, relationship: string, contextUsed: object|null, contextualOnly: boolean, entry: object|null }}
+ */
+export function resolveRelevance(pp, up, needId) {
+  const entry = pp.health_need_relevance[needId] || null;
+  if (!entry) return { base: 0, relationship: 'unrelated', contextUsed: null, contextualOnly: false, entry: null };
+  let base = entry.score || 0;
+  let level = base; // the reviewed relationship level (names the relationship)
+  let contextUsed = null;
+  for (const c of entry.contextual || []) {
+    const active = c.requires.map((id) => up.contexts?.[id]).filter(Boolean).sort((a, b) => b.strength - a.strength)[0];
+    if (!active) continue;
+    // A weaker context source (typed in prose, or a need that names the
+    // context) scales the score down a little; the relationship stays.
+    const scaled = c.level * (0.85 + 0.15 * active.strength);
+    if (scaled > base) {
+      const src = active.sources[0];
+      base = scaled;
+      level = c.level;
+      contextUsed = { context: active.id, type: src.type, id: src.id, phrase: src.phrase, strength: active.strength, rule: c.rule, via: 'contextual' };
+    }
+  }
+  const contextualOnly = Boolean(contextUsed) && !(entry.score > 0);
+  const hasUnmetContextual = !base && (entry.contextual || []).length > 0;
+  return { base, relationship: relationshipOf(level), contextUsed, contextualOnly, entry, needsContext: hasUnmetContextual ? entry.contextual.flatMap((c) => c.requires) : null };
+}
+
+function relationshipOf(score) {
+  if (score >= 1) return 'direct';
+  if (score >= 0.8) return 'strong';
+  if (score >= 0.55) return 'secondary';
+  if (score >= 0.3) return 'adjacent';
+  if (score > 0) return 'weak';
+  return 'unrelated';
+}
+
 function healthComponent(pp, up, need, base, notes) {
   let rel = base;
   if (rel <= 0) return 0;
@@ -280,20 +457,34 @@ function healthComponent(pp, up, need, base, notes) {
     const condRel = pp.health_need_relevance[supportNeed]?.score || 0;
     if (condRel >= 0.3) {
       const veryHigh = c.id === 'pcos' && up.healthIntent.reinforcement.pcos === 'very_high';
-      rel = Math.min(1, rel + (veryHigh ? 0.2 : condRel >= 0.55 ? 0.15 : 0.1));
+      rel = Math.min(1.05, rel + (veryHigh ? 0.2 : condRel >= 0.55 ? 0.15 : 0.1));
       notes.health.push(`condition_pathway:${c.id}`);
+      notes.contextBoost = notes.contextBoost || { type: 'condition', id: c.id, phrase: conditionPhrase(c.id) };
     }
   }
-  // Selected support need for a condition also reinforces pathway needs.
+  // Selected support need for a condition (explicit interest, not a diagnosis) reinforces pathway needs a little.
   if (need.id !== 'condition_support.pcos' && up.healthIntent.reinforcement.pcos && !up.safety.conditions.some((c) => c.id === 'pcos')
     && (CONDITION_PATHWAYS.pcos || []).includes(need.id) && (pp.health_need_relevance['condition_support.pcos']?.score || 0) >= 0.3) {
-    rel = Math.min(1, rel + 0.1);
+    rel = Math.min(1.05, rel + 0.05);
     notes.health.push('pcos_support_pathway');
+    notes.contextBoost = notes.contextBoost || { type: 'need', id: 'condition_support.pcos', phrase: 'PCOS support' };
+  }
+
+  // Context bonus (spec A.14): a product already relevant to this need AND
+  // designed for a life stage she explicitly shared gets +0.10. Never from age.
+  if (base >= 0.55) {
+    const conflicting = new Set(up.physiology.compatibility.conflictingStages);
+    const stage = up.physiology.lifeStages.find((st) => !conflicting.has(st) && pp.life_stage[st] === 'designed_for');
+    if (stage) {
+      rel = Math.min(1.05, rel + CONTEXT_BONUS);
+      notes.health.push(`context_bonus:${stage}`);
+      notes.stageBonus = stage;
+    }
   }
 
   // Cramp severity (only for the explicitly selected cramp need).
   if (need.id === 'pain.menstrual_cramp' && m.painIntensity != null) {
-    rel = Math.min(1, rel + (base >= 0.8 ? 0.1 : base >= 0.55 ? 0.03 : 0) * m.painIntensity);
+    rel = Math.min(1.05, rel + (base >= 0.8 ? 0.05 : base >= 0.55 ? 0.02 : 0) * m.painIntensity);
   }
 
   // Flow -> menstrual product characteristics.
@@ -323,7 +514,7 @@ function healthComponent(pp, up, need, base, notes) {
     if (early && ['6_12m', 'gt_12m'].includes(m.postpartumTiming)) rel *= 0.6;
     if (need.id === 'hair.loss' && m.postpartumTiming === '3_6m') rel *= 1.15;
   }
-  return clamp01(rel);
+  return Math.max(0, Math.min(1.05, rel));
 }
 
 function flowFit(pp, m) {
@@ -334,150 +525,90 @@ function flowFit(pp, m) {
   return fit;
 }
 
-function specificityComponent(pp, needId, base) {
-  const rel = relationshipOf(base);
+function focusFactor(pp, needId) {
   const others = Object.entries(pp.health_need_relevance).filter(([id, e]) => id !== needId && e.score >= 0.8).length;
-  const focus = Math.max(0.6, 1 - 0.08 * others);
-  return clamp01((SPECIFICITY_BASE[rel] || 0) * focus);
+  return Math.max(0.6, 1 - 0.08 * others);
 }
-function relationshipOf(score) {
-  if (score >= 1) return 'direct';
-  if (score >= 0.8) return 'strong';
-  if (score >= 0.55) return 'secondary';
-  if (score >= 0.3) return 'adjacent';
-  if (score > 0) return 'weak';
-  return 'unrelated';
+function specificityComponent(pp, needId, base) {
+  return clamp01((SPECIFICITY_BASE[relationshipOf(base)] || 0) * focusFactor(pp, needId));
 }
 
-const STAGE_EXPLANATION = {
-  pregnant: 'Fits the pregnancy stage you shared',
-  postpartum: 'Made for the postpartum stage you shared',
-  perimenopause: 'Made with perimenopause in mind',
-  menopause: 'Made with menopause in mind',
-  postmenopause: 'Made with post-menopause in mind',
-  ttc: 'Fits your plans to conceive',
-};
-
-function contextComponent(pp, up, need, notes, explanations) {
-  let c = NEUTRAL.context;
+// ─── Preference dimensions (only known + applicable ones) ──────────────────
+function contextDimension(pp, up) {
   const conflicting = new Set(up.physiology.compatibility.conflictingStages);
-  let stageExplained = false;
+  const vals = [];
   for (const stage of up.physiology.lifeStages) {
     if (conflicting.has(stage)) continue; // neutralized until clarified
     const v = pp.life_stage[stage];
-    if (v === 'designed_for') {
-      c += 0.25;
-      if (!stageExplained && STAGE_EXPLANATION[stage]) { explanations.push(STAGE_EXPLANATION[stage]); stageExplained = true; }
-    } else if (v === 'relevant') c += 0.1;
-    else if (v === 'not_relevant') c -= 0.25;
+    if (v === 'designed_for') vals.push(1);
+    else if (v === 'relevant') vals.push(0.9);
+    else if (v === 'not_relevant') vals.push(0.25);
   }
-  // Age is a small prior only, used when no stage was shared.
-  if (!up.physiology.lifeStages.length && up.physiology.age != null && up.physiology.age >= 45 && pp.life_stage.perimenopause === 'designed_for') c += 0.05;
-  // Diagnosed condition gives contextual relevance on pathway needs.
-  for (const cond of up.safety.conditions) {
-    if ((CONDITION_PATHWAYS[cond.id] || []).includes(need.id)) { c += 0.15; notes.conditionContext = cond.id; break; }
-  }
-  if (notes.flowFit != null) c = (c + notes.flowFit) / 2;
-  if (need.modifiers?.postpartumTiming && pp.matched_rules.includes('postpartum_recovery_kit')) {
-    if (need.modifiers.postpartumTiming === 'lt_6w') c += 0.2;
-    if (['6_12m', 'gt_12m'].includes(need.modifiers.postpartumTiming)) c -= 0.3;
-  }
-  return clamp01(c);
+  return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
 }
 
-function historyRelation(h, pp) {
-  if (sameProduct(h, pp)) return 'same';
-  if (h.resolvedProduct) {
-    const hp = buildProductProfile(h.resolvedProduct);
-    if (hp.category !== pp.category) return null;
-    if (hp.brand.key && hp.brand.key === pp.brand.key) return 'very_similar';
-    const sharedFormat = hp.formats.some((f) => pp.formats.includes(f));
-    const sharedIngredient = hp.ingredient_keys.some((k) => pp.ingredient_keys.includes(k));
-    return sharedFormat || sharedIngredient ? 'similar' : null;
-  }
-  // A brand-only entry ("Always") relates to that brand's products.
-  if (h.brandKey && pp.brand.key && h.brandKey === pp.brand.key) return 'very_similar';
-  return null;
-}
-
-function experienceComponent(pp, up, notes, explanations) {
-  let x = NEUTRAL.experience;
-  for (const h of up.experience.history) {
-    const rel = historyRelation(h, pp);
-    if (!rel) continue;
-    for (const e of h.effects) {
-      if (rel === 'same') x += e.same || 0;
-      else x += (e.similar || 0) * (rel === 'very_similar' ? 1 : 0.6);
-      if (rel !== 'same' && e.similarCaution) notes.similarReaction = true;
-    }
-    if (rel === 'same') {
-      if (h.outcome === 'helped_a_lot') explanations.push('You said this helped a lot');
-      else if (h.outcome === 'helped_somewhat') explanations.push('You said this helped somewhat');
-    } else if (['helped_a_lot', 'helped_somewhat'].includes(h.outcome)) explanations.push('Similar to something that worked for you');
-  }
-  for (const p of up.shopping.positiveMentions) {
-    if ((p.key && p.key === pp.brand.key) || (p.normalized && normalizeName(pp.name).includes(p.normalized))) {
-      x += 0.15 * p.weight;
-      explanations.push('From a brand you said you like');
-      break;
-    }
-  }
-  return clamp01(x);
-}
-
-function preferenceComponent(pp, up, notes, explanations) {
+function formatDimension(pp, up, notes, explanations) {
   const sh = up.shopping;
-  // Formats
-  let format = NEUTRAL.preference;
-  if (sh.formats.preferred.length) {
-    const hit = pp.formats.some((f) => sh.formats.preferred.includes(f));
-    format = hit ? 1 : 0.35;
-    if (hit) explanations.push('In a format you prefer');
-  }
-  const disliked = new Set();
-  for (const d of sh.formats.disliked) {
-    if (d.id) disliked.add(`${d.id}|${d.weight}`);
-    if (d.fromProductId) {
-      const h = up.experience.history.find((x) => x.resolvedProductId === d.fromProductId);
-      if (h?.resolvedProduct) buildProductProfile(h.resolvedProduct).formats.forEach((f) => disliked.add(`${f}|1`));
-    }
-  }
-  for (const key of disliked) {
-    const [f, w] = key.split('|');
-    if (pp.formats.includes(f)) format -= 0.4 * Number(w);
-  }
   if (sh.formats.strict.length && !pp.formats.some((f) => sh.formats.strict.includes(f))) notes.filtered = 'format_strict';
   if (sh.declinesInternal && pp.internal) notes.filtered = 'internal_declined';
+  if (!pp.formats.length) return null; // product format unknown: not scored
+  const disliked = new Map();
+  for (const d of sh.formats.disliked) {
+    if (d.id) disliked.set(d.id, Math.max(disliked.get(d.id) || 0, d.weight));
+    if (d.fromProductId) {
+      const h = up.experience.history.find((x) => x.resolvedProductId === d.fromProductId);
+      if (h?.resolvedProduct) buildProductProfile(h.resolvedProduct).formats.forEach((f) => disliked.set(f, Math.max(disliked.get(f) || 0, 1)));
+    }
+  }
+  let value = null;
+  if (sh.formats.preferred.length) {
+    const hit = pp.formats.some((f) => sh.formats.preferred.includes(f));
+    value = hit ? 1 : 0.4;
+    if (hit) explanations.push('In a format you prefer');
+  } else if (!sh.formats.explicitNoPreference) {
+    // Soft preference learned from what worked / what she stopped (weight 0.5 equivalent).
+    const learned = up.experience.learnedFormats || { liked: [], disliked: [] };
+    const fmts = (ids) => new Set(ids.flatMap((id) => { const h = up.experience.history.find((x) => x.resolvedProductId === id); return h?.resolvedProduct ? buildProductProfile(h.resolvedProduct).formats : []; }));
+    const liked = fmts(learned.liked);
+    const stopped = fmts(learned.disliked);
+    if (pp.formats.some((f) => liked.has(f))) value = 0.9;
+    else if (pp.formats.some((f) => stopped.has(f) && !liked.has(f))) value = 0.6;
+  }
+  const penalty = Math.max(0, ...pp.formats.map((f) => disliked.get(f) || 0));
+  if (penalty > 0) value = Math.max(0, (value ?? 0.8) - 0.6 * penalty);
+  return value;
+}
 
-  // Values ("Should be") and leave-out matches
+function valuePhrase(id) {
+  return { unscented: 'unscented', organic: 'organic', vegan: 'vegan', cruelty_free: 'cruelty-free', minimal_ingredients: 'made with minimal ingredients', sensitive_skin: 'made for sensitive skin', reusable: 'reusable', eco_friendly: 'eco-friendly', pregnancy_considerations: 'pregnancy-reviewed', black_owned: 'Black-owned', brown_owned: 'Brown-owned' }[id] || id;
+}
+
+function valuesDimension(pp, up, notes, explanations) {
+  const sh = up.shopping;
   const parts = [];
   for (const v of sh.shouldBe) {
     const st = pp.values[v.id];
-    const val = st === 'yes' ? 1 : st === 'partial' ? 0.6 : st === 'no' ? 0 : st === 'not_applicable' ? 0.5 : 0.4;
-    parts.push({ val, w: v.weight || 1 });
-    if (st === 'yes') explanations.push(`${capitalize(valuePhrase(v.id))}, which you asked for`);
+    if (st === 'yes') { parts.push({ val: 1, w: v.weight || 1 }); explanations.push(`${capitalize(valuePhrase(v.id))}, which you asked for`); }
+    else if (st === 'partial') parts.push({ val: 0.6, w: v.weight || 1 });
+    else if (st === 'no') parts.push({ val: 0, w: v.weight || 1 });
+    else if (st === 'unknown') notes.unknownValues = (notes.unknownValues || 0) + 1;
   }
-  let cosmeticConflict = false;
   for (const l of sh.leaveOut) {
     const st = pp.safety.details[l.attr]?.status;
     const phrase = ATTRIBUTE_PHRASE[l.attr] || l.attr;
     if (st === 'no') { parts.push({ val: 1, w: 1 }); explanations.push(`${capitalize(phrase)}-free, which you asked for`); }
-    else if (st === 'yes' && l.strength === 'cosmetic') { parts.push({ val: 0, w: 1 }); cosmeticConflict = true; }
-    else if (st === 'unknown') parts.push({ val: 0.4, w: 1 });
+    else if (st === 'yes' && l.strength === 'cosmetic') { parts.push({ val: 0, w: 1.5 * (l.weight ?? 1) }); notes.cosmeticConflict = true; }
   }
-  const values = parts.length ? parts.reduce((s, p) => s + p.val * p.w, 0) / parts.reduce((s, p) => s + p.w, 0) : NEUTRAL.preference;
-
-  // Brand
-  let brand = NEUTRAL.preference;
-  if (pp.brand.key && sh.trustedBrands.some((t) => t.key === pp.brand.key || (pp.brand.id_slug && t.key === normalizeBrand(pp.brand.id_slug)))) {
-    brand = 1;
-    explanations.push('From a brand you trust');
-  }
-  notes.cosmeticConflict = cosmeticConflict;
-  return clamp01(0.35 * clamp01(format) + 0.4 * values + 0.25 * brand);
+  if (!parts.length) return null;
+  return parts.reduce((sum, p) => sum + p.val * p.w, 0) / parts.reduce((sum, p) => sum + p.w, 0);
 }
-function valuePhrase(id) {
-  return { unscented: 'unscented', organic: 'organic', vegan: 'vegan', cruelty_free: 'cruelty-free', minimal_ingredients: 'made with minimal ingredients', sensitive_skin: 'made for sensitive skin', reusable: 'reusable', eco_friendly: 'eco-friendly', pregnancy_considerations: 'pregnancy-reviewed', black_owned: 'Black-owned', brown_owned: 'Brown-owned' }[id] || id;
+
+function brandDimension(pp, up, explanations) {
+  const sh = up.shopping;
+  const trusted = pp.brand.key && sh.trustedBrands.some((t) => t.key === pp.brand.key || (pp.brand.id_slug && t.key === normalizeBrand(pp.brand.id_slug)));
+  if (trusted) { explanations.push('From a brand you trust'); return 1; }
+  if (sh.trustedBrands.length && sh.brandOpenness === 'I mostly stick with brands I already trust') return 0.6;
+  return null;
 }
 
 /** Evidence channels 0..1 for a product. */
@@ -489,15 +620,37 @@ export function evidenceChannels(pp) {
   return { clinical, community, expert };
 }
 
-function evidenceComponent(pp, up, explanations) {
-  const ch = evidenceChannels(pp);
+/** Evidence summary for THIS need (claim level), product vs ingredient. */
+export function evidenceFor(pp, needId) {
+  const claim = pp.claim_evidence?.[needId] || null;
+  const e = pp.evidence;
+  const level = claim?.product_specific ? 'product_specific' : claim?.clinical_guideline ? 'guideline'
+    : claim?.ingredient_specific ? 'ingredient_only' : e.product_specific + e.ingredient_specific + e.clinical_guideline > 0 ? 'not_for_this_claim'
+      : e.community > 0 ? 'community_only' : 'none';
+  return { level, forThisNeed: claim, catalogStrength: e.strength || null, channels: evidenceChannels(pp) };
+}
+
+function trustWeightsFor(pp, up) {
+  const mult = CATEGORY_TRUST[productClass(pp)] || CATEGORY_TRUST.other;
   const w = up.trust.weights;
-  const value = w.clinical * ch.clinical + w.community * ch.community + w.expert * ch.expert;
+  const raw = { clinical: w.clinical * mult.clinical, community: w.community * mult.community, expert: w.expert * mult.expert };
+  const total = raw.clinical + raw.community + raw.expert;
+  return { clinical: raw.clinical / total, community: raw.community / total, expert: raw.expert / total };
+}
+
+function evidenceDimension(pp, up, needId, explanations) {
+  const ch = evidenceChannels(pp);
+  const w = trustWeightsFor(pp, up);
+  const value = clamp01(w.clinical * ch.clinical + w.community * ch.community + w.expert * ch.expert);
+  if (!up.trust.touched) return { value, known: false };
+  const hasData = ch.clinical + ch.community + ch.expert > 0;
   const top = up.trust.ranking[0];
-  if (top === 'clinical' && ch.clinical >= 0.75) explanations.push('Backed by clinical sources, which you ranked first');
+  const claim = pp.claim_evidence?.[needId];
+  const phrase = needPhrase(needId);
+  if (top === 'clinical' && claim && (claim.product_specific || claim.clinical_guideline)) explanations.push(`Has clinical sources about ${phrase}, which you ranked first`);
   if (top === 'community' && ch.community >= 0.66) explanations.push('Well reviewed by other women, which you ranked first');
   if (top === 'expert' && ch.expert >= 0.8) explanations.push('Reviewed by experts, which you ranked first');
-  return clamp01(value);
+  return { value, known: hasData };
 }
 
 /**
@@ -518,40 +671,119 @@ export function budgetFit(amount, budget) {
   return 0.1;
 }
 
-function priceComponent(pp, up, explanations) {
+function priceDimension(pp, up, notes, explanations) {
   const sh = up.shopping;
   const price = pp.price;
-  if (price.is_free) return 1;
-  if (sh.priceNotImportant || !sh.budget) return NEUTRAL.price;
-  if (price.amount == null) return 0.7;
+  if (!sh.budget) return null;                  // skipped or "not a major factor": not scored
+  if (price.is_free) { explanations.push('Within your budget'); return 1; }
+  if (price.amount == null) { notes.priceUnknown = true; return null; } // product price unknown: not scored
   let fit = budgetFit(price.amount, sh.budget);
   if (fit >= 1) explanations.push('Within your budget');
   else if (price.amount > sh.budget.max) {
+    // True cost over time: a reusable or long-supply product whose monthly
+    // cost fits the budget is not treated like a one-off expensive item.
+    const perMonth = pp.pricing?.per_month;
+    if (perMonth != null && perMonth <= sh.budget.max && (pp.pricing.reusable || /supply|years?/.test(pp.pricing.per_month_source || ''))) {
+      fit = Math.max(fit, 0.85);
+      notes.costOverTime = true;
+    }
     // History can gradually tighten the curve; it never rewrites the stated budget.
     fit -= Math.min(0.1, 0.05 * sh.priceSensitivity);
     // Purchases above the stated max soften the penalty by at most a quarter.
     const above = (up.behavior.purchasedPrices || []).filter((x) => x > sh.budget.max).length;
     if (above) fit += (1 - fit) * Math.min(0.25, 0.0625 * above);
-    if (fit < 0.85) explanations.push('Above your usual budget');
+    if (notes.costOverTime) explanations.push('Costs less over time than the upfront price');
+    else if (fit < 0.85) explanations.push('Above your usual budget');
   }
-  if (price.amount >= 75 && price.amount > sh.budget.max) {
+  if (price.amount >= 75 && price.amount > sh.budget.max && !notes.costOverTime) {
     if (sh.largePurchaseFrequency === 'Never') fit *= 0.85;
     else if (sh.largePurchaseFrequency === 'Rarely') fit *= 0.93;
   }
   return clamp01(fit);
 }
 
-function behaviorComponent(pp, up, notes) {
+function effortDimension(pp, up) {
+  if (!(up.shopping.usageBurden > 0) || pp.effort?.burden == null) return null;
+  return clamp01(1 - pp.effort.burden);
+}
+
+// ─── Experience (her history) and behavior ─────────────────────────────────
+const FACET_FOR_DIMENSION = { health: 'mechanism', safety: 'ingredients', format: 'format', price: 'price', effort: 'format' };
+function historyRelation(h, pp) {
+  if (sameProduct(h, pp)) return { kind: 'same' };
+  if (h.resolvedProduct) {
+    const hp = buildProductProfile(h.resolvedProduct);
+    const sim = productSimilarity(hp, pp);
+    return sim ? { kind: 'similar', sim, sameBrand: sim.brand === 1 } : null;
+  }
+  // A brand-only entry ("Always") relates to that brand's products.
+  if (h.brandKey && pp.brand.key && h.brandKey === pp.brand.key) return { kind: 'brand' };
+  return null;
+}
+
+function experiencePoints(pp, up, notes, explanations) {
+  let points = 0;
+  let index = 0.6; // reporting only: 0.6 = no history signal
+  let similarPoints = 0;
+  for (const h of up.experience.history) {
+    const rel = historyRelation(h, pp);
+    if (!rel) continue;
+    for (const e of h.effects) {
+      if (rel.kind === 'same') {
+        points += (e.same || 0) * EXPERIENCE_POINTS.scale;
+        index += e.same || 0;
+        continue;
+      }
+      if (!e.similar) continue;
+      // Similar only on the facet the effect is about, and only when truly similar.
+      let sim = 0;
+      if (rel.kind === 'brand') sim = 0.6;
+      else {
+        const facet = e.facet || FACET_FOR_DIMENSION[e.dimension];
+        const fv = facet ? rel.sim[facet] : null;
+        const sameUse = rel.sim.use_case === 1 || (rel.sim.health_function ?? 0) > 0;
+        sim = sameUse && fv != null && fv >= EXPERIENCE_POINTS.minFacetSimilarity ? fv : 0;
+        if (rel.sameBrand && sameUse) sim = Math.max(sim, 0.8);
+      }
+      if (!sim) continue;
+      similarPoints += e.similar * EXPERIENCE_POINTS.scale * sim;
+      index += e.similar * sim;
+      if (e.similarCaution) notes.similarReaction = true;
+    }
+    if (rel.kind === 'same') {
+      if (h.outcome === 'helped_a_lot') explanations.push('You said this helped a lot');
+      else if (h.outcome === 'helped_somewhat') explanations.push('You said this helped somewhat');
+    } else if (['helped_a_lot', 'helped_somewhat'].includes(h.outcome) && rel.kind !== 'brand' && (rel.sim?.mechanism ?? 0) >= 0.5) {
+      explanations.push('Works like something that helped you');
+    }
+  }
+  points += Math.max(-EXPERIENCE_POINTS.similarCap, Math.min(EXPERIENCE_POINTS.similarCap, similarPoints));
+  for (const p of up.shopping.positiveMentions) {
+    if ((p.key && p.key === pp.brand.key) || (p.normalized && normalizeName(pp.name).includes(p.normalized))) {
+      points += 3 * p.weight;
+      index += 0.15 * p.weight;
+      explanations.push('From a brand you said you like');
+      break;
+    }
+  }
+  return { points: Math.max(-EXPERIENCE_POINTS.cap, Math.min(EXPERIENCE_POINTS.cap, points)), index: clamp01(index) };
+}
+
+function behaviorSignal(pp, up, notes) {
   const b = up.behavior;
   const id = pp.product_id;
-  if (!id) return NEUTRAL.behavior;
-  if (b.hidden.has(id)) { notes.filtered = notes.filtered || 'hidden_by_user'; return 0; }
-  let v = NEUTRAL.behavior;
-  if (b.saved.has(id)) v = Math.max(v, 0.85);
-  if (b.purchased.has(id)) v = Math.max(v, 0.9);
-  if (b.reordered.has(id)) v = 1;
-  v += Math.min(0.1, 0.03 * (Number(b.viewed[id]) || 0));
-  return clamp01(v);
+  if (!id) return { net: 0, index: null };
+  if (b.hidden.has(id)) { notes.filtered = notes.filtered || 'hidden_by_user'; return { net: -1, index: 0 }; }
+  const ev = b.events?.get(String(id)) || {};
+  let net = Object.values(ev).reduce((a, v) => a + v, 0);
+  // Legacy shapes without events (saved / purchased / reordered sets).
+  if (!b.events) {
+    if (b.saved.has(id)) net += 0.5;
+    if (b.purchased.has(id)) net += 0.8;
+    if (b.reordered.has(id)) net += 1;
+  }
+  net = Math.max(-1, Math.min(1, net));
+  return { net, index: Object.keys(ev).length || b.saved.has(id) || b.purchased.has(id) ? clamp01(0.6 + 0.4 * net) : null };
 }
 
 // ─── Access (separate from health) ──────────────────────────────────────────
@@ -572,58 +804,108 @@ export function computeAccess(productOrProfile, up) {
   return { score: null, label: 'Availability not confirmed', zipUsed: false, known: false };
 }
 
+// ─── Explanations ───────────────────────────────────────────────────────────
+const VERB_BY_SOURCE = { selected: 'selected', legacy: 'shared', custom: 'added', free_text: 'mentioned', adhoc: 'selected' };
+function contextPhrase(ctx) {
+  if (!ctx) return null;
+  if (ctx.type === 'life_stage') return ctx.id === 'breastfeeding' ? 'the breastfeeding you shared' : `the ${LIFE_STAGE_BY_ID[ctx.id]?.phrase || ctx.phrase} stage you shared`;
+  if (ctx.type === 'condition') return `the ${ctx.phrase} diagnosis you shared`;
+  if (ctx.type === 'need') return `the ${ctx.phrase} you selected`;
+  if (ctx.type === 'free_text') return `the ${ctx.phrase} you mentioned`;
+  if (ctx.type === 'answer') return `the ${ctx.phrase} you shared`;
+  return null;
+}
+/**
+ * The health sentence: WHAT matched, never WHY she has a symptom.
+ * "Matches the night sweats you selected."
+ * "Matches your night sweats and the perimenopause stage you shared."
+ */
+export function healthSentence(relationship, needId, source, ctx) {
+  const phrase = needPhrase(needId);
+  const verb = VERB_BY_SOURCE[source] || 'selected';
+  const withCtx = contextPhrase(ctx);
+  if (relationship === 'direct' || relationship === 'strong') return withCtx ? `Matches your ${phrase} and ${withCtx}` : `Matches the ${phrase} you ${verb}`;
+  if (relationship === 'secondary') return withCtx ? `A secondary option for your ${phrase} and ${withCtx}` : `A secondary option for the ${phrase} you ${verb}`;
+  if (relationship === 'adjacent') return `Loosely related to the ${phrase} you ${verb}`;
+  return null;
+}
+
 // ─── Main entry points ──────────────────────────────────────────────────────
 /**
  * Score one product for one of the user's needs.
  * @param {object} productOrProfile raw catalog product or buildProductProfile() result
  * @param {object} up buildUserProfile() result
- * @param {string} needId canonical need id
+ * @param {string} needIdIn canonical need id
  * @param {{ safety?: object }} [opts] pass a precomputed evaluateSafety() result to skip recomputation
  */
-export function scoreProductForNeed(productOrProfile, up, needId, opts = {}) {
+export function scoreProductForNeed(productOrProfile, up, needIdIn, opts = {}) {
   const pp = asProfile(productOrProfile);
-  const need = up.healthIntent.needs.find((n) => n.id === needId) || { id: needId, modifiers: {}, source: 'adhoc' };
+  const needId = canonicalNeedId(needIdIn);
+  const need = up.healthIntent.needs.find((n) => n.id === needId) || { id: needId, modifiers: {}, source: 'adhoc', confidence: 1 };
   const safety = opts.safety || evaluateSafety(pp, up);
   const notes = { health: [] };
-  const healthExpl = [];
-  const contextExpl = [];
+  const prefExpl = [];
   const otherExpl = [];
 
-  const entry = pp.health_need_relevance[needId];
-  const base = entry?.score || 0;
+  // Relevance (with explicit contexts only).
+  const rel = resolveRelevance(pp, up, needId);
+  const base = rel.base;
   const health = healthComponent(pp, up, need, base, notes);
-  const relationship = relationshipOf(base);
-  const phrase = needPhrase(needId);
-  if (relationship === 'direct') healthExpl.push(`Made for ${phrase}`);
-  else if (relationship === 'strong') healthExpl.push(`A strong match for ${phrase}`);
-  else if (relationship === 'secondary') healthExpl.push(`Can help with ${phrase} alongside other options`);
-  else if (relationship === 'adjacent') healthExpl.push(`Loosely related to ${phrase}`);
+  const relationship = rel.relationship;
+  const focus = focusFactor(pp, needId);
+  const R = base > 0 ? RELEVANCE_SCALE * health * (0.9 + 0.1 * focus) : 0;
 
-  const components = {
-    health,
-    specificity: specificityComponent(pp, needId, base),
-    context: contextComponent(pp, up, need, notes, contextExpl),
-    experience: experienceComponent(pp, up, notes, otherExpl),
-    preference: preferenceComponent(pp, up, notes, otherExpl),
-    evidence: evidenceComponent(pp, up, otherExpl),
-    price: priceComponent(pp, up, otherExpl),
-    behavior: behaviorComponent(pp, up, notes),
+  // Context used for the explanation: the contextual unlock, else a stage or condition boost.
+  const ctxUsed = rel.contextUsed
+    || (notes.stageBonus ? { type: 'life_stage', id: notes.stageBonus, phrase: LIFE_STAGE_BY_ID[notes.stageBonus]?.phrase || notes.stageBonus } : null)
+    || (notes.contextBoost ? notes.contextBoost : null);
+
+  // Preference dimensions: known + applicable only (dynamic denominator).
+  const dims = {
+    context: contextDimension(pp, up),
+    format: formatDimension(pp, up, notes, prefExpl),
+    values: valuesDimension(pp, up, notes, prefExpl),
+    brand: brandDimension(pp, up, prefExpl),
+    evidence: null,
+    price: priceDimension(pp, up, notes, prefExpl),
+    effort: effortDimension(pp, up),
   };
+  const ev = evidenceDimension(pp, up, needId, prefExpl);
+  if (ev.known) dims.evidence = ev.value;
+  const weightFor = (k) => DIMENSION_WEIGHTS[k] * (k === 'price' && up.contradictions?.some((c) => c.affects.includes('price')) ? 0.5 : 1);
+  const known = Object.entries(dims).filter(([, v]) => v != null);
+  const preferenceFit = known.length ? known.reduce((sum, [k, v]) => sum + weightFor(k) * v, 0) / known.reduce((sum, [k]) => sum + weightFor(k), 0) : null;
+  const P = preferenceFit ?? 1;
 
-  // Need-specific confidence adjustments on top of the product-level safety confidence.
+  // Her history and behavior.
+  const exp = experiencePoints(pp, up, notes, otherExpl);
+  const beh = behaviorSignal(pp, up, notes);
+  const behaviorPoints = BEHAVIOR_POINTS * beh.net;
+
+  // Confidence (separate; never in the match).
   const confidenceReasons = safety.penalties.map((p) => ({ code: p.code, factor: p.factor, text: p.text }));
   let confidence = safety.confidence;
   const addPenalty = (code, text) => { confidence *= CONFIDENCE_PENALTIES[code]; confidenceReasons.push({ code, factor: CONFIDENCE_PENALTIES[code], text }); };
   if (needId === 'pain.menstrual_cramp' && need.modifiers?.painVaries) addPenalty('pain_varies', 'Pain varies');
   if (notes.similarReaction) addPenalty('similar_reaction_caution', 'Similar to a product that caused a mild reaction');
   if (notes.flowContradiction) addPenalty('flow_contradiction', 'Period support selected with no current periods');
-  confidence = Math.max(0.2, Math.min(1, confidence));
+  if (up.contradictions?.some((c) => c.affects.includes(needId))) addPenalty('answer_contradiction', 'Some answers about this need conflict');
+  if (need.confidence != null && need.confidence < 0.9) addPenalty('interpretation_uncertain', 'We are not fully sure how to read what you typed');
+  if (up.recency?.stale?.needs) addPenalty('stale_answers', 'Your answers are from a while ago');
+  const cls = productClass(pp);
+  const applicable = APPLICABLE_ANSWERS[cls] || APPLICABLE_ANSWERS.other;
+  const informative = (k) => ['answered', 'explicit_no'].includes(up.answers?.[k]);
+  const coverage = applicable.length ? applicable.filter(informative).length / applicable.length : 1;
+  confidence = Math.max(0.2, Math.min(1, confidence * (0.6 + 0.4 * coverage)));
 
-  const weighted = Object.entries(WEIGHTS).reduce((sum, [k, w]) => sum + w * components[k], 0);
-  const scores = base > 0;
-  const cosmetic = notes.cosmeticConflict ? COSMETIC_LEAVE_OUT_FACTOR : 1;
-  const raw = scores ? weighted * (safety.eligible ? 1 : 0) * confidenceFactor(confidence) * cosmetic : 0;
-  const score = Math.round(raw);
+  // The match.
+  let raw = base > 0 ? R * (1 - PREFERENCE_SPAN * (1 - P)) + exp.points + behaviorPoints : 0;
+  // Explainability check: without a truthful health sentence (at least a
+  // secondary relationship to THIS need) a product cannot rank as a match.
+  const explainable = ['direct', 'strong', 'secondary'].includes(relationship);
+  if (!explainable) raw = Math.min(raw, 49);
+  raw = Math.max(0, Math.min(MAX_SCORE, raw));
+  const score = safety.eligible && base > 0 ? Math.round(raw) : 0;
 
   // Care flags.
   const m = need.modifiers || {};
@@ -634,33 +916,68 @@ export function scoreProductForNeed(productOrProfile, up, needId, opts = {}) {
     || (MENSTRUAL_PRODUCT_NEEDS.has(needId) && m.flow === 'very_heavy')
     || needId === 'urinary.burning' || needId === 'vaginal.discharge' || needId === 'sexual.sti';
 
-  // Explanations: short, plain, user-facing, no em dashes. No "safe" claim when blocked.
-  const explanations = [...healthExpl];
+  // Explanations: what matched (actual inputs), never why she has a symptom.
+  const explanations = [];
+  const hs = healthSentence(relationship, needId, need.source, ctxUsed);
+  if (hs) explanations.push(hs);
   if (MENSTRUAL_PRODUCT_NEEDS.has(needId) && notes.flowFit >= 0.85 && ['heavy', 'very_heavy'].includes(m.flow)) explanations.push(`High capacity for ${m.flow === 'very_heavy' ? 'very heavy' : 'heavy'} flow`);
   if (MENSTRUAL_PRODUCT_NEEDS.has(needId) && notes.flowFit >= 0.85 && ['very_light', 'light'].includes(m.flow)) explanations.push('Sized for a lighter flow');
-  if (notes.conditionContext && notes.health.some((h) => h.startsWith('condition_pathway'))) explanations.push(`Fits the ${conditionPhrase(notes.conditionContext)} context you shared`);
-  explanations.push(...contextExpl);
   safety.confirmed.forEach((c) => explanations.push(c.text));
-  explanations.push(...otherExpl);
+  explanations.push(...otherExpl, ...prefExpl);
   if (notes.preventionOnlyNow) explanations.push('Not a substitute for getting checked');
   safety.cautions.forEach((c) => explanations.push(c.text.replace(/\.$/, '')));
   const finalExplanations = [...new Set(explanations.map(clean))];
+
+  const eligibility = !safety.eligible ? 'excluded' : safety.restricted ? 'restricted' : 'eligible';
+  const evidence = evidenceFor(pp, needId);
+  const access = computeAccess(pp, up);
 
   return {
     productId: pp.product_id,
     productName: pp.name,
     needId,
-    needLabel: NEED_BY_ID[needId]?.option || phrase,
+    needLabel: NEED_BY_ID[needId]?.option || needPhrase(needId),
     relevance: base,
     relationship,
+    contextual: rel.contextualOnly,
+    contextUsed: ctxUsed ? { type: ctxUsed.type, id: ctxUsed.id, phrase: ctxUsed.phrase, context: ctxUsed.context || null } : null,
+    needsContext: rel.needsContext || null,
     score,
-    components: Object.fromEntries(Object.entries(components).map(([k, v]) => [k, Math.round(v * 1000) / 1000])),
-    weightedPoints: Object.fromEntries(Object.entries(components).map(([k, v]) => [k, Math.round(WEIGHTS[k] * v * 10) / 10])),
-    safety: { eligible: safety.eligible, reasons: safety.reasons, cautions: safety.cautions, blockedClaims: safety.blockedClaims },
-    confidence: Math.round(confidence * 1000) / 1000,
-    confidenceFactor: Math.round(confidenceFactor(confidence) * 1000) / 1000,
+    eligibility,
+    restricted: eligibility === 'restricted',
+    explainable,
+    // Separate outputs (spec C).
+    outputs: {
+      relevance: Math.round(R),
+      preferenceFit: round3(preferenceFit),
+      safety: safety.status,
+      evidence: evidence.level,
+      confidence: round3(confidence),
+      access: access.score,
+    },
+    dimensions: {
+      known: known.map(([k]) => k),
+      unknown: Object.keys(dims).filter((k) => dims[k] == null),
+      values: Object.fromEntries(Object.entries(dims).map(([k, v]) => [k, round3(v)])),
+    },
+    components: {
+      health: round3(Math.min(1, health)),
+      specificity: round3(specificityComponent(pp, needId, base)),
+      context: round3(dims.context),
+      experience: round3(exp.index),
+      preference: round3(preferenceFit),
+      evidence: round3(ev.value),
+      price: round3(dims.price),
+      behavior: round3(beh.index),
+    },
+    points: { relevance: Math.round(R * 10) / 10, preferenceMultiplier: round3(1 - PREFERENCE_SPAN * (1 - P)), experience: Math.round(exp.points * 10) / 10, behavior: Math.round(behaviorPoints * 10) / 10 },
+    evidence,
+    safety: { eligible: safety.eligible, status: safety.status, restricted: safety.restricted, missingFields: safety.missingFields, reasons: safety.reasons, cautions: safety.cautions, blockedClaims: safety.blockedClaims },
+    confidence: round3(confidence),
+    confidenceLevel: eligibility === 'restricted' ? 'limited' : confidenceLevel(confidence),
     confidenceReasons,
-    tier: scores && safety.eligible ? tierFor(score) : 'browse',
+    coverage: round3(coverage),
+    tier: base > 0 && safety.eligible ? tierFor(score) : 'browse',
     explanations: finalExplanations,
     careFirst,
     careProminent: Boolean(careProminent),
@@ -668,10 +985,11 @@ export function scoreProductForNeed(productOrProfile, up, needId, opts = {}) {
     fsaHsa: pp.fsa_hsa,
     flowFit: notes.flowFit ?? null,
     careRoles: pp.care_roles,
+    access,
   };
 }
 function conditionPhrase(id) {
-  return { pcos: 'PCOS', endometriosis: 'endometriosis', fibroids: 'fibroids', adenomyosis: 'adenomyosis', pmdd: 'PMDD', pms: 'PMS', anemia: 'anemia', anxiety: 'anxiety', depression: 'depression', ibs_digestive: 'digestive condition', infertility: 'fertility' }[id] || id;
+  return { pcos: 'PCOS', endometriosis: 'endometriosis', fibroids: 'fibroids', adenomyosis: 'adenomyosis', pmdd: 'PMDD', pms: 'PMS', anemia: 'iron deficiency', anxiety: 'anxiety', depression: 'depression', ibs_digestive: 'digestive condition', infertility: 'infertility' }[id] || CONTEXTS[id]?.phrase || id;
 }
 
 /**
@@ -683,8 +1001,7 @@ export function scoreProduct(productOrProfile, up) {
   const safety = evaluateSafety(pp, up);
   const needs = up.healthIntent.needs
     .map((n) => scoreProductForNeed(pp, up, n.id, { safety }))
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => b.score - a.score || b.relevance - a.relevance);
   const best = needs.find((r) => r.relevance > 0) || null;
   return { productId: pp.product_id, needs, best, safety, access: computeAccess(pp, up) };
 }
-

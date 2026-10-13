@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
+import PartnerStrip from '../../components/PartnerStrip.jsx';
 import DiscoverDeck from '../components/DiscoverDeck.jsx';
 import CategoryNav from '../components/CategoryNav.jsx';
 import ProductCard from '../components/ProductCard.jsx';
@@ -417,6 +418,9 @@ export default function BrowseScreen({
           <span className="ay-discover-copy"><strong>Swipe to discover</strong></span>
           <span className="ay-discover-go" aria-hidden="true">→</span>
         </button>
+      )}
+      {mode === 'products' && !searchValue.trim() && (
+        <PartnerStrip variant="app" className="ay-shop-partners" onSelectBrand={(name) => { setActiveGroup('all'); setSearchValue(name); }} />
       )}
       {showDeck && <DiscoverDeck products={filtered} quizAnswers={authUser ? quizAnswers : null} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
       {mode === 'products' && <>

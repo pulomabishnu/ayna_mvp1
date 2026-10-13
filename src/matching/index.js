@@ -22,10 +22,15 @@ import { buildProductProfile } from './productProfile.js';
 import { scoreProduct, scoreProductForNeed } from './score.js';
 
 export { buildUserProfile, resolveCatalogProduct } from './userProfile.js';
-export { buildProductProfile, clearProductProfileCache, parsePrice, RELEVANCE_RULES, LEVEL } from './productProfile.js';
-export { scoreProduct, scoreProductForNeed, evaluateSafety, computeAccess, budgetFit, tierFor, confidenceFactor, WEIGHTS, TIERS, NEUTRAL } from './score.js';
-export { buildEcosystem, sortResults, brandCategory } from './ecosystem.js';
-export { canonicalize, NEEDS, NEED_BY_ID, needIdForOption, CONDITIONS, LIFE_STAGES, FORMATS, VALUES, ALLERGENS, LEAVE_OUT } from './ontology.js';
+export { buildProductProfile, clearProductProfileCache, parsePrice, productSimilarity, RELEVANCE_RULES, LEVEL, CONTEXT_BONUS, BROAD_MARKETING } from './productProfile.js';
+export {
+  scoreProduct, scoreProductForNeed, evaluateSafety, computeAccess, budgetFit, tierFor, confidenceLevel, resolveRelevance, healthSentence, evidenceFor,
+  requiredFieldsFor, REQUIRED_FIELD_TEXT, DIMENSION_WEIGHTS, WEIGHTS, TIERS, PREFERENCE_SPAN,
+} from './score.js';
+export { buildEcosystem, sortResults, brandCategory, diversify, assignRoles, compareResults, qualityPrior } from './ecosystem.js';
+export {
+  canonicalize, canonicalNeedId, NEEDS, NEED_BY_ID, NEED_POLICY, NEED_KINDS, CONTEXTS, needIdForOption, needKind, CONDITIONS, LIFE_STAGES, FORMATS, VALUES, ALLERGENS, LEAVE_OUT,
+} from './ontology.js';
 export { normalizeMedication, checkMedicationInteractions, INTERACTION_TABLE } from './medications.js';
 export { extractFreeText, summarizeFreeText } from './freeText.js';
 
@@ -79,6 +84,8 @@ export function explainProduct(product, intake, opts = {}) {
     eligible: all.safety.eligible,
     excludedBecause: all.safety.reasons.map((r) => r.text),
     confidence: best ? best.confidence : all.safety.confidence,
+    confidenceLevel: best ? best.confidenceLevel : 'limited',
+    eligibility: best ? best.eligibility : all.safety.eligible ? (all.safety.restricted ? 'restricted' : 'eligible') : 'excluded',
     access: all.access,
     careFirst: up.safety.careFirst,
     careProminent: best ? best.careProminent : up.safety.careProminent,

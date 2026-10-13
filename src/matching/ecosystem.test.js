@@ -135,7 +135,7 @@ describe('adapters', () => {
 
   it('explainProduct returns a headline, explanations and exclusion reasons', () => {
     const e = explainProduct(thermacare, intake);
-    expect(e).toMatchObject({ headline: 'Made for period cramps', eligible: true, needId: 'pain.menstrual_cramp' });
+    expect(e).toMatchObject({ headline: 'Matches the period cramps you selected', eligible: true, needId: 'pain.menstrual_cramp' });
     const avoided = explainProduct(thermacare, { ...intake, avoidRepeat: ['ThermaCare'] });
     expect(avoided.eligible).toBe(false);
     expect(avoided.excludedBecause[0]).toMatch(/avoid ThermaCare/);

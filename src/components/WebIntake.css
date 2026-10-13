@@ -202,3 +202,21 @@ div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var
 .wq-tile.is-on .wq-check { border-color: var(--ink); }
 .wq-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 10px !important; }
 @media (max-width: 640px) { .wq-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
+
+/* About you + ZIP: the answer sits centred in the card, like the full-width answers on other steps */
+.wq-page[data-step='age'] .wq-age { justify-items: center; text-align: center; }
+.app-container .wq-page[data-step='age'] .wq-age-field { grid-template-columns: 1fr auto 1fr; justify-content: stretch; width: 100%; }
+.app-container .wq-page[data-step='age'] .wq-age-field input { grid-column: 2; }
+.app-container .wq-page[data-step='age'] .wq-age-field small { grid-column: 3; justify-self: start; }
+.app-container .wq-page[data-step='age'] .wq-age-field > span { justify-self: center; }
+.app-container .wq-page[data-step='age'] .wq-age-field input { text-align: center; }
+.wq-page[data-step='age'] .wq-alert { text-align: center; }
+.wq-zip-wrap { display: grid; justify-items: center; gap: 12px; padding: 24px; border: 2px solid var(--ink); border-radius: 24px; background: var(--cream); }
+.wq-zip-wrap .wq-zip { width: min(280px, 100%); max-width: none; text-align: center; letter-spacing: .16em; }
+.wq-zip-wrap .wq-zip::placeholder { letter-spacing: .04em; }
+.wq-zip-wrap .wq-zip[aria-invalid='true'] { border-color: #b4402a; }
+.wq-page .wq-zip-err { --zip-err: #b4402a; display: flex; align-items: center; gap: 8px; color: var(--zip-err) !important; }
+.wq-page .wq-zip-err::before { content: '!'; display: grid; place-items: center; width: 20px; height: 20px; flex: none; border-radius: 50%; background: var(--zip-err); color: #fffcf5; font: 800 13px/1 'Poppins', system-ui, sans-serif; }
+.app-container[data-theme='dark'] .wq-page .wq-zip-err { --zip-err: #ff9b85; }
+.app-container[data-theme='dark'] .wq-page .wq-zip-err::before { color: #17161f; }
+.app-container[data-theme='dark'] .wq-zip-wrap .wq-zip[aria-invalid='true'] { border-color: #ff9b85; }

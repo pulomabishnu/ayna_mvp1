@@ -26,6 +26,23 @@ export function relationshipFor(score) {
 }
 const { DIRECT, STRONG, SECONDARY, ADJACENT, WEAK } = LEVEL;
 
+// CONTEXTUAL relationship (founder spec A.10): the product is relevant to a
+// need ONLY when she also gave one of these explicit contexts (ontology
+// CONTEXTS). Example: a menopause supplement for night sweats requires the
+// menopause transition context; night sweats alone never unlocks it.
+//   ctx(STRONG, 'menopause_transition')
+export function ctx(level, ...contexts) { return { level, requires: contexts }; }
+// CONTEXT BONUS (spec A.14): a product that is already relevant to the need
+// and is specifically appropriate to an explicit context gets +0.10 when that
+// context is present, nothing otherwise.
+export const CONTEXT_BONUS = 0.1;
+
+// Broad marketing language ("hormone balance", "women's wellness", "detox",
+// "cycle support", "feminine wellness", "metabolism", "reproductive support")
+// is almost worthless as relevance: any need supported only by it is capped
+// at WEAK (0.10), so it can never put a product on a shelf.
+export const BROAD_MARKETING = /hormone balance|hormonal balance|balance (your )?hormones|women'?s wellness|feminine wellness|\bdetox|cycle support|metabolism|reproductive support|hormonal support|hormone support/;
+
 export const PERIOD_CATEGORIES = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear']);
 
 // Copy that denies a property ("hormone-free") or uses a keyword in an
@@ -117,7 +134,7 @@ export const RELEVANCE_RULES = [
   { id: 'pelvic_wand', why: 'A pelvic wand is made for pelvic trigger-point release.',
     when: (f) => f.cat === 'pelvic-floor' && f.n(/wand/), set: { 'pain.pelvic': DIRECT, 'pain.sexual': SECONDARY, 'pain.menstrual_cramp': WEAK } },
   { id: 'dilators', why: 'Dilators are made for vaginismus and pain with penetration.',
-    when: (f) => f.n(/dilator/), set: { 'pain.sexual': DIRECT, 'pain.pelvic': STRONG } },
+    when: (f) => f.n(/dilator/), set: { 'pain.sexual': DIRECT, 'pain.pelvic': SECONDARY } },
   { id: 'pelvic_pain_app', why: 'A pain-tracking app built for pelvic pain.',
     when: (f) => f.cat === 'tracker' && f.t(/pelvic pain|chronic pain/),
     set: (f) => ({ 'pain.pelvic': STRONG, 'pain.menstrual_cramp': ADJACENT, ...(f.t(/endometriosis/) ? { 'condition_support.endometriosis': STRONG } : {}) }),
@@ -126,6 +143,8 @@ export const RELEVANCE_RULES = [
   // ── Pelvic floor and bladder ───────────────────────────────────────────
   { id: 'incontinence_product', why: 'Incontinence pads, liners, underwear and devices are made for bladder leaks.',
     when: (f) => f.cat === 'incontinence' || f.fn('bladder-leak-protection'), set: { 'urinary.incontinence': DIRECT } },
+  { id: 'overactive_bladder_device', why: 'A device the catalog describes for overactive bladder (urge) symptoms.',
+    when: (f) => f.cat === 'incontinence' && f.n(/overactive bladder|\burge\b/), set: { 'urinary.urgency': STRONG, 'urinary.frequency': SECONDARY } },
   { id: 'pelvic_floor_trainer', why: 'Pelvic floor trainers and programs target bladder leakage.',
     when: (f) => f.cat === 'pelvic-floor' && !f.n(/wand|bra|extender/) && !f.has('accessory') && f.t(/kegel|pelvic floor|leak|incontinen|bladder|resistance spring/),
     set: (f) => ({ 'urinary.incontinence': STRONG, 'fitness.strength': f.has('fitness') ? SECONDARY : ADJACENT,
@@ -145,7 +164,8 @@ export const RELEVANCE_RULES = [
       'fertility.ttc': f.t(/fertil|conceive|ovulat/) ? SECONDARY : ADJACENT }) },
   { id: 'menopause_tracker', why: 'A symptom tracker made for perimenopause and menopause.',
     when: (f) => f.cat === 'tracker' && f.t(/menopause/),
-    set: { 'menopause.hot_flashes': SECONDARY, 'menopause.night_sweats': ADJACENT, 'menopause.body_changes': SECONDARY, 'cycle.irregular': ADJACENT } },
+    set: { 'vasomotor.hot_flashes': ctx(SECONDARY, 'menopause_transition'), 'vasomotor.night_sweats': ctx(ADJACENT, 'menopause_transition'),
+      'menopause.body_changes': SECONDARY, 'cycle.irregular': ctx(ADJACENT, 'menopause_transition') } },
   { id: 'wearable_tracker', why: 'A wearable that tracks sleep and activity alongside the cycle.',
     when: (f) => f.cat === 'tracker' && f.t(/sleep/) && f.t(/ring|wearable|watch/),
     set: { 'sleep.trouble': SECONDARY, 'energy.fatigue': ADJACENT, 'fitness.strength': ADJACENT } },
@@ -167,7 +187,7 @@ export const RELEVANCE_RULES = [
 
   // ── Hormonal conditions ────────────────────────────────────────────────
   { id: 'pcos_tagged', why: 'Catalog marks this for PCOS.',
-    when: (f) => f.has('pcos'), set: (f) => ({ 'condition_support.pcos': f.n(/inositol/) ? STRONG : SECONDARY, 'hormonal.general': ADJACENT }) },
+    when: (f) => f.has('pcos'), set: (f) => ({ 'condition_support.pcos': f.n(/inositol/) ? STRONG : SECONDARY, 'hormonal.general': WEAK }) },
   { id: 'pcos_mentioned', why: 'Mentions PCOS without being made for it.',
     when: (f) => !f.has('pcos') && f.tc(/\bpcos\b/), set: { 'condition_support.pcos': ADJACENT } },
   { id: 'androgen_mention', why: 'Mentions androgen or excess hair research.',
@@ -181,22 +201,28 @@ export const RELEVANCE_RULES = [
       ...(f.has('cramps') ? { 'pain.menstrual_cramp': SECONDARY, 'pain.pelvic': SECONDARY } : {}) }) },
   { id: 'endo_tagged', why: 'Catalog marks this for endometriosis.',
     when: (f) => f.has('endometriosis'), set: { 'condition_support.endometriosis': ADJACENT } },
-  { id: 'hormone_tagged', why: 'Catalog marks this as hormone-related.',
-    when: (f) => f.fn('hormone-balance') || f.has('hormonal') || f.has('hormone-support') || f.has('hormone-monitoring'), set: { 'hormonal.general': ADJACENT } },
+  { id: 'hormone_tagged', why: 'Catalog marks this as hormone-related (broad marketing, almost no weight).', broad: true,
+    when: (f) => f.fn('hormone-balance') || f.has('hormonal') || f.has('hormone-support') || f.has('hormone-monitoring') || f.t(BROAD_MARKETING), set: { 'hormonal.general': WEAK } },
 
   // ── Care services (telehealth, virtual clinics) ────────────────────────
   { id: 'care_service', why: 'A telehealth or virtual care service.',
-    when: (f) => isCareService(f), set: { 'care.telehealth': DIRECT, 'care.find_doctor': SECONDARY, 'hormonal.general': ADJACENT }, roles: ['care'] },
+    when: (f) => isCareService(f), set: { 'care.telehealth': DIRECT, 'care.find_doctor': SECONDARY, 'hormonal.general': WEAK }, roles: ['care'] },
   { id: 'care_uti', why: 'Telehealth that treats UTIs.',
     when: (f) => isCareService(f) && (f.has('uti') || f.fn('uti-prevention') || f.t(/\buti\b/)),
-    set: { 'urinary.burning': STRONG, 'urinary.frequency': STRONG, 'urinary.urgency': STRONG, 'urinary.recurrent_uti': STRONG }, roles: ['care'] },
+    // Frequent urination or urgency alone does not mean a UTI: UTI care is a
+    // useful secondary option for those, strong only for UTI-like symptoms.
+    set: { 'urinary.burning': STRONG, 'urinary.frequency': SECONDARY, 'urinary.urgency': SECONDARY, 'urinary.recurrent_uti': STRONG }, roles: ['care'] },
   { id: 'care_sti', why: 'Telehealth that handles STI care.',
     when: (f) => isCareService(f) && f.t(/\bstis?\b|\bstds?\b|sexually transmitted/), set: { 'sexual.sti': STRONG }, roles: ['care'] },
   { id: 'care_bv', why: 'Telehealth that treats BV.',
     when: (f) => isCareService(f) && f.t(/\bbv\b|bacterial vaginosis/), set: { 'vaginal.bv': DIRECT, 'vaginal.discharge': SECONDARY, 'vaginal.odor': SECONDARY }, roles: ['care'] },
   { id: 'care_menopause', why: 'Virtual care focused on perimenopause and menopause.',
     when: (f) => isCareService(f) && (f.has('menopause') || f.cat === 'menopause' || f.t(/menopause/)),
-    set: { 'menopause.hot_flashes': STRONG, 'menopause.night_sweats': STRONG, 'menopause.body_changes': STRONG, 'pain.joint': ADJACENT, 'sleep.trouble': ADJACENT, 'vaginal.dryness': ADJACENT }, roles: ['care'] },
+    // A menopause clinic is relevant to hot flashes or night sweats only when
+    // she shared the menopause transition; the symptom alone never unlocks it.
+    set: { 'vasomotor.hot_flashes': ctx(STRONG, 'menopause_transition'), 'vasomotor.night_sweats': ctx(STRONG, 'menopause_transition'), 'menopause.body_changes': STRONG,
+      'pain.joint': ctx(ADJACENT, 'menopause_transition'), 'sleep.trouble': ctx(ADJACENT, 'menopause_transition'), 'vaginal.dryness': ctx(SECONDARY, 'menopause_transition'),
+      'sexual.libido': ctx(ADJACENT, 'menopause_transition'), 'cognition.brain_fog': ctx(ADJACENT, 'menopause_transition') }, roles: ['care'] },
   { id: 'care_mental_health', why: 'Telehealth that treats anxiety and depression.',
     when: (f) => isCareService(f) && (f.fn('mental-health') || f.has('mental-health')),
     set: (f) => ({ 'mood.general_anxiety': STRONG, 'mood.low': STRONG, 'mood.pmdd': SECONDARY, 'mood.irritability': ADJACENT,
@@ -222,12 +248,22 @@ export const RELEVANCE_RULES = [
     set: { 'mood.low': ADJACENT, 'pregnancy.prenatal': ADJACENT, 'postpartum.recovery': ADJACENT, 'fertility.ttc': ADJACENT, 'menopause.body_changes': ADJACENT } },
   { id: 'sleep_product', why: 'Made for sleep.',
     when: (f) => f.cat === 'sleep',
-    set: (f) => ({ 'sleep.trouble': f.t(/heats? and cools?|temperature/) ? STRONG : SECONDARY,
-      ...(f.has('menopause') && f.t(/cool|temperature/) ? { 'menopause.night_sweats': SECONDARY, 'menopause.hot_flashes': ADJACENT } : {}) }) },
+    set: (f) => ({ 'sleep.trouble': f.t(/heats? and cools?|temperature/) ? STRONG : SECONDARY }) },
+  // Night sweats and hot flashes are heat symptoms. A product whose mechanism
+  // is cooling addresses them directly, whatever their cause; no life stage
+  // is needed. Menopause positioning only adds the context bonus.
+  { id: 'cooling_sleep', why: 'Actively cools the bed at night, which directly targets nighttime heat and sweating.',
+    when: (f) => f.cat === 'sleep' && f.t(/\bcool(s|ing)?\b/) && f.t(/heats? and cools?|temperature|cooling/),
+    set: { 'vasomotor.night_sweats': STRONG, 'vasomotor.hot_flashes': ADJACENT } },
+  { id: 'cooling_product', why: 'A cooling product made for hot flashes or night sweats.',
+    when: (f) => f.cat !== 'sleep' && f.t(/\bcool(s|ing)?\b/) && f.t(/hot flash|night sweat/) && !f.t(/supplement|capsule|tablet/),
+    set: (f) => ({ 'vasomotor.hot_flashes': f.n(/hot flash/) ? DIRECT : STRONG, 'vasomotor.night_sweats': f.t(/night sweat/) ? STRONG : ADJACENT }) },
 
   // ── Supplements by name / ingredient ───────────────────────────────────
   { id: 'iron_supplement', why: 'Iron supports energy when iron is low.',
-    when: (f) => f.cat === 'supplement' && f.n(/\biron\b/), set: { 'energy.fatigue': SECONDARY } },
+    // Fatigue alone does not mean iron deficiency: iron is relevant to fatigue
+    // only when she shared a confirmed anemia / iron deficiency diagnosis.
+    when: (f) => f.cat === 'supplement' && f.n(/\biron\b/), set: { 'energy.fatigue': ctx(SECONDARY, 'anemia') } },
   { id: 'vitamin_d_only', why: 'Vitamin D alone is only adjacent to bone health.',
     when: (f) => f.cat === 'supplement' && f.n(/vitamin d/) && !f.n(/calcium/), set: { 'bone.health': ADJACENT } },
   { id: 'bone_health', why: 'Made for bone health.',
@@ -256,13 +292,16 @@ export const RELEVANCE_RULES = [
     set: { 'bloating.cycle_related': ADJACENT, 'bloating.unspecified': ADJACENT, 'bloating.digestive': WEAK } },
   { id: 'menopause_supplement', why: 'Supplement or product marketed for menopause symptoms.',
     when: (f) => (f.cat === 'menopause' || (f.cat === 'supplement' && f.has('menopause') && !f.n(/creatine/))) && !isCareService(f),
+    // Positioned for menopause: relevant to her symptoms only in the
+    // menopause transition context she shared (CONTEXTUAL), never from the
+    // symptom alone.
     set: (f) => ({
       'menopause.body_changes': SECONDARY,
-      ...(f.t(/hot flash/) ? { 'menopause.hot_flashes': f.n(/hot flash/) ? DIRECT : STRONG } : {}),
-      ...(f.t(/night sweat/) ? { 'menopause.night_sweats': STRONG } : {}),
-      ...(f.t(/mood/) ? { 'mood.swings': SECONDARY } : {}),
-      ...(f.t(/memory|cognit/) ? { 'cognition.brain_fog': SECONDARY, 'cognition.concentration': ADJACENT } : {}),
-      ...(f.t(/sleep/) ? { 'sleep.trouble': SECONDARY } : {}) }) },
+      ...(f.t(/hot flash/) ? { 'vasomotor.hot_flashes': ctx(f.n(/hot flash/) ? DIRECT : STRONG, 'menopause_transition') } : {}),
+      ...(f.t(/night sweat/) ? { 'vasomotor.night_sweats': ctx(STRONG, 'menopause_transition') } : {}),
+      ...(f.t(/mood/) ? { 'mood.swings': ctx(SECONDARY, 'menopause_transition') } : {}),
+      ...(f.t(/memory|cognit/) ? { 'cognition.brain_fog': ctx(SECONDARY, 'menopause_transition'), 'cognition.concentration': ctx(ADJACENT, 'menopause_transition') } : {}),
+      ...(f.t(/sleep/) ? { 'sleep.trouble': ctx(SECONDARY, 'menopause_transition') } : {}) }) },
   { id: 'prenatal', why: 'A prenatal vitamin.',
     when: (f) => f.n(/prenatal/), set: { 'pregnancy.prenatal': DIRECT, 'fertility.ttc': SECONDARY, 'postpartum.lactation': ADJACENT } },
   { id: 'probiotic_vaginal', why: 'A general probiotic is not a BV or yeast treatment.',
@@ -277,11 +316,13 @@ export const RELEVANCE_RULES = [
     set: { 'urinary.recurrent_uti': STRONG, 'urinary.burning': WEAK, 'urinary.frequency': WEAK, 'urinary.urgency': WEAK }, roles: ['prevention'] },
   { id: 'uti_test', why: 'An at-home UTI test.',
     when: (f) => (f.has('uti') || f.fn('uti-prevention')) && f.t(/test strip|uti test|rapid test|\btest\b/),
-    set: { 'urinary.burning': DIRECT, 'urinary.frequency': STRONG, 'urinary.urgency': STRONG, 'urinary.recurrent_uti': STRONG },
+    // Frequent urination / urgency alone do not mean a UTI: a UTI test is a
+    // useful secondary check for them, strong for UTI-like symptoms.
+    set: { 'urinary.burning': DIRECT, 'urinary.frequency': SECONDARY, 'urinary.urgency': SECONDARY, 'urinary.recurrent_uti': STRONG },
     roles: (f) => (f.fn('telehealth') ? ['testing', 'care'] : ['testing']) },
   { id: 'uti_symptom_relief', why: 'Short-term urinary pain relief.',
     when: (f) => (f.has('uti') || f.fn('uti-prevention')) && f.t(/phenazopyridine|urinary pain relief|pain relief/),
-    set: { 'urinary.burning': STRONG, 'urinary.urgency': SECONDARY, 'urinary.frequency': SECONDARY, 'urinary.recurrent_uti': WEAK }, roles: ['symptom_relief'] },
+    set: { 'urinary.burning': STRONG, 'urinary.urgency': ADJACENT, 'urinary.frequency': ADJACENT, 'urinary.recurrent_uti': WEAK }, roles: ['symptom_relief'] },
 
   // ── Vaginal and vulvar ─────────────────────────────────────────────────
   { id: 'vaginal_ph_test', why: 'At-home vaginal pH test with a care path.',
@@ -341,9 +382,9 @@ export const RELEVANCE_RULES = [
   { id: 'postpartum_tagged', why: 'Catalog marks this as postpartum-relevant.',
     when: (f) => f.has('postpartum'), set: { 'postpartum.recovery': ADJACENT } },
   { id: 'pregnancy_support_band', why: 'Made for pregnancy back and pelvic pressure.',
-    when: (f) => f.has('pregnancy') && f.n(/\bband\b|bandit/), set: { 'pregnancy.discomfort': DIRECT, 'pain.pelvic': ADJACENT } },
+    when: (f) => f.has('pregnancy') && f.n(/\bband\b|bandit/), set: { 'pregnancy.discomfort': DIRECT, 'pain.pelvic': ctx(ADJACENT, 'pregnancy') } },
   { id: 'pregnancy_pillow', why: 'Made for sleep comfort in pregnancy.',
-    when: (f) => f.has('pregnancy') && f.n(/pillow/), set: { 'pregnancy.discomfort': STRONG, 'sleep.trouble': ADJACENT } },
+    when: (f) => f.has('pregnancy') && f.n(/pillow/), set: { 'pregnancy.discomfort': STRONG, 'sleep.trouble': ctx(SECONDARY, 'pregnancy') } },
   { id: 'pregnancy_tagged', why: 'Made with pregnancy in mind.',
     when: (f) => f.has('pregnancy') || f.cat === 'pregnancy',
     set: (f) => ({ 'pregnancy.safe_discovery': f.has('pregnancy') ? STRONG : SECONDARY, 'pregnancy.prenatal': ADJACENT }) },
@@ -352,7 +393,9 @@ export const RELEVANCE_RULES = [
   { id: 'acne_tagged', why: 'Catalog marks this for acne.',
     when: (f) => f.has('acne'), set: { 'skin.acne': SECONDARY, 'skin.hormonal': ADJACENT } },
   { id: 'nausea_text', why: 'Mentions nausea relief.',
-    when: (f) => f.t(/nausea/) && f.cat === 'supplement', set: { 'digestive.nausea': SECONDARY } },
+    when: (f) => f.t(/nausea/) && f.cat === 'supplement',
+    // Nausea alone never means pregnancy; morning-sickness products need the pregnancy context.
+    set: (f) => ({ 'digestive.nausea': f.t(/morning sickness|pregnan/) ? ctx(SECONDARY, 'pregnancy') : SECONDARY }) },
   { id: 'constipation_text', why: 'Made for constipation.',
     when: (f) => f.t(/constipat|laxative|stool softener/), set: { 'digestive.constipation': STRONG } },
   { id: 'diarrhea_text', why: 'Made for diarrhea.',
@@ -364,11 +407,13 @@ export const RELEVANCE_RULES = [
   { id: 'fitness_tagged', why: 'Fitness-oriented.',
     when: (f) => (f.has('fitness') || f.fn('fitness-cycle')) && !f.has('accessory'), set: { 'fitness.strength': SECONDARY } },
   { id: 'energy_tagged', why: 'Catalog marks this for energy.',
-    when: (f) => f.has('energy') || f.has('fatigue'), set: { 'energy.fatigue': SECONDARY } },
+    // Iron is handled by iron_supplement (fatigue only with a confirmed deficiency).
+    when: (f) => (f.has('energy') || f.has('fatigue')) && !f.n(/\biron\b/), set: { 'energy.fatigue': SECONDARY } },
   { id: 'sleep_tagged', why: 'Catalog marks this for sleep.',
-    when: (f) => f.has('sleep') || f.fn('sleep'), set: { 'sleep.trouble': SECONDARY } },
+    // Menopause-positioned supplements get sleep only in that context (menopause_supplement).
+    when: (f) => (f.has('sleep') || f.fn('sleep')) && !(f.cat === 'menopause' || (f.cat === 'supplement' && f.has('menopause'))), set: { 'sleep.trouble': SECONDARY } },
   { id: 'sleep_energy_group', why: 'Catalog groups this under sleep and energy.',
-    when: (f) => f.fn('sleep-energy') && !f.has('sleep'), set: { 'energy.fatigue': ADJACENT } },
+    when: (f) => f.fn('sleep-energy') && !f.has('sleep') && !f.n(/\biron\b/), set: { 'energy.fatigue': ADJACENT } },
   { id: 'accessory_cap', why: 'Accessories never rank above the product they belong to.',
     when: (f) => f.has('accessory'), set: {}, cap: { '*': SECONDARY } },
   // Spec: 0.80 means strong evidence or relevance. A product the catalog marks
@@ -583,8 +628,13 @@ function lifeStageFor(f, pregnancy) {
   if (f.fn('contraception') || f.has('contraception')) { ls.hormonal_birth_control = 'relevant'; if (ls.ttc === 'unknown') ls.ttc = 'not_relevant'; }
   if (f.has('pregnancy') || f.cat === 'pregnancy' || f.n(/prenatal/)) ls.pregnant = 'designed_for';
   if (f.has('postpartum') || f.cat === 'postpartum') ls.postpartum = 'designed_for';
-  if (f.has('menopause') || f.cat === 'menopause' || f.fn('perimenopause') || f.has('perimenopause') || f.t(/menopaus/)) {
+  // 'designed_for' needs a catalog classification (tag, category, health
+  // function) or the product name. A passing mention in marketing copy ("a
+  // common perimenopause and postpartum symptom") only makes it 'relevant'.
+  if (f.has('menopause') || f.cat === 'menopause' || f.fn('perimenopause') || f.has('perimenopause') || f.n(/menopaus/)) {
     Object.assign(ls, { perimenopause: 'designed_for', menopause: 'designed_for', postmenopause: 'designed_for' });
+  } else if (f.t(/menopaus/)) {
+    for (const st of ['perimenopause', 'menopause', 'postmenopause']) if (ls[st] === 'unknown') ls[st] = 'relevant';
   }
   if (pregnancy.overall === 'contraindicated') ls.pregnant = 'contraindicated';
   return ls;
@@ -729,6 +779,141 @@ function accessFor(product, f, price) {
   };
 }
 
+// ─── Status, freshness, pricing, effort, mechanism, claim evidence ─────────
+// RECALL / STATUS (spec B): a structured status field suppresses the product
+// regardless of personalization. Free-text `safety.recalls` notes are not
+// parsed (they mix lawsuits, historical recalls and "no recalls").
+export function statusFor(product) {
+  const raw = String(product.status || product.listingStatus || product.availabilityStatus || '').toLowerCase();
+  if (product.recall?.active === true || product.activeRecall === true || product.isRecalled === true || /recall/.test(raw)) return { state: 'recalled', source: 'catalog field' };
+  if (product.removed === true || product.isRemoved === true || /removed|delisted/.test(raw)) return { state: 'removed', source: 'catalog field' };
+  if (product.discontinued === true || product.isDiscontinued === true || /discontinued/.test(raw)) return { state: 'discontinued', source: 'catalog field' };
+  return { state: 'active', source: raw ? 'catalog field' : null };
+}
+
+// CATALOG FRESHNESS (spec B): when ingredients, safety, price and stock were
+// last verified. The catalog has no such dates today, so this is 'unknown'.
+export const FRESHNESS_DAYS = { fresh: 120, aging: 365 };
+export function freshnessFor(product, now = Date.now()) {
+  const raw = product.lastVerified ?? product.verifiedAt ?? product.lastReviewed ?? product.last_reviewed ?? product.priceCheckedAt ?? product.updatedAt ?? null;
+  const t = raw ? Date.parse(String(raw)) : NaN;
+  if (!Number.isFinite(t)) return { state: 'unknown', lastVerified: null, ageDays: null };
+  const ageDays = Math.max(0, Math.round((now - t) / 86400000));
+  return { state: ageDays <= FRESHNESS_DAYS.fresh ? 'fresh' : ageDays <= FRESHNESS_DAYS.aging ? 'aging' : 'stale', lastVerified: String(raw), ageDays };
+}
+
+// TRUE COST OVER TIME (spec B). Only from what the price text states:
+// "/month", "/week", "/year", "N-day supply", "reusable up to N years".
+// Nothing is assumed about dose or how long a pack lasts otherwise.
+export function pricingFor(price, product, f) {
+  const text = String(product.price || '').toLowerCase();
+  const out = { upfront: price.amount, per_month: null, per_month_source: null, reusable: /reusable/.test(`${text} ${f.text}`) || f.has('reusable') };
+  if (price.amount == null) return out;
+  const daySupply = text.match(/(\d{2,3})[- ]day supply/);
+  const years = text.match(/(?:reusable|lasts?)[^.;)]*?(\d{1,2})\s*years?/);
+  if (price.recurring === 'month') { out.per_month = price.amount; out.per_month_source = 'price per month'; }
+  else if (price.recurring === 'week') { out.per_month = Math.round(price.amount * 4.33 * 100) / 100; out.per_month_source = 'price per week'; }
+  else if (/\/\s*year|per year|a year/.test(text) && !/\/\s*month/.test(text)) { out.per_month = Math.round((price.amount / 12) * 100) / 100; out.per_month_source = 'price per year'; }
+  else if (daySupply) { out.per_month = Math.round((price.amount / Number(daySupply[1])) * 30 * 100) / 100; out.per_month_source = `${daySupply[1]}-day supply`; }
+  else if (years) { out.per_month = Math.round((price.amount / (Number(years[1]) * 12)) * 100) / 100; out.per_month_source = `reusable up to ${years[1]} years`; }
+  return out;
+}
+
+// EFFORT / ADHERENCE (spec B), from format, category and price text.
+export const EFFORT_LEVELS = {
+  one_time: { label: 'Buy once', burden: 0.1 },
+  per_use: { label: 'Use when needed', burden: 0.2 },
+  device_setup: { label: 'Device with setup', burden: 0.4 },
+  subscription: { label: 'Subscription', burden: 0.4 },
+  daily: { label: 'Daily routine', burden: 0.5 },
+  appointment: { label: 'Appointments', burden: 0.6 },
+};
+export function effortFor(f, formats, price, careService) {
+  let level = null;
+  if (careService) level = 'appointment';
+  else if (price.recurring) level = 'subscription';
+  else if (f.cat === 'supplement' || formats.some((x) => ['pill_capsule', 'gummy', 'powder', 'drink_tea'].includes(x))) level = 'daily';
+  else if (formats.includes('app_service')) level = 'subscription';
+  else if (formats.includes('device') && /app|bluetooth|program|session|charge|rechargeable/.test(f.text)) level = 'device_setup';
+  else if (formats.includes('device') || f.has('reusable')) level = 'one_time';
+  else if (formats.some((x) => ['period_care', 'topical', 'patch', 'suppository', 'test_kit'].includes(x))) level = 'per_use';
+  return level ? { level, ...EFFORT_LEVELS[level] } : { level: 'unknown', label: null, burden: null };
+}
+
+// MECHANISM: the rules that make it relevant (how it works), used for
+// facet similarity and "alternative approach" roles.
+function mechanismFor(matchedRules, formats) {
+  const skip = new Set(['accessory_cap', 'limited_evidence_cap', 'postpartum_tagged', 'pregnancy_tagged', 'hormone_tagged']);
+  return { rules: matchedRules.filter((r) => !skip.has(r)), formats };
+}
+
+// CLAIM-LEVEL EVIDENCE (spec B): which citations talk about THIS need, split
+// into product-specific (names the product or brand), ingredient-only, and
+// guideline sources. Matching is on words from the need's own vocabulary.
+export const NEED_CLAIM_WORDS = {
+  'pain.menstrual_cramp': /cramp|dysmenorrh|period pain|menstrual pain/,
+  'pain.pelvic': /pelvic pain/, 'pain.sexual': /dyspareunia|painful (sex|intercourse)|vaginismus/,
+  'period.heavy': /heavy (menstrual|period|bleed)|menorrhagia/, 'period.product_support': /menstrua|period|tampon|pad\b|cup\b/,
+  'vaginal.dryness': /dryness|atroph|moistur/, 'vaginal.bv': /bacterial vaginosis|\bbv\b/, 'vaginal.yeast': /yeast|candid/,
+  'urinary.recurrent_uti': /urinary tract infection|\buti/, 'urinary.incontinence': /incontinen|bladder leak|pelvic floor/,
+  'vasomotor.hot_flashes': /hot flash|vasomotor/, 'vasomotor.night_sweats': /night sweat|vasomotor/,
+  'cycle.pms': /premenstrual|\bpms\b/, 'mood.general_anxiety': /anxiety/, 'mood.low': /depress/,
+  'sleep.trouble': /sleep|insomnia/, 'energy.fatigue': /fatigue|energy/, 'skin.acne': /acne/,
+  'condition_support.pcos': /pcos|polycystic/, 'fertility.ovulation_tracking': /ovulat|fertil/, 'fertility.ttc': /fertil|concept/,
+  'bone.health': /bone|osteopor/, 'pregnancy.prenatal': /prenatal|pregnan|folate|neural tube/,
+};
+function claimEvidenceFor(product, brandName, needIds) {
+  const links = collectLinks(product);
+  const nameWords = [brandName, ...String(product.name || '').split(/\s+/).slice(0, 2)].filter((w) => w && w.length > 3).map((w) => w.toLowerCase());
+  const out = {};
+  for (const need of needIds) {
+    const re = NEED_CLAIM_WORDS[need];
+    if (!re) continue;
+    const row = { product_specific: 0, ingredient_specific: 0, clinical_guideline: 0 };
+    for (const l of links) {
+      if (l.from === 'community') continue;
+      const url = String(l.url || '').toLowerCase();
+      const label = `${l.text || ''} ${l.label || ''} ${l.summary || ''} ${l.title || ''}`.toLowerCase();
+      if (!re.test(label)) continue;
+      const mentionsProduct = nameWords.some((w) => label.includes(w));
+      if (GUIDELINE_DOMAINS.test(url)) row.clinical_guideline += 1;
+      else if (mentionsProduct) row.product_specific += 1;
+      else row.ingredient_specific += 1;
+    }
+    if (row.product_specific + row.ingredient_specific + row.clinical_guideline > 0) out[need] = row;
+  }
+  return out;
+}
+
+/**
+ * Facet similarity between two product profiles (spec B): products can share
+ * a category and still differ completely, so each facet is scored on its own.
+ * @returns {{ ingredients, mechanism, format, price, materials, use_case, brand, health_function }} each 0..1 (null when unknown)
+ */
+export function productSimilarity(a, b) {
+  if (!a || !b) return null;
+  const jaccard = (x, y) => {
+    const A = new Set(x || []); const B = new Set(y || []);
+    if (!A.size || !B.size) return null;
+    let inter = 0; A.forEach((v) => { if (B.has(v)) inter += 1; });
+    return Math.round((inter / (A.size + B.size - inter)) * 100) / 100;
+  };
+  const strongNeeds = (pp) => Object.entries(pp.health_need_relevance).filter(([, e]) => e.score >= 0.55).map(([k]) => k);
+  const pa = a.pricing?.per_month ?? a.price?.amount; const pb = b.pricing?.per_month ?? b.price?.amount;
+  const ingA = [...(a.ingredient_keys || []), ...(a.ingredients || []).map((x) => x.toLowerCase())];
+  const ingB = [...(b.ingredient_keys || []), ...(b.ingredients || []).map((x) => x.toLowerCase())];
+  return {
+    ingredients: jaccard(ingA, ingB),
+    mechanism: jaccard(a.mechanism?.rules, b.mechanism?.rules),
+    format: jaccard(a.formats, b.formats),
+    price: pa != null && pb != null && Math.max(pa, pb) > 0 ? Math.round((Math.min(pa, pb) / Math.max(pa, pb)) * 100) / 100 : null,
+    materials: jaccard((a.materials || []).map((x) => x.toLowerCase()), (b.materials || []).map((x) => x.toLowerCase())),
+    use_case: a.category && b.category ? (a.category === b.category ? 1 : 0) : null,
+    brand: a.brand?.key && b.brand?.key ? (a.brand.key === b.brand.key ? 1 : 0) : null,
+    health_function: jaccard(strongNeeds(a), strongNeeds(b)),
+  };
+}
+
 // ─── Build + cache ──────────────────────────────────────────────────────────
 const CACHE = new Map();
 export function clearProductProfileCache() { CACHE.clear(); }
@@ -775,17 +960,27 @@ export function buildProductProfile(product) {
   const pregnancy = stageSafety(stText, PREGNANCY_RULES, bodyContact && !isDigital);
   const breastfeeding = stageSafety(stText, BREASTFEEDING_RULES, bodyContact && !isDigital);
 
-  // Relevance
+  // Relevance. Unconditional levels merge by MAX; contextual levels are kept
+  // separately (with the contexts they require) and only count at scoring
+  // time when she gave that context. Broad-marketing rules are capped at WEAK.
   const relevance = {};
   const caps = {};
   const roles = new Set();
   const matchedRules = [];
+  const entryFor = (need) => { relevance[need] = relevance[need] || { score: 0, rule: null, why: null, contextual: [] }; return relevance[need]; };
   for (const rule of RELEVANCE_RULES) {
     if (!rule.when(f)) continue;
     matchedRules.push(rule.id);
     const set = typeof rule.set === 'function' ? rule.set(f) : rule.set;
-    for (const [need, level] of Object.entries(set || {})) {
-      if (!relevance[need] || relevance[need].score < level) relevance[need] = { score: level, rule: rule.id, why: rule.why };
+    for (const [need, value] of Object.entries(set || {})) {
+      const e = entryFor(need);
+      if (value && typeof value === 'object') {
+        const level = rule.broad ? Math.min(WEAK, value.level) : value.level;
+        e.contextual.push({ level, requires: value.requires, rule: rule.id, why: rule.why });
+      } else {
+        const level = rule.broad ? Math.min(WEAK, value) : value;
+        if (e.score < level) { e.score = level; e.rule = rule.id; e.why = rule.why; e.broad = Boolean(rule.broad); }
+      }
     }
     const cap = typeof rule.cap === 'function' ? rule.cap(f) : rule.cap;
     if (cap) for (const [need, level] of Object.entries(cap)) caps[need] = Math.min(caps[need] ?? 1, level);
@@ -795,15 +990,27 @@ export function buildProductProfile(product) {
   for (const [need, entry] of Object.entries(relevance)) {
     const cap = Math.min(caps[need] ?? 1, caps['*'] ?? 1);
     if (entry.score > cap) { entry.score = cap; entry.capped = true; }
+    entry.contextual.forEach((c) => { if (c.level > cap) { c.level = cap; c.capped = true; } });
+    entry.contextual = entry.contextual.filter((c) => c.level > entry.score);
   }
 
   const brand = brandFor(product);
   const evidence = evidenceFor(product, brand.name);
   const evidenceTotal = evidence.product_specific + evidence.ingredient_specific + evidence.clinical_guideline;
   const evidenceConfidence = Math.min(1, (evidence.product_specific * 2 + evidence.ingredient_specific + evidence.clinical_guideline) / 4) * (evidence.strength === 'limited' ? 0.5 : 1);
+  const claimEvidence = claimEvidenceFor(product, brand.name, Object.keys(relevance));
   const health_need_relevance = Object.fromEntries(Object.entries(relevance)
-    .filter(([, e]) => e.score > 0)
-    .map(([need, e]) => [need, { score: e.score, relationship: relationshipFor(e.score), evidence_confidence: Math.round(evidenceConfidence * 100) / 100, rule: e.rule, why: e.why }]));
+    .filter(([, e]) => e.score > 0 || e.contextual.length)
+    .map(([need, e]) => [need, {
+      score: e.score,
+      relationship: e.score > 0 ? relationshipFor(e.score) : 'contextual',
+      evidence_confidence: Math.round(evidenceConfidence * 100) / 100,
+      claim_evidence: claimEvidence[need] || null,
+      rule: e.rule || e.contextual[0]?.rule || null,
+      why: e.why || e.contextual[0]?.why || null,
+      broad: Boolean(e.broad),
+      contextual: e.contextual.map((c) => ({ level: c.level, relationship: relationshipFor(c.level), requires: c.requires, rule: c.rule, why: c.why })),
+    }]));
 
   const price = parsePrice(product.price);
   const ingredientKeys = detectIngredientKeys([product.name, product.ingredients, product.summary].filter(Boolean).join(' '));
@@ -820,8 +1027,12 @@ export function buildProductProfile(product) {
     pregnancy.overall !== 'unknown',
     evidenceTotal + evidence.community > 0,
     Boolean(brand.name),
-    Object.values(health_need_relevance).some((e) => e.score >= 0.55),
+    Object.values(health_need_relevance).some((e) => e.score >= 0.55 || e.contextual.some((c) => c.level >= 0.55)),
   ];
+  const freshness = freshnessFor(product);
+  const status = statusFor(product);
+  const pricing = pricingFor(price, product, f);
+  const effort = effortFor(f, formats, price, isCareService(f));
 
   const profile = {
     product_id: product.id || null,
@@ -868,6 +1079,13 @@ export function buildProductProfile(product) {
       brand: keyFields[8], health_relevance: keyFields[9],
     },
     is_digital: isDigital,
+    // Spec B additions. All read from catalog fields; unknown when silent.
+    status,            // { state: 'active'|'recalled'|'removed'|'discontinued', source }
+    freshness,         // { state: 'fresh'|'aging'|'stale'|'unknown', lastVerified, ageDays }
+    pricing,           // { upfront, per_month, per_month_source, reusable }
+    effort,            // { level, label }
+    mechanism: mechanismFor(matchedRules, formats),
+    claim_evidence: claimEvidence,
   };
   profile.values = valuesFor(product, f, safety, brand, pregnancy);
   if (key) CACHE.set(key, profile);

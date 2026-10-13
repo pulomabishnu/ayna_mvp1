@@ -428,7 +428,7 @@ export function buildSnapshot(intake) {
 
   const symptomTokens = [];
   if ((intake.supportSelections || []).includes('Cramps or period pain')) symptomTokens.push('cramps');
-  if ((intake.supportSelections || []).some((x) => /bloating/i.test(x))) symptomTokens.push('bloating');
+  if ((intake.supportSelections || []).includes('Cycle-related bloating')) symptomTokens.push('bloating');
   if ((intake.supportSelections || []).includes('Nausea')) symptomTokens.push('nausea');
   if ((intake.supportSelections || []).includes('Fatigue or low energy')) symptomTokens.push('fatigue');
   if ((intake.supportSelections || []).includes('Brain fog')) symptomTokens.push('brain fog');
@@ -526,6 +526,12 @@ export function buildSnapshot(intake) {
     personalizationCompletedAt: new Date().toISOString(),
     intakeVersion: 'beta-redesign-2026-09',
   };
+}
+
+/** A plausible US ZIP: exactly five digits, and not 00000. Shared by app and website quiz. */
+export function isValidUsZip(value) {
+  const zip = String(value ?? '').trim();
+  return /^\d{5}$/.test(zip) && zip !== '00000';
 }
 
 export function requiredReady(stepId, intake) {

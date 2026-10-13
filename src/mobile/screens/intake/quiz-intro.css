@@ -154,3 +154,16 @@
   .qi-title { font-size: 28px; }
   .qi-caption { font-size: 13px; }
 }
+
+/* "Don't show again": one quiet row under the demos, 44px tap target. */
+.qi-dont { display: flex; align-items: center; gap: 12px; min-height: 44px; margin: -4px 0 -8px; cursor: pointer; font: 600 14px/1.2 'Poppins', system-ui, sans-serif; color: var(--qi-ink); -webkit-tap-highlight-color: transparent; }
+.qi-dont input { appearance: none; -webkit-appearance: none; flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin: 0; border: 2px solid var(--qi-ink); border-radius: 6px; background: var(--qi-paper); cursor: pointer; transition: background-color .15s ease; }
+.qi-dont input::after { content: ''; width: 10px; height: 6px; margin-top: -3px; border: solid var(--qi-paper); border-width: 0 0 2.5px 2.5px; rotate: -45deg; opacity: 0; transition: opacity .15s ease; }
+.qi-dont input:checked { background: var(--qi-ink); }
+.qi-dont input:checked::after { opacity: 1; }
+.qi-dont input:focus-visible { outline: 3px solid #b9c2f4; outline-offset: 2px; }
+/* Paused by the checkbox: demos settle on their finished state. */
+.qi.is-paused .qi-card * { animation: none !important; }
+.qi.is-paused .qi-finger { display: none; }
+.qi.is-paused .qi-mock-i { background: var(--qi-dark); color: var(--qi-light); }
+.qi.is-paused .qi-mock-chip { background: #f7e78e; }

@@ -21,7 +21,7 @@ export const OPTION_INFO = {
   'Adenomyosis-related concerns': 'Adenomyosis is when uterine lining tissue grows into the muscle wall of the uterus, which can cause heavy, painful periods.',
   'Hormone-related symptoms': 'Changes you think are linked to shifting hormones, like mood swings, sleep changes or hot flashes.',
   'Cycle-related bloating': 'Feeling puffy or swollen in your belly around your period.',
-  'Nausea': 'Feeling sick to your stomach, for example around your period or in early pregnancy.',
+  'Nausea': 'Feeling sick to your stomach.',
   // Fertility, pregnancy, postpartum
   'Fertility support': 'Products and care that support your chances of getting pregnant.',
   'Trying to conceive': 'Actively trying to get pregnant now.',
@@ -54,7 +54,7 @@ export const OPTION_INFO = {
   // Midlife
   'Hot flashes': 'Sudden waves of heat, often in your face and chest, sometimes with sweating.',
   'Night sweats': 'Heavy sweating while you sleep that can soak your sheets.',
-  'Joint aches': 'Stiff or achy joints, which can increase around perimenopause.',
+  'Joint aches': 'Stiff or achy joints.',
   'Menopause-related body changes': 'Changes around menopause like weight shifts, dryness, sleep or skin changes.',
   // Mood
   'Mood swings': 'Quick shifts between feeling okay, upset, sad or irritable.',

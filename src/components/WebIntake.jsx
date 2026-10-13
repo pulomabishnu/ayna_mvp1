@@ -10,7 +10,7 @@ import {
   PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
   PRODUCT_OR_BRAND_SUGGESTIONS, STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot, getIntakeSteps,
   getLifeStages, isMinorAge, normalizeSuggestion, rankedSuggestions, readIntakeDraft, reconstructIntakeFromSnapshot,
-  requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions,
+  requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions, isValidUsZip,
 } from '../mobile/data/intakeModel.js';
 import QuizIntro from '../mobile/screens/intake/QuizIntro.jsx';
 import './WebIntake.css';
@@ -40,17 +40,15 @@ function Rows({ options, value, onChange }) {
   </div>;
 }
 
-function Tiles({ items, selected = [], onToggle, labels = {}, label, onDefine }) {
-  // Multi-select: square checkboxes, plus an "i" button per tile for the definition (desktop has no long press).
+function Tiles({ items, selected = [], onToggle, labels = {}, label }) {
+  // Multi-select: square checkboxes. Press and hold a tile for its definition (taught in the quiz intro).
   return <div className="wq-tiles" role="group" aria-label={label}>
     {items.map((item, i) => {
       const text = labels[item] || item;
-      const def = onDefine ? onDefine(item, text) : null;
-      return <div key={item} className={`wq-tile-wrap${def ? ' has-info' : ''}`}>
+      return <div key={item} className="wq-tile-wrap">
         <button type="button" role="checkbox" className={`wq-tile tone-${i % 4}${selected.includes(item) ? ' is-on' : ''}`} aria-checked={selected.includes(item)} onClick={() => onToggle(item)}>
           <span className="wq-check" aria-hidden="true">✓</span><span className="wq-tile-text">{text}</span>
         </button>
-        {def && <button type="button" className="wq-tile-info" aria-label={`What ${text} means`} onClick={def}>i</button>}
       </div>;
     })}
   </div>;
@@ -280,7 +278,7 @@ function firstUnansweredStep(intake) {
   return firstMore ? firstMore.id : 'age';
 }
 
-export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null }) {
+export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot = null, introEnabled = true }) {
   const [savedDraft] = useState(() => (initialSnapshot ? null : readIntakeDraft()));
   const [intake, setIntake] = useState(() => (savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot)));
   const [stepId, setStepId] = useState(() => {
@@ -298,6 +296,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     return () => window.removeEventListener('keydown', onKey);
   }, [glossary]);
   const [minorGate, setMinorGate] = useState(false);
+  // ZIP: Next is live from the first digit; a bad ZIP is caught on Next, not before.
+  const [zipError, setZipError] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [avoidTab, setAvoidTab] = useState('avoid');
@@ -339,7 +339,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     setSearch('');
   };
 
-  const go = (id) => { setSearch(''); setInfoOpen(false); setStepId(id); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const go = (id) => { setSearch(''); setInfoOpen(false); setZipError(''); setStepId(id); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const back = () => {
     if (atCheckpoint) { go(coreSteps[coreSteps.length - 1].id); return; }
     if (index > 0) go(steps[index - 1].id);
@@ -368,7 +368,18 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   };
   const next = () => {
     if (step.id === 'age' && isMinorAge(intake.age)) return;
+    if (step.id === 'zip') {
+      if (!intake.zipcode) return;
+      if (!isValidUsZip(intake.zipcode)) { setZipError('Invalid ZIP code'); return; }
+      advance();
+      return;
+    }
     if (!requiredReady(step.id, intake) || !stepAnswered(step.id, intake)) return;
+    advance();
+  };
+  // Skip never validates; a half-typed ZIP is dropped rather than saved.
+  const skip = () => {
+    if (step.id === 'zip' && !isValidUsZip(intake.zipcode)) set('zipcode', '');
     advance();
   };
 
@@ -390,14 +401,6 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const lifeStages = getLifeStages(intake);
   const lifeStageOptions = intake.age !== '' && Number(intake.age) >= 40 ? [...MIDLIFE_LIFE_STAGES, ...LIFE_STAGES.filter((i) => !MIDLIFE_LIFE_STAGES.includes(i))] : LIFE_STAGES;
 
-  // Click "i" on a tile for its plain-language meaning (same glossary as press and hold).
-  const defineTile = (type) => (item, text) => {
-    const value = LIFE_STAGE_VALUE_BY_LABEL[text] || item;
-    const hit = defineOption(value, type);
-    if (!hit) return null;
-    return (e) => { e.stopPropagation(); setGlossary({ ...hit, term: hit.term === value ? text : hit.term }); };
-  };
-
   const body = () => {
     switch (step.type) {
       case 'aboutYou':
@@ -405,11 +408,17 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       case 'lifeStage': return <>
         <AgeField value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
         <p className="wq-sub-q" id="wq-stage-q">Your life stage <small>Pick every stage that fits</small></p>
-        <Tiles label="Your life stage" onDefine={defineTile('lifeStage')} items={lifeStageOptions} selected={lifeStages} labels={LIFE_STAGE_LABELS} onToggle={(v) => setIntake((prev) => { const n = selectLifeStage(getLifeStages(prev), v); return { ...prev, lifeStageSelections: n, lifeStage: n[0] || '' }; })} />
+        <Tiles label="Your life stage" items={lifeStageOptions} selected={lifeStages} labels={LIFE_STAGE_LABELS} onToggle={(v) => setIntake((prev) => { const n = selectLifeStage(getLifeStages(prev), v); return { ...prev, lifeStageSelections: n, lifeStage: n[0] || '' }; })} />
         {lifeStages.includes('I am postpartum') && <div className="wq-follow"><b>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</b><Chips small single items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} /></div>}
         {lifeStages.includes('I am in perimenopause') && <div className="wq-follow"><b>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</b><Chips small single items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} /></div>}
       </>;
-      case 'zip': return <input className="wq-input wq-zip" inputMode="numeric" value={intake.zipcode} onChange={(e) => set('zipcode', e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="e.g. 10027" aria-label="ZIP code" />;
+      case 'zip': return <div className="wq-zip-wrap">
+        <input className="wq-input wq-zip" inputMode="numeric" autoComplete="postal-code" value={intake.zipcode} placeholder="e.g. 10027" aria-label="ZIP code"
+          aria-invalid={zipError ? true : undefined} aria-describedby={zipError ? 'wq-zip-err' : undefined}
+          onChange={(e) => { setZipError(''); set('zipcode', e.target.value.replace(/\D/g, '').slice(0, 5)); }}
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); next(); } }} />
+        {zipError && <p className="wq-alert wq-zip-err" id="wq-zip-err" role="alert">{zipError}</p>}
+      </div>;
       case 'support': {
         const q = search.trim().toLowerCase();
         const known = new Set(SUPPORT_GROUPS.flatMap((g) => g.items));
@@ -485,7 +494,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         <Rows options={['Yes', 'No', 'Not sure']} value={intake.safetyConcern} onChange={(v) => set('safetyConcern', v)} />
         {['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="wq-alert-card" role="note"><b>Worth a closer look</b><p>Some new or worsening symptoms need a clinician. ayna helps you discover products and doesn’t diagnose. If it feels urgent or severe, get care promptly.</p></div>}
       </>;
-      case 'formats': return <Tiles label={step.title} onDefine={defineTile('formats')} items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} />;
+      case 'formats': return <Tiles label={step.title} items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} />;
       case 'recommendationCount': return <div className="wq-count">{[1, 2, 3, 5].map((c) => <button type="button" key={c} className={Number(intake.recommendedProductsPerArea) === c ? 'is-on' : ''} aria-pressed={Number(intake.recommendedProductsPerArea) === c} onClick={() => set('recommendedProductsPerArea', c)}><strong>{c}</strong><span>{c === 1 ? 'pick' : 'picks'}</span></button>)}</div>;
       case 'price': {
         const sel = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []);
@@ -542,7 +551,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   if (minorGate) return <div className="wq-page"><MinorGate onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBrowseLibrary} /></div>;
 
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
-  const ready = requiredReady(step.id, intake) && stepAnswered(step.id, intake) && !minorBlocked;
+  const ready = step.id === 'zip' ? String(intake.zipcode || '').length > 0 : requiredReady(step.id, intake) && stepAnswered(step.id, intake) && !minorBlocked;
   const tone = atCheckpoint ? 'mint' : (SECTION_TONES[step.section] || 'peri');
 
   if (atCheckpoint) {
@@ -593,12 +602,12 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
 
       {saveError && <p className="wq-alert">{saveError}</p>}
       <footer className="wq-foot">
-        {(step.optional || phase === 'more') ? <button type="button" className="wq-skip" onClick={advance} disabled={saving}>Skip</button> : <span className="wq-required">Needed for safety</span>}
+        {(step.optional || phase === 'more') ? <button type="button" className="wq-skip" onClick={skip} disabled={saving}>Skip</button> : <span className="wq-required">Needed for safety</span>}
         <button type="button" className="wq-btn" onClick={next} disabled={!ready || saving}>{saving ? 'Saving…' : (isLast && phase === 'more') ? 'See my results' : 'Next'} <span aria-hidden="true">→</span></button>
       </footer>
     </div>
 
-    <QuizIntro variant="web" />
+    <QuizIntro variant="web" enabled={introEnabled} />
     {glossary && <div className="wq-glossary" role="dialog" aria-label={glossary.term} onClick={() => setGlossary(null)}>
       <div onClick={(e) => e.stopPropagation()}><strong>{glossary.term}</strong><p>{glossary.definition}</p><button type="button" className="wq-btn" onClick={() => setGlossary(null)}>Got it</button></div>
     </div>}

@@ -16,11 +16,39 @@
 export const CONSENT_VERSION = 'v1';
 const STORAGE_KEY = 'ayna_pending_consent';
 
+const SIGNUP_META_KEY = 'ayna_pending_signup_meta';
+
+// Extra sign-up answers (e.g. "Where did you hear about us?") picked on the
+// create-account form before a Google/Apple redirect. Call right before the
+// redirect with the fields (or null to clear, e.g. from the sign-in form so a
+// stale answer never lands on an existing account). stashPendingConsent()
+// folds them into the same record flushPendingConsent() writes on return.
+export function stashPendingSignupMeta(meta) {
+  try {
+    if (meta && Object.keys(meta).length) sessionStorage.setItem(SIGNUP_META_KEY, JSON.stringify(meta));
+    else sessionStorage.removeItem(SIGNUP_META_KEY);
+  } catch {
+    // storage unavailable: the answer is optional, nothing else depends on it
+  }
+}
+
+function takePendingSignupMeta() {
+  try {
+    const raw = sessionStorage.getItem(SIGNUP_META_KEY);
+    sessionStorage.removeItem(SIGNUP_META_KEY);
+    const meta = raw ? JSON.parse(raw) : null;
+    return meta && typeof meta === 'object' ? meta : {};
+  } catch {
+    return {};
+  }
+}
+
 export function stashPendingConsent() {
   try {
+    const meta = takePendingSignupMeta();
     sessionStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ consent_given_at: new Date().toISOString(), consent_version: CONSENT_VERSION })
+      JSON.stringify({ ...meta, consent_given_at: new Date().toISOString(), consent_version: CONSENT_VERSION })
     );
   } catch {
     // Private mode / storage unavailable — the account still gets created;

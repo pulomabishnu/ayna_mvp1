@@ -162,7 +162,8 @@ export function useSupabaseAuth() {
     };
   }, []);
 
-  async function signUpWithPassword({ email, password, firstName }) {
+  // `metadata`: extra sign-up answers (e.g. heard_about) saved with the name.
+  async function signUpWithPassword({ email, password, firstName, metadata = {} }) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
     const consentAt = new Date().toISOString();
@@ -172,6 +173,7 @@ export function useSupabaseAuth() {
       options: {
         emailRedirectTo: emailConfirmRedirect(),
         data: {
+          ...metadata,
           first_name: firstName,
           full_name: firstName,
           consent_given_at: consentAt,

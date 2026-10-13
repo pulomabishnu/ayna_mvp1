@@ -10,6 +10,7 @@ import { makePlaylistCoverFile } from '../mobile/components/playlistCoverImage.j
 import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch.js';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import { customProductId, customProductName } from '../utils/customProductTag.js';
 import './WebCommunity.css';
 import '../styles/audit-community.css';
 import '../styles/verify-content.css';
@@ -92,7 +93,14 @@ function SkeletonPlaylists() {
 
 function Mention({ productId, productsById, quizResults, onOpenProduct }) {
   const product = productsById.get(String(productId));
-  if (!product) return null;
+  if (!product) {
+    const customName = customProductName(String(productId || ''));
+    if (!customName) return null;
+    return <span className="wc-mention is-custom">
+      <span className="wc-mention-photo" aria-hidden="true">{customName.slice(0, 1).toUpperCase()}</span>
+      <span><strong>{customName}</strong><small>Not in the ayna catalog yet</small></span>
+    </span>;
+  }
   const match = quizResults ? getProductMatchDetailsForProduct(product, quizResults) : null;
   const show = match?.matchStatus === 'scored' && Number.isFinite(match.percent);
   return <button type="button" className="wc-mention" onClick={() => onOpenProduct(product)}>
@@ -123,10 +131,17 @@ function Picker({ products, value, onChange }) {
       .filter((x) => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 8).map((x) => x.p);
   }, [products, q]);
   const selected = products.find((p) => String(p.id) === String(value));
-  if (selected) return <div className="wc-picked"><span>{selected.name}</span><button type="button" onClick={() => { onChange(null); setQ(''); }}>Remove</button></div>;
+  const selectedName = selected?.name || customProductName(String(value || ''));
+  const draft = q.trim().replace(/\s+/g, ' ');
+  const exact = matches.some((p) => String(p.name || '').trim().toLowerCase() === draft.toLowerCase());
+  const addCustom = () => { const id = customProductId(draft); if (id) { onChange(id); setQ(''); } };
+  if (selectedName) return <div className="wc-picked"><span>{selectedName}</span><button type="button" onClick={() => { onChange(null); setQ(''); }}>Remove</button></div>;
   return <div className="wc-picker">
-    <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Mention a product (optional)" aria-label="Find a product" />
-    {matches.length > 0 && <div className="wc-results">{matches.map((p) => <button type="button" key={p.id} onClick={() => { onChange(p.id); setQ(''); }}>{p.name}<small>{[p.brand, p.category?.replace(/-/g, ' ')].filter(Boolean).join(' · ')}</small></button>)}</div>}
+    <input value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.length >= 2) { e.preventDefault(); if (matches.length && exact) { onChange(matches[0].id); setQ(''); } else addCustom(); } }} placeholder="Mention a product (optional)" aria-label="Find a product" />
+    {draft.length >= 2 && <div className="wc-results">
+      {!exact && <button type="button" className="is-add" onClick={addCustom}>+ Add “{draft}”<small>{matches.length ? 'Not listed? Tag it anyway' : 'Not in the ayna catalog yet'}</small></button>}
+      {matches.map((p) => <button type="button" key={p.id} onClick={() => { onChange(p.id); setQ(''); }}>{p.name}<small>{[p.brand, p.category?.replace(/-/g, ' ')].filter(Boolean).join(' · ')}</small></button>)}
+    </div>}
   </div>;
 }
 

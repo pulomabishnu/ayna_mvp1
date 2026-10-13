@@ -10,7 +10,7 @@ import { formatPrice } from '../../utils/formatPrice.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { matchBadge } from '../../utils/matchDisplay.js';
 
-export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts }) {
+export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, isSaved = false, onToggleSaved, onOpenWhyMatch, matchOpts, needId = null }) {
   const { name, category, price, priceDisplay, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   // Same price model as the website card: short main line + optional detail line.
@@ -20,9 +20,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const brandRepeatsName = shownBrand && String(name || '').trim().toLowerCase() === shownBrand.toLowerCase();
   // Brand only — never fall back to the category word ("Pad") in the brand slot.
   const secondaryLabel = shownBrand || '';
-  const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts) : null;
+  const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers, null, needId ? { ...matchOpts, needId } : matchOpts) : null;
   // Badge = best need score, only with a profile and 50+ ("82% for period cramps").
-  const badge = matchBadge(match);
+  const badge = matchBadge(match, { needId });
   const showMatch = Boolean(badge);
   const relevantReason = match?.matchStatus === 'scored' && !showMatch
     ? match.reasonDetails?.find((reason) => ['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency', 'diagnoses', 'lifeStage'].includes(reason.component))
@@ -55,7 +55,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         {contexts.length > 0 && <span className="ayna-fresh-product-context">{contexts.join(' · ')}</span>}
       </span>
       </button>
-      {showMatch && <button type="button" className="ayna-fresh-match-badge ayna-match-action" aria-label={`${badge.label}. Why this match for ${name}`} title={badge.label} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()}><strong>{match.percent}%</strong><span>MATCH</span></button>}
+      {showMatch && <button type="button" className="ayna-fresh-match-badge ayna-match-action" aria-label={`${badge.label}. Why this match for ${name}`} title={badge.label} onClick={() => onOpenWhyMatch ? onOpenWhyMatch(product) : onClick?.()}><strong>{badge.percent ?? match.percent}%</strong><span>MATCH</span></button>}
       {onToggleSaved && <button type="button" className="ayna-card-save" aria-label={isSaved ? `Remove ${name} from Saved` : `Save ${name}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg></button>}
       {isList && <div className="ayna-fresh-product-actions">
         <button type="button" onClick={onClick}>Details <span aria-hidden="true">→</span></button>

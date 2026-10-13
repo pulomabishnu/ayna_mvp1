@@ -93,7 +93,7 @@ function buildMatchExplanation(needMatch, details) {
         .slice(0, 3);
     if (reasons.length > 0) return `${reasons.join('. ')}.`;
     if (details?.reasons?.length) return details.reasons.slice(0, 3).join(' ');
-    return 'This product is relevant to this care area, but there is not enough profile information to give a highly personalized explanation yet.';
+    return 'Matches a need you selected. Add more to your health profile for more personal picks.';
 }
 
 function textForSafety(product) {
@@ -440,8 +440,14 @@ export function generateTieredRecommendations(intake = {}) {
             .filter((note) => CARE_NOTE_FOR_NEED[note.code]?.(needIds))
             .forEach((note) => notes.push(note.text));
 
+        // The concern key is a UI grouping (navigation only). Headers should
+        // name what she actually selected: "Night sweats", not "Perimenopause
+        // and menopause support" for someone who never shared that stage.
+        const needLabels = getSelectedNeeds(intake).filter((n) => needIds.includes(n.id)).map((n) => n.label);
         return {
             concern: concern.key,
+            displayLabel: needLabels.length ? needLabels.join(', ') : concern.key,
+            needLabels,
             prompt: buildRecommendationPrompt(intake, concern.key),
             tiers,
             notes: [...new Set(notes)],

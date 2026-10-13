@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
-import { CONSENT_VERSION, stashPendingConsent } from '../utils/pendingConsent.js';
+import { CONSENT_VERSION, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
+import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../utils/heardAbout.js';
 import '../styles/audit-qya.css';
+import './AuthGate.css';
 
 // One short line per tab (audit AU01).
 const SUBTITLES = { signup: 'Make your shop yours.', signin: 'Welcome back.' };
@@ -24,11 +26,12 @@ const CONSENT_ITEMS = [
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
 ];
 
-export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem, initialMode, summary = null }) {
+export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem, initialMode, summary = null, allowSignup = false }) {
   useEscapeToClose(isModal, onSkip);
-  // 'signup' | 'signin'. After the quiz, creating an account is the likely next step.
-  // No ecosystem yet = log in only; new accounts start by building an ecosystem.
-  const [mode, setMode] = useState(() => (onStartEcosystem ? 'signin' : initialMode === 'signup' || initialMode === 'signin' ? initialMode : context === 'quiz' ? 'signup' : 'signin'));
+  // 'signup' | 'signin'. An account can only be created in the save step after
+  // the quiz (allowSignup). Every other entry point is sign-in only, with
+  // "Don't have an account? Build your ecosystem" starting the quiz instead.
+  const [mode, setMode] = useState(() => (allowSignup && initialMode !== 'signin' ? 'signup' : 'signin'));
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,6 +43,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [checked, setChecked] = useState([false, false, false]);
+  // Optional "Where did you hear about us?" (saved in user metadata).
+  const [heardAbout, setHeardAbout] = useState('');
+  const [heardOther, setHeardOther] = useState('');
+  const heardMeta = heardAboutMetadata(heardAbout, heardOther);
   // Two real signups reported never getting a confirmation email
   // (2026-08-25) — Supabase's built-in email sender has a very low rate
   // limit and no delivery guarantee, so a signup silently succeeding with
@@ -67,7 +74,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
   const supabase = getSupabaseClient();
   const allConsented = checked.every(Boolean);
-  const isSignup = mode === 'signup';
+  const isSignup = allowSignup && mode === 'signup';
   const subtitle = isSignup && summary ? 'Save your matches. Create an account to keep them.' : SUBTITLES[mode];
 
   // Health-data consent stays explicit: one checkbox per statement.
@@ -110,6 +117,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           options: {
             emailRedirectTo: 'https://www.aynahealth.co/confirmed',
             data: {
+              ...heardMeta,
               first_name: cleanFirstName,
               full_name: cleanFirstName,
               consent_given_at: consentAt,
@@ -200,6 +208,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         phone: e164,
         options: {
           data: {
+            ...heardMeta,
             first_name: cleanFirstName,
             full_name: cleanFirstName,
             consent_given_at: consentAt,
@@ -255,6 +264,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       // first-time visitor who happens to click the "Sign in" toggle used to get
       // an account created — and reach the health intake — with the consent
       // checkboxes never shown and no consent record written at all.
+      stashPendingSignupMeta(isSignup ? heardMeta : null);
       stashPendingConsent();
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
@@ -286,6 +296,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       // Same reasoning as handleGoogle just above: Apple's provider also
       // auto-provisions an account for any unseen Apple ID, so consent has
       // to be stashed here too, not only on the email/password path.
+      stashPendingSignupMeta(isSignup ? heardMeta : null);
       stashPendingConsent();
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
@@ -380,7 +391,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           </div>
         )}
 
-        {!onStartEcosystem && <div className="ay-auth-toggle" style={styles.toggleRow}>
+        {allowSignup && <div className="ay-auth-toggle" style={styles.toggleRow}>
           <button
             type="button"
             className={isSignup ? 'is-on' : ''}
@@ -547,6 +558,19 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
             {isSignup && !fieldErrors.password && <p className="ay-auth-hint">At least 8 characters.</p>}
           </Field>
           {isSignup && (
+            <div className="ay-auth-field ay-auth-heard">
+              <label htmlFor="auth-heard">Where did you hear about us? <span className="ay-auth-optional">Optional</span></label>
+              <select id="auth-heard" name="heardAbout" value={heardAbout} onChange={(e) => setHeardAbout(e.target.value)} className={heardAbout ? '' : 'is-empty'}>
+                <option value="">Choose one</option>
+                {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+              {heardAbout === 'other' && (
+                <input id="auth-heard-other" name="heardAboutOther" type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX}
+                  value={heardOther} onChange={(e) => setHeardOther(e.target.value)} style={styles.input} autoComplete="off" />
+              )}
+            </div>
+          )}
+          {isSignup && (
             <fieldset className="ay-auth-consent" aria-describedby={fieldErrors.consent ? 'auth-consent-err' : undefined}>
               <legend>How we handle your data</legend>
               {CONSENT_ITEMS.map((text, i) => (
@@ -655,7 +679,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           </p>
         )}
 
-        {!isSignup && onStartEcosystem && (
+        {!isSignup && !allowSignup && onStartEcosystem && (
           <button type="button" className="ay-auth-new" onClick={onStartEcosystem}>
             Don’t have an account? <b>Build your ecosystem</b>
           </button>

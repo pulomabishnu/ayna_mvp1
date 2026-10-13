@@ -42,6 +42,32 @@ const BODY_AREAS = [
 ];
 const TOPICAL_WORDS = /\b(creams?|lotions?|gels?|balms?|washes?|soaps?|lubes?|lubricants?|moisturi[sz]ers?|wipes?|serums?|oils?)\b/;
 
+// First-person, certain life-stage statements. Questions, guesses and
+// negations ("could this be menopause", "not pregnant") are not reports.
+const STAGE_WORDS = [
+  { re: /peri ?menopaus\w*|\bperi\b/, id: 'perimenopause' },
+  { re: /post ?menopaus\w*/, id: 'postmenopause' },
+  { re: /menopaus\w*/, id: 'menopause' },
+  { re: /pregnan\w*|\d+ weeks? pregnant|expecting/, id: 'pregnant' },
+  { re: /postpartum|just had (a|my) baby/, id: 'postpartum' },
+  { re: /breastfeeding|nursing|pumping/, id: 'breastfeeding' },
+];
+function reportedStage(s) {
+  if (/\b(maybe|might|could|wonder|wondering|think|probably|possibly|if i|whether|not sure|worried|scared|afraid|planning|plan to|want to get|hoping)\b/.test(s)) return null;
+  for (const w of STAGE_WORDS) {
+    const src = w.re.source;
+    const first = new RegExp(`\\b(i am|im|i have been|currently|going through|now)\\s+(in\\s+|in my\\s+|going through\\s+)?(${src})`);
+    const attributed = new RegExp(`\\b(from|because of|due to|since|with|during|thanks to)\\s+(my\\s+|the\\s+)?(${src})`);
+    const possessive = new RegExp(`\\bmy\\s+(${src})`);
+    const hit = s.match(first) || s.match(attributed) || s.match(possessive);
+    if (!hit) continue;
+    const before = s.slice(Math.max(0, hit.index - 12), hit.index);
+    if (/\bnot\b|\bno\b|\bnever\b/.test(before) || /\b(i am|currently) not\b/.test(s)) return null;
+    return w.id;
+  }
+  return null;
+}
+
 function item(field, value, confidence, evidence, extra = {}) {
   return { field, value, confidence, evidence, source: 'user_free_text', ...extra };
 }
@@ -152,9 +178,23 @@ export function extractFreeText(text, options = {}) {
     }
     const stage = canonicalize(s, { kinds: ['life_stage'] });
     if (stage.canonical_id && stage.method === 'synonym_rule') {
-      // Context only. A life stage typed in prose never activates a gate by itself.
-      items.push(item('mentioned_life_stage', stage.canonical_id, 'LOW', s, { canonical: stage }));
+      // A life stage typed in prose is stored. Only a first-person, certain
+      // statement ("I am in perimenopause", "my night sweats from menopause")
+      // becomes a REPORTED CONTEXT (HIGH), which can unlock contextual product
+      // matches. It never activates a safety exclusion by itself.
+      const reported = reportedStage(s);
+      if (reported) items.push(item('reported_context', reported, 'HIGH', s, { canonical: stage }));
+      else items.push(item('mentioned_life_stage', stage.canonical_id, 'LOW', s, { canonical: stage }));
     }
+
+    // Lifestyle constraints that affect usage effort (stored as a soft signal).
+    if (/\b(no time|busy|travel a lot|always traveling|on the go|hate routines?|forget to take|keep forgetting|too many steps)\b/.test(s)) {
+      items.push(item('effort_sensitivity', 'lower_effort', 'MEDIUM', s));
+    }
+    // Favorite brands in prose ("my favorite brand is Saalt") are positive history above;
+    // brand dislikes are stored only and never become an absolute avoid.
+    m = s.match(/\b(hate|do not like|dislike|never again|stay away from)\b\s+(the\s+)?([a-z0-9][a-z0-9.'&-]{2,30})\s+(brand|products?)\b/);
+    if (m) items.push(item('brand_dislike', m[3], 'LOW', s));
 
     // Goals (stored only)
     m = s.match(/\b(want|trying|hoping|goal is) to ([a-z\s]{3,60})/);
@@ -185,7 +225,7 @@ export function summarizeFreeText(extraction) {
   const out = {
     format_dislikes: [], format_only: [], max_price: null, price_sensitivity: null, sensitivities: [], positive_product_history: [],
     inferred_preferences: [], explicit_allergies: [], reaction_history: [], leave_out: [], should_be: [], mentioned_needs: [],
-    stored: [], source: 'user_free_text',
+    reported_contexts: [], effort_sensitivity: null, stored: [], source: 'user_free_text',
   };
   for (const it of extraction?.items || []) {
     if (it.confidence === 'LOW') { out.stored.push(it); continue; }
@@ -204,6 +244,8 @@ export function summarizeFreeText(extraction) {
       case 'leave_out_preference': out.leave_out.push({ attr: it.value, strength: 'cosmetic', weight: w }); break;
       case 'should_be_preference': out.should_be.push({ id: it.value, weight: w }); break;
       case 'mentioned_need': out.mentioned_needs.push({ id: it.value, weight: w, canonical: it.canonical }); break;
+      case 'reported_context': out.reported_contexts.push({ stage: it.value, weight: w, evidence: it.evidence }); break;
+      case 'effort_sensitivity': out.effort_sensitivity = { value: it.value, weight: w }; break;
       default: out.stored.push(it);
     }
   }

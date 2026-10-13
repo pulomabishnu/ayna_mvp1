@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
+import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../../utils/heardAbout.js';
+import { stashPendingSignupMeta } from '../../utils/pendingConsent.js';
 import '../auth.css';
 import '../../styles/flow.css';
 
@@ -168,6 +170,12 @@ export default function SigninScreen({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [checked, setChecked] = useState([false, false, false]);
+  // Optional "Where did you hear about us?" (saved in user metadata).
+  const [heardAbout, setHeardAbout] = useState('');
+  const [heardOther, setHeardOther] = useState('');
+  // Create account is only offered in the save step after the quiz (opened
+  // in signup mode). Opened for sign-in, new people go build an Ecosystem.
+  const canSignUp = initialMode === 'signup';
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
@@ -214,7 +222,7 @@ export default function SigninScreen({
     setError('');
     setLoading(true);
     try {
-      const { needsConfirmation } = await onSignUp({ email: email.trim(), password, firstName: firstName.trim() });
+      const { needsConfirmation } = await onSignUp({ email: email.trim(), password, firstName: firstName.trim(), metadata: heardAboutMetadata(heardAbout, heardOther) });
       if (needsConfirmation) setMode('check-email');
       else onAuthenticated(firstName.trim() || undefined);
     } catch (e) {
@@ -248,6 +256,7 @@ export default function SigninScreen({
       return;
     }
     setError('');
+    stashPendingSignupMeta(mode === 'signup' ? heardAboutMetadata(heardAbout, heardOther) : null);
     setGoogleLoading(true);
     try {
       await onGoogleSignIn();
@@ -265,6 +274,7 @@ export default function SigninScreen({
       return;
     }
     setError('');
+    stashPendingSignupMeta(mode === 'signup' ? heardAboutMetadata(heardAbout, heardOther) : null);
     setAppleLoading(true);
     try {
       await onAppleSignIn();
@@ -370,6 +380,19 @@ export default function SigninScreen({
           </Field>
 
           {mode === 'signup' && (
+            <div className="ay-auth-heard">
+              <label className="ay-auth-heard-label" htmlFor="ay-auth-heard">Where did you hear about us? <span>Optional</span></label>
+              <select id="ay-auth-heard" value={heardAbout} onChange={(e) => setHeardAbout(e.target.value)} className={heardAbout ? '' : 'is-empty'}>
+                <option value="">Choose one</option>
+                {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+              {heardAbout === 'other' && (
+                <input type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX} value={heardOther} onChange={(e) => setHeardOther(e.target.value)} autoComplete="off" />
+              )}
+            </div>
+          )}
+
+          {mode === 'signup' && (
             <div className="ay-auth-consent">
               {CONSENT_ITEMS.map((text, i) => (
                 <label key={i} style={{ display: 'flex', gap: 10, cursor: 'pointer', alignItems: 'flex-start' }}>
@@ -406,8 +429,13 @@ export default function SigninScreen({
             <AppleButton onClick={handleApple} disabled={appleLoading || googleLoading || loading} />
           </div>
 
-          <button type="button" className="ayna-fresh-auth-switch ay-auth-link" onClick={() => { if (mode === 'signin' && onStartEcosystem) onStartEcosystem(); else setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); }}>
-            {mode === 'signup' ? 'Already have an account? Sign in' : onStartEcosystem ? <>Don’t have an account? <b>Build your Ecosystem</b></> : <>Don’t have an account? <b>Sign up</b></>}
+          <button type="button" className="ayna-fresh-auth-switch ay-auth-link" onClick={() => {
+            setError('');
+            if (mode === 'signup') setMode('signin');
+            else if (canSignUp) setMode('signup');
+            else onStartEcosystem?.();
+          }}>
+            {mode === 'signup' ? 'Already have an account? Sign in' : canSignUp ? <>Don’t have an account? <b>Create one</b></> : <>Don’t have an account? <b>Build your Ecosystem</b></>}
           </button>
 
           <div className="ayna-fresh-auth-trust" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>

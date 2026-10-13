@@ -162,3 +162,11 @@
   .app-container .wc3 .wc-pl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .app-container .wc3 .wc-cover.is-big { width: 128px; }
 }
+
+/* Product picker "+ Add '<name>'" (tag a product that isn't in the catalog) */
+.app-container .wc-results button { min-height: 44px; }
+.app-container .wc-results .is-add { font-weight: 700; }
+.app-container .wc-mention.is-custom { cursor: default; }
+.app-container .wc3 .wc-mention.is-custom:hover { border-color: var(--ay-ink); background: var(--ay-cream); }
+.app-container .wc-mention.is-custom .wc-mention-photo { display: grid; place-items: center; background: #fff; color: #1d1a2b; font: 800 18px/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); }
+.app-container .wc-mention.is-custom small { display: block; color: var(--ay-ink-soft); font-size: 12px; }

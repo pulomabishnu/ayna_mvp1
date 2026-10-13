@@ -245,6 +245,19 @@ export default function MobileApp() {
     setAuthMode(mode);
     setScreen('signin');
   };
+  // "Don't have an account? Build your ecosystem": accounts are only made in the
+  // save step after the quiz, so this starts the quiz (or, if she already built
+  // one on this device while signed out, returns to its save step).
+  const startEcosystemFlow = () => {
+    authResumeRef.current = null;
+    setAuthPrompt(null);
+    setAskAynaOpen(false);
+    setOverlay(null);
+    if (lastQuizAnswers && !authUser) { setRevealAtEnd(true); setScreen('reveal'); return; }
+    setIntakeMode('new');
+    setEditingHealthProfile(false);
+    setScreen('quiz');
+  };
   const openProfile = () => { authResumeRef.current = null; setOverlay({ type: authUser ? 'profile' : 'profile-auth' }); };
 
   // Backend-only state used to keep mobile ecosystem writes consistent with
@@ -700,7 +713,7 @@ export default function MobileApp() {
         setScreen(authReturnScreenRef.current);
       }
     },
-    onStartEcosystem: lastQuizAnswers ? null : () => { setIntakeMode('new'); setEditingHealthProfile(false); setScreen('quiz'); },
+    onStartEcosystem: startEcosystemFlow,
     // Real Supabase auth (src/mobile/hooks/useSupabaseAuth.js) — the name
     // comes from whatever SigninScreen already has in its own form state
     // (the person just typed it) rather than from authUser here, since
@@ -773,6 +786,7 @@ export default function MobileApp() {
         onDraftChange={setHasIntakeDraft}
         initialSnapshot={editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
         startAtBeginning={intakeMode === 'add' && !resumeQuizDraft}
+        introEnabled={!resumeQuizDraft}
         revealStartAtEnd={revealAtEnd}
         ecosystemNotice={ecosystemNotice}
         name={resolvedName}
@@ -804,8 +818,8 @@ export default function MobileApp() {
           <section className="ayna-profile-auth-sheet" role="dialog" aria-modal="true" aria-labelledby="ayna-profile-auth-title" onClick={(event) => event.stopPropagation()}>
             <button type="button" className="ayna-profile-auth-close" aria-label="Close" onClick={() => { setOverlay(null); setAuthPrompt(null); authResumeRef.current = null; }}>×</button>
             <h2 id="ayna-profile-auth-title">{authPrompt ? `Sign in for ${authPrompt.feature}` : 'Sign in to ayna'}</h2>
-            <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signup', !!authPrompt)}>Sign up</button>
-            <button type="button" className="ayna-profile-auth-secondary" onClick={() => openAuth('signin', !!authPrompt)}>Sign in</button>
+            <button type="button" className="ayna-profile-auth-primary" onClick={() => openAuth('signin', !!authPrompt)}>Sign in</button>
+            <button type="button" className="ayna-profile-auth-new" onClick={startEcosystemFlow}>Don’t have an account? <b>Build your Ecosystem</b></button>
           </section>
         </div>
       )}

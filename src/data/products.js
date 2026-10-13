@@ -15,9 +15,9 @@ import { INCONTINENCE_PHYSICAL } from './incontinenceProducts.js';
 import { RELEASED_STARTUPS } from './startups.js';
 import {
     buildUserProfile, buildProductProfile, scoreProduct as engineScoreProduct, scoreProductForNeed,
-    buildEcosystem, sortResults, TIERS, NEED_BY_ID,
+    buildEcosystem, sortResults, TIERS, NEED_BY_ID, REQUIRED_FIELD_TEXT,
 } from '../matching/index.js';
-import { needPhrase } from '../matching/ontology.js';
+import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
 import { getCareResourceBundle } from './careResources.js';
 
 // Tags used for quiz → product matching
@@ -1217,7 +1217,7 @@ function buildWorthNotingNotes(product, quizAnswers, medication) {
 
         if (hasOverlap) {
             notes.push({
-                text: 'Review the side effects before you commit — a few of them overlap with what you flagged as sensitivities.',
+                text: 'Review the side effects before you choose. A few of them overlap with what you flagged as sensitivities.',
                 cta: 'See side effects',
             });
         }
@@ -1351,7 +1351,13 @@ export function getPrescriptionAccessGuidance(product) {
 //   recommendations       = eligible, not suppressed, best need >= 50
 //                           (exploratory tier); fewer rather than weaker
 //   hard exclusions       = safety, avoid list, reactions, clinician-stopped,
-//                           "Not for me": percent 0 + a reason, never recommended
+//                           "Not for me", recalled/removed: percent 0 + a reason
+//   restricted            = a safety answer the product needs is missing
+//                           (e.g. medicines for an interacting supplement):
+//                           the percent stays, eligibility is 'restricted',
+//                           it is held out of recommendations, never shown low
+//   confidence            = separate (confidence / confidenceLevel); never
+//                           part of the percent. Profile completeness never is.
 //
 // Optional behavior signals (last argument { behavior }):
 //   saved -> small positive, omitted ("Not for me") -> hard suppress,
@@ -1473,12 +1479,10 @@ function needLabel(need) {
 // Map an engine explanation to the component names the UI already groups by
 // ("Your needs" / "Your profile" / "Your preferences").
 function componentForExplanation(text) {
-    if (/^(Made for|A strong match|Can help with|Loosely related|High capacity|Sized for)/.test(text)) return 'primaryGoal';
-    if (/context you shared/.test(text)) return 'diagnoses';
-    if (/stage you shared|in mind$|plans to conceive/.test(text)) return 'lifeStage';
-    if (/^You said this|worked for you|brand you said you like/.test(text)) return 'triedBefore';
+    if (/^(Matches|A secondary option|Loosely related|High capacity|Sized for)/.test(text)) return 'primaryGoal';
+    if (/^You said this|helped you|brand you said you like/.test(text)) return 'triedBefore';
     if (/format you prefer/.test(text)) return 'format';
-    if (/budget/i.test(text)) return 'price';
+    if (/budget|over time/i.test(text)) return 'price';
     if (/brand you trust/.test(text)) return 'trustedBrands';
     if (/ranked first/.test(text)) return 'trustRanking';
     if (/which you asked for|which matters with your/.test(text)) return 'attributes';
@@ -1502,7 +1506,44 @@ const UNKNOWN_TEXT = {
     urgent_not_sure_high_risk: () => 'You were not sure if something is urgent. Check with a clinician before starting this.',
     pain_varies: () => 'Your period pain varies, so the cramp fit is less certain.',
     flow_contradiction: () => 'You chose period support but said you do not get periods now.',
+    medications_not_shared: () => 'You did not share medicines, so we could not check this against them.',
+    pregnancy_status_unknown: () => 'Your life stage is not on file, so pregnancy fit is not checked.',
+    pregnancy_reported: () => 'You mentioned pregnancy outside the life-stage question. Add it there so we can check products for you.',
+    stale_answers: () => 'Some of your answers are from a while ago. Update your profile to keep picks current.',
+    stale_pregnancy: () => 'Your pregnancy answer is from a while ago. Update your life stage.',
+    stale_medications: () => 'Your medicine list is from a while ago. Update it to keep checks current.',
 };
+const PROFILE_HINT = 'Add more to your health profile for more personal picks';
+
+// What a match was based on: her actual inputs, never generic reasoning.
+const BUDGET_LABEL = (b) => (b.max === Infinity ? `$${b.min}+` : b.min ? `$${b.min} to $${b.max}` : `under $${b.max}`);
+function inputsFor(best, up) {
+    if (!best) return [];
+    const need = up.healthIntent.needs.find((n) => n.id === best.needId);
+    const out = [];
+    const verb = need?.source === 'free_text' ? 'you mentioned' : need?.source === 'custom' ? 'you added' : 'you selected';
+    out.push({ kind: 'need', text: `${needLabel(need || { id: best.needId })} (${verb})` });
+    const ctx = best.contextUsed;
+    if (ctx) {
+        const label = ctx.type === 'life_stage' ? `${LIFE_STAGE_BY_ID[ctx.id]?.option ? cap(LIFE_STAGE_BY_ID[ctx.id].phrase) : cap(ctx.phrase)} (you shared)`
+            : ctx.type === 'condition' ? `${ctx.phrase} diagnosis (you shared)` : ctx.type === 'free_text' ? `${cap(ctx.phrase)} (you mentioned)` : `${cap(ctx.phrase)} (you shared)`;
+        out.push({ kind: ctx.type === 'condition' ? 'diagnosis' : 'context', text: label });
+    }
+    const known = new Set(best.dimensions?.known || []);
+    const sh = up.shopping;
+    if (known.has('format') && sh.formats.preferred.length) out.push({ kind: 'format', text: `Preferred formats: ${sh.formats.preferred.map((f) => FORMAT_BY_ID[f]?.phrase || f).join(', ')}` });
+    if (known.has('price') && sh.budget) out.push({ kind: 'price', text: `Budget per item: ${BUDGET_LABEL(sh.budget)}` });
+    if (known.has('values')) {
+        const vals = [...sh.shouldBe.map((v) => VALUE_BY_ID[v.id]?.phrase || v.id), ...sh.leaveOut.map((l) => `no ${ATTRIBUTE_PHRASE[l.attr] || l.attr}`)];
+        if (vals.length) out.push({ kind: 'values', text: `What you asked for: ${vals.slice(0, 4).join(', ')}` });
+    }
+    if (known.has('brand') && sh.trustedBrands.length) out.push({ kind: 'brand', text: `Brands you trust: ${sh.trustedBrands.map((t) => t.raw).slice(0, 3).join(', ')}` });
+    if (known.has('evidence') && up.trust.ranking[0]) out.push({ kind: 'trust', text: `What matters most to you: ${{ clinical: 'clinical evidence', community: 'other women\u2019s reviews', expert: 'expert and brand reputation' }[up.trust.ranking[0]]}` });
+    if (known.has('context') && !ctx && up.physiology.lifeStages.length) out.push({ kind: 'context', text: `Life stage: ${up.physiology.lifeStages.map((st) => LIFE_STAGE_BY_ID[st]?.phrase || st).join(', ')}` });
+    if ((best.points?.experience ?? 0) !== 0) out.push({ kind: 'history', text: 'Your product history' });
+    return out;
+}
+function cap(t) { const s2 = String(t || ''); return s2 ? s2[0].toUpperCase() + s2.slice(1) : s2; }
 
 function confidenceLabel(c) {
     if (c >= 0.85) return 'high';
@@ -1530,6 +1571,13 @@ function toNeedMatch(r, up) {
         filtered: r.filtered,
         components: r.components,
         source: need?.source || null,
+        eligibility: r.eligibility,
+        restricted: r.restricted,
+        confidenceLevel: r.confidenceLevel,
+        contextual: r.contextual,
+        contextUsed: r.contextUsed,
+        explainable: r.explainable,
+        outputs: r.outputs,
     };
 }
 
@@ -1553,7 +1601,10 @@ function excludedDetails(product, reasons, base) {
         unmetNeeds: [],
         excludedBecause: reasons,
         eligible: false,
+        eligibility: 'excluded',
         tier: 'browse',
+        basedOn: [],
+        profileHint: null,
     };
 }
 
@@ -1561,11 +1612,16 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
     const product = hydrateCatalogProduct(savedProduct);
     const up = userProfileFor(quizAnswers, healthProfile, opts);
     const entry = engineResultFor(product, up);
-    if (entry.details) return entry.details;
+    if (entry.details && !opts?.needId) return entry.details;
     const { pp, result } = entry;
     const safety = result.safety;
     const needMatches = result.needs.map((r) => toNeedMatch(r, up));
-    const best = result.best;
+    // opts.needId: show this need's score (e.g. on that need's shelf) when the
+    // product is relevant to it, so a badge never names a different need than
+    // the shelf it sits on.
+    const focusId = opts?.needId ? canonicalNeedId(opts.needId) : null;
+    const focus = focusId ? result.needs.find((r) => r.needId === focusId && r.relevance > 0) : null;
+    const best = focus || result.best;
     const hidden = Boolean(pp.product_id && up.behavior.hidden.has(pp.product_id));
     const owned = Boolean(pp.product_id && up.behavior.purchased.has(pp.product_id));
     const signals = hasProfileSignals(up);
@@ -1585,6 +1641,19 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         filtered: best?.filtered || null,
         owned,
         excludedBecause: [],
+        // ASK2 separate outputs. eligibility: eligible | restricted | excluded.
+        eligibility: best?.eligibility || (safety.eligible ? (safety.restricted ? 'restricted' : 'eligible') : 'excluded'),
+        restricted: Boolean(best?.restricted ?? safety.restricted),
+        missingSafetyFields: safety.missingFields,
+        missingSafetyText: safety.missingFields.map((f) => REQUIRED_FIELD_TEXT[f]).filter(Boolean),
+        safetyStatus: safety.status,
+        outputs: best?.outputs || null,
+        evidence: best?.evidence || null,
+        contextUsed: best?.contextUsed || null,
+        explainable: best ? best.explainable : null,
+        profileCompleteness: up.completeness,
+        contradictions: up.contradictions.map((c) => c.text),
+        focusNeedId: focus ? focus.needId : null,
     };
 
     let details;
@@ -1595,7 +1664,7 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         details = {
             ...base, percent: null, matchStatus: 'no-profile', score: 0, goalMatch: null, profileFit: null, healthMatch: null,
             preferenceMatch: null, confidence: 'limited', confidenceCoverage: 0, labels: [], reasons: [], reasonDetails: [],
-            considerations: [], unknowns: [], unmetNeeds: [], eligible: true, tier: 'browse',
+            considerations: [], unknowns: [], unmetNeeds: [], eligible: true, tier: 'browse', basedOn: [], profileHint: PROFILE_HINT,
         };
     } else {
         const cautionTexts = new Set(safety.cautions.map((c) => c.text.replace(/\.$/, '')));
@@ -1610,7 +1679,7 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             positive.push(text);
         }
         for (const other of needMatches) {
-            if (best && other.needId !== best.needId && other.relevant && other.score >= MIN_RECOMMEND_SCORE) positive.push(`Also a match for ${other.phrase}`);
+            if (best && other.needId !== best.needId && other.relevant && other.score >= MIN_RECOMMEND_SCORE) positive.push(`Also matches the ${other.phrase} you selected`);
         }
         const reasonDetails = positive.map((text) => {
             const component = componentForExplanation(text);
@@ -1625,6 +1694,10 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             const fn = UNKNOWN_TEXT[p.code];
             if (fn) unknowns.push(fn(p));
         }
+        if (safety.restricted) {
+            const fields = safety.missingFields.map((f) => REQUIRED_FIELD_TEXT[f]).filter(Boolean);
+            considerations.unshift({ text: `Safety not checked yet: add ${fields.join(' and ')} to your health profile before we recommend this.`, cta: null });
+        }
         if (product.evidenceStrength === 'limited') {
             unknowns.push('Evidence for this product’s health benefit is limited, so the match is held lower until stronger product-specific evidence is available.');
         }
@@ -1634,16 +1707,18 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             .filter((n) => !needMatches.find((m) => m.needId === n.id)?.relevant)
             .map((n) => n.raw || needLabel(n));
         const confidence = best ? best.confidence : safety.confidence;
+        const confidenceLevel = best ? best.confidenceLevel : confidenceLabel(confidence);
         details = {
             ...base,
             percent: best ? best.score : 0,
             matchStatus: best ? 'scored' : 'no-relevance',
             score: best ? best.score : 0,
             goalMatch: best ? Math.round(best.components.health * 100) : 0,
-            profileFit: best ? Math.round(best.components.context * 100) : null,
+            // null = not known for her (never a 0 that reads as a bad fit).
+            profileFit: best && best.components.context != null ? Math.round(best.components.context * 100) : null,
             healthMatch: best ? Math.round(best.components.health * 100) : 0,
-            preferenceMatch: best ? Math.round(best.components.preference * 100) : null,
-            confidence: confidenceLabel(confidence),
+            preferenceMatch: best && best.components.preference != null ? Math.round(best.components.preference * 100) : null,
+            confidence: confidenceLevel,
             confidenceScore: confidence,
             confidenceCoverage: Math.round(confidence * 100),
             labels: positive.slice(0, 4),
@@ -1654,9 +1729,12 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             unmetNeeds: [...new Set(unmetNeeds)],
             eligible: true,
             tier: best ? best.tier : 'browse',
+            // The why view: the inputs this match used, and a soft prompt when we know little.
+            basedOn: inputsFor(best, up),
+            profileHint: confidenceLevel === 'high' ? null : PROFILE_HINT,
         };
     }
-    entry.details = details;
+    if (!focusId) entry.details = details;
     return details;
 }
 
@@ -1684,6 +1762,7 @@ function careFlagsFor(up) {
     if (up.safety.pregnant) notes.push({ code: 'pregnancy_unknown', text: 'Pregnancy safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.safety.breastfeeding === 'yes') notes.push({ code: 'breastfeeding_unknown', text: 'Breastfeeding safety is not confirmed for most products. Check new products with your clinician.' });
     if (up.physiology.confidenceFlags.includes('needs_clarification')) notes.push({ code: 'stage_needs_clarification', text: 'Some life stages you chose do not usually go together. Update your profile so we can match better.' });
+    for (const c of up.contradictions.filter((x) => x.code === 'period_need_vs_stage')) notes.push({ code: c.code, text: c.text });
     return {
         urgent: up.safety.urgent,
         careFirst: up.safety.careFirst,
@@ -1697,6 +1776,8 @@ function careFlagsFor(up) {
         breastfeeding: up.safety.breastfeeding,
         ttc: up.safety.ttc,
         confidenceFlags: up.physiology.confidenceFlags,
+        contradictions: up.contradictions,
+        profileCompleteness: up.completeness,
         notes,
     };
 }
@@ -1749,7 +1830,7 @@ function rankCatalog(quizAnswers, healthProfile, opts) {
         if (pp.product_id && up.behavior.hidden.has(pp.product_id)) continue;
         profilesById.set(pp.product_id, pp);
         const best = result.best;
-        if (best && !best.filtered && best.score >= MIN_RECOMMEND_SCORE) matched.push({ product, best });
+        if (best && !best.filtered && !best.restricted && best.explainable && best.score >= MIN_RECOMMEND_SCORE) matched.push({ product, best });
         else if (best && best.score > 0) weaker.push({ product, best });
         else unrelated.push(product);
     }
@@ -1822,7 +1903,10 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
     const { up, eco } = ecosystemFor(quizAnswers, healthProfile, opts);
     const careFlags = careFlagsFor(up);
     const shelves = eco.shelves.map((shelf) => {
-        const picks = shelf.picks.map((r) => ({ productId: r.productId, score: r.score, tier: r.tier, explanations: r.explanations, access: r.access }));
+        const picks = shelf.picks.map((r) => ({
+            productId: r.productId, score: r.score, tier: r.tier, explanations: r.explanations, access: r.access,
+            confidence: r.confidence, confidenceLevel: r.confidenceLevel, roles: r.roles || [], aboveNext: r.aboveNext || [],
+        }));
         for (const r of shelf.picks) {
             const product = getProductById(r.productId);
             if (!product) continue;
@@ -1850,6 +1934,11 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
             qualifiedCount: shelf.qualifiedCount,
             shortBy: shelf.shortBy,
             emptyReason: shelf.emptyReason,
+            quality: shelf.quality,
+            qualityNote: shelf.qualityNote,
+            restrictedCount: shelf.restrictedCount,
+            missingSafetyText: shelf.missingSafetyText,
+            roles: shelf.roles,
             careFirst: shelf.careFirst,
             careProminent: shelf.careProminent,
             care: shelf.care,
@@ -1866,7 +1955,7 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts
  */
 export function getEcosystemAlternatives(productId, tag, quizAnswers, healthProfile = null, limit = 3, opts = {}) {
     const up = userProfileFor(quizAnswers || {}, healthProfile, opts);
-    let needId = tag && NEED_BY_ID[tag] ? tag : null;
+    let needId = tag && NEED_BY_ID[canonicalNeedId(tag)] ? canonicalNeedId(tag) : null;
     if (!needId && productId) {
         const current = getProductById(productId);
         const best = current ? engineResultFor(hydrateCatalogProduct(current), up).result.best : null;
@@ -1883,7 +1972,7 @@ export function getEcosystemAlternatives(productId, tag, quizAnswers, healthProf
             const { result } = engineResultFor(product, up);
             if (!result.safety.eligible) continue;
             const r = result.needs.find((n) => n.needId === needId) || scoreProductForNeed(pp, up, needId, { safety: result.safety });
-            if (r.filtered || r.score < MIN_RECOMMEND_SCORE) continue;
+            if (r.filtered || r.restricted || !r.explainable || r.score < MIN_RECOMMEND_SCORE) continue;
             profilesById.set(pp.product_id, pp);
             rows.push(r);
         }
@@ -1957,7 +2046,7 @@ const FOCUS_TO_TAG_AND_REASON = {
     'Different period product': { tag: 'heavy-flow', reason: 'Suggested period product swap from your check-in.' },
     'Different supplement': { tag: 'discomfort', reason: 'Suggested supplement option from your check-in.' },
     'Different app': { tag: 'privacy', reason: 'Suggested app or tracker from your check-in.' },
-    'More bloating': { tag: 'bloating', reason: 'Recommended for hormonal bloating from your check-in.' },
+    'More bloating': { tag: 'bloating', reason: 'Recommended for the bloating you noted in your check-in.' },
 };
 
 /**
@@ -1965,7 +2054,7 @@ const FOCUS_TO_TAG_AND_REASON = {
  * quiz profile, and optional tracker data (period + menopause). Returns both physical and
  * digital products with clear reasons so users see telehealth and apps as well as physical.
  */
-export function getCheckinRecommendations(profile, checkinData, cycleData = [], menopauseData = []) {
+export function getCheckinRecommendations(profile, checkinData, cycleData, menopauseData = []) {
     const userTags = new Set();
     const reasonByTag = {};
 
@@ -1974,7 +2063,7 @@ export function getCheckinRecommendations(profile, checkinData, cycleData = [], 
             'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Irregular cycles': 'irregular',
             'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
             'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
-            'Menopause symptoms': 'menopause', 'Endometriosis': 'cramps', 'Fertility / TTC': 'fertility',
+            'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis', 'Fertility / TTC': 'fertility',
             'Pregnancy': 'pregnancy', 'Postpartum recovery': 'postpartum'
         };
         profile.frustrations.forEach(f => {
@@ -1992,24 +2081,14 @@ export function getCheckinRecommendations(profile, checkinData, cycleData = [], 
         }
     });
 
-    // Synthesize from menopause tracker: if they log symptoms, boost menopause + symptom-related
-    const hasMenopauseData = menopauseData && menopauseData.length > 0;
-    if (hasMenopauseData) {
-        const recentSymptoms = new Set();
-        menopauseData.slice(0, 14).forEach(entry => {
-            (entry.symptoms || []).forEach(s => recentSymptoms.add(s));
-        });
-        if (recentSymptoms.size > 0) {
-            userTags.add('menopause');
-            reasonByTag['menopause'] = `Matches symptoms you track in Menopause Tracker (e.g. ${[...recentSymptoms].slice(0, 2).join(', ')}).`;
-        }
-    }
-
-    // Synthesize from period tracker: if they use it, boost cycle/tracking and period products
-    const hasCycleData = cycleData && cycleData.length > 0;
-    if (hasCycleData) {
-        userTags.add('irregular');
-        if (!reasonByTag['irregular']) reasonByTag['irregular'] = 'Based on your period tracking in Cycle Tracker.';
+    // Tracker use is behavior, not health context (ASK2): using the menopause
+    // tracker does not mean menopause, and logging periods does not mean
+    // irregular cycles. Menopause products are only boosted when she shared
+    // that life stage herself.
+    const stages = asStringArray(rawIntakeFromProfile(profile)?.lifeStageSelections);
+    if (stages.some((st) => /perimenopause|menopause|post-menopause/i.test(st)) && Array.isArray(menopauseData) && menopauseData.length > 0) {
+        userTags.add('menopause');
+        reasonByTag['menopause'] = 'Matches the life stage you shared.';
     }
 
     // Exclude products that match user's sensitivities or productsToAvoid
@@ -2064,7 +2143,7 @@ export const SIMILAR_PROFILES = {
         topProducts: ['p-magnesium-glycinate', 'p-honeypot-pad', 'p-thermacare'],
     },
     'bloating': {
-        label: 'Users with Hormonal Bloating',
+        label: 'Users with bloating',
         topProducts: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me'],
     },
     'uti': {

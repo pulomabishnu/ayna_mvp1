@@ -63,7 +63,8 @@ function place(state, id) {
   return { slots, ages, tick: state.tick + 1 };
 }
 
-export function useEcoSlots(needs, { demo = true } = {}) {
+// loop: false plays the demo once (fills the three slots, then rests).
+export function useEcoSlots(needs, { demo = true, loop = true, step: stepMs = DEMO_STEP } = {}) {
   const reduced = useReducedMotion();
   const [state, setState] = useState(EMPTY);
   const [touched, setTouched] = useState(false);
@@ -75,15 +76,17 @@ export function useEcoSlots(needs, { demo = true } = {}) {
   useEffect(() => {
     if (!demo || touched || reduced || !demoOrder.length) return undefined;
     let step = 0;
+    let timer;
     const run = () => {
+      if (!loop && step >= Math.min(SLOTS, demoOrder.length)) { window.clearInterval(timer); return; }
       const id = demoOrder[step % demoOrder.length];
       step += 1;
       setState((prev) => place(prev, id));
     };
     const first = window.setTimeout(run, 500);
-    const timer = window.setInterval(() => { if (!document.hidden) run(); }, DEMO_STEP);
+    timer = window.setInterval(() => { if (!document.hidden) run(); }, stepMs);
     return () => { window.clearTimeout(first); window.clearInterval(timer); };
-  }, [demo, touched, reduced, demoOrder]);
+  }, [demo, loop, stepMs, touched, reduced, demoOrder]);
 
   const toggle = (id) => {
     if (!touched) {

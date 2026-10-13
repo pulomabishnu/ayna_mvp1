@@ -2,29 +2,39 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import './quiz-intro.css';
 
 // A few seconds at the very start of the quiz (app and website) that shows
-// the two helpers once: the "i" next to a question, and press-and-hold on an
-// answer. Shown once per device; replaces the per-step tip pills.
-const QUIZ_INTRO_KEY = 'ayna_quiz_intro_seen_v1';
+// the two helpers: the "i" next to a question, and press-and-hold on an
+// answer. Shown every time someone starts building their Ecosystem, unless
+// she ticked "Don't show again" (stored under QUIZ_INTRO_HIDDEN_KEY).
+// Replaces the older once-per-device key, ayna_quiz_intro_seen_v1.
+const QUIZ_INTRO_HIDDEN_KEY = 'ayna_quiz_intro_hidden_v1';
 const DURATION_MS = 4600;
 
-function quizIntroSeen() {
-  try { return localStorage.getItem(QUIZ_INTRO_KEY) === '1'; } catch { return true; }
+function quizIntroHidden() {
+  try { return localStorage.getItem(QUIZ_INTRO_HIDDEN_KEY) === '1'; } catch { return false; }
 }
-function markSeen() {
-  try { localStorage.setItem(QUIZ_INTRO_KEY, '1'); } catch { /* storage unavailable */ }
+function setHidden(hidden) {
+  try {
+    if (hidden) localStorage.setItem(QUIZ_INTRO_HIDDEN_KEY, '1');
+    else localStorage.removeItem(QUIZ_INTRO_HIDDEN_KEY);
+  } catch { /* storage unavailable */ }
 }
 function prefersReducedMotion() {
   try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }
 }
 
-/** Renders the intro once per device; renders nothing after it has been seen. */
-export default function QuizIntro({ variant = 'app' }) {
-  const [open, setOpen] = useState(() => !quizIntroSeen());
+/**
+ * Renders the intro on mount (each new quiz start) unless hidden for good.
+ * `enabled={false}` skips it, e.g. when the quiz reopens mid-way.
+ */
+export default function QuizIntro({ variant = 'app', enabled = true }) {
+  const [open, setOpen] = useState(() => enabled && !quizIntroHidden());
   const [leaving, setLeaving] = useState(false);
   const [still] = useState(prefersReducedMotion);
+  // Touching the checkbox stops the auto-advance so it never closes under her finger.
+  const [paused, setPaused] = useState(false);
+  const [dontShow, setDontShow] = useState(false);
   const skipRef = useRef(null);
   const close = useCallback(() => {
-    markSeen();
     if (still) { setOpen(false); return; }
     setLeaving(true);
     setTimeout(() => setOpen(false), 220);
@@ -36,17 +46,18 @@ export default function QuizIntro({ variant = 'app' }) {
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     window.addEventListener('keydown', onKey);
     // Reduced motion: a still card that waits for "Got it" instead of moving on by itself.
-    const timer = still ? null : setTimeout(() => close(), DURATION_MS);
+    const timer = still || paused ? null : setTimeout(() => close(), DURATION_MS);
     return () => { window.removeEventListener('keydown', onKey); clearTimeout(timer); };
-  }, [open, still, close]);
+  }, [open, still, paused, close]);
 
   if (!open) return null;
+  const manual = still || paused;
   return (
-    <div className={`qi qi--${variant}${still ? ' is-still' : ''}${leaving ? ' is-leaving' : ''}`} role="dialog" aria-modal="true" aria-labelledby="qi-title" onClick={close}>
+    <div className={`qi qi--${variant}${still ? ' is-still' : ''}${paused ? ' is-paused' : ''}${leaving ? ' is-leaving' : ''}`} role="dialog" aria-modal="true" aria-labelledby="qi-title" onClick={close}>
       <div className="qi-card" onClick={(e) => e.stopPropagation()} style={{ '--qi-dur': `${DURATION_MS}ms` }}>
         <div className="qi-top">
           <span className="qi-tag">Quick tip</span>
-          <button type="button" className="qi-skip" ref={skipRef} onClick={close}>{still ? 'Got it' : 'Skip'}</button>
+          <button type="button" className="qi-skip" ref={skipRef} onClick={close}>{manual ? 'Got it' : 'Skip'}</button>
         </div>
         <h2 className="qi-title" id="qi-title">Two helpers</h2>
 
@@ -74,7 +85,17 @@ export default function QuizIntro({ variant = 'app' }) {
           <p className="qi-caption">Hold an answer to see what it means</p>
         </div>
 
-        {!still && <span className="qi-timer" aria-hidden="true"><i /></span>}
+        <label className="qi-dont" onPointerDown={() => setPaused(true)}>
+          <input
+            type="checkbox"
+            checked={dontShow}
+            onFocus={() => setPaused(true)}
+            onChange={(e) => { setPaused(true); setDontShow(e.target.checked); setHidden(e.target.checked); }}
+          />
+          <span>Don’t show again</span>
+        </label>
+
+        {!manual && <span className="qi-timer" aria-hidden="true"><i /></span>}
       </div>
     </div>
   );

@@ -427,6 +427,9 @@ function App() {
   // Back from the first Wrapped slide (signed in) reopens the quiz from its
   // draft, on the last step, instead of the saved profile's first gap.
   const [quizResume, setQuizResume] = useState(false);
+  // Bumped by "Build your ecosystem" in the sign-in modal so the quiz restarts
+  // (with its intro) even when the modal opened on top of the quiz itself.
+  const [quizRun, setQuizRun] = useState(0);
   const [askOpenSignal, setAskOpenSignal] = useState(0);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
@@ -1454,7 +1457,7 @@ function App() {
               )}
               {showAccountMenu && !user && (
                 <div className="nav-account-menu" role="menu">
-                  <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); setCurrentView('quiz'); }}>Sign up</button>
+                  <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); setCurrentView('quiz'); }}>Build your ecosystem</button>
                   <button type="button" role="menuitem" onClick={() => { setShowAccountMenu(false); setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}>Log in</button>
                 </div>
               )}
@@ -1594,7 +1597,7 @@ function App() {
           />
         )}
         {currentView === 'quiz' && (
-          <WebIntake key={quizResume ? 'quiz-resume' : 'quiz'} initialSnapshot={quizResume ? null : quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} />
+          <WebIntake key={quizResume ? 'quiz-resume' : `quiz-${quizRun}`} introEnabled={!quizResume} initialSnapshot={quizResume ? null : quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} />
         )}
         {currentView === 'profile-edit' && (
           <div className="ay-flow-editbar">
@@ -2053,7 +2056,10 @@ function App() {
               // Same area names the Wrapped story just showed.
               areas: [...new Set(guestPreview.products.map((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label).filter(Boolean))],
             } : null}
-            onStartEcosystem={(quizResults || pendingQuizResults || pendingAction === 'quiz-complete') ? null : () => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setCurrentView('quiz'); }}
+            // Create account exists only in the save step after the quiz (Wrapped).
+            // Everywhere else: sign in, or "Build your ecosystem" to start the quiz.
+            allowSignup={pendingAction === 'quiz-complete'}
+            onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
             onBeforeOAuthRedirect={() => {
               try {

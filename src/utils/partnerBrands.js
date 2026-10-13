@@ -39,6 +39,16 @@
  */
 export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/, /\bproov\b/, /\belitone\b/, /\bmy pelvic bra\b/, /\bbuni\b/, /\blim method\b/, /\bwinx health\b/, /\bsootheher\b/, /\bgina\b/, /\blola\b/];
 
+/**
+ * Display names for the contracted partners above, in the same order, each
+ * paired with its matching pattern. Used by the "Our brand partners" strip
+ * (src/components/PartnerStrip.jsx). Keep in sync with PARTNER_BRAND_PATTERNS.
+ */
+export const PARTNER_BRANDS = [
+  'Neycher', 'Connect Pelvic Floor Fitness', 'VIO2', 'Proov', 'Elitone', 'My Pelvic Bra',
+  'BUNI', 'LiM Method', 'Winx Health', 'SootheHer', 'gina', 'LOLA',
+].map((name, i) => ({ name, pattern: PARTNER_BRAND_PATTERNS[i] }));
+
 export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
   return PARTNER_BRAND_PATTERNS.some((re) => re.test(text));

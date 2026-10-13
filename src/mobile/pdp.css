@@ -185,3 +185,22 @@
 .ay-pdp-community-grid button { min-height: 44px; padding: 8px 10px; border: 1.5px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); color: var(--ay-ink); font: 700 13px/1.15 var(--ay-font-ui); cursor: pointer; }
 .ay-pdp-community-grid button.is-primary { background: var(--ay-ink); color: var(--ay-paper); }
 .ay-pdp-community-grid button:active { transform: scale(.97); }
+
+/* "See your match" (guest, no profile yet): a clean outline pill like the
+   other app buttons. Overrides the old underline style from figma.css /
+   reference-system.css whose bottom border curved with the inherited radius. */
+.ayna-mobile.ayna-mobile .ayna-figma-guest-match.ayna-figma-guest-match {
+  position: static !important;
+  display: inline-flex !important; align-items: center; justify-content: center; gap: 8px;
+  width: auto; min-height: 44px; margin: 12px 0 0 !important; padding: 0 20px !important;
+  border: 2px solid var(--ay-ink) !important; border-radius: 999px !important;
+  background: var(--ay-paper) !important; color: var(--ay-ink) !important;
+  box-shadow: 2px 2px 0 var(--ay-ink) !important;
+  font: 700 15px/1 var(--ay-font-ui, 'Poppins', system-ui, sans-serif) !important;
+  text-decoration: none !important; cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.ayna-mobile.ayna-mobile .ayna-figma-guest-match.ayna-figma-guest-match span { font-size: 16px; line-height: 1; }
+.ayna-mobile.ayna-mobile .ayna-figma-guest-match.ayna-figma-guest-match:active { transform: scale(.98); box-shadow: 1px 1px 0 var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ayna-figma-guest-match.ayna-figma-guest-match:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile.ayna-mobile .ayna-figma-guest-match.ayna-figma-guest-match { transition: none; } }

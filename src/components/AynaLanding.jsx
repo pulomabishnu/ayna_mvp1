@@ -1,44 +1,31 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import WebHeroCarousel from './WebHeroCarousel';
 import { ExploreByNeed } from './HomeShowcase';
-import { EcoOrbit, NeedPicker } from './EcoBuilder';
+import { EcoOrbit } from './EcoBuilder';
+import PartnerStrip from './PartnerStrip';
 import { useEcoSlots, useNeeds } from './landingNeeds';
 import WebEcosystemChart from './WebEcosystemChart';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import '../styles/eco-redesign.css';
 import '../styles/landing.css';
-import useReveal from '../utils/useReveal';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } from '../data/products';
 import ProductCard from './ProductCard';
 import { edgeFadeRef } from '../utils/edgeFade';
 import { getVerificationLinks } from '../utils/verificationLinks';
 
 /**
- * Website home.
+ * Website home, laid out by the design rulebook (/tmp figma RULEBOOK §14):
  *
- *   FirstVisitLanding  logged out: "Build your ecosystem" toy (pick needs,
- *                      watch them land in orbit, start the quiz), a big
- *                      search, the welcome stories, how it works, Popular on
- *                      ayna (chips + Filters + Personalize) and Explore by need.
- *   WelcomeBack        logged in: greeting with the ecosystem ring (or the
- *                      same build toy when it is empty), Picked for you and
- *                      Explore by need.
+ *   FirstVisitLanding  hero (Build your ecosystem + search + a small orbit),
+ *                      brand partner strip, why ayna (3), how it works (3 +
+ *                      CTA), shop by need, stories, final CTA band.
+ *   WelcomeBack        signed in: greeting hero with the ecosystem ring (or
+ *                      the build hero when it is empty), partner strip,
+ *                      Picked for you.
  *
- * Styles: src/styles/landing.css (classes prefixed lx-).
+ * One primary-styled button per viewport (.lx-cta); everything else is an
+ * outline or text button. Styles: src/styles/landing.css (classes lx-*).
  */
-
-/** The eight products in board 1a's Shop grid, with the mockup's own category eyebrows. */
-const SHOP_LINEUP = [
-  { id: 'p-lola-pad', label: 'PADS' },
-  { id: 'p-elvie-trainer', label: 'PELVIC FLOOR' },
-  { id: 'p-wuka-underwear', label: 'PERIOD WEAR' },
-  { id: 'p-b-complex', label: 'SUPPLEMENTS' },
-  { id: 'p-silverette-cups', label: 'POSTPARTUM' },
-  { id: 'p-neycher-vaginal-moisturizer', label: 'INTIMATE CARE' },
-  { id: 'p-lola-tampon', label: 'TAMPONS' },
-  { id: 'p-dame-arc', label: 'INTIMACY' },
-];
-
 
 // One category list everywhere (HI05): the same chips as Shop.
 // Home shows the first few (same order as Shop); the rest are one tap away.
@@ -185,10 +172,6 @@ function displayNameFromUser(user) {
   return '';
 }
 
-function productById(id) {
-  return ALL_PRODUCTS.find((p) => p.id === id) || null;
-}
-
 function HomeSkeleton() {
   return (
     <div className="mockup-landing ay-home-skeleton" aria-busy="true" aria-label="Loading">
@@ -233,7 +216,6 @@ function Toggle({ on, offTrack = '#DCD5CB', onTrack = 'var(--color-primary)', on
 }
 
 const SEARCH_HINTS = ['organic pads', 'PCOS support', 'postpartum recovery', 'vaginal dryness', 'pelvic floor', 'sleep support', 'period underwear'];
-const SEARCH_CHIPS = ['Postpartum recovery', 'Organic pads', 'Pelvic floor', 'Supplements for cramps', 'Menopause'];
 
 function useRotating(length, ms) {
   const [i, setI] = useState(0);
@@ -245,8 +227,12 @@ function useRotating(length, ms) {
   return i;
 }
 
-/** The big search: tall bar with a rotating example under the caret. */
-function BigSearch({ onViewDiscovery }) {
+const Arrow = () => (
+  <span className="lx-cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" /></svg></span>
+);
+
+/** The hero's secondary action: one wide search field with a rotating example. */
+function HeroSearch({ onViewDiscovery }) {
   const [query, setQuery] = useState('');
   const hint = useRotating(SEARCH_HINTS.length, 2600);
   const submit = (e) => {
@@ -254,64 +240,59 @@ function BigSearch({ onViewDiscovery }) {
     onViewDiscovery?.(discoveryTargetFor(query));
   };
   return (
-    <section className="lx-search" aria-labelledby="lx-search-title">
-      <div className="mockup-page">
-        <h2 id="lx-search-title" className="lx-search__title">Or search for something specific</h2>
-        <form className="lx-search__bar" role="search" onSubmit={submit}>
-          <svg className="lx-search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
-          <span className="lx-search__field">
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              aria-label="Search products"
-              placeholder=" "
-              enterKeyHint="search"
-            />
-            {!query && (
-              <span className="lx-search__hint" aria-hidden="true">
-                Try <b key={hint}>{SEARCH_HINTS[hint]}</b>
-              </span>
-            )}
+    <form className="lx-search" role="search" onSubmit={submit}>
+      <label className="lx-search__field">
+        <span className="lx-sr">Search products</span>
+        <svg className="lx-search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder=" "
+          enterKeyHint="search"
+          autoComplete="off"
+        />
+        {!query && (
+          <span className="lx-search__hint" aria-hidden="true">
+            Search <b key={hint}>{SEARCH_HINTS[hint]}</b>
           </span>
-          <button type="submit">Search</button>
-        </form>
-        <div className="lx-search__chips" aria-label="Popular searches">
-          {SEARCH_CHIPS.map((chip) => (
-            <button key={chip} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(chip))}>{chip}</button>
-          ))}
-        </div>
-      </div>
-    </section>
+        )}
+      </label>
+      <button type="submit" className="lx-search__go" aria-label="Search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+      </button>
+    </form>
   );
 }
 
-/** "Build your ecosystem": the one thing the page is about. */
+function HeroTitle({ lead, word }) {
+  return (
+    <h1 id="lx-hero-title" className="lx-hero__title">
+      {lead} <span className="lx-mark">{word}</span>
+    </h1>
+  );
+}
+
+/** "Build your ecosystem": headline, one primary CTA, search, a small orbit. */
 function BuildHero({ onStartQuiz, onViewDiscovery, onOpenProduct, greeting }) {
   const needs = useNeeds();
-  const { slots, toggle, touched } = useEcoSlots(needs);
-  const picked = slots.filter(Boolean).length;
+  // Plays once: three needs land in orbit, then it rests.
+  const { slots } = useEcoSlots(needs, { loop: false, step: 900 });
   return (
     <section className="lx-hero" aria-labelledby="lx-hero-title">
       <div className="mockup-page lx-hero__inner">
         <div className="lx-hero__copy">
           {greeting && <p className="lx-hero__hello">{greeting}</p>}
-          <h1 id="lx-hero-title" className="lx-hero__title">
-            <span>Build your</span> <span className="lx-hero__word">ecosystem.</span>
-          </h1>
-          <p className="lx-hero__sub">Pick what you care about. We match products to your body, with the evidence beside each one.</p>
-          <NeedPicker needs={needs} slots={touched ? slots : []} onToggle={toggle} />
-          <div className="lx-hero__actions">
+          <HeroTitle lead="Build your" word="ecosystem." />
+          <p className="lx-hero__sub">Health products matched to your body, with the evidence beside each one.</p>
+          <div className="lx-hero__cta">
             <button type="button" className="lx-cta" onClick={onStartQuiz}>
-              Build my ecosystem
-              <span className="lx-cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" /></svg></span>
+              Build your ecosystem
+              <Arrow />
             </button>
-            <p className="lx-hero__note">
-              {touched && picked > 0 ? 'Six questions to finish it.' : 'Six questions, then a shop matched to you.'}
-              {' '}
-              <button type="button" className="lx-link" onClick={() => onViewDiscovery?.('')}>Browse the Shop</button>
-            </p>
+            <p className="lx-hero__note">Six questions, then a shop matched to you.</p>
           </div>
+          <HeroSearch onViewDiscovery={onViewDiscovery} />
         </div>
         <div className="lx-hero__visual">
           <EcoOrbit needs={needs} slots={slots} onOpenProduct={onOpenProduct} />
@@ -321,20 +302,77 @@ function BuildHero({ onStartQuiz, onViewDiscovery, onOpenProduct, greeting }) {
   );
 }
 
-function HowItWorks() {
+function Trust({ onViewDiscovery }) {
   return (
-    <section className="lx-how ay-reveal" aria-labelledby="lx-how-title">
-      <div className="mockup-page lx-how__inner">
-        <div className="lx-how__head">
-          <h2 id="lx-how-title" className="lx-h2">No mystery box.</h2>
-          <p>How ayna picks what you see.</p>
-        </div>
+    <div className="lx-trust">
+      <div className="mockup-page">
+        <PartnerStrip variant="web" onSelectBrand={(name) => onViewDiscovery?.(name)} />
+      </div>
+    </div>
+  );
+}
+
+const VALUE_PROPS = [
+  { tone: 'pink', title: 'Matched to you', text: 'Your shop is ranked around your body and what you avoid.', icon: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></> },
+  { tone: 'butter', title: 'Evidence beside each pick', text: 'Every match shows why it fits and where that comes from.', icon: <><path d="M7 4h7l4 4v12H7z" /><path d="M10 12h5M10 16h5" /></> },
+  { tone: 'mint', title: 'Your data stays yours', text: 'We do not sell your personal health information.', icon: <><rect x="6" y="10" width="12" height="10" rx="2" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /></> },
+];
+
+function ValueProps() {
+  return (
+    <section className="lx-values" aria-labelledby="lx-values-title">
+      <div className="mockup-page">
+        <h2 id="lx-values-title" className="lx-h2">Why ayna</h2>
+        <ul className="lx-values__list">
+          {VALUE_PROPS.map((v) => (
+            <li key={v.title} className={`tone-${v.tone}`}>
+              <span className="lx-values__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{v.icon}</svg></span>
+              <h3>{v.title}</h3>
+              <p>{v.text}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorks({ onStartQuiz }) {
+  return (
+    <section className="lx-how" aria-labelledby="lx-how-title">
+      <div className="mockup-page">
+        <h2 id="lx-how-title" className="lx-h2">How it works</h2>
         <ol className="lx-how__steps">
-          <li className="tone-pink"><b>1</b><strong>Your profile</strong><span>Six questions about your body and what you avoid.</span></li>
-          <li className="tone-butter"><b>2</b><strong>The market</strong><span>We look across products, apps and care.</span></li>
-          <li className="tone-mint"><b>3</b><strong>The evidence</strong><span>Each pick shows its sources.</span></li>
-          <li className="tone-peri"><b>4</b><strong>Your shop</strong><span>Ranked for you. You decide.</span></li>
+          <li className="tone-pink"><b>1</b><h3>Answer six questions</h3><p>About your body and what you avoid.</p></li>
+          <li className="tone-butter"><b>2</b><h3>We check the evidence</h3><p>Across products, apps and care.</p></li>
+          <li className="tone-peri"><b>3</b><h3>Get your ecosystem</h3><p>Ranked for you. You decide.</p></li>
         </ol>
+        <div className="lx-how__cta">
+          <button type="button" className="lx-cta" onClick={onStartQuiz}>
+            Build your ecosystem
+            <Arrow />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FinalCta({ onStartQuiz, onViewDiscovery }) {
+  return (
+    <section className="lx-final" aria-labelledby="lx-final-title">
+      <div className="mockup-page">
+        <div className="lx-final__card">
+          <h2 id="lx-final-title" className="lx-h2">Start with six questions.</h2>
+          <p>Then a shop matched to you.</p>
+          <div className="lx-final__actions">
+            <button type="button" className="lx-cta" onClick={onStartQuiz}>
+              Build your ecosystem
+              <Arrow />
+            </button>
+            <button type="button" className="lx-link" onClick={() => onViewDiscovery?.('')}>Browse the Shop</button>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -481,7 +519,7 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
   const [open, setOpen] = useState(false);
   const active = Object.keys(NO_FILTERS).filter((k) => filters[k] !== 'all').length;
   return (
-    <section className="lx-shop ay-reveal" aria-labelledby="lx-shop-title">
+    <section className="lx-shop" aria-labelledby="lx-shop-title">
       <div className="mockup-page">
         <div className="lx-shop__head">
           <h2 id="lx-shop-title" className="lx-h2">{title}</h2>
@@ -512,7 +550,7 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
         )}
         {children}
         <div className="lx-shop__foot">
-          <button type="button" className="lx-cta lx-cta--sm" onClick={() => onViewDiscovery?.('')}>See all in Shop</button>
+          <button type="button" className="lx-ghost" onClick={() => onViewDiscovery?.('')}>See all in Shop</button>
         </div>
       </div>
     </section>
@@ -526,7 +564,6 @@ const exploreTarget = (n) => (n.group ? { initialMacroGroup: n.group } : (n.keyw
 /* ------------------------------------------------------------------ */
 
 function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null, savedProducts = {}, onToggleSaved }) {
-  const revealRef = useReveal();
   const name = displayNameFromUser(user) || 'there';
   const [filter, setFilter] = useCategoryParam(initialCategory);
   const [personalize, setPersonalize] = useState(true);
@@ -574,28 +611,28 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
   }, [myProducts]);
 
   return (
-    <div className="mockup-landing mockup-landing--returning lx" ref={revealRef}>
+    <div className="mockup-landing mockup-landing--returning lx">
       {picks > 0 ? (
         <section className="lx-hero lx-hero--home" aria-labelledby="lx-hero-title">
           <div className="mockup-page lx-hero__inner">
             <div className="lx-hero__copy">
               <p className="lx-hero__hello">Hello, {name}</p>
-              <h1 id="lx-hero-title" className="lx-hero__title"><span>Your</span> <span className="lx-hero__word">ecosystem.</span></h1>
+              <HeroTitle lead="Your" word="ecosystem." />
               <p className="lx-hero__sub">
                 {picks} pick{picks === 1 ? '' : 's'} across {ecoGroups.length} area{ecoGroups.length === 1 ? '' : 's'} of care.
               </p>
-              <div className="lx-hero__actions">
+              <div className="lx-hero__cta">
                 <button type="button" className="lx-cta" onClick={onViewEcosystem}>
                   Open my ecosystem
-                  <span className="lx-cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" /></svg></span>
+                  <Arrow />
                 </button>
-                {nextArea && (
-                  <button type="button" className="lx-next" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
-                    <span className="lx-next__dot" aria-hidden="true" />
-                    Your {nextArea.label} shelf is empty. <b>Add one</b>
-                  </button>
-                )}
               </div>
+              {nextArea && (
+                <button type="button" className="lx-next" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
+                  <span className="lx-next__dot" aria-hidden="true" />
+                  <span>Your {nextArea.label} shelf is empty. <b>Add one</b></span>
+                </button>
+              )}
             </div>
             <div className="lx-hero__visual">
               <div className="lx-ring-card">
@@ -607,6 +644,8 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
       ) : (
         <BuildHero greeting={`Hello, ${name}`} onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} onOpenProduct={onOpenProduct} />
       )}
+
+      <Trust onViewDiscovery={onViewDiscovery} />
 
       <ShopSection
         title={personalize ? 'Picked for you' : 'Popular on ayna'}
@@ -639,10 +678,6 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
         </div>
         {shownProducts.length === 0 && <div className="lx-empty">No matches yet. Try another filter.</div>}
       </ShopSection>
-
-      <div className="lx-needs-wrap ay-reveal">
-        <ExploreByNeed onOpenProduct={onOpenProduct} onExplore={(n) => onViewDiscovery?.(exploreTarget(n))} />
-      </div>
     </div>
   );
 }
@@ -651,60 +686,24 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
 /* Logged out                                                          */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
-  const revealRef = useReveal();
-  const [filter, setFilter] = useCategoryParam(initialCategory);
-  const [personalize, setPersonalize] = useState(false);
-  const [filters, setFilters] = useState(NO_FILTERS);
-
-  const lineup = useMemo(() => SHOP_LINEUP.map(({ id }) => productById(id)).filter(Boolean), []);
-  const chips = useMemo(
-    () => SHOP_FILTERS.filter((item) => item.key === 'all' || lineup.some((p) => matchesShopFilter(p, item.key))).slice(0, HOME_CHIPS),
-    [lineup],
-  );
-  const productTypes = useMemo(() => Array.from(new Set(lineup.map((p) => p.category).filter(Boolean))).sort(), [lineup]);
-
-  const shown = useMemo(() => {
-    let list = applyFilters(lineup.filter((p) => matchesShopFilter(p, filter)), filters, {});
-    if (personalize && profileCategories?.length) {
-      const rank = new Set(profileCategories);
-      list = [...list].sort((a, b) => (rank.has(b.category) ? 1 : 0) - (rank.has(a.category) ? 1 : 0));
-    }
-    return list;
-  }, [lineup, filter, filters, personalize, profileCategories]);
-
+function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onViewDiscovery, onOpenProduct }) {
   return (
-    <div className="mockup-landing mockup-landing--first lx" ref={revealRef}>
+    <div className="mockup-landing mockup-landing--first lx">
       <BuildHero onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} onOpenProduct={onOpenProduct} />
-      <BigSearch onViewDiscovery={onViewDiscovery} />
-      <WebHeroCarousel onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
-      <HowItWorks />
-      <ShopSection
-        title="Popular on ayna"
-        chips={chips}
-        filter={filter}
-        setFilter={setFilter}
-        filters={filters}
-        setFilters={setFilters}
-        productTypes={productTypes}
-        onViewDiscovery={onViewDiscovery}
-        personalizeControl={hasProfile ? (
-          <label className="lx-toggle">
-            <span>{personalize ? 'Personalized' : 'Personalize'}</span>
-            <Toggle on={personalize} onClick={() => setPersonalize((v) => !v)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPersonalize((v) => !v); } }} />
-          </label>
-        ) : (
-          <button type="button" className="lx-pill is-butter" onClick={onStartQuiz}>Personalize</button>
-        )}
-      >
-        <div className="lx-grid">
-          {shown.map((product) => <ProductCard key={product.id} product={product} onOpen={onOpenProduct} />)}
-        </div>
-        {shown.length === 0 && <div className="lx-empty">No matches yet. Try another filter.</div>}
-      </ShopSection>
-      <div className="lx-needs-wrap ay-reveal">
-        <ExploreByNeed onOpenProduct={onOpenProduct} onExplore={(n) => onViewDiscovery?.(exploreTarget(n))} />
+      <Trust onViewDiscovery={onViewDiscovery} />
+      <ValueProps />
+      <HowItWorks onStartQuiz={onStartQuiz} />
+      <div className="lx-needs-wrap">
+        <ExploreByNeed
+          onOpenProduct={onOpenProduct}
+          onExplore={(n) => onViewDiscovery?.(exploreTarget(n))}
+          onViewAll={() => onViewDiscovery?.('')}
+        />
       </div>
+      <div className="lx-stories">
+        <WebHeroCarousel onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
+      </div>
+      <FinalCta onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
     </div>
   );
 }
@@ -718,8 +717,6 @@ export default function AynaLanding({
   onViewCommunity,
   user,
   myProducts,
-  hasProfile = false,
-  profileCategories,
   recommendedProductIds = [],
   initialCategory = null,
   loading = false,
@@ -753,9 +750,6 @@ export default function AynaLanding({
       onViewCommunity={onViewCommunity}
       onViewDiscovery={onViewDiscovery}
       onOpenProduct={onOpenProduct}
-      hasProfile={hasProfile}
-      profileCategories={profileCategories}
-      initialCategory={initialCategory}
     />
   );
 }

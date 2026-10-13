@@ -16,8 +16,15 @@
 
 // ─── Health needs ───────────────────────────────────────────────────────────
 // id: '<family>.<sub_need>'. `option` is the exact intake answer string.
-// `phrase` is used inside user-facing explanations ("Made for period cramps").
-// `extra: true` marks sub-needs only reachable through custom text.
+// `phrase` is used inside user-facing explanations ("Matches the period
+// cramps you selected"). `extra: true` marks sub-needs only reachable through
+// custom text.
+//
+// UI CATEGORIES ARE NAVIGATION ONLY. The intake groups options under headers
+// such as "Perimenopause + menopause"; those headers have no meaning here.
+// `family` is a neutral body-system family (never a cause) and `kind` says
+// what sort of answer the option is (see NEED_KINDS). Night sweats is
+// 'vasomotor.night_sweats', a symptom, not a menopause need.
 export const NEEDS = [
   // Period + cycle
   { id: 'period.product_support', option: 'Period product support', phrase: 'period care', family: 'period' },
@@ -72,10 +79,10 @@ export const NEEDS = [
   { id: 'sexual.contraception', option: 'Contraception', phrase: 'contraception', family: 'sexual' },
   { id: 'sexual.sti', option: 'STI-related concerns', phrase: 'STI concerns', family: 'sexual' },
   // Perimenopause + menopause + post-menopause
-  { id: 'menopause.hot_flashes', option: 'Hot flashes', phrase: 'hot flashes', family: 'menopause' },
-  { id: 'menopause.night_sweats', option: 'Night sweats', phrase: 'night sweats', family: 'menopause' },
+  { id: 'vasomotor.hot_flashes', option: 'Hot flashes', phrase: 'hot flashes', family: 'vasomotor' },
+  { id: 'vasomotor.night_sweats', option: 'Night sweats', phrase: 'night sweats', family: 'vasomotor' },
   { id: 'pain.joint', option: 'Joint aches', phrase: 'joint aches', family: 'pain' },
-  { id: 'menopause.body_changes', option: 'Menopause-related body changes', phrase: 'menopause body changes', family: 'menopause' },
+  { id: 'menopause.body_changes', option: 'Menopause-related body changes', phrase: 'menopause-related body changes', family: 'menopause' },
   // Mood + mental wellbeing
   { id: 'mood.swings', option: 'Mood swings', phrase: 'mood swings', family: 'mood' },
   { id: 'mood.irritability', option: 'Irritability', phrase: 'irritability', family: 'mood' },
@@ -84,9 +91,9 @@ export const NEEDS = [
   { id: 'mood.cycle_related', option: 'Cycle-related mood changes', phrase: 'cycle-related mood changes', family: 'mood' },
   // Sleep + energy + cognition
   { id: 'energy.fatigue', option: 'Fatigue or low energy', phrase: 'low energy', family: 'energy' },
-  { id: 'sleep.trouble', option: 'Trouble sleeping', phrase: 'sleep', family: 'sleep' },
+  { id: 'sleep.trouble', option: 'Trouble sleeping', phrase: 'trouble sleeping', family: 'sleep' },
   { id: 'cognition.brain_fog', option: 'Brain fog', phrase: 'brain fog', family: 'cognition' },
-  { id: 'cognition.concentration', option: 'Difficulty concentrating', phrase: 'focus', family: 'cognition' },
+  { id: 'cognition.concentration', option: 'Difficulty concentrating', phrase: 'trouble concentrating', family: 'cognition' },
   // Digestive health
   { id: 'digestive.constipation', option: 'Constipation', phrase: 'constipation', family: 'digestive' },
   { id: 'digestive.diarrhea', option: 'Diarrhea', phrase: 'diarrhea', family: 'digestive' },
@@ -97,7 +104,7 @@ export const NEEDS = [
   { id: 'skin.acne', option: 'Acne', phrase: 'acne', family: 'skin' },
   { id: 'hair.loss', option: 'Hair thinning or hair loss', phrase: 'hair thinning', family: 'hair' },
   { id: 'hair.excess', option: 'Excess facial or body hair', phrase: 'excess hair', family: 'hair' },
-  { id: 'skin.hormonal', option: 'Hormone-related skin concerns', phrase: 'hormone-related skin', family: 'skin' },
+  { id: 'skin.hormonal', option: 'Hormone-related skin concerns', phrase: 'hormone-related skin concerns', family: 'skin' },
   // Metabolic + physical wellness
   { id: 'metabolic.weight', option: 'Metabolism or weight support', phrase: 'metabolism support', family: 'metabolic' },
   { id: 'fitness.strength', option: 'Strength or fitness', phrase: 'strength and fitness', family: 'fitness' },
@@ -117,10 +124,12 @@ export const NON_NEED_OPTIONS = new Set(['Nothing right now', 'Something else'])
 export const LEGACY_NEED_OPTION_ALIASES = { 'Other hormone-related skin concerns': 'Hormone-related skin concerns' };
 
 // Older saved profiles (the first quiz and the first web intake) only carry
-// broad answers. Each maps to the specific needs it named, never to a whole
-// family. Used only when the intake has no current "What needs support?"
-// answers, so a current answer is never widened by its generated legacy copy.
-// 'General discomfort' and 'Not sure if products are safe' are not needs.
+// broad answers. Each maps to the specific needs it NAMED, never to a whole
+// family and never to a symptom the answer did not name (UI categories are
+// navigation, not causes). Used only when the intake has no current "What
+// needs support?" answers, so a current answer is never widened by its
+// generated legacy copy. 'General discomfort', 'Not sure if products are
+// safe' and broad areas that name no specific need map to nothing.
 export const LEGACY_FRUSTRATION_NEEDS = {
   'Heavy flow': ['period.heavy'],
   'Painful cramps': ['pain.menstrual_cramp'],
@@ -130,7 +139,8 @@ export const LEGACY_FRUSTRATION_NEEDS = {
   'Recurrent UTIs': ['urinary.recurrent_uti'],
   'PCOS symptoms': ['condition_support.pcos'],
   'Pelvic pain': ['pain.pelvic'],
-  'Menopause symptoms': ['menopause.hot_flashes', 'menopause.body_changes'],
+  // "Menopause symptoms" names menopause, not hot flashes or any other symptom.
+  'Menopause symptoms': ['menopause.body_changes'],
   Endometriosis: ['condition_support.endometriosis'],
   'Fertility / TTC': ['fertility.ttc'],
   Pregnancy: ['pregnancy.prenatal'],
@@ -140,6 +150,8 @@ export const LEGACY_FRUSTRATION_NEEDS = {
 };
 // First web intake "primary concerns" (also generated by buildSnapshot for
 // older screens). Keys copied verbatim from recommendationEngine CONCERN_CONFIG.
+// Only needs a concern names explicitly. "Gut and vaginal health" names no
+// specific need (it used to become BV + odor), so it maps to nothing.
 export const LEGACY_CONCERN_NEEDS = {
   'Period care (pads, tampons, cups, discs, underwear)': ['period.product_support'],
   'Cramp and pain relief (devices, supplements, heat)': ['pain.menstrual_cramp'],
@@ -147,22 +159,22 @@ export const LEGACY_CONCERN_NEEDS = {
   'Hormonal bloating': ['bloating.cycle_related'],
   'PCOS management (supplements, telehealth, apps)': ['condition_support.pcos'],
   'Endometriosis management (supplements, devices, telehealth)': ['condition_support.endometriosis'],
-  'Fertility and conception (supplements, trackers, telehealth)': ['fertility.ttc', 'fertility.ovulation_tracking'],
+  'Fertility and conception (supplements, trackers, telehealth)': ['fertility.ttc'],
   'Pregnancy support (prenatal vitamins, trackers, comfort)': ['pregnancy.prenatal'],
   'Postpartum recovery (nursing, healing, comfort)': ['postpartum.recovery'],
   'UTI support': ['urinary.recurrent_uti'],
   'STI support': ['sexual.sti'],
-  'Gut and vaginal health (probiotics, pH balance)': ['vaginal.bv', 'vaginal.odor'],
-  'Perimenopause and menopause support': ['menopause.hot_flashes', 'menopause.body_changes'],
-  'Sexual health and comfort (lubricants, pelvic floor)': ['sexual.wellness', 'pain.sexual'],
-  'Mental health and cycle mood support': ['mood.cycle_related', 'mood.general_anxiety'],
+  'Gut and vaginal health (probiotics, pH balance)': [],
+  'Perimenopause and menopause support': ['menopause.body_changes'],
+  'Sexual health and comfort (lubricants, pelvic floor)': ['sexual.wellness'],
+  'Mental health and cycle mood support': ['mood.cycle_related'],
   'Sleep and energy': ['sleep.trouble', 'energy.fatigue'],
-  'Skin and hair (hormone-related)': ['skin.hormonal', 'hair.loss'],
+  'Skin and hair (hormone-related)': ['skin.hormonal'],
   'Telehealth and provider matching': ['care.telehealth'],
 };
-// First-quiz symptom tokens.
+// First-quiz symptom tokens. "bloating" does not say cycle or digestive.
 export const LEGACY_SYMPTOM_NEEDS = {
-  cramps: ['pain.menstrual_cramp'], bloating: ['bloating.cycle_related'], nausea: ['digestive.nausea'],
+  cramps: ['pain.menstrual_cramp'], bloating: ['bloating.unspecified'], nausea: ['digestive.nausea'],
   fatigue: ['energy.fatigue'], 'brain fog': ['cognition.brain_fog'], 'breast tenderness': ['cycle.breast_tenderness'],
 };
 // First-quiz shopping preferences.
@@ -179,14 +191,148 @@ export const LEGACY_SENSITIVITY_ALLERGEN = {
 
 export const NEED_BY_ID = Object.fromEntries(NEEDS.map((n) => [n.id, n]));
 export const NEED_ID_BY_OPTION = Object.fromEntries(NEEDS.filter((n) => n.option).map((n) => [n.option, n.id]));
+// Ids used before night sweats and hot flashes stopped being filed under
+// menopause. Stored seeds / shelves may still carry them.
+export const NEED_ID_ALIASES = { 'menopause.hot_flashes': 'vasomotor.hot_flashes', 'menopause.night_sweats': 'vasomotor.night_sweats' };
+export function canonicalNeedId(id) { return NEED_ID_ALIASES[id] || id; }
 
 export function needIdForOption(option) {
   const label = LEGACY_NEED_OPTION_ALIASES[option] || option;
   return NEED_ID_BY_OPTION[label] || null;
 }
 export function needPhrase(needId) {
-  return NEED_BY_ID[needId]?.phrase || String(needId || '').split('.').pop().replace(/_/g, ' ');
+  const id = canonicalNeedId(needId);
+  return NEED_BY_ID[id]?.phrase || String(id || '').split('.').pop().replace(/_/g, ' ');
 }
+
+// ─── Answer kinds and contexts ──────────────────────────────────────────────
+// What sort of answer each support option is. Symptoms are observations;
+// diagnosed conditions (CONDITIONS) and life stages (LIFE_STAGES) are
+// separate kinds and are only ever set by an explicit answer.
+export const NEED_KINDS = {
+  symptom: 'An observation she reported. Never implies a cause, diagnosis or life stage.',
+  goal: 'Something she wants to do or get (period products, contraception, fitness).',
+  condition_support: 'Support related to a named condition. Not a diagnosis unless she also selected it under "Diagnosed with?".',
+  life_stage_need: 'A need she tied to a life stage herself (pregnancy, postpartum, menopause-related body changes).',
+  care_access: 'Finding a clinician or telehealth service.',
+};
+
+// CONTEXTS: explicit answers that can unlock CONTEXTUAL product
+// relationships ("a menopause supplement for night sweats") or add a context
+// bonus. A context is active only when she gave it: a life stage she
+// selected, a diagnosis she selected, an answer that states it (a pregnancy
+// trimester), or a first-person free-text statement. Never from symptoms,
+// age, behavior or the UI section an option sits in.
+//   stages / conditions: explicit selections that activate it (strength 1)
+//   needs: support options that name the context themselves (lower strength,
+//          e.g. "Menopause-related body changes" names menopause)
+//   phrase: used in explanations ("... and the perimenopause stage you shared")
+export const CONTEXTS = {
+  menopause_transition: { stages: ['perimenopause', 'menopause', 'postmenopause'], needs: { 'menopause.body_changes': 0.8 }, freeText: ['perimenopause', 'menopause', 'postmenopause'], phrase: 'menopause transition' },
+  pregnancy: { stages: ['pregnant'], needs: { 'pregnancy.discomfort': 0.7, 'pregnancy.safe_discovery': 0.6, 'bloating.pregnancy_related': 0.7 }, freeText: ['pregnant'], phrase: 'pregnancy' },
+  postpartum: { stages: ['postpartum'], needs: { 'postpartum.recovery': 0.7, 'postpartum.body_skin': 0.7, 'postpartum.lactation': 0.6, 'pain.postpartum': 0.7 }, freeText: ['postpartum'], phrase: 'postpartum' },
+  breastfeeding: { stages: ['breastfeeding'], needs: { 'postpartum.lactation': 0.8 }, freeText: ['breastfeeding'], phrase: 'breastfeeding' },
+  ttc: { stages: ['ttc'], needs: { 'fertility.ttc': 1 }, freeText: [], phrase: 'trying to conceive' },
+  pcos: { conditions: ['pcos'], needs: { 'condition_support.pcos': 0.5 }, freeText: [], phrase: 'PCOS' },
+  endometriosis: { conditions: ['endometriosis'], needs: { 'condition_support.endometriosis': 0.5 }, freeText: [], phrase: 'endometriosis' },
+  anemia: { conditions: ['anemia'], needs: {}, freeText: [], phrase: 'iron deficiency' },
+};
+
+// PER-OPTION AUDIT (founder spec A.18). Every support option, by need id:
+//   kind         NEED_KINDS
+//   unlocks      contexts that may unlock CONTEXTUAL products for this need
+//                (only when she explicitly gave the context)
+//   boosts       explicit contexts / diagnoses that may add a small relevance
+//                bonus to products relevant to BOTH (never create relevance)
+//   prohibited   causes, diagnoses or life stages that must never be inferred
+//                from this answer (it stays a symptom: cause = unknown)
+//   care         'check' = care information shown more prominently
+// Possible real-world contexts (environment, medicines, infection, hormones,
+// ...) are deliberately not listed per symptom: they are never assigned.
+// Direct / contextual / adjacent product relationships live in
+// productProfile.js RELEVANCE_RULES; ENGINE.md has the full table.
+const SYM = (o = {}) => ({ kind: 'symptom', unlocks: [], boosts: [], prohibited: [], care: null, ...o });
+const GOAL = (o = {}) => ({ kind: 'goal', unlocks: [], boosts: [], prohibited: [], care: null, ...o });
+const COND = (o = {}) => ({ kind: 'condition_support', unlocks: [], boosts: [], prohibited: [], care: null, ...o });
+const STAGE = (o = {}) => ({ kind: 'life_stage_need', unlocks: [], boosts: [], prohibited: [], care: null, ...o });
+export const NEED_POLICY = {
+  'period.product_support': GOAL({ prohibited: ['heavy periods', 'any condition'] }),
+  'pain.menstrual_cramp': SYM({ boosts: ['endometriosis', 'adenomyosis', 'fibroids'], prohibited: ['endometriosis', 'adenomyosis', 'fibroids'], care: 'severe_pain' }),
+  'pain.pelvic': SYM({ unlocks: ['pregnancy'], boosts: ['endometriosis', 'adenomyosis', 'fibroids'], prohibited: ['endometriosis', 'pelvic floor dysfunction', 'infection'], care: 'check' }),
+  'period.heavy': SYM({ boosts: ['fibroids', 'adenomyosis', 'endometriosis', 'anemia'], prohibited: ['fibroids', 'adenomyosis', 'iron deficiency'], care: 'very_heavy_flow' }),
+  'period.light': SYM({ prohibited: ['pregnancy', 'menopause transition'] }),
+  'cycle.irregular': SYM({ unlocks: ['menopause_transition'], boosts: ['pcos', 'menopause_transition'], prohibited: ['pcos', 'perimenopause', 'thyroid condition', 'pregnancy'] }),
+  'cycle.missed': SYM({ boosts: ['pcos'], prohibited: ['pregnancy', 'pcos', 'menopause'] }),
+  'cycle.spotting': SYM({ prohibited: ['pregnancy', 'any condition'], care: 'check' }),
+  'cycle.pms': SYM({ boosts: ['pms'], prohibited: ['pmdd'] }),
+  'mood.pmdd': SYM({ boosts: ['pmdd'], prohibited: ['pmdd diagnosis'] }),
+  'cycle.breast_tenderness': SYM({ boosts: ['pms'], prohibited: ['pregnancy'] }),
+  'pain.cycle_headache': SYM({ prohibited: ['migraine with aura'] }),
+  'condition_support.pcos': COND({ boosts: ['pcos'], prohibited: ['pcos diagnosis (unless selected under Diagnosed with?)'] }),
+  'condition_support.endometriosis': COND({ boosts: ['endometriosis'], prohibited: ['endometriosis diagnosis'] }),
+  'condition_support.fibroids': COND({ prohibited: ['fibroids diagnosis'] }),
+  'condition_support.adenomyosis': COND({ prohibited: ['adenomyosis diagnosis'] }),
+  'hormonal.general': SYM({ prohibited: ['any condition', 'any life stage'] }),
+  'bloating.cycle_related': SYM({ boosts: ['pms', 'endometriosis'], prohibited: ['digestive condition', 'pms', 'endometriosis'] }),
+  'digestive.nausea': SYM({ unlocks: ['pregnancy'], prohibited: ['pregnancy'] }),
+  'fertility.support': GOAL({ boosts: ['pcos', 'infertility', 'endometriosis'], prohibited: ['infertility'] }),
+  'fertility.ttc': GOAL({ boosts: ['pcos', 'infertility', 'endometriosis'], prohibited: ['infertility'] }),
+  'fertility.ovulation_tracking': GOAL({ boosts: ['pcos', 'infertility'], prohibited: ['infertility', 'trying to conceive'] }),
+  'pregnancy.prenatal': STAGE({ unlocks: ['pregnancy'], prohibited: ['pregnant (may be planning)'] }),
+  'pregnancy.discomfort': STAGE({ unlocks: ['pregnancy'] }),
+  'pregnancy.safe_discovery': STAGE({ unlocks: ['pregnancy'], prohibited: ['pregnant (may be planning)'] }),
+  'postpartum.recovery': STAGE({ unlocks: ['postpartum'] }),
+  'postpartum.lactation': STAGE({ unlocks: ['postpartum', 'breastfeeding'] }),
+  'postpartum.body_skin': STAGE({ unlocks: ['postpartum'] }),
+  'vaginal.dryness': SYM({ unlocks: ['menopause_transition'], boosts: ['menopause_transition'], prohibited: ['menopause', 'perimenopause'] }),
+  'vaginal.irritation': SYM({ prohibited: ['yeast infection', 'BV', 'STI'] }),
+  'vaginal.discharge': SYM({ prohibited: ['BV', 'yeast infection', 'STI'], care: 'check' }),
+  'vaginal.odor': SYM({ prohibited: ['BV', 'infection'] }),
+  'vaginal.bv': SYM({ prohibited: ['BV diagnosis'], care: 'check' }),
+  'vaginal.yeast': SYM({ prohibited: ['yeast infection diagnosis'] }),
+  'urinary.burning': SYM({ prohibited: ['UTI', 'STI'], care: 'check' }),
+  'urinary.frequency': SYM({ prohibited: ['UTI', 'diabetes', 'pregnancy', 'overactive bladder'] }),
+  'urinary.urgency': SYM({ prohibited: ['UTI', 'overactive bladder'] }),
+  'urinary.recurrent_uti': SYM({ prohibited: ['UTI diagnosis'], care: 'uti_frequency' }),
+  'urinary.incontinence': SYM({ unlocks: ['postpartum'], prohibited: ['postpartum', 'menopause'] }),
+  'pain.sexual': SYM({ boosts: ['endometriosis', 'menopause_transition'], prohibited: ['vaginismus', 'vulvodynia', 'endometriosis', 'menopause'] }),
+  'sexual.libido': SYM({ unlocks: ['menopause_transition'], prohibited: ['hormonal issue', 'menopause', 'depression'] }),
+  'sexual.wellness': GOAL(),
+  'sexual.contraception': GOAL(),
+  'sexual.sti': SYM({ prohibited: ['STI diagnosis'], care: 'check' }),
+  'vasomotor.hot_flashes': SYM({ unlocks: ['menopause_transition'], prohibited: ['menopause', 'perimenopause', 'thyroid condition'] }),
+  'vasomotor.night_sweats': SYM({ unlocks: ['menopause_transition'], prohibited: ['menopause', 'perimenopause', 'infection', 'medication side effect'] }),
+  'pain.joint': SYM({ unlocks: ['menopause_transition'], prohibited: ['menopause', 'autoimmune condition'] }),
+  'menopause.body_changes': STAGE({ unlocks: ['menopause_transition'] }),
+  'mood.swings': SYM({ unlocks: ['menopause_transition'], boosts: ['pmdd', 'pms'], prohibited: ['menopause', 'PMDD', 'mood disorder'] }),
+  'mood.irritability': SYM({ boosts: ['pmdd'], prohibited: ['PMDD', 'mood disorder'] }),
+  'mood.general_anxiety': SYM({ boosts: ['anxiety'], prohibited: ['anxiety disorder'] }),
+  'mood.low': SYM({ boosts: ['depression', 'pmdd'], prohibited: ['depression'] }),
+  'mood.cycle_related': SYM({ boosts: ['pmdd', 'pms'], prohibited: ['PMDD'] }),
+  'energy.fatigue': SYM({ unlocks: ['anemia'], boosts: ['anemia'], prohibited: ['anemia', 'thyroid condition', 'pregnancy', 'depression', 'menopause'] }),
+  'sleep.trouble': SYM({ unlocks: ['menopause_transition', 'pregnancy'], boosts: ['anxiety'], prohibited: ['menopause', 'pregnancy', 'anxiety disorder'] }),
+  'cognition.brain_fog': SYM({ unlocks: ['menopause_transition'], prohibited: ['menopause'] }),
+  'cognition.concentration': SYM({ unlocks: ['menopause_transition'], prohibited: ['ADHD', 'menopause'] }),
+  'digestive.constipation': SYM({ unlocks: ['pregnancy'], boosts: ['ibs_digestive'], prohibited: ['IBS', 'pregnancy'] }),
+  'digestive.diarrhea': SYM({ boosts: ['ibs_digestive'], prohibited: ['IBS', 'gut condition'] }),
+  'digestive.gas': SYM({ boosts: ['ibs_digestive'], prohibited: ['gut condition'] }),
+  'pain.abdominal': SYM({ boosts: ['ibs_digestive'], prohibited: ['endometriosis', 'IBS'] }),
+  'bloating.digestive': SYM({ boosts: ['ibs_digestive'], prohibited: ['gut condition', 'IBS'] }),
+  'skin.acne': SYM({ unlocks: ['pcos'], boosts: ['pcos'], prohibited: ['pcos', 'hormonal disorder'] }),
+  'hair.loss': SYM({ unlocks: ['pcos', 'postpartum', 'menopause_transition'], boosts: ['pcos'], prohibited: ['pcos', 'postpartum', 'menopause', 'thyroid condition', 'iron deficiency'] }),
+  'hair.excess': SYM({ unlocks: ['pcos'], boosts: ['pcos'], prohibited: ['pcos'] }),
+  'skin.hormonal': SYM({ unlocks: ['pcos'], boosts: ['pcos'], prohibited: ['pcos', 'any condition'] }),
+  'metabolic.weight': GOAL({ boosts: ['pcos', 'insulin_resistance', 'diabetes'], prohibited: ['insulin resistance', 'pcos', 'thyroid condition'] }),
+  'fitness.strength': GOAL(),
+  'bone.health': GOAL({ unlocks: ['menopause_transition'], prohibited: ['menopause', 'osteoporosis'] }),
+  'care.find_doctor': { kind: 'care_access', unlocks: [], boosts: [], prohibited: [], care: null },
+  'care.telehealth': { kind: 'care_access', unlocks: [], boosts: [], prohibited: [], care: null },
+  'bloating.pregnancy_related': STAGE({ unlocks: ['pregnancy'] }),
+  'bloating.unspecified': SYM({ prohibited: ['digestive condition', 'cycle-related cause'] }),
+  'pain.postpartum': STAGE({ unlocks: ['postpartum'] }),
+};
+NEEDS.forEach((n) => { n.kind = NEED_POLICY[n.id]?.kind || 'symptom'; });
+export function needKind(needId) { return NEED_POLICY[canonicalNeedId(needId)]?.kind || null; }
 
 // Needs where the urinary "How often?" answer applies.
 export const URINARY_UTI_NEEDS = new Set(['urinary.burning', 'urinary.frequency', 'urinary.urgency', 'urinary.recurrent_uti']);
@@ -474,8 +620,9 @@ export const SYNONYM_RULES = [
   { re: /\bconstipat/, kind: 'need', id: 'digestive.constipation', confidence: 0.96 },
   { re: /\bdiarrh?ea\b|\bloose stools?\b/, kind: 'need', id: 'digestive.diarrhea', confidence: 0.95 },
   { re: /\bgassy\b|\bgas\b|\bflatulen/, kind: 'need', id: 'digestive.gas', confidence: 0.85 },
-  { re: /\bhot flash(es)?\b|\bhot flush(es)?\b/, kind: 'need', id: 'menopause.hot_flashes', confidence: 0.97 },
-  { re: /\bnight sweats?\b/, kind: 'need', id: 'menopause.night_sweats', confidence: 0.97 },
+  { re: /\bhot flash(es)?\b|\bhot flush(es)?\b/, kind: 'need', id: 'vasomotor.hot_flashes', confidence: 0.97 },
+  { re: /\bnight sweats?\b/, kind: 'need', id: 'vasomotor.night_sweats', confidence: 0.97 },
+  { re: /\b(wake|woke|waking) up (drenched|soaked|sweating|sweaty)\b|\bdrenched in sweat\b|\bsweat(ing|y)? (at|during the) night\b|\bnight ?time sweat/, kind: 'need', id: 'vasomotor.night_sweats', confidence: 0.9 },
   { re: /\bvaginal(ly)? dry|\bdryness down there\b|\bdry vagina\b|\bvaginal atrophy\b/, kind: 'need', id: 'vaginal.dryness', confidence: 0.96 },
   { re: /\bbv\b|\bbacterial vaginosis\b/, kind: 'need', id: 'vaginal.bv', confidence: 0.97 },
   { re: /\byeast infection|\bthrush\b|\bcandida/, kind: 'need', id: 'vaginal.yeast', confidence: 0.96 },

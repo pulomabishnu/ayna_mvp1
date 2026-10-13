@@ -679,3 +679,10 @@
 @media (prefers-reduced-motion: reduce) { .ip-avoid-panel { animation: none; } }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-avoid-tabs { background: var(--ay-paper); }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-avoid-foot .ip-chip.is-muted:not([aria-pressed='true']) { background: transparent !important; color: #fff !important; }
+
+/* ZIP: inline error under the ticket (Next stays on this step) */
+.ip-zip { display: grid; gap: 12px; }
+.ayna-play-intake .ip-zip-err { --zip-err: #b4402a; margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font: 700 15px/1.3 var(--ay-font-ui); color: var(--zip-err) !important; text-align: center; }
+.ayna-play-intake .ip-zip-err::before { content: '!'; display: grid; place-items: center; width: 20px; height: 20px; flex: none; border-radius: 50%; background: var(--zip-err); color: #fffcf5; font: 800 13px/1 var(--ay-font-ui); }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-zip-err { --zip-err: #ff9b85; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-zip-err::before { color: #17161f; }

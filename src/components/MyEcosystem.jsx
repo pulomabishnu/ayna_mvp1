@@ -1522,6 +1522,7 @@ export default function MyEcosystem({
                 return {
                     id: `${concern}-${idx}`,
                     concern,
+                    displayLabel: String(entry?.displayLabel || '').trim() || null,
                     tag: null,
                     topProduct: normalizedTiers[0]?.product || fallbackTop || null,
                     alternatives: normalizedTiers[0]?.alternatives || fallbackAlternatives,
@@ -1767,7 +1768,7 @@ export default function MyEcosystem({
                                     }}
                                 >
                                     <span style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-main)' }}>
-                                        {normalizeConcernLabel(section.concern)}
+                                        {section.displayLabel || normalizeConcernLabel(section.concern)}
                                     </span>
                                     <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>{isOpen ? 'Hide ▴' : 'Show ▾'}</span>
                                 </button>
@@ -1787,7 +1788,7 @@ export default function MyEcosystem({
                                                     const fallbackReason = String(reasonRaw).replace(/^Why it could work:\s*/i, '').trim();
                                                     const tierReason = toConciseReason(
                                                         llmReason || String(tier.matchExplanation || '').trim() || fallbackReason,
-                                                        `Matched to your concern: ${section.concern}.`
+                                                        `Matches the ${(section.displayLabel || section.concern).toLowerCase()} you selected.`
                                                     );
                                                     return (
                                                         <div key={swapKey} style={{ minWidth: 0 }}>
@@ -2176,11 +2177,11 @@ export default function MyEcosystem({
                         </summary>
                         <div className="eco3-details__body">
                             <p>
-                                ayna scores products against your intake answers (stage, goals, sensitivities
-                                and life stage) plus published clinical, community, and safety sources per
-                                product. When the catalog has no strong fit for a concern, ayna searches for and
-                                adds a real, currently-sold product rather than leaving the shelf empty. Update
-                                your profile any time and your picks recompute against the new answers.
+                                ayna matches products to what you shared: the needs you picked, plus your life
+                                stage, safety answers and preferences when you give them. Skipped questions never
+                                lower a match; they only make us less certain. When nothing is a strong fit for a
+                                need, that shelf stays short or empty instead of being filled. We never guess why
+                                you have a symptom. Update your profile any time and your picks recompute.
                             </p>
                         </div>
                     </details>

@@ -24,6 +24,7 @@ import {
   FREE_TEXT_PROMPTS,
   FSA_HSA,
   INTAKE_DRAFT_KEY,
+  isValidUsZip,
   LARGE_PURCHASE_FREQUENCY,
   LIFE_STAGES,
   LIFE_STAGE_GLYPHS,
@@ -528,7 +529,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
 /* --------------------------------- Main screen --------------------------------- */
 
 
-export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false }) {
+export default function IntakeScreen({ onBack, onComplete, onDraftChange, initialSnapshot = null, startAtBeginning = false, introEnabled = true }) {
   const [savedDraft] = useState(() => !initialSnapshot && !startAtBeginning ? readIntakeDraft() : null);
   const [intake, setIntake] = useState(() => savedDraft ? { ...EMPTY, ...savedDraft.intake } : reconstructIntakeFromSnapshot(initialSnapshot));
   const [stepId, setStepId] = useState(() => (import.meta.env.DEV && new URLSearchParams(window.location.search).get('step')) || savedDraft?.stepId || (startAtBeginning ? 'age' : getFirstIncompleteStepId(initialSnapshot) || 'age'));
@@ -547,6 +548,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     onDraftChange?.(hasProgress);
   }, [intake, stepId, initialSnapshot, startAtBeginning, onDraftChange]);
   const [minorGate, setMinorGate] = useState(false);
+  // ZIP: Next is live from the first digit; a bad ZIP is caught on Next, not before.
+  const [zipError, setZipError] = useState('');
   const [direction, setDirection] = useState('forward');
   const [infoOpen, setInfoOpen] = useState(null);
   // Hold a word (e.g. "Perimenopause", "PMDD") for a plain-language definition.
@@ -611,6 +614,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const goNext = () => {
     if (step.id === 'age' && isMinorAge(intake.age)) return;
     if (!requiredReady(step.id, intake)) return;
+    if (step.id === 'zip' && intake.zipcode && !isValidUsZip(intake.zipcode)) { setZipError('Invalid ZIP code'); return; }
     if (currentIndex >= visibleSteps.length - 1) {
       try { localStorage.removeItem(INTAKE_DRAFT_KEY); } catch { /* storage unavailable */ }
       onDraftChange?.(false);
@@ -620,6 +624,16 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     setSearch('');
     setDirection('forward');
     setStepId(visibleSteps[currentIndex + 1].id);
+  };
+  // Skip never validates; a half-typed ZIP is dropped rather than saved.
+  const skipStep = () => {
+    if (step.id === 'zip') {
+      setZipError('');
+      if (!isValidUsZip(intake.zipcode)) set('zipcode', '');
+      if (currentIndex < visibleSteps.length - 1) { setSearch(''); setDirection('forward'); setStepId(visibleSteps[currentIndex + 1].id); }
+      return;
+    }
+    goNext();
   };
 
   const selectedLifeStages = getLifeStages(intake);
@@ -652,7 +666,10 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       </>
     );
 
-    if (step.type === 'zip') return <ZipTicket value={intake.zipcode} onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))} />;
+    if (step.type === 'zip') return <div className="ip-zip">
+      <ZipTicket value={intake.zipcode} onChange={(v) => { setZipError(''); set('zipcode', v.replace(/\D/g, '').slice(0, 5)); }} />
+      {zipError && <div className="ip-zip-err" role="alert">{zipError}</div>}
+    </div>;
 
     if (step.type === 'support') return (
       <TopicPicker groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} onAdd={(value) => addCustomSelection('supportSelections', value, ['Nothing right now'])} />
@@ -793,7 +810,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     step.id === 'formats' ? intake.preferredFormats.length :
     step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
-  const ready = requiredReady(step.id, intake) && !minorBlocked;
+  const ready = requiredReady(step.id, intake) && !minorBlocked && (step.id !== 'zip' || String(intake.zipcode || '').length > 0);
   const storyTouch = useRef(null);
   const storyWheel = useRef(0);
   const storyAdvance = (direction) => {
@@ -845,7 +862,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
           <span className="ip-count" aria-label={`Question ${currentIndex + 1} of ${visibleSteps.length}`}>{String(currentIndex + 1).padStart(2, '0')}<i>/{String(visibleSteps.length).padStart(2, '0')}</i></span>
-          {step.optional ? <button type="button" className="ip-skip" onClick={goNext}>Skip</button> : <span className="ip-skip-spacer" />}
+          {step.optional ? <button type="button" className="ip-skip" onClick={skipStep}>Skip</button> : <span className="ip-skip-spacer" />}
         </div>
         <div className="ip-progress" aria-hidden="true">
           {visibleSteps.map((s, i) => <span key={s.id} className={i < currentIndex ? 'is-done' : i === currentIndex ? 'is-now' : ''} />)}
@@ -868,7 +885,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         </div>
       </div>
 
-      <QuizIntro variant="app" />
+      <QuizIntro variant="app" enabled={introEnabled} />
       {glossary && <div className="ip-glossary" role="dialog" aria-label={glossary.term} onClick={() => setGlossary(null)}>
         <div className="ip-glossary-card" onClick={(e) => e.stopPropagation()}>
           <strong>{glossary.term}</strong>

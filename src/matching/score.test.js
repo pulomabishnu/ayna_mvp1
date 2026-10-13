@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { ALL_PRODUCTS } from '../data/products.js';
 import { EMPTY } from '../mobile/data/intakeModel.js';
 import { buildUserProfile } from './userProfile.js';
-import { scoreProductForNeed, scoreProduct, evaluateSafety, budgetFit, tierFor, confidenceFactor, computeAccess, WEIGHTS } from './score.js';
+import { scoreProductForNeed, scoreProduct, evaluateSafety, budgetFit, tierFor, computeAccess, DIMENSION_WEIGHTS } from './score.js';
 
 const byId = Object.fromEntries(ALL_PRODUCTS.map((p) => [p.id, p]));
 const P = (id) => byId[id];
@@ -10,8 +10,11 @@ const user = (over, opts = {}) => buildUserProfile({ ...EMPTY, ...over }, { cata
 const score = (id, up, need) => scoreProductForNeed(P(id), up, need);
 
 describe('formula and tiers', () => {
-  it('weights sum to 100', () => {
-    expect(Object.values(WEIGHTS).reduce((a, b) => a + b, 0)).toBe(100);
+  // ASK2 (spec C): the match is relevance-anchored with a dynamic
+  // denominator over known preference dimensions, so there is no fixed
+  // 100-point weight table any more.
+  it('preference dimensions are the ones the spec lists', () => {
+    expect(Object.keys(DIMENSION_WEIGHTS).sort()).toEqual(['brand', 'context', 'effort', 'evidence', 'format', 'price', 'values']);
   });
   it('tiers: excellent >= 80, strong >= 65, exploratory >= 50, browse < 50', () => {
     expect(tierFor(80)).toBe('excellent');
@@ -21,9 +24,15 @@ describe('formula and tiers', () => {
     expect(tierFor(50)).toBe('exploratory');
     expect(tierFor(49)).toBe('browse');
   });
-  it('confidence factor = 0.7 + 0.3 x confidence', () => {
-    expect(confidenceFactor(1)).toBe(1);
-    expect(confidenceFactor(0.5)).toBeCloseTo(0.85);
+  // ASK2 (spec C): confidence is a separate output and no longer multiplies
+  // the displayed match (was 0.7 + 0.3 x confidence).
+  it('confidence is reported separately and never changes the match', () => {
+    const base = user({ supportSelections: ['Cramps or period pain'], lifeStageSelections: ['I get periods regularly'], allergyStatus: 'No' });
+    const allergic = user({ supportSelections: ['Cramps or period pain'], lifeStageSelections: ['I get periods regularly'], allergyStatus: 'Yes', allergyItems: ['Latex'] });
+    const a = scoreProductForNeed(P('p-thermacare'), base, 'pain.menstrual_cramp');
+    const b = scoreProductForNeed(P('p-thermacare'), allergic, 'pain.menstrual_cramp');
+    expect(b.confidence).toBeLessThan(a.confidence);
+    expect(b.score).toBe(a.score);
   });
 });
 
@@ -45,20 +54,21 @@ describe('score per need (critical)', () => {
     const moist = score('p-neycher-vaginal-moisturizer', up, 'vaginal.dryness');
     expect(moist.score).toBeGreaterThan(lube.score);
     expect(lube.score).toBeGreaterThan(0);
-    expect(moist.explanations[0]).toBe('Made for vaginal dryness');
+    expect(moist.explanations[0]).toBe('Matches the vaginal dryness you selected');
   });
 
-  it('returns the 8 weighted components and short explanations without em dashes', () => {
+  it('returns the components, separate outputs and short explanations without em dashes', () => {
     const r = score('p-thermacare', up, 'pain.menstrual_cramp');
-    expect(Object.keys(r.components).sort()).toEqual(Object.keys(WEIGHTS).sort());
-    expect(r.explanations[0]).toBe('Made for period cramps');
+    expect(Object.keys(r.components).sort()).toEqual(['behavior', 'context', 'evidence', 'experience', 'health', 'preference', 'price', 'specificity']);
+    expect(Object.keys(r.outputs).sort()).toEqual(['access', 'confidence', 'evidence', 'preferenceFit', 'relevance', 'safety']);
+    expect(r.explanations[0]).toBe('Matches the period cramps you selected');
     r.explanations.forEach((e) => expect(e).not.toMatch(/[—–]/));
   });
 });
 
 describe('pregnancy gate', () => {
   const pregnant = user({ lifeStageSelections: ['I am pregnant'], pregnancyTrimester: 'Second trimester', supportSelections: ['Cramps or period pain', 'Pregnancy-related discomfort'] });
-  const notPregnant = user({ supportSelections: ['Cramps or period pain', 'Pregnancy-related discomfort'] });
+  const notPregnant = user({ supportSelections: ['Cramps or period pain', 'Pregnancy-related discomfort'], lifeStageSelections: ['I get periods regularly'] });
 
   it('excludes products the catalog says are not for pregnancy', () => {
     const r = score('p-sootheher-elaris-pod', pregnant, 'pain.menstrual_cramp');
@@ -72,7 +82,8 @@ describe('pregnancy gate', () => {
     const n = score('p-thermacare', notPregnant, 'pain.menstrual_cramp');
     expect(p.safety.eligible).toBe(true);
     expect(p.confidence).toBeLessThan(n.confidence);
-    expect(p.score).toBeLessThan(n.score);
+    // ASK2: missing safety data limits confidence, it does not lower the match.
+    expect(p.score).toBe(n.score);
     expect(p.safety.blockedClaims).toContain('pregnancy_safe');
     expect(p.explanations.join(' ')).toMatch(/Pregnancy safety is not confirmed/);
     p.explanations.forEach((e) => expect(e).not.toMatch(/\bsafe (for|in|during) pregnan|pregnancy[- ]safe\b/i));
@@ -80,8 +91,9 @@ describe('pregnancy gate', () => {
 
   it('pregnancy stage boosts pregnancy-designed products with a stage explanation', () => {
     const r = score('p-belly-bandit', pregnant, 'pregnancy.discomfort');
-    expect(r.explanations).toContain('Fits the pregnancy stage you shared');
-    expect(r.components.context).toBeGreaterThan(score('p-belly-bandit', notPregnant, 'pregnancy.discomfort').components.context);
+    expect(r.explanations).toContain('Matches your pregnancy discomfort and the pregnancy stage you shared');
+    expect(r.components.health).toBeGreaterThanOrEqual(score('p-belly-bandit', notPregnant, 'pregnancy.discomfort').components.health);
+    expect(r.score).toBeGreaterThan(score('p-belly-bandit', notPregnant, 'pregnancy.discomfort').score);
   });
 });
 
@@ -89,7 +101,7 @@ describe('age and life stage', () => {
   it('age 22 + post-menopause keeps the stage, with a confidence flag', () => {
     const up = user({ age: '22', lifeStageSelections: ['I am post-menopause'], supportSelections: ['Vaginal dryness'] });
     const r = score('p-kindra-lotion', up, 'vaginal.dryness');
-    expect(r.explanations).toContain('Made with post-menopause in mind');
+    expect(r.explanations).toContain('Matches your vaginal dryness and the post-menopause stage you shared');
     expect(r.confidenceReasons.map((c) => c.code)).toContain('unusual_combination');
   });
 
@@ -103,7 +115,8 @@ describe('age and life stage', () => {
   it('contradictory stages are neutralized, not used to boost or suppress', () => {
     const up = user({ lifeStageSelections: ['I am pregnant', 'I get periods regularly'], supportSelections: ['Period product support'] });
     const r = score('p-rael-organic-pad', up, 'period.product_support');
-    expect(r.components.context).toBeCloseTo(0.6, 5);
+    // ASK2: neutralized = not used at all (unknown), instead of a neutral 0.6.
+    expect(r.components.context).toBe(null);
     expect(r.confidenceReasons.map((c) => c.code)).toContain('stage_needs_clarification');
   });
 });
@@ -353,13 +366,16 @@ describe('conditions', () => {
     const a = scoreProductForNeed(both, acneOnly, 'skin.acne');
     const b = scoreProductForNeed(both, pcosAcne, 'skin.acne');
     expect(b.score).toBeGreaterThan(a.score);
-    expect(b.explanations).toContain('Fits the PCOS context you shared');
+    expect(b.explanations.join(' ')).toMatch(/your acne and the PCOS diagnosis you shared/);
     // Step 2 change: p-zinc's catalog text says its PCOS benefit is NOT
     // established, so that sentence no longer counts as a PCOS mention and
     // zinc gets the diagnosis context only (no pathway claim).
+    // ASK2: a diagnosis only boosts products relevant to BOTH the diagnosis
+    // and the need (contextual multiplier, spec A.14). Zinc is not
+    // PCOS-specific, so the PCOS diagnosis neither raises nor lowers it.
     const z = score('p-zinc', pcosAcne, 'skin.acne');
-    expect(z.score).toBeGreaterThan(score('p-zinc', acneOnly, 'skin.acne').score);
-    expect(z.explanations).not.toContain('Fits the PCOS context you shared');
+    expect(z.score).toBe(score('p-zinc', acneOnly, 'skin.acne').score);
+    expect(z.explanations.join(' ')).not.toMatch(/PCOS/);
     expect(score('p-inositol-wholesome', pcosAcne, 'skin.acne').score).toBe(0);
   });
 });

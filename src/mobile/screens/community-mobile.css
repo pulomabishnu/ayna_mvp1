@@ -296,3 +296,12 @@
 .ayna-mobile.ayna-mobile .am-scroll .am-subpage > * , .ayna-mobile.ayna-mobile.ayna-mobile .am-scroll .am-subpage > .am-compose-inline { margin-left: 0 !important; margin-right: 0 !important; }
 .ayna-mobile.ayna-mobile .am-scroll .am-subpage .am-section { color: var(--ay-ink) !important; }
 .ayna-mobile.ayna-mobile .am-scroll .am-profile-content .am-post-card, .ayna-mobile.ayna-mobile .am-scroll .am-search-results .am-post-card { margin-left: 0 !important; margin-right: 0 !important; }
+
+/* "+ Add '<name>'" in the product picker: tag a product that isn't in the catalog */
+.ayna-mobile .am-results button { min-height: 44px; }
+.ayna-mobile .am-results .is-add { font-weight: 700; color: var(--ay-ink, var(--ayna-text)); }
+.ayna-mobile .am-results .is-add small { font-weight: 500; }
+/* Custom (member-added) product mention: not a link, letter tile instead of a photo */
+.ayna-mobile .am-product.is-custom { cursor: default; }
+.ayna-mobile .am-product.is-custom:active { transform: none; }
+.ayna-mobile .am-product.is-custom .am-product-photo { display: grid !important; place-items: center; font: 800 18px/1 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); color: var(--ay-ink, #1d1a2b); }
