@@ -1153,3 +1153,10 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 .app-container .mockup-landing.mockup-landing--first .ayna-landing-hero .ayna-landing-hero-col { margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important; max-width: 640px !important; justify-self: start; }
 .app-container .ayna-ask-dock { transition: opacity .25s ease, transform .25s ease; }
 .app-container .ayna-ask-dock.is-waiting { opacity: 0; transform: translateY(12px); pointer-events: none; }
+
+/* Shop toolbar: wrap on phones so the Sort select never pushes the page sideways. */
+@media (max-width: 640px) {
+  .app-container .ayna-browse__toolbar { flex-wrap: wrap !important; }
+  .app-container .ayna-browse__toolbar-left { flex-wrap: wrap; min-width: 0; }
+  .app-container .ayna-browse__toolbar select { max-width: 100%; }
+}
