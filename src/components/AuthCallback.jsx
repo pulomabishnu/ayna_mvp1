@@ -111,6 +111,15 @@ export default function AuthCallback({ onAuthenticated }) {
           }
 
           const session = data.session;
+
+          // Finish the main client's initial storage hydration BEFORE writing
+          // the fresh Google session. On the callback route App.jsx deliberately
+          // skips its own initial getSession(); without this barrier the client's
+          // delayed INITIAL_SESSION(null) can arrive after SIGNED_IN and the app's
+          // existing null-session guard briefly clears the just-signed-in user.
+          // This only reads auth storage. It does not alter profile/ecosystem data.
+          try { await supabase.auth.getSession(); } catch { /* best effort */ }
+
           const { data: mainData, error: mainError } = await supabase.auth.setSession({
             access_token: session.access_token,
             refresh_token: session.refresh_token,
@@ -121,8 +130,18 @@ export default function AuthCallback({ onAuthenticated }) {
             return;
           }
 
+          // Confirm the session is visible from the main client before changing
+          // screens. This prevents a stale initialization event from winning a
+          // race against the successful PKCE exchange.
+          const { data: verified } = await supabase.auth.getSession();
+          if (!verified?.session?.user) {
+            setStatus('error');
+            setErrorMsg('Google sign-in completed, but the browser session did not persist. Please try again.');
+            return;
+          }
+
           void flushPendingConsent(supabase);
-          finishAuth(mainData.session.user);
+          finishAuth(verified.session.user);
         })
         .catch((error) => {
           setStatus('error');
