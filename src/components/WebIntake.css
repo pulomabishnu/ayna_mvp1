@@ -223,3 +223,11 @@ div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var
 
 /* Formats: your own format, under the tiles */
 .wq-format-own { margin-top: 16px; align-items: center; }
+
+/* Age: type it or slide it (the app has the same pairing). */
+.app-container .wq-age-slide { display: flex; align-items: center; gap: 12px; max-width: 360px; margin: 16px auto 0; }
+.app-container .wq-age-slide > span { color: var(--ay-ink-soft); font: 700 13px/1 var(--ay-font-ui); }
+.app-container .wq-age-slide input[type='range'] { flex: 1; appearance: none; height: 6px; border-radius: 99px; background: var(--ay-line); accent-color: var(--ay-ink); cursor: pointer; }
+.app-container .wq-age-slide input[type='range']::-webkit-slider-thumb { appearance: none; width: 24px; height: 24px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-butter); box-shadow: 2px 2px 0 var(--ay-ink); }
+.app-container .wq-age-slide input[type='range']::-moz-range-thumb { width: 24px; height: 24px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-butter); box-shadow: 2px 2px 0 var(--ay-ink); }
+.app-container .wq-age-slide input[type='range']:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 4px; }

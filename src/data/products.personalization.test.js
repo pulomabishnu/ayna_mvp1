@@ -113,7 +113,8 @@ describe('personalized relevance scoring', () => {
 
     it('does not treat PCOS alone as a reason to recommend bloat herbs or high-dose vitamin D', () => {
         const pcosOnly = { fullHealthIntake: { supportSelections: ['PCOS support'], diagnosisSelections: ['PCOS'] } };
-        for (const id of ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-natures-bounty-d3-125mcg', 'p-zinc', 'd-ovia', 'd-glow', 'd-natural-cycles', 'd-initio', 'p-proov-complete']) {
+        // p-pink-stork-bloat left the catalog on 2026-10-13 (discontinued).
+        for (const id of ['p-love-wellness-bloat', 'p-natures-bounty-d3-125mcg', 'p-zinc', 'd-ovia', 'd-glow', 'd-natural-cycles', 'd-initio', 'p-proov-complete']) {
             const product = ALL_PRODUCTS.find((entry) => entry.id === id);
             expect(product, id).toBeTruthy();
             expect(getProductRelevanceScore(product, pcosOnly), id).toBe(0);
