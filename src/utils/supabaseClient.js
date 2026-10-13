@@ -3,6 +3,30 @@ import { processLock } from '@supabase/auth-js';
 import { Capacitor } from '@capacitor/core';
 
 let client = null;
+let googlePkceClient = null;
+
+// Google's short-code redirect is isolated from the existing implicit
+// sessions used by Apple, password recovery, and the mobile app.
+export function getGooglePkceClient() {
+  if (googlePkceClient) return googlePkceClient;
+  const url = import.meta.env.VITE_SUPABASE_URL;
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) return null;
+  try {
+    googlePkceClient = createClient(url, anonKey, {
+      auth: {
+        flowType: 'pkce',
+        detectSessionInUrl: false,
+        autoRefreshToken: false,
+        storageKey: 'ayna-google-pkce',
+      },
+    });
+  } catch (error) {
+    console.error('[Ayna] Google sign-in client init failed:', error);
+    return null;
+  }
+  return googlePkceClient;
+}
 
 export function getSupabaseClient() {
   if (client) return client;
