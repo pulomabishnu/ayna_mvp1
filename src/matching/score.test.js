@@ -168,12 +168,13 @@ describe('flow and menstrual characteristics', () => {
     const honey = score('p-honeypot-pad', up, 'period.heavy');
     expect(honey.safety.eligible).toBe(false);
     expect(honey.safety.reasons[0].code).toBe('allergen_conflict');
+    // Review pinned Always Infinity to its unscented variant, so it is now a
+    // confirmed fragrance-free product rather than the variant-unknown case.
     const always = score('p-always-infinity', up, 'period.heavy');
     expect(always.safety.eligible).toBe(true);
-    expect(always.explanations.join(' ')).toMatch(/Choose the fragrance-free version/);
+    expect(always.explanations).toContain('Fragrance-free, which matters with your fragrance allergy');
     const rael = score('p-rael-overnight', up, 'period.heavy');
     expect(rael.explanations).toContain('Fragrance-free, which matters with your fragrance allergy');
-    expect(rael.score).toBeGreaterThan(always.score);
   });
 
   it('"no periods" flow with a period need is treated as a contradiction', () => {
