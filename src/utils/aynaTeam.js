@@ -3,14 +3,11 @@
 // same list (supabase/migrations/*_community_announcements.sql,
 // community_team_members), so editing only this file never grants posting.
 //
-// Only puloma@aynahealth.co is confirmed in this repo (privacy policy, terms).
-// TODO(team): confirm Ameera's and Eliz's exact @aynahealth.co sign-in emails.
-// The two placeholders below follow the firstname@aynahealth.co pattern and
-// must be checked before launch (here AND in the migration seed).
+// All three sign-in emails confirmed by Ameera on 2026-10-13.
 export const AYNA_TEAM = {
-  'ameera@aynahealth.co': { firstName: 'Ameera', title: 'CMO, ayna', confirmed: false }, // TODO(team): confirm email
+  'ameera@aynahealth.co': { firstName: 'Ameera', title: 'CMO, ayna', confirmed: true },
   'puloma@aynahealth.co': { firstName: 'Puloma', title: 'CEO, ayna', confirmed: true },
-  'eliz@aynahealth.co': { firstName: 'Eliz', title: 'COO, ayna', confirmed: false }, // TODO(team): confirm email
+  'eliz@aynahealth.co': { firstName: 'Eliz', title: 'COO, ayna', confirmed: true },
 };
 
 export const AYNA_TEAM_DOMAIN = 'aynahealth.co';

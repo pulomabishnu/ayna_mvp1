@@ -1,7 +1,7 @@
 -- Community: ayna team, verified badges, Announcements, and a server-side
 -- backstop for the community rules.
 --
--- NOT RUN AUTOMATICALLY. Review, confirm the TODO emails, then run once in the
+-- NOT RUN AUTOMATICALLY. Review, then run once in the
 -- Supabase SQL editor. Idempotent: safe to run again.
 --
 -- What it adds
@@ -30,8 +30,6 @@ revoke all on public.community_team_members from anon, authenticated;
 
 insert into public.community_team_members (email, first_name, title) values
   ('puloma@aynahealth.co', 'Puloma', 'CEO, ayna'),
-  -- TODO(team): confirm the exact sign-in emails for Ameera and Eliz before
-  -- running. These follow firstname@aynahealth.co and are placeholders.
   ('ameera@aynahealth.co', 'Ameera', 'CMO, ayna'),
   ('eliz@aynahealth.co', 'Eliz', 'COO, ayna')
 on conflict (email) do update set first_name = excluded.first_name, title = excluded.title;

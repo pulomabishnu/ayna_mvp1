@@ -7,7 +7,7 @@ import { getBrandAffinity, getSafetyAlerts } from '../mobile/utils/shopperProfil
 import { getProfileCompletionPct } from '../mobile/utils/profileCompleteness.js';
 import { ROUTINE_BUCKETS, ROUTINE_BUCKET_LABELS, useRoutine } from '../mobile/hooks/useRoutine.js';
 import { fetchDataExport } from '../mobile/utils/dataExportApi.js';
-import { ShelfDonut, TrustBars } from '../mobile/components/ShopperCharts.jsx';
+import ShopperCard from '../mobile/components/ShopperCard.jsx';
 import BadgesPanel from './BadgesPanel';
 import './WebYou.css';
 import '../styles/audit-qya.css';
@@ -123,13 +123,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
 
     <div className="wyou-grid">
       <div className="wyou-col">
-        {shopper ? <section className="wyou-shopper is-shelf">
-          <header>
-            <small>From your answers and your Ecosystem</small><h2>At a glance</h2>
-          </header>
-          <div className="wyou-charts"><ShelfDonut shelf={shopper.shelf} total={shopper.total} /><TrustBars trust={shopper.trust} /></div>
-          <dl>{shopper.rows.map((r) => <div key={r.key} className={`tone-${r.tone}`}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}</dl>
-        </section> : <section className="wyou-card is-shopper-empty"><h2>At a glance</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
+        {shopper ? <ShopperCard profile={shopper} /> : <section className="wyou-card is-shopper-empty"><h2>At a glance</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
         <BadgesPanel userId={user.id} myProducts={products} quizAnswers={quizResults} variant="web" />
       </div>
 
