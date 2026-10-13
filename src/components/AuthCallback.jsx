@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getSupabaseClient } from '../utils/supabaseClient';
+import { getGooglePkceClient, getSupabaseClient } from '../utils/supabaseClient';
 import { flushPendingConsent } from '../utils/pendingConsent.js';
 
 export default function AuthCallback({ onAuthenticated }) {
@@ -20,6 +20,7 @@ export default function AuthCallback({ onAuthenticated }) {
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
     } catch { /* non-fatal */ }
     const searchParams = new URLSearchParams(window.location.search);
+    const authCode = searchParams.get('code');
     const accessToken = hashParams.get('access_token');
     const refreshToken = hashParams.get('refresh_token');
     const type = hashParams.get('type') || searchParams.get('type');
@@ -78,6 +79,45 @@ export default function AuthCallback({ onAuthenticated }) {
         return;
       }
       onAuthenticated(user);
+    }
+
+    // Google uses a PKCE Auth Code so the Supabase redirect stays short.
+    // Keep the other providers' existing implicit callback unchanged.
+    if (authCode) {
+      const googleClient = getGooglePkceClient();
+      if (!googleClient) {
+        setStatus('error');
+        setErrorMsg('Google sign-in is unavailable right now. Please try again.');
+        return;
+      }
+      searchParams.delete('code');
+      try {
+        const query = searchParams.toString();
+        window.history.replaceState(null, '', window.location.pathname + (query ? `?${query}` : ''));
+      } catch { /* non-fatal */ }
+      googleClient.auth.exchangeCodeForSession(authCode).then(async ({ data, error }) => {
+        if (error || !data.session?.user) {
+          setStatus('error');
+          setErrorMsg(error?.message || 'Could not complete Google sign-in. Please try again.');
+          return;
+        }
+        const { data: mainData, error: sessionError } = await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+        if (sessionError || !mainData.session?.user) {
+          setStatus('error');
+          setErrorMsg(sessionError?.message || 'Could not establish session. Please try again.');
+          return;
+        }
+        try { window.localStorage.removeItem('ayna-google-pkce'); } catch { /* unavailable storage */ }
+        void flushPendingConsent(supabase);
+        finishAuth(mainData.session.user);
+      }).catch((error) => {
+        setStatus('error');
+        setErrorMsg(error?.message || 'Could not complete Google sign-in. Please try again.');
+      });
+      return;
     }
 
     // OAuth, set session and navigate to ecosystem
