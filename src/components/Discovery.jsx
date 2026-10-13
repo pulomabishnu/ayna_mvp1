@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import WebDiscoverDeck from './WebDiscoverDeck';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
+import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -384,7 +385,7 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null, onAsk = null, matchOpts: matchOptsProp = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         // initialMacroGroup (a whole care area, e.g. from "Swap" in the
         // ecosystem view) sets ONLY the broader group, leaving every
@@ -605,18 +606,26 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return [...products, ...releasedAsProducts, ...discovered];
     }, [discoveredProducts]);
 
+    // Behavior signals for the matching engine (saved, Not for me, in her
+    // ecosystem). Memoized: the engine caches profiles by this object.
+    const matchOpts = useMemo(
+        () => matchOptsProp || behaviorFrom({ saved: savedProducts, omitted: omittedProducts, inEcosystem: myProducts }),
+        [matchOptsProp, savedProducts, omittedProducts, myProducts]
+    );
+
     const combinedRelevance = useMemo(() => {
         const map = new Map();
         combined.forEach((item) => {
-            map.set(item.id, getProductRelevanceScore(item, quizResults, healthProfile));
+            map.set(item.id, getProductRelevanceScore(item, quizResults, healthProfile, matchOpts));
         });
         return map;
-    }, [combined, quizResults, healthProfile]);
+    }, [combined, quizResults, healthProfile, matchOpts]);
 
+    // "Personalized" = products whose best need reaches the exploratory tier (50+).
     const personalizedSet = useMemo(() => {
         const set = new Set();
         combinedRelevance.forEach((score, id) => {
-            if (score != null && score > 0) set.add(id);
+            if (score != null && score >= 50) set.add(id);
         });
         return set;
     }, [combinedRelevance]);
@@ -666,7 +675,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (eligibilityFilter === 'hsa' && !eligibility.hsa) return false;
             if (eligibilityFilter === 'fsa-hsa' && !(eligibility.fsa || eligibility.hsa)) return false;
 
-            if (aynaFilter === 'best-match' && !(getProfileMatchPercentForProduct(item, quizResults, healthProfile) >= 50)) return false;
+            if (aynaFilter === 'best-match' && !(getProfileMatchPercentForProduct(item, quizResults, healthProfile, matchOpts) >= 50)) return false;
             if (aynaFilter === 'clinician' && !hasClinicianSupport(item)) return false;
             if (aynaFilter === 'community' && !hasCommunitySupport(item, aynaReviews[item.id])) return false;
             if (aynaFilter === 'ecosystem' && !myProducts?.[item.id]) return false;
@@ -784,7 +793,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             }
         }
         return list;
-    }, [combined, macroGroup, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, myProducts]);
+    }, [combined, macroGroup, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, myProducts, matchOpts]);
 
     // Back to the first page whenever the underlying result set actually
     // changes (new filter/search/sort) — not when AI suggestions arrive later
@@ -1445,10 +1454,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const resolvedItemImage = resolvedImages[item.id];
                     const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
-                    const profileMatchPercent = getProfileMatchPercentForProduct(item, quizResults, healthProfile);
-                    const matchPercent = (hasQuizFrustrations || hasHealthImport)
-                        ? profileMatchPercent
-                        : getExplicitMatchPercent(item);
+                    // Badge = best need score, only with a profile and 50+ ("82% for period cramps").
+                    const hasProfile = Boolean(hasQuizFrustrations || hasHealthImport);
+                    const badge = hasProfile ? matchBadge(getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts)) : null;
+                    const matchPercent = hasProfile ? (badge ? badge.percent : null) : getExplicitMatchPercent(item);
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];
@@ -1465,6 +1474,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             product={item}
                             style={{ animation: `fadeInUp 0.4s ${Math.min(idx * 0.04, 0.24)}s backwards` }}
                             matchPercent={matchPercent}
+                            matchLabel={badge ? badge.label : ''}
                             isSaved={isWishlisted}
                             inEcosystem={isInEcosystem}
                             onOpen={onOpenProduct}

@@ -7,11 +7,14 @@ describe('ProductDetailScreen match display', () => {
   it('shows a relevant score below 60 instead of hiding it on the detail page', () => {
     const product = ALL_PRODUCTS.find((item) => item.id === 'p-vitex');
     const quizAnswers = { fullHealthIntake: { supportSelections: ['PMS symptoms'] } };
-    const percent = getProductMatchDetailsForProduct(product, quizAnswers).percent;
+    const details = getProductMatchDetailsForProduct(product, quizAnswers);
+    const percent = details.percent;
     expect(percent).toBeGreaterThan(0);
     expect(percent).toBeLessThan(60);
+    const phrase = details.needMatches.find((m) => m.needId === details.needId).phrase;
     const html = renderToStaticMarkup(<ProductDetailScreen product={product} quizAnswers={quizAnswers} />);
-    expect(html).toContain(`${percent} percent match. See why`);
+    // Leads with the need ("NN% for <need>"), not a bare percent.
+    expect(html).toContain(`${percent}% for ${phrase}. See why`);
     expect(html).toMatch(/PROFILE MATCH/);
   });
 });

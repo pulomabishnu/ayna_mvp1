@@ -8,6 +8,7 @@ import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
+import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, isClaimBlocked } from '../../utils/matchDisplay.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
@@ -17,6 +18,7 @@ import { HEART_PATH } from '../utils/heart.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
 import '../pdp.css';
+import '../eco-needs.css';
 
 const CARD = { background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '16px 0', boxShadow: 'none' };
 const EYEBROW = { fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 700, letterSpacing: '-.01em', color: 'var(--ayna-heading)' };
@@ -332,6 +334,10 @@ export default function ProductDetailScreen({
   quizAnswers = null,
   ecosystemProducts = [],
   onOpenProduct,
+  // Matching engine behavior signals and the "Not for me" action.
+  matchOpts,
+  isOmitted = false,
+  onToggleOmit,
 }) {
   const [partnerOpen, setPartnerOpen] = useState(false);
   const [activeDetailSection, setActiveDetailSection] = useState('summary');
@@ -362,15 +368,15 @@ export default function ProductDetailScreen({
     const owned = new Set((ecosystemProducts || []).map((p) => p?.id).filter(Boolean));
     const pool = ALL_PRODUCTS.filter((p) => p && p.id && p.name && p.id !== product.id && !owned.has(p.id));
     const matches = quizAnswers ? pool
-      .map((p) => ({ p, m: getProductMatchDetailsForProduct(p, quizAnswers) }))
-      .filter(({ m }) => m?.matchStatus === 'scored' && Number.isFinite(m.percent) && m.percent > 0)
+      .map((p) => ({ p, m: getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts) }))
+      .filter(({ m }) => m?.matchStatus === 'scored' && Number.isFinite(m.percent) && m.percent >= 50)
       .sort((a, b) => b.m.percent - a.m.percent)
       .slice(0, 4)
       .map(({ p }) => p) : [];
     const used = new Set(matches.map((p) => p.id));
     const similar = pool.filter((p) => !used.has(p.id) && p.category === product.category).slice(0, 4);
     return { matches, similar };
-  }, [product, onOpenProduct, ecosystemProducts, quizAnswers]);
+  }, [product, onOpenProduct, ecosystemProducts, quizAnswers, matchOpts]);
 
   if (!product) {
     return (
@@ -385,14 +391,22 @@ export default function ProductDetailScreen({
       <WhyMatchScreen
         product={product}
         quizAnswers={quizAnswers}
+        matchOpts={matchOpts}
         onBack={() => setShowWhyMatch(false)}
         onViewDetails={() => setShowWhyMatch(false)}
       />
     );
   }
 
-  const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers);
-  const matchPercent = quizAnswers && matchDetails.matchStatus === 'scored' && Number.isFinite(matchDetails.percent) ? matchDetails.percent : null;
+  const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts);
+  const matchPercent = quizAnswers && matchDetails.matchStatus === 'scored' && Number.isFinite(matchDetails.percent) && matchDetails.percent > 0 ? matchDetails.percent : null;
+  // Lead with the need ("82% for period cramps"), then every selected need's
+  // own score, the separate access label and confidence notes.
+  const needRows = quizAnswers && matchDetails.matchStatus === 'scored' ? needBreakdown(matchDetails) : [];
+  const bestNeedRow = needRows.find((r) => r.needId === matchDetails.needId) || needRows[0] || null;
+  const matchHeadline = matchPercent != null && bestNeedRow ? needHeadline(matchPercent, bestNeedRow.phrase) : '';
+  const matchNotes = matchPercent != null ? confidenceNotes(matchDetails, product) : [];
+  const exclusions = quizAnswers && matchDetails.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
   const openWhyMatch = () => setShowWhyMatch(true);
 
   const {
@@ -426,7 +440,8 @@ export default function ProductDetailScreen({
   const safetyAlertText = getSafetyAlertText(product);
   const isPartner = isPartnerBrandItem(product);
   const partnerDisclosure = getPartnerDisclosureText(product);
-  const pillTags = tags.slice(0, 4).map(humanizeTag);
+  // Never show a claim-style tag ("hormone-free") the engine could not confirm for her.
+  const pillTags = tags.slice(0, 4).map(humanizeTag).filter((t) => !isClaimBlocked(t, matchDetails.blockedClaims));
 
   const handleShare = async () => {
     const origin = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname)
@@ -565,7 +580,7 @@ export default function ProductDetailScreen({
             }}
           >
             <ProductImage product={product} src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
-            {matchPercent != null && <button type="button" className="ayna-figma-detail-score" onClick={openWhyMatch} aria-label={`${matchPercent} percent match. See why`}><strong>{matchPercent}%</strong><span>PROFILE MATCH</span></button>}
+            {matchPercent != null && <button type="button" className="ayna-figma-detail-score" onClick={openWhyMatch} aria-label={`${matchHeadline || `${matchPercent} percent match`}. See why`}><strong>{matchPercent}%</strong><span>PROFILE MATCH</span></button>}
           </div>
         </div>
 
@@ -577,7 +592,15 @@ export default function ProductDetailScreen({
             {price && shownPrice.sub && <small>{shownPrice.sub}</small>}
             {perUnit && <small>{perUnit}</small>}
           </div>}
-          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? 'Not a fit right now' : 'No clear match'} <span aria-hidden="true">→</span></button>}
+          {matchHeadline && <div className="ay-pdp-need">
+            <button type="button" className="ay-pdp-need__lead" onClick={openWhyMatch}><strong>{matchHeadline}</strong><span className={`ay-pdp-need__tier is-${matchDetails.tier}`}>{tierWord(matchDetails.tier, matchPercent)}</span></button>
+            {needRows.length > 1 && <ul className="ay-pdp-need__rows" aria-label="Match for each of your needs">{needRows.map((r) => <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'}>{r.short} <b>{r.score}</b></li>)}</ul>}
+            {(matchDetails.access?.label || matchNotes.length > 0) && <div className="ay-pdp-need__meta">
+              {matchDetails.access?.label && <span className="ay-pdp-need__access">{matchDetails.access.label}</span>}
+              {matchNotes.map((n) => <span key={n} className="ay-pdp-need__note">{n}</span>)}
+            </div>}
+          </div>}
+          {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'} <span aria-hidden="true">→</span></button>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>See your match <span aria-hidden="true">↗</span></button>}
           {pillTags.length > 0 && (
             <div className="ay-pdp-tags">
@@ -625,6 +648,7 @@ export default function ProductDetailScreen({
             {meaningfulDetail(ingredients) && <section className="ay-pdp-card"><h2>Ingredients</h2><p className="is-sub" style={{ whiteSpace: 'pre-line' }}>{ingredients}</p></section>}
             {meaningfulDetail(safety.fdaStatus) && <section className="ay-pdp-card"><h2>FDA status</h2><p className="is-sub">{safety.fdaStatus}</p></section>}
             {!buyUrl && whereToBuy.length > 0 && <section className="ay-pdp-card"><h2>Where to buy</h2><p className="is-sub">{whereToBuy.join(' · ')}</p></section>}
+            {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
           </>}
 
           {currentSection === 'clinician' && <SourcePanel kind="clinician" key={`c-${product.id}`} title={clinicianOpinionSource === 'brand' ? 'Brand note' : 'Clinician opinion'} count={sourceCounts.doctor} summary={doctorOpinion} emptyText="No clinician opinion yet."

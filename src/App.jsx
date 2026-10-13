@@ -29,6 +29,7 @@ const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
 const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
 import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById } from './data/products';
+import { behaviorFrom } from './utils/matchDisplay';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -839,10 +840,18 @@ function App() {
     };
   }, [quizResults]);
 
+  // Behavior signals for the matching engine (saved, Not for me, in her
+  // ecosystem), shared by Shop, Ecosystem and the product page so they all
+  // show the same per-need score. Memoized: the engine caches by identity.
+  const matchOpts = useMemo(
+    () => behaviorFrom({ saved: savedProducts, omitted: omittedProducts, inEcosystem: myProducts }),
+    [savedProducts, omittedProducts, myProducts]
+  );
+
   const recommendedProductIds = useMemo(() => {
     if (!hasCompletedPersonalization) return [];
-    return getPersonalizedProductIds(quizResults || null, healthProfile);
-  }, [quizResults, healthProfile, hasCompletedPersonalization]);
+    return getPersonalizedProductIds(quizResults || null, healthProfile, matchOpts);
+  }, [quizResults, healthProfile, hasCompletedPersonalization, matchOpts]);
 
   // Categories this person actually matches on, in match order — the landing
   // Shop's Personalize toggle sorts by these.
@@ -1721,6 +1730,7 @@ function App() {
         {currentView === 'ecosystem' && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
+            matchOpts={matchOpts}
             myProducts={myProducts}
             ecosystemOrder={ecosystemOrder}
             onToggleProduct={toggleMyProduct}
@@ -1767,6 +1777,7 @@ function App() {
         {currentView === 'discovery' && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <Discovery
+            matchOpts={matchOpts}
             trackedProducts={trackedProducts}
             toggleTrackProduct={toggleTrackProduct}
             myProducts={myProducts}
@@ -1933,6 +1944,7 @@ function App() {
               quizResults={quizResults}
               healthProfile={healthProfile}
               ecosystemProducts={Object.values(myProducts)}
+              matchOpts={matchOpts}
               user={user}
               userSession={userSession}
               onOpenProduct={handleOpenProduct}

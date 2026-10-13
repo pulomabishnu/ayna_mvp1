@@ -16,6 +16,9 @@ const DEFAULT_SESSION = {
   // applied at each render site (ProfileFlow, AccountInfoScreen, etc.),
   // not baked into the stored value itself.
   userName: '',
+  // "Not for me": { [productId]: true }. Passed to the matching engine as
+  // omitted so these never come back in recommendations, seeds or swaps.
+  omittedProducts: {},
 };
 
 function loadSession() {
@@ -29,6 +32,7 @@ function loadSession() {
       lastQuizAnswers: parsed?.lastQuizAnswers && typeof parsed.lastQuizAnswers === 'object' ? parsed.lastQuizAnswers : null,
       pendingIntakeSync: parsed?.pendingIntakeSync === true,
       userName: typeof parsed?.userName === 'string' ? parsed.userName : '',
+      omittedProducts: parsed?.omittedProducts && typeof parsed.omittedProducts === 'object' && !Array.isArray(parsed.omittedProducts) ? parsed.omittedProducts : {},
     };
   } catch {
     return DEFAULT_SESSION;

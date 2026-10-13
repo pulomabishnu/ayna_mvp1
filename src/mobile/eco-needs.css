@@ -1,0 +1,73 @@
+/* Matching engine surfaces in the app: per-need product view, care-first
+   Ecosystem, per-need shelves. Tokens only, so dark mode follows tokens.css.
+   Text on pastel / neon fills is always the dark ink (#1d1a2b). */
+
+/* ---------- Product page: lead with the need ---------- */
+.ayna-mobile .ay-pdp-need { display: grid; gap: 8px; margin-top: 14px; }
+.ayna-mobile .ay-pdp-need__lead { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-self: start; padding: 0; border: 0; background: transparent; color: var(--ay-ink); text-align: left; cursor: pointer; }
+.ayna-mobile .ay-pdp-need__lead strong { font: 800 20px/1.15 var(--ay-font-display, var(--ay-font-ui)); letter-spacing: -.03em; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; text-decoration-color: var(--ay-line); }
+.ayna-mobile :is(.ay-pdp-need__tier, .ay-match-tier) { display: inline-block; padding: 4px 10px; border-radius: 99px; background: var(--ay-mint); color: #1d1a2b; font: 700 12px/1.2 var(--ay-font-ui); }
+.ayna-mobile .ay-pdp-need__tier.is-strong { background: var(--ay-peri); }
+.ayna-mobile .ay-pdp-need__tier.is-exploratory { background: var(--ay-butter); }
+.ayna-mobile .ay-pdp-need__tier.is-browse { background: var(--ay-tile, var(--ayna-chip-bg)); color: var(--ay-ink); }
+.ayna-mobile .ay-pdp-need__rows { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.ayna-mobile .ay-pdp-need__rows li { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; color: var(--ay-ink); font: 600 12.5px/1.2 var(--ay-font-ui); }
+.ayna-mobile .ay-pdp-need__rows li b { font-weight: 800; }
+.ayna-mobile .ay-pdp-need__rows li.is-none { border-style: dashed; border-color: var(--ay-line); color: var(--ay-ink-soft, var(--ay-ink)); }
+.ayna-mobile .ay-pdp-need__rows li.is-excellent { background: var(--ay-mint); border-color: #1d1a2b; color: #1d1a2b; }
+.ayna-mobile .ay-pdp-need__rows li.is-strong { background: var(--ay-peri); border-color: #1d1a2b; color: #1d1a2b; }
+.ayna-mobile .ay-pdp-need__rows li.is-exploratory { background: var(--ay-butter); border-color: #1d1a2b; color: #1d1a2b; }
+.ayna-mobile .ay-pdp-need__meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.ayna-mobile :is(.ay-pdp-need__access, .ay-pdp-need__note) { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 99px; background: var(--ay-tile, var(--ayna-chip-bg)); color: var(--ay-ink); font: 600 12px/1.2 var(--ay-font-ui); }
+.ayna-mobile .ay-pdp-need__access::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--ay-mint); border: 1px solid #1d1a2b; }
+.ayna-mobile .ay-pdp-need__note { background: transparent; border: 1.5px dashed var(--ay-line); }
+.ayna-mobile .ay-pdp-omit { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+.ayna-mobile .ay-pdp-omit button { min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); }
+.ayna-mobile .ay-pdp-omit small { color: var(--ay-ink-soft, var(--ay-ink)); font-size: 12px; }
+
+/* ---------- Why this match ---------- */
+.ayna-mobile.ayna-mobile .ay-match-hero .ay-match-tier { margin-bottom: 8px; }
+.ayna-mobile.ayna-mobile .ay-match-hero h2 { color: #1d1a2b !important; }
+.ayna-mobile.ayna-mobile .ay-match-hero p.ay-match-access { margin-top: 8px !important; font-size: 13px !important; font-weight: 600; color: #1d1a2b !important; }
+.ayna-mobile.ayna-mobile .ay-match-hero p.ay-match-access span { font-size: 9px; vertical-align: 2px; }
+.ayna-mobile.ayna-mobile .ay-match-hero .ay-match-tier { background: var(--ay-paper); color: var(--ay-ink); border: 1.5px solid var(--ay-ink); }
+.ayna-mobile[data-theme='dark'] .ay-match-hero .ayna-match-ring span { color: var(--ay-ink) !important; }
+.ayna-mobile .ay-match-notes { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.ayna-mobile .ay-match-notes li { padding: 6px 11px; border: 1.5px dashed var(--ay-ink); border-radius: 99px; color: var(--ay-ink); font: 600 12.5px/1.2 var(--ay-font-ui); }
+.ayna-mobile .ay-match-excluded { display: grid; gap: 6px; background: var(--ay-pink) !important; color: #1d1a2b; font-weight: 600; }
+.ayna-mobile .ay-match-excluded p { margin: 0; }
+.ayna-mobile .ay-need-rows { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ayna-mobile .ay-need-rows li { display: grid; grid-template-columns: minmax(0, 7.5em) minmax(0, 1fr) 2.2em; grid-template-rows: auto auto; column-gap: 10px; align-items: center; }
+.ayna-mobile .ay-need-rows__label { font: 700 14px/1.2 var(--ay-font-ui); color: var(--ay-ink); overflow-wrap: anywhere; }
+.ayna-mobile .ay-need-rows__bar { height: 10px; border: 1.5px solid var(--ay-ink); border-radius: 99px; overflow: hidden; background: var(--ay-cream); }
+.ayna-mobile .ay-need-rows__bar i { display: block; height: 100%; background: var(--ay-mint); }
+.ayna-mobile .ay-need-rows li.is-strong .ay-need-rows__bar i { background: var(--ay-peri); }
+.ayna-mobile .ay-need-rows li.is-exploratory .ay-need-rows__bar i { background: var(--ay-butter); }
+.ayna-mobile .ay-need-rows li.is-browse .ay-need-rows__bar i { background: var(--ay-pink); }
+.ayna-mobile .ay-need-rows li strong { font: 800 15px/1 var(--ay-font-ui); text-align: right; color: var(--ay-ink); }
+.ayna-mobile .ay-need-rows li small { grid-column: 2 / 4; font: 600 11.5px/1.3 var(--ay-font-ui); color: var(--ay-ink-soft, var(--ay-ink)); }
+.ayna-mobile .ay-need-rows li.is-none .ay-need-rows__label { opacity: .6; }
+
+/* ---------- Ecosystem: care first, care notes, per-need shelves ---------- */
+.ayna-mobile .ay-care-first { margin: 12px var(--ay-gutter, 20px) 0; padding: 18px; border: 2px solid #1d1a2b; border-radius: 22px; background: var(--ay-pink); color: #1d1a2b; box-shadow: 3px 3px 0 #1d1a2b; }
+.ayna-mobile .ay-care-first__eyebrow { margin: 0 0 4px; font: 700 12px/1.2 var(--ay-font-ui); text-transform: uppercase; letter-spacing: .06em; }
+.ayna-mobile .ay-care-first h2 { margin: 0 0 8px; font: 800 24px/1.05 var(--ay-font-display, var(--ay-font-ui)); letter-spacing: -.04em; color: #1d1a2b; }
+.ayna-mobile .ay-care-first > p { margin: 0 0 8px; font-size: 14px; line-height: 1.45; color: #1d1a2b; }
+.ayna-mobile .ay-care-first .ay-care-links a { background: #fffcf5; color: #1d1a2b; border-color: #1d1a2b; }
+.ayna-mobile .ay-care-first__after { margin: 24px var(--ay-gutter, 20px) -8px; font: 700 13px/1.2 var(--ay-font-ui); color: var(--ay-ink-soft, var(--ay-ink)); }
+.ayna-mobile .ay-eco-secondary { opacity: .86; }
+.ayna-mobile .ay-eco-secondary .ayna-cabinet-section-head h2 { font-size: 20px !important; }
+.ayna-mobile .ay-care-links { display: grid; gap: 8px; margin: 10px 0 0; padding: 0; list-style: none; }
+.ayna-mobile .ay-care-links a { display: grid; gap: 2px; padding: 10px 12px; border: 1.5px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); color: var(--ay-ink); text-decoration: none; }
+.ayna-mobile .ay-care-links strong { font: 700 13.5px/1.3 var(--ay-font-ui); }
+.ayna-mobile .ay-care-links span { font: 500 12px/1.35 var(--ay-font-ui); opacity: .78; }
+.ayna-mobile .ay-care-banner { display: grid; gap: 6px; margin: 16px var(--ay-gutter, 20px) 0; padding: 14px 16px; border: 1.5px solid var(--ay-ink); border-radius: 18px; background: var(--ay-paper); color: var(--ay-ink); }
+.ayna-mobile .ay-care-banner.is-prominent { border-left-width: 6px; border-left-color: var(--ay-pink); }
+.ayna-mobile .ay-care-banner p { margin: 0; font-size: 13.5px; line-height: 1.45; }
+.ayna-mobile .ay-shelf-note { margin: -6px 0 12px; font: 600 13px/1.35 var(--ay-font-ui); color: var(--ay-ink-soft, var(--ay-ink)); }
+.ayna-mobile .ay-shelf-empty { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border: 1.5px dashed var(--ay-ink); border-radius: 18px; color: var(--ay-ink); }
+.ayna-mobile .ay-shelf-empty p { margin: 0; font-size: 14px; line-height: 1.4; }
+.ayna-mobile .ay-shelf-empty button { flex: none; min-height: 40px; padding: 0 14px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: var(--area-tone, var(--ay-butter)); color: #1d1a2b; font: 700 13px/1 var(--ay-font-ui); }
+.ayna-mobile .ay-shelf-care { margin-top: 12px; padding: 12px 14px; border: 1.5px solid var(--ay-ink); border-radius: 16px; background: var(--ay-paper); color: var(--ay-ink); }
+.ayna-mobile .ay-shelf-care summary { cursor: pointer; font: 700 13.5px/1.3 var(--ay-font-ui); }
+.ayna-mobile .ayna-area-collection.is-empty-shelf .ayna-cabinet-section-head { margin-bottom: 10px !important; }

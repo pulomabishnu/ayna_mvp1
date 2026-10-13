@@ -1,6 +1,8 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import LegalFooter from '../components/LegalFooter.jsx';
+import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines } from '../../utils/matchDisplay.js';
 import '../match.css';
+import '../eco-needs.css';
 
 const GOAL_COMPONENTS = new Set(['primaryGoal', 'otherNeeds', 'periodFlow', 'periodPain', 'utiFrequency']);
 const PROFILE_COMPONENTS = new Set(['age', 'lifeStage', 'breastfeeding', 'postpartumTiming', 'pregnancyTrimester', 'perimenopauseLastPeriod', 'diagnoses', 'triedBefore']);
@@ -18,10 +20,19 @@ function reasonKind(component) {
   return 'Your preferences';
 }
 
-export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateHealth, onViewDetails }) {
-  const { percent, eligible, matchStatus, reasonDetails = [], considerations = [], unknowns = [], unmetNeeds = [] } = getProductMatchDetailsForProduct(product, quizAnswers);
-  const hasScore = eligible !== false && matchStatus === 'scored' && Number.isFinite(percent);
-  const title = eligible === false ? 'Not a fit right now' : hasScore ? 'Your match' : matchStatus === 'no-profile' ? 'About this match' : 'No clear match';
+const TONE = { excellent: 'is-strong', strong: 'is-good', exploratory: 'is-partial', browse: 'is-partial' };
+
+export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack, onUpdateHealth, onViewDetails }) {
+  const details = getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts);
+  const { percent, eligible, matchStatus, reasonDetails = [], considerations = [], unknowns = [], unmetNeeds = [], tier, access } = details;
+  const hasScore = eligible !== false && matchStatus === 'scored' && Number.isFinite(percent) && percent > 0;
+  const excluded = matchStatus === 'excluded' || eligible === false;
+  const rows = matchStatus === 'no-profile' ? [] : needBreakdown(details);
+  const best = rows.find((r) => r.needId === details.needId) || rows[0];
+  const notes = hasScore ? confidenceNotes(details, product) : [];
+  const exclusionReasons = excluded ? exclusionLines(details) : [];
+  const exclusions = exclusionReasons.length ? exclusionReasons : excluded ? considerations.map((c) => c.text).filter(Boolean) : [];
+  const title = excluded ? 'Not in your matches' : hasScore ? 'Your match' : matchStatus === 'no-profile' ? 'About this match' : 'No clear match';
 
   return (
     <main className="ayna-match-page">
@@ -33,35 +44,53 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
       </header>
       <div className="ayna-match-scroll">
         {hasScore ? (
-          <section className={`ayna-match-result ay-match-hero ${percent >= 80 ? 'is-strong' : percent >= 60 ? 'is-good' : 'is-partial'}`} aria-label={`${percent} percent match`}>
+          <section className={`ayna-match-result ay-match-hero ${TONE[tier] || 'is-partial'}`} aria-label={needHeadline(percent, best?.phrase)}>
             <div className="ayna-match-ring" aria-hidden="true" style={{ '--match-angle': `${percent * 3.6}deg` }}><span>{percent}<small>%</small></span></div>
-            <div><h2>{percent >= 80 ? 'Strong match' : percent >= 60 ? 'Good fit' : 'Partial match'}</h2><p>{percent >= 60 ? 'Your answers line up with this product. Review the details before choosing it.' : 'This product relates to some of your answers. It does not address your whole profile.'}</p></div>
+            <div>
+              <span className="ay-match-tier">{tierWord(tier, percent)}</span>
+              <h2>{needHeadline(percent, best?.phrase)}</h2>
+              {access?.label && <p className="ay-match-access"><span aria-hidden="true">●</span> {access.label}</p>}
+            </div>
           </section>
+        ) : excluded ? (
+          <section className="ayna-match-intro ay-match-excluded">{exclusions.length > 0
+            ? exclusions.map((line) => <p key={line}>{tidy(line)}</p>)
+            : <p>This product does not fit your current health profile.</p>}</section>
         ) : (
-          <p className="ayna-match-intro">{eligible === false
-            ? "This product doesn't fit your current health profile. Review the reason below."
-            : matchStatus === 'no-profile'
+          <p className="ayna-match-intro">{matchStatus === 'no-profile'
               ? 'Complete your health profile to see how this product relates to your answers.'
               : 'This product does not clearly line up with your selected needs. We leave the percentage blank instead of guessing.'}</p>
         )}
 
+        {notes.length > 0 && <ul className="ay-match-notes" aria-label="What lowers our confidence">{notes.map((n) => <li key={n}>{n}</li>)}</ul>}
+        {rows.length > 0 && !excluded && (
+          <section className="ayna-match-section">
+            <h2>Your needs</h2>
+            <ul className="ay-need-rows">{rows.map((r) => <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'}>
+              <span className="ay-need-rows__label">{tidy(r.short)}</span>
+              <span className="ay-need-rows__bar" aria-hidden="true"><i style={{ width: `${r.score}%` }} /></span>
+              <strong>{r.score}</strong>
+              <small>{r.word}</small>
+            </li>)}</ul>
+          </section>
+        )}
         {hasScore && reasonDetails.length > 0 && (
           <section className="ayna-match-section">
             <h2>What lines up</h2>
             <ul className="ayna-match-reasons">{reasonDetails.map((reason, index) => <li key={`${reason.component}-${index}`}><span>{reasonKind(reason.component)}</span><p>{tidy(reason.text)}</p></li>)}</ul>
           </section>
         )}
-        {unmetNeeds.length > 0 && (
+        {unmetNeeds.length > 0 && rows.length === 0 && (
           <section className="ayna-match-section"><h2>Not addressed by this product</h2><ul className="ay-match-chips">{unmetNeeds.map((need) => <li key={need}>{tidy(need)}</li>)}</ul></section>
         )}
-        {considerations.length > 0 && (
+        {!excluded && considerations.length > 0 && (
           <section className="ayna-match-section ayna-match-cautions"><h2>Before you choose</h2>{considerations.map((note, index) => <div key={index}><p>{tidy(note.text)}</p>{note.cta && onViewDetails && <button type="button" onClick={onViewDetails}>{note.cta}</button>}</div>)}</section>
         )}
         {unknowns.length > 0 && (
           <section className="ayna-match-section"><h2>What we could not confirm</h2>{unknowns.map((note) => <p key={note}>{tidy(note)}</p>)}</section>
         )}
         {matchStatus === 'no-profile' && onUpdateHealth && <button type="button" className="ayna-match-update" onClick={onUpdateHealth}>Complete health profile</button>}
-        <p className="ayna-match-disclaimer">A relevance score from your answers, not a diagnosis or a promise of results.</p>
+        <p className="ayna-match-disclaimer">A relevance score from your answers, not a diagnosis or a promise of results. Availability is shown separately and never changes the score.</p>
         <LegalFooter />
       </div>
     </main>

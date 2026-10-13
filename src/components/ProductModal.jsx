@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
-import { ALL_PRODUCTS, getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, CATEGORY_LABELS } from '../data/products';
+import { needBreakdown, needHeadline, tierWord, confidenceNotes, exclusionLines, isClaimBlocked } from '../utils/matchDisplay';
+import '../styles/match-ui.css';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { isPartnerBrandItem } from '../utils/partnerBrands';
@@ -660,6 +662,9 @@ export default function ProductModal({
   quizResults = null,
   healthProfile = null,
   ecosystemProducts = null,
+  // Memoized { behavior } for the matching engine (App.jsx), so the score
+  // here matches Shop and Ecosystem.
+  matchOpts = undefined,
   // Navigates to another product's own dedicated page.
   onOpenProduct = null,
   // Optional: renders a visible in-page "Back" control.
@@ -712,15 +717,27 @@ export default function ProductModal({
   const heroImageSrc = resolvedModalImage || product?.image || '';
 
   const matchLabels = useMemo(
-    () => getProfileMatchLabelsForProduct(product, quizResults, healthProfile),
-    [product, quizResults, healthProfile]
+    () => getProfileMatchLabelsForProduct(product, quizResults, healthProfile, matchOpts),
+    [product, quizResults, healthProfile, matchOpts]
   );
   const explicitMatchPercent = useMemo(() => getRealMatchPercent(product), [product]);
   const profileMatchPercent = useMemo(
-    () => getProfileMatchPercentForProduct(product, quizResults, healthProfile),
-    [product, quizResults, healthProfile]
+    () => getProfileMatchPercentForProduct(product, quizResults, healthProfile, matchOpts),
+    [product, quizResults, healthProfile, matchOpts]
   );
   const matchPercent = profileMatchPercent ?? explicitMatchPercent;
+  // Per-need view from the matching engine: lead with the need, show every
+  // selected need's own score, the separate access label, confidence notes,
+  // and the exclusion reason when she would not be shown this product.
+  const matchDetails = useMemo(
+    () => (quizResults ? getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts) : null),
+    [product, quizResults, healthProfile, matchOpts]
+  );
+  const needRows = useMemo(() => (matchDetails?.matchStatus === 'scored' ? needBreakdown(matchDetails) : []), [matchDetails]);
+  const bestNeedRow = needRows.find((r) => r.needId === matchDetails?.needId) || needRows[0] || null;
+  const matchNotes = useMemo(() => (matchDetails?.matchStatus === 'scored' ? confidenceNotes(matchDetails, product) : []), [matchDetails, product]);
+  const matchExclusions = matchDetails?.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
+  const blockedClaims = useMemo(() => matchDetails?.blockedClaims || [], [matchDetails]);
   const headMatchLabel = matchLabels[0] || null;
   const buyUrl = useMemo(() => getBuyUrl(product), [product]);
   const usesAffiliateLink = Boolean(
@@ -747,8 +764,8 @@ export default function ProductModal({
     let matches = [];
     if (quizResults) {
       matches = pool
-        .map((p) => ({ p, m: getProfileMatchPercentForProduct(p, quizResults) }))
-        .filter((x) => Number.isFinite(x.m) && x.m > 0)
+        .map((p) => ({ p, m: getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts) }))
+        .filter((x) => Number.isFinite(x.m) && x.m >= 50)
         .sort((x, y) => y.m - x.m)
         .slice(0, 4)
         .map((x) => ({ ...x.p, _match: Math.round(x.m) }));
@@ -756,7 +773,7 @@ export default function ProductModal({
     const used = new Set(matches.map((p) => p.id));
     const similar = pool.filter((p) => !used.has(p.id) && p.category === product.category).slice(0, 4);
     return { matches, similar };
-  }, [product, ecosystemProducts, quizResults]);
+  }, [product, ecosystemProducts, quizResults, healthProfile, matchOpts]);
 
   const eyebrow = useMemo(() => {
     if (!product) return '';
@@ -789,7 +806,12 @@ export default function ProductModal({
     return t ? noDash(t) : null;
   }, [product]);
 
-  const typedTags = useMemo(() => buildTypedTags(product), [product]);
+  // Never show a "fragrance-free" / "pregnancy-safe" style tag the engine
+  // could not confirm for her (details.blockedClaims).
+  const typedTags = useMemo(
+    () => buildTypedTags(product).filter((t) => !isClaimBlocked(t.label, blockedClaims)),
+    [product, blockedClaims]
+  );
   const reviewer = useMemo(() => getNamedReviewer(product), [product]);
   const allSources = useMemo(() => buildAllSources(product), [product]);
 
@@ -958,7 +980,7 @@ export default function ProductModal({
     <div className="mockup-page pdp-page-wrap">
       <div className="pdp-page">
 
-        {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} />}
+        {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} />}
 
         <div className="pdp-topbar">
           {onBack ? (
@@ -990,7 +1012,7 @@ export default function ProductModal({
             <div className="pdp-head__titlerow">
               <h1 className="pdp-head__name">{product.name}</h1>
               {matchPercent > 0 && (
-                <button type="button" className="pdp-dial" onClick={() => setShowWhy(true)} aria-label={`${matchPercent} percent match. Why?`}>
+                <button type="button" className="pdp-dial" onClick={() => setShowWhy(true)} aria-label={bestNeedRow ? `${needHeadline(matchPercent, bestNeedRow.phrase)}. Why?` : `${matchPercent} percent match. Why?`} title={bestNeedRow ? needHeadline(matchPercent, bestNeedRow.phrase) : undefined}>
                   <MatchGauge percent={matchPercent} size={40} theme="light" />
                   <span>Why?</span>
                 </button>
@@ -1005,6 +1027,33 @@ export default function ProductModal({
                 <span className="pdp-head__match">{headMatchLabel}</span>
               ) : null}
             </div>
+
+            {matchDetails?.matchStatus === 'scored' && bestNeedRow && matchPercent > 0 && (
+              <div className="pdp-need">
+                <button type="button" className="pdp-need__lead" onClick={() => setShowWhy(true)}>
+                  <strong>{needHeadline(matchPercent, bestNeedRow.phrase)}</strong>
+                  <span className={`pdp-need__tier is-${matchDetails.tier}`}>{tierWord(matchDetails.tier, matchPercent)}</span>
+                </button>
+                {needRows.length > 1 && (
+                  <ul className="pdp-need__rows" aria-label="Match for each of your needs">
+                    {needRows.map((r) => (
+                      <li key={r.needId} className={r.score > 0 ? `is-${r.tier}` : 'is-none'} title={`${r.label}: ${r.word}`}>
+                        {r.short} <b>{r.score}</b>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <div className="pdp-need__meta">
+                  {matchDetails.access?.label && <span className="pdp-need__access">{matchDetails.access.label}</span>}
+                  {matchNotes.map((n) => <span key={n} className="pdp-need__note">{n}</span>)}
+                </div>
+              </div>
+            )}
+            {matchExclusions.length > 0 && (
+              <button type="button" className="pdp-need pdp-need--excluded" onClick={() => setShowWhy(true)}>
+                {matchExclusions[0]}
+              </button>
+            )}
 
             {(typedTags.length > 0 || trustChecks.length > 0 || reviewer) && (
               <ul className="pdp-typed-tags" aria-label="About this product">

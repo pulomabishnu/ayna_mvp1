@@ -5,7 +5,12 @@ import {
     CATEGORY_LABELS,
     getEcosystemAlternatives,
     getRecommendationExplanation,
+    getEcosystemSeedFromQuiz,
+    getSelectedNeeds,
+    getProductById,
 } from '../data/products';
+import { behaviorFrom, careNotes, shortNeedLabel, tierWord } from '../utils/matchDisplay';
+import '../styles/match-ui.css';
 import ProductTileImage, { resolveCatalogProductImage, ProductImageFallback } from './ProductTileImage';
 import CareNearYouPanel from './CareNearYouPanel';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
@@ -939,6 +944,7 @@ export default function MyEcosystem({
     user = null,
     userSession = null,
     isPremium: _isPremium = false,
+    matchOpts: matchOptsProp = null,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
     useEscapeToClose(showAddModal, () => setShowAddModal(false));
@@ -1075,6 +1081,31 @@ export default function MyEcosystem({
         if (byArea.has('other')) groups.push({ key: 'other', label: 'Other', categories: [], products: byArea.get('other') });
         return groups.sort((a, b) => b.products.length - a.products.length);
     }, [myProductList]);
+    // Matching engine shelves: one per selected need (picks, shortBy,
+    // emptyReason) plus care flags. Behavior (Not for me, in her ecosystem)
+    // is passed so hidden products never come back here.
+    const matchOpts = useMemo(
+        () => matchOptsProp || behaviorFrom({ omitted: omittedProducts, inEcosystem: myProducts }),
+        [matchOptsProp, omittedProducts, myProducts]
+    );
+    const needSeed = useMemo(
+        () => (quizResults ? getEcosystemSeedFromQuiz(quizResults, healthProfile, matchOpts) : null),
+        [quizResults, healthProfile, matchOpts]
+    );
+    const needPhrases = useMemo(
+        () => new Map((quizResults ? getSelectedNeeds(quizResults, healthProfile, matchOpts) : []).map((n) => [n.id, n.phrase])),
+        [quizResults, healthProfile, matchOpts]
+    );
+    const needShelves = useMemo(() => needSeed?.shelves || [], [needSeed]);
+    const careFlags = needSeed?.careFlags || null;
+    const careFirst = Boolean(careFlags?.careFirst);
+    const careNoteLines = careNotes(careFlags);
+    // Care links keyed to the needs she actually chose (the engine's reading),
+    // not the older broad concern mapping.
+    const careQuizResults = useMemo(
+        () => (quizResults && needShelves.length ? { ...quizResults, frustrations: needShelves.map((shelf) => shelf.label) } : quizResults),
+        [quizResults, needShelves]
+    );
     const gapAreas = useMemo(
         () => ECOSYSTEM_AREAS.filter((a) => !areaGroups.some((g) => g.key === a.key)).slice(0, 6),
         [areaGroups]
@@ -1844,6 +1875,30 @@ export default function MyEcosystem({
                     </div>
                 </header>
 
+                {careFirst && (
+                    <section className="eco3-carefirst" aria-labelledby="eco3-carefirst-title">
+                        <p className="eco3-carefirst__eyebrow">Care first</p>
+                        <h2 id="eco3-carefirst-title">Reach a clinician first</h2>
+                        {careNoteLines.map((n) => <p key={n} className="eco3-carefirst__note">{n}</p>)}
+                        <CareNearYouPanel
+                            compact
+                            quizResults={careQuizResults}
+                            healthProfile={healthProfile}
+                            userZipCode={userZipCode}
+                            onZipCodeChange={onZipCodeChange}
+                            onOpenProduct={onOpenProduct}
+                            onEditHealthProfile={onEditHealthProfile}
+                        />
+                    </section>
+                )}
+                {!careFirst && careNoteLines.length > 0 && (
+                    <div className={`eco3-carenote${careFlags?.careProminent ? ' is-prominent' : ''}`} role="note">
+                        {careNoteLines.map((n) => <p key={n}>{n}</p>)}
+                    </div>
+                )}
+
+                <div className={careFirst ? 'eco3-secondary' : undefined}>
+                {careFirst && <p className="eco3-secondary__label">Products, when you are ready</p>}
                 <form
                     className="ayna-browse__search eco3-search"
                     role="search"
@@ -1933,6 +1988,74 @@ export default function MyEcosystem({
                     )
                 )}
 
+                {!ecoQueryTrimmed && needShelves.length > 0 && (
+                    <section className="eco3-needs" aria-labelledby="eco3-needs-title">
+                        <div className="eco3-needs__head">
+                            <h2 id="eco3-needs-title">For your needs</h2>
+                            <span className="eco3-needs__sub">Our strongest picks for each need you chose</span>
+                        </div>
+                        <ul className="eco3-needs__list">
+                            {[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => {
+                                const phrase = needPhrases.get(shelf.needId) || shelf.label.toLowerCase();
+                                const short = shortNeedLabel(shelf.label);
+                                const picks = shelf.picks.map((pick) => ({ ...pick, product: myProducts[pick.productId] || getProductById(pick.productId) })).filter((p) => p.product);
+                                return (
+                                    <li key={shelf.needId} className={`eco3-need${picks.length ? '' : ' is-empty'}`}>
+                                        <div className="eco3-need__label">
+                                            <strong>{shelf.label}</strong>
+                                            {picks.length > 0 && shelf.shortBy > 0 && (
+                                                <span className="eco3-need__short">Only {picks.length} strong match{picks.length === 1 ? '' : 'es'} for {phrase} so far</span>
+                                            )}
+                                        </div>
+                                        {picks.length > 0 ? (
+                                            <div className="eco3-need__picks">
+                                                {picks.map(({ product, score, tier, productId }) => {
+                                                    const owned = Boolean(myProducts[productId]);
+                                                    return (
+                                                        <div key={productId} className={`eco3-pick${owned ? ' is-owned' : ''}`}>
+                                                            <button type="button" className="eco3-pick__open" onClick={() => onOpenProduct?.(product)} title={`${score}% for ${phrase}`}>
+                                                                <span className="eco3-pick__img" aria-hidden="true">
+                                                                    <ProductTileImage product={product} alt="" imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }} letterNode={<ProductImageFallback compact />} />
+                                                                </span>
+                                                                <span className="eco3-pick__text">
+                                                                    <span className="eco3-pick__name">{product.name}</span>
+                                                                    <span className="eco3-pick__score"><b>{score}</b> {tierWord(tier, score)}</span>
+                                                                </span>
+                                                            </button>
+                                                            {owned ? (
+                                                                <span className="eco3-pick__state">In ecosystem</span>
+                                                            ) : onToggleProduct && (
+                                                                <button type="button" className="eco3-pick__add" onClick={() => onToggleProduct(product)} aria-label={`Add ${product.name} to your ecosystem`}>+ Add</button>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <div className="eco3-need__empty">
+                                                <span>No strong matches for {phrase} yet.</span>
+                                                {typeof onGoToSearch === 'function' && (
+                                                    <button type="button" className="eco3-pill" onClick={() => onGoToSearch({ query: short })}>Shop {short.toLowerCase()}</button>
+                                                )}
+                                            </div>
+                                        )}
+                                        {shelf.care && !careFirst && (
+                                            <details className="eco3-need__care">
+                                                <summary>Care options for {phrase}</summary>
+                                                <ul>
+                                                    {[...(shelf.care.clinicLinks || []), ...(shelf.care.telehealthLinks || [])].slice(0, 4).map((link) => (
+                                                        <li key={link.href}><a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a> <span>{link.hint}</span></li>
+                                                    ))}
+                                                </ul>
+                                            </details>
+                                        )}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </section>
+                )}
+
                 {visibleAreaGroups.map((group) => {
                     const toneIndex = areaGroups.findIndex((g) => g.key === group.key);
                     return (
@@ -1997,6 +2120,8 @@ export default function MyEcosystem({
                     </div>
                 )}
 
+                </div>
+
                 <div className="eco3-details">
                     {smsCardShown && (
                         <div className="eco3-details__card eco3-details__sms">
@@ -2034,7 +2159,7 @@ export default function MyEcosystem({
                         <div className="eco3-details__body">
                             <CareNearYouPanel
                                 compact
-                                quizResults={quizResults}
+                                quizResults={careQuizResults}
                                 healthProfile={healthProfile}
                                 userZipCode={userZipCode}
                                 onZipCodeChange={onZipCodeChange}

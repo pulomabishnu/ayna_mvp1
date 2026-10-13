@@ -103,7 +103,7 @@ function PixelateGrid({ count = 6 }) {
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved }) {
+function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch, onStartQuiz, showOnboarding = false, savedProducts = {}, onToggleSaved, matchOpts }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
@@ -142,7 +142,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
       >
         {visibleProducts.map((p, index) => (
           <Fragment key={p.id}>
-            <ProductCard product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} />
+            <ProductCard product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} isSaved={!!savedProducts[p.id]} onToggleSaved={onToggleSaved} matchOpts={matchOpts} />
             {showOnboarding && index === Math.min(3, visibleProducts.length - 1) && <section className="ayna-figma-discover-cta"><button type="button" onClick={onStartQuiz}>Get matched <span aria-hidden="true">→</span></button></section>}
           </Fragment>
         ))}
@@ -179,6 +179,9 @@ export default function BrowseScreen({
   onStartQuiz,
   hasEcosystem = false,
   myProducts = [],
+  // "Not for me" ids and the memoized engine behavior object (MobileApp).
+  omittedProducts = {},
+  matchOpts,
   quizAnswers = null,
   theme = 'dark',
   onToggleTheme,
@@ -191,9 +194,11 @@ export default function BrowseScreen({
   personalized: personalizedProp,
   onPersonalizedChange,
   onGoLibrary,
+  // Search to open with (an Ecosystem shelf's "Shop" link for one need).
+  initialSearch = '',
 }) {
   const mode = 'products'; // Reads moved to the Library tab
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState(initialSearch || '');
   // Falls back to local state only if no controlled value is passed in
   // (keeps this component usable/testable standalone).
   const [personalizedLocal, setPersonalizedLocal] = useState(false);
@@ -262,9 +267,10 @@ export default function BrowseScreen({
   // language queries, unlike a plain substring check.
   const searchTermRaw = searchValue.trim();
   const searchTerm = searchTermRaw.toLowerCase();
-  let filtered = shuffled;
+  const visible = shuffled.filter((p) => !omittedProducts[p.id]);
+  let filtered = visible;
   if (searchTermRaw) {
-    filtered = shuffled
+    filtered = visible
       .map((p) => ({
         item: p,
         matchScore: scoreQueryAgainstProduct(
@@ -283,7 +289,7 @@ export default function BrowseScreen({
   // happens to be empty because of an unrelated active filter".
   const searchScored = filtered;
   if (personalized && hasProfile) {
-    const personalizedIds = new Set(getPersonalizedProductIds(quizAnswers, null));
+    const personalizedIds = new Set(getPersonalizedProductIds(quizAnswers, null, matchOpts));
     filtered = filtered.filter((p) => personalizedIds.has(p.id));
   }
   if (activeGroup !== 'all') {
@@ -297,7 +303,7 @@ export default function BrowseScreen({
     if (filters.price === '50-100' && !(price != null && price > 50 && price <= 100)) return false;
     if (filters.price === '100-plus' && !(price != null && price > 100)) return false;
     if (filters.rating === '4-plus' && !(RATING_VALUE(item) >= 4)) return false;
-    if (filters.ayna === 'best-match' && !(getProfileMatchPercentForProduct(item, quizAnswers) >= 50)) return false;
+    if (filters.ayna === 'best-match' && !(getProfileMatchPercentForProduct(item, quizAnswers, null, matchOpts) >= 50)) return false;
     if (filters.ayna === 'clinician' && !(item.doctorOpinion || item.clinicianOpinion || getVerificationLinks(item, 'doctor').length)) return false;
     if (filters.ayna === 'community' && !(item.communityReview || getVerificationLinks(item, 'community').length || RATING_VALUE(item) >= 4)) return false;
     if (filters.ayna === 'ecosystem' && !myProducts.some((p) => String(p.id) === String(item.id))) return false;
@@ -321,7 +327,7 @@ export default function BrowseScreen({
   if (sortBy === 'default' && personalized && hasProfile && !searchTermRaw) {
     const matchScores = new Map(filtered.map((product) => [
       product.id,
-      getProfileMatchPercentForProduct(product, quizAnswers) ?? 0,
+      getProfileMatchPercentForProduct(product, quizAnswers, null, matchOpts) ?? 0,
     ]));
     filtered = [...filtered].sort((a, b) =>
       matchScores.get(b.id) - matchScores.get(a.id));
@@ -433,7 +439,7 @@ export default function BrowseScreen({
       {mode === 'products' ? (
         <>
           {filtered.length > 0 ? (
-            <ProductGrid savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />
+            <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
               <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
@@ -446,7 +452,7 @@ export default function BrowseScreen({
               <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Not in our catalog yet — found via AI search
               </div>
-              <ProductGrid savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+              <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
             </>
           ) : (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>

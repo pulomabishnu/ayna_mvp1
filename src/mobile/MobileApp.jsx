@@ -15,6 +15,7 @@ import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from '../utils/ecosystemStore.js';
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
+import { behaviorFrom } from '../utils/matchDisplay.js';
 import { ARTICLES, getArticlesByProfileRelevance } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
@@ -151,10 +152,10 @@ function capProductsPerBrand(products, maxPerBrand = MAX_PRODUCTS_PER_BRAND) {
 // — and every per-area seat within it, since each seat's product list is a
 // subset of this same array — stays a variety of brands instead of one
 // brand's whole catalog crowding everything else out.
-function seedEcosystemFromAnswers(quizAnswers) {
+function seedEcosystemFromAnswers(quizAnswers, matchOpts) {
   // One shelf per selected need from the matching engine (quantity per need,
-  // never lower quality to fill a shelf).
-  const { mergedProducts, seedMeta } = getEcosystemSeedFromQuiz(quizAnswers, null);
+  // never lower quality to fill a shelf). matchOpts carries "Not for me".
+  const { mergedProducts, seedMeta } = getEcosystemSeedFromQuiz(quizAnswers, null, matchOpts);
   return capProductsPerBrand(Object.values(mergedProducts || {}).map((p) => {
     const area = resolveEcosystemProductArea(p, REAL_ECOSYSTEM_AREAS);
     return { ...p, areaKey: area ? area.key : null, needId: seedMeta?.[p.id]?.needId || null };
@@ -170,7 +171,7 @@ function hasSavedIntakeDraft() {
 
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
-  const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName } = session;
+  const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {} } = session;
   const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
   // The welcome screen is the signed-out entry point. Returning accounts
   // move into their ecosystem once auth finishes restoring their session.
@@ -216,7 +217,7 @@ export default function MobileApp() {
     const dy = event.changedTouches[0].clientY - swipeStart.current.y;
     swipeStart.current = null;
     if (Math.abs(dx) < 85 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
-    if (screen === 'eco' && dx < 0) setScreen('browse');
+    if (screen === 'eco' && dx < 0) { setBrowseQuery(''); setScreen('browse'); }
     if (screen === 'browse' && dx > 0 && hasEcosystem) setScreen('eco');
   };
   const { user: authUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
@@ -251,6 +252,13 @@ export default function MobileApp() {
   const ecosystemFlagsRef = useRef({ trackedProducts: {}, omittedProducts: {} });
   const pendingQuizEcosystemRef = useRef(null);
   const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
+  const [browseQuery, setBrowseQuery] = useState('');
+  // Behavior signals for the matching engine (saved, "Not for me", in her
+  // Ecosystem). Memoized: the engine caches profiles by this object.
+  const matchOpts = useMemo(
+    () => behaviorFrom({ saved: savedMap, omitted: omittedProducts, inEcosystem: myProducts }),
+    [savedMap, omittedProducts, myProducts]
+  );
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
   const [personalized, setPersonalized] = usePersonalizedFeed(authUser?.id);
   // Requests push permission and registers this device on launch (iOS only
@@ -362,6 +370,7 @@ export default function MobileApp() {
         trackedProducts: ecosystem?.trackedProducts || {},
         omittedProducts: ecosystem?.omittedProducts || {},
       };
+      const remoteOmitted = Object.fromEntries(Object.keys(ecosystem?.omittedProducts || {}).map((id) => [id, true]));
 
       const remoteProducts = Object.values(ecosystem?.myProducts || {}).map((product) => {
         const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
@@ -376,6 +385,7 @@ export default function MobileApp() {
       updateSession((prev) => ({
         userName: firstName || prev.userName,
         myProducts: remoteProducts,
+        omittedProducts: { ...(prev.omittedProducts || {}), ...remoteOmitted },
         hasEcosystem: remoteProducts.length > 0,
         pendingIntakeSync: false,
         // Don't clobber a completion that just happened locally this same
@@ -437,10 +447,10 @@ export default function MobileApp() {
   const suggestedEcosystemProducts = useMemo(() => {
     if (!effectiveQuizAnswers) return [];
     const savedIds = new Set(myProducts.map((product) => product.id));
-    return seedEcosystemFromAnswers(effectiveQuizAnswers)
+    return seedEcosystemFromAnswers(effectiveQuizAnswers, matchOpts)
       .filter((product) => !savedIds.has(product.id))
       .slice(0, 6);
-  }, [effectiveQuizAnswers, myProducts]);
+  }, [effectiveQuizAnswers, myProducts, matchOpts]);
 
   // Only true right after a mobile-initiated Google sign-in completes — the
   // full-page OAuth redirect leaves this app entirely and comes back on
@@ -531,6 +541,34 @@ export default function MobileApp() {
     }
   };
 
+  // "Not for me" (same as the website's toggleOmitProduct): hides the product
+  // from every recommendation, seed and swap, and takes it out of the
+  // Ecosystem. Undo brings it back as a candidate.
+  const handleToggleOmit = (product) => {
+    if (!product?.id) return;
+    const wasOmitted = !!omittedProducts[product.id];
+    updateSession((prev) => {
+      const nextOmitted = { ...(prev.omittedProducts || {}) };
+      if (wasOmitted) delete nextOmitted[product.id];
+      else nextOmitted[product.id] = true;
+      const nextProducts = wasOmitted ? prev.myProducts : prev.myProducts.filter((entry) => entry.id !== product.id);
+      return { omittedProducts: nextOmitted, myProducts: nextProducts, hasEcosystem: nextProducts.length > 0 };
+    });
+    const supabase = getSupabaseClient();
+    if (authUser && supabase) {
+      if (wasOmitted) delete ecosystemFlagsRef.current.omittedProducts[product.id];
+      else {
+        ecosystemFlagsRef.current.omittedProducts[product.id] = product;
+        delete ecosystemFlagsRef.current.trackedProducts[product.id];
+      }
+      upsertProductState(supabase, authUser.id, product, {
+        inEcosystem: wasOmitted ? myProducts.some((entry) => entry.id === product.id) : false,
+        isTracked: wasOmitted ? !!ecosystemFlagsRef.current.trackedProducts[product.id] : false,
+        isOmitted: !wasOmitted,
+      }).catch((error) => console.warn('[Ayna] mobile Not for me sync failed:', error));
+    }
+  };
+
   const handleResetEcosystem = async () => {
     if (resettingEcosystem) return;
     setResettingEcosystem(true);
@@ -572,7 +610,8 @@ export default function MobileApp() {
     onStartQuiz: () => { setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); },
     onOpenMonthlyCheckin: () => setScreen('checkin'),
     onReplayStory: () => { setRevealAtEnd(false); setScreen('reveal'); },
-    onBrowse: () => setScreen('browse'),
+    // An Ecosystem shelf's "Shop" passes its need label as the search.
+    onBrowse: (query) => { setBrowseQuery(typeof query === 'string' ? query : ''); setScreen('browse'); },
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
     onOpenSaved: () => setScreen('saved'),
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
@@ -600,7 +639,7 @@ export default function MobileApp() {
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
-      const seededProducts = seedEcosystemFromAnswers(quizAnswers);
+      const seededProducts = seedEcosystemFromAnswers(quizAnswers, behaviorFrom({ omitted: omittedProducts }));
       const existingProducts = intakeMode === 'add' ? myProducts : [];
       const existingIds = new Set(existingProducts.map((product) => product.id));
       const addedProducts = seededProducts.filter((product) => !existingIds.has(product.id));
@@ -708,7 +747,8 @@ export default function MobileApp() {
         {...nav}
         seedKind={communitySeed?.kind}
         seedProductId={communitySeed?.productId}
-        onGoBrowse={() => setScreen('browse')}
+        onGoBrowse={() => { setBrowseQuery(''); setScreen('browse'); }}
+        initialSearch={screen === 'browse' ? browseQuery : ''}
         onGoLibrary={() => setScreen('library')}
         onGoEco={() => setScreen(hasEcosystem ? 'eco' : 'ecointro')}
         authUser={authUser}
@@ -724,6 +764,8 @@ export default function MobileApp() {
         onToggleSaved={(product) => authUser ? toggleSaved(product) : requestAuth('Saved')}
         onAddToEcosystem={handleAddToEcosystem}
         myProducts={myProducts}
+        omittedProducts={omittedProducts}
+        matchOpts={matchOpts}
         suggestedEcosystemProducts={suggestedEcosystemProducts}
         quizAnswers={effectiveQuizAnswers}
         lastQuizAnswers={lastQuizAnswers}
@@ -751,7 +793,7 @@ export default function MobileApp() {
       {showTabBar && <MobileTabBar
         active={askAynaOpen ? 'library' : activeTab}
         onHome={() => { setAskAynaOpen(false); setOverlay(null); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
-        onBrowse={() => { setAskAynaOpen(false); setOverlay(null); setScreen('browse'); }}
+        onBrowse={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setScreen('browse'); }}
         onCommunity={() => { setAskAynaOpen(false); setOverlay(null); setCommunitySeed(null); setScreen('community'); }}
         onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setScreen('library'); }}
         onProfile={() => { setAskAynaOpen(false); openProfile(); }}
@@ -777,6 +819,9 @@ export default function MobileApp() {
             onToggleSaved={() => toggleSaved(overlay.item)}
             isInEcosystem={myProducts.some((p) => p.id === overlay.item?.id)}
             onAddToEcosystem={() => handleAddToEcosystem(overlay.item)}
+            isOmitted={!!omittedProducts[overlay.item?.id]}
+            onToggleOmit={() => handleToggleOmit(overlay.item)}
+            matchOpts={matchOpts}
             onCommunityAction={(kind) => {
               if (!authUser && ['review', 'playlist', 'recommend'].includes(kind)) {
                 const productId = overlay.item?.id;
@@ -823,6 +868,7 @@ export default function MobileApp() {
           <WhyMatchScreen
             product={overlay.item}
             quizAnswers={effectiveQuizAnswers}
+            matchOpts={matchOpts}
             onBack={() => setOverlay(null)}
             onUpdateHealth={() => { setOverlay(null); setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
             onViewDetails={() => setOverlay({ type: 'product', item: overlay.item })}
