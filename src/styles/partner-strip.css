@@ -47,11 +47,11 @@
 .ay-partners--app.is-static .ay-partners-list::-webkit-scrollbar { display: none; }
 .ay-partners--app.is-static .ay-partner-tile { scroll-snap-align: start; }
 
-.ay-partner-tile { min-width: 0; }
+.ay-partner-tile { min-width: 0; display: grid; align-items: stretch; }
 .ay-partner-btn, .ay-partner-tile > .ay-partner-name, .ay-partner-tile > .ay-partner-photo { font: inherit; }
 .ay-partner-tile:not(:has(.ay-partner-btn)), .ay-partner-btn {
   display: flex; align-items: center; gap: 12px;
-  width: 100%; min-height: 64px;
+  width: 100%; height: 100%; min-height: 72px;
   padding: 8px 16px 8px 8px;
   border: 2px solid var(--ps-ink);
   border-radius: 16px;
@@ -101,3 +101,9 @@
 /* Placements */
 .ayna-browse .ayna-browse__partners { margin: 24px 0 16px; }
 .ayna-mobile .ay-shop-partners { margin: 0 var(--ay-gutter, 16px) 24px; }
+
+/* Every tile in a row is the same height; a long brand name wraps inside the
+   tile at a smaller size instead of making its tile taller than the others. */
+.ay-partners-list { align-items: stretch; }
+.ay-partner-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: clamp(14px, 1.1vw, 17px); line-height: 1.2; text-wrap: balance; }
+.ay-partner-btn:has(.ay-partner-name) { min-width: 0; }
