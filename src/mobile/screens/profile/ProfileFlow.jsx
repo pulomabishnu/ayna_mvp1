@@ -2968,7 +2968,7 @@ export function AboutAynaScreen({ onBack }) {
 
         <section className="ayna-scrapbook__team" aria-label="The people behind ayna">
           <div className="ayna-scrapbook__polaroid">
-            <div className="ayna-scrapbook__photo"><img src="/team/ayna-founders.jpg" alt="The ayna team together outdoors" /></div>
+            <div className="ayna-scrapbook__photo"><img src="/team/ayna-team-app.jpg" alt="The ayna team together outdoors" /></div>
             <div className="ayna-scrapbook__handwriting">the people behind ayna</div>
           </div>
           <div className="ayna-scrapbook__team-note">

@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PANEL_ICONS, PANEL_TONES } from '../components/pdpIcons.jsx';
-import { CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
+import { ALL_PRODUCTS, CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
+import ProductCard from '../components/ProductCard.jsx';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
@@ -330,6 +331,7 @@ export default function ProductDetailScreen({
   reads = [],
   quizAnswers = null,
   ecosystemProducts = [],
+  onOpenProduct,
 }) {
   const [partnerOpen, setPartnerOpen] = useState(false);
   const [activeDetailSection, setActiveDetailSection] = useState('summary');
@@ -352,6 +354,23 @@ export default function ProductDetailScreen({
     setWarningsOpen(false);
     setActiveDetailSection('summary');
   }
+
+  // Bottom suggestions, same rules as the website product page: picks that
+  // match your profile (when there is one), then more from this category.
+  const related = useMemo(() => {
+    if (!product || !onOpenProduct) return { matches: [], similar: [] };
+    const owned = new Set((ecosystemProducts || []).map((p) => p?.id).filter(Boolean));
+    const pool = ALL_PRODUCTS.filter((p) => p && p.id && p.name && p.id !== product.id && !owned.has(p.id));
+    const matches = quizAnswers ? pool
+      .map((p) => ({ p, m: getProductMatchDetailsForProduct(p, quizAnswers) }))
+      .filter(({ m }) => m?.matchStatus === 'scored' && Number.isFinite(m.percent) && m.percent > 0)
+      .sort((a, b) => b.m.percent - a.m.percent)
+      .slice(0, 4)
+      .map(({ p }) => p) : [];
+    const used = new Set(matches.map((p) => p.id));
+    const similar = pool.filter((p) => !used.has(p.id) && p.category === product.category).slice(0, 4);
+    return { matches, similar };
+  }, [product, onOpenProduct, ecosystemProducts, quizAnswers]);
 
   if (!product) {
     return (
@@ -522,7 +541,7 @@ export default function ProductDetailScreen({
 
   return (
     <div className="ayna-fresh-product-detail ay-pdp" style={{ flex: 1, minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: 0, background: 'var(--ayna-bg)', color: 'var(--ayna-text)' }}>
-      <div style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out', paddingBottom: 104 }}>
+      <div key={product.id} style={{ flex: 1, overflowY: 'auto', animation: 'ay-page .25s ease-out', paddingBottom: 104 }}>
         <div className="ay-pdp-top">
           <button type="button" className="ay-pdp-round" onClick={onBack} aria-label="Back to products">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
@@ -634,6 +653,15 @@ export default function ProductDetailScreen({
           <div className="ay-pdp-community-grid">
             {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>)}
           </div>
+        </section>}
+
+        {related.matches.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-match">
+          <div className="ayna-cabinet-section-head"><h2 id="ay-pdp-related-match">Matches your profile</h2></div>
+          <div className="ayna-editorial-product-grid">{related.matches.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
+        </section>}
+        {related.similar.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-similar">
+          <div className="ayna-cabinet-section-head"><h2 id="ay-pdp-related-similar">{related.matches.length > 0 ? 'More like this' : 'You might also like'}</h2></div>
+          <div className="ayna-editorial-product-grid">{related.similar.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
         </section>}
 
         {reads.length > 0 && (

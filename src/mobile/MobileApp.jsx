@@ -765,6 +765,7 @@ export default function MobileApp() {
             onRequireAuth={(feature) => requestAuth(feature || 'Ask Ayna', () => { setScreen(screen); setOverlay({ type: 'product', item: overlay.item }); })}
             quizAnswers={authUser ? effectiveQuizAnswers : null}
             ecosystemProducts={myProducts}
+            onOpenProduct={(item) => setOverlay({ type: 'product', item })}
             theme={theme}
             onToggleTheme={setThemeMode}
           />

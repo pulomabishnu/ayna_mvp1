@@ -10,6 +10,7 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
 import WhyMatchPanel from './WhyMatchPanel';
+import { PANEL_ICONS, PANEL_TONES } from '../mobile/components/pdpIcons.jsx';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
 import { getVerificationLinks, hostLabel } from '../utils/verificationLinks';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
@@ -522,6 +523,38 @@ function buildAllSources(product) {
   return out;
 }
 
+function meaningful(value) {
+  const t = String(value || '').trim();
+  return t && !/^(n\/?a|none|not applicable|unknown)$/i.test(t) ? t : '';
+}
+
+const FACT_ACRONYMS = { pcos: 'PCOS', ibs: 'IBS', uti: 'UTI', ivf: 'IVF', pms: 'PMS', pmdd: 'PMDD', hrt: 'HRT', iud: 'IUD', bv: 'BV' };
+function factTag(tag) {
+  return String(tag || '').replace(/[-_]/g, ' ').toLowerCase().split(' ')
+    .map((w, i) => FACT_ACRONYMS[w] || (i === 0 ? w.charAt(0).toUpperCase() + w.slice(1) : w)).join(' ');
+}
+function factSentence(text, max = 90) {
+  const t = String(text || '').trim();
+  if (!t) return '';
+  const cut = t.split(/(?<=[.!?])\s/)[0] || t;
+  if (cut.length <= max) return cut;
+  const tr = cut.slice(0, max); const sp = tr.lastIndexOf(' ');
+  return `${(sp > max * 0.6 ? tr.slice(0, sp) : tr).trimEnd()}…`;
+}
+/** Best for / Materials / Skip if, same rows as the app. */
+function buildFactRows(product) {
+  const bestFor = [...new Set((product.healthFunctions || []).concat(product.tags || []).map(factTag))].slice(0, 3).join(', ');
+  const materials = meaningful(product.safety?.materials);
+  const ingredients = meaningful(product.ingredients);
+  const same = materials && ingredients && materials.toLowerCase().replace(/[^a-z0-9]/g, '') === ingredients.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const skipIf = factSentence(meaningful(product.safety?.sideEffects)) || factSentence(meaningful(product.safety?.allergens));
+  return [
+    bestFor ? { label: 'Best for', value: bestFor } : null,
+    materials && !same ? { label: 'Materials', value: materials } : null,
+    skipIf ? { label: 'Skip if', value: skipIf } : null,
+  ].filter(Boolean);
+}
+
 const SOURCE_GROUPS = [['Research', 'Research and clinical'], ['Brand', 'From the brand'], ['Community', 'Community']];
 
 function SourceRow({ source, compact = false }) {
@@ -639,7 +672,6 @@ export default function ProductModal({
   const [activeTab, setActiveTab] = useState('summary');
   const [showWhy, setShowWhy] = useState(false);
   const [showSources, setShowSources] = useState(false);
-  const [askOpen, setAskOpen] = useState(false);
   const [toast, setToast] = useState('');
   const toastTimer = useRef(0);
   useEffect(() => () => window.clearTimeout(toastTimer.current), []);
@@ -776,15 +808,23 @@ export default function ProductModal({
   const whoItsFor = Array.isArray(product?.whoItsFor) ? product.whoItsFor : [];
   const howToUse = product?.howToUse?.steps?.length > 0 ? product.howToUse : null;
 
-  // P06: max 4 tabs in one row. "Who it’s for" and "How to use" are
-  // sections inside Summary; Ask ayna sits below the panel.
-  const visibleTabs = useMemo(() => {
-    const tabs = [{ id: 'summary', label: 'Summary' }];
-    if (product?.doctorOpinion) tabs.push({ id: 'evidence', label: 'What the evidence says' });
-    if (allSources.length > 0) tabs.push({ id: 'sources', label: 'Sources' });
-    tabs.push({ id: 'people', label: 'What people say' });
-    return tabs;
-  }, [product, allSources.length]);
+  // Same tabs as the app's product screen (ayna summary, Clinician opinion,
+  // Scientific literature, Reviews, Who it's for, How to use, Ask ayna).
+  const visibleTabs = useMemo(() => [
+    { id: 'summary', label: 'ayna summary', icon: 'summary' },
+    { id: 'clinician', label: 'Clinician opinion', icon: 'clinician' },
+    { id: 'scientific', label: 'Scientific literature', icon: 'scientific' },
+    { id: 'community', label: 'Reviews', icon: 'community' },
+    ...(whoItsFor.length > 0 ? [{ id: 'whoitsfor', label: 'Who it’s for', icon: 'community' }] : []),
+    ...(howToUse ? [{ id: 'howtouse', label: 'How to use', icon: 'summary' }] : []),
+    { id: 'ask', label: 'Ask ayna', icon: 'ask' },
+  ], [whoItsFor.length, howToUse]);
+  const factRows = useMemo(() => (product ? buildFactRows(product) : []), [product]);
+  const sourceIndex = useMemo(() => {
+    const c = { Research: 0, Brand: 0, Community: 0 };
+    allSources.forEach((s) => { if (c[s.kind] != null) c[s.kind] += 1; });
+    return { ...c, total: c.Research + c.Brand + c.Community };
+  }, [allSources]);
 
   const evidenceChips = useMemo(() => allSources.filter((s) => s.kind !== 'Community').slice(0, 4), [allSources]);
   const communitySources = useMemo(() => allSources.filter((s) => s.kind === 'Community'), [allSources]);
@@ -994,28 +1034,39 @@ export default function ProductModal({
 
         <div className="pdp-below">
           <div className="pdp-tabpanel">
-            {visibleTabs.length > 1 && (
-              <div className="pdp-tabs pdp-tabs--flat" role="tablist" aria-label="Product information">
-                {visibleTabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    role="tab"
-                    id={`pdp-tab-${tab.id}`}
-                    aria-selected={currentTab.id === tab.id}
-                    aria-controls="pdp-tabpanel"
-                    className={currentTab.id === tab.id ? 'is-active' : undefined}
-                    onClick={() => setActiveTab(tab.id)}
-                  >
-                    {tab.label}
+            {/* Same sections as the app's product screen, nothing hidden. */}
+            {sourceIndex.total > 0 && (
+              <div className="pdp-srcindex" aria-label="Sources on file">
+                {[['Research', 'Research', 'scientific'], ['Brand', 'From the brand', 'clinician'], ['Community', 'Community', 'community']].map(([kind, label, tab]) => (
+                  <button key={kind} type="button" onClick={() => setActiveTab(tab)} aria-label={`${label}: ${sourceIndex[kind]} sources`}>
+                    <span>{label}</span><strong>{sourceIndex[kind]}</strong><small>{sourceIndex[kind] === 1 ? 'source' : 'sources'}</small>
                   </button>
                 ))}
               </div>
             )}
 
-            <div className="pdp-panel" id="pdp-tabpanel" role="tabpanel" aria-labelledby={`pdp-tab-${currentTab.id}`}>
+            <div className="pdp-tabs pdp-tabs--app" role="tablist" aria-label="Product information">
+              {visibleTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  id={`pdp-tab-${tab.id}`}
+                  data-tone={PANEL_TONES[tab.icon] || 'ink'}
+                  aria-selected={currentTab.id === tab.id}
+                  aria-controls="pdp-tabpanel"
+                  className={currentTab.id === tab.id ? 'is-active' : undefined}
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  {PANEL_ICONS[tab.icon] && <svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS[tab.icon]}</svg>}
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="pdp-panel" id="pdp-tabpanel" role="tabpanel" aria-labelledby={`pdp-tab-${currentTab.id}`} data-tone={PANEL_TONES[currentTab.icon] || 'ink'}>
               <div className="pdp-panel__title">
-                <h3>{currentTab.label}</h3>
+                <h2>{currentTab.label}</h2>
                 {currentTab.id === 'summary' && sourcesButton}
               </div>
 
@@ -1024,6 +1075,12 @@ export default function ProductModal({
                   {showSources && sourcesCount > 0 && (
                     <div className="pdp-inline-sources" id="pdp-inline-sources">
                       <ul>{allSources.map((s) => <SourceRow key={s.url} source={s} compact />)}</ul>
+                    </div>
+                  )}
+                  {headMatchLabel && (
+                    <div className="pdp-fit">
+                      <strong>Why this fits you</strong>
+                      <p>{matchLabels.slice(0, 3).map((l) => noDash(l)).join('. ')}.</p>
                     </div>
                   )}
                   {summary.sentences.length > 0 ? (
@@ -1043,22 +1100,31 @@ export default function ProductModal({
                       {' '}for the {summary.ref.what}.
                     </p>
                   )}
-
-                  {whoItsFor.length > 0 && (
-                    <section className="pdp-panel__section" aria-labelledby="pdp-who">
-                      <h4 id="pdp-who">Who it’s for</h4>
-                      <ul className="pdp-bullets">{whoItsFor.map((item) => <li key={item}>{noDash(item)}</li>)}</ul>
+                  {trustChecks.length > 0 && (
+                    <ul className="pdp-checks">{trustChecks.map((c) => <li key={c}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>{c}</li>)}</ul>
+                  )}
+                  {factRows.length > 0 && (
+                    <dl className="pdp-facts">{factRows.map((row) => <div key={row.label}><dt>{row.label}</dt><dd>{noDash(row.value)}</dd></div>)}</dl>
+                  )}
+                  {Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
+                    <section className="pdp-panel__section">
+                      <h3>What’s inside</h3>
+                      <ul className="pdp-bullets">
+                        {product.ingredientScience.map((item) => (
+                          <li key={item.name}><strong>{item.name}:</strong> {noDash(item.text)}</li>
+                        ))}
+                      </ul>
                     </section>
                   )}
-
-                  {howToUse && (
-                    <section className="pdp-panel__section" aria-labelledby="pdp-how">
-                      <h4 id="pdp-how">How to use</h4>
-                      {howToUse.intro && <p className="pdp-panel__body">{noDash(howToUse.intro)}</p>}
-                      <ol className="pdp-bullets pdp-bullets--steps">{howToUse.steps.map((step) => <li key={step}>{noDash(step)}</li>)}</ol>
-                    </section>
+                  {meaningful(product.ingredients) && (
+                    <section className="pdp-panel__section"><h3>Ingredients</h3><p className="pdp-panel__body pdp-pre">{noDash(product.ingredients)}</p></section>
                   )}
-
+                  {meaningful(product.safety?.fdaStatus) && (
+                    <section className="pdp-panel__section"><h3>FDA status</h3><p className="pdp-panel__body">{noDash(product.safety.fdaStatus)}</p></section>
+                  )}
+                  {Array.isArray(product.whereToBuy) && product.whereToBuy.length > 0 && (
+                    <section className="pdp-panel__section"><h3>Where to buy</h3><p className="pdp-panel__body">{product.whereToBuy.join(' · ')}</p></section>
+                  )}
                   {onOmit && (
                     <div className="pdp-panel__foot pdp-panel__foot--end">
                       <button type="button" className="pdp-head__link" onClick={() => onOmit(product)}>
@@ -1069,53 +1135,44 @@ export default function ProductModal({
                 </>
               )}
 
-              {currentTab.id === 'evidence' && (
-                <>
-                  <p className="pdp-panel__body" style={{ whiteSpace: 'pre-line' }}>{noDash(product.doctorOpinion)}</p>
-                  {evidenceChips.length > 0 && (
-                    <div className="pdp-panel__chips">
-                      {evidenceChips.map((s) => (
-                        <a key={s.url} className="pdp-chip" href={s.url} target="_blank" rel="noopener noreferrer" title={s.title}>
-                          {s.publisher}{s.kind === 'Brand' ? ' (brand)' : ''}
-                        </a>
-                      ))}
-                      {sourcesCount > evidenceChips.length && (
-                        <button type="button" className="pdp-chip pdp-chip--more" onClick={() => setActiveTab('sources')}>All sources</button>
-                      )}
-                    </div>
-                  )}
-                  {product.clinicianAttribution && (
-                    <div className="pdp-panel__foot"><span>{noDash(product.clinicianAttribution)}</span></div>
-                  )}
-                </>
+              {currentTab.id === 'clinician' && (
+                product.doctorOpinion ? (
+                  <>
+                    <p className="pdp-panel__body" style={{ whiteSpace: 'pre-line' }}>{noDash(product.doctorOpinion)}</p>
+                    {evidenceChips.length > 0 && (
+                      <div className="pdp-panel__chips">
+                        {evidenceChips.map((s) => (
+                          <a key={s.url} className="pdp-chip" href={s.url} target="_blank" rel="noopener noreferrer" title={s.title}>
+                            {s.publisher}{s.kind === 'Brand' ? ' (brand)' : ''}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                    {product.clinicianAttribution && (
+                      <div className="pdp-panel__foot"><span>{noDash(product.clinicianAttribution)}</span></div>
+                    )}
+                  </>
+                ) : <p className="pdp-panel__empty">No clinician opinion yet.</p>
               )}
 
-              {currentTab.id === 'sources' && (
+              {currentTab.id === 'scientific' && (
                 <>
+                  {meaningful(product.effectiveness) && <p className="pdp-panel__body">{noDash(product.effectiveness)}</p>}
                   {SOURCE_GROUPS.map(([kind, title]) => {
                     const list = allSources.filter((s) => s.kind === kind);
                     if (list.length === 0) return null;
                     return (
                       <section key={kind} className="pdp-panel__section">
-                        <h4>{title}</h4>
+                        <h3>{title}</h3>
                         <ul className="pdp-srclist">{list.map((s) => <SourceRow key={s.url} source={s} />)}</ul>
                       </section>
                     );
                   })}
-                  {Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
-                    <section className="pdp-panel__section">
-                      <h4>Inside</h4>
-                      <ul className="pdp-bullets">
-                        {product.ingredientScience.map((item) => (
-                          <li key={item.name}><strong>{item.name}:</strong> {noDash(item.text)}</li>
-                        ))}
-                      </ul>
-                    </section>
-                  )}
+                  {allSources.length === 0 && <p className="pdp-panel__empty">No studies linked yet.</p>}
                 </>
               )}
 
-              {currentTab.id === 'people' && (
+              {currentTab.id === 'community' && (
                 <>
                   {(aynaRating != null || aynaReviewCount > 0) && (
                     <p className="pdp-rating">
@@ -1124,14 +1181,10 @@ export default function ProductModal({
                       {aynaReviewCount > 0 && <>{aynaReviewCount} review{aynaReviewCount === 1 ? '' : 's'}</>}
                     </p>
                   )}
-                  {communitySnippets.length > 0 && communitySnippets.map((snippet, i) => (
-                    <p key={i} className="pdp-panel__body">{snippet}</p>
-                  ))}
-                  {communitySources.length > 0 && (
-                    <ul className="pdp-srclist">{communitySources.map((s) => <SourceRow key={s.url} source={s} />)}</ul>
-                  )}
+                  {communitySnippets.map((snippet, i) => <p key={i} className="pdp-panel__body">{snippet}</p>)}
+                  {communitySources.length > 0 && <ul className="pdp-srclist">{communitySources.map((s) => <SourceRow key={s.url} source={s} />)}</ul>}
                   {communitySnippets.length === 0 && communitySources.length === 0 && aynaRating == null && (
-                    <p className="pdp-panel__empty">No community notes yet.</p>
+                    <p className="pdp-panel__empty">No review summary yet.</p>
                   )}
                   {isInEcosystem && onRate && (
                     <>
@@ -1152,22 +1205,12 @@ export default function ProductModal({
                       </div>
                       {onReview && (
                         <div className="pdp-community__reviewrow">
-                          <input
-                            type="text"
-                            value={reviewInput}
-                            onChange={(e) => setReviewInput(e.target.value)}
-                            placeholder="Add a short review…"
-                          />
+                          <input type="text" value={reviewInput} onChange={(e) => setReviewInput(e.target.value)} placeholder="Add a short review…" aria-label="Short review" />
                           <button
                             type="button"
                             className="pdp-btn pdp-btn--outline"
                             disabled={!reviewInput.trim()}
-                            onClick={() => {
-                              if (reviewInput.trim()) {
-                                onReview(product, reviewInput.trim());
-                                setReviewInput('');
-                              }
-                            }}
+                            onClick={() => { if (reviewInput.trim()) { onReview(product, reviewInput.trim()); setReviewInput(''); } }}
                           >
                             Post
                           </button>
@@ -1177,14 +1220,24 @@ export default function ProductModal({
                   )}
                 </>
               )}
-            </div>
 
-            <div className="pdp-ask">
-              <button type="button" className="pdp-ask__toggle" aria-expanded={askOpen} onClick={() => setAskOpen((v) => !v)}>
-                <span>Ask ayna about this product</span>
-                <span aria-hidden="true">{askOpen ? '▴' : '▾'}</span>
-              </button>
-              {askOpen && (
+              {currentTab.id === 'whoitsfor' && (
+                <ol className="pdp-who">{whoItsFor.map((item, i) => <li key={item}><b>{i + 1}</b><span>{noDash(item)}</span></li>)}</ol>
+              )}
+
+              {currentTab.id === 'howtouse' && (
+                <>
+                  {howToUse.intro && <p className="pdp-panel__body">{noDash(howToUse.intro)}</p>}
+                  <ol className="pdp-bullets pdp-bullets--steps">{howToUse.steps.map((step) => <li key={step}>{noDash(step)}</li>)}</ol>
+                  {howToUse.sourceUrl && (
+                    <div className="pdp-panel__chips">
+                      <a className="pdp-chip" href={howToUse.sourceUrl} target="_blank" rel="noopener noreferrer">{hostLabel(howToUse.sourceUrl) || 'Source'}</a>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {currentTab.id === 'ask' && (
                 <AskAynaProductTab
                   product={product}
                   aiContext={{}}

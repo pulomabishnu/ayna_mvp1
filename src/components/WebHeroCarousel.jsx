@@ -2,9 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { TEAM_PHOTO, TEAM_CAPTION, getDailyFact } from '../data/welcomeSlides.js';
 import './WebHeroCarousel.css';
 
-// Website welcome carousel: us, what ayna does, the app, today's fact and
+// Website welcome carousel: us, the app, what ayna does, today's fact and
 // what's new. Swipe, arrows, dots or keyboard. Pauses on hover.
 
+// First slide (the team) stays a little longer, then 2.5s each.
+const FIRST_DURATION = 3500;
 const DURATION = 2500;
 
 function TeamSlide() {
@@ -73,8 +75,8 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
   const fact = useMemo(() => getDailyFact(), []);
   const slides = useMemo(() => [
     { key: 'team', label: 'Meet ayna', tone: 'peri' },
-    { key: 'about', label: 'What ayna does', tone: 'cream' },
     { key: 'app', label: 'The app', tone: 'butter' },
+    { key: 'about', label: 'What ayna does', tone: 'cream' },
     ...(fact ? [{ key: 'fact', label: 'Daily ayna fact', tone: 'mint' }] : []),
     { key: 'news', label: 'Now introducing Community', tone: 'pink' },
   ], [fact]);
@@ -88,7 +90,7 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
 
   useEffect(() => {
     if (paused || hover || reduced) return undefined;
-    const t = window.setTimeout(() => setIndex((i) => (i + 1) % count), DURATION);
+    const t = window.setTimeout(() => setIndex((i) => (i + 1) % count), index === 0 ? FIRST_DURATION : DURATION);
     return () => window.clearTimeout(t);
   }, [index, paused, hover, reduced, count]);
 
