@@ -13,10 +13,12 @@ import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import './WebCommunity.css';
 import '../styles/audit-community.css';
 import '../styles/verify-content.css';
+import '../styles/community2.css';
 
 // The app's Community, built for the website. Same data and rules (shared
-// community store, ranking, topics, guest posting); the layout is a two
-// column page with the feed on the left and your profile + actions on the right.
+// community store, ranking, topics, guest posting). Three columns on wide
+// screens: feeds + you on the left, the feed in the middle, and side modules
+// built only from loaded data on the right (each hides when it has nothing).
 
 const TABS = [['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists']];
 const KIND_TITLES = { post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' };
@@ -27,6 +29,9 @@ const COMMENT_MAX = 1000;
 const BIO_MAX = 160;
 const SUGGESTED_MAX = 5;
 const PROFILE_LIST_MAX = 30;
+const KIND_TAG = { question: 'Question', review: 'Review', post: 'Post', playlist: 'Playlist' };
+const SIDE_MAX = 3;
+const TOPICS_MAX = 8;
 const timeLabel = (v) => (v ? new Date(v).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '');
 
 function Avatar({ name, path, anonymous = false, size = 40 }) {
@@ -43,6 +48,7 @@ const ICONS = {
   plus: <path d="M12 5v14M5 12h14" />,
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
   close: <path d="M6 6l12 12M18 6 6 18" />,
+  more: <><circle cx="5" cy="12" r="1.2" /><circle cx="12" cy="12" r="1.2" /><circle cx="19" cy="12" r="1.2" /></>,
 };
 function Icon({ name, size = 18 }) {
   return <svg className="wc-icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[name]}</svg>;
@@ -51,9 +57,9 @@ const STAR_PATH = 'M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 17l-5.4 2.9 1.1-6.1-
 function Star({ on, size = 18 }) {
   return <svg className={`wc-star${on ? ' is-on' : ''}`} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true"><path d={STAR_PATH} fill={on ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>;
 }
-function Stars({ value = 0 }) {
+function Stars({ value = 0, size = 18 }) {
   const n = Math.max(0, Math.min(5, Number(value) || 0));
-  return <span className="wc-stars" role="img" aria-label={`Rated ${n} out of 5`}>{[1, 2, 3, 4, 5].map((i) => <Star key={i} on={i <= n} />)}</span>;
+  return <span className="wc-stars" role="img" aria-label={`Rated ${n} out of 5`}>{[1, 2, 3, 4, 5].map((i) => <Star key={i} on={i <= n} size={size} />)}</span>;
 }
 function Check({ checked, onChange, children }) {
   return <label className="wc-check">
@@ -94,6 +100,18 @@ function Mention({ productId, productsById, quizResults, onOpenProduct }) {
     <span><strong>{product.name}</strong><small>{product.brand || 'ayna product'}</small></span>
     <em>{show ? `${match.percent}% match` : 'View'}</em>
   </button>;
+}
+
+function Tag({ kind }) {
+  return <span className={`wc-tag is-${kind in KIND_TAG ? kind : 'post'}`}>{KIND_TAG[kind] || KIND_TAG.post}</span>;
+}
+
+// Playlist cover: the uploaded cover, or up to four product photos on white tiles.
+function PlaylistCover({ playlist, productsById, big = false }) {
+  if (playlist.cover_url) return <span className={`wc-cover${big ? ' is-big' : ''}`}><img src={publicMediaUrl(playlist.cover_url)} alt="" loading="lazy" /></span>;
+  const picks = (playlist.preview_product_ids || []).map((id) => productsById.get(String(id))).filter(Boolean).slice(0, 4);
+  if (!picks.length) return <span className={`wc-cover${big ? ' is-big' : ''}`}>ayna</span>;
+  return <span className={`wc-cover is-mosaic${big ? ' is-big' : ''}`}>{picks.map((p) => <span key={p.id} className="wc-cover-tile"><ProductTileImage product={p} imgStyle={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: 4 }} letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />} /></span>)}</span>;
 }
 
 function Picker({ products, value, onChange }) {
@@ -204,6 +222,9 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [editHandle, setEditHandle] = useState('');
   const [editBio, setEditBio] = useState('');
   const [profileLoading, setProfileLoading] = useState(false);
+  const [menuId, setMenuId] = useState(null);
+  const [sideQuestions, setSideQuestions] = useState([]);
+  const [sidePlaylists, setSidePlaylists] = useState([]);
 
   const notifyError = (e) => setError(community.friendlyError(e));
   const requireAccount = (feature = 'this feature') => onRequireAuth?.(feature);
@@ -266,6 +287,25 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     }, 250);
     return () => { active = false; window.clearTimeout(t); };
   }, [search, supabase]);
+
+  // Side modules: recent questions and community playlists, loaded once.
+  useEffect(() => {
+    if (!supabase || composeOnly) return undefined;
+    let active = true;
+    community.listFeedPosts(supabase, { kind: 'question', limit: 6 }).then((rows) => { if (active) setSideQuestions(rows || []); }).catch(() => {});
+    community.listPlaylists(supabase, { section: 'recent', limit: 6 }).then((rows) => { if (active) setSidePlaylists(rows || []); }).catch(() => {});
+    return () => { active = false; };
+  }, [supabase, composeOnly, refresh]);
+
+  // The post "…" menu closes on outside click or Escape.
+  useEffect(() => {
+    if (!menuId) return undefined;
+    const onDown = (e) => { if (!e.target.closest?.('.wc-menu-wrap')) setMenuId(null); };
+    const onKey = (e) => { if (e.key === 'Escape') setMenuId(null); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
+  }, [menuId]);
 
   const loadMore = async () => {
     if (!cursor || loading) return;
@@ -467,8 +507,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
 
   // People to follow, only from profiles already loaded with the feed.
   const suggestedPeople = useMemo(() => [...profileById.values()]
-    .filter((p) => p?.user_id && p.username && p.user_id !== user?.id && !followingIds.includes(p.user_id))
-    .slice(0, SUGGESTED_MAX), [profileById, user, followingIds]);
+    .filter((p) => p?.user_id && p.username && p.user_id !== user?.id && p.user_id !== profile?.user_id && !followingIds.includes(p.user_id))
+    .slice(0, SUGGESTED_MAX), [profileById, user, profile, followingIds]);
 
   const bodyMax = POST_MAX;
   const composeIssue = (() => {
@@ -485,29 +525,39 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const hashtagMatch = body.match(/(?:^|\s)#([A-Za-z][\w-]*)?$/);
   const hashtagSuggestions = hashtagMatch ? suggestHashtags(hashtagMatch[1] || '', 6) : [];
 
-  const renderPost = (post) => {
-    const name = post.is_anonymous || !post.author_id ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
-    const kind = post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : null;
-    return <article className="wc-post" key={post.id}>
-      <header>
-        <Avatar name={name} path={!post.is_anonymous && post.author_id ? profileById.get(post.author_id)?.avatar_url : null} anonymous={post.is_anonymous || !post.author_id} />
-        <div>{post.is_anonymous || !post.author_username ? <strong>{name}</strong> : <button type="button" className="wc-name" onClick={() => openProfile(post.author_username)}>{name}</button>}<small>{timeLabel(post.created_at)}{kind ? ` · ${kind}` : ''}</small></div>
-        <button type="button" className="wc-more" aria-label={post.is_mine ? 'Delete this post' : `Report ${name}'s post`} onClick={() => (post.is_mine ? setDeleteTarget(post) : setReportPost(post))}>{post.is_mine ? 'Delete' : 'Report'}</button>
+  const renderPost = (post, full = false) => {
+    const anon = post.is_anonymous || !post.author_id;
+    const name = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
+    const menuOpen = menuId === post.id;
+    const helpful = Number(post.helpful_count) || 0;
+    const replies = Number(post.comment_count) || 0;
+    return <article className={`wc-post${full ? ' is-full' : ''}`} key={post.id}>
+      <header className="wc-post-head">
+        <Avatar size={36} name={name} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
+        <div className="wc-post-who">
+          {anon || !post.author_username ? <strong>{name}</strong> : <button type="button" className="wc-name" onClick={() => openProfile(post.author_username)}>{name}</button>}
+          <time dateTime={post.created_at || undefined}>{timeLabel(post.created_at)}</time>
+        </div>
+        <Tag kind={post.kind} />
+        <div className="wc-menu-wrap">
+          <button type="button" className="wc-more" aria-label={`More options for ${name}'s post`} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuId(menuOpen ? null : post.id)}><Icon name="more" size={18} /></button>
+          {menuOpen && <div className="wc-menu" role="menu"><button type="button" role="menuitem" onClick={() => { setMenuId(null); if (post.is_mine) setDeleteTarget(post); else setReportPost(post); }}>{post.is_mine ? 'Delete post' : 'Report post'}</button></div>}
+        </div>
       </header>
-      <button type="button" className="wc-body" onClick={() => openPost(post)}>{post.body}</button>
+      {post.kind === 'review' && <Stars value={post.rating} size={15} />}
+      {full ? <p className="wc-body">{post.body}</p> : <button type="button" className="wc-body" onClick={() => openPost(post)}>{post.body}</button>}
       {(post.media || []).length > 0 && <div className="wc-photos">{post.media.slice(0, 4).map((m) => <img key={m.path} src={publicMediaUrl(m.path)} alt="" loading="lazy" />)}</div>}
-      {post.kind === 'review' && <Stars value={post.rating} />}
       {postProductIds(post).slice(0, 1).map((id) => <Mention key={id} productId={id} productsById={productsById} quizResults={quizResults} onOpenProduct={onOpenProduct} />)}
-      <footer>
-        <button type="button" aria-pressed={Boolean(post.viewer_found_helpful)} onClick={() => togglePost(post, 'helpful')}><Icon name="heart" /><span>Helpful{post.helpful_count ? ` ${post.helpful_count}` : ''}</span></button>
-        <button type="button" onClick={() => openPost(post)}><Icon name="comment" /><span>Reply{post.comment_count ? ` ${post.comment_count}` : ''}</span></button>
-        <button type="button" aria-pressed={Boolean(post.viewer_saved)} onClick={() => togglePost(post, 'save')}><Icon name="bookmark" /><span>{post.viewer_saved ? 'Saved' : 'Save'}</span></button>
+      <footer className="wc-actions">
+        <button type="button" aria-pressed={Boolean(post.viewer_found_helpful)} aria-label={`Helpful${helpful ? `, ${helpful}` : ''}`} title="Helpful" onClick={() => togglePost(post, 'helpful')}><Icon name="heart" size={17} /><span aria-hidden="true">{helpful ? `Helpful ${helpful}` : 'Helpful'}</span></button>
+        <button type="button" aria-label={`Reply${replies ? `, ${replies} replies` : ''}`} title="Reply" onClick={() => openPost(post)}><Icon name="comment" size={17} /><span aria-hidden="true">{replies ? `Reply ${replies}` : 'Reply'}</span></button>
+        <button type="button" className="wc-save" aria-pressed={Boolean(post.viewer_saved)} aria-label={post.viewer_saved ? 'Saved' : 'Save'} title={post.viewer_saved ? 'Saved' : 'Save'} onClick={() => togglePost(post, 'save')}><Icon name="bookmark" size={17} /><span aria-hidden="true">{post.viewer_saved ? 'Saved' : 'Save'}</span></button>
       </footer>
     </article>;
   };
   const playlistCard = (p) => <button type="button" className="wc-playlist" key={p.id} onClick={() => openPlaylist(p)}>
-    <span className="wc-cover">{p.cover_url ? <img src={publicMediaUrl(p.cover_url)} alt="" loading="lazy" /> : 'ayna'}</span>
-    <strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · by {p.owner_display_name || 'ayna community'}</small>
+    <PlaylistCover playlist={p} productsById={productsById} />
+    <span className="wc-playlist-copy"><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · {p.owner_display_name || 'ayna community'}</small></span>
   </button>;
 
   const composeSheet = compose && <Sheet title={KIND_TITLES[compose]} onClose={closeCompose}>
@@ -549,7 +599,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   let main;
   if (page?.type === 'post' && details) {
     main = <>
-      {renderPost(details)}
+      {renderPost(details, true)}
       <h2 className="wc-h2">Replies</h2>
       {comments.length === 0 && <p className="wc-muted">No replies yet.</p>}
       {comments.map((c) => <div className="wc-comment" key={c.id}>
@@ -570,8 +620,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   } else if (page?.type === 'playlist' && details) {
     const mine = user?.id === details.owner_id;
     main = <section className="wc-pl-detail">
-      <div className="wc-pl-hero"><span className="wc-cover is-big">{details.cover_url ? <img src={publicMediaUrl(details.cover_url)} alt="" /> : 'ayna'}</span>
-        <div><small>{details.item_count ?? items.length} picks</small><h1>{details.title}</h1>{details.description && <p>{details.description}</p>}{mine && <button type="button" className="wc-link is-danger" onClick={async () => { setBusy(true); try { await community.deletePlaylist(supabase, details.id); closePage(); setRefresh((v) => v + 1); setNotice('Playlist deleted.'); } catch (e) { notifyError(e); } finally { setBusy(false); } }}>Delete playlist</button>}</div></div>
+      <div className="wc-pl-hero"><PlaylistCover playlist={{ ...details, preview_product_ids: details.preview_product_ids || items.map((it) => it.product_id) }} productsById={productsById} big />
+        <div><Tag kind="playlist" /><small>{details.item_count ?? items.length} picks</small><h1>{details.title}</h1>{details.description && <p>{details.description}</p>}{mine && <button type="button" className="wc-link is-danger" onClick={async () => { setBusy(true); try { await community.deletePlaylist(supabase, details.id); closePage(); setRefresh((v) => v + 1); setNotice('Playlist deleted.'); } catch (e) { notifyError(e); } finally { setBusy(false); } }}>Delete playlist</button>}</div></div>
       <div className="wc-pl-items">{items.map((it) => <div key={it.product_id} className="wc-pl-item"><Mention productId={it.product_id} productsById={productsById} quizResults={quizResults} onOpenProduct={onOpenProduct} />{mine && <button type="button" className="wc-link" disabled={busy} onClick={async () => { setBusy(true); try { await community.removeFromPlaylist(supabase, details.id, it.product_id); await refreshPlaylist(details.id); } catch (e) { notifyError(e); } finally { setBusy(false); } }}>Remove</button>}</div>)}</div>
       {items.length === 0 && <p className="wc-muted">No products added yet.</p>}
       {mine && <div className="wc-card"><h3>Add a product</h3><Picker products={products.filter((p) => !items.some((s) => String(s.product_id) === String(p.id)))} value={productId} onChange={setProductId} />
@@ -612,21 +662,16 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       <h2 className="wc-h2">Playlists</h2>
       {profilePlaylists.length ? <div className="wc-pl-grid">{profilePlaylists.map(playlistCard)}</div> : <p className="wc-muted">No playlists shared yet.</p>}
       <h2 className="wc-h2">Posts</h2>
-      {profilePosts.length ? profilePosts.map(renderPost) : <p className="wc-muted">No posts shared yet.</p>}
+      {profilePosts.length ? profilePosts.map((p) => renderPost(p)) : <p className="wc-muted">No posts shared yet.</p>}
     </section>;
   } else if (search) {
     main = search.trim().length < 2 ? <p className="wc-muted">Type at least two letters to search Community.</p> : !searchResults ? <p className="wc-muted">Searching…</p> : <>
       {searchResults.people.length > 0 && <><h2 className="wc-h2">People</h2><div className="wc-people">{searchResults.people.map((p) => <button type="button" key={p.user_id} onClick={() => openProfile(p.username)}><Avatar name={p.display_name} path={p.avatar_url} /><span>{p.display_name}<small>@{p.username}</small></span></button>)}</div></>}
-      {searchResults.posts.length > 0 && <><h2 className="wc-h2">Posts</h2>{searchResults.posts.map(renderPost)}</>}
+      {searchResults.posts.length > 0 && <><h2 className="wc-h2">Posts</h2>{searchResults.posts.map((p) => renderPost(p))}</>}
       {searchResults.playlists.length > 0 && <><h2 className="wc-h2">Playlists</h2><div className="wc-pl-grid">{searchResults.playlists.map(playlistCard)}</div></>}
       {!searchResults.people.length && !searchResults.posts.length && !searchResults.playlists.length && <p className="wc-muted">No results. Try a name, topic, or playlist.</p>}
     </>;
   } else {
-    const switchTab = (k) => {
-      if (k === 'following' && !user) { requireAccount('your following feed'); return; }
-      if (k !== tab) { setPosts([]); setCursor(null); setError(''); }
-      setTab(k);
-    };
     const switchSection = (k) => {
       if (k !== 'recent' && !user) { requireAccount('your playlists'); return; }
       if (k !== playlistSection) setPlaylists([]);
@@ -634,13 +679,20 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     };
     const firstLoad = loading && (tab === 'playlists' ? playlists.length === 0 : posts.length === 0);
     main = <>
-      <div className="wc-tabs" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={tab === k} className={tab === k ? 'is-on' : ''} onClick={() => switchTab(k)}>{l}</button>)}</div>
       {tab === 'playlists' ? <>
         <div className="wc-row is-split wc-subbar"><div className="wc-subtabs" role="tablist" aria-label="Playlists">{[['recent', 'Community'], ['friends', 'Friends'], ['mine', 'My playlists']].map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={playlistSection === k} onClick={() => switchSection(k)}>{l}</button>)}</div><button type="button" className="wc-btn" onClick={() => openCompose('playlist')}>Create playlist</button></div>
         {firstLoad ? <SkeletonPlaylists /> : playlists.length ? <div className="wc-pl-grid">{playlists.map(playlistCard)}</div> : <div className="wc-empty"><h2>No playlists yet</h2><p>Collect your favorites.</p></div>}
       </> : <>
-        <button type="button" className="wc-share" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}><Avatar name={profile?.display_name || 'You'} path={profile?.avatar_url} /><span>{tab === 'question' ? 'Ask the community a question' : tab === 'review' ? 'Review a product you’ve tried' : 'Share with the community'}</span><b aria-hidden="true"><Icon name="plus" size={18} /></b></button>
-        {firstLoad ? <div className="wc-skel-list" aria-busy="true" aria-label="Loading posts"><SkeletonPost /><SkeletonPost /><SkeletonPost /></div> : posts.map(renderPost)}
+        <div className="wc-composer">
+          <Avatar size={36} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} />
+          <button type="button" className="wc-share" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}>{tab === 'question' ? 'Ask the community a question' : tab === 'review' ? 'Review a product you’ve tried' : 'Share with the community'}</button>
+          <div className="wc-composer-kinds" aria-label="Or start a">
+            <button type="button" className="is-question" onClick={() => openCompose('question')}>Ask</button>
+            <button type="button" className="is-review" onClick={() => openCompose('review')}>Review</button>
+            <button type="button" className="is-playlist" onClick={() => openCompose('playlist')}>Playlist</button>
+          </div>
+        </div>
+        {firstLoad ? <div className="wc-skel-list" aria-busy="true" aria-label="Loading posts"><SkeletonPost /><SkeletonPost /><SkeletonPost /></div> : posts.map((p) => renderPost(p))}
         {!loading && posts.length === 0 && (tab === 'following' ? <div className="wc-empty">
           <h2>No posts yet</h2>
           <p>{suggestedPeople.length ? 'Follow a few people to fill this feed.' : 'Follow people from their profiles to see their posts here.'}</p>
@@ -654,23 +706,54 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     </>;
   }
 
-  return <section className="wc">
+  const switchTab = (k) => {
+    if (k === 'following' && !user) { requireAccount('your following feed'); return; }
+    if (page) closePage();
+    if (search) { setSearch(''); setSearchResults(null); }
+    if (k !== tab) { setPosts([]); setCursor(null); setError(''); }
+    setTab(k);
+  };
+  const onFeed = !page && !search;
+  const openMe = () => (profile ? openProfile(profile.username) : requireAccount('your Community profile'));
+
+  // Side modules, each built only from loaded data and hidden when empty.
+  const topics = (() => {
+    const counts = new Map();
+    [...posts, ...sideQuestions].forEach((p) => (p.topics || []).forEach((t) => { const k = String(t).toLowerCase(); counts.set(k, (counts.get(k) || 0) + 1); }));
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, TOPICS_MAX).map(([t]) => t);
+  })();
+  const questionsSide = sideQuestions.filter((q) => !(page?.type === 'post' && page.id === q.id)).slice(0, SIDE_MAX);
+  const playlistsSide = sidePlaylists.slice(0, SIDE_MAX);
+  const peopleSide = suggestedPeople.slice(0, SIDE_MAX);
+
+  return <section className="wc wc3">
     <div className="wc-head">
       {page ? <button type="button" className="wc-back" onClick={closePage}>← Community</button> : <h1>Community</h1>}
       <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
         <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount ? `Updates, ${unreadCount} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount > 0 && <span className="wc-bell-dot" aria-hidden="true" />}</button>
+        <button type="button" className="wc-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Sign in for a Community profile'}><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /></button>
       </div>
     </div>
     {error && <p className="wc-error" role="alert">{error}</p>}
     {notice && <p className="wc-notice" role="status">{notice}</p>}
-    <div className={`wc-layout${page?.type === 'profile' && !(user && !profile) ? ' is-solo' : ''}`}>
-      <div className="wc-main">{main}</div>
-      <aside className="wc-side">
-        {user && !profile ? <div className="wc-card"><h3>Join Community</h3><p className="wc-muted">Your health answers stay private.</p>
+    <div className="wc-layout">
+      <nav className="wc-nav" aria-label="Community">
+        <div className="wc-tabs" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className={onFeed && tab === k ? 'is-on' : ''} onClick={() => switchTab(k)}>{l}</button>)}</div>
+        {user && !profile ? <div className="wc-card wc-join"><h3>Join Community</h3><p className="wc-muted">Your health answers stay private.</p>
           <input value={profileName} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" />
           <input value={profileHandle} onChange={(e) => setProfileHandle(e.target.value.toLowerCase())} placeholder="Username" aria-label="Username" />
           <button type="button" className="wc-btn" disabled={busy} onClick={saveProfile}>Create profile</button></div>
-          : page?.type !== 'profile' && <div className="wc-card wc-me"><Avatar size={56} name={profile?.display_name || 'Guest'} path={profile?.avatar_url} /><div><strong>{profile?.display_name || 'Guest'}</strong><small>{profile ? `@${profile.username}` : 'Posting anonymously'}</small></div>{profile && <button type="button" className="wc-link wc-me-btn" onClick={() => openProfile(profile.username)}>View profile</button>}</div>}
+          : <div className="wc-me"><Avatar size={40} name={profile?.display_name || 'Guest'} path={profile?.avatar_url} anonymous={!profile} /><div><strong>{profile?.display_name || 'Guest'}</strong><small>{profile ? `@${profile.username}` : 'Posting anonymously'}</small></div>
+            {profile ? <button type="button" className="wc-link wc-me-btn" onClick={() => openProfile(profile.username)}>View profile</button> : <button type="button" className="wc-link wc-me-btn" onClick={() => requireAccount('your Community profile')}>Sign in</button>}</div>}
+      </nav>
+      <div className="wc-main">{main}</div>
+      <aside className="wc-side" aria-label="More from Community">
+        {questionsSide.length > 0 && <section className="wc-mod"><h2>Recent questions</h2><ul>{questionsSide.map((q) => <li key={q.id}><button type="button" className="wc-mod-q" onClick={() => openPost(q)}><span>{q.body}</span><small>{Number(q.comment_count) ? `${q.comment_count} ${Number(q.comment_count) === 1 ? 'reply' : 'replies'}` : 'No replies yet'}</small></button></li>)}</ul>
+          {!(onFeed && tab === 'question') && <button type="button" className="wc-link" onClick={() => switchTab('question')}>All questions</button>}</section>}
+        {playlistsSide.length > 0 && <section className="wc-mod"><h2>Playlists</h2><ul>{playlistsSide.map((p) => <li key={p.id}><button type="button" className="wc-mod-pl" onClick={() => openPlaylist(p)}><PlaylistCover playlist={p} productsById={productsById} /><span><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · {p.owner_display_name || 'ayna community'}</small></span></button></li>)}</ul>
+          {!(onFeed && tab === 'playlists') && <button type="button" className="wc-link" onClick={() => switchTab('playlists')}>All playlists</button>}</section>}
+        {peopleSide.length > 0 && <section className="wc-mod"><h2>People to follow</h2><ul>{peopleSide.map((p) => <li key={p.user_id} className="wc-mod-person"><button type="button" className="wc-suggest-who" onClick={() => openProfile(p.username)}><Avatar size={32} name={p.display_name || p.username} path={p.avatar_url} /><span><strong>{p.display_name || p.username}</strong><small>@{p.username}</small></span></button><button type="button" className="wc-btn is-small" onClick={() => toggleFollow(p.user_id)}>Follow</button></li>)}</ul></section>}
+        {topics.length > 0 && <section className="wc-mod"><h2>Topics</h2><div className="wc-mod-topics">{topics.map((t) => <button type="button" key={t} onClick={() => { if (page) closePage(); setSearch(t); setSearchResults(null); }}>#{t}</button>)}</div></section>}
       </aside>
     </div>
 

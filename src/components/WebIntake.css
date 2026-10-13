@@ -163,14 +163,17 @@ div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var
 }
 
 /* Avoid or must-have: one list at a time */
-.wq-avoid { display: grid; gap: 24px; }
+.wq-avoid { display: grid; gap: 16px; }
+.wq-avoid .wq-chips { gap: 8px !important; }
 .wq-avoid-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; max-width: 440px; padding: 4px; border: 2px solid var(--ay-ink, #1d1a2b); border-radius: 99px; background: var(--ay-paper, #fffcf5); }
 .wq-avoid-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border: 0; border-radius: 99px; background: transparent; color: var(--ay-ink, #1d1a2b); font: 700 15px/1 'Poppins', system-ui, sans-serif; cursor: pointer; }
 .wq-avoid-tabs button.is-on.is-avoid { background: var(--ay-pink, #f7badd); }
 .wq-avoid-tabs button.is-on.is-want { background: var(--ay-mint, #bfe8cf); }
 .wq-avoid-tabs button span { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 99px; background: var(--ay-ink, #1d1a2b); color: #fff; font: 700 12px/1 'Poppins', system-ui, sans-serif; }
 .wq-avoid-panel { display: grid; gap: 16px; animation: wq-avoid-in .25s ease-out both; }
-.wq-avoid-none { padding-top: 20px; border-top: 1.5px dashed rgba(29, 26, 43, .3); }
+.wq-avoid-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.wq-avoid-foot .wq-addown { flex: 1 1 100%; }
+.wq-avoid-foot .wq-chip:not(.is-on) { border-style: dashed; background: transparent; }
 @keyframes wq-avoid-in { from { opacity: 0; transform: translateY(8px); } }
 
 /* What needs support: topic tabs, one group at a time */
@@ -187,12 +190,6 @@ div.wq-count button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var
 .wq-chips { gap: 10px !important; }
 .wq-group + .wq-group { margin-top: 8px; }
 .wq-foot { margin-top: 40px !important; }
-
-/* One-time "hold an answer" tip */
-.wq-holdtip { display: inline-flex; align-items: center; gap: 10px; margin: 12px 0 0; padding: 8px 8px 8px 14px; border: 2px solid var(--ink, #1d1a2b); border-radius: 99px; background: var(--paper, #fffcf5); color: var(--ink, #1d1a2b); font: 600 14px/1.2 'Poppins', sans-serif; animation: wqTipIn .35s cubic-bezier(.3, 1.5, .5, 1) both; }
-.wq-holdtip button { padding: 7px 12px; border: 0; border-radius: 99px; background: var(--ink, #1d1a2b); color: var(--paper, #fffcf5); font: 700 12px/1 'Poppins', sans-serif; cursor: pointer; }
-@keyframes wqTipIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .wq-holdtip { animation: none; } }
 
 /* Calmer quiz (team review 12 Oct): one progress track, quieter tiles */
 .wq-progress { gap: 0; height: 10px; border: 1.5px solid var(--ink); border-radius: 99px; background: var(--paper); overflow: hidden; }

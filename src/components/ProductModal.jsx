@@ -879,10 +879,10 @@ export default function ProductModal({
             type="button"
             className={`pdp-btn pdp-actions__ecosystem${isInEcosystem ? ' is-on' : ''}`}
             aria-pressed={isInEcosystem}
-            title="Adds it to your ecosystem"
+            title={isInEcosystem ? 'Removes it from your ecosystem' : 'Adds it to your ecosystem'}
             onClick={() => onAddToEcosystem(product)}
           >
-            {isInEcosystem ? '✓ I use this' : 'I use this'}
+            {isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
           </button>
         )}
         {onToggleSaved && (

@@ -8,7 +8,7 @@ import './reference-system.css';
 import './tokens.css';
 import './app-play.css';
 import './no-focus-ring.css';
-import { ALL_PRODUCTS, getEcosystemAlternatives, getRecommendationMatchesAndRest, filterPrescriptionCareGate, hydrateCatalogProduct } from '../data/products.js';
+import { ALL_PRODUCTS, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate, hydrateCatalogProduct } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
@@ -27,7 +27,7 @@ import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAu
 import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import { getNextArticle } from './utils/nextArticle.js';
-import { selectEcosystemProducts } from './utils/recommendationSelection.js';
+import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './data/intakeModel.js';
 import MobileTabBar from './components/MobileTabBar.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
 import ProfileFlow, { AboutAynaScreen } from './screens/profile/ProfileFlow.jsx';
@@ -152,16 +152,13 @@ function capProductsPerBrand(products, maxPerBrand = MAX_PRODUCTS_PER_BRAND) {
 // subset of this same array — stays a variety of brands instead of one
 // brand's whole catalog crowding everything else out.
 function seedEcosystemFromAnswers(quizAnswers) {
-  const { matches } = getRecommendationMatchesAndRest(quizAnswers, null);
-  const withAreas = matches.map((p) => {
+  // One shelf per selected need from the matching engine (quantity per need,
+  // never lower quality to fill a shelf).
+  const { mergedProducts, seedMeta } = getEcosystemSeedFromQuiz(quizAnswers, null);
+  return capProductsPerBrand(Object.values(mergedProducts || {}).map((p) => {
     const area = resolveEcosystemProductArea(p, REAL_ECOSYSTEM_AREAS);
-    return { ...p, areaKey: area ? area.key : null };
-  });
-  return selectEcosystemProducts(
-    capProductsPerBrand(withAreas),
-    quizAnswers,
-    quizAnswers?.fullHealthIntake?.recommendedProductsPerArea,
-  );
+    return { ...p, areaKey: area ? area.key : null, needId: seedMeta?.[p.id]?.needId || null };
+  }));
 }
 
 function hasSavedIntakeDraft() {
@@ -274,6 +271,34 @@ export default function MobileApp() {
   // the first thing left blank) from every other way into the quiz screen
   // (start quiz, retake, update health), which all start fresh on purpose.
   const [editingHealthProfile, setEditingHealthProfile] = useState(false);
+  // Back from Wrapped reopens the quiz on its LAST step with every answer in
+  // place (via the same draft the quiz already resumes from), and back from
+  // the sign-up screen that follows Wrapped lands on Wrapped's last slide.
+  const [resumeQuizDraft, setResumeQuizDraft] = useState(false);
+  const [revealAtEnd, setRevealAtEnd] = useState(false);
+  const lastIntakeModeRef = useRef('new');
+  useEffect(() => {
+    if (screen !== 'quiz' && resumeQuizDraft) Promise.resolve().then(() => setResumeQuizDraft(false));
+  }, [screen, resumeQuizDraft]);
+  const resumeQuizAtLastStep = () => {
+    const snapshot = lastQuizAnswers?.fullHealthIntake || null;
+    let resumed = false;
+    if (snapshot) {
+      try {
+        const intake = reconstructIntakeFromSnapshot(snapshot);
+        const steps = getIntakeSteps(intake);
+        const stepId = steps[steps.length - 1]?.id;
+        if (stepId) {
+          localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ version: 1, intake, stepId }));
+          resumed = true;
+        }
+      } catch { /* storage unavailable: fall back to the saved profile */ }
+    }
+    setIntakeMode(lastIntakeModeRef.current);
+    setResumeQuizDraft(resumed);
+    setEditingHealthProfile(!resumed);
+    setScreen('quiz');
+  };
   // Falls back to the real Supabase identity whenever the locally-cached
   // session name is empty — covers a returning user whose device never
   // captured a name (e.g. signed in with Google before this fallback
@@ -546,7 +571,7 @@ export default function MobileApp() {
     // force it back to light.
     onStartQuiz: () => { setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); },
     onOpenMonthlyCheckin: () => setScreen('checkin'),
-    onReplayStory: () => setScreen('reveal'),
+    onReplayStory: () => { setRevealAtEnd(false); setScreen('reveal'); },
     onBrowse: () => setScreen('browse'),
     onGoCommunity: () => { setCommunitySeed(null); setScreen('community'); },
     onOpenSaved: () => setScreen('saved'),
@@ -565,8 +590,7 @@ export default function MobileApp() {
     onAskAyna: () => authUser ? setAskAynaOpen(true) : requestAuth('Ask Ayna', () => { setScreen(screen); setAskAynaOpen(true); }),
     onBack: () => {
       if (['building', 'reveal'].includes(screen)) {
-        setEditingHealthProfile(true);
-        setScreen('quiz');
+        resumeQuizAtLastStep();
         return;
       }
       setScreen(screen === 'quiz' ? (hasEcosystem ? 'eco' : 'ecointro') : screen === 'ecointro' ? 'landing' : screen === 'eco' ? 'browse' : hasEcosystem ? 'eco' : 'landing');
@@ -615,6 +639,8 @@ export default function MobileApp() {
       // that user on any other device. No-ops harmlessly when signed out.
       const rawIntake = quizAnswers?.fullHealthIntake || quizAnswers;
       saveHealthIntakeForCurrentUser(rawIntake).catch(() => {});
+      lastIntakeModeRef.current = intakeMode;
+      setResumeQuizDraft(false);
       setIntakeMode('new');
       setScreen('building');
     },
@@ -623,14 +649,17 @@ export default function MobileApp() {
     // (a monthly check-in, a retaken quiz, an edited profile) already has an
     // account and this same ecosystem attached to it — routing them through
     // "sign in" again after finishing is a dead end, not a next step.
-    onFinish: () => setScreen('reveal'),
+    onFinish: () => { setRevealAtEnd(false); setScreen('reveal'); },
     onContinue: () => authUser ? setScreen('eco') : openAuth('signup'),
     initialMode: authMode,
     onAuthBack: () => {
       const resume = authResumeRef.current;
       authResumeRef.current = null;
       if (resume) resume();
-      else setScreen(authReturnScreenRef.current);
+      else {
+        setRevealAtEnd(authReturnScreenRef.current === 'reveal');
+        setScreen(authReturnScreenRef.current);
+      }
     },
     onStartEcosystem: lastQuizAnswers ? null : () => { setIntakeMode('new'); setEditingHealthProfile(false); setScreen('quiz'); },
     // Real Supabase auth (src/mobile/hooks/useSupabaseAuth.js) — the name
@@ -700,8 +729,9 @@ export default function MobileApp() {
         lastQuizAnswers={lastQuizAnswers}
         hasIntakeDraft={hasIntakeDraft && !hasEcosystem}
         onDraftChange={setHasIntakeDraft}
-        initialSnapshot={editingHealthProfile ? lastQuizAnswers?.fullHealthIntake || null : null}
-        startAtBeginning={intakeMode === 'add'}
+        initialSnapshot={editingHealthProfile && !resumeQuizDraft ? lastQuizAnswers?.fullHealthIntake || null : null}
+        startAtBeginning={intakeMode === 'add' && !resumeQuizDraft}
+        revealStartAtEnd={revealAtEnd}
         ecosystemNotice={ecosystemNotice}
         name={resolvedName}
         headerInitial={headerInitial}

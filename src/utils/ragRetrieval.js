@@ -45,7 +45,7 @@ function generateSearchAngles(intake = {}) {
   }
 
   // Angle 5: TTC safety angle
-  if (intake.tryingToConceive === 'yes') {
+  if (String(intake?.tryingToConceive || '').toLowerCase() === 'yes') {
     angles.push('prenatal supplements fertility conception safety');
   }
 

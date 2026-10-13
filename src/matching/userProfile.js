@@ -15,7 +15,7 @@ import {
   needIdForOption, NON_NEED_OPTIONS, NEED_BY_ID, canonicalize, CONDITION_ID_BY_OPTION, CONDITION_ID_BY_LEGACY, NON_CONDITION_OPTIONS,
   LIFE_STAGE_ID_BY_OPTION, LIFE_STAGE_COMPATIBILITY, ageBandFor, UNUSUAL_AGE_FOR_STAGE, FORMAT_ID_BY_OPTION, LEAVE_OUT_BY_OPTION,
   VALUE_ID_BY_OPTION, ALLERGEN_BY_OPTION, ALLERGEN_BY_ID, PCOS_REINFORCING_NEEDS, URINARY_UTI_NEEDS, MENSTRUAL_PRODUCT_NEEDS, POSTPARTUM_NEEDS,
-  normalizeText,
+  normalizeText, LEGACY_FRUSTRATION_NEEDS, LEGACY_CONCERN_NEEDS, LEGACY_SYMPTOM_NEEDS, LEGACY_PREFERENCE, LEGACY_SENSITIVITY_ALLERGEN,
 } from './ontology.js';
 import { normalizeMedication } from './medications.js';
 import { extractFreeText, summarizeFreeText } from './freeText.js';
@@ -191,6 +191,21 @@ export function buildUserProfile(intakeInput, options = {}) {
     if (c.canonical_id && c.confidence >= 0.7 && !c.contextual_only) addNeed(c.canonical_id, 'custom', text, c.confidence, { canonical: c });
     else unresolvedNeeds.push(c);
   }
+  // Older saved profiles: no current support answers, only the first quiz's
+  // broad answers. Each maps to the specific needs it named (ontology tables).
+  const hasCurrentSupport = support.length > 0 || splitList(intake.supportOtherText).length > 0;
+  if (!hasCurrentSupport && !nothingRightNow) {
+    const addLegacy = (option, table) => {
+      const ids = table[option] || (needIdForOption(option) ? [needIdForOption(option)] : null);
+      if (ids) { ids.forEach((id) => addNeed(id, 'legacy', option)); return; }
+      const c = canonicalize(option, { kinds: ['need'] });
+      if (c.canonical_id && c.confidence >= 0.7 && !c.contextual_only) addNeed(c.canonical_id, 'legacy', option, c.confidence, { canonical: c });
+    };
+    const concerns = arr(intake.primaryConcerns).length ? arr(intake.primaryConcerns) : arr(intake.primaryConcern);
+    concerns.forEach((c) => addLegacy(c, LEGACY_CONCERN_NEEDS));
+    if (!concerns.length) arr(intake.frustrations).forEach((f) => addLegacy(f, LEGACY_FRUSTRATION_NEEDS));
+    arr(intake.symptoms).forEach((sym) => (LEGACY_SYMPTOM_NEEDS[String(sym).toLowerCase()] || []).forEach((id) => addNeed(id, 'legacy', sym)));
+  }
   for (const m of freeText.mentioned_needs) {
     if (m.weight >= 1) addNeed(m.id, 'free_text', m.canonical?.raw_user_text, m.canonical?.confidence ?? 0.9, { canonical: m.canonical });
   }
@@ -288,6 +303,13 @@ export function buildUserProfile(intakeInput, options = {}) {
     if (c.canonical_id && c.confidence >= 0.9) allergies.push({ ...ALLERGEN_BY_ID[c.canonical_id], raw, source: 'custom', canonical: c });
     else unresolvedAllergies.push(c);
   }
+  // First quiz: "sensitivities" (and sensitivity labels inside productsToAvoid) are allergy-equivalent.
+  if (!allergyItems.length && allergyStatus !== 'no') {
+    for (const raw of [...arr(intake.sensitivities), ...arr(intake.productsToAvoid)]) {
+      const id = LEGACY_SENSITIVITY_ALLERGEN[raw];
+      if (id && !allergies.some((x) => x.id === id)) allergies.push({ ...ALLERGEN_BY_ID[id], raw, source: 'legacy' });
+    }
+  }
   for (const a of freeText.explicit_allergies) {
     if (!allergies.some((x) => x.id === a.id)) allergies.push({ ...ALLERGEN_BY_ID[a.id], raw: a.id, source: 'free_text_explicit' });
   }
@@ -300,7 +322,9 @@ export function buildUserProfile(intakeInput, options = {}) {
     meds.push({ ...normalizeMedication('hormonal contraceptive (unspecified)'), raw: 'Hormonal birth control (life stage)', source: 'life_stage' });
   }
 
-  const avoidEntries = [...new Set([...arr(intake.avoidRepeat)])].map((raw) => {
+  const avoidNames = [...arr(intake.avoidRepeat), ...arr(intake.dislikedProducts), ...arr(intake.productsToAvoid)]
+    .filter((raw) => !LEGACY_SENSITIVITY_ALLERGEN[raw] && !/^(other allergies|none)$/i.test(String(raw).trim()));
+  const avoidEntries = [...new Set(avoidNames)].map((raw) => {
     const resolved = resolveCatalogProduct(raw, catalog);
     return { raw, normalized: normalizeName(raw), brandKey: normalizeBrand(raw), resolvedProductId: resolved?.id || null };
   });
@@ -384,6 +408,13 @@ export function buildUserProfile(intakeInput, options = {}) {
     else if (c.kind === 'allergen' && c.confidence >= 0.9 && ALLERGEN_BY_ID[c.canonical_id]?.attr) {
       const attr = ALLERGEN_BY_ID[c.canonical_id].attr;
       if (!leaveOut.some((x) => x.attr === attr)) leaveOut.push({ attr, raw, strength: 'strong', source: 'custom' });
+    }
+  }
+  if (!arr(intake.avoidIngredients).length) {
+    for (const raw of arr(intake.preference)) {
+      const lp = LEGACY_PREFERENCE[raw];
+      if (lp?.value && !shouldBe.some((x) => x.id === lp.value)) shouldBe.push({ id: lp.value, raw, weight: 1, source: 'legacy' });
+      if (lp?.leaveOut && !leaveOut.some((x) => x.attr === lp.leaveOut)) leaveOut.push({ attr: lp.leaveOut, raw, strength: 'strong', source: 'legacy' });
     }
   }
   for (const raw of arr(intake.brandSupportPreferences)) {
@@ -488,6 +519,8 @@ export function buildUserProfile(intakeInput, options = {}) {
       shouldBe,
       fsaHsa,
       picksPerNeed,
+      // First quiz "comfortable with internal products?" = No: a stated hard preference.
+      declinesInternal: intake.internalComfort === 'No',
     },
     trust: { ranking, weights: trustWeights, touched },
     access: { zip: zipMatch ? zipMatch[1] : null, fsaHsa },

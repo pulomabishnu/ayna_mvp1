@@ -13,7 +13,7 @@ import { TEAM_PHOTO, TEAM_CAPTION } from '../data/welcomeSlides.js';
 const FOUNDERS = [
   { name: 'Puloma Bishnu', role: 'Co-founder & CEO' },
   { name: 'Ameera Omar', role: 'Co-founder, CMO & interim CTO' },
-  { name: 'Eliz Celik', role: 'Co-founder' },
+  { name: 'Eliz Celik', role: 'Co-founder & COO' },
 ];
 // Advisors in discussion stay off the public page until confirmed.
 const SHOW_ADVISOR_IN_DISCUSSION = false;

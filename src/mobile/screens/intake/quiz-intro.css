@@ -1,0 +1,156 @@
+/* Quiz intro: a few seconds showing the "i" button and press-and-hold.
+   Shared by the app quiz (.qi--app, inside .ayna-play-intake) and the
+   website quiz (.qi--web, fixed over the page). Times are fractions of one
+   timeline (--qi-dur) so every part stays in step. */
+
+.qi {
+  --qi-ink: #1d1a2b;
+  --qi-paper: #fffcf5;
+  --qi-soft: rgba(29, 26, 43, .66);
+  --qi-shadow: 4px 4px 0 #1d1a2b;
+  --qi-scrim: rgba(29, 26, 43, .32);
+  --qi-dark: #1d1a2b; /* ink inside the pastel demo panels, both themes */
+  --qi-light: #fffcf5;
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: var(--qi-scrim);
+  color: var(--qi-ink);
+  font-family: 'Poppins', system-ui, sans-serif;
+  animation: qi-fade .22s ease-out both;
+}
+.qi--web { position: fixed; z-index: 2100; }
+.qi.is-leaving { animation: qi-fade-out .22s ease-in both; }
+.ayna-mobile[data-theme='dark'] .qi,
+.app-container[data-theme='dark'] .qi {
+  --qi-ink: #f4f2ff;
+  --qi-paper: #17161f;
+  --qi-soft: rgba(244, 242, 255, .72);
+  --qi-shadow: 4px 4px 0 rgba(255, 255, 255, .72);
+  --qi-scrim: rgba(0, 0, 0, .6);
+}
+
+.qi-card {
+  position: relative;
+  width: min(360px, 100%);
+  box-sizing: border-box;
+  display: grid;
+  gap: 16px;
+  padding: 16px 16px 24px;
+  border: 2px solid var(--qi-ink);
+  border-radius: 24px;
+  background: var(--qi-paper);
+  box-shadow: var(--qi-shadow);
+  overflow: hidden;
+  animation: qi-card-in .32s cubic-bezier(.3, 1.4, .5, 1) both;
+}
+.qi--web .qi-card { width: min(400px, 100%); padding: 24px 24px 32px; }
+
+.qi-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.qi-tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1.5px solid var(--qi-ink); border-radius: 99px; font: 700 12px/1 'Poppins', system-ui, sans-serif; }
+.qi-tag::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #b9c2f4; border: 1.5px solid var(--qi-ink); }
+.qi .qi-skip { min-height: 36px; min-width: 0; width: auto; box-sizing: border-box; padding: 0 16px; border: 2px solid var(--qi-ink); border-radius: 99px; background: var(--qi-ink); color: var(--qi-paper); font: 700 13px/1 'Poppins', system-ui, sans-serif; cursor: pointer; }
+.qi .qi-skip:focus-visible { outline: 3px solid #b9c2f4; outline-offset: 2px; }
+.qi-title { margin: 0; font: 800 32px/1 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.045em; color: var(--qi-ink); }
+
+.qi-demo { display: grid; gap: 8px; }
+.qi-stage { position: relative; height: 104px; border: 2px solid var(--qi-ink); border-radius: 18px; background: #b9c2f4; color: var(--qi-dark); overflow: hidden; }
+.qi-demo--hold .qi-stage { background: #f7badd; }
+.qi-caption { margin: 0; font: 600 14px/1.35 'Poppins', system-ui, sans-serif; color: var(--qi-ink); }
+.qi-inline-i { display: inline-grid; place-items: center; width: 20px; height: 20px; margin: 0 2px; vertical-align: -4px; border: 1.5px solid var(--qi-ink); border-radius: 50%; font: italic 800 12px/1 'Poppins', system-ui, sans-serif; }
+
+/* mock question + i */
+.qi-mock-q { position: absolute; top: 16px; left: 16px; right: 16px; height: 40px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 12px; border: 1.5px solid var(--qi-dark); border-radius: 12px; background: var(--qi-light); }
+.qi-mock-title { font: 800 16px/1 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.03em; }
+.qi-mock-i { width: 28px; height: 28px; display: grid; place-items: center; border: 1.5px solid var(--qi-dark); border-radius: 50%; background: var(--qi-light); color: var(--qi-dark); font: italic 800 14px/1 'Poppins', system-ui, sans-serif; animation: qi-i var(--qi-dur) linear both; }
+
+/* mock answer chip */
+.qi-mock-chip { position: absolute; top: 16px; left: 16px; display: inline-flex; align-items: center; min-height: 36px; padding: 0 16px; border: 1.5px solid var(--qi-dark); border-radius: 99px; background: var(--qi-light); font: 600 13px/1 'Poppins', system-ui, sans-serif; animation: qi-chip var(--qi-dur) linear both; }
+
+/* bubbles */
+.qi-bubble { position: absolute; top: 64px; padding: 6px 10px; border: 1.5px solid var(--qi-dark); border-radius: 12px; background: var(--qi-light); color: var(--qi-dark); font: 600 12px/1.2 'Poppins', system-ui, sans-serif; white-space: nowrap; box-shadow: 2px 2px 0 var(--qi-dark); transform-origin: var(--qi-origin, 50% 0); }
+.qi-bubble::before { content: ''; position: absolute; top: -6px; width: 8px; height: 8px; border-left: 1.5px solid var(--qi-dark); border-top: 1.5px solid var(--qi-dark); background: var(--qi-light); transform: rotate(45deg); }
+.qi-bubble--info { right: 16px; --qi-origin: calc(100% - 14px) 0; animation: qi-bubble-info var(--qi-dur) linear both; }
+.qi-bubble--info::before { right: 14px; }
+.qi-bubble--hold { left: 16px; --qi-origin: 40px 0; animation: qi-bubble-hold var(--qi-dur) linear both; }
+.qi-bubble--hold::before { left: 36px; }
+
+/* finger + press ring */
+.qi-finger { position: absolute; width: 48px; height: 48px; margin: -24px 0 0 -24px; display: grid; place-items: center; pointer-events: none; }
+.qi-finger i { width: 22px; height: 22px; border: 2px solid var(--qi-dark); border-radius: 50%; background: rgba(255, 252, 245, .7); box-shadow: 0 0 0 4px rgba(29, 26, 43, .14); }
+.qi-finger--tap { top: 36px; right: 4px; animation: qi-tap var(--qi-dur) linear both; }
+.qi-finger--hold { top: 34px; left: 72px; animation: qi-hold var(--qi-dur) linear both; }
+.qi-finger svg { position: absolute; inset: 0; width: 48px; height: 48px; rotate: -90deg; fill: none; stroke-width: 3; }
+.qi-ring-track { stroke: rgba(29, 26, 43, .18); }
+.qi-ring { stroke: var(--qi-dark); stroke-linecap: round; stroke-dasharray: 132; stroke-dashoffset: 132; animation: qi-ring var(--qi-dur) linear both; }
+
+/* auto-advance timer */
+.qi-timer { position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: rgba(29, 26, 43, .08); }
+.qi-timer i { display: block; height: 100%; background: var(--qi-ink); transform-origin: 0 50%; animation: qi-timer var(--qi-dur) linear both; }
+
+/* timeline (4.6s): tap the i at ~0.8s, bubble ~1s; hold the chip 2.0s to 2.8s, bubble ~2.9s */
+@keyframes qi-tap {
+  0%, 6% { opacity: 0; transform: translate(14px, 18px) scale(1); }
+  13% { opacity: 1; transform: none; }
+  16% { transform: scale(.78); }
+  21% { transform: scale(1); }
+  30% { opacity: 1; }
+  36%, 100% { opacity: 0; transform: none; }
+}
+@keyframes qi-i {
+  0%, 16% { background: var(--qi-light); color: var(--qi-dark); }
+  17%, 100% { background: var(--qi-dark); color: var(--qi-light); }
+}
+@keyframes qi-bubble-info {
+  0%, 18% { opacity: 0; transform: translateY(-4px) scale(.6); }
+  23% { opacity: 1; transform: scale(1.06); }
+  27%, 100% { opacity: 1; transform: none; }
+}
+@keyframes qi-hold {
+  0%, 35% { opacity: 0; transform: translate(18px, 22px) scale(1); }
+  41% { opacity: 1; transform: none; }
+  44%, 61% { opacity: 1; transform: scale(.86); }
+  64% { transform: scale(1); }
+  74% { opacity: 1; }
+  80%, 100% { opacity: 0; transform: none; }
+}
+@keyframes qi-ring {
+  0%, 43% { stroke-dashoffset: 132; opacity: 1; }
+  61% { stroke-dashoffset: 0; opacity: 1; }
+  74% { stroke-dashoffset: 0; opacity: 1; }
+  80%, 100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes qi-chip {
+  0%, 43% { background: var(--qi-light); transform: none; }
+  45%, 61% { background: #f7e78e; transform: scale(.96); }
+  65%, 100% { background: #f7e78e; transform: none; }
+}
+@keyframes qi-bubble-hold {
+  0%, 61% { opacity: 0; transform: translateY(-4px) scale(.6); }
+  66% { opacity: 1; transform: scale(1.06); }
+  70%, 100% { opacity: 1; transform: none; }
+}
+@keyframes qi-timer { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes qi-card-in { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes qi-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes qi-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+/* Reduced motion: the finished state, still. */
+.qi.is-still, .qi.is-still * { animation: none !important; }
+.qi.is-still .qi-finger { display: none; }
+.qi.is-still .qi-mock-i { background: var(--qi-dark); color: var(--qi-light); }
+.qi.is-still .qi-mock-chip { background: #f7e78e; }
+@media (prefers-reduced-motion: reduce) {
+  .qi, .qi * { animation: none !important; }
+  .qi-finger { display: none; }
+  .qi-mock-i { background: var(--qi-dark); color: var(--qi-light); }
+  .qi-mock-chip { background: #f7e78e; }
+}
+
+@media (max-width: 360px) {
+  .qi-title { font-size: 28px; }
+  .qi-caption { font-size: 13px; }
+}

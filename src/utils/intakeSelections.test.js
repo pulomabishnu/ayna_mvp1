@@ -16,6 +16,11 @@ describe('intake consistency', () => {
   it('does not infer menopause from age 45', () => {
     const product = { id: 'menopause', name: 'Menopause support', category: 'supplement', tags: ['menopause'], healthFunctions: ['menopause-support'] };
     const match = getProductMatchDetailsForProduct(product, { fullHealthIntake: { age: 45, lifeStageSelections: ['I get periods regularly'], supportSelections: ['Acne'] } });
-    expect(match.eligible).toBe(false);
+    // Matching engine (step 2): a life-stage mismatch is no longer a safety
+    // exclusion. The product is simply not relevant to any need she selected,
+    // so it scores 0 and is never recommended; age never adds a menopause need.
+    expect(match.percent).toBe(0);
+    expect(match.matchStatus).toBe('no-relevance');
+    expect(match.needMatches.some((m) => m.relevant)).toBe(false);
   });
 });

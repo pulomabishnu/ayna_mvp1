@@ -257,3 +257,42 @@
 .am-actions { margin: 12px 17px 0; }
 .am-playlist { box-shadow: none; border-radius: 13px; }
 .am-empty-state { box-shadow: none; }
+
+/* Round 3 (founder feedback): every post is a clearly separated card with a
+   type tag, a one-line header, compact left-aligned actions, and a composer
+   aligned to the content edges. Doubled class beats the older layers. */
+.ayna-mobile.ayna-mobile .am-scroll .am-share-prompt { box-sizing: border-box; width: 100% !important; min-height: 52px; margin: 0 0 12px !important; padding: 8px 8px 8px 10px !important; gap: 10px; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-paper) !important; box-shadow: 3px 3px 0 var(--ay-ink) !important; color: var(--ay-ink-soft) !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-share-prompt .am-avatar { width: 32px; height: 32px; }
+.ayna-mobile.ayna-mobile .am-scroll .am-share-prompt > span:nth-child(2) { font: 500 14px/1 var(--ay-font-ui) !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-share-plus { width: 34px; height: 34px; flex: none; border: 2px solid var(--ay-ink) !important; }
+
+.ayna-mobile.ayna-mobile .am-scroll .am-card.am-post-card { box-sizing: border-box; width: auto; display: grid; gap: 8px; margin: 0 0 12px !important; padding: 12px 12px 6px !important; border: 2px solid var(--ay-ink) !important; border-radius: 18px !important; background: var(--ay-paper) !important; box-shadow: none !important; overflow: visible; }
+.ayna-mobile.ayna-mobile .am-scroll .am-post-head { display: flex; align-items: center; gap: 8px; padding: 0 !important; min-width: 0; }
+.ayna-mobile.ayna-mobile .am-scroll .am-post-head .am-avatar { width: 32px; height: 32px; border: 1.5px solid var(--ay-ink); background: var(--ay-peri); color: var(--ay-ink); font-size: 11px; }
+.ayna-mobile.ayna-mobile .am-scroll .am-author-copy { display: flex; align-items: baseline; gap: 6px; flex: 1; min-width: 0; }
+.ayna-mobile.ayna-mobile .am-scroll .am-author-copy :is(button, strong) { min-height: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ay-ink); font: 700 14px/1.2 var(--ay-font-ui) !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-author-copy small { flex: none; color: var(--ay-ink-soft); font: 500 12px/1.2 var(--ay-font-ui); }
+.ayna-mobile .am-tag { flex: none; display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: #b9c2f4; color: #1d1a2b; font: 700 11px/1 var(--ay-font-ui); }
+.ayna-mobile .am-tag.is-question { background: #f7e78e; }
+.ayna-mobile .am-tag.is-review { background: #bdebd6; }
+.ayna-mobile[data-theme='dark'] .am-tag { border-color: transparent; }
+.ayna-mobile.ayna-mobile .am-scroll .am-post-more { width: 32px; height: 32px; min-height: 32px; display: grid; place-items: center; padding: 0; border: 0 !important; border-radius: 50%; background: none !important; color: var(--ay-ink-soft); box-shadow: none !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-post-more[aria-expanded='true'] { background: var(--ay-tile, rgba(0,0,0,.06)) !important; color: var(--ay-ink); }
+.ayna-mobile.ayna-mobile .am-scroll .am-post-menu { top: 36px; border: 2px solid var(--ay-ink); border-radius: 14px; background: var(--ay-paper); box-shadow: 3px 3px 0 var(--ay-ink); }
+.ayna-mobile.ayna-mobile .am-scroll .am-post-menu button { min-height: 40px; color: var(--ay-ink); font: 600 14px/1 var(--ay-font-ui); }
+.ayna-mobile .am-post-stars { display: flex; gap: 2px; }
+.ayna-mobile .am-post-stars svg { width: 15px; height: 15px; fill: none !important; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linejoin: round; }
+.ayna-mobile .am-post-stars svg.is-on { fill: var(--ay-butter) !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-postbody { min-height: 0; padding: 0 !important; color: var(--ay-ink); font: 500 15px/1.45 var(--ay-font-ui) !important; letter-spacing: 0 !important; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6; overflow: hidden; }
+.ayna-mobile.ayna-mobile .am-scroll .am-subpage .am-postbody { display: block; -webkit-line-clamp: unset; font-size: 16px !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-post-card .am-photo-grid { width: 100%; margin: 0; border-radius: 12px; }
+.ayna-mobile.ayna-mobile .am-scroll .am-post-card .am-product { width: 100%; margin: 0; min-height: 0; padding: 6px 8px 6px 6px !important; border: 1.5px solid var(--ay-line) !important; border-radius: 14px !important; background: var(--ay-cream, var(--ay-paper)) !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-post-card .am-product-photo { width: 40px; height: 40px; background: #fff !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-actions { display: flex; justify-content: flex-start; gap: 4px; margin: 0 0 0 -8px !important; padding: 0 !important; border: 0 !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-actions button { flex: none; min-width: 0; min-height: 36px; padding: 0 8px; gap: 5px; border-radius: 99px; color: var(--ay-ink-soft); font: 600 12px/1 var(--ay-font-ui); }
+.ayna-mobile.ayna-mobile .am-scroll .am-actions button[aria-pressed='true'] { color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-actions button[aria-pressed='true'] svg { fill: var(--ay-pink); }
+.ayna-mobile.ayna-mobile .am-scroll .am-actions button:last-child[aria-pressed='true'] svg { fill: var(--ay-butter); }
+.ayna-mobile.ayna-mobile .am-scroll .am-subpage > * , .ayna-mobile.ayna-mobile.ayna-mobile .am-scroll .am-subpage > .am-compose-inline { margin-left: 0 !important; margin-right: 0 !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-subpage .am-section { color: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .am-scroll .am-profile-content .am-post-card, .ayna-mobile.ayna-mobile .am-scroll .am-search-results .am-post-card { margin-left: 0 !important; margin-right: 0 !important; }

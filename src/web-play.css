@@ -1151,3 +1151,5 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 .app-container .mockup-landing--first .ayna-landing-hero { min-height: 0 !important; padding-top: 56px !important; padding-bottom: 56px !important; }
 /* Hero copy lines up with the logo and every section edge (one left edge) */
 .app-container .mockup-landing.mockup-landing--first .ayna-landing-hero .ayna-landing-hero-col { margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important; max-width: 640px !important; justify-self: start; }
+.app-container .ayna-ask-dock { transition: opacity .25s ease, transform .25s ease; }
+.app-container .ayna-ask-dock.is-waiting { opacity: 0; transform: translateY(12px); pointer-events: none; }

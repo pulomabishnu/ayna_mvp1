@@ -164,3 +164,21 @@ describe('other fields', () => {
     expect(prof('p-thermacare').fsa_hsa).toBe('unknown');
   });
 });
+
+describe('step 2 rule refinements', () => {
+  it('a sentence that denies a benefit is not a mention of the condition', () => {
+    // "not established as a treatment for PCOS", "PCOS alone does not establish a need"
+    for (const id of ['p-vitex', 'p-evening-primrose', 'p-natures-bounty-d3-125mcg', 'p-zinc']) {
+      expect(rel(id, 'condition_support.pcos'), id).toBe(0);
+    }
+    expect(rel('p-vitex', 'cycle.pms')).toBe(LEVEL.SECONDARY);
+  });
+  it('limited catalog evidence caps every need at secondary (0.55)', () => {
+    expect(rel('p-inositol-wholesome', 'condition_support.pcos')).toBe(LEVEL.SECONDARY);
+    expect(prof('p-inositol-wholesome').matched_rules).toContain('limited_evidence_cap');
+  });
+  it('flags high-dose iron as confirmation-first and reads snake_case FSA/HSA fields', () => {
+    expect(prof('p-nature-made-iron-65mg').requires_condition).toEqual(expect.objectContaining({ condition: 'anemia' }));
+    expect(buildProductProfile({ id: 't-fsa', name: 'T', category: 'pad', fsa_eligible: true }).fsa_hsa).toBe('yes');
+  });
+});

@@ -187,6 +187,13 @@ export function evaluateSafety(productOrProfile, up) {
     if (maximum != null && up.physiology.age > maximum) reasons.push({ code: 'age_above_maximum', text: `Intended for ages up to ${maximum}` });
   }
 
+  // 5b. Confirmation-first products (e.g. high-dose iron) need the condition confirmed.
+  //     Only applied once she has shared needs or conditions (browsing stays neutral).
+  if (pp.requires_condition && (up.healthIntent.needs.length || s.conditions.length)
+    && !s.conditions.some((c) => c.id === pp.requires_condition.condition)) {
+    reasons.push({ code: 'requires_confirmed_condition', text: pp.requires_condition.text });
+  }
+
   // 6. Medications: structured, reviewed table only. Unknown = penalty, never 'compatible'.
   const interaction = checkMedicationInteractions(s.medications, pp);
   if (interaction.verdict === 'avoid') {
@@ -440,6 +447,7 @@ function preferenceComponent(pp, up, notes, explanations) {
     if (pp.formats.includes(f)) format -= 0.4 * Number(w);
   }
   if (sh.formats.strict.length && !pp.formats.some((f) => sh.formats.strict.includes(f))) notes.filtered = 'format_strict';
+  if (sh.declinesInternal && pp.internal) notes.filtered = 'internal_declined';
 
   // Values ("Should be") and leave-out matches
   const parts = [];

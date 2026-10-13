@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { TEAM_PHOTO, TEAM_CAPTION, getDailyFact } from '../data/welcomeSlides.js';
 import './WebHeroCarousel.css';
 
-// Website welcome carousel: us, the app, what ayna does, today's fact and
-// what's new. Swipe, arrows, dots or keyboard. Pauses on hover.
+// Website welcome stories: us, the app, what ayna does, today's fact and
+// what's new. A big stage with a chapter list whose bars fill as each slide
+// plays; the whole band takes the slide's colour. Swipe, arrows, chapter
+// buttons or keyboard. Pauses on hover; no autoplay with reduced motion.
 
 // First slide (the team) stays a little longer, then 2.5s each.
 const FIRST_DURATION = 3500;
@@ -18,56 +20,59 @@ function TeamSlide() {
 
 function AboutSlide({ onStartQuiz }) {
   return <>
-    <span className="whc-kicker">What ayna does</span>
-    <h2 className="whc-title">Health,<br />matched to you.</h2>
-    <ul className="whc-tiles">
+    <div className="whc-copy">
+      <h2 className="whc-title">Health, matched to you.</h2>
+      <button type="button" className="whc-cta" onClick={onStartQuiz}>Take the quiz</button>
+    </div>
+    <ul className="whc-art whc-tiles">
       <li className="tone-pink"><span className="whc-glyph is-eco" aria-hidden="true"><i /><i /><i /></span><b>Your Ecosystem</b></li>
       <li className="tone-butter"><span className="whc-glyph is-ring" aria-hidden="true" /><b>Your match</b></li>
-      <li className="tone-mint"><span className="whc-glyph is-chat" aria-hidden="true" /><b>Ask ayna</b></li>
+      <li className="tone-peri"><span className="whc-glyph is-chat" aria-hidden="true" /><b>Ask ayna</b></li>
       <li className="tone-paper"><span className="whc-glyph is-deck" aria-hidden="true"><i /><i /></span><b>Discover</b></li>
     </ul>
-    <button type="button" className="whc-cta" onClick={onStartQuiz}>Take the quiz →</button>
   </>;
 }
 
 function AppSlide() {
-  return <div className="whc-split">
-    <div>
-      <span className="whc-kicker">The app</span>
-      <h2 className="whc-title">ayna, in<br />your pocket.</h2>
-      <a className="whc-cta" href="/mobile-preview">Try the app →</a>
+  return <>
+    <div className="whc-copy">
+      <h2 className="whc-title">ayna, in your pocket.</h2>
+      <a className="whc-cta" href="/mobile-preview">Try the app</a>
     </div>
-    <div className="whc-phone" aria-hidden="true">
+    <div className="whc-art whc-phone" aria-hidden="true">
       <span className="whc-phone__notch" />
       <span className="whc-phone__mark">ayna</span>
       <span className="whc-phone__row is-dark"><i /><b /></span>
       <span className="whc-phone__row"><i className="is-mint" /><b /></span>
       <span className="whc-phone__row"><i className="is-peri" /><b /></span>
+      <span className="whc-phone__row"><i /><b /></span>
       <span className="whc-phone__bar" />
     </div>
-  </div>;
+  </>;
 }
 
 function FactSlide({ fact, onViewArticles }) {
   return <>
-    <span className="whc-kicker">Daily ayna fact</span>
-    <div className="whc-fact">
-      <strong>{fact.term}</strong>
-      <p>{fact.text}</p>
+    <div className="whc-copy">
+      <p className="whc-note">Today on ayna</p>
+      <h2 className="whc-title whc-title--term">{fact.term}</h2>
+      <button type="button" className="whc-cta" onClick={onViewArticles}>Read more in the Library</button>
     </div>
-    <button type="button" className="whc-cta" onClick={onViewArticles}>Read more in the Library →</button>
+    <div className="whc-art whc-fact"><p>{fact.text}</p></div>
   </>;
 }
 
 function NewsSlide({ onViewCommunity }) {
   return <>
-    <span className="whc-kicker is-new">New</span>
-    <h2 className="whc-title">Now introducing<br />ayna Community.</h2>
-    <div className="whc-posts" aria-hidden="true">
+    <div className="whc-copy">
+      <h2 className="whc-title">Now introducing ayna Community.</h2>
+      <button type="button" className="whc-cta" onClick={onViewCommunity}>See Community</button>
+    </div>
+    <div className="whc-art whc-posts" aria-hidden="true">
       <span className="whc-post"><i className="is-pink" /><b /><b className="is-short" /></span>
       <span className="whc-post is-two"><i className="is-mint" /><b /><b className="is-short" /></span>
+      <span className="whc-post is-three"><i className="is-butter" /><b /><b className="is-short" /></span>
     </div>
-    <button type="button" className="whc-cta" onClick={onViewCommunity}>See Community →</button>
   </>;
 }
 
@@ -76,9 +81,9 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
   const slides = useMemo(() => [
     { key: 'team', label: 'Meet ayna', tone: 'peri' },
     { key: 'app', label: 'The app', tone: 'butter' },
-    { key: 'about', label: 'What ayna does', tone: 'cream' },
-    ...(fact ? [{ key: 'fact', label: 'Daily ayna fact', tone: 'mint' }] : []),
-    { key: 'news', label: 'Now introducing Community', tone: 'pink' },
+    { key: 'about', label: 'What ayna does', tone: 'mint' },
+    ...(fact ? [{ key: 'fact', label: 'Daily ayna fact', tone: 'cream' }] : []),
+    { key: 'news', label: 'New: ayna Community', tone: 'pink' },
   ], [fact]);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -87,12 +92,14 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
   const drag = useRef({ x: 0, active: false });
   const count = slides.length;
   const go = (step) => setIndex((i) => (i + step + count) % count);
+  const playing = !paused && !hover && !reduced;
+  const duration = index === 0 ? FIRST_DURATION : DURATION;
 
   useEffect(() => {
-    if (paused || hover || reduced) return undefined;
-    const t = window.setTimeout(() => setIndex((i) => (i + 1) % count), index === 0 ? FIRST_DURATION : DURATION);
+    if (!playing) return undefined;
+    const t = window.setTimeout(() => setIndex((i) => (i + 1) % count), duration);
     return () => window.clearTimeout(t);
-  }, [index, paused, hover, reduced, count]);
+  }, [index, playing, count, duration]);
 
   const onPointerDown = (e) => { if (!e.target.closest('button, a')) drag.current = { x: e.clientX, active: true }; };
   const onPointerUp = (e) => {
@@ -116,34 +123,56 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
   };
 
   return <section
-    className="ayna-landing-hero-photo whc"
+    className={`whc whc--stage is-tone-${slides[index].tone}`}
     aria-roledescription="carousel"
     aria-label="Welcome to ayna"
-    tabIndex={0}
-    onKeyDown={onKey}
     onMouseEnter={() => setHover(true)}
     onMouseLeave={() => setHover(false)}
-    onPointerDown={onPointerDown}
-    onPointerUp={onPointerUp}
   >
-    <div className="whc-track" style={{ transform: `translateX(-${index * 100}%)` }}>
-      {slides.map((s, i) => <div
-        key={s.key}
-        className={`whc-slide is-${s.key} tone-${s.tone}${i === index ? ' is-on' : ''}`}
-        role="group"
-        aria-roledescription="slide"
-        aria-label={`${i + 1} of ${count}: ${s.label}`}
-        aria-hidden={i !== index}
-        inert={i !== index}
-      >{render(s.key)}</div>)}
-    </div>
-    <div className="whc-controls">
-      <div className="whc-dots">
-        {slides.map((s, i) => <button key={s.key} type="button" aria-label={`Show ${s.label}`} aria-current={i === index} className={i === index ? 'is-on' : ''} onClick={() => setIndex(i)} />)}
+    <div className="whc-inner mockup-page">
+      <div
+        className="whc-stage"
+        tabIndex={0}
+        onKeyDown={onKey}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
+      >
+        <div className="whc-track">
+          {slides.map((s, i) => <div
+            key={s.key}
+            className={`whc-slide is-${s.key} tone-${s.tone}${i === index ? ' is-on' : ''}`}
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${i + 1} of ${count}: ${s.label}`}
+            aria-hidden={i !== index}
+            inert={i !== index}
+          >{render(s.key)}</div>)}
+        </div>
       </div>
-      <button type="button" className="whc-btn" aria-label="Previous slide" onClick={() => go(-1)}>←</button>
-      <button type="button" className="whc-btn" aria-label="Next slide" onClick={() => go(1)}>→</button>
-      {!reduced && <button type="button" className="whc-btn" aria-label={paused ? 'Play slides' : 'Pause slides'} onClick={() => setPaused((v) => !v)}>{paused ? '▶' : '❚❚'}</button>}
+      <div className="whc-side">
+        <p className="whc-now" aria-hidden="true">{slides[index].label}</p>
+        <ol className="whc-chapters">
+          {slides.map((s, i) => <li key={s.key}>
+            <button type="button" aria-label={`Show ${s.label}`} aria-current={i === index} className={i === index ? 'is-on' : ''} onClick={() => setIndex(i)}>
+              <span className="whc-chapters__label">{s.label}</span>
+              <span className="whc-chapters__bar" aria-hidden="true">
+                <i
+                  key={i === index && playing ? 'run' : 'still'}
+                  className={i === index ? (playing ? 'is-running' : 'is-full') : (i < index ? 'is-done' : '')}
+                  style={i === index && playing ? { animationDuration: `${duration}ms` } : undefined}
+                />
+              </span>
+            </button>
+          </li>)}
+        </ol>
+        <div className="whc-controls">
+          <button type="button" className="whc-btn" aria-label="Previous slide" onClick={() => go(-1)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
+          <button type="button" className="whc-btn" aria-label="Next slide" onClick={() => go(1)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
+          {!reduced && <button type="button" className="whc-btn" aria-label={paused ? 'Play slides' : 'Pause slides'} onClick={() => setPaused((v) => !v)}>
+            {paused ? <svg viewBox="0 0 24 24" aria-hidden="true"><path className="is-fill" d="M8 5l11 7-11 7z" /></svg> : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14" /></svg>}
+          </button>}
+        </div>
+      </div>
     </div>
   </section>;
 }

@@ -348,10 +348,18 @@ describe('conditions', () => {
   it('PCOS diagnosis + acne boosts products on both pathways; it never unlocks unrelated PCOS products', () => {
     const acneOnly = user({ supportSelections: ['Acne'] });
     const pcosAcne = user({ supportSelections: ['Acne'], diagnosisSelections: ['PCOS'] });
-    const a = score('p-zinc', acneOnly, 'skin.acne');
-    const b = score('p-zinc', pcosAcne, 'skin.acne');
+    // A product relevant to both PCOS and acne gets the pathway boost.
+    const both = { id: 't-pcos-acne', name: 'Test PCOS acne support', category: 'supplement', tags: ['pcos', 'acne'] };
+    const a = scoreProductForNeed(both, acneOnly, 'skin.acne');
+    const b = scoreProductForNeed(both, pcosAcne, 'skin.acne');
     expect(b.score).toBeGreaterThan(a.score);
     expect(b.explanations).toContain('Fits the PCOS context you shared');
+    // Step 2 change: p-zinc's catalog text says its PCOS benefit is NOT
+    // established, so that sentence no longer counts as a PCOS mention and
+    // zinc gets the diagnosis context only (no pathway claim).
+    const z = score('p-zinc', pcosAcne, 'skin.acne');
+    expect(z.score).toBeGreaterThan(score('p-zinc', acneOnly, 'skin.acne').score);
+    expect(z.explanations).not.toContain('Fits the PCOS context you shared');
     expect(score('p-inositol-wholesome', pcosAcne, 'skin.acne').score).toBe(0);
   });
 });

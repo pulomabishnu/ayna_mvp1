@@ -86,6 +86,8 @@
 .ayna-mobile.ayna-mobile .ay-pdp-bar > button[aria-pressed='true'] svg { fill: var(--ay-ink); stroke: var(--ay-ink); }
 .ayna-mobile.ayna-mobile .ay-pdp-bar > a { background: var(--ay-ink) !important; color: var(--ay-paper) !important; border: 1.5px solid var(--ay-ink); box-shadow: none !important; }
 .ayna-mobile.ayna-mobile .ay-pdp-bar > div { background: var(--ay-tile) !important; color: var(--ay-ink) !important; opacity: .7; }
+.ayna-mobile.ayna-mobile .ay-pdp-bar > button[aria-pressed]:not([aria-label='Save']):not([aria-label^='Remove from Saved']) { white-space: nowrap; padding: 0 14px !important; }
+.ayna-mobile.ayna-mobile .ay-pdp-bar.ayna-product-purchase-bar { grid-template-columns: 44px auto minmax(96px, 1fr) !important; }
 .ayna-mobile.ayna-mobile .ay-pdp-tabs { display: flex !important; }
 .ayna-mobile.ayna-mobile .ay-pdp-tabs button { flex: 1 1 auto; font-size: 12.5px !important; padding: 0 10px !important; }
 

@@ -7,6 +7,7 @@ import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/intake/intakeScenes.js';
 import '../intake-play.css';
 import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
+import QuizIntro from './intake/QuizIntro.jsx';
 import { selectLifeStage } from '../../utils/intakeSelections.js';
 import {
   ALLERGIES,
@@ -14,10 +15,12 @@ import {
   AVOID_INGREDIENTS,
   AVOID_PAIRS,
   BRAND_OPENNESS,
+  BREASTFEEDING_STATUS,
   BRAND_SUGGESTIONS,
   CATALOG_PRODUCT_NAMES,
   CONDITIONS,
   EMPTY,
+  FOLLOWUP_QUESTIONS,
   FREE_TEXT_PROMPTS,
   FSA_HSA,
   INTAKE_DRAFT_KEY,
@@ -42,6 +45,7 @@ import {
   WARNING_BG,
   WARNING_BORDER,
   WARNING_BORDER_SOFT,
+  asksBreastfeedingOnTiming,
   buildSnapshot,
   getIntakeSteps,
   getLifeStages,
@@ -51,6 +55,7 @@ import {
   readIntakeDraft,
   reconstructIntakeFromSnapshot,
   requiredReady,
+  ttcDurationOptions,
 } from '../data/intakeModel.js';
 
 // Mirrors the real onboarding form's one-question-per-step wizard from
@@ -110,11 +115,11 @@ function AvoidMustHave({ avoidItems, avoidSelected, wantItems, wantSelected, onT
         <button type="button" role="tab" aria-selected={!isAvoid} className={`is-want${!isAvoid ? ' is-on' : ''}`} onClick={() => setTab('want')}>Should be{wantSelected.length > 0 && <span>{wantSelected.length}</span>}</button>
       </div>
       <div className="ip-avoid-panel" role="tabpanel" key={tab}>
-        <ChipList items={isAvoid ? avoidItems : wantItems} selected={isAvoid ? avoidSelected : wantSelected} onToggle={onToggle} compact />
-        <AddOwn placeholder={isAvoid ? 'Add something to leave out' : 'Add a must-have'} onAdd={isAvoid ? onAddAvoid : onAddWant} />
+        <ChipList items={isAvoid ? avoidItems : wantItems} selected={isAvoid ? avoidSelected : wantSelected} onToggle={onToggle} />
       </div>
-      <div className="ip-avoid-none">
-        <ChipList items={['No preference']} selected={noPref ? ['No preference'] : []} onToggle={onNoPref} compact />
+      <div className="ip-avoid-foot">
+        <AddOwn key={tab} placeholder={isAvoid ? 'Add something to leave out' : 'Add a must-have'} onAdd={isAvoid ? onAddAvoid : onAddWant} />
+        <ChipList items={['No preference']} selected={noPref ? ['No preference'] : []} onToggle={onNoPref} muted={['No preference']} />
       </div>
     </div>
   );
@@ -546,9 +551,6 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const [infoOpen, setInfoOpen] = useState(null);
   // Hold a word (e.g. "Perimenopause", "PMDD") for a plain-language definition.
   const [glossary, setGlossary] = useState(null);
-  // One-time tip: people in testing didn't know answers can be held.
-  const [holdTipSeen, setHoldTipSeen] = useState(() => { try { return localStorage.getItem('ayna_hold_tip_seen_v1') === '1'; } catch { return false; } });
-  const dismissHoldTip = () => { setHoldTipSeen(true); try { localStorage.setItem('ayna_hold_tip_seen_v1', '1'); } catch { /* storage unavailable */ } };
   const holdRef = useRef({ timer: null, fired: false });
   const startHold = (event) => {
     const el = event.target.closest('button, label, [role="radio"]');
@@ -558,7 +560,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     clearTimeout(holdRef.current.timer);
     holdRef.current.fired = false;
     if (!hit) return;
-    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); dismissHoldTip(); navigator.vibrate?.(8); }, 450);
+    holdRef.current.timer = setTimeout(() => { holdRef.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); navigator.vibrate?.(8); }, 450);
   };
   const endHold = () => clearTimeout(holdRef.current.timer);
   const swallowClickAfterHold = (event) => {
@@ -637,13 +639,13 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         <SearchableChoices items={lifeStageOptions} selected={selectedLifeStages} onToggle={toggleLifeStage} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('lifeStageSelections', value)} placeholder="Search life stages" layout="grid" labels={LIFE_STAGE_LABELS} glyphs={LIFE_STAGE_GLYPHS} searchable={false} />
         {selectedLifeStages.includes('I am postpartum') && (
           <div className="ip-followup">
-            <strong>Breastfeeding right now?</strong>
-            <ChipList items={['Yes', 'No', 'Prefer not to say']} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} compact />
+            <strong>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</strong>
+            <ChipList items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} compact />
           </div>
         )}
         {selectedLifeStages.includes('I am in perimenopause') && (
           <div className="ip-followup">
-            <strong>When was your last period?</strong>
+            <strong>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</strong>
             <ChipList items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} compact />
           </div>
         )}
@@ -659,7 +661,18 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     if (step.type === 'flow') return <LevelMeter options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} shape="drop" />;
     if (step.type === 'pain') return <LevelMeter options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} shape="bar" />;
     if (step.type === 'utiFrequency') return <TrackLine options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
-    if (step.type === 'postpartumTiming') return <TrackLine options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />;
+    if (step.type === 'ttcDuration') return <TrackLine options={ttcDurationOptions(intake)} value={intake.ttcDuration} onChange={(v) => set('ttcDuration', v)} />;
+    if (step.type === 'postpartumTiming') return (
+      <>
+        <TrackLine options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />
+        {asksBreastfeedingOnTiming(intake) && (
+          <div className="ip-followup">
+            <strong>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</strong>
+            <ChipList items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} compact />
+          </div>
+        )}
+      </>
+    );
     if (step.type === 'pregnancyTrimester') return <TrackLine options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
 
     if (step.type === 'conditions') {
@@ -730,7 +743,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         <>
           <PriceStacks options={PRICE_RANGES.filter((opt) => opt !== notAFactor)} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
           <ChipList items={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} compact />
-          <DotScale label="How often do you spend $75+?" options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
+          <DotScale label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
         </>
       );
     }
@@ -793,7 +806,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const onStoryTouchEnd = (event) => {
     const start = storyTouch.current;
     storyTouch.current = null;
-    if (!start || start.y == null || start.target?.closest('input, textarea, select, button, .ayna-intake-timeline, [role="slider"], [contenteditable]')) return;
+    if (!start || start.y == null || start.target?.closest('input, textarea, select, button, .ayna-intake-timeline, [role="slider"], [contenteditable], .qi')) return;
     const deltaX = start.x - event.changedTouches[0]?.clientX;
     const delta = start.y - event.changedTouches[0]?.clientY;
     if (Math.abs(deltaX) > 75 && Math.abs(deltaX) > Math.abs(delta) * 1.3) { storyAdvance(Math.sign(deltaX)); return; }
@@ -803,7 +816,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     if (delta < 0 && body.scrollTop <= 8) storyAdvance(-1);
   };
   const onStoryWheel = (event) => {
-    if (event.target.closest('input, textarea, select, [role="listbox"]')) return;
+    if (event.target.closest('input, textarea, select, [role="listbox"], .qi')) return;
     const body = event.currentTarget.querySelector('.ip-body');
     if (!body) return;
     const atEnd = event.deltaY > 0 && body.scrollTop + body.clientHeight >= body.scrollHeight - 8;
@@ -843,21 +856,19 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         <div className="ip-question" key={`q-${step.id}`}>
           <div className="ip-label-row">
             {scene.label && <span className={`ip-label ip-label--${step.section}`}>{scene.label}</span>}
+            {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
             {step.info && <button type="button" className="ip-info" aria-label={`About this question: ${step.title}`} aria-expanded={infoOpen === step.id} onClick={() => setInfoOpen((v) => v === step.id ? null : step.id)}>i</button>}
           </div>
           <h1 className="ip-title">{step.title}</h1>
           {step.subtitle && <p className="ip-subtitle">{step.subtitle}</p>}
           {step.info && infoOpen === step.id && <p className="ip-info-pop" role="note">{step.info}</p>}
-          {flaggedStepIds.has(step.id) && <span className="ip-flag">Not answered yet</span>}
-          {!holdTipSeen && !['age', 'zip'].includes(step.type) && (
-            <p className="ip-holdtip" role="note">Hold any answer for its meaning.<button type="button" onClick={dismissHoldTip} aria-label="Got it">Got it</button></p>
-          )}
           <span className="ip-spacer is-top" aria-hidden="true" />
           <div className="ip-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold} onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallowClickAfterHold} onContextMenu={(e) => { if (holdRef.current.fired) e.preventDefault(); }}>{renderBody()}</div>
           <span className="ip-spacer is-bottom" aria-hidden="true" />
         </div>
       </div>
 
+      <QuizIntro variant="app" />
       {glossary && <div className="ip-glossary" role="dialog" aria-label={glossary.term} onClick={() => setGlossary(null)}>
         <div className="ip-glossary-card" onClick={(e) => e.stopPropagation()}>
           <strong>{glossary.term}</strong>

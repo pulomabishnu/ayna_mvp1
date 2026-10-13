@@ -1,6 +1,6 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
 
-export const MIN_ECOSYSTEM_MATCH_PERCENT = 30;
+export const MIN_ECOSYSTEM_MATCH_PERCENT = 50;
 export function recommendationCount(value) {
   return [1, 2, 3, 5].includes(Number(value)) ? Number(value) : 3;
 }
@@ -14,7 +14,7 @@ export function selectEcosystemProducts(products, profile, count, score = getPro
     .filter(({ details }) => details.eligible !== false && details.matchStatus === 'scored' && details.healthMatch > 0 && details.percent >= MIN_ECOSYSTEM_MATCH_PERCENT)
     .sort((a, b) => b.details.percent - a.details.percent)
     .filter(({ product }) => {
-      const area = product.areaKey || 'other';
+      const area = product.needId || product.areaKey || 'other';
       const taken = counts.get(area) || 0;
       if (seen.has(product.id) || taken >= recommendationCount(count)) return false;
       seen.add(product.id);

@@ -263,6 +263,13 @@ export const OPTION_INFO_BY_STEP = {
     'Not sure': 'Something feels off but you are not sure. We will share when to get care.',
     'No': 'Nothing new or quickly getting worse.',
   },
+  ttcDuration: {
+    'Not trying yet': 'You are planning ahead or tracking, but not trying to get pregnant right now.',
+    'Less than 6 months': 'You started trying within the last 6 months.',
+    '6–12 months': 'You have been trying for 6 months to a year. If you are 35 or older, this is when clinicians usually suggest a fertility check.',
+    'More than 12 months': 'Over a year of trying. Clinicians usually suggest a fertility check at this point.',
+    'Prefer not to say': 'You would rather not share this.',
+  },
   largePurchase: {
     'Never': 'You never spend $75 or more on one health product.',
     'Rarely': 'Once in a while, maybe once a year or less.',

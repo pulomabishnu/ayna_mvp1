@@ -18,6 +18,7 @@ import '../community-play.css';
 import { displayName } from '../utils/displayName.js';
 
 const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'] ];
+const POST_KINDS = { question: 'Question', review: 'Review', post: 'Post' };
 const timeLabel = (value) => value ? new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
 
 function CommunityIcon({ name, size = 20 }) {
@@ -159,6 +160,15 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
     document.addEventListener('keydown', handleKey);
     return () => { document.removeEventListener('keydown', handleKey); if (previous?.isConnected) previous.focus(); };
   }, [sheetOpen]);
+
+  useEffect(() => {
+    if (!postMenuId) return undefined;
+    const onDown = (event) => { if (!event.target.closest?.('.am-post-menu-wrap')) setPostMenuId(null); };
+    const onKey = (event) => { if (event.key === 'Escape') setPostMenuId(null); };
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('pointerdown', onDown); document.removeEventListener('keydown', onKey); };
+  }, [postMenuId]);
 
   const hashtagMatch = body.match(/(?:^|\s)#([A-Za-z][\w-]*)?$/);
   const hashtagSuggestions = hashtagMatch ? suggestHashtags(hashtagMatch[1] || '', 6) : [];
@@ -465,30 +475,32 @@ export default function CommunityScreen({ authUser, products = [], quizAnswers, 
   }, [search, supabase]);
 
   const renderPost = (post) => {
-    const authorName = post.is_anonymous || !post.author_id ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
-    const postKind = post.kind === 'question' ? 'Question' : post.kind === 'review' ? 'Review' : null;
-    return <article className="am-card am-post-card" key={post.id}>
+    const anon = post.is_anonymous || !post.author_id;
+    const authorName = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
+    const kind = POST_KINDS[post.kind] ? post.kind : 'post';
+    const helpful = Number(post.helpful_count) || 0;
+    const replies = Number(post.comment_count) || 0;
+    return <article className={`am-card am-post-card is-${kind}`} key={post.id}>
       <div className="am-post-head">
-        <div className="am-author">
-          <CommunityAvatar name={authorName} path={!post.is_anonymous && post.author_id ? profileById.get(post.author_id)?.avatar_url : null} anonymous={post.is_anonymous || !post.author_id} />
-          <div className="am-author-copy">
-            {post.is_anonymous || !post.author_username ? <strong>{authorName}</strong> : <button type="button" onClick={() => openProfile(post.author_username)}>{authorName}</button>}
-            <small>{timeLabel(post.created_at)}{postKind ? ` · ${postKind}` : ''}</small>
-          </div>
+        <CommunityAvatar name={authorName} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
+        <div className="am-author-copy">
+          {anon || !post.author_username ? <strong>{authorName}</strong> : <button type="button" onClick={() => openProfile(post.author_username)}>{authorName}</button>}
+          <small>{timeLabel(post.created_at)}</small>
         </div>
+        <span className={`am-tag is-${kind}`}>{POST_KINDS[kind]}</span>
         <div className="am-post-menu-wrap">
-          <button type="button" className="am-icon-button" aria-label={`More options for ${authorName}'s post`} aria-expanded={postMenuId === post.id} onClick={() => setPostMenuId((id) => id === post.id ? null : post.id)}><CommunityIcon name="more" /></button>
+          <button type="button" className="am-post-more" aria-label={`More options for ${authorName}'s post`} aria-expanded={postMenuId === post.id} onClick={() => setPostMenuId((id) => id === post.id ? null : post.id)}><CommunityIcon name="more" size={18} /></button>
           {postMenuId === post.id && <div className="am-post-menu"><button type="button" onClick={() => { setPostMenuId(null); if (post.is_mine) setDeleteTarget(post); else setReportPost(post); }}>{post.is_mine ? 'Delete post' : 'Report post'}</button></div>}
         </div>
       </div>
+      {post.kind === 'review' && <span className="am-post-stars" role="img" aria-label={`Rated ${post.rating || 0} out of 5`}>{[1, 2, 3, 4, 5].map((n) => <svg key={n} viewBox="0 0 24 24" aria-hidden="true" className={n <= (post.rating || 0) ? 'is-on' : ''}><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z" /></svg>)}</span>}
       <button type="button" className="am-postbody" onClick={() => openPost(post)}>{post.body}</button>
       {(post.media || []).length > 0 && <button type="button" className="am-photo-grid" onClick={() => openPost(post)} aria-label="Open post photos">{post.media.slice(0, 4).map((photo) => <img key={photo.path} src={publicMediaUrl(photo.path)} alt="" loading="lazy" />)}</button>}
-      {post.kind === 'review' && <small className="am-kind">Rated {post.rating || 0} out of 5</small>}
       {postProductIds(post).slice(0, 1).map((id) => <ProductMention key={id} productId={id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />)}
       <div className="am-actions">
-        <button type="button" aria-pressed={Boolean(post.viewer_found_helpful)} onClick={() => togglePost(post, 'helpful')}><CommunityIcon name="heart" /><span>{post.kind === 'post' ? 'Like' : 'Helpful'}{post.helpful_count ? ` ${post.helpful_count}` : ''}</span></button>
-        <button type="button" onClick={() => openPost(post)}><CommunityIcon name="comment" /><span>Reply{post.comment_count ? ` ${post.comment_count}` : ''}</span></button>
-        <button type="button" aria-pressed={Boolean(post.viewer_saved)} onClick={() => togglePost(post, 'save')}><CommunityIcon name="bookmark" /><span>{post.viewer_saved ? 'Saved' : 'Save'}</span></button>
+        <button type="button" aria-pressed={Boolean(post.viewer_found_helpful)} onClick={() => togglePost(post, 'helpful')}><CommunityIcon name="heart" size={17} /><span>{post.kind === 'post' ? 'Like' : 'Helpful'}{helpful ? ` ${helpful}` : ''}</span></button>
+        <button type="button" onClick={() => openPost(post)}><CommunityIcon name="comment" size={17} /><span>Reply{replies ? ` ${replies}` : ''}</span></button>
+        <button type="button" aria-pressed={Boolean(post.viewer_saved)} onClick={() => togglePost(post, 'save')}><CommunityIcon name="bookmark" size={17} /><span>{post.viewer_saved ? 'Saved' : 'Save'}</span></button>
       </div>
     </article>;
   };

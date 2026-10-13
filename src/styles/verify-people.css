@@ -13,5 +13,3 @@
 .app-container main:has(> .wq-page) + .site-footer { margin-top: 0 !important; }
 
 /* Quiz hold tip: "Got it" stays on one line at 360px. */
-.app-container .wq-holdtip button { flex: none; white-space: nowrap; }
-@media (max-width: 480px) { .app-container .wq-holdtip { border-radius: 20px; } }

@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { AskContext } from '../askContext.js';
 import { HEART_PATH } from '../utils/heart.js';
+import '../../styles/flow.css';
 
 export default function MobileHeader({ onOpenSaved, onBack }) {
   const openAsk = useContext(AskContext);
@@ -12,8 +13,9 @@ export default function MobileHeader({ onOpenSaved, onBack }) {
       <span className="ayna-shared-wordmark">ayna</span>
     </div>
     <div className="ay-header-actions">
-    {openAsk && <button type="button" onClick={openAsk} aria-label="Ask ayna" className="ayna-shared-header-action ay-header-ask">
-      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v12H9l-5 3V5Z" /><path d="M10 9.5a2 2 0 1 1 3.4 1.4c-.9.6-1.4 1-1.4 2.1M12 15h.01" /></svg>
+    {openAsk && <button type="button" onClick={openAsk} aria-label="Ask ayna" className="ay-header-ask ay-header-ask-pill">
+      <span className="ay-header-ask-orb" aria-hidden="true" />
+      Ask ayna
     </button>}
     {onOpenSaved && <button type="button" onClick={onOpenSaved} aria-label="Saved" className="ayna-shared-header-action">
       <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>

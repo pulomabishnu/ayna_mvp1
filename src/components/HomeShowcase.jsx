@@ -1,68 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import { ALL_PRODUCTS, itemMatchesMacroGroup } from '../data/products';
-import { isPlaceholderProductImage } from '../utils/resolveProductImage';
+import { NEEDS, TONES, productsForNeed } from './landingNeeds';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import './HomeShowcase.css';
 
-const hasPhoto = (p) => p?.image && !isPlaceholderProductImage(p.image, p.type === 'digital') && p.type !== 'digital' && p.category !== 'telehealth';
-
-/* ------------------------------------------------------------------ */
-/* Hero mosaic: real products floating in a loose grid (logged out).   */
-/* ------------------------------------------------------------------ */
-const MOSAIC_PICKS = ['period', 'intimate', 'hormones', 'pelvic', 'fertility', 'postpartum', 'skin', 'sleep-stress'];
-
-export function ProductMosaic({ onOpenProduct }) {
-  const items = useMemo(() => {
-    const used = new Set();
-    const out = [];
-    for (const g of MOSAIC_PICKS) {
-      const p = ALL_PRODUCTS.find((x) => hasPhoto(x) && !used.has(x.id) && itemMatchesMacroGroup(x, g));
-      if (p) { used.add(p.id); out.push(p); }
-      if (out.length === 6) break;
-    }
-    return out;
-  }, []);
-  if (items.length < 3) return null;
-  return (
-    <div className="hs-mosaic" aria-label="A few products on ayna">
-      {items.map((p, i) => (
-        <a
-          key={p.id}
-          className={`hs-mosaic__card is-${i % 6}`}
-          href={productHref(p.id)}
-          onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(p); }}
-          style={{ '--i': i }}
-        >
-          <span className="hs-mosaic__img"><img src={p.image} alt="" loading={i < 3 ? 'eager' : 'lazy'} onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} /></span>
-          <span className="hs-mosaic__name">{p.name}</span>
-        </a>
-      ))}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Explore by need: one card per health need with a real product.     */
-/* ------------------------------------------------------------------ */
-const NEEDS = [
-  { id: 'period', label: 'Period care', group: 'period' },
-  { id: 'pcos', label: 'PCOS', keywords: ['pcos', 'inositol', 'spearmint'] },
-  { id: 'vaginal', label: 'Vaginal health', group: 'intimate' },
-  { id: 'uti', label: 'UTI support', keywords: ['uti', 'urinary', 'cranberry'] },
-  { id: 'fertility', label: 'Fertility', group: 'fertility' },
-  { id: 'pelvic', label: 'Pelvic health', group: 'pelvic' },
-  { id: 'menopause', label: 'Menopause', group: 'menopause' },
-  { id: 'postpartum', label: 'Postpartum', group: 'postpartum' },
-];
-const TONES = ['pink', 'mint', 'butter', 'peri'];
-
-function textOf(p) {
-  return [p?.name, p?.brand, p?.category, p?.summary, ...(p?.tags || []), ...(p?.healthFunctions || [])].filter(Boolean).join(' ').toLowerCase();
-}
-function productsForNeed(need) {
-  return ALL_PRODUCTS.filter((p) => hasPhoto(p) && (need.group ? itemMatchesMacroGroup(p, need.group) : need.keywords.some((k) => textOf(p).includes(k))));
-}
-
+/* Explore by need: one card per health need with a real product. */
 export function ExploreByNeed({ onExplore, onOpenProduct, limit = 6 }) {
   const needs = useMemo(() => NEEDS.map((n) => ({ ...n, pool: productsForNeed(n) })).filter((n) => n.pool.length > 0).slice(0, limit), [limit]);
   const [turn, setTurn] = useState(0);

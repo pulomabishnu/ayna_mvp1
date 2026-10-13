@@ -122,3 +122,38 @@ describe('scoreProduct — FSA/HSA prioritization', () => {
     expect(scoreProduct(eligible, intake, concern)).toBeGreaterThan(scoreProduct({ ...relevant }, intake, concern));
   });
 });
+
+// Step 2: tiers are built on the matching engine (src/matching).
+describe('generateTieredRecommendations — matching engine', () => {
+  it('scores a concern only on the needs she selected inside it, and every tier clears the 50 bar', () => {
+    const intake = {
+      supportSelections: ['Heavy periods', 'Cramps or period pain'],
+      primaryConcerns: ['Period care (pads, tampons, cups, discs, underwear)', 'Cramp and pain relief (devices, supplements, heat)'],
+      periodFlow: 'Very heavy',
+    };
+    const result = generateTieredRecommendations(intake);
+    const period = result.find((r) => r.concern.startsWith('Period care'));
+    expect(period.needIds).toEqual(['period.heavy']);
+    expect(period.tiers.length).toBeGreaterThan(0);
+    period.tiers.forEach((t) => {
+      expect(t.needId).toBe('period.heavy');
+      expect(t.score).toBeGreaterThanOrEqual(50);
+      expect(t.product.category).not.toBe('cramp-relief');
+    });
+    expect(period.notes.some((n) => /Very heavy periods/.test(n))).toBe(true);
+    const cramps = result.find((r) => r.concern.startsWith('Cramp'));
+    expect(cramps.needIds).toEqual(['pain.menstrual_cramp']);
+  });
+
+  it('returns fewer tiers instead of weak ones', () => {
+    const result = generateTieredRecommendations({ supportSelections: ['Joint aches'], primaryConcerns: ['Perimenopause and menopause support'] });
+    expect(result[0].tiers.every((t) => t.score >= 50)).toBe(true);
+    expect(result[0].tiers.length).toBeLessThan(5);
+  });
+
+  it('never tiers an excluded product', () => {
+    const result = generateTieredRecommendations({ supportSelections: ['Cramps or period pain'], primaryConcerns: ['Cramp and pain relief (devices, supplements, heat)'], avoidRepeat: ['ThermaCare'] });
+    const ids = result[0].tiers.flatMap((t) => [t.product.id, ...t.alternatives.map((a) => a.id)]);
+    expect(ids.some((id) => /thermacare/.test(id))).toBe(false);
+  });
+});

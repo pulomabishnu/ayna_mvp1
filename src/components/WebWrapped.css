@@ -43,9 +43,15 @@
 .wwr-card ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .wwr-card li { display: flex; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid rgba(29, 26, 43, .12); font: 600 14px/1.3 'Poppins', sans-serif; }
 .wwr-card li b { text-align: right; }
-.wwr-actions { display: grid; gap: 10px; justify-items: center; }
+.wwr-actions { display: grid; gap: 16px; }
 .wwr-cta { width: 100%; min-height: 54px; border: 2px solid var(--ink); border-radius: 99px; background: var(--ink); color: var(--paper); font: 700 16px/1 'Poppins', sans-serif; }
-.wwr-link { padding: 0; border: 0; background: none; color: var(--ink); font: 700 14px/1 'Poppins', sans-serif; text-decoration: underline; text-underline-offset: 4px; }
-.wwr-actions small { font: 600 12px/1 'Poppins', sans-serif; }
+.wwr-secondary { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wwr-link { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 16px; border: 2px solid var(--ink); border-radius: 99px; background: transparent; color: var(--ink); font: 600 14px/1 'Poppins', sans-serif; white-space: nowrap; cursor: pointer; transition: transform .14s ease, background-color .14s; }
+.wwr-link:hover { background: color-mix(in srgb, var(--paper) 55%, transparent); }
+.wwr-link:active { transform: scale(.97); }
+.wwr-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.wwr-toast { position: absolute; left: 0; right: 0; bottom: 24px; display: flex; justify-content: center; pointer-events: none; z-index: 5; }
+.wwr-toast span { padding: 10px 16px; border: 2px solid var(--ink); border-radius: 99px; background: var(--butter); color: var(--ink); font: 700 13px/1 'Poppins', sans-serif; box-shadow: 3px 3px 0 var(--ink); animation: wwr-toast .24s ease both; }
+@keyframes wwr-toast { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .wwr-hint { margin: 0; text-align: center; font: 600 12px/1 'Poppins', sans-serif; opacity: .7; }
 @media (prefers-reduced-motion: reduce) { .wwr-stage, .wwr-ranks li, .wwr-facts div, .wwr-tile { animation: none; } }

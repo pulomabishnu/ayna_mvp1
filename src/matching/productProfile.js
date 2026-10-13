@@ -37,6 +37,18 @@ const NEGATED_PHRASES = [
   /stress\s+(?:(?:or|and)\s+urge\s+)?(?:bladder\s+)?(?:incontinence|leaks?)/g,
 ];
 
+// Sentences that deny a benefit ("not established as a treatment for PCOS",
+// "PCOS alone does not establish a need", "evidence ... is limited") must not
+// count as a mention of that condition.
+const NEGATED_CLAIM = [
+  /\b(not|no|does not|doesn't|isn't|is not|cannot|insufficient)\b[^.]*\b(treat\w*|establish\w*|evidence|support|benefit|need|improv\w*|promise|effective)\b/,
+  /\b(treat\w*|establish\w*|evidence|support|benefit|improv\w*)\b[^.]*\b(not established|is limited|are limited|insufficient|not conclusive)\b/,
+  /\bshould not be treated as\b/,
+];
+function claimText(text) {
+  return text.split(/(?<=[.!?])\s+/).filter((sentence) => !NEGATED_CLAIM.some((re) => re.test(sentence))).join(' ');
+}
+
 /** Lowercased fields used by the rule predicates. */
 function facts(product) {
   const tags = new Set((product.tags || []).map((t) => String(t).toLowerCase()));
@@ -46,7 +58,11 @@ function facts(product) {
     .filter(Boolean).join(' ').toLowerCase();
   const text = NEGATED_PHRASES.reduce((t, re) => t.replace(re, ' '), rawText);
   const priceText = String(product.price || '').toLowerCase();
+  const claims = claimText(text);
   return {
+    // tc: text with benefit-denying sentences removed (for "mentions X" rules).
+    tc: (re) => re.test(claims),
+    limited: product.evidenceStrength === 'limited',
     id: product.id, cat: String(product.category || '').toLowerCase(), type: String(product.type || '').toLowerCase(),
     tags, hf, name, text,
     has: (t) => tags.has(t), fn: (h) => hf.has(h), n: (re) => re.test(name), t: (re) => re.test(text),
@@ -153,9 +169,9 @@ export const RELEVANCE_RULES = [
   { id: 'pcos_tagged', why: 'Catalog marks this for PCOS.',
     when: (f) => f.has('pcos'), set: (f) => ({ 'condition_support.pcos': f.n(/inositol/) ? STRONG : SECONDARY, 'hormonal.general': ADJACENT }) },
   { id: 'pcos_mentioned', why: 'Mentions PCOS without being made for it.',
-    when: (f) => !f.has('pcos') && f.t(/\bpcos\b/), set: { 'condition_support.pcos': ADJACENT } },
+    when: (f) => !f.has('pcos') && f.tc(/\bpcos\b/), set: { 'condition_support.pcos': ADJACENT } },
   { id: 'androgen_mention', why: 'Mentions androgen or excess hair research.',
-    when: (f) => f.t(/androgen|hirsut/), set: { 'hair.excess': ADJACENT } },
+    when: (f) => f.tc(/androgen|hirsut/), set: { 'hair.excess': ADJACENT } },
   { id: 'endo_fibroid_clinic', why: 'Virtual clinic focused on endometriosis, fibroids and heavy periods.',
     when: (f) => isCareService(f) && f.t(/endometriosis|fibroid/),
     set: (f) => ({ ...(f.t(/endometriosis/) ? { 'condition_support.endometriosis': DIRECT } : {}),
@@ -355,6 +371,10 @@ export const RELEVANCE_RULES = [
     when: (f) => f.fn('sleep-energy') && !f.has('sleep'), set: { 'energy.fatigue': ADJACENT } },
   { id: 'accessory_cap', why: 'Accessories never rank above the product they belong to.',
     when: (f) => f.has('accessory'), set: {}, cap: { '*': SECONDARY } },
+  // Spec: 0.80 means strong evidence or relevance. A product the catalog marks
+  // as having limited evidence is at most a useful secondary option.
+  { id: 'limited_evidence_cap', why: 'Evidence for this product is limited, so it is at most a secondary option.',
+    when: (f) => f.limited, set: {}, cap: { '*': SECONDARY } },
 ];
 
 // ─── Menstrual product characteristics ──────────────────────────────────────
@@ -717,6 +737,20 @@ export function clearProductProfileCache() { CACHE.clear(); }
  * Build (and cache by product id) the structured product profile.
  * @param {object} product raw catalog product
  */
+// CONFIRMATION-FIRST PRODUCTS (clinician review): eligible only when the
+// condition they treat has been confirmed. A 45 mg+ iron supplement is above
+// the adult daily upper limit; fatigue or heavy periods do not establish iron
+// deficiency.
+export const HIGH_DOSE_IRON_MG = 45;
+function requiresConditionFor(product, f) {
+  if (f.cat !== 'supplement') return null;
+  const text = `${product.name || ''} ${product.summary || ''}`;
+  if (!/\biron\b/i.test(product.name || '')) return null;
+  const mg = [...text.matchAll(/(\d{2,3})\s*mg/gi)].map((m) => Number(m[1]));
+  if (!mg.some((x) => x >= HIGH_DOSE_IRON_MG)) return null;
+  return { condition: 'anemia', text: 'High-dose iron is best considered after iron deficiency is confirmed with a clinician or lab test' };
+}
+
 export function buildProductProfile(product) {
   if (!product) return null;
   const key = product.id ? `${product.id}|${product.name || ''}` : null;
@@ -805,7 +839,10 @@ export function buildProductProfile(product) {
       versatile: f.cat === 'period-underwear' && f.t(/multiple absorbency|absorbency levels|modular|inserts/),
     } : null,
     price,
-    fsa_hsa: product.fsaHsaEligible === true ? 'yes' : product.fsaHsaEligible === false ? 'no' : 'unknown',
+    fsa_hsa: [product.fsaHsaEligible, product.fsa_hsa_eligible, product.fsaEligible, product.fsa_eligible, product.hsaEligible, product.hsa_eligible].some((v) => v === true) ? 'yes'
+      : product.fsaHsaEligible === false ? 'no' : 'unknown',
+    internal: product.internal === true || ['tampon', 'cup', 'disc'].includes(f.cat),
+    requires_condition: requiresConditionFor(product, f),
     safety: {
       ...Object.fromEntries(Object.entries(safety).map(([k, v]) => [k, v.status])),
       details: safety,

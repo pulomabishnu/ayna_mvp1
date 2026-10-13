@@ -4,14 +4,15 @@ import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { selectLifeStage } from '../utils/intakeSelections.js';
 import { defineOption } from '../mobile/data/glossary.js';
 import {
-  ALLERGIES, AVOID_GROUPS, AVOID_INGREDIENTS, AVOID_PAIRS, BRAND_OPENNESS, BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES,
-  CONDITIONS, EMPTY, FREE_TEXT_PROMPTS, FSA_HSA, INTAKE_DRAFT_KEY, LARGE_PURCHASE_FREQUENCY, LIFE_STAGES,
+  ALLERGIES, AVOID_GROUPS, AVOID_INGREDIENTS, AVOID_PAIRS, BRAND_OPENNESS, BRAND_SUGGESTIONS, BREASTFEEDING_STATUS, CATALOG_PRODUCT_NAMES,
+  CONDITIONS, EMPTY, FOLLOWUP_QUESTIONS, FREE_TEXT_PROMPTS, FSA_HSA, INTAKE_DRAFT_KEY, LARGE_PURCHASE_FREQUENCY, LIFE_STAGES,
   LIFE_STAGE_LABELS, LIFE_STAGE_VALUE_BY_LABEL, MEDICATION_SUGGESTIONS, MIDLIFE_LIFE_STAGES, PERIMENOPAUSE_LAST_PERIOD,
   PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
   PRODUCT_OR_BRAND_SUGGESTIONS, STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot, getIntakeSteps,
   getLifeStages, isMinorAge, normalizeSuggestion, rankedSuggestions, readIntakeDraft, reconstructIntakeFromSnapshot,
-  requiredReady,
+  requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions,
 } from '../mobile/data/intakeModel.js';
+import QuizIntro from '../mobile/screens/intake/QuizIntro.jsx';
 import './WebIntake.css';
 import '../styles/audit-qya.css';
 
@@ -241,6 +242,7 @@ function stepAnswered(id, intake) {
     case 'periodFlow': return has(intake.periodFlow);
     case 'periodPain': return has(intake.periodPain);
     case 'utiFrequency': return has(intake.utiFrequency);
+    case 'ttcDuration': return has(intake.ttcDuration);
     case 'postpartumTiming': return has(intake.postpartumTiming);
     case 'pregnancyTrimester': return has(intake.pregnancyTrimester);
     case 'conditions': case 'allergies': case 'medications': case 'safety': return requiredReady(id, intake);
@@ -288,8 +290,6 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const [search, setSearch] = useState('');
   const [infoOpen, setInfoOpen] = useState(false);
   const [glossary, setGlossary] = useState(null);
-  const [holdTipSeen, setHoldTipSeen] = useState(() => { try { return localStorage.getItem('ayna_hold_tip_seen_v1') === '1'; } catch { return false; } });
-  const dismissHoldTip = () => { setHoldTipSeen(true); try { localStorage.setItem('ayna_hold_tip_seen_v1', '1'); } catch { /* storage unavailable */ } };
   // Escape closes the meaning card, like every other dialog on the site.
   useEffect(() => {
     if (!glossary) return undefined;
@@ -297,15 +297,6 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [glossary]);
-  // One-time tip: once it has been shown on a step, leaving that step counts as seen.
-  const tipStepRef = useRef(null);
-  useEffect(() => {
-    if (tipStepRef.current && tipStepRef.current !== stepId) {
-      tipStepRef.current = null;
-      setHoldTipSeen(true);
-      try { localStorage.setItem('ayna_hold_tip_seen_v1', '1'); } catch { /* storage unavailable */ }
-    }
-  }, [stepId]);
   const [minorGate, setMinorGate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
@@ -391,7 +382,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     clearTimeout(hold.current.timer);
     hold.current.fired = false;
     if (!hit) return;
-    hold.current.timer = setTimeout(() => { hold.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); dismissHoldTip(); }, 450);
+    hold.current.timer = setTimeout(() => { hold.current.fired = true; setGlossary({ ...hit, term: hit.term === value ? raw : hit.term }); }, 450);
   };
   const endHold = () => clearTimeout(hold.current.timer);
   const swallow = (e) => { if (hold.current.fired) { e.preventDefault(); e.stopPropagation(); hold.current.fired = false; } };
@@ -404,7 +395,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     const value = LIFE_STAGE_VALUE_BY_LABEL[text] || item;
     const hit = defineOption(value, type);
     if (!hit) return null;
-    return (e) => { e.stopPropagation(); setGlossary({ ...hit, term: hit.term === value ? text : hit.term }); dismissHoldTip(); };
+    return (e) => { e.stopPropagation(); setGlossary({ ...hit, term: hit.term === value ? text : hit.term }); };
   };
 
   const body = () => {
@@ -415,8 +406,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         <AgeField value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />
         <p className="wq-sub-q" id="wq-stage-q">Your life stage <small>Pick every stage that fits</small></p>
         <Tiles label="Your life stage" onDefine={defineTile('lifeStage')} items={lifeStageOptions} selected={lifeStages} labels={LIFE_STAGE_LABELS} onToggle={(v) => setIntake((prev) => { const n = selectLifeStage(getLifeStages(prev), v); return { ...prev, lifeStageSelections: n, lifeStage: n[0] || '' }; })} />
-        {lifeStages.includes('I am postpartum') && <div className="wq-follow"><b>Breastfeeding right now?</b><Chips small single items={['Yes', 'No', 'Prefer not to say']} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} /></div>}
-        {lifeStages.includes('I am in perimenopause') && <div className="wq-follow"><b>When was your last period?</b><Chips small single items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} /></div>}
+        {lifeStages.includes('I am postpartum') && <div className="wq-follow"><b>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</b><Chips small single items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} /></div>}
+        {lifeStages.includes('I am in perimenopause') && <div className="wq-follow"><b>{FOLLOWUP_QUESTIONS.perimenopauseLastPeriod}</b><Chips small single items={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} /></div>}
       </>;
       case 'zip': return <input className="wq-input wq-zip" inputMode="numeric" value={intake.zipcode} onChange={(e) => set('zipcode', e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="e.g. 10027" aria-label="ZIP code" />;
       case 'support': {
@@ -455,7 +446,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       case 'flow': return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} />;
       case 'pain': return <Scale options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} />;
       case 'utiFrequency': return <Rows options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
-      case 'postpartumTiming': return <Rows options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />;
+      case 'ttcDuration': return <Rows options={ttcDurationOptions(intake)} value={intake.ttcDuration} onChange={(v) => set('ttcDuration', v)} />;
+      case 'postpartumTiming': return <>
+        <Rows options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />
+        {asksBreastfeedingOnTiming(intake) && <div className="wq-follow"><b>{FOLLOWUP_QUESTIONS.breastfeedingStatus}</b><Chips small single items={BREASTFEEDING_STATUS} selected={intake.breastfeedingStatus ? [intake.breastfeedingStatus] : []} onToggle={(v) => set('breastfeedingStatus', v)} /></div>}
+      </>;
       case 'pregnancyTrimester': return <Rows options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
       case 'conditions': {
         const items = ['None that I know of', 'Prefer not to say', ...CONDITIONS.filter((i) => !['None that I know of', 'Prefer not to say'].includes(i))];
@@ -497,7 +492,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         const notAFactor = 'Price is not a major factor for me';
         return <>
           <Chips items={PRICE_RANGES} selected={sel} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
-          <div className="wq-follow"><b>How often do you spend $75+?</b><Chips small single items={LARGE_PURCHASE_FREQUENCY} selected={intake.largePurchaseFrequency ? [intake.largePurchaseFrequency] : []} onToggle={(v) => set('largePurchaseFrequency', v)} /></div>
+          <div className="wq-follow"><b>{FOLLOWUP_QUESTIONS.largePurchaseFrequency}</b><Chips small single items={LARGE_PURCHASE_FREQUENCY} selected={intake.largePurchaseFrequency ? [intake.largePurchaseFrequency] : []} onToggle={(v) => set('largePurchaseFrequency', v)} /></div>
         </>;
       }
       case 'brand': return <Rows options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
@@ -524,11 +519,14 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
             <button type="button" role="tab" aria-selected={!onAvoid} className={`is-want${!onAvoid ? ' is-on' : ''}`} onClick={() => setAvoidTab('want')}>Should be{wantSel.length > 0 && <span>{wantSel.length}</span>}</button>
           </div>
           <div className="wq-avoid-panel" role="tabpanel" key={avoidTab}>
-            {onAvoid
-              ? <><Chips items={[...AVOID_GROUPS.avoid, ...customAvoid]} selected={avoidSel} onToggle={toggle} /><AddOwn placeholder="Add something to leave out" onAdd={(v) => addCustom('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference'])} /></>
-              : <><Chips items={[...AVOID_GROUPS.want, ...customWant]} selected={wantSel} onToggle={toggle} /><AddOwn placeholder="Add a must-have" onAdd={(v) => addCustom('avoidIngredients', v, ['No preference'])} /></>}
+            <Chips label={onAvoid ? 'Leave out' : 'Should be'} items={onAvoid ? [...AVOID_GROUPS.avoid, ...customAvoid] : [...AVOID_GROUPS.want, ...customWant]} selected={onAvoid ? avoidSel : wantSel} onToggle={toggle} />
           </div>
-          <div className="wq-avoid-none"><Chips small items={['No preference']} selected={sel.includes('No preference') ? ['No preference'] : []} onToggle={toggle} /></div>
+          <div className="wq-avoid-foot">
+            {onAvoid
+              ? <AddOwn key="avoid" placeholder="Add something to leave out" onAdd={(v) => addCustom('avoidIngredients', `No ${v.replace(/^no\s+/i, '')}`, ['No preference'])} />
+              : <AddOwn key="want" placeholder="Add a must-have" onAdd={(v) => addCustom('avoidIngredients', v, ['No preference'])} />}
+            <Chips items={['No preference']} selected={sel.includes('No preference') ? ['No preference'] : []} onToggle={toggle} />
+          </div>
         </div>;
       }
       case 'fsa': return <div className="wq-fsa">{FSA_HSA.map((o) => <button type="button" key={o} className={intake.fsaHsaAnswer === o ? 'is-on' : ''} aria-pressed={intake.fsaHsaAnswer === o} onClick={() => set('fsaHsaAnswer', o)}>{o}</button>)}</div>;
@@ -546,7 +544,6 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
   const ready = requiredReady(step.id, intake) && stepAnswered(step.id, intake) && !minorBlocked;
   const tone = atCheckpoint ? 'mint' : (SECTION_TONES[step.section] || 'peri');
-  const holdable = !['zip', 'textarea', 'trust', 'recommendationCount', 'trustedBrands', 'avoidRepeat', 'products'].includes(step.type);
 
   if (atCheckpoint) {
     return <div className="wq-page tone-mint" data-step="checkpoint">
@@ -587,9 +584,6 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       <h1 className="wq-title">{step.title}</h1>
       {step.subtitle && <p className="wq-subtitle">{step.subtitle}</p>}
       {infoOpen && step.info && <p className="wq-info-pop" role="note">{step.info}</p>}
-      {!holdTipSeen && holdable && (
-        <p className="wq-holdtip" role="note" ref={(el) => { if (el && !tipStepRef.current) tipStepRef.current = stepId; }}>Press and hold any answer to see what it means.<button type="button" onClick={dismissHoldTip}>Got it</button></p>
-      )}
 
       <div className="wq-answer" onPointerDown={startHold} onPointerUp={endHold} onPointerLeave={endHold} onPointerCancel={endHold}
         onPointerMove={(e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }} onClickCapture={swallow}
@@ -604,6 +598,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       </footer>
     </div>
 
+    <QuizIntro variant="web" />
     {glossary && <div className="wq-glossary" role="dialog" aria-label={glossary.term} onClick={() => setGlossary(null)}>
       <div onClick={(e) => e.stopPropagation()}><strong>{glossary.term}</strong><p>{glossary.definition}</p><button type="button" className="wq-btn" onClick={() => setGlossary(null)}>Got it</button></div>
     </div>}

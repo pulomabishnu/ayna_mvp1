@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import '../auth.css';
+import '../../styles/flow.css';
 
 // Same three statements, same order, same required-before-signup gate as
 // src/components/AuthGate.jsx's CONSENT_ITEMS — this is a real compliance
@@ -331,12 +332,18 @@ export default function SigninScreen({
 
           {mode === 'signup' && showEcoSummary && (
             <section className="ay-auth-eco" aria-label="Your Ecosystem">
-              <div className="ay-auth-eco-thumbs" aria-hidden="true">
-                {ecoPicks.slice(0, 3).map((p, i) => <span key={p.id || i} className={`tone-${i}`}><ProductImage product={p} src={p.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /></span>)}
-              </div>
               <div className="ay-auth-eco-copy">
                 <strong>{ecoPicks.length} {ecoPicks.length === 1 ? 'pick' : 'picks'}{topAreas.length ? ` · ${topAreas.length} ${topAreas.length === 1 ? 'area' : 'areas'}` : ''}</strong>
-                {topAreas.length > 0 && <span>{topAreas.slice(0, 3).join(', ')}</span>}
+                {topAreas.length > 0 && <span>{topAreas.slice(0, 4).join(', ')}</span>}
+              </div>
+              <div className="ay-auth-eco-thumbs" aria-hidden="true">
+                {ecoPicks.slice(0, ecoPicks.length > 4 ? 3 : 4).map((p, i) => (
+                  <span key={p.id || i}>
+                    <i className="ay-auth-eco-fallback">{String(p.brand || p.name || '?').trim().charAt(0).toUpperCase()}</i>
+                    <ProductImage product={p} src={p.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff' }} />
+                  </span>
+                ))}
+                {ecoPicks.length > 4 && <span className="is-more">+{ecoPicks.length - 3}</span>}
               </div>
             </section>
           )}

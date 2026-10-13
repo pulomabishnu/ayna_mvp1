@@ -74,6 +74,14 @@ export const UTI_FREQUENCY = ['This is the first time', 'Rarely', 'A few times a
 export const POSTPARTUM_TIMING = ['Less than 6 weeks ago', '6 weeks–3 months ago', '3–6 months ago', '6–12 months ago', 'More than 12 months ago'];
 export const PREGNANCY_TRIMESTER = ['First trimester', 'Second trimester', 'Third trimester', 'Not sure', 'Prefer not to say'];
 export const PERIMENOPAUSE_LAST_PERIOD = ['Within the past 3 months', '3–6 months ago', '6–12 months ago', 'More than 12 months ago', "I'm not sure", 'Prefer not to say'];
+export const TTC_DURATION = ['Not trying yet', 'Less than 6 months', '6–12 months', 'More than 12 months', 'Prefer not to say'];
+export const BREASTFEEDING_STATUS = ['Yes', 'No', 'Prefer not to say'];
+// Follow-up question copy, shared so the app and the website ask the same thing.
+export const FOLLOWUP_QUESTIONS = {
+  breastfeedingStatus: 'Are you breastfeeding or pumping?',
+  perimenopauseLastPeriod: 'When was your last period?',
+  largePurchaseFrequency: 'How often are you comfortable making $75+ purchases?',
+};
 
 export const CONDITIONS = [
   'PCOS', 'Endometriosis', 'Fibroids', 'Adenomyosis', 'PMS', 'PMDD', 'Infertility', 'Thyroid condition',
@@ -174,14 +182,14 @@ export const FSA_HSA_REVERSE = { fsa: 'FSA', hsa: 'HSA', both: 'Both', none: 'No
 export const RESUMABLE_PASSTHROUGH_FIELDS = [
   'age', 'lifeStage', 'lifeStageSelections', 'lifeStageOther', 'zipcode',
   'supportSelections', 'supportOtherText',
-  'periodFlow', 'periodPain', 'utiFrequency', 'postpartumTiming', 'pregnancyTrimester',
+  'periodFlow', 'periodPain', 'utiFrequency', 'ttcDuration', 'postpartumTiming', 'pregnancyTrimester',
   'breastfeedingStatus', 'perimenopauseLastPeriod',
   'diagnosisSelections', 'conditionOtherText',
   'allergyStatus', 'allergyItems',
   'takesCurrent', 'currentMedicationItems',
   'productHistory', 'avoidRepeat', 'safetyConcern',
   'preferredFormats', 'formatOtherText', 'recommendedProductsPerArea', 'priceRange', 'largePurchaseFrequency',
-  'brandOpenness', 'trustedBrands',
+  'brandOpenness', 'trustedBrands', 'brandSupportPreferences',
   'avoidIngredients', 'avoidIngredientsOtherText',
   'anythingElse',
 ];
@@ -244,8 +252,10 @@ export const LEGACY_CONCERN_BY_ITEM = {
   'Cycle-related headaches or migraines': 'Mental health and cycle mood support',
   'PCOS support': 'PCOS management (supplements, telehealth, apps)',
   'Endometriosis support': 'Endometriosis management (supplements, devices, telehealth)',
-  'Fibroid-related concerns': 'Fibroid-related concerns',
-  'Adenomyosis-related concerns': 'Adenomyosis-related concerns',
+  // Not CONCERN_AREAS names on their own, so they never matched; both mostly
+  // mean heavy, painful periods.
+  'Fibroid-related concerns': ['Period care (pads, tampons, cups, discs, underwear)', 'Cramp and pain relief (devices, supplements, heat)'],
+  'Adenomyosis-related concerns': ['Period care (pads, tampons, cups, discs, underwear)', 'Cramp and pain relief (devices, supplements, heat)'],
   'Hormone-related symptoms': 'Hormone balance (supplements, lifestyle)',
   'Cycle-related bloating': 'Hormonal bloating',
   Nausea: 'Hormone balance (supplements, lifestyle)',
@@ -295,6 +305,7 @@ export const LEGACY_CONCERN_BY_ITEM = {
   Acne: 'Skin and hair (hormone-related)',
   'Hair thinning or hair loss': 'Skin and hair (hormone-related)',
   'Excess facial or body hair': 'Skin and hair (hormone-related)',
+  'Hormone-related skin concerns': 'Skin and hair (hormone-related)',
   'Other hormone-related skin concerns': 'Skin and hair (hormone-related)',
   'Metabolism or weight support': 'Hormone balance (supplements, lifestyle)',
   'Strength or fitness': 'Sleep and energy',
@@ -315,10 +326,22 @@ export const FORMAT_TO_LEGACY = {
 };
 
 export const PREFERENCE_MAP = {
+  // Leave out
   Fragrance: 'fragrance-free', Dyes: 'dye-free', Parabens: 'paraben-free', Sulfates: 'sulfate-free',
   Phthalates: 'phthalate-free', Latex: 'latex-free', 'Synthetic materials': 'natural-materials',
-  'Animal-derived ingredients': 'vegan', 'Added sugar': 'sugar-free', 'Artificial sweeteners': 'no-artificial-sweeteners',
+  'Animal-derived': 'vegan', 'Animal-derived ingredients': 'vegan', 'Added sugar': 'sugar-free', 'Artificial sweeteners': 'no-artificial-sweeteners',
+  // Paired values stored with a Leave out pick (AVOID_PAIRS)
+  'Fragrance-free': 'fragrance-free', 'Dye-free': 'dye-free', 'Paraben-free': 'paraben-free', 'Sulfate-free': 'sulfate-free', 'Latex-free': 'latex-free',
+  // Should be
+  Unscented: 'fragrance-free', Organic: 'organic', Vegan: 'vegan', 'Cruelty-free': 'cruelty-free',
+  'Minimal ingredients': 'minimal ingredients', 'Eco-friendly': 'sustainable/eco-friendly',
 };
+// "Should be" picks that are about who makes the product, not what is in it.
+export const BRAND_SUPPORT_OPTIONS = ['Black-owned', 'Brown-owned'];
+// Product history answers: the quiz saves the short UI words; older saved
+// profiles used the long ones. Both count.
+export const WORSE_ANSWERS = new Set(['Made it worse', 'Made things worse']);
+export const SERIOUS_REACTIONS = new Set(['Serious', 'Serious or concerning reaction']);
 
 export function arrayHasAny(arr, set) {
   return (arr || []).some((value) => set.has(value));
@@ -354,6 +377,17 @@ export function isTtcRelevant(intake) {
 export function isPregnancyRelevant(intake) {
   return hasLifeStage(intake, 'I am pregnant') || arrayHasAny(intake.supportSelections, PREGNANCY_TRIGGER);
 }
+/** "Not trying yet" only makes sense when trying to conceive was not picked as a life stage. */
+export function ttcDurationOptions(intake) {
+  return hasLifeStage(intake, 'I am trying to conceive') ? TTC_DURATION.filter((x) => x !== 'Not trying yet') : TTC_DURATION;
+}
+/** Breastfeeding is asked with the life stage; anyone postpartum only through a need gets it on the timing step. */
+export function asksBreastfeedingOnTiming(intake) {
+  return isPostpartumRelevant(intake) && !hasLifeStage(intake, 'I am postpartum');
+}
+export function isPerimenopauseRelevant(intake) {
+  return hasLifeStage(intake, 'I am in perimenopause');
+}
 export function isPostpartumRelevant(intake) {
   return hasLifeStage(intake, 'I am postpartum') || arrayHasAny(intake.supportSelections, POSTPARTUM_TRIGGER);
 }
@@ -361,7 +395,7 @@ export function isPostpartumRelevant(intake) {
 export function buildSnapshot(intake) {
   const lifeStageSelections = getLifeStages(intake);
   const primaryLifeStage = intake.lifeStage || lifeStageSelections[0] || '';
-  const primaryConcerns = [...new Set((intake.supportSelections || []).map((item) => LEGACY_CONCERN_BY_ITEM[item]).filter(Boolean))];
+  const primaryConcerns = [...new Set((intake.supportSelections || []).flatMap((item) => LEGACY_CONCERN_BY_ITEM[item] || []))];
   const knownSupportOptions = new Set(SUPPORT_GROUPS.flatMap((group) => group.items));
   const customConcerns = [...new Set([
     ...(intake.supportSelections || []).filter((item) => !knownSupportOptions.has(item) && item !== 'Something else'),
@@ -402,7 +436,7 @@ export function buildSnapshot(intake) {
 
   const usedNames = (intake.productHistory || []).map((p) => p.name).filter(Boolean);
   const automaticallyAvoid = (intake.productHistory || [])
-    .filter((p) => p.worked === 'Made things worse' || p.reaction === 'Serious or concerning reaction')
+    .filter((p) => WORSE_ANSWERS.has(p.worked) || SERIOUS_REACTIONS.has(p.reaction))
     .map((p) => p.name)
     .filter(Boolean);
   const dislikedProducts = [...new Set([...(intake.avoidRepeat || []), ...automaticallyAvoid])];
@@ -443,11 +477,11 @@ export function buildSnapshot(intake) {
     periodFlow: isPeriodRelevant(intake) ? intake.periodFlow : '',
     periodPain: isPeriodRelevant(intake) ? intake.periodPain : '',
     utiFrequency: isUtiRelevant(intake) ? intake.utiFrequency : '',
-    ttcDuration: '',
+    ttcDuration: isTtcRelevant(intake) ? (intake.ttcDuration || '') : '',
     postpartumTiming: isPostpartumRelevant(intake) ? intake.postpartumTiming : '',
     pregnancyTrimester: isPregnancyRelevant(intake) ? intake.pregnancyTrimester : '',
-    breastfeedingStatus: hasLifeStage(intake, 'I am postpartum') ? intake.breastfeedingStatus : '',
-    perimenopauseLastPeriod: hasLifeStage(intake, 'I am in perimenopause') ? intake.perimenopauseLastPeriod : '',
+    breastfeedingStatus: isPostpartumRelevant(intake) ? (intake.breastfeedingStatus || '') : '',
+    perimenopauseLastPeriod: isPerimenopauseRelevant(intake) ? (intake.perimenopauseLastPeriod || '') : '',
     diagnosisSelections: intake.diagnosisSelections,
     conditions,
     conditionOtherText: [...new Set([...customConditions, intake.conditionOtherText.trim()].filter(Boolean))].join('; '),
@@ -461,20 +495,24 @@ export function buildSnapshot(intake) {
     currentMedications: intake.takesCurrent === 'Yes' ? intake.currentMedicationItems.join(', ') : '',
     hormonalBirthControl: hasLifeStage(intake, 'I use hormonal birth control') ? 'Yes' : '',
     hormonalBirthControlType: '',
-    tryingToConceive: isTtcRelevant(intake) ? 'Yes' : 'No',
+    tryingToConceive: !isTtcRelevant(intake) ? 'No' : intake.ttcDuration === 'Not trying yet' ? 'Not right now' : 'Yes',
     productHistory: intake.productHistory,
     currentProducts: usedNames,
     avoidRepeat: intake.avoidRepeat,
     dislikedProducts,
     dislikedReason,
-    brandSupportPreferences: intake.brandSupportPreferences,
+    // Asked in "Should be" (Black-owned, Brown-owned); other saved values are kept.
+    brandSupportPreferences: [...new Set([
+      ...(intake.brandSupportPreferences || []).filter((x) => !BRAND_SUPPORT_OPTIONS.includes(x)),
+      ...(intake.avoidIngredients || []).filter((x) => BRAND_SUPPORT_OPTIONS.includes(x)),
+    ])],
     safetyConcern: intake.safetyConcern,
     preferredFormats: intake.preferredFormats,
     formatOtherText: [...new Set([...customFormats, intake.formatOtherText.trim()].filter(Boolean))].join('; '),
     recommendedProductsPerArea: intake.recommendedProductsPerArea,
     preferredProductTypes,
     priceRange: intake.priceRange,
-    largePurchaseFrequency: intake.largePurchaseFrequency,
+    largePurchaseFrequency: intake.largePurchaseFrequency || '',
     brandOpenness: intake.brandOpenness,
     trustedBrands: intake.trustedBrands,
     avoidIngredients: intake.avoidIngredients,
@@ -568,30 +606,31 @@ export function readIntakeDraft() {
 export function getIntakeSteps(intake) {
   return [
       { id: 'age', section: 'core', title: 'Your age', type: 'age', optional: true, info: 'We use your age to skip products that are not meant for you, like menopause supplements in your 20s. Type it, tap plus or minus, or slide the ruler.' },
-      { id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', optional: true, info: 'Pick every stage that fits right now. It changes what we show, for example pregnancy-safe picks only, or midlife support. Hold any option to see what it means.' },
+      { id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', optional: true, info: 'Pick every stage that fits right now. It changes what we show, for example pregnancy-safe picks only, or midlife support.' },
       { id: 'zip', section: 'core', title: 'ZIP code', type: 'zip', optional: true, info: 'Only used to find clinics, telehealth and stores that serve your area. We never sell it or show it to anyone.' },
-      { id: 'support', section: 'support', title: 'What needs support?', type: 'support', optional: true, info: 'Pick everything you want help with. Each one becomes its own shelf of products in your Ecosystem. Use the tabs or search to find more. Hold any option to see what it means.' },
+      { id: 'support', section: 'support', title: 'What needs support?', type: 'support', optional: true, info: 'Pick everything you want help with. Each one becomes its own shelf of products in your Ecosystem. Use the tabs or search to find more.' },
       ...(isPeriodRelevant(intake) ? [
-        { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', optional: true, info: 'How much you bleed on a typical heavy day. We use it to match pad, tampon, cup and underwear absorbency. Hold any option to see what it means.' },
-        { id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', optional: true, info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list. Hold any option to see what it means.' },
+        { id: 'periodFlow', section: 'support', title: 'Your period flow', type: 'flow', optional: true, info: 'How much you bleed on a typical heavy day. We use it to match pad, tampon, cup and underwear absorbency.' },
+        { id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', optional: true, info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' },
       ] : []),
-      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', optional: true, info: 'How often UTI-type symptoms come back. It decides whether we show prevention products, testing strips or care options first. Hold any option to see what it means.' }] : []),
-      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago?', type: 'postpartumTiming', optional: true, info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year. Hold any option to see what it means.' }] : []),
-      ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', optional: true, info: 'Which part of pregnancy you are in. We only show products generally considered safe for that stage. Hold any option to see what it means.' }] : []),
-      { id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', optional: false, info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out. Hold any option to see what it means.' },
-      { id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', optional: false, info: 'Anything you react to. Products with these ingredients or materials will not show up in your picks. Hold any option to see what it means.' },
+      ...(isTtcRelevant(intake) ? [{ id: 'ttcDuration', section: 'support', title: 'How long have you been trying?', type: 'ttcDuration', optional: true, info: 'How long you have been trying to get pregnant. It changes whether we lead with tracking and prenatal basics, or with fertility care options.' }] : []),
+      ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often?', type: 'utiFrequency', optional: true, info: 'How often UTI-type symptoms come back. It decides whether we show prevention products, testing strips or care options first.' }] : []),
+      ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago?', type: 'postpartumTiming', optional: true, info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year.' }] : []),
+      ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'pregnancyTrimester', optional: true, info: 'Which part of pregnancy you are in. We only show products generally considered safe for that stage.' }] : []),
+      { id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', optional: false, info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out.' },
+      { id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', optional: false, info: 'Anything you react to. Products with these ingredients or materials will not show up in your picks.' },
       { id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', optional: false, info: 'Some supplements interact with medicines, for example St. John’s wort with birth control. We use this to flag those combinations.' },
       { id: 'products', section: 'history', title: 'What have you tried?', type: 'products', optional: true, info: 'Products you have used before. We use what worked and what did not to avoid repeats and find better fits.' },
       { id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', optional: true, info: 'Anything you add here will never show up in your picks.' },
-      { id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', optional: false, info: 'ayna does not diagnose. If you have new or quickly worsening symptoms, we point you to care before products. Hold any option to see what it means.' },
-      { id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', optional: true, info: 'The kinds of products you like using. We rank these formats higher in your picks. Hold any option to see what it means.' },
+      { id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', optional: false, info: 'ayna does not diagnose. If you have new or quickly worsening symptoms, we point you to care before products.' },
+      { id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', optional: true, info: 'The kinds of products you like using. We rank these formats higher in your picks.' },
       { id: 'recommendationCount', section: 'preferences', title: 'Picks per need', subtitle: 'For each area you want support with', info: 'How many products we show for each thing you picked. For example, 3 means 3 for cramps and 3 for sleep.', type: 'recommendationCount', optional: true },
-      { id: 'priceRange', section: 'preferences', title: 'Budget per item', info: 'What you usually spend on one item, not your total. We use it to rank picks within your range first. Hold any option to see what it means.', type: 'price', optional: true },
-      { id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', optional: true, info: 'How open you are to brands you have not tried. It shifts your picks between familiar names and newer startups. Hold any option to see what it means.' },
+      { id: 'priceRange', section: 'preferences', title: 'Budget per item', info: 'What you usually spend on one item, not your total. We use it to rank picks within your range first.', type: 'price', optional: true },
+      { id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', optional: true, info: 'How open you are to brands you have not tried. It shifts your picks between familiar names and newer startups.' },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', info: 'Brands you already like. We show them first when they fit what you need.', type: 'trustedBrands', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Avoid or must-have?', info: 'Leave out removes products with those ingredients. Should be favors products that match. Both are optional. Hold any option to see what it means.', type: 'avoidIngredients', optional: true },
-      { id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'If you have a pre-tax health account, we can point out products that are usually eligible. Hold any option to see what it means.', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'What matters most?', subtitle: 'When choosing a product', info: 'Drag to rank what you trust most. We weigh your top pick most when matching. Hold any option to see what it means.', type: 'trust', optional: false },
+      { id: 'avoidIngredients', section: 'preferences', title: 'Avoid or must-have?', info: 'Leave out removes products with those ingredients. Should be favors products that match. Both are optional.', type: 'avoidIngredients', optional: true },
+      { id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'If you have a pre-tax health account, we can point out products that are usually eligible.', type: 'fsa', optional: true },
+      { id: 'trust', section: 'trust', title: 'What matters most?', subtitle: 'When choosing a product', info: 'Drag to rank what you trust most. We weigh your top pick most when matching.', type: 'trust', optional: false },
       { id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', optional: true, info: 'Anything else you want us to keep in mind, like a goal, a budget limit or a product you love. Optional.' },
   ];
 }

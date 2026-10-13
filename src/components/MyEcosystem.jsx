@@ -951,6 +951,8 @@ export default function MyEcosystem({
     const [llmTiered, setLlmTiered] = useState([]);
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
+    // Quiet, neutral status (e.g. a refresh when nothing new can be built).
+    const [llmNotice, setLlmNotice] = useState('');
     // Distinct from llmError: some concerns didn't generate but others DID —
     // the ecosystem is functionally built, just missing a couple of sections.
     // Kept separate so this never renders under the "We couldn't build your
@@ -1168,6 +1170,7 @@ export default function MyEcosystem({
             setLlmTiered(rec.tiered);
             setLlmLoading(rec.loading);
             setLlmError(rec.error);
+            setLlmNotice(rec.notice || '');
             setLlmPartialConcerns(rec.partialConcerns || []);
             setLlmLoadStartedAt(rec.startedAt);
         };
@@ -1180,6 +1183,7 @@ export default function MyEcosystem({
             rec.startedAt = Date.now();
             rec.loading = true;
             rec.error = '';
+            rec.notice = '';
             rec.partialConcerns = [];
             rec.tiered = [];
             notifyGeneration(rec);
@@ -1286,10 +1290,11 @@ export default function MyEcosystem({
                             // Quota used: keep the instant local ecosystem quietly and
                             // cache it, so later visits make no requests at all.
                             const prior = previousLlmTieredRef.current;
-                            if (bypassCache) {
-                                // She tapped refresh: keep what she had and say why.
-                                if (Array.isArray(prior) && prior.length > 0) rec.tiered = prior;
-                                rec.error = "You've already built your ecosystem. Rebuilding is coming to premium.";
+                            if (bypassCache && Array.isArray(prior) && prior.length > 0) {
+                                // She tapped refresh: keep what she had, with a quiet neutral line.
+                                rec.tiered = prior;
+                                rec.error = '';
+                                rec.notice = 'Your ecosystem is up to date.';
                                 notifyGeneration(rec);
                                 return;
                             }
@@ -1302,7 +1307,9 @@ export default function MyEcosystem({
                                 previousLlmTieredRef.current = localRecs;
                                 return;
                             }
-                            rec.error = "You've already generated your ayna ecosystem. Regenerating is a premium feature. Email puloma@aynahealth.co to upgrade.";
+                            // Nothing new to show: keep the current ecosystem silently.
+                            if (Array.isArray(prior) && prior.length > 0) rec.tiered = prior;
+                            rec.error = '';
                             notifyGeneration(rec);
                             return;
                         }
@@ -1872,10 +1879,11 @@ export default function MyEcosystem({
 
                 {llmError && !llmLoading && (
                     <div className="eco3-notice" role="status">
-                        {/premium/i.test(llmError) ? llmError : (
-                            <>Couldn&apos;t refresh your matches. <button type="button" onClick={handleRefreshRecommendations}>Try again</button></>
-                        )}
+                        Couldn&apos;t refresh your matches. <button type="button" onClick={handleRefreshRecommendations}>Try again</button>
                     </div>
+                )}
+                {llmNotice && !llmError && !llmLoading && (
+                    <div className="eco3-notice eco3-notice--soft" role="status">{llmNotice}</div>
                 )}
                 {llmPartialConcerns.length > 0 && !llmError && !llmLoading && (
                     <div className="eco3-notice eco3-notice--soft" role="status">

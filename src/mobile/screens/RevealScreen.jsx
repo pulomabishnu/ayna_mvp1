@@ -4,8 +4,8 @@ import { getProfileMatchPercentForProduct } from '../../data/products.js';
 import IntakeSceneArt from '../components/intake/IntakeSceneArt.jsx';
 import '../wrapped.css';
 import { buildPersona } from '../utils/shopperProfile.js';
-import { shareWrappedImage } from '../utils/wrappedImage.js';
-import { displayName } from '../utils/displayName.js';
+import { shareAynaLink } from '../utils/shareLink.js';
+import '../../styles/flow.css';
 
 const SLIDE_ART = { focus: 'scallop', match: 'bloom', persona: 'sparkle', lineup: 'arch', empty: 'scallop' };
 
@@ -20,14 +20,7 @@ function imageFor(product) {
 }
 
 
-export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse, authUser, quizAnswers, lastQuizAnswers }) {
-  const [index, setIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const progressRef = useRef(0);
-  const touchX = useRef(null);
-  const swipeTime = useRef(0);
-
+export default function RevealScreen({ myProducts = [], topAreas = [], onContinue, onBack, onGoBrowse, authUser, quizAnswers, lastQuizAnswers, revealStartAtEnd = false }) {
   const products = myProducts.slice(0, 4);
   const first = products[0];
   const areaCount = new Set(myProducts.map((product) => product.areaKey).filter(Boolean)).size;
@@ -41,6 +34,13 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
   const slides = products.length
     ? ['intro', ...(topAreas.length ? ['focus'] : []), 'match', ...(persona ? ['persona'] : []), 'lineup', 'finish']
     : ['empty'];
+  // Coming back from the sign-up screen lands on the last slide, not the start.
+  const [index, setIndex] = useState(() => (revealStartAtEnd ? slides.length - 1 : 0));
+  const [progress, setProgress] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const progressRef = useRef(0);
+  const touchX = useRef(null);
+  const swipeTime = useRef(0);
   const active = slides[index] || slides[0];
   const last = index === slides.length - 1;
 
@@ -74,16 +74,14 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
     if (distance > 0) next(); else previous();
   };
   const [shareState, setShareState] = useState('');
+  const shareTimer = useRef(null);
+  useEffect(() => () => window.clearTimeout(shareTimer.current), []);
   const share = async () => {
-    setShareState('Making your card…');
-    const result = await shareWrappedImage({
-      title: persona?.title || 'My ecosystem',
-      picks: myProducts.length,
-      areas: areaCount || topAreas.length,
-      topAreas,
-      productNames: products.map((p) => displayName(p)),
-    });
-    setShareState(result === 'downloaded' ? 'Saved to your downloads' : result === 'failed' ? 'Couldn’t make the image' : '');
+    const result = await shareAynaLink();
+    const message = result === 'copied' ? 'Link copied' : result === 'failed' ? 'Couldn’t share the link' : '';
+    setShareState(message);
+    window.clearTimeout(shareTimer.current);
+    if (message) shareTimer.current = window.setTimeout(() => setShareState(''), 2400);
   };
 
   return (
@@ -170,8 +168,11 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
           </div>
           <div className="ayw-actions">
             <button className="ayw-cta" type="button" onClick={onContinue}>{authUser ? 'Open my Ecosystem' : 'Save my Ecosystem'}<i aria-hidden="true">→</i></button>
-            <div>
-              <button className="ayw-link" type="button" onClick={share}>Share</button>{shareState && <small className="ayw-share-state" role="status">{shareState}</small>}
+            <div className="ayw-secondary">
+              <button className="ayw-link" type="button" onClick={share}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" /></svg>
+                Share
+              </button>
               <button className="ayw-link" type="button" onClick={onGoBrowse}>Browse instead</button>
             </div>
           </div>
@@ -188,6 +189,7 @@ export default function RevealScreen({ myProducts = [], topAreas = [], onContinu
         </>}
       </div>
       {!last && <div className="ayw-hint" aria-hidden="true">Tap to continue</div>}
+      <div className="ayw-toast" role="status" aria-live="polite">{shareState && <span>{shareState}</span>}</div>
     </main>
   );
 }

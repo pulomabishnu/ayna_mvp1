@@ -707,7 +707,7 @@ export default function ProductDetailScreen({
         <button
           type="button"
           aria-pressed={isInEcosystem}
-          aria-label={isInEcosystem ? 'Remove' : 'Add to Ecosystem'}
+          aria-label={isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
           onClick={onAddToEcosystem}
           style={{
             flex: 'none',
@@ -726,7 +726,7 @@ export default function ProductDetailScreen({
             border: '1px solid ' + (isInEcosystem ? 'var(--ayna-accent-dark)' : 'var(--ayna-border)'),
           }}
         >
-          {isInEcosystem ? 'Remove' : 'Add to Ecosystem'}
+          {isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
         </button>
         {buyUrl ? (
           <a

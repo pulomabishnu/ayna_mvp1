@@ -27,6 +27,7 @@ export const INTAKE_SCENES = {
   support: { art: 'bloom' },
   periodFlow: { art: 'drops' },
   periodPain: { art: 'zigzag' },
+  ttcDuration: { art: 'arch' },
   utiFrequency: { art: 'arch' },
   postpartumTiming: { art: 'arch' },
   pregnancyTrimester: { art: 'arch' },

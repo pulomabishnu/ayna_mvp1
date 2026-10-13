@@ -163,6 +163,17 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   // Always visible (testers missed it when it shrank on scroll). It can be
   // tucked to the right edge as a small tab if it's in the way; that choice
   // is remembered per browser.
+  // On the home page the launcher waits until she scrolls past the hero so it
+  // never sits on the main "Build my ecosystem" button.
+  const [homeTop, setHomeTop] = useState(() => typeof window !== 'undefined' && window.location.pathname === '/' && window.scrollY < 320);
+  useEffect(() => {
+    const onScroll = () => setHomeTop(window.location.pathname === '/' && window.scrollY < 320);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('popstate', onScroll);
+    const t = window.setInterval(onScroll, 1000);
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('popstate', onScroll); window.clearInterval(t); };
+  }, []);
   const TUCK_KEY = 'ayna_ask_tucked_v1';
   const [tucked, setTucked] = useState(() => { try { return localStorage.getItem(TUCK_KEY) === '1'; } catch { return false; } });
   const setTuck = (v) => { setTucked(v); try { localStorage.setItem(TUCK_KEY, v ? '1' : '0'); } catch { /* storage unavailable */ } };
@@ -317,7 +328,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
           <span className="ayna-ask-tab__chev" aria-hidden="true">‹</span>
         </button>
       ) : (
-        <div className="ayna-ask-dock">
+        <div className={`ayna-ask-dock${homeTop && !open ? ' is-waiting' : ''}`}>
           <button
             type="button"
             className="ayna-ask-launcher"

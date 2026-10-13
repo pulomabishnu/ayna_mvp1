@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductMatchDetailsForProduct, getProductRelevanceScore, hydrateCatalogProduct } from './products';
+import {
+    ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductMatchDetailsForProduct, getProductRelevanceScore, hydrateCatalogProduct,
+    getNeedMatchesForProduct, getEcosystemSeedFromQuiz, getRecommendationMatchesAndRest, getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct,
+    getMatchCareFlags, getEcosystemAlternatives, getRecommendationExplanation,
+} from './products';
 import { STARTUPS } from './startups';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake';
 
@@ -76,7 +80,14 @@ describe('personalized relevance scoring', () => {
     it('does not infer cramps from endometriosis or hormone needs from PCOS', () => {
         const crampProduct = { id: 'cramp-only', name: 'Cramp warmer', category: 'cramp-relief', tags: ['cramps', 'cramp-relief'] };
         const hormoneProduct = { id: 'hormone-only', name: 'General hormone supplement', category: 'supplement', tags: ['hormone-balance'] };
-        expect(getProductRelevanceScore(crampProduct, { fullHealthIntake: { supportSelections: ['Endometriosis support'] } })).toBe(0);
+        // Matching engine (step 2): a heat device is ADJACENT (0.30) to
+        // endometriosis support per the reviewed relevance table, so it gets a
+        // browse-only score (< 50, never recommended). Was 0 before. A cramp
+        // need is still never inferred from the condition.
+        const endo = { fullHealthIntake: { supportSelections: ['Endometriosis support'] } };
+        expect(getProductRelevanceScore(crampProduct, endo)).toBeLessThan(50);
+        expect(getNeedMatchesForProduct(crampProduct, endo).map((m) => m.needId)).toEqual(['condition_support.endometriosis']);
+        expect(getPersonalizedProductIds(endo)).not.toContain('cramp-only');
         expect(getProductRelevanceScore(hormoneProduct, { fullHealthIntake: { supportSelections: ['PCOS support'] } })).toBe(0);
     });
 
@@ -163,12 +174,20 @@ describe('personalized relevance scoring', () => {
         });
     });
 
-    it('uses all selected needs instead of treating one matched need as a full match', () => {
+    it('scores each selected need separately; the shown percent is the best need', () => {
+        // Founder spec (score per need): Product x Cramps 94, x Acne 12 ...,
+        // not one blended number. Before step 2 the percent was averaged over
+        // every selected need (oneNeed > twoNeeds); now an unrelated second
+        // need neither lowers nor raises the cramp score, and the per-need
+        // breakdown shows the 0 for UTIs.
         const product = { id: 'cramp-test', name: 'Cramp warmer', category: 'cramp-relief', tags: ['cramps'], healthFunctions: ['cramp-relief'] };
         const oneNeed = getProductRelevanceScore(product, { fullHealthIntake: { supportSelections: ['Cramps or period pain'] } });
         const twoNeeds = getProductRelevanceScore(product, { fullHealthIntake: { supportSelections: ['Cramps or period pain', 'Recurrent UTIs'] } });
-        expect(oneNeed).toBeGreaterThan(twoNeeds);
+        expect(oneNeed).toBe(twoNeeds);
         expect(twoNeeds).toBeGreaterThan(0);
+        const perNeed = getNeedMatchesForProduct(product, { fullHealthIntake: { supportSelections: ['Cramps or period pain', 'Recurrent UTIs'] } });
+        expect(perNeed[0]).toMatchObject({ needId: 'pain.menstrual_cramp', score: oneNeed });
+        expect(perNeed.find((m) => m.needId === 'urinary.recurrent_uti')).toMatchObject({ score: 0, relevant: false });
         expect(getProductMatchDetailsForProduct(product, { fullHealthIntake: { supportSelections: ['Cramps or period pain', 'Recurrent UTIs'] } }).unmetNeeds).toContain('Recurrent UTIs');
     });
 
@@ -246,5 +265,129 @@ describe('personalized relevance scoring', () => {
 
         expect(getProductRelevanceScore(partnered, quiz, null))
             .toBe(getProductRelevanceScore(base, quiz, null));
+    });
+});
+
+// ─── Matching engine integration (step 2) ───────────────────────────────────
+describe('matching engine integration', () => {
+    const byId = (id) => ALL_PRODUCTS.find((p) => p.id === id);
+    const spec = { fullHealthIntake: {
+        supportSelections: ['Cramps or period pain', 'Acne', 'Anxiety', 'Vaginal dryness'],
+        lifeStageSelections: ['I get periods regularly'], age: '27',
+    } };
+
+    it('shows the best per-need score and keeps the per-need breakdown (founder spec example)', () => {
+        const heat = byId('p-thermacare');
+        const perNeed = getNeedMatchesForProduct(heat, spec);
+        expect(perNeed.map((m) => m.needId)).toEqual(expect.arrayContaining(['pain.menstrual_cramp', 'skin.acne', 'mood.general_anxiety', 'vaginal.dryness']));
+        const cramps = perNeed.find((m) => m.needId === 'pain.menstrual_cramp');
+        expect(cramps.score).toBeGreaterThanOrEqual(80);
+        expect(perNeed.find((m) => m.needId === 'mood.general_anxiety').score).toBe(0);
+        expect(getProfileMatchPercentForProduct(heat, spec)).toBe(cramps.score);
+        expect(getProfileMatchLabelsForProduct(heat, spec)[0]).toBe('Made for period cramps');
+        for (const m of perNeed) {
+            expect(m).toEqual(expect.objectContaining({ needId: expect.any(String), label: expect.any(String), score: expect.any(Number), tier: expect.any(String), explanations: expect.any(Array), confidence: expect.any(Number) }));
+            expect(m.safety).toEqual(expect.objectContaining({ eligible: true }));
+        }
+    });
+
+    it('only recommends products at the exploratory bar (50) or above', () => {
+        const { matches } = getRecommendationMatchesAndRest(spec);
+        expect(matches.length).toBeGreaterThan(0);
+        for (const p of matches) expect(getProfileMatchPercentForProduct(p, spec), p.id).toBeGreaterThanOrEqual(50);
+        const percents = matches.map((p) => getProfileMatchPercentForProduct(p, spec));
+        for (let i = 1; i < percents.length; i += 1) expect(percents[i]).toBeLessThanOrEqual(percents[i - 1] + 2);
+    });
+
+    it('builds one ecosystem shelf per need; picks per need controls quantity, never quality', () => {
+        const seed = getEcosystemSeedFromQuiz({ fullHealthIntake: { ...spec.fullHealthIntake, recommendedProductsPerArea: 2 } });
+        expect(seed.shelves.map((s) => s.needId)).toEqual(['pain.menstrual_cramp', 'skin.acne', 'mood.general_anxiety', 'vaginal.dryness']);
+        for (const shelf of seed.shelves) {
+            expect(shelf.picks.length).toBeLessThanOrEqual(2);
+            shelf.picks.forEach((pick) => expect(pick.score).toBeGreaterThanOrEqual(50));
+        }
+        expect(seed.seedMeta.shelves).toBe(seed.shelves);
+        expect(Object.keys(seed.seedMeta)).toEqual(Object.keys(seed.mergedProducts));
+        const [firstId] = Object.keys(seed.seedMeta);
+        expect(seed.seedMeta[firstId]).toEqual(expect.objectContaining({ needId: 'pain.menstrual_cramp', tag: 'pain.menstrual_cramp', frustration: 'Cramps or period pain' }));
+        // Alternatives stay on the same need and above the bar.
+        const alts = getEcosystemAlternatives(firstId, seed.seedMeta[firstId].tag, { fullHealthIntake: spec.fullHealthIntake });
+        expect(alts.length).toBeGreaterThan(0);
+        alts.forEach((p) => {
+            expect(p.id).not.toBe(firstId);
+            expect(getNeedMatchesForProduct(p, spec).find((m) => m.needId === 'pain.menstrual_cramp').score).toBeGreaterThanOrEqual(50);
+        });
+    });
+
+    it('returns a shorter shelf rather than lowering the bar', () => {
+        const seed = getEcosystemSeedFromQuiz({ fullHealthIntake: { supportSelections: ['Joint aches'], recommendedProductsPerArea: 5 } });
+        const shelf = seed.shelves[0];
+        expect(shelf.picks.length).toBeLessThan(5);
+        expect(shelf.shortBy).toBe(5 - shelf.picks.length);
+        shelf.picks.forEach((pick) => expect(pick.score).toBeGreaterThanOrEqual(50));
+    });
+
+    it('hard-excludes the avoid list (product and brand) with percent 0 and a reason', () => {
+        const thermacare = byId('p-thermacare');
+        const quiz = { fullHealthIntake: { supportSelections: ['Cramps or period pain'], avoidRepeat: [thermacare.name] } };
+        const d = getProductMatchDetailsForProduct(thermacare, quiz);
+        expect(d).toEqual(expect.objectContaining({ percent: 0, matchStatus: 'excluded', eligible: false }));
+        expect(d.excludedBecause[0]).toMatch(/avoid/i);
+        expect(getRecommendations(quiz)).not.toContainEqual(expect.objectContaining({ id: 'p-thermacare' }));
+        expect(Object.keys(getEcosystemSeedFromQuiz(quiz).mergedProducts)).not.toContain('p-thermacare');
+        expect(getRecommendationExplanation(thermacare, quiz).whyItWorks).toBeNull();
+    });
+
+    it('hard-excludes a serious reaction and a clinician-stopped product', () => {
+        const thermacare = byId('p-thermacare');
+        for (const history of [{ name: thermacare.name, reaction: 'Serious' }, { name: thermacare.name, stopReasons: ['A clinician recommended stopping it'] }]) {
+            const quiz = { fullHealthIntake: { supportSelections: ['Cramps or period pain'], productHistory: [history] } };
+            expect(getProductRelevanceScore(thermacare, quiz)).toBe(0);
+            expect(getPersonalizedProductIds(quiz)).not.toContain('p-thermacare');
+        }
+    });
+
+    it('maps behavior: "Not for me" hard-suppresses, saved is a small positive, in-ecosystem counts as owned', () => {
+        const quiz = { fullHealthIntake: { supportSelections: ['Cramps or period pain'] } };
+        const base = getProfileMatchPercentForProduct(byId('p-thermacare'), quiz);
+        const omitted = getProductMatchDetailsForProduct(byId('p-thermacare'), quiz, null, { behavior: { omitted: { 'p-thermacare': true } } });
+        expect(omitted).toEqual(expect.objectContaining({ percent: 0, matchStatus: 'excluded' }));
+        expect(getPersonalizedProductIds(quiz, null, { behavior: { omitted: ['p-thermacare'] } })).not.toContain('p-thermacare');
+        const saved = getProfileMatchPercentForProduct(byId('p-thermacare'), quiz, null, { behavior: { saved: ['p-thermacare'] } });
+        expect(saved).toBeGreaterThan(base);
+        expect(saved - base).toBeLessThanOrEqual(3);
+        const owned = getProductMatchDetailsForProduct(byId('p-thermacare'), quiz, null, { behavior: { inEcosystem: { 'p-thermacare': {} } } });
+        expect(owned.owned).toBe(true);
+    });
+
+    it('excludes high-dose iron unless iron deficiency is confirmed', () => {
+        const iron = byId('p-nature-made-iron-65mg');
+        expect(getProductMatchDetailsForProduct(iron, { fullHealthIntake: { supportSelections: ['Fatigue or low energy'] } }).excludedBecause[0]).toMatch(/iron deficiency is confirmed/);
+        expect(getProductRelevanceScore(iron, {})).toBeNull();
+    });
+
+    it('exposes care flags: urgent yes = care first, UTI right now, pregnancy notes', () => {
+        const urgent = getMatchCareFlags({ fullHealthIntake: { supportSelections: ['Pelvic pain'], safetyConcern: 'Yes' } });
+        expect(urgent).toEqual(expect.objectContaining({ careFirst: true, careProminent: true }));
+        const uti = { fullHealthIntake: { supportSelections: ['Recurrent UTI-like symptoms'], utiFrequency: 'I am experiencing them right now' } };
+        expect(getMatchCareFlags(uti)).toEqual(expect.objectContaining({ utiRightNow: true, careProminent: true }));
+        const dmannose = getProductMatchDetailsForProduct(byId('p-d-mannose-now'), uti);
+        expect(dmannose.considerations[0].text).toMatch(/Not a substitute for getting checked/);
+        const pregnant = getMatchCareFlags({ fullHealthIntake: { lifeStageSelections: ['I am pregnant'], supportSelections: ['Prenatal or pregnancy support'] } });
+        expect(pregnant.notes.map((n) => n.code)).toContain('pregnancy_unknown');
+        const seed = getEcosystemSeedFromQuiz({ fullHealthIntake: { supportSelections: ['Pelvic pain'], safetyConcern: 'Yes' } });
+        expect(seed.careFirst).toBe(true);
+    });
+
+    it('reads older saved profiles (frustrations only) as specific needs', () => {
+        const seed = getEcosystemSeedFromQuiz({ frustrations: ['Painful cramps', 'Recurrent UTIs', 'General discomfort'] });
+        expect(seed.shelves.map((s) => s.needId)).toEqual(['pain.menstrual_cramp', 'urinary.recurrent_uti']);
+    });
+
+    it('uses imported health data as context, never as a new need', () => {
+        const quiz = { fullHealthIntake: { supportSelections: ['Fatigue or low energy'] } };
+        const iron = byId('p-nature-made-iron-65mg');
+        expect(getProductMatchDetailsForProduct(iron, quiz, { conditions: ['Iron deficiency anemia'] }).eligible).toBe(true);
+        expect(getPersonalizedProductIds({}, { conditions: ['PCOS'] })).toEqual([]);
     });
 });

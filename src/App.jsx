@@ -1,4 +1,5 @@
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
 import SavedForLater from './components/SavedForLater';
@@ -64,6 +65,9 @@ import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchL
 import posthog from 'posthog-js';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, parseProductIdFromPath } from './utils/productRoute';
+import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
+import './styles/flow.css';
+import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
@@ -247,6 +251,8 @@ function App() {
   // Ref always mirrors currentView synchronously — safe to read inside Supabase callbacks
   // that run outside React's render cycle.
   const currentViewRef = useRef(getInitialView());
+  // Where "Update profile" was opened from, so its Back returns there.
+  const profileEditFromRef = useRef('ecosystem');
   // Counts real in-app pushState navigations (not the initial replaceState
   // on mount, and not replace-style navigations). Used to tell "the user
   // clicked around inside the app to get here" apart from "this tab's only
@@ -260,6 +266,7 @@ function App() {
     return VIEW_TO_PATH[view] || '/';
   }, []);
   const setCurrentView = useCallback((view, { replace = false } = {}) => {
+    if (view === 'profile-edit' && currentViewRef.current !== 'profile-edit') profileEditFromRef.current = currentViewRef.current || 'ecosystem';
     currentViewRef.current = view;
     setCurrentViewRaw(view);
     if (view !== 'product') setProductRouteId(null);
@@ -376,6 +383,8 @@ function App() {
   // Signed-out quiz finish: her matches, shown before the sign-up ask.
   const [guestPreview, setGuestPreview] = useState(null);
   useEffect(() => { if (currentView !== 'product') setComposerSeed(null); }, [currentView]);
+  useEffect(() => { if (currentView !== 'quiz') setQuizResume(false); }, [currentView]);
+
   const [aynaReviews, setAynaReviews] = useState({});
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
   const [savedProducts, setSavedProducts] = useState(() => loadSavedProducts());
@@ -414,6 +423,9 @@ function App() {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   // From the app: Wrapped story after the quiz, and an Ask ayna button in the header.
   const [showWrapped, setShowWrapped] = useState(false);
+  // Back from the first Wrapped slide (signed in) reopens the quiz from its
+  // draft, on the last step, instead of the saved profile's first gap.
+  const [quizResume, setQuizResume] = useState(false);
   const [askOpenSignal, setAskOpenSignal] = useState(0);
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
@@ -739,13 +751,7 @@ function App() {
       setQuizResults(pendingQuizResults);
       const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
       setEcosystemSeedMeta(seedMeta);
-      const instantProducts = Object.keys(mergedProducts || {}).length
-        ? mergedProducts
-        : Object.fromEntries(
-            getRecommendations(pendingQuizResults, healthProfile)
-              .slice(0, 6)
-              .map((product) => [product.id, product])
-          );
+      const instantProducts = (mergedProducts || {});
       setMyProducts(instantProducts);
       setEcosystemOrder(Object.keys(instantProducts));
       clearCachedLlmRecommendations();
@@ -894,6 +900,29 @@ function App() {
 
   const handleStartQuiz = () => setCurrentView('quiz');
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
+  // Leave the profile editor without saving anything (the editor only writes
+  // on "See my results"), back to wherever it was opened from.
+  const handleExitProfileEdit = () => {
+    if (inAppPushCountRef.current > 0 && window.history.state?.view === 'profile-edit') window.history.back();
+    else setCurrentView(profileEditFromRef.current === 'profile-edit' ? 'ecosystem' : profileEditFromRef.current || 'ecosystem');
+  };
+  // Signed in: back from the first Wrapped slide reopens the quiz on its last
+  // screen with every answer in place (same draft the quiz resumes from).
+  const handleWrappedBackToQuiz = () => {
+    const snapshot = quizResults?.fullHealthIntake;
+    setShowWrapped(false);
+    if (!snapshot) { setCurrentView('quiz'); return; }
+    try {
+      const intake = reconstructIntakeFromSnapshot(snapshot);
+      const has = (v) => (Array.isArray(v) ? v.length > 0 : String(v ?? '').trim() !== '');
+      const didMore = ['productHistory', 'preferredFormats', 'priceRange', 'brandOpenness', 'trustedBrands', 'avoidIngredients', 'fsaHsaAnswer', 'anythingElse'].some((k) => has(intake[k]));
+      const steps = getIntakeSteps(intake);
+      const stepId = didMore ? steps[steps.length - 1]?.id : 'checkpoint';
+      localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ version: 1, intake, stepId }));
+      setQuizResume(true);
+    } catch { /* storage unavailable: the quiz opens from the saved profile */ }
+    setCurrentView('quiz');
+  };
   const handleOpenPhoneVerification = () => setCurrentView('phone-verify');
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
@@ -990,22 +1019,14 @@ function App() {
       setPendingQuizResults(completedResults);
       setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
       const { mergedProducts: guestSeed } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
-      const guestProducts = Object.values(guestSeed || {}).length
-        ? Object.values(guestSeed)
-        : getRecommendations(completedResults, healthProfile).slice(0, 6);
+      const guestProducts = Object.values(guestSeed || {});
       setGuestPreview({ results: completedResults, products: guestProducts });
       return;
     }
     setQuizResults(completedResults);
     const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
-    const instantProducts = Object.keys(mergedProducts || {}).length
-      ? mergedProducts
-      : Object.fromEntries(
-          getRecommendations(completedResults, healthProfile)
-            .slice(0, 6)
-            .map((product) => [product.id, product])
-        );
+    const instantProducts = (mergedProducts || {});
     setMyProducts(instantProducts);
     setEcosystemOrder(Object.keys(instantProducts));
     llmBuiltThisSessionRef.current = false;
@@ -1030,13 +1051,7 @@ function App() {
     setQuizResults(updatedResults);
     const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
-    const instantProducts = Object.keys(mergedProducts || {}).length
-      ? mergedProducts
-      : Object.fromEntries(
-          getRecommendations(updatedResults, healthProfile)
-            .slice(0, 6)
-            .map((product) => [product.id, product])
-        );
+    const instantProducts = (mergedProducts || {});
     setMyProducts(instantProducts);
     setEcosystemOrder(Object.keys(instantProducts));
     llmBuiltThisSessionRef.current = false;
@@ -1510,6 +1525,13 @@ function App() {
           <WebWrapped
             products={guestPreview.products}
             quizResults={guestPreview.results}
+            startAtEnd={!!guestPreview.atEnd}
+            onBack={() => {
+              // The quiz is still on screen underneath, on its last step with every answer.
+              setGuestPreview(null);
+              setPendingQuizResults(null);
+              setPendingAction(null); pendingActionRef.current = null;
+            }}
             primaryLabel="Save my matches →"
             onPrimary={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
             onClose={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
@@ -1521,6 +1543,7 @@ function App() {
             products={Object.values(myProducts || {})}
             quizResults={quizResults}
             onClose={() => setShowWrapped(false)}
+            onBack={handleWrappedBackToQuiz}
             onBrowse={() => { setShowWrapped(false); handleViewDiscovery(''); }}
           />
         )}
@@ -1562,7 +1585,16 @@ function App() {
           />
         )}
         {currentView === 'quiz' && (
-          <WebIntake initialSnapshot={quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} />
+          <WebIntake key={quizResume ? 'quiz-resume' : 'quiz'} initialSnapshot={quizResume ? null : quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} />
+        )}
+        {currentView === 'profile-edit' && (
+          <div className="ay-flow-editbar">
+            <button type="button" className="ay-flow-back" onClick={handleExitProfileEdit}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+              {profileEditFromRef.current === 'ecosystem' ? 'Back to Ecosystem' : 'Back'}
+            </button>
+            <span>Nothing changes until you finish.</span>
+          </div>
         )}
         {currentView === 'profile-edit' && (
           // Same as the app: editing your profile reopens the quiz with your answers filled in.
@@ -1990,13 +2022,24 @@ function App() {
           </div>
         )}
 
+        {showAuthModal && !user && pendingAction === 'quiz-complete' && guestPreview?.done && createPortal(
+          <button type="button" className="ay-flow-auth-back" onClick={() => {
+            setShowAuthModal(false);
+            setGuestPreview((g) => (g ? { ...g, done: false, atEnd: true } : g));
+          }}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+            Back to my Wrapped
+          </button>,
+          document.body,
+        )}
         {showAuthModal && (
           <AuthGate
             isModal
             summary={pendingAction === 'quiz-complete' && guestPreview ? {
               count: guestPreview.products.length,
               products: guestPreview.products,
-              areas: [...new Set(guestPreview.products.map((p) => String(CATEGORY_LABELS[p.category] || p.category || '').replace(/^[^\w]+\s*/, '')).filter(Boolean))],
+              // Same area names the Wrapped story just showed.
+              areas: [...new Set(guestPreview.products.map((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label).filter(Boolean))],
             } : null}
             onStartEcosystem={(quizResults || pendingQuizResults || pendingAction === 'quiz-complete') ? null : () => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setCurrentView('quiz'); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}

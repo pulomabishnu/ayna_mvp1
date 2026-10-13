@@ -1,13 +1,19 @@
-import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../data/products.js';
+import { ALL_PRODUCTS, getProductMatchDetailsForProduct, getSelectedNeeds, getMatchCareFlags } from '../data/products.js';
+import { LEGACY_CONCERN_NEEDS, needIdForOption } from '../matching/ontology.js';
+import { LEGACY_CONCERN_BY_ITEM } from '../mobile/data/intakeModel.js';
 
-// `categories` used to be dead data — nothing ever read it, only `tags` did,
-// and several entries used category names ('app', 'device') that don't
-// exist anywhere in the real taxonomy (src/data/products.js's
-// CATEGORY_LABELS), so those concerns could only ever match via a `tags`
-// coincidence. Now used as a second, OR'd matching path below (see
-// generateTieredRecommendations) — category is a controlled, always-present
-// field, unlike free-text tags, so it's the more reliable signal. Rewritten
-// against the real current category taxonomy (2026-08-25).
+// Instant local tiers for the ecosystem, built on the matching engine
+// (src/matching): each concern area is scored on the specific needs she
+// selected inside it, a product only appears if it is eligible and scores
+// >= 50 (exploratory) for one of those needs, and a concern with few
+// qualifying products gets fewer tiers rather than weaker ones.
+const MIN_TIER_SCORE = 50;
+
+// Concern areas of the first web intake (keys are also what the LLM route and
+// MyEcosystem key shelves by). Matching no longer uses `tags`/`categories`:
+// each concern's products come from the engine needs it contains
+// (LEGACY_CONCERN_BY_ITEM for current answers, LEGACY_CONCERN_NEEDS for older
+// saved profiles). `tags` still order concerns (concernRelevanceScore).
 const CONCERN_CONFIG = [
   { key: 'Period care (pads, tampons, cups, discs, underwear)', tags: ['heavy-flow', 'leaks', 'cramps'], categories: ['pad', 'liner', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'] },
   { key: 'Cramp and pain relief (devices, supplements, heat)', tags: ['cramps'], categories: ['cramp-relief', 'supplement'] },
@@ -53,10 +59,6 @@ function selectedConcerns(intake) {
   return [];
 }
 
-function lowerList(arr = []) {
-  return asArray(arr).map((x) => String(x || '').toLowerCase());
-}
-
 function buildSubcategoryLabel(concern, tierType) {
   const key = String(concern?.key || '').toLowerCase();
   if (key.includes('uti')) {
@@ -84,22 +86,14 @@ function buildSubcategoryLabel(concern, tierType) {
   return 'Digital or Telehealth Support';
 }
 
-function buildMatchExplanation(product, intake, concern, tierType) {
-  const details = getProductMatchDetailsForProduct(product, intake);
-
-  const reasons = Array.isArray(details?.reasons)
-    ? details.reasons.filter(Boolean).slice(0, 3)
-    : [];
-
-  if (reasons.length > 0) {
-    return reasons.join(' ');
-  }
-
-  if (details?.healthMatch != null) {
-    return 'This product was ranked using your health profile, preferences, and the available evidence for this product.';
-  }
-
-  return 'This product is relevant to this care area, but there is not enough profile information to give a highly personalized explanation yet.';
+function buildMatchExplanation(needMatch, details) {
+    const cautions = new Set((details?.considerations || []).map((c) => String(c.text).replace(/\.$/, '')));
+    const reasons = (needMatch?.explanations || [])
+        .filter((text) => !cautions.has(text) && text !== 'Not a substitute for getting checked')
+        .slice(0, 3);
+    if (reasons.length > 0) return `${reasons.join('. ')}.`;
+    if (details?.reasons?.length) return details.reasons.slice(0, 3).join(' ');
+    return 'This product is relevant to this care area, but there is not enough profile information to give a highly personalized explanation yet.';
 }
 
 function textForSafety(product) {
@@ -123,34 +117,6 @@ function productDisliked(product, dislikedList) {
   return dislikedList.some((d) => n.includes(String(d || '').toLowerCase()));
 }
 
-function hasReliabilityConcern(product) {
-  const source = String(product?.clinicianOpinionSource || '').toLowerCase();
-  if (source === 'brand' || source === 'mixed') return true;
-
-  const concernText = [
-    product?.safety?.opinionAlerts,
-    product?.communityReview,
-    product?.doctorOpinion,
-    product?.summary,
-  ]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase();
-
-  if (/less scientific|split opinions|polarized|class-action|not robust|unreliable|incentivized/.test(concernText)) {
-    return true;
-  }
-  return false;
-}
-
-function hasIndependentClinicianOpinion(product) {
-  const source = String(product?.clinicianOpinionSource || '').toLowerCase();
-  const attribution = String(product?.clinicianAttribution || '').trim();
-  const doctorOpinion = String(product?.doctorOpinion || '').trim();
-  // Accept: explicit independent source with attribution, OR any product with a substantive doctor opinion
-  return (source === 'independent' && attribution.length > 0) || doctorOpinion.length > 20;
-}
-
 function isSupplementProduct(product) {
   const category = String(product?.category || '').toLowerCase();
   const tags = (product?.tags || []).map((t) => String(t || '').toLowerCase());
@@ -161,13 +127,6 @@ function isDigitalOrTelehealthProduct(product) {
   const type = String(product?.type || 'physical').toLowerCase();
   const category = String(product?.category || '').toLowerCase();
   return type === 'digital' || category.includes('telehealth') || category.includes('app') || category.includes('tracker');
-}
-
-function matchesTierType(product, tierType) {
-  if (tierType === 'physical') return String(product?.type || 'physical').toLowerCase() === 'physical' && !isSupplementProduct(product);
-  if (tierType === 'supplement') return isSupplementProduct(product);
-  if (tierType === 'digital') return isDigitalOrTelehealthProduct(product);
-  return false;
 }
 
 function intakeProfile(intake) {
@@ -241,90 +200,115 @@ function solutionTypeLabel(key, concern) {
     .join(' ');
 }
 
-function periodPainIsRelevant(intake) {
-  const profile = intakeProfile(intake);
-  const pain = String(profile?.periodPain || profile?.painLevel || '').toLowerCase();
-
-  if (pain && !['none', 'not sure', '0'].includes(pain)) return true;
-
-  const support = [
-    ...asArray(profile?.supportSelections),
-    ...asArray(profile?.primaryConcerns),
-    ...asArray(profile?.symptoms),
-  ].map((value) => String(value || '').toLowerCase());
-
-  return support.some((value) => /cramp|period pain|pelvic pain/.test(value));
+/** The engine need ids that belong to one concern area for this person. */
+function concernNeedIds(concern, intake) {
+    const selected = new Set(getSelectedNeeds(intake).map((n) => n.id));
+    const profile = intakeProfile(intake);
+    const ids = new Set();
+    asArray(profile?.supportSelections).forEach((item) => {
+        const mapped = asArray(LEGACY_CONCERN_BY_ITEM[item]);
+        const id = needIdForOption(item);
+        if (id && mapped.includes(concern.key)) ids.add(id);
+    });
+    (LEGACY_CONCERN_NEEDS[concern.key] || []).forEach((id) => { if (selected.has(id)) ids.add(id); });
+    return [...ids].filter((id) => selected.has(id));
 }
 
-function candidateAllowedForConcern(product, intake, concern) {
-  const concernKey = String(concern?.key || '').toLowerCase();
-  const solutionKey = solutionTypeKey(product);
-
-  if (concernKey.includes('period care') && solutionKey === 'cramp-relief') {
-    return periodPainIsRelevant(intake);
-  }
-
-  return true;
+/** Best eligible need match for this concern, or null. */
+function concernMatch(product, intake, needIds) {
+    const details = getProductMatchDetailsForProduct(product, intake);
+    if (details?.eligible === false) return { details, match: null };
+    const match = (details?.needMatches || [])
+        .filter((m) => needIds.includes(m.needId) && m.relevant && !m.filtered && m.score >= MIN_TIER_SCORE)
+        .sort((x, y) => y.score - x.score)[0] || null;
+    return { details, match };
 }
 
 function buildDiverseTiers(products, intake, concern, limit = 5) {
-  const profile = intakeProfile(intake);
-  const disliked = [
-    ...asArray(profile?.dislikedProducts),
-    ...asArray(profile?.avoidRepeat),
-  ];
+    const profile = intakeProfile(intake);
+    const disliked = [
+        ...asArray(profile?.dislikedProducts),
+        ...asArray(profile?.avoidRepeat),
+    ];
+    const needIds = concernNeedIds(concern, intake);
+    if (!needIds.length) return [];
 
-  const ranked = products
-    .filter(Boolean)
-    .filter((product) => !productDisliked(product, disliked))
-    .filter((product) => !hasRecall(product))
-    .filter((product) => candidateAllowedForConcern(product, intake, concern))
-    .filter((product) => getProductMatchDetailsForProduct(product, intake)?.eligible !== false)
-    .sort((a, b) => scoreProduct(b, intake, concern) - scoreProduct(a, intake, concern));
+    const ranked = products
+        .filter(Boolean)
+        .filter((product) => !productDisliked(product, disliked))
+        .filter((product) => !hasRecall(product))
+        .map((product) => ({ product, ...concernMatch(product, intake, needIds) }))
+        .filter((row) => row.match)
+        .map((row) => ({ ...row, key: row.match.score + fsaHsaBonus(row.product, intake) }))
+        .sort((a, b) => b.key - a.key);
 
-  const groups = new Map();
+    const groups = new Map();
+    ranked.forEach((row) => {
+        const key = solutionTypeKey(row.product);
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(row);
+    });
 
-  ranked.forEach((product) => {
-    const key = solutionTypeKey(product);
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(product);
-  });
-
-  return [...groups.entries()]
-    .map(([key, candidates]) => ({
-      key,
-      product: candidates[0],
-      alternatives: candidates.slice(1, 3),
-      score: scoreProduct(candidates[0], intake, concern),
-    }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map((group, index) => ({
-      id: `tier-${group.key}-${index + 1}`,
-      name: solutionTypeLabel(group.key, concern),
-      subcategory: solutionTypeLabel(group.key, concern),
-      product: group.product,
-      matchExplanation: buildMatchExplanation(group.product, intake, concern, group.key),
-      safetyFlags: safetyNotes(group.product, intake),
-      alternatives: group.alternatives,
-    }));
+    return [...groups.entries()]
+        .map(([key, rows]) => ({ key, rows, score: rows[0].key }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, limit)
+        .map((group, index) => {
+            const top = group.rows[0];
+            return {
+                id: `tier-${group.key}-${index + 1}`,
+                name: solutionTypeLabel(group.key, concern),
+                subcategory: solutionTypeLabel(group.key, concern),
+                product: top.product,
+                matchExplanation: buildMatchExplanation(top.match, top.details),
+                safetyFlags: [...safetyNotes(top.product, intake), ...(top.details?.considerations || []).map((c) => c.text)],
+                alternatives: group.rows.slice(1, 3).map((row) => row.product),
+                needId: top.match.needId,
+                score: top.match.score,
+                tier: top.match.tier,
+            };
+        });
 }
 
 // Same field-name fallback pattern as Discovery.jsx's eligibility filter —
 // the catalog has both camelCase and snake_case rows depending on when a
 // product was added.
 function fsaHsaEligibility(product) {
-  const combined = product?.fsaHsaEligible === true || product?.fsa_hsa_eligible === true;
-  return {
-    fsa: combined || product?.fsaEligible === true || product?.fsa_eligible === true,
-    hsa: combined || product?.hsaEligible === true || product?.hsa_eligible === true,
-  };
+    const combined = product?.fsaHsaEligible === true || product?.fsa_hsa_eligible === true;
+    return {
+        fsa: combined || product?.fsaEligible === true || product?.fsa_eligible === true,
+        hsa: combined || product?.hsaEligible === true || product?.hsa_eligible === true,
+    };
 }
 
+function fsaHsaAccount(intake) {
+    const profile = intakeProfile(intake);
+    const answer = { FSA: 'fsa', HSA: 'hsa', Both: 'both' }[profile?.fsaHsaAnswer] || profile?.fsaHsa || intake?.fsaHsa || '';
+    return String(answer).toLowerCase();
+}
+
+// FSA/HSA is a tie-break only (engine spec): +1.5 ranking points, never part
+// of the displayed match. 94 vs 93-and-eligible can flip; 94 vs 55 never does.
+function fsaHsaBonus(product, intake) {
+    const account = fsaHsaAccount(intake);
+    const eligible = fsaHsaEligibility(product);
+    const ok = (account === 'fsa' && eligible.fsa) || (account === 'hsa' && eligible.hsa) || (account === 'both' && (eligible.fsa || eligible.hsa));
+    return ok ? 1.5 : 0;
+}
+
+/**
+ * Ranking key for a product within a concern: the engine's best score for
+ * the concern's needs (or the product's best need when the concern has no
+ * mapped needs) plus the FSA/HSA tie-break. -1 when excluded.
+ */
 export function scoreProduct(product, intake, concern) {
-  const details = getProductMatchDetailsForProduct(product, intake);
-  if (!details?.eligible) return -1;
-  return details?.percent == null ? 0 : details.percent;
+    const details = getProductMatchDetailsForProduct(product, intake);
+    if (!details?.eligible) return -1;
+    const needIds = concern?.key && LEGACY_CONCERN_NEEDS[concern.key] ? concernNeedIds(concern, intake) : [];
+    const concernScore = needIds.length
+        ? Math.max(0, ...(details.needMatches || []).filter((m) => needIds.includes(m.needId)).map((m) => m.score))
+        : details.percent == null ? 0 : details.percent;
+    return concernScore + fsaHsaBonus(product, intake);
 }
 
 function safetyNotes(product, intake) {
@@ -337,26 +321,10 @@ function safetyNotes(product, intake) {
   if (conditions.includes('PCOS') && includesAny(safetyText, PCOS_HORMONE_FLAGS)) {
     notes.push('Contains ingredients/materials with potential hormone-disrupting concerns for PCOS.');
   }
-  if (asArray(intake?.tryingToConceive)[0] === 'yes' && /ashwagandha|retinol|high-dose vitamin a/i.test(safetyText)) {
+  if (String(asArray(intake?.tryingToConceive)[0] || '').toLowerCase() === 'yes' && /ashwagandha|retinol|high-dose vitamin a/i.test(safetyText)) {
     notes.push('Trying to conceive: verify this supplement with a provider before use in preconception/pregnancy.');
   }
   return notes;
-}
-
-function isRelevantConcern(concern, intake) {
-  const selected = selectedConcerns(intake);
-  if (selected.includes(concern.key)) return true;
-  const tags = concern.tags;
-  if ((intake?.conditions || []).includes('PCOS') && tags.includes('pcos')) return true;
-  if ((intake?.conditions || []).includes('endometriosis') && tags.includes('endometriosis')) return true;
-  if ((intake?.conditions || []).includes('perimenopause') || (intake?.conditions || []).includes('menopause')) {
-    if (tags.includes('menopause')) return true;
-  }
-  if ((intake?.tryingToConceive || '') === 'yes' && tags.includes('fertility')) return true;
-  if ((intake?.symptoms || []).includes('cramps') && tags.includes('cramps')) return true;
-  if ((intake?.goals || []).includes('find a provider') && concern.key.includes('Telehealth')) return true;
-  if ((intake?.menstrualCycle === 'yes' || intake?.menstrualCycle === 'irregular') && concern.key.startsWith('Period care')) return true;
-  return false;
 }
 
 function concernRelevanceScore(concern, intake) {
@@ -366,7 +334,7 @@ function concernRelevanceScore(concern, intake) {
   if ((intake?.conditions || []).includes('PCOS') && concern.tags.includes('pcos')) score += 8;
   if ((intake?.conditions || []).includes('endometriosis') && concern.tags.includes('endometriosis')) score += 8;
   if (((intake?.conditions || []).includes('perimenopause') || (intake?.conditions || []).includes('menopause')) && concern.tags.includes('menopause')) score += 8;
-  if ((intake?.tryingToConceive || '') === 'yes' && concern.tags.includes('fertility')) score += 7;
+  if (String(intake?.tryingToConceive || '').toLowerCase() === 'yes' && concern.tags.includes('fertility')) score += 7;
   if ((intake?.symptoms || []).includes('cramps') && concern.tags.includes('cramps')) score += 5;
   if ((intake?.symptoms || []).includes('bloating') && concern.tags.includes('bloating')) score += 4;
   if ((intake?.flowLevel || '').toLowerCase().includes('heavy') && concern.tags.includes('heavy-flow')) score += 6;
@@ -374,34 +342,6 @@ function concernRelevanceScore(concern, intake) {
   if ((intake?.menstrualCycle === 'yes' || intake?.menstrualCycle === 'irregular') && concern.tags.includes('leaks')) score += 4;
   if ((intake?.goals || []).includes('find a provider') && concern.key.includes('Telehealth')) score += 4;
   return score;
-}
-
-function selectTierProduct(products, intake, concern, tierType, alreadyChosen = new Set()) {
-  const disliked = asArray(intake?.dislikedProducts);
-  const candidates = products
-    .filter((p) => !alreadyChosen.has(p.id))
-    .filter((p) => !productDisliked(p, disliked))
-    .filter((p) => !hasRecall(p))
-    .filter((p) => getProductMatchDetailsForProduct(p, intake)?.eligible !== false)
-    .filter((p) => {
-      if (tierType === 'physical') return (p.type || 'physical') === 'physical';
-      return (p.type || 'physical') === 'digital' || p.category === 'supplement';
-    })
-    .sort((a, b) => scoreProduct(b, intake, concern) - scoreProduct(a, intake, concern));
-
-  return candidates[0] || null;
-}
-
-function selectTierCandidates(products, intake, concern, tierType, alreadyChosen = new Set(), limit = 4) {
-  const disliked = asArray(intake?.dislikedProducts);
-  return products
-    .filter((p) => !alreadyChosen.has(p.id))
-    .filter((p) => !productDisliked(p, disliked))
-    .filter((p) => !hasRecall(p))
-    .filter((p) => getProductMatchDetailsForProduct(p, intake)?.eligible !== false)
-    .filter((p) => matchesTierType(p, tierType))
-    .sort((a, b) => scoreProduct(b, intake, concern) - scoreProduct(a, intake, concern))
-    .slice(0, limit);
 }
 
 export function buildRecommendationPrompt(intake, concern) {
@@ -455,57 +395,59 @@ RULES:
 - Always explain why each recommendation fits the user's actual profile in plain language.`;
 }
 
-export function generateTieredRecommendations(intake = {}) {
-  const selected = selectedConcerns(intake);
-  if (selected.length === 0) return [];
-
-  const concerns = CONCERN_CONFIG
-    .map((c) => ({ concern: c, score: concernRelevanceScore(c, intake) }))
-    .filter(({ concern }) => selected.includes(concern.key))
-    .sort((a, b) => b.score - a.score)
-    .map(({ concern }) => concern);
-
-  const scopedConcerns = concerns.slice(0, 20);
-
-  return scopedConcerns.map((concern) => {
-    const concernPool = ALL_PRODUCTS.filter((product) => {
-      const tags = product.tags || [];
-      const category = product.category || '';
-
-      if (concern.key.startsWith('Period care')) {
-        const allowedPeriodTypes = new Set([
-          'pad',
-          'liner',
-          'tampon',
-          'cup',
-          'disc',
-          'period-underwear',
-          'cramp-relief',
-        ]);
-
-        return allowedPeriodTypes.has(solutionTypeKey(product));
-      }
-
-      return concern.tags.some((tag) => tags.includes(tag))
-        || concern.categories.includes(category);
-    });
-
-    const tiers = buildDiverseTiers(concernPool, intake, concern, 5);
-
-    const notes = [];
+function selectedConcernKeys(intake) {
+    const selected = selectedConcerns(intake);
+    if (selected.length) return selected;
     const profile = intakeProfile(intake);
-    const pain = String(profile?.periodPain || profile?.painLevel || '');
-    const numericPain = Number(pain);
+    return [...new Set(asArray(profile?.supportSelections).flatMap((item) => asArray(LEGACY_CONCERN_BY_ITEM[item])))];
+}
 
-    if (Number.isFinite(numericPain) && numericPain >= 8) {
-      notes.push('Pain level is 8 or higher: include telehealth and suggest speaking to a provider.');
-    }
+const CARE_NOTE_FOR_NEED = {
+    uti_right_now: (ids) => ids.some((id) => id.startsWith('urinary.')),
+    uti_first_time: (ids) => ids.some((id) => id.startsWith('urinary.')),
+    severe_pain: (ids) => ids.includes('pain.menstrual_cramp'),
+    very_heavy_flow: (ids) => ids.some((id) => id.startsWith('period.')),
+    symptom_check: (ids) => ids.some((id) => ['urinary.burning', 'vaginal.discharge', 'sexual.sti'].includes(id)),
+    pregnancy_unknown: () => true,
+    breastfeeding_unknown: () => true,
+    urgent_yes: () => true,
+    urgent_not_sure: () => true,
+};
 
-    return {
-      concern: concern.key,
-      prompt: buildRecommendationPrompt(intake, concern.key),
-      tiers,
-      notes,
-    };
-  });
+export function generateTieredRecommendations(intake = {}) {
+    const selected = selectedConcernKeys(intake);
+    if (selected.length === 0) return [];
+
+    const concerns = CONCERN_CONFIG
+        .map((c) => ({ concern: c, score: concernRelevanceScore(c, intake) }))
+        .filter(({ concern }) => selected.includes(concern.key))
+        .sort((a, b) => b.score - a.score)
+        .map(({ concern }) => concern);
+
+    const careFlags = getMatchCareFlags(intake);
+
+    return concerns.slice(0, 20).map((concern) => {
+        const tiers = buildDiverseTiers(ALL_PRODUCTS, intake, concern, 5);
+        const needIds = concernNeedIds(concern, intake);
+
+        const notes = [];
+        const profile = intakeProfile(intake);
+        const numericPain = Number(String(profile?.painLevel || ''));
+        if (Number.isFinite(numericPain) && numericPain >= 8) {
+            notes.push('Pain level is 8 or higher: include telehealth and suggest speaking to a provider.');
+        }
+        careFlags.notes
+            .filter((note) => CARE_NOTE_FOR_NEED[note.code]?.(needIds))
+            .forEach((note) => notes.push(note.text));
+
+        return {
+            concern: concern.key,
+            prompt: buildRecommendationPrompt(intake, concern.key),
+            tiers,
+            notes: [...new Set(notes)],
+            needIds,
+            careFirst: careFlags.careFirst,
+            careProminent: careFlags.careProminent && notes.length > 0,
+        };
+    });
 }

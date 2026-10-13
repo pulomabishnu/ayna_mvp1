@@ -134,3 +134,24 @@ describe('buildUserProfile layers', () => {
     expect(fromQuiz.healthIntent.needs.map((n) => n.id)).toEqual(['vaginal.dryness']);
   });
 });
+
+describe('older saved profiles (step 2)', () => {
+  it('maps first-quiz frustrations to the specific needs they named, only without current answers', () => {
+    const legacy = buildUserProfile({ frustrations: ['Heavy flow', 'Painful cramps', 'General discomfort', 'Urinary incontinence'] });
+    expect(legacy.healthIntent.needs.map((n) => n.id)).toEqual(['period.heavy', 'pain.menstrual_cramp', 'urinary.incontinence']);
+    const current = buildUserProfile({ frustrations: ['Hormonal bloating'], fullHealthIntake: { supportSelections: ['Acne'] } });
+    expect(current.healthIntent.needs.map((n) => n.id)).toEqual(['skin.acne']);
+  });
+  it('maps first web intake concerns and symptoms', () => {
+    const up = buildUserProfile({ primaryConcerns: ['UTI support', 'Sleep and energy'], symptoms: ['cramps'] });
+    expect(up.healthIntent.needs.map((n) => n.id)).toEqual(['urinary.recurrent_uti', 'sleep.trouble', 'energy.fatigue', 'pain.menstrual_cramp']);
+  });
+  it('reads first-quiz sensitivities as allergies, products to avoid as the avoid list, and preferences as values', () => {
+    const up = buildUserProfile({ frustrations: ['Painful cramps'], sensitivities: ['Latex allergy'], productsToAvoid: ['Fragrance sensitivity', 'ThermaCare'], preference: ['Organic/Natural only', 'Non-hormonal / hormone-free'], internalComfort: 'No' }, { catalog: ALL_PRODUCTS });
+    expect(up.safety.allergies.map((a) => a.id)).toEqual(['latex', 'fragrance']);
+    expect(up.safety.avoid.map((a) => a.raw)).toEqual(['ThermaCare']);
+    expect(up.shopping.shouldBe.map((v) => v.id)).toEqual(['organic']);
+    expect(up.shopping.leaveOut.map((l) => l.attr)).toEqual(['hormones']);
+    expect(up.shopping.declinesInternal).toBe(true);
+  });
+});
