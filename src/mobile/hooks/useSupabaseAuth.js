@@ -79,7 +79,9 @@ export function useSupabaseAuth() {
   // "Got the app" badge: any signed-in user in the app counts, recorded once
   // in her account metadata (ayna_app_signed_in_at) and on this device.
   useEffect(() => {
-    if (user?.id) recordAppSignIn(getSupabaseClient(), user);
+    // Only the installed app earns "Got the app": the web /mobile-preview runs this
+    // same code but is not the app.
+    if (user?.id && Capacitor.isNativePlatform()) recordAppSignIn(getSupabaseClient(), user);
   }, [user]);
 
   useEffect(() => {
@@ -181,6 +183,8 @@ export function useSupabaseAuth() {
         emailRedirectTo: emailConfirmRedirect(),
         data: {
           ...metadata,
+          // Main's admin tools read heard_about_us; the website writes both.
+          ...(metadata.heard_about ? { heard_about_us: metadata.heard_about } : {}),
           first_name: firstName,
           full_name: firstName,
           consent_given_at: consentAt,
@@ -218,7 +222,7 @@ export function useSupabaseAuth() {
     if (error) throw error;
   }
 
-  async function signInWithGoogle() {
+  async function signInWithGoogle({ mode = 'signin' } = {}) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
 
@@ -228,11 +232,11 @@ export function useSupabaseAuth() {
       // Storage unavailable.
     }
 
-    // Stashed before EITHER redirect path below, same as AuthGate.jsx's
-    // handleGoogle, Supabase's Google provider auto-provisions a real
-    // account for any unseen address the instant this redirect completes,
-    // with no consent checkboxes shown at all in mobile's "sign in" mode.
-    stashPendingConsent();
+    // Stashed before EITHER redirect path below, but ONLY when she came from
+    // the sign-up flow, where the consent checkboxes were actually shown.
+    // Stashing on plain sign-in used to record consent she never ticked;
+    // a brand-new OAuth account from sign-in now gets ConsentGate instead.
+    if (mode === 'save') stashPendingConsent();
 
     if (Capacitor.isNativePlatform()) {
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -278,7 +282,7 @@ export function useSupabaseAuth() {
   // equivalent option. Same native OAuth treatment as signInWithGoogle
   // above, appUrlOpen's handleNativeOAuthUrl doesn't care which provider
   // produced the redirect, so no changes needed there.
-  async function signInWithApple() {
+  async function signInWithApple({ mode = 'signin' } = {}) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
 
@@ -288,7 +292,7 @@ export function useSupabaseAuth() {
       // Storage unavailable.
     }
 
-    stashPendingConsent();
+    if (mode === 'save') stashPendingConsent();
 
     if (Capacitor.isNativePlatform()) {
       const { data, error } = await supabase.auth.signInWithOAuth({

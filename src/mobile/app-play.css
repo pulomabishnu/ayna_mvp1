@@ -820,3 +820,7 @@
 
 /* Swipe to discover: front card pink */
 .ayna-mobile .ay-discover-art i:nth-child(3) { background: var(--ay-pink) !important; }
+
+/* Wrapped montage match art: word form, no invented percent. */
+.ay-reel-score.is-word span { font: 700 13px/1 var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+.ay-reel-score.is-word strong { font-size: 34px; letter-spacing: -.03em; }

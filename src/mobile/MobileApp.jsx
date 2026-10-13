@@ -741,8 +741,8 @@ export default function MobileApp() {
     onSignIn: signInWithPassword,
     // Remember where Google/Apple started: the post-quiz save may create an
     // account; a plain sign-in that does gets the "build it first" step.
-    onGoogleSignIn: (...args) => { markOAuthSource(authMode === 'signup' || lastQuizAnswers ? 'save' : 'signin'); return signInWithGoogle(...args); },
-    onAppleSignIn: (...args) => { markOAuthSource(authMode === 'signup' || lastQuizAnswers ? 'save' : 'signin'); return signInWithApple(...args); },
+    onGoogleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers ? 'save' : 'signin'; markOAuthSource(mode); return signInWithGoogle({ mode }); },
+    onAppleSignIn: () => { const mode = authMode === 'signup' || lastQuizAnswers ? 'save' : 'signin'; markOAuthSource(mode); return signInWithApple({ mode }); },
     onResendConfirmation: resendConfirmation,
     onAuthenticated: (name) => {
       updateSession((prev) => ({ userName: name || prev.userName }));

@@ -430,6 +430,9 @@ export function buildGlance(product, ctx = {}) {
     sources,
     nav,
     verified: pp.qa.status === 'verified',
+    // Research has checked at least some facts against sources, but a human
+    // has not signed the product off yet.
+    researched: pp.qa.status !== 'not_reviewed' || Boolean(pp.dates?.last_verified),
     alert,
     glossary: planGlossary({ what, who, sections }),
   };

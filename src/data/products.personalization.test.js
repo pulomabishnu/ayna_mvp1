@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
     ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductMatchDetailsForProduct, getProductRelevanceScore, hydrateCatalogProduct,
     getNeedMatchesForProduct, getEcosystemSeedFromQuiz, getRecommendationMatchesAndRest, getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct,
-    getMatchCareFlags, getEcosystemAlternatives, getRecommendationExplanation,
+    getMatchCareFlags, getEcosystemAlternatives, getRecommendationExplanation, isOffShelfProduct,
 } from './products';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake';
 
@@ -17,7 +17,10 @@ describe('getPersonalizedProductIds', () => {
         // fallback tail (ecosystem-building always wants candidates) — so it stays
         // the full catalog. A membership filter built from it would be a near no-op.
         expect(full.length).toBeLessThanOrEqual(ALL_PRODUCTS.length);
-        expect(full.length).toBeGreaterThan(ALL_PRODUCTS.length - 5);
+        // Off-shelf products (sold out, discontinued, recalled per passport review)
+        // are rightly missing from the fallback, so measure against the shelf-able set.
+        const shelfable = ALL_PRODUCTS.filter((p) => !isOffShelfProduct(p)).length;
+        expect(full.length).toBeGreaterThan(shelfable - 5);
 
         // getPersonalizedProductIds() must NOT carry that fallback tail — it's the
         // hard, meaningfully-restricted set a "Personalized" toggle should filter to.

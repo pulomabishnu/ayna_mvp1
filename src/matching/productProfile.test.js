@@ -75,8 +75,13 @@ describe('safety statuses are read from text, never inferred from silence', () =
   it('fragrance-free stated -> no; fragranced -> yes; variant -> unknown; silent -> unknown', () => {
     expect(prof('p-rael-organic-pad').safety.fragrance).toBe('no');
     expect(prof('p-honeypot-pad').safety.fragrance).toBe('yes');
-    expect(prof('p-always-infinity').safety.fragrance).toBe('unknown');
-    expect(prof('p-always-infinity').safety.details.fragrance.variant).toBe(true);
+    // p-always-infinity's variant is now pinned (unscented 18 ct) by a reviewed
+    // retailer source, so its fragrance is a known 'no'. The variant-dependent
+    // case is kept as a synthetic product so it stays reviewed-state-proof.
+    expect(prof('p-always-infinity').safety.fragrance).toBe('no');
+    const variantProduct = buildProductProfile({ id: 'x-variant-pad', name: 'Pad', category: 'pad', type: 'physical', ingredients: 'Cotton top sheet. Available in scented and unscented versions.' });
+    expect(variantProduct.safety.fragrance).toBe('unknown');
+    expect(variantProduct.safety.details.fragrance.variant).toBe(true);
     expect(prof('p-thermacare').safety.fragrance).toBe('unknown');
   });
 

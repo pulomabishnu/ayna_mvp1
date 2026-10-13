@@ -298,6 +298,13 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
               {who.items.length > 0 && who.helps.length > 0 && <ul className="ay-gl-chips is-fit">{who.helps.map((t) => <li key={t}>{t}</li>)}</ul>}
             </div>
           )}
+          {!glance.verified && (
+            <p className="ay-glance__caveat">
+              {glance.researched
+                ? 'Details marked with a date were checked against the listed sources. Full review is still in progress.'
+                : 'From ayna’s catalog. We have not checked these details against the label yet.'}
+            </p>
+          )}
         </div>
         <dl className="ay-glance__facts" aria-label="Key facts">
           {facts.map((f) => (
@@ -314,7 +321,6 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
           ))}
         </dl>
       </div>
-      {!glance.verified && <p className="ay-glance__caveat">From ayna’s catalog. We have not checked these details against the label yet.</p>}
 
       <div className="ay-glance__grid">
         <div className="ay-gl-col">{renderCol(left)}</div>

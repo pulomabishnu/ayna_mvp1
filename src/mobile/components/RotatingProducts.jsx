@@ -30,7 +30,7 @@ function MatchArt() {
       <circle className="track" cx="60" cy="60" r="48" />
       <circle className="fill" cx="60" cy="60" r="48" />
     </svg>
-    <div className="ay-reel-score"><strong>86</strong><span>% match</span></div>
+    <div className="ay-reel-score is-word"><span>your</span><strong>match</strong></div>
     <div className="ay-reel-tags"><span>Fit</span><span>Evidence</span><span>Reviews</span></div>
   </div>;
 }

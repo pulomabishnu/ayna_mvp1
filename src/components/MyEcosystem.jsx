@@ -1113,9 +1113,16 @@ export default function MyEcosystem({
         () => (quizResults && needShelves.length ? { ...quizResults, frustrations: needShelves.map((shelf) => shelf.label) } : quizResults),
         [quizResults, needShelves]
     );
+    // "Next step" highlights a different empty area on every page load.
+    const [gapSpin] = useState(() => Math.floor(Math.random() * 97));
     const gapAreas = useMemo(
-        () => ECOSYSTEM_AREAS.filter((a) => !areaGroups.some((g) => g.key === a.key)).slice(0, 6),
-        [areaGroups]
+        () => {
+            const gaps = ECOSYSTEM_AREAS.filter((a) => !areaGroups.some((g) => g.key === a.key));
+            if (gaps.length < 2) return gaps.slice(0, 6);
+            const start = gapSpin % gaps.length;
+            return [...gaps.slice(start), ...gaps.slice(0, start)].slice(0, 6);
+        },
+        [areaGroups, gapSpin]
     );
     const ecoQueryTrimmed = ecoQuery.trim();
     const visibleAreaGroups = useMemo(() => {
