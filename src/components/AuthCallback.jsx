@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getSupabaseClient } from '../utils/supabaseClient';
+import { getSupabaseClient, getWebGoogleOAuthClient } from '../utils/supabaseClient';
 import { flushPendingConsent } from '../utils/pendingConsent.js';
 
 export default function AuthCallback({ onAuthenticated }) {
@@ -12,16 +12,16 @@ export default function AuthCallback({ onAuthenticated }) {
 
     const hashParams = new URLSearchParams(window.location.hash.slice(1));
     // Scrub the fragment immediately. The client uses Supabase's `implicit`
-    // flow, so access AND refresh tokens arrive in window.location.hash, and
-    // they were left there, meaning a long-lived refresh token for a women's
-    // health account sat in browser history, in `document.location`, and
-    // readable by any third-party script on the page.
+    // flow for non-Google auth, so access AND refresh tokens can arrive in
+    // window.location.hash. They must not sit in browser history or remain
+    // readable from document.location after we have captured them.
     try {
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
     } catch { /* non-fatal */ }
     const searchParams = new URLSearchParams(window.location.search);
     const accessToken = hashParams.get('access_token');
     const refreshToken = hashParams.get('refresh_token');
+    const authCode = searchParams.get('code');
     const type = hashParams.get('type') || searchParams.get('type');
     const errorDesc = hashParams.get('error_description') || searchParams.get('error_description');
 
@@ -78,6 +78,57 @@ export default function AuthCallback({ onAuthenticated }) {
         return;
       }
       onAuthenticated(user);
+    }
+
+    // Web Google OAuth now uses an isolated PKCE client. Supabase returns a
+    // short-lived `?code=` here; exchange it using the same sessionStorage
+    // that holds the verifier, then copy the resulting session into the main
+    // app client. This does not create/replace user data: it only establishes
+    // the browser session for the user Supabase already authenticated.
+    if (authCode) {
+      const googleClient = getWebGoogleOAuthClient();
+      if (!googleClient) {
+        setStatus('error');
+        setErrorMsg('Could not establish the Google sign-in session. Please try again.');
+        return;
+      }
+
+      // The code is single-use. Remove it from browser history immediately so
+      // refresh/back cannot accidentally attempt a second exchange.
+      try {
+        const cleanParams = new URLSearchParams(window.location.search);
+        cleanParams.delete('code');
+        const cleanSearch = cleanParams.toString();
+        window.history.replaceState(null, '', `${window.location.pathname}${cleanSearch ? `?${cleanSearch}` : ''}`);
+      } catch { /* non-fatal */ }
+
+      googleClient.auth.exchangeCodeForSession(authCode)
+        .then(async ({ data, error }) => {
+          if (error || !data?.session?.user) {
+            setStatus('error');
+            setErrorMsg(error?.message || 'Could not establish the Google sign-in session.');
+            return;
+          }
+
+          const session = data.session;
+          const { data: mainData, error: mainError } = await supabase.auth.setSession({
+            access_token: session.access_token,
+            refresh_token: session.refresh_token,
+          });
+          if (mainError || !mainData?.session?.user) {
+            setStatus('error');
+            setErrorMsg(mainError?.message || 'Could not establish session.');
+            return;
+          }
+
+          void flushPendingConsent(supabase);
+          finishAuth(mainData.session.user);
+        })
+        .catch((error) => {
+          setStatus('error');
+          setErrorMsg(error?.message || 'Could not establish the Google sign-in session.');
+        });
+      return;
     }
 
     // OAuth, set session and navigate to ecosystem

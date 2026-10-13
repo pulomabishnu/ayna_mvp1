@@ -40,6 +40,40 @@ function normalizeWebOAuthReturnPath() {
 normalizeWebOAuthReturnPath();
 
 let client = null;
+let webGoogleOAuthClient = null;
+
+// Google OAuth on the web uses a dedicated PKCE client. The production Auth
+// service began issuing a valid Google session and then returning
+// `bad_oauth_state` for the same implicit-flow callback. PKCE keeps the server
+// flow state through the provider callback and returns a one-time code instead,
+// avoiding that broken implicit callback path. Keep its verifier in
+// sessionStorage so it survives the Google round trip without changing the
+// app's normal Supabase session storage or any native auth behavior.
+export function getWebGoogleOAuthClient() {
+  if (typeof window === 'undefined' || Capacitor.isNativePlatform()) return null;
+  if (webGoogleOAuthClient) return webGoogleOAuthClient;
+
+  const url = import.meta.env.VITE_SUPABASE_URL;
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) return null;
+
+  try {
+    webGoogleOAuthClient = createClient(url, anonKey, {
+      auth: {
+        flowType: 'pkce',
+        detectSessionInUrl: false,
+        persistSession: true,
+        autoRefreshToken: false,
+        storage: window.sessionStorage,
+      },
+    });
+  } catch (e) {
+    console.error('[Ayna] Google OAuth client init failed:', e);
+    return null;
+  }
+
+  return webGoogleOAuthClient;
+}
 
 export function getSupabaseClient() {
   if (client) return client;
@@ -50,12 +84,11 @@ export function getSupabaseClient() {
     client = createClient(url, anonKey, {
       auth: {
         flowType: 'implicit',
-        // Web OAuth can legitimately return to either /auth/callback or the
-        // configured SITE_URL. Let supabase-js consume the implicit grant from
-        // the URL wherever it lands so a successful Google sign-in never comes
-        // back to ayna with tokens in the hash while the app still thinks she is
-        // signed out. Native Capacitor handles its custom-scheme callback itself.
-        detectSessionInUrl: !Capacitor.isNativePlatform(),
+        // AuthCallback.jsx owns both implicit hash tokens and the web Google
+        // PKCE code exchange. Leaving automatic URL detection on here races the
+        // dedicated PKCE client and tries to exchange the code without its
+        // verifier.
+        detectSessionInUrl: false,
         persistSession: true,
         // GoTrueClient auto-selects the browser's navigator.locks API to
         // serialize auth calls whenever it's merely present, true in a
@@ -67,6 +100,20 @@ export function getSupabaseClient() {
         ...(Capacitor.isNativePlatform() ? { lock: processLock } : {}),
       },
     });
+
+    // Route every WEB Google OAuth start through the isolated PKCE client,
+    // including sign-in, quiz save, and Google re-auth flows. Apple and native
+    // Google keep their existing behavior.
+    if (!Capacitor.isNativePlatform()) {
+      const signInWithOAuth = client.auth.signInWithOAuth.bind(client.auth);
+      client.auth.signInWithOAuth = (credentials) => {
+        if (credentials?.provider === 'google') {
+          const googleClient = getWebGoogleOAuthClient();
+          if (googleClient) return googleClient.auth.signInWithOAuth(credentials);
+        }
+        return signInWithOAuth(credentials);
+      };
+    }
   } catch (e) {
     // createClient throws synchronously on a malformed VITE_SUPABASE_URL
     // (e.g. missing "https://", a stray trailing space, a copy-pasted anon
