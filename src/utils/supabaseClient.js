@@ -65,6 +65,12 @@ export function getWebGoogleOAuthClient() {
         persistSession: true,
         autoRefreshToken: false,
         storage: window.sessionStorage,
+        // Do not let the temporary Google PKCE client share Supabase's
+        // default auth storage/broadcast key with the main app client. Two
+        // GoTrue clients on the same key can signal auth changes to each other
+        // even when they use different storage backends, leaving React signed
+        // in while PostgREST requests still run as anon.
+        storageKey: 'supabase.auth.ayna-google-pkce',
       },
     });
   } catch (e) {
