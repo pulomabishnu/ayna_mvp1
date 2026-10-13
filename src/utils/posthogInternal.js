@@ -6,21 +6,21 @@
  * of analytics without requiring login.
  *
  * CURRENT INTERNAL USERS:
- * Puloma — phone:              019f23fa-2ddc-7baf-b219-bf4b5c6dceb4
- * Puloma — laptop:             019f23fd-c46e-77a1-b38a-6198fa08a799
- * Eliz   — phone:              019f23f6-e815-77bc-ae5f-ce0421ef345c
- * Eliz   — laptop:             pending
- * Aditi (thakur.aditi0504@gmail.com), identified — Supabase auth.users.id:
+ * Puloma, phone:              019f23fa-2ddc-7baf-b219-bf4b5c6dceb4
+ * Puloma, laptop:             019f23fd-c46e-77a1-b38a-6198fa08a799
+ * Eliz, phone:              019f23f6-e815-77bc-ae5f-ce0421ef345c
+ * Eliz, laptop:             pending
+ * Aditi (thakur.aditi0504@gmail.com), identified, Supabase auth.users.id:
  *                               78b66458-eb0e-4445-8e1a-8150c7db35aa
- * lalaloops99@gmail.com, identified — Supabase auth.users.id:
+ * lalaloops99@gmail.com, identified, Supabase auth.users.id:
  *                               46adced4-68e8-4a60-97ee-1fad4aa32135
  *
- * Anonymous pre-login distinct IDs added 2026-08-25 — real internal testing
+ * Anonymous pre-login distinct IDs added 2026-08-25, real internal testing
  * traffic (Aditi's/team's own pre-login browsing) that showed up heavily in
  * the PostHog event list under a raw anonymous UUID instead of an email,
  * skewing usage metrics. These are NOT stable: PostHog mints a fresh
  * anonymous ID whenever local storage is cleared or a new browser/device is
- * used, so this list will need new entries again whenever that happens —
+ * used, so this list will need new entries again whenever that happens
  * it isn't a one-time fix the way an identified user's ID is.
  * 01a02d2f-4488-7fbf-acb3-67ccc38e8065
  * 01a02cb9-5061-7cb3-b910-67425fe5e71e
@@ -47,18 +47,18 @@
  * 5. Also update .env.local and .env.example here
  *    in this file's comment and in the env files
  * 6. Redeploy from Vercel Deployments tab
- * 7. No code changes needed — the env var is the
+ * 7. No code changes needed, the env var is the
  *    single source of truth for all internal IDs
  *
  * HOW TO VERIFY A DEVICE IS FILTERED:
  * 1. Visit the live site on that device
  * 2. Open browser console
  * 3. Run: posthog.get_distinct_id()
- *    — confirm it matches one of the IDs above
+ *, confirm it matches one of the IDs above
  * 4. Run: posthog.get_property('is_internal')
- *    — should return true
+ *, should return true
  * 5. In PostHog → People → search that distinct ID
- *    — is_internal: true should appear in properties
+ *, is_internal: true should appear in properties
  *
  * PRIVACY NOTE:
  * This file only touches PostHog person properties.
@@ -82,7 +82,7 @@ export function getInternalIds() {
 /**
  * Tags the current PostHog visitor as internal if
  * their distinct ID is in the internal IDs list.
- * Safe to call multiple times — PostHog people.set
+ * Safe to call multiple times, PostHog people.set
  * is idempotent. Safe to call before or after identify.
  *
  * @param {Object} ph - The PostHog instance
@@ -112,7 +112,7 @@ export function tagInternalUserIfNeeded(ph) {
     ph.people.set({ is_internal: true });
     if (import.meta.env.DEV) {
       console.info(
-        '[Ayna/PostHog] Internal user detected — session tagged ' +
+        '[Ayna/PostHog] Internal user detected, session tagged ' +
         'as is_internal: true and will be excluded from analytics.'
       );
     }
@@ -131,8 +131,8 @@ export function tagInternalUserIfNeeded(ph) {
  * session is tagged as internal.
  *
  * Usage:
- *   posthog.get_distinct_id()         — should return your known ID
- *   posthog.get_property('is_internal') — should return true
+ *   posthog.get_distinct_id(), should return your known ID
+ *   posthog.get_property('is_internal'), should return true
  *
  * @param {Object} ph - The PostHog instance
  */
@@ -158,7 +158,7 @@ export function debugPosthogStatus(ph) {
   console.log('PostHog initialized:    ✅ yes');
   console.log('Distinct ID:           ', distinctId);
   console.log('is_internal property:  ', isInternal === true ? '✅ true (will be filtered from analytics)' : `❌ ${isInternal} (NOT filtered)`);
-  console.log('ID in internal list:   ', internalIds.has(distinctId) ? '✅ yes' : '❌ no — add this ID to VITE_POSTHOG_INTERNAL_IDS');
+  console.log('ID in internal list:   ', internalIds.has(distinctId) ? '✅ yes' : '❌ no, add this ID to VITE_POSTHOG_INTERNAL_IDS');
   console.log('Internal IDs list:     ', [...internalIds]);
   console.groupEnd();
 

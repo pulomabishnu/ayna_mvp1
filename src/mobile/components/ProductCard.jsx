@@ -19,7 +19,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
   const shownBrand = brandOf(product);
   const brandRepeatsName = shownBrand && String(name || '').trim().toLowerCase() === shownBrand.toLowerCase();
-  // Brand only — never fall back to the category word ("Pad") in the brand slot.
+  // Brand only, never fall back to the category word ("Pad") in the brand slot.
   const secondaryLabel = shownBrand || '';
   const match = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers, null, needId ? { ...matchOpts, needId } : matchOpts) : null;
   // Badge = best need score, only with a profile and 50+ ("82% for period cramps").

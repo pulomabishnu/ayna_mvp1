@@ -1,5 +1,5 @@
 // Brand for older catalog entries that have no `brand` field. Every value is
-// the brand already written at the start of that product's own name — nothing
+// the brand already written at the start of that product's own name, nothing
 // new is asserted. Display-only: the shared product data is untouched.
 // Products whose name IS the brand (e.g. "Calm", "DivaCup") map to that name.
 export const BRAND_FALLBACK = {

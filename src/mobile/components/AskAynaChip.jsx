@@ -15,7 +15,7 @@ function screenBounds() {
 }
 
 function defaultPosition() {
-  // `|| 390`/`|| 812` rather than just checking `typeof window` — guards
+  // `|| 390`/`|| 812` rather than just checking `typeof window`, guards
   // against innerWidth/innerHeight themselves reading 0 at a very early
   // render (before layout has run), not just `window` being undefined.
   const bounds = typeof document !== 'undefined' ? screenBounds() : { right: 390, bottom: 812 };
@@ -48,13 +48,13 @@ function nearestEdgeX(x, width) {
 }
 
 /**
- * Draggable launcher — press-and-drag repositions it anywhere on screen; a
+ * Draggable launcher, press-and-drag repositions it anywhere on screen; a
  * plain tap (movement under DRAG_THRESHOLD) still opens Ask Ayna. Position
  * persists across screens and reloads via localStorage.
  *
  * Scrolling down docks it to whichever screen edge (left/right) it's
- * currently nearer to and shrinks it to an icon — like iOS's AssistiveTouch
- * bubble — so it stays out of the way of content instead of just shrinking
+ * currently nearer to and shrinks it to an icon, like iOS's AssistiveTouch
+ * bubble, so it stays out of the way of content instead of just shrinking
  * in place. The dock target is computed once, at the moment scrolling
  * crosses the threshold (not continuously), so it doesn't chase the free
  * position around; scrolling back near the top returns it there, and
@@ -63,8 +63,8 @@ function nearestEdgeX(x, width) {
  *
  * `viewKey` identifies whatever screen/overlay is currently showing (see
  * MobileApp.jsx). This component is mounted once and never unmounts as the
- * app navigates, so without this its `compact`/docked state — set from a
- * scroll event on whatever was on screen before — would carry over
+ * app navigates, so without this its `compact`/docked state, set from a
+ * scroll event on whatever was on screen before, would carry over
  * unchanged onto a brand-new screen that hasn't been scrolled at all,
  * making the chip look like it "jumps around" between screens (docked and
  * icon-only on one, expanded and free on the next, with no scrolling in
@@ -96,7 +96,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
 
   useEffect(() => {
     // Every screen scrolls its own inner container rather than the window,
-    // so a plain window 'scroll' listener would never fire — a capturing
+    // so a plain window 'scroll' listener would never fire, a capturing
     // listener on document catches scroll events from any of them (scroll
     // doesn't bubble, but it is dispatched during the capture phase).
     const onScroll = (e) => {
@@ -108,7 +108,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
   }, []);
 
   useEffect(() => {
-    // Compute the dock target only at the instant compact turns on/off —
+    // Compute the dock target only at the instant compact turns on/off
     // deliberately not reacting to `pos` here, so it anchors once rather
     // than following the free position around while docked.
     setDockedX(compact || manualDock ? nearestEdgeX(pos.x, CHIP_WIDTH) : null);
@@ -116,7 +116,7 @@ export default function AskAynaChip({ onClick, viewKey }) {
   }, [compact, manualDock]);
 
   useEffect(() => {
-    // A new screen always starts scrolled to the top — undock/un-compact
+    // A new screen always starts scrolled to the top, undock/un-compact
     // immediately rather than waiting for a scroll event on it (which may
     // never come if the new screen's content is short).
     setManualDock(true);

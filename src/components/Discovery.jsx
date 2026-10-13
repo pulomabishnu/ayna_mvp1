@@ -6,7 +6,9 @@ import PartnerStrip from './PartnerStrip';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
 import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
 import { loadProductCatalog } from '../utils/productCatalog';
-import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
+import { scoreSearchMatch, correctedSearchQuery } from '../utils/search/index.js';
+import SmartSearchInput from './search/SmartSearchInput.jsx';
+import SearchAssist from './search/SearchAssist.jsx';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { isPartnerBrandItem } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
@@ -34,7 +36,7 @@ import { isPlainLeftClick } from '../utils/productRoute';
 // Discovery.macroGroupFilter.test.js), which imports these from here.
 export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice };
 
-/** Natural-language phrase for the browse-AI extension's `query` param — prefers the
+/** Natural-language phrase for the browse-AI extension's `query` param, prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
  * returns '' when browsing is fully unscoped (both 'all'), which the caller treats as
  * "not eligible to auto-generate" (a single LLM call needs a specific product type to
@@ -51,25 +53,25 @@ function buildBrowseAiQueryText(categoryFilter, macroGroup) {
 }
 
 /** Resolves what a single browse-AI round (runBrowseAiRound) should actually send, unifying
- * two callers: (1) browse mode, no typed query — uses the synthesized category/macro-group
- * label text; (2) typed-search "Load more" continuation — uses the user's own submitted text
+ * two callers: (1) browse mode, no typed query, uses the synthesized category/macro-group
+ * label text; (2) typed-search "Load more" continuation, uses the user's own submitted text
  * verbatim, per qTrimForAi, rather than a synthesized label. Also decides the "batch N" cache-
  * busting suffix (see the fetchSearchSuggestions caching note at the runBrowseAiRound call
  * site). For a typed search, roundIndexAtCallTime starts at 0 (a fresh browseAiRounds
  * accumulator per query) but the initial one-shot fetch (runAiSearch) already consumed "batch
- * 1" with the plain query text before any round-based continuation runs — so this round is
+ * 1" with the plain query text before any round-based continuation runs, so this round is
  * really the SECOND batch overall; effectiveRoundIndex accounts for that with a +1 so the
  * very first continuation round doesn't resend the identical query runAiSearch just used
  * (which would just hit fetchSearchSuggestions' cache and return already-seen duplicates).
  * Returns null when there's no query text to send at all (unscoped browse). Exported for unit
- * testing — see Discovery.macroGroupFilter.test.js. */
+ * testing, see Discovery.macroGroupFilter.test.js. */
 function resolveBrowseAiRoundQuery(qTrimForAi, categoryFilter, macroGroup, roundIndexAtCallTime) {
     const isTypedSearchContinuation = Boolean(qTrimForAi);
     const baseQueryText = isTypedSearchContinuation ? qTrimForAi : buildBrowseAiQueryText(categoryFilter, macroGroup);
     if (!baseQueryText) return null;
     const effectiveRoundIndex = isTypedSearchContinuation ? roundIndexAtCallTime + 1 : roundIndexAtCallTime;
     const queryText = effectiveRoundIndex > 0
-        ? `${baseQueryText} (batch ${effectiveRoundIndex + 1} of several — suggest different specific products than earlier batches, avoid repeating brand names already covered)`
+        ? `${baseQueryText} (batch ${effectiveRoundIndex + 1} of several, suggest different specific products than earlier batches, avoid repeating brand names already covered)`
         : baseQueryText;
     return { queryText, isTypedSearchContinuation };
 }
@@ -155,7 +157,7 @@ const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear
 /** Extract a numeric price for sorting (rough proxy: first $ amount, or monthly equivalent when obvious). */
 /**
  * The old version searched for a "$N/month" pattern ANYWHERE in the price
- * string and preferred it over everything else whenever one existed — so
+ * string and preferred it over everything else whenever one existed, so
  * "Oura Ring Gen 3 $299 + $6/month" sorted as $6, and "Natural Cycles $100/
  * year or $13/month" sorted as $13, both landing next to actually-cheap
  * items regardless of Low-to-High/High-to-Low. That's what scattered the
@@ -164,7 +166,7 @@ const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear
  * stop, with "Free" (an optional paid tier mentioned afterward doesn't
  * change that the base product is free) checked first as $0.
  */
-// "Free" only means $0 to sort by when nothing that follows walks it back —
+// "Free" only means $0 to sort by when nothing that follows walks it back
 // "Free trial, then subscription" and "Free through insurance" both matched
 // bare /^free\b/ and sorted as $0 above genuinely cheap products (found live,
 // 2026-08-24 bug bash: technically not wrong per the literal word, but reads
@@ -178,7 +180,7 @@ function getSortPrice(item) {
     if (!s) return null;
     if (/^free\b/i.test(s) && !CONDITIONAL_FREE_PATTERN.test(s)) return 0;
     // Comma thousands separators ("$2,245+") must be part of the digit match,
-    // not just the leading "$2" — stripped after matching, not before, so a
+    // not just the leading "$2", stripped after matching, not before, so a
     // stray comma elsewhere in the string can't merge two unrelated numbers.
     const amounts = [...s.matchAll(/\$(\d{1,3}(?:,\d{3})*(?:\.\d+)?)/g)];
     return amounts.length > 0 ? parseFloat(amounts[0][1].replace(/,/g, '')) : null;
@@ -192,7 +194,7 @@ function hasVerificationLinks(section) {
 }
 
 // A brand-new/smaller-company product with zero citations usually means Ayna's content team
-// hasn't researched it yet, not evidence the product is bad — this is the single source of
+// hasn't researched it yet, not evidence the product is bad, this is the single source of
 // truth for "cold-start" status, shared by getQualityScore's neutral-default scoring and by
 // applyColdStartFloor's page-1 visibility guarantee below, so the two can't drift apart.
 function isColdStartItem(item) {
@@ -205,7 +207,7 @@ function getQualityScore(item, aynaReviews = {}) {
     const clinical = hasVerificationLinks(v.doctor);
     const social = hasVerificationLinks(v.community);
     const scientific = hasVerificationLinks(v.scientific);
-    // Treat "not yet researched" as a neutral middle value rather than a penalty — see
+    // Treat "not yet researched" as a neutral middle value rather than a penalty, see
     // isColdStartItem above for why zero citations isn't evidence against a product.
     const hasAnyConsensus = clinical || social || scientific;
     const consensusScore = hasAnyConsensus ? (clinical + social + scientific) : 1.5;
@@ -213,14 +215,14 @@ function getQualityScore(item, aynaReviews = {}) {
     const hasRating = !item.ratingNote && (aynaRating != null || item.userRating != null);
     const baseRating = item.ratingNote ? 0 : (item.userRating != null ? Number(item.userRating) / 5 : 0);
     const ratedValue = item.ratingNote ? 0 : (aynaRating != null ? aynaRating / 5 : baseRating);
-    // Same idea for rating: no rating yet isn't evidence of a bad product, just an unrated one —
+    // Same idea for rating: no rating yet isn't evidence of a bad product, just an unrated one
     // default to a neutral 0.7 (out of 1) instead of 0.
     const rating = hasRating ? ratedValue : 0.7;
     const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
     return (rating * 2) + consensusScore + safetyOk;
 }
 
-// Deterministic per-(item, seed) hash in [0, 1) — same seed always reorders the same way (so a
+// Deterministic per-(item, seed) hash in [0, 1), same seed always reorders the same way (so a
 // single landing's grid doesn't jitter as filters/sort re-render), but a fresh seed each time the
 // component mounts (see shuffleSeed in Discovery) produces a different order on the next visit.
 function hashToUnitInterval(str) {
@@ -238,7 +240,7 @@ const SHUFFLE_JITTER_RANGE = 1.5;
 // uncited products, but ~119 of 154 catalog products still cluster in a narrow band near the
 // max score (curated content checks nearly every box for most of the catalog), so a cold-start
 // product's ~3.9 is still a couple points below that cluster's floor. The standard ±1.5 jitter
-// can't close that on its own — give cold-start items a wider band so they get a real (if
+// can't close that on its own, give cold-start items a wider band so they get a real (if
 // occasional) shot at page-1 visibility instead of a guaranteed spot near the very bottom.
 const COLD_START_QUALITY_THRESHOLD = 4.5;
 const COLD_START_JITTER_RANGE = 3;
@@ -251,14 +253,14 @@ function shuffleJitter(item, seed, baseScore = 0) {
 // Even with the wider cold-start jitter band above, simulating the real catalog (154 products +
 // 39 released startups, ~28% of which are cold-start) across 500 random shuffle seeds showed only
 // ~14% average page-1 representation for cold-start items, and worse: 35 of the 55 cold-start
-// items never once landed on page 1 across all 500 seeds — jitter alone concentrates luck on
+// items never once landed on page 1 across all 500 seeds, jitter alone concentrates luck on
 // whichever cold-start items happen to hash favorably for a given seed, not a fair rotation across
 // all of them. This guarantees a floor instead of leaving it to chance: after the score+jitter sort,
 // if fewer than COLD_START_PAGE_FLOOR cold-start items made it into the first `pageSize` results,
 // promote the highest score+jitter-ranked cold-start items that didn't (still using the SAME jitter
 // roll for this seed, so which items get promoted still rotates seed to seed) into those spots,
 // displacing the lowest-ranked non-partner items at the bottom of the page. 6/30 (20%) is a
-// deliberately conservative floor — below cold-start's ~28% catalog share, so this narrows the gap
+// deliberately conservative floor, below cold-start's ~28% catalog share, so this narrows the gap
 // without displacing enough established, well-reviewed products to feel like a regression for
 // users who came for the curated content. Partner-pinned items are never displaced.
 const COLD_START_PAGE_FLOOR = 6;
@@ -273,7 +275,7 @@ function applyColdStartFloor(rankedList, pageSize) {
     const promotable = rest.filter(isColdStartItem).slice(0, shortfall);
     if (promotable.length === 0) return rankedList;
 
-    // Displace from the bottom of the page upward, never touching partner-pinned items —
+    // Displace from the bottom of the page upward, never touching partner-pinned items
     // those stay pinned regardless of this guarantee.
     const displaceable = [];
     for (let i = page.length - 1; i >= 0 && displaceable.length < promotable.length; i--) {
@@ -360,7 +362,7 @@ function truncateCardSummary(text, max = 200) {
     if (t.length <= max) return t;
     // Prefer stopping at the end of a full sentence within the limit, so the
     // card teaser reads as one complete thought instead of trailing off
-    // mid-clause — full detail is always one tap away in Details.
+    // mid-clause, full detail is always one tap away in Details.
     const truncated = t.slice(0, max);
     const lastSentenceEnd = Math.max(truncated.lastIndexOf('. '), truncated.lastIndexOf('! '), truncated.lastIndexOf('? '));
     if (lastSentenceEnd > max * 0.4) {
@@ -369,7 +371,7 @@ function truncateCardSummary(text, max = 200) {
     return `${truncated.trimEnd()}…`;
 }
 
-/** Shared profile/dislikes context builder for the AI search-suggestion calls —
+/** Shared profile/dislikes context builder for the AI search-suggestion calls
  * used by both the typed-search flow (runAiSearch) and the browse-mode AI
  * extension (runBrowseAiRound) so the two can't drift on what "personalized"
  * means. Pure extraction of what runAiSearch already computed inline; the
@@ -443,7 +445,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [macroGroup, setMacroGroup] = useState(() => {
         // initialMacroGroup (a whole care area, e.g. from "Swap" in the
         // ecosystem view) sets ONLY the broader group, leaving every
-        // category within it visible — narrower than initialCategory,
+        // category within it visible, narrower than initialCategory,
         // which also pins categoryFilter down to that one specific type.
         if (initialMacroGroup && initialMacroGroup !== 'all') return initialMacroGroup;
         if (!initialCategory || initialCategory === 'all') return 'all';
@@ -454,7 +456,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
-    // Freshly generated on every mount — Discovery unmounts/remounts on each navigation to it,
+    // Freshly generated on every mount, Discovery unmounts/remounts on each navigation to it,
     // so this reshuffles the browsing grid's default order every time a user lands on the page,
     // without reshuffling mid-visit as filters/sort change.
     const [shuffleSeed] = useState(() => Math.random().toString(36).slice(2));
@@ -506,10 +508,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Mirrors browseAiSuggestions synchronously, kept in lockstep everywhere the state is
     // set (reset effect below, and inside runBrowseAiRound). Needed because computing "how
     // many of this round's suggestions are actually new" requires reading the array as it
-    // stands *right now* — doing that inside a setBrowseAiSuggestions(prev => ...) functional
+    // stands *right now*, doing that inside a setBrowseAiSuggestions(prev => ...) functional
     // updater instead (mutating an outer `freshCount` variable as a side effect of the
     // updater) is impure, and React is explicitly allowed to invoke an updater function more
-    // than once for a single call (e.g. to compute eager state) — confirmed live: doing it
+    // than once for a single call (e.g. to compute eager state), confirmed live: doing it
     // that way made a round's *correctly-computed* fresh-item count silently read back as 0
     // after the setState call returned, on a round that had in fact added 4 genuinely new
     // products, which falsely tripped the "this looks like a dry/exhausted round" logic
@@ -521,11 +523,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const browseAiAbortRef = useRef(null);
     // Synchronous guard against two overlapping runBrowseAiRound calls processing the same
     // round concurrently (the trigger effect firing again before the in-flight call's state
-    // updates have committed) — browseAiLoading is a state value and only reflects reality a
+    // updates have committed), browseAiLoading is a state value and only reflects reality a
     // render cycle later, which isn't fast enough to close this window.
     const browseAiInFlightRef = useRef(false);
     // How many CONSECUTIVE rounds in a row added zero genuinely new products.
-    // One dry round isn't strong evidence a category is exhausted — the model
+    // One dry round isn't strong evidence a category is exhausted, the model
     // can repeat itself on a single batch and still have real, distinct
     // products left to suggest on the next one (confirmed live: a typed
     // search for "Kegel trainer" stopped dead after round 3 of a possible
@@ -535,11 +537,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const dryRoundStreakRef = useRef(0);
     // Set when a round's fetchSearchSuggestions call itself failed (rate
     // limit, auth required, server error) rather than genuinely succeeding
-    // with zero new suggestions — fetchSearchSuggestions never throws on
+    // with zero new suggestions, fetchSearchSuggestions never throws on
     // these, it resolves with `suggestions: []` and an `error`/`code`
     // field (see src/utils/fetchSearchSuggestions.js), which is otherwise
     // indistinguishable from "the AI legitimately found nothing new" and
-    // was wrongly counted toward dryRoundStreakRef — confirmed live: after
+    // was wrongly counted toward dryRoundStreakRef, confirmed live: after
     // this session's own heavy testing tripped the 15-req/hour rate limit,
     // two back-to-back 429s got treated as proof a category was exhausted
     // and showed "that's everything we could find" for a query that had
@@ -550,7 +552,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [resolvedImages, setResolvedImages] = useState({});
     // Pagination: rendering every matching product as a full DOM card at once
     // (previously up to the whole ~159+ product catalog, unconditionally) was
-    // the actual render-cost bottleneck — not image loading, which already had
+    // the actual render-cost bottleneck, not image loading, which already had
     // caching/concurrency limits. "Load more" reveals additional batches
     // instead of mounting everything up front.
     const PAGE_SIZE = 30;
@@ -559,7 +561,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // to 10 per explicit direction: browsing a category should feel
     // effectively endless (there are real products in every category well
     // beyond what the static catalog holds), not stop after one extra
-    // batch. Still bounded, not literally infinite — a genuinely
+    // batch. Still bounded, not literally infinite, a genuinely
     // open-ended browse session (someone holding "Load more") shouldn't be
     // able to run unlimited paid LLM calls, but 10 rounds x ~8 items is
     // ~80 additional real products per category before it stops offering
@@ -569,7 +571,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const recommendedRank = useMemo(() => new Map((recommendedProductIds || []).map((id, index) => [id, index])), [recommendedProductIds]);
 
-    // AI-discovered products (api/discover-products.js), human-approved only —
+    // AI-discovered products (api/discover-products.js), human-approved only
     // /api/products already filters to is_active=true, and a discovered row is
     // never is_active until scripts/review-discovered-products.mjs approves it
     // (see supabase/product_catalog_discovery.sql). This is additive on top of
@@ -587,15 +589,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return () => { cancelled = true; };
     }, []);
 
-    // Arriving here with a query already set — the landing hero search box,
+    // Arriving here with a query already set, the landing hero search box,
     // a shared/bookmarked ?q= link, a related-search chip elsewhere in the
-    // app — used to only pre-fill the search box's text. It never actually
+    // app, used to only pre-fill the search box's text. It never actually
     // submitted, so searchSubmitted stayed false and the whole AI-fallback
     // engine below (runAiSearch / runBrowseAiRound) never fired: a query with
     // zero catalog matches (confirmed live: "hair") landed on a bare "No
     // matches" with none of the AI-suggested-product machinery this file
     // already builds ever running. runSearch() is exactly what pressing
-    // Enter in this page's own search box does — routing the initial query
+    // Enter in this page's own search box does, routing the initial query
     // through it (instead of just setting the two pieces of text state)
     // makes a preset query behave identically to a manually typed-and-submitted
     // one, category nudges and all.
@@ -603,7 +605,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (initialSearch === undefined) return;
         if (initialSearch && initialSearch.trim().length >= 2) {
             // runSearch is a plain (non-memoized) function defined later in this
-            // component — intentionally NOT a dependency here, since its identity
+            // component, intentionally NOT a dependency here, since its identity
             // changes every render and would re-fire this effect in a loop.
             runSearch(initialSearch);
         } else {
@@ -641,7 +643,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const combined = useMemo(() => {
         // Ayna doesn't sell or dispense prescriptions, so prescription-only items
         // (birth control requiring an Rx, HRT patches/inserts, etc.) never show as
-        // shoppable products here — searching what they treat (e.g. "hormone
+        // shoppable products here, searching what they treat (e.g. "hormone
         // replacement therapy") surfaces telehealth providers that prescribe it instead.
         const products = filterPrescriptionCareGate(ALL_PRODUCTS).map(p => ({ ...p, isStartup: false }));
         // Released startups appear as normal products (no startup badge); unreleased are only on Startups page
@@ -653,7 +655,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             price: s.stage || ''
         }));
         // discoveredProducts are already the client-ready shape /api/products
-        // returns (toClientProduct in api/products.js), so no mapping needed —
+        // returns (toClientProduct in api/products.js), so no mapping needed
         // just stamp isStartup like the other two sources for consistent shape.
         const discovered = filterPrescriptionCareGate(discoveredProducts).map(p => ({ ...p, isStartup: false }));
         return [...products, ...releasedAsProducts, ...discovered];
@@ -746,7 +748,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (qTrim) {
             const scoreItem = (item) => ({
                 item,
-                matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS), buildIdentityTextForItem(item, CATEGORY_LABELS)),
+                matchScore: scoreSearchMatch(qTrim, item),
             });
             let scored = list.map(scoreItem).filter((x) => x.matchScore > 0);
 
@@ -756,7 +758,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const broadScored = broadList.map(scoreItem).filter((x) => x.matchScore > 0);
                 const bestBroadScore = broadScored.reduce((max, x) => Math.max(max, x.matchScore), 0);
                 // Widen past the active category tab whenever nothing in it matched, or something
-                // outside it matches meaningfully better — e.g. searching "heating pad for cramps"
+                // outside it matches meaningfully better, e.g. searching "heating pad for cramps"
                 // while browsing the Pads tab should surface the actual heating pad, not just period
                 // pads that happen to share the word "pad" with the query.
                 if (scored.length === 0 || bestBroadScore > bestScopedScore) {
@@ -827,7 +829,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     if (sa !== sb) return sb - sa;
                 }
                 // Brand partners are pinned to the top of the default browsing sort
-                // (but not when personalized results are on — a partnership doesn't
+                // (but not when personalized results are on, a partnership doesn't
                 // buy placement in a real recommendation, only visibility on the
                 // page you browse freely, per How We Make Money).
                 if (browsingWithoutTextQuery && !personalizationFilter) {
@@ -849,10 +851,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     }, [combined, macroGroup, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, myProducts, matchOpts]);
 
     // Back to the first page whenever the underlying result set actually
-    // changes (new filter/search/sort) — not when AI suggestions arrive later
+    // changes (new filter/search/sort), not when AI suggestions arrive later
     // (gridItems depends on those too, but `filtered` deliberately doesn't).
     // Adjusted during render (React's recommended pattern for "reset state
-    // when a derived value changes"), not in an effect — that would cost an
+    // when a derived value changes"), not in an effect, that would cost an
     // extra render pass for something that's cheap to just do inline.
     const [prevFiltered, setPrevFiltered] = useState(filtered);
     if (filtered !== prevFiltered) {
@@ -867,7 +869,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         [aiSuggestions]
     );
 
-    // Stable key for the active browse/search scope — used to know when the browse-AI
+    // Stable key for the active browse/search scope, used to know when the browse-AI
     // accumulator below belongs to a *different* context (user picked a new macro
     // group/category/personalization, or typed a new search) and needs to reset rather
     // than keep accumulating onto a stale scope. Includes qTrimForAi so submitting a new
@@ -903,7 +905,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const gridItems = useMemo(() => {
         // Union real catalog matches for the submitted query with AI suggestions,
         // in both browsing and search modes. This used to show ONLY AI results
-        // once a search was submitted, discarding catalog matches entirely — so
+        // once a search was submitted, discarding catalog matches entirely, so
         // a query the local scorer already matches correctly (e.g. "menstrual
         // cup" via the cup/menstrual alias in naturalLanguageSearch.js) showed 0
         // results whenever the AI call failed, rate-limited, or returned empty,
@@ -917,13 +919,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (n && names.has(n)) continue;
             out.push(p);
         }
-        // Round-accumulated AI suggestions (from "Load more" — browse-mode rounds when no
+        // Round-accumulated AI suggestions (from "Load more", browse-mode rounds when no
         // text query is active, or typed-search continuation rounds once the initial
         // one-shot search above has already run) are appended the same way, deduped
         // against the catalog AND anything already added above. browseAiContextKey (which
         // now includes qTrimForAi) already guarantees this accumulator gets reset to []
         // whenever the query/scope changes, so there's no risk of a stale query's rounds
-        // leaking into a new one — no need to also gate this merge on !qTrimForAi.
+        // leaking into a new one, no need to also gate this merge on !qTrimForAi.
         if (enrichedBrowseAiSuggestions.length > 0) {
             const outNames = new Set(out.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
             for (const p of enrichedBrowseAiSuggestions) {
@@ -934,7 +936,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             }
         }
         // The AI suggestions above are appended in whatever order Claude returned
-        // them — the prompt asks it to rank by relevance, but that's advisory,
+        // them, the prompt asks it to rank by relevance, but that's advisory,
         // not enforced, so the model's first pick is sometimes a weaker/tangential
         // match while later ones are spot-on. Re-score everything (catalog items
         // included) against the query with the same deterministic scorer used for
@@ -944,7 +946,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             const scored = out.map((item, idx) => ({
                 item,
                 idx,
-                score: scoreQueryAgainstProduct(qTrimForAi, buildSearchTextForItem(item, CATEGORY_LABELS), buildIdentityTextForItem(item, CATEGORY_LABELS)),
+                score: scoreSearchMatch(qTrimForAi, item),
             }));
             scored.sort((a, b) => (b.score - a.score) || (a.idx - b.idx));
             const ranked = scored.map((x) => x.item);
@@ -957,7 +959,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     useEffect(() => {
         // Only resolve images for what's actually rendered (visibleCount),
-        // not a flat 80 — pagination already caps the DOM to what's visible,
+        // not a flat 80, pagination already caps the DOM to what's visible,
         // so this now naturally scales with it instead of doing extra work
         // for cards the user hasn't scrolled/paged to yet.
         const visible = gridItems.slice(0, visibleCount);
@@ -968,7 +970,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (missing.length === 0) return;
 
         // Bounded worker pool. This used to fire one request per item with no
-        // cap — up to 80 concurrent serverless invocations against a metered
+        // cap, up to 80 concurrent serverless invocations against a metered
         // image API from a single render, because every AI suggestion carries a
         // placeholder image. The shared cache and in-flight dedup made it cheap,
         // but the burst was still 80 parallel calls.
@@ -1015,14 +1017,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 personalized: personalizationFilter,
                 profileSummary,
                 dislikedProducts,
-                // Claude generates roughly linearly with requested count — each
+                // Claude generates roughly linearly with requested count, each
                 // suggestion carries a full schema (summary, tags, retailers,
                 // search terms, safety note), so asking for 20 of them is what
                 // made every search feel slow (multi-second generation before
                 // anything new could render). Catalog matches (in `filtered`)
                 // already render instantly regardless of this call, so cutting
                 // the AI request down trades "more invented suggestions" for
-                // "results show up fast" — the better trade for a live per-
+                // "results show up fast", the better trade for a live per-
                 // keystroke search.
                 maxResults: personalizationFilter ? 6 : 8,
             });
@@ -1058,11 +1060,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // (or an appended-since-visited "Load more") caught up with what runAiSearch's
     // initial one-shot fetch (round 0) returned. Both share the exact same
     // fetchSearchSuggestions utility, anti-fabrication API, round-batching, and dedup
-    // logic — only the query text source differs (typed text verbatim vs. a synthesized
+    // logic, only the query text source differs (typed text verbatim vs. a synthesized
     // category-label phrase), which is why they were unified into one function instead of
     // typed search getting its own separate, weaker one-shot-only mechanism.
     const runBrowseAiRound = useCallback(async (contextKeyAtCallTime, roundIndexAtCallTime) => {
-        // fetchSearchSuggestions session-caches by (query, category, symptom, maxResults) —
+        // fetchSearchSuggestions session-caches by (query, category, symptom, maxResults)
         // an identical query on a later round would just replay an earlier round's cached
         // response verbatim (every item then gets deduped away, silently wasting the round).
         // Confirmed live: with only a single "later round" variant text, rounds 3+ all sent
@@ -1075,7 +1077,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (!resolved) return;
         // Belt-and-suspenders against the trigger effect firing again before this round's
         // state updates have committed (browseAiLoading is a state value, so it only reflects
-        // reality a render cycle later) — see browseAiInFlightRef's declaration above.
+        // reality a render cycle later), see browseAiInFlightRef's declaration above.
         if (browseAiInFlightRef.current) return;
         browseAiInFlightRef.current = true;
         const { queryText, isTypedSearchContinuation } = resolved;
@@ -1106,14 +1108,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 return;
             }
             // The context may have changed (user switched category/group) while
-            // this request was in flight — discard stale results instead of
+            // this request was in flight, discard stale results instead of
             // leaking them into a different scope's accumulator. The reset
             // effect above already cleared browseAiSuggestions/Rounds for the
             // new context, so just bail here.
             if (browseAiContextKeyRef.current !== contextKeyAtCallTime) return;
             setBrowseAiLoading(false);
             // A rate limit / auth / server error resolves here (see
-            // fetchSearchSuggestions) rather than throwing — the request
+            // fetchSearchSuggestions) rather than throwing, the request
             // itself never got a real answer, so this must NOT count as
             // evidence the category is exhausted. Bound retries the same
             // way an actual thrown error does (below) but keep the error
@@ -1126,13 +1128,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             }
             setBrowseAiErrorCode(null);
             // Dedup against catalog matches, whatever's already accumulated for this browse
-            // context (read from the ref, not React state — see browseAiSuggestionsRef's
+            // context (read from the ref, not React state, see browseAiSuggestionsRef's
             // declaration above for why: computing this inside a setBrowseAiSuggestions(prev
             // => ...) functional updater is impure, since it also assigns to an outer
             // freshCount variable as a side effect, and React is allowed to invoke an
-            // updater more than once for a single call — which silently corrupted freshCount
+            // updater more than once for a single call, which silently corrupted freshCount
             // on rounds that had, in fact, added genuinely new products), and the
-            // search-flow's AI suggestions — mirrors the dedup gridItems already does above.
+            // search-flow's AI suggestions, mirrors the dedup gridItems already does above.
             const existingNames = new Set([
                 ...filtered.map((p) => (p.name || '').trim().toLowerCase()),
                 ...browseAiSuggestionsRef.current.map((p) => (p.name || '').trim().toLowerCase()),
@@ -1151,7 +1153,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 browseAiSuggestionsRef.current = [...browseAiSuggestionsRef.current, ...fresh];
                 setBrowseAiSuggestions(browseAiSuggestionsRef.current);
             }
-            // A DRY round (adds nothing new) isn't trusted on its own — the
+            // A DRY round (adds nothing new) isn't trusted on its own, the
             // model can duplicate one batch and still have real, distinct
             // products on the next (confirmed live, see dryRoundStreakRef
             // above). Only two dry rounds IN A ROW is treated as "this
@@ -1169,7 +1171,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (e?.name === 'AbortError' && !roundTimedOut) return;
             setBrowseAiLoading(false);
             // Count a failed round against the cap too, so a persistent server
-            // error can't cause the trigger effect below to retry indefinitely —
+            // error can't cause the trigger effect below to retry indefinitely
             // the round budget is about bounding calls, not just successes. Same
             // reasoning as the fetchErrorCode branch above: a thrown exception
             // isn't evidence of "nothing left," so don't touch dryRoundStreakRef.
@@ -1186,9 +1188,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Fires the next AI round exactly when "Load more" would otherwise vanish with
     // nothing left to show, in either mode:
     //   - Browse mode (no typed query): a specific scope actually selected (never for the
-    //     fully-unscoped "All" view — too unbounded for one LLM call).
+    //     fully-unscoped "All" view, too unbounded for one LLM call).
     //   - Typed-search continuation: gated on the initial one-shot fetch (runAiSearch)
-    //     having actually finished (searchSubmitted && !aiLoading) — otherwise this would
+    //     having actually finished (searchSubmitted && !aiLoading), otherwise this would
     //     double-fire a first AI round in parallel with runSearch's own initial call for
     //     the same query. A typed query is specific enough on its own that the "All"
     //     scope restriction below doesn't apply to it.
@@ -1237,9 +1239,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (!q || q.length < 2) return;
         setSearchQuery(q);
         posthog.capture('search_performed', { queryLength: q.length });
-        const qLower = q.toLowerCase();
+        // Typos fixed before the category nudges and live search ("tampoons" -> "tampons").
+        const qFixed = correctedSearchQuery(q);
+        const qLower = qFixed.toLowerCase();
 
-        // Cancel any pending debounce — we're going immediate
+        // Cancel any pending debounce, we're going immediate
         clearTimeout(debounceRef.current);
         setSubmittedQuery(q);
         setSearchSubmitted(true);
@@ -1282,7 +1286,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         }
 
         // Trigger AI search immediately with resolved category
-        runAiSearch(q, resolvedCategory, symptomFilter);
+        runAiSearch(qFixed, resolvedCategory, symptomFilter);
     };
 
     const handleSmartSearch = (e) => {
@@ -1290,7 +1294,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         runSearch(searchQuery);
     };
 
-    // "Clear" resets the FILTERS — Personalized is a standing preference the
+    // "Clear" resets the FILTERS, Personalized is a standing preference the
     // user turned on deliberately, not a filter value like price/rating/life
     // stage, and turning it off as a side effect of clicking something
     // labeled just "Clear" was a surprising, undocumented behavior (found
@@ -1359,14 +1363,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             </div>
 
             <form onSubmit={handleSmartSearch} className="ayna-browse__search">
-                <input
+                <SmartSearchInput
                     type="search"
+                    suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 7 }}
+                    onPick={(s) => runSearch(s.query)}
                     value={searchQuery}
                     onChange={(e) => {
                         const value = e.target.value;
                         setSearchQuery(value);
                         // Clearing the box (the native × or backspacing to empty) used to
-                        // leave the Product Type filter exactly as the search had left it —
+                        // leave the Product Type filter exactly as the search had left it
                         // often a category the search itself auto-selected via the nudge
                         // logic in runSearch, with no text left to explain why results were
                         // still scoped to it. Clearing the text now clears that filter too.
@@ -1376,7 +1382,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             clearTimeout(debounceRef.current);
                             return;
                         }
-                        // Typing used to do nothing at all until Enter was pressed — no
+                        // Typing used to do nothing at all until Enter was pressed, no
                         // live feedback, felt broken (found live, 2026-08-24 bug bash).
                         // Debounced instead of firing on every keystroke: this triggers
                         // a real LLM call once local catalog matches run out, so an
@@ -1391,6 +1397,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 />
                 <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
             </form>
+            {submittedQuery && <SearchAssist query={submittedQuery} resultCount={filtered.length} showTries={false} onUse={(text) => runSearch(text)} />}
             {!submittedQuery && (
                 <PartnerStrip variant="web" className="ayna-browse__partners" onSelectBrand={(name) => { setMacroGroup('all'); setCategoryFilter('all'); runSearch(name); }} />
             )}
@@ -1458,7 +1465,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 />
             )}
 
-            {/* Loading state for explicit search — a bare skeleton grid with no
+            {/* Loading state for explicit search, a bare skeleton grid with no
                 explanation for several seconds read as stuck/broken (found live,
                 2026-08-24 bug bash), since a query with no catalog matches has to
                 wait on a real LLM search, not an instant lookup. */}
@@ -1486,7 +1493,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             <div className="ayna-browse__grid">
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
                     // A defined (even empty-string) resolvedImages[item.id] came back
-                    // from the server's type-aware /api/product-image resolution —
+                    // from the server's type-aware /api/product-image resolution
                     // trust it as-is below rather than re-running it through
                     // isPlaceholderProductImage, which doesn't know the product is
                     // 'digital' and would reject a legitimate app/telehealth logo.
@@ -1576,7 +1583,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </div>
             ) : browseAiLoading ? (
                 // A browse-AI round is fetching more results for this scope in the
-                // background — show a disabled, clearly-labeled state instead of
+                // background, show a disabled, clearly-labeled state instead of
                 // "Load more" just disappearing (which would look broken) or being
                 // clickable and double-firing a request.
                 <div style={{ textAlign: 'center', marginTop: '2rem' }}>
@@ -1590,13 +1597,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </button>
                 </div>
             ) : gridItems.length > 0 && (qTrimForAi || !(macroGroup === 'all' && categoryFilter === 'all')) && browseAiRounds >= MAX_BROWSE_AI_ROUNDS ? (
-                // The round budget is used up — say so explicitly rather than
+                // The round budget is used up, say so explicitly rather than
                 // the button just vanishing with no explanation, which reads
                 // as broken/stuck. Two different reasons land here, and they
                 // need different, honest copy: genuinely ran out of new
-                // suggestions (or two duplicate-heavy rounds in a row — see
+                // suggestions (or two duplicate-heavy rounds in a row, see
                 // dryRoundStreakRef) vs. the fetch itself kept failing/rate-
-                // limiting (browseAiErrorCode) — the latter is NOT "we
+                // limiting (browseAiErrorCode), the latter is NOT "we
                 // checked and this is everything," it's "we couldn't check."
                 <p style={{ textAlign: 'center', marginTop: '2rem', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
                     {browseAiErrorCode === 'rate_limited'

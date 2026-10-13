@@ -1,4 +1,4 @@
-// Thin client for /api/export-data — same auth pattern as
+// Thin client for /api/export-data, same auth pattern as
 // notificationPreferencesApi.js (a real Supabase JWT via Authorization:
 // Bearer, never a client-supplied user id), kept as its own small file
 // rather than a shared cross-concern helper since that's the pattern this
@@ -37,7 +37,7 @@ export async function fetchDataExport() {
   return data;
 }
 
-// Same route, POST — files a real account_deletion_requests row (see that
+// Same route, POST, files a real account_deletion_requests row (see that
 // table's header comment for what "processed" actually still requires).
 export async function requestAccountDeletion() {
   const token = await getAccessToken();

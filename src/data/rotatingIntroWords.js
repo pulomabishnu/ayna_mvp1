@@ -1,4 +1,4 @@
-/** Same list as ayna_waitlist / index.html — rotating hero phrases */
+/** Same list as ayna_waitlist / index.html, rotating hero phrases */
 export const ROTATING_INTRO_WORDS = [
   'period pad',
   'OBGYN',

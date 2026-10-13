@@ -1,7 +1,7 @@
 // Mirrors AREAS in src/components/EcosystemBubbles.jsx: the real
 // MACRO_GROUPS taxonomy (minus 'all') plus two ecosystem-only areas.
 // Product -> area resolution (resolveArea/resolveEcosystemProductArea in
-// that file) is intentionally NOT reimplemented here — deferred until real
+// that file) is intentionally NOT reimplemented here, deferred until real
 // product data is wired in, at which point products should already carry
 // an areaKey computed by the real function, not a mobile-local guess.
 export const ECOSYSTEM_AREAS = [

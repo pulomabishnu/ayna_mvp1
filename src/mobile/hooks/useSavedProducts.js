@@ -8,7 +8,7 @@ import {
 } from '../../utils/savedProductsStore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 
-// Mirrors compactProduct() in savedProductsStore.js (not exported there) —
+// Mirrors compactProduct() in savedProductsStore.js (not exported there)
 // keeps local writes in the same compact shape used by the website.
 const COMPACT_KEYS = [
   'id', 'name', 'brand', 'category', 'type', 'price', 'priceDisplay', 'stage',

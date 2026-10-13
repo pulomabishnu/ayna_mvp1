@@ -1,22 +1,22 @@
 /* global process */
 // Returns a product image URL for a given product name/brand/official-page
-// URL. Previously used the Serper.dev Google Image Search API — that key
+// URL. Previously used the Serper.dev Google Image Search API, that key
 // ran out of credits ("Not enough credits" from a direct API test), and
 // every lookup silently returned empty. Replaced with two free, no-quota
 // methods tried in order against the product's official page URL:
-//   1. Shopify storefronts publicly expose /products.json — fuzzy-match the
+//   1. Shopify storefronts publicly expose /products.json, fuzzy-match the
 //      product name against it for the real per-SKU photo.
 //   2. Fall back to the page's og:image/twitter:image meta tag, rejecting
 //      anything that looks like a logo/banner/social-share asset by
 //      filename rather than risk mislabeling a brand logo as a product photo.
 // Both reuse the SSRF-safe fetch pattern in ./_ssrfSafeFetch.js.
 //
-// `url` is optional — the hardcoded catalog mostly doesn't have one yet, and
+// `url` is optional, the hardcoded catalog mostly doesn't have one yet, and
 // without it there's no page to resolve against, so this returns empty
 // (UI falls back to the 🌸 placeholder) rather than guessing.
 //
 // COST/ABUSE: this route is unauthenticated and could otherwise be hit
-// directly by any caller — per-IP rate limit, a shared Redis cache so the
+// directly by any caller, per-IP rate limit, a shared Redis cache so the
 // cost is per PRODUCT rather than per product-per-browser, edge caching,
 // input caps, and a request timeout on every outbound fetch.
 
@@ -27,7 +27,7 @@ import { lookupSerperImage } from './_serperImageSearch.js';
 
 const MAX_TERM_LEN = 120;
 const MAX_URL_LEN = 500;
-const CACHE_TTL_SEC = 30 * 24 * 60 * 60; // 30 days — product photos don't move
+const CACHE_TTL_SEC = 30 * 24 * 60 * 60; // 30 days, product photos don't move
 const NEGATIVE_TTL_SEC = 24 * 60 * 60;   // don't re-fetch known misses all day
 
 let redisPromise = null;
@@ -71,7 +71,7 @@ function allowedOrigin(req) {
   return configured.includes(origin) ? origin : null;
 }
 
-/** Tries Shopify catalog match first, then og:image — first hit wins. */
+/** Tries Shopify catalog match first, then og:image, first hit wins. */
 async function resolveImageFromUrl(pageUrl, name, brand, allowBrandLogo) {
   const shopifyImage = await matchShopifyProduct(pageUrl, name, brand);
   if (shopifyImage) return shopifyImage;
@@ -81,12 +81,12 @@ async function resolveImageFromUrl(pageUrl, name, brand, allowBrandLogo) {
 }
 
 // llm-recommendations.js's enrichProduct() always sets `type` to exactly
-// 'digital' or 'physical' (defaulting to 'physical') — a cleaner, more
+// 'digital' or 'physical' (defaulting to 'physical'), a cleaner, more
 // reliable signal for "does this even have a physical form to photograph"
 // than guessing off `category` (an open-ended string with dozens of
 // values). Apps/telehealth services (Brightside, Clue) are 'digital': a
 // brand logo/icon genuinely IS the product's real "photo" there. Everything
-// 'physical' keeps the strict logo/SVG rejection — a logo standing in for
+// 'physical' keeps the strict logo/SVG rejection, a logo standing in for
 // an actual product photo is a real bug there (Pure Encapsulations'
 // Shopify catalog resolving to its theme logo instead of a bottle photo).
 
@@ -94,13 +94,13 @@ async function resolveImageFromUrl(pageUrl, name, brand, allowBrandLogo) {
  * Third, URL-independent fallback: NIH's Dietary Supplement Label Database.
  * Free, keyless, no hallucination risk (it's a real government database
  * matched by fuzzy product name, already used for the same purpose in
- * api/llm-recommendations.js) — a much better fit than trying to guess a
+ * api/llm-recommendations.js), a much better fit than trying to guess a
  * retailer product URL for an LLM-suggested product, since a large share of
  * AI-suggested products are supplements with no usable page URL at all (the
  * model either omits `officialUrl` or, before this file's other fix, gave a
  * brand homepage that has no product-specific og:image). Only ever helps
  * (returns a real label photo) or does nothing (name doesn't match DSLD's
- * supplement-only catalog) — never a source of a wrong image, since it
+ * supplement-only catalog), never a source of a wrong image, since it
  * requires an actual database match, not a guess.
  */
 async function resolveImageFromDsld(name) {
@@ -136,7 +136,7 @@ export default async function handler(req, res) {
   // whenever the catalog's own generic product description didn't share
   // enough words with the brand's actual commercial product name (e.g.
   // "Kegel8 Pelvic Floor Exerciser" vs the real "Kegel8 Ultra 20 V2
-  // Electronic Pelvic Toner") — confirmed live, cached negative under v9.
+  // Electronic Pelvic Toner"), confirmed live, cached negative under v9.
   const cacheKey = `ayna:img:v10:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
@@ -161,7 +161,7 @@ export default async function handler(req, res) {
   let imageUrl = '';
   try {
     // isLikelyNonProductImageUrl is the final authority regardless of
-    // source — matchShopifyProduct trusts whatever image field the matched
+    // source, matchShopifyProduct trusts whatever image field the matched
     // catalog entry has with no filename check of its own (a real
     // production case: Pure Encapsulations' Shopify catalog resolved to
     // their own theme logo SVG, not a per-SKU photo). Rejecting BEFORE the
@@ -175,7 +175,7 @@ export default async function handler(req, res) {
       imageUrl = await resolveImageFromDsld(name);
       if (isLikelyNonProductImageUrl(imageUrl)) imageUrl = '';
     }
-    // True last resort — a real image-search index, unlike every resolver
+    // True last resort, a real image-search index, unlike every resolver
     // above, doesn't depend on the brand's own site being reachable or
     // scrapable (a large share of real brands actively block bots) and
     // works for a product with no catalog `url` at all, including one an
@@ -190,7 +190,7 @@ export default async function handler(req, res) {
 
   if (redis) {
     // Only pin a negative result once every resolver that COULD have found
-    // something has actually been tried — a page URL (Shopify/og:image), or
+    // something has actually been tried, a page URL (Shopify/og:image), or
     // Serper configured (works with no URL at all). Otherwise a product
     // with no URL yet and no Serper key might still resolve later via a
     // different path, so don't cache that as permanent.

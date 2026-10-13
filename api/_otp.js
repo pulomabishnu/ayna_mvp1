@@ -7,7 +7,7 @@ import crypto from 'crypto';
  * The previous scheme was `sha256(`${userId}:${code}`)` with no server secret,
  * stored in a table whose RLS policy let the row's owner SELECT it. Since an
  * attacker starts verification for the VICTIM's number under their OWN user_id,
- * the row — and therefore the hash — was theirs to read, and the input space is
+ * the row, and therefore the hash, was theirs to read, and the input space is
  * 10^6 with a known user_id. Measured recovery time: under 2 seconds on a
  * laptop. The attacker then confirmed the code and bound someone else's phone
  * number to their account.
@@ -30,7 +30,7 @@ function pepper() {
   const fallback = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
   if (fallback) {
     if (!warnedAboutFallback) {
-      console.warn('[otp] OTP_PEPPER is not set — deriving from SUPABASE_SERVICE_ROLE_KEY. Set OTP_PEPPER to a dedicated random value.');
+      console.warn('[otp] OTP_PEPPER is not set, deriving from SUPABASE_SERVICE_ROLE_KEY. Set OTP_PEPPER to a dedicated random value.');
       warnedAboutFallback = true;
     }
     return `otp-derived:${fallback}`;

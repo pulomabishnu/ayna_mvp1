@@ -1,4 +1,4 @@
--- LOCAL TESTING ONLY — never run this against a Supabase project.
+-- LOCAL TESTING ONLY, never run this against a Supabase project.
 --
 -- Supabase provides an `auth` schema, the anon/authenticated/service_role roles,
 -- and auth.uid(). A bare Postgres has none of them, so the migrations cannot be
@@ -58,7 +58,7 @@ grant usage on schema public to anon, authenticated, service_role;
 grant usage on schema auth to anon, authenticated, service_role;
 
 -- Supabase ships default privileges that grant new public tables to these roles
--- automatically. A bare Postgres does not, so mirror it — otherwise every RLS
+-- automatically. A bare Postgres does not, so mirror it, otherwise every RLS
 -- test fails with "permission denied" for the wrong reason.
 alter default privileges in schema public
   grant all on tables to anon, authenticated, service_role;

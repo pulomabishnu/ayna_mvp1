@@ -80,7 +80,7 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
       );
     }
     // Applies to any internal product (tampons, cups, discs, etc.), not just one
-    // category — a plain "No"/"Open to trying" answer carries very different
+    // category, a plain "No"/"Open to trying" answer carries very different
     // guidance than silence, so this is only added when the user actually
     // answered the quiz question.
     if (internalComfort === 'No') {
@@ -89,7 +89,7 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
       );
     } else if (internalComfort === 'Open to trying') {
       lines.push(
-        'Internal-product comfort: Nervous but open to trying internal products (tampons, cups, discs, etc.). When discussing these, be extra concrete and reassuring — address insertion/removal technique, what normal first-time discomfort feels like versus a real problem, sizing, and hygiene/safety — rather than only listing features.'
+        'Internal-product comfort: Nervous but open to trying internal products (tampons, cups, discs, etc.). When discussing these, be extra concrete and reassuring, address insertion/removal technique, what normal first-time discomfort feels like versus a real problem, sizing, and hygiene/safety, rather than only listing features.'
       );
     }
   }

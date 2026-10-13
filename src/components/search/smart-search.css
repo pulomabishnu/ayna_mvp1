@@ -1,0 +1,120 @@
+/* Shared search: unknown-word squiggle, suggestions dropdown, assist line.
+   Works inside the website (.app-container) and the app (.ayna-mobile);
+   colors come from the shared --ay-* tokens, so dark mode follows them. */
+
+.ays-mirror {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin: 0;
+  border: 0;
+  color: transparent;
+  white-space: pre;
+  pointer-events: none;
+  user-select: none;
+}
+.ays-mirror__text { display: block; white-space: pre; color: transparent; }
+.ays-mirror .ays-bad {
+  color: transparent;
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--ays-squiggle, #d9363e);
+  text-decoration-thickness: 1.5px;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 4px;
+}
+:is(.app-container[data-theme='dark'], .ayna-mobile[data-theme='dark']) .ays-mirror .ays-bad { --ays-squiggle: #ff7a7f; }
+
+.ays-sr {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Suggestions dropdown */
+.ays-list {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  box-sizing: border-box;
+  max-width: min(640px, calc(100vw - 32px));
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  border: 2px solid var(--ay-ink, #1d1a2b);
+  border-radius: 16px;
+  background: var(--ay-paper, #fffcf5);
+  box-shadow: 4px 4px 0 var(--ay-ink, #1d1a2b);
+  color: var(--ay-ink, #1d1a2b);
+  text-align: left;
+  animation: aysIn .15s ease-out both;
+}
+.ays-list[hidden] { display: none; }
+.ays-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font: 500 16px/1.3 var(--ay-font-ui, Poppins, system-ui, sans-serif);
+  cursor: pointer;
+}
+.ays-opt span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.ays-opt small { margin-left: auto; flex: none; max-width: 40%; overflow: hidden; color: var(--ay-ink-soft, rgba(29, 26, 43, .62)); font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.ays-opt.is-need span { font-weight: 700; }
+.ays-opt.is-active, .ays-opt:hover { background: color-mix(in srgb, var(--ay-peri, #b9c2f4) 45%, transparent); }
+.ays-opt__icon { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }
+
+/* Assist line: "Did you mean ...?" / "We don't recognize ..." */
+.ays-assist {
+  margin: 8px 0 16px;
+  color: var(--ay-ink-soft, rgba(29, 26, 43, .62));
+  font: 500 16px/1.4 var(--ay-font-ui, Poppins, system-ui, sans-serif);
+}
+.ays-assist p { margin: 0; }
+.ays-assist__fix {
+  display: inline;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ay-ink, #1d1a2b);
+  font: inherit;
+  font-weight: 700;
+  font-style: italic;
+  text-decoration: none;
+  cursor: pointer;
+}
+.ays-assist__fix:hover { text-decoration: underline; text-underline-offset: 3px; }
+.ays-assist__fix:focus-visible, .ays-assist__chips button:focus-visible { outline: 3px solid var(--ay-ink, #1d1a2b); outline-offset: 2px; border-radius: 6px; }
+.ays-assist__chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.ays-assist__chips button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 2px solid var(--ay-ink, #1d1a2b);
+  border-radius: 99px;
+  background: var(--ay-paper, #fffcf5);
+  color: var(--ay-ink, #1d1a2b);
+  font: 600 15px/1 var(--ay-font-ui, Poppins, system-ui, sans-serif);
+  cursor: pointer;
+  transition: transform .15s ease-out;
+}
+.ays-assist__chips button:active { transform: scale(.98); }
+.ays-assist--app { margin: 4px var(--ay-gutter, 20px) 12px; }
+
+@keyframes aysIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .ays-list { animation: none; }
+  .ays-assist__chips button { transition: none; }
+}

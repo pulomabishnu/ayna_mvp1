@@ -7,7 +7,7 @@ import '../auth.css';
 import '../../styles/flow.css';
 
 // Same three statements, same order, same required-before-signup gate as
-// src/components/AuthGate.jsx's CONSENT_ITEMS — this is a real compliance
+// src/components/AuthGate.jsx's CONSENT_ITEMS, this is a real compliance
 // step for a health app processing self-reported data via AI, not
 // decoration, so it isn't something to drop for a simpler mobile form.
 const CONSENT_ITEMS = [
@@ -40,7 +40,7 @@ function Field({ label, icon, children }) {
 }
 
 // iOS zooms the whole page in on focus for any text input whose computed
-// font-size is under 16px, then doesn't reliably zoom back out — the
+// font-size is under 16px, then doesn't reliably zoom back out, the
 // max() floor keeps that from firing without changing the size at any
 // --ayna-text-scale setting that was already >= 16px.
 const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "var(--ayna-font-ui)", fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: '#171717', width: '100%', padding: '3px 0 0' };
@@ -196,7 +196,7 @@ export default function SigninScreen({
 
   // The native Google/Apple round trip (Browser.open -> appUrlOpen) lands
   // back on this same mounted screen instead of navigating anywhere, so a
-  // failure there previously only reached console.error — invisible on a
+  // failure there previously only reached console.error, invisible on a
   // real device with no attached debugger. useSupabaseAuth dispatches this
   // event instead of (or in addition to) logging, so the failure actually
   // reaches the person trying to sign in.
@@ -247,7 +247,7 @@ export default function SigninScreen({
   };
 
   const handleGoogle = async () => {
-    // Same gate as desktop's AuthGate.jsx handleGoogle — the three consent
+    // Same gate as desktop's AuthGate.jsx handleGoogle, the three consent
     // statements above only render in signup mode, so this is the one place
     // stopping Google from creating a real account with none of them agreed
     // to. Signing in with an existing account needs no re-consent.
@@ -292,7 +292,7 @@ export default function SigninScreen({
       await onResendConfirmation(email.trim());
       setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
     } catch (e) {
-      setResendMsg(e.message || 'Could not resend right now — try again in a moment.');
+      setResendMsg(e.message || 'Could not resend right now, try again in a moment.');
     } finally {
       setResending(false);
     }
@@ -324,7 +324,7 @@ export default function SigninScreen({
             Almost there.
           </div>
           <div className="ay-auth-check-copy">
-            A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. Once confirmed, come back here — this screen updates on its own.
+            A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. Once confirmed, come back here, this screen updates on its own.
           </div>
           {resendMsg && <div className="ay-auth-check-msg" role="status">{resendMsg}</div>}
           <button type="button" className="ay-auth-link" disabled={resending} onClick={handleResend}>

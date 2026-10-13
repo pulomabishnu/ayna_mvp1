@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getCareResourceBundle } from '../data/careResources';
 
 /**
- * Care near you + telehealth — driven by quiz, chat-updated profile, imported records, and wearable summary.
+ * Care near you + telehealth, driven by quiz, chat-updated profile, imported records, and wearable summary.
  */
 export default function CareNearYouPanel({
   quizResults,

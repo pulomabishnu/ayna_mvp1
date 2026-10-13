@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
-import { installBuyClickTracking, installReferralCapture } from '../../utils/badges.js';
+import { installReferralCapture } from '../../utils/badges.js';
 import { AskContext } from '../askContext.js';
 import { HEART_PATH } from '../utils/heart.js';
 import '../../styles/flow.css';
@@ -8,8 +8,8 @@ import './mobile-header.css';
 
 export default function MobileHeader({ onOpenSaved, onBack }) {
   const openAsk = useContext(AskContext);
-  // Header is on every app tab: capture invite codes and retailer click-outs (idempotent).
-  useEffect(() => { const supabase = getSupabaseClient(); installReferralCapture(supabase); installBuyClickTracking(supabase); }, []);
+  // Header is on every app tab: capture invite codes (idempotent).
+  useEffect(() => { installReferralCapture(getSupabaseClient()); }, []);
   return <header className="ayna-figma-header ayna-shared-header">
     <div className="ayna-shared-header-leading">
       {onBack && <button type="button" onClick={onBack} aria-label="Back" className="ayna-shared-header-action">

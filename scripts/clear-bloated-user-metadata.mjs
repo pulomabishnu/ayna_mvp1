@@ -9,8 +9,8 @@
  *
  * Those keys ride along inside the Supabase auth JWT (it's built from
  * user_metadata), so once a user's saved-products list grows large enough the
- * token itself grows past ~40KB and every authenticated request — including
- * api/export-data.js ("Manage my data") — gets rejected before it even
+ * token itself grows past ~40KB and every authenticated request, including
+ * api/export-data.js ("Manage my data"), gets rejected before it even
  * reaches application code with HTTP 431 Request Header Fields Too Large.
  *
  *   node scripts/clear-bloated-user-metadata.mjs <email>            # dry run
@@ -18,7 +18,7 @@
  *
  * Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in the environment.
  *
- * Only these two keys are touched — every other user_metadata field
+ * Only these two keys are touched, every other user_metadata field
  * (first_name, avatar_url, consent_given_at, etc.) is left exactly as-is.
  */
 import { createClient } from '@supabase/supabase-js';
@@ -44,7 +44,7 @@ if (!email) {
 
 const admin = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 
-console.log(`\n${APPLY ? 'APPLYING' : 'DRY RUN'} — looking up ${email}...\n`);
+console.log(`\n${APPLY ? 'APPLYING' : 'DRY RUN'}, looking up ${email}...\n`);
 
 let target = null;
 let page = 1;
@@ -72,7 +72,7 @@ const present = BLOAT_KEYS.filter((k) => metadata[k] !== undefined);
 
 console.log(`user: ${target.email}  ${target.id}`);
 if (!present.length) {
-  console.log('\n✅ neither bloat key is present — nothing to clear.\n');
+  console.log('\n✅ neither bloat key is present, nothing to clear.\n');
   process.exit(0);
 }
 
@@ -82,7 +82,7 @@ for (const k of present) {
 }
 
 if (!APPLY) {
-  console.log('\nDry run — nothing changed. Re-run with --apply to clear these keys.\n');
+  console.log('\nDry run, nothing changed. Re-run with --apply to clear these keys.\n');
   process.exit(0);
 }
 

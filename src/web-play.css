@@ -662,7 +662,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .ayna-discover-card__name { min-height: 0 !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .app-container .ayna-discover-card__price { margin-top: 4px !important; line-height: 1.3 !important; }
 
-/* Home: "Trending" header — title, then filters and the toggle on one aligned row */
+/* Home: "Trending" header, title, then filters and the toggle on one aligned row */
 .app-container .ayna-landing-shop-head { display: grid !important; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center !important; gap: 16px !important; margin-bottom: 24px !important; }
 .app-container .ayna-landing-shop-head .ayna-landing-shop-title { grid-column: 1 / -1; margin: 0 !important; }
 .app-container .ayna-landing-shop-controls { display: contents !important; }

@@ -5,16 +5,16 @@ import { topicsForTags, isCycleTopic } from './topics.js';
  *
  * V1 runs in the viewer's browser over each page of recent posts the server
  * returns (newest first, keyset-paginated). Keeping it client-side means the
- * viewer's health signals never leave their device to rank a feed — the
+ * viewer's health signals never leave their device to rank a feed, the
  * server only ever sees "give me the next page".
  *
  * Signals, all optional:
- *   interest     — the viewer's own profile tags (getProfileInterestSignals)
- *   lifeStage    — flags from the same helper; pushes period-only topics down
+ *   interest, the viewer's own profile tags (getProfileInterestSignals)
+ *   lifeStage, flags from the same helper; pushes period-only topics down
  *                  for people who don't get periods
- *   matchFor     — (productId) => viewer's % match from the existing engine
- *   followingIds / friendIds — social graph
- *   ownedProductIds — ecosystem + wishlist, so posts about products the
+ *   matchFor, (productId) => viewer's % match from the existing engine
+ *   followingIds / friendIds, social graph
+ *   ownedProductIds, ecosystem + wishlist, so posts about products the
  *                  viewer already uses surface
  *
  * The weights are deliberately simple and live in one object so they can be

@@ -66,7 +66,7 @@ function SignedOutCard({ children }) {
 function BackIcon({ stroke = 'var(--ayna-heading)' }) {
   return (
     // CSS custom properties only resolve through the `style` attribute, not
-    // a plain SVG presentation attribute — `stroke="var(--x)"` silently
+    // a plain SVG presentation attribute`stroke="var(--x)"` silently
     // renders as no stroke at all (Chromium doesn't substitute var() there).
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" style={{ stroke }}>
       <path d="M15 6l-6 6 6 6" />
@@ -85,7 +85,7 @@ function ChevronIcon() {
 // Line icons for the "Your account" rows, replacing the original emoji
 // placeholders (🛍️ ✨ 🔔 ⚙️) with the same stroke-icon language used
 // everywhere else in this screen (BackIcon, ChevronIcon).
-// You-menu icons — same stroke system as the Settings icons (24 grid, 1.8 stroke, round caps).
+// You-menu icons, same stroke system as the Settings icons (24 grid, 1.8 stroke, round caps).
 const HUB_ICONS = {
   ecosystem: <><circle cx="12" cy="13" r="3" /><circle cx="12" cy="4.5" r="1.8" /><circle cx="5" cy="18" r="1.8" /><circle cx="19" cy="18" r="1.8" /><path d="M12 10V6.3M9.5 14.6l-3 2.2M14.5 14.6l3 2.2" /></>,
   saved: <><path d="M12 19.5s-7-4.3-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.2c0 5-7 9.3-7 9.3Z" /></>,
@@ -477,7 +477,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
                   </div>
                 ) : (
                   <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 16 }}>
-                    Nothing in your {ROUTINE_BUCKET_LABELS[activeBucket].toLowerCase()} routine yet — tap a product below to add it.
+                    Nothing in your {ROUTINE_BUCKET_LABELS[activeBucket].toLowerCase()} routine yet, tap a product below to add it.
                   </div>
                 )}
 
@@ -604,7 +604,7 @@ function formatCategoryLabel(category) {
 }
 
 // Same frustration -> tag vocabulary as the desktop matching logic
-// (src/data/startups.js) — Airtable's Symptom Tags were filled in against
+// (src/data/startups.js), Airtable's Symptom Tags were filled in against
 // this exact vocabulary. This only ranks the real Airtable-sourced startups
 // fetched below; it deliberately does not pull in the desktop's separate
 // hardcoded STARTUPS catalog, which is a different, much larger list this
@@ -639,7 +639,7 @@ function sortByRelevance(startups, quizAnswers) {
 }
 
 // "Clinical" reads on real badge data (Airtable's Tags field) rather than a
-// field that doesn't exist — there's no dedicated "clinical" flag, so this is
+// field that doesn't exist, there's no dedicated "clinical" flag, so this is
 // the closest honest proxy: some form of clinical/medical validation.
 const CLINICAL_BADGES = new Set(['Clinically Backed', 'Doctor-Founded', 'FDA-Cleared']);
 
@@ -652,7 +652,7 @@ function matchesFilter(startup, filter) {
 
 function EarlyStageScreen({ onBack, quizAnswers }) {
   const [filter, setFilter] = useState('all');
-  // Real early-stage startups synced from Airtable via api/startups.js — no
+  // Real early-stage startups synced from Airtable via api/startups.js, no
   // hardcoded placeholder companies here; an empty/failed fetch just shows
   // an honest empty state below rather than fake data.
   const [startups, setStartups] = useState([]);
@@ -767,7 +767,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 }
 
 // Ayna's confirmed brand partnerships live only on the web today
-// (BrandPartners.jsx at aynahealth.co/startups) — Settings links straight
+// (BrandPartners.jsx at aynahealth.co/startups), Settings links straight
 // out to that real page (see SettingsScreen's "About Ayna" rows) rather
 // than duplicating its hardcoded partner list in a native screen, so it
 // never drifts out of sync with the actual list.
@@ -775,15 +775,15 @@ const BRAND_PARTNERSHIPS_URL = 'https://www.aynahealth.co/startups';
 
 /* ---------------------------- Preferences ---------------------------- */
 
-// Substack has no API to subscribe someone by a toggle — this opens the
+// Substack has no API to subscribe someone by a toggle, this opens the
 // real publication's public subscribe page instead, the same
 // window.open(url, '_blank', 'noopener,noreferrer') pattern the Startups
 // hub already uses for its external links.
 const NEWSLETTER_URL = 'https://aynahealth.substack.com/subscribe';
 // There's no webhook back from Substack telling the app someone actually
 // completed the subscribe form on their site, so "Subscribed" is only ever
-// shown once the user explicitly says so — a "Yes, I'm in" tap after
-// they've been sent to the real subscribe page — rather than assumed the
+// shown once the user explicitly says so, a "Yes, I'm in" tap after
+// they've been sent to the real subscribe page, rather than assumed the
 // moment they tap through, which they might not follow through on. Kept
 // entirely client-side (localStorage), independent of the real
 // notification-preferences backend below: that backend has no way to know
@@ -802,7 +802,7 @@ function ExternalLinkIcon() {
   );
 }
 
-// Shared with the phone-verify panel below — same error vocabulary as
+// Shared with the phone-verify panel below, same error vocabulary as
 // src/components/PhoneVerification.jsx's ERROR_MESSAGES, since both call
 // the same /api/phone-verify-send and /api/phone-verify-confirm routes.
 const PHONE_ERROR_MESSAGES = {
@@ -825,7 +825,7 @@ function friendlyPhoneError(code) {
 const RESEND_COOLDOWN_SECONDS = 30;
 
 // Two-step phone verification, reusing the same real endpoints as the
-// desktop flow (src/components/PhoneVerification.jsx) — not a separate
+// desktop flow (src/components/PhoneVerification.jsx), not a separate
 // implementation, just this app's own visual language.
 function PhoneVerifyPanel({ onBack, onVerified }) {
   const [step, setStep] = useState('phone'); // 'phone' | 'code'
@@ -932,12 +932,12 @@ function PhoneVerifyPanel({ onBack, onVerified }) {
 const PREFERENCES_ERROR_MESSAGES = {
   ...PHONE_ERROR_MESSAGES,
   load_failed: "Couldn't load your preferences. Try again shortly.",
-  save_failed: "That didn't save — try again.",
+  save_failed: "That didn't save, try again.",
   phone_not_verified: 'Verify your phone first.',
 };
 
 function friendlyPreferencesError(code) {
-  return PREFERENCES_ERROR_MESSAGES[code] || "That didn't save — try again.";
+  return PREFERENCES_ERROR_MESSAGES[code] || "That didn't save, try again.";
 }
 
 function SectionLabel({ children }) {
@@ -1004,7 +1004,7 @@ function ThemeSwatch({ mode, selected, onClick }) {
 // local state immediately, then rolls back with a toast if the PATCH fails.
 // Mobile has no real Supabase sign-in flow yet (see useEcosystemSession.js),
 // so until that exists this correctly shows "sign in" rather than pretending
-// to work — the API and table are real and ready the moment mobile auth is.
+// to work, the API and table are real and ready the moment mobile auth is.
 // Join newsletter is deliberately NOT part of this backend-synced list: it
 // links out to the real Substack subscribe page instead (see NEWSLETTER_URL
 // above) rather than a toggle that can't actually enroll anyone.
@@ -1024,7 +1024,7 @@ function PreferencesScreen({
   const [prefs, setPrefs] = useState(null);
   const [toast, setToast] = useState('');
   // Session-only nudge to ask "did you subscribe?" after sending them to
-  // Substack — not persisted, since it's just prompting for the confirm
+  // Substack, not persisted, since it's just prompting for the confirm
   // tap below, not the subscribed state itself.
   const [awaitingConfirm, setAwaitingConfirm] = useState(false);
   const [newsletterConfirmed, setNewsletterConfirmed] = useState(loadNewsletterConfirmed);
@@ -1032,7 +1032,7 @@ function PreferencesScreen({
 
   // Initial state is already 'loading', so the mount effect below doesn't
   // need to (and per the react-hooks lint rule, shouldn't) set it again
-  // synchronously — only the retry button, which isn't running inside an
+  // synchronously, only the retry button, which isn't running inside an
   // effect, does that explicitly.
   const fetchPrefs = () => {
     fetchNotificationPreferences()
@@ -1074,7 +1074,7 @@ function PreferencesScreen({
     });
   };
 
-  // Best-effort mirror only, same as Night mode above — the real local
+  // Best-effort mirror only, same as Night mode above, the real local
   // change (onTextSizeChange, working with no account) is what actually
   // scales the app; a failed save here never blocks or rolls back the
   // visual change, it just leaves the synced value stale until next edit.
@@ -1112,7 +1112,7 @@ function PreferencesScreen({
       <BackHeader title="Preferences" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
         {/* Always visible regardless of the notification-preferences backend's
-            load state below — Substack subscription has nothing to do with
+            load state below, Substack subscription has nothing to do with
             being signed into Ayna. */}
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px', marginBottom: 20 }}>
           <div
@@ -1127,7 +1127,7 @@ function PreferencesScreen({
                 )}
               </div>
               <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>
-                {newsletterConfirmed ? "You're on the list — The Mirror lands monthly." : 'The Mirror — one letter a month, no products pushed.'}
+                {newsletterConfirmed ? "You're on the list, The Mirror lands monthly." : 'The Mirror, one letter a month, no products pushed.'}
               </div>
             </div>
             <ExternalLinkIcon />
@@ -1171,7 +1171,7 @@ function PreferencesScreen({
         </div>}
 
         {/* Clearing Ask Ayna history is purely local (in-memory chat state in
-            MobileApp.jsx — nothing is stored server-side for this feature),
+            MobileApp.jsx, nothing is stored server-side for this feature),
             so unlike the toggles above it needs no account and works whether
             or not the fetch above succeeded. */}
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px', marginTop: loadState === 'ready' ? 20 : 0 }}>
@@ -1205,7 +1205,7 @@ function PreferencesScreen({
           Analytics choices are in Privacy & data.
         </div>
 
-        {/* Appearance — always local, no account needed. */}
+        {/* Appearance, always local, no account needed. */}
         <SectionLabel>Appearance</SectionLabel>
         <div style={{ background: 'transparent', border: 0, borderBottom: '1px solid var(--ayna-border)', borderRadius: 0, padding: '18px 0' }}>
           <div style={{ fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Theme</div>
@@ -1246,12 +1246,12 @@ function PreferencesScreen({
   );
 }
 
-// Split out of PreferencesScreen so "delivery channel" and "quiet hours" —
+// Split out of PreferencesScreen so "delivery channel" and "quiet hours"
 // both real, account-scoped fields on the same notification_preferences row
-// — get their own focused screen, matching the design's IA. Owns its own
+//, get their own focused screen, matching the design's IA. Owns its own
 // fetch/patch rather than receiving `prefs` as a prop from PreferencesScreen,
 // since the two screens are never mounted at the same time (screenStack
-// navigation swaps one for the other) — sharing state would need lifting it
+// navigation swaps one for the other), sharing state would need lifting it
 // to the orchestrator for no real benefit.
 function ChannelsScreen({ onBack }) {
   const [loadState, setLoadState] = useState('loading');
@@ -1439,12 +1439,12 @@ const PRIVACY_POLICY_URL = 'https://www.aynahealth.co/privacy-policy';
 const TERMS_URL = 'https://www.aynahealth.co/terms-of-use';
 
 // Real toggle: PostHog's own opt-out API (posthog-js exposes
-// opt_out_capturing/opt_in_capturing/has_opted_out_capturing — see
+// opt_out_capturing/opt_in_capturing/has_opted_out_capturing, see
 // src/main.jsx for the real init). Not a stored per-user backend flag, but
-// a genuine SDK call, not invented state — and this app has no analytics
+// a genuine SDK call, not invented state, and this app has no analytics
 // consent UI anywhere yet, so this is the first place it's wired up.
 // window.posthog may be undefined if VITE_PUBLIC_POSTHOG_KEY isn't set
-// (e.g. this dev environment) — every call below is guarded for that.
+// (e.g. this dev environment), every call below is guarded for that.
 function isAnalyticsOptedOut() {
   try { return typeof window !== 'undefined' && window.posthog?.has_opted_out_capturing?.() === true; } catch { return false; }
 }
@@ -1474,12 +1474,12 @@ function PrivacyDataScreen({ onBack, onOpenDeleteAccount }) {
           <AccountRow
             borderTop={false}
             title={<span style={{ color: '#B4402A' }}>Delete my account & data</span>}
-            sub="We'll process it within a week — nothing kept after."
+            sub="We'll process it within a week, nothing kept after."
             onClick={onOpenDeleteAccount}
           />
         </div>
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 9, padding: '0 4px' }}>
-          Deletion removes your account and health answers from our active systems. We may keep limited records where the law requires it — never your health data.
+          Deletion removes your account and health answers from our active systems. We may keep limited records where the law requires it, never your health data.
         </div>
 
         <div style={{ margin: '24px 0 11px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>What you share</div>
@@ -1496,7 +1496,7 @@ function PrivacyDataScreen({ onBack, onOpenDeleteAccount }) {
         <div style={{ marginTop: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '16px 18px' }}>
           <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 8 }}>How AI is used</div>
           <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
-            Ask Ayna and match explanations are powered by a third-party AI provider (Anthropic). Your questions and relevant profile details are shared with them to generate a response — never sold, and never used to train anyone else's model.
+            Ask Ayna and match explanations are powered by a third-party AI provider (Anthropic). Your questions and relevant profile details are shared with them to generate a response, never sold, and never used to train anyone else's model.
           </div>
           <div onClick={() => window.open(PRIVACY_POLICY_URL, '_blank', 'noopener,noreferrer')} style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', fontWeight: 600, marginTop: 10, cursor: 'pointer' }}>
             Read the full privacy policy
@@ -1548,7 +1548,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
             borderTop={false}
             onClick={onOpenOpenSourceLicenses}
           />
-          <AccountRow title="Typefaces" sub="Bricolage Grotesque and Poppins — Google Fonts, SIL Open Font Licence." onClick={onOpenTypefaces} />
+          <AccountRow title="Typefaces" sub="Bricolage Grotesque and Poppins, Google Fonts, SIL Open Font Licence." onClick={onOpenTypefaces} />
           <AccountRow title="Research and data sources" sub="Where ayna's product and safety information comes from." onClick={onOpenResearchSources} />
         </div>
 
@@ -1574,7 +1574,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
 
 /* ------------------------ Consumer Health Data Policy ------------------------ */
 
-// Real disclosures reflecting how ayna actually works today — the third
+// Real disclosures reflecting how ayna actually works today, the third
 // parties named here (Supabase, Anthropic/OpenAI/Gemini, PostHog, Twilio,
 // Resend) are the app's actual real integrations (see .env.example), and
 // the rights described map to screens that already exist and work (Manage
@@ -1584,7 +1584,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
 //
 // This is a good-faith draft written to cover Washington's My Health My
 // Data Act's (MHMDA) required disclosures. It has NOT been reviewed by a
-// lawyer — that review should happen before this is relied on as ayna's
+// lawyer, that review should happen before this is relied on as ayna's
 // actual compliance policy, the same as the Termly-generated Privacy
 // Policy/Terms of Service linked above were presumably reviewed before
 // publishing.
@@ -1593,13 +1593,13 @@ const HEALTH_DATA_PROCESSORS = [
   { initial: 'A', name: 'Anthropic, OpenAI, Google', role: 'Generate product summaries and Ask Ayna answers.', bg: 'var(--ay-pink)', fg: 'var(--ay-ink)' },
   { initial: 'T', name: 'Twilio', role: 'Sends verification codes and opt-in safety-recall texts.', bg: '#E7EAF5', fg: '#3B4677' },
   { initial: 'R', name: 'Resend', role: 'Delivers email, including contact-form messages.', bg: '#F5E9F0', fg: '#7A3E60' },
-  { initial: 'P', name: 'PostHog', role: 'Anonymised usage analytics — off any time in Privacy & data.', bg: '#F1EDE6', fg: '#6B6257' },
+  { initial: 'P', name: 'PostHog', role: 'Anonymised usage analytics, off any time in Privacy & data.', bg: '#F1EDE6', fg: '#6B6257' },
 ];
 
 const HEALTH_DATA_RIGHTS = [
-  { title: 'See or download what we hold', how: 'Email puloma@aynahealth.co — we will send it directly' },
+  { title: 'See or download what we hold', how: 'Email puloma@aynahealth.co, we will send it directly' },
   { title: 'Withdraw consent for analytics', how: 'Settings → Privacy & data → the analytics toggle' },
-  { title: 'Delete your account and data', how: 'Email puloma@aynahealth.co — providers are directed too' },
+  { title: 'Delete your account and data', how: 'Email puloma@aynahealth.co, providers are directed too' },
 ];
 
 function NumberedCard({ n, title, children }) {
@@ -1634,13 +1634,13 @@ function ConsumerHealthDataPolicyScreen({ onBack }) {
 
         <NumberedCard n="01" title="What counts as health data">
           <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
-            Anything linked to you that says something about your past, present or future physical or mental health — including reproductive and sexual health, conditions, diagnoses, symptoms, and whatever you tell Ask Ayna about any of it.
+            Anything linked to you that says something about your past, present or future physical or mental health, including reproductive and sexual health, conditions, diagnoses, symptoms, and whatever you tell Ask Ayna about any of it.
           </div>
         </NumberedCard>
 
         <NumberedCard n="02" title="What we collect, and why">
           <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
-            Your intake answers, your questions to Ask Ayna, and the products you save. We use them to build your matches, explain why a product fits, and flag safety recalls on what you own — nothing else.
+            Your intake answers, your questions to Ask Ayna, and the products you save. We use them to build your matches, explain why a product fits, and flag safety recalls on what you own, nothing else.
           </div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 12 }}>
             {['Intake answers', 'Ask ayna', 'Saved products'].map((t) => (
@@ -1730,7 +1730,7 @@ function downloadText(content, filename) {
 }
 
 function buildLicensesText(grouped) {
-  const lines = ['ayna — open-source licences', `Generated ${new Date().toISOString().slice(0, 10)}`, ''];
+  const lines = ['ayna, open-source licences', `Generated ${new Date().toISOString().slice(0, 10)}`, ''];
   for (const [license, packages] of grouped) {
     lines.push(`${license} (${packages.length})`, '-'.repeat(40));
     for (const pkg of packages) lines.push(`  ${pkg.name}@${pkg.version}`);
@@ -1760,7 +1760,7 @@ function OpenSourceLicensesScreen({ onBack }) {
             <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(52px * var(--ayna-text-scale, 1))', lineHeight: .9, color: '#1D1A2B' }}>{OPEN_SOURCE_PACKAGES.length}</div>
             <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ay-ink-soft)', paddingBottom: 5 }}>packages<br />inside ayna</div>
           </div>
-          <div style={{ position: 'relative', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: '#53545A', marginTop: 12, maxWidth: 250 }}>These are the ones actually bundled into what runs on your device — not build tooling.</div>
+          <div style={{ position: 'relative', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: '#53545A', marginTop: 12, maxWidth: 250 }}>These are the ones actually bundled into what runs on your device, not build tooling.</div>
           <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 14, background: '#FFFFFF', borderRadius: 99, padding: '7px 13px 7px 10px', boxShadow: '0 1px 4px rgba(122,68,16,.12)' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="#E8843C" style={{ flex: 'none' }}><path d="M12 21s-7.5-4.7-9.5-9A5.2 5.2 0 0 1 12 6.6 5.2 5.2 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z" /></svg>
             <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: '#1D1A2B', fontWeight: 500 }}>Thank you to everyone who maintains them</div>
@@ -1882,7 +1882,7 @@ function TypefacesScreen({ onBack }) {
         <div style={{ marginTop: 16, background: 'var(--ayna-surface)', border: '1px dashed var(--ayna-border)', borderRadius: 24, padding: '16px 18px' }}>
           <div style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 7 }}>Loaded via Google Fonts</div>
           <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
-            Served from Google's font CDN over HTTPS — the standard way Google Fonts are delivered, not bundled with the app itself.
+            Served from Google's font CDN over HTTPS, the standard way Google Fonts are delivered, not bundled with the app itself.
           </div>
         </div>
         <LegalFooter />
@@ -1893,7 +1893,7 @@ function TypefacesScreen({ onBack }) {
 
 /* ---------------------------- Research & data sources ---------------------------- */
 
-// Accurate to what ayna actually does today — verified against the real
+// Accurate to what ayna actually does today, verified against the real
 // codebase rather than copied from the design mockup's placeholder text,
 // which claimed things that aren't true yet: fonts "self-hosted" (they load
 // from Google's CDN, see index.html), a manufacturer-vs-independently-
@@ -1904,7 +1904,7 @@ function TypefacesScreen({ onBack }) {
 const RESEARCH_SOURCES = [
   {
     key: 'clin', num: '01', title: 'Clinical guidance', blurb: 'The bodies whose guidance we follow.',
-    body: "Menstrual, reproductive and sexual health information is grounded in guidance from ACOG, the CDC, and NIH (including NICHD), plus peer-reviewed literature indexed in PubMed — the same sources cited directly on individual articles and product pages throughout the app.",
+    body: "Menstrual, reproductive and sexual health information is grounded in guidance from ACOG, the CDC, and NIH (including NICHD), plus peer-reviewed literature indexed in PubMed, the same sources cited directly on individual articles and product pages throughout the app.",
     tags: ['ACOG', 'CDC', 'NIH / NICHD', 'PUBMED'],
     note: "ayna's advisory board includes Dr. David Orbach, MD.",
   },
@@ -1912,7 +1912,7 @@ const RESEARCH_SOURCES = [
     key: 'safe', num: '02', title: 'Product & ingredient safety', blurb: 'What we check a product against.',
     body: 'Recall checks run live against OpenFDA. Supplement products are checked against the NIH Dietary Supplement Label Database (DSLD). Ingredient and condition-specific concerns are checked against the clinical sources above.',
     tags: ['OPENFDA', 'NIH DSLD', 'PUBMED'],
-    note: "We don't yet mark manufacturer-reported claims separately from independently verified ones on the product page — treat an ingredient claim as manufacturer-reported unless a citation says otherwise.",
+    note: "We don't yet mark manufacturer-reported claims separately from independently verified ones on the product page, treat an ingredient claim as manufacturer-reported unless a citation says otherwise.",
   },
   {
     key: 'ai', num: '03', title: 'How AI answers are grounded', blurb: 'Models read our sources, not the open web.',
@@ -1922,7 +1922,7 @@ const RESEARCH_SOURCES = [
   },
   {
     key: 'you', num: '04', title: 'Your own data', blurb: 'The part of a match that is only yours.',
-    body: "Personalised insights also draw on what you've told ayna — your intake answers, the products you've saved, and what you've asked Ask Ayna. That's why two people can see different matches for the same product. It is never used to advertise to you.",
+    body: "Personalised insights also draw on what you've told ayna, your intake answers, the products you've saved, and what you've asked Ask Ayna. That's why two people can see different matches for the same product. It is never used to advertise to you.",
     tags: ['Intake answers', 'Ask ayna', 'Saved products'],
     note: 'Read the Privacy Policy for how it is stored and deleted.',
   },
@@ -1984,7 +1984,7 @@ function ResearchSourcesScreen({ onBack }) {
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 7.6v.1" /></svg>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#53545A' }}>Not a substitute for medical advice</div>
-            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: '#53545A', lineHeight: 1.6, marginTop: 4 }}>Ayna is a discovery and education tool. Nothing here diagnoses or treats a condition — talk to your clinician about anything that worries you.</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: '#53545A', lineHeight: 1.6, marginTop: 4 }}>Ayna is a discovery and education tool. Nothing here diagnoses or treats a condition, talk to your clinician about anything that worries you.</div>
           </div>
         </div>
 
@@ -2006,20 +2006,20 @@ function humanizeKey(key) {
     .trim();
 }
 
-// Recursive on purpose — the health intake profile in particular nests
+// Recursive on purpose, the health intake profile in particular nests
 // arrays of objects (productHistory, trustRanking, etc.), and this is a
 // generic "show me everything" viewer rather than a hand-built form field
 // per intake question (that's IntakeScreen's job, not this screen's).
 function formatValue(value) {
-  if (value === null || value === undefined || value === '') return '—';
+  if (value === null || value === undefined || value === '') return '-';
   if (typeof value === 'boolean') return value ? 'Yes' : 'No';
   if (Array.isArray(value)) {
-    if (!value.length) return '—';
+    if (!value.length) return '-';
     return value.map((v) => formatValue(v)).join(' · ');
   }
   if (typeof value === 'object') {
     const entries = Object.entries(value).filter(([, v]) => v !== null && v !== undefined && v !== '' && !(Array.isArray(v) && v.length === 0));
-    if (!entries.length) return '—';
+    if (!entries.length) return '-';
     return entries.map(([k, v]) => `${humanizeKey(k)}: ${formatValue(v)}`).join(', ');
   }
   return String(value);
@@ -2057,7 +2057,7 @@ function downloadJson(data, filenamePrefix) {
 
 // Real backend: GET /api/export-data, service-role-authenticated, pulling
 // live from the same tables the rest of the app writes to (phone_numbers,
-// notification_preferences, health_intakes, user_ecosystems) — nothing
+// notification_preferences, health_intakes, user_ecosystems), nothing
 // here is placeholder or cached. Also serves "Download my data": both the
 // Privacy & data screen's two separate rows and Account information's
 // "Download a copy" row all land here now, rather than three different
@@ -2069,7 +2069,7 @@ function ManageDataScreen({ onBack }) {
 
   // Initial state is already 'loading', so the mount effect below doesn't
   // need to (and per the react-hooks lint rule, shouldn't) set it again
-  // synchronously — only the retry button, which isn't running inside an
+  // synchronously, only the retry button, which isn't running inside an
   // effect, does that explicitly. Same pattern as PreferencesScreen above.
   const fetchData = () => {
     fetchDataExport()
@@ -2091,7 +2091,7 @@ function ManageDataScreen({ onBack }) {
       await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-    } catch { /* clipboard unavailable in this context — download still works */ }
+    } catch { /* clipboard unavailable in this context, download still works */ }
   };
 
   const hasAnyData = data && (data.phone || data.healthIntake || (data.savedProducts || []).length || data.notificationPreferences);
@@ -2101,7 +2101,7 @@ function ManageDataScreen({ onBack }) {
       <BackHeader title="Manage my data" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
         <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 20 }}>
-          Every field below is read live from your account — nothing here is cached or approximate.
+          Every field below is read live from your account, nothing here is cached or approximate.
         </div>
 
         {loadState === 'loading' && (
@@ -2153,7 +2153,7 @@ function ManageDataScreen({ onBack }) {
 
             {!hasAnyData && (
               <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, padding: '0 4px' }}>
-                Nothing else on file yet — this fills in as you use ayna.
+                Nothing else on file yet, this fills in as you use ayna.
               </div>
             )}
           </>
@@ -2174,14 +2174,14 @@ function formatMemberSince(dateStr) {
 }
 
 // Same E.164 phone_numbers.phone_number column PhoneVerifyPanel already
-// writes to, just masked for display — never shown in full.
+// writes to, just masked for display, never shown in full.
 function maskPhone(e164) {
   const digits = String(e164 || '').replace(/^\+1/, '').replace(/\D/g, '');
   if (digits.length < 10) return e164 || '';
   return `+1 (${digits.slice(0, 3)}) •••• ${digits.slice(-2)}`;
 }
 
-// Same slugs as IntakeScreen.jsx's FSA_HSA_REVERSE — the real stored value
+// Same slugs as IntakeScreen.jsx's FSA_HSA_REVERSE, the real stored value
 // (quizAnswers.fullHealthIntake.fsaHsa), not a separately-invented field.
 const FSA_HSA_LABELS = { fsa: 'FSA', hsa: 'HSA', both: 'Both', none: 'No', unsure: 'Not sure' };
 
@@ -2222,7 +2222,7 @@ function AccountRow({ title, sub, value, badge, badgeTone = 'neutral', onClick, 
 // straight from phone_numbers (RLS-scoped to the caller, same table
 // PhoneVerifyPanel writes to), age/zip/FSA-HSA from the real intake
 // snapshot. No "Security" section here (session list, two-step verification)
-// since neither has a backend yet — showing a row that just says "coming
+// since neither has a backend yet, showing a row that just says "coming
 // soon" isn't something to ship, not even as a placeholder; add it back once
 // either is real. Delete account opens a real in-app confirm flow
 // (DeleteAccountScreen) backed by account_deletion_requests, not an email
@@ -2231,7 +2231,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
   const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
   const [phone, setPhone] = useState({ loading: true, number: '', verified: false });
   // Real Supabase auth.updateUser() call, same first_name/full_name fields
-  // the email/password signup form writes (see useSupabaseAuth.js) — the
+  // the email/password signup form writes (see useSupabaseAuth.js), the
   // one place that data can be set for Google sign-ins, which never get a
   // name-entry step of their own since the OAuth redirect leaves the app
   // entirely. onNameChanged mirrors the save into the app's own session
@@ -2254,7 +2254,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
       onNameChanged?.(trimmed);
       setEditingName(false);
     } catch (e) {
-      setNameError(e.message || "That didn't save — try again.");
+      setNameError(e.message || "That didn't save, try again.");
     } finally {
       setNameSaving(false);
     }
@@ -2350,7 +2350,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
           )}
         </div>
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
-          Phone verification unlocks text alerts as a delivery channel — your email{googleIdentity ? ' or Google login' : ''} is what signs you in either way.
+          Phone verification unlocks text alerts as a delivery channel, your email{googleIdentity ? ' or Google login' : ''} is what signs you in either way.
         </div>
 
         <div style={{ margin: '24px 0 11px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About you</div>
@@ -2392,7 +2392,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
           )}
         </div>
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
-          {authUser?.identities?.some((i) => i.provider === 'google') ? "Google didn't share a name with us, or you'd like to change it — set it here." : "What ayna calls you, everywhere in the app."}
+          {authUser?.identities?.some((i) => i.provider === 'google') ? "Google didn't share a name with us, or you'd like to change it, set it here." : "What ayna calls you, everywhere in the app."}
         </div>
 
         <div style={{ margin: '24px 0 11px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>From your intake</div>
@@ -2421,7 +2421,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
 
 /* ---------------------------- Delete account ---------------------------- */
 
-// Real in-app action — files a row in account_deletion_requests via
+// Real in-app action, files a row in account_deletion_requests via
 // api/export-data.js's POST branch, instead of a mailto: link with no
 // record on our side unless the email is actually sent and read. Requires
 // typing DELETE (not just a tap) before the button enables, since this is
@@ -2442,7 +2442,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
       setStatus('success');
     } catch (e) {
       setStatus('error');
-      setErrorMsg(e instanceof NotSignedInError ? 'Please sign in again, then retry.' : (e.message || "That didn't go through — try again."));
+      setErrorMsg(e instanceof NotSignedInError ? 'Please sign in again, then retry.' : (e.message || "That didn't go through, try again."));
     }
   };
 
@@ -2459,7 +2459,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
           <div style={{ width: 56, height: 56, borderRadius: 99, background: 'var(--ayna-chip-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'calc(26px * var(--ayna-text-scale, 1))', marginBottom: 18 }}>Done</div>
           <div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', marginBottom: 10, color: 'var(--ayna-heading)' }}>Request received.</div>
           <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, maxWidth: 280 }}>
-            We'll process it within a week — nothing kept after. You're being signed out now.
+            We'll process it within a week, nothing kept after. You're being signed out now.
           </div>
           <div
             onClick={handleDone}
@@ -2481,7 +2481,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
           This can't be undone.
         </div>
         <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 20 }}>
-          Deleting your account removes your profile, health intake answers, saved products, and ecosystem from our active systems. We may keep limited records where the law requires it — never your health data. We process requests within a week.
+          Deleting your account removes your profile, health intake answers, saved products, and ecosystem from our active systems. We may keep limited records where the law requires it, never your health data. We process requests within a week.
         </div>
 
         <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginBottom: 8 }}>
@@ -2546,7 +2546,7 @@ function getPasswordStrength(pw) {
 const PASSWORD_ERROR_MESSAGES = {
   invalid_credentials: 'That current password is wrong.',
   weak_password: 'Choose a stronger password (at least 8 characters).',
-  same_password: "That's already your password — try a new one.",
+  same_password: "That's already your password, try a new one.",
   over_request_rate_limit: 'Too many attempts. Please try again in a bit.',
 };
 
@@ -2721,7 +2721,7 @@ function PasswordScreen({ onBack, authUser }) {
 /* ------------------------- How it works / About / Contact ------------------------- */
 // Ported from the real desktop pages (src/components/HowItWorks.jsx,
 // HowItWorksFunnel.jsx, About.jsx, Contact.jsx) so this content and data
-// can't drift from what's actually live on aynahealth.co — only the layout
+// can't drift from what's actually live on aynahealth.co, only the layout
 // below is new, re-flowed for a phone per the mobile design reference.
 // Copy for the two headline moments ("Nothing reaches you unchecked." here,
 // vs. desktop's older "No mystery box." on this same page) is intentionally
@@ -2731,7 +2731,7 @@ function PasswordScreen({ onBack, authUser }) {
 
 // Real numbers from HowItWorksFunnel.jsx: a plain linear scale would make
 // the 14-product final stage nearly invisible next to 3,140 (a real problem
-// found in an August 2026 bug bash), so widths use a sqrt scale instead —
+// found in an August 2026 bug bash), so widths use a sqrt scale instead
 // ported here rather than reimplemented, not the design reference's static
 // illustrative percentages.
 const NARROWING_STAGES = [
@@ -2838,7 +2838,7 @@ function HowItWorksScreen({ onBack }) {
   );
 }
 
-// Ported from About.jsx's own FUNNEL/GATES/DIFFERENCES/ADVISORS — same real
+// Ported from About.jsx's own FUNNEL/GATES/DIFFERENCES/ADVISORS, same real
 // content the live "About ayna" page uses.
 const CONCEPT_FUNNEL = [
   { label: 'Open market', width: '100%', fill: '#1D1A2B' },
@@ -2996,7 +2996,7 @@ export function AboutAynaScreen({ onBack }) {
   );
 }
 
-// Real reasons + real endpoint, ported from Contact.jsx/api/contact.js —
+// Real reasons + real endpoint, ported from Contact.jsx/api/contact.js
 // this posts to the same live /api/contact route (Resend email to the ayna
 // team) the desktop contact page uses, not a local-only mock.
 const CONTACT_REASONS = ['Partnerships', 'Help & Support', 'Feedback or Feature Request', 'Press & Media', 'Other'];
@@ -3144,7 +3144,7 @@ export default function ProfileFlow({
   textSizeIndex = 1,
   onTextSizeChange,
 }) {
-  // A real back-navigation stack rather than a static single-parent map —
+  // A real back-navigation stack rather than a static single-parent map
   // several screens (Preferences/Notifications, in particular) are now
   // reachable from more than one place (ProfileHub's own row, and Settings'
   // "Notifications" row), so "back" has to return to wherever the user
@@ -3286,7 +3286,7 @@ export default function ProfileFlow({
     <div className="ayna-fresh-profile-overlay" style={{ position: 'fixed', inset: 0, bottom: 'var(--ayna-bottom-nav-height)', zIndex: 55, background: 'var(--ayna-bg)', display: 'flex' }}>
       {/* Keyed on `screen` so each push/pop within this overlay (hub -> Shopper
           Profile -> Preferences -> Settings, etc.) remounts this wrapper and
-          replays the entrance animation — without the key, only the overlay's
+          replays the entrance animation, without the key, only the overlay's
           own first mount would ever animate, since `body` swapping alone
           doesn't restart a running CSS animation. */}
       <div key={screen} className="ay-set-page" data-page={screen} style={{ flex: 1, minWidth: 0, display: 'flex', animation: 'ay-page .22s ease-out' }}>

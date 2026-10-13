@@ -17,10 +17,10 @@ const SHADOW_LS_PREFIX = 'ayna_ecosystem_shadow_v2:';
 function describeError(error, op) {
   if (!error) return null;
   if (error.code === '42P10') {
-    return `${op}: no unique constraint on (user_id, product_id) — apply supabase/user_ecosystems.sql`;
+    return `${op}: no unique constraint on (user_id, product_id), apply supabase/user_ecosystems.sql`;
   }
   if (error.code === '42501' || /row-level security/i.test(error.message || '')) {
-    return `${op}: blocked by RLS — check the policies in supabase/user_ecosystems.sql`;
+    return `${op}: blocked by RLS, check the policies in supabase/user_ecosystems.sql`;
   }
   return `${op}: ${error.message || 'unknown error'}`;
 }
@@ -303,7 +303,7 @@ export async function upsertProductState(supabase, userId, product, flags) {
   // Local shadow is written first (instant, always succeeds) so a successful
   // UI change survives logout/login even if the table write below is
   // rejected. The auth-metadata copy is written ONLY when the table write
-  // actually fails below — not on every call — since user_metadata rides
+  // actually fails below, not on every call, since user_metadata rides
   // along in the auth JWT on every request; writing it unconditionally here
   // used to make it grow without bound and eventually blow past header size
   // limits (HTTP 431) even when the table was working fine.

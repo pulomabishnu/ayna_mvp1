@@ -4,16 +4,16 @@ import MatchPill from './MatchPill';
 
 /**
  * The right-hand rail on the evidence layout (mockup board 1g): three small
- * stacked cards — why you're seeing this, clinician opinion, evidence.
+ * stacked cards, why you're seeing this, clinician opinion, evidence.
  *
  * Board 1g shows a big invented "98%" match number and made-up source counts
  * (NIH, ACOG, CDC). Neither exists in our data, so every row here is built
- * from fields the product actually carries — verificationLinks counts, the
- * real clinician sentence, real Ayna review counts — and dropped entirely
+ * from fields the product actually carries, verificationLinks counts, the
+ * real clinician sentence, real Ayna review counts, and dropped entirely
  * when there's nothing real to show, rather than printing a number we made up.
  */
 
-/** First sentence, so a long safety blob doesn't blow out a card — cut on a word boundary, never mid-word. */
+/** First sentence, so a long safety blob doesn't blow out a card, cut on a word boundary, never mid-word. */
 function firstSentence(text, max = 140) {
   const t = String(text || '').trim();
   if (!t) return '';
@@ -25,12 +25,12 @@ function firstSentence(text, max = 140) {
 }
 
 export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0 }) {
-  // Prefers a shorter, results-first version when a catalog entry has one —
+  // Prefers a shorter, results-first version when a catalog entry has one
   // this rail card has much less width than the ayna-summary tab's
   // full-width Clinician opinion card, which always gets the full text.
   const clinicianNote = product.doctorOpinionShort || product.doctorOpinion || product.clinicianOpinion || null;
   // Backs the clinician-opinion claim with an actual link to check it against
-  // — a stated claim with no source a reader can click isn't evidence, it's
+  //, a stated claim with no source a reader can click isn't evidence, it's
   // just a bigger claim. Flagged live 2026-08-25.
   const clinicianSourceChips = [
     ...toSourceChips([

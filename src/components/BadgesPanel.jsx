@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import {
-  computeBadges, ecosystemCompletion, hasBuyClick, inviteLinkFor, loadHasPosted, loadReferralStats,
-  installBuyClickTracking, installReferralCapture,
+  computeBadges, ecosystemCompletion, hasAppSignIn, inviteLinkFor, loadHasPosted, loadReferralStats,
+  installReferralCapture,
 } from '../utils/badges';
 import './badges-panel.css';
 
 const ICONS = {
-  purchase: <><path d="M6 8h12l-1 12H7L6 8Z" /><path d="M9 8V6.5a3 3 0 0 1 6 0V8" /></>,
+  app: <><rect x="7" y="3.5" width="10" height="17" rx="2.5" /><path d="M10.5 17.5h3" /></>,
   ecosystem: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3.2" /></>,
   post: <path d="M5 5.5h14v10H10l-5 3.5V5.5Z" />,
   friends: <><circle cx="9" cy="9" r="3" /><circle cx="16.5" cy="10" r="2.4" /><path d="M3.5 19c.6-3.1 2.8-5 5.5-5s4.9 1.9 5.5 5M14.5 15.2c.6-.3 1.3-.5 2-.5 2.1 0 3.6 1.5 4 4.3" /></>,
@@ -15,14 +15,13 @@ const ICONS = {
 const LOCK = <><rect x="6.5" y="11" width="11" height="8" rx="2" /><path d="M9 11V8.5a3 3 0 0 1 6 0V11" /></>;
 
 /** Loads the real signals behind the four badges. Everything degrades to "locked". */
-function useBadges({ userId, myProducts, quizAnswers, matchOpts }) {
+function useBadges({ userId, myProducts, quizAnswers, matchOpts, inApp }) {
   const [user, setUser] = useState(null);
   const [hasPosted, setHasPosted] = useState(null);
   const [referrals, setReferrals] = useState(null);
   useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase || !userId) return undefined;
-    installBuyClickTracking(supabase);
     installReferralCapture(supabase);
     let cancelled = false;
     supabase.auth?.getUser?.().then(({ data }) => { if (!cancelled) setUser(data?.user || null); }).catch(() => {});
@@ -31,12 +30,12 @@ function useBadges({ userId, myProducts, quizAnswers, matchOpts }) {
     return () => { cancelled = true; };
   }, [userId]);
   const eco = useMemo(() => ecosystemCompletion(myProducts, quizAnswers, matchOpts), [myProducts, quizAnswers, matchOpts]);
-  const badges = computeBadges({ boughtOnce: hasBuyClick(user), eco, hasPosted, referrals });
+  const badges = computeBadges({ usedApp: inApp || hasAppSignIn(user), eco, hasPosted, referrals });
   return { badges, inviteLink: inviteLinkFor(userId) };
 }
 
 export default function BadgesPanel({ userId, myProducts, quizAnswers, matchOpts, variant = 'app' }) {
-  const { badges, inviteLink } = useBadges({ userId, myProducts, quizAnswers, matchOpts });
+  const { badges, inviteLink } = useBadges({ userId, myProducts, quizAnswers, matchOpts, inApp: variant === 'app' });
   const [copied, setCopied] = useState(false);
   if (!userId) return null;
   const earned = badges.filter((b) => b.earned).length;

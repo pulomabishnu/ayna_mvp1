@@ -2,8 +2,8 @@
  * Photo uploads for posts, reviews, avatars and playlist covers.
  *
  * Every image is decoded and re-encoded through a canvas before it leaves the
- * device. That strips EXIF metadata — including GPS location, which phones
- * embed by default — and caps the dimensions/size.
+ * device. That strips EXIF metadata, including GPS location, which phones
+ * embed by default, and caps the dimensions/size.
  *
  * Post photos go to posts/<random uuid>.jpg, never under a user-id folder, so
  * an anonymous post's photo URL can't identify its author. See

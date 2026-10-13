@@ -11,7 +11,7 @@ import { createClient } from '@supabase/supabase-js';
  *
  * It lives on a SECOND client with its own storage key so the rest of ayna
  * (App auth state, quiz sync, account pages) never sees a guest as "signed
- * in". The session is only created the first time a guest actually writes —
+ * in". The session is only created the first time a guest actually writes
  * browsing stays keyless (the `anon` role).
  *
  * The guest id is never shown anywhere: the feed views return author_id = null

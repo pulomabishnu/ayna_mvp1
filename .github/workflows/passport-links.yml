@@ -1,0 +1,69 @@
+name: Product passport link check
+
+# Weekly: HEAD/GET every purchase and source URL in the product passports,
+# hash brand pages, and flag pages that changed since last week. Read-only:
+# no secrets, no commits. The result (link-status.json) is uploaded as an
+# artifact; copy it to scripts/passport/link-status.json to wire it into the
+# passports (404/410 purchase links -> 'unavailable', changed pages -> review).
+
+on:
+  schedule:
+    - cron: "17 9 * * 1" # Mondays 09:17 UTC
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Only check the first N URLs (0 = all)
+        required: false
+        default: "0"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: passport-links
+  cancel-in-progress: false
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out Ayna
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # Last run's results, so page hashes can be compared week to week.
+      - name: Restore previous link status
+        uses: actions/cache/restore@v4
+        with:
+          path: scripts/passport/link-status.json
+          key: passport-links-${{ github.run_id }}
+          restore-keys: passport-links-
+
+      - name: Check links
+        run: node scripts/passport/check-links.mjs --limit "${{ github.event.inputs.limit || '0' }}"
+
+      - name: Save link status for next week
+        if: always() && hashFiles('scripts/passport/link-status.json') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: scripts/passport/link-status.json
+          key: passport-links-${{ github.run_id }}
+
+      - name: Upload link status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: passport-link-status
+          path: scripts/passport/link-status.json
+          if-no-files-found: warn
+          retention-days: 90

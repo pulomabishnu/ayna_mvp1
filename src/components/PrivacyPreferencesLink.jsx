@@ -2,9 +2,9 @@ import { getStoredConsent, grantConsent, denyConsent } from '../utils/analyticsC
 
 /**
  * Lets a visitor change the analytics decision they made in ConsentBanner,
- * from the site footer. Required counterpart to the banner — a consent
+ * from the site footer. Required counterpart to the banner, a consent
  * mechanism you can't reverse isn't really consent. Complements (does not
- * replace) the "Usage analytics" toggle in account settings — this one also
+ * replace) the "Usage analytics" toggle in account settings, this one also
  * works for signed-out visitors, who have no account settings to go to.
  *
  * Renders nothing until PostHog is on `window` (see the note in

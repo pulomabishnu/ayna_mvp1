@@ -15,4 +15,10 @@
  *
  * Never mark a product verified without checking it against a real source.
  */
-export const PASSPORT_REVIEWS = {};
+import batch1 from './reviews/batch-1.js';
+import batch2 from './reviews/batch-2.js';
+import batch3 from './reviews/batch-3.js';
+import batch4 from './reviews/batch-4.js';
+import batch5 from './reviews/batch-5.js';
+
+export const PASSPORT_REVIEWS = { ...batch1, ...batch2, ...batch3, ...batch4, ...batch5 };

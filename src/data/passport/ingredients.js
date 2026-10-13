@@ -188,3 +188,27 @@ export function parseIngredients(text) {
 export function ingredientIds(text) {
   return [...new Set(parseIngredients(text).map((r) => r.id).filter(Boolean))];
 }
+
+// "Free of X", "no X", "without X", "X-free": those name an ingredient the
+// product does NOT contain, so they must never produce an ingredient id.
+const NEGATED_CLAUSE = /\b(?:free (?:of|from)|contains no|does not contain|made without|without|no added|no)\b[^.;:()]*/gi;
+const FREE_TOKEN = /\b[a-z0-9]+(?:[- ][a-z0-9]+)?[- ]free\b/gi;
+
+/**
+ * Ingredient ids actually listed in an ingredient or materials list. Unlike
+ * ingredientIds(), negated mentions ("fragrance-free", "free of soy") are
+ * dropped first, so a claim of absence never reads as presence.
+ */
+export function listedIngredientIds(text) {
+  const cleaned = String(Array.isArray(text) ? text.join(', ') : text || '')
+    .replace(FREE_TOKEN, ' ')
+    .replace(NEGATED_CLAUSE, ' ');
+  return ingredientIds(cleaned);
+}
+
+/** Every class carried by a set of ingredient ids (e.g. 'allergen-soy', 'hormone-active'). */
+export function classesForIds(ids) {
+  const out = new Set();
+  for (const id of ids || []) (getIngredient(id)?.classes || []).forEach((c) => out.add(c));
+  return [...out];
+}

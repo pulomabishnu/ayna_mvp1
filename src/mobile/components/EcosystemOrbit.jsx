@@ -3,14 +3,14 @@ import { ECOSYSTEM_AREAS, MAX_SATELLITES, CANVAS, CANVAS_H, BUBBLE, seatPosition
 
 // Wrapper reserves the post-scale box (overflow hidden) while the inner
 // canvas keeps its real 560x520 coordinate space and is scaled down visually
-// — same technique EcosystemBubbles.jsx uses so bubble math stays correct.
+//, same technique EcosystemBubbles.jsx uses so bubble math stays correct.
 const SCALE = 0.62;
 
 // Controlled: selection state lives in the parent (EcosystemScreen) so a
 // "Show all" affordance elsewhere on the page can clear it.
 export default function EcosystemOrbit({ products = [], name = 'You', selectedKey = null, onSelectKey, onSelect, onExploreArea }) {
   // NOTE: expects each product to already carry an `areaKey` (computed by
-  // the real resolveEcosystemProductArea, once real data is wired in) —
+  // the real resolveEcosystemProductArea, once real data is wired in)
   // this component intentionally does not resolve areas itself.
   const { seats } = useMemo(() => {
     const byArea = new Map();
@@ -37,7 +37,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
     return { seats, covered: filled.length };
   }, [products]);
 
-  // No default selection — every node starts in its plain/white resting
+  // No default selection, every node starts in its plain/white resting
   // state until the person actually taps one, matching the design.
   const selected = seats.find((s) => s.key === selectedKey) || null;
 

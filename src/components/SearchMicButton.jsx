@@ -1,6 +1,6 @@
 import React from 'react';
 
-/** Mic control for search bars — type="button" so it never submits the form */
+/** Mic control for search bars, type="button" so it never submits the form */
 export default function SearchMicButton({
   isRecording,
   onClick,

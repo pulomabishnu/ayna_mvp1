@@ -23,7 +23,7 @@ const CONCERN_CONFIG = [
   { key: 'Endometriosis management (supplements, devices, telehealth)', tags: ['endometriosis', 'cramps'], categories: ['supplement', 'telehealth', 'cramp-relief'] },
   { key: 'Fertility and conception (supplements, trackers, telehealth)', tags: ['fertility'], categories: ['supplement', 'tracker', 'telehealth'] },
   // Real feedback from a beta tester (Theresa Mahon, 2026-08-25): "Fertility
-  // and conception isn't comprehensive enough" — the catalog already carries
+  // and conception isn't comprehensive enough", the catalog already carries
   // 13 'pregnancy' and 5 'postpartum' category products (maternity support,
   // nursing cups, etc.) with no concern checkbox that could ever surface
   // them, since neither category was referenced by any existing entry here.
@@ -36,7 +36,7 @@ const CONCERN_CONFIG = [
   { key: 'Sexual health and comfort (lubricants, pelvic floor)', tags: ['pelvic-floor'], categories: ['sex-tech', 'intimate-care', 'pelvic-floor'] },
   { key: 'Mental health and cycle mood support', tags: ['mood', 'anxiety'], categories: ['mental-health'] },
   { key: 'Sleep and energy', tags: ['sleep', 'energy'], categories: ['sleep', 'supplement'] },
-  // No live product currently carries category 'skin'/'skincare'/'hair'/'haircare' — a real
+  // No live product currently carries category 'skin'/'skincare'/'hair'/'haircare', a real
   // catalog gap, not a mapping bug. Left correct so this activates the moment one exists; the
   // LLM-backed final generation (api/llm-recommendations.js) isn't limited to this static
   // catalog and can still surface a real product via live search grounding in the meantime.
@@ -270,7 +270,7 @@ function buildDiverseTiers(products, intake, concern, limit = 5) {
         });
 }
 
-// Same field-name fallback pattern as Discovery.jsx's eligibility filter —
+// Same field-name fallback pattern as Discovery.jsx's eligibility filter
 // the catalog has both camelCase and snake_case rows depending on when a
 // product was added.
 function fsaHsaEligibility(product) {

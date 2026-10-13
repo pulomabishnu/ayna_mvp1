@@ -32,7 +32,7 @@ on public.user_ai_usage for select
 to authenticated using (auth.uid() = user_id);
 
 -- ── Atomic quota functions ───────────────────────────────────────────────────
--- The application must never do "SELECT count, then INSERT count+1" — two
+-- The application must never do "SELECT count, then INSERT count+1", two
 -- concurrent requests both read the pre-increment value and both proceed, so a
 -- 1-per-lifetime quota grants 2. Every mutation below is a single statement.
 
@@ -135,7 +135,7 @@ as $$
 $$;
 
 -- These run with the definer's rights, so they must not be callable by a
--- browser session — otherwise a user could refund herself unlimited quota.
+-- browser session, otherwise a user could refund herself unlimited quota.
 revoke all on function public.increment_ai_usage(uuid, text, text) from public, anon, authenticated;
 revoke all on function public.consume_ai_usage(uuid, text, text, integer) from public, anon, authenticated;
 revoke all on function public.refund_ai_usage(uuid, text, text) from public, anon, authenticated;

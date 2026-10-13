@@ -17,7 +17,7 @@ function estimateReadMinutes(body) {
 
 // Every real article (src/components/Articles.jsx) ends its body with a
 // <p><strong>Sources:</strong></p> paragraph followed by a <ul> of citation
-// links — a consistent real convention, not a special case for one article.
+// links, a consistent real convention, not a special case for one article.
 // Splitting on it lets the citation links render in a dedicated section
 // instead of a fabricated "reviewed by Dr. X" byline the real data has no
 // field for.

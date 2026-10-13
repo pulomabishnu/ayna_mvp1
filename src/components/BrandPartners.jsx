@@ -6,7 +6,7 @@ import { ProductImageFallback } from './ProductTileImage';
 import { InfoPage } from './InfoPage';
 
 /**
- * Brands — the partnership page.
+ * Brands, the partnership page.
  *
  * This replaced the old Brands page, which was a general Ayna waitlist form
  * plus a list of unreleased startups to join waitlists for. Neither is what
@@ -18,7 +18,7 @@ import { InfoPage } from './InfoPage';
  * rather than only src/data/brands.js.
  *
  * Emptied 2026-08-24 (no contract signed yet), refilled 2026-08-25: Neycher
- * signed a real, official partnership — confirmed by Aditi. No logo file has
+ * signed a real, official partnership, confirmed by Aditi. No logo file has
  * been dropped at public/brands/neycher.png yet, so BrandMark below falls
  * back to a text wordmark until one is added; that's an existing, working
  * fallback, not a bug.
@@ -56,7 +56,7 @@ const PARTNERS = [
   },
   {
     // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
-    // missing from this page until 2026-09-23 — folded in alongside the
+    // missing from this page until 2026-09-23, folded in alongside the
     // Winx/SootheHer/gina additions below.
     brand: 'LiM Method',
     logo: 'https://www.limmethod.com/cdn/shop/files/IMG_2821.jpg?v=1696450654&width=1946',
@@ -93,7 +93,7 @@ const PARTNERS = [
   },
   {
     // Confirmed partner since 2026-09-23 (see src/utils/partnerBrands.js).
-    // No single shared affiliate link — each LOLA product below has its own.
+    // No single shared affiliate link, each LOLA product below has its own.
     brand: 'LOLA',
     logo: '',
     url: 'https://mylola.com/',
@@ -121,7 +121,7 @@ const PARTNERS = [
     blurb:
       'Hormone-free vaginal moisturizing glides and applicator refills for intimate comfort.',
   },
-  // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner — its
+  // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner, its
   // two products stay in the catalog (src/data/brands.js) so they still
   // surface in Discovery/search, but intentionally left off this page and
   // out of partnerBrands.js's allowlist until a partnership is confirmed.

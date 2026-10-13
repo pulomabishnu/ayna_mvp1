@@ -78,8 +78,8 @@ describe('pregnancy gate', () => {
   });
 
   it('unknown pregnancy safety lowers confidence and blocks any safe claim', () => {
-    const p = score('p-thermacare', pregnant, 'pain.menstrual_cramp');
-    const n = score('p-thermacare', notPregnant, 'pain.menstrual_cramp');
+    const p = score('p-portable-heating', pregnant, 'pain.menstrual_cramp');
+    const n = score('p-portable-heating', notPregnant, 'pain.menstrual_cramp');
     expect(p.safety.eligible).toBe(true);
     expect(p.confidence).toBeLessThan(n.confidence);
     // ASK2: missing safety data limits confidence, it does not lower the match.

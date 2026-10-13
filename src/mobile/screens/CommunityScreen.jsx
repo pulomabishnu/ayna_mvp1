@@ -9,7 +9,9 @@ import { rankForYou, postProductIds } from '../../utils/community/ranking.js';
 import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts } from '../../utils/community/topics.js';
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS, publicMediaUrl } from '../../utils/community/imageUpload.js';
 import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../../data/products.js';
-import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
+import { scoreSearchMatch } from '../../utils/search/index.js';
+import { searchCommunityTolerant } from '../../utils/search/communitySearch.js';
+import SmartSearchInput from '../../components/search/SmartSearchInput.jsx';
 import { customProductId, customProductName } from '../../utils/customProductTag.js';
 import PlaylistCoverPicker from '../components/PlaylistCoverPicker.jsx';
 import PlaylistAudiencePicker from '../components/PlaylistAudiencePicker.jsx';
@@ -86,7 +88,7 @@ function ProductPicker({ products, value, onChange }) {
     if (q.length < 2) return [];
     return products.map((product) => ({
       product,
-      score: scoreQueryAgainstProduct(q, buildSearchTextForItem(product, CATEGORY_LABELS), buildIdentityTextForItem(product, CATEGORY_LABELS)),
+      score: scoreSearchMatch(q, product),
     })).filter(({ score }) => score > 0).sort((a, b) => b.score - a.score).slice(0, 10).map(({ product }) => product);
   }, [products, query]);
   const selected = products.find((p) => String(p.id) === String(value));
@@ -97,7 +99,7 @@ function ProductPicker({ products, value, onChange }) {
   return <div className="am-picker">
     <label htmlFor="am-product-query">{selectedName ? 'Product' : 'Find a product'}</label>
     {selectedName ? <div className="am-picked"><span>{selectedName}</span><button type="button" onClick={() => { onChange(null); setQuery(''); }}>Remove</button></div> : <>
-      <div className="am-product-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 5 5" /></svg><input id="am-product-query" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.length >= 2) { e.preventDefault(); if (matches.length && exact) { onChange(matches[0].id); setQuery(''); } else addCustom(); } }} placeholder="Search products" /></div>
+      <div className="am-product-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 5 5" /></svg><SmartSearchInput id="am-product-query" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.length >= 2) { e.preventDefault(); if (matches.length && exact) { onChange(matches[0].id); setQuery(''); } else addCustom(); } }} placeholder="Search products" /></div>
       {draft.length >= 2 && <div className="am-results">
         {!exact && <button type="button" className="is-add" onClick={addCustom}>+ Add “{draft}”<small>{matches.length ? 'Not listed? Tag it anyway' : 'Not in the ayna catalog yet'}</small></button>}
         {matches.map((p) => <button type="button" key={p.id} onClick={() => { onChange(p.id); setQuery(''); }}>{p.name}<small>{[p.brand, p.category?.replace(/-/g, ' ')].filter(Boolean).join(' · ')}</small></button>)}
@@ -509,7 +511,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     let active = true;
     const timer = window.setTimeout(async () => {
       try {
-        const results = await community.searchCommunity(supabase, search);
+        const results = await searchCommunityTolerant(community.searchCommunity, supabase, search);
         if (active) setSearchResults(results);
       } catch (e) { if (active) notifyError(e); }
     }, 250);

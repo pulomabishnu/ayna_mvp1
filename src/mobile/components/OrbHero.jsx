@@ -6,7 +6,7 @@ const CHIPS = [
 
 /**
  * The glowing "you" orb with three signal chips ("Preferences", "Health
- * history", "Goals") orbiting it on an elliptical CSS motion path — shared
+ * history", "Goals") orbiting it on an elliptical CSS motion path, shared
  * between LandingScreen (signed out, first launch) and EcosystemIntroScreen
  * (signed in but no ecosystem built yet), so both use the exact same visual
  * instead of drifting apart. `showYou` is off for EcosystemIntroScreen since
@@ -14,7 +14,7 @@ const CHIPS = [
  *
  * Sized responsively via the --ayna-orb-scale custom property (defined once
  * on .ayna-mobile in mobile.css) rather than fixed px, so it grows on wider
- * phones instead of looking small in the middle of a lot of empty gradient —
+ * phones instead of looking small in the middle of a lot of empty gradient
  * the orbit's motion path is plain SVG path syntax (no % / calc support), so
  * the whole assembly is built at one fixed pixel size and scaled up
  * uniformly with a CSS transform instead of resizing the path itself.

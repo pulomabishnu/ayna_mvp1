@@ -1,5 +1,5 @@
 -- Deactivates 3 products that could not be verified as real, purchasable
--- items during the 2026-08-24 Buy Now audit — found while trying to source
+-- items during the 2026-08-24 Buy Now audit, found while trying to source
 -- a working Buy Now link for each after their prior link was removed as
 -- dead/dangerous.
 --
@@ -11,11 +11,11 @@
 --   - Sensatone "Digital Compact Pelvic Floor Stimulator": no working
 --     domain found (5 variants tried), and zero results for the brand name
 --     "Sensatone" in an Amazon search for pelvic floor stimulators.
---   - Pause Well-Aging "Fascia Stimulating Tool": same — not found on
+--   - Pause Well-Aging "Fascia Stimulating Tool": same, not found on
 --     Amazon under "Pause" or "Well-Aging"; its brand domain
 --     (pausewellaging.com) has separately expired and now redirects to a
 --     gambling site (fixed earlier this session by clearing its dead
---     whereToBuy entry — this goes further and deactivates the listing
+--     whereToBuy entry, this goes further and deactivates the listing
 --     itself). Already flagged as unverifiable in an earlier pass (no live
 --     image sourced either) but left active rather than pulled.
 --
@@ -24,7 +24,7 @@
 -- review safety gate entirely.
 --
 -- Sets the same safe state anything unverified gets today: inactive,
--- pending human review. Nothing here is deleted — a human can still
+-- pending human review. Nothing here is deleted, a human can still
 -- confirm and re-approve any of these later via
 -- scripts/review-discovered-products.mjs if a real source is found.
 update product_catalog

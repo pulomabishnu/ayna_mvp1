@@ -3,9 +3,9 @@ import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 /**
- * "Four shelves, built for you." — mockup board 1e, the alternate/organized
+ * "Four shelves, built for you.", mockup board 1e, the alternate/organized
  * view of the same ecosystem EcosystemBubbles (1d) draws as a circle. Same
- * area grouping, same real data — just a row-per-area layout instead of a
+ * area grouping, same real data, just a row-per-area layout instead of a
  * ring, for anyone who reads a list faster than a diagram.
  */
 

@@ -3,15 +3,15 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProf
 
 // A product added to the ecosystem is stored as a frozen JSON snapshot
 // (user_ecosystems.product_data, see src/utils/ecosystemStore.js) taken at
-// the moment it was added — not re-fetched from the catalog on load. Its own
+// the moment it was added, not re-fetched from the catalog on load. Its own
 // `category` field can't always be trusted even once the area taxonomy
 // itself is complete:
 //   1. An older snapshot can predate a category being assigned at all, or
 //      predate a later reclassification (found live, Aditi 2026-08-24: Rael
 //      Organic Cotton Pads' stored snapshot didn't resolve to any area even
 //      though the live catalog has always had it as category: 'pad').
-//   2. A product that was never in the catalog at all — an AI-generated
-//      recommendation from api/llm-recommendations.js — has a `category`
+//   2. A product that was never in the catalog at all, an AI-generated
+//      recommendation from api/llm-recommendations.js, has a `category`
 //      the LLM wrote as FREEFORM text (see enrichProduct there), not
 //      constrained to this site's real taxonomy at all, so it can be
 //      anything ("device", "wellness", ...) or missing entirely (found
@@ -21,11 +21,11 @@ const CURRENT_CATEGORY_BY_ID = new Map(ALL_PRODUCTS.map((p) => [p.id, p.category
 
 // A single bare word, shared with an unrelated everyday meaning, is weak
 // evidence on its own for which of several possible areas a product belongs
-// to — 'cycle' is Discovery's own documented repeat offender (see its
+// to'cycle' is Discovery's own documented repeat offender (see its
 // comments on the Hormones/Period chips: it satisfies a "sleep-wake cycle,"
 // a "fitness-cycle" healthFunction slug, etc., none of them the menstrual
 // cycle it's meant to catch). Discovery can afford to let a weak keyword
-// hit through — a false-positive filter chip is low stakes. Bucketing a
+// hit through, a false-positive filter chip is low stakes. Bucketing a
 // product into exactly ONE ecosystem area is higher stakes: a weak,
 // ambiguous match winning by pure array order over a correct, specific one
 // misfiles the product outright (found live, Aditi 2026-08-24: "Lumie
@@ -37,7 +37,7 @@ const WEAK_FALLBACK_KEYWORDS = new Set(['cycle']);
 function scoreGroupMatch(product, group) {
   // Same guard Discovery's keyword scan uses: some categories are opted out
   // of a chip's free-text scan entirely (e.g. an intimate-care product
-  // saying "skin" shouldn't match Skin) — see MACRO_GROUPS' own comments.
+  // saying "skin" shouldn't match Skin), see MACRO_GROUPS' own comments.
   if (Array.isArray(group.excludeCategories) && group.excludeCategories.includes(product?.category)) return 0;
   let score = 0;
   if (Array.isArray(group.healthFunctions) && Array.isArray(product?.healthFunctions) &&
@@ -55,11 +55,11 @@ function resolveArea(product, areas) {
     if (area) return area;
   }
   // Last resort: the same name/summary/tags keyword inference Discovery's
-  // category chips use, for a product with no usable category anywhere —
+  // category chips use, for a product with no usable category anywhere
   // scored by match strength instead of "first group in array order wins,"
   // so a specific match beats a merely-coincidental one regardless of which
   // area happens to be listed first. Only tried against MACRO_GROUPS-sourced
-  // areas (they alone carry `keywords`) — 'care'/'supplements' are
+  // areas (they alone carry `keywords`)'care'/'supplements' are
   // EcosystemBubbles-only additions with no keyword list, and category
   // membership (already checked above) is the right bar for those two
   // either way.
@@ -71,7 +71,7 @@ function resolveArea(product, areas) {
 }
 
 /**
- * "This is your ecosystem." — mockup board 1d, the circular layout.
+ * "This is your ecosystem.", mockup board 1d, the circular layout.
  *
  * A centre bubble for the person, one satellite per area of care she has
  * products in, and dashed satellites for the areas she doesn't. Selecting a
@@ -88,7 +88,7 @@ const ORBIT = 178;
 const BUBBLE = 128;
 
 /**
- * Care areas, and the catalog categories that roll up into each — derived from
+ * Care areas, and the catalog categories that roll up into each, derived from
  * MACRO_GROUPS (../data/products), the same taxonomy Discovery's category
  * chips use, rather than a separately hand-maintained list. That list used to
  * live only here and had drifted out of sync with the real category set
@@ -106,7 +106,7 @@ const AREAS = [
   // MACRO_GROUPS deliberately excludes the bare 'supplement' category from every
   // area (see its own comment: one flat "Supplements" chip would be useless for
   // FILTERING ~40 unrelated supplements down by what they treat). That reasoning
-  // is specific to Discovery's filter chips — here, someone just wants to see
+  // is specific to Discovery's filter chips, here, someone just wants to see
   // "the supplements in my ecosystem" as one group, so it's added back only here.
   { key: 'supplements', label: 'Supplements', categories: ['supplement'] },
 ];
@@ -167,7 +167,7 @@ export default function EcosystemBubbles({
     const filledCapped = filled.slice(0, MAX_SATELLITES);
     // One "Add More" seat, not one dashed seat per empty area (was AREAS not
     // yet covered, up to MAX_SATELLITES - filled.length of them, each
-    // pre-suggesting a specific category to fill — Aditi/team decided this
+    // pre-suggesting a specific category to fill, Aditi/team decided this
     // should instead be a single affordance to Browse and pick anything,
     // not the app pre-choosing which gaps look most fillable). Only shown
     // when there's an actual empty seat in the ring to put it in.
@@ -190,7 +190,7 @@ export default function EcosystemBubbles({
   return (
     <section className="eco-bubbles mockup-page">
       {/* .eco-bubbles__canvas is a fixed 560x520 (CANVAS/CANVAS_H) so every
-          bubble's JS-computed left/top stays correct — it's visually shrunk
+          bubble's JS-computed left/top stays correct, it's visually shrunk
           on narrower screens with transform:scale, which is paint-only and
           does NOT reduce the box's layout footprint. Without this wrapper
           reserving the real (post-scale) space via CSS, the still-560px-wide
@@ -237,7 +237,7 @@ export default function EcosystemBubbles({
           <div className="eco-bubbles__card">
             <div className="eco-bubbles__card-label">{selected.label} · Selected</div>
             {selected.products.map((product) => {
-              // Every product this area covers gets its own row — this card
+              // Every product this area covers gets its own row, this card
               // used to show only products[0], so a "2 picks" area silently
               // hid its second product with no way to see or act on it here.
               const labels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);

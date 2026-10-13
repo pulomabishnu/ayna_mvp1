@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * Waitlist tokens (coral base + wash) with a full-bleed motion-blur wellness photo.
  * Photo: public/landing-bg.png (asset from product; same waitlist overlay on top).
- * @param {boolean} [fullViewport] — true for edge-to-edge height (e.g. welcome intro with nav hidden)
+ * @param {boolean} [fullViewport], true for edge-to-edge height (e.g. welcome intro with nav hidden)
  */
 export default function WaitlistLandingLayout({ children, className = '', fullViewport = false }) {
   return (

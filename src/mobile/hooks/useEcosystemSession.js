@@ -9,7 +9,7 @@ const DEFAULT_SESSION = {
   myProducts: [],
   lastQuizAnswers: null,
   pendingIntakeSync: false,
-  // Empty, not 'You' — this used to be a baked-in literal, which meant it
+  // Empty, not 'You', this used to be a baked-in literal, which meant it
   // was always truthy and MobileApp.jsx's `userName || <real fallback>`
   // could never actually reach the real Supabase name for a returning
   // Google sign-in. "You" is purely a last-resort display fallback now,
@@ -43,7 +43,7 @@ function persistSession(session) {
   try {
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   } catch {
-    // Best-effort — same as savedProductsStore, a full/unavailable
+    // Best-effort, same as savedProductsStore, a full/unavailable
     // localStorage shouldn't crash the app.
   }
 }

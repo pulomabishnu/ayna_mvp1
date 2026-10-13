@@ -23,17 +23,17 @@ create table if not exists public.early_stage_startups (
   waitlist_url text,
   image text,
 
-  -- Matching metadata — same shape as product_catalog so
+  -- Matching metadata, same shape as product_catalog so
   -- getPersonalizedStartups() scores these identically to the hardcoded
   -- STARTUPS array. `tags` comes from Airtable's Symptom Tags (matching
   -- vocabulary); `badges` comes from Airtable's own Tags field (display
-  -- only — Women-Owned, Third-Party Tested, etc. — never used for scoring).
+  -- only, Women-Owned, Third-Party Tested, etc., never used for scoring).
   tags jsonb not null default '[]'::jsonb,
   health_functions jsonb not null default '[]'::jsonb,
   badges jsonb not null default '[]'::jsonb,
   featured boolean not null default false,
 
-  -- Founder names, founded year, women-founded flag — real Airtable fields
+  -- Founder names, founded year, women-founded flag, real Airtable fields
   -- with no dedicated column of their own.
   extra jsonb not null default '{}'::jsonb,
 

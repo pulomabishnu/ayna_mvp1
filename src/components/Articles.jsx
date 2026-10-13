@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import ProductCard from './ProductCard';
 import SuggestBox from './SuggestBox';
+import SmartSearchInput from './search/SmartSearchInput.jsx';
+import SearchAssist from './search/SearchAssist.jsx';
+import { searchArticles } from '../utils/search/index.js';
 import '../styles/audit-library.css';
 import '../styles/verify-content.css';
 import { ALL_PRODUCTS, getPersonalizedProductIds } from '../data/products';
@@ -9,7 +12,7 @@ import { RELEASED_STARTUPS } from '../data/startups';
 import { buildLibrary } from '../mobile/utils/personalReads.js';
 import { getNextArticle } from '../mobile/utils/nextArticle.js';
 
-/** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort) — only tags that match the article heading. */
+/** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort), only tags that match the article heading. */
 export const ARTICLE_TOPIC_TAGS = {
   'intimate-wash': ['vaginal-health', 'intimate-care'],
   'heavy-bleeding': ['heavy-flow', 'cramps'],
@@ -903,7 +906,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const q = query.trim().toLowerCase();
   let body;
   if (q.length >= 2) {
-    const results = ARTICLES.filter((a) => `${a.title} ${(a.tags || []).join(' ')} ${a.teaser || ''}`.toLowerCase().includes(q));
+    const results = searchArticles(query, ARTICLES);
     body = results.length ? <ul className="ay-web-lib-grid">{results.map(card)}</ul> : <p className="ay-web-lib-empty">No reads match.</p>;
   } else if (topic !== 'all') {
     const items = topic === 'foryou' ? forYou : (rows.find((r) => r.id === topic)?.items || []);
@@ -928,9 +931,10 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         </div>
         <label className="ay-web-lib-search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search reads" aria-label="Search reads" />
+          <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search reads" aria-label="Search reads" />
         </label>
       </div>
+      {q.length >= 2 && <SearchAssist query={query} resultCount={searchArticles(query, ARTICLES).length} onUse={setQuery} />}
       {q.length < 2 && <div className="ay-web-lib-filter ay-lib-chips" role="group" aria-label="Topics">
         {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
       </div>}

@@ -1,5 +1,5 @@
 /**
- * "How to use" content for product modals — merges Ayna database fields with
+ * "How to use" content for product modals, merges Ayna database fields with
  * category templates and curated public links (brand sites, FDA, Mayo, YouTube search).
  * Per-product overrides: product.howToUse or HOW_TO_BY_PRODUCT_ID.
  */

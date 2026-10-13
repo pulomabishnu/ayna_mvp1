@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 // Persists which routine bucket (if any) each ecosystem product has been
 // manually sorted into. There's no real dosing/timing data anywhere in the
-// catalog, so — unlike the recommendation logic elsewhere in the app — this
+// catalog, so, unlike the recommendation logic elsewhere in the app, this
 // is deliberately NOT computed: the user tells us their own routine instead
 // of the app guessing one. One bucket per product keeps the mental model
 // simple ("where does this live in your routine"); mirrors the localStorage
@@ -34,7 +34,7 @@ function persistRoutine(map) {
   try {
     localStorage.setItem(ROUTINE_KEY, JSON.stringify(map));
   } catch {
-    // Best-effort — same as savedProductsStore, a full/unavailable
+    // Best-effort, same as savedProductsStore, a full/unavailable
     // localStorage shouldn't crash the screen.
   }
 }

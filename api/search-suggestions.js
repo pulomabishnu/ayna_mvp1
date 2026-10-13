@@ -3,7 +3,7 @@
  * products. Suggestions that aren't already in the hardcoded catalog get
  * persisted to a shared Redis-backed "discovered products" store (see
  * persistNewDiscoveries below) so the same product isn't independently
- * re-discovered — and doesn't need re-generating — the next time any user
+ * re-discovered, and doesn't need re-generating, the next time any user
  * searches for it.
  */
 /* global process */
@@ -12,8 +12,9 @@ import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { verifyUser } from './_usageLimit.js';
 import { tryParseJsonCandidate, callWithFallback, parseProviderOrder, providerConfigured } from './_llm.js';
 import { ALL_PRODUCTS } from '../src/data/products.js';
+import { correctedSearchQuery } from '../src/utils/search/index.js';
 
-// Mirrors PRESCRIPTION_DRUG_PATTERN in api/llm-recommendations.js — keep the two in sync.
+// Mirrors PRESCRIPTION_DRUG_PATTERN in api/llm-recommendations.js, keep the two in sync.
 const PRESCRIPTION_DRUG_PATTERN = new RegExp(
   [
     '\\bprescription\\b', 'tranexamic', 'tranexemic', '\\blysteda\\b',
@@ -85,7 +86,7 @@ function getRedis() {
   return redisPromise;
 }
 
-// Dedup key: normalized product NAME only, not brand+name — brand is
+// Dedup key: normalized product NAME only, not brand+name, brand is
 // deliberately NOT part of the key so multiple distinct products from the
 // same brand (e.g. "Always Radiant" and "Always Infinity") are never treated
 // as duplicates of each other. AI-generated suggestions already fold the
@@ -95,7 +96,7 @@ function normalizeProductKey(name) {
   return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
-// Built once per cold start and reused across warm invocations — the catalog
+// Built once per cold start and reused across warm invocations, the catalog
 // is static within a deployment, so there's no reason to re-normalize ~100+
 // product names on every search request.
 let hardcodedNameSet = null;
@@ -111,7 +112,7 @@ function getHardcodedNameSet() {
 /**
  * For each suggestion not already in the hardcoded catalog, checks the
  * shared Redis "discovered products" hash and persists it if it's genuinely
- * new — strict per-product dedup (by normalized name), while still allowing
+ * new, strict per-product dedup (by normalized name), while still allowing
  * any number of different products from the same brand. Best-effort: a
  * Redis outage degrades to "nothing persisted this request," never to a
  * failed search.
@@ -158,7 +159,7 @@ function sanitizeStr(s, maxLen) {
   return t.slice(0, maxLen);
 }
 
-// The model's product page URL is advisory, not verified — it can be wrong or
+// The model's product page URL is advisory, not verified, it can be wrong or
 // hallucinated. This only rejects obviously-malformed values; the actual
 // SSRF-safe fetch (with resolved-IP validation) happens downstream in
 // api/product-image.js before anything derived from this URL is ever used.
@@ -182,16 +183,16 @@ function sanitizeOfficialUrl(s) {
 // ─── Live web search grounding ────────────────────────────────────────────
 //
 // Without this, a suggestion's existence rests entirely on the model's own
-// training-data recall — "only suggest brands you're confident exist" below.
+// training-data recall"only suggest brands you're confident exist" below.
 // That's the right anti-hallucination default, but it means a real, smaller,
 // or newer brand the model just doesn't happen to recall confidently (found
-// live: "Oboo", "Femigist" — both real, both returned zero suggestions,
+// live: "Oboo", "Femigist", both real, both returned zero suggestions,
 // zero catalog matches) looks identical to a query for something that
 // doesn't exist at all. Same technique api/llm-recommendations.js already
 // uses for category-level discovery (searchProductsForConcerns), applied
 // here to the exact typed query instead: real search results let the model
 // confirm a specific product's existence instead of relying on recall alone,
-// without loosening the actual fabrication rules — it still may only report
+// without loosening the actual fabrication rules, it still may only report
 // what these results actually show.
 async function searchWebForQuery(query) {
   const serperKey = process.env.SERPER_API_KEY;
@@ -211,7 +212,7 @@ async function searchWebForQuery(query) {
       .map((h) => ({ title: h.title, snippet: h.snippet.slice(0, 200), url: h.link || '' }));
     return hits.length ? hits : null;
   } catch {
-    // Search failure is non-fatal — the prompt just falls back to
+    // Search failure is non-fatal, the prompt just falls back to
     // recall-only, i.e. today's behavior.
     return null;
   }
@@ -219,8 +220,8 @@ async function searchWebForQuery(query) {
 
 function formatSearchHitsForPrompt(hits) {
   if (!hits || !hits.length) return '';
-  const lines = hits.map((h, i) => `${i + 1}. ${h.title} — ${h.snippet}${h.url ? ` (${h.url})` : ''}`);
-  return `\n\nLIVE WEB SEARCH RESULTS for this exact query (real, current — use these to confirm a specific product actually exists, especially for a smaller or newer brand you would not otherwise be fully confident naming from memory alone). Only report what these results actually show — a brand or product name that doesn't appear here and that you're not independently confident about is still not something to include:\n${lines.join('\n')}`;
+  const lines = hits.map((h, i) => `${i + 1}. ${h.title}, ${h.snippet}${h.url ? ` (${h.url})` : ''}`);
+  return `\n\nLIVE WEB SEARCH RESULTS for this exact query (real, current, use these to confirm a specific product actually exists, especially for a smaller or newer brand you would not otherwise be fully confident naming from memory alone). Only report what these results actually show, a brand or product name that doesn't appear here and that you're not independently confident about is still not something to include:\n${lines.join('\n')}`;
 }
 
 function clampTypicalRating(n) {
@@ -283,7 +284,7 @@ function normalizeSuggestion(raw, index) {
   const type = String(raw?.type || 'physical').toLowerCase() === 'digital' ? 'digital' : 'physical';
   const tags = uniqueStrings(raw?.tags, 8, 48);
   // Capped at 3 to match ProductModal.jsx, which only ever renders
-  // whereToBuy.slice(0, 3) — asking the model for more than the UI shows
+  // whereToBuy.slice(0, 3), asking the model for more than the UI shows
   // wastes output tokens (and thus latency) for no visible benefit.
   const whereToBuy = sanitizeRetailers(raw?.whereToBuy || raw?.retailers, 3);
   const searchTerms = uniqueStrings(raw?.searchTerms, 6, 100);
@@ -293,7 +294,7 @@ function normalizeSuggestion(raw, index) {
   if (!name || name.length < 3 || !summary || summary.length < 25) return null;
 
   // The prompt already says never to suggest a prescription drug, but that's
-  // advisory — same gap fixed with a code-level backstop in
+  // advisory, same gap fixed with a code-level backstop in
   // api/llm-recommendations.js (PRESCRIPTION_DRUG_PATTERN there). Telehealth
   // platforms are exempt: their whole purpose is connecting someone to a
   // prescriber, so their summary legitimately names what they treat/prescribe.
@@ -319,7 +320,7 @@ function normalizeSuggestion(raw, index) {
     llmGenerated: true,
     aiEstimatedRating: typical != null,
     userRating: typical != null ? typical : undefined,
-    ratingNote: typical != null ? undefined : 'Not in Ayna database — no verified rating',
+    ratingNote: typical != null ? undefined : 'Not in Ayna database, no verified rating',
     badges: uniqueStrings(raw?.badges, 2, 32),
     image: '/ayna_placeholder.png',
   };
@@ -340,35 +341,35 @@ function buildPrompt(query, categoryHint, symptomHint, personalized, profileSumm
       ? `User filtered supplements by symptom theme: "${symptomHint}".`
       : '';
   const profileLine = personalized && profileSummary
-    ? `User health profile: ${profileSummary}. Use this to rank which products within the searched category are most relevant — do NOT use it to recommend products from a different category.`
+    ? `User health profile: ${profileSummary}. Use this to rank which products within the searched category are most relevant, do NOT use it to recommend products from a different category.`
     : '';
   const dislikedLine = dislikedProducts
-    ? `The user has tried and disliked these products — do NOT include them: ${dislikedProducts}`
+    ? `The user has tried and disliked these products, do NOT include them: ${dislikedProducts}`
     : '';
   const countLine = personalized
     ? `Return the top ${maxResults} most relevant options for this specific user's profile.`
     : `Return the top ${maxResults} options available in the US market, ranked by relevance, reputation, and availability.`;
   const cats = [...ALLOWED_CATEGORIES].join(', ');
-  return `You are the product-discovery layer for Ayna, a women's health app. Propose REAL, SHIPPABLE products/apps — specific brand names and product lines a shopper could find at major US retailers or official brand/app stores. The search query defines the product TYPE to return (e.g. "iron supplements" → only iron supplements, never trackers/apps/period care, no matter what the profile says); the user profile below, if given, may only re-rank WITHIN that type — never switch category. ${countLine}
+  return `You are the product-discovery layer for Ayna, a women's health app. Propose REAL, SHIPPABLE products/apps, specific brand names and product lines a shopper could find at major US retailers or official brand/app stores. The search query defines the product TYPE to return (e.g. "iron supplements" → only iron supplements, never trackers/apps/period care, no matter what the profile says); the user profile below, if given, may only re-rank WITHIN that type, never switch category. ${countLine}
 
 User search: "${query.replace(/"/g, '\\"')}"
 ${cat}${sym ? '\n' + sym : ''}${profileLine ? '\n' + profileLine : ''}${dislikedLine ? '\n' + dislikedLine : ''}${formatSearchHitsForPrompt(searchHits)}
 
-Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions in this shape. Keep every field as brief as the guidance below allows — concise output is faster to generate and lets more suggestions fit in the response:
+Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions in this shape. Keep every field as brief as the guidance below allows, concise output is faster to generate and lets more suggestions fit in the response:
 {
-  "querySummary": "1-2 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth). Where genuinely applicable, briefly cite ACOG (menstrual/PCOS/endo/menopause/fertility/contraception/UTI/pelvic floor), NIH ODS (supplements), FDA (device/product safety), or Cochrane (evidence quality) by name for credibility — only when confident their guidance actually covers this topic, and never fabricate a specific guideline number, PMID, or direct quote. Remind users to verify fit with a clinician when medical.",
-  "relatedSearches": ["3-4 short natural search phrases the user might try next based on this search — real queries a person would type, not category labels"],
+  "querySummary": "1-2 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth). Where genuinely applicable, briefly cite ACOG (menstrual/PCOS/endo/menopause/fertility/contraception/UTI/pelvic floor), NIH ODS (supplements), FDA (device/product safety), or Cochrane (evidence quality) by name for credibility, only when confident their guidance actually covers this topic, and never fabricate a specific guideline number, PMID, or direct quote. Remind users to verify fit with a clinician when medical.",
+  "relatedSearches": ["3-4 short natural search phrases the user might try next based on this search, real queries a person would type, not category labels"],
   "suggestions": [
     {
       "brand": "Brand name",
       "name": "Product line or SKU name (include brand in name OR set brand separately)",
       "category": "one slug from: ${cats}",
       "type": "physical" | "digital",
-      "summary": "1-2 sentences: what it is, who it is for, how it helps — neutral, not medical advice",
-      "priceHint": "A hedged price RANGE only, e.g. ~$12-18 or Subscription ~$15/mo — never a single exact price. Attach a pack/count size (e.g. '14-16 pads') only if you're confident that's genuinely this brand's real configuration — a wrong invented count is worse than none; if unsure of quantity, give price alone.",
+      "summary": "1-2 sentences: what it is, who it is for, how it helps, neutral, not medical advice",
+      "priceHint": "A hedged price RANGE only, e.g. ~$12-18 or Subscription ~$15/mo, never a single exact price. Attach a pack/count size (e.g. '14-16 pads') only if you're confident that's genuinely this brand's real configuration, a wrong invented count is worse than none; if unsure of quantity, give price alone.",
       "tags": ["up to 4 short tags: heavy-flow", "organic", "app", ...],
-      "whereToBuy": ["up to 3 retailer NAMES only, no URLs — e.g. Amazon, Target, Brand website, App Store"],
-      "officialUrl": "THIS SPECIFIC PRODUCT's own page on the brand's official site (e.g. https://brand.com/products/this-exact-product) — NOT the homepage/root domain, which is useless for fetching a product photo. If one of the live web search results above is clearly this exact product's own page, use that URL. Otherwise only include it if you're independently confident of the real product-page URL; omit entirely rather than guess or fall back to the homepage. The one exception to the no-URLs rule below.",
+      "whereToBuy": ["up to 3 retailer NAMES only, no URLs, e.g. Amazon, Target, Brand website, App Store"],
+      "officialUrl": "THIS SPECIFIC PRODUCT's own page on the brand's official site (e.g. https://brand.com/products/this-exact-product), NOT the homepage/root domain, which is useless for fetching a product photo. If one of the live web search results above is clearly this exact product's own page, use that URL. Otherwise only include it if you're independently confident of the real product-page URL; omit entirely rather than guess or fall back to the homepage. The one exception to the no-URLs rule below.",
       "typicalUserRating": 4.2,
       "safetyNote": "one short line: e.g. consult clinician for prescriptions, patch tests for topicals",
       "searchTerms": ["1-2 web search phrases that include brand + product kind for Google"]
@@ -377,18 +378,18 @@ Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions i
 }
 
 RULES (apply to every suggestion):
-- Draw on your full knowledge of relevant brands — mainstream, indie, DTC, clinical, international — sold in the US. Rank by: relevance to the query, clinical reputation/safety record, availability, community reputation.
-- Only suggest brands/products you are confident genuinely exist and sell in the US market. Never invent a brand name, product line, feature, or service — even as a placeholder. Confidence can come from either your own knowledge OR the live web search results above (a smaller/newer real brand you wouldn't otherwise recall confidently is fine to include if those results clearly confirm it) — but never extrapolate a name, price, or count beyond what the search results actually show, and if neither source supports it, leave it out — it likely doesn't exist.
-- Same standard applies to pack sizes/counts as to brand names: state a specific count (e.g. "60 capsules") only if you're confident that's the real configuration for this brand+product — an invented-but-plausible count is a fabrication just like an invented brand, and it's more deceptive because it looks precise. When unsure, give a price range with no count attached.
-- NEVER suggest any product whose brand is "Ayna" — that's the app the user is already in, not a product to recommend
+- Draw on your full knowledge of relevant brands, mainstream, indie, DTC, clinical, international, sold in the US. Rank by: relevance to the query, clinical reputation/safety record, availability, community reputation.
+- Only suggest brands/products you are confident genuinely exist and sell in the US market. Never invent a brand name, product line, feature, or service, even as a placeholder. Confidence can come from either your own knowledge OR the live web search results above (a smaller/newer real brand you wouldn't otherwise recall confidently is fine to include if those results clearly confirm it), but never extrapolate a name, price, or count beyond what the search results actually show, and if neither source supports it, leave it out, it likely doesn't exist.
+- Same standard applies to pack sizes/counts as to brand names: state a specific count (e.g. "60 capsules") only if you're confident that's the real configuration for this brand+product, an invented-but-plausible count is a fabrication just like an invented brand, and it's more deceptive because it looks precise. When unsure, give a price range with no count attached.
+- NEVER suggest any product whose brand is "Ayna", that's the app the user is already in, not a product to recommend
 - Never include URLs, domains, or "http" in any field except officialUrl (retailer names as plain text only); for officialUrl, only include it if you're confident it's the real current URL, else omit rather than guess
-- typicalUserRating: optional 3.0-5.0 only with real signal — omit if unsure
+- typicalUserRating: optional 3.0-5.0 only with real signal, omit if unsure
 - If the query is not women's health/wellness shopping related, return {"querySummary":"","suggestions":[]}
-- NEVER suggest a prescription medication as a product — this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, and prescription weight-loss drugs (GLP-1s), even if the search names the condition it treats. For a query about something that requires a prescription (e.g. "birth control pills", "UTI antibiotics"), suggest telehealth platforms/services that can prescribe it instead of naming the drug itself.`;
+- NEVER suggest a prescription medication as a product, this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, and prescription weight-loss drugs (GLP-1s), even if the search names the condition it treats. For a query about something that requires a prescription (e.g. "birth control pills", "UTI antibiotics"), suggest telehealth platforms/services that can prescribe it instead of naming the drug itself.`;
 }
 
 /**
- * Was Anthropic-only via a hand-rolled fetch — a single provider's outage
+ * Was Anthropic-only via a hand-rolled fetch, a single provider's outage
  * (e.g. the account running out of credits, found live 2026-08-25) took down
  * every search on the site with no fallback. Now goes through the same
  * multi-provider callWithFallback every other AI route uses: a non-retryable
@@ -405,16 +406,16 @@ async function callSuggestionsModel(prompt) {
       // Was reduced to 2048 on the assumption that was "~10x what 20 short
       // suggestions need." It wasn't: the schema below asks for a 2-3 sentence
       // summary, up to 6 tags, retailers, search terms, and a safety note PER
-      // suggestion — 20 of those run ~2,800+ tokens before querySummary/
+      // suggestion, 20 of those run ~2,800+ tokens before querySummary/
       // relatedSearches. 2048 truncated mid-JSON on every request needing
-      // close to the full 20 (confirmed live in production — every real
+      // close to the full 20 (confirmed live in production, every real
       // search failed with invalid_model_json). Raising to 4096 still wasn't
       // enough (many requests still hit max_tokens live). 8192 is the
       // original value this was reduced from, before the "~10x" assumption
       // turned out to be wrong for the schema as it exists today.
       //
       // Tempting to shrink this now that Discovery.jsx requests far fewer
-      // suggestions per search (8/6, down from 20/10) — resist that without
+      // suggestions per search (8/6, down from 20/10), resist that without
       // a live-verified measurement first. This exact reasoning ("fewer
       // items requested, so a smaller ceiling should have headroom") is what
       // failed at 4096 for 20 items; a regression test below pins 8192 as
@@ -424,7 +425,7 @@ async function callSuggestionsModel(prompt) {
       jsonMode: true,
     });
     if (out.truncated) {
-      // Truncated output can't be recovered after the fact — this is here so a
+      // Truncated output can't be recovered after the fact, this is here so a
       // future max_tokens regression shows up as a clear log line instead of a
       // bare invalid_model_json with no indication of why.
       console.warn(`search-suggestions: ${out.provider} hit max_tokens; response is truncated and will likely fail to parse`);
@@ -461,7 +462,7 @@ export default async function handler(req, res) {
   // oversight: an IP-rotating script can still run up the bill.
   //
   // Set REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS=1 to close it. Signed-out search
-  // then returns 401 and the client falls back to catalog-only results — no
+  // then returns 401 and the client falls back to catalog-only results, no
   // code change, no redeploy beyond the env var.
   if (/^(1|true)$/i.test(process.env.REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS || '')) {
     const { user, error: authError } = await verifyUser(req);
@@ -493,14 +494,19 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_json' });
   }
 
-  const query = sanitizeStr(body?.query, 500);
-  if (query.length < 2) {
+  const typedQuery = sanitizeStr(body?.query, 500);
+  if (typedQuery.length < 2) {
     return res.status(400).json({ error: 'query_too_short' });
   }
+  // Same spelling fixes as the on-site search ("tampoons" -> "tampons",
+  // "menstral crmps" -> "menstrual cramps"), so a typo never sends the web
+  // search and the model off after the wrong thing. Never fails the request.
+  let query = typedQuery;
+  try { query = sanitizeStr(correctedSearchQuery(typedQuery), 500) || typedQuery; } catch { query = typedQuery; }
 
   // Every other input here is sanitized (query 500 + quote-escaped,
   // profileSummary 400, dislikedProducts 300); these two got neither a cap nor
-  // quote escaping, and land inside a quoted string in the prompt — on an
+  // quote escaping, and land inside a quoted string in the prompt, on an
   // endpoint with no auth. Unbounded token sink and the cleanest injection point.
   const categoryHint = sanitizeStr(body?.category, 64).replace(/"/g, '');
   const symptomHint = sanitizeStr(body?.symptom, 64).replace(/"/g, '');
@@ -513,7 +519,7 @@ export default async function handler(req, res) {
   const maxResults = typeof body?.maxResults === 'number' ? Math.min(Math.max(body.maxResults, 1), 25) : 25;
 
   // Grounds the exact typed query in a real, current web search before
-  // asking the model to generate — see searchWebForQuery's own comment for
+  // asking the model to generate, see searchWebForQuery's own comment for
   // why. A missing/failing search key degrades to today's recall-only
   // behavior (formatSearchHitsForPrompt returns '' for null hits), never to
   // a failed search.
@@ -526,7 +532,7 @@ export default async function handler(req, res) {
 
   // Tolerant parse (same helper _llm.js's callers use): strips stray code
   // fences, extracts a balanced JSON object out of surrounding prose, and
-  // drops trailing commas — a naive JSON.parse rejected all of these even
+  // drops trailing commas, a naive JSON.parse rejected all of these even
   // when the model's actual suggestions were intact and usable.
   const parsed = tryParseJsonCandidate(rawJson);
   if (!parsed) {

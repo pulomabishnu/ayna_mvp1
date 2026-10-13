@@ -9,7 +9,7 @@ const TELEHEALTH_SERVICES = [
     { name: 'Wisp', focus: 'Sexual Health & UTIs', benefit: 'Same-day medication for UTIs & BV.', url: 'https://hellowisp.com' }
 ];
 
-// Guideline sources — every recommendation is backed by at least 3 sources
+// Guideline sources, every recommendation is backed by at least 3 sources
 const GUIDELINE_LINKS = {
     sti: [
         { name: 'ACOG – STI screening', url: 'https://www.acog.org/womens-health/faqs/sexually-transmitted-infections' },

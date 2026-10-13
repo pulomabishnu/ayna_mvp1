@@ -1,42 +1,100 @@
 // Studio-style product photos (Amazon main-image standard): the item itself on
 // pure white, no people, props, text overlays or watermarks, square, centered.
-// Each file in public/products/catalog/<id>.webp was either
-//   - cleaned: the catalog's own photo with its light studio backdrop removed
-//     to pure white and re-framed (square 640px, ~8% padding), or
-//   - replaced: the catalog photo showed a person, a lifestyle scene, a
-//     banner/promo text or the wrong item, so it was swapped for the brand's
-//     own packshot (brand store) or the Amazon main image of the same product.
-// Provenance (source URL + previous URL per id): scripts/images/sources.json.
-// Regenerate the audit sheet with scripts/images/contact-sheet.py.
+// Each file in public/products/catalog/<id>.webp is the brand packshot, the
+// Amazon / Target / Walmart main image, or the catalog's own photo, normalized
+// (background flood-filled or masked to pure white, trimmed, ~8% padding,
+// 640px square, WebP <= 150KB). Provenance per id: scripts/images/sources.json.
+// Regenerate the audit sheet with scripts/images/contact-sheet.py; the browser
+// helper that fetched and normalized the photos is scripts/images/browser-lib.js.
 //
 // Keyed by catalog product id. Only physical products; digital products keep
-// their brand imagery.
+// their brand imagery. An entry is either the cover path (string) or
+// { cover, gallery: [...] } where the gallery holds up to 4 extra clean shots
+// (other angles, contents, label / ingredients panel). The cover is always the
+// box or the product itself; it is what product cards show.
 export const PRODUCT_IMAGE_OVERRIDES = Object.freeze({
   'p-aisle-underwear': '/products/catalog/p-aisle-underwear.webp',
   'p-always-liners': '/products/catalog/p-always-liners.webp',
+  'p-bambody-underwear': {
+    cover: '/products/catalog/p-bambody-underwear.webp',
+    gallery: [
+      '/products/catalog/p-bambody-underwear-2.webp',
+    ],
+  },
+  'p-belly-bandit': '/products/catalog/p-belly-bandit.webp',
+  'p-bodily-kit': '/products/catalog/p-bodily-kit.webp',
   'p-boric-acid': '/products/catalog/p-boric-acid.webp',
   'p-buni-bundle': '/products/catalog/p-buni-bundle.webp',
   'p-buni-rejuvenate-vulva-balm': '/products/catalog/p-buni-rejuvenate-vulva-balm.webp',
   'p-buni-soothe-nipple-lip-balm': '/products/catalog/p-buni-soothe-nipple-lip-balm.webp',
+  'p-buni-transform-scar-body-oil': '/products/catalog/p-buni-transform-scar-body-oil.webp',
+  'p-citracal-bone-health': {
+    cover: '/products/catalog/p-citracal-bone-health.webp',
+    gallery: [
+      '/products/catalog/p-citracal-bone-health-2.webp',
+      '/products/catalog/p-citracal-bone-health-3.webp',
+    ],
+  },
   'p-cora-disc': '/products/catalog/p-cora-disc.webp',
   'p-cora-organic-pads': '/products/catalog/p-cora-organic-pads.webp',
   'p-cora-organic-tampons': '/products/catalog/p-cora-organic-tampons.webp',
   'p-cora-overnight': '/products/catalog/p-cora-overnight.webp',
   'p-creatine-womens': '/products/catalog/p-creatine-womens.webp',
-  'p-cystex': '/products/catalog/p-cystex.webp',
+  'p-cystex': {
+    cover: '/products/catalog/p-cystex.webp',
+    gallery: [
+      '/products/catalog/p-cystex-2.webp',
+    ],
+  },
   'p-dear-kate-underwear': '/products/catalog/p-dear-kate-underwear.webp',
   'p-diva-cup': '/products/catalog/p-diva-cup.webp',
+  'p-elitone': '/products/catalog/p-elitone.webp',
+  'p-elitone-urge': '/products/catalog/p-elitone-urge.webp',
   'p-elvie-trainer': '/products/catalog/p-elvie-trainer.webp',
   'p-estroven-mood': '/products/catalog/p-estroven-mood.webp',
+  'p-femmycycle': '/products/catalog/p-femmycycle.webp',
   'p-flex-cup': '/products/catalog/p-flex-cup.webp',
   'p-flex-disc': '/products/catalog/p-flex-disc.webp',
+  'p-gina-insertion-applicator-refills': {
+    cover: '/products/catalog/p-gina-insertion-applicator-refills.webp',
+    gallery: [
+      '/products/catalog/p-gina-insertion-applicator-refills-2.webp',
+    ],
+  },
+  'p-gina-vaginal-moisturizing-glides': {
+    cover: '/products/catalog/p-gina-vaginal-moisturizing-glides.webp',
+    gallery: [
+      '/products/catalog/p-gina-vaginal-moisturizing-glides-2.webp',
+      '/products/catalog/p-gina-vaginal-moisturizing-glides-3.webp',
+      '/products/catalog/p-gina-vaginal-moisturizing-glides-4.webp',
+    ],
+  },
+  'p-good-kitty-uti-biome-shield': {
+    cover: '/products/catalog/p-good-kitty-uti-biome-shield.webp',
+    gallery: [
+      '/products/catalog/p-good-kitty-uti-biome-shield-2.webp',
+    ],
+  },
   'p-hatch-oil': '/products/catalog/p-hatch-oil.webp',
+  'p-hello-disc': {
+    cover: '/products/catalog/p-hello-disc.webp',
+    gallery: [
+      '/products/catalog/p-hello-disc-2.webp',
+    ],
+  },
   'p-honeypot-wash': '/products/catalog/p-honeypot-wash.webp',
+  'p-intimina-kegel': {
+    cover: '/products/catalog/p-intimina-kegel.webp',
+    gallery: [
+      '/products/catalog/p-intimina-kegel-2.webp',
+    ],
+  },
   'p-intimina-lily': '/products/catalog/p-intimina-lily.webp',
   'p-kindra-lotion': '/products/catalog/p-kindra-lotion.webp',
   'p-knix-underwear': '/products/catalog/p-knix-underwear.webp',
   'p-kotex-security': '/products/catalog/p-kotex-security.webp',
   'p-lena-cup': '/products/catalog/p-lena-cup.webp',
+  'p-lim-method-bundle': '/products/catalog/p-lim-method-bundle.webp',
   'p-lim-method-kneeling-pad': '/products/catalog/p-lim-method-kneeling-pad.webp',
   'p-lim-method-shoe-covers': '/products/catalog/p-lim-method-shoe-covers.webp',
   'p-livlabs-pippa-fit-kit': '/products/catalog/p-livlabs-pippa-fit-kit.webp',
@@ -45,8 +103,23 @@ export const PRODUCT_IMAGE_OVERRIDES = Object.freeze({
   'p-lumma-disc': '/products/catalog/p-lumma-disc.webp',
   'p-lunette-cup': '/products/catalog/p-lunette-cup.webp',
   'p-maude-vibe': '/products/catalog/p-maude-vibe.webp',
-  'p-mypelvicbra-classic-plus': '/products/catalog/p-mypelvicbra-classic-plus.webp',
-  'p-mypelvicbra-waistband-extenders': '/products/catalog/p-mypelvicbra-waistband-extenders.webp',
+  'p-mypelvicbra-classic': '/products/catalog/p-mypelvicbra-classic.webp',
+  'p-mypelvicbra-classic-plus': {
+    cover: '/products/catalog/p-mypelvicbra-classic-plus.webp',
+    gallery: [
+      '/products/catalog/p-mypelvicbra-classic-plus-2.webp',
+      '/products/catalog/p-mypelvicbra-classic-plus-3.webp',
+      '/products/catalog/p-mypelvicbra-classic-plus-4.webp',
+    ],
+  },
+  'p-mypelvicbra-sports': '/products/catalog/p-mypelvicbra-sports.webp',
+  'p-mypelvicbra-waistband-extenders': {
+    cover: '/products/catalog/p-mypelvicbra-waistband-extenders.webp',
+    gallery: [
+      '/products/catalog/p-mypelvicbra-waistband-extenders-2.webp',
+      '/products/catalog/p-mypelvicbra-waistband-extenders-3.webp',
+    ],
+  },
   'p-mystery-vibe': '/products/catalog/p-mystery-vibe.webp',
   'p-neycher-botanical-vulva-balm': '/products/catalog/p-neycher-botanical-vulva-balm.webp',
   'p-neycher-goodbye-dryness-bundle': '/products/catalog/p-neycher-goodbye-dryness-bundle.webp',
@@ -54,14 +127,37 @@ export const PRODUCT_IMAGE_OVERRIDES = Object.freeze({
   'p-neycher-odor-be-gone': '/products/catalog/p-neycher-odor-be-gone.webp',
   'p-neycher-vaginal-moisturizer': '/products/catalog/p-neycher-vaginal-moisturizer.webp',
   'p-nixit': '/products/catalog/p-nixit.webp',
+  'p-ob-original-multipack-40': '/products/catalog/p-ob-original-multipack-40.webp',
+  'p-ob-original-multipack-80': '/products/catalog/p-ob-original-multipack-80.webp',
+  'p-ob-original-regular-40': '/products/catalog/p-ob-original-regular-40.webp',
+  'p-ob-original-super-40': '/products/catalog/p-ob-original-super-40.webp',
+  'p-ob-original-super-plus-40': '/products/catalog/p-ob-original-super-plus-40.webp',
+  'p-ob-original-ultra-40': '/products/catalog/p-ob-original-ultra-40.webp',
+  'p-ob-procomfort-mini-16': '/products/catalog/p-ob-procomfort-mini-16.webp',
+  'p-ob-procomfort-mini-32': '/products/catalog/p-ob-procomfort-mini-32.webp',
   'p-oboo-boom': '/products/catalog/p-oboo-boom.webp',
   'p-oboo-cool-spray': '/products/catalog/p-oboo-cool-spray.webp',
   'p-oboo-groove': '/products/catalog/p-oboo-groove.webp',
-  'p-oboo-loob-arousal': '/products/catalog/p-oboo-loob-arousal.webp',
-  'p-oboo-loob-daily': '/products/catalog/p-oboo-loob-daily.webp',
+  'p-oboo-loob-arousal': {
+    cover: '/products/catalog/p-oboo-loob-arousal.webp',
+    gallery: [
+      '/products/catalog/p-oboo-loob-arousal-2.webp',
+    ],
+  },
+  'p-oboo-loob-daily': {
+    cover: '/products/catalog/p-oboo-loob-daily.webp',
+    gallery: [
+      '/products/catalog/p-oboo-loob-daily-2.webp',
+    ],
+  },
   'p-oboo-mood-drops': '/products/catalog/p-oboo-mood-drops.webp',
   'p-oboo-moon': '/products/catalog/p-oboo-moon.webp',
-  'p-oboo-nook': '/products/catalog/p-oboo-nook.webp',
+  'p-oboo-nook': {
+    cover: '/products/catalog/p-oboo-nook.webp',
+    gallery: [
+      '/products/catalog/p-oboo-nook-2.webp',
+    ],
+  },
   'p-oboo-oooh': '/products/catalog/p-oboo-oooh.webp',
   'p-oboo-shoop': '/products/catalog/p-oboo-shoop.webp',
   'p-oboo-smooch': '/products/catalog/p-oboo-smooch.webp',
@@ -72,11 +168,36 @@ export const PRODUCT_IMAGE_OVERRIDES = Object.freeze({
   'p-organicup': '/products/catalog/p-organicup.webp',
   'p-pelvic-wand': '/products/catalog/p-pelvic-wand.webp',
   'p-period-co-underwear': '/products/catalog/p-period-co-underwear.webp',
+  'p-period-nirvana-disc': {
+    cover: '/products/catalog/p-period-nirvana-disc.webp',
+    gallery: [
+      '/products/catalog/p-period-nirvana-disc-2.webp',
+    ],
+  },
   'p-probiotics-women': '/products/catalog/p-probiotics-women.webp',
+  'p-proof-period': '/products/catalog/p-proof-period.webp',
+  'p-proov-balance-bundle': '/products/catalog/p-proov-balance-bundle.webp',
+  'p-proov-complete': '/products/catalog/p-proov-complete.webp',
+  'p-proov-empower': '/products/catalog/p-proov-empower.webp',
+  'p-proov-his-hers': '/products/catalog/p-proov-his-hers.webp',
+  'p-proov-path-to-pregnancy': '/products/catalog/p-proov-path-to-pregnancy.webp',
   'p-rael-organic-pad': '/products/catalog/p-rael-organic-pad.webp',
   'p-remifemin': '/products/catalog/p-remifemin.webp',
+  'p-rituals-prenatal': {
+    cover: '/products/catalog/p-rituals-prenatal.webp',
+    gallery: [
+      '/products/catalog/p-rituals-prenatal-2.webp',
+    ],
+  },
   'p-ruby-cup': '/products/catalog/p-ruby-cup.webp',
   'p-saalt-cup': '/products/catalog/p-saalt-cup.webp',
+  'p-seventh-gen-pad': {
+    cover: '/products/catalog/p-seventh-gen-pad.webp',
+    gallery: [
+      '/products/catalog/p-seventh-gen-pad-2.webp',
+    ],
+  },
+  'p-seventh-gen-tampon': '/products/catalog/p-seventh-gen-tampon.webp',
   'p-silverette-cups': '/products/catalog/p-silverette-cups.webp',
   'p-snoogle-pillow': '/products/catalog/p-snoogle-pillow.webp',
   'p-softdisc': '/products/catalog/p-softdisc.webp',
@@ -88,17 +209,47 @@ export const PRODUCT_IMAGE_OVERRIDES = Object.freeze({
   'p-u-kotex-pad': '/products/catalog/p-u-kotex-pad.webp',
   'p-uqora-control': '/products/catalog/p-uqora-control.webp',
   'p-vio2-mouth-tape': '/products/catalog/p-vio2-mouth-tape.webp',
+  'p-willow-pump': {
+    cover: '/products/catalog/p-willow-pump.webp',
+    gallery: [
+      '/products/catalog/p-willow-pump-2.webp',
+    ],
+  },
+  'p-winx-uti-test-treat': '/products/catalog/p-winx-uti-test-treat.webp',
+  'p-winx-vaginal-health-test-treat': '/products/catalog/p-winx-vaginal-health-test-treat.webp',
   'p-wuka-underwear': '/products/catalog/p-wuka-underwear.webp',
 });
 
-/** The cleaned studio photo for a catalog product id, or '' when none. */
-export function productImageOverride(productOrId) {
+function entryFor(productOrId) {
   const id = typeof productOrId === 'string' ? productOrId : productOrId?.id;
-  if (!id) return '';
-  return PRODUCT_IMAGE_OVERRIDES[id] || '';
+  if (!id) return null;
+  return PRODUCT_IMAGE_OVERRIDES[id] || null;
 }
 
-/** Returns the product with its image swapped for the studio photo, if any. */
+/** The cleaned studio cover photo for a catalog product (or id), or '' when none. */
+export function productImageOverride(productOrId) {
+  const entry = entryFor(productOrId);
+  if (!entry) return '';
+  return typeof entry === 'string' ? entry : entry.cover || '';
+}
+
+/**
+ * Every clean photo for a product, cover first: [cover, ...gallery]. Products
+ * without an override fall back to their own `image` (when given an object),
+ * so a gallery always has at least the card photo when one exists.
+ */
+export function productGallery(productOrId) {
+  const entry = entryFor(productOrId);
+  if (!entry) {
+    const own = typeof productOrId === 'object' && productOrId ? String(productOrId.image || '').trim() : '';
+    return own ? [own] : [];
+  }
+  if (typeof entry === 'string') return [entry];
+  const list = [entry.cover, ...(entry.gallery || [])].filter(Boolean);
+  return [...new Set(list)];
+}
+
+/** Returns the product with its image swapped for the studio cover, if any. */
 export function withImageOverride(product) {
   const src = productImageOverride(product);
   return src && product ? { ...product, image: src } : product;

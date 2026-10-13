@@ -8,7 +8,9 @@ import { extractHashtagTopics, suggestHashtags, suggestTopicsForProducts } from 
 import { uploadCommunityImage, deleteCommunityImage, checkImageFile, MAX_POST_PHOTOS, publicMediaUrl } from '../utils/community/imageUpload.js';
 import { makePlaylistCoverFile } from '../mobile/components/playlistCoverImage.js';
 import { CATEGORY_LABELS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products';
-import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch.js';
+import { scoreSearchMatch } from '../utils/search/index.js';
+import { searchCommunityTolerant } from '../utils/search/communitySearch.js';
+import SmartSearchInput from './search/SmartSearchInput.jsx';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { customProductId, customProductName } from '../utils/customProductTag.js';
 import { RuleField, CommunityRulesList } from './community/RuleField.jsx';
@@ -122,7 +124,7 @@ function Picker({ products, value, onChange, placeholder = 'Mention a product (o
   const matches = useMemo(() => {
     const t = q.trim();
     if (t.length < 2) return [];
-    return products.map((p) => ({ p, s: scoreQueryAgainstProduct(t, buildSearchTextForItem(p, CATEGORY_LABELS), buildIdentityTextForItem(p, CATEGORY_LABELS)) }))
+    return products.map((p) => ({ p, s: scoreSearchMatch(t, p) }))
       .filter((x) => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 8).map((x) => x.p);
   }, [products, q]);
   const selected = products.find((p) => String(p.id) === String(value));
@@ -132,7 +134,7 @@ function Picker({ products, value, onChange, placeholder = 'Mention a product (o
   const addCustom = () => { const id = customProductId(draft); if (id) { onChange(id); setQ(''); } };
   if (selectedName) return <div className="wc-picked"><span>{selectedName}</span><button type="button" onClick={() => { onChange(null); setQ(''); }}>Remove</button></div>;
   return <div className="wc-picker">
-    <input value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.length >= 2) { e.preventDefault(); if (matches.length && exact) { onChange(matches[0].id); setQ(''); } else addCustom(); } }} placeholder={placeholder} aria-label="Find a product" />
+    <SmartSearchInput value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.length >= 2) { e.preventDefault(); if (matches.length && exact) { onChange(matches[0].id); setQ(''); } else addCustom(); } }} placeholder={placeholder} aria-label="Find a product" />
     {draft.length >= 2 && <div className="wc-results">
       {!exact && <button type="button" className="is-add" onClick={addCustom}>+ Add “{draft}”<small>{matches.length ? 'Not listed? Tag it anyway' : 'Not in the ayna catalog yet'}</small></button>}
       {matches.map((p) => <button type="button" key={p.id} onClick={() => { onChange(p.id); setQ(''); }}>{p.name}<small>{[p.brand, p.category?.replace(/-/g, ' ')].filter(Boolean).join(' · ')}</small></button>)}
@@ -300,7 +302,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     if (search.trim().length < 2 || !supabase) return undefined;
     let active = true;
     const t = window.setTimeout(async () => {
-      try { const r = await community.searchCommunity(supabase, search); if (active) setSearchResults(r); } catch (e) { if (active) notifyError(e); }
+      try { const r = await searchCommunityTolerant(community.searchCommunity, supabase, search); if (active) setSearchResults(r); } catch (e) { if (active) notifyError(e); }
     }, 250);
     return () => { active = false; window.clearTimeout(t); };
   }, [search, supabase]);

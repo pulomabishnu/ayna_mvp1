@@ -1,4 +1,4 @@
-// Thin client for /api/device-tokens — same authed-fetch pattern as
+// Thin client for /api/device-tokens, same authed-fetch pattern as
 // notificationPreferencesApi.js (real Supabase JWT via Authorization: Bearer,
 // never a client-supplied user id).
 import { getSupabaseClient } from '../../utils/supabaseClient.js';

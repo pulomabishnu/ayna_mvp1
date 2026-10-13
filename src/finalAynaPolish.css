@@ -13,7 +13,7 @@
 .ayna-browse__search input { width:100%; border:1px solid var(--color-border); border-radius:var(--radius-pill); padding:.9rem 1.15rem; background:#fff; color:var(--color-text-main); font:inherit; outline:none; }
 .ayna-browse__search input:focus { border-color:rgba(78,56,102,.45); box-shadow:0 0 0 3px rgba(78,56,102,.07); }
 /* Hiding the scrollbar (below) removed the only visible cue that this row
-   scrolls at all — the last couple category chips were easy to miss with no
+   scrolls at all, the last couple category chips were easy to miss with no
    hint more existed off-screen (found live, 2026-08-24 bug bash). A fade at
    both edges signals "there's more this way" without needing JS to track
    scroll position. */
@@ -47,7 +47,7 @@
 .ayna-browse-card .ayna-discover-card__tile img { width:100%; height:100%; position:absolute; inset:0; object-fit:contain; padding:14px; box-sizing:border-box; }
 .ayna-browse-card__match,.ayna-browse-card__ecosystem { position:absolute; top:.65rem; left:.65rem; z-index:2; border-radius:var(--radius-pill); padding:.32rem .55rem; background:rgba(255,255,255,.93); font-family:var(--font-label); font-size:.61rem; letter-spacing:.05em; color:var(--color-amber-deep); }
 /* Wraps a MatchGauge (a circle already carries its own white "hole" and
-   shadow) instead of text — the pill padding/background above would just
+   shadow) instead of text, the pill padding/background above would just
    add a mismatched square-ish halo around a circle. */
 .ayna-browse-card__match { padding:0; background:none; border-radius:50%; line-height:0; }
 .ayna-browse-card__ecosystem { top:auto; bottom:.65rem; color:#2f6b4f; }
@@ -213,7 +213,7 @@
 .pdp-rail__match-ring small { align-self:center; margin-top:28px; font:500 8px/1 'DM Mono',monospace; letter-spacing:.09em; text-transform:uppercase; color:rgba(246,239,230,.68); }
 /* grid-template-columns/gap for .pdp-evidence-head and .pdp-evidence-head__info
    used to be redefined here too, competing with index.css's versions of the
-   same selectors — whichever file's build order won determined the real
+   same selectors, whichever file's build order won determined the real
    layout, invisibly. That let index.css's unguarded middle-column `1fr` (no
    minimum) win in production and crush that column at some widths. Fixed at
    the source in index.css instead of duplicating it here again. */
@@ -228,7 +228,7 @@
   .pdp-evidence-head { gap:22px; }
 }
 
-/* Shared MatchGauge.jsx — see that file for why this replaced flat text
+/* Shared MatchGauge.jsx, see that file for why this replaced flat text
    badges on the Summary tab and Browse cards. */
 .ayna-match-gauge {
   --gauge-size: 44px;
@@ -256,11 +256,11 @@
   color: var(--gauge-text);
 }
 
-/* My Ecosystem — board 2a ("Ecosystem page, restructured"): one persistent
+/* My Ecosystem, board 2a ("Ecosystem page, restructured"): one persistent
    left summary, one scrolling content column. Replaces eco-overview-shell /
    eco-details-clean, which stacked two separate "your ecosystem" headers on
    the same page (an Overview/Details tab switcher above an already-visible
-   bubble hero) — the exact "repeat header" complaint this redesign fixes. */
+   bubble hero), the exact "repeat header" complaint this redesign fixes. */
 .eco2-body { display:grid; grid-template-columns:280px 1fr; gap:2rem; align-items:start; max-width:1100px; margin:2rem auto 0; }
 .eco2-sidebar { position:sticky; top:88px; display:flex; flex-direction:column; gap:1rem; min-width:0; }
 .eco2-main { min-width:0; }

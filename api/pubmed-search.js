@@ -1,5 +1,5 @@
 /* global process */
-// PubMed E-utilities — free, no API key required
+// PubMed E-utilities, free, no API key required
 // Add NCBI_API_KEY to Vercel env vars for higher rate limits (optional, free at ncbi.nlm.nih.gov/account)
 // Docs: https://www.ncbi.nlm.nih.gov/books/NBK25501/
 

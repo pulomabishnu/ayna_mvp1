@@ -90,7 +90,7 @@ export async function consumeUsage(admin, userId, action) {
   const period = getPeriod(action);
   const limit = LIMITS[action];
   if (!admin) {
-    console.error('[usageLimit] consumeUsage called without an admin client — allowing (degraded)');
+    console.error('[usageLimit] consumeUsage called without an admin client, allowing (degraded)');
     return { allowed: true, used: 0, limit, period, degraded: true };
   }
   try {
@@ -114,7 +114,7 @@ export async function consumeUsage(admin, userId, action) {
   } catch (e) {
     // Loud: this is the branch where the paywall silently stops working.
     console.error(
-      `[usageLimit] consume_ai_usage FAILED for action=${action} — allowing request (degraded). ` +
+      `[usageLimit] consume_ai_usage FAILED for action=${action}, allowing request (degraded). ` +
       `Apply supabase/user_ai_usage.sql if the function is missing. Cause: ${e?.message}`
     );
     return { allowed: true, used: 0, limit, period, degraded: true };
@@ -151,7 +151,7 @@ export async function refundUsage(admin, userId, action, period) {
 export async function claimEcosystemBuild(admin, userId, buildId) {
   const limit = LIMITS.ecosystem;
   if (!admin) {
-    console.error('[usageLimit] claimEcosystemBuild called without an admin client — allowing (degraded)');
+    console.error('[usageLimit] claimEcosystemBuild called without an admin client, allowing (degraded)');
     return { allowed: true, used: 0, limit, degraded: true };
   }
   try {
@@ -172,7 +172,7 @@ export async function claimEcosystemBuild(admin, userId, buildId) {
     return { allowed: row.allowed, used: row.used ?? 0, limit, degraded: false };
   } catch (e) {
     console.error(
-      '[usageLimit] claim_ecosystem_build FAILED — allowing request (degraded). ' +
+      '[usageLimit] claim_ecosystem_build FAILED, allowing request (degraded). ' +
       `Apply supabase/user_ecosystem_builds.sql if the function is missing. Cause: ${e?.message}`
     );
     return { allowed: true, used: 0, limit, degraded: true };

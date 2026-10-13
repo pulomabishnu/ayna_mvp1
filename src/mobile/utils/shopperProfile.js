@@ -1,4 +1,4 @@
-// Shopper profile — built only from what the person answered and what's in
+// Shopper profile, built only from what the person answered and what's in
 // their Ecosystem (nothing inferred beyond that). Shared by Wrapped and You.
 const TRUST_TYPES = {
   'Clinical or scientific evidence': { title: 'The Researcher', line: 'Evidence first' },

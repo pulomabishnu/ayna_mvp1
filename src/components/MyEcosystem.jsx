@@ -1,3 +1,4 @@
+import SmartSearchInput from './search/SmartSearchInput.jsx';
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import {
@@ -50,9 +51,9 @@ import posthog from 'posthog-js';
 
 // Ecosystem products are stored as a full snapshot of the product object at
 // the moment they're added (toggleMyProduct in App.jsx), not a live ID
-// reference — see ProductTileImage.jsx (shared with SavedForLater.jsx,
+// reference, see ProductTileImage.jsx (shared with SavedForLater.jsx,
 // EcosystemShelf.jsx, TrackedItems.jsx, Comparison.jsx, Recalls.jsx,
-// OmittedProducts.jsx, AynaLanding.jsx, Recommendations.jsx — every place
+// OmittedProducts.jsx, AynaLanding.jsx, Recommendations.jsx, every place
 // that renders one of these snapshots) for the full history of why a
 // synchronous catalog lookup alone isn't enough and a live resolution
 // fallback is needed too.
@@ -73,13 +74,13 @@ const SYNC_SOURCES = [
 ];
 
 // Clicking "Swap" on a product, or an area bubble, used to always land on
-// unfiltered Browse — the specific area clicked was received then discarded
+// unfiltered Browse, the specific area clicked was received then discarded
 // (found live, 2026-08-24 bug bash: "Sleep" showed tampons and supplements,
 // nothing sleep-related). An area with more than one underlying catalog
 // category (e.g. "Period" covers pads/tampons/cups/discs/...) maps to
 // Discovery's broader initialMacroGroup, so every category in it stays
 // visible; a single-category area (Clinicians -> telehealth, Supplements ->
-// supplement — EcosystemBubbles' own additions, not real MACRO_GROUPS
+// supplement, EcosystemBubbles' own additions, not real MACRO_GROUPS
 // entries) maps to the narrower initialCategory instead, since there's only
 // one real thing to show either way.
 function exploreAreaOptions(area) {
@@ -181,14 +182,14 @@ function EcosystemFunctionProductCard({
     const rawSummary = (product.summary || '').trim();
     const summaryShort = rawSummary.length > 110 ? `${rawSummary.slice(0, 107)}…` : rawSummary;
     // resolvedCardImage came back from the server's type-aware
-    // /api/product-image resolution — trust it as-is rather than re-running
+    // /api/product-image resolution, trust it as-is rather than re-running
     // it through isPlaceholderProductImage, which doesn't know the product
     // is 'digital' and would reject a legitimate app/telehealth logo again.
     // Same reasoning for the resolveCatalogProductImage(product) fallback below:
     // its own product.image can itself already be a server-resolved value
     // merged in by the caller (recommendedSwapByKey/tier.product rendering
     // above), and resolveCatalogProductImage() already gates its own catalog
-    // lookups internally — wrapping the result in safeProductImageSrc again
+    // lookups internally, wrapping the result in safeProductImageSrc again
     // re-applies the type-blind heuristic to that already-vetted value.
     const displayImage = resolvedCardImage || resolveCatalogProductImage(product) || '';
 
@@ -334,7 +335,7 @@ function toConciseReason(text, fallback) {
     return `${candidate.slice(0, maxLen - 1).trim()}…`;
 }
 
-// Client-side mirror of api/llm-recommendations.js's PRESCRIPTION_DRUG_PATTERN —
+// Client-side mirror of api/llm-recommendations.js's PRESCRIPTION_DRUG_PATTERN
 // a defense-in-depth backstop for ecosystems generated before this filter
 // existed (and cached), not just newly-generated ones. Keep these two lists
 // in sync.
@@ -782,7 +783,7 @@ function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = ''
     const type = String(product.type || '').toLowerCase();
     const sub = String(tierSubcategory || '').toLowerCase();
 
-    // ── Concern is the primary signal — all product types go under the same concern category ──
+    // ── Concern is the primary signal, all product types go under the same concern category ──
     if (c.includes('pcos') || c.includes('polycystic')) return ['pcos-management'];
     if (c.includes('endometriosis') || c.includes('endo')) return ['endometriosis'];
     if (c.includes('hormone balance') || c.includes('hormonal') || c.includes('bloating') || c.includes('thyroid') || c.includes('irregular cycle') || c.includes('irregular period')) return ['hormone-balance'];
@@ -830,7 +831,7 @@ function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = ''
     if (cat.includes('pcos') || cat.includes('hormone')) return ['pcos-management'];
 
     // ── True last resort: digital → routine-building, physical → hormone-balance ──
-    // Never map LLM products to 'supplement' — that category is for legacy DB products only
+    // Never map LLM products to 'supplement', that category is for legacy DB products only
     return type === 'digital' ? ['routine-building'] : ['hormone-balance'];
 }
 
@@ -846,7 +847,7 @@ function estimateMonthlyCost(priceStr, product) {
     if (perMonthMatch) return parseFloat(perMonthMatch[1]);
 
     // Range: "$25–$38", "$25–38", "$25-38" → use average. Only real
-    // range-separator characters here — a literal '.' or ' ' would false-match
+    // range-separator characters here, a literal '.' or ' ' would false-match
     // any two dollar amounts sitting near each other in the string.
     const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–‒\-]+\s*\$?(\d+(?:\.\d+)?)/);
     if (rangeMatch) {
@@ -855,7 +856,7 @@ function estimateMonthlyCost(priceStr, product) {
         if (/one.?time|one purchase|reusable|device|wearable|ring|tracker/i.test(s)) return avg / 24;
         // Supplements and consumables: treat range as monthly price
         if (/supplement|vitamin|probiotic|powder|capsule|tablet|softgel|tea|extract/i.test(s + ' ' + category)) return avg;
-        // Telehealth: initial visit price is not monthly — skip to avoid inflating estimate
+        // Telehealth: initial visit price is not monthly, skip to avoid inflating estimate
         if (/initial|visit|consult|appointment/i.test(s)) return null;
         return avg; // default: treat as monthly consumable
     }
@@ -961,14 +962,14 @@ export default function MyEcosystem({
     const [llmError, setLlmError] = useState('');
     // Quiet, neutral status (e.g. a refresh when nothing new can be built).
     const [llmNotice, setLlmNotice] = useState('');
-    // Distinct from llmError: some concerns didn't generate but others DID —
+    // Distinct from llmError: some concerns didn't generate but others DID
     // the ecosystem is functionally built, just missing a couple of sections.
     // Kept separate so this never renders under the "We couldn't build your
     // ecosystem" framing, which used to fire for this case too (see rec.error
     // vs rec.partialConcerns below).
     const [llmPartialConcerns, setLlmPartialConcerns] = useState([]);
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
-    // Last known-good complete recommendation set — restored if a rebuild is cancelled mid-flight.
+    // Last known-good complete recommendation set, restored if a rebuild is cancelled mid-flight.
     const previousLlmTieredRef = useRef([]);
     const [resolvedImages, setResolvedImages] = useState({});
     const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
@@ -1159,7 +1160,7 @@ export default function MyEcosystem({
 
     useEffect(() => {
         if (!intakeFingerprint) {
-            // Intake is still loading from Supabase — don't clear the cache or it will
+            // Intake is still loading from Supabase, don't clear the cache or it will
             // wipe valid recommendations before the fingerprint is available.
             setLlmTiered([]);
             setLlmLoading(false);
@@ -1188,7 +1189,7 @@ export default function MyEcosystem({
                 // A prior failed generation used to poison this intake forever:
                 // the fingerprint was recorded even when no recommendations were
                 // cached, so a reload would refuse to try again. If there is no
-                // cached payload, retry normally instead of trapping the user —
+                // cached payload, retry normally instead of trapping the user
                 // the instant local ecosystem below already gives her something
                 // useful while this retry runs, so there's no need to interrupt
                 // her with an error just because a past attempt didn't cache.
@@ -1196,7 +1197,7 @@ export default function MyEcosystem({
             }
         } else {
             // Explicit refresh: any existing record for this fingerprint (in-flight
-            // or otherwise) reflects stale intent — replace it, don't attach to it.
+            // or otherwise) reflects stale intent, replace it, don't attach to it.
             discardGeneration(intakeFingerprint);
         }
 
@@ -1231,7 +1232,7 @@ export default function MyEcosystem({
             }
 
             (async () => {
-                // Per-attempt state — the shared record only needs the fields
+                // Per-attempt state, the shared record only needs the fields
                 // consumers read (tiered/loading/error/startedAt); these are
                 // internal to this one generation run.
                 let limitReached = false;
@@ -1248,7 +1249,7 @@ export default function MyEcosystem({
                     // ceiling instead of needing a 252s budget that never existed.
                     // 7 x 3 covers the server's MAX_CONCERNS cap of 20 (raised from
                     // 6 x 3 / cap 18 on 2026-08-25, when the quiz grew from 16 to 18
-                    // checkbox options — same silent-truncation risk as the original
+                    // checkbox options, same silent-truncation risk as the original
                     // 12/4 bug if this isn't kept in lockstep with the server cap;
                     // keeping BATCH_SIZE at 3 rather than raising it preserves the
                     // per-invocation timing this was already tuned for, just runs one
@@ -1274,7 +1275,7 @@ export default function MyEcosystem({
                                     // sections than she asked for, with no signal.
                                     partialConcerns.push(...d.failedConcerns);
                                     // Reason travels with the response so this is
-                                    // diagnosable from the browser console alone — a
+                                    // diagnosable from the browser console alone, a
                                     // live 2026-08-22 incident (2 concerns failed
                                     // ~20s in) was undiagnosable after the fact
                                     // because nothing captured *why*, and by the
@@ -1381,7 +1382,7 @@ export default function MyEcosystem({
                     // produced a permanently empty ecosystem with no error.
                     if (cachedOk) saveFetchedLlmFingerprint(intakeFingerprint);
                     if (partialConcerns.length > 0) {
-                        // NOT rec.error — this branch only runs when recs.length > 0
+                        // NOT rec.error, this branch only runs when recs.length > 0
                         // (the recs.length === 0 case above already returned), so the
                         // ecosystem DID build, just missing a couple of sections. Every
                         // rec.error reader in this file renders an alarming "We
@@ -1426,7 +1427,7 @@ export default function MyEcosystem({
                         rec.startedAt = 0;
                         notifyGeneration(rec);
                     }
-                    // Only remove the map entry if it's still *this* record — a
+                    // Only remove the map entry if it's still *this* record, a
                     // cancel/refresh that discarded this generation may have
                     // already replaced it with a newer one under the same key.
                     if (activeGenerations.get(intakeFingerprint) === rec) activeGenerations.delete(intakeFingerprint);
@@ -1495,7 +1496,7 @@ export default function MyEcosystem({
                             // The server generates these (ingredient and contraindication
                             // warnings tailored to endometriosis / PCOS / TTC status) and
                             // this mapping used to drop the field entirely, so they were
-                            // never rendered on the primary ecosystem surface —
+                            // never rendered on the primary ecosystem surface
                             // Recommendations.jsx shows them, but that view renders the
                             // rule-based engine, not LLM output.
                             safetyFlags: Array.isArray(tier?.safetyFlags)
@@ -1570,7 +1571,7 @@ export default function MyEcosystem({
         // quiz completion sets ayna_force_llm_refresh → nonce=1, rebuild button increments nonce
         // Never auto-generate on page load or login, even if ecosystem is empty
         if (recommendationRefreshNonce === 0) return;
-        // Each concern has 3 tiers (supplement, physical, telehealth) — add each as its own ecosystem card
+        // Each concern has 3 tiers (supplement, physical, telehealth), add each as its own ecosystem card
         const enrichedProducts = recommendedProductsForDisplay
             .flatMap(section =>
                 (section.tiers || []).map(tier => {
@@ -1578,7 +1579,7 @@ export default function MyEcosystem({
                     if (!product) return null;
                     return {
                         ...product,
-                        // Always re-derive from concern — never trust healthFunctions the LLM may have added
+                        // Always re-derive from concern, never trust healthFunctions the LLM may have added
                         healthFunctions: inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
                         _llmAlternatives: (tier.alternatives || []).filter(p => p && p.id !== product.id).slice(0, 3),
                         _llmConcern: section.concern || '',
@@ -1591,13 +1592,13 @@ export default function MyEcosystem({
         posthog.capture('recommendation_viewed', { concernCount: recommendedProductsForDisplay.length });
     }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce]);
 
-    // Bounded worker pool — mirrors the fix already applied to Discovery.jsx.
+    // Bounded worker pool, mirrors the fix already applied to Discovery.jsx.
     // Both effects below used to fire one request per product with no cap: a
     // freshly-generated ecosystem can carry a top product + up to 3
     // alternatives across a dozen-plus concerns, all placeholder-imaged, so a
     // single render could burst 40-50+ concurrent /api/product-image calls.
     // Some of those got rate-limited or timed out, and a failed lookup is
-    // recorded as "resolved to no image" (never retried this mount) — so
+    // recorded as "resolved to no image" (never retried this mount), so
     // under load, some cards permanently kept the generic placeholder even
     // though the image existed and a later, unthrottled request would have
     // found it.
@@ -1637,13 +1638,13 @@ export default function MyEcosystem({
     }, [activeTiered]);
 
     useEffect(() => {
-        // myProductList is deliberately excluded here — ProductTileImage
+        // myProductList is deliberately excluded here, ProductTileImage
         // (used everywhere "Your products" tiles render) now resolves those
         // images itself on demand. Keeping this effect's own fetch for the
         // same items too meant every ecosystem product ran two independent
         // resolveProductImage() calls per mount; resolveProductImage()'s
         // shared memCache/localStorage dedupes the network cost, but it's
-        // still redundant work. recommendedProducts still needs this path —
+        // still redundant work. recommendedProducts still needs this path
         // it feeds IntakeRecommendationsProductCard/IntakeRecAltMini, which
         // don't use ProductTileImage.
         const recommendedProducts = recommendedProductsForDisplay
@@ -1677,7 +1678,7 @@ export default function MyEcosystem({
     }, []);
 
     const handleRefreshRecommendations = useCallback(() => {
-        // Deliberately don't clear llmTiered or the cache here — the current
+        // Deliberately don't clear llmTiered or the cache here, the current
         // (old) ecosystem stays on screen and in cache until a full new set
         // successfully replaces it, so a cancelled rebuild has something to fall back to.
         setLlmError('');
@@ -1733,7 +1734,7 @@ export default function MyEcosystem({
                     We couldn't load your recommendations: {llmError}
                 </p>
             )}
-            {/* Partial success, not a failure — most of the ecosystem DID build.
+            {/* Partial success, not a failure, most of the ecosystem DID build.
                 Deliberately neutral styling (not the red "couldn't build" banner
                 elsewhere in this file), since a couple of missing sections isn't
                 the same as the whole build failing. */}
@@ -1783,7 +1784,7 @@ export default function MyEcosystem({
                                                     const swapKey = `${section.id}::${tier.id || tierIdx}`;
                                                     const product = recommendedSwapByKey[swapKey] || tier.product;
                                                     if (!product) return null;
-                                                    // Always rotate within the fixed 4-product pool — never repopulate
+                                                    // Always rotate within the fixed 4-product pool, never repopulate
                                                     const tierPool = [tier.product, ...(tier.alternatives || [])].filter(Boolean);
                                                     const rotatedAlternatives = tierPool.filter(p => p?.id !== product.id).slice(0, 3);
                                                     const llmReason = String(product?.whyItWorks || '').trim();
@@ -1907,7 +1908,7 @@ export default function MyEcosystem({
                         if (myProductList.length === 0 || visibleMatchCount === 0) searchShop(ecoQueryTrimmed);
                     }}
                 >
-                    <input
+                    <SmartSearchInput
                         type="search"
                         value={ecoQuery}
                         onChange={(e) => setEcoQuery(e.target.value)}
@@ -2224,7 +2225,7 @@ export default function MyEcosystem({
                                 <span className="eco2-tool-row__hint">In-network, near you</span>
                             </button>
                             {/* Log a symptom, check an ingredient, and export my data aren't
-                                real features yet anywhere in this app — deliberately not
+                                real features yet anywhere in this app, deliberately not
                                 shown here rather than shipped as dead buttons. */}
                         </div>
                     </div>

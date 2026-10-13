@@ -15,8 +15,9 @@ import { INCONTINENCE_PHYSICAL } from './incontinenceProducts.js';
 import { RELEASED_STARTUPS } from './startups.js';
 import {
     buildUserProfile, buildProductProfile, scoreProduct as engineScoreProduct, scoreProductForNeed,
-    buildEcosystem, sortResults, TIERS, NEED_BY_ID, REQUIRED_FIELD_TEXT,
+    buildEcosystem, sortResults, TIERS, NEED_BY_ID, REQUIRED_FIELD_TEXT, PRODUCT_INFO_TEXT,
 } from '../matching/index.js';
+import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
 import { getCareResourceBundle } from './careResources.js';
 import { withImageOverride } from './productImageOverrides.js';
@@ -88,7 +89,7 @@ export const PHYSICAL_PRODUCTS = [
         doctorOpinion: 'FlexFoam absorption is reliable for heavy flow; unscented versions minimize irritation risk for sensitive users.',
         communityReview: 'Community discussions on Reddit r/periods include praise for absorption and a thin profile, along with reports of irritation or dislike of the synthetic feel. These are user experiences, not clinical safety findings.',
         ingredients: 'Polyethylene, polypropylene, wood pulp, adhesive. Fragrance-free version omits parfum.',
-        effectiveness: 'Highly effective for heavy flow — users consistently report fewer leaks than with standard mainstream pads at a comparable price point.',
+        effectiveness: 'Highly effective for heavy flow, users consistently report fewer leaks than with standard mainstream pads at a comparable price point.',
         integrations: [],
         badges: ['Mainstream Favorite', 'High Absorbency'],
         verificationLinks: {
@@ -245,24 +246,24 @@ export const PHYSICAL_PRODUCTS = [
         userRating: 4.5,
         whereToBuy: ['Amazon', 'LOLA.com'],
         url: 'https://mylola.com/',
-        // Ayna affiliate partnership — affiliateUrl wins over `url`/`productUrl`
+        // Ayna affiliate partnership, affiliateUrl wins over `url`/`productUrl`
         // for the Buy Now destination (see getBuyUrl in src/mobile/data/buyUrl.js).
         affiliateUrl: 'https://lvnta.com/lv_lV9gmDbqDB8xIEp6W2',
         faqUrl: 'https://help.mylola.com/',
         image: 'https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946',
-        summary: '100% organic cotton tampon with a BPA-free compact applicator, from LOLA — founded in 2014 by Jordana Kier and Alex Friedman after one asked the other "have you ever wondered what\'s in a tampon?" and neither could find a real answer. LOLA was built around ingredient transparency: no synthetic fibers, fragrance, dyes, or chlorine-bleaching byproducts. Customizable subscription box.',
+        summary: '100% organic cotton tampon with a BPA-free compact applicator, from LOLA, founded in 2014 by Jordana Kier and Alex Friedman after one asked the other "have you ever wondered what\'s in a tampon?" and neither could find a real answer. LOLA was built around ingredient transparency: no synthetic fibers, fragrance, dyes, or chlorine-bleaching byproducts. Customizable subscription box.',
         safety: {
             fdaStatus: 'FDA-registered',
             materials: '100% organic cotton (tampon and string), BPA-free compact plastic applicator',
             recalls: '⚠️ 2021: An active federal class-action (Manson v. ALYK Inc., S.D.N.Y., Case No. 7:21-cv-05688) alleges LOLA tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body during removal. No recall has been issued; LOLA/ALYK denies wrongdoing and continues to sell the product, and the case remains open as of 2026.',
             allergens: 'Hypoallergenic, fragrance-free, dye-free',
-            sideEffects: 'TSS risk — use the lowest absorbency for your flow and never wear longer than 8 hours. A subset of user reviews and the pending lawsuit above describe the tampon unraveling or shedding fibers on removal.',
-            opinionAlerts: 'A 2021 class-action complaint, still active as of 2026, alleges LOLA tampons shed cotton fibers inside the vaginal canal on removal because they lack the protective outer coating most competing tampons use, with some plaintiffs describing needing medical help to remove retained fibers; LOLA denies wrongdoing and no recall has followed. Separately, and unrelated to the lawsuit: research on cotton-only vs. cotton/rayon-blend tampons and bacterial toxin growth is genuinely mixed — a 2018 in-vitro comparison of currently marketed tampons found LOWER Staphylococcus aureus growth with cotton/rayon-blend tampons than with cotton-only tampons, which cuts against the common assumption that "all-organic-cotton" is automatically the lower-TSS-risk choice.'
+            sideEffects: 'TSS risk, use the lowest absorbency for your flow and never wear longer than 8 hours. A subset of user reviews and the pending lawsuit above describe the tampon unraveling or shedding fibers on removal.',
+            opinionAlerts: 'A 2021 class-action complaint, still active as of 2026, alleges LOLA tampons shed cotton fibers inside the vaginal canal on removal because they lack the protective outer coating most competing tampons use, with some plaintiffs describing needing medical help to remove retained fibers; LOLA denies wrongdoing and no recall has followed. Separately, and unrelated to the lawsuit: research on cotton-only vs. cotton/rayon-blend tampons and bacterial toxin growth is genuinely mixed, a 2018 in-vitro comparison of currently marketed tampons found LOWER Staphylococcus aureus growth with cotton/rayon-blend tampons than with cotton-only tampons, which cuts against the common assumption that "all-organic-cotton" is automatically the lower-TSS-risk choice.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Organic cotton, and freedom from added dyes, chlorine-bleaching byproducts, and synthetic fragrance, are things clinicians will generally support for someone with a history of vulvar irritation or contact sensitivity. What the evidence doesn\'t support is treating "100% organic cotton" as an automatic toxic-shock-syndrome safety upgrade: research comparing cotton-only to cotton/rayon-blend tampons is mixed, and a 2018 in-vitro study of currently marketed tampons actually found lower Staphylococcus aureus growth with cotton/rayon-blend tampons than with cotton-only tampons. Fiber type matters less for TSS risk than using the lowest absorbency that handles your flow and never wearing a tampon longer than 8 hours.\n\nIt\'s also worth knowing before buying: LOLA is currently a defendant in an active federal class-action, filed in 2021 in the Southern District of New York, alleging its tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body on removal — some plaintiffs describe needing medical help to remove retained pieces. The case is still open as of 2026, LOLA has not recalled the product and denies wrongdoing, but if a tampon feels like it\'s coming apart when you remove it, that\'s a documented, reported issue worth stopping and seeking care for, not dismissing.',
-        doctorOpinionShort: 'Organic cotton reduces exposure to dyes, bleaching byproducts, and fragrance, but isn\'t a proven TSS-risk downgrade — a 2018 study found cotton/rayon blends grew less bacteria than cotton-only tampons. LOLA is also a defendant in an active 2021 class-action alleging its tampons can unravel or shed fibers during removal.',
+        doctorOpinion: 'Organic cotton, and freedom from added dyes, chlorine-bleaching byproducts, and synthetic fragrance, are things clinicians will generally support for someone with a history of vulvar irritation or contact sensitivity. What the evidence doesn\'t support is treating "100% organic cotton" as an automatic toxic-shock-syndrome safety upgrade: research comparing cotton-only to cotton/rayon-blend tampons is mixed, and a 2018 in-vitro study of currently marketed tampons actually found lower Staphylococcus aureus growth with cotton/rayon-blend tampons than with cotton-only tampons. Fiber type matters less for TSS risk than using the lowest absorbency that handles your flow and never wearing a tampon longer than 8 hours.\n\nIt\'s also worth knowing before buying: LOLA is currently a defendant in an active federal class-action, filed in 2021 in the Southern District of New York, alleging its tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body on removal, some plaintiffs describe needing medical help to remove retained pieces. The case is still open as of 2026, LOLA has not recalled the product and denies wrongdoing, but if a tampon feels like it\'s coming apart when you remove it, that\'s a documented, reported issue worth stopping and seeking care for, not dismissing.',
+        doctorOpinionShort: 'Organic cotton reduces exposure to dyes, bleaching byproducts, and fragrance, but isn\'t a proven TSS-risk downgrade, a 2018 study found cotton/rayon blends grew less bacteria than cotton-only tampons. LOLA is also a defendant in an active 2021 class-action alleging its tampons can unravel or shed fibers during removal.',
         doctorOpinionCitations: [
             { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', label: 'FDA: Facts About Tampons and How to Use Them Safely' },
             { url: 'https://pubmed.ncbi.nlm.nih.gov/29678918/', label: 'PubMed: Tampon/menstrual cup S. aureus growth & TSST-1 production' },
@@ -272,7 +273,7 @@ export const PHYSICAL_PRODUCTS = [
             'People who want full ingredient transparency and no synthetic fragrance, dyes, or chlorine-bleaching byproducts in a tampon',
             'Those with a history of vulvar or vaginal irritation from mainstream tampon materials',
             'Subscription shoppers who want a customizable period-product box',
-            'Not the pick for anyone who specifically wants a tampon brand without an open lawsuit over reported removal issues — LOLA currently has one active',
+            'Not the pick for anyone who specifically wants a tampon brand without an open lawsuit over reported removal issues, LOLA currently has one active',
         ],
         howToUse: {
             intro: 'Per LOLA\'s own instructions and general FDA tampon guidance:',
@@ -286,7 +287,7 @@ export const PHYSICAL_PRODUCTS = [
             sourceLabel: 'FDA: Facts About Tampons and How to Use Them Safely',
         },
         warnings: [
-            'Toxic shock syndrome (TSS) is rare but serious — remove within 8 hours and seek emergency care for sudden fever, rash, vomiting, or dizziness during your period.',
+            'Toxic shock syndrome (TSS) is rare but serious, remove within 8 hours and seek emergency care for sudden fever, rash, vomiting, or dizziness during your period.',
             'An active class-action lawsuit alleges LOLA tampons can unravel or shed fibers on removal; if a tampon doesn\'t come out intact, check for retained fragments and contact a doctor if you\'re unsure it was fully removed.',
             'Not a form of contraception and does not protect against STIs.',
         ],
@@ -339,7 +340,7 @@ export const PHYSICAL_PRODUCTS = [
             materials: '100% medical-grade silicone, no BPA, latex, dyes, or chemicals',
             recalls: 'No recalls.',
             allergens: 'Latex-free, hypoallergenic',
-            sideEffects: 'Possible cramping from suction, difficulty with insertion/removal, urinary urgency if sized incorrectly. Like tampons, menstrual cups carry a rare but medically documented risk of toxic shock syndrome (TSS) — a small number of published case reports exist — so follow labeled wear-time and cleaning instructions.',
+            sideEffects: 'Possible cramping from suction, difficulty with insertion/removal, urinary urgency if sized incorrectly. Like tampons, menstrual cups carry a rare but medically documented risk of toxic shock syndrome (TSS), a small number of published case reports exist, so follow labeled wear-time and cleaning instructions.',
             opinionAlerts: 'Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product, and difficulty removing the cup (due to suction) is a recurring complaint that occasionally sends first-time users to urgent care.'
         },
         clinicianOpinionSource: 'independent',
@@ -499,7 +500,7 @@ export const PHYSICAL_PRODUCTS = [
         whereToBuy: ['Target', 'CVS', 'Amazon'],
         // Was the brand's own primary marketing image, which is itself a
         // customer-review screenshot composite (5-star rating graphic,
-        // testimonial, reviewer name) — real, but reads as a forgotten
+        // testimonial, reviewer name), real, but reads as a forgotten
         // placeholder next to properly photographed competitors (found live,
         // 2026-08-24 bug bash). Swapped for a clean lifestyle photo, the
         // second image in FlexFits' own product feed for the disposable
@@ -783,7 +784,7 @@ export const DIGITAL_PRODUCTS = [
 ];
 
 // Master list combining all sources (MVP categories prioritized with mvpProducts).
-// Ayna only does OTC health products and telehealth — prescription-only items
+// Ayna only does OTC health products and telehealth, prescription-only items
 // (birth control requiring an Rx, HRT patches/inserts, clinician-administered
 // devices like IUDs, etc.) are filtered out here so no surface in the app can
 // ever show one, rather than relying on each consumer to remember to gate them.
@@ -810,7 +811,7 @@ export const ALL_PRODUCTS = [
 
 /**
  * Look up a catalog product by id. Returns null for ids that don't exist in
- * the static catalog — callers also need to check the user's own ecosystem/
+ * the static catalog, callers also need to check the user's own ecosystem/
  * saved/tracked state for LLM-generated or custom products, which never
  * live here.
  * @param {string} id
@@ -922,7 +923,7 @@ export const CATEGORY_LABELS = {
 // The site's one taxonomy of user-facing care areas, each rolling up one or more
 // raw catalog `category` values. Originally lived only in Discovery.jsx (as its
 // category-filter chips); moved here so it can also be the single source of
-// truth for EcosystemBubbles' area grouping — it used to keep its own smaller,
+// truth for EcosystemBubbles' area grouping, it used to keep its own smaller,
 // separately-hand-maintained category list that had drifted out of sync
 // (missing birth-control, breast care, menopause, skin, hair, gut, pain-relief,
 // tests-devices...), so any product in one of those categories silently landed
@@ -935,7 +936,7 @@ export const MACRO_GROUPS = [
     // they have their own home under Virtual care.
     { id: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief', 'cup-steamer'], keywords: ['period', 'menstrual'], excludeCategories: ['telehealth'] },
     // 'ph' used to be a bare keyword here and matched any product whose copy happened to
-    // contain the substring "ph" — e.g. Nature Made Iron ("#1 pharmacist recommended"), Wisp
+    // contain the substring "ph", e.g. Nature Made Iron ("#1 pharmacist recommended"), Wisp
     // ("pharmacy pickup"), and Apple Health ("built into iPhone") all satisfied it despite
     // having nothing to do with intimate care. Scoped to the actual phrasing real vaginal-pH
     // products use (see e.g. p-honeypot-wash, p-good-clean-love, p-v-wash) instead.
@@ -949,16 +950,16 @@ export const MACRO_GROUPS = [
     { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
     { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
     // 'supplement' is a product-TYPE category shared by dozens of unrelated items (iron for
-    // anemia, plain vitamin D, omega-3 for cramps, etc.) — it used to be listed here directly,
+    // anemia, plain vitamin D, omega-3 for cramps, etc.), it used to be listed here directly,
     // which meant EVERY supplement in the catalog satisfied the Hormones chip regardless of what
     // it actually treats. Matching is now scoped to the real concern taxonomy instead: the
     // 'hormone-monitoring' category, the 'hormone-balance' healthFunction (checked exactly via
-    // healthFunctions below, not folded into the general keyword text blob — a substring scan
+    // healthFunctions below, not folded into the general keyword text blob, a substring scan
     // would otherwise let something like the unrelated 'fitness-cycle' healthFunction slug
     // falsely satisfy the 'cycle' keyword), and the keywords below.
     { id: 'hormones', label: 'Hormones', categories: ['hormone-monitoring'], healthFunctions: ['hormone-balance'], keywords: ['pms', 'pcos', 'cycle', 'hormone', 'hormonal'] },
     // Bare 'skin'/'moisturizer' catch vulvar/vulva-balm copy ("vulvar skin", "arousal
-    // moisturizers") and an incontinence liner's "skin comfort formula" claim — all real
+    // moisturizers") and an incontinence liner's "skin comfort formula" claim, all real
     // catalog phrasing, just not about the facial/body skincare this chip means. Those
     // product types are excluded from the keyword scan below (see excludeCategories in
     // itemMatchesMacroGroup) rather than trying to enumerate every mismatched phrase.
@@ -971,21 +972,21 @@ export const MACRO_GROUPS = [
     { id: 'gut', label: 'Gut', categories: ['gut-health'], keywords: ['gut', 'bloating', 'fiber', 'probiotic'] },
     // 'stress' alone matched incontinence products' clinical term "stress incontinence"/
     // "stress or urge bladder leaks" (a bladder-control classification, unrelated to mental
-    // stress) — stripped via NEGATED_CONCERN_PHRASES in Discovery.jsx rather than dropping the
+    // stress), stripped via NEGATED_CONCERN_PHRASES in Discovery.jsx rather than dropping the
     // keyword, since "stress" genuinely belongs here for its real (psychological) sense.
     // 'sleep' is a real distinct category value in the live catalog (e.g. Eight Sleep Pod)
-    // alongside 'mental-health' — both belong under this chip.
+    // alongside 'mental-health', both belong under this chip.
     { id: 'sleep-stress', label: 'Sleep + Stress', categories: ['mental-health', 'sleep'], keywords: ['sleep', 'stress', 'relaxation'] },
     { id: 'pain-recovery', label: 'Pain + Recovery', categories: ['pain-relief', 'cramp-relief', 'recovery'], keywords: ['pain', 'cramp', 'heat therapy', 'recovery', 'muscle'] },
     // 'test' used to be a bare keyword and matched "clinically tested" (Honey Pot wash),
-    // "gynecologist-tested" (Luna wash), and even "testosterone" (spearmint PCOS tea) — none
+    // "gynecologist-tested" (Luna wash), and even "testosterone" (spearmint PCOS tea), none
     // of which are diagnostic tests/devices. Scoped to the phrasing real test products use
     // (p-azo-test's "test strips", p-winx-uti-test-treat's "rapid test").
     { id: 'tests-devices', label: 'Tests + Devices', categories: ['tracker', 'diagnostics', 'hormone-monitoring'], keywords: ['test strip', 'test kit', 'rapid test', 'diagnostic test', 'lab test', 'tracker', 'wearable', 'monitor'] },
 ];
 
-// Some product copy legitimately advertises the ABSENCE of a property — e.g. Neycher's
-// intimate-care line describing itself as "hormone-free" / "non-hormonal" — rather than the
+// Some product copy legitimately advertises the ABSENCE of a property, e.g. Neycher's
+// intimate-care line describing itself as "hormone-free" / "non-hormonal", rather than the
 // presence of it. A naive substring match on a concern keyword like "hormone" can't tell "this
 // product is about hormones" apart from "this product explicitly contains none," so it was
 // mis-filing hormone-free vulva balm/moisturizing gel under the Hormones chip. Strip these
@@ -1001,7 +1002,7 @@ export const MACRO_GROUPS = [
 //     the very thing the keyword is meant to detect.
 //   - "stress incontinence" / "stress or urge bladder leaks" / "stress and urge incontinence"
 //     are a clinical bladder-control term, not the Sleep + Stress chip's intended
-//     (psychological) sense of "stress" — was surfacing incontinence pads under that chip.
+//     (psychological) sense of "stress", was surfacing incontinence pads under that chip.
 const NEGATED_CONCERN_PHRASES = [
     /non-?\s?hormonal/g,
     /hormone-?\s?free/g,
@@ -1028,13 +1029,13 @@ export function itemMatchesMacroGroup(item, groupId) {
     if (!group) return true;
     if (group.categories.includes(item?.category)) return true;
     // Structured concern tags (e.g. 'hormone-balance') are checked as an exact membership test,
-    // not folded into the free-text keyword scan below — that keeps a slug like the unrelated
+    // not folded into the free-text keyword scan below, that keeps a slug like the unrelated
     // 'fitness-cycle' healthFunction from accidentally satisfying a keyword such as 'cycle'.
     if (Array.isArray(group.healthFunctions) && Array.isArray(item?.healthFunctions) &&
         item.healthFunctions.some((hf) => group.healthFunctions.includes(hf))) return true;
     // Some chips' keywords are inherently ambiguous outside their own product domain (e.g.
     // "skin"/"moisturizer" legitimately describe vulvar-care copy; "thinning" legitimately
-    // describes vaginal-tissue thinning) — excludeCategories lets a chip opt specific
+    // describes vaginal-tissue thinning), excludeCategories lets a chip opt specific
     // product-type categories out of the free-text keyword scan below (they can still match
     // via an explicit categories/healthFunctions hit above) so e.g. a vulva balm doesn't
     // surface under "Skin" just because its copy happens to say "skin."
@@ -1135,7 +1136,7 @@ function groupByCategory(products) {
         map[cat].push(p);
     });
     // Sections are ordered by how many of *this user's* matched products actually landed in each
-    // category (most first, alphabetical tiebreak) — not a hand-typed category list. A fixed list
+    // category (most first, alphabetical tiebreak), not a hand-typed category list. A fixed list
     // would mean some categories always render ahead of others regardless of fit for the user.
     return Object.keys(map)
         .sort((a, b) => map[b].length - map[a].length || a.localeCompare(b))
@@ -1175,7 +1176,7 @@ function productMatchesAvoidTrigger(product, trigger) {
 }
 
 /**
- * "Worth noting" cards for a still-eligible (not excluded) product — real,
+ * "Worth noting" cards for a still-eligible (not excluded) product, real,
  * actionable considerations, not the product's whole safety.sideEffects text
  * dumped in. Two sources, both already real:
  *  - A known medication/supplement interaction (getKnownInteractionAssessment)
@@ -1183,12 +1184,12 @@ function productMatchesAvoidTrigger(product, trigger) {
  *  - A real overlap between what the user actually flagged and this
  *    product's own side-effects/allergens text, for the cases that don't
  *    already cause a hard exclusion (isProductEligibleForProfile/
- *    getExtendedAvoidSet handle the 3 mapped triggers — fragrance, latex,
- *    essential oils — so a product reaching this point already cleared
+ *    getExtendedAvoidSet handle the 3 mapped triggers, fragrance, latex,
+ *    essential oils, so a product reaching this point already cleared
  *    those). Two schemas exist in the wild and both are checked: the
  *    current mobile intake's free-text allergyItems (matched directly
  *    against the product's text), and the legacy quiz's fixed
- *    "Other allergies" option — the one entry in
+ *    "Other allergies" option, the one entry in
  *    SENSITIVITY_AVOID_TO_TRIGGER with no exclusion mapping since we don't
  *    know what it refers to, checked via the same keyword lists used for
  *    the mapped triggers.
@@ -1241,11 +1242,11 @@ export function isPrescriptionRestrictedProduct(p) {
 /**
  * True for any prescription-only item, with no exceptions (unlike
  * isPrescriptionRestrictedProduct, which waives items that carry official
- * manufacturer access URLs). Ayna doesn't sell or dispense prescriptions —
+ * manufacturer access URLs). Ayna doesn't sell or dispense prescriptions
  * shopping/recommendation surfaces should never show these as buyable
  * products, even when a savings/patient link or telehealth care path exists
  * for them. Search for what they treat (e.g. "hormone replacement therapy")
- * should surface telehealth providers instead — see findTelehealthAccessForProduct.
+ * should surface telehealth providers instead, see findTelehealthAccessForProduct.
  */
 export function isRxOnlyProduct(p) {
     if (!p) return false;
@@ -1253,7 +1254,7 @@ export function isRxOnlyProduct(p) {
     if (p.requiresPrescription === true) return true;
     const wtb = (p.whereToBuy || []).map((x) => String(x).toLowerCase());
     // Covers both pharmacy-dispensed prescriptions and clinician-administered
-    // devices/procedures (e.g. IUD insertion) — neither is something Ayna sells.
+    // devices/procedures (e.g. IUD insertion), neither is something Ayna sells.
     return wtb.some((s) => s.includes('pharmacy with prescription') || s.includes('clinic insertion') || s.includes('clinic administered'));
 }
 
@@ -1365,6 +1366,24 @@ export function getPrescriptionAccessGuidance(product) {
 //   in-ecosystem / tracked -> owned (counts as purchased), purchased, reordered, viewed.
 
 const MIN_RECOMMEND_SCORE = TIERS.find((t) => t.id === 'exploratory').min;
+
+/**
+ * Shop listing flag from the product passport:
+ * { state, offShelf, label, notice }. offShelf (recalled, discontinued,
+ * unavailable) products are never recommended or put on shelves; Shop can
+ * still list them with `notice`.
+ */
+export function getListingStatus(product) {
+    if (!product || typeof product !== 'object') return { state: null, offShelf: false, label: null, notice: null };
+    try {
+        return passportListingStatus(product);
+    } catch {
+        return { state: null, offShelf: false, label: null, notice: null };
+    }
+}
+export function isOffShelfProduct(product) {
+    return getListingStatus(product).offShelf;
+}
 
 function rawIntakeFromProfile(quizAnswers) {
     if (!quizAnswers || typeof quizAnswers !== 'object') return {};
@@ -1647,6 +1666,10 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         restricted: Boolean(best?.restricted ?? safety.restricted),
         missingSafetyFields: safety.missingFields,
         missingSafetyText: safety.missingFields.map((f) => REQUIRED_FIELD_TEXT[f]).filter(Boolean),
+        // Product-side safety facts the passport does not have yet (restricts, never lowers the percent).
+        missingProductInfo: safety.missingProductInfo || [],
+        missingProductInfoText: (safety.missingProductInfo || []).map((f) => PRODUCT_INFO_TEXT[f]).filter(Boolean),
+        listingStatus: getListingStatus(product),
         safetyStatus: safety.status,
         outputs: best?.outputs || null,
         evidence: best?.evidence || null,
@@ -1697,7 +1720,13 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
         }
         if (safety.restricted) {
             const fields = safety.missingFields.map((f) => REQUIRED_FIELD_TEXT[f]).filter(Boolean);
-            considerations.unshift({ text: `Safety not checked yet: add ${fields.join(' and ')} to your health profile before we recommend this.`, cta: null });
+            const info = (safety.missingProductInfo || []).map((f) => PRODUCT_INFO_TEXT[f]).filter(Boolean);
+            const notes = [];
+            if (fields.length) notes.push({ text: `Safety not checked yet: add ${fields.join(' and ')} to your health profile before we recommend this.`, cta: null });
+            if (info.length) notes.push({ text: `Safety not checked yet: we do not have ${info.join(' or ')} yet, so we hold it back from your picks.`, cta: null });
+            // Care-first notes ("Not a substitute for getting checked") stay on top.
+            const at = considerations.findIndex((c) => !/^Not a substitute for getting checked/.test(c.text));
+            considerations.splice(at < 0 ? considerations.length : at, 0, ...notes);
         }
         if (product.evidenceStrength === 'limited') {
             unknowns.push('Evidence for this product’s health benefit is limited, so the match is held lower until stronger product-specific evidence is available.');
@@ -1825,8 +1854,13 @@ function rankCatalog(quizAnswers, healthProfile, opts) {
     const matched = [];
     const weaker = [];
     const unrelated = [];
+    const offShelf = [];
     for (const product of candidates) {
         const { pp, result } = engineResultFor(product, up);
+        if (['recalled', 'discontinued', 'unavailable', 'removed'].includes(pp.status?.state)) {
+            offShelf.push(product);
+            continue;
+        }
         if (!result.safety.eligible) continue;
         if (pp.product_id && up.behavior.hidden.has(pp.product_id)) continue;
         profilesById.set(pp.product_id, pp);
@@ -1838,14 +1872,18 @@ function rankCatalog(quizAnswers, healthProfile, opts) {
     const order = new Map(sortResults(matched.map((m) => m.best), up, profilesById).map((r, i) => [r.productId, i]));
     matched.sort((a, b) => order.get(a.best.productId) - order.get(b.best.productId));
     weaker.sort((a, b) => b.best.score - a.best.score);
-    return { up, matches: matched.map((m) => m.product), others: [...weaker.map((w) => w.product), ...unrelated] };
+    return { up, matches: matched.map((m) => m.product), others: [...weaker.map((w) => w.product), ...unrelated], offShelf };
 }
 
 /** Ranked lists using the same per-need score shown in personalization UI. */
+/**
+ * offShelf: recalled / discontinued / unavailable products, never in matches
+ * or others. Shop may list them last with getListingStatus(product).notice.
+ */
 export function getRecommendationMatchesAndRest(quizAnswers, healthProfile = null, opts = {}) {
-    const { up, matches, others } = rankCatalog(quizAnswers, healthProfile, opts);
-    if (!hasProfileSignals(up) || !up.healthIntent.needs.length) return { matches: [], others: [...matches, ...others] };
-    return { matches, others };
+    const { up, matches, others, offShelf } = rankCatalog(quizAnswers, healthProfile, opts);
+    if (!hasProfileSignals(up) || !up.healthIntent.needs.length) return { matches: [], others: [...matches, ...others], offShelf };
+    return { matches, others, offShelf };
 }
 
 export function getRecommendations(quizAnswers, healthProfile = null, opts = {}) {

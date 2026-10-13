@@ -6,7 +6,7 @@ import { GLOSSARY as APP_GLOSSARY } from '../mobile/data/glossary.js';
  * caller to know a separate id.
  */
 export const GLOSSARY = {
-  // Diagnosed conditions (src/utils/healthIntake.js DIAGNOSED_CONDITIONS —
+  // Diagnosed conditions (src/utils/healthIntake.js DIAGNOSED_CONDITIONS
   // these values are matched elsewhere in the app, so we explain them here
   // instead of renaming them)
   'PCOS': 'A common hormone condition. It can cause irregular periods, acne, and extra hair growth.',
@@ -87,7 +87,7 @@ const GLOSSARY_KEYS_BY_LENGTH = Object.keys(GLOSSARY).sort((a, b) => b.length - 
  * Finds the first glossary term that appears as a whole word/phrase inside a longer
  * label (e.g. "PCOS management (supplements, telehealth, apps)" contains "PCOS") and
  * returns its definition. Used for options/labels we can't rename because the exact
- * string is a matching key elsewhere in the app — this adds an explanation without
+ * string is a matching key elsewhere in the app, this adds an explanation without
  * touching the value. Longer keys are checked first so "endometriosis" doesn't get
  * shadowed by a shorter unrelated match.
  */

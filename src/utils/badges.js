@@ -1,12 +1,11 @@
 /**
  * Badges + invite links (round 5). Exactly four badges:
  *
- *  1. First purchase   Signal: she clicked a "Buy now" / "Shop" button that
- *                      opens a retailer from a product page while signed in.
- *                      ayna has no order or checkout data, so this is a
- *                      click-out, not a confirmed purchase. Stored once in her
- *                      account metadata (ayna_first_buy_click_at) and on this
- *                      device.
+ *  1. Got the app      She has signed in on the ayna mobile app at least once.
+ *                      The app records it (recordAppSignIn) the first time it
+ *                      sees a signed-in user: once in her account metadata
+ *                      (ayna_app_signed_in_at) and on that device. Inside the
+ *                      app the badge is always earned, since she is using it.
  *  2. Full ecosystem   Every need she chose in the quiz has at least one of her
  *                      Ecosystem products on its shelf (the same per-need
  *                      shelves the Ecosystem page draws). Progress = filled / needs.
@@ -20,7 +19,7 @@
 import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../data/products.js';
 
 const PENDING_REF_KEY = 'ayna_pending_ref_v1';
-const BUY_KEY = 'ayna_buy_clicks_v1';
+const APP_KEY = 'ayna_app_signed_in_v1';
 const CODE_RE = /^[a-z0-9]{6,20}$/;
 const FRIENDS_GOAL = 3;
 const MIN_SHELF_SCORE = 50;
@@ -113,49 +112,26 @@ export async function loadReferralStats(supabase) {
   }
 }
 
-/* ------------------------------- Click-outs ------------------------------- */
+/* ----------------------------- Got the app ------------------------------ */
 
-const BUY_TEXT = /^(buy now|shop|explore|view app)$/i;
-
-export function recordBuyClick(productId, supabase) {
-  const clicks = safeGet(BUY_KEY) || {};
-  const first = !Object.keys(clicks).length;
-  clicks[productId || 'unknown'] = clicks[productId || 'unknown'] || Date.now();
-  safeSet(BUY_KEY, clicks);
-  if (!supabase?.auth) return;
-  supabase.auth.getUser().then(({ data }) => {
-    const user = data?.user;
-    if (!user || user.user_metadata?.ayna_first_buy_click_at) return;
-    supabase.auth.updateUser({ data: { ayna_first_buy_click_at: new Date().toISOString(), ayna_first_buy_product: productId || null } }).catch(() => {});
-  }).catch(() => {});
-  return first;
-}
-
-export function hasBuyClick(user) {
-  if (user?.user_metadata?.ayna_first_buy_click_at) return true;
-  const clicks = safeGet(BUY_KEY);
-  return Boolean(clicks && Object.keys(clicks).length);
-}
-
-let buyInstalled = false;
 /**
- * One document listener for the retailer buttons on product pages:
- * website a.pdp-btn--buy (product id from /product/<id>), any a[data-ay-buy],
- * and the app product page's Shop / Explore / View app link.
+ * Called by the mobile app whenever it has a signed-in user. Writes the
+ * device flag every time (cheap) and the account metadata only once.
  */
-export function installBuyClickTracking(supabase) {
-  if (buyInstalled || typeof document === 'undefined') return;
-  buyInstalled = true;
-  document.addEventListener('click', (e) => {
-    const a = e.target?.closest?.('a[href]');
-    if (!a) return;
-    const tagged = a.getAttribute('data-ay-buy');
-    const webBuy = a.classList.contains('pdp-btn--buy');
-    const appBuy = !webBuy && a.target === '_blank' && a.closest('.ayna-fresh-product-detail') && BUY_TEXT.test((a.textContent || '').trim());
-    if (!tagged && !webBuy && !appBuy) return;
-    const fromPath = (window.location.pathname.match(/\/product\/([^/?#]+)/) || [])[1];
-    recordBuyClick(tagged || (fromPath ? decodeURIComponent(fromPath) : null), supabase);
-  }, true);
+export function recordAppSignIn(supabase, user) {
+  if (!user?.id) return;
+  const seen = safeGet(APP_KEY) || {};
+  if (!seen[user.id]) { seen[user.id] = Date.now(); safeSet(APP_KEY, seen); }
+  if (user.user_metadata?.ayna_app_signed_in_at || !supabase?.auth?.updateUser) return;
+  try {
+    Promise.resolve(supabase.auth.updateUser({ data: { ayna_app_signed_in_at: new Date().toISOString() } })).catch(() => {});
+  } catch { /* offline or older client: the device flag still counts here */ }
+}
+
+export function hasAppSignIn(user) {
+  if (user?.user_metadata?.ayna_app_signed_in_at) return true;
+  const seen = safeGet(APP_KEY);
+  return Boolean(user?.id && seen && seen[user.id]);
 }
 
 /* ------------------------------ Community post ----------------------------- */
@@ -196,11 +172,11 @@ export function ecosystemCompletion(myProducts = [], quizAnswers = null, matchOp
 /**
  * @returns [{ key, label, earned, progress: { value, goal } | null, hint }]
  */
-export function computeBadges({ boughtOnce = false, eco = { filled: 0, total: 0 }, hasPosted = null, referrals = null } = {}) {
+export function computeBadges({ usedApp = false, eco = { filled: 0, total: 0 }, hasPosted = null, referrals = null } = {}) {
   const ecoDone = eco.total > 0 && eco.filled >= eco.total;
   const friends = Math.min(FRIENDS_GOAL, referrals?.qualified || 0);
   return [
-    { key: 'purchase', label: 'First purchase', earned: Boolean(boughtOnce), progress: null, hint: 'Shop a pick through ayna' },
+    { key: 'app', label: 'Got the app', earned: Boolean(usedApp), progress: null, hint: 'Download the ayna app and sign in' },
     { key: 'ecosystem', label: 'Full ecosystem', earned: ecoDone, progress: eco.total ? { value: Math.min(eco.filled, eco.total), goal: eco.total } : null, hint: eco.total ? 'One pick for every need' : 'Take the quiz' },
     { key: 'post', label: 'First post', earned: hasPosted === true, progress: null, hint: 'Post in Community' },
     { key: 'friends', label: 'Brought 3 friends', earned: friends >= FRIENDS_GOAL, progress: { value: friends, goal: FRIENDS_GOAL }, hint: 'Friends who join and post' },

@@ -99,7 +99,7 @@ function WelcomeBackHero({ user, myProducts, ecosystemCount, onStartQuiz, onView
   );
 }
 
-// Landing page: no photo carousel, no rotating images — text, search, and CTA only.
+// Landing page: no photo carousel, no rotating images, text, search, and CTA only.
 export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onViewDiscovery, user, myProducts, ecosystemCount = 0, onViewEcosystem }) {
   const scrollY = useScrollPosition();
   const [searchValue, setSearchValue] = useState('');

@@ -3,7 +3,7 @@
  * medications, allergies, wearable/FHIR summaries).
  *
  * This data was localStorage-only. It is fed to the LLM as health context, so
- * losing it doesn't just lose a screen — it silently degrades every subsequent
+ * losing it doesn't just lose a screen, it silently degrades every subsequent
  * recommendation with no signal to the user. localStorage stays as the
  * synchronous read path (the profile is read during render in several places),
  * with the server as the durable copy.

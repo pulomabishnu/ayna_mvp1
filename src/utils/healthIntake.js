@@ -75,8 +75,8 @@ export const PREFERRED_PRODUCT_TYPES = [
 ];
 
 export const INSURANCE_TYPES = [
-  { value: 'employer_ppo', label: 'Insurance from my job (PPO — can see any doctor)' },
-  { value: 'employer_hmo', label: 'Insurance from my job (HMO — pick a main doctor first)' },
+  { value: 'employer_ppo', label: 'Insurance from my job (PPO, can see any doctor)' },
+  { value: 'employer_hmo', label: 'Insurance from my job (HMO, pick a main doctor first)' },
   { value: 'marketplace_aca', label: 'Insurance I bought myself (ACA / healthcare.gov plan)' },
   { value: 'medicaid', label: 'Medicaid (free or low-cost insurance)' },
   { value: 'medicare', label: 'Medicare (insurance for people 65+)' },
@@ -110,7 +110,7 @@ export const GOALS = [
 ];
 
 // Shared between the quiz (HealthIntakeForm.jsx) and the profile editor
-// (HealthProfileEditor.jsx) — the editor used to re-implement these two
+// (HealthProfileEditor.jsx), the editor used to re-implement these two
 // fields as free-text inputs holding the literal word "Yes"/"yes" instead
 // of a real select, easy to enter garbage into and easy to misread (found
 // live, 2026-08-24 bug bash). One shared vocabulary now, not two that can

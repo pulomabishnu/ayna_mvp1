@@ -2,7 +2,7 @@ import { getSupabaseClient, getSupabaseUser } from './supabaseClient.js';
 
 const TABLE = 'monthly_checkins';
 
-// Always the 1st of the month — matches monthly_checkins.sql's
+// Always the 1st of the month, matches monthly_checkins.sql's
 // (user_id, check_in_month) unique index, so "this month" and "last month"
 // are unambiguous regardless of what day it actually is.
 export function monthKey(date = new Date()) {
@@ -28,12 +28,12 @@ async function resolveUserId(supabase) {
 }
 
 /**
- * Returns { thisMonthCheckin, lastCheckin } — thisMonthCheckin is non-null
+ * Returns { thisMonthCheckin, lastCheckin }, thisMonthCheckin is non-null
  * only once the person has already submitted this month's check-in (used
  * to show the completed/summary state instead of the wizard again);
  * lastCheckin is whatever their most recent PRIOR check-in was, used to
  * pre-fill the wizard. Both null for someone signed out or with no history
- * yet — the wizard falls back to the health intake itself in that case.
+ * yet, the wizard falls back to the health intake itself in that case.
  */
 export async function loadMonthlyCheckinStatus() {
   const supabase = getSupabaseClient();

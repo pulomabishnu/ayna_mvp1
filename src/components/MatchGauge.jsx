@@ -2,7 +2,7 @@ import React from 'react';
 
 /**
  * The radial "% match" gauge previously only existed on the Evidence tab
- * (.pdp-rail__match-ring, dark-card themed) — the Summary tab showed a flat
+ * (.pdp-rail__match-ring, dark-card themed), the Summary tab showed a flat
  * text badge, and Browse cards showed a flat badge too (when populated at
  * all). Same number, three different presentations depending on where you
  * looked (found live, 2026-08-24 bug bash: "using the same radial gauge

@@ -10,14 +10,14 @@
  * SAME ANTI-FABRICATION DISCIPLINE AS THE REST OF THIS CATALOG'S PIPELINE
  * (api/discover-products.js, api/search-suggestions.js): every claim in the
  * output must be grounded in a REAL search result actually returned for that
- * product, or in well-established general medical knowledge — never invented
+ * product, or in well-established general medical knowledge, never invented
  * quotes, invented studies, or invented Reddit sentiment. When real search
  * coverage for a product is thin, the model is instructed to say so honestly
- * (short and true) rather than pad with generic filler — concise-but-honest
+ * (short and true) rather than pad with generic filler, concise-but-honest
  * beats long-but-invented every time.
  *
  * Read-only against Supabase (public /api/products). This script has no DB
- * write credentials (none are available locally in this environment) — it
+ * write credentials (none are available locally in this environment), it
  * only WRITES A SQL FILE for a human to run in the Supabase SQL Editor, same
  * pattern as every other catalog change this session.
  *
@@ -43,7 +43,7 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--limit') out.limit = Number(argv[++i]) || Infinity;
     if (argv[i] === '--start-after') out.startAfter = argv[++i];
-    // Retarget the run at specific product ids only — for retrying the
+    // Retarget the run at specific product ids only, for retrying the
     // handful that failed mid-run (e.g. a billing lapse) without re-paying
     // for everything already done. Takes precedence over --start-after/--limit.
     if (argv[i] === '--ids') out.ids = new Set(argv[++i].split(',').map((s) => s.trim()).filter(Boolean));
@@ -72,7 +72,7 @@ async function serperSearch(query) {
   }
 }
 
-/** Best-effort platform tag from the hit's own URL — lets the model (and a
+/** Best-effort platform tag from the hit's own URL, lets the model (and a
  * human skimming this prompt) know which results are actually Reddit vs.
  * TikTok vs. neither, instead of guessing from the search query alone. */
 function platformOf(url) {
@@ -87,10 +87,10 @@ function platformOf(url) {
 }
 
 function formatHits(label, hits) {
-  if (!hits.length) return `${label}: (no results found — treat as genuinely no public coverage, do not invent any)`;
+  if (!hits.length) return `${label}: (no results found, treat as genuinely no public coverage, do not invent any)`;
   return `${label}:\n${hits.map((h, i) => {
     const platform = platformOf(h.url);
-    return `${i + 1}. ${platform ? `[${platform}] ` : ''}${h.title} — ${h.snippet} (${h.url})`;
+    return `${i + 1}. ${platform ? `[${platform}] ` : ''}${h.title}, ${h.snippet} (${h.url})`;
   }).join('\n')}`;
 }
 
@@ -102,7 +102,7 @@ function buildPrompt(product, communityHits, clinicalHits) {
   return `
 You are rewriting three fields on a women's health product catalog page (Ayna) to be
 substantive and genuinely useful for a purchase decision, not generic filler. This
-product already exists in the catalog — you are improving its content, not inventing
+product already exists in the catalog, you are improving its content, not inventing
 the product.
 
 PRODUCT: ${product.name}${product.brand ? ` (brand: ${product.brand})` : ''}
@@ -114,7 +114,7 @@ ${formatHits('REAL COMMUNITY/SOCIAL SEARCH RESULTS', communityHits)}
 
 ${formatHits('REAL CLINICAL/SCIENTIFIC SEARCH RESULTS', clinicalHits)}
 
-ANTI-FABRICATION RULES — this is the most important part:
+ANTI-FABRICATION RULES, this is the most important part:
 - Every specific claim (a study finding, a named source, a recurring community theme,
   a named subreddit or platform) MUST come from the search results actually shown
   above. Do not invent a study, a statistic, a Reddit thread, or a specific complaint
@@ -125,21 +125,21 @@ ANTI-FABRICATION RULES — this is the most important part:
   product, SAY SO HONESTLY in communityReview (e.g. "Limited public discussion of
   this specific product") rather than inventing sentiment. Same for clinical results.
 - Being concise is fine. Being vague is not. A short, honest, specific field beats a
-  long, padded, generic one — but the current problem across this catalog is fields
+  long, padded, generic one, but the current problem across this catalog is fields
   that are only 1-2 throwaway sentences with almost no real information. Aim for
   3-5 sentences of real substance when the search results support it.
 
 WRITE THREE DISTINCT FIELDS, each in a different voice:
 
-1. doctorOpinion — clinical reasoning: what this product actually does mechanically/
+1. doctorOpinion, clinical reasoning: what this product actually does mechanically/
    physiologically, who it's appropriate for, and anything real search results or
    general medical knowledge suggest a clinician would flag (when to see a doctor
    instead of just using this, a real safety consideration, etc). Do NOT just restate
    the summary.
 
-2. communityReview — synthesized REAL sentiment from the community search results,
+2. communityReview, synthesized REAL sentiment from the community search results,
    ATTRIBUTED TO ITS ACTUAL PLATFORM: each hit above is tagged [Reddit], [TikTok], or
-   untagged (some other site) — say specifically where a theme came from ("Users on
+   untagged (some other site), say specifically where a theme came from ("Users on
    Reddit note that...", "On TikTok, several reviewers highlight...") rather than a
    vague "some users say." If both Reddit and TikTok have real coverage, mention both
    by name. If only one does, name that one and don't imply the other exists. Cover
@@ -148,7 +148,7 @@ WRITE THREE DISTINCT FIELDS, each in a different voice:
    (neither platform identifiable), say so honestly instead of padding or guessing
    a platform.
 
-3. effectiveness — an honest evidence-based read: is there a real study of this exact
+3. effectiveness, an honest evidence-based read: is there a real study of this exact
    product (only if actually shown in results)? If not, what does the honest
    category-level evidence say? Never claim this product outperforms others without
    real data for that.
@@ -159,10 +159,10 @@ Return ONLY valid JSON, exactly this shape:
   "communityReview": "...",
   "effectiveness": "...",
   "citations": [
-    { "type": "scientific" or "community", "platform": "reddit" or "tiktok" (only for community, else omit), "url": "...", "text": "short label", "summary": "one sentence, specific to what THIS source actually said — not a restatement of communityReview" }
+    { "type": "scientific" or "community", "platform": "reddit" or "tiktok" (only for community, else omit), "url": "...", "text": "short label", "summary": "one sentence, specific to what THIS source actually said, not a restatement of communityReview" }
   ]
 }
-"citations" should only include URLs that actually appeared in the search results above — up to 2 total, only the most relevant. When both a real Reddit result and a real TikTok result are relevant, prefer citing one of each over two from the same platform. Omit entirely (empty array) if none of the results are worth citing.
+"citations" should only include URLs that actually appeared in the search results above, up to 2 total, only the most relevant. When both a real Reddit result and a real TikTok result are relevant, prefer citing one of each over two from the same platform. Omit entirely (empty array) if none of the results are worth citing.
 `.trim();
 }
 
@@ -175,7 +175,7 @@ async function enrichOne(product, order) {
     serperSearch(tiktokQuery),
     serperSearch(clinicalQuery),
   ]);
-  // Dedup by URL — the reddit- and tiktok-flavored queries can both surface
+  // Dedup by URL, the reddit- and tiktok-flavored queries can both surface
   // the same off-platform result (e.g. a roundup article), and platformOf()
   // already tags each hit from its own URL, so query intent doesn't matter
   // once merged.
@@ -208,7 +208,7 @@ function toSqlUpdate(product, result) {
 
   let extraSql = 'extra';
   if (scientific.length) {
-    const json = JSON.stringify({ links: scientific.map((c) => ({ url: c.url, text: c.text, summary: c.summary, justification: 'Cited during 2026-08-24 content-depth pass — see search grounding in scripts/enrich-product-content.mjs.' })) });
+    const json = JSON.stringify({ links: scientific.map((c) => ({ url: c.url, text: c.text, summary: c.summary, justification: 'Cited during 2026-08-24 content-depth pass, see search grounding in scripts/enrich-product-content.mjs.' })) });
     extraSql = `jsonb_set(${extraSql}, '{verificationLinks,scientific}', ${sqlString(json)}::jsonb, true)`;
   }
   if (community.length) {

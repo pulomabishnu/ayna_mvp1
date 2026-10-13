@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { findTerm } from '../../data/glossary.js';
+import SmartSearchInput from '../../../components/search/SmartSearchInput.jsx';
+import { matchesSearchOption } from '../../../utils/search/index.js';
 
 // Game-style answer controls for the mobile intake. Every control keeps the
 // exact value contract of the widget it replaced (same option strings, same
@@ -54,7 +56,7 @@ export function SearchField({ value, onChange, placeholder }) {
   return (
     <label className="ip-search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} aria-label={placeholder} maxLength={80} />
+      <SmartSearchInput value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} aria-label={placeholder} maxLength={80} />
       {value && <button type="button" aria-label="Clear search" onClick={() => onChange('')}>×</button>}
     </label>
   );
@@ -393,7 +395,7 @@ export function TopicPicker({ groups, selected, onToggle, search, onSearch, onAd
   const q = search.trim().toLowerCase();
   const known = groups.flatMap((g) => g.items);
   const custom = selected.filter((item) => !known.includes(item));
-  const results = q ? known.filter((item) => item.toLowerCase().includes(q)) : [];
+  const results = q ? known.filter((item) => matchesSearchOption(q, item)) : [];
   const group = groups.find((g) => g.label === active) || groups[0];
   const value = search.trim().replace(/\s+/g, ' ');
   const canAdd = value.length >= 2 && ![...known, ...selected].some((item) => item.toLowerCase() === value.toLowerCase());

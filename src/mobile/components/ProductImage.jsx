@@ -13,7 +13,7 @@ function PhotoPlaceholder({ style }) {
 
 /**
  * Fills its (position: relative) parent with either the product's real
- * photo or the shared "ayna" watermark placeholder — used instead of a bare
+ * photo or the shared "ayna" watermark placeholder, used instead of a bare
  * CSS backgroundImage everywhere a product image renders in the mobile app.
  * backgroundImage has no onError, so a dead external hotlink (a brand's CDN
  * asset that starts 403ing/404ing after the catalog entry was written)

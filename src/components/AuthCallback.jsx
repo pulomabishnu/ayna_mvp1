@@ -12,7 +12,7 @@ export default function AuthCallback({ onAuthenticated }) {
 
     const hashParams = new URLSearchParams(window.location.hash.slice(1));
     // Scrub the fragment immediately. The client uses Supabase's `implicit`
-    // flow, so access AND refresh tokens arrive in window.location.hash — and
+    // flow, so access AND refresh tokens arrive in window.location.hash, and
     // they were left there, meaning a long-lived refresh token for a women's
     // health account sat in browser history, in `document.location`, and
     // readable by any third-party script on the page.
@@ -31,7 +31,7 @@ export default function AuthCallback({ onAuthenticated }) {
       return;
     }
 
-    // Email confirmation — just show the success message
+    // Email confirmation, just show the success message
     if (type === 'signup' || type === 'email_change') {
       setStatus('confirmed');
       return;
@@ -40,7 +40,7 @@ export default function AuthCallback({ onAuthenticated }) {
     // A mobile-initiated Google sign-in (src/mobile/hooks/useSupabaseAuth.js)
     // sets this before redirecting, since this callback page always renders
     // via the DESKTOP App.jsx (main.jsx picks App vs MobileApp purely by URL
-    // path, before any of this runs) — send it back to /mobile-preview
+    // path, before any of this runs), send it back to /mobile-preview
     // instead of running desktop's own post-auth navigation. The flag is
     // read but deliberately left set: MobileApp.jsx clears it itself only
     // once it confirms the session actually arrived there, so a redirect
@@ -64,7 +64,7 @@ export default function AuthCallback({ onAuthenticated }) {
       onAuthenticated(user);
     }
 
-    // OAuth — set session and navigate to ecosystem
+    // OAuth, set session and navigate to ecosystem
     if (accessToken && refreshToken) {
       supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
         .then(({ data, error }) => {

@@ -10,7 +10,7 @@ import { loadMonthlyCheckinStatus, saveMonthlyCheckin, monthKey } from '../../ut
 const CHECKIN_TONES = { lifeStage: 'peri', symptoms: 'pink', flow: 'peri', pain: 'butter', uti: 'mint', recs: 'butter', medications: 'mint', safety: 'mint', notes: 'pink' };
 
 // A curated, quick-to-answer subset of intake's own taxonomy (not every one
-// of its ~90 items — this is a monthly maintenance ping, not a re-run of
+// of its ~90 items, this is a monthly maintenance ping, not a re-run of
 // the full intake). Each check-in item maps to the matching intake
 // supportSelections string where one exists, so a newly-reported symptom
 // here can actually reach the recommendation engine (see
@@ -60,10 +60,10 @@ const CHECKIN_TO_INTAKE = Object.fromEntries(SYMPTOM_GROUPS.flatMap((g) => g.ite
 const PERIOD_SYMPTOM_LABELS = new Set(['Cramps', 'Heavy periods', 'Irregular periods', 'Spotting between periods', 'PMS mood shifts']);
 
 const FLOW_OPTIONS = [
-  ['Spotting', 'Lighter than a period — barely there.'],
+  ['Spotting', 'Lighter than a period, barely there.'],
   ['Light', 'On the lighter side for you.'],
-  ['Moderate', 'Normal for you — regular changes, nothing unusual.'],
-  ['Heavy', 'Heavier than typical — worth keeping an eye on.'],
+  ['Moderate', 'Normal for you, regular changes, nothing unusual.'],
+  ['Heavy', 'Heavier than typical, worth keeping an eye on.'],
   ['Very heavy', 'Significantly heavier than usual for you.'],
 ];
 const PAIN_OPTIONS = [
@@ -103,7 +103,7 @@ function monthLabel(key) {
   const d = new Date(`${key}T00:00:00`);
   return d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
 }
-// A distinct, at-a-glance colored badge per verdict — matches the design
+// A distinct, at-a-glance colored badge per verdict, matches the design
 // reference's own treatment (a plain radio circle reads identically for
 // "helped" and "made it worse," which are opposite signals for the
 // algorithm and shouldn't look the same while scanning the list).
@@ -125,7 +125,7 @@ function DividerLabel({ children, right }) {
   return <div className="ip-divider"><span>{children}</span>{right != null && <small>{right}</small>}</div>;
 }
 
-// Bar height increases left to right — severity read as a shape, not just
+// Bar height increases left to right, severity read as a shape, not just
 // a label, same as the design reference's flow/pain scale. Bars are purely
 // visual; the actual hit target is the whole column (bar + label).
 
@@ -201,7 +201,7 @@ function buildInitialAnswers(lastCheckinAnswers, fullHealthIntake) {
 
 // Feeds what actually changed back into a copy of the person's raw health
 // intake (the same shape IntakeScreen.jsx's buildSnapshot produces), then
-// re-runs it through the same mapper intake itself uses — so
+// re-runs it through the same mapper intake itself uses, so
 // MobileApp.jsx's existing onComplete handler (reseed the ecosystem, save,
 // show the building screen) treats a check-in exactly like a retaken quiz,
 // with no separate recalculation path to keep in sync.
@@ -209,7 +209,7 @@ function applyCheckinToIntake(fullHealthIntake, answers) {
   const base = { ...(fullHealthIntake || {}) };
   const mappedSymptoms = answers.symptoms.map((label) => CHECKIN_TO_INTAKE[label]).filter(Boolean);
   // Keep any intake selections this check-in's taxonomy doesn't cover
-  // (allergy-driven avoidances, etc.) — only replace the subset it can
+  // (allergy-driven avoidances, etc.), only replace the subset it can
   // actually re-ask about.
   const untouched = (base.supportSelections || []).filter((label) => !Object.values(CHECKIN_TO_INTAKE).includes(label));
   base.supportSelections = [...new Set([...untouched, ...mappedSymptoms])];
@@ -265,7 +265,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
   const periodRelevant = answers ? answers.symptoms.some((s) => PERIOD_SYMPTOM_LABELS.has(s)) : false;
   const utiRelevant = answers ? answers.symptoms.includes('Recurrent UTIs') : false;
   // Reminds the person what's actually on file instead of asking them to
-  // recall it cold — the single highest-value context this step can show,
+  // recall it cold, the single highest-value context this step can show,
   // since "has anything changed" is meaningless without knowing what
   // "unchanged" currently means for them.
   const currentLifeStageOnFile = Array.isArray(fullHealthIntake?.lifeStageSelections) && fullHealthIntake.lifeStageSelections.length
@@ -314,7 +314,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
     setSaving(false);
     setComplete(true);
     // Small delay so the completion state is visible before the ecosystem
-    // rebuild takes over the screen — matches the deliberate pause the
+    // rebuild takes over the screen, matches the deliberate pause the
     // intake quiz's own reveal step already has.
     setTimeout(() => onComplete(mapIntakeToLegacyQuizProfile(updatedIntake)), 900);
   };

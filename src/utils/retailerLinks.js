@@ -3,17 +3,17 @@
  *
  * The catalog (src/data/*.js) and the live AI-suggestion path
  * (api/search-suggestions.js) both store `whereToBuy` as plain retailer NAME
- * strings — almost never a real per-retailer URL (whereToBuyLinks exists on
+ * strings, almost never a real per-retailer URL (whereToBuyLinks exists on
  * only a handful of catalog entries, and the AI path never emits it at all,
- * by design — the prompt explicitly forbids the model from inventing URLs).
+ * by design, the prompt explicitly forbids the model from inventing URLs).
  *
  * This module never asks an LLM, and never claims a specific product page,
- * price, or availability exists at a retailer — it only builds a real,
+ * price, or availability exists at a retailer, it only builds a real,
  * functioning SEARCH-RESULTS URL for a known retailer's own site search, so
  * a user can go compare for herself. That's the key safety property: unlike
  * a fabricated price (the LOLA Liners incident this file exists to prevent a
  * repeat of), "here's Amazon's search results for this product name" cannot
- * be wrong in the same way — worst case it's a mediocre search, never a
+ * be wrong in the same way, worst case it's a mediocre search, never a
  * false claim.
  */
 
@@ -37,7 +37,7 @@ const RETAILER_SEARCH_BUILDERS = {
 // Descriptive phrases the catalog/AI path sometimes puts in `whereToBuy`
 // that are not actually a place to search (a prescriber, a note about how a
 // product is obtained, or too vague to point anywhere real). Never worth a
-// generated link — better to show as plain text than a misleading one.
+// generated link, better to show as plain text than a misleading one.
 const SKIP_PHRASES = new Set([
   'brand website',
   'brand site',
@@ -49,7 +49,7 @@ const SKIP_PHRASES = new Set([
 
 // Some catalog entries already store a literal domain as the "retailer" name
 // (e.g. 'LOLA.com', 'Thorne.com', 'FemmyCycle.com') rather than a brand name.
-// That's not a guess — it's already the exact value the catalog authored —
+// That's not a guess, it's already the exact value the catalog authored
 // so it's safe to link straight to that site's homepage.
 function isLikelyDomain(name) {
   const trimmed = name.trim();
@@ -68,7 +68,7 @@ export function buildRetailerQuery(product) {
  * `specific` distinguishes a link that's actually scoped to THIS product
  * (a known retailer's own site-search, or an explicit whereToBuyLinks URL)
  * from one that isn't (a bare brand/retailer homepage, or the generic Google
- * Shopping catch-all) — callers preferring "get me to the actual product"
+ * Shopping catch-all), callers preferring "get me to the actual product"
  * over "get me to the general site" use this to rank results.
  */
 export function getRetailerLink(retailerName, product) {
@@ -87,7 +87,7 @@ export function getRetailerLink(retailerName, product) {
   const builder = RETAILER_SEARCH_BUILDERS[lower];
   if (builder) return { url: builder(encode(query)), specific: true };
 
-  // Unrecognized retailer name (e.g. "Whole Foods", "Sephora", "Kroger") —
+  // Unrecognized retailer name (e.g. "Whole Foods", "Sephora", "Kroger")
   // no confident URL pattern, so fall back to a Google Shopping search that
   // includes the retailer's name, rather than guess at that site's own
   // search URL and risk a broken link.
@@ -98,7 +98,7 @@ export function getRetailerLink(retailerName, product) {
  * Builds the list of clickable retailer links for a product's `whereToBuy`
  * array, preferring a real explicit URL from `whereToBuyLinks` (when one
  * exists and is a genuine http(s) URL) over a generated search link.
- * Never includes a price or any per-retailer claim — name + link only.
+ * Never includes a price or any per-retailer claim, name + link only.
  *
  * `specific` (see getRetailerLink) is true for an explicit whereToBuyLinks
  * URL or a known retailer's own site-search; false for a bare domain

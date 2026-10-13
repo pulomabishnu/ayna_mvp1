@@ -6,12 +6,12 @@ import { productImageOverride } from '../data/productImageOverrides';
 
 /**
  * The honest "we couldn't find a real photo" state. Previously a literal
- * "Product image not found" label next to a generic broken-image icon —
+ * "Product image not found" label next to a generic broken-image icon
  * accurate, but it read like a raw dev fallback dropped into an otherwise
  * carefully art-directed site (cream, gold accents, serif display type)
  * rather than a deliberate placeholder (found live, 2026-08-24 bug bash).
  * Now a faint watermark of the site's own wordmark, in the same italic
- * serif and navy the real nav logo uses, on the existing warm gold wash —
+ * serif and navy the real nav logo uses, on the existing warm gold wash
  * quiet and on-brand instead of alarming. The literal "not found" wording
  * still reaches screen readers and hover users via aria-label/title.
  */
@@ -51,11 +51,11 @@ export function ProductImageFallback({ compact = false, style, className }) {
 }
 
 // Shared by every place that renders a user-collected product snapshot
-// (ecosystem, wishlist, tracked, compared, omitted, recommendations) —
+// (ecosystem, wishlist, tracked, compared, omitted, recommendations)
 // these are frozen copies of a product object taken at add/save/recommend
 // time (App.jsx's toggleMyProduct, savedProductsStore, etc.), not live
 // references, so a product's `image` field can be stale or ('' for an
-// LLM-recommended item whose model wasn't confident of a real photo — see
+// LLM-recommended item whose model wasn't confident of a real photo, see
 // enrichProduct in api/llm-recommendations.js). Originally only fixed
 // inside MyEcosystem.jsx's own tile grids; promoted here after the same
 // class of bug turned up in the Wishlist (SavedForLater.jsx) showing a
@@ -68,7 +68,7 @@ const CATALOG_BY_NORMALIZED_NAME = new Map(
 /**
  * Synchronous best-effort lookup against the curated static catalog, by id
  * first (exact) then by normalized name (LLM-recommendation ids are always
- * freshly minted — see enrichProduct — so they can never match a catalog id
+ * freshly minted, see enrichProduct, so they can never match a catalog id
  * even for a product that's actually in the catalog under the same name).
  * Falls back to the product's own (possibly placeholder) image.
  */
@@ -88,12 +88,12 @@ export function resolveCatalogProductImage(product) {
 /**
  * Renders a product's real photo, falling back to a live /api/product-image
  * lookup (same resolver Discovery.jsx/ProductModal.jsx use) when the
- * catalog lookup above still comes up empty — e.g. a genuinely novel
+ * catalog lookup above still comes up empty, e.g. a genuinely novel
  * LLM-recommended product with no catalog entry at all (Brightside, Clue,
  * Thorne Iron Bisglycinate). Renders `letterNode` (an initial-letter
  * avatar) while no real image is available.
  */
-// Callers that didn't pass `alt` at all got a blank one by default — some
+// Callers that didn't pass `alt` at all got a blank one by default, some
 // product images across the app had real descriptions, others none, a real
 // screen-reader barrier (found live, 2026-08-24 bug bash). The product name
 // is always a meaningful description for a product photo, so it's the
@@ -124,7 +124,7 @@ export default function ProductTileImage({ product, alt, imgStyle, imgClassName,
   }, [initial, product?.id, product?.name, product?.brand, product?.url]);
 
   // `resolved` came back from the server's /api/product-image, which already
-  // applied the type-aware (allowBrandLogo) check — re-running it through
+  // applied the type-aware (allowBrandLogo) check, re-running it through
   // isPlaceholderProductImage here would reject a legitimate app/telehealth
   // logo again, since that heuristic has no idea the product is 'digital'.
   const finalSrc = resolved || safeProductImageSrc(initial, allowBrandLogo);
@@ -137,7 +137,7 @@ export default function ProductTileImage({ product, alt, imgStyle, imgClassName,
         className={imgClassName}
         style={imgStyle}
         // A backgrounded tab can abort an in-flight/lazy image load with a
-        // genuine `error` event even though the URL is completely fine —
+        // genuine `error` event even though the URL is completely fine
         // one retry before actually giving up and hiding it.
         onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
       />

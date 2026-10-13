@@ -1,6 +1,6 @@
 /**
  * Vercel serverless: AI summaries + server-built search links only (no model-supplied URLs).
- * Providers: Anthropic Claude, OpenAI, Gemini — in AI_INSIGHTS_PROVIDER_ORDER (default claude,openai).
+ * Providers: Anthropic Claude, OpenAI, Gemini, in AI_INSIGHTS_PROVIDER_ORDER (default claude,openai).
  */
 /* global process */
 
@@ -25,7 +25,7 @@ function hasUrlLike(s) {
  * This used to return '' whenever a URL appeared anywhere in the string, so one
  * stray "http" in a 2200-character clinical narrative threw away all 2200
  * characters. If enough fields emptied out, normalizeParsed returned null and
- * the entire (already billed) generation was discarded — or the user silently
+ * the entire (already billed) generation was discarded, or the user silently
  * got boilerplate with no indication anything had been dropped.
  */
 export function sanitizePhrase(s, maxLen) {
@@ -78,7 +78,7 @@ function buildUserPrompt(product, userContextText = '') {
 Brand / comparison context (use this so readers can compare this brand to others in the same category):
 - Brand to surface in searches and narrative: ${brandCtx.brandName}
 - Product kind (plain language): ${brandCtx.deviceKindLabel || category}
-- Many vendors sell ${brandCtx.deviceKindLabel || 'this kind of product'} under different brand names. In clinicalNarrative, scienceSummary, and communitySummary, add one short sentence acknowledging that materials, fit, sizing, app behavior, or evidence may differ by brand—without claiming this brand is better or worse than others.
+- Many vendors sell ${brandCtx.deviceKindLabel || 'this kind of product'} under different brand names. In clinicalNarrative, scienceSummary, and communitySummary, add one short sentence acknowledging that materials, fit, sizing, app behavior, or evidence may differ by brand, without claiming this brand is better or worse than others.
 - pubmedSearchQueries: include at least one phrase that combines the product kind with the brand name or with comparison-relevant terms (e.g. efficacy, safety, sizing) so results are not only generic category reviews.
 - patientEducationQueries: include at least one phrase that names the brand plus the device or product kind (short), OR a neutral phrase about choosing between brands in this category if the brand name is long.
 - communitySearchQueries: include at least one phrase that includes the brand name plus product kind (e.g. for forum/video search) so users find brand-specific threads; you may also keep one broader category query.
@@ -89,11 +89,11 @@ Brand / comparison context (use this so readers can compare this brand to others
     userContextText && userContextText.trim().length > 0
       ? `
 
-Reader health context (tailor summaries to this person when relevant; educational only; never diagnose; never tell them to stop a prescribed medication—suggest discussing with their clinician for interactions or contraindications):
+Reader health context (tailor summaries to this person when relevant; educational only; never diagnose; never tell them to stop a prescribed medication, suggest discussing with their clinician for interactions or contraindications):
 ${userContextText.trim()}
 
 Tailoring rules when reader context is present:
-- Personalize clinicalNarrative, scienceSummary, and communitySummary: briefly note why this category might matter for their stated concerns (e.g. heavy flow, menopause, UTI history, latex or fragrance sensitivity, imported conditions)—without individual medical directives.
+- Personalize clinicalNarrative, scienceSummary, and communitySummary: briefly note why this category might matter for their stated concerns (e.g. heavy flow, menopause, UTI history, latex or fragrance sensitivity, imported conditions), without individual medical directives.
 - pubmedSearchQueries, patientEducationQueries, and communitySearchQueries may include one helpful qualifier tied to their context (e.g. "heavy menstrual bleeding management", "latex-free menstrual cup") when it fits the product category. Never echo names, emails, or street addresses.
 - If context is irrelevant to this product type, keep text generic as usual.
 `
@@ -113,7 +113,7 @@ ${brandBlock}${readerBlock}
 CLINICAL AUTHORITY SOURCES TO REFERENCE:
 Ground clinicalNarrative and scienceSummary in guidance from these organizations where relevant:
 - ACOG (American College of Obstetricians and Gynecologists) for OB/GYN conditions: menstrual health, PCOS, endometriosis, menopause, perimenopause, fertility, contraception, UTIs, pelvic floor
-- NIH Office of Dietary Supplements for all supplement categories — ingredient safety, evidence quality, dosing guidance
+- NIH Office of Dietary Supplements for all supplement categories, ingredient safety, evidence quality, dosing guidance
 - FDA for device and period care product regulatory standing
 - Cochrane Reviews for systematic review evidence on supplement and device categories
 - UpToDate for how clinicians approach a condition or product category at point of care
@@ -121,8 +121,8 @@ Ground clinicalNarrative and scienceSummary in guidance from these organizations
 
 EDITORIAL REVIEW SOURCES FOR COMMUNITY CONTEXT:
 When writing communitySummary, reference trusted editorial reviews if relevant to this product category:
-- NYT Wirecutter — independent, lab-tested reviews for menstrual products, fitness trackers, and health gear
-- InStyle — expert-tested reviews for period underwear and personal care
+- NYT Wirecutter, independent, lab-tested reviews for menstrual products, fitness trackers, and health gear
+- InStyle, expert-tested reviews for period underwear and personal care
 In communitySummary, you may say things like "Independent testing by outlets like NYT Wirecutter has evaluated products in this category" or "Editorial reviews note [observation]" when it genuinely applies.
 In communitySearchQueries, include one query that would surface editorial reviews (e.g. "best [category] wirecutter review") when relevant.
 
@@ -130,7 +130,7 @@ HOW TO USE THESE SOURCES:
 - In clinicalNarrative: open with or include one phrase grounding the category in clinical guidance, e.g. "ACOG recognizes menstrual pain management as a key area of OB/GYN care" or "The NIH Office of Dietary Supplements notes that evidence for magnesium in menstrual pain is emerging"
 - In scienceSummary: reference the type and quality of evidence, e.g. "Cochrane reviews note limited RCT evidence for most menstrual supplements" or "ACOG clinical guidelines address this condition category"
 - NEVER fabricate specific bulletin numbers, PMIDs, guideline numbers, or direct quotes
-- ONLY say "consistent with", "aligned with", "noted by", or "referenced in" — never claim to directly quote
+- ONLY say "consistent with", "aligned with", "noted by", or "referenced in", never claim to directly quote
 - Only reference an organization when confident their guidance genuinely covers this area
 - If clinical authority is not relevant to this product type, skip this block
 
@@ -138,7 +138,7 @@ ${productKnowledgeContext ? `${productKnowledgeContext}\n\n` : ''}Return a SINGL
 {
   "clinicalNarrative": "2-4 sentences grounded in the clinical knowledge base above. Reference ACOG, NIH ODS, or Cochrane where the knowledge supports it. When reader context is present, open with one clause on relevance to their specific conditions. Educational only - no diagnosis.",
   "scienceSummary": "1-2 sentences: how evidence or trials are typically discussed for this category (not about this specific product unless clearly a named drug/device). Mention evidence limitations when the reader has complex conditions and evidence may not be product-specific.",
-  "communitySummary": "1-2 sentences: how patients often discuss this topic in forums — clearly anecdotal, not factual claims. If reader sensitivities apply (e.g. fragrance), note that forum posts are unverified.",
+  "communitySummary": "1-2 sentences: how patients often discuss this topic in forums, clearly anecdotal, not factual claims. If reader sensitivities apply (e.g. fragrance), note that forum posts are unverified.",
   "quickOverviewPros": ["2-4 concise bullets, each explicitly tied to the reader context when possible"],
   "quickOverviewCons": ["2-4 bullets on ingredient safety concerns, contraindications, or mismatch risks SPECIFIC to this reader's conditions - use the clinical knowledge base above to identify relevant ingredient flags for their conditions"],
   "quickOverviewFit": ["1-2 concise bullets stating why this is or is not a good fit for this reader profile"],
@@ -273,7 +273,7 @@ function buildSafeLinks(parsed, productCategory) {
     literatureLinks.push({
       url: `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(q)}`,
       text: `PubMed search: ${q.length > 55 ? `${q.slice(0, 52)}…` : q}`,
-      summary: 'Opens PubMed with this query. Link is generated by Ayna — not supplied by the AI.',
+      summary: 'Opens PubMed with this query. Link is generated by Ayna, not supplied by the AI.',
       justification: 'Official NLM search URL',
     });
   }
@@ -294,14 +294,14 @@ function buildSafeLinks(parsed, productCategory) {
     communityLinks.push({
       url: `https://www.reddit.com/search/?q=${encodeURIComponent(tail)}`,
       text: `Reddit search: ${q.length > 45 ? `${q.slice(0, 42)}…` : q}`,
-      summary: 'Jump to Reddit search — verify posts yourself; not medical advice.',
+      summary: 'Jump to Reddit search, verify posts yourself; not medical advice.',
       justification: 'Official Reddit search URL',
       platform: 'reddit',
     });
     communityLinks.push({
       url: `https://www.youtube.com/results?search_query=${encodeURIComponent(tail)}`,
       text: `YouTube search: ${q.length > 45 ? `${q.slice(0, 42)}…` : q}`,
-      summary: 'Jump to YouTube search results — creator content varies in quality.',
+      summary: 'Jump to YouTube search results, creator content varies in quality.',
       justification: 'Official YouTube search URL',
       platform: 'youtube',
     });
@@ -322,12 +322,12 @@ function buildSafeLinks(parsed, productCategory) {
   return { clinicianLinks, literatureLinks, communityLinks };
 }
 
-// Shared transport (api/_llm.js) — proper retry/backoff/timeout and status
+// Shared transport (api/_llm.js), proper retry/backoff/timeout and status
 // classification instead of the bespoke fetch calls this route used to carry
 // (which duplicated a less-robust, per-provider version of the same thing:
 // no jitter, no distinction between "bad key" and "rate limited", no Gemini).
 const INSIGHTS_SYSTEM_PROMPT =
-  "You produce only valid JSON for a women's health education app. Never include URLs, links, domains, or fabricated citations. Use short search phrases only. Output a single JSON object only — no markdown, no code fences, no text before or after the JSON.";
+  "You produce only valid JSON for a women's health education app. Never include URLs, links, domains, or fabricated citations. Use short search phrases only. Output a single JSON object only, no markdown, no code fences, no text before or after the JSON.";
 
 async function callProvider(provider, prompt) {
   const args = { system: INSIGHTS_SYSTEM_PROMPT, prompt, maxTokens: 2000, temperature: 0.25, jsonMode: true };
@@ -338,7 +338,7 @@ async function callProvider(provider, prompt) {
 }
 
 /**
- * One provider per call, NOT api/_llm.js's callWithFallback — a provider that
+ * One provider per call, NOT api/_llm.js's callWithFallback, a provider that
  * responds successfully but with unparseable/schema-violating JSON must still
  * fall through to the next provider in the handler's loop below, and
  * callWithFallback only falls through on a hard HTTP/API failure.
@@ -387,7 +387,7 @@ export default async function handler(req, res) {
   if (!user) return res.status(401).json({ error });
 
   // _rateLimitProductInsights.js is named for THIS route but was only ever
-  // imported by search-suggestions.js — so the endpoint it was written to
+  // imported by search-suggestions.js, so the endpoint it was written to
   // protect had no IP rate limit at all.
   const rl = await checkProductInsightsRateLimit(req);
   if (!rl.ok) {
@@ -409,7 +409,7 @@ export default async function handler(req, res) {
       message:
         'No AI provider key set. Add ANTHROPIC_API_KEY (Claude) or OPENAI_API_KEY in Vercel.',
       hint:
-        'In Vercel: Project → Settings → Environment Variables → add ANTHROPIC_API_KEY for Production (and Preview if you test previews). Save, then Deployments → Redeploy — env vars apply at deploy time.',
+        'In Vercel: Project → Settings → Environment Variables → add ANTHROPIC_API_KEY for Production (and Preview if you test previews). Save, then Deployments → Redeploy, env vars apply at deploy time.',
     });
   }
 
@@ -429,7 +429,7 @@ export default async function handler(req, res) {
   // retriever. Uncapped, this was both a token-cost amplifier (~100x on a
   // context-filling summary) and a CPU sink: buildUserPrompt calls
   // retrieveKnowledgeForProduct, whose scoreDocument does an includes() per word
-  // per document across 25 docs — a multi-megabyte summary is ~10^6 words x 25
+  // per document across 25 docs, a multi-megabyte summary is ~10^6 words x 25
   // docs of substring scanning, all billed, before any LLM call happens.
   const capStr = (v, n) => (typeof v === 'string' ? v.replace(/[\r\n]+/g, ' ').trim().slice(0, n) : '');
   const product = {
@@ -454,14 +454,14 @@ export default async function handler(req, res) {
     tryProviders = fallback.filter((p) => providerConfigured(p));
   }
 
-  // Reserve before spending, refund on failure — see the note in product-chat.js.
+  // Reserve before spending, refund on failure, see the note in product-chat.js.
   // The old shape (check -> generate -> increment only on success) let a client
   // force the failure branch with request-body content (e.g. a product.summary
   // that makes the model break the JSON schema, so normalizeParsed returns null)
   // and drive unlimited *billed* generations that never touched the counter.
   //
   // This reservation must come AFTER every synchronous validation above (body
-  // JSON, product/name presence, provider-key configuration) — those can all
+  // JSON, product/name presence, provider-key configuration), those can all
   // fail before any billable call is even attempted, and used to consume a
   // user's quota anyway with no refund path.
   let insightsPeriod = null;
@@ -504,7 +504,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // Nothing usable — hand the quota slot back rather than charging the user for
+  // Nothing usable, hand the quota slot back rather than charging the user for
   // a generation she never received.
   await refundInsights();
   return res.status(502).json({

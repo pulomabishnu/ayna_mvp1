@@ -1,4 +1,4 @@
-/* ayna mobile palette — the single source for color, type and motion.
+/* ayna mobile palette, the single source for color, type and motion.
    ink + paper + four pastels. Older token names used across the app are
    aliased here so every screen draws from the same palette. */
 .ayna-mobile {
@@ -67,7 +67,7 @@
 .ayna-mobile[data-screen='community'] { --ay-section: var(--ay-mint); }
 .ayna-mobile { --ay-gutter: 20px; }
 
-/* Paper grain over the whole app — subtle, never blocks taps */
+/* Paper grain over the whole app, subtle, never blocks taps */
 .ayna-mobile.ayna-mobile::after { background: url('/images/ayna-grain-mobile.svg') repeat !important; background-size: 180px 180px !important; opacity: .09 !important; mix-blend-mode: multiply !important; z-index: 2147483000 !important; pointer-events: none !important; }
 .ayna-mobile[data-theme='dark']::after { mix-blend-mode: screen !important; opacity: .06 !important; }
 @media (prefers-reduced-transparency: reduce) { .ayna-mobile.ayna-mobile::after { display: none; } }

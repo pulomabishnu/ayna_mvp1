@@ -10,6 +10,7 @@ import '../styles/eco-redesign.css';
 import '../styles/landing.css';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } from '../data/products';
 import ProductCard from './ProductCard';
+import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { edgeFadeRef } from '../utils/edgeFade';
 import { getVerificationLinks } from '../utils/verificationLinks';
 
@@ -116,7 +117,7 @@ function productTypeOptions() {
 }
 
 /** Mirrors Discovery's "Ayna" match-quality filter, minus the quiz-derived
- * best-match ranking that only Discovery has access to — here "Best Match"
+ * best-match ranking that only Discovery has access to, here "Best Match"
  * just means "already recommended to you," and "In My Ecosystem" is only
  * meaningful (and only passed) for the returning-user shop. */
 function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
@@ -131,7 +132,7 @@ function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
 /**
  * Turn a free-text query into the discovery view's filter options, so the hero
  * search and the chips land on a pre-filtered feed instead of a raw text search.
- * Carried over from the previous hero — the routing rules are unchanged.
+ * Carried over from the previous hero, the routing rules are unchanged.
  */
 function discoveryTargetFor(text) {
   const q = String(text || '').trim();
@@ -244,10 +245,13 @@ function HeroSearch({ onViewDiscovery }) {
       <label className="lx-search__field">
         <span className="lx-sr">Search products</span>
         <svg className="lx-search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
-        <input
+        <SmartSearchInput
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }}
+          onPick={(s) => onViewDiscovery?.(discoveryTargetFor(s.query))}
+          anchor=".lx-search"
           placeholder=" "
           enterKeyHint="search"
           autoComplete="off"

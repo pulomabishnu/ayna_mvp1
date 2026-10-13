@@ -1,5 +1,5 @@
 // ============================================================
-// Ayna Reviews — User ratings and reviews (localStorage)
+// Ayna Reviews, User ratings and reviews (localStorage)
 // ============================================================
 
 const STORAGE_KEY = 'ayna_reviews';
@@ -39,7 +39,7 @@ export function loadAynaReviews() {
  * upserts that whole object as the user's row. Without this hydration step, a
  * second device starts from an EMPTY local blob: the UI shows the 8 reviews
  * loaded from Supabase, but rating a 9th product writes a single-element array
- * over the server row and destroys the other 8 — including the free-text
+ * over the server row and destroys the other 8, including the free-text
  * review bodies.
  */
 export function hydrateAynaReviews(serverReviews) {

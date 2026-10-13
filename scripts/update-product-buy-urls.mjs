@@ -485,7 +485,7 @@ let apiFailures = 0;
 
 for (const [index, product] of batch.entries()) {
   process.stdout.write(
-    `[${index + 1}/${batch.length}] ${product.id} — ${product.name} ... `
+    `[${index + 1}/${batch.length}] ${product.id}, ${product.name} ... `
   );
 
   try {

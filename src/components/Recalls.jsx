@@ -1,14 +1,15 @@
+import SmartSearchInput from './search/SmartSearchInput.jsx';
 import React, { useState } from 'react';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { InfoPage, InfoSection } from './InfoPage';
 
-// EDITORIALLY CURATED HIGHLIGHTS — not a recall feed and not a complete list.
+// EDITORIALLY CURATED HIGHLIGHTS, not a recall feed and not a complete list.
 //
 // This page previously presented these two hardcoded rows as the output of
 // continuous multi-source monitoring ("Real-time monitoring", "scans the
 // following sources daily: FDA · CPSC · EPA · Community Watch"). No code for
 // CPSC, EPA or community scanning exists anywhere in the repo, and this
-// component never called the live FDA endpoint at all — so searching for any
+// component never called the live FDA endpoint at all, so searching for any
 // product outside these two rows printed an affirmative "No alerts found",
 // which is an all-clear the app had not earned.
 //
@@ -53,7 +54,7 @@ export default function Recalls({ myProducts = {} }) {
         >
             <div className="ay-info-search">
                 <label htmlFor="recalls-search" className="ay-info-label">Search the curated notes</label>
-                <input
+                <SmartSearchInput
                     id="recalls-search"
                     type="search"
                     placeholder="Brand or product, e.g. Always, Kotex"

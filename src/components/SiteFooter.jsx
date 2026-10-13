@@ -5,7 +5,7 @@ import '../styles/audit-info.css';
 import '../styles/verify-people.css';
 import '../styles/site-footer.css';
 import { getSupabaseClient } from '../utils/supabaseClient';
-import { installBuyClickTracking, installReferralCapture } from '../utils/badges';
+import { installReferralCapture } from '../utils/badges';
 
 /**
  * Site footer: brand blurb + Explore / Company / Get in touch columns, a
@@ -101,12 +101,10 @@ export default function SiteFooter({
   onViewTermsOfUse,
   onViewHowWeMakeMoney,
 }) {
-  // The footer is on every website page: capture ?ref invite codes and
-  // retailer click-outs here (both idempotent, both no-ops without Supabase).
+  // The footer is on every website page: capture ?ref invite codes here
+  // (idempotent, a no-op without Supabase).
   useEffect(() => {
-    const supabase = getSupabaseClient();
-    installReferralCapture(supabase);
-    installBuyClickTracking(supabase);
+    installReferralCapture(getSupabaseClient());
   }, []);
 
   const openConsumerHealth = () => {

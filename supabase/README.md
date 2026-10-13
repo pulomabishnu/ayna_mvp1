@@ -20,7 +20,7 @@ migration run can report complete success while a live table still lacks a
 column, a composite key, or an RLS policy the app depends on.
 
 ```sh
-# 1. On the live database (READ-ONLY — no writes, no DDL, no row data returned)
+# 1. On the live database (READ-ONLY, no writes, no DDL, no row data returned)
 psql "$DB_URL" -At -f supabase/_introspect.sql > live-schema.json
 #    ...or paste supabase/_introspect.sql into the Supabase SQL Editor and copy
 #    the single result cell into live-schema.json
@@ -29,8 +29,8 @@ psql "$DB_URL" -At -f supabase/_introspect.sql > live-schema.json
 node scripts/diff-schema.mjs live-schema.json
 ```
 
-It compares against `supabase/expected-schema.json` — the same introspection
-query run against a clean local apply of every migration — and ranks findings by
+It compares against `supabase/expected-schema.json`, the same introspection
+query run against a clean local apply of every migration, and ranks findings by
 what actually breaks. Exits non-zero on anything BLOCKING.
 
 Regenerate the reference after any schema change:
@@ -63,7 +63,7 @@ npm run catalog:export   # writes supabase/seed/product_catalog.{json,sql}
 share an id. It currently reports **155 products, 0 duplicates, 0 lossy**.
 
 The client keeps the bundled catalog as a fallback until the table is seeded and
-verified — see the header of `src/utils/productCatalog.js` for the steps that
+verified, see the header of `src/utils/productCatalog.js` for the steps that
 actually shrink the bundle. **The bundle does not shrink until you do that.**
 
 > Curated safety content (`safety`, `doctor_opinion`, `clinician_attribution`)
@@ -98,7 +98,7 @@ do
   psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "supabase/$f"
 done
 
-# Seed the catalog (generated — regenerate with `npm run catalog:export`)
+# Seed the catalog (generated, regenerate with `npm run catalog:export`)
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed/product_catalog.sql
 
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/_verify.sql
@@ -111,7 +111,7 @@ JavaScript destructures. It names the user-visible consequence of each failure.
 ## What was missing from version control
 
 `user_ecosystems`, `user_reviews`, `user_learning_memory`, `user_ai_usage` and the
-`increment_ai_usage` RPC existed only in the hosted project — the database could
+`increment_ai_usage` RPC existed only in the hosted project, the database could
 not be rebuilt from this repo, and a `supabase db reset` would have permanently
 destroyed the ecosystem, reviews and learning memory of every user.
 
@@ -120,11 +120,11 @@ destroyed the ecosystem, reviews and learning memory of every user.
 | Missing piece | Symptom |
 |---|---|
 | `claim_otp_attempt()` | `/api/phone-verify-confirm` returns 500 on **every** attempt |
-| `consume_ai_usage()` | Chat/insights quotas fail **open** — unmetered LLM spend, logged but not blocked |
+| `consume_ai_usage()` | Chat/insights quotas fail **open**, unmetered LLM spend, logged but not blocked |
 | `claim_ecosystem_build()` | Ecosystem build quota fails open |
 | `release_ecosystem_build()` | A failed build permanently burns the user's one lifetime build |
 | Composite key on `user_ecosystems` | Every product write raises `42P10`; the UI shows success and the data is lost |
-| `user_ecosystems` UPDATE/DELETE policy | Clearing the ecosystem is a silent 0-row no-op — stale products reappear |
+| `user_ecosystems` UPDATE/DELETE policy | Clearing the ecosystem is a silent 0-row no-op, stale products reappear |
 | A SELECT policy on `pending_phone_verifications` | **Account takeover.** See below. |
 
 ## Two deliberate security decisions
@@ -133,7 +133,7 @@ destroyed the ecosystem, reviews and learning memory of every user.
 client access; the service-role key bypasses RLS so the API still works. It
 previously had a `select own` policy, which was an account-takeover path: an
 attacker starts verification for the *victim's* number, so the row is created
-under the *attacker's* `user_id` and RLS hands them their own row — including
+under the *attacker's* `user_id` and RLS hands them their own row, including
 `code_hash`. That hash was an unsalted `sha256(user_id:code)` over a 10⁶ keyspace
 with a `user_id` they already know; recovery was measured at **1.85 seconds**.
 It is now an HMAC with a server-side pepper (`OTP_PEPPER`), so a leaked row is not

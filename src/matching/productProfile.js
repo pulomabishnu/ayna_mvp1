@@ -11,8 +11,14 @@
 // The relevance rules (RELEVANCE_RULES) and the safety text rules
 // (ATTRIBUTE_RULES, PREGNANCY_RULES) are plain tables so a clinician can
 // review them line by line.
+//
+// The product passport (src/data/passport) is read on top of the catalog:
+// passport status (recalled / discontinued / unavailable), reviewed
+// ingredient, allergen and pregnancy facts, canonical ingredient ids,
+// claim-level evidence and freshness. See passportLayer() below.
 
 import { detectIngredientKeys } from './medications.js';
+import { getPassport, OFF_SHELF_STATUSES } from '../data/passport/index.js';
 
 // ─── Relevance levels (spec) ────────────────────────────────────────────────
 export const LEVEL = { DIRECT: 1.0, STRONG: 0.8, SECONDARY: 0.55, ADJACENT: 0.3, WEAK: 0.1, NONE: 0 };
@@ -775,7 +781,7 @@ function accessFor(product, f, price) {
     national_retailer: retailers.some((r) => NATIONAL_RETAILERS.test(r)),
     in_stock: product.whereToBuyInStock || null,
     service_area: product.serviceArea || product.statesServed || null, // not in catalog today
-    ships_from_eu: price.currency === 'EUR',
+    ships_from_eu: price.currency === 'EUR' || /sold in euros/i.test(String(product?.priceNote || '')),
   };
 }
 
@@ -794,10 +800,16 @@ export function statusFor(product) {
 // CATALOG FRESHNESS (spec B): when ingredients, safety, price and stock were
 // last verified. The catalog has no such dates today, so this is 'unknown'.
 export const FRESHNESS_DAYS = { fresh: 120, aging: 365 };
-export function freshnessFor(product, now = Date.now()) {
+export function freshnessFor(product, now = Date.now(), passportFreshness = null) {
   const raw = product.lastVerified ?? product.verifiedAt ?? product.lastReviewed ?? product.last_reviewed ?? product.priceCheckedAt ?? product.updatedAt ?? null;
   const t = raw ? Date.parse(String(raw)) : NaN;
-  if (!Number.isFinite(t)) return { state: 'unknown', lastVerified: null, ageDays: null };
+  if (!Number.isFinite(t)) {
+    // Passport review dates: past next_review_due is 'stale' (spec 14).
+    if (passportFreshness?.last_verified) {
+      return { state: passportFreshness.state === 'stale' ? 'stale' : 'fresh', lastVerified: passportFreshness.last_verified, ageDays: passportFreshness.age_days ?? null, nextReviewDue: passportFreshness.next_review_due || null, source: 'product passport' };
+    }
+    return { state: 'unknown', lastVerified: null, ageDays: null };
+  }
   const ageDays = Math.max(0, Math.round((now - t) / 86400000));
   return { state: ageDays <= FRESHNESS_DAYS.fresh ? 'fresh' : ageDays <= FRESHNESS_DAYS.aging ? 'aging' : 'stale', lastVerified: String(raw), ageDays };
 }
@@ -914,6 +926,125 @@ export function productSimilarity(a, b) {
   };
 }
 
+
+// ─── Product passport layer ─────────────────────────────────────────────────
+// Canonical ingredient ids / classes that mean an attribute is present.
+// Compared on ids, so "natural rubber latex", "methylparaben" or "sodium
+// salicylate" are recognized however the label spells them.
+export const ATTRIBUTE_INGREDIENTS = {
+  latex: { ids: ['latex'], classes: ['allergen-latex'] },
+  adhesives: { ids: ['adhesive'] },
+  nsaid: { classes: ['nsaid'] },
+  aspirin: { ids: ['sodium-salicylate'] }, // salicylate labels warn people with aspirin allergy
+  hormones: { classes: ['hormone'] },
+  essential_oils: { classes: ['essential-oil'] },
+  parabens: { ids: ['parabens'] },
+  preservatives: { classes: ['preservative'] },
+  soy: { classes: ['allergen-soy'] },
+  dairy: { classes: ['allergen-dairy'] },
+  animal_derived: { classes: ['animal-derived'] },
+  synthetic_materials: { ids: ['polyester', 'spandex', 'tpe', 'silicone', 'superabsorbent-polymer'], classes: ['plastic'] },
+};
+
+function safePassport(product) {
+  try { return getPassport(product); } catch { return null; }
+}
+
+function factText(f) {
+  if (!f || !f.known) return '';
+  const flat = (v) => (v == null ? '' : typeof v === 'string' ? v : Array.isArray(v) ? v.map(flat).join(', ') : typeof v === 'object' ? Object.values(v).map(flat).join(', ') : String(v));
+  return flat(f.value);
+}
+
+// Reviewed label text says "physician" or "healthcare professional" where the
+// catalog rules expect "doctor"; normalize before applying the same rules.
+function normalizeClinician(text) {
+  return String(text || '').toLowerCase().replace(/\b(physicians?|health ?care (professionals?|providers?|practitioners?)|medical professionals?|pharmacists?)\b/g, 'doctor');
+}
+
+const STAGE_RANK = { not_applicable: -1, unknown: 0, verified: 1, caution: 2, contraindicated: 3 };
+function worseStage(a, b) {
+  if (!b || b.overall === 'unknown' || a.overall === 'not_applicable') return a;
+  return STAGE_RANK[b.overall] > STAGE_RANK[a.overall] ? { ...b, evidence_source: 'product passport (reviewed source)' } : a;
+}
+
+/**
+ * What the engine reads from the passport. Missing passport -> everything
+ * unknown, nothing excluded.
+ */
+function passportLayer(product, passport, applicable) {
+  if (!passport) {
+    return { status: null, freshness: null, completeness: null, missingCritical: [], ingredientIds: [], ingredientClasses: [], reviewedText: '', pregnancyText: '', breastfeedingText: '', interactionText: '', known: {}, claims: [], qa: null };
+  }
+  const c = passport.composition;
+  const sf = passport.safety;
+  const reviewed = (f) => Boolean(f?.known && f.reviewed);
+  const reviewedText = [c.ingredients, c.allergens, c.materials, c.fragrance].filter(reviewed).map(factText).join(' . ').toLowerCase();
+  const claimsFact = passport.evidence?.claims;
+  const claims = claimsFact?.known && Array.isArray(claimsFact.value) ? claimsFact.value.filter((x) => x && typeof x === 'object' && x.claim) : [];
+  return {
+    status: passport.status,
+    offShelf: OFF_SHELF_STATUSES.includes(passport.status),
+    freshness: passport.freshness || null,
+    completeness: passport.completeness?.overall ?? null,
+    missingCritical: passport.completeness?.missingCritical || [],
+    ingredientIds: passport.ingredient_ids || [],
+    ingredientClasses: passport.ingredient_classes || [],
+    reviewedText,
+    pregnancyText: reviewed(sf.pregnancy) ? normalizeClinician(factText(sf.pregnancy)) : '',
+    breastfeedingText: reviewed(sf.breastfeeding) ? normalizeClinician(factText(sf.breastfeeding)) : '',
+    interactionText: reviewed(sf.medication_interactions) ? factText(sf.medication_interactions).toLowerCase() : '',
+    // Safety facts we have any information on (catalog or reviewed). Not applicable counts as known.
+    known: {
+      pregnancy: sf.pregnancy?.notApplicable || Boolean(sf.pregnancy?.known) || !applicable,
+      breastfeeding: sf.breastfeeding?.notApplicable || Boolean(sf.breastfeeding?.known) || !applicable,
+      interactions: sf.medication_interactions?.notApplicable || Boolean(sf.medication_interactions?.known),
+      allergens: c.allergens?.notApplicable || Boolean(c.allergens?.known),
+      ingredients: c.ingredients?.notApplicable || Boolean(c.ingredients?.known) || Boolean(c.materials?.known),
+    },
+    claims,
+    qa: passport.qa?.status || null,
+  };
+}
+
+/** Merge a passport-derived attribute status into the catalog one. Unknown is never upgraded to "free of". */
+function mergeAttribute(catalog, reviewed, idHit) {
+  if (catalog.status === 'not_applicable') return catalog;
+  if (idHit) {
+    if (catalog.status === 'no' && !reviewed) return { status: 'unknown', conflict: true, source: 'catalog says free of it, ingredient list names it' };
+    return { status: 'yes', source: 'canonical ingredient id' };
+  }
+  if (!reviewed || reviewed.status === 'unknown') return reviewed?.conflict && catalog.status === 'no' ? { status: 'unknown', conflict: true, source: 'reviewed label conflicts' } : catalog;
+  if (reviewed.status === 'yes' || catalog.status === 'yes') return { status: 'yes', source: reviewed.status === 'yes' ? 'product passport (reviewed source)' : catalog.source };
+  if (reviewed.status === 'no' && catalog.status !== 'yes') return { status: 'no', source: 'product passport (reviewed source)' };
+  return catalog;
+}
+
+/** Claim-level evidence from the passport, per need: strength x (product-specific 1, ingredient-level 0.6). */
+export const CLAIM_STRENGTH = { strong: 1, moderate: 0.7, limited: 0.4, weak: 0.4, none: 0 };
+export const INGREDIENT_LEVEL_WEIGHT = 0.6;
+const GUIDELINE_TYPES = new Set(['clinical_guideline', 'regulatory']);
+function passportClaimEvidence(claims) {
+  const out = {};
+  for (const c of claims) {
+    const text = `${c.claim || ''} ${c.supports || ''}`.toLowerCase();
+    const strength = CLAIM_STRENGTH[String(c.strength || '').toLowerCase()] ?? 0.4;
+    if (!strength) continue;
+    const productSpecific = c.product_specific === true || c.evidence_type === 'product_study';
+    const guideline = GUIDELINE_TYPES.has(c.evidence_type);
+    const value = strength * (productSpecific ? 1 : guideline ? 0.8 : INGREDIENT_LEVEL_WEIGHT);
+    for (const [need, re] of Object.entries(NEED_CLAIM_WORDS)) {
+      if (!re.test(text)) continue;
+      const row = out[need] || { score: 0, product_specific: 0, ingredient_level: 0, guideline: 0, claims: [] };
+      row.score = Math.max(row.score, value);
+      if (productSpecific) row.product_specific += 1; else if (guideline) row.guideline += 1; else row.ingredient_level += 1;
+      row.claims.push({ claim: c.claim, strength: c.strength || null, evidence_type: c.evidence_type || null, product_specific: productSpecific, source_url: c.source_url || null });
+      out[need] = row;
+    }
+  }
+  return out;
+}
+
 // ─── Build + cache ──────────────────────────────────────────────────────────
 const CACHE = new Map();
 export function clearProductProfileCache() { CACHE.clear(); }
@@ -948,8 +1079,18 @@ export function buildProductProfile(product) {
   const sText = safetyText(product);
   const ctx = { isDigital, ingested, text: sText };
 
+  const passport = safePassport(product);
+  const ppLayer = passportLayer(product, passport, true);
+  const idSet = new Set(ppLayer.ingredientIds);
+  const classSet = new Set(ppLayer.ingredientClasses);
   const safety = {};
-  for (const [attr, rule] of Object.entries(ATTRIBUTE_RULES)) safety[attr] = attributeStatus(product, attr, rule, ctx);
+  for (const [attr, rule] of Object.entries(ATTRIBUTE_RULES)) {
+    const catalog = attributeStatus(product, attr, rule, ctx);
+    const reviewed = ppLayer.reviewedText ? attributeStatus({ avoidIfSensitivity: [] }, attr, rule, { ...ctx, text: ppLayer.reviewedText }) : null;
+    const m = ATTRIBUTE_INGREDIENTS[attr];
+    const idHit = Boolean(m && ((m.ids || []).some((id) => idSet.has(id)) || (m.classes || []).some((c) => classSet.has(c))));
+    safety[attr] = passport ? mergeAttribute(catalog, reviewed, idHit) : catalog;
+  }
 
   // Pregnancy / breastfeeding safety only matters for things that act on or
   // enter the body. Apps, services and support garments are not_applicable.
@@ -957,8 +1098,9 @@ export function buildProductProfile(product) {
     || product.internal === true || ['sex-tech', 'cramp-relief', 'incontinence', 'intimate-care'].includes(f.cat)
     || (f.cat === 'pelvic-floor' && formats.includes('device'));
   const stText = statementText(product);
-  const pregnancy = stageSafety(stText, PREGNANCY_RULES, bodyContact && !isDigital);
-  const breastfeeding = stageSafety(stText, BREASTFEEDING_RULES, bodyContact && !isDigital);
+  const stageApplies = bodyContact && !isDigital;
+  const pregnancy = worseStage(stageSafety(stText, PREGNANCY_RULES, stageApplies), ppLayer.pregnancyText ? stageSafety(ppLayer.pregnancyText, PREGNANCY_RULES, stageApplies) : null);
+  const breastfeeding = worseStage(stageSafety(stText, BREASTFEEDING_RULES, stageApplies), ppLayer.breastfeedingText ? stageSafety(ppLayer.breastfeedingText, BREASTFEEDING_RULES, stageApplies) : null);
 
   // Relevance. Unconditional levels merge by MAX; contextual levels are kept
   // separately (with the contexts they require) and only count at scoring
@@ -999,6 +1141,7 @@ export function buildProductProfile(product) {
   const evidenceTotal = evidence.product_specific + evidence.ingredient_specific + evidence.clinical_guideline;
   const evidenceConfidence = Math.min(1, (evidence.product_specific * 2 + evidence.ingredient_specific + evidence.clinical_guideline) / 4) * (evidence.strength === 'limited' ? 0.5 : 1);
   const claimEvidence = claimEvidenceFor(product, brand.name, Object.keys(relevance));
+  const passportClaims = passportClaimEvidence(ppLayer.claims);
   const health_need_relevance = Object.fromEntries(Object.entries(relevance)
     .filter(([, e]) => e.score > 0 || e.contextual.length)
     .map(([need, e]) => [need, {
@@ -1029,8 +1172,9 @@ export function buildProductProfile(product) {
     Boolean(brand.name),
     Object.values(health_need_relevance).some((e) => e.score >= 0.55 || e.contextual.some((c) => c.level >= 0.55)),
   ];
-  const freshness = freshnessFor(product);
-  const status = statusFor(product);
+  const freshness = freshnessFor(product, Date.now(), ppLayer.freshness);
+  const catalogStatus = statusFor(product);
+  const status = catalogStatus.state === 'active' && ppLayer.offShelf ? { state: ppLayer.status, source: 'product passport' } : catalogStatus;
   const pricing = pricingFor(price, product, f);
   const effort = effortFor(f, formats, price, isCareService(f));
 
@@ -1086,6 +1230,19 @@ export function buildProductProfile(product) {
     effort,            // { level, label }
     mechanism: mechanismFor(matchedRules, formats),
     claim_evidence: claimEvidence,
+    // Product passport (src/data/passport). Confidence only, plus safety unknowns.
+    passport: {
+      status: ppLayer.status,
+      qa: ppLayer.qa,
+      completeness: ppLayer.completeness,
+      missing_critical: ppLayer.missingCritical,
+      freshness: ppLayer.freshness ? ppLayer.freshness.state : null,
+      known: ppLayer.known,
+      interaction_text: ppLayer.interactionText,
+      claim_evidence: passportClaims,
+    },
+    ingredient_ids: ppLayer.ingredientIds,
+    ingredient_classes: ppLayer.ingredientClasses,
   };
   profile.values = valuesFor(product, f, safety, brand, pregnancy);
   if (key) CACHE.set(key, profile);

@@ -100,7 +100,7 @@ export default function WebDiscoverDeck({ products = [], quizResults = null, sav
                 ) : (
                   <span className="wdeck-back__label">{quizResults ? 'Not a direct match, but popular' : 'Take the quiz to see why things fit you'}</span>
                 )}
-                {(current.product.summary || current.product.description) && <p className="wdeck-back__summary">{String(current.product.summary || current.product.description).replace(/\s*—\s*/g, ', ').slice(0, 160)}{String(current.product.summary || current.product.description).length > 160 ? '…' : ''}</p>}
+                {(current.product.summary || current.product.description) && <p className="wdeck-back__summary">{String(current.product.summary || current.product.description).replace(/\s*\u2014\s*/g, ', ').slice(0, 160)}{String(current.product.summary || current.product.description).length > 160 ? '…' : ''}</p>}
                 <div className="wdeck-back__price"><b>{formatPrice(current.product).main}</b>{formatPrice(current.product).sub && <small>{formatPrice(current.product).sub}</small>}</div>
               </div>
             </div>

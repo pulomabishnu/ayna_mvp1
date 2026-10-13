@@ -1,17 +1,17 @@
 /**
- * /api/export-data — everything this app holds about the signed-in caller,
+ * /api/export-data, everything this app holds about the signed-in caller,
  * pulled live from the real tables (never a fabricated/placeholder shape).
  * Backs both the "Manage my data" screen (renders this JSON) and "Download
  * my data" (the client turns this same response into a file).
  *
  * Same auth pattern as notification-preferences.js: verifyUser() reads the
- * caller's Supabase JWT from Authorization: Bearer <token> — a user id is
+ * caller's Supabase JWT from Authorization: Bearer <token>, a user id is
  * never trusted from the request. Deployed environments use the existing
  * service-role client; local development can fall back to the caller's JWT
  * plus the public key, with each table's RLS policy enforcing ownership.
  *
  * POST here files a real "delete my account" request (account_deletion_
- * requests table) — kept on this same route rather than a new top-level
+ * requests table), kept on this same route rather than a new top-level
  * api/*.js file per README.md's Vercel function-count guidance. This only
  * records the request; it does not itself purge data (see that table's own
  * header comment for exactly what a real deletion still has to touch).

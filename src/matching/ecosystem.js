@@ -20,7 +20,7 @@
 //   names "best for" roles when they are true.
 
 import { buildProductProfile } from './productProfile.js';
-import { scoreProductForNeed, evaluateSafety, evidenceChannels, TIERS, REQUIRED_FIELD_TEXT } from './score.js';
+import { scoreProductForNeed, evaluateSafety, evidenceChannels, TIERS, REQUIRED_FIELD_TEXT, PRODUCT_INFO_TEXT } from './score.js';
 import { NEED_BY_ID, needPhrase } from './ontology.js';
 
 export const TIE_BREAK = { fsaHsa: 1.5, other: 1.0 };
@@ -182,9 +182,10 @@ function careBundleFor(shelfNeeds, up, getCareResourceBundle) {
  *   limited  only exploratory picks, or limited confidence
  *   none     nothing qualifies: show fewer or zero products, never filler
  */
-function shelfQuality(picks, restrictedCount, needId) {
+function shelfQuality(picks, restrictedCount, needId, userFieldsMissing = true) {
   const phrase = needPhrase(needId);
   if (!picks.length) {
+    if (restrictedCount && !userFieldsMissing) return { quality: 'none', note: `We are still checking safety details for the products that fit ${phrase}, so we are holding them back.` };
     return restrictedCount
       ? { quality: 'none', note: `We need a couple of safety details before we can suggest products for ${phrase}.` }
       : { quality: 'none', note: `We do not have a product we can stand behind for ${phrase} yet, so we are not showing filler.` };
@@ -222,6 +223,7 @@ export function buildEcosystem(up, products, options = {}) {
     let belowThreshold = 0;
     let restrictedCount = 0;
     const missingFields = new Set();
+    const missingProductInfo = new Set();
     let careProminent = up.safety.careProminent;
     for (const pp of profilesById.values()) {
       if (!pp.health_need_relevance[need.id]) continue; // only shelves where it actually scores
@@ -230,7 +232,12 @@ export function buildEcosystem(up, products, options = {}) {
       if (!r.safety.eligible) { excludedCount += 1; continue; }
       if (r.filtered) { excludedCount += 1; continue; }
       if (r.score < minScore || !r.explainable) { belowThreshold += 1; continue; }
-      if (r.restricted && !options.includeRestricted) { restrictedCount += 1; r.safety.missingFields.forEach((f) => missingFields.add(f)); continue; }
+      if (r.restricted && !options.includeRestricted) {
+        restrictedCount += 1;
+        r.safety.missingFields.forEach((f) => missingFields.add(f));
+        (r.safety.missingProductInfo || []).forEach((f) => missingProductInfo.add(f));
+        continue;
+      }
       results.push(r);
     }
     const sorted = sortResults(results, up, profilesById);
@@ -242,7 +249,7 @@ export function buildEcosystem(up, products, options = {}) {
     });
     anyCareProminent = anyCareProminent || careProminent;
     const care = (careProminent || need.id.startsWith('care.')) ? careBundleFor([need.id], up, options.getCareResourceBundle) : null;
-    const quality = shelfQuality(picks, restrictedCount, need.id);
+    const quality = shelfQuality(picks, restrictedCount, need.id, missingFields.size > 0);
     shelves.push({
       needId: need.id,
       label: need.label,
@@ -255,6 +262,8 @@ export function buildEcosystem(up, products, options = {}) {
       restrictedCount,
       missingSafetyFields: [...missingFields],
       missingSafetyText: [...missingFields].map((f) => REQUIRED_FIELD_TEXT[f]).filter(Boolean),
+      missingProductInfo: [...missingProductInfo],
+      missingProductInfoText: [...missingProductInfo].map((f) => PRODUCT_INFO_TEXT[f]).filter(Boolean),
       shortBy: Math.max(0, picksPerNeed - picks.length),
       emptyReason: picks.length ? null : restrictedCount ? 'needs_safety_details' : sorted.length === 0 && belowThreshold > 0 ? 'no_product_meets_quality_bar' : 'no_matching_products',
       quality: quality.quality,

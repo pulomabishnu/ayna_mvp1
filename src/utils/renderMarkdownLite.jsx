@@ -1,21 +1,21 @@
 import React from 'react';
 
 /**
- * Renders the small markdown subset Ask Ayna's LLM replies actually use —
- * **bold**, [links](url), and - / 1. lists — as real React elements. Chat
+ * Renders the small markdown subset Ask Ayna's LLM replies actually use
+ * **bold**, [links](url), and - / 1. lists, as real React elements. Chat
  * text used to be dumped straight into JSX as a plain string, so a reply
  * like "**Flex Cup**" showed the literal asterisks instead of bold text
  * (found live, 2026-08-24 bug bash), on both the global Ask Ayna widget and
  * the product-page Ask Ayna tab.
  *
  * Deliberately NOT a general CommonMark parser and NOT html/dangerouslySet-
- * InnerHTML — LLM output is untrusted text, and building React elements
+ * InnerHTML, LLM output is untrusted text, and building React elements
  * directly (never parsing to an HTML string) means there's no injection
  * surface to sanitize in the first place.
  */
 
 function renderInline(text, keyPrefix) {
-  // [label](url) — only http(s) links accepted; anything else renders as
+  // [label](url), only http(s) links accepted; anything else renders as
   // plain text rather than becoming a live link.
   const linkPattern = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
   const withLinks = [];

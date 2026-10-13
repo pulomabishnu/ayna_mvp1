@@ -1,6 +1,6 @@
 /* Settings + account subpages (ProfileFlow). Functional pages: the system
    shows up through type, spacing, grouped cards, controls and one quiet
-   accent per group — not decoration. */
+   accent per group, not decoration. */
 
 .ay-set-page { background: var(--ay-cream); }
 .ayna-mobile[data-theme='dark'] .ay-set-page { background: transparent; }

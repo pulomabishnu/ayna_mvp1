@@ -15,8 +15,8 @@ export function displayName(product) {
   if (!lowerName.startsWith(lowerBrand)) return name;
   const next = name.charAt(brand.length);
   // Must end on a word boundary: "Saalt Cup" yes, "Saaltwater" no.
-  if (next && !/[\s:–—\-|,®™'’]/.test(next)) return name;
-  const rest = name.slice(brand.length).replace(/^[\s:–—\-|,®™]+/, '').replace(/^['’]s\s+/i, '').trim();
+  if (next && !/[\s:–\u2014\-|,®™'’]/.test(next)) return name;
+  const rest = name.slice(brand.length).replace(/^[\s:–\u2014\-|,®™]+/, '').replace(/^['’]s\s+/i, '').trim();
   // Keep the brand if trimming would leave a single generic word ("Uqora Control" → "Control").
   if (rest.length < 3 || rest.split(/\s+/).length < 2) return name;
   return rest.charAt(0).toUpperCase() + rest.slice(1);

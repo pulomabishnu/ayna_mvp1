@@ -10,24 +10,21 @@ import WhyMatchScreen from './WhyMatchScreen.jsx';
 import { exclusionLines } from '../../utils/matchDisplay.js';
 import MatchPill from '../../components/MatchPill.jsx';
 import ProductSections from '../../components/passport/ProductSections.jsx';
-import { buildProductSections, headerFacts, matchLine } from '../../data/passport/content.js';
+import { matchLine } from '../../data/passport/content.js';
+import { buildGlance, perUnitLabel } from '../../components/pdp/glance.js';
+import { galleryImages, retailerLinks, similarProducts, sameNeedProducts } from '../../components/pdp/commerce.js';
+import GalleryThumbs from '../../components/pdp/GalleryThumbs.jsx';
+import ComparePanel from '../../components/pdp/ComparePanel.jsx';
+import { jumpTo } from '../../components/pdp/jump.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
 import { productHref } from '../../utils/productRoute.js';
-import { getPricePerUnitLabel } from '../../utils/pricePerUnit.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
 import '../pdp.css';
 import '../eco-needs.css';
-
-/** Same '⚠️'-flag convention as getSafetyAlertText in src/components/ProductModal.jsx — surfaces a real, already-on-file safety concern regardless of which tab is open. */
-function getSafetyAlertText(product) {
-  const recalls = product?.safety?.recalls;
-  if (!recalls || !String(recalls).includes('⚠️')) return null;
-  return product?.safety?.opinionAlerts || recalls;
-}
 
 function toneFor(product) {
   const functions = product?.healthFunctions || [];
@@ -38,27 +35,18 @@ function toneFor(product) {
   return 'pink';
 }
 
-function SafetyBanner({ text }) {
-  const [expanded, setExpanded] = useState(false);
+/** One line in the header; the full note lives in the Safety section. */
+function SafetyFlag() {
   return (
-    <div
-      onClick={() => setExpanded((v) => !v)}
-      style={{ margin: '14px var(--ay-gutter, 20px) 0', background: '#FEF2F2', border: '1px solid #991B1B', borderLeft: '4px solid #991B1B', borderRadius: 16, padding: '12px 14px', cursor: 'pointer' }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-        <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 700, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: '#991B1B' }}>Safety note</div>
-        <span style={{ color: '#991B1B', fontSize: 12 }}>{expanded ? '▴' : '▾'}</span>
-      </div>
-      <p style={{ margin: '6px 0 0', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: '#3f3831', display: '-webkit-box', WebkitLineClamp: expanded ? 'unset' : 2, WebkitBoxOrient: 'vertical', overflow: expanded ? 'visible' : 'hidden' }}>
-        {text}
-      </p>
-    </div>
+    <button type="button" className="ay-pdp-safetyflag" onClick={() => jumpTo('ay-sec-safety')}>
+      <span aria-hidden="true">⚠️</span><strong>Safety note on file</strong><span>See it</span>
+    </button>
   );
 }
 
 /**
  * Ask Ayna, ported from AskAynaProductTab in src/components/ProductModal.jsx
- * — same /api/product-chat contract, same getSupabaseClient() bearer-token
+ *, same /api/product-chat contract, same getSupabaseClient() bearer-token
  * auth, same not-signed-in / weekly-limit-reached handling. Only the markup
  * changed (mobile's own inline-style patterns instead of the desktop
  * pdp-* classes).
@@ -237,8 +225,9 @@ export default function ProductDetailScreen({
   // only holds one layer) so "back" from here returns to this product
   // instead of closing straight through to whatever screen sits underneath.
   const [showWhyMatch, setShowWhyMatch] = useState(false);
+  const [photo, setPhoto] = useState(0);
 
-  // Reset per-product UI state on product switch — this screen can receive
+  // Reset per-product UI state on product switch, this screen can receive
   // a new `product` prop without unmounting (MobileApp doesn't key it).
   // Adjusted during render (React's recommended pattern for resetting state
   // when a prop changes) rather than in an effect, to avoid the extra
@@ -247,23 +236,27 @@ export default function ProductDetailScreen({
   if (product?.id !== seenProductId) {
     setSeenProductId(product?.id);
     setPartnerOpen(false);
+    setPhoto(0);
   }
 
-  // Bottom suggestions, same rules as the website product page: picks that
-  // match your profile (when there is one), then more from this category.
+  // Bottom of the page, same as the website: close alternatives in a
+  // compare table, then picks that fit her (or things for the same need).
   const related = useMemo(() => {
-    if (!product || !onOpenProduct) return { matches: [], similar: [] };
+    if (!product) return { compare: [], more: [] };
     const owned = new Set((ecosystemProducts || []).map((p) => p?.id).filter(Boolean));
-    const pool = ALL_PRODUCTS.filter((p) => p && p.id && p.name && p.id !== product.id && !owned.has(p.id));
-    const matches = quizAnswers ? pool
+    const pool = ALL_PRODUCTS.filter((p) => p && p.id && p.name && p.id !== product.id);
+    const compare = onOpenProduct ? similarProducts(product, { pool, limit: 3 }) : [];
+    const used = new Set([...compare.map((p) => p.id), ...owned]);
+    let more = !onOpenProduct ? [] : quizAnswers ? pool
+      .filter((p) => !used.has(p.id))
       .map((p) => ({ p, m: getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts) }))
       .filter(({ m }) => m?.matchStatus === 'scored' && Number.isFinite(m.percent) && m.percent >= 50)
       .sort((a, b) => b.m.percent - a.m.percent)
       .slice(0, 4)
       .map(({ p }) => p) : [];
-    const used = new Set(matches.map((p) => p.id));
-    const similar = pool.filter((p) => !used.has(p.id) && p.category === product.category).slice(0, 4);
-    return { matches, similar };
+    const personal = more.length > 0;
+    if (onOpenProduct && more.length < 4) more = [...more, ...sameNeedProducts(product, { pool, limit: 4 - more.length, exclude: [...used, ...more.map((p) => p.id)] })];
+    return { compare, more, personal };
   }, [product, onOpenProduct, ecosystemProducts, quizAnswers, matchOpts]);
 
   if (!product) {
@@ -304,12 +297,13 @@ export default function ProductDetailScreen({
   const categoryLabel = CATEGORY_LABELS[category] || (category ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '');
   const eyebrowLine = [categoryLabel, brand && String(brand).trim().toLowerCase() !== String(name || '').trim().toLowerCase() ? brand : null].filter(Boolean).join(' · ');
   const buyUrl = getBuyUrl(product);
-  const safetyAlertText = getSafetyAlertText(product);
   const isPartner = isPartnerBrandItem(product);
   const partnerDisclosure = getPartnerDisclosureText(product);
-  // At most four facts; never a claim the engine could not confirm for her.
-  const facts = headerFacts(product, { blockedClaims: matchDetails.blockedClaims || [] });
-  const sections = buildProductSections(product, { details: quizAnswers ? matchDetails : null, whyMatched });
+  const glance = buildGlance(product, { details: quizAnswers ? matchDetails : null, whyMatched });
+  const images = galleryImages(product);
+  const shownImage = images[Math.min(photo, Math.max(images.length - 1, 0))] || image;
+  const retailers = retailerLinks(product, buyUrl);
+  const matchFor = quizAnswers ? (p) => { const d = getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts); return d?.matchStatus === 'scored' ? d.percent : null; } : null;
   const openProductByName = (target) => {
     const found = ALL_PRODUCTS.find((p) => String(p?.name || '').toLowerCase() === String(target || '').toLowerCase());
     if (found && onOpenProduct) onOpenProduct(found);
@@ -333,7 +327,7 @@ export default function ProductDetailScreen({
 
   const tone = toneFor(product);
   const shownName = displayName(product);
-  const perUnit = getPricePerUnitLabel(product);
+  const perUnit = perUnitLabel(product);
   // Same price model as the cards (and the website): short main + detail line.
   const shownPrice = formatPrice(product);
   const hasDisplayPrice = shownPrice.main !== 'Price at retailer';
@@ -363,9 +357,10 @@ export default function ProductDetailScreen({
               overflow: 'hidden',
             }}
           >
-            <ProductImage product={product} src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
+            <ProductImage key={shownImage} product={product} src={shownImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
           </div>
         </div>
+        {images.length > 1 && <div className="ay-pdp-thumbs"><GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={name} /></div>}
 
         <div className="ayna-fresh-detail-title ay-pdp-title ay-pdp-head2">
           {eyebrowLine && <div className="ay-pdp-eyebrow">{eyebrowLine}</div>}
@@ -381,10 +376,14 @@ export default function ProductDetailScreen({
           </div>}
           {(matchDetails.matchStatus === 'no-relevance' || matchDetails.matchStatus === 'excluded') && quizAnswers && <button type="button" className="ay-pdp-fitnote" onClick={openWhyMatch}>{matchDetails.matchStatus === 'excluded' ? (exclusions[0] || 'Not a fit right now') : 'No clear match'} <span aria-hidden="true">→</span></button>}
           {matchDetails.matchStatus === 'no-profile' && <button type="button" className="ayna-figma-guest-match" onClick={onStartQuiz}>See your match <span aria-hidden="true">↗</span></button>}
-          {facts.length > 0 && (
-            <ul className="ay-pdp-facts2" aria-label="About this product">
-              {facts.map((f) => <li key={f.label} className={`is-${f.type}`}>{f.type === 'check' && <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>}{f.label}</li>)}
-            </ul>
+          {glance?.alert && <SafetyFlag />}
+          {retailers.length > 0 && (
+            <div className="ay-retailers">
+              <span id="ay-pdp-also-at">Also at</span>
+              <ul aria-labelledby="ay-pdp-also-at">
+                {retailers.map((r) => <li key={r.url}><a href={r.url} target="_blank" rel="noopener noreferrer">{r.name}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg></a></li>)}
+              </ul>
+            </div>
           )}
         </div>
 
@@ -397,33 +396,47 @@ export default function ProductDetailScreen({
           </div>
         )}
 
-        {safetyAlertText && <SafetyBanner text={safetyAlertText} />}
 
         <div className="ay-pdp-passport">
           <ProductSections
             key={product.id}
-            sections={sections}
+            glance={glance}
             onXref={openProductByName}
             extras={{ match: <button type="button" className="ay-psec-action" onClick={openWhyMatch}>See the full breakdown</button> }}
-            extraSections={[{ id: 'ask', title: 'Ask ayna', preview: 'Ask a question', node: <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} /> }]}
+            extraNav={[{ id: 'ask', label: 'Ask ayna' }, ...(related.compare.length ? [{ id: 'compare', label: 'Compare' }] : [])]}
           />
+
+          <section className="ay-pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="ay-pdp-ask-h">
+            <div className="ay-pdp-sechead">
+              <h2 id="ay-pdp-ask-h">Questions? Ask ayna</h2>
+              <p>Ask anything about this product.</p>
+            </div>
+            <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} />
+          </section>
+
+          {related.compare.length > 0 && (
+            <ComparePanel
+              product={product}
+              others={related.compare}
+              onOpen={(p) => onOpenProduct(p)}
+              matchFor={matchFor}
+              renderThumb={(p) => { const src = galleryImages(p)[0]; return src ? <img src={src} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : null; }}
+            />
+          )}
+
           {onToggleOmit && <div className="ay-pdp-omit"><button type="button" onClick={onToggleOmit} aria-pressed={isOmitted}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button>{isOmitted && <small>Hidden from your matches.</small>}</div>}
         </div>
+
+        {related.more.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-more">
+          <div className="ay-pdp-sechead"><h2 id="ay-pdp-related-more">You may also like</h2><p>{related.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p></div>
+          <div className="ayna-editorial-product-grid">{related.more.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
+        </section>}
 
         {onCommunityAction && <section className="ay-pdp-community-actions" aria-label="Community">
           <div className="ay-pdp-community-head"><svg viewBox="0 0 24 24" aria-hidden="true">{PANEL_ICONS.community}</svg><h2>Community</h2></div>
           <div className="ay-pdp-community-grid">
             {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>)}
           </div>
-        </section>}
-
-        {related.matches.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-match">
-          <div className="ayna-cabinet-section-head"><h2 id="ay-pdp-related-match">Matches your profile</h2></div>
-          <div className="ayna-editorial-product-grid">{related.matches.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
-        </section>}
-        {related.similar.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-similar">
-          <div className="ayna-cabinet-section-head"><h2 id="ay-pdp-related-similar">{related.matches.length > 0 ? 'More like this' : 'You might also like'}</h2></div>
-          <div className="ayna-editorial-product-grid">{related.similar.map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
         </section>}
 
         {reads.length > 0 && (

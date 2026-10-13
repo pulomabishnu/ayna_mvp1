@@ -4,6 +4,8 @@ import SearchBar from '../components/SearchBar.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { buildLibrary } from '../utils/personalReads.js';
 import SuggestBox from '../../components/SuggestBox.jsx';
+import SearchAssist from '../../components/search/SearchAssist.jsx';
+import { searchArticles } from '../../utils/search/index.js';
 import '../library.css';
 
 function ReadState({ value = 0 }) {
@@ -35,7 +37,7 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, readP
 
   let body;
   if (q.length >= 2) {
-    const results = articles.filter((a) => `${a.title} ${(a.tags || []).join(' ')} ${a.teaser || ''}`.toLowerCase().includes(q));
+    const results = searchArticles(query, articles);
     body = results.length ? <div className="ay-lib-grid">{results.map((a) => tile(a))}</div> : <p className="ay-lib-empty">No reads match.</p>;
   } else if (topic !== 'all') {
     const items = topic === 'foryou' ? forYou : (rows.find((r) => r.id === topic)?.items || []);
@@ -54,8 +56,9 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, readP
       <div className="ay-lib-title"><h1>Library</h1>
         <span className="ay-lib-total" aria-label={`${finished} of ${articles.length} finished`}><i style={{ '--p': `${articles.length ? Math.round((finished / articles.length) * 100) : 0}%` }} />{finished}/{articles.length}</span>
       </div>
-      <SearchBar placeholder="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
+      <SearchBar placeholder="Search reads" ariaLabel="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
     </header>
+    {q.length >= 2 && <SearchAssist variant="app" query={query} resultCount={searchArticles(query, articles).length} onUse={setQuery} />}
     {q.length < 2 && <div className="ay-lib-topics" role="group" aria-label="Topics">
       {topics.map(([id, label]) => <button type="button" key={id} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
     </div>}

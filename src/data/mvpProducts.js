@@ -1,5 +1,5 @@
 // ============================================================
-// MVP Focus Products — UTIs, organic cotton, sustainable, PCOS,
+// MVP Focus Products, UTIs, organic cotton, sustainable, PCOS,
 // endometriosis, hormonal health, contraception, pelvic floor,
 // heavy menstrual bleeding, perimenopause/menopause
 // ============================================================
@@ -93,7 +93,7 @@ export const MVP_PHYSICAL = [
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=cystex&restrict_sr=1', text: 'Reddit r/HealthyHooha: Cystex', summary: 'Community discussions on OTC UTI symptom relief.' }] }
     }
   },
-  // ─── ORGANIC COTTON (Cora brand — products listed separately) ─
+  // ─── ORGANIC COTTON (Cora brand, products listed separately) ─
   {
     id: 'p-cora-organic-pads',
     name: 'Cora Organic Pads',
@@ -108,13 +108,13 @@ export const MVP_PHYSICAL = [
     whereToBuy: ['Cora.life', 'Target', 'Amazon'],
     url: 'https://cora.life/',
     // Cora rebranded away from "Organic Pads" naming (their live catalog
-    // now calls this "The Peace-of-Mind Pad") — the live resolver's fuzzy
+    // now calls this "The Peace-of-Mind Pad"), the live resolver's fuzzy
     // name match can't bridge that gap, so hardcoding their verified
     // current photo directly rather than leaving this on a letter avatar.
     // Confirmed live at cora.life/products.json before using.
     image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_POM_Pads_Regular_1000X1000_9e847653-7318-46fb-9fdf-a714e0931031.png?v=1787080092',
     summary: '100% organic cotton pads from Cora. Subscription or one-time. B-Corp, plastic-free packaging.',
-    safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No formal recalls. Note: a 2024 independent lab investigation (Mamavation, using an EPA-certified lab) found organic fluorine — an indicator of PFAS "forever chemicals" — at roughly 30 ppm in a Cora organic-cotton liner product, despite the brand\'s organic marketing. The same investigation found PFAS indicators in about half of tested pad/liner brands, including several other organic ones, while some organic brands tested clean.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.', opinionAlerts: 'Since the 2024 PFAS lab testing news, some shoppers have expressed concern about organic-marketed pads generally, including Cora, and a subset have shifted toward brands that tested clean.' },
+    safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No formal recalls. Note: a 2024 independent lab investigation (Mamavation, using an EPA-certified lab) found organic fluorine, an indicator of PFAS "forever chemicals", at roughly 30 ppm in a Cora organic-cotton liner product, despite the brand\'s organic marketing. The same investigation found PFAS indicators in about half of tested pad/liner brands, including several other organic ones, while some organic brands tested clean.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.', opinionAlerts: 'Since the 2024 PFAS lab testing news, some shoppers have expressed concern about organic-marketed pads generally, including Cora, and a subset have shifted toward brands that tested clean.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Organic cotton reduces exposure to dyes and fragrances that can irritate sensitive skin.',
@@ -146,7 +146,7 @@ export const MVP_PHYSICAL = [
     url: 'https://cora.life/',
     // Cora rebranded away from "Organic Tampons" naming (live catalog now
     // splits this into "The Comfort Fit Tampon" [applicator] and "The
-    // Applicator-Free Tampon") — hardcoding the applicator version's
+    // Applicator-Free Tampon"), hardcoding the applicator version's
     // verified current photo, since applicator is the more common default
     // for a generic "tampons" listing. Confirmed live before using.
     image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_Applicator_Tampons_V3_1000X1000_7f00668b-f217-4371-b8a1-1c3b4ab16741.png?v=1787190945',
@@ -260,7 +260,7 @@ export const MVP_PHYSICAL = [
     userRating: 4.3,
     whereToBuy: ['Amazon', 'PinkStork.com', 'Target'],
     // Was a hardcoded SVG brand-logo image (Pink Stork's own wordmark, not
-    // a bottle photo) — caught by the catalog-wide image sweep.
+    // a bottle photo), caught by the catalog-wide image sweep.
     image: '',
     summary: 'Herbal blend with fennel, dandelion, and ginger to support digestion and ease cycle-related bloating and water retention.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Fennel, dandelion root, ginger, organic ingredients', recalls: 'No recalls.', allergens: 'Vegan, gluten-free', sideEffects: 'Generally well tolerated. Fennel and dandelion may interact with blood thinners or diuretics. Check with a clinician if you take either. Occasional mild GI upset reported.' },
@@ -492,7 +492,7 @@ export const MVP_DIGITAL = [
     whereToBuy: ['Nurx.com'],
     platform: 'Web, app',
     url: 'https://www.nurx.com/',
-    // App Store icon — confirmed via Apple's iTunes Search API (real, brand-
+    // App Store icon, confirmed via Apple's iTunes Search API (real, brand-
     // name-matched result: "Nurx: Birth Control Delivered" by Thirty Madison,
     // Inc., the real company behind Nurx). Verified the icon loads before using.
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4b/c9/d9/4bc9d930-40a1-9566-2ec1-83a23ae06789/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg',
@@ -545,9 +545,9 @@ export const MVP_DIGITAL = [
     userRating: 4.4,
     whereToBuy: ['App Store', 'Google Play'],
     platform: 'iOS, Android',
-    // happiapp.com is a HugeDomains parking listing, not this app's real site —
+    // happiapp.com is a HugeDomains parking listing, not this app's real site
     // couldn't confirm an official domain to source a real image from. Empty,
-    // not the literal /ayna_placeholder.png path — that file is Ayna's own
+    // not the literal /ayna_placeholder.png path, that file is Ayna's own
     // marketing image, hardcoding it here would render OUR branding as if it
     // were a photo of Happi's app. Empty correctly falls back to a letter avatar.
     image: '',

@@ -1,4 +1,4 @@
-/* "Your match" — same card language as the product page. */
+/* "Your match", same card language as the product page. */
 .ayna-mobile .ayna-match-page { background: var(--ay-cream) !important; color: var(--ay-ink); }
 .ayna-mobile.ayna-mobile .ay-match-head { display: flex !important; align-items: center !important; gap: 12px !important; padding: max(18px, env(safe-area-inset-top)) var(--ay-gutter) 6px !important; border: 0 !important; background: transparent !important; }
 .ayna-mobile.ayna-mobile .ay-match-head button { width: 44px !important; height: 44px !important; flex: none; display: grid !important; place-items: center !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; padding: 0 !important; }

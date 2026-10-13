@@ -3,33 +3,33 @@
  * Background AI product discovery.
  *
  * WHY THIS EXISTS: Discovery's grid was capped at the bundled ~158-product
- * catalog + 39 released startups — a fixed number no matter how many real
+ * catalog + 39 released startups, a fixed number no matter how many real
  * women's health products actually exist. This endpoint uses the same
  * search-grounded, anti-hallucination-disciplined generation approach as
  * api/llm-recommendations.js (which already does this well, just scoped to
  * one user's on-demand quiz results) to find REAL products the catalog is
  * missing, and grows the catalog over time instead of shipping a fixed list.
  *
- * SAFETY CONTRACT — read before changing anything in this file.
+ * SAFETY CONTRACT, read before changing anything in this file.
  *
  * Every row this endpoint writes goes in as source='discovered',
  * is_active=false, review_status='pending', UNLESS it clears the narrow
  * auto-approval gate in isAutoApprovable() (a fully-answered, clean FDA
  * recall check AND a real https source URL the model was confident enough to
- * name) — see that function for exactly what "narrow" means. Everything else
+ * name), see that function for exactly what "narrow" means. Everything else
  * stays pending until a human runs scripts/review-discovered-products.mjs and
  * explicitly approves it (which flips is_active=true). The is_active=false
- * default (and the auto-approval gate's conditions) are enforced twice —
- * here, and again in supabase/product_catalog_discovery.sql's RLS policy —
+ * default (and the auto-approval gate's conditions) are enforced twice
+ * here, and again in supabase/product_catalog_discovery.sql's RLS policy
  * because the site's own How We Make Money page promises every product
  * passes the same clinical/safety review, partner or not. An AI search
- * result is a candidate, not a review — auto-approval is a policy decision
+ * result is a candidate, not a review, auto-approval is a policy decision
  * (Aditi, 2026-08-23) to let the two strongest confidence signals already
  * collected stand in for a human on the clearest cases, not a loosening of
  * that promise for anything the pipeline is less than fully sure about.
  *
  * Cron-triggered only, same CRON_SECRET Bearer-auth pattern as
- * api/fda-recall.js's sweep mode — see that file's header comment for why the
+ * api/fda-recall.js's sweep mode, see that file's header comment for why the
  * secret must be set at all before anything runs, not just checked.
  */
 import { createClient } from '@supabase/supabase-js';
@@ -39,12 +39,12 @@ import { checkRecallsForProduct } from './fda-recall.js';
 import { lookupDsldProduct } from './llm-recommendations.js';
 
 // One category discovered per run, rotated deterministically across
-// RUN_HOURS_UTC.length runs/day — not every category every run. A full sweep
+// RUN_HOURS_UTC.length runs/day, not every category every run. A full sweep
 // every run would mean N categories x (1 search + 1 LLM call + up to 8 recall
 // lookups + DSLD lookups) every single invocation, most of it re-discovering
 // the same handful of real brands in a slow-moving market. Rotating means the
 // whole list gets a pass roughly every CATEGORIES.length / RUN_HOURS_UTC.length
-// days — this is a deliberately conservative cost/quality tradeoff, not a
+// days, this is a deliberately conservative cost/quality tradeoff, not a
 // technical limit, and the slot count is the throughput knob: more slots/day
 // means faster catalog growth at proportionally higher LLM/search cost.
 export const CATEGORIES = [
@@ -122,7 +122,7 @@ export function slugify(s) {
  * Dedup key from "brand name" concatenated into ONE slug, not two separate
  * fields joined by a delimiter. A lot of this catalog's older entries fold
  * the brand into `name` with no separate `brand` field at all (e.g.
- * `{ name: 'LOLA Organic Cotton Pads' }`, no `brand` key) — a discovered
+ * `{ name: 'LOLA Organic Cotton Pads' }`, no `brand` key), a discovered
  * candidate with `{ brand: 'LOLA', name: 'Organic Cotton Pads' }` is the same
  * real product, but a two-part "brand::name" key never collides across that
  * split. Concatenating first means both produce the identical slug.
@@ -162,17 +162,17 @@ You are helping Ayna, a women's health product discovery platform, find REAL pro
 
 CATEGORY: ${label} (internal category key: "${category}")
 ${searchContext}
-ALREADY IN CATALOG — do not suggest any of these, or an obvious variant of them (same brand+product):
+ALREADY IN CATALOG, do not suggest any of these, or an obvious variant of them (same brand+product):
 ${excludeNames.slice(0, 120).join(', ') || 'none'}
 
-ANTI-HALLUCINATION — this is the most important rule:
+ANTI-HALLUCINATION, this is the most important rule:
 - ONLY name a brand you are CERTAIN exists and currently sells in the US. Test: can you state the real website domain? If not, do not include it.
 - Never invent a product line or SKU. Never combine a real brand with a product it doesn't actually make.
 - Every product must be something a woman could search for right now and find for sale.
 
-QUALITY BAR — only include a product if it plausibly has: majority positive reviews from real women, a real US-available brand, and no obvious red flags. Do not include anything you're not confident is real and currently sold.
+QUALITY BAR, only include a product if it plausibly has: majority positive reviews from real women, a real US-available brand, and no obvious red flags. Do not include anything you're not confident is real and currently sold.
 
-TASK: Suggest up to ${MAX_CANDIDATES_PER_RUN} real, currently-sold products in this category that are NOT in the exclusion list above. Fewer is fine if you're not confident about more — never pad the list with a guess.
+TASK: Suggest up to ${MAX_CANDIDATES_PER_RUN} real, currently-sold products in this category that are NOT in the exclusion list above. Fewer is fine if you're not confident about more, never pad the list with a guess.
 
 Return ONLY valid JSON, exactly this shape:
 {
@@ -211,7 +211,7 @@ export function buildExclusionSet(category, dbRows) {
 /** Enrich one candidate with a real recall check, and DSLD ingredients if it claims to be a supplement. */
 async function enrichCandidate(candidate, category) {
   const recall = await checkRecallsForProduct({ name: candidate.name, brand: candidate.brand, category });
-  // 'failed' means we know NOTHING about this product's recall status — same
+  // 'failed' means we know NOTHING about this product's recall status, same
   // three-state contract as fda-recall.js's own header comment. Don't insert
   // a health-product row with an unknown safety state; skip it this run, it
   // can be picked up again next rotation.
@@ -227,7 +227,7 @@ async function enrichCandidate(candidate, category) {
     ...candidate,
     safety: {
       recalls: recall.hasRecalls
-        ? `⚠️ Active FDA recall record(s) found — review before approving.`
+        ? `⚠️ Active FDA recall record(s) found, review before approving.`
         : 'No recalls found.',
       materials: dsldIngredients,
       sideEffects: '',
@@ -286,25 +286,25 @@ export function toRow(candidate, { category, searchHits, provider }) {
 
 /**
  * A candidate auto-approves ONLY when BOTH of the strongest confidence
- * signals already collected for it are clean — everything else stays
+ * signals already collected for it are clean, everything else stays
  * pending, exactly as before this gate existed:
  *
  *   1. The FDA recall check fully answered (status === 'ok', not 'partial')
  *      AND found nothing active. 'partial' means some dataset failed to
- *      respond — it could be hiding a real recall, so it does not qualify no
+ *      respond, it could be hiding a real recall, so it does not qualify no
  *      matter how confident the rest of the candidate looks.
- *   2. The model named a real, verifiable https source URL — AND that URL
+ *   2. The model named a real, verifiable https source URL, AND that URL
  *      was actually verified (see verifyUrlIsLive, called at the site that
  *      awaits isAutoApprovable's result). This function only checks the
  *      string exists; url liveness was found live (2026-08-24, full Buy Now
  *      audit) to NOT be checked anywhere despite this docstring's original
- *      claim — every one of the 14 auto-approved discovered products found
+ *      claim, every one of the 14 auto-approved discovered products found
  *      with a dead Buy Now link had passed this gate purely because `!!url`
  *      was true, including two whose domains had expired and now redirect
  *      to an unrelated site (one to a gambling site) while still returning
  *      a 200. A truthy string was never evidence the URL actually works.
  *
- * This is deliberately narrow, not a general "looks fine, ship it" filter —
+ * This is deliberately narrow, not a general "looks fine, ship it" filter
  * see the SAFETY CONTRACT note at the top of this file for why.
  */
 export function isAutoApprovable(row) {
@@ -313,11 +313,11 @@ export function isAutoApprovable(row) {
 }
 
 /**
- * Live-checks a candidate's source URL — the second half of the
+ * Live-checks a candidate's source URL, the second half of the
  * auto-approval bar isAutoApprovable() only checks the string-existence
  * half of. Requires a real 2xx AND that the final (post-redirect) hostname
  * still plausibly belongs to the same site, not a different domain
- * entirely — an expired domain silently parked or resold still returns a
+ * entirely, an expired domain silently parked or resold still returns a
  * 200, just for someone else's page (a domain-broker parking page, or in
  * one case found live, a gambling site), so status code alone isn't enough.
  * A subdomain change (brand.com -> shop.brand.com) is allowed; a different
@@ -408,7 +408,7 @@ export default async function handler(req, res) {
     const rawCandidates = Array.isArray(parsed?.products) ? parsed.products : [];
 
     // Dedup against the catalog, THEN against each other within this same
-    // response — a model asked for "up to 8" has repeated the same product
+    // response, a model asked for "up to 8" has repeated the same product
     // under a slightly different name more than once in testing.
     const seenThisRun = new Set();
     const fresh = rawCandidates.filter((c) => {
@@ -442,7 +442,7 @@ export default async function handler(req, res) {
     }
 
     const rows = enriched.map((c) => toRow(c, { category, searchHits, provider: out.provider }));
-    // Upsert on the deterministic id (brand+name slug) — reinserting the same
+    // Upsert on the deterministic id (brand+name slug), reinserting the same
     // discovered product on a later rotation updates its discovery_meta
     // instead of creating a duplicate row. Never overwrites review_status: if
     // a human already approved or rejected this id, a later re-discovery must
@@ -454,9 +454,9 @@ export default async function handler(req, res) {
     const alreadyReviewed = new Map((existingReviewed || []).map((r) => [r.id, r.review_status]));
 
     // Auto-approval only ever applies to brand-new rows, never to
-    // toUpdateMetaOnly — a human's prior verdict on an id is never touched.
+    // toUpdateMetaOnly, a human's prior verdict on an id is never touched.
     // verifyUrlIsLive is a real network call, so only pay for it on rows that
-    // already cleared the (free, synchronous) rest of isAutoApprovable — a
+    // already cleared the (free, synchronous) rest of isAutoApprovable, a
     // row failing on the recall check shouldn't also wait on a fetch whose
     // result can't change the outcome.
     const newRows = rows.filter((r) => !alreadyReviewed.has(r.id));

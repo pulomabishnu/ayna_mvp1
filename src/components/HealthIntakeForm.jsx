@@ -101,7 +101,7 @@ function Chip({ label, selected, onClick, small, title }) {
 
 // `glossary` looks each item's plain-language explanation up (via findGlossaryTermInText, so it
 // still matches e.g. "PCOS management (...)" containing "PCOS") and shows it as a native hover/
-// long-press tooltip — without renaming the option value itself, since several of these strings
+// long-press tooltip, without renaming the option value itself, since several of these strings
 // (PCOS, endometriosis, UTI support, ...) are matched elsewhere in the app as literal keys.
 function ChipGrid({ items, selected = [], onToggle, small, glossary = false }) {
   return (
@@ -180,7 +180,7 @@ function TextInput({ value, onChange, placeholder, type = 'text' }) {
 
 // Popular default suggestions shown before the user types anything, so the
 // picker isn't a blank box on a screen whose whole job is "search for a
-// product" — sorted by userRating, the same quality signal Discovery uses.
+// product", sorted by userRating, the same quality signal Discovery uses.
 const DEFAULT_PRODUCT_SUGGESTIONS = ALL_PRODUCTS
   .filter((p) => p.name && p.userRating != null)
   .sort((a, b) => b.userRating - a.userRating)
@@ -197,7 +197,7 @@ function ProductSearchPicker({ selected = [], onAdd, onRemove, placeholder }) {
       return DEFAULT_PRODUCT_SUGGESTIONS.filter((p) => !selected.includes(p.name)).slice(0, 6);
     }
     if (q.length < 2) return [];
-    // Whitespace-insensitive on top of substring match — "Diva Cup" should find
+    // Whitespace-insensitive on top of substring match"Diva Cup" should find
     // "DivaCup", "always infinity" should find "Always Infinity", etc. Product
     // names in the catalog aren't consistently spaced/cased with how people type.
     const qNorm = normalizeForMatch(q);
@@ -349,7 +349,7 @@ function SkipLink({ onClick, label = 'Skip this step →' }) {
   );
 }
 
-/** Resolves a 5-digit US zip to "City, ST" via Photon (free, keyless, CORS-open geocoder) — best-effort only, never blocks the form. */
+/** Resolves a 5-digit US zip to "City, ST" via Photon (free, keyless, CORS-open geocoder), best-effort only, never blocks the form. */
 async function lookupZipLocation(zip, signal) {
   try {
     const res = await fetch(`https://photon.komoot.io/api/?q=${zip}&limit=5&osm_tag=place:postcode`, { signal });
@@ -416,7 +416,7 @@ export default function HealthIntakeForm({ onComplete }) {
   const progressPct = Math.round(((currentIndex + 1) / total) * 100);
 
   // Warn before losing quiz progress on tab close/refresh once she's past
-  // the first screen — mirrors the same beforeunload guard App.jsx uses for
+  // the first screen, mirrors the same beforeunload guard App.jsx uses for
   // the post-completion, pre-sign-in window (see that file's comment).
   useEffect(() => {
     if (currentIndex <= 0) return undefined;
@@ -476,7 +476,7 @@ export default function HealthIntakeForm({ onComplete }) {
     };
     // A silent `catch (_) {}` here meant a signed-in user could complete the
     // entire ~20-question intake, have the upsert fail (expired token, RLS,
-    // network), and be taken straight to her ecosystem as if it had saved —
+    // network), and be taken straight to her ecosystem as if it had saved
     // because the LLM builds from the in-memory copy. On her next visit
     // quizResults is null and she is asked to retake the whole thing.
     // saveHealthIntakeForCurrentUser also RETURNS {saved:false} without throwing

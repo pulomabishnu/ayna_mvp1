@@ -46,7 +46,7 @@ function readRaw() {
     if (parsed && (parsed.decision === 'granted' || parsed.decision === 'denied') && parsed.timestamp) {
       return parsed;
     }
-  } catch { /* not JSON — treat as no decision */ }
+  } catch { /* not JSON, treat as no decision */ }
   return null;
 }
 
@@ -86,7 +86,7 @@ function persist(decision) {
       CONSENT_STORAGE_KEY,
       JSON.stringify({ decision, timestamp: new Date().toISOString() })
     );
-  } catch { /* private mode — the SDK-level state still applies */ }
+  } catch { /* private mode, the SDK-level state still applies */ }
 }
 
 /**
@@ -130,8 +130,8 @@ export function denyConsent(ph) {
  * GLOBAL PRIVACY CONTROL (GPC), REGION-SCOPED: honored only where a state's
  * privacy law actually mandates it (see isMandatoryGpcVisitor() below and
  * api/_gpcRegions.js for the state list and its legal caveats), not for
- * every GPC-sending browser everywhere. GPC's legal scope is narrow — an
- * opt-out of "sale"/"sharing" of personal information — and this app's
+ * every GPC-sending browser everywhere. GPC's legal scope is narrow, an
+ * opt-out of "sale"/"sharing" of personal information, and this app's
  * analytics is neither. main.jsx starts every GPC sender opted out
  * synchronously (safe default, since we can't know their region yet at
  * init time), then asynchronously confirms via isMandatoryGpcVisitor(): if
@@ -139,7 +139,7 @@ export function denyConsent(ph) {
  * the same default-on state as everyone else.
  */
 
-/** Sync — reads the browser's own signal, no network call. */
+/** Sync, reads the browser's own signal, no network call. */
 export function isGpcActive() {
   try {
     return typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
@@ -153,7 +153,7 @@ let mandatoryRegionPromise = null;
 /**
  * Asks /api/gpc-region whether this visitor is in a state that legally
  * mandates honoring GPC. Cached at module scope. FAILS CLOSED (resolves
- * true) on any error, non-OK response, or timeout — see the fail-closed
+ * true) on any error, non-OK response, or timeout, see the fail-closed
  * rationale in api/gpc-region.js.
  */
 function checkMandatoryGpcRegion() {
@@ -178,7 +178,7 @@ function checkMandatoryGpcRegion() {
 
 /**
  * Is this visitor someone GPC must be honored for? False immediately (no
- * network call) if GPC isn't active at all — the region check only ever
+ * network call) if GPC isn't active at all, the region check only ever
  * runs for the minority of visitors whose browser actually sends the
  * signal.
  * @returns {Promise<boolean>}

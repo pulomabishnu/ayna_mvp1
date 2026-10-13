@@ -27,7 +27,7 @@ export function buildDiscoveryProfileSummary({
   }
   if (quizResults?.sensitivities?.length) {
     sentences.push(
-      `Sensitivities on file: ${quizResults.sensitivities.slice(0, 5).join(', ')}—always check labels and ask your clinician when unsure.`
+      `Sensitivities on file: ${quizResults.sensitivities.slice(0, 5).join(', ')}, always check labels and ask your clinician when unsure.`
     );
   }
 

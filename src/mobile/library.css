@@ -1,4 +1,4 @@
-/* Library (health education) — 8pt rhythm, same card language as the app */
+/* Library (health education), 8pt rhythm, same card language as the app */
 .ayna-mobile .ay-lib { flex: 1; min-height: 0; overflow-y: auto; background: var(--ay-cream); color: var(--ay-ink); padding-bottom: calc(var(--ayna-bottom-nav-height, 80px) + 24px); }
 .ay-lib-head { padding: 8px var(--ay-gutter) 16px; }
 .ay-lib-head h1 { margin: 0 0 16px; font: 800 calc(36px * var(--ayna-text-scale, 1))/1 var(--ay-font-display); letter-spacing: -.045em; }
@@ -30,7 +30,7 @@
 .ayna-mobile[data-theme='dark'] .ay-lib-progress i { background: rgba(255,255,255,.18); }
 .ayna-mobile[data-theme='dark'] .ay-lib-progress i::after { background: var(--ayna-heading, #fff); }
 
-/* Article reading status — sticky at the top of the article */
+/* Article reading status, sticky at the top of the article */
 .ay-read-status { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 10px var(--ay-gutter); background: var(--ay-cream); border-bottom: 1px solid var(--ay-line); }
 .ay-read-status-bar { flex: 1; height: 6px; border-radius: 99px; background: var(--ay-tile); overflow: hidden; }
 .ay-read-status-bar i { display: block; height: 100%; border-radius: inherit; background: var(--ay-ink); transition: width .15s linear; }

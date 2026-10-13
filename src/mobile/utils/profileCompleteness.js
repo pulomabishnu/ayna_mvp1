@@ -1,16 +1,16 @@
 // Single source of truth for "how complete is this person's health
-// profile" — used both to show a real percentage on the Profile hub
+// profile", used both to show a real percentage on the Profile hub
 // (ProfileFlow.jsx) and to decide which intake step to jump back to when
 // someone wants to finish it (IntakeScreen.jsx's initialSnapshot/resume
 // mode). Keeping one list instead of two prevents them drifting apart.
 //
 // Operates on quizAnswers.fullHealthIntake, the raw buildSnapshot() output
 // mapIntakeToLegacyQuizProfile() (src/utils/healthIntake.js) tucks onto
-// quizAnswers — NOT the intake wizard's own EMPTY-shaped state (field names
+// quizAnswers, NOT the intake wizard's own EMPTY-shaped state (field names
 // differ in a couple of spots, e.g. fsaHsa vs fsaHsaAnswer).
 //
 // 'trustedBrands' only counts against someone who actually said they stick
-// with brands they trust — IntakeScreen.jsx only shows that step at all
+// with brands they trust, IntakeScreen.jsx only shows that step at all
 // when brandOpenness is one of these two answers, so scoring it against
 // everyone else would ding people for a question they were never asked.
 function trustedBrandsRelevant(intake) {
@@ -46,7 +46,7 @@ export function getProfileCompletionPct(intake) {
 }
 
 // The step id IntakeScreen should land on to help someone finish their
-// profile — the first still-empty one, in wizard order. null means nothing
+// profile, the first still-empty one, in wizard order. null means nothing
 // tracked here is missing.
 export function getFirstIncompleteStepId(intake) {
   if (!intake) return null;

@@ -1,15 +1,15 @@
 /**
- * /api/device-tokens — register the calling device's push-notification token
+ * /api/device-tokens, register the calling device's push-notification token
  * against the authenticated Supabase user.
  *
  * Same auth pattern as notification-preferences.js: verifyUser() reads the
- * caller's Supabase JWT from Authorization: Bearer <token> — a user id is
+ * caller's Supabase JWT from Authorization: Bearer <token>, a user id is
  * never trusted from the request body. Reads/writes use the service-role
  * client in deployed environments, falling back to a caller-scoped client
  * (verifyUserWithRls) for local development without a service-role key; the
  * existing RLS policies then restrict every read/write to auth.uid() = user_id.
  *
- * Registration only — nothing here sends a push. That step needs the APNs
+ * Registration only, nothing here sends a push. That step needs the APNs
  * auth key wired in server-side and is a separate, later piece of work.
  */
 /* global process */

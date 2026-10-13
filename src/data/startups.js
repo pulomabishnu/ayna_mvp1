@@ -1,5 +1,5 @@
 // ============================================================
-// Ayna Startups Database — Real Women's Health Startups
+// Ayna Startups Database, Real Women's Health Startups
 // ============================================================
 // VERIFICATION: Before adding a startup, confirm (1) url resolves and is real,
 // (2) company/product is findable and real. Do not add placeholders or defunct sites.
@@ -213,7 +213,7 @@ export const STARTUPS = [
         spotsLeft: 500,
         url: 'https://hellowisp.com',
         // Was a mismatched third-party trade-press photo of a DIFFERENT
-        // startup's product (Qvin's Q-Pad, from clpmag.com) — verified
+        // startup's product (Qvin's Q-Pad, from clpmag.com), verified
         // replacement is Wisp's own hero image, fetched live from
         // hellowisp.com and confirmed to return a real image (200,
         // image/jpeg) before use.
@@ -245,7 +245,7 @@ export const STARTUPS = [
         stage: 'Available, DTC',
         productReleased: true,
         spotsLeft: 400,
-        // natalist.com now 302-redirects to everlywell.com — same pattern as
+        // natalist.com now 302-redirects to everlywell.com, same pattern as
         // the Favor/Nurx entry fixed earlier today (brand acquired, catalog
         // entry gone stale). Flagging for a content decision rather than
         // guessing: merge into an Everlywell entry, or confirm Natalist still
@@ -253,7 +253,7 @@ export const STARTUPS = [
         // real current URL.
         url: 'https://natalist.com',
         // Was a completely unrelated wild boar stock photo (img.freepik.com)
-        // — cleared rather than guessing a replacement; falls back to the
+        //, cleared rather than guessing a replacement; falls back to the
         // clean initial-letter placeholder until a real, verified photo is
         // sourced.
         image: ''
@@ -483,7 +483,7 @@ export const STARTUPS = [
         spotsLeft: 480,
         url: 'https://www.nurx.com',
         // Was a single unrelated SKU from Nurx's own catalog (a hair-regrowth
-        // product bottle, RegrowRX — reads like a lipstick tube in a small
+        // product bottle, RegrowRX, reads like a lipstick tube in a small
         // card, not representative of the birth-control service this entry
         // is about). Verified replacement is Nurx's own homepage hero image,
         // fetched live and confirmed to return a real image (200, image/png).
@@ -1617,10 +1617,10 @@ export function isStartupUsAvailable(s) {
     return usSignals.some(sig => stage.includes(sig));
 }
 
-/** Startups NOT yet available in the US — shown in the Startups / waitlist section. */
+/** Startups NOT yet available in the US, shown in the Startups / waitlist section. */
 export const UNRELEASED_STARTUPS = STARTUPS.filter(s => !isStartupUsAvailable(s));
 
-/** Startups with US-available products — shown as regular brands, not as startups. */
+/** Startups with US-available products, shown as regular brands, not as startups. */
 export const RELEASED_STARTUPS = STARTUPS.filter(s => isStartupUsAvailable(s));
 
 // ─── STARTUP MATCHING ──────────────────────────────────

@@ -3,7 +3,7 @@ import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 
 // Topic tags from the mobile intake (fullHealthIntake) plus legacy quiz
 // frustrations. The website's getArticlesByProfileRelevance only reads
-// `frustrations`, which the mobile intake rarely fills — so reads looked
+// `frustrations`, which the mobile intake rarely fills, so reads looked
 // generic. This reads the answers people actually give on mobile.
 const RULES = [
   [/heavy|flood|clot|bleed/, ['heavy-flow']],

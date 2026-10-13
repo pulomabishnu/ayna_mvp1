@@ -1,4 +1,4 @@
-/* Product card (grid) — image tile with badge + save inside it; name (≤2 lines); one meta line: brand · price. */
+/* Product card (grid), image tile with badge + save inside it; name (≤2 lines); one meta line: brand · price. */
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) { position: relative !important; display: flex !important; flex-direction: column !important; height: auto !important; gap: 0; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-main { flex: 0 0 auto !important; }
 
@@ -44,7 +44,7 @@
 .ayna-mobile.ayna-mobile .ayna-shop-filter-toggle { width: 40px !important; height: 40px !important; min-width: 40px !important; flex: none; border-radius: 50% !important; display: grid !important; place-items: center !important; }
 .ayna-mobile.ayna-mobile .ay-discover-cta { margin: 0 var(--ay-gutter) 24px !important; }
 .ayna-mobile.ayna-mobile .ayna-category-index .ayna-shop-category-row .ayna-shop-filter-toggle { border-radius: 999px !important; }
-/* "For me" (personalized) switch — light, same switch as Settings */
+/* "For me" (personalized) switch, light, same switch as Settings */
 .ay-for-me { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; margin-left: auto; padding: 0 6px 0 14px; border: 1.5px solid var(--ay-line); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 700 13px/1 var(--ay-font-ui); cursor: pointer; }
 .ay-for-me:disabled { opacity: .45; cursor: not-allowed; }
 .ay-for-me i { position: relative; width: 40px; height: 24px; border-radius: 99px; border: 1.5px solid var(--ay-ink); background: var(--ay-tile); transition: background .18s var(--ay-ease); }
@@ -63,7 +63,7 @@
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-image { border: 0 !important; border-radius: 14px !important; background: var(--ay-cream) !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-match-badge { top: 14px !important; left: 14px !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-card-save { top: 12px !important; right: 12px !important; }
-/* Text block: brand (1 line) / name (2 lines) / price (1 line) — heights reserved */
+/* Text block: brand (1 line) / name (2 lines) / price (1 line), heights reserved */
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { gap: 2px !important; padding: 12px 4px 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-card-brand { order: 0 !important; display: block; width: 100%; height: 16px; font: 600 12.5px/16px var(--ay-font-ui) !important; text-align: center; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-card-brand::after { content: none !important; }
@@ -73,7 +73,7 @@
 .ayna-mobile.ayna-mobile .ayna-figma-discover .ayna-editorial-product-grid:not(.is-list-layout) { row-gap: 12px !important; column-gap: 12px !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) { box-sizing: border-box !important; width: 100% !important; min-width: 0 !important; margin: 0 !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy > strong { align-content: center !important; -webkit-box-pack: center; }
-/* For me switch: even insets — track sits 8px from the pill edge top/right/bottom; knob 3px inside the track */
+/* For me switch: even insets, track sits 8px from the pill edge top/right/bottom; knob 3px inside the track */
 .ay-for-me { height: 40px; min-height: 40px; padding: 0 8px 0 16px; gap: 12px; box-sizing: border-box; font-size: 14px; }
 .ay-for-me i { width: 40px; height: 22px; box-sizing: border-box; border-width: 1.5px; }
 .ay-for-me i b { top: 50%; left: 3px; width: 14px; height: 14px; translate: 0 -50%; }

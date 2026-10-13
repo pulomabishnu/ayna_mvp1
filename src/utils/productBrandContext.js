@@ -60,7 +60,7 @@ export function deriveBrandSearchContext(product) {
   // Only ever use an EXPLICIT brand.
   //
   // This used to fall back to the first two words of the product name whenever
-  // `brand` was absent — which is the common path, since only a handful of
+  // `brand` was absent, which is the common path, since only a handful of
   // catalog entries set it. "Organic Cotton Tampons" produced the brand
   // "Organic Cotton", which was then injected into the prompt as
   // "Brand to surface in searches and narrative: Organic Cotton" and rendered

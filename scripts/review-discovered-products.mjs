@@ -8,7 +8,7 @@
  *   node scripts/review-discovered-products.mjs auto-approved [category]
  *
  * Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in the environment
- * (same as scripts/migrate-premium-flag.mjs — Dashboard -> Project Settings
+ * (same as scripts/migrate-premium-flag.mjs, Dashboard -> Project Settings
  * -> API -> the SERVICE ROLE key, never the anon key).
  *
  * WHY THIS IS A SCRIPT AND NOT ALWAYS AUTO-APPROVAL: every product on this
@@ -20,7 +20,7 @@
  * api/discover-products.js's isAutoApprovable() lets a candidate skip
  * straight to is_active=true WITHOUT this script, but only when it cleared
  * both a fully-answered clean FDA recall check and had a real https source
- * URL — see that function's comment for the exact bar. Those rows are
+ * URL, see that function's comment for the exact bar. Those rows are
  * tagged `discovery_meta.autoApproved: true` so they stay auditable here via
  * `auto-approved` even though they never showed up in `list`. `reject` still
  * works on them exactly like any other discovered row, immediately pulling
@@ -45,14 +45,14 @@ const [, , cmd, ...args] = process.argv;
 function printProduct(row) {
   const recall = row.discovery_meta?.recallCheck;
   const recallLine = recall?.hasRecalls
-    ? '⚠️  ACTIVE RECALL FOUND — do not approve without reading api/fda-recall.js output for this product'
+    ? '⚠️  ACTIVE RECALL FOUND, do not approve without reading api/fda-recall.js output for this product'
     : (recall ? '✓ no recalls found' : '? recall status unknown');
   const hits = row.discovery_meta?.searchHits || [];
 
   console.log(`\n── ${row.id} ${'─'.repeat(Math.max(0, 60 - row.id.length))}`);
-  console.log(`   ${row.name}${row.brand ? ` — ${row.brand}` : ''}`);
+  console.log(`   ${row.name}${row.brand ? `, ${row.brand}` : ''}`);
   console.log(`   category: ${row.category} | type: ${row.product_type} | price: ${row.price || 'unknown'}`);
-  console.log(`   url: ${row.url || '(none — model gave no source URL, verify manually before approving)'}`);
+  console.log(`   url: ${row.url || '(none, model gave no source URL, verify manually before approving)'}`);
   console.log(`   summary: ${row.summary || '(none)'}`);
   console.log(`   safety.recalls: ${row.safety?.recalls || '(unset)'}`);
   console.log(`   recall check: ${recallLine}`);
@@ -111,7 +111,7 @@ async function listAutoApproved(category) {
       : 'No auto-approved discovered products yet.');
     return;
   }
-  console.log(`${data.length} auto-approved discovered product(s)${category ? ` in "${category}"` : ''} — already live, spot-check and reject if anything looks wrong:`);
+  console.log(`${data.length} auto-approved discovered product(s)${category ? ` in "${category}"` : ''}, already live, spot-check and reject if anything looks wrong:`);
   data.forEach(printProduct);
   console.log(`\nPull one offline with:  node scripts/review-discovered-products.mjs reject ${data[0].id}`);
 }
@@ -137,7 +137,7 @@ async function setStatus(ids, status) {
     console.log('No matching discovered products found for the given id(s). (Only source=discovered rows can be reviewed here.)');
     return;
   }
-  data.forEach((r) => console.log(`${status === 'approved' ? '✓ approved' : '✗ rejected'} — ${r.id} (${r.name})`));
+  data.forEach((r) => console.log(`${status === 'approved' ? '✓ approved' : '✗ rejected'}, ${r.id} (${r.name})`));
   const missing = ids.filter((id) => !data.some((r) => r.id === id));
   if (missing.length) console.log(`Not found (or not a discovered row): ${missing.join(', ')}`);
 }

@@ -7,6 +7,8 @@ import { INTAKE_SCENES, SECTION_TONES, SECTION_LABELS } from '../components/inta
 import '../intake-play.css';
 import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
 import QuizIntro from './intake/QuizIntro.jsx';
+import SmartSearchInput from '../../components/search/SmartSearchInput.jsx';
+import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../../utils/search/index.js';
 import {
   ALLERGIES,
   ALLERGY_STATUS,
@@ -61,7 +63,6 @@ import {
   getLifeStages,
   isMinorAge,
   normalizeSuggestion,
-  rankedSuggestions,
   readIntakeDraft,
   reconstructIntakeFromSnapshot,
   requiredReady,
@@ -77,7 +78,7 @@ import {
 // The wizard itself keeps draft edits separate until completion.
 
 // One real icon per product format, keyed to the exact option strings above
-// (design pattern B1/E1 tiles) — line-art only, drawn with `currentColor` so
+// (design pattern B1/E1 tiles), line-art only, drawn with `currentColor` so
 // each tile's badge can recolor with the tile's own selected/unselected ink.
 const FORMAT_ICONS = {
   'Pills or capsules': (
@@ -151,7 +152,7 @@ function AddOwn({ placeholder, onAdd }) {
 /* ---------------------------- Shared style tokens ---------------------------- */
 // Values from the intake design reference (Ayna_Intake_Flow.html), which
 // turned out to already be the app's own --ayna-* palette (surface, border,
-// accent-dark, peach, chip-bg, brown, navy, text-faint) — reused as CSS vars
+// accent-dark, peach, chip-bg, brown, navy, text-faint), reused as CSS vars
 // here rather than re-hardcoded, so this screen gets the app's real dark
 // mode for free instead of staying permanently light like the mockup frame.
 // Choice colors use the app tokens so selection remains legible in both themes.
@@ -169,7 +170,7 @@ const BODY_TEXT = 'var(--ayna-text-muted)';
 /* ------------------------------ Shared widgets ------------------------------ */
 
 // 2-column tile grid (design pattern B1/E1). Callers with real per-option
-// icon art (currently just product formats — see FORMAT_ICONS above) pass an
+// icon art (currently just product formats, see FORMAT_ICONS above) pass an
 // `icons` map to render a small rounded-square badge above the label;
 // callers without one (life stages, which have no matching icon set) get the
 // plain label-only tile exactly as before.
@@ -177,14 +178,14 @@ function ChoiceGrid({ items, selected = [], onToggle, icons, labels, glyphs }) {
   return <StickerGrid items={items} selected={selected} onToggle={onToggle} icons={icons} labels={labels} glyphs={glyphs} />;
 }
 
-// Chip spec (design pattern C1/G1) — flex-wrapped pills, not vertical rows.
+// Chip spec (design pattern C1/G1), flex-wrapped pills, not vertical rows.
 // Used both flat (conditions) and grouped under a label (SearchableGroups).
 function RowChoiceList({ items, selected = [], onToggle }) {
   return <ChipList items={items} selected={selected} onToggle={onToggle} />;
 }
 
 // Shared search-bar chrome (design rule: "search on every list over ~12
-// options") — same pill-shaped input used by SearchableGroups, TokenInput
+// options"), same pill-shaped input used by SearchableGroups, TokenInput
 // and ProductHistoryBuilder, factored out so conditions/avoidIngredients
 // (previously ungrouped flat lists with no filtering at all) can use it too.
 function SearchBar({ value, onChange, placeholder }) {
@@ -199,7 +200,7 @@ function AddCustomChoice({ query, options, onAdd }) {
 
 function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd, placeholder, layout = 'chips', icons, labels, glyphs, searchable = true }) {
   const query = search.trim().toLowerCase();
-  const filtered = query ? items.filter((item) => item.toLowerCase().includes(query) || String(labels?.[item] || '').toLowerCase().includes(query)) : items;
+  const filtered = query ? items.filter((item) => matchesSearchOption(query, item) || matchesSearchOption(query, labels?.[item])) : items;
   const custom = selected.filter((item) => !items.includes(item));
   return <div className="ip-picker">
     {searchable && <SearchBar value={search} onChange={onSearch} placeholder={placeholder} />}
@@ -209,7 +210,7 @@ function SearchableChoices({ items, selected, onToggle, search, onSearch, onAdd,
   </div>;
 }
 
-// Same chip spec as RowChoiceList — kept as a separate component since
+// Same chip spec as RowChoiceList, kept as a separate component since
 // callers pass a single non-array `selected` list built differently (some
 // single-select via toggleExclusive, some genuinely multi), and the
 // `compact`/`left` nested-context variants (inside ProductHistoryBuilder)
@@ -218,19 +219,19 @@ function Pills({ options, selected, onToggle, compact, exclusiveValues = [] }) {
   return <ChipList items={options} selected={selected} onToggle={onToggle} compact={compact} muted={exclusiveValues} />;
 }
 
-// Vertical single-select radio list (design pattern F1) — the workhorse
+// Vertical single-select radio list (design pattern F1), the workhorse
 // pattern for every Yes/No/Not-sure-style question, replacing the old
 // horizontal segmented-button bar.
 function Segmented({ options, value, onChange }) {
   return <ChoiceRows options={options} value={value} onChange={onChange} />;
 }
 
-// Pattern K1: price bands as a vertical row list rather than chips — a
+// Pattern K1: price bands as a vertical row list rather than chips, a
 // Playfair price label on the left, a descriptive subtitle right-aligned,
 // and a trailing checkmark instead of a leading radio circle.
 
 
-// Under-18 gate (Ayna_Minor_Gate.html design reference) — a fixed warm
+// Under-18 gate (Ayna_Minor_Gate.html design reference), a fixed warm
 // warning tone rather than a --ayna-* var, same reasoning as SELECTED_TEXT
 // above: the reference keeps this specific color regardless of theme, and
 // there's no existing token for it.
@@ -239,7 +240,7 @@ function Segmented({ options, value, onChange }) {
 // opening the keyboard. Age is optional, but under-18 selections remain gated.
 
 // Five real per-digit inputs (the standard OTP-input pattern), not one
-// invisible input overlaid on decorative boxes — that overlay trick proved
+// invisible input overlaid on decorative boxes, that overlay trick proved
 // unreliable for actually opening the keyboard/accepting taps on real
 // mobile browsers, where each digit box here is itself a genuine,
 // correctly-sized, tappable, typeable <input>.
@@ -247,20 +248,20 @@ function Segmented({ options, value, onChange }) {
 
 // Pattern D2: rising bars for the first up-to-5 ordered levels; any
 // trailing non-ordinal options (e.g. "It varies", "Not sure") render as
-// plain chips below instead of getting an arbitrary bar height — same
+// plain chips below instead of getting an arbitrary bar height, same
 // options, just not force-fit onto a severity scale they don't belong on.
 
 // Timeline questions (UTI recurrence, postpartum timing, trimester, large-
-// purchase frequency) are single-select among ordered options — pattern F1
+// purchase frequency) are single-select among ordered options, pattern F1
 // (the same vertical radio list as Yes/No questions), not a distinct
 // visual language of their own.
 
-// Brand openness is a single-select among ordered options too — F1 again,
+// Brand openness is a single-select among ordered options too, F1 again,
 // swapping in only the option order it already had.
 
 // Pattern H1: search-styled input, added items as swatch+title cards (not
 // small chips), a dashed "Add" affordance implicit in the search bar
-// itself, and an × to remove — same values/suggestions/onChange contract.
+// itself, and an × to remove, same values/suggestions/onChange contract.
 function SuggestList({ draft, matches, onPick }) {
   if (!draft.trim()) return null;
   return (
@@ -301,7 +302,7 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
     <div className="ip-token-input">
       <label className="ip-search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-        <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }} placeholder={placeholder} aria-label={placeholder} />
+        <SmartSearchInput vocabulary={suggestions} value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }} placeholder={placeholder} aria-label={placeholder} />
         {draft && <button type="button" aria-label="Clear" onClick={() => setDraft('')}>×</button>}
       </label>
       <SuggestList draft={draft} matches={matches} onPick={addValue} />
@@ -445,14 +446,14 @@ function ProductHistoryBuilder({ products, onChange }) {
   );
 }
 
-// Pattern L1 — real drag-to-reorder, built on Pointer Events rather than
+// Pattern L1, real drag-to-reorder, built on Pointer Events rather than
 // HTML5 native drag-and-drop (which doesn't fire reliably on touchscreens).
 // The dragged row tracks the pointer via a CSS transform computed from a
 // fixed rect snapshot taken at pointer-down, while the other rows' *live*
-// positions (read fresh on every move) decide when to splice the array —
+// positions (read fresh on every move) decide when to splice the array
 // so the list itself reorders live as you drag, not just on release.
 
-// Pattern M1 — textarea plus dashed "inspiration only" prompt chips: tapping
+// Pattern M1, textarea plus dashed "inspiration only" prompt chips: tapping
 // one appends its starter phrase rather than committing an answer, since
 // unlike every selectable option elsewhere in this form, these never
 // represent a stored choice.
@@ -460,12 +461,12 @@ function ProductHistoryBuilder({ products, onChange }) {
 
 // Under-18 gate, terminal screen (Ayna_Minor_Gate.html design reference).
 // Deliberately not styled with the rest of the quiz's dark hero-gradient
-// chrome — this is a policy/stop screen, not another question card, so it
+// chrome, this is a policy/stop screen, not another question card, so it
 // keeps its own light card look from the reference. No progress bar, no
 // Skip, and nothing about the intake carries forward from here: leaving
 // (Browse the reading library) unmounts this screen entirely the same as
 // every other exit from this file, and Change my birthday just returns to
-// the still-populated birthday question — nothing was ever cleared.
+// the still-populated birthday question, nothing was ever cleared.
 function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
   const whatYouCanDo = [
     ['01', 'Talk to someone who can help', 'A parent, guardian, school nurse or your own doctor can look at symptoms with your full history in front of them.'],
@@ -786,7 +787,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     }
     if (step.type === 'brand') return <BrandSpectrum options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
     if (step.type === 'avoidIngredients') {
-      // "Leave out: Fragrance" also stores "Fragrance-free" — the value the match engine already scores — so logic is unchanged.
+      // "Leave out: Fragrance" also stores "Fragrance-free", the value the match engine already scores, so logic is unchanged.
       const selected = intake.avoidIngredients || [];
       const isOn = (v) => selected.includes(v) || (AVOID_PAIRS[v] && selected.includes(AVOID_PAIRS[v]));
       const known = new Set([...AVOID_INGREDIENTS, ...Object.values(AVOID_PAIRS)]);

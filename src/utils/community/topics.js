@@ -2,7 +2,7 @@
  * Community topics.
  *
  * Every topic maps onto the SAME tag vocabulary the match engine uses
- * (src/data/products.js — tagsForHealthLabel / normalizeProfileSignals), so a
+ * (src/data/products.js, tagsForHealthLabel / normalizeProfileSignals), so a
  * viewer whose intake mentions PCOS lines up with posts tagged "PCOS" without
  * a second, separate interpretation of their profile.
  *

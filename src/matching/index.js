@@ -22,10 +22,13 @@ import { buildProductProfile } from './productProfile.js';
 import { scoreProduct, scoreProductForNeed } from './score.js';
 
 export { buildUserProfile, resolveCatalogProduct } from './userProfile.js';
-export { buildProductProfile, clearProductProfileCache, parsePrice, productSimilarity, RELEVANCE_RULES, LEVEL, CONTEXT_BONUS, BROAD_MARKETING } from './productProfile.js';
+export {
+  buildProductProfile, clearProductProfileCache, parsePrice, productSimilarity, RELEVANCE_RULES, LEVEL, CONTEXT_BONUS, BROAD_MARKETING,
+  ATTRIBUTE_INGREDIENTS, CLAIM_STRENGTH, INGREDIENT_LEVEL_WEIGHT,
+} from './productProfile.js';
 export {
   scoreProduct, scoreProductForNeed, evaluateSafety, computeAccess, budgetFit, tierFor, confidenceLevel, resolveRelevance, healthSentence, evidenceFor,
-  requiredFieldsFor, REQUIRED_FIELD_TEXT, DIMENSION_WEIGHTS, WEIGHTS, TIERS, PREFERENCE_SPAN,
+  requiredFieldsFor, REQUIRED_FIELD_TEXT, PRODUCT_INFO_TEXT, PASSPORT_COMPLETENESS_FLOOR, clinicalForNeed, DIMENSION_WEIGHTS, WEIGHTS, TIERS, PREFERENCE_SPAN,
 } from './score.js';
 export { buildEcosystem, sortResults, brandCategory, diversify, assignRoles, compareResults, qualityPrior } from './ecosystem.js';
 export {

@@ -28,7 +28,7 @@
   --color-ink: #1d1a2b;
   --hero-gradient: #b9c2f4;
 
-  /* Typography — same feel as the public waitlist (clean, editorial weight) */
+  /* Typography, same feel as the public waitlist (clean, editorial weight) */
   --font-heading: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
   --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
   --font-serif: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
@@ -97,7 +97,7 @@ body {
   }
 }
 
-/* Sticky top bar — visible frosted glass: gradient sell the “lens” on top of blur (same-cream page was hiding the old look). */
+/* Sticky top bar, visible frosted glass: gradient sell the “lens” on top of blur (same-cream page was hiding the old look). */
 .app-nav {
   display: flex;
   justify-content: space-between;
@@ -146,7 +146,7 @@ body {
     0 1px 0 rgba(232, 169, 79, 0.22);
 }
 
-/* Nav sits directly on the gradient hero (mockup 1a) — same gradient as the hero
+/* Nav sits directly on the gradient hero (mockup 1a), same gradient as the hero
    itself, no separate glass panel, so the top bar reads as part of the hero,
    not a bar sitting on top of it. */
 .app-nav--landing {
@@ -378,7 +378,7 @@ button {
   }
 }
 
-/* —— ayna_waitlist-matched landing (index.html: .bg + .bg-overlay, .form-card, .headline) —— */
+/*, , ayna_waitlist-matched landing (index.html: .bg + .bg-overlay, .form-card, .headline), , */
 .ayna-landing {
   position: relative;
   overflow: hidden;
@@ -391,7 +391,7 @@ button {
 }
 
 .ayna-landing__bg {
-  /* Was position:fixed (viewport-pinned) — that painted above non-positioned
+  /* Was position:fixed (viewport-pinned), that painted above non-positioned
      siblings like .hero-continuation once scrolled past, per CSS stacking
      order (positioned descendants of an isolated context paint after
      non-positioned siblings, regardless of DOM order). Absolute confines it
@@ -425,7 +425,7 @@ button {
   padding: 5rem 2rem 6rem;
 }
 
-/* Full-viewport first screen (no nav) — used by welcome intro */
+/* Full-viewport first screen (no nav), used by welcome intro */
 .ayna-landing.ayna-landing--full-viewport {
   min-height: 100dvh;
   min-height: 100svh;
@@ -622,7 +622,7 @@ button {
   }
 }
 
-/* Eyebrow label — DM Mono small-caps, matches the mockup's "WOMEN'S HEALTH, PERSONALIZED" treatment */
+/* Eyebrow label, DM Mono small-caps, matches the mockup's "WOMEN'S HEALTH, PERSONALIZED" treatment */
 .ayna-landing .ayna-eyebrow {
   font-family: var(--font-label);
   font-size: clamp(0.65rem, 0.3vw + 0.6rem, 0.78rem);
@@ -662,7 +662,7 @@ button {
   text-shadow: none;
 }
 
-/* Welcome (and any landing): four fixed, centered lines — text / text / rotating word / text */
+/* Welcome (and any landing): four fixed, centered lines, text / text / rotating word / text */
 .ayna-landing .ayna-rotating-headline.ayna-rotating-headline--stacked {
   display: flex;
   flex-direction: column;
@@ -703,7 +703,7 @@ button {
   margin-right: auto;
 }
 
-/* "Welcome to " — same tracking as body line (only AYNA is wide-tracked) */
+/* "Welcome to ", same tracking as body line (only AYNA is wide-tracked) */
 .ayna-landing .ayna-landing-welcome-lead {
   color: #fff;
   font-weight: 400;
@@ -850,7 +850,7 @@ button {
   box-shadow: 0 6px 26px rgba(192, 118, 31, 0.42);
 }
 
-/* Navy pill button — used on the light sections below the hero (e.g. "Build your ecosystem") */
+/* Navy pill button, used on the light sections below the hero (e.g. "Build your ecosystem") */
 .btn-navy {
   display: inline-flex;
   align-items: center;
@@ -1057,13 +1057,13 @@ html {
 
 /*
  * The visible "gap" between the trigger and the menu below it used to be a
- * real gap in this element's own position (top: calc(100% + 0.35rem)) — but
+ * real gap in this element's own position (top: calc(100% + 0.35rem)), but
  * that gap sits OUTSIDE this element's box, so it's not part of what :hover
  * on the ancestor (.nav-dropdown / .nav-ecosystem) considers "still hovering
  * the dropdown". Moving the mouse straight down from the trigger toward the
  * menu crossed that dead zone and closed the menu before the cursor ever
  * reached it. Fixed by sitting this element flush against the trigger
- * (top: 100%, no gap) and reserving the old gap as padding-top instead —
+ * (top: 100%, no gap) and reserving the old gap as padding-top instead
  * padding IS part of the hoverable box, so the hit-area is now continuous.
  * The actual visible card (background/border/shadow/blur) moved to
  * .nav-ecosystem__panel-inner / .nav-dropdown__panel-inner below, offset
@@ -1101,7 +1101,7 @@ html {
 
 /* ─── Mobile responsiveness ─────────────────────────────────────────────── */
 
-/* Hamburger button — hidden on desktop, shown on mobile */
+/* Hamburger button, hidden on desktop, shown on mobile */
 .mobile-menu-btn {
   display: none;
   background: none;
@@ -1117,14 +1117,14 @@ html {
   justify-content: center;
 }
 
-/* Mobile drawer — hidden on desktop */
+/* Mobile drawer, hidden on desktop */
 .mobile-nav-drawer { display: none; }
 
-/* Nav-specific rules split out to their own 900px breakpoint — MUST match
+/* Nav-specific rules split out to their own 900px breakpoint, MUST match
    .app-nav__links' own hide breakpoint below (also 900px). These used to be
    two different numbers (768px here, 900px there), leaving a ~130px dead
    zone (a common laptop-with-sidebar/split-screen width) where the desktop
-   links were already hidden but the hamburger hadn't appeared yet — no way
+   links were already hidden but the hamburger hadn't appeared yet, no way
    to navigate from the header at all (found live, 2026-08-24 bug bash).
    Split out (instead of just widening the whole old block) so the unrelated
    .btn/.container touch-target rules below keep their original 768px. */
@@ -1175,7 +1175,7 @@ html {
 }
 
 @media (max-width: 480px) {
-  /* Ecosystem card buttons — smaller so Details+Remove fit side by side */
+  /* Ecosystem card buttons, smaller so Details+Remove fit side by side */
   .ecosystem-product-grid .btn {
     font-size: 0.8rem;
     min-height: 40px;
@@ -1183,7 +1183,7 @@ html {
   }
 }
 /* ============================================================
-   Aug 2026 desktop mockup — shared page frame
+   Aug 2026 desktop mockup, shared page frame
    The mockup boards are 1180px-wide cards with 56px side padding, so every
    surface ported from them centres on that width and keeps the 56px gutter.
    ============================================================ */
@@ -1508,7 +1508,7 @@ html {
   gap: 26px 22px;
 }
 
-/* 1c — returning user */
+/* 1c, returning user */
 
 .ayna-landing-hero--returning {
   background: var(--mockup-hero-gradient-returning);
@@ -1598,7 +1598,7 @@ html {
   cursor: pointer;
 }
 
-/* Small "beta" tag beside the wordmark — em-sized off .app-nav__logo's own
+/* Small "beta" tag beside the wordmark, em-sized off .app-nav__logo's own
    font-size so it scales automatically between the landing (27px) and
    cream (24px) nav variants below, rather than needing its own breakpoints. */
 .app-nav__beta-badge {
@@ -1663,7 +1663,7 @@ html {
 }
 
 /* One consistent avatar color everywhere, not gold on the dark hero header
-   and lavender everywhere else (found live, 2026-08-24 bug bash) — as a
+   and lavender everywhere else (found live, 2026-08-24 bug bash), as a
    personal-identity marker, it should look the same regardless of which
    page you're on. Gold is the established brand accent already used here on
    the hero; the cream-header override that swapped it for lavender is gone. */
@@ -1822,7 +1822,7 @@ html {
      variant of it: real iPhone Safari screenshot showed the filter-pill
      row wrapping to a second line on a narrow real device, pushing the
      hero past the fixed 580px background-size, and the plain page
-     background cut through mid-hero right across the pills. Same fix —
+     background cut through mid-hero right across the pills. Same fix
      a linear-gradient has no fixed natural size, so it fills the element
      completely with no size/position override at all. */
   background: var(--mockup-hero-gradient);
@@ -1830,15 +1830,15 @@ html {
 }
 
 .ayna-landing-hero--returning {
-  /* Was background-size:100% 482px / position:0 -84px — a fixed-pixel crop
+  /* Was background-size:100% 482px / position:0 -84px, a fixed-pixel crop
      of the gradient calibrated for a ~398-482px-tall hero. Once the
      two-column .ayna-landing-welcomeback grid stacks to one column (at
      narrow widths / high zoom) the section grows well past 482px tall, the
      gradient ran out partway down, and the page's plain background showed
-     through mid-hero — right behind the semi-transparent ecosystem card,
+     through mid-hero, right behind the semi-transparent ecosystem card,
      which is exactly the "cut off" look reported live. A CSS gradient (not
      a raster image) has no fixed natural size, so it fills the element
-     completely with no size/position override at all — same as this
+     completely with no size/position override at all, same as this
      selector's OTHER declaration elsewhere in this file, which never had
      this bug. */
   background: var(--mockup-hero-gradient-returning);
@@ -2096,7 +2096,7 @@ a.pdp-head__badge:focus-visible {
   line-height: 1.5;
   color: var(--color-text-main);
 }
-/* Collapsed by default (see SafetyAlert in ProductModal.jsx) — a long
+/* Collapsed by default (see SafetyAlert in ProductModal.jsx), a long
    safety paragraph used to push Buy Now/Wishlist below the fold. */
 .pdp-safety-alert__toggle {
   display: flex;
@@ -2175,7 +2175,7 @@ a.pdp-head__badge:focus-visible {
   opacity: 0.72;
 }
 
-/* Evidence layout's own head — a true three-column row (image / info / rail)
+/* Evidence layout's own head, a true three-column row (image / info / rail)
    instead of reusing the two-column 1f head, so 1g matches the mockup's
    actual layout rather than approximating it by stacking two 2-column rows. */
 
@@ -2360,7 +2360,7 @@ a.pdp-head__badge:focus-visible {
 
 /* Specs tab: reuses .pdp-rail__spec rows, plus tiny utility links at the foot */
 
-/* "Pairs with your ecosystem" — fixed 4-across on desktop, stacks down on mobile */
+/* "Pairs with your ecosystem", fixed 4-across on desktop, stacks down on mobile */
 
 /* Footer cleanup: remove the Careers link without deleting the route. */
 footer a[href*="career" i],
@@ -2418,7 +2418,7 @@ footer a[href*="career" i],
   color: #B4732A;
 }
 
-/* "Compare at" retailer links — real site-search links, never a per-retailer
+/* "Compare at" retailer links, real site-search links, never a per-retailer
    price (see src/utils/retailerLinks.js). Styled as small pill chips so they
    read as "go compare" rather than a second primary CTA next to Buy Now. */
 
@@ -2643,7 +2643,7 @@ footer a[href*="career" i],
   color: #B3261E;
 }
 
-/* One row per product when an area has more than one pick — was previously
+/* One row per product when an area has more than one pick, was previously
    collapsed to a single products[0], silently hiding the rest. */
 .eco-bubbles__card-product + .eco-bubbles__card-product {
   margin-top: 18px;
@@ -2796,7 +2796,7 @@ footer a[href*="career" i],
 
 @media (max-width: 1040px) {
   .eco-bubbles {
-    /* minmax(0, 1fr), not bare 1fr — a bare 1fr track's minimum size still
+    /* minmax(0, 1fr), not bare 1fr, a bare 1fr track's minimum size still
        considers its content's intrinsic/explicit width (the canvas wrap's
        own `width` below), so it doesn't actually cap the track and content
        silently overflowed anyway (confirmed live: computed
@@ -2855,11 +2855,11 @@ footer a[href*="career" i],
 }
 
 /* iPhone SE and similarly narrow phones (~320-340px): even the 560px
-   breakpoint's 336px-wide canvas wrap doesn't fit — found live (598px of
+   breakpoint's 336px-wide canvas wrap doesn't fit, found live (598px of
    overflow at 320px). One more discrete scale step, same pattern as the
    two above (the canvas's internal bubble positions are computed in JS
    against a fixed 560x520, so this can't be made fluid without also
-   changing seatPosition() — see EcosystemBubbles.jsx). */
+   changing seatPosition(), see EcosystemBubbles.jsx). */
 @media (max-width: 340px) {
   .eco-bubbles__canvas-wrap {
     width: 280px;
@@ -2982,7 +2982,7 @@ footer a[href*="career" i],
   --shadow-lg: 0 14px 40px rgba(26, 23, 20, 0.12);
 }
 
-/* Headings are Playfair at book weight, as on every board — not DM Sans 600. */
+/* Headings are Playfair at book weight, as on every board, not DM Sans 600. */
 h1,
 h2,
 h3,
@@ -3180,7 +3180,7 @@ textarea {
 
 /* How it works */
 
-/* The "how many products got cut" story — was three flat numbers spread
+/* The "how many products got cut" story, was three flat numbers spread
    across separate step cards with no visual connection between them. See
    HowItWorksFunnel.jsx for why the bars use a sqrt, not linear, scale. */
 
@@ -3224,7 +3224,7 @@ textarea {
   transition: max-width 0.22s ease, opacity 0.15s ease, margin 0.22s ease;
 }
 
-/* Shrinks to just the orb once scrolled (see ProfileChatbot.jsx) — smaller
+/* Shrinks to just the orb once scrolled (see ProfileChatbot.jsx), smaller
    footprint for most of a session instead of a permanent full-width pill
    that can sit over page content in the bottom-right corner. */
 .ayna-ask-launcher.is-compact {
@@ -3386,7 +3386,7 @@ textarea {
   color: #8C817B;
 }
 
-/* A profile-update confirmation — distinct from a plain reply bubble on
+/* A profile-update confirmation, distinct from a plain reply bubble on
    either side, since this is the app telling her what changed, not Ayna
    speaking (see the "show chat changes clearly" fix, 2026-08-24). */
 .ayna-ask-message--system {

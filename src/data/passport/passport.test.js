@@ -1,15 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { ALL_PRODUCTS } from '../products.js';
 import { getPassport, canonicalizeIngredient, lintText, matchCeiling } from './index.js';
+import { PASSPORT_REVIEWS } from './reviews.js';
 import { buildProductSections } from './content.js';
 import { findHardTerms, planGlossaryTerms, getGlossaryEntry } from '../glossary.js';
 
 describe('product passport', () => {
-  it('builds a passport for every catalog product, all Not reviewed and unverified', () => {
+  it('builds a passport for every catalog product; unreviewed ones are Not reviewed and unverified', () => {
     for (const p of ALL_PRODUCTS) {
       const pp = getPassport(p);
-      expect(pp.qa.label).toBe('Not reviewed');
-      expect(pp.identity.name.verified_at).toBeNull();
+      if (!PASSPORT_REVIEWS[p.id]) {
+        expect(pp.qa.label).toBe('Not reviewed');
+        expect(pp.identity.name.verified_at).toBeNull();
+        expect(pp.dates.last_verified).toBeNull();
+      }
       expect(pp.completeness.overall).toBeGreaterThanOrEqual(0);
       expect(pp.completeness.overall).toBeLessThanOrEqual(100);
     }

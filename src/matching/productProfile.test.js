@@ -88,7 +88,8 @@ describe('safety statuses are read from text, never inferred from silence', () =
   });
 
   it('"-free" claims never count as a positive mention', () => {
-    expect(prof('p-luna-wash').safety.preservatives).not.toBe('yes');
+    // Synthetic: real catalog products with this claim have since been reviewed against their labels.
+    expect(buildProductProfile({ id: 'x-free-claim', name: 'Gentle wash', category: 'wash', type: 'physical', ingredients: 'Water, aloe. Paraben-free and preservative-free.' }).safety.preservatives).not.toBe('yes');
     expect(prof('p-citracal-bone-health').safety.animal_derived).toBe('unknown');
   });
 
@@ -100,7 +101,8 @@ describe('safety statuses are read from text, never inferred from silence', () =
 
 describe('pregnancy and breastfeeding', () => {
   it('defaults to unknown with no evidence source or review date', () => {
-    const p = prof('p-thermacare').pregnancy;
+    // p-thermacare now has a reviewed label caution; use an unreviewed product.
+    const p = prof('p-portable-heating').pregnancy;
     expect(p).toEqual({ overall: 'unknown', trimester_1: 'unknown', trimester_2: 'unknown', trimester_3: 'unknown', evidence_source: null, last_reviewed: null });
   });
   it('reads explicit catalog statements', () => {

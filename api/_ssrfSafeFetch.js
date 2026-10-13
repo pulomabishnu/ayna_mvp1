@@ -52,7 +52,7 @@ export async function isSafePublicUrl(urlString) {
     if (family === 6 && isPrivateIPv6(address)) return false;
     return true;
   } catch {
-    return false; // DNS failure — fail closed, don't fetch
+    return false; // DNS failure, fail closed, don't fetch
   }
 }
 

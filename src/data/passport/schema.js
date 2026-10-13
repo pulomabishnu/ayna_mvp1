@@ -170,3 +170,45 @@ export const PASSPORT_SECTIONS = [
 export function getPath(obj, path) {
   return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
 }
+
+/** Recall check result a reviewer records (where they checked goes in notes). */
+export const RECALL_STATUS = ['none_found', 'recalled', 'unknown'];
+
+/** Passport states that take a product off recommendations and shelves. */
+export const OFF_SHELF_STATUSES = ['recalled', 'discontinued', 'unavailable'];
+
+/** Which refresh schedule (REVIEW_INTERVAL_DAYS) a fact path follows. */
+export function reviewFamilyFor(path) {
+  const [section, field] = String(path || '').split('.');
+  if (section === 'pricing') return field === 'availability' ? 'availability' : 'pricing';
+  if (section === 'identity') return field === 'purchase_url' ? 'availability' : 'identity';
+  if (section === 'composition') return 'composition';
+  if (section === 'safety') return 'safety';
+  if (section === 'evidence' || section === 'health') return 'evidence';
+  if (section === 'community') return 'community';
+  return 'identity';
+}
+
+const DAY_MS = 86400000;
+/** 'YYYY-MM-DD' -> ms (UTC), or NaN. */
+export function parseDay(value) {
+  if (!value) return NaN;
+  const t = Date.parse(String(value).length === 10 ? `${value}T00:00:00Z` : String(value));
+  return Number.isFinite(t) ? t : NaN;
+}
+export function addDays(day, n) {
+  const t = parseDay(day);
+  return Number.isFinite(t) ? new Date(t + n * DAY_MS).toISOString().slice(0, 10) : null;
+}
+export function daysBetween(fromDay, toMs) {
+  const t = parseDay(fromDay);
+  return Number.isFinite(t) ? Math.floor((toMs - t) / DAY_MS) : null;
+}
+
+/** Plain label for a fact path ("safety.pregnancy" -> "Pregnancy information"). */
+export const FIELD_LABELS = Object.fromEntries(PASSPORT_SECTIONS.flatMap((s) => s.fields.map((f) => [f.path, f.label])));
+export function labelForPath(path) {
+  if (FIELD_LABELS[path]) return FIELD_LABELS[path];
+  const leaf = String(path || '').split('.').pop() || '';
+  return leaf.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
+}

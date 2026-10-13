@@ -10,10 +10,11 @@ import SuggestBox from '../../components/SuggestBox.jsx';
 import { getPersonalizedProductIds, getProfileMatchPercentForProduct, productSearchText, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
 import { getVerificationLinks } from '../../utils/verificationLinks.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
-import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
+import { scoreSearchMatch, correctedSearchQuery, searchArticles } from '../../utils/search/index.js';
+import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
 
-// Fisher-Yates — uniform shuffle, unlike sort(() => Math.random() - 0.5)
+// Fisher-Yates, uniform shuffle, unlike sort(() => Math.random() - 0.5)
 // (which is biased and not a proper random permutation).
 function fisherYatesShuffle(list) {
   const result = list.slice();
@@ -73,7 +74,7 @@ function SkeletonCard() {
 
 // AI-search loading state: a coarse checkerboard "pixel" pattern that
 // materializes in via steps() (a chunky, non-smooth animation) rather than
-// the plain fade SkeletonCard uses above — this is a live network+LLM call
+// the plain fade SkeletonCard uses above, this is a live network+LLM call
 // (real latency, not instant like the local catalog filter), so it reads as
 // a distinct, more eventful kind of waiting.
 function PixelateCard() {
@@ -101,7 +102,7 @@ function PixelateGrid({ count = 6 }) {
 }
 
 // Owns its own pagination state, remounted via `key` (from the parent)
-// whenever the active filters change — that gives it a fresh initial
+// whenever the active filters change, that gives it a fresh initial
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
@@ -161,7 +162,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
 }
 
 // products.js/ALL_PRODUCTS is a static array bundled into the app, not a
-// paginated network endpoint — this app has no live backend for the
+// paginated network endpoint, this app has no live backend for the
 // catalog. "Infinite scroll" is therefore client-side batching over that
 // same real array (same fields/images), revealed progressively as the user
 // scrolls, rather than network-fetched pages.
@@ -191,7 +192,7 @@ export default function BrowseScreen({
   onOpenWhyMatch,
   // Controlled from MobileApp.jsx (and persisted there) so the toggle
   // survives this screen unmounting when the user navigates away (e.g. to
-  // My Ecosystem) and back — it should stay on until the user explicitly
+  // My Ecosystem) and back, it should stay on until the user explicitly
   // turns it off, not reset just because they left the tab.
   personalized: personalizedProp,
   onPersonalizedChange,
@@ -238,18 +239,18 @@ export default function BrowseScreen({
   const [sortBy, setSortBy] = useState('default');
   const cardLayout = 'grid';
   // AI fallback for a typed search the local catalog scoring found nothing
-  // for — same /api/search-suggestions the desktop Discovery page falls
+  // for, same /api/search-suggestions the desktop Discovery page falls
   // back to (see fetchSearchSuggestions.js), not a separate mechanism.
   const [aiState, setAiState] = useState({ query: '', loading: false, suggestions: [], error: null });
 
-  // Re-shuffled once per mount — this screen unmounts whenever you navigate
+  // Re-shuffled once per mount, this screen unmounts whenever you navigate
   // away (MobileApp swaps which screen component renders), so a fresh
   // shuffle happens on every visit to Browse, not just once per app load.
   const [shuffled] = useState(() => fisherYatesShuffle(products));
 
   // frustrations is the legacy desktop quiz shape; the real current mobile
-  // intake (IntakeScreen.jsx) never sets it at all — it produces
-  // fullHealthIntake.supportSelections/primaryConcerns instead — so relying
+  // intake (IntakeScreen.jsx) never sets it at all, it produces
+  // fullHealthIntake.supportSelections/primaryConcerns instead, so relying
   // on frustrations alone meant "For You" personalization was permanently
   // disabled for every real mobile user who'd actually completed the quiz.
   const hasProfile = !!(
@@ -258,9 +259,9 @@ export default function BrowseScreen({
     || quizAnswers?.fullHealthIntake?.primaryConcerns?.length
   );
 
-  // Real filtering — reuses the site's own scoreQueryAgainstProduct/
+  // Real filtering, reuses the site's own scoreQueryAgainstProduct/
   // buildSearchTextForItem/buildIdentityTextForItem (naturalLanguageSearch.js)
-  // and getPersonalizedProductIds/itemMatchesMacroGroup (products.js) — the
+  // and getPersonalizedProductIds/itemMatchesMacroGroup (products.js), the
   // exact same search-scoring and personalization/category-matching
   // functions the desktop Discovery page already uses, not a separate,
   // weaker matching system. This is why terms like "PCOS" or "hair
@@ -275,18 +276,14 @@ export default function BrowseScreen({
     filtered = visible
       .map((p) => ({
         item: p,
-        matchScore: scoreQueryAgainstProduct(
-          searchTermRaw,
-          buildSearchTextForItem(p, CATEGORY_LABELS),
-          buildIdentityTextForItem(p, CATEGORY_LABELS)
-        ),
+        matchScore: scoreSearchMatch(searchTermRaw, p),
       }))
       .filter((x) => x.matchScore > 0)
       .sort((a, b) => b.matchScore - a.matchScore)
       .map((x) => x.item);
   }
   // Captured before the personalized/category filters narrow `filtered`
-  // further — the AI fallback below should trigger on "the typed search
+  // further, the AI fallback below should trigger on "the typed search
   // itself found nothing in the catalog", not "this narrower filtered view
   // happens to be empty because of an unrelated active filter".
   const searchScored = filtered;
@@ -334,7 +331,7 @@ export default function BrowseScreen({
     filtered = [...filtered].sort((a, b) =>
       matchScores.get(b.id) - matchScores.get(a.id));
   }
-  // Brand partners pinned to the top of the default browsing sort — same
+  // Brand partners pinned to the top of the default browsing sort, same
   // rule as desktop Discovery.jsx: a partnership buys visibility on the
   // page you browse freely, never placement inside an actual text search
   // or personalized ("For You") recommendation.
@@ -344,7 +341,7 @@ export default function BrowseScreen({
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}|${JSON.stringify(filters)}|${sortBy}`;
 
   useEffect(() => {
-    // Nothing to fetch — and nothing to reset either: the render logic below
+    // Nothing to fetch, and nothing to reset either: the render logic below
     // already gates on `aiState.query === searchTermRaw`, so a stale
     // aiState from a previous search can never render once searchTermRaw
     // has changed. Resetting it here would be a synchronous setState call
@@ -355,7 +352,7 @@ export default function BrowseScreen({
     const timer = setTimeout(() => {
       setAiState({ query: searchTermRaw, loading: true, suggestions: [], error: null });
       fetchSearchSuggestions({
-        query: searchTermRaw,
+        query: correctedSearchQuery(searchTermRaw),
         category: activeGroup !== 'all' ? activeGroup : '',
         maxResults: 20,
         signal: controller.signal,
@@ -376,15 +373,7 @@ export default function BrowseScreen({
     };
   }, [searchTermRaw, searchScored.length, activeGroup]);
 
-  const matchingReads = searchTermRaw.length >= 2 ? articles
-    .map((article) => {
-      const title = String(article.title || '').toLowerCase();
-      const details = `${(article.tags || []).join(' ')} ${article.teaser || ''}`.toLowerCase();
-      return { article, score: title.includes(searchTerm) ? 2 : details.includes(searchTerm) ? 1 : 0 };
-    })
-    .filter(({ score }) => score > 0)
-    .sort((a, b) => b.score - a.score)
-    .map(({ article }) => article) : [];
+  const matchingReads = searchTermRaw.length >= 2 ? searchArticles(searchTermRaw, articles) : [];
 
 
   return (
@@ -402,8 +391,9 @@ export default function BrowseScreen({
 
       <div className="ayna-fresh-browse-heading ayna-shop-heading">
         <div className="ay-shop-titlebar"><h1>Shop</h1>{hasProfile && <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />}</div>
-        <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
+        <SearchBar placeholder="Search products or brands" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }} onPick={(s) => setSearchValue(s.query)} />
       </div>
+      {searchTermRaw.length >= 2 && <SearchAssist variant="app" query={searchTermRaw} resultCount={searchScored.length} onUse={setSearchValue} />}
 
       {mode === 'products' && (
         <CategoryNav groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} action={
@@ -438,7 +428,7 @@ export default function BrowseScreen({
       </>}
 
 
-      {/* Once the ecosystem exists, Browse stays pure browsing — the
+      {/* Once the ecosystem exists, Browse stays pure browsing, the
           "update your health" prompt lives on the Ecosystem screen instead,
           after its Reads section. */}
       {mode === 'products' ? (
@@ -455,7 +445,7 @@ export default function BrowseScreen({
           ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
             <>
               <div style={{ padding: '0 20px 14px', fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
-                Not in our catalog yet — found via AI search
+                Not in our catalog yet, found via AI search
               </div>
               <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={authUser ? quizAnswers : null} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
             </>

@@ -5,10 +5,14 @@
  * completeness score. Nothing here looks anything up or guesses: a field we
  * cannot read from the catalog is `unknown`, never `false`.
  */
-import { fact, unknownFact, notApplicable, isEmptyValue, CATALOG_SOURCE, PASSPORT_SECTIONS, QA_STATUS, getPath, EVIDENCE_TYPES } from './schema.js';
-import { parseIngredients } from './ingredients.js';
+import {
+  fact, unknownFact, notApplicable, isEmptyValue, CATALOG_SOURCE, PASSPORT_SECTIONS, QA_STATUS, getPath, EVIDENCE_TYPES,
+  REVIEW_INTERVAL_DAYS, reviewFamilyFor, addDays, daysBetween, parseDay, labelForPath,
+} from './schema.js';
+import { parseIngredients, listedIngredientIds, classesForIds } from './ingredients.js';
 import { lintProductCopy } from './wording.js';
 import { PASSPORT_REVIEWS } from './reviews.js';
+import { LINK_STATUS, linkRecord } from './linkStatus.js';
 import { getVerificationLinks, hostLabel } from '../../utils/verificationLinks.js';
 import { getBuyUrl } from '../../mobile/data/buyUrl.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
@@ -168,7 +172,7 @@ function mentionFact(product, re, what) {
 // ---------------------------------------------------------------------------
 // The passport
 // ---------------------------------------------------------------------------
-export function buildPassport(product) {
+export function buildPassport(product, { now = Date.now(), reviews = PASSPORT_REVIEWS, links = LINK_STATUS } = {}) {
   if (!product) return null;
   const kind = product.type === 'digital' ? 'digital' : 'physical';
   const route = classifyRoute(product);
@@ -184,6 +188,8 @@ export function buildPassport(product) {
   const evidenceSources = sources.filter((s) => s.evidence_type !== 'community');
   const communitySources = sources.filter((s) => s.evidence_type === 'community');
   const recallsText = meaningful(product?.safety?.recalls);
+  // A "⚠" catalog note mixes lawsuits, historical recalls and labeling
+  // concerns. It is a concern to review, never an active recall by itself.
   const flagged = recallsText.includes('⚠');
 
   const ingestibleOrTopical = ['ingestible', 'topical', 'vaginal_insert'].includes(route);
@@ -274,28 +280,212 @@ export function buildPassport(product) {
   };
 
   passport.flags = { clinician_review: clinicianReviewFlags(product, { route, ingredients, wording }) };
-  const review = PASSPORT_REVIEWS[product.id] || null;
+  const review = (reviews && reviews[product.id]) || null;
   passport.qa = {
     status: review?.qa_status || 'not_reviewed',
-    label: QA_STATUS[review?.qa_status || 'not_reviewed'],
+    label: QA_STATUS[review?.qa_status || 'not_reviewed'] || QA_STATUS.not_reviewed,
     reviewed_by: review?.reviewed_by || null,
     reviewed_at: review?.reviewed_at || null,
     notes: review?.notes || null,
   };
-  passport.status = flagged && /recall/i.test(recallsText) ? 'recalled' : review?.status || 'needs_review';
-  applyReviewedFacts(passport, review);
+  applyReviewedFacts(passport, review, now);
+  passport.corrections = normalizeCorrections(review?.corrections);
+  passport.recall = recallFor(product, review);
+  if (passport.recall.status !== 'unknown' && !passport.safety.recalls.reviewed) {
+    passport.safety.recalls = fact({ text: passport.recall.status === 'recalled' ? 'Active recall found' : 'No recall found', flagged: passport.recall.status === 'recalled' }, {
+      source: passport.recall.source, source_type: passport.recall.status === 'recalled' ? 'regulatory' : 'ayna_catalog', verified_at: passport.recall.checked_at, status: 'current',
+    });
+  }
+  passport.dates = datesFor(passport, review);
+  passport.freshness = freshnessOf(passport, now);
+  passport.links = linksFor(passport, links);
+  if (passport.links.purchase) {
+    const l = passport.links.purchase;
+    passport.pricing.link_check = fact({ state: l.state, http_status: l.status ?? null, final_url: l.final_url || null, checked_at: l.checked_at || null },
+      { source: 'automated link check (scripts/passport/check-links.mjs)', source_type: 'retailer', verified_at: l.checked_at || null, status: l.state === 'unavailable' ? 'unavailable' : 'current' });
+  }
+  passport.ingredient_ids = ingredientIdsFor(passport);
+  passport.ingredient_classes = classesForIds(passport.ingredient_ids);
+  passport.status = statusFor(product, passport, review);
   passport.completeness = computeCompleteness(passport);
   passport.confidence = computeConfidence(passport);
   return passport;
 }
 
-/** Verified facts from reviews.js replace the catalog-derived ones. */
-function applyReviewedFacts(passport, review) {
+/**
+ * Reviewed facts from reviews.js replace the catalog-derived ones. Each keeps
+ * its source and source_url; a fact past its refresh schedule is 'stale'.
+ */
+function applyReviewedFacts(passport, review, now) {
   for (const [path, f] of Object.entries(review?.facts || {})) {
+    if (!f || typeof f !== 'object') continue;
     const keys = path.split('.');
     const parent = getPath(passport, keys.slice(0, -1).join('.'));
-    if (parent && typeof parent === 'object') parent[keys[keys.length - 1]] = { known: !isEmptyValue(f.value), status: 'current', ...f };
+    if (!parent || typeof parent !== 'object') continue;
+    const verified = f.verified_at || review.last_checked || review.reviewed_at || null;
+    const due = verified ? addDays(verified, REVIEW_INTERVAL_DAYS[reviewFamilyFor(path)] ?? 180) : null;
+    const overdue = due ? daysBetween(due, now) > 0 : false;
+    parent[keys[keys.length - 1]] = {
+      known: !isEmptyValue(f.value),
+      ...f,
+      source_url: f.source_url || null,
+      verified_at: verified,
+      review_due: due,
+      status: f.status || (overdue ? 'stale' : 'current'),
+      reviewed: true,
+    };
   }
+}
+
+function normalizeCorrections(list) {
+  return (Array.isArray(list) ? list : []).filter((c) => c && typeof c === 'object').map((c) => ({
+    field: c.field || null,
+    catalog: c.catalog ?? null,
+    source_says: c.source_says ?? null,
+    source_url: c.source_url || null,
+    note: c.note || null,
+  }));
+}
+
+const RECALL_FIELDS = (product) => product?.recall?.active === true || product?.activeRecall === true || product?.isRecalled === true
+  || /recall/i.test(String(product?.status || product?.listingStatus || product?.availabilityStatus || ''));
+
+/** Recall state: only a reviewer's recall check or a structured catalog field, never free text. */
+function recallFor(product, review) {
+  if (RECALL_FIELDS(product)) return { status: 'recalled', source: 'catalog status field', checked_at: null };
+  const rs = review?.recall_status;
+  if (rs === 'recalled' || rs === 'none_found') {
+    return { status: rs, source: 'ayna review recall check (see notes)', checked_at: review.last_checked || review.reviewed_at || null };
+  }
+  return { status: 'unknown', source: null, checked_at: null };
+}
+
+/** first_verified / last_verified / next_review_due (spec 12). */
+function datesFor(passport, review) {
+  const verified = [];
+  const walk = (o) => {
+    if (!o || typeof o !== 'object') return;
+    if ('known' in o && 'source' in o) { if (o.reviewed && o.verified_at) verified.push(o.verified_at); return; }
+    Object.values(o).forEach(walk);
+  };
+  ['identity', 'pricing', 'composition', 'safety', 'health', 'evidence', 'community'].forEach((k) => walk(passport[k]));
+  if (review?.last_checked) verified.push(review.last_checked);
+  if (review?.reviewed_at) verified.push(review.reviewed_at);
+  const sorted = verified.filter((d) => Number.isFinite(parseDay(d))).sort();
+  const first = review?.first_verified || sorted[0] || null;
+  const last = review?.last_checked || sorted[sorted.length - 1] || null;
+  let next = review?.next_review_due || null;
+  if (!next && last) {
+    // Earliest refresh among the fact families this review covers.
+    const families = new Set(Object.keys(review?.facts || {}).map(reviewFamilyFor));
+    const days = families.size ? Math.min(...[...families].map((f) => REVIEW_INTERVAL_DAYS[f] ?? 180)) : REVIEW_INTERVAL_DAYS.pricing;
+    next = addDays(last, days);
+  }
+  return { first_verified: first, last_verified: last, next_review_due: next };
+}
+
+/**
+ * Data freshness (spec 14): 'unverified' (never checked), 'current',
+ * 'stale' (past next_review_due). Stale lowers confidence, never the match.
+ */
+export function freshnessOf(passport, now = Date.now()) {
+  const { last_verified: last, next_review_due: due } = passport.dates || {};
+  if (!last) return { state: 'unverified', last_verified: null, next_review_due: null, days_overdue: null, age_days: null };
+  const overdue = due ? daysBetween(due, now) : null;
+  return {
+    state: overdue != null && overdue > 0 ? 'stale' : 'current',
+    last_verified: last,
+    next_review_due: due,
+    days_overdue: overdue != null && overdue > 0 ? overdue : 0,
+    age_days: daysBetween(last, now),
+  };
+}
+
+/** Link check results for this product's purchase and source URLs (scripts/passport/check-links.mjs). */
+function linksFor(passport, links) {
+  const purchaseUrl = passport.identity.purchase_url?.known ? String(passport.identity.purchase_url.value) : null;
+  const purchase = purchaseUrl ? linkRecord(links, purchaseUrl) : null;
+  const sourceUrls = new Set();
+  (passport.sources.all.known ? passport.sources.all.value : []).forEach((s) => s.url && sourceUrls.add(s.url));
+  const walk = (o) => {
+    if (!o || typeof o !== 'object') return;
+    if (Array.isArray(o)) { o.forEach(walk); return; }
+    if (o.source_url) sourceUrls.add(o.source_url);
+    if (o.url && /^https?:/.test(o.url)) sourceUrls.add(o.url);
+    Object.values(o).forEach((v) => { if (v && typeof v === 'object') walk(v); });
+  };
+  ['identity', 'pricing', 'composition', 'safety', 'health', 'evidence'].forEach((k) => walk(passport[k]));
+  if (purchaseUrl) sourceUrls.delete(purchaseUrl);
+  const sources = [...sourceUrls].map((url) => linkRecord(links, url)).filter(Boolean);
+  return {
+    checked_at: links?.generated_at || null,
+    purchase,
+    sources,
+    broken: [purchase, ...sources].filter((l) => l && l.state === 'unavailable'),
+    changed: [purchase, ...sources].filter((l) => l && l.changed),
+  };
+}
+
+/** Canonical ingredient ids from the reviewed (or catalog) ingredient and materials lists. */
+function flattenText(v) {
+  if (v == null) return '';
+  if (typeof v === 'string') return v;
+  if (Array.isArray(v)) return v.map(flattenText).join(', ');
+  if (typeof v === 'object') return Object.values(v).map(flattenText).join(', ');
+  return String(v);
+}
+function ingredientIdsFor(passport) {
+  const c = passport.composition;
+  const ids = new Set();
+  [c.ingredients, c.active_ingredients, c.materials].filter((f) => f?.known)
+    .forEach((f) => listedIngredientIds(flattenText(f.value)).forEach((id) => ids.add(id)));
+  return [...ids].sort();
+}
+
+/**
+ * Passport status (spec 14), most serious first:
+ * recalled > discontinued > unavailable (purchase link 404/410) > stale >
+ * needs_review (never checked, or a source page changed) > current.
+ */
+function statusFor(product, passport, review) {
+  if (passport.recall.status === 'recalled') return 'recalled';
+  const raw = String(product?.status || product?.listingStatus || product?.availabilityStatus || '').toLowerCase();
+  if (review?.status === 'discontinued' || product?.discontinued === true || product?.isDiscontinued === true || /discontinued/.test(raw)) return 'discontinued';
+  if (review?.status === 'unavailable' || product?.removed === true || product?.isRemoved === true || /removed|delisted/.test(raw)) return 'unavailable';
+  if (passport.links.purchase?.state === 'unavailable') return 'unavailable';
+  if (passport.freshness.state === 'stale') return 'stale';
+  if (passport.freshness.state === 'unverified' || passport.links.changed.length) return 'needs_review';
+  return review?.status && ['current', 'needs_review', 'stale'].includes(review.status) ? review.status : 'current';
+}
+
+/** Flat list of every fact on a passport, with its source (for the PDP and the audit page). */
+export function passportFacts(passport) {
+  if (!passport) return [];
+  const out = [];
+  const walk = (o, path) => {
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return;
+    if ('known' in o && 'source' in o) {
+      if (o.notApplicable) return;
+      out.push({
+        path,
+        section: path.split('.')[0],
+        label: labelForPath(path),
+        value: o.value,
+        known: Boolean(o.known),
+        source: o.source || null,
+        source_url: o.source_url || null,
+        source_type: o.source_type || null,
+        verified_at: o.verified_at || null,
+        status: o.status || null,
+        reviewed: Boolean(o.reviewed),
+        note: o.note || null,
+      });
+      return;
+    }
+    for (const [k, v] of Object.entries(o)) walk(v, path ? `${path}.${k}` : k);
+  };
+  for (const k of ['identity', 'pricing', 'composition', 'safety', 'health', 'evidence', 'community', 'explanation']) walk(passport[k], k);
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -345,6 +535,7 @@ export function computeConfidence(passport) {
     safety_data: level(sec('safety'), verified),
     evidence: level(sec('evidence'), verified),
     price_freshness: passport.pricing.price.verified_at ? `Verified ${passport.pricing.price.verified_at}` : 'Not verified',
-    source: CATALOG_SOURCE,
+    data_freshness: passport.freshness?.state || 'unverified',
+    source: passport.qa.status === 'not_reviewed' ? CATALOG_SOURCE : 'ayna review (see sources per fact)',
   };
 }

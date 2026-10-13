@@ -8,7 +8,7 @@ import { apiUrl } from '../../utils/apiUrl.js';
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
- * (src/components/ProfileChatbot.jsx) — same /api/ask-ayna contract, same
+ * (src/components/ProfileChatbot.jsx), same /api/ask-ayna contract, same
  * profile-update shape. Duplicated rather than imported so this file has no
  * dependency on the desktop component's own JSX/CSS.
  */
@@ -55,7 +55,7 @@ function buildWelcome() {
  * Mobile equivalent of ProfileChatbot.jsx, adapted to a full-screen overlay
  * instead of a corner-anchored panel (mobile has no room for that) and to
  * this app's own nav-style callbacks instead of desktop's. Voice ("Talk")
- * mode is intentionally left out — it depends on the browser
+ * mode is intentionally left out, it depends on the browser
  * SpeechRecognition API, which the Capacitor WKWebView shell doesn't
  * support without a native plugin this change doesn't add.
  */
@@ -148,7 +148,7 @@ export default function AskAynaModal({
         if (merged.added.sensitivities.length) parts.push(`Sensitivities: ${merged.added.sensitivities.join(', ')}`);
         if (merged.added.productsToAvoid.length) parts.push(`Avoiding: ${merged.added.productsToAvoid.join(', ')}`);
         if (merged.added.preference) parts.push(`Priority: ${merged.added.preference}`);
-        newMessages.push({ role: 'system', text: `Updated your profile — ${parts.join(' · ')}.`, showViewRecommendations: true });
+        newMessages.push({ role: 'system', text: `Updated your profile, ${parts.join(' · ')}.`, showViewRecommendations: true });
       }
 
       if (data.browseIntent?.category && onNavigateToDiscovery) {

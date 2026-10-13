@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { peekGeneration, subscribeIfActive } from '../utils/ecosystemGenerationStore';
 
 /**
- * Global "your ecosystem is building" indicator — visible on every page, not
+ * Global "your ecosystem is building" indicator, visible on every page, not
  * just My Ecosystem. Ecosystem generation already survives leaving the My
  * Ecosystem page (see ecosystemGenerationStore.js's GENERATION_ABANDON_GRACE_MS);
  * this component is the missing piece that surfaces that already-running
@@ -10,7 +10,7 @@ import { peekGeneration, subscribeIfActive } from '../utils/ecosystemGenerationS
  *
  * SAFETY CONTRACT: this component must NEVER start a generation. It only
  * observes one that MyEcosystem's own effect already started, via
- * peekGeneration/subscribeIfActive — neither of which can create a record or
+ * peekGeneration/subscribeIfActive, neither of which can create a record or
  * fire an onStart-style side effect (unlike subscribeToGeneration, which a
  * component with a "start if missing" job would use instead). Every poll
  * tick below re-checks peekGeneration and only ever attaches to whatever it
@@ -19,7 +19,7 @@ import { peekGeneration, subscribeIfActive } from '../utils/ecosystemGenerationS
 export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosystem, hasEcosystem = false }) {
   const [rec, setRec] = useState(null); // { loading, startedAt, error } snapshot, or null when nothing active
   // The actual Date.now() reading lives in state (updated by the ticking
-  // effect below) rather than being read directly during render — a render
+  // effect below) rather than being read directly during render, a render
   // body calling Date.now() itself is an impure read (React's purity rule),
   // since the same render could be invoked more than once and see a
   // different value each time.
@@ -45,13 +45,13 @@ export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosys
 
     const attachIfNeeded = () => {
       const active = peekGeneration(intakeFingerprint);
-      // Already attached to the current record (including "both null" —
+      // Already attached to the current record (including "both null"
       // nothing active, already know it). Nothing to do this tick.
       if (active === subscribedRecRef.current) return;
 
       // The active record changed identity (a new generation started, the
       // one we knew about finished + got garbage-collected, or a refresh
-      // discarded and replaced it) — drop the old subscription and attach to
+      // discarded and replaced it), drop the old subscription and attach to
       // whatever's there now, including nothing.
       unsubscribeRef.current?.();
       unsubscribeRef.current = null;
@@ -62,7 +62,7 @@ export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosys
         return;
       }
 
-      // A brand-new record we're attaching to means a brand-new generation —
+      // A brand-new record we're attaching to means a brand-new generation
       // reset the one-shot "ready" popup and the dismiss state so they apply
       // to THIS run, not a stale decision from a previous one.
       setReadyPopup(false);
@@ -76,7 +76,7 @@ export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosys
 
     attachIfNeeded();
     // Polling, not an event, because nothing broadcasts "a generation just
-    // started" — MyEcosystem's own effect is the only thing that creates a
+    // started", MyEcosystem's own effect is the only thing that creates a
     // record, and it may do so on a page this component isn't mounted under
     // (moot here, since this always renders from App.jsx, but the poll is
     // also what notices a *finished* record being GC'd and a *new* one

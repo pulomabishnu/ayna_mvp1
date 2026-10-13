@@ -48,7 +48,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [heardOther, setHeardOther] = useState('');
   const heardMeta = heardAboutMetadata(heardAbout, heardOther);
   // Two real signups reported never getting a confirmation email
-  // (2026-08-25) — Supabase's built-in email sender has a very low rate
+  // (2026-08-25), Supabase's built-in email sender has a very low rate
   // limit and no delivery guarantee, so a signup silently succeeding with
   // no email actually arriving is a known, real failure mode, not a fluke.
   // Can't fix the underlying sender from this codebase (Supabase Dashboard
@@ -58,13 +58,13 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
-  // Signup via native Supabase phone-OTP auth instead of email/password —
+  // Signup via native Supabase phone-OTP auth instead of email/password
   // requested 2026-08-25 as an alternative for anyone whose confirmation
   // email never arrives (see the resend feature above). Fully independent
   // of email confirmation: a verified phone creates/signs in the account
   // directly, no email step involved at all. Requires Twilio to actually be
   // configured as Supabase's SMS provider (Authentication → Phone in the
-  // Supabase Dashboard) — this code can't set that up, only use it once set.
+  // Supabase Dashboard), this code can't set that up, only use it once set.
   const [authMethod, setAuthMethod] = useState('email');
   const [showPhoneNotice, setShowPhoneNotice] = useState(false);
   const [phoneStep, setPhoneStep] = useState('number');
@@ -133,7 +133,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         }
         if (data.session) {
           // Supabase already returned a live session, meaning this project's
-          // "Confirm email" setting is off — no confirmation email is coming.
+          // "Confirm email" setting is off, no confirmation email is coming.
           // Telling her to go check her inbox here would be actively wrong:
           // she's already signed in, which App.jsx's onAuthStateChange handler
           // is about to act on.
@@ -182,7 +182,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   };
 
   // Same US-default E.164 normalization as the server's normalizeE164
-  // (api/_otp.js) — kept independent since that one's server-only, but
+  // (api/_otp.js), kept independent since that one's server-only, but
   // matching it means a number that works for one phone feature works for
   // this one too, no surprise "invalid number" for something the rest of
   // the app already accepts.
@@ -237,7 +237,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         type: 'sms',
       });
       if (error) throw error;
-      // Session now exists — App.jsx's onAuthStateChange SIGNED_IN handler
+      // Session now exists, App.jsx's onAuthStateChange SIGNED_IN handler
       // takes it from here, same as any other sign-in path.
     } catch (err) {
       setError(err.message || 'That code is wrong or expired. Please try again.');
@@ -262,7 +262,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       // redirect. Stored in BOTH modes: Supabase's Google provider
       // auto-provisions an account for any unseen Google address, so a
       // first-time visitor who happens to click the "Sign in" toggle used to get
-      // an account created — and reach the health intake — with the consent
+      // an account created, and reach the health intake, with the consent
       // checkboxes never shown and no consent record written at all.
       stashPendingSignupMeta(isSignup ? heardMeta : null);
       stashPendingConsent();
@@ -365,7 +365,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
         {!supabase && (
           // Without this, a missing/blank .env.local silently disabled the
-          // email/password submit button with zero feedback — clicking it
+          // email/password submit button with zero feedback, clicking it
           // did nothing, no error, no console output, nothing to search for.
           // The Google button already surfaced this same problem via its own
           // error state; email/password had no equivalent, so it looked
@@ -953,7 +953,7 @@ const styles = {
     textAlign: 'center',
     // No forced nowrap: at the narrowest phone widths the card itself is
     // narrower than 2*(button content), so keeping nowrap here overflowed
-    // the card instead of wrapping — minWidth:0 lets the flex item actually
+    // the card instead of wrapping, minWidth:0 lets the flex item actually
     // shrink so it can wrap to two lines there instead of clipping.
     minWidth: 0,
     flex: 1,

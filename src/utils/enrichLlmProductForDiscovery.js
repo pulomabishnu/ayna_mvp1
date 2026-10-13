@@ -32,7 +32,7 @@ function buildVerificationLinks(product) {
         },
         {
           url: acog,
-          text: 'ACOG — Women’s health topics',
+          text: 'ACOG, Women’s health topics',
           summary: 'Professional guidance on many women’s health concerns.',
           justification: 'American College of Obstetricians and Gynecologists',
         },
@@ -75,13 +75,13 @@ function buildVerificationLinks(product) {
         {
           platform: 'youtube',
           url: `https://www.youtube.com/results?search_query=${encodeURIComponent(`${name} review`)}`,
-          text: 'YouTube — reviews & comparisons',
+          text: 'YouTube, reviews & comparisons',
           summary: 'Video reviews (verify sponsor disclosure).',
         },
         {
           platform: 'tiktok',
           url: `https://www.tiktok.com/search?q=${encodeURIComponent(name)}`,
-          text: 'TikTok — product search',
+          text: 'TikTok, product search',
           summary: 'Short-form reviews and wear tests.',
         },
       ],
@@ -114,7 +114,7 @@ export function enrichLlmProductForDiscovery(product) {
     sideEffects:
       product.safetyNote ||
       'Consult a clinician if you have conditions, are pregnant or breastfeeding, or take medications.',
-    fdaStatus: 'Varies by product—verify on packaging or FDA resources for your product type.',
+    fdaStatus: 'Varies by product, verify on packaging or FDA resources for your product type.',
     opinionAlerts:
       'AI-suggested products can be wrong or outdated. Verify the exact brand name, formulation, and retailer before buying.',
   };
@@ -128,16 +128,16 @@ export function enrichLlmProductForDiscovery(product) {
   return {
     ...product,
     // MUST NOT default to 'independent'. The recommendation prompt asks the model
-    // to emit `clinicianOpinionSource: ""`, which is falsy — so every AI-generated
+    // to emit `clinicianOpinionSource: ""`, which is falsy, so every AI-generated
     // product used to inherit 'independent' and render a green
     // "Independent clinician verified" badge that no clinician ever reviewed.
     clinicianOpinionSource: product.clinicianOpinionSource || 'ai-generated',
     clinicianAttribution:
       product.clinicianAttribution ||
-      'ayna general guidance — this listing is AI-generated, not a curated catalog entry and not clinician-reviewed. Verify with your clinician.',
+      'ayna general guidance, this listing is AI-generated, not a curated catalog entry and not clinician-reviewed. Verify with your clinician.',
     doctorOpinion:
       product.doctorOpinion ||
-      'This match is generated to help you explore options. It is not a substitute for personalized medical advice—confirm fit with your clinician.',
+      'This match is generated to help you explore options. It is not a substitute for personalized medical advice, confirm fit with your clinician.',
     communityReview:
       product.communityReview ||
       truncate(summary, 320) ||

@@ -16,7 +16,7 @@ import { planGlossaryTerms } from '../glossary.js';
 
 /** No em dashes in anything we show; some catalog copy still has them. */
 export function noDash(text) {
-  return String(text || '').replace(/\s*—\s*/g, ', ').replace(/^,\s*/, '').trim();
+  return String(text || '').replace(/\s*\u2014\s*/g, ', ').replace(/^,\s*/, '').trim();
 }
 const clean = (v) => {
   const t = String(v ?? '').trim();

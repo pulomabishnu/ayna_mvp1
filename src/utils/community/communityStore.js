@@ -13,7 +13,7 @@ import { topicForHashtag } from './topics';
 export const PAGE_SIZE = 20;
 
 const FRIENDLY_ERRORS = {
-  community_rate_limited: "You're posting a lot right now — take a breather and try again in a bit.",
+  community_rate_limited: "You're posting a lot right now, take a breather and try again in a bit.",
   community_post_unavailable: "This post isn't available anymore.",
   community_too_many_products: 'You can tag up to 3 products.',
   community_playlist_full: 'Playlists can hold up to 50 products.',
@@ -64,7 +64,7 @@ export async function upsertCommunityProfile(supabase, userId, { username, displ
     username: String(username || '').trim().toLowerCase(),
     display_name: String(displayName || '').trim(),
     bio: bio ? String(bio).trim() : null,
-    // A storage path (avatars/<uid>/<uuid>.jpg), never a full URL — see community.sql.
+    // A storage path (avatars/<uid>/<uuid>.jpg), never a full URL, see community.sql.
     avatar_url: avatarUrl || null,
   };
   if (Array.isArray(publicInterests)) row.public_interests = [...new Set(publicInterests)].slice(0, 8);

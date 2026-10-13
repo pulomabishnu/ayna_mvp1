@@ -18,7 +18,7 @@ import OmittedProducts from './components/OmittedProducts';
 import Comparison from './components/Comparison';
 import DoctorPrep from './components/DoctorPrep';
 import Recalls from './components/Recalls';
-// Lazy: each of these pulls in src/data/startups.js (~1700 lines) — deferring
+// Lazy: each of these pulls in src/data/startups.js (~1700 lines), deferring
 // them until the user actually navigates there keeps that out of the main
 // bundle. products.js itself is still eager (App.jsx needs getRecommendations/
 // getEcosystemSeedFromQuiz synchronously), so this doesn't fix everything,
@@ -71,6 +71,9 @@ import { productHref, parseProductIdFromPath } from './utils/productRoute';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
 import './styles/flow.css';
 import './styles/web-neon-dark.css';
+import './styles/web-density.css';
+import NewAccountStart from './components/NewAccountStart';
+import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
@@ -113,7 +116,7 @@ const VIEW_TO_PATH = {
   'confirmed': '/confirmed',
   'product-audit': '/internal/product-audit',
 };
-// Friendly document.title per view — 'welcome'/'hero' and any view not
+// Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
   quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
@@ -168,7 +171,7 @@ function getInitialView() {
   if (parseProductIdFromPath(path)) return 'product';
   const sub = viewFromSubPath(path);
   if (sub) return sub;
-  // An unrecognized path used to silently resolve to 'welcome' — a typo'd
+  // An unrecognized path used to silently resolve to 'welcome', a typo'd
   // or stale-bookmarked URL landed on the homepage with zero indication
   // anything was wrong (found live, 2026-08-24 bug bash). The root path
   // itself is explicitly mapped in PATH_TO_VIEW, so this only ever affects
@@ -184,7 +187,7 @@ function getInitialProductId() {
  * Discovery's search query/results lived only in React state, so a browser tab
  * discard/reload (mobile tab-switch memory eviction, desktop "memory saver")
  * always came back to an empty search even when the URL correctly restored the
- * Discovery view — the app looked "reset" even though only this one query was
+ * Discovery view, the app looked "reset" even though only this one query was
  * lost. Mirroring it into ?q= makes it survive a reload the same way the view
  * itself already does via VIEW_TO_PATH.
  */
@@ -200,7 +203,7 @@ function getInitialDiscoverySearch() {
 /**
  * Same problem as getInitialDiscoverySearch, one level up: the homepage's
  * "Shop" category pill (All/Period/Intimate Care/...) was pure local state
- * in AynaLanding, with no URL round-trip — clicking a product from a
+ * in AynaLanding, with no URL round-trip, clicking a product from a
  * filtered Shop view and hitting Back always landed on "All", the filter
  * silently lost. Flagged live 2026-08-25: "when we go back from the product
  * page, it must go back to the previous query."
@@ -224,7 +227,7 @@ function ViewLoadingFallback() {
 }
 
 /**
- * Shared "nothing here" state — a bad product link already showed a proper,
+ * Shared "nothing here" state, a bad product link already showed a proper,
  * on-brand empty state (centered serif heading, muted subtext, single navy
  * CTA), but a bad top-level URL (a typo, a stale bookmark) instead silently
  * redirected to the homepage with zero indication anything was wrong (found
@@ -248,12 +251,12 @@ installScrollMemory();
 
 function App() {
   const [currentView, setCurrentViewRaw] = useState(getInitialView);
-  // Only meaningful when currentView === 'product' — the :id segment of
+  // Only meaningful when currentView === 'product', the :id segment of
   // /product/:id. Kept separate from currentView (rather than encoded into
   // it) so VIEW_TO_PATH/PATH_TO_VIEW stay simple static maps for every other
   // route.
   const [productRouteId, setProductRouteId] = useState(getInitialProductId);
-  // Ref always mirrors currentView synchronously — safe to read inside Supabase callbacks
+  // Ref always mirrors currentView synchronously, safe to read inside Supabase callbacks
   // that run outside React's render cycle.
   const currentViewRef = useRef(getInitialView());
   // Where "Update profile" was opened from, so its Back returns there.
@@ -261,7 +264,7 @@ function App() {
   // Counts real in-app pushState navigations (not the initial replaceState
   // on mount, and not replace-style navigations). Used to tell "the user
   // clicked around inside the app to get here" apart from "this tab's only
-  // entry is a direct/shared link" — window.history.length can't do this
+  // entry is a direct/shared link", window.history.length can't do this
   // reliably, since a freshly opened tab already carries its own blank
   // entry before the app even loads, making history.length > 1 true even
   // with zero in-app navigation.
@@ -281,7 +284,7 @@ function App() {
       else { window.history.pushState({ view }, '', path); inAppPushCountRef.current += 1; window.scrollTo(0, 0); }
     }
   }, [pathForView]);
-  /** Navigate to a specific product's dedicated page — a real URL, not modal state. */
+  /** Navigate to a specific product's dedicated page, a real URL, not modal state. */
   const navigateToProduct = useCallback((id, { replace = false } = {}) => {
     if (!id) return;
     currentViewRef.current = 'product';
@@ -327,7 +330,7 @@ function App() {
       setProductRouteId(pathProductId);
       // Discovery unmounts/remounts on every navigation away and back (it's
       // conditionally rendered on currentView), so its own search state is
-      // lost each time — landing back on a product's "Back" button always
+      // lost each time, landing back on a product's "Back" button always
       // showed the blank default search, not what was actually searched.
       // Discovery already mirrors its submittedQuery into ?q= via
       // replaceState as the user searches, so that history entry's URL still
@@ -340,7 +343,7 @@ function App() {
           setDiscoverySearch('');
         }
       }
-      // Same fix, for the homepage Shop category pill — see getInitialHomeCategory.
+      // Same fix, for the homepage Shop category pill, see getInitialHomeCategory.
       if (view === 'welcome' || view === 'hero') {
         try {
           setHomeCategory(new URLSearchParams(window.location.search).get('category') || null);
@@ -363,7 +366,7 @@ function App() {
   const [trackedProducts, setTrackedProducts] = useState({});
   const [joinedWaitlists, setJoinedWaitlists] = useState({});
   const [myProducts, setMyProducts] = useState({});
-  // Stable insertion-order array of product IDs — prevents cards from reordering on swap/add
+  // Stable insertion-order array of product IDs, prevents cards from reordering on swap/add
   const [ecosystemOrder, setEcosystemOrder] = useState([]);
   const [omittedProducts, setOmittedProducts] = useState({});
   // Product page → Community: which composer to open and for which product.
@@ -396,7 +399,7 @@ function App() {
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const [user, setUser] = useState(null);
   const [userSession, setUserSession] = useState(null);
-  // Set to true once the LLM builds the ecosystem this session — prevents
+  // Set to true once the LLM builds the ecosystem this session, prevents
   // Supabase token-refresh reloads from overwriting in-memory LLM products.
   const llmBuiltThisSessionRef = useRef(false);
   const [authLoading, setAuthLoading] = useState(true);
@@ -409,11 +412,11 @@ function App() {
   // Requested 2026-08-24 meeting: "sign-in required to build an ecosystem,
   // accompanied by a popup warning to prevent loss of unsaved progress." The
   // sign-in requirement already existed (handleQuizComplete gates on `user`
-  // below) — what didn't exist was the warning: pendingQuizResults lives only
+  // below), what didn't exist was the warning: pendingQuizResults lives only
   // in React state until she signs in, so closing the tab, hitting back, or
   // navigating away while the AuthGate modal is up silently threw away a
   // just-completed quiz with no warning at all. beforeunload is the only
-  // browser mechanism that can actually intercept a tab close/refresh — an
+  // browser mechanism that can actually intercept a tab close/refresh, an
   // in-app modal can't.
   useEffect(() => {
     if (!pendingQuizResults) return undefined;
@@ -488,7 +491,7 @@ function App() {
     if (quizResults?.fullHealthIntake?.personalizationCompleted === true) return true;
     return false;
   }, [quizResults]);
-  // Same fingerprint MyEcosystem computes for its own generation effect —
+  // Same fingerprint MyEcosystem computes for its own generation effect
   // this is what lets EcosystemGenerationBar find and observe (never start)
   // the same activeGenerations record from anywhere in the app.
   const ecosystemIntakeFingerprint = useMemo(
@@ -568,12 +571,12 @@ function App() {
         // [user, pendingAction] effect below does the post-login navigation.
         // The Google OAuth return trip is handled separately by AuthCallback's
         // onAuthenticated. Supabase also fires SIGNED_IN on session restoration
-        // AND on every tab-focus token check (even when nothing changed) — a
+        // AND on every tab-focus token check (even when nothing changed), a
         // previous version of this handler tried to distinguish "explicit
         // login" from those via a ref snapshot of the initial session, but that
         // snapshot could be wrong (e.g. a transient getSession() failure marked
         // it "signed out" even for an already-signed-in user), which sent
-        // users back to the ecosystem page — losing whatever they were doing —
+        // users back to the ecosystem page, losing whatever they were doing
         // every time they returned to the tab. Since the two real login paths
         // already navigate on their own, this handler doesn't need to.
       }
@@ -582,11 +585,11 @@ function App() {
       }
       if (!session) {
         // supabase-js is known to emit a spurious SIGNED_OUT (session: null)
-        // on a transient background token-refresh failure — a brief network
+        // on a transient background token-refresh failure, a brief network
         // blip, not a real sign-out. This block wipes EVERY piece of local
         // state (ecosystem, quiz results, reviews, health profile, saved
         // products) and sends the user back to 'welcome', forcing a full
-        // intake redo — exactly what an MVP tester reported happening to her
+        // intake redo, exactly what an MVP tester reported happening to her
         // for no apparent reason while she was still genuinely signed in.
         // Debounce: wait briefly and re-check the ACTUAL current session
         // before treating this as a real sign-out, so a transient blip that
@@ -594,9 +597,9 @@ function App() {
         await new Promise((resolve) => setTimeout(resolve, 1500));
         try {
           const { data } = await supabase.auth.getSession();
-          if (data?.session) return; // recovered — was transient, wipe nothing
+          if (data?.session) return; // recovered, was transient, wipe nothing
         } catch (_) {
-          // getSession() itself failing doesn't prove there's no session —
+          // getSession() itself failing doesn't prove there's no session
           // fall through to the wipe rather than loop forever on an
           // unrelated network error, same as every other best-effort check
           // in this handler.
@@ -608,7 +611,7 @@ function App() {
         setAynaReviews({});
         // Held only in memory + localStorage and never cleared before, so the
         // next user on this browser inherited the previous user's imported
-        // conditions and medications — which are then sent to the LLM as
+        // conditions and medications, which are then sent to the LLM as
         // "her" health context by ProductModal and MyEcosystem.
         setHealthProfile(null);
         setSavedProducts({});
@@ -617,7 +620,7 @@ function App() {
           setCurrentView('welcome', { replace: true });
         }
         try {
-          // Keep LLM recommendations cache — it's fingerprint-keyed so a
+          // Keep LLM recommendations cache, it's fingerprint-keyed so a
           // different quiz will naturally miss. Clearing it caused a re-fetch
           // on every login for the same user.
           localStorage.removeItem('ayna_llm_learning_memory_v1');
@@ -670,9 +673,9 @@ function App() {
       loadHealthIntakeForCurrentUser().catch(() => null),
       // Imported conditions/medications/allergies. Was localStorage-only, so it
       // vanished on any other device while still being fed to the LLM as health
-      // context — recommendations silently degraded with no signal.
+      // context, recommendations silently degraded with no signal.
       loadHealthProfileForCurrentUser().catch(() => null),
-      // null when the is_saved column isn't on the live table yet — the local
+      // null when the is_saved column isn't on the live table yet, the local
       // list stands in until the migration is applied.
       loadSavedForUser(supabase, loadForUserId).catch(() => null),
     ]).then(([ecosystem, reviews, memory, intake, healthProfileResult, saved]) => {
@@ -710,7 +713,7 @@ function App() {
             return [...merged, ...extra];
           });
         } else {
-          // LLM already built this session — merge only manual (non-LLM) products from Supabase
+          // LLM already built this session, merge only manual (non-LLM) products from Supabase
           setMyProducts(prev => {
             const manual = Object.fromEntries(
               Object.entries(visibleEcosystem.myProducts)
@@ -750,7 +753,7 @@ function App() {
   React.useEffect(() => {
     if (!user) return;
     if (!pendingAction) {
-      // No pending action — user was already signed in (e.g. returning session).
+      // No pending action, user was already signed in (e.g. returning session).
       // Stay on welcome so they can navigate themselves.
       return;
     }
@@ -769,7 +772,7 @@ function App() {
       setCurrentView('ecosystem');
       // Persist the RAW intake, not the legacy wrapper. `pendingQuizResults` is
       // already the output of mapIntakeToLegacyQuizProfile(), so saving it stored
-      // the wrong shape in health_intakes.profile — and on the next load
+      // the wrong shape in health_intakes.profile, and on the next load
       // mapIntakeToLegacyQuizProfile() ran over an already-mapped object, whose
       // keys it does not recognise. Conditions, symptoms, flow level and product
       // preferences all came back EMPTY for every user who signed up after
@@ -786,6 +789,24 @@ function App() {
     }
     setPendingAction(null); pendingActionRef.current = null;
   }, [user, pendingAction]);
+
+  // Google/Apple from a sign-in form (not the post-quiz save) can create a
+  // brand-new empty account. Once her saved data has loaded, offer the quiz
+  // first instead of an empty account (src/utils/oauthNewAccount.js).
+  const [newAccountStart, setNewAccountStart] = useState(false);
+  const newAccountLoadRef = useRef(false);
+  React.useEffect(() => {
+    if (!user) return;
+    if (dataLoading) { newAccountLoadRef.current = true; return; }
+    if (!newAccountLoadRef.current) return;
+    newAccountLoadRef.current = false;
+    // An app (mobile-preview) sign-in passes through here on its way back; the app checks it.
+    try { if (localStorage.getItem('ayna_mobile_oauth_pending') === '1') return; } catch { /* private mode */ }
+    const offer = shouldOfferEcosystemStart({
+      user, source: takeOAuthSource(), hasIntake: Boolean(quizResults), productCount: Object.keys(myProducts || {}).length,
+    });
+    if (offer) Promise.resolve().then(() => setNewAccountStart(true));
+  }, [user, dataLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!showAccountMenu) return;
@@ -860,7 +881,7 @@ function App() {
     return getPersonalizedProductIds(quizResults || null, healthProfile, matchOpts);
   }, [quizResults, healthProfile, hasCompletedPersonalization, matchOpts]);
 
-  // Categories this person actually matches on, in match order — the landing
+  // Categories this person actually matches on, in match order, the landing
   // Shop's Personalize toggle sorts by these.
   const landingProfileCategories = useMemo(() => {
     if (!hasCompletedPersonalization) return [];
@@ -883,11 +904,11 @@ function App() {
   };
 
   // The zip captured during intake was "capture-only, no downstream wiring"
-  // when that field was added — Care near you has its own separate zip input
+  // when that field was added, Care near you has its own separate zip input
   // (userZipCode, above), so users had to type the same zip twice for it to
   // show up in local clinic/telehealth links. One-time carry-over, covering
   // fresh quiz completion, the post-OAuth-signup completion path, a health
-  // profile edit, and a session-restore load — all of them funnel through
+  // profile edit, and a session-restore load, all of them funnel through
   // `quizResults` eventually. Never overwrites a zip the user already set
   // directly in Care near you.
   React.useEffect(() => {
@@ -906,7 +927,7 @@ function App() {
   }, []);
 
   const CHECKIN_INTERVAL_MS = 30 * 24 * 60 * 60 * 1000; // ~monthly
-  // Only nags once someone has done a first check-in — a brand-new user with
+  // Only nags once someone has done a first check-in, a brand-new user with
   // nothing in their ecosystem yet has nothing to "check in" about.
   const checkinDue = !!checkinCompletedAt && (Date.now() - new Date(checkinCompletedAt).getTime() > CHECKIN_INTERVAL_MS);
   const isScrolled = scrollY > 20;
@@ -1092,7 +1113,7 @@ function App() {
       healthFunctions: newProduct.healthFunctions?.length ? newProduct.healthFunctions : (oldProduct?.healthFunctions || []),
       _llmConcern: newProduct._llmConcern || oldProduct?._llmConcern || '',
       _llmAlternatives: newAlts,
-      _userSwapped: true, // survives cache reloads — never overwritten by handleBuildEcosystemFromLlm
+      _userSwapped: true, // survives cache reloads, never overwritten by handleBuildEcosystemFromLlm
     };
     setMyProducts((prev) => {
       const next = { ...prev };
@@ -1168,7 +1189,7 @@ function App() {
       wasIn ? prev.filter(id => id !== product.id) : [...prev, product.id]
     );
 
-    // Anything in your ecosystem is watched for recalls by default — that is
+    // Anything in your ecosystem is watched for recalls by default, that is
     // the promise the product page makes on the Add to ecosystem button, so it
     // has to be true without a second click. Removing from the ecosystem also
     // stops the monitoring, since nothing else asked for it.
@@ -1192,7 +1213,7 @@ function App() {
     }
   };
 
-  /** Save for later — the wishlist shown at the bottom of My Ecosystem. */
+  /** Save for later, the wishlist shown at the bottom of My Ecosystem. */
   const toggleSavedProduct = (product) => {
     setSaveError(null);
     const wasSaved = !!savedProducts[product.id];
@@ -1274,7 +1295,7 @@ function App() {
   }, [user, reportSaveFailure]);
 
   // Cache of the exact product object last clicked, so the dedicated page can
-  // render instantly without waiting on a lookup — a fresh LLM-generated
+  // render instantly without waiting on a lookup, a fresh LLM-generated
   // recommendation, for instance, may not be findable any other way until
   // its ecosystem write round-trips. A URL loaded directly (refresh, shared
   // link, browser back/forward) won't have this and falls back to
@@ -1286,7 +1307,7 @@ function App() {
 
   // The gradient nav shares one painted canvas with the hero below it, so it
   // has to know WHICH board's hero that is: 1a, 1c (returning) or 1j (About).
-  // Declared here, below ecosystemCount, and not up with the other nav flags —
+  // Declared here, below ecosystemCount, and not up with the other nav flags
   // reading ecosystemCount before its `const` is a temporal dead zone error,
   // and && short-circuiting hid it from every signed-out check.
   const navGradientVariant = currentView === 'about'
@@ -1320,7 +1341,7 @@ function App() {
   }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts]);
   const productStillResolving = !resolvedProduct && (authLoading || dataLoading);
 
-  // Every route showed the identical generic <title> from index.html — no
+  // Every route showed the identical generic <title> from index.html, no
   // way to tell tabs apart, bookmark a specific page, or get a useful link
   // preview when sharing (found live, 2026-08-24 bug bash). One page,
   // dynamic title per route/product instead.
@@ -1373,7 +1394,7 @@ function App() {
     <div className="app-container" data-theme={theme}>
       {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
           save-error banner and the ecosystem-generation bar stack instead of
-          overlapping if both are showing at once — neither sets its own
+          overlapping if both are showing at once, neither sets its own
           position:fixed any more. */}
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 3000 }}>
         {/* Persistence failures were previously console-only, so the UI always
@@ -1466,7 +1487,7 @@ function App() {
                 </div>
               )}
             </div>
-            {/* Hamburger — mobile only, on the right with Saved (MW03) */}
+            {/* Hamburger, mobile only, on the right with Saved (MW03) */}
             <button
               className="mobile-menu-btn"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
@@ -1731,7 +1752,7 @@ function App() {
         )}
         {/* The bubble hero + shelves used to render here as two alternate
             App.jsx-level views (an "Ecosystem / Shelves" toggle) ABOVE
-            MyEcosystem's own internal overview — two separate "your
+            MyEcosystem's own internal overview, two separate "your
             ecosystem" headers stacked on the same page. MyEcosystem now
             renders both combined (board 2a), so this toggle is gone rather
             than becoming a third, redundant copy. */}
@@ -1866,14 +1887,14 @@ function App() {
             onProfileUpdate={(updated) => {
               setQuizResults(updated);
               setCheckinUpdatedProfile(true);
-              // Previously this only ever updated in-memory state — a real
+              // Previously this only ever updated in-memory state, a real
               // check-in change (e.g. adding "Painful cramps") showed the
               // right confirmation, then silently vanished on reload,
               // because nothing was ever sent to the backend (found live,
               // 2026-08-24 bug bash). `frustrations` on the legacy profile
               // shape is DERIVED (mapIntakeToLegacyQuizProfile computes it
               // from the raw intake's own fields, e.g. `symptoms`), so it
-              // can't be persisted by writing it back directly — instead,
+              // can't be persisted by writing it back directly, instead,
               // append whatever's newly added to customConcerns, the same
               // free-text path the quiz itself uses (inferFrustrationsFrom-
               // FreeTextConcerns), so it re-derives the same frustration on
@@ -1927,7 +1948,7 @@ function App() {
         {currentView === 'product' && (
           resolvedProduct ? (
             // Keying by id forces a clean remount when navigating from one
-            // product's page straight to another's — every internal tab,
+            // product's page straight to another's, every internal tab,
             // the Summary/Evidence toggle, and the chat thread reset to that
             // product's own defaults instead of carrying the previous
             // product's state over.
@@ -1957,6 +1978,7 @@ function App() {
               userSession={userSession}
               onOpenProduct={handleOpenProduct}
               onBack={handleBackFromProduct}
+              onOpenShop={(category) => handleViewDiscovery(category ? { initialCategory: category } : '')}
               onCommunityAction={(kind) => {
                 const seed = { kind, productId: resolvedProduct?.id || null, token: Date.now() };
                 if (!user && kind !== 'post') {
@@ -2072,6 +2094,7 @@ function App() {
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
             onBeforeOAuthRedirect={() => {
+              markOAuthSource(pendingAction === 'quiz-complete' ? 'save' : 'signin');
               try {
                 if (pendingAction) sessionStorage.setItem('ayna_pending_auth_action', pendingAction);
                 if (pendingAction === 'quiz-complete' && pendingQuizResults) {
@@ -2092,6 +2115,13 @@ function App() {
               }
               setPendingAction(null); pendingActionRef.current = null;
             }}
+          />
+        )}
+        {newAccountStart && user && currentView !== 'quiz' && (
+          <NewAccountStart
+            onStart={() => { setNewAccountStart(false); setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
+            onSignOut={() => { setNewAccountStart(false); handleSignOut(); }}
+            onClose={() => setNewAccountStart(false)}
           />
         )}
       </main>

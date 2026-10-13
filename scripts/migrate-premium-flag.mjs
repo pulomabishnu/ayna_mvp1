@@ -2,15 +2,15 @@
 /**
  * Move `is_premium` from user_metadata to app_metadata.
  *
- *   node scripts/migrate-premium-flag.mjs          # dry run — lists, changes nothing
+ *   node scripts/migrate-premium-flag.mjs          # dry run, lists, changes nothing
  *   node scripts/migrate-premium-flag.mjs --apply  # performs the migration
  *
  * Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in the environment.
  *
  * WHY: the entitlement check used to read `user_metadata.is_premium`, which the
- * end user can write themselves —
+ * end user can write themselves
  *   await supabase.auth.updateUser({ data: { is_premium: true } })
- * — so anyone could grant themselves unlimited AI spend from the browser
+ *, so anyone could grant themselves unlimited AI spend from the browser
  * console, invisibly, because the usage counter was never touched either.
  *
  * The check now reads `app_metadata`, which only the service-role key can write.
@@ -38,7 +38,7 @@ const premium = [];
 let page = 1;
 const PER_PAGE = 200;
 
-console.log(`\n${APPLY ? 'APPLYING' : 'DRY RUN'} — scanning users...\n`);
+console.log(`\n${APPLY ? 'APPLYING' : 'DRY RUN'}, scanning users...\n`);
 
 for (;;) {
   const { data, error } = await admin.auth.admin.listUsers({ page, perPage: PER_PAGE });
@@ -68,14 +68,14 @@ console.log(`  already on app_metadata: ${alreadyDone.length}`);
 console.log(`  NEED MIGRATION:          ${needsMigration.length}\n`);
 
 if (!needsMigration.length) {
-  console.log('✅ nothing to migrate — no paying user will be downgraded by the deploy.\n');
+  console.log('✅ nothing to migrate, no paying user will be downgraded by the deploy.\n');
   process.exit(0);
 }
 
 for (const u of needsMigration) console.log(`  ${u.email || '(no email)'}  ${u.id}`);
 
 if (!APPLY) {
-  console.log('\nDry run — nothing changed. Re-run with --apply to migrate these users.\n');
+  console.log('\nDry run, nothing changed. Re-run with --apply to migrate these users.\n');
   process.exit(0);
 }
 
@@ -97,7 +97,7 @@ for (const u of needsMigration) {
 
 console.log(`\n${ok} migrated, ${failed} failed.`);
 if (failed) {
-  console.error('Re-run to retry the failures — the script is idempotent.\n');
+  console.error('Re-run to retry the failures, the script is idempotent.\n');
   process.exit(1);
 }
 // user_metadata is deliberately left as-is: harmless once the code ignores it,

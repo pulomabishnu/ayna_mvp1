@@ -1,4 +1,4 @@
-/* Sign in / sign up — head, form (fields + primary), or, social, switch, trust. 8pt grid, one left edge. */
+/* Sign in / sign up, head, form (fields + primary), or, social, switch, trust. 8pt grid, one left edge. */
 .ayna-mobile.ayna-mobile .ay-auth { background: var(--ay-cream) !important; color: var(--ay-ink) !important; padding: max(16px, env(safe-area-inset-top)) var(--ay-gutter) 32px !important; }
 .ayna-mobile.ayna-mobile .ay-auth-back { width: 44px; height: 44px; margin: 0 0 24px !important; padding: 0 !important; display: grid; place-items: center; border: 1.5px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; color: var(--ay-ink) !important; }
 

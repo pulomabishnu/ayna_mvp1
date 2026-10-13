@@ -1,5 +1,5 @@
 // Mirrors ARTICLE_CATEGORIES in src/components/Articles.jsx verbatim (not
-// exported there) — the real grouping of article ids into named sections,
+// exported there), the real grouping of article ids into named sections,
 // already used by the website's own Articles library page. Keep in sync if
 // the real groupings change.
 export const ARTICLE_CATEGORIES = [

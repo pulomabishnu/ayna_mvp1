@@ -37,8 +37,8 @@ with check (auth.uid() = user_id);
 
 -- Without a DELETE policy every delete is silently blocked (RLS returns 0 rows
 -- affected, not an error). Combined with the UNIQUE constraint on phone_number
--- that means a number bound to the wrong account is stuck forever — the
--- rightful owner gets 23505 -> 409 with no unbind path — and a GDPR/CCPA
+-- that means a number bound to the wrong account is stuck forever, the
+-- rightful owner gets 23505 -> 409 with no unbind path, and a GDPR/CCPA
 -- erasure request cannot be honoured short of deleting the auth.users row.
 drop policy if exists "phone_numbers_delete_own" on public.phone_numbers;
 create policy "phone_numbers_delete_own"

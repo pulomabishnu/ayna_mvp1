@@ -10,10 +10,12 @@ import {
   LIFE_STAGE_LABELS, LIFE_STAGE_VALUE_BY_LABEL, MEDICATION_SUGGESTIONS, MIDLIFE_LIFE_STAGES, PERIMENOPAUSE_LAST_PERIOD,
   PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
   PRODUCT_OR_BRAND_SUGGESTIONS, STOP_REASONS, SUPPORT_GROUPS, UTI_FREQUENCY, buildSnapshot,
-  getLifeStages, isMinorAge, normalizeSuggestion, rankedSuggestions, readIntakeDraft, reconstructIntakeFromSnapshot,
+  getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
   requiredReady, asksBreastfeedingOnTiming, ttcDurationOptions, isValidUsZip,
 } from '../mobile/data/intakeModel.js';
 import QuizIntro from '../mobile/screens/intake/QuizIntro.jsx';
+import SmartSearchInput from './search/SmartSearchInput.jsx';
+import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../utils/search/index.js';
 import './WebIntake.css';
 import '../styles/audit-qya.css';
 
@@ -72,7 +74,7 @@ function Scale({ options, value, onChange }) {
 function Search({ value, onChange, placeholder }) {
   return <label className="wq-search">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-    <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} aria-label={placeholder} />
+    <SmartSearchInput value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} aria-label={placeholder} />
     {value && <button type="button" aria-label="Clear" onClick={() => onChange('')}>×</button>}
   </label>;
 }
@@ -95,7 +97,7 @@ function Tokens({ values, onChange, placeholder, suggestions = [], limit = 8 }) 
   return <div className="wq-tokens-wrap">
     <label className="wq-search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-      <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) { e.preventDefault(); add(draft); } }} placeholder={placeholder} aria-label={placeholder} />
+      <SmartSearchInput vocabulary={suggestions} value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) { e.preventDefault(); add(draft); } }} placeholder={placeholder} aria-label={placeholder} />
     </label>
     {draft.trim() && <div className="wq-suggest" role="listbox">
       <button type="button" className="is-add" onClick={() => add(draft)}>+ Add “{draft.trim()}”</button>
@@ -406,7 +408,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
           {q ? (
             <div className="wq-groups">
               {SUPPORT_GROUPS.map((g) => {
-                const items = g.items.filter((i) => i.toLowerCase().includes(q));
+                const items = g.items.filter((i) => matchesSearchOption(q, i));
                 if (!items.length) return null;
                 return <section key={g.label} className="wq-group"><h3>{g.label}</h3><Chips items={items} selected={intake.supportSelections} onToggle={(v) => toggleExclusive('supportSelections', v, ['Nothing right now'])} /></section>;
               })}
@@ -445,7 +447,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         return <>
           <Search value={search} onChange={setSearch} placeholder="Search conditions" />
           <AddCustom query={search} options={[...items, ...intake.diagnosisSelections]} onAdd={(v) => addCustom('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} />
-          <Chips items={[...(q ? items.filter((i) => i.toLowerCase().includes(q)) : items), ...custom]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} />
+          <Chips items={[...(q ? items.filter((i) => matchesSearchOption(q, i)) : items), ...custom]} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} />
         </>;
       }
       case 'allergies': return <>

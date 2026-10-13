@@ -94,7 +94,15 @@ export const CONFIDENCE_PENALTIES = {
   interpretation_uncertain: 0.9,
   age_unknown_age_limited: 0.95,
   restricted: 0.6,
+  // Product passport (src/data/passport): data quality lowers confidence, never the match.
+  passport_critical_gaps: 0.95,
+  passport_incomplete: 0.92,
+  passport_stale: 0.97, // stale is no better than never verified (catalog_freshness_unknown)
+  medication_label_interaction: 0.85,
 };
+
+// Passport completeness below this lowers confidence (passport_incomplete).
+export const PASSPORT_COMPLETENESS_FLOOR = 60;
 
 // Specificity by relationship of the product to this exact need.
 const SPECIFICITY_BASE = { direct: 1, strong: 0.75, secondary: 0.45, adjacent: 0.2, weak: 0.05, unrelated: 0 };
@@ -136,9 +144,12 @@ export const CATEGORY_TRUST = {
 // needs before we personalize it. Missing -> "restricted" (insufficient
 // information), never a low match. Optional unknowns never restrict.
 const INTERACTION_INGREDIENTS = new Set(INTERACTION_TABLE.map((r) => r.product_ingredient));
+const INTERACTION_WORDS = /interact|absorption|less effective|potency|reduce[sd]? (the )?(effect|level)|avoid (taking|use)|do not take|bleeding risk|blood thinner|anticoagul/;
 export function requiredFieldsFor(pp) {
   const req = [];
-  if (pp.ingested && pp.ingredient_keys.some((k) => INTERACTION_INGREDIENTS.has(k))) req.push('medications');
+  // A reviewed label or NIH fact sheet naming interactions counts like the reviewed table.
+  const passportInteractions = Boolean(pp.passport?.interaction_text && INTERACTION_WORDS.test(pp.passport.interaction_text));
+  if (pp.ingested && (pp.ingredient_keys.some((k) => INTERACTION_INGREDIENTS.has(k)) || passportInteractions)) req.push('medications');
   const pregnancyConcern = ['contraindicated', 'caution'].includes(pp.pregnancy.overall) || pp.safety.hormones === 'yes';
   if (pregnancyConcern && (pp.ingested || pp.formats.includes('suppository') || (pp.safety.hormones === 'yes' && pp.formats.includes('topical')))) req.push('pregnancy_status');
   return req;
@@ -148,8 +159,19 @@ export const REQUIRED_FIELD_TEXT = {
   pregnancy_status: 'whether you are pregnant (your life stage)',
 };
 
+// Product-side safety facts the passport does not have yet. When one is
+// safety-critical for THIS user, the product is restricted (held back, the
+// percent unchanged): unknown is never treated as safe.
+export const PRODUCT_INFO_TEXT = {
+  pregnancy_info: 'pregnancy safety information for this product',
+  breastfeeding_info: 'breastfeeding safety information for this product',
+  ingredient_list: 'a full ingredient list for this product',
+  interaction_info: 'medicine interaction information for this product',
+};
+const HORMONE_ACTIVE_CLASSES = new Set(['hormone', 'hormone-active', 'phytoestrogen']);
+
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
-const clean = (s) => String(s).replace(/\s*[—–]\s*/g, ', ');
+const clean = (s) => String(s).replace(/\s*[\u2014–]\s*/g, ', ');
 const round3 = (x) => (x == null ? null : Math.round(x * 1000) / 1000);
 
 function asProfile(productOrProfile) {
@@ -215,7 +237,13 @@ export function evaluateSafety(productOrProfile, up) {
   const penalize = (code, text) => penalties.push({ code, factor: CONFIDENCE_PENALTIES[code], text });
 
   // 0. Recalled / removed listings: suppressed regardless of personalization.
-  if (pp.status && pp.status.state !== 'active') reasons.push({ code: `status_${pp.status.state}`, text: pp.status.state === 'recalled' ? 'This product has an active recall' : 'This listing is no longer available' });
+  // Passport states recalled / discontinued / unavailable count here too.
+  const STATUS_TEXT = { recalled: 'This product has an active recall', discontinued: 'This product has been discontinued', unavailable: 'We could not find this product for sale right now' };
+  if (pp.status && pp.status.state !== 'active') reasons.push({ code: `status_${pp.status.state}`, text: STATUS_TEXT[pp.status.state] || 'This listing is no longer available' });
+  const missingProductInfo = [];
+  const pk = pp.passport?.known || null; // null: no passport, nothing to add
+  const bodyRoute = pp.ingested || pp.formats.includes('suppository') || pp.formats.includes('topical');
+  const hormoneActive = pp.safety.hormones === 'yes' || (pp.ingredient_classes || []).some((c) => HORMONE_ACTIVE_CLASSES.has(c));
 
   // 1. Avoid list: absolute.
   for (const entry of s.avoid) {
@@ -268,6 +296,10 @@ export function evaluateSafety(productOrProfile, up) {
     else if (s.allergyStatus === 'unknown' && !s.allergies.length) penalize('allergy_status_unknown', 'Allergies not shared');
   }
 
+  // 3b. A specific allergy and no ingredient list or allergen facts at all for
+  //     something she swallows, inserts or puts on skin: we cannot check it.
+  if (pk && bodyRoute && s.allergies.some((a) => a.attr) && !pk.ingredients && !pk.allergens) missingProductInfo.push('ingredient_list');
+
   // 4. Leave out (allergy-equivalent or strong = hard filter on a confirmed 'yes').
   for (const l of s.leaveOut) {
     if (l.strength === 'cosmetic') continue; // handled as a preference value
@@ -306,6 +338,27 @@ export function evaluateSafety(productOrProfile, up) {
   }
   if (interaction.unknownPairs > 0 && interaction.verdict !== 'avoid') {
     penalize('medication_unknown', 'Interaction with your medicines not reviewed');
+    blockedClaims.add('medication_compatible');
+  }
+  // 6b. Reviewed label / NIH interaction text that names one of her medicines.
+  const labelText = pp.passport?.interaction_text || '';
+  if (labelText && interaction.verdict !== 'avoid') {
+    for (const m of s.medications) {
+      if (m.source === 'life_stage') continue;
+      const names = [m.generic, m.raw].filter((x) => x && String(x).length >= 4).map((x) => String(x).toLowerCase());
+      const hit = names.find((n) => new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}s?\\b`).test(labelText));
+      if (hit) {
+        penalize('medication_label_interaction', `Label notes an interaction with ${m.generic || m.raw}`);
+        cautions.push({ code: 'medication_label_interaction', text: `The label or NIH fact sheet notes an interaction with ${m.generic || m.raw}. Check with your clinician or pharmacist.` });
+        blockedClaims.add('medication_compatible');
+        break;
+      }
+    }
+  }
+  // 6c. Hormone-active product, she takes medicines, and nobody has reviewed its interactions.
+  const takesMeds = s.medications.some((m) => m.source !== 'life_stage');
+  if (pk && takesMeds && pp.ingested && hormoneActive && !pk.interactions && !['avoid', 'caution'].includes(interaction.verdict)) {
+    missingProductInfo.push('interaction_info');
     blockedClaims.add('medication_compatible');
   }
   const required = requiredFieldsFor(pp);
@@ -362,6 +415,12 @@ export function evaluateSafety(productOrProfile, up) {
       cautions.push({ code: 'breastfeeding_caution', text: 'Check with your clinician before using this while breastfeeding.' });
     } else if (pp.ingested || pp.formats.includes('topical')) penalize('breastfeeding_unknown', 'Breastfeeding safety not confirmed');
   }
+  // 7b. Pregnant or breastfeeding + hormone-active product with no pregnancy /
+  //     breastfeeding facts at all: restricted until the passport has them.
+  if (pk && hormoneActive && bodyRoute) {
+    if (pStatus === 'pregnant' && preg.overall === 'unknown' && !pk.pregnancy) missingProductInfo.push('pregnancy_info');
+    if (s.breastfeeding === 'yes' && pp.breastfeeding.overall === 'unknown' && !pk.breastfeeding) missingProductInfo.push('breastfeeding_info');
+  }
   for (const stage of up.physiology.lifeStages) {
     if (stage !== 'pregnant' && pp.life_stage[stage] === 'contraindicated') reasons.push({ code: 'life_stage_contraindicated', text: `Not for use in ${LIFE_STAGE_BY_ID[stage]?.phrase || stage}` });
   }
@@ -374,7 +433,13 @@ export function evaluateSafety(productOrProfile, up) {
   // 9. Data quality, freshness, recency and profile flags.
   if (pp.metadata_confidence < 0.5) penalize('low_metadata', 'Limited product data');
   if (pp.freshness?.state === 'unknown') penalize('catalog_freshness_unknown', 'Catalog data has no verification date');
+  else if (pp.freshness?.state === 'stale' && pp.freshness.source === 'product passport') penalize('passport_stale', 'Product facts are past their review date');
   else if (pp.freshness?.state === 'stale') penalize('catalog_stale', 'Catalog data not verified recently');
+  // Passport completeness: how much we know about the product, never how good it is.
+  if (pp.passport?.completeness != null) {
+    if (pp.passport.missing_critical?.length) penalize('passport_critical_gaps', `Product facts missing: ${pp.passport.missing_critical.slice(0, 3).join(', ')}`);
+    if (pp.passport.completeness < PASSPORT_COMPLETENESS_FLOOR) penalize('passport_incomplete', 'Limited verified product facts');
+  }
   if (up.physiology.confidenceFlags.includes('unusual_combination')) penalize('unusual_combination', 'Unusual age and life stage combination');
   const conflicting = up.physiology.compatibility.conflictingStages;
   if (conflicting.some((st) => ['designed_for', 'not_relevant', 'relevant'].includes(pp.life_stage[st]))) {
@@ -385,7 +450,7 @@ export function evaluateSafety(productOrProfile, up) {
   if (rec.medications && s.medications.length && pp.interaction_relevant) penalize('stale_medications', 'Your medicine list is from a while ago');
   if (up.contradictions?.some((c) => c.affects.includes('safety')) && bodyContact(pp)) penalize('answer_contradiction', 'Some safety answers conflict');
 
-  const restricted = reasons.length === 0 && missingFields.length > 0;
+  const restricted = reasons.length === 0 && (missingFields.length > 0 || missingProductInfo.length > 0);
   if (restricted) penalize('restricted', 'Safety details missing');
   const confidence = Math.max(0.2, penalties.reduce((c, p) => c * p.factor, 1));
   const status = reasons.length ? 'excluded' : restricted ? 'insufficient_information' : cautions.length ? 'caution' : 'clear';
@@ -394,6 +459,7 @@ export function evaluateSafety(productOrProfile, up) {
     status,
     restricted,
     missingFields: [...new Set(missingFields)],
+    missingProductInfo: [...new Set(missingProductInfo)],
     reasons,
     cautions,
     penalties,
@@ -623,11 +689,24 @@ export function evidenceChannels(pp) {
 /** Evidence summary for THIS need (claim level), product vs ingredient. */
 export function evidenceFor(pp, needId) {
   const claim = pp.claim_evidence?.[needId] || null;
+  const pc = pp.passport?.claim_evidence?.[needId] || null;
   const e = pp.evidence;
-  const level = claim?.product_specific ? 'product_specific' : claim?.clinical_guideline ? 'guideline'
-    : claim?.ingredient_specific ? 'ingredient_only' : e.product_specific + e.ingredient_specific + e.clinical_guideline > 0 ? 'not_for_this_claim'
+  const level = claim?.product_specific || pc?.product_specific ? 'product_specific' : claim?.clinical_guideline || pc?.guideline ? 'guideline'
+    : claim?.ingredient_specific || pc?.ingredient_level ? 'ingredient_only' : e.product_specific + e.ingredient_specific + e.clinical_guideline > 0 ? 'not_for_this_claim'
       : e.community > 0 ? 'community_only' : 'none';
-  return { level, forThisNeed: claim, catalogStrength: e.strength || null, channels: evidenceChannels(pp) };
+  return { level, forThisNeed: claim, passportClaims: pc ? pc.claims : [], passportScore: pc ? pc.score : null, catalogStrength: e.strength || null, channels: evidenceChannels(pp) };
+}
+
+/**
+ * Clinical evidence for THIS need: the product-level channel, raised by a
+ * reviewed passport claim that matches the need (strength x product-specific
+ * 1 / guideline 0.8 / ingredient-level 0.6). Ingredient-only evidence weighs
+ * less than product-specific evidence.
+ */
+export function clinicalForNeed(pp, needId) {
+  const general = evidenceChannels(pp).clinical;
+  const pc = pp.passport?.claim_evidence?.[needId];
+  return pc ? Math.max(general, clamp01(pc.score)) : general;
 }
 
 function trustWeightsFor(pp, up) {
@@ -639,7 +718,7 @@ function trustWeightsFor(pp, up) {
 }
 
 function evidenceDimension(pp, up, needId, explanations) {
-  const ch = evidenceChannels(pp);
+  const ch = { ...evidenceChannels(pp), clinical: clinicalForNeed(pp, needId) };
   const w = trustWeightsFor(pp, up);
   const value = clamp01(w.clinical * ch.clinical + w.community * ch.community + w.expert * ch.expert);
   if (!up.trust.touched) return { value, known: false };
@@ -647,7 +726,8 @@ function evidenceDimension(pp, up, needId, explanations) {
   const top = up.trust.ranking[0];
   const claim = pp.claim_evidence?.[needId];
   const phrase = needPhrase(needId);
-  if (top === 'clinical' && claim && (claim.product_specific || claim.clinical_guideline)) explanations.push(`Has clinical sources about ${phrase}, which you ranked first`);
+  const pclaim = pp.passport?.claim_evidence?.[needId];
+  if (top === 'clinical' && ((claim && (claim.product_specific || claim.clinical_guideline)) || (pclaim && (pclaim.product_specific || pclaim.guideline) && pclaim.score >= 0.5))) explanations.push(`Has clinical sources about ${phrase}, which you ranked first`);
   if (top === 'community' && ch.community >= 0.66) explanations.push('Well reviewed by other women, which you ranked first');
   if (top === 'expert' && ch.expert >= 0.8) explanations.push('Reviewed by experts, which you ranked first');
   return { value, known: hasData };
@@ -972,7 +1052,7 @@ export function scoreProductForNeed(productOrProfile, up, needIdIn, opts = {}) {
     },
     points: { relevance: Math.round(R * 10) / 10, preferenceMultiplier: round3(1 - PREFERENCE_SPAN * (1 - P)), experience: Math.round(exp.points * 10) / 10, behavior: Math.round(behaviorPoints * 10) / 10 },
     evidence,
-    safety: { eligible: safety.eligible, status: safety.status, restricted: safety.restricted, missingFields: safety.missingFields, reasons: safety.reasons, cautions: safety.cautions, blockedClaims: safety.blockedClaims },
+    safety: { eligible: safety.eligible, status: safety.status, restricted: safety.restricted, missingFields: safety.missingFields, missingProductInfo: safety.missingProductInfo, reasons: safety.reasons, cautions: safety.cautions, blockedClaims: safety.blockedClaims },
     confidence: round3(confidence),
     confidenceLevel: eligibility === 'restricted' ? 'limited' : confidenceLevel(confidence),
     confidenceReasons,

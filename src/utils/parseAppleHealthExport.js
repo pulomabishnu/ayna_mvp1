@@ -1,6 +1,6 @@
 /**
- * Parses Apple Health's export.xml — plain, documented XML (Settings -> Health
- * -> Export All Health Data produces it), not a HealthKit-only format —
+ * Parses Apple Health's export.xml, plain, documented XML (Settings -> Health
+ * -> Export All Health Data produces it), not a HealthKit-only format
  * entirely client-side. No app, no server, no third-party processor: the file
  * never leaves the browser, same as parseFhirBundleText in healthDataProfile.js.
  *

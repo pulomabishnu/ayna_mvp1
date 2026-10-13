@@ -1,18 +1,18 @@
 /**
  * Real snapshot of the open-source packages actually shipped in the ayna
- * mobile app — the browser bundle (react, react-dom, posthog-js,
+ * mobile app, the browser bundle (react, react-dom, posthog-js,
  * @supabase/supabase-js and their runtime sub-dependencies) plus the
  * Capacitor packages that ship inside the native iOS/Android container.
  *
  * Deliberately excludes:
- * - devDependencies (eslint, vite, vitest, etc.) — never shipped to a user.
- * - @capacitor/cli's own dependency tree — developer tooling used locally
+ * - devDependencies (eslint, vite, vitest, etc.), never shipped to a user.
+ * - @capacitor/cli's own dependency tree, developer tooling used locally
  *   to manage the Xcode/Android project, never code that runs on a user's
  *   device.
- * - TypeScript type-only packages (@types/*, csstype, undici-types) — .d.ts
+ * - TypeScript type-only packages (@types/*, csstype, undici-types).d.ts
  *   declarations only, no runtime code ships from them.
  * - Optional peer dependencies that aren't actually installed (bufferutil,
- *   utf-8-validate, preact-render-to-string) — listed by some tools as
+ *   utf-8-validate, preact-render-to-string), listed by some tools as
  *   possible deps of ws/posthog-js, but not present in node_modules here.
  *
  * To regenerate after a dependency change: re-run the walk documented in
@@ -53,7 +53,7 @@ export const OPEN_SOURCE_PACKAGES = [
 ];
 
 // Short "MIT, Apache 2.0, 0BSD"–style summary for the Legal screen's row
-// subtitle — every distinct exact license string present, most-common
+// subtitle, every distinct exact license string present, most-common
 // first, lightly reformatted for readability. Matches on the exact license
 // string rather than a substring check, since e.g. '0BSD'.includes('BSD')
 // would otherwise wrongly claim a plain "BSD" license is present too.

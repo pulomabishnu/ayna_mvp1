@@ -10,7 +10,7 @@ function simpleHash(str) {
   // health-context string emits the quiz block (frustrations, preferences,
   // sensitivities) BEFORE conditions, medications and allergies. Any user with
   // a filled-in quiz therefore produced an identical cache key no matter how
-  // her conditions or medications changed — so she kept seeing insights
+  // her conditions or medications changed, so she kept seeing insights
   // personalized to a profile missing, say, a newly added allergy, for the full
   // 30-day TTL, on a health product.
   const s = String(str || '');
@@ -129,7 +129,7 @@ export async function fetchProductInsights(product, options = {}) {
   } catch (e) {
     if (e?.name === 'AbortError') {
       const err = new Error(
-        signal?.aborted ? 'Cancelled' : 'That took too long — please try again.'
+        signal?.aborted ? 'Cancelled' : 'That took too long, please try again.'
       );
       err.code = signal?.aborted ? 'cancelled' : 'timeout';
       throw err;

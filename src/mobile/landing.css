@@ -1,4 +1,4 @@
-/* Landing — one column on an 8pt grid. Everything shares the 24px gutter edge.
+/* Landing, one column on an 8pt grid. Everything shares the 24px gutter edge.
    Widget content floats on the page colour (no card behind it). */
 .ayna-mobile.ayna-mobile .ay-cover {
   --lp-gutter: 24px;
@@ -102,7 +102,7 @@
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { position: relative !important; z-index: 1; }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { top: auto !important; left: auto !important; }
 
-/* Discover frame — clean swipe loop (3s, matches the frame length):
+/* Discover frame, clean swipe loop (3s, matches the frame length):
    rest → bookmark pops (saved) → card swipes off fast → next card rises from the deck. No lingering ghost. */
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { overflow: hidden; margin-inline: calc(-1 * var(--lp-gutter)); padding-inline: var(--lp-gutter); }
 .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c1 { background: var(--ay-butter); rotate: -9deg; }
@@ -145,7 +145,7 @@
 /* One small sparkle in the 32px band under the header; the second sits by the headline */
 .ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(1) { right: 30% !important; top: 72px !important; width: 16px !important; height: 16px !important; }
 .ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(2) { display: none !important; }
-/* Stars: a loose constellation around the edges — varied size/colour, staggered twinkle, never over controls */
+/* Stars: a loose constellation around the edges, varied size/colour, staggered twinkle, never over controls */
 .ayna-mobile.ayna-mobile .ay-cover-stars i { display: block !important; position: absolute; border: 0 !important; border-radius: 0 !important; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); background: var(--ay-butter) !important; animation: lp-twinkle 3.6s ease-in-out infinite; }
 .ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(1) { left: auto !important; right: 30% !important; top: 70px !important; width: 18px !important; height: 18px !important; animation-delay: 0s; }
 .ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(2) { display: block !important; left: 6px !important; right: auto !important; top: 30% !important; width: 14px !important; height: 14px !important; background: var(--ay-paper) !important; animation-delay: -1.2s; }
@@ -157,7 +157,7 @@
 /* Narrow phones: keep the headline to two lines */
 .ayna-mobile.ayna-mobile .ay-cover-copy h1 { font-size: calc(clamp(32px, 10.2vw, 48px) * var(--ayna-text-scale, 1)) !important; }
 
-/* Proximity (Figma UI principles): the reel is one tight group — title, art, progress —
+/* Proximity (Figma UI principles): the reel is one tight group, title, art, progress
    and leftover height becomes equal white space around the group, never inside it. */
 .ayna-mobile.ayna-mobile .ay-cover-reel { flex: 1 1 auto; display: flex !important; flex-direction: column; justify-content: center; margin: 0 !important; padding: 32px 0 40px !important; }
 .ayna-mobile.ayna-mobile .ay-cover-widget { flex: 0 0 auto !important; display: block; }

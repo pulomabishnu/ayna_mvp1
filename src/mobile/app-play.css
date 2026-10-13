@@ -636,7 +636,7 @@
 .ayna-mobile .ay-cover-widget .ay-reel.is-mint { --reel-bg: var(--ay-mint); }
 .ayna-mobile .ay-cover-widget .ay-reel.is-peri { --reel-bg: var(--ay-paper); }
 
-/* You hub menu — same card language as Settings */
+/* You hub menu, same card language as Settings */
 .ayna-mobile.ayna-mobile .ayna-fresh-profile-menu { gap: 10px !important; padding: 20px var(--ay-gutter) 26px !important; background: transparent !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button { min-height: 64px !important; padding: 12px 14px !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 18px !important; background: var(--ay-paper) !important; box-shadow: 0 3px 0 var(--ay-ink); }
 .ayna-mobile.ayna-mobile .ayna-fresh-profile-menu > button > div:first-child { display: flex !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; border: 1.5px solid var(--ay-ink); color: var(--ay-ink) !important; }
@@ -653,7 +653,7 @@
 .ayna-mobile .ay-ask-title { margin: 0; font-family: var(--ayna-font-ui); font-weight: 700; font-size: calc(30px * var(--ayna-text-scale, 1)); letter-spacing: -.04em; line-height: 1.1; color: var(--ay-ink); }
 .ayna-mobile .ay-hub-avatar { overflow: hidden !important; } .ayna-mobile .ay-hub-avatar.has-photo { background: var(--ay-paper) !important; }
 
-/* Product card copy — name, brand right under it, price pinned to the bottom so every card in a row lines up. */
+/* Product card copy, name, brand right under it, price pinned to the bottom so every card in a row lines up. */
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) { display: flex !important; flex-direction: column !important; height: 100%; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-main { flex: 1 1 auto !important; display: flex !important; flex-direction: column !important; }
 .ayna-mobile.ayna-mobile .ayna-fresh-product-card:not(.is-list) .ayna-fresh-product-copy { flex: 1 1 auto !important; display: flex !important; flex-direction: column !important; align-items: center !important; gap: 3px !important; padding: 10px 6px 2px !important; }

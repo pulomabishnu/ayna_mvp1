@@ -1,5 +1,5 @@
 /**
- * /api/phone-verify-confirm — Confirm the self-issued OTP (see
+ * /api/phone-verify-confirm, Confirm the self-issued OTP (see
  * api/phone-verify-send.js) and persist the verified phone number.
  *
  * The pending row is read/written with the SERVICE-ROLE key so `code_hash` is
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
   const { user, error } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
 
-  // The confirm endpoint previously had NO rate limit at all — the only brake
+  // The confirm endpoint previously had NO rate limit at all, the only brake
   // was an `attempts` column updated via a racy read-modify-write, so N
   // parallel guesses all read the same value and all wrote n+1. That left the
   // full 10^6 keyspace open for the code's 10-minute lifetime.

@@ -42,3 +42,5 @@
   .app-container .ay-audit__detail { padding-left: 0; }
   .app-container .ay-audit__facts > div { grid-template-columns: 1fr; gap: 0; }
 }
+.app-container .ay-audit__badges .is-status { background: var(--ay-ink); color: var(--ay-paper); }
+.app-container .ay-audit__detail a { color: var(--ay-ink); text-decoration: underline; text-underline-offset: 2px; }

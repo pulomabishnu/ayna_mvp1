@@ -1,10 +1,10 @@
 // Mirrors getBuyUrl/isExactBuyUrl/hasRealPath/isSearchResultsUrl from
-// src/components/ProductModal.jsx verbatim (not exported there) — this is
+// src/components/ProductModal.jsx verbatim (not exported there), this is
 // the real site's actual "Buy Now" URL-resolution logic (affiliate link,
 // then Ayna's centrally verified PRODUCT_BUY_URLS map, then product-level
 // URL fields, rejecting bare homepages and search-result pages along the
 // way). PRODUCT_BUY_URLS itself is imported directly from the real
-// src/data/productBuyUrls.js — the actual hardcoded id -> URL map used on
+// src/data/productBuyUrls.js, the actual hardcoded id -> URL map used on
 // the website, not a mobile-only copy. Keep the helper functions in sync
 // with ProductModal.jsx if that logic changes.
 import { PRODUCT_BUY_URLS } from '../../data/productBuyUrls.js';

@@ -573,7 +573,7 @@ export function normalizeText(raw) {
   return String(raw ?? '')
     .toLowerCase()
     .replace(/[’‘`]/g, "'")
-    .replace(/[–—]/g, '-')
+    .replace(/[–\u2014]/g, '-')
     .replace(/\bcan't\b/g, 'cannot')
     .replace(/\bwon't\b/g, 'will not')
     .replace(/\bdon't\b/g, 'do not')
