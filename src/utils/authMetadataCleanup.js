@@ -48,9 +48,15 @@ function preserveLegacyLocally(userId, ecosystem, saved) {
 /**
  * Older builds copied whole ecosystem/wishlist blobs into Supabase Auth metadata.
  * Supabase embeds user_metadata in the access JWT, so those blobs can inflate the
- * Authorization header past Vercel's request-header limit. Preserve the legacy
- * values in the app's existing browser fallbacks, remove them from Auth metadata,
- * then refresh the session so subsequent API calls get a compact JWT immediately.
+ * Authorization header past Vercel/Supabase request-header limits. Preserve the
+ * legacy values in the app's existing browser fallbacks, remove them from Auth
+ * metadata, then refresh the session so subsequent API calls get a compact JWT.
+ *
+ * Important recovery case: after an admin/server cleanup removes the legacy blob,
+ * a browser can still have the OLD oversized JWT cached in localStorage. Calling
+ * updateUser with that stale JWT fails before GoTrue can read the now-clean user.
+ * If the cached token itself is oversized, refresh it FIRST. /token can mint a
+ * fresh JWT from the current server metadata without requiring /auth/v1/user.
  */
 export async function compactLegacyAuthMetadata(supabase) {
   if (!supabase) return { session: null, changed: false };
@@ -60,13 +66,31 @@ export async function compactLegacyAuthMetadata(supabase) {
     const { data, error } = await supabase.auth.getSession();
     if (error) throw error;
 
-    const session = data?.session || null;
+    let session = data?.session || null;
     if (!session?.user) return { session, changed: false };
 
-    const { ecosystem, saved } = legacyMetadata(session.user);
-    const tokenTooLarge = String(session.access_token || '').length > SAFE_AUTH_TOKEN_CHARS;
-    const hasLegacyBlob = Boolean(ecosystem || saved);
+    let { ecosystem, saved } = legacyMetadata(session.user);
+    let tokenTooLarge = String(session.access_token || '').length > SAFE_AUTH_TOKEN_CHARS;
 
+    // A stale browser session may still contain legacy metadata even though the
+    // server record has already been compacted. Refreshing first replaces that
+    // stale JWT/user snapshot with the current server-side version and avoids a
+    // doomed /auth/v1/user update using the oversized Authorization header.
+    if (tokenTooLarge) {
+      try {
+        const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
+        if (!refreshError && refreshed?.session) {
+          session = refreshed.session;
+          ({ ecosystem, saved } = legacyMetadata(session.user));
+          tokenTooLarge = String(session.access_token || '').length > SAFE_AUTH_TOKEN_CHARS;
+        }
+      } catch (_) {
+        // Fall through to the legacy preservation/cleanup path below. If the
+        // server still has the blob, that path remains the best effort repair.
+      }
+    }
+
+    const hasLegacyBlob = Boolean(ecosystem || saved);
     if (!hasLegacyBlob && !tokenTooLarge) {
       return { session, changed: false };
     }
