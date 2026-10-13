@@ -1,19 +1,18 @@
+import { compactLegacyAuthMetadata } from './authMetadataCleanup';
+import { toCatalogProduct } from './catalogIntegrity';
+
 /**
  * Supabase persistence for user_ecosystems.
  * One row per (user_id, product_id). Flags track which lists the product lives in.
  *
- * IMPORTANT: the live database has historically drifted from the frontend
- * schema/RLS. Ecosystem edits must never disappear just because that table is
- * temporarily unwritable. We therefore keep a tiny per-user shadow copy in
- * localStorage and in Supabase auth user_metadata. The table remains the primary
- * store when it works; the shadow is a durable fallback and conflict resolver.
+ * The table is the durable source of truth. A sessionStorage shadow exists only
+ * as an active-tab resilience layer; ecosystem/product blobs must never be put
+ * into Supabase Auth user_metadata because that metadata is embedded in the JWT.
  */
 
-const SHADOW_VERSION = 2;
-const SHADOW_META_KEY = 'ayna_ecosystem_shadow_v2';
+const SHADOW_VERSION = 3;
 const SHADOW_LS_PREFIX = 'ayna_ecosystem_shadow_v2:';
 
-/** Postgres failures that mean "the write did not happen" but are easy to miss. */
 function describeError(error, op) {
   if (!error) return null;
   if (error.code === '42P10') {
@@ -46,8 +45,19 @@ function localShadowKey(userId) {
 
 function readLocalShadow(userId) {
   if (!userId || typeof window === 'undefined') return emptyShadow();
+  const key = localShadowKey(userId);
   try {
-    return normalizeShadow(JSON.parse(window.localStorage.getItem(localShadowKey(userId)) || 'null'));
+    const current = window.sessionStorage.getItem(key);
+    if (current) return normalizeShadow(JSON.parse(current));
+
+    // One-time migration from older builds that persisted a personalized
+    // ecosystem snapshot in localStorage.
+    const legacy = window.localStorage.getItem(key);
+    if (!legacy) return emptyShadow();
+    const parsed = normalizeShadow(JSON.parse(legacy));
+    try { window.sessionStorage.setItem(key, JSON.stringify(parsed)); } catch (_) {}
+    try { window.localStorage.removeItem(key); } catch (_) {}
+    return parsed;
   } catch {
     return emptyShadow();
   }
@@ -55,8 +65,10 @@ function readLocalShadow(userId) {
 
 function writeLocalShadow(userId, shadow) {
   if (!userId || typeof window === 'undefined') return false;
+  const key = localShadowKey(userId);
   try {
-    window.localStorage.setItem(localShadowKey(userId), JSON.stringify(normalizeShadow(shadow)));
+    window.sessionStorage.setItem(key, JSON.stringify(normalizeShadow(shadow)));
+    try { window.localStorage.removeItem(key); } catch (_) {}
     return true;
   } catch {
     return false;
@@ -70,7 +82,8 @@ function compactProduct(product) {
     'image', 'imageUrl', 'images', 'summary', 'description', 'tagline',
     'tags', 'healthFunctions', 'internal', 'safety', 'ageMin', 'ageMax',
     'whereToBuy', 'url', 'website', 'buyUrl', 'purchaseUrl', 'affiliateUrl',
-    'llmGenerated', 'intakeGenerated', '_llmConcern', '_userSwapped',
+    'intakeGenerated', '_llmConcern', '_userSwapped',
+    'catalogId', 'catalogVerified', 'whyItWorks', 'considerations', 'matchExplanation',
     'aynaMatch', 'aynaMatchPercent', 'matchPercent', 'matchPercentage',
   ];
   const out = {};
@@ -91,50 +104,6 @@ function rowFromProduct(product, flags) {
     isOmitted: !!flags.isOmitted,
     updatedAt: Date.now(),
   };
-}
-
-function mergeShadows(a, b) {
-  const left = normalizeShadow(a);
-  const right = normalizeShadow(b);
-  const merged = {
-    version: SHADOW_VERSION,
-    resetAt: Math.max(left.resetAt || 0, right.resetAt || 0),
-    fullResetAt: Math.max(left.fullResetAt || 0, right.fullResetAt || 0),
-    rows: { ...left.rows },
-  };
-  for (const [id, row] of Object.entries(right.rows || {})) {
-    const current = merged.rows[id];
-    if (!current || Number(row?.updatedAt || 0) >= Number(current?.updatedAt || 0)) {
-      merged.rows[id] = row;
-    }
-  }
-  return merged;
-}
-
-async function readMetadataShadow(supabase, userId) {
-  if (!supabase || !userId) return emptyShadow();
-  try {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || data?.user?.id !== userId) return emptyShadow();
-    return normalizeShadow(data.user.user_metadata?.[SHADOW_META_KEY]);
-  } catch {
-    return emptyShadow();
-  }
-}
-
-async function writeMetadataShadow(supabase, userId, shadow) {
-  if (!supabase || !userId) return false;
-  try {
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || userData?.user?.id !== userId) return false;
-    const current = userData.user.user_metadata || {};
-    const { error } = await supabase.auth.updateUser({
-      data: { ...current, [SHADOW_META_KEY]: normalizeShadow(shadow) },
-    });
-    return !error;
-  } catch {
-    return false;
-  }
 }
 
 function updateLocalProductShadow(userId, product, flags) {
@@ -185,9 +154,13 @@ function hydrateFromRows(rowsById) {
   const omittedProducts = {};
   const ecosystemUpdatedAt = {};
 
-  for (const [productId, row] of Object.entries(rowsById || {})) {
-    const product = row?.product;
+  for (const [, row] of Object.entries(rowsById || {})) {
+    // PRODUCT INTEGRITY: saved snapshots from older builds can hold free-form
+    // model output (invented names/URLs). Only catalog-backed products are
+    // shown, always with current catalog facts. Rows are NOT deleted.
+    const product = toCatalogProduct(row?.product);
     if (!product?.id) continue;
+    const productId = product.id;
     if (row.inEcosystem) {
       myProducts[productId] = product;
       ecosystemUpdatedAt[productId] = row.updatedAt ? new Date(row.updatedAt).toISOString() : null;
@@ -199,7 +172,46 @@ function hydrateFromRows(rowsById) {
   return { myProducts, trackedProducts, omittedProducts, ecosystemUpdatedAt };
 }
 
+function toRow(userId, product, { inEcosystem, isTracked, isOmitted }) {
+  return {
+    user_id: userId,
+    product_id: product.id,
+    product_name: product.name,
+    brand: product.brand,
+    category: product.category,
+    product_type: product.type,
+    product_data: product,
+    in_ecosystem: !!inEcosystem,
+    is_tracked: !!isTracked,
+    is_omitted: !!isOmitted,
+    updated_at: new Date().toISOString(),
+  };
+}
+
+async function syncActiveShadowRows(supabase, userId, shadow, onlyIds = null) {
+  const rows = Object.entries(shadow?.rows || {})
+    .filter(([id]) => !onlyIds || onlyIds.has(id))
+    .map(([, row]) => row)
+    .filter((row) => row?.product?.id && (row.inEcosystem || row.isTracked || row.isOmitted))
+    .map((row) => toRow(userId, row.product, row));
+  if (!rows.length) return;
+
+  const CHUNK = 100;
+  for (let i = 0; i < rows.length; i += CHUNK) {
+    const { error } = await supabase
+      .from('user_ecosystems')
+      .upsert(rows.slice(i, i + CHUNK), { onConflict: 'user_id,product_id' });
+    if (error) throw error;
+  }
+}
+
 export async function loadEcosystemForUser(supabase, userId) {
+  // This also migrates any legacy Auth-metadata shadow into sessionStorage and
+  // refreshes the JWT so subsequent Vercel API calls do not carry a huge header.
+  try { await compactLegacyAuthMetadata(supabase); } catch (error) {
+    console.warn('[Ayna] legacy auth metadata cleanup deferred:', error?.message || error);
+  }
+
   let dbData = [];
   let dbError = null;
   try {
@@ -214,36 +226,41 @@ export async function loadEcosystemForUser(supabase, userId) {
   }
 
   const localShadow = readLocalShadow(userId);
-  const metadataShadow = await readMetadataShadow(supabase, userId);
-  const shadow = mergeShadows(localShadow, metadataShadow);
-  // Keep the newest metadata copy available locally for the next login even if
-  // the table is still unavailable.
-  writeLocalShadow(userId, shadow);
+  writeLocalShadow(userId, localShadow);
 
   const mergedRows = {};
   for (const row of dbData) {
     const converted = dbRowToShadowRow(row);
-    // A local reset is a tombstone for old DB ecosystem flags. This prevents a
-    // stale row from popping back in after logout/login while RLS is broken.
-    if (shadow.resetAt && converted.updatedAt <= shadow.resetAt) {
+    // A local reset is a tombstone for older DB flags so a stale row cannot
+    // pop back in this session. Rows are never deleted by this.
+    if (localShadow.resetAt && converted.updatedAt <= localShadow.resetAt) {
       converted.inEcosystem = false;
     }
-    if (shadow.fullResetAt && converted.updatedAt <= shadow.fullResetAt) {
+    if (localShadow.fullResetAt && converted.updatedAt <= localShadow.fullResetAt) {
       converted.isTracked = false;
       converted.isOmitted = false;
     }
     mergedRows[row.product_id] = converted;
   }
 
-  for (const [productId, row] of Object.entries(shadow.rows || {})) {
+  const shadowWins = new Set();
+  for (const [productId, row] of Object.entries(localShadow.rows || {})) {
     const existing = mergedRows[productId];
     if (!existing || Number(row?.updatedAt || 0) >= Number(existing?.updatedAt || 0)) {
       mergedRows[productId] = row;
+      shadowWins.add(productId);
     }
   }
 
+  // Best-effort migration of any legacy/session fallback rows into the real
+  // table. Only rows where the fallback copy is at least as new as the table
+  // are pushed, so an older session copy never overwrites a newer table row.
+  try { await syncActiveShadowRows(supabase, userId, localShadow, shadowWins); } catch (error) {
+    if (!dbError) dbError = error;
+  }
+
   if (dbError) {
-    console.warn('[Ayna] user_ecosystems read unavailable; restored ecosystem from fallback storage:', describeError(dbError, 'loadEcosystem'));
+    console.warn('[Ayna] user_ecosystems read/write unavailable; restored ecosystem from session fallback:', describeError(dbError, 'loadEcosystem'));
   }
 
   return hydrateFromRows(mergedRows);
@@ -251,11 +268,11 @@ export async function loadEcosystemForUser(supabase, userId) {
 
 /**
  * Remove products from the ecosystem WITHOUT destroying tracked/omitted state.
- * The local/auth shadow is written first so reset remains durable even when the
- * live table rejects UPDATE/DELETE through RLS.
+ * `includeTracking: true` is the explicit full reset (ecosystem + tracking +
+ * hidden); saved-for-later rows (is_saved) are never touched either way.
  */
 export async function clearEcosystemForUser(supabase, userId, { includeTracking = false } = {}) {
-  const shadow = clearLocalEcosystemShadow(userId, includeTracking);
+  clearLocalEcosystemShadow(userId, includeTracking);
 
   try {
     let updateQuery = supabase
@@ -277,39 +294,15 @@ export async function clearEcosystemForUser(supabase, userId, { includeTracking 
     if (deleteError && deleteError.code !== '42703') throw deleteError;
     return { cleared: count ?? null, synced: true };
   } catch (error) {
-    console.warn('[Ayna] user_ecosystems reset deferred; fallback copy is authoritative:', describeError(error, 'clearEcosystem'));
-    const metadataSaved = await writeMetadataShadow(supabase, userId, shadow);
-    return { cleared: null, synced: metadataSaved, fallback: true };
+    console.warn('[Ayna] user_ecosystems reset deferred; session fallback retained:', describeError(error, 'clearEcosystem'));
+    return { cleared: null, synced: false, fallback: true };
   }
 }
 
-function toRow(userId, product, { inEcosystem, isTracked, isOmitted }) {
-  return {
-    user_id: userId,
-    product_id: product.id,
-    product_name: product.name,
-    brand: product.brand,
-    category: product.category,
-    product_type: product.type,
-    product_data: product,
-    in_ecosystem: !!inEcosystem,
-    is_tracked: !!isTracked,
-    is_omitted: !!isOmitted,
-    updated_at: new Date().toISOString(),
-  };
-}
-
 export async function upsertProductState(supabase, userId, product, flags) {
-  // Local shadow is written first (instant, always succeeds) so a successful
-  // UI change survives logout/login even if the table write below is
-  // rejected. The auth-metadata copy is written ONLY when the table write
-  // actually fails below, not on every call, since user_metadata rides
-  // along in the auth JWT on every request; writing it unconditionally here
-  // used to make it grow without bound and eventually blow past header size
-  // limits (HTTP 431) even when the table was working fine.
-  const shadow = updateLocalProductShadow(userId, product, flags);
-
+  updateLocalProductShadow(userId, product, flags);
   const { inEcosystem, isTracked, isOmitted } = flags;
+
   try {
     if (!inEcosystem && !isTracked && !isOmitted) {
       const { error: updateError } = await supabase
@@ -337,20 +330,39 @@ export async function upsertProductState(supabase, userId, product, flags) {
     }
     return { synced: true };
   } catch (error) {
-    console.warn('[Ayna] user_ecosystems write unavailable; ecosystem change saved to fallback:', describeError(error, 'upsertProduct'));
-    // localStorage is already written, so this is still a successful user save
-    // on this device. user_metadata makes it cross-session/device when allowed.
-    const metadataSaved = await writeMetadataShadow(supabase, userId, shadow);
-    return { synced: metadataSaved, fallback: true };
+    console.warn('[Ayna] user_ecosystems write unavailable; change remains in session fallback:', describeError(error, 'upsertProduct'));
+    return { synced: false, fallback: true };
   }
 }
 
-/** Persist many products in ONE request per chunk, with the same durable fallback. */
+/** Replace superseded quiz/AI picks without changing tracking, omission or saved flags. */
+export async function removeGeneratedProductsFromEcosystem(supabase, userId, productIds) {
+  const ids = [...new Set((productIds || []).filter(Boolean))];
+  if (!ids.length) return { updated: 0 };
+  const shadow = readLocalShadow(userId);
+  const now = Date.now();
+  for (const id of ids) {
+    if (shadow.rows[id]) {
+      shadow.rows[id].inEcosystem = false;
+      shadow.rows[id].updatedAt = now;
+    }
+  }
+  writeLocalShadow(userId, shadow);
+  const { error } = await supabase
+    .from('user_ecosystems')
+    .update({ in_ecosystem: false, updated_at: new Date(now).toISOString() })
+    .eq('user_id', userId)
+    .in('product_id', ids);
+  if (error) throw error;
+  return { updated: ids.length };
+}
+
+/** Persist many products in chunks. Never write product blobs to Auth metadata. */
 export async function upsertProductsBatch(supabase, userId, products, flags) {
   const valid = (Array.isArray(products) ? products : []).filter((p) => p?.id);
   if (valid.length === 0) return { saved: 0 };
 
-  let shadow = readLocalShadow(userId);
+  const shadow = readLocalShadow(userId);
   for (const product of valid) {
     const row = rowFromProduct(product, flags);
     if (row) shadow.rows[product.id] = row;
@@ -370,8 +382,7 @@ export async function upsertProductsBatch(supabase, userId, products, flags) {
     }
     return { saved, synced: true };
   } catch (error) {
-    console.warn('[Ayna] ecosystem batch table write unavailable; fallback copy saved:', describeError(error, 'upsertProductsBatch'));
-    const metadataSaved = await writeMetadataShadow(supabase, userId, shadow);
-    return { saved: valid.length, synced: metadataSaved, fallback: true };
+    console.warn('[Ayna] ecosystem batch table write unavailable; session fallback retained:', describeError(error, 'upsertProductsBatch'));
+    return { saved: valid.length, synced: false, fallback: true };
   }
 }

@@ -1,0 +1,126 @@
+/* Final specificity pass for the Canva visual system.
+ * This file is imported last on purpose so legacy V6 rules cannot wash it out.
+ */
+
+/* Canva editorial display type must stay Playfair, even against older !important heading rules. */
+.canva-home .canva-display,
+.canva-home h1.canva-display,
+.canva-home h2.canva-display,
+.canva-home h3.canva-display {
+  font-family:'Playfair Display','Cormorant Garamond',Georgia,serif!important;
+  font-weight:500!important;
+  letter-spacing:-.065em!important;
+  line-height:.95!important;
+}
+
+/* Legacy form rules were drawing a second gray pill inside the homepage search. */
+.canva-home form.canva-search input[type='search'],
+.canva-home form.canva-search input,
+.canva-home .canva-search > input {
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  flex:1 1 auto!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  outline:0!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:#292524!important;
+}
+.canva-home form.canva-search input[type='search']::-webkit-search-decoration,
+.canva-home form.canva-search input[type='search']::-webkit-search-cancel-button,
+.canva-home form.canva-search input[type='search']::-webkit-search-results-button,
+.canva-home form.canva-search input[type='search']::-webkit-search-results-decoration{display:none!important}
+
+/* Make the dark intake actually read like the Canva cinematic modal, not pale lavender. */
+html body:has(.ayna-intake-root.v6-quiz-dark),
+html body:has(.ayna-intake-root.v6-quiz-dark) .app-container,
+html .ayna-intake-root.v6-quiz-dark {
+  color:#FFFCF9!important;
+  background:
+    radial-gradient(circle at 85% 8%,rgba(106,72,91,.78),transparent 34%),
+    radial-gradient(circle at 9% 96%,rgba(240,168,75,.17),transparent 24%),
+    radial-gradient(circle at 47% 56%,rgba(63,52,87,.70),transparent 47%),
+    #242A52!important;
+}
+html body:has(.ayna-intake-root.v6-quiz-dark) .app-nav,
+html body:has(.ayna-intake-root.v6-quiz-dark) .app-nav--cream,
+html body:has(.ayna-intake-root.v6-quiz-dark) .app-nav--landing {
+  background:rgba(36,42,82,.94)!important;
+  color:#FFFCF9!important;
+  border-bottom-color:rgba(255,252,249,.15)!important;
+  box-shadow:none!important;
+}
+html body:has(.ayna-intake-root.v6-quiz-dark) .app-nav__logo,
+html body:has(.ayna-intake-root.v6-quiz-dark) .app-nav a,
+html body:has(.ayna-intake-root.v6-quiz-dark) .app-nav button{color:#FFFCF9!important}
+html .ayna-intake-root.v6-quiz-dark .ayna-intake-card,
+html .ayna-intake-root.v6-quiz-dark .ayna-intake-question,
+html .ayna-intake-root.v6-quiz-dark .ayna-question-card {
+  background:rgba(36,42,82,.46)!important;
+  color:#FFFCF9!important;
+  border:1px solid rgba(255,252,249,.16)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(3px)!important;
+}
+html .ayna-intake-root.v6-quiz-dark h1,
+html .ayna-intake-root.v6-quiz-dark h2,
+html .ayna-intake-root.v6-quiz-dark h3,
+html .ayna-intake-root.v6-quiz-dark p,
+html .ayna-intake-root.v6-quiz-dark label,
+html .ayna-intake-root.v6-quiz-dark .ayna-intake-hint{color:#FFFCF9!important}
+html .ayna-intake-root.v6-quiz-dark input,
+html .ayna-intake-root.v6-quiz-dark textarea,
+html .ayna-intake-root.v6-quiz-dark select,
+html .ayna-intake-root.v6-quiz-dark .v6-support-search-wrap input {
+  background:rgba(255,252,249,.07)!important;
+  color:#FFFCF9!important;
+  border-color:rgba(255,252,249,.25)!important;
+  box-shadow:none!important;
+}
+html .ayna-intake-root.v6-quiz-dark input::placeholder,
+html .ayna-intake-root.v6-quiz-dark textarea::placeholder{color:rgba(255,252,249,.55)!important}
+html .ayna-intake-root.v6-quiz-dark .ayna-choice,
+html .ayna-intake-root.v6-quiz-dark .ayna-chip,
+html .ayna-intake-root.v6-quiz-dark .v6-support-suggestion-chip,
+html .ayna-intake-root.v6-quiz-dark .ayna-option-button {
+  background:rgba(255,252,249,.04)!important;
+  color:#FFFCF9!important;
+  border-color:rgba(255,252,249,.24)!important;
+  box-shadow:none!important;
+}
+html .ayna-intake-root.v6-quiz-dark .ayna-choice.selected,
+html .ayna-intake-root.v6-quiz-dark .ayna-chip.selected,
+html .ayna-intake-root.v6-quiz-dark .ayna-option-button.selected {
+  background:#FFEFD6!important;
+  color:#292524!important;
+  border-color:#A2603C!important;
+}
+html .ayna-intake-root.v6-quiz-dark .ayna-continue,
+html .ayna-intake-root.v6-quiz-dark button[type='submit'].ayna-continue {
+  background:#F0A84B!important;
+  color:#292524!important;
+  border-color:#F0A84B!important;
+}
+
+/* Preserve the cute Canva hover Match, but only when a real signed-in score exists. */
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match {
+  background:#242A52!important;
+  color:#FFFCF9!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html.v6-signed-out .ayna-browse-card__match{display:none!important}
+
+@media(max-width:600px){
+  .canva-home .canva-display,
+  .canva-home h1.canva-display,
+  .canva-home h2.canva-display{letter-spacing:-.055em!important}
+}

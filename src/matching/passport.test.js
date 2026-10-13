@@ -192,7 +192,10 @@ describe('claim-level evidence from the passport', () => {
     expect(product.components.evidence).toBeGreaterThan(ingredient.components.evidence);
     expect(ingredient.components.evidence).toBeGreaterThanOrEqual(none.components.evidence);
     expect(product.evidence.level).toBe('product_specific');
-    expect(ingredient.evidence.level).toBe('ingredient_only');
+    // Main's catalog evidence adds a 2026 heat-therapy systematic review to
+    // ThermaCare, so its category-level evidence now reads as guideline-level,
+    // which already outranks an ingredient-only passport claim.
+    expect(ingredient.evidence.level).toBe('guideline');
   });
 
   it('a claim about a different need does not count for this one', () => {

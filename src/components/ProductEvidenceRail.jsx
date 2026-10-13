@@ -24,18 +24,58 @@ function firstSentence(text, max = 140) {
   return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
 
-export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0 }) {
-  // Prefers a shorter, results-first version when a catalog entry has one
+/**
+ * First `maxSentences` sentences (paragraph breaks treated as sentence
+ * breaks too), so this compact rail card gets a short clinician note even
+ * for products with no authored doctorOpinionShort, falls back to slicing
+ * on the full doctorOpinion, which for some products runs 4-5 paragraphs
+ * and blew out this card. Flagged live by a user 2026-09-24: "way too long."
+ */
+function firstSentences(text, maxSentences = 3, maxChars = 480) {
+  const t = String(text || '').trim().replace(/\n+/g, ' ');
+  if (!t) return '';
+  const sentences = t.match(/[^.!?]+[.!?]+(\s|$)/g) || [t];
+  let out = sentences.slice(0, maxSentences).join('').trim();
+  if (!out) out = t;
+  if (out.length > maxChars) {
+    const truncated = out.slice(0, maxChars);
+    const lastSpace = truncated.lastIndexOf(' ');
+    out = `${(lastSpace > maxChars * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
+  } else if (sentences.length > maxSentences) {
+    out = `${out}…`;
+  }
+  return out;
+}
+
+export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0, hasEcosystemContext = false, isInEcosystem = false, whyItWorks = null, considerations = null }) {
+  // A product can be genuinely in the user's ecosystem while still scoring no
+  // quiz-match labels (e.g. it was added manually, or its tags don't map to
+  // any quiz answer), that's a real state, not "no ecosystem yet". Flagged
+  // live by a user 2026-09-24: this card told her to "build your ecosystem"
+  // on a product page that, one section up, already said "In your ecosystem".
+  const noMatchFallback = isInEcosystem
+    ? 'Already in your ecosystem'
+    : hasEcosystemContext
+      ? 'Add this to your ecosystem to see your match'
+      : 'Build your ecosystem to see your match';
+  // Prefers a shorter, results-first version when a catalog entry has one,
   // this rail card has much less width than the ayna-summary tab's
   // full-width Clinician opinion card, which always gets the full text.
-  const clinicianNote = product.doctorOpinionShort || product.doctorOpinion || product.clinicianOpinion || null;
+  // When a product has no authored doctorOpinionShort, auto-trim the full
+  // doctorOpinion to ~3 sentences rather than dumping the whole thing here.
+  const clinicianNote = product.doctorOpinionShort
+    || firstSentences(product.doctorOpinion || product.clinicianOpinion, 3)
+    || null;
   // Backs the clinician-opinion claim with an actual link to check it against
   //, a stated claim with no source a reader can click isn't evidence, it's
-  // just a bigger claim. Flagged live 2026-08-25.
+  // just a bigger claim. Flagged live 2026-08-25. Skips 'scientific' links
+  // when the product curates its own scientificCitations, see the matching
+  // note on clinicianSourceLinks in ProductModal.jsx for why.
+  const hasCuratedScientific = (product.scientificCitations || []).length > 0;
   const clinicianSourceChips = [
     ...toSourceChips([
       ...getVerificationLinks(product, 'doctor'),
-      ...getVerificationLinks(product, 'scientific'),
+      ...(hasCuratedScientific ? [] : getVerificationLinks(product, 'scientific')),
     ]),
     ...(product.doctorOpinionCitations || []).map((c) => ({ url: c.url, label: hostLabel(c.url) || c.label, text: c.label })),
   ];
@@ -52,9 +92,9 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
       ? { label: 'Clinical', value: `${clinicalChips.length} reference${clinicalChips.length === 1 ? '' : 's'}`, chips: clinicalChips }
       : null,
     communityChips.length > 0
-      ? { label: 'Social Media', value: `${communityChips.length} link${communityChips.length === 1 ? '' : 's'}`, chips: communityChips }
+      ? { label: 'Social Media + Reviews', value: `${communityChips.length} link${communityChips.length === 1 ? '' : 's'}`, chips: communityChips }
       : null,
-    aynaReviewCount > 0 ? { label: 'ayna reviews', value: `${aynaReviewCount}` } : null,
+    aynaReviewCount > 0 ? { label: 'ayna Reviews', value: `${aynaReviewCount}` } : null,
     product.safety?.fdaStatus ? { label: 'FDA', value: firstSentence(product.safety.fdaStatus, 56) } : null,
   ].filter(Boolean);
 
@@ -75,13 +115,23 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
           <div className="pdp-rail__body">
             {matchLabels.length > 0
               ? matchLabels.slice(0, 3).join(' · ')
-              : 'Build your ecosystem to see your match.'}
+              : `${noMatchFallback}.`}
           </div>
+        )}
+        {/* A short, connected explanation tying this specific product to the
+            user's own quiz answers/profile, not just the terse match-label
+            phrases above. Flagged live by a user 2026-09-24: "I couldn't
+            always tell why a particular product was recommended." */}
+        {whyItWorks && (
+          <div className="pdp-rail__body" style={{ marginTop: 8 }}>{whyItWorks}</div>
+        )}
+        {considerations && (
+          <div className="pdp-rail__body" style={{ marginTop: 6, fontStyle: 'italic' }}>{considerations}</div>
         )}
       </div>
 
       <div className="pdp-rail__card">
-        <div className="pdp-rail__label">Clinician opinion</div>
+        <div className="pdp-rail__label">Clinician Opinion</div>
         {clinicianNote ? (
           <>
             <div className="pdp-rail__body pdp-rail__body--dark">{clinicianNote}</div>

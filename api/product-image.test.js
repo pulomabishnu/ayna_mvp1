@@ -97,37 +97,17 @@ describe('product-image', () => {
     expect(res.headers['access-control-allow-origin']).toBe('https://ayna.health');
   });
 
-  it('skips the URL-based resolvers but still tries DSLD when no official url is given', async () => {
+  it('never guesses a photo using a product name without an exact page', async () => {
+    lookupDsldProductMock.mockResolvedValue({ imageUrl: 'https://wrong.example.com/photo.jpg' });
+    lookupSerperImageMock.mockResolvedValue('https://wrong.example.com/photo.jpg');
     const handler = await loadHandler();
     const res = mockRes();
     await handler({ method: 'GET', query: { name: 'DivaCup' }, headers: {} }, res);
-    expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ imageUrl: '' });
     expect(matchShopifyProductMock).not.toHaveBeenCalled();
     expect(fetchOgImageMock).not.toHaveBeenCalled();
-    expect(lookupDsldProductMock).toHaveBeenCalledWith('DivaCup');
-  });
-
-  it('resolves via the DSLD fallback when the URL-based methods find nothing (or there is no url) — the "vitamin c" case', async () => {
-    // This is the actual reported bug: most AI-suggested supplements either
-    // have no officialUrl at all, or one that doesn't resolve (a brand
-    // homepage, not a product page) — DSLD is a URL-independent, name-based
-    // fallback that catches exactly this case for supplements.
-    lookupDsldProductMock.mockResolvedValue({ imageUrl: 'https://dsld.od.nih.gov/label-images/12345.jpg' });
-    const handler = await loadHandler();
-    const res = mockRes();
-    await handler({ method: 'GET', query: { name: 'Thorne Vitamin C-1000', brand: 'Thorne' }, headers: {} }, res);
-    expect(res.statusCode).toBe(200);
-    expect(res.body.imageUrl).toBe('https://dsld.od.nih.gov/label-images/12345.jpg');
-  });
-
-  it('tries DSLD only after the URL-based methods fail, and does not call it when Shopify already found something', async () => {
-    matchShopifyProductMock.mockResolvedValue('https://cdn.shopify.com/found.jpg');
-    const handler = await loadHandler();
-    const res = mockRes();
-    await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
-    expect(res.body.imageUrl).toBe('https://cdn.shopify.com/found.jpg');
     expect(lookupDsldProductMock).not.toHaveBeenCalled();
+    expect(lookupSerperImageMock).not.toHaveBeenCalled();
   });
 
   it('does not cache a negative result when no url was given, even if DSLD also found nothing', async () => {
@@ -177,23 +157,6 @@ describe('product-image', () => {
     expect(matchShopifyProductMock).not.toHaveBeenCalled();
   });
 
-  it('prefers a Shopify catalog match over og:image, and caches it', async () => {
-    process.env.UPSTASH_REDIS_REST_URL = 'https://redis.example.com';
-    process.env.UPSTASH_REDIS_REST_TOKEN = 'token';
-    matchShopifyProductMock.mockResolvedValue('https://cdn.shopify.com/divacup.jpg');
-    const handler = await loadHandler();
-    const res = mockRes();
-    await handler({ method: 'GET', query: { name: 'DivaCup', brand: 'Diva', url: 'https://diva.example.com' }, headers: {} }, res);
-    expect(res.statusCode).toBe(200);
-    expect(res.body.imageUrl).toBe('https://cdn.shopify.com/divacup.jpg');
-    expect(fetchOgImageMock).not.toHaveBeenCalled();
-    expect(redisSet).toHaveBeenCalledWith(
-      expect.stringContaining('ayna:img:'),
-      'https://cdn.shopify.com/divacup.jpg',
-      expect.objectContaining({ ex: expect.any(Number) })
-    );
-  });
-
   it('falls back to og:image when there is no Shopify match', async () => {
     matchShopifyProductMock.mockResolvedValue(null);
     fetchOgImageMock.mockResolvedValue('https://diva.example.com/product-photo.jpg');
@@ -210,24 +173,6 @@ describe('product-image', () => {
     const res = mockRes();
     await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
     expect(res.body.imageUrl).toBe('');
-  });
-
-  // Real production bug: Pure Encapsulations' own Shopify catalog resolved
-  // every product's image to /cdn/shop/files/pure-encapsulations.svg (the
-  // store theme's logo file, not a per-SKU photo) — matchShopifyProduct has
-  // no filename check of its own, so a rejected match must still fall
-  // through to DSLD rather than giving up on the product entirely.
-  it('falls through to DSLD when the Shopify-matched image is the brand logo, not a product photo', async () => {
-    matchShopifyProductMock.mockResolvedValue('https://www.pureencapsulations.com/cdn/shop/files/pure-encapsulations.svg');
-    lookupDsldProductMock.mockResolvedValue({ imageUrl: 'https://api.ods.od.nih.gov/dsld/s3/pdf/thumbnails/12345.jpg' });
-    const handler = await loadHandler();
-    const res = mockRes();
-    await handler({
-      method: 'GET',
-      query: { name: 'Pure Encapsulations Calcium Citrate', brand: 'Pure Encapsulations', url: 'https://www.pureencapsulations.com/' },
-      headers: {},
-    }, res);
-    expect(res.body.imageUrl).toBe('https://api.ods.od.nih.gov/dsld/s3/pdf/thumbnails/12345.jpg');
   });
 
   it('rejects an SVG image from any resolver, even with no bad keyword in the filename', async () => {
@@ -255,7 +200,7 @@ describe('product-image', () => {
       headers: {},
     }, res);
     expect(res.body.imageUrl).toBe('https://helloclue.com/brand-logo.png');
-    expect(fetchOgImageMock).toHaveBeenCalledWith('https://helloclue.com/', true);
+    expect(fetchOgImageMock).toHaveBeenCalledWith('https://helloclue.com/', true, 'Clue Cycle Tracking App');
   });
 
   it('still rejects a bare favicon for a digital product — too small/generic even as a logo', async () => {
@@ -292,54 +237,20 @@ describe('product-image', () => {
     expect(res.body).toEqual({ imageUrl: '' });
   });
 
-  describe('Serper image search (last resort)', () => {
-    it('is tried only after Shopify, og:image, and DSLD all fail', async () => {
-      lookupSerperImageMock.mockResolvedValue('https://retailer.example.com/real-product-photo.jpg');
-      const handler = await loadHandler();
-      const res = mockRes();
-      await handler({ method: 'GET', query: { name: 'Tampax Radiant Tampons', brand: 'Tampax', url: 'https://tampax.com/' }, headers: {} }, res);
-      expect(res.body.imageUrl).toBe('https://retailer.example.com/real-product-photo.jpg');
-      expect(matchShopifyProductMock).toHaveBeenCalled();
-      expect(fetchOgImageMock).toHaveBeenCalled();
-      expect(lookupDsldProductMock).toHaveBeenCalled();
-      expect(lookupSerperImageMock).toHaveBeenCalledWith('Tampax Radiant Tampons', 'Tampax');
-    });
+  it('keys cached images by exact page URL, so corrected variants cannot collide', async () => {
+    process.env.UPSTASH_REDIS_REST_URL = 'https://redis.example.com';
+    process.env.UPSTASH_REDIS_REST_TOKEN = 'token';
+    const handler = await loadHandler();
+    for (const url of ['https://brand.example.com/products/a', 'https://brand.example.com/products/b']) {
+      await handler({ method: 'GET', query: { name: 'Same name', brand: 'Brand', url }, headers: {} }, mockRes());
+    }
+    expect(redisGet.mock.calls[0][0]).not.toBe(redisGet.mock.calls[1][0]);
+  });
 
-    it('resolves a product with NO catalog url at all — the actual AI-search-result case', async () => {
-      // No url in the query at all: Shopify/og:image are never attempted
-      // (nothing to fetch), DSLD finds nothing (not a supplement), Serper
-      // is the only resolver that can work here since it needs just a name.
-      lookupSerperImageMock.mockResolvedValue('https://retailer.example.com/we-vibe-chorus.jpg');
-      const handler = await loadHandler();
-      const res = mockRes();
-      await handler({ method: 'GET', query: { name: 'We-Vibe Chorus', brand: 'We-Vibe' }, headers: {} }, res);
-      expect(res.body.imageUrl).toBe('https://retailer.example.com/we-vibe-chorus.jpg');
-      expect(matchShopifyProductMock).not.toHaveBeenCalled();
-      expect(fetchOgImageMock).not.toHaveBeenCalled();
-    });
-
-    it('is not called when an earlier resolver already found a real image', async () => {
-      matchShopifyProductMock.mockResolvedValue('https://cdn.shopify.com/divacup.jpg');
-      const handler = await loadHandler();
-      const res = mockRes();
-      await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
-      expect(res.body.imageUrl).toBe('https://cdn.shopify.com/divacup.jpg');
-      expect(lookupSerperImageMock).not.toHaveBeenCalled();
-    });
-
-    it('caches a negative result once Serper (with no url needed) has also been tried', async () => {
-      process.env.UPSTASH_REDIS_REST_URL = 'https://redis.example.com';
-      process.env.UPSTASH_REDIS_REST_TOKEN = 'token';
-      process.env.SERPER_API_KEY = 'test-key'; // negative caching requires Serper to actually be configured
-      const handler = await loadHandler();
-      const res = mockRes();
-      await handler({ method: 'GET', query: { name: 'Nonexistent Product Xyz' }, headers: {} }, res);
-      expect(res.body).toEqual({ imageUrl: '' });
-      expect(redisSet).toHaveBeenCalledWith(
-        expect.stringContaining('ayna:img:'),
-        '',
-        expect.objectContaining({ ex: expect.any(Number) })
-      );
-    });
+  it('does not give missing images a month-long edge cache', async () => {
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({ method: 'GET', query: { name: 'Missing' }, headers: {} }, res);
+    expect(res.headers['cache-control']).toBe('no-store');
   });
 });

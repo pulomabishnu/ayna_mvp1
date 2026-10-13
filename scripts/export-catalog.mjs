@@ -16,10 +16,14 @@
  */
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const { ALL_PRODUCTS } = await import(resolve(root, 'src/data/products.js'));
+// pathToFileURL is required on Windows — a raw absolute path like
+// "C:\...\products.js" passed straight to a dynamic import() throws
+// ERR_UNSUPPORTED_ESM_URL_SCHEME (node treats "C:" as an unsupported URL
+// scheme); Windows Node's loader only accepts file:// URLs for import().
+const { ALL_PRODUCTS } = await import(pathToFileURL(resolve(root, 'src/data/products.js')));
 
 /** Columns with a home of their own; everything else lands in `extra`. */
 const MAPPED = new Map([

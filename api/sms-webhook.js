@@ -11,6 +11,9 @@ import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/
 import { consumeUsage } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import { callWithFallback, parseProviderOrder } from './_llm.js';
+import { hashedSessionId, traceMessages } from './_prismTrace.js';
+import { ALL_PRODUCTS } from '../src/data/products.js';
+import { stripLinks } from './_catalogGrounding.js';
 
 const NO_ACCOUNT_REPLY =
   "Hi! I'm Ayna. To get personalized health texts, complete your free health profile at https://ayna.health/quiz. It takes 5 minutes.";
@@ -95,6 +98,12 @@ ${knowledgeContext ? `${knowledgeContext}\n\n` : ''}${historyLines ? `RECENT CON
 Reply to her text now, following all the rules above.`;
 }
 
+const TELEHEALTH_NAMES = ALL_PRODUCTS
+  .filter((p) => p?.category === 'telehealth' && p?.name)
+  .map((p) => p.name)
+  .slice(0, 40)
+  .join(', ');
+
 const SMS_SYSTEM_PROMPT = `You are Ayna, a warm and knowledgeable friend texting with a woman about her health. She has already completed a health profile on the Ayna app, always answer using her actual profile (conditions, symptoms, preferences), never a generic answer.
 
 READING LEVEL, this is critical, many of the women you text have low literacy or limited healthcare access:
@@ -108,10 +117,15 @@ TONE:
 OTC-FIRST, ESCALATE WHEN WARRANTED:
 - Lead with free or low-cost over-the-counter (OTC) options when appropriate for her symptoms.
 - Escalate to "this needs an in-person visit" only when her symptom severity or duration warrants it (for example: pain she rates 8 or higher out of 10, symptoms lasting an unusually long time, or red-flag symptoms like heavy bleeding or fever).
-- When escalating: first acknowledge her reality (for example, "I know getting to a doctor isn't always easy"). Then name ONE specific resource, a real clinic, mobile health unit, or telehealth service (like Allara Health, Nurx, or Maven Clinic), never just "see a doctor." Frame it as an option she can choose, not a directive (for example, "one option is..." not "you need to...").
+- When escalating: first acknowledge her reality (for example, "I know getting to a doctor isn't always easy"). Then name ONE option she can choose, a telehealth service from the AYNA TELEHEALTH LIST below, or a general kind of care (urgent care, a community health center, Planned Parenthood), never just "see a doctor." Frame it as an option, not a directive (for example, "one option is..." not "you need to...").
 
-LOCATION-SPECIFIC ANSWERS:
-- If she names a location or pharmacy, give a specific, realistic answer about what's typically available there and at what price point, using your general knowledge.
+PRODUCT INTEGRITY, never break these:
+- Never name a specific product or brand except a service on the AYNA TELEHEALTH LIST. Describe OTC options by type (for example "a heating pad" or "an ibuprofen-type pain reliever"), not brand.
+- Never state a price, a stock/availability claim, or a store-specific fact. Never include links or URLs.
+- If she names a pharmacy or place, say what TYPE of product to look for and suggest she check with the pharmacist.
+
+AYNA TELEHEALTH LIST:
+${TELEHEALTH_NAMES || '(none, use general kinds of care only)'}
 
 LENGTH:
 - Keep replies under 320 characters (about 2 text messages) whenever possible. Only go longer if the situation truly needs more detail to be safe and clear.
@@ -125,7 +139,7 @@ Reply only with the text message itself, no preamble, no signature.`;
  * unanswerable with no fallback. Now goes through the same multi-provider
  * callWithFallback every other AI route uses.
  */
-async function callSmsModel(systemPrompt, userPrompt) {
+async function callSmsModel(systemPrompt, userPrompt, userId, traceTurns) {
   const order = parseProviderOrder('AI_SMS_PROVIDER_ORDER', 'anthropic,openai,gemini');
   try {
     const out = await callWithFallback(order, {
@@ -134,6 +148,7 @@ async function callSmsModel(systemPrompt, userPrompt) {
       maxTokens: 250,
       temperature: 0.3,
       timeoutMs: 8000,
+      trace: { name: 'sms-webhook', sessionId: hashedSessionId('sms', userId), messages: traceTurns },
     });
     return out.text.trim() || null;
   } catch (e) {
@@ -307,7 +322,16 @@ export default async function handler(req, res) {
 
   let reply;
   try {
-    reply = await callSmsModel(SMS_SYSTEM_PROMPT, userPrompt);
+    // The text thread as she sees it. recentMessages is newest-first and
+    // already holds this inbound text (logged above), so drop it before
+    // traceMessages appends it as the new turn.
+    const prior = (recentMessages || []).slice();
+    if (prior[0]?.direction === 'inbound' && prior[0]?.message_body === text) prior.shift();
+    const traceTurns = traceMessages(
+      prior.reverse().map((m) => ({ role: m.direction === 'inbound' ? 'user' : 'assistant', text: m.message_body })),
+      text
+    );
+    reply = await callSmsModel(SMS_SYSTEM_PROMPT, userPrompt, userId, traceTurns);
   } catch (e) {
     console.error('[sms-webhook] Claude error:', e?.message);
   }
@@ -315,7 +339,7 @@ export default async function handler(req, res) {
   if (!reply) {
     reply = "Sorry, I'm having trouble right now. Please try texting again in a few minutes.";
   } else {
-    reply = sanitizeBannedWords(reply);
+    reply = stripLinks(sanitizeBannedWords(reply));
   }
 
   await logMessage(admin, userId, 'outbound', reply);

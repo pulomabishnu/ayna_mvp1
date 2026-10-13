@@ -1,9 +1,15 @@
+import posthog from 'posthog-js';
 import { buildUserHealthContextString } from './userHealthContextForInsights';
 import { deriveBrandSearchContext } from './productBrandContext.js';
+import { getAppSessionId } from './conversationId';
 
 const API_PATH = '/api/product-insights';
 const CACHE_PREFIX = 'ayna_insights_v2_';
-const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // active-tab cache; never durable health-derived storage
+
+function captureInsightAnalytics(event, properties) {
+  try { posthog.capture(event, properties); } catch { /* analytics must never break insights */ }
+}
 
 function simpleHash(str) {
   // Hashes the WHOLE string. It previously truncated to 300 chars, but the
@@ -28,37 +34,69 @@ function cacheKey(productId, contextHash) {
   return `${CACHE_PREFIX}${productId}_${contextHash}`;
 }
 
+function storage() {
+  return typeof window === 'undefined' ? null : window.sessionStorage;
+}
+
+/** Remove health-derived insight caches left by older persistent-storage builds. */
+function purgeLegacyInsightCache() {
+  if (typeof window === 'undefined') return;
+  try {
+    const keys = [];
+    for (let i = 0; i < window.localStorage.length; i += 1) {
+      const key = window.localStorage.key(i);
+      if (key?.startsWith(CACHE_PREFIX)) keys.push(key);
+    }
+    keys.forEach((key) => window.localStorage.removeItem(key));
+  } catch {}
+}
+
 export function loadCachedInsights(productId, healthContextKey) {
   try {
+    purgeLegacyInsightCache();
+    const store = storage();
+    if (!store) return null;
     const key = cacheKey(productId, simpleHash(healthContextKey));
-    const raw = localStorage.getItem(key);
+    const raw = store.getItem(key);
     if (!raw) return null;
     const { data, ts } = JSON.parse(raw);
-    if (Date.now() - ts > CACHE_TTL_MS) { localStorage.removeItem(key); return null; }
+    if (Date.now() - ts > CACHE_TTL_MS) { store.removeItem(key); return null; }
     return data || null;
   } catch { return null; }
 }
 
 export function saveCachedInsights(productId, healthContextKey, data) {
   try {
+    purgeLegacyInsightCache();
+    const store = storage();
+    if (!store) return;
     const key = cacheKey(productId, simpleHash(healthContextKey));
-    localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
-    // Prune expired entries so localStorage doesn't grow unbounded
-    for (const k of Object.keys(localStorage)) {
-      if (!k.startsWith(CACHE_PREFIX)) continue;
+    store.setItem(key, JSON.stringify({ data, ts: Date.now() }));
+    const keys = [];
+    for (let i = 0; i < store.length; i += 1) {
+      const k = store.key(i);
+      if (k?.startsWith(CACHE_PREFIX)) keys.push(k);
+    }
+    for (const k of keys) {
       try {
-        const { ts } = JSON.parse(localStorage.getItem(k) || '{}');
-        if (!ts || Date.now() - ts > CACHE_TTL_MS) localStorage.removeItem(k);
-      } catch { localStorage.removeItem(k); }
+        const { ts } = JSON.parse(store.getItem(k) || '{}');
+        if (!ts || Date.now() - ts > CACHE_TTL_MS) store.removeItem(k);
+      } catch { store.removeItem(k); }
     }
   } catch {}
 }
 
 export function clearInsightsCacheForProduct(productId) {
   try {
-    for (const k of Object.keys(localStorage)) {
-      if (k.startsWith(`${CACHE_PREFIX}${productId}_`)) localStorage.removeItem(k);
+    purgeLegacyInsightCache();
+    const store = storage();
+    if (!store) return;
+    const keys = [];
+    for (let i = 0; i < store.length; i += 1) {
+      const k = store.key(i);
+      if (k?.startsWith(`${CACHE_PREFIX}${productId}_`)) keys.push(k);
     }
+    keys.forEach((k) => store.removeItem(k));
   } catch {}
 }
 
@@ -103,10 +141,12 @@ export async function fetchProductInsights(product, options = {}) {
     throw new Error('Invalid product');
   }
 
-  // Had neither a timeout nor an AbortSignal, unlike its sibling
-  // fetchLlmRecommendations. A hung provider left the modal's insight panel
-  // spinning until the browser's own ~5-minute network timeout, and closing and
-  // reopening fired a second request against the same 5/week quota.
+  const analyticsBase = {
+    productId: product?.id,
+    category: product?.category || 'unknown',
+    hasPersonalizedContext: Boolean(body.userContext),
+  };
+
   const controller = new AbortController();
   const tid = setTimeout(() => controller.abort(), timeoutMs);
   const onExternalAbort = () => controller.abort();
@@ -123,17 +163,20 @@ export async function fetchProductInsights(product, options = {}) {
         'Content-Type': 'application/json',
         ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ ...body, conversationId: getAppSessionId() }),
       signal: controller.signal,
     });
   } catch (e) {
     if (e?.name === 'AbortError') {
+      const code = signal?.aborted ? 'cancelled' : 'timeout';
+      captureInsightAnalytics('ai_product_insights_failed', { ...analyticsBase, code });
       const err = new Error(
         signal?.aborted ? 'Cancelled' : 'That took too long, please try again.'
       );
-      err.code = signal?.aborted ? 'cancelled' : 'timeout';
+      err.code = code;
       throw err;
     }
+    captureInsightAnalytics('ai_product_insights_failed', { ...analyticsBase, code: 'network_error' });
     throw e;
   } finally {
     clearTimeout(tid);
@@ -144,10 +187,16 @@ export async function fetchProductInsights(product, options = {}) {
   try {
     data = await res.json();
   } catch {
+    captureInsightAnalytics('ai_product_insights_failed', { ...analyticsBase, code: 'invalid_response', status: res.status });
     throw new Error('Invalid response');
   }
   if (!res.ok) {
     const msg = data?.message || data?.error || `HTTP ${res.status}`;
+    captureInsightAnalytics('ai_product_insights_failed', {
+      ...analyticsBase,
+      code: data?.error || 'request_failed',
+      status: res.status,
+    });
     const err = new Error(msg);
     err.code = data?.error;
     err.hint = data?.hint;
@@ -164,5 +213,11 @@ export async function fetchProductInsights(product, options = {}) {
     }
     throw err;
   }
+
+  captureInsightAnalytics('ai_product_insights_completed', {
+    ...analyticsBase,
+    providerUsed: typeof data?.providerUsed === 'string' ? data.providerUsed : 'unknown',
+    linkMode: typeof data?.linkMode === 'string' ? data.linkMode : 'unknown',
+  });
   return data;
 }

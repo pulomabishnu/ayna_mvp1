@@ -1,0 +1,70 @@
+name: V6 Local Visual Audit
+
+on:
+  push:
+    branches:
+      - ameera/v6-real-site-current
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout redesign branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install redesign dependencies
+        run: npm ci
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+      - name: Build redesign branch
+        run: npm run build
+
+      - name: Start redesign preview
+        run: |
+          nohup npx vite preview --host 127.0.0.1 --port 4173 > /tmp/ayna-after.log 2>&1 &
+          echo $! > /tmp/ayna-after.pid
+
+      - name: Prepare current main build
+        run: |
+          git fetch origin main
+          git worktree add --detach /tmp/ayna-main origin/main
+          cd /tmp/ayna-main
+          npm ci
+          npm run build
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+      - name: Start current main preview
+        run: |
+          cd /tmp/ayna-main
+          nohup npx vite preview --host 127.0.0.1 --port 4174 > /tmp/ayna-before.log 2>&1 &
+          echo $! > /tmp/ayna-before.pid
+
+      - name: Capture real before and after screenshots
+        run: node scripts/capture-v6-local-audit.mjs
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          AYNA_AFTER_URL: http://127.0.0.1:4173
+          AYNA_BEFORE_URL: http://127.0.0.1:4174
+
+      - name: Upload local visual audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v6-local-visual-audit
+          path: artifacts/v6-local-audit
+          if-no-files-found: error

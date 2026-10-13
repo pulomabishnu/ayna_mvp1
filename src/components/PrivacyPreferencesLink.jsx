@@ -15,7 +15,7 @@ import { getStoredConsent, grantConsent, denyConsent } from '../utils/analyticsC
  * mount in App.jsx/main.jsx, so re-running the page is the honest way to get
  * the new decision applied to this visit rather than the next one.
  */
-export default function PrivacyPreferencesLink({ style }) {
+export default function PrivacyPreferencesLink({ style, className = '', separator = ' · ' }) {
   if (typeof window === 'undefined' || !window.posthog) return null
 
   const stored = getStoredConsent()
@@ -31,8 +31,13 @@ export default function PrivacyPreferencesLink({ style }) {
 
   return (
     <>
-      {' · '}
-      <button type="button" className="privacy-preferences-link" style={style} onClick={toggle}>
+      {separator}
+      <button
+        type="button"
+        className={`privacy-preferences-link ${className}`.trim()}
+        style={style}
+        onClick={toggle}
+      >
         {current === 'granted' ? 'Turn usage analytics off' : 'Turn usage analytics on'}
       </button>
     </>

@@ -23,7 +23,10 @@ async function freshModule() {
   return import('./productCatalog.js');
 }
 
-describe('loadProductCatalog', () => {
+// freshModule() re-imports the whole bundled catalog (every src/data file), and
+// the first test pays that cold-import cost. Under a full parallel test run it
+// crept past the 5s default as the catalog grew, so allow more time.
+describe('loadProductCatalog', { timeout: 20_000 }, () => {
   it('serves the API catalog when available', async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -55,7 +58,7 @@ describe('loadProductCatalog', () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
     const { loadProductCatalog } = await freshModule();
     await loadProductCatalog();
-    expect(localStorage.getItem('ayna_product_catalog_v1')).toBeNull();
+    expect(localStorage.getItem('ayna_product_catalog_v4')).toBeNull();
   });
 
   it('single-flights concurrent callers instead of fetching the catalog N times', async () => {
@@ -70,7 +73,7 @@ describe('loadProductCatalog', () => {
 
   it('serves a warm cache without hitting the network', async () => {
     localStorage.setItem(
-      'ayna_product_catalog_v1',
+      'ayna_product_catalog_v4',
       JSON.stringify({ ts: Date.now(), products: [{ id: 'cached' }] })
     );
     const fetchMock = vi.fn();
@@ -83,7 +86,7 @@ describe('loadProductCatalog', () => {
 
   it('ignores an expired cache', async () => {
     localStorage.setItem(
-      'ayna_product_catalog_v1',
+      'ayna_product_catalog_v4',
       JSON.stringify({ ts: Date.now() - 7 * 60 * 60 * 1000, products: [{ id: 'old' }] })
     );
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ products: [{ id: 'fresh' }] }) });

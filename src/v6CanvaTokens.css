@@ -1,0 +1,107 @@
+/* Final shared-token remap.
+ * A large part of the real app uses these legacy custom properties inline.
+ * Mapping them here carries the Canva identity into utility, legal, article,
+ * comparison, screening, tracking, modal, and secondary pages as well.
+ */
+:root{
+  --color-bg:#F3EFE9!important;
+  --color-background:#F3EFE9!important;
+  --color-surface:#FFFCF9!important;
+  --color-surface-soft:#F3EFE9!important;
+  --color-surface-muted:#ECE5DB!important;
+  --color-surface-contrast:#242A52!important;
+  --color-text-main:#292524!important;
+  --color-text:#292524!important;
+  --color-text-muted:#78716C!important;
+  --color-muted:#78716C!important;
+  --color-primary:#242A52!important;
+  --color-primary-hover:#303354!important;
+  --color-primary-fade:rgba(36,42,82,.09)!important;
+  --color-secondary:#4E3866!important;
+  --color-secondary-hover:#303354!important;
+  --color-secondary-fade:#FFEFD6!important;
+  --color-accent:#F0A84B!important;
+  --color-accent-hover:#A2603C!important;
+  --color-accent-fade:#FFEFD6!important;
+  --color-border:rgba(41,37,36,.14)!important;
+  --color-border-strong:rgba(41,37,36,.22)!important;
+  --font-serif:'Playfair Display','Cormorant Garamond',Georgia,serif!important;
+  --font-sans:'DM Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+  --radius-xs:6px!important;
+  --radius-sm:9px!important;
+  --radius-md:14px!important;
+  --radius-lg:20px!important;
+  --shadow-sm:none!important;
+  --shadow-md:none!important;
+  --shadow-lg:0 22px 70px rgba(41,37,36,.08)!important;
+}
+
+/* Secondary/document-like pages should inherit the same paper-and-ink system. */
+.mockup-page,
+.hiw,
+.articles-page,
+.article-page,
+.screenings-page,
+.comparison-page,
+.tracked-page,
+.recalls-page,
+.omitted-page,
+.doctor-prep-page,
+.waitlist-page{
+  color:#292524!important;
+  background:#F3EFE9!important;
+}
+
+/* About / How-it-works family. */
+.hiw-hero{
+  color:#FFFCF9!important;
+  background:
+    radial-gradient(circle at 85% 8%,rgba(106,72,91,.78),transparent 34%),
+    radial-gradient(circle at 9% 96%,rgba(240,168,75,.17),transparent 24%),
+    radial-gradient(circle at 47% 56%,rgba(63,52,87,.70),transparent 47%),
+    #242A52!important;
+}
+.hiw-hero__headline,.hiw-lede__stat,.hiw-h,.hiw-card__title,.hiw-band__title{
+  font-family:'Playfair Display','Cormorant Garamond',Georgia,serif!important;
+  font-weight:500!important;
+  letter-spacing:-.045em!important;
+}
+.hiw-hero__eyebrow,.hiw-kicker,.hiw-card__label{color:#A2603C!important}
+.hiw-card,.hiw-gate,.about-advisor{
+  background:#FFFCF9!important;
+  color:#292524!important;
+  border-color:rgba(41,37,36,.14)!important;
+  box-shadow:none!important;
+}
+.hiw-gate--dark,.hiw-band{
+  background:#242A52!important;
+  color:#FFFCF9!important;
+  border-color:rgba(255,252,249,.16)!important;
+}
+.about-source-grid span,.about-difference-grid>div,.about-factor-list>div{
+  background:transparent!important;
+  color:#292524!important;
+  border-color:rgba(41,37,36,.14)!important;
+  box-shadow:none!important;
+}
+
+/* Article/editorial surfaces: keep readable paper, not app-dashboard gray. */
+.article-card,.articles-card,.article-related-card,.article-product-card,
+.telehealth-card,.disclaimer,.comparison-card,.tracked-card,.recall-card{
+  background:#FFFCF9!important;
+  border-color:rgba(41,37,36,.14)!important;
+  box-shadow:none!important;
+}
+
+/* Inputs/actions on miscellaneous pages follow the same material language. */
+.mockup-page input:not([type='checkbox']):not([type='radio']),
+.mockup-page textarea,
+.mockup-page select,
+.hiw input:not([type='checkbox']):not([type='radio']),
+.hiw textarea,
+.hiw select{
+  background:#FFFCF9!important;
+  color:#292524!important;
+  border-color:rgba(41,37,36,.14)!important;
+  box-shadow:none!important;
+}

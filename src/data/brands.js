@@ -221,7 +221,7 @@ export const BRAND_PRODUCTS = [
         id: 'p-winx-uti-pain-relief',
         name: 'Winx Health UTI Fast-Acting Pain Relief',
         brand: 'Winx Health',
-        category: 'supplement',
+        category: 'medication',
         type: 'physical',
         internal: false,
         healthFunctions: ['uti-prevention'],
@@ -407,91 +407,6 @@ export const BRAND_PRODUCTS = [
         },
         isEmergingBrand: true,
     },
-    // SootheHer brand partnership (2026-09-16), affiliate links supplied by
-    // Ayna (collabs.shop short links carrying the AYNA discount/tracking
-    // code); product facts, pricing, and safety details checked live against
-    // sootheher.com on 2026-09-16. Category is 'cramp-relief', not a pelvic
-    // floor trainer/exerciser: Elaris is a TENS device for menstrual cramp
-    // pain, not a device that trains or contracts the pelvic floor.
-    {
-        id: 'p-sootheher-elaris-pod',
-        name: "SootheHer's Elaris Pod",
-        brand: 'SootheHer',
-        category: 'cramp-relief',
-        type: 'physical',
-        internal: false,
-        healthFunctions: ['cramp-relief'],
-        tags: ['cramps', 'discomfort', 'wearable', 'drug-free'],
-        price: '$89.99 (list $120)',
-        whereToBuy: [], // direct-to-consumer only; affiliateUrl below covers it
-        url: 'https://sootheher.com/',
-        // Ayna affiliate partnership, affiliateUrl wins over `url` for the
-        // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
-        affiliateUrl: 'https://collabs.shop/jfue1u',
-        image: 'https://sootheher.com/assets/elaris-butterfly-hero-DnUO3OIN.webp',
-        summary: 'A discreet, wearable TENS (transcutaneous electrical nerve stimulation) device for menstrual cramps. A butterfly-shaped gel pad worn on the lower abdomen sends adjustable electrical pulses meant to block pain signals, prompt endorphin release, and relax uterine muscles, worn under clothing, drug-free.',
-        safety: {
-            fdaStatus: 'FDA-cleared, per the brand.',
-            materials: 'Device, reusable butterfly and circular gel pads, connecting wire, USB-C charging cable, user manual, per the brand.',
-            recalls: 'No recalls found.',
-            sideEffects: 'Brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition, consult a clinician first if any of these apply.',
-            opinionAlerts: 'Brand cites a 4.8-star rating across 718 reviews and offers a 30-day money-back guarantee, brand-hosted figures, not independently verified here.',
-        },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: "Sourced from SootheHer's own site marketing claims, not independent clinical literature.",
-        doctorOpinion: 'TENS (transcutaneous electrical nerve stimulation) has real supportive evidence for reducing primary dysmenorrhea pain via the gate-control mechanism the brand describes; this does not independently establish that the Elaris Pod specifically matches published TENS study outcomes. A 2024 Cochrane review found both high- and low-frequency TENS may reduce period pain compared with placebo or no treatment, though the reviewers downgraded their certainty because of risk of bias in the underlying trials, and a separate 2024 meta-analysis (10 RCTs, 469 women) found a statistically significant effect but with very high heterogeneity between studies, real evidence for the modality, with genuine uncertainty about how much relief to expect from any one device.',
-        doctorOpinionCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', label: 'Cochrane: TENS for pain control in primary dysmenorrhea (2024)' },
-            { url: 'https://doi.org/10.1080/17581869.2026.2714978', label: 'Pain Management: TENS for primary dysmenorrhea, systematic review & meta-analysis' },
-        ],
-        whoItsFor: [
-            'People looking for a drug-free, reusable option for period cramp pain alongside or instead of OTC pain relievers',
-            'Not recommended for anyone with a pacemaker, epilepsy, a heart rhythm condition, or who is pregnant, per the brand',
-            'Best understood as a real but variable-benefit option, trial evidence for TENS generally is genuinely mixed on how much relief to expect',
-        ],
-        warnings: [
-            'Do not use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition, per the brand.',
-            'Persistent, severe, or worsening pelvic pain, or pain that doesn\'t respond to typical measures, warrants clinical evaluation.',
-        ],
-        effectiveness: 'Positioned by the brand as fast-acting, drug-free cramp relief; no independently conducted clinical study of this specific device was found here. TENS as a pain-relief category has supportive evidence for dysmenorrhea.',
-        scientificCitations: [
-            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', text: 'Cochrane: Transcutaneous electrical nerve stimulation (TENS) for pain control in women with primary dysmenorrhoea', summary: '2024 Cochrane review: both high- and low-frequency TENS may reduce pain vs. placebo/no treatment, though certainty was downgraded for risk of bias in the underlying trials.' },
-            { url: 'https://doi.org/10.1080/17581869.2026.2714978', text: 'Pain Management: Transcutaneous electrical nerve stimulation in the relief of primary dysmenorrhea, systematic review and meta-analysis', summary: '10 RCTs, 469 women: statistically significant reduction in pain intensity favoring TENS, with very high heterogeneity between studies.' },
-        ],
-        integrations: [],
-        badges: [],
-        isEmergingBrand: true,
-    },
-    {
-        id: 'p-sootheher-gel-pad-refills',
-        name: 'SootheHer Gel Pad Refills',
-        brand: 'SootheHer',
-        category: 'cramp-relief',
-        type: 'physical',
-        internal: false,
-        healthFunctions: ['cramp-relief'],
-        tags: ['cramps', 'accessory', 'reusable'],
-        price: '$11.99 (list $16, pack of 4)',
-        whereToBuy: [],
-        url: 'https://sootheher.com/',
-        affiliateUrl: 'https://collabs.shop/uj8q5x',
-        image: '/products/sootheher/gel-pad-refills.png',
-        summary: 'A 4-pack of replacement butterfly gel pads for the Elaris Pod. Each gel pad is rated for roughly 30-40 uses; store on the plastic backing between uses to extend pad life, per the brand.',
-        safety: {
-            fdaStatus: 'Accessory to the FDA-cleared Elaris Pod device, per the brand; not separately FDA-cleared.',
-            materials: 'Reusable gel pad material, per the brand.',
-            recalls: 'No recalls found.',
-            sideEffects: 'Same use precautions as the Elaris Pod, brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition.',
-            opinionAlerts: 'Brand-hosted rating shown at time of listing was based on very few reviews, check current review volume before treating it as representative.',
-        },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: "Sourced from SootheHer's own site marketing claims, not independent clinical literature.",
-        doctorOpinion: 'A consumable accessory for the Elaris Pod rather than a standalone treatment; replacing worn gel pads maintains the skin contact needed for the device to deliver its stimulation effectively.',
-        effectiveness: 'Maintenance accessory, not a standalone treatment, effectiveness depends on the Elaris Pod device itself.',
-        integrations: [],
-        badges: [],
-        isEmergingBrand: true,
-    },
     {
         id: 'p-neycher-vaginal-moisturizer',
         name: 'Neycher Vaginal Moisturizer',
@@ -504,6 +419,11 @@ export const BRAND_PRODUCTS = [
         price: '$32.91',
         whereToBuy: ['helloneycher.com', 'Amazon'],
         url: 'https://www.helloneycher.com/product/vaginal-moisturizer',
+        // Ayna affiliate link, affiliateUrl wins over `url` for the Buy Now /
+        // Visit Site destination (see getBuyUrl in ProductModal.jsx). Verified
+        // 2026-09-08: the site's real path is singular "/product/", not the
+        // "/products/" path from the affiliate program's own link table.
+        affiliateUrl: 'https://helloneycher.com/product/vaginal-moisturizer?sca_ref=12276038.vwBYOKCYa7&utm_source=affiliate&utm_medium=socialmedia&utm_campaign=affiliate',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg',
         summary: 'A hormone-free vaginal suppository that pairs hyaluronic acid with a bioadhesive gel to moisturize from the inside, holding moisture at the vaginal wall for days rather than hours. Positioned for the dryness, irritation, and pain during sex common in perimenopause, menopause, postpartum, and after cancer treatment or a hysterectomy.',
@@ -523,10 +443,10 @@ export const BRAND_PRODUCTS = [
         doctorOpinion: 'Neycher states its formulas are developed with input from "scientists, doctors, and researchers" and are "OB/GYN and real people-approved," per the brand\'s own site.\n\nNeycher also cites its own clinical evaluation: 20 women (ages 29-74) with vulvovaginal symptoms used the product for about a month, assessed with the Vulvovaginal Symptoms Questionnaire (VSQ), a real, peer-reviewed tool (Erekson et al., Menopause, 2013), analyzed by paired t-test (brand-reported as p<0.001 on every measure).\n\nResults: mean VSQ symptom score dropped from 9.22 to 0.61 (p<0.001), with complete symptom remission in 65% of participants and a greater than 50% reduction in discomfort in 89%, with improvement reported after just one week. No adverse events were recorded.\n\nNeycher\'s own site doesn\'t publish this study as a standalone paper, the closest verifiable public source is Gruppo FarmaImpresa (the manufacturer named on Neycher\'s own technical documentation, doc ref FT.CE.110), whose hyaluronic acid + polycarbophil + lactic acid ovule, the same formulation profile as this product, matches this exact study design and these exact numbers on their own site. This is the manufacturer\'s own published summary of its clinical evaluation, not an independently peer-reviewed journal article; the VSQ instrument it used is real and independently validated.',
         // Shorter, results-first version for the Evidence view's rail card
         // (ProductEvidenceRail.jsx), which has much less horizontal room
-        // than the ayna-summary tab's full-width Clinician opinion card
+        // than the ayna-summary tab's full-width Clinician opinion card,
         // that one keeps the full walkthrough above.
         doctorOpinionShort: 'Neycher cites its own 20-woman clinical evaluation: mean VSQ symptom score dropped from 9.22 to 0.61 (p<0.001), with complete symptom remission in 65% of participants and improvement reported within one week. No adverse events were recorded. This is the manufacturer\'s own funded evaluation, not an independently peer-reviewed study.',
-        // Kept separate from verificationLinks.scientific/doctor on purpose
+        // Kept separate from verificationLinks.scientific/doctor on purpose,
         // that data also feeds the Scientific literature tab's citation
         // list, and these two links belong only on the clinical-study claim
         // above, not mixed into that list.
@@ -542,10 +462,7 @@ export const BRAND_PRODUCTS = [
             'Breast cancer survivors and anyone who can\'t or doesn\'t want to use hormone therapy',
         ],
         // Rendered as a bulleted list on the Evidence view. Matches the
-        // "Application" section on Neycher's own live product page (updated
-        // from the earlier brand-guidelines PDF, which said "2 to 3 times a
-        // week" instead of "every 3 to 5 nights", the live site is the more
-        // current source).
+        // "Application" section on Neycher's own live product page.
         howToUse: {
             intro: 'Lie down and insert one suppository into the vagina. Stay lying down for about 30 minutes so it absorbs fully, which makes bedtime the easiest time to use it.',
             steps: [
@@ -602,7 +519,7 @@ export const BRAND_PRODUCTS = [
             },
             {
                 name: 'Lactic acid',
-                text: 'The same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (3.8 to 4.5).',
+                text: 'The same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (about 3.8 on average in the cited study).',
                 citations: [
                     { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6332693/', label: 'NIH (PMC): Vaginal pH measured in vivo, lactobacilli determine pH and lactic acid concentration' },
                 ],
@@ -623,13 +540,8 @@ export const BRAND_PRODUCTS = [
                 ],
             },
         ],
-        // Curated so the Scientific literature tab always has real citations on
-        // file, instead of depending on api/product-insights.js's live LLM call
-        // succeeding (which needs its own API key configured, silently comes
-        // back empty on an environment, like a fresh localhost checkout, that
-        // doesn't have one set).
         // Category-level citations shown only on the Scientific literature
-        // tab (merged there with the per-ingredient citations below), kept
+        // tab (merged there with the per-ingredient citations above), kept
         // out of verificationLinks so they don't also pool onto the
         // Clinician opinion card's chip row, which only wants
         // doctorOpinionCitations (the two clinical-study-specific links).
@@ -647,9 +559,7 @@ export const BRAND_PRODUCTS = [
         ],
         verificationLinks: {
             doctor: { links: [] },
-            scientific: {
-                links: [],
-            },
+            scientific: { links: [] },
             community: {
                 links: [
                     {
@@ -666,7 +576,7 @@ export const BRAND_PRODUCTS = [
                     },
                     {
                         platform: 'website',
-                        url: 'https://helloneycher.com/products/goodbye-dryness-bundle?Title=Default',
+                        url: 'https://helloneycher.com/products/vaginal-moisturizer?Title=Default',
                         text: 'helloneycher.com: Customer reviews',
                         summary: 'Neycher\'s own site carries customer reviews across its intimate-care line, including this moisturizer.',
                     },
@@ -687,8 +597,15 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['vaginal-health'],
         tags: ['discomfort', 'comfort', 'non-hormonal'],
         price: '$29.97 (10 suppositories)',
-        whereToBuy: ['helloneycher.com'],
-        url: 'https://helloneycher.com/products/odor-be-gone',
+        whereToBuy: ['helloneycher.com', 'Amazon'],
+        url: 'https://www.helloneycher.com/product/odor-be-gone',
+        // Ayna affiliate link, affiliateUrl wins over `url` for the Buy Now /
+        // Visit Site destination (see getBuyUrl in ProductModal.jsx). Verified
+        // 2026-09-08: the site's real path is singular "/product/", not the
+        // "/products/" path from the affiliate program's own link table.
+        // Note: this product showed "Notify when available" (out of stock) at
+        // verification time; the affiliate link still resolves to the real page.
+        affiliateUrl: 'https://helloneycher.com/product/odor-be-gone?sca_ref=12276038.vwBYOKCYa7&utm_source=affiliate&utm_medium=socialmedia&utm_campaign=affiliate',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/6a0b3e76d248803f468a5c1e_Frame%201000011416%20(1).webp',
         summary: 'Vaginal odor, unusual discharge, and irritation often mean the vagina\'s pH has shifted, letting BV or yeast overgrow. This boric acid suppository (10 count, 2 g each) uses half the usual dose, paired with hyaluronic acid, lactic acid, and calming plant extracts, so it works without the dryness and burning pure boric acid products are known for.',
@@ -831,7 +748,12 @@ export const BRAND_PRODUCTS = [
         tags: ['discomfort', 'comfort', 'organic', 'non-hormonal'],
         price: '$25.97',
         whereToBuy: ['helloneycher.com', 'Amazon'],
-        url: 'https://helloneycher.com/products/hydrobloom-moisturizing-gel?Title=Default',
+        url: 'https://www.helloneycher.com/product/hydrobloom-moisturizing-gel',
+        // Ayna affiliate link, affiliateUrl wins over `url` for the Buy Now /
+        // Visit Site destination (see getBuyUrl in ProductModal.jsx). Verified
+        // 2026-09-08: the site's real path is singular "/product/", not the
+        // "/products/" path from the affiliate program's own link table.
+        affiliateUrl: 'https://helloneycher.com/product/hydrobloom-moisturizing-gel?sca_ref=12276038.vwBYOKCYa7&utm_source=affiliate&utm_medium=socialmedia&utm_campaign=affiliate',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp',
         summary: 'Vulvar dryness and irritation are common from hormonal changes, friction, or harsh soaps. This hormone-free, pH-balanced gel pairs hyaluronic acid and glycerin to hydrate outside on the vulva and inside the vagina, non-sticky and fast-absorbing.',
@@ -980,289 +902,12 @@ export const BRAND_PRODUCTS = [
                         text: 'Amazon: Neycher HydroBloom reviews',
                         // Amazon blocks automated access, so this isn't a
                         // summary of actual review text, just confirms
-                        // this is the real, current product listing (Made
-                        // in Italy, 20 mg hyaluronic acid, ranked in
-                        // Amazon's Vaginal Moisturizers category at time of
-                        // writing). Read the reviews directly on Amazon.
+                        // this is the real, current product listing. Read
+                        // the reviews directly on Amazon.
                         summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing, read them directly on the page.',
                     },
                 ],
             },
-        },
-        integrations: [],
-        badges: [],
-        isEmergingBrand: true,
-    },
-    {
-        id: 'p-neycher-botanical-vulva-balm',
-        name: 'Neycher Botanical Vulva Balm',
-        brand: 'Neycher',
-        category: 'intimate-care',
-        type: 'physical',
-        internal: false,
-        healthFunctions: ['vaginal-health'],
-        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal'],
-        price: '$23.45',
-        whereToBuy: ['helloneycher.com'],
-        // url previously pointed to /product/botanical-vulva-balm, which 404s
-        // (2026-08-24), removed rather than left dead; falls back to the
-        // brand homepage via whereToBuy above.
-        faqUrl: 'https://www.helloneycher.com/faq',
-        image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686ecba35751d51959233c9e_botanical%20vulva%20balm.jpg',
-        summary: 'An external, hormone-free balm for vulvar skin, made with 11 botanicals. Applied topically to the outer intimate area. Not inserted.',
-        ingredients: '11 botanicals including grape seed oil, beeswax, lavender, jojoba seed oil, shea butter, rosehip seed oil, meadowfoam seed oil, calendula flower extract, olive oil, tea tree leaf oil, and chamomile.',
-        safety: {
-            fdaStatus: 'Cosmetic/topical product; not an FDA-cleared medical device.',
-            materials: 'Contains beeswax (not vegan) and botanical oils including tea tree and lavender. Patch-test first if you have plant or fragrance sensitivities.',
-            recalls: 'No recalls found.',
-            sideEffects: 'None specific reported; discontinue use and consult a clinician if irritation occurs.',
-            opinionAlerts: 'Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
-        },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher describes this as a "hormone-free moisturizer [that] is gynecologist-tested to hydrate, condition, and replenish the delicate vulvar skin," per the brand\'s own site.',
-        communityReview: 'Repeat customers on Amazon describe quick relief from dryness-related burning and itching, and several called out a recent formula/packaging change (a smoother, less waxy texture and a metal rather than plastic cap) as an improvement.',
-        effectiveness: 'Brand cites its own consumer trial in which 92% reported reduced dryness and 96% reported decreased burning or stinging within four weeks; no independent clinical study of the product was found.',
-        integrations: [],
-        badges: [],
-        isEmergingBrand: true,
-    },
-    {
-        id: 'p-neycher-goodbye-dryness-bundle',
-        name: 'Neycher Goodbye, Dryness Bundle',
-        brand: 'Neycher',
-        category: 'intimate-care',
-        type: 'physical',
-        internal: true,
-        healthFunctions: ['vaginal-health'],
-        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal', 'cost'],
-        price: '$49.97 (bundle; $61.97 separately)',
-        whereToBuy: ['helloneycher.com'],
-        url: 'https://www.helloneycher.com/product/goodbye-dryness-bundle',
-        faqUrl: 'https://www.helloneycher.com/faq',
-        // Neycher's own site is inconsistent about what's in this bundle: the product
-        // page text names the Vaginal Moisturizer + HydroBloom Gel, while their official
-        // bundle photo (used below, taken from their shop listing) shows the Vaginal
-        // Moisturizer + Botanical Everyday Balm. Summary deliberately doesn't name the
-        // contents so it can't contradict the image. Confirm with Neycher before
-        // asserting either pairing.
-        image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/68650ca0d383b3c169e56331_6.webp',
-        summary: 'Neycher\'s dryness bundle. Two of their intimate-care products sold together at a discount versus buying them separately. Check the product page for the current pairing.',
-        ingredients: 'See the individual Neycher product entries for full ingredient lists.',
-        safety: {
-            fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
-            materials: 'See product packaging for the full ingredient list.',
-            recalls: 'No recalls found.',
-            sideEffects: 'None specific reported; discontinue use and consult a clinician if irritation occurs.',
-            opinionAlerts: 'Contains an internally used product. Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
-        },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher positions this as an "inside-outside" pairing, per the brand\'s own site. See the individual products for their respective claims.',
-        effectiveness: 'Bundle of two products; see the individual entries for the brand\'s cited results. No independent clinical study of the bundle was found.',
-        integrations: [],
-        badges: [],
-        isEmergingBrand: true,
-    },
-    {
-        // Confirmed ayna brand partner (2026-09-23). isEmergingBrand only
-        // adds the "Brand" tag on Discovery, the "ayna Partner" badge comes
-        // from src/utils/partnerBrands.js's PARTNER_BRAND_PATTERNS allowlist,
-        // which gina is now in.
-        // Brand name is styled lowercase ("gina"), matching its own
-        // packaging/wordmark, same convention this app already uses for
-        // "ayna" itself.
-        id: 'p-gina-vaginal-moisturizing-glides',
-        name: 'gina Vaginal Moisturizing Glides',
-        brand: 'gina',
-        category: 'intimate-care',
-        type: 'physical',
-        internal: true,
-        healthFunctions: ['vaginal-health'],
-        // 'cruelty-free', 'non-toxic', 'ph-neutral', 'single-use', and
-        // 'clinician-informed' are gina's own stated Key Benefits (per the
-        // brand's site), feeds both the Discovery "Preferences" filter
-        // (matchesPreference in Discovery.jsx) and the ecosystem
-        // preference matcher (preferenceLabelMatchesProduct in
-        // products.js), both of which scan this tags array as text.
-        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal', 'cruelty-free', 'non-toxic', 'ph-neutral', 'single-use', 'clinician-informed'],
-        price: '$101.00',
-        whereToBuy: ['getgina.com'],
-        url: 'https://getgina.com/products/vaginal-moisturizing-glides',
-        image: '/products/gina/vaginal-moisturizing-glides.webp',
-        summary: 'Vaginal dryness, irritation, or discomfort during intimacy can happen at any life stage, perimenopause, menopause, postpartum, or day to day. This single-ingredient suppository (12 per box, 1.72 g each) is 100% pure, extra virgin, unrefined, cold-pressed coconut oil, inserted directly or with gina\'s optional reusable applicator to hydrate and soothe.',
-        safety: {
-            // No FDA-registered-facility claim was found on gina's site
-            // (unlike Neycher's), so fdaStatus is left off rather than
-            // assumed.
-            // Full packaging text, shown in full under "Materials" on
-            // the Evidence view (see buildFactRows in ProductModal.jsx,
-            // which doesn't truncate this field).
-            materials: 'Box of 12 vaginal moisturizing glides. Ingredients (from the box): 100% pure, extra virgin, unrefined, cold-pressed coconut oil. Net weight per glide: 0.061 oz (1.72 g). Chill before use.',
-            recalls: 'No recalls found.',
-            sideEffects: 'Discontinue and see a doctor if you notice irritation or an allergic reaction. Coconut oil is oil-based and can weaken latex condoms. Full warnings are listed below.',
-        },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'gina positions its coconut-oil glides as pure, simple, and effective, developed without hormones or harsh additives, non-irritating, non-toxic, pH-neutral, cruelty-free, pre-portioned for single use, and clinician-informed, per the brand\'s own site.\n\nThere\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration), though it wasn\'t placebo-controlled and didn\'t test this specific product.\n\nLab evidence is more mixed: one study found coconut oil, unlike several other commercial vaginal products, didn\'t inhibit the growth of E. coli in vitro. Coconut oil\'s natural pH (roughly 7 to 8) is also more alkaline than the vagina\'s normal acidic range (3.8 to 4.5), and a separate cohort study found intravaginal oil use was linked to a much higher rate of yeast colonization, a documented reason intravaginal oil use is linked to a higher risk of bacterial vaginosis or a yeast infection in some people.\n\nNo independent clinical study of this specific product was found.',
-        doctorOpinionShort: 'A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness over 6 months reported real improvement, though it wasn\'t placebo-controlled. Coconut oil is also naturally alkaline (pH roughly 7 to 8) versus the vagina\'s normal acidic range, which can raise BV/yeast risk in some people. No independent clinical study of this specific product was found.',
-        // Backs specific claims made in doctorOpinion with direct links,
-        // same as Neycher's doctorOpinionCitations, kept out of
-        // verificationLinks so it doesn't pool with the Scientific
-        // literature tab's citation list (the first is also listed there,
-        // in scientificCitations below, since it backs a general claim too).
-        doctorOpinionCitations: [
-            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7203152/', label: 'NIH (PMC): Effect of Commercial Vaginal Products on the Growth of Uropathogenic and Commensal Vaginal Bacteria' },
-            { url: 'https://pubmed.ncbi.nlm.nih.gov/23635677/', label: 'PubMed: Intravaginal Practices and Risk of Bacterial Vaginosis and Candidiasis Infection Among a Cohort of Women in the United States' },
-        ],
-        // Rendered as a bulleted list on the Evidence view, under "Best for".
-        whoItsFor: [
-            'Women with vaginal dryness or irritation at any life stage, perimenopause, menopause, postpartum, or day to day',
-            'Women who prefer a single-ingredient, hormone-free option over multi-ingredient formulas',
-            'Women who want a precision applicator rather than applying oil by hand',
-        ],
-        // Rendered as a bulleted list on the Evidence view. Matches
-        // getgina.com/pages/how-to-use-moisturizing-glides.
-        howToUse: {
-            intro: 'Per gina\'s own site: insert up to 3 times a week before bedtime or intercourse for ongoing hydration.',
-            steps: [
-                'Empty your bladder, clean the area, and wash your hands.',
-                'Separate a single chilled glide, wait 1 to 3 minutes, then peel back the foil.',
-                'Squeeze to pop the glide out onto a clean surface.',
-                'Insert while lying on your back, with your knees raised.',
-                'Wait 3 minutes, or until it\'s fully melted.',
-            ],
-            sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
-            sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
-        },
-        // Rendered as a red warning box on the Evidence view.
-        warnings: [
-            'Oil-based: can weaken latex condoms.',
-            'Coconut oil\'s natural pH is more alkaline than the vagina\'s, introducing it can shift vaginal pH and, in some people, raise the risk of bacterial vaginosis or a yeast infection.',
-            'Chill before use, per the box.',
-            'Pregnant or breastfeeding: check with a doctor first.',
-            'Irritation or an allergic reaction: stop using it and see a doctor.',
-        ],
-        communityReview: 'gina\'s own product page shows three customer testimonials: "The moisturizing glide melts instantly and feels so clean and natural," "I love that it\'s one ingredient and pre-measured. No more mess, just long lasting hydration and comfort," and "The glide melts instantly and gives a precise, soothing dose of hydration. The relief was immediate." No star rating or review count was shown alongside them, and no independent (non-brand) review data was found at time of writing, gina launched in April 2026.',
-        // Kept short and product-focused, the pilot-study specifics (who,
-        // how many, over how long) live on the Clinician opinion tab, which
-        // has room for that detail; this field feeds the ayna-summary card
-        // alongside `summary` above, so it stays to the point.
-        effectiveness: 'Real clinical evidence supports coconut oil for vaginal dryness generally, though no independent study has tested this specific product.',
-        // Plain-text ingredient summary, kept as a string since search
-        // indexing, the interaction checker, DoctorPrep.jsx, and the Ask
-        // Ayna context builder all read this field as a string.
-        ingredients: 'Coconut oil (100% pure, extra virgin, unrefined, cold-pressed).',
-        // Per-ingredient science claims, each paired with a credible
-        // source (NIH-hosted or PubMed). Rendered on the Scientific
-        // literature tab.
-        ingredientScience: [
-            {
-                name: 'Coconut oil (100% pure, extra virgin, unrefined, cold-pressed)',
-                text: 'A natural moisturizer rich in lauric acid. In a randomized, double-blind clinical trial, topical virgin coconut oil improved skin barrier function (lower transepidermal water loss, higher skin capacitance) more than mineral oil.',
-                citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/24320105/', label: 'PubMed: Topical virgin coconut oil in pediatric atopic dermatitis, a randomized, double-blind clinical trial' },
-                ],
-            },
-        ],
-        // Category-level citation shown only on the Scientific literature
-        // tab, kept out of verificationLinks so it doesn't also pool onto
-        // the Clinician opinion card's chip row.
-        scientificCitations: [
-            {
-                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7203152/',
-                text: 'Effect of Commercial Vaginal Products on the Growth of Uropathogenic and Commensal Vaginal Bacteria',
-                summary: 'A lab study (Scientific Reports) compared five commercial vaginal products, including coconut oil, for effects on E. coli and Lactobacillus growth, coconut oil, unlike the others, didn\'t inhibit E. coli growth in vitro. This is ingredient-level lab evidence, not a clinical study of this specific product.',
-            },
-            {
-                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
-                text: 'ACOG: Vulvovaginal Health',
-                summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
-            },
-            {
-                url: 'https://pubmed.ncbi.nlm.nih.gov/37594604/',
-                text: 'Antimicrobial Potential of Cocos nucifera (Coconut) Oil on Bacterial Isolates',
-                summary: 'An in vitro lab study testing coconut oil against clinical and reference bacterial isolates, Streptococcus species showed the highest susceptibility, E. coli the least, attributed to coconut oil\'s lauric acid content. This is ingredient-level lab evidence, not a clinical study of this specific product.',
-            },
-            {
-                url: 'https://pubmed.ncbi.nlm.nih.gov/28707186/',
-                text: 'Natural Oils for Skin-Barrier Repair: Ancient Compounds Now Backed by Modern Science',
-                summary: 'A 2018 review (Vaughn et al., American Journal of Clinical Dermatology) of natural plant oils, including coconut oil, for repairing skin-barrier function, covering antimicrobial, antioxidant, and anti-inflammatory properties. This is general dermatology evidence about the oil, not a clinical study of this specific product or vaginal use.',
-            },
-            {
-                // Same paper as PubMed 37461787 (PMC is the full-text
-                // mirror), included once, under its PMC link, rather than
-                // as two separate entries for the same study.
-                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/',
-                text: 'Virgin Coconut Oil in Paste Form as Treatment for Dyspareunia and Vaginal Dryness in Patients With and Without Rheumatic Autoimmune Diseases: An Efficacy and Safety Assessment Pilot Study',
-                summary: 'A 2023 pilot study (Cureus) followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, 83% reported improved dryness and 87% reported improved moisture duration. Real clinical outcomes, but not placebo-controlled and not a study of this specific product.',
-            },
-        ],
-        verificationLinks: {
-            doctor: { links: [] },
-            scientific: { links: [] },
-            community: {
-                links: [
-                    {
-                        platform: 'website',
-                        url: 'https://getgina.com/products/vaginal-moisturizing-glides',
-                        text: 'getgina.com: Customer testimonials',
-                        summary: 'gina\'s own product page shows three customer testimonials (see the Community summary above). No star rating or review count is shown alongside them.',
-                    },
-                ],
-            },
-        },
-        integrations: [],
-        badges: [],
-        isEmergingBrand: true,
-    },
-    {
-        // See the note on the Glides entry above re: partner status and
-        // gina's lowercase brand styling.
-        id: 'p-gina-insertion-applicator-refills',
-        name: 'gina Insertion Applicator Refills',
-        brand: 'gina',
-        category: 'intimate-care',
-        type: 'physical',
-        internal: true,
-        healthFunctions: ['vaginal-health'],
-        tags: ['comfort', 'non-hormonal'],
-        // Exact refill-pack count wasn't confirmed.
-        price: '$10.00',
-        whereToBuy: ['getgina.com'],
-        url: 'https://getgina.com/products/insertion-applicator-refills',
-        image: '/products/gina/insertion-applicator-refills.png',
-        summary: 'A reusable, BPA-free applicator designed exclusively for gina\'s Vaginal Moisturizing Glides, for smooth, precise, and deeper placement. This refill replaces a worn or lost applicator, exact pack size wasn\'t confirmed at time of writing.',
-        safety: {
-            materials: 'BPA-free reusable applicator, designed exclusively for gina Vaginal Moisturizing Glides.',
-            recalls: 'No recalls found.',
-            sideEffects: 'Discontinue and see a doctor if you notice irritation. Rinse well and air-dry before storing.',
-        },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'gina states this applicator allows for smooth, precise, and deeper placement of its Glide, per the brand\'s own site. It\'s a delivery accessory, not an active ingredient, see the Vaginal Moisturizing Glides entry for the product it\'s used with.',
-        // Rendered as a bulleted list on the Evidence view.
-        howToUse: {
-            intro: 'Unwrap the applicator and moisten the tip with water or lubricant. Pull the plunger down to stop, then load a gina glide rounded side first.',
-            steps: [
-                'Lie back with your knees raised and insert to a comfortable depth, then press the plunger to release the glide and remove the applicator.',
-                'Rinse the applicator well and air-dry it before storing, it\'s reusable.',
-            ],
-            sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
-            sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
-        },
-        warnings: [
-            'Designed exclusively for use with gina Vaginal Moisturizing Glides.',
-            'Rinse well and air-dry between uses.',
-            'Irritation or discomfort: stop using it and see a doctor.',
-        ],
-        communityReview: 'No independent customer review data was found for this product at time of writing, gina launched in April 2026.',
-        effectiveness: 'A reusable delivery accessory rather than an active ingredient; effectiveness depends on the Vaginal Moisturizing Glide it\'s used with.',
-        ingredients: 'BPA-free applicator (plastic components; no active ingredients).',
-        verificationLinks: {
-            doctor: { links: [] },
-            scientific: { links: [] },
-            community: { links: [] },
         },
         integrations: [],
         badges: [],
@@ -1279,8 +924,8 @@ export const BRAND_PRODUCTS = [
         tags: ['uti', 'safety-concern'],
         price: '$99 starter kit (or $84.15/mo subscription)',
         whereToBuy: [], // direct-to-consumer only; the url field above covers the official site link
-        url: 'https://goodkittyco.com/',
-        image: 'https://cdn.prod.website-files.com/66dc11fd6ea52df0b92e5e5c/670589c8dcbf01c1fa271073_Frame%201000001813%20(1).png',
+        url: 'https://goodkittyco.com/products/uti-biome-shield',
+        image: '',
         summary: 'A daily UTI-prevention capsule combining D-mannose, soluble cranberry PACs, vitamin D3, and zinc. Designed for people prone to recurrent UTIs who want a preventive daily routine rather than only reactive treatment.',
         safety: {
             fdaStatus: 'Dietary supplement; not FDA-evaluated for disease treatment (standard supplement disclaimer).',
@@ -1318,10 +963,20 @@ export const BRAND_PRODUCTS = [
             sideEffects: 'None specific reported; discontinue use and consult a clinician if irritation occurs.',
             opinionAlerts: 'No FDA-clearance or clinical-study claims found on the brand site. Marketed on materials/design safety and menopause-specific positioning, not clinical evidence.',
         },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Oboo\'s own site; no independent clinician endorsement verified.',
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Menopause-related changes can include vaginal dryness, discomfort, and changes in sexual response. Sexual aids may be used as part of sexual wellness, but this device should not be presented as a treatment for genitourinary syndrome of menopause or other medical conditions.',
         communityReview: 'Named a 2026 Oprah Daily Menopause O-Ward Winner; featured in Wellness Magazine, Oprah Daily, The Pause Life, and Flow Space.',
-        effectiveness: 'Positioned to address menopause-related changes in arousal and vaginal dryness; no independent clinical study of the product was found.',
+        effectiveness: 'Vibrator use has limited category-level evidence related to sexual function and genitourinary health. No independent clinical study of the Oboo Woosh itself was identified here.',
+        verificationLinks: {
+            doctor: { links: [
+                { url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health', text: 'ACOG: Vulvovaginal Health', summary: 'ACOG describes menopause-related vaginal dryness and genitourinary changes and discusses evidence-based options for symptom management.' },
+                { url: 'https://www.acog.org/womens-health/faqs/your-sexual-health', text: 'ACOG: Your Sexual Health', summary: 'ACOG includes sex toys among options people may try for sexual stimulation while distinguishing sexual wellness from medical treatment.' }
+            ] },
+            scientific: { links: [
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/38668760/', text: 'Vibrator Use and Women\'s Pelvic Health: Prospective Pilot Study', summary: 'A small prospective pilot found associations between regular vibrator use and improvements in several sexual and genitourinary outcomes. This is category-level evidence and does not validate the Oboo Woosh specifically.', justification: 'Peer-reviewed PubMed-indexed prospective pilot study; limited category-level evidence.' }
+            ] }
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
@@ -1730,13 +1385,16 @@ export const BRAND_PRODUCTS = [
         type: 'digital',
         internal: false,
         healthFunctions: ['vaginal-health'],
-        tags: ['pelvic-floor', 'leaks', 'discomfort', 'fitness', 'postpartum', 'prolapse'],
-        price: '$30/month or $180/year (14-day free trial)',
-        whereToBuy: ['Connect Pelvic Floor Fitness'],
-        platform: 'Web, app, Roku, Amazon Fire TV, Apple TV',
-        url: 'https://www.connectpelvicfloorfitness.com/',
+        tags: ['pelvic-floor', 'leaks', 'discomfort', 'postpartum', 'fitness', 'prolapse'],
+        price: '$30/month or $180/year (14-day free trial; HSA/FSA eligible)',
+        userRating: 4.9,
+        whereToBuy: [], platform: 'Web, app, Roku, Amazon Fire TV, Apple TV',
+// membership site + app; affiliateUrl below covers it
+        url: 'https://connectpelvicfloorfitness.com/',
+        // Ayna affiliate partnership, affiliateUrl wins over `url` for the
+        // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
         affiliateUrl: 'https://goto.connectpelvicfloorfitness.com/YVk7WO',
-        image: '',
+        image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/b1/39/0f/b1390fbf-2c51-b7ff-af3b-b9a7660f4b9c/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg',
         summary: 'A pelvic-floor-informed fitness program founded by Caroline Packard, DPT, after her own postpartum stress incontinence and prolapse. Combines pelvic floor rehab principles with real strength training, HIIT, yoga, and mobility work to build pelvic floor and whole-body strength.',
         ingredients: 'Not a physical product, see "How it works" below for what the membership includes.',
         safety: {
@@ -1793,7 +1451,7 @@ export const BRAND_PRODUCTS = [
             {
                 url: 'https://pubmed.ncbi.nlm.nih.gov/25408383/',
                 text: 'PubMed: Pelvic floor muscle training for urinary incontinence in women, a Cochrane systematic review',
-                summary: '31 trials, 1,817 women. Found PFMT can cure or improve stress and other types of urinary incontinence, general evidence for the training approach, not this specific program.',
+                summary: '21 trials, 1,281 women. Found PFMT is associated with cure or improvement of stress and other types of urinary incontinence, general evidence for the training approach, not this specific program.',
             },
             {
                 url: 'https://pubmed.ncbi.nlm.nih.gov/26407564/',
@@ -2466,9 +2124,16 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
-    // Elitone brand partnership (2026-09-07), one general affiliate link
-    // (elitone.com/?af=aynahealth) covers both devices; there's no
-    // per-product affiliate link, so affiliateUrl is the same on each entry.
+    // Elitone brand partnership (2026-09-07), per-product affiliate links
+    // (each product's own URL with ?af=aynahealth appended, corrected
+    // 2026-09-15 from a single shared elitone.com/?af=aynahealth link).
+    // Category stays 'incontinence' (its primary shopping aisle), but per
+    // Ayna's taxonomy Elitone is clinically a "pelvic floor exerciser": an
+    // FDA-cleared Class II device that contracts the pelvic floor FOR the
+    // user (see CATEGORY_LABELS in products.js), it's included in the
+    // 'pelvic' macro group and the pelvic-floor/kegel search nudge in
+    // Discovery.jsx. Elitone URGE below is deliberately NOT an "exerciser":
+    // it calms an overactive bladder rather than exercising the pelvic floor.
     {
         id: 'p-elitone',
         name: 'Elitone (Stress + Mixed Incontinence)',
@@ -2477,13 +2142,13 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['bladder-leak-protection'],
-        tags: ['bladder-leaks', 'incontinence', 'urinary', 'menopause', 'postpartum'],
-        price: 'From $359',
+        tags: ['bladder-leaks', 'incontinence', 'urinary', 'pelvic-floor', 'menopause', 'postpartum'],
+        price: 'From $399',
         whereToBuy: [], // direct-to-consumer only; affiliateUrl below covers it
         url: 'https://elitone.com/product/elitone/',
         // Ayna affiliate partnership, affiliateUrl wins over `url` for the
         // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
-        affiliateUrl: 'https://elitone.com/?af=aynahealth',
+        affiliateUrl: 'https://elitone.com/product/elitone/?af=aynahealth',
         image: 'https://elitone.com/wp-content/uploads/2021/05/SUI-Hero-2-1200x1000-AVIF.avif',
         summary: 'Elitone was created by Gloria Kolb, an MIT- and Stanford-trained engineer who co-founded Elidah, Inc. after developing stress incontinence following the birth of 13-pound twins and finding the available treatments too invasive or time-consuming. Elidah, Inc. is a Connecticut-based, woman-owned medical device company that has worked with medical professionals since 2014, partly funded by National Science Foundation grants. Elitone is an external, at-home pelvic floor stimulation device for stress and mixed urinary incontinence, a gel pad worn near the pubic bone delivers gentle electrical stimulation to contract and relax pelvic floor muscles automatically, roughly 100 contractions per 20-minute session.',
         safety: {
@@ -2583,11 +2248,11 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['bladder-leak-protection'],
-        tags: ['bladder-leaks', 'incontinence', 'urinary', 'menopause', 'postpartum'],
-        price: 'From $359',
+        tags: ['bladder-leaks', 'incontinence', 'urinary', 'pelvic-floor', 'menopause', 'postpartum'],
+        price: 'From $399',
         whereToBuy: [],
         url: 'https://elitone.com/product/elitone-urge/',
-        affiliateUrl: 'https://elitone.com/?af=aynahealth',
+        affiliateUrl: 'https://elitone.com/product/elitone-urge/?af=aynahealth',
         image: 'https://elitone.com/wp-content/uploads/2023/02/UUI-Hero-071426.avif',
         summary: 'Elitone URGE uses the same hardware as the original Elitone, from the same company (Elidah, Inc., founded by engineer Gloria Kolb, see the original Elitone entry for her story and the company\'s history), but with a different waveform aimed at calming overactive bladder-muscle signals rather than strengthening pelvic floor muscles directly. It\'s an external, at-home device for overactive bladder (OAB) and urge incontinence, tuned to send calming signals that aim to reduce sudden urges, frequent bathroom trips, and urge-related leaks, without medication or a procedure.',
         safety: {
@@ -2763,9 +2428,10 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
-    // BUNI Body, verified against bunibody.com and the supplied Amazon
-    // Associates links (2026-09-11). BUNI is NOT an ayna brand partner;
-    // affiliateUrl is used only as the exact Amazon purchase destination.
+    // BUNI Body, verified against bunibody.com (2026-09-11). BUNI is an ayna
+    // brand partner; affiliateUrl is the direct BUNI affiliate link
+    // (?ref=oxaevspm, supplied 2026-09-29). Amazon Associates links remain as
+    // a secondary retailer.
     {
         id: 'p-buni-rejuvenate-vulva-balm',
         name: 'REJUVENATE: Vulva Balm',
@@ -2776,12 +2442,12 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['vaginal-health'],
         tags: ['discomfort', 'menopause', 'postpartum', 'hormone-free', 'organic', 'cruelty-free', 'vegan', 'ph-neutral'],
         price: '$42',
-        whereToBuy: ['Amazon', 'BUNI Body'],
-        url: 'https://www.bunibody.com/products/buni-vulva-balm',
-        affiliateUrl: 'https://amzn.to/4yE7pZH',
+        whereToBuy: ['BUNI Body', 'Amazon'],
+        url: 'https://www.bunibody.com/products/buni-vulva-balm?ref=oxaevspm',
+        affiliateUrl: 'https://www.bunibody.com/products/buni-vulva-balm?ref=oxaevspm',
         whereToBuyLinks: {
             Amazon: 'https://amzn.to/4yE7pZH',
-            'BUNI Body': 'https://www.bunibody.com/products/buni-vulva-balm',
+            'BUNI Body': 'https://www.bunibody.com/products/buni-vulva-balm?ref=oxaevspm',
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-vulva-balm-product-page-main.webp?v=1776773714',
         summary: 'A hormone-free, pH-balanced external vulva moisturizer in an airless pump, formulated to relieve dryness, reduce friction and chafing, soothe itching and irritation, and help prevent ingrown hairs. BUNI positions it for menopause and perimenopause, pregnancy and postpartum, grooming, exercise, and comfort during intimacy.',
@@ -2925,12 +2591,12 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['comfort'],
         tags: ['postpartum', 'pregnancy', 'comfort', 'cruelty-free', 'vegan'],
         price: '$25',
-        whereToBuy: ['Amazon', 'BUNI Body'],
-        url: 'https://www.bunibody.com/products/buni-nipple-balm',
-        affiliateUrl: 'https://amzn.to/4xnutuF',
+        whereToBuy: ['BUNI Body', 'Amazon'],
+        url: 'https://www.bunibody.com/products/buni-nipple-balm?ref=oxaevspm',
+        affiliateUrl: 'https://www.bunibody.com/products/buni-nipple-balm?ref=oxaevspm',
         whereToBuyLinks: {
             Amazon: 'https://amzn.to/4xnutuF',
-            'BUNI Body': 'https://www.bunibody.com/products/buni-nipple-balm',
+            'BUNI Body': 'https://www.bunibody.com/products/buni-nipple-balm?ref=oxaevspm',
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-nipple-lip-balm-product-page-main_1.webp?v=1776774214',
         summary: 'A lanolin-free balm for nipples, lips, cuticles, and other dry skin, positioned for nursing and pumping comfort as well as pregnancy and postpartum care.',
@@ -3070,12 +2736,12 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['comfort'],
         tags: ['postpartum', 'comfort', 'cruelty-free', 'vegan'],
         price: '$35',
-        whereToBuy: ['Amazon', 'BUNI Body'],
-        url: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil',
-        affiliateUrl: 'https://amzn.to/3UOVTfk',
+        whereToBuy: ['BUNI Body', 'Amazon'],
+        url: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil?ref=oxaevspm',
+        affiliateUrl: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil?ref=oxaevspm',
         whereToBuyLinks: {
             Amazon: 'https://amzn.to/3UOVTfk',
-            'BUNI Body': 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil',
+            'BUNI Body': 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil?ref=oxaevspm',
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-transform-oil-product-page-main_6-2.webp?v=1776774797',
         summary: 'A 1.7 oz scar and body treatment oil with a rollerball applicator and included onyx gua sha tool, marketed for the appearance of scars, stretch marks, and postpartum body care.',
@@ -3217,12 +2883,12 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['comfort', 'vaginal-health'],
         tags: ['postpartum', 'pregnancy', 'menopause', 'comfort', 'hormone-free', 'cruelty-free', 'vegan'],
         price: '$98',
-        whereToBuy: ['Amazon', 'BUNI Body'],
-        url: 'https://www.bunibody.com/products/buni-bundle',
-        affiliateUrl: 'https://amzn.to/4xSUqDt',
+        whereToBuy: ['BUNI Body', 'Amazon'],
+        url: 'https://www.bunibody.com/products/buni-bundle?ref=oxaevspm',
+        affiliateUrl: 'https://www.bunibody.com/products/buni-bundle?ref=oxaevspm',
         whereToBuyLinks: {
             Amazon: 'https://amzn.to/4xSUqDt',
-            'BUNI Body': 'https://www.bunibody.com/products/buni-bundle',
+            'BUNI Body': 'https://www.bunibody.com/products/buni-bundle?ref=oxaevspm',
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-bundle-product-page-main.webp?v=1776772005',
         summary: 'BUNI’s complete body-care set containing REJUVENATE Vulva Balm, SOOTHE Nipple and Lip Balm, TRANSFORM Scar+Body Treatment Oil, and an onyx gua sha tool.',
@@ -3259,6 +2925,1237 @@ export const BRAND_PRODUCTS = [
                 ],
             },
         },
+        isEmergingBrand: true,
+    },
+
+    // kieró, verified against us.kieroskincare.com (2026-09-30). Every
+    // science claim below was re-checked against the cited abstract (NCBI
+    // E-utilities) on 2026-10-02; study size and design are stated wherever
+    // they limit what the finding shows. Not a brand
+    // partner and no affiliate link yet, so there's no affiliateUrl; Buy Now
+    // falls back to kieró's own product page (see resolveBuyUrl). Listed as
+    // sold out on kieró's US site at time of writing.
+    {
+        id: 'p-kiero-refining-enzyme-cleanser',
+        name: 'Refining Enzyme Cleanser',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'cleanser', 'exfoliation', 'vegan', 'fragrance-free'],
+        price: '$11.99 for 50 g (1.76 oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
+        },
+        image: 'https://us.kieroskincare.com/cdn/shop/files/kiero-_-05_9dcbb676-03a3-45a9-bb4e-ae5dd1708f23.jpg',
+        summary: 'A powder face cleanser that turns into a creamy foam with water, made with papaya enzymes (papain), beta-glucan, and chia seed extract. kieró positions it as a gentle daily enzyme exfoliant that removes impurities and excess oil without drying and refines skin texture. It is step 1 of kieró\'s 5-step routine, which blends Korean-beauty formulation with Latin American botanicals.',
+        ingredients: 'Full INCI list per kieró: Zea Mays (Corn) Starch, Sodium Cocoyl Isethionate, Microcrystalline Cellulose, Sodium Methyl Cocoyl Taurate, Potassium Laurate, Sodium Lauroyl Glutamate, Allantoin, Maltodextrin, Papain, Water, CI 77499, Glycerin, Salvia Hispanica Seed Extract, 1,2-Hexanediol, Butylene Glycol, Beta-Glucan, Ethylhexylglycerin.',
+        safety: {
+            fdaStatus: 'Cosmetic face cleanser; not an FDA-cleared drug or medical device. kieró states its products are vegan and cruelty-free and use EWG Green-graded ingredients; ayna did not independently verify those claims.',
+            materials: 'Water-activated powder (50 g / 1.76 oz). Cleansing comes mainly from mild synthetic surfactants: sodium cocoyl isethionate, sodium methyl cocoyl taurate, and sodium lauroyl glutamate. It also contains potassium laurate, which is a true soap. The enzyme is papain. Supporting ingredients are allantoin, glycerin, beta-glucan, and chia (Salvia hispanica) seed extract. CI 77499 is black iron oxide, a colorant. No added fragrance, essential oils, or sulfates appear in the published ingredient list.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Papain is a protein-digesting enzyme and a documented allergen. Published cases include workers who became allergic by breathing it in and a person who reacted to papain in a contact-lens solution; one case report also links papain allergy to kiwi and fig allergy. Anyone allergic to papaya, papain, kiwi, or fig should avoid it or patch test first. The AAD warns that exfoliating while using retinoids or benzoyl peroxide can worsen dryness. Full warnings are listed below.',
+            opinionAlerts: 'Allergy note: contains papain (papaya enzyme), a known allergen. Avoid it if you\'re allergic to papaya, kiwi, or fig, or patch test first. Benefit claims (refined texture, radiance, barrier support) come from kieró, and no independent clinical study of the finished product was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says the papaya enzymes gently exfoliate, beta-glucan hydrates and soothes, and chia seed reinforces the skin barrier, and that the powder foams up to remove oil and impurities without drying. No independent study of this product was found, so what follows is what the research says about its main ingredients.\n\nThe main cleansing agent, sodium cocoyl isethionate, is the basis of "syndet" (synthetic detergent) cleansers. Reviews describe syndets as gentler on the skin barrier than soap, and lab work explains why: its micelles are too large to slip into the skin\'s outer layer. The formula also contains potassium laurate, which is a true soap, so it isn\'t entirely soap-free.\n\nPapain breaks down keratin and other skin proteins in lab tests, which is how enzyme exfoliants work. The evidence is thin, though. A review found only 11 published studies on enzyme exfoliation, with few clinical trials, and concluded that more robust studies are needed before it can be recommended as safe. The lab test took hours to break down skin proteins, and a cleanser is rinsed off within a minute, so any exfoliation is likely mild. Papain is also a documented allergen, mostly in workers who breathe it in. In human skin cells and in mice, it weakened the skin barrier and caused sensitization through the skin.\n\nThe supporting ingredients have early evidence, all from leave-on products rather than cleansers. For beta-glucan, a 20-patient split-face trial after laser treatment found that a beta-glucan skin-care regimen improved hydration and redness compared with a placebo cream, and an open-label eczema study of 105 patients found less itch and milder flare-ups. For chia seed oil, a 4% chia oil cream improved hydration and barrier function in an 8-week study of just 10 people, with no control group. Allantoin is recognized by the FDA as an over-the-counter skin protectant at 0.5–2%, but kieró doesn\'t list its concentration.\n\nThe American Academy of Dermatology advises gentle exfoliation for dry or sensitive skin, moisturizing afterward, and not exfoliating while using retinoids or benzoyl peroxide or on broken or sunburned skin.',
+        doctorOpinionShort: 'A powder cleanser built on syndet surfactants, which are gentler on the skin barrier than soap, with papaya enzyme (papain) for exfoliation. Evidence for enzyme exfoliation is thin, and the beta-glucan and chia research comes from small studies of leave-on products, not rinse-off cleansers. Papain is a documented allergen, so avoid it if you\'re allergic to papaya, kiwi, or fig. No independent study of this product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser', label: 'kieroskincare.com: Refining Enzyme Cleanser, ingredient list and claims' },
+            { url: 'https://www.aad.org/public/everyday-care/skin-care-secrets/routine/safely-exfoliate-at-home', label: 'American Academy of Dermatology: How to safely exfoliate at home' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'People who want gentle, daily enzyme exfoliation instead of a scrub or acid',
+            'Normal, oily, or combination skin looking for a cleanser that removes excess oil without a tight, stripped feeling',
+            'People who prefer a fragrance-free, vegan formula',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // us.kieroskincare.com/products/refining-enzyme-cleanser.
+        howToUse: {
+            intro: 'Per kieró\'s own site: use daily as step 1 (cleanse) of the routine.',
+            steps: [
+                'Pour a small amount of powder into wet hands.',
+                'Rub your hands together to create a creamy lather, then gently massage it into your skin.',
+                'Rinse well and pat your face dry.',
+                'Follow with moisturizer. The AAD recommends moisturizing right after any exfoliation.',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
+            sourceLabel: 'kieroskincare.com: Refining Enzyme Cleanser',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Allergy to papaya, papain, kiwi, or fig: avoid it or patch test first. Papain is a known allergen.',
+            'Using a prescription retinoid, retinol, or benzoyl peroxide: exfoliating on top of them can worsen dryness and irritation (AAD).',
+            'Don\'t use on broken, cut, or sunburned skin.',
+            'Keep out of eyes. If you get redness, burning, or an allergic reaction, stop using it and see a doctor.',
+        ],
+        communityReview: 'kieró\'s US site shows 251 customer reviews, and 233 of them (93%) are five stars. Most reviews are in Spanish and describe skin feeling very clean, soft, and hydrated, for example: "Muy recomendable, te deja la piel suave e hidratada" ("Highly recommend, it leaves your skin soft and hydrated"). On Amazon it has 4.6 out of 5 stars from 36 ratings as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
+        effectiveness: 'Cleanses with mild syndet surfactants. Papain may add light exfoliation, but enzyme exfoliation has few clinical trials and a cleanser is rinsed off quickly. Evidence for beta-glucan and chia comes from small studies of leave-on products. No independent study of the finished product was found.',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab. Matches kieró's key-ingredient claims.
+        ingredientScience: [
+            {
+                name: 'Papain (papaya enzyme)',
+                text: 'kieró states this gently exfoliates. In a lab study, papain broke down keratin and collagen, and on pig skin it had an exfoliating effect, though breakdown took hours. A review (J Cosmet Dermatol, 2022) found only 11 studies on enzyme exfoliation, few of them clinical trials. It concluded that more robust studies are needed before enzyme exfoliation can be recommended as safe. Papain is also an allergen. In human skin cells and in mice it weakened the skin barrier and caused sensitization through the skin. In people, papain allergy is mostly documented in workers who breathe it in, and one case report links it to kiwi and fig allergy.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/34897928/', label: 'PubMed: An overview of the use of proteolytic enzymes as exfoliating agents' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/35892222/', label: 'PubMed: In vitro effect on the proteolytic activity of papain with proteins of the skin as substrate' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/25705851/', label: 'PubMed: Papain degrades tight junction proteins of human keratinocytes in vitro and sensitizes mice via the skin' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26739411/', label: 'PubMed: Papain-induced occupational asthma with kiwi and fig allergy, case report and review of 13 cases' },
+                ],
+            },
+            {
+                name: 'Beta-glucan',
+                text: 'kieró states this hydrates and soothes. In a split-face, double-blind trial of 20 patients after laser treatment, a beta-glucan skin-care regimen improved hydration and redness compared with a placebo cream. In an open-label study (no blinding or separate control group) of 105 people with mild-to-moderate eczema, a beta-glucan cream reduced itch and eczema severity on the treated side. Both tested leave-on products, not a rinse-off cleanser.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33128496/', label: 'PubMed: Skin care regimens containing β-glucan for skin recovery after fractional laser therapy, split-face, double-blinded, vehicle-controlled study' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26654776/', label: 'PubMed: β-Glucan-based cream in supportive treatment of mild-to-moderate atopic dermatitis' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12023766/', label: 'NIH (PMC): Exploring the properties and application potential of β-glucan in skin care' },
+                ],
+            },
+            {
+                name: 'Chia seed (Salvia hispanica) extract',
+                text: 'kieró states this reinforces the skin barrier. In an 8-week study of 10 people with dry, itchy skin and no control group, a cream with 4% chia seed oil improved skin hydration and barrier function, with no side effects reported. The study was run by a company that makes skin products, and it tested a leave-on oil, not a rinse-off extract.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/20548903/', label: 'PubMed: Effectiveness of topical chia seed oil on pruritus of end-stage renal disease patients and healthy volunteers' },
+                ],
+            },
+            {
+                name: 'Sodium cocoyl isethionate',
+                text: 'The main cleansing agent. Lab research found its micelles are too large to get into the skin\'s outer layer, which explains why it is milder than soap or sodium lauryl sulfate. A 2022 review concludes that syndet cleansers like this preserve the skin barrier better than soap.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/17598025/', label: 'PubMed: Why is sodium cocoyl isethionate (SCI) mild to the skin barrier?' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8954092/', label: 'NIH (PMC): Skin cleansing without or with compromise, soaps and syndets' },
+                ],
+            },
+            {
+                name: 'Allantoin',
+                text: 'The FDA recognizes allantoin as an over-the-counter skin-protectant ingredient at 0.5–2%. kieró doesn\'t list how much this cleanser contains, and in a rinse-off product little stays on the skin.',
+                citations: [
+                    { url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-347/subpart-B/section-347.10', label: 'FDA (21 CFR 347.10): Skin protectant active ingredients, allantoin, 0.5 to 2 percent' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/everyday-care/skin-care-secrets/routine/safely-exfoliate-at-home',
+                text: 'American Academy of Dermatology: How to safely exfoliate at home',
+                summary: 'AAD guidance: people with dry, sensitive, or acne-prone skin should choose gentle exfoliation, moisturize afterward, and avoid exfoliating on broken or sunburned skin or while using retinoids or benzoyl peroxide. This is general guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FRMDSSY6',
+                        text: 'Amazon: kieró Refining Enzyme Cleanser reviews',
+                        summary: '4.6 out of 5 stars from 36 ratings on Amazon as of October 2026.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/refining-enzyme-cleanser',
+                        text: 'kieroskincare.com: Refining Enzyme Cleanser customer reviews',
+                        summary: 'kieró\'s own product page shows 251 reviews, 93% of them five stars, mostly in Spanish (see the Community summary above).',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // kieró Airy Sun Stick, verified against us.kieroskincare.com
+    // (2026-09-30). Same situation as the cleanser above: no affiliate link
+    // yet, sold out on kieró's US site at time of writing.
+    {
+        id: 'p-kiero-airy-sun-stick-spf50',
+        name: 'Airy Sun Stick SPF 50+',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'spf', 'sunscreen', 'vegan'],
+        price: '$11.99 for 20 g (0.7 oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/sun-stick-spf-50',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/sun-stick-spf-50',
+        },
+        image: 'https://us.kieroskincare.com/cdn/shop/files/kiero-_-05_a549ac4a-c417-4be1-8731-03d3c0ffddb8.jpg',
+        summary: 'A broad-spectrum SPF 50+ / PA++++ sunscreen stick with chamomile, vitamin E, and madecassoside (from centella). kieró positions it for daily UV protection with a lightweight, non-greasy finish that can be swiped on over makeup, and says it soothes and supports the skin barrier. It uses chemical (organic) UV filters, not zinc or titanium.',
+        ingredients: 'Full INCI list per kieró: Dimethicone, Synthetic Wax, Vinyl Dimethicone/Methicone Silsesquioxane Crosspolymer, Cetyl Ethylhexanoate, Octocrylene, Homosalate, Methyl Methacrylate Crosspolymer, Dibutyl Adipate, Butyloctyl Salicylate, Octisalate, Avobenzone, Pentylene Glycol, Polyglyceryl-4 Oleate, Helianthus Annuus (Sunflower) Seed Oil, Polyglyceryl-6 Oleate, Polyhydroxystearic Acid, Methylpropanediol, Persea Gratissima (Avocado) Oil, Ethylhexylglycerin, Caprylyl Glycol, Glycine Soja (Soybean) Oil, Tocopherol, Steareth-30, Lactobacillus Ferment Lysate, Butyrospermum Parkii (Shea) Butter Extract, Bixa Orellana Seed Oil, Water, Sodium Guaiazulene Sulfonate, Panthenol, Butylene Glycol, 1,2-Hexanediol, Anthemis Nobilis Flower Water, Madecassoside, Asiaticoside, Asiatic Acid, Madecassic Acid.',
+        safety: {
+            fdaStatus: 'In the US, sunscreens are regulated as over-the-counter drugs. kieró doesn\'t publish the percentage of each UV filter or say whether the product is water resistant. kieró states its products are vegan and cruelty-free; ayna did not independently verify that.',
+            materials: 'Solid silicone-and-wax stick (20 g / 0.7 oz). UV filters: avobenzone (UVA), octocrylene, homosalate, octisalate, and butyloctyl salicylate, all chemical filters with no zinc oxide or titanium dioxide. The soothing ingredients are Roman chamomile flower water, sodium guaiazulene sulfonate (an azulene compound related to chamomile\'s blue oil), madecassoside with other centella compounds, panthenol, and vitamin E. Plant oils include sunflower, avocado, soybean, shea, and annatto (Bixa orellana).',
+            recalls: 'No recalls found.',
+            sideEffects: 'Octocrylene can cause photoallergic reactions (a rash after sun exposure), notably in people who have reacted to ketoprofen, an anti-inflammatory gel. The formula contains Roman chamomile, a daisy-family (Asteraceae) plant; this family is a known contact allergen and cross-reacts with ragweed, so people with those allergies should patch test first. Full warnings are listed below.',
+            opinionAlerts: 'Safety note: sunscreen only reaches its labeled SPF when applied generously, and most people apply far less, so go over each area several times. Its chemical UV filters were absorbed into the bloodstream in an FDA study; the FDA researchers said that doesn\'t mean people should stop using sunscreen. Contains Roman chamomile, so patch test if you\'re allergic to ragweed or daisies. Soothing and barrier claims come from kieró, and no independent study of the finished product was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says the chamomile soothes, the vitamin E gives antioxidant defense, and the madecassoside strengthens the skin barrier, and that the stick can be swiped on over makeup. No independent study of this product was found, so what follows is what the research says about daily sunscreen and its ingredients.\n\nThe strongest evidence is for daily sunscreen use itself, from a randomized trial of 1,621 adults in Nambour, Australia, using an SPF 15+ sunscreen. People assigned to daily use had 24% less skin aging over 4.5 years than people who used sunscreen when they chose to. They also had about 39% fewer squamous cell carcinoma tumors, though the share of people who got one didn\'t differ significantly, and there was no effect on basal cell carcinoma. Ten years later, the daily group had 11 new melanomas versus 22, a difference just short of statistical significance overall, though the drop in invasive melanoma (3 vs 11) was significant.\n\nHow much you apply matters. SPF is tested at 2 mg/cm², while consumers typically apply 0.5–1 mg/cm², and lab studies show actual SPF drops steeply at those amounts. One study found SPF 30–50 products may not give enough protection at typical consumer amounts. The AAD and FDA advise applying 15 minutes before sun exposure and reapplying at least every two hours, and more often when swimming or sweating. kieró doesn\'t claim water resistance.\n\nThe UV filters in this stick (avobenzone, octocrylene, homosalate, octisalate) were all absorbed into the bloodstream in a 2020 FDA randomized trial of 48 people. Levels were above the point at which the FDA can waive further safety testing, and the FDA researchers said this does not mean people should stop using sunscreen. A separate lab study found benzophenone, which it calls a possible human carcinogen, in all 28 octocrylene-containing products tested, increasing with age and heat. People who want to avoid these filters can choose a mineral (zinc oxide) sunscreen.\n\nFor the soothing ingredients, a 6-month double-blind study of 20 women found that a cream combining 5% vitamin C with 0.1% madecassoside improved wrinkles, firmness, and hydration. Because the two were combined, the result can\'t be credited to madecassoside alone. In a separate study, madecassoside reduced UV-triggered inflammation in skin cells and reduced UV tanning on human skin over 8 weeks. Vitamin E is the main antioxidant naturally found in skin.',
+        doctorOpinionShort: 'Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a large randomized trial, with a likely drop in invasive melanoma. Protection depends on applying enough, so go over each area several times and reapply every two hours. Its chemical filters are absorbed into the blood; the FDA researchers said that doesn\'t mean people should stop using sunscreen, and mineral sunscreen is an alternative. No independent study of this product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/sun-stick-spf-50', label: 'kieroskincare.com: Airy Sun Stick SPF 50+, ingredient list and claims' },
+            { url: 'https://www.aad.org/public/everyday-care/sun-protection/shade-clothing-sunscreen/how-to-apply-sunscreen', label: 'American Academy of Dermatology: How to apply sunscreen' },
+            { url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun', label: 'FDA: Sunscreen, how to help protect your skin from the sun' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/10475183/', label: 'PubMed: Daily sunscreen application in prevention of basal-cell and squamous-cell carcinomas, randomised controlled trial', chipLabel: 'Nambour sunscreen trial (Lancet 1999)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23732711/', label: 'PubMed: Sunscreen and prevention of skin aging, a randomized trial (Ann Intern Med 2013)', chipLabel: 'Sunscreen and skin aging trial (2013)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/21135266/', label: 'PubMed: Reduced melanoma after regular sunscreen use, randomized trial follow-up (J Clin Oncol 2011)', chipLabel: 'Sunscreen and melanoma follow-up (2011)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/19614894/', label: 'PubMed: The influence of the amount of sunscreen applied on its sun protection factor', chipLabel: 'Sunscreen amount and SPF study' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31961417/', label: 'PubMed: Effect of sunscreen application on plasma concentration of sunscreen active ingredients, randomized clinical trial (JAMA 2020)', chipLabel: 'FDA sunscreen absorption trial (JAMA 2020)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/33763894/', label: 'PubMed: The presence of benzophenone in sunscreens and cosmetics containing the organic UV filter octocrylene', chipLabel: 'Benzophenone in octocrylene products (2021)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin', chipLabel: 'Vitamin C + madecassoside trial, 20 women' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6290557/', label: 'NIH (PMC): Madecassoside inhibits melanin synthesis by blocking ultraviolet-induced inflammation', chipLabel: 'Madecassoside UV study' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the response of skin to oxidative stress, vitamin E as a key indicator', chipLabel: 'Vitamin E in skin (review)' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'People who want a mess-free daily SPF they can reapply over makeup',
+            'Oily or combination skin looking for a non-greasy finish',
+            'Touch-ups on the face, ears, nose, and around the eyes during the day',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // us.kieroskincare.com/products/sun-stick-spf-50, plus AAD/FDA
+        // application guidance (marked as such).
+        howToUse: {
+            intro: 'Per kieró\'s own site: swipe the stick on as the last step of your morning routine, or over makeup, evenly covering all sun-exposed areas. Reapply through the day as needed.',
+            steps: [
+                'Go over each area several times (back and forth). A single light swipe won\'t deliver the labeled SPF.',
+                'Apply about 15 minutes before going outside (AAD).',
+                'Reapply at least every two hours, and right after swimming or sweating (AAD / FDA).',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/sun-stick-spf-50',
+            sourceLabel: 'kieroskincare.com: Airy Sun Stick SPF 50+',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Allergy to ragweed, chamomile, or other daisy-family plants: patch test first.',
+            'Have you reacted to ketoprofen (an anti-inflammatory gel)? Octocrylene can cause photoallergic reactions in people sensitized to it.',
+            'Rash or irritation, especially after sun exposure: stop using it and see a doctor.',
+            'Not stated as water resistant: reapply after swimming or sweating.',
+            'Infants under 6 months: the FDA doesn\'t recommend sunscreen; keep them out of the sun instead.',
+        ],
+        communityReview: 'kieró\'s US site shows 657 customer reviews, and 593 of them (90%) are five stars; the rest are four stars. Most reviews are in Spanish and praise how easily it goes on, how fast it absorbs, and its non-greasy feel, including over makeup. For example: "No es grasoso y protege muy bien tu piel del sol" ("It\'s not greasy and protects your skin from the sun really well"). On Amazon it has 4.5 out of 5 stars from 28 ratings (69% five-star, 26% four-star, 5% one-star) as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
+        effectiveness: 'Labeled SPF 50+ / PA++++ broad spectrum, but real-world protection depends on how much you apply. Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a randomized trial. No independent study of the finished product was found.',
+        // Per-ingredient / per-topic science, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab.
+        ingredientScience: [
+            {
+                name: 'Daily broad-spectrum sunscreen',
+                text: 'In the Nambour randomized trial (1,621 adults, SPF 15+), people assigned to daily sunscreen showed no detectable increase in skin aging over 4.5 years, 24% less aging than the discretionary-use group. They had 39% fewer squamous cell carcinoma tumors, though the share of people who got one didn\'t differ significantly, and there was no effect on basal cell carcinoma. Ten years later, the daily group had 11 new melanomas vs 22; that overall difference was just short of statistical significance (p = 0.051), while the drop in invasive melanoma (3 vs 11) was significant.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/10475183/', label: 'PubMed: Daily sunscreen application in prevention of basal-cell and squamous-cell carcinomas, a randomised controlled trial (Green et al., Lancet 1999)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23732711/', label: 'PubMed: Sunscreen and prevention of skin aging, a randomized trial (Hughes et al., Ann Intern Med 2013)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/21135266/', label: 'PubMed: Reduced melanoma after regular sunscreen use, randomized trial follow-up (Green et al., J Clin Oncol 2011)' },
+                ],
+            },
+            {
+                name: 'How much you apply',
+                text: 'SPF is measured at 2 mg/cm², but consumers typically apply 0.5–1 mg/cm². Lab studies on volunteers found actual SPF falls significantly at lower amounts. One found SPF 30–50 products may not give enough protection at typical consumer amounts.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/19614894/', label: 'PubMed: The influence of the amount of sunscreen applied on its sun protection factor' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/22463921/', label: 'PubMed: High-SPF sunscreens may compensate for lower user application amounts' },
+                ],
+            },
+            {
+                name: 'Chemical UV filters (avobenzone, octocrylene, homosalate, octisalate)',
+                text: 'In a 2020 FDA randomized trial of 48 people, all of these filters were absorbed into the bloodstream after a single application, above the level at which the FDA can waive further safety testing. The researchers concluded this does not mean people should stop using sunscreen. A separate lab study found benzophenone, a possible human carcinogen, in all 28 octocrylene-containing products tested. Levels rose with time and heat.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31961417/', label: 'PubMed: Effect of sunscreen application on plasma concentration of sunscreen active ingredients, a randomized clinical trial (JAMA 2020)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33763894/', label: 'PubMed: The presence of benzophenone in sunscreens and cosmetics containing the organic UV filter octocrylene' },
+                ],
+            },
+            {
+                name: 'Madecassoside (centella)',
+                text: 'kieró states this strengthens the skin barrier. No study testing madecassoside alone for barrier strength was found. In a 6-month double-blind study of 20 women, a cream combining 5% vitamin C with 0.1% madecassoside improved wrinkles, firmness, and hydration, but the result can\'t be credited to madecassoside alone. In another study, madecassoside reduced UV-triggered inflammation in skin cells and reduced UV tanning on human skin over 8 weeks.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6290557/', label: 'NIH (PMC): Madecassoside inhibits melanin synthesis by blocking ultraviolet-induced inflammation' },
+                ],
+            },
+            {
+                name: 'Roman chamomile',
+                text: 'kieró states this soothes sensitive skin. No study of chamomile flower water for soothing was found. Chamomile is in the daisy (Asteraceae) family, whose compounds are known skin sensitizers that can cross-react with ragweed.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11847717/', label: 'NIH (PMC): Allergic potential of medicinal plants from the Asteraceae family (2025 review)' },
+                ],
+            },
+            {
+                name: 'Vitamin E',
+                text: 'kieró states this gives antioxidant defense. Vitamin E is the main antioxidant naturally found in human skin, and UV exposure depletes it.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the Response of Skin to Oxidative Stress, Vitamin E as a Key Indicator' },
+                ],
+            },
+        ],
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/everyday-care/sun-protection/shade-clothing-sunscreen/how-to-apply-sunscreen',
+                text: 'American Academy of Dermatology: How to apply sunscreen',
+                summary: 'AAD guidance: use SPF 30+ broad-spectrum sunscreen, apply about 15 minutes before going out, and reapply every two hours and after swimming or sweating. This is general guidance, not product-specific validation.',
+            },
+            {
+                url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun',
+                text: 'FDA: Sunscreen, how to help protect your skin from the sun',
+                summary: 'FDA guidance: use broad-spectrum SPF 15+, apply 15 minutes before sun exposure, reapply at least every two hours, and keep infants under 6 months out of the sun rather than using sunscreen.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0HBVSP2QH',
+                        text: 'Amazon: kieró Airy Sun Stick reviews',
+                        summary: '4.5 out of 5 stars from 28 ratings (69% five-star, 26% four-star, 5% one-star) on Amazon as of October 2026.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/sun-stick-spf-50',
+                        text: 'kieroskincare.com: Airy Sun Stick SPF 50+ customer reviews',
+                        summary: 'kieró\'s own product page shows 657 reviews, 90% of them five stars and the rest four stars, mostly in Spanish (see the Community summary above).',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // kieró Comfort Cleansing Balm, Prime Sun Gel SPF 40+, Essential Boost
+    // Serum, verified against us.kieroskincare.com on 2026-10-06 (product
+    // description, full INCI list, and review counts from each product page).
+    // Every science claim below was read from its abstract via NCBI
+    // E-utilities; the sun gel reuses the sun stick's already-verified
+    // sunscreen sources because it has the same UV filters. Not a brand
+    // partner and no affiliate link, so Buy Now goes to kieró's own page.
+    {
+        id: 'p-kiero-comfort-cleansing-balm',
+        name: 'Comfort Cleansing Balm',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'cleanser', 'cleansing balm', 'makeup remover', 'oil cleanser', 'vegan', 'fragrance-free'],
+        price: '$11.99 for 80 g (2.82 oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/comfort-cleansing-balm',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/comfort-cleansing-balm',
+        },
+        image: '/products/kiero/comfort-cleansing-balm.jpg', // supplied by ayna; same photo as kieró's product page
+        summary: 'A cleansing balm with grape seed oil, macadamia oil and vitamin E that melts on contact to dissolve makeup and impurities. kieró positions it as a first cleanse that removes makeup without drying and protects the skin\'s moisture barrier. Massage it onto dry skin, then rinse with warm water. It is step 1 (cleanse) of kieró\'s 5-step routine.',
+        ingredients: 'Full INCI list per kieró: Cetyl Ethylhexanoate, Caprylic/Capric Triglyceride, PEG-20 Glyceryl Triisostearate, PEG-10 Isostearate, Synthetic Wax, Sorbitan Sesquioleate, Glyceryl Caprylate, Ethylhexylglycerin, Vitis Vinifera (Grape) Seed Oil, Eclipta Prostrata Extract, Melia Azadirachta Leaf Extract, Melia Azadirachta Flower Extract, Coccinia Indica Fruit Extract, Solanum Melongena (Eggplant) Fruit Extract, Moringa Oleifera Seed Oil, Simmondsia Chinensis (Jojoba) Seed Oil, Corallina Officinalis Extract, Curcuma Longa (Turmeric) Root Extract, Ocimum Sanctum Leaf Extract, Macadamia Ternifolia Seed Oil, Tocopherol, Helianthus Annuus (Sunflower) Seed Oil, Vegetable Oil.',
+        safety: {
+            fdaStatus: 'Cosmetic cleanser; not an FDA-cleared drug or medical device. kieró states its products are vegan and cruelty-free; ayna did not independently verify that.',
+            materials: 'Solid balm (80 g / 2.82 oz) made mostly of emollient esters, oils and wax, with grape seed, moringa, jojoba, macadamia and sunflower oils, vitamin E (tocopherol), and small amounts of plant extracts including neem (Melia azadirachta), turmeric, holy basil (Ocimum sanctum) and eggplant. No water, added fragrance or essential oils appear in the published ingredient list.',
+            recalls: 'No recalls found.',
+            sideEffects: 'None reported by kieró. It contains several plant extracts and macadamia seed oil, so patch test first if you have sensitive skin or plant or nut allergies. Full warnings are listed below.',
+            opinionAlerts: 'Claims that it soothes sensitive skin and strengthens the skin barrier come from kieró, and no independent study of the finished product was found. One reviewer noted it doesn\'t melt as quickly as expected.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says the balm dissolves makeup and impurities without drying, soothes and protects sensitive skin, and nourishes the skin barrier, crediting grape seed oil, macadamia oil and vitamin E.\n\nNo independent study of this product, or of cleansing balms as a category, was found, so these benefits rest on kieró\'s own claims. Vitamin E is the main antioxidant naturally found in skin, but in a rinse-off cleanser most of it is washed away. The formula lists no added fragrance or essential oils.',
+        doctorOpinionShort: 'An oil-based makeup-removing balm with no added fragrance. Its soothing and barrier claims come from kieró, and no independent study of the product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/comfort-cleansing-balm', label: 'kieroskincare.com: Comfort Cleansing Balm, ingredient list and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the response of skin to oxidative stress, vitamin E as a key indicator', chipLabel: 'Vitamin E in skin (review)' },
+        ],
+        whoItsFor: [
+            'People who wear makeup or sunscreen and want a first cleanse that dissolves it without scrubbing',
+            'Dry or normal skin that feels tight after foaming cleansers',
+            'People who prefer a fragrance-free, vegan formula',
+        ],
+        howToUse: {
+            intro: 'Per kieró\'s own site: use as step 1 (cleanse) of the routine.',
+            steps: [
+                'Scoop a small amount onto dry hands.',
+                'Massage it onto a dry face in circular motions to dissolve makeup.',
+                'Rinse with warm water.',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/comfort-cleansing-balm',
+            sourceLabel: 'kieroskincare.com: Comfort Cleansing Balm',
+        },
+        warnings: [
+            'Plant or nut allergies (it contains macadamia oil and several plant extracts): patch test first.',
+            'Keep out of eyes. If you get redness, burning, or a rash, stop using it.',
+        ],
+        communityReview: 'kieró\'s US site shows 334 customer reviews, and 311 of them (93%) are five stars; the rest are four stars. Most reviews are in Spanish and praise how fully it removes makeup, including waterproof makeup and long-wear lipstick, and that it has no scent. For example: "Me encantó que removió todo el maquillaje de mi rostro" ("I loved that it removed all the makeup from my face"). One reviewer said it doesn\'t melt as quickly as expected. On Amazon it has 4.5 out of 5 stars from 58 ratings as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
+        effectiveness: 'Reviewers on kieró\'s site say it removes even waterproof makeup and long-wear lipstick without scrubbing.',
+        ingredientScience: [
+            {
+                name: 'Vitamin E',
+                text: 'kieró credits vitamin E for nourishing the skin. Vitamin E is the main antioxidant naturally found in human skin, and UV exposure depletes it. In a rinse-off cleanser, most of it is washed away.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the Response of Skin to Oxidative Stress, Vitamin E as a Key Indicator' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FRMXWM2M',
+                        text: 'Amazon: kieró Comfort Cleansing Balm reviews',
+                        summary: '4.5 out of 5 stars from 58 ratings on Amazon as of October 2026.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/comfort-cleansing-balm',
+                        text: 'kieroskincare.com: Comfort Cleansing Balm customer reviews',
+                        summary: 'kieró\'s own product page shows 334 reviews, 93% of them five stars and the rest four stars, mostly in Spanish (see the Community summary above).',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-kiero-prime-sun-gel-spf40',
+        name: 'Prime Sun Gel SPF 40+',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'spf', 'sunscreen', 'vegan'],
+        price: '$12.99 for 50 ml (1.69 fl oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/sun-barrier',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/sun-barrier',
+        },
+        image: '/products/kiero/prime-sun-gel.jpg', // supplied by ayna; same photo as kieró's product page
+        summary: 'A lightweight gel sunscreen labeled SPF 40+ / PA++++ broad spectrum, with chamomile, azulene and panthenol. kieró positions it for daily UV protection in a fast-absorbing, non-sticky texture that soothes sensitive skin and redness, hydrates, and wears alone or under makeup. It is the last step (protect) of kieró\'s morning routine.',
+        ingredients: 'Full INCI list per kieró: Isododecane, Cyclopentasiloxane, Homosalate, Octocrylene, Cyclohexasiloxane, Dimethicone/Bis-Isobutyl PPG-20 Crosspolymer, Vinyl Dimethicone/Methicone Silsesquioxane Crosspolymer, Octisalate, Butyloctyl Salicylate, Avobenzone, 1,2-Hexanediol, Helianthus Annuus (Sunflower) Seed Oil, Polyglyceryl-4 Oleate, Water, C12-13 Pareth-9, Polyglyceryl-6 Oleate, Polyhydroxystearic Acid, Ethylhexylglycerin, Glycine Soja (Soybean) Oil, Caryodendron Orinocense Seed Oil, Tocopherol, Plukenetia Volubilis Seed Oil, Bixa Orellana Seed Oil, Sodium Guaiazulene Sulfonate, Panthenol, Butylene Glycol, Anthemis Nobilis Flower Water, Madecassoside, Asiaticoside, Asiatic Acid, Madecassic Acid, Fragrance.',
+        safety: {
+            fdaStatus: 'In the US, sunscreens are regulated as over-the-counter drugs. No FDA drug listing for this product was found in openFDA\'s NDC directory (checked 2026-10-06), so the SPF 40+ / PA++++ and broad-spectrum claims are per kieró. kieró doesn\'t publish the percentage of each UV filter or say whether it is water resistant. kieró states the formula is vegan and free of sulfates, parabens and phthalates; ayna did not independently verify that.',
+            materials: 'Silicone-based gel (50 ml / 1.69 fl oz). UV filters: avobenzone (UVA), octocrylene, homosalate, octisalate, and butyloctyl salicylate, all chemical filters with no zinc oxide or titanium dioxide. Soothing ingredients are Roman chamomile flower water, sodium guaiazulene sulfonate (an azulene derivative), panthenol, and madecassoside (from centella). It also contains soybean oil, vitamin E, and added fragrance.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Octocrylene can cause photoallergic reactions (a rash after sun exposure), notably in people who have reacted to ketoprofen, an anti-inflammatory gel. The formula contains Roman chamomile, a daisy-family (Asteraceae) plant; this family is a known contact allergen and cross-reacts with ragweed. It also contains added fragrance. People with those allergies or fragrance sensitivity should patch test first. Full warnings are listed below.',
+            opinionAlerts: 'Safety note: sunscreen only reaches its labeled SPF when applied generously, and most people apply far less. Its chemical UV filters were absorbed into the bloodstream in an FDA study; the FDA researchers said that doesn\'t mean people should stop using sunscreen. Contains added fragrance and Roman chamomile, so patch test if you\'re fragrance-sensitive or allergic to ragweed or daisies. No FDA drug listing for this product was found. Soothing and redness claims come from kieró, and no independent study of the finished product was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says chamomile and azulene soothe sensitive skin and reduce redness, panthenol hydrates and strengthens the barrier, and the gel wears well alone or under makeup. No independent study of this product was found, and no FDA drug listing for it was found, so its SPF rating is per kieró.\n\nThe strongest evidence is for daily sunscreen use itself, from a randomized trial of 1,621 adults in Nambour, Australia, using an SPF 15+ sunscreen. People assigned to daily use had 24% less skin aging over 4.5 years than people who used sunscreen when they chose to. They also had about 39% fewer squamous cell carcinoma tumors, though the share of people who got one didn\'t differ significantly, and there was no effect on basal cell carcinoma. Ten years later, the daily group had 11 new melanomas versus 22, a difference just short of statistical significance overall, though the drop in invasive melanoma (3 vs 11) was significant.\n\nHow much you apply matters. SPF is tested at 2 mg/cm², while consumers typically apply 0.5–1 mg/cm², and lab studies show actual SPF drops steeply at those amounts. The AAD and FDA advise applying 15 minutes before sun exposure and reapplying at least every two hours, and more often when swimming or sweating. kieró doesn\'t claim water resistance.\n\nThe UV filters in this gel (avobenzone, octocrylene, homosalate, octisalate) were all absorbed into the bloodstream in a 2020 FDA randomized trial of 48 people, above the point at which the FDA can waive further safety testing; the FDA researchers said this does not mean people should stop using sunscreen. People who want to avoid these filters can choose a mineral (zinc oxide) sunscreen.\n\nFor the soothing ingredients: panthenol\'s active form, dexpanthenol, improved skin hydration and reduced water loss through the skin within 7 days in a small randomized, double-blind, placebo-controlled study. No human study of sodium guaiazulene sulfonate for redness was found; a 2003 lab study in bacteria found azulene and guaiazulene became mutagenic when exposed to UVA or visible light, which has not been tested in people. The gel also contains added fragrance, which can irritate sensitive skin.',
+        doctorOpinionShort: 'Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a large randomized trial. Protection depends on applying enough and reapplying every two hours. No FDA drug listing for this product was found, so its SPF 40+ rating is per kieró. It contains added fragrance and chemical filters that are absorbed into the blood; mineral sunscreen is an alternative.',
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/sun-barrier', label: 'kieroskincare.com: Prime Sun Gel SPF 40+, ingredient list and claims' },
+            { url: 'https://www.aad.org/public/everyday-care/sun-protection/shade-clothing-sunscreen/how-to-apply-sunscreen', label: 'American Academy of Dermatology: How to apply sunscreen' },
+            { url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun', label: 'FDA: Sunscreen, how to help protect your skin from the sun' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/10475183/', label: 'PubMed: Daily sunscreen application in prevention of basal-cell and squamous-cell carcinomas, randomised controlled trial', chipLabel: 'Nambour sunscreen trial (Lancet 1999)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23732711/', label: 'PubMed: Sunscreen and prevention of skin aging, a randomized trial (Ann Intern Med 2013)', chipLabel: 'Sunscreen and skin aging trial (2013)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/21135266/', label: 'PubMed: Reduced melanoma after regular sunscreen use, randomized trial follow-up (J Clin Oncol 2011)', chipLabel: 'Sunscreen and melanoma follow-up (2011)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/19614894/', label: 'PubMed: The influence of the amount of sunscreen applied on its sun protection factor', chipLabel: 'Sunscreen amount and SPF study' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31961417/', label: 'PubMed: Effect of sunscreen application on plasma concentration of sunscreen active ingredients, randomized clinical trial (JAMA 2020)', chipLabel: 'FDA sunscreen absorption trial (JAMA 2020)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/10965426/', label: 'PubMed: Effect of topically applied dexpanthenol on epidermal barrier function and stratum corneum hydration', chipLabel: 'Dexpanthenol skin barrier trial (2000)' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3767376/', label: 'NIH (PMC): Photomutagenicity of cosmetic ingredient chemicals azulene and guaiazulene', chipLabel: 'Azulene lab study (2003)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin', chipLabel: 'Vitamin C + madecassoside trial, 20 women' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6290557/', label: 'NIH (PMC): Madecassoside inhibits melanin synthesis by blocking ultraviolet-induced inflammation', chipLabel: 'Madecassoside UV study' },
+        ],
+        whoItsFor: [
+            'People who want a lightweight daily sunscreen that works under makeup',
+            'Oily or combination skin looking for a non-sticky gel finish',
+            'Not ideal for fragrance-sensitive skin, since it contains added fragrance',
+        ],
+        howToUse: {
+            intro: 'Per kieró\'s own site: use alone or as the last step of your morning routine, before makeup.',
+            steps: [
+                'Apply evenly to all sun-exposed skin. Use enough: most people apply far less than the amount SPF is tested at.',
+                'Apply about 15 minutes before going outside (AAD).',
+                'Reapply at least every two hours, and right after swimming or sweating (AAD / FDA).',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/sun-barrier',
+            sourceLabel: 'kieroskincare.com: Prime Sun Gel SPF 40+',
+        },
+        warnings: [
+            'Contains added fragrance: patch test if you have fragrance-sensitive skin.',
+            'Allergy to ragweed, chamomile, or other daisy-family plants: patch test first.',
+            'Have you reacted to ketoprofen (an anti-inflammatory gel)? Octocrylene can cause photoallergic reactions in people sensitized to it.',
+            'Not stated as water resistant: reapply after swimming or sweating.',
+            'Infants under 6 months: the FDA doesn\'t recommend sunscreen; keep them out of the sun instead.',
+        ],
+        communityReview: 'kieró\'s US site shows 310 customer reviews, and 287 of them (93%) are five stars; 22 are four stars and one is one star. Most reviews are in Spanish and praise the light texture, fast absorption, and hydrated feel. For example: "Textura ligera y se siente muy bien en la piel" ("Light texture and it feels great on the skin"). On Amazon it has 4.5 out of 5 stars from 34 ratings (75% five-star; 5% two-star, none one-star) as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
+        effectiveness: 'Daily sunscreen use slowed skin aging and reduced squamous cell carcinoma tumors in a large randomized trial.',
+        ingredientScience: [
+            {
+                name: 'Daily broad-spectrum sunscreen',
+                text: 'In the Nambour randomized trial (1,621 adults, SPF 15+), people assigned to daily sunscreen showed no detectable increase in skin aging over 4.5 years, 24% less aging than the discretionary-use group. They had 39% fewer squamous cell carcinoma tumors, though the share of people who got one didn\'t differ significantly, and there was no effect on basal cell carcinoma. Ten years later, the daily group had 11 new melanomas vs 22; that overall difference was just short of statistical significance (p = 0.051), while the drop in invasive melanoma (3 vs 11) was significant.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/10475183/', label: 'PubMed: Daily sunscreen application in prevention of basal-cell and squamous-cell carcinomas, a randomised controlled trial (Green et al., Lancet 1999)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23732711/', label: 'PubMed: Sunscreen and prevention of skin aging, a randomized trial (Hughes et al., Ann Intern Med 2013)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/21135266/', label: 'PubMed: Reduced melanoma after regular sunscreen use, randomized trial follow-up (Green et al., J Clin Oncol 2011)' },
+                ],
+            },
+            {
+                name: 'How much you apply',
+                text: 'SPF is measured at 2 mg/cm², but consumers typically apply 0.5–1 mg/cm². Lab studies on volunteers found actual SPF falls significantly at lower amounts. One found SPF 30–50 products may not give enough protection at typical consumer amounts.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/19614894/', label: 'PubMed: The influence of the amount of sunscreen applied on its sun protection factor' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/22463921/', label: 'PubMed: High-SPF sunscreens may compensate for lower user application amounts' },
+                ],
+            },
+            {
+                name: 'Chemical UV filters (avobenzone, octocrylene, homosalate, octisalate)',
+                text: 'In a 2020 FDA randomized trial of 48 people, all of these filters were absorbed into the bloodstream after a single application, above the level at which the FDA can waive further safety testing. The researchers concluded this does not mean people should stop using sunscreen. A separate lab study found benzophenone, a possible human carcinogen, in all 28 octocrylene-containing products tested. Levels rose with time and heat.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31961417/', label: 'PubMed: Effect of sunscreen application on plasma concentration of sunscreen active ingredients, a randomized clinical trial (JAMA 2020)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33763894/', label: 'PubMed: The presence of benzophenone in sunscreens and cosmetics containing the organic UV filter octocrylene' },
+                ],
+            },
+            {
+                name: 'Panthenol',
+                text: 'kieró states this hydrates and strengthens the skin barrier. In a small randomized, double-blind, placebo-controlled study, dexpanthenol (panthenol\'s active form) in two lipophilic creams improved skin hydration and reduced water loss through the skin after 7 days compared with the same creams without it. A 2017 review describes dexpanthenol\'s use as a moisturizer and barrier restorer; three of its four authors work for Bayer Consumer Care.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/10965426/', label: 'PubMed: Effect of topically applied dexpanthenol on epidermal barrier function and stratum corneum hydration (Gehring & Gloor, 2000)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28503966/', label: 'PubMed: Topical use of dexpanthenol, a 70th anniversary article (Proksch et al., 2017)' },
+                ],
+            },
+            {
+                name: 'Azulene (sodium guaiazulene sulfonate)',
+                text: 'kieró states azulene reduces redness. No human study of sodium guaiazulene sulfonate for redness was found. A 2003 lab study in bacteria found azulene and guaiazulene became mutagenic when exposed to UVA or visible light, though not in the dark. That was not a study in people or skin, it tested guaiazulene rather than the sulfonate form used here, and its relevance to sunscreen use is unknown.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3767376/', label: 'NIH (PMC): Photomutagenicity of cosmetic ingredient chemicals azulene and guaiazulene (2003)' },
+                ],
+            },
+            {
+                name: 'Madecassoside (centella)',
+                text: 'No study testing madecassoside alone for barrier strength was found. In a 6-month double-blind study of 20 women, a cream combining 5% vitamin C with 0.1% madecassoside improved wrinkles, firmness, and hydration, but the result can\'t be credited to madecassoside alone. In another study, madecassoside reduced UV-triggered inflammation in skin cells and reduced UV tanning on human skin over 8 weeks.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6290557/', label: 'NIH (PMC): Madecassoside inhibits melanin synthesis by blocking ultraviolet-induced inflammation' },
+                ],
+            },
+            {
+                name: 'Roman chamomile',
+                text: 'kieró states this soothes sensitive skin. No study of chamomile flower water for soothing was found. Chamomile is in the daisy (Asteraceae) family, whose compounds are known skin sensitizers that can cross-react with ragweed.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11847717/', label: 'NIH (PMC): Allergic potential of medicinal plants from the Asteraceae family (2025 review)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.aad.org/public/everyday-care/sun-protection/shade-clothing-sunscreen/how-to-apply-sunscreen',
+                text: 'American Academy of Dermatology: How to apply sunscreen',
+                summary: 'AAD guidance: use SPF 30+ broad-spectrum sunscreen, apply about 15 minutes before going out, and reapply every two hours and after swimming or sweating. This is general guidance, not product-specific validation.',
+            },
+            {
+                url: 'https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun',
+                text: 'FDA: Sunscreen, how to help protect your skin from the sun',
+                summary: 'FDA guidance: use broad-spectrum SPF 15+, apply 15 minutes before sun exposure, reapply at least every two hours, and keep infants under 6 months out of the sun rather than using sunscreen.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0HBVTHQDG',
+                        text: 'Amazon: kieró Prime Sun Gel reviews',
+                        summary: '4.5 out of 5 stars from 34 ratings (75% five-star; 5% two-star, none one-star) on Amazon as of October 2026.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/sun-barrier',
+                        text: 'kieroskincare.com: Prime Sun Gel SPF 40+ customer reviews',
+                        summary: 'kieró\'s own product page shows 310 reviews, 93% of them five stars, mostly in Spanish (see the Community summary above).',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-kiero-essential-boost-serum',
+        name: 'Essential Boost Serum',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'serum', 'niacinamide', 'hyaluronic acid', 'peptides', 'hydration', 'hyperpigmentation', 'vegan'],
+        price: '$11.99 for 30 ml (1.01 fl oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/essential-boost-serum',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/essential-boost-serum',
+        },
+        image: '/products/kiero/essential-boost-serum.jpg', // supplied by ayna; same photo as kieró's product page
+        summary: 'A lightweight serum with prickly pear, peptides, niacinamide and panthenol, plus several forms of hyaluronic acid. kieró positions it to hydrate, improve firmness, even out skin tone and strengthen the skin barrier for a brighter complexion. Apply a small amount to clean face and neck, morning and night. It is step 3 (treat) of kieró\'s 5-step routine.',
+        ingredients: 'Full INCI list per kieró: Water, Butylene Glycol, Glycerin, Panthenol, Dipropylene Glycol, Niacinamide, Benzyl Glycol, Hydroxyethyl Urea, Carbomer, Arginine, Methylpropanediol, Beta-Glucan, Betaine, Ethylhexylglycerin, Protease, Hydrolyzed Sclerotium Gum, Caprylyl Glycol, Adenosine, Mica (CI 77019), 1,2-Hexanediol, Opuntia Ficus-Indica Fruit Extract, Agar, Gellan Gum, Calcium Alginate, Phenoxyethanol, Steareth-30, Madecassoside, Asiaticoside, Asiatic Acid, Madecassic Acid, Sodium Hyaluronate, Hydrolyzed Hyaluronic Acid, Hydrolyzed Sodium Hyaluronate, Dimethylsilanol Hyaluronate, Potassium Hyaluronate, Hyaluronic Acid, Hydroxypropyltrimonium Hyaluronate, Sodium Hyaluronate Crosspolymer, Sodium Hyaluronate Dimethylsilanol, Sodium Acetylated Hyaluronate, Palmitoyl Tetrapeptide-7, Palmitoyl Tripeptide-1, Titanium Dioxide (CI 77891), Iron Oxides Red (CI 77491).',
+        safety: {
+            fdaStatus: 'Cosmetic serum; not an FDA-cleared drug or medical device. kieró states its products are vegan and cruelty-free; ayna did not independently verify that.',
+            materials: 'Water-based gel serum (30 ml / 1.01 fl oz). Key ingredients: panthenol, niacinamide, hydroxyethyl urea, beta-glucan, prickly pear (Opuntia ficus-indica) extract, centella compounds (madecassoside, asiaticoside), ten forms of hyaluronic acid, and two peptides (palmitoyl tetrapeptide-7, palmitoyl tripeptide-1). It also contains a protease enzyme, phenoxyethanol as a preservative, and mica, titanium dioxide and red iron oxide as colorants. kieró doesn\'t list ingredient percentages. No added fragrance appears in the published ingredient list.',
+            recalls: 'No recalls found.',
+            sideEffects: 'None reported by kieró. As with any new skincare product, patch test first if you have sensitive skin, and stop using it if you get redness, burning or a rash. Full warnings are listed below.',
+            opinionAlerts: 'kieró doesn\'t list the niacinamide percentage, and its firmness and tone claims are its own: no independent study of the finished product, its peptides, or its prickly pear extract was found.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says the serum hydrates and protects with antioxidants, improves firmness, evens out skin tone, and soothes and strengthens the skin barrier. No independent study of this product was found, so what follows is what the research says about its main ingredients.\n\nNiacinamide has the best evidence. In two 12-week, double-blind, split-face trials, each with 50 women, 5% niacinamide improved fine lines and wrinkles, dark spots, red blotchiness, sallowness and elasticity compared with the same cream without it. Both trials were run by Procter & Gamble, and kieró doesn\'t say how much niacinamide this serum contains.\n\nFor hydration, a randomized trial of 76 women found that 0.1% hyaluronic acid eye creams improved skin hydration and elasticity over 60 days compared with a placebo cream, and the lower-molecular-weight forms also reduced wrinkle depth. Panthenol\'s active form, dexpanthenol, improved hydration and reduced water loss through the skin within 7 days in a small double-blind, placebo-controlled study.\n\nNo independent clinical trial of its two peptides (palmitoyl tetrapeptide-7 and palmitoyl tripeptide-1) or of prickly pear extract on skin was found, so the firmness claim rests on kieró.',
+        doctorOpinionShort: 'Niacinamide improved wrinkles, dark spots and redness in two 12-week controlled trials at 5%, but kieró doesn\'t list this serum\'s percentage. Hyaluronic acid and panthenol have small controlled studies for hydration. No independent study of the product, its peptides, or its prickly pear extract was found.',
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/essential-boost-serum', label: 'kieroskincare.com: Essential Boost Serum, ingredient list and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/16029679/', label: 'PubMed: Niacinamide, a B vitamin that improves aging facial skin appearance', chipLabel: 'Niacinamide trial, 50 women (2005)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/18492135/', label: 'PubMed: Topical niacinamide reduces yellowing, wrinkling, red blotchiness, and hyperpigmented spots in aging facial skin', chipLabel: 'Niacinamide trial, 50 women (2004)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/22052267/', label: 'PubMed: Efficacy of cream-based formulations of hyaluronic acid of different molecular weights in anti-wrinkle treatment', chipLabel: 'Hyaluronic acid trial, 76 women (2011)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/10965426/', label: 'PubMed: Effect of topically applied dexpanthenol on epidermal barrier function and stratum corneum hydration', chipLabel: 'Dexpanthenol skin barrier trial (2000)' },
+        ],
+        whoItsFor: [
+            'People who want a lightweight hydrating serum for morning and night',
+            'People interested in niacinamide for uneven tone, dark spots or redness',
+            'People who prefer a fragrance-free, vegan formula',
+        ],
+        howToUse: {
+            intro: 'Per kieró\'s own site: use as step 3 (treat) of the routine, morning and night.',
+            steps: [
+                'Cleanse your face first.',
+                'Apply a small amount to your face and neck.',
+                'Follow with moisturizer, and sunscreen in the morning.',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/essential-boost-serum',
+            sourceLabel: 'kieroskincare.com: Essential Boost Serum',
+        },
+        warnings: [
+            'Sensitive skin: patch test first.',
+            'Keep out of eyes. If you get redness, burning, or a rash, stop using it.',
+        ],
+        communityReview: 'kieró\'s US site shows 236 customer reviews, and 213 of them (90%) are five stars; the rest are four stars. Most reviews are in Spanish and describe skin looking hydrated and smoother. For example: "Llevo casi un mes usándolo y mi piel se ve muy hidratada y bonita" ("I\'ve been using it for almost a month and my skin looks very hydrated and pretty"). On Amazon it has 4.4 out of 5 stars from 37 ratings (69% five-star; 8% two-star, none one-star) as of October 2026. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s product page.',
+        effectiveness: 'Niacinamide improved wrinkles, dark spots and redness in controlled trials at 5%, and hyaluronic acid and panthenol have small controlled studies for hydration.',
+        ingredientScience: [
+            {
+                name: 'Niacinamide',
+                text: 'kieró states this evens out skin tone. In two 12-week, double-blind, split-face trials of 50 women each, 5% niacinamide improved fine lines and wrinkles, dark spots, red blotchiness, sallowness and elasticity compared with the same cream without it, and was well tolerated. Both trials were run by Procter & Gamble. kieró doesn\'t list this serum\'s niacinamide percentage.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/16029679/', label: 'PubMed: Niacinamide, a B vitamin that improves aging facial skin appearance (Bissett et al., 2005)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18492135/', label: 'PubMed: Topical niacinamide reduces yellowing, wrinkling, red blotchiness, and hyperpigmented spots in aging facial skin (Bissett et al., 2004)' },
+                ],
+            },
+            {
+                name: 'Hyaluronic acid',
+                text: 'kieró states this hydrates. In a randomized trial of 76 women, eye creams with 0.1% hyaluronic acid applied twice daily for 60 days improved skin hydration and elasticity compared with a placebo cream on the other eye. Only the lower-molecular-weight forms also reduced wrinkle depth. This serum combines ten forms of hyaluronic acid at unlisted amounts.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/22052267/', label: 'PubMed: Efficacy of cream-based formulations of hyaluronic acid of different molecular weights in anti-wrinkle treatment (Pavicic et al., 2011)' },
+                ],
+            },
+            {
+                name: 'Panthenol',
+                text: 'kieró states this soothes and strengthens the skin barrier. In a small randomized, double-blind, placebo-controlled study, dexpanthenol (panthenol\'s active form) improved skin hydration and reduced water loss through the skin after 7 days compared with the same creams without it. A 2017 review describes its use as a moisturizer and barrier restorer; three of its four authors work for Bayer Consumer Care.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/10965426/', label: 'PubMed: Effect of topically applied dexpanthenol on epidermal barrier function and stratum corneum hydration (Gehring & Gloor, 2000)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28503966/', label: 'PubMed: Topical use of dexpanthenol, a 70th anniversary article (Proksch et al., 2017)' },
+                ],
+            },
+            {
+                name: 'Madecassoside (centella)',
+                text: 'No study testing madecassoside alone for barrier strength was found. In a 6-month double-blind study of 20 women, a cream combining 5% vitamin C with 0.1% madecassoside improved wrinkles, firmness, and hydration, but the result can\'t be credited to madecassoside alone.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18503551/', label: 'PubMed: Long-term effects of topical ascorbic acid and madecassoside in photoaged human skin' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FRMCLFT1',
+                        text: 'Amazon: kieró Essential Boost Serum reviews',
+                        summary: '4.4 out of 5 stars from 37 ratings (69% five-star; 8% two-star, none one-star) on Amazon as of October 2026.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/essential-boost-serum',
+                        text: 'kieroskincare.com: Essential Boost Serum customer reviews',
+                        summary: 'kieró\'s own product page shows 236 reviews, 90% of them five stars and the rest four stars, mostly in Spanish (see the Community summary above).',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // kieró Pure Radiant Eye Cream, verified against
+    // us.kieroskincare.com/products/pure-radiant-eye-cream on 2026-10-07
+    // (description, full INCI, review counts). Contains retinal (a retinoid),
+    // so it carries a pregnancy note sourced to a meta-analysis read via NCBI
+    // E-utilities. Amazon rating from Amazon's search listing for B0FRMQZRF3.
+    {
+        id: 'p-kiero-pure-radiant-eye-cream',
+        name: 'Pure Radiant Eye Cream',
+        brand: 'kieró',
+        category: 'skincare',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['skin', 'eye cream', 'retinal', 'retinoid', 'niacinamide', 'dark circles', 'fine lines', 'vegan'],
+        price: '$12.99 for 25 ml (0.85 fl oz)',
+        whereToBuy: ['kieró'],
+        url: 'https://us.kieroskincare.com/products/pure-radiant-eye-cream',
+        whereToBuyLinks: {
+            'kieró': 'https://us.kieroskincare.com/products/pure-radiant-eye-cream',
+        },
+        image: '/products/kiero/pure-radiant-eye-cream.jpg', // supplied by ayna; same photo as kieró's product page
+        summary: 'An eye cream with retinal, pink algae (Dunaliella salina), centella asiatica and niacinamide. kieró positions it to smooth fine lines, brighten dark circles and firm the eye area, in a lightweight formula that soothes delicate skin. Apply a small amount around the eyes once a day, preferably at night. It is step 3 (treat) of kieró\'s 5-step routine.',
+        ingredients: 'Full INCI list per kieró: Water, Caprylic/Capric Triglyceride, Glycerin, Butylene Glycol, Pentaerythrityl Tetraethylhexanoate, Polyglyceryl-3 Methylglucose Distearate, Niacinamide, Cetearyl Alcohol, Glyceryl Stearate SE, 1,2-Hexanediol, Cetearyl Olivate, Betaine, Hydroxyacetophenone, Sorbitan Olivate, Glyceryl Stearate, Carbomer, Arginine, Sodium Polyacrylate, Hydrogenated Polydecene, Retinal, Tocopherol, Centella Asiatica Extract, Adenosine, Disodium EDTA, Trideceth-6, Dunaliella Salina Extract, Macadamia Integrifolia Seed Oil, Rosa Canina Fruit Oil, Olea Europaea (Olive) Fruit Oil, Lactobacillus Ferment Lysate, C11-13 Isoparaffin, Bambusa Vulgaris Sap Extract, Caprylyl Glycol, Moringa Oleifera Seed Extract, Thuja Orientalis Leaf Extract, Zanthoxylum Piperitum Fruit Extract, Polygonum Cuspidatum Root Extract, Madecassoside, Dipeptide Diaminobutyroyl Benzylamide Diacetate, Asiaticoside, Ethylhexylglycerin, Asiatic Acid, Madecassic Acid, Centaurea Cyanus Flower Extract, Paeonia Albiflora Flower Extract, Nymphaea Caerulea Flower Extract, Sophora Japonica Flower Extract, Crocus Sativus Flower Extract, Histidine, Taurine, Ornithine, Phenylalanine, Proline, Aspartic Acid, Serine, Alanine, Isoleucine, Methionine, Valine, Leucine, Glycine, Glutamic Acid.',
+        safety: {
+            fdaStatus: 'Cosmetic eye cream; not an FDA-cleared drug or medical device. kieró states its products are vegan and cruelty-free; ayna did not independently verify that.',
+            materials: 'Cream (25 ml / 0.85 fl oz). Key ingredients: retinal (retinaldehyde, a retinoid), niacinamide, pink algae (Dunaliella salina) extract, centella compounds (madecassoside, asiaticoside), adenosine, a peptide (dipeptide diaminobutyroyl benzylamide diacetate), vitamin E, and macadamia, rosehip and olive oils, plus several botanical extracts. kieró doesn\'t list the retinal or niacinamide percentage. No added fragrance appears in the published ingredient list.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Contains a retinoid. A 2015 meta-analysis found no significant increase in birth defects or miscarriage after topical retinoid use in early pregnancy, but said the data aren\'t strong enough to justify using retinoids while pregnant, so ask your clinician first if you\'re pregnant, trying to conceive or breastfeeding. It also contains macadamia oil and many plant extracts, so patch test first if you have sensitive skin or nut or plant allergies. Full warnings are listed below.',
+            opinionAlerts: 'Contains retinal, a retinoid: ask your clinician before using it if you\'re pregnant, trying to conceive or breastfeeding. kieró doesn\'t list its retinal percentage.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from kieró; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'kieró says retinal smooths fine lines and wrinkles, the formula brightens dark circles, centella calms and strengthens the eye area, and niacinamide evens out tone. No independent study of this product was found, so what follows is what the research says about its main ingredients.\n\nRetinal (retinaldehyde) is the natural precursor of retinoic acid, the prescription retinoid. In a 3-month randomized, double-blind trial of 40 Korean women, retinal creams at 0.1% and 0.05% applied twice daily improved texture around the crow\'s feet and skin hydration, were well tolerated, and only the 0.1% cream improved pigmentation. The trial compared the two strengths and had no placebo group. kieró doesn\'t list this cream\'s retinal percentage.\n\nNiacinamide improved fine lines, dark spots and redness in two 12-week controlled trials at 5%, run by Procter & Gamble; this cream\'s percentage isn\'t listed. For the pink algae, a placebo-controlled study of a Dunaliella salina extract reported fewer wrinkles and spots under intense sun exposure, but it was run by the company that sells that extract, and it may not be the same extract used here.\n\nRetinoids and pregnancy: a 2015 meta-analysis of 654 pregnancies exposed to topical retinoids found no significant increase in birth defects or miscarriage, but its authors said the data aren\'t strong enough to justify using topical retinoids during pregnancy.',
+        doctorOpinionShort: 'Retinal improved skin texture and hydration in a small 3-month trial, and niacinamide has good controlled-trial evidence at 5%, but kieró doesn\'t list either percentage. No independent study of this cream was found. It contains a retinoid, so ask your clinician first if you\'re pregnant, trying to conceive or breastfeeding.',
+        doctorOpinionCitations: [
+            { url: 'https://us.kieroskincare.com/products/pure-radiant-eye-cream', label: 'kieroskincare.com: Pure Radiant Eye Cream, ingredient list and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/29663701/', label: 'PubMed: Efficacy and safety of retinaldehyde 0.1% and 0.05% creams used to treat photoaged skin', chipLabel: 'Retinal trial, 40 women (2018)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/16029679/', label: 'PubMed: Niacinamide, a B vitamin that improves aging facial skin appearance', chipLabel: 'Niacinamide trial, 50 women (2005)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/18492135/', label: 'PubMed: Topical niacinamide reduces yellowing, wrinkling, red blotchiness, and hyperpigmented spots in aging facial skin', chipLabel: 'Niacinamide trial, 50 women (2004)' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8879334/', label: 'NIH (PMC): A Dunaliella salina extract counteracts skin aging under intense solar irradiation', chipLabel: 'Pink algae extract study (2022)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/26215715/', label: 'PubMed: Pregnancy outcomes following first-trimester exposure to topical retinoids, systematic review and meta-analysis', chipLabel: 'Retinoids in pregnancy meta-analysis (2015)' },
+        ],
+        whoItsFor: [
+            'People looking for a gentle retinoid eye cream for fine lines',
+            'People interested in niacinamide for dark circles or uneven tone around the eyes',
+            'Not for use during pregnancy or while trying to conceive without checking with a clinician first',
+        ],
+        howToUse: {
+            intro: 'Per kieró\'s own site: use once a day, preferably at night.',
+            steps: [
+                'Apply a small amount to the eye contour area.',
+                'Massage gently until absorbed.',
+            ],
+            sourceUrl: 'https://us.kieroskincare.com/products/pure-radiant-eye-cream',
+            sourceLabel: 'kieroskincare.com: Pure Radiant Eye Cream',
+        },
+        warnings: [
+            'Pregnant, trying to conceive, or breastfeeding: contains a retinoid (retinal), so ask your clinician first.',
+            'Nut or plant allergies (it contains macadamia oil and several plant extracts): patch test first.',
+            'Keep out of eyes. If you get redness, burning, or a rash, stop using it.',
+        ],
+        communityReview: 'kieró\'s US site shows 325 customer reviews, and 291 of them (90%) are five stars; 33 are four stars and one is two stars. Most reviews are in Spanish, and several are from people who had only just started using it. One reviewer wrote that after less than a month: "aún no veo grandes cambios pero sí una mejora en la textura de la piel del contorno de mis ojos" ("I don\'t see big changes yet, but I do see better texture in the skin around my eyes"). On Amazon it has 3.8 out of 5 stars from 55 ratings as of October 2026, noticeably lower than on kieró\'s site. The first set of reviews is on kieró\'s own site; the Amazon rating is from Amazon\'s search listing.',
+        effectiveness: 'Retinal improved skin texture and hydration around the crow\'s feet in a small 3-month trial, and niacinamide improved fine lines and dark spots in controlled trials at 5%.',
+        ingredientScience: [
+            {
+                name: 'Retinal (retinaldehyde)',
+                text: 'kieró states this smooths fine lines and wrinkles. In a 3-month randomized, double-blind trial of 40 Korean women, 0.1% and 0.05% retinal creams applied twice daily improved texture around the crow\'s feet (about 13%) and skin hydration, and were well tolerated; only the 0.1% cream improved pigmentation. The trial compared the two strengths and had no placebo group. kieró doesn\'t list this cream\'s retinal percentage.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/29663701/', label: 'PubMed: Efficacy and safety of retinaldehyde 0.1% and 0.05% creams used to treat photoaged skin (Kwon et al., 2018)' },
+                ],
+            },
+            {
+                name: 'Topical retinoids in pregnancy',
+                text: 'A 2015 meta-analysis of 654 pregnant women exposed to topical retinoids in the first trimester, compared with 1,375 unexposed, found no significant increase in major birth defects, miscarriage, low birth weight or prematurity. Its authors said this can reassure people exposed by accident, but the data aren\'t strong enough to justify using topical retinoids during pregnancy.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26215715/', label: 'PubMed: Pregnancy outcomes following first-trimester exposure to topical retinoids, systematic review and meta-analysis (Kaplan et al., 2015)' },
+                ],
+            },
+            {
+                name: 'Niacinamide',
+                text: 'kieró states this evens out skin tone. In two 12-week, double-blind, split-face trials of 50 women each, 5% niacinamide improved fine lines and wrinkles, dark spots, red blotchiness, sallowness and elasticity compared with the same cream without it. Both trials were run by Procter & Gamble and tested the whole face, not the eye area. kieró doesn\'t list this cream\'s niacinamide percentage.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/16029679/', label: 'PubMed: Niacinamide, a B vitamin that improves aging facial skin appearance (Bissett et al., 2005)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18492135/', label: 'PubMed: Topical niacinamide reduces yellowing, wrinkling, red blotchiness, and hyperpigmented spots in aging facial skin (Bissett et al., 2004)' },
+                ],
+            },
+            {
+                name: 'Pink algae (Dunaliella salina extract)',
+                text: 'In a placebo-controlled study under intense sun exposure, a Dunaliella salina extract rich in colorless carotenoids reduced skin glycation scores and improved wrinkle counts and spots compared with placebo. The authors work for the company that sells that extract, and it may not be the same extract kieró uses.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8879334/', label: 'NIH (PMC): A Dunaliella salina extract counteracts skin aging under intense solar irradiation (Havas et al., 2022)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0FRMQZRF3',
+                        text: 'Amazon: kieró Pure Radiant Eye Cream reviews',
+                        summary: '3.8 out of 5 stars from 55 ratings on Amazon as of October 2026.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://us.kieroskincare.com/products/pure-radiant-eye-cream',
+                        text: 'kieroskincare.com: Pure Radiant Eye Cream customer reviews',
+                        summary: 'kieró\'s own product page shows 325 reviews, 90% of them five stars, mostly in Spanish (see the Community summary above).',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // Joylux, the company, split into its individual products (2026-10-02).
+    // Replaces the single 's-joylux' startup entry, which described the whole
+    // company as "FDA-cleared devices for vaginal rejuvenation" (false).
+    // Sources: each product's page on joylux.com (product data via
+    // joylux.com/products.json), the FDA 510(k) and device registration
+    // databases (openFDA), and the two PubMed papers Joylux cites (abstracts
+    // read via NCBI E-utilities). Bundles, color variants, refills, and
+    // accessories (Photonic Gel, Photonic Wipes, chargers) are left out.
+    // Not a brand partner; no affiliate links.
+    {
+        id: 'p-joylux-vfit',
+        name: 'vFit® Device',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['menopause', 'discomfort'],
+        price: '$395',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/vfit',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/vfit' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/vfit-plus-upgraded-device-259789.jpg?v=1745343867',
+        summary: 'An at-home intimate wellness device that you insert into the vagina. It combines red light (six 662 nm LEDs), gentle heat, and vibration in sessions of 6 to 10 minutes. Joylux markets it to midlife women for more natural lubrication, sensation, and confidence, and says it supports pelvic floor strength.',
+        safety: {
+            fdaStatus: 'Not FDA-cleared or approved. Joylux says the FDA designated vFit a "low-risk general wellness device" in 2017. That category isn\'t reviewed for safety or effectiveness and can\'t claim to treat any condition, including dryness, incontinence, or pelvic floor problems.',
+            materials: 'Rechargeable insertable device with six 662 nm red LEDs, heat, and vibration modes. Comes with a USB charging cable and power cube, a storage pouch, and a user guide, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'In the Joylux-funded 2017 study, 2 of 55 women (3.6%) had an adverse event: one urinary tract infection and one case of discomfort from too much warmth. Joylux\'s product page lists no contraindications, so check with your doctor first if you are pregnant, have an IUD or implanted device, or have a vaginal infection or unexplained bleeding.',
+            opinionAlerts: 'This is a general wellness device, not an FDA-cleared treatment. The only published study was funded by Joylux, run by its consultants, and had no control group.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s. The study it cites was funded by Joylux and written by Joylux consultants, one of whom is Joylux\'s chief medical officer.',
+        doctorOpinion: 'Joylux says vFit is Ob-Gyn designed, supports pelvic floor strength, and that users report more natural lubrication, more sensation, and more confidence.\n\nThe main published evidence, which Joylux cites, is a 2017 study in the International Urogynecology Journal of "multimodal vaginal toning" therapy. 55 women with stress urinary incontinence after childbirth did 24 ten-minute sessions at home over 50 days. Among the 48 who finished, leakage on a pad test and symptom and quality-of-life scores improved substantially. The study had no control group, so it can\'t separate the device\'s effect from placebo or the passage of time. Joylux funded it, and both authors were Joylux consultants.\n\nA 2019 review co-written by Joylux\'s chief medical officer argued that red-light therapy (photobiomodulation) is a plausible approach for vaginal symptoms of menopause, calling the evidence preliminary. It was not a trial of vFit.\n\nThe FDA classes vFit as a general wellness product, so it hasn\'t been reviewed as a treatment. For bothersome dryness, pain with sex, or bladder leaks, talk to a doctor or a pelvic floor physical therapist.',
+        doctorOpinionShort: 'A red-light, heat, and vibration device sold for intimate wellness. It is an FDA "general wellness" product, not FDA-cleared. One Joylux-funded study with no control group reported less leakage in 48 women with postpartum stress incontinence.',
+        doctorOpinionCitations: [
+            { url: 'https://joylux.com/blogs/faq/are-vfit-or-vfit-plus-products-fda-approved', label: 'Joylux FAQ: Are vFit or vFit PLUS products FDA approved?' },
+        ],
+        whoItsFor: [
+            'Midlife women curious about an at-home, drug-free wellness device for intimate comfort, who understand it is not an FDA-cleared treatment',
+        ],
+        howToUse: {
+            intro: 'Per Joylux\'s product page:',
+            steps: [
+                'Use every other day, starting with 6-minute sessions and working up to 8, then 10 minutes.',
+                'For the first 60 days use it 3 times a week, then 1 to 2 times a week to maintain.',
+                'Joylux recommends a clear, water-based gel to help with insertion.',
+            ],
+            sourceUrl: 'https://joylux.com/products/vfit',
+            sourceLabel: 'joylux.com: vFit Device',
+        },
+        warnings: [
+            'Not an FDA-cleared treatment for dryness, incontinence, or pelvic floor problems.',
+            'Joylux lists no contraindications on the product page. Check with a doctor first if you are pregnant, have an IUD or implanted device, have a vaginal infection, or have unexplained bleeding.',
+            'Stop if it causes pain, burning, or too much warmth.',
+        ],
+        ingredientScience: [
+            {
+                name: 'The study behind vFit',
+                text: 'A 2017 single-group study (no control group) of 55 women with postpartum stress urinary incontinence. They did 24 ten-minute home sessions over 50 days. Of the 38 who had measurable leakage at the start, 84% had more than 50% less leakage on a pad test, and among the 48 who finished, symptom and quality-of-life scores improved. Joylux funded the study, and both authors were Joylux consultants.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28035444/', label: 'PubMed: Multimodal vaginal toning for bladder symptoms and quality of life in stress urinary incontinence (Int Urogynecol J, 2017)' },
+                ],
+            },
+            {
+                name: 'Red light (photobiomodulation)',
+                text: 'A 2019 review argued red-light therapy may help vaginal symptoms of menopause, calling the evidence preliminary. Its authors include Joylux\'s chief medical officer and a Joylux consultant. It is a review, not a trial of vFit.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31210575/', label: 'PubMed: The rationale for photobiomodulation therapy of vaginal tissue for genitourinary syndrome of menopause (2019 review)' },
+                ],
+            },
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-vfit-plus',
+        name: 'vFit® PLUS',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['menopause', 'discomfort'],
+        price: '$494',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/vfit-plus',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/vfit-plus' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/vfit-plus-upgraded-device-259789.jpg?v=1745343867',
+        summary: 'The same red-light, heat, and vibration intimate wellness device as vFit, with the PLUS upgrade included: brighter LEDs, a 12-minute session option, and 4 more vibration modes, per Joylux.',
+        safety: {
+            fdaStatus: 'Not FDA-cleared or approved. Joylux says the FDA designated vFit and vFit PLUS "low-risk general wellness devices" in 2017. That category isn\'t reviewed for safety or effectiveness and can\'t claim to treat any condition.',
+            materials: 'Rechargeable insertable device with red LEDs, heat, and vibration, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Same device as vFit with stronger settings. See the vFit entry: in the Joylux-funded study, 2 of 55 women had an adverse event (one urinary tract infection, one too much warmth).',
+            opinionAlerts: 'This is a general wellness device, not an FDA-cleared treatment. The only published study was funded by Joylux and had no control group.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'vFit PLUS is the vFit device with brighter LEDs, a longer session option, and more vibration modes. No study comparing PLUS with the standard vFit was found. The evidence is the same as for vFit: one Joylux-funded study of 55 women with postpartum stress incontinence, with no control group. See the vFit entry for details.',
+        doctorOpinionShort: 'vFit with stronger settings. An FDA "general wellness" product, not FDA-cleared. No study compares it with the standard vFit.',
+        doctorOpinionCitations: [
+            { url: 'https://joylux.com/blogs/faq/are-vfit-or-vfit-plus-products-fda-approved', label: 'Joylux FAQ: Are vFit or vFit PLUS products FDA approved?' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28035444/', label: 'PubMed: Multimodal vaginal toning for bladder symptoms and quality of life in stress urinary incontinence (Int Urogynecol J, 2017)' },
+        ],
+        warnings: [
+            'Not an FDA-cleared treatment for dryness, incontinence, or pelvic floor problems.',
+            'Check with a doctor first if you are pregnant, have an IUD or implanted device, have a vaginal infection, or have unexplained bleeding.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-juicy-like-a-peach',
+        name: 'JUICY LIKE A PEACH® Vaginal Gel',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'sexual-health'],
+        tags: ['menopause', 'discomfort', 'hormone-free'],
+        price: '$59 for 30 applications',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/juicy-like-a-peach',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/juicy-like-a-peach' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/juicy-like-a-peach-3736266.jpg?v=1781733740',
+        summary: 'A hormone-free vaginal gel (pH 3.8) applied inside the vagina once a day with an applicator. Joylux markets it for menopausal dryness and pain during sex, saying it forms a moisture barrier on vaginal tissue.',
+        ingredients: 'Purified water, hypromellose, benzoic acid, lactic acid, sodium hydroxide, per Joylux.',
+        safety: {
+            fdaStatus: 'FDA-cleared as a personal lubricant (Class II). Joylux\'s FDA listing for this gel cites 510(k) K200098, a clearance held by Peptonic Medical for its VagiVital Aktivgel. A personal-lubricant clearance covers lubrication and moisture; it is not an FDA approval to treat menopause.',
+            materials: '36 g tube with an applicator, 30 pre-measured 1 mL doses, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per Joylux: possible mild, short-lived itching, irritation, burning, or discharge; rarely severe irritation or urinary tract infection. Stop and see a doctor if symptoms persist.',
+            opinionAlerts: 'Not compatible with natural rubber latex or polyurethane condoms, per Joylux. It is only compatible with polyisoprene condoms.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; regulatory status verified in the FDA 510(k) and registration databases.',
+        doctorOpinion: 'Joylux says the gel relieves vaginal dryness and pain during sex and that comfort builds with daily use. It calls the product "clinically studied," but its page doesn\'t name or link a study, and ayna didn\'t find one for this product. Its FDA clearance is as a personal lubricant. If dryness or pain persists, talk to a doctor.',
+        doctorOpinionShort: 'A hormone-free vaginal gel, FDA-cleared as a personal lubricant. Joylux markets it for menopausal dryness and pain with sex but doesn\'t cite a study. Not compatible with latex condoms.',
+        doctorOpinionCitations: [
+            { url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K200098', label: 'FDA 510(k) K200098: VagiVital Aktivgel (Peptonic Medical), personal lubricant, cleared 2020' },
+        ],
+        howToUse: {
+            intro: 'Per Joylux\'s product page:',
+            steps: [
+                'Use once a day, preferably before bed.',
+                'Attach the applicator, fill it to 1 mL, insert gently, and press the plunger.',
+                'Rinse the applicator with warm water and antibacterial soap after each use.',
+            ],
+            sourceUrl: 'https://joylux.com/products/juicy-like-a-peach',
+            sourceLabel: 'joylux.com: JUICY LIKE A PEACH',
+        },
+        warnings: [
+            'Not compatible with natural rubber latex or polyurethane condoms.',
+            'Stop and see a doctor if itching, burning, or irritation persists.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-lets-spin',
+        name: 'LET\'S SPIN® Intimacy Gel',
+        brand: 'Joylux',
+        category: 'sex-tech',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sexual-health', 'vaginal-health'],
+        tags: ['menopause', 'discomfort', 'hormone-free'],
+        price: '$45 for 60 mL',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/lets-spin-intimacy-gel',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/lets-spin-intimacy-gel' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/lets-spin-intimacy-gel-422294.jpg?v=1727172815',
+        summary: 'A water-based intimacy gel with hyaluronic acid and aloe, made with Respin (Halle Berry\'s brand). Joylux markets it to moisturize, supplement natural lubrication, and make sex more comfortable when dryness or hormonal changes get in the way.',
+        ingredients: 'Water (Aqua), Sodium Hyaluronate, Propanediol, Hydroxyethylcellulose, Xanthan Gum, Sodium Hydroxide, Sodium Benzoate, Potassium Sorbate, Citric Acid, Aloe Vera 200X Powder, Gluconolactone, per Joylux.',
+        safety: {
+            fdaStatus: 'FDA-cleared as a personal lubricant (Class II): 510(k) K242958, "Joylux Intimacy Gel," cleared March 20, 2025. Joylux\'s FDA listing names it as LET\'S SPIN.',
+            materials: '60 mL pump bottle (a mini tube is also sold), pH 4.0–5.0, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Stop if irritation develops.',
+            opinionAlerts: 'Compatible with natural rubber latex and polyisoprene condoms, but not polyurethane condoms, per Joylux.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; regulatory status verified in the FDA 510(k) database.',
+        doctorOpinion: 'This is an FDA-cleared, water-based personal lubricant. Joylux also calls it "clinically proven," but its page doesn\'t name or link a study.',
+        doctorOpinionShort: 'A water-based lubricant with hyaluronic acid and aloe, FDA-cleared as a personal lubricant (K242958). Latex-condom compatible.',
+        doctorOpinionCitations: [
+            { url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K242958', label: 'FDA 510(k) K242958: Joylux Intimacy Gel (PG3100), personal lubricant, cleared 2025' },
+        ],
+        howToUse: {
+            intro: 'Per Joylux\'s product page: apply as much as you like to intimate areas and reapply as often as needed. Store at room temperature.',
+            steps: [],
+            sourceUrl: 'https://joylux.com/products/lets-spin-intimacy-gel',
+            sourceLabel: 'joylux.com: LET\'S SPIN Intimacy Gel',
+        },
+        warnings: [
+            'Not compatible with polyurethane condoms.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-reliefher',
+        name: 'reliefHER™ Vaginal Hydration Melts',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['menopause', 'discomfort', 'hormone-free'],
+        price: '$49 for 10 melts',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/reliefher',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/reliefher' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/reliefHER_10pack_HERO.jpg?v=1782326170',
+        summary: 'Non-hormonal vaginal melts made with coconut oil, cocoa butter, vitamin E, and hyaluronic acid (15 mg per melt, per Joylux). You insert one at bedtime every 2 to 3 days for vaginal hydration.',
+        ingredients: 'Coconut Oil, Vitamin E, Hyaluronic Acid, Silica, Cocoa Butter, per Joylux.',
+        safety: {
+            fdaStatus: 'Not listed with the FDA as a medical device (checked 2026-10-02); sold as a personal-care product.',
+            materials: 'Solid melts that dissolve at body temperature. Store somewhere cool.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per Joylux: stop if irritation develops. Check with a doctor first if you have a vaginal infection, unusual bleeding, a recent procedure or childbirth, open sores, or an allergy to any ingredient.',
+            opinionAlerts: 'Contains coconut oil and cocoa butter. The CDC warns that oil-based products can cause condoms to break, and Joylux\'s page doesn\'t address condom compatibility.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Joylux describes these as hyaluronic-acid melts for vaginal hydration, "backed by science," but doesn\'t name or link a study for this product, and ayna didn\'t find one.',
+        doctorOpinionShort: 'Oil-based vaginal melts with hyaluronic acid. Not an FDA-listed medical device. No product-specific study found.',
+        doctorOpinionCitations: [
+            { url: 'https://www.cdc.gov/condom-use/resources/external.html', label: 'CDC: How to use an external condom (oil-based products can cause condoms to break)' },
+        ],
+        howToUse: {
+            intro: 'Per Joylux\'s product page:',
+            steps: [
+                'Wash your hands, then insert 1 melt into the vagina, as deep as is comfortable, preferably at bedtime.',
+                'Use every 2 to 3 days, or as needed.',
+                'Store in a cool place; a chilled melt stays firm.',
+            ],
+            sourceUrl: 'https://joylux.com/products/reliefher',
+            sourceLabel: 'joylux.com: reliefHER Vaginal Hydration Melts',
+        },
+        warnings: [
+            'Vaginal infection, unusual bleeding, recent procedure or childbirth, or open sores: check with a doctor first.',
+            'Contains oils; the CDC warns oil-based products can cause condoms to break.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-revitalizher',
+        name: 'revitalizHER™ Hydrating Serum',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['menopause', 'discomfort'],
+        price: '$49 for 30 mL',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/revitalizher',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/revitalizher' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/revitalizher-hydrating-serum-987054.jpg?v=1742591593',
+        summary: 'An oil-based serum for the external vulva, made with coconut, sea buckthorn, and jojoba oils plus beeswax, vitamin E, vitamin C, and mandarin orange peel oil. Joylux markets it to shield against dryness.',
+        ingredients: 'Caprylic/Capric Triglyceride, Cocos Nucifera (Coconut) Oil, Hippophae Rhamnoides (Sea Buckthorn) Oil, Beeswax, Simmondsia Chinensis (Jojoba) Oil, Tocopherol (Vitamin E), Tetrahexyldecyl Ascorbate (Vitamin C), Citrus Nobilis (Mandarin Orange) Peel Oil, per Joylux.',
+        safety: {
+            fdaStatus: 'Not listed with the FDA as a medical device (checked 2026-10-02); sold as a cosmetic.',
+            materials: '30 mL serum.',
+            recalls: 'No recalls found.',
+            sideEffects: 'For external use on the vulva only. Do not use internally, per Joylux. It contains mandarin orange peel oil.',
+            opinionAlerts: 'External use only, per Joylux.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'An oil-based external moisturizer. Joylux doesn\'t cite a study for this product, and ayna didn\'t find one.',
+        doctorOpinionShort: 'An external vulvar oil serum. Cosmetic, not FDA-listed. No product-specific study found.',
+        howToUse: {
+            intro: 'Per Joylux\'s product page: after cleansing, pat dry and apply to the external vulva. Don\'t rinse. Don\'t use internally.',
+            steps: [],
+            sourceUrl: 'https://joylux.com/products/revitalizher',
+            sourceLabel: 'joylux.com: revitalizHER Hydrating Serum',
+        },
+        warnings: [
+            'External use only.',
+            'Stop if it stings or irritates.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-shebar',
+        name: 'SHEbar® Intimate Cleansing Bar',
+        brand: 'Joylux',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['comfort'],
+        price: '$13 for 3.2 oz',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/shebar',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/shebar' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/SHEbar_Packshot_2.jpg?v=1778785371',
+        summary: 'A soap-free cleansing bar for intimate areas (pH about 4.5, per Joylux) with coconut, argan, and avocado oils. It contains added fragrance.',
+        ingredients: 'Sodium Cocoyl Isethionate, Hydrogenated Vegetable Oil, Polyglyceryl-4 Laurate, Water, Glycerin, Fragrance, Titanium Dioxide (CI 77891), Cocos Nucifera (Coconut) Oil, Argania Spinosa Kernel Oil, Persea Gratissima (Avocado) Oil, Tetrasodium Glutamate Diacetate, per Joylux.',
+        safety: {
+            fdaStatus: 'Cosmetic cleanser; not an FDA-regulated medical device.',
+            materials: '3.2 oz (90.7 g) bar.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Contains added fragrance. Stop if it causes itching or burning.',
+            opinionAlerts: 'Contains added fragrance.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'A soap-free bar built on sodium cocoyl isethionate, a syndet surfactant; reviews describe syndets as gentler on the skin barrier than soap. It does contain added fragrance. Joylux doesn\'t cite a study for this product.',
+        doctorOpinionShort: 'A mild, soap-free bar, but it contains added fragrance.',
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8954092/', label: 'NIH (PMC): Skin cleansing without or with compromise, soaps and syndets (2022 review)' },
+        ],
+        warnings: [
+            'Contains fragrance; stop if it causes itching or burning.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-ilyeo-body',
+        name: 'ILYEO™ body',
+        brand: 'Joylux',
+        category: 'pain-relief',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['comfort'],
+        tags: ['menopause', 'discomfort'],
+        price: '$199',
+        fsaHsaEligible: true,
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/ilyeo-body',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/ilyeo-body' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/ilyeo-body-8041504.jpg?v=1789522687',
+        summary: 'A flexible, cordless silicone wrap that combines red light, heat, and vibration for muscle and joint pain. Joylux markets it to midlife women; it is used for 10-minute sessions on areas like the shoulders or knees. Listed as a pre-order shipping the week of October 5 at time of writing.',
+        safety: {
+            fdaStatus: 'FDA-registered Class II therapeutic infrared heating lamp, exempt from 510(k) premarket review. Verified in the FDA device registration database (2026-10-02); Joylux\'s page says the same.',
+            materials: 'Flexible medical-grade silicone wrap with red light, heat, and vibration, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per Joylux: don\'t use if you take medications or products that increase light sensitivity, have impaired sensation in the area, or have active skin cancer or suspicious lesions. Ask your doctor first if you are pregnant or have a history of skin cancer. On darker skin tones, start with 2-minute sessions and work up to 10.',
+            opinionAlerts: 'Exempt devices like this aren\'t reviewed by the FDA for effectiveness. Joylux calls it "clinically proven" but doesn\'t name a study.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; regulatory status verified in the FDA registration database.',
+        doctorOpinion: 'Joylux says ILYEO body is indicated for temporary relief of minor muscle and joint pain, arthritis pain and stiffness, and muscle spasms, and to temporarily increase local blood circulation. It is registered with the FDA but exempt from premarket review, so the FDA hasn\'t evaluated its effectiveness. Joylux calls it "clinically proven" without naming a study, and ayna didn\'t find one for this device.',
+        doctorOpinionShort: 'A red-light, heat, and vibration wrap for minor muscle and joint pain. FDA-registered Class II and exempt from review; no product-specific study found.',
+        howToUse: {
+            intro: 'Per Joylux\'s product page: 10-minute sessions, daily or as needed, following the protocol in the ILYEO app for the area being treated.',
+            steps: [
+                'On darker skin tones, start with 2-minute sessions and gradually increase to 10.',
+            ],
+            sourceUrl: 'https://joylux.com/products/ilyeo-body',
+            sourceLabel: 'joylux.com: ILYEO body',
+        },
+        warnings: [
+            'Don\'t use if you take light-sensitizing medications or products, have impaired sensation in the area, or have active skin cancer or suspicious lesions.',
+            'Pregnant, or a history of skin cancer: ask your doctor first.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-joylux-coldher',
+        name: 'coldHER™ Cooling Bra Inserts',
+        brand: 'Joylux',
+        category: 'menopause',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['perimenopause'],
+        tags: ['menopause', 'comfort'],
+        price: '$21 for 2 pads',
+        whereToBuy: ['Joylux'],
+        url: 'https://joylux.com/products/coldher',
+        whereToBuyLinks: { Joylux: 'https://joylux.com/products/coldher' },
+        image: 'https://cdn.shopify.com/s/files/1/1120/5174/files/coldher-cooling-bra-inserts-9258458.jpg?v=1753846926',
+        summary: 'Reusable cooling pads made with phase-change material, which absorbs body heat as it melts. You tuck them into your bra for hot flashes, breast or nipple soreness, or cooling down after exercise. They re-harden at room temperature in about 30 minutes, or faster in the fridge.',
+        safety: {
+            fdaStatus: 'FDA-registered Class I reusable hot/cold pack, exempt from premarket review (verified in the FDA device registration database, 2026-10-02). Joylux sells it as a general wellness product.',
+            materials: 'Two pads of phase-change material, per Joylux.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Stop if your skin becomes irritated. Wipe clean with a damp cloth and mild soap.',
+            opinionAlerts: 'Gives temporary cooling comfort; it doesn\'t treat the cause of hot flashes.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are Joylux\'s; regulatory status verified in the FDA registration database.',
+        doctorOpinion: 'A simple reusable cooling pad for temporary comfort during hot flashes or breast soreness. If hot flashes are frequent or disrupt your sleep, talk to a doctor about treatments that reduce them.',
+        doctorOpinionShort: 'Reusable cooling pads for temporary relief during hot flashes or breast soreness. FDA-registered Class I.',
+        howToUse: {
+            intro: 'Per Joylux\'s product page:',
+            steps: [
+                'Tuck the pads into your bra strap with the cooling material against your skin, at the top of the breasts, under the arms, or wherever you need it.',
+                'For nipple soreness, place a pad directly over the nipple.',
+                'Re-cool at room temperature (about 30 minutes) or in the fridge.',
+            ],
+            sourceUrl: 'https://joylux.com/products/coldher',
+            sourceLabel: 'joylux.com: coldHER Cooling Bra Inserts',
+        },
+        warnings: [
+            'Stop if your skin becomes irritated.',
+        ],
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [] } },
+        integrations: [],
+        badges: [],
         isEmergingBrand: true,
     },
 
@@ -3445,7 +4342,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: [],
         url: 'https://www.mypelvicbra.shop/products/sports-pelvic-bra%C2%AE',
         affiliateUrl: 'https://pelvic-bra.myshopify.com/products/sports-pelvic-bra%C2%AE?bg_ref=bZYYwMBpTa',
-        image: '',
+        image: '/products/mypelvicbra/sports-pelvic-bra.webp',
         summary: 'From My Pelvic Bra, founded by pelvic floor physical therapist Jeanice Mitchell, PT (see the Classic Pelvic Bra entry for her story). The Sports Pelvic Bra is a lightweight, fully adjustable style with a snug bikini-style fit for activities where an extra pelvic-floor lift is wanted, per the brand\'s own site.',
         safety: {
             fdaStatus: 'Compression support garment; not an FDA-cleared medical device and not a corrective treatment for prolapse.',
@@ -3497,6 +4394,1074 @@ export const BRAND_PRODUCTS = [
                     },
                 ],
             },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
+    // SootheHer brand partnership (2026-09-16), affiliate links supplied by
+    // Ayna (collabs.shop short links carrying the AYNA discount/tracking
+    // code); product facts, pricing, and safety details checked live against
+    // sootheher.com on 2026-09-16. Category is 'cramp-relief', not a pelvic
+    // floor trainer/exerciser: Elaris is a TENS device for menstrual cramp
+    // pain, not a device that trains or contracts the pelvic floor.
+    {
+        id: 'p-sootheher-elaris-pod',
+        name: "SootheHer's Elaris Pod",
+        brand: 'SootheHer',
+        category: 'cramp-relief',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['cramp-relief'],
+        tags: ['cramps', 'discomfort', 'wearable', 'drug-free'],
+        price: '$89.99 (list $120)',
+        whereToBuy: [], // direct-to-consumer only; affiliateUrl below covers it
+        url: 'https://sootheher.com/',
+        // Ayna affiliate partnership, affiliateUrl wins over `url` for the
+        // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
+        affiliateUrl: 'https://collabs.shop/jfue1u',
+        image: 'https://sootheher.com/assets/elaris-butterfly-hero-DnUO3OIN.webp',
+        summary: 'A discreet, wearable TENS (transcutaneous electrical nerve stimulation) device for menstrual cramps. A butterfly-shaped gel pad worn on the lower abdomen sends adjustable electrical pulses meant to block pain signals, prompt endorphin release, and relax uterine muscles, worn under clothing, drug-free.',
+        safety: {
+            fdaStatus: 'SootheHer says the Elaris Pod is FDA-cleared. ayna could not find it in the FDA\'s 510(k) or device-listing databases under the SootheHer or Elaris name (checked 2026-10-02). TENS devices are sometimes cleared under the manufacturer\'s name, so the clearance has not been confirmed either way.',
+            materials: 'Device, reusable butterfly and circular gel pads, connecting wire, USB-C charging cable, user manual, per the brand.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition, consult a clinician first if any of these apply.',
+            opinionAlerts: 'Brand cites a 4.8-star rating across 718 reviews and offers a 30-day money-back guarantee, brand-hosted figures, not independently verified here.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: "Sourced from SootheHer's own site marketing claims, not independent clinical literature.",
+        doctorOpinion: 'TENS (transcutaneous electrical nerve stimulation) has real supportive evidence for reducing primary dysmenorrhea pain via the gate-control mechanism the brand describes; this does not independently establish that the Elaris Pod specifically matches published TENS study outcomes. A 2024 Cochrane review found both high- and low-frequency TENS may reduce period pain compared with placebo or no treatment, though the reviewers downgraded their certainty because of risk of bias in the underlying trials, and a separate 2024 meta-analysis (10 RCTs, 469 women) found a statistically significant effect but with very high heterogeneity between studies, real evidence for the modality, with genuine uncertainty about how much relief to expect from any one device.',
+        doctorOpinionCitations: [
+            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', label: 'Cochrane: TENS for pain control in primary dysmenorrhea (2024)' },
+            { url: 'https://doi.org/10.1080/17581869.2026.2714978', label: 'Pain Management: TENS for primary dysmenorrhea, systematic review & meta-analysis' },
+        ],
+        whoItsFor: [
+            'People looking for a drug-free, reusable option for period cramp pain alongside or instead of OTC pain relievers',
+            'Not recommended for anyone with a pacemaker, epilepsy, a heart rhythm condition, or who is pregnant, per the brand',
+            'Best understood as a real but variable-benefit option, trial evidence for TENS generally is genuinely mixed on how much relief to expect',
+        ],
+        warnings: [
+            'Do not use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition, per the brand.',
+            'Persistent, severe, or worsening pelvic pain, or pain that doesn\'t respond to typical measures, warrants clinical evaluation.',
+        ],
+        effectiveness: 'Positioned by the brand as fast-acting, drug-free cramp relief; no independently conducted clinical study of this specific device was found here. TENS as a pain-relief category has supportive evidence for dysmenorrhea.',
+        scientificCitations: [
+            { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', text: 'Cochrane: Transcutaneous electrical nerve stimulation (TENS) for pain control in women with primary dysmenorrhoea', summary: '2024 Cochrane review: both high- and low-frequency TENS may reduce pain vs. placebo/no treatment, though certainty was downgraded for risk of bias in the underlying trials.' },
+            { url: 'https://doi.org/10.1080/17581869.2026.2714978', text: 'Pain Management: Transcutaneous electrical nerve stimulation in the relief of primary dysmenorrhea, systematic review and meta-analysis', summary: '10 RCTs, 469 women: statistically significant reduction in pain intensity favoring TENS, with very high heterogeneity between studies.' },
+        ],
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-sootheher-gel-pad-refills',
+        name: 'SootheHer Gel Pad Refills',
+        brand: 'SootheHer',
+        category: 'cramp-relief',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['cramp-relief'],
+        tags: ['cramps', 'accessory', 'reusable'],
+        price: '$11.99 (list $16, pack of 4)',
+        whereToBuy: [],
+        url: 'https://sootheher.com/',
+        affiliateUrl: 'https://collabs.shop/uj8q5x',
+        image: '/products/sootheher/gel-pad-refills.png',
+        summary: 'A 4-pack of replacement butterfly gel pads for the Elaris Pod. Each gel pad is rated for roughly 30-40 uses; store on the plastic backing between uses to extend pad life, per the brand.',
+        safety: {
+            fdaStatus: 'Accessory to the FDA-cleared Elaris Pod device, per the brand; not separately FDA-cleared.',
+            materials: 'Reusable gel pad material, per the brand.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Same use precautions as the Elaris Pod, brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition.',
+            opinionAlerts: 'Brand-hosted rating shown at time of listing was based on very few reviews, check current review volume before treating it as representative.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: "Sourced from SootheHer's own site marketing claims, not independent clinical literature.",
+        doctorOpinion: 'A consumable accessory for the Elaris Pod rather than a standalone treatment; replacing worn gel pads maintains the skin contact needed for the device to deliver its stimulation effectively.',
+        effectiveness: 'Maintenance accessory, not a standalone treatment, effectiveness depends on the Elaris Pod device itself.',
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        // Confirmed ayna brand partner (2026-09-23). isEmergingBrand only
+        // adds the "Brand" tag on Discovery, the "ayna Partner" badge comes
+        // from src/utils/partnerBrands.js's PARTNER_BRAND_PATTERNS allowlist,
+        // which gina is now in.
+        // Brand name is styled lowercase ("gina"), matching its own
+        // packaging/wordmark, same convention this app already uses for
+        // "ayna" itself.
+        id: 'p-gina-vaginal-moisturizing-glides',
+        name: 'gina Vaginal Moisturizing Glides',
+        brand: 'gina',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        // 'cruelty-free', 'non-toxic', 'ph-neutral', 'single-use', and
+        // 'clinician-informed' are gina's own stated Key Benefits (per the
+        // brand's site), feeds both the Discovery "Preferences" filter
+        // (matchesPreference in Discovery.jsx) and the ecosystem
+        // preference matcher (preferenceLabelMatchesProduct in
+        // products.js), both of which scan this tags array as text.
+        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal', 'cruelty-free', 'non-toxic', 'ph-neutral', 'single-use', 'clinician-informed'],
+        price: '$101.00',
+        whereToBuy: ['getgina.com'],
+        url: 'https://getgina.com/products/vaginal-moisturizing-glides',
+        image: '/products/gina/vaginal-moisturizing-glides.webp',
+        summary: 'Vaginal dryness, irritation, or discomfort during intimacy can happen at any life stage, perimenopause, menopause, postpartum, or day to day. This single-ingredient suppository (12 per box, 1.72 g each) is 100% pure, extra virgin, unrefined, cold-pressed coconut oil, inserted directly or with gina\'s optional reusable applicator to hydrate and soothe.',
+        safety: {
+            // No FDA-registered-facility claim was found on gina's site
+            // (unlike Neycher's), so fdaStatus is left off rather than
+            // assumed.
+            // Full packaging text, shown in full under "Materials" on
+            // the Evidence view (see buildFactRows in ProductModal.jsx,
+            // which doesn't truncate this field).
+            materials: 'Box of 12 vaginal moisturizing glides. Ingredients (from the box): 100% pure, extra virgin, unrefined, cold-pressed coconut oil. Net weight per glide: 0.061 oz (1.72 g). Chill before use.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation or an allergic reaction. Coconut oil is oil-based and can weaken latex condoms. Full warnings are listed below.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
+        doctorOpinion: 'gina positions its coconut-oil glides as pure, simple, and effective, developed without hormones or harsh additives, non-irritating, non-toxic, pH-neutral, cruelty-free, pre-portioned for single use, and clinician-informed, per the brand\'s own site.\n\nThere\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration), though it wasn\'t placebo-controlled and didn\'t test this specific product.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness over 6 months reported real improvement, though it wasn\'t placebo-controlled. No independent clinical study of this specific product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/', label: 'Cureus (2023): Virgin coconut oil for dyspareunia and vaginal dryness, pilot study, 53 women', chipLabel: 'Read the 2023 study (NIH) →' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with vaginal dryness or irritation at any life stage, perimenopause, menopause, postpartum, or day to day',
+            'Women who prefer a single-ingredient, hormone-free option over multi-ingredient formulas',
+            'Women who want a precision applicator rather than applying oil by hand',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // getgina.com/pages/how-to-use-moisturizing-glides.
+        howToUse: {
+            intro: 'Per gina\'s own site: insert up to 3 times a week before bedtime or intercourse for ongoing hydration.',
+            steps: [
+                'Empty your bladder, clean the area, and wash your hands.',
+                'Separate a single chilled glide, wait 1 to 3 minutes, then peel back the foil.',
+                'Squeeze to pop the glide out onto a clean surface.',
+                'Insert while lying on your back, with your knees raised.',
+                'Wait 3 minutes, or until it\'s fully melted.',
+            ],
+            sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
+            sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Oil-based: can weaken latex condoms.',
+            'Chill before use, per the box.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'gina\'s own product page shows three customer testimonials: "The moisturizing glide melts instantly and feels so clean and natural," "I love that it\'s one ingredient and pre-measured. No more mess, just long lasting hydration and comfort," and "The glide melts instantly and gives a precise, soothing dose of hydration. The relief was immediate." No star rating or review count was shown alongside them, and no independent (non-brand) review data was found at time of writing, gina launched in April 2026.',
+        // Kept short and product-focused, the pilot-study specifics (who,
+        // how many, over how long) live on the Clinician opinion tab, which
+        // has room for that detail; this field feeds the ayna-summary card
+        // alongside `summary` above, so it stays to the point.
+        effectiveness: 'Real clinical evidence supports coconut oil for vaginal dryness generally, though no independent study has tested this specific product.',
+        // Plain-text ingredient summary, kept as a string since search
+        // indexing, the interaction checker, DoctorPrep.jsx, and the Ask
+        // Ayna context builder all read this field as a string.
+        ingredients: 'Coconut oil (100% pure, extra virgin, unrefined, cold-pressed).',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab.
+        ingredientScience: [
+            {
+                name: 'Coconut oil (100% pure, extra virgin, unrefined, cold-pressed)',
+                text: 'A natural moisturizer rich in lauric acid. In a randomized, double-blind clinical trial, topical virgin coconut oil improved skin barrier function (lower transepidermal water loss, higher skin capacitance) more than mineral oil.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/24320105/', label: 'PubMed: Topical virgin coconut oil in pediatric atopic dermatitis, a randomized, double-blind clinical trial' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/37594604/',
+                text: 'Antimicrobial Potential of Cocos nucifera (Coconut) Oil on Bacterial Isolates',
+                summary: 'An in vitro lab study testing coconut oil against clinical and reference bacterial isolates, Streptococcus species showed the highest susceptibility, E. coli the least, attributed to coconut oil\'s lauric acid content. This is ingredient-level lab evidence, not a clinical study of this specific product.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/28707186/',
+                text: 'Natural Oils for Skin-Barrier Repair: Ancient Compounds Now Backed by Modern Science',
+                summary: 'A 2018 review (Vaughn et al., American Journal of Clinical Dermatology) of natural plant oils, including coconut oil, for repairing skin-barrier function, covering antimicrobial, antioxidant, and anti-inflammatory properties. This is general dermatology evidence about the oil, not a clinical study of this specific product or vaginal use.',
+            },
+            {
+                // Same paper as PubMed 37461787 (PMC is the full-text
+                // mirror), included once, under its PMC link, rather than
+                // as two separate entries for the same study.
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/',
+                text: 'Virgin Coconut Oil in Paste Form as Treatment for Dyspareunia and Vaginal Dryness in Patients With and Without Rheumatic Autoimmune Diseases: An Efficacy and Safety Assessment Pilot Study',
+                summary: 'A 2023 pilot survey study (Cureus) of 53 women who used a virgin coconut oil paste for vaginal dryness and painful sex found dryness decreased by 55% and 66% in its two groups (women without and with rheumatic autoimmune disease), with no side effects reported. It was a survey without a control group, and it didn\'t test this product.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://getgina.com/products/vaginal-moisturizing-glides',
+                        text: 'getgina.com: Customer testimonials',
+                        summary: 'gina\'s own product page shows three customer testimonials (see the Community summary above). No star rating or review count is shown alongside them.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        // See the note on the Glides entry above re: partner status and
+        // gina's lowercase brand styling.
+        id: 'p-gina-insertion-applicator-refills',
+        name: 'gina Insertion Applicator Refills',
+        brand: 'gina',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['comfort', 'non-hormonal'],
+        // Exact refill-pack count wasn't confirmed.
+        price: '$10.00',
+        whereToBuy: ['getgina.com'],
+        url: 'https://getgina.com/products/insertion-applicator-refills',
+        image: '/products/gina/insertion-applicator-refills.png',
+        summary: 'A reusable, BPA-free applicator designed exclusively for gina\'s Vaginal Moisturizing Glides, for smooth, precise, and deeper placement. This refill replaces a worn or lost applicator, exact pack size wasn\'t confirmed at time of writing.',
+        safety: {
+            materials: 'BPA-free reusable applicator, designed exclusively for gina Vaginal Moisturizing Glides.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation. Rinse well and air-dry before storing.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
+        doctorOpinion: 'gina states this applicator allows for smooth, precise, and deeper placement of its Glide, per the brand\'s own site. It\'s a delivery accessory, not an active ingredient, see the Vaginal Moisturizing Glides entry for the product it\'s used with.',
+        // Rendered as a bulleted list on the Evidence view.
+        howToUse: {
+            intro: 'Unwrap the applicator and moisten the tip with water or lubricant. Pull the plunger down to stop, then load a gina glide rounded side first.',
+            steps: [
+                'Lie back with your knees raised and insert to a comfortable depth, then press the plunger to release the glide and remove the applicator.',
+                'Rinse the applicator well and air-dry it before storing, it\'s reusable.',
+            ],
+            sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
+            sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
+        },
+        warnings: [
+            'Designed exclusively for use with gina Vaginal Moisturizing Glides.',
+            'Rinse well and air-dry between uses.',
+            'Irritation or discomfort: stop using it and see a doctor.',
+        ],
+        communityReview: 'No independent customer review data was found for this product at time of writing, gina launched in April 2026.',
+        effectiveness: 'A reusable delivery accessory rather than an active ingredient; effectiveness depends on the Vaginal Moisturizing Glide it\'s used with.',
+        ingredients: 'BPA-free applicator (plastic components; no active ingredients).',
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [] },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // gina Starter Kit, verified against getgina.com/products/the-starter-kit
+    // on 2026-10-07 (contents, price, how-to tip, review count). gina is a
+    // confirmed brand partner, so it gets the "ayna Favorite" label via
+    // src/utils/partnerBrands.js. The glides inside are the same product as
+    // p-gina-vaginal-moisturizing-glides, so the evidence below reuses that
+    // entry's already-verified coconut-oil sources.
+    {
+        id: 'p-gina-starter-kit',
+        name: 'gina The Starter Kit',
+        brand: 'gina',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal', 'cruelty-free', 'non-toxic', 'ph-neutral', 'single-use', 'clinician-informed', 'starter kit', 'bundle'],
+        price: '$48.00 (list $63)',
+        whereToBuy: ['getgina.com'],
+        url: 'https://getgina.com/products/the-starter-kit',
+        image: '/products/gina/starter-kit.jpg', // supplied by ayna
+        summary: 'gina\'s starter bundle for vaginal dryness, irritation, or discomfort during intimacy, at any life stage: perimenopause, menopause, postpartum, or day to day. It includes a one-month supply of its coconut-oil Vaginal Moisturizing Glides (pack of 12), plus disposable finger sleeves, an insertion applicator, a free cotton pouch, a brochure guide, and free wellness advice from gina\'s nurse practitioner team. The glides are non-hormonal, single-ingredient suppositories of 100% pure, extra virgin, unrefined, cold-pressed coconut oil, with no fillers or artificial ingredients.',
+        safety: {
+            materials: 'Contents per gina: 12 Vaginal Moisturizing Glides (100% pure, extra virgin, unrefined, cold-pressed coconut oil; 1.72 g each), disposable finger sleeves, an insertion applicator, a cotton pouch, and a brochure guide. gina doesn\'t state what the finger sleeves are made of.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation or an allergic reaction. Coconut oil is oil-based and can weaken latex condoms. Full warnings are listed below.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
+        doctorOpinion: 'The Starter Kit bundles gina\'s coconut-oil Vaginal Moisturizing Glides with the tools for inserting them, at $48 compared with a $63 list price. gina says the glides hydrate and condition vaginal tissue and soothe discomfort, including during intimacy.\n\nThere\'s real clinical evidence behind coconut oil for this use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and most reported real improvement. It wasn\'t placebo-controlled and didn\'t test this specific product. No independent clinical study of gina\'s glides was found.',
+        doctorOpinionShort: 'A starter bundle of gina\'s single-ingredient coconut-oil glides plus insertion tools. A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness reported improvement, though it wasn\'t placebo-controlled; no independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/', label: 'Cureus (2023): Virgin coconut oil for dyspareunia and vaginal dryness, pilot study, 53 women', chipLabel: 'Read the 2023 study (NIH) →' },
+        ],
+        whoItsFor: [
+            'People trying gina for the first time who want the glides and every insertion option in one box',
+            'Vaginal dryness or discomfort at any life stage, including perimenopause, menopause and postpartum',
+            'People who prefer a single-ingredient, hormone-free option',
+        ],
+        howToUse: {
+            intro: 'Per gina\'s own site: if you\'re new to vaginal care or have extreme dryness, start with finger or finger-sleeve insertion for greater comfort, then try the applicator.',
+            steps: [
+                'Empty your bladder, clean the area, and wash your hands.',
+                'Separate a single chilled glide, wait 1 to 3 minutes, then peel back the foil.',
+                'Squeeze to pop the glide out onto a clean surface.',
+                'Insert with a finger, a finger sleeve, or the applicator while lying on your back with your knees raised.',
+                'Wait 3 minutes, or until it\'s fully melted.',
+            ],
+            sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
+            sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
+        },
+        warnings: [
+            'Oil-based: can weaken latex condoms.',
+            'Latex allergy: gina doesn\'t say what the finger sleeves are made of, so check with gina before using them.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'gina\'s product page lists 18 reviews for The Starter Kit, but no star rating is shown alongside the count. The glides inside the kit are reviewed separately on gina\'s glides page.',
+        effectiveness: 'Clinical evidence supports coconut oil for vaginal dryness generally, though no independent study has tested gina\'s glides specifically.',
+        ingredients: 'Glides: coconut oil (100% pure, extra virgin, unrefined, cold-pressed). Kit also includes finger sleeves, an applicator, a pouch and a guide.',
+        ingredientScience: [
+            {
+                name: 'Coconut oil (100% pure, extra virgin, unrefined, cold-pressed)',
+                text: 'A natural moisturizer rich in lauric acid. In a randomized, double-blind clinical trial, topical virgin coconut oil improved skin barrier function (lower transepidermal water loss, higher skin capacitance) more than mineral oil.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/24320105/', label: 'PubMed: Topical virgin coconut oil in pediatric atopic dermatitis, a randomized, double-blind clinical trial' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/',
+                text: 'Virgin Coconut Oil in Paste Form as Treatment for Dyspareunia and Vaginal Dryness in Patients With and Without Rheumatic Autoimmune Diseases: An Efficacy and Safety Assessment Pilot Study',
+                summary: 'A 2023 pilot survey study (Cureus) of 53 women who used a virgin coconut oil paste for vaginal dryness and painful sex found dryness decreased in both of its groups, with no side effects reported. It had no control group and didn\'t test gina\'s product.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://getgina.com/products/the-starter-kit',
+                        text: 'getgina.com: The Starter Kit reviews',
+                        summary: 'gina\'s product page lists 18 reviews for the kit, without a star rating shown.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // The Good Bug, Gut Balance and Good To Glow, verified against
+    // thegoodbug.com product pages on 2026-10-07. The store converts prices by
+    // visitor location; US dollar prices to be filled in from the US storefront. Science
+    // claims read from their abstracts via NCBI E-utilities. Not a brand
+    // partner, no affiliate link.
+    {
+        id: 'p-goodbug-gut-balance',
+        name: 'The Good Bug Gut Balance SuperGut Stick',
+        brand: 'The Good Bug',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement'],
+        tags: ['goodbug', 'tgb', 'gut', 'gut health', 'probiotic', 'synbiotic', 'digestion', 'bloating', 'supplement'],
+        price: '$13 (list $14)',
+        whereToBuy: ['thegoodbug.com'],
+        url: 'https://thegoodbug.com/products/healthy-gut-balance',
+        image: '/products/goodbug/gut-balance.jpg', // supplied by ayna
+        summary: 'A daily synbiotic powder stick (probiotics plus prebiotic fiber) for gut and digestive health. The Good Bug says it eases bloating, gas and indigestion, supports regular digestion and immunity, and contains two of the most researched probiotic strains, Lacticaseibacillus rhamnosus LGG® and Bifidobacterium animalis subsp. lactis BB-12®, with an enzyme blend, vitamin C and inulin. The box lists 4 billion CFU. Mix one stick into 200 ml of water.',
+        ingredients: 'Per The Good Bug\'s description and the box: L. rhamnosus LGG®, B. lactis BB-12®, enzyme blend (amylase, cellulase, lipase, lactase, protease), vitamin C, inulin; 4 billion CFU. The ingredient list on the same product page instead reads: Isomalt, Hydrolyzed Guar Gum, Polydextrose, Fructooligosaccharides, Lactobacillus Plantarum UALp-05, Bifidobacterium lactis UABla-12, Added Flavors (Nature Identical Flavors), Permitted Natural Color (INS 160a). 1.2 g per stick.',
+        safety: {
+            fdaStatus: 'Sold in India as a nutraceutical (per the box). In the US this would be a dietary supplement, which the FDA does not evaluate for safety or efficacy claims.',
+            materials: 'Powder sticks, 1.2 g each; packs of 15, 30, 60 or 90. Made in India by Sundyota Numandis Probioceuticals for SevenTurns Private Limited. Best before 12 months from manufacture.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Per The Good Bug, some people get mild bloating, gas or loose stools in the first few days; stop and see a doctor if it lasts more than 2 days. The Good Bug advises checking with a health practitioner first if you are pregnant or breastfeeding, or have IBS, diabetes or another medical condition. Full warnings are listed below.',
+            opinionAlerts: 'Ingredient mismatch: The Good Bug\'s description and box name the strains LGG® and BB-12®, but the ingredient list on the same page names different strains (L. plantarum UALp-05 and B. lactis UABla-12) and no enzymes or vitamin C. It may be from the older formula; check the box you receive.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from The Good Bug; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'The Good Bug says Gut Balance eases bloating, gas and indigestion, and supports digestion and immunity, using LGG® and BB-12®, two well-studied probiotic strains. No independent study of this product was found.\n\nFor LGG, a 2025 meta-analysis of 69 randomized trials found it reduced the risk and length of diarrhea, with moderate-certainty evidence that was strongest in children. Its effects on bloating, abdominal pain and constipation were limited, and the authors said evidence in adults was limited.\n\nThe Good Bug cites two studies. The first, a 2015 randomized, double-blind, placebo-controlled trial of 650 people in Croatia, gave the same two strains (LGG® and BB-12®) or a placebo for 14 days alongside antibiotics for an H. pylori stomach infection. The probiotic group had a higher cure rate (87% vs 73%) and less bloating, flatulence and other treatment side effects. Those were people on antibiotics, not people with everyday bloating, and two authors worked for JGL, the company that sells that probiotic. The second, a 2024 study of 20 healthy adults with post-meal bloating, found that a single dose of a different company\'s supplement (18 digestive enzymes plus ginger, fennel and peppermint) reduced belly distension after one meal compared with a placebo. It was funded by HUM Nutrition, whose employee wrote it, and Gut Balance\'s enzyme blend doesn\'t include those herbs.\n\nOne thing to check: the ingredient list on The Good Bug\'s own page names different strains (L. plantarum UALp-05 and B. lactis UABla-12) than its description and box (LGG® and BB-12®). Research on one strain doesn\'t carry over to another, so it matters which formula you get.',
+        doctorOpinionShort: 'Its main strain, LGG, reduces diarrhea in a large body of trials, mostly in children, but did little for bloating or constipation in a 2025 meta-analysis. The trial The Good Bug cites found less bloating only in people taking antibiotics for H. pylori. The product page lists different strains in its ingredient list than in its description, so check the box. No independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://thegoodbug.com/products/healthy-gut-balance', label: 'thegoodbug.com: Gut Balance, ingredients and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/40702885/', label: 'PubMed: Effects of Lacticaseibacillus rhamnosus GG on gastrointestinal and respiratory outcomes, systematic review and meta-analysis (2025)', chipLabel: 'LGG meta-analysis, 69 trials (2025)' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4603068/', label: 'NIH (PMC): Probiotics for standard triple Helicobacter pylori eradication, randomized, double-blind, placebo-controlled trial (Hauser et al., 2015)', chipLabel: 'H. pylori probiotic trial, 650 people (2015)' },
+            { url: 'https://doi.org/10.2147/NDS.S453377', label: 'Nutrition and Dietary Supplements (2024): A multi-digestive enzyme and herbal dietary supplement reduces bloating in a single use in healthy adults', chipLabel: 'Enzyme + herbal bloating study, 20 people (2024)' },
+        ],
+        whoItsFor: [
+            'Adults looking for a daily probiotic powder for general digestive support',
+            'People who prefer a stick mixed into water over capsules',
+            'Not a substitute for seeing a doctor about persistent bloating, diarrhea or changes in bowel habits',
+        ],
+        howToUse: {
+            intro: 'The Good Bug sizes its packs at one stick a day (15 sticks for 15 days, 30 for a month) and says the best results came with 3 months of consistent use.',
+            steps: [
+                'Mix one stick into 200 ml of water.',
+                'Avoid mixing it into carbonated drinks like soda.',
+                'If you miss a dose, take it when you remember; don\'t double up.',
+            ],
+            sourceUrl: 'https://thegoodbug.com/products/healthy-gut-balance',
+            sourceLabel: 'thegoodbug.com: Gut Balance',
+        },
+        warnings: [
+            'Pregnant, breastfeeding, or managing IBS, diabetes or another medical condition: check with a doctor first (per The Good Bug).',
+            'Loose stools or digestive changes lasting more than 2 days: stop and see a doctor (per The Good Bug).',
+        ],
+        communityReview: 'The Good Bug\'s product page shows 4.6 out of 5 stars from 119 reviews: 68% five stars, 22% four stars, 8% three stars and 2% two stars. The first reviews shown describe less bloating and acidity and better digestion after a few weeks or months. These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        effectiveness: 'LGG reduced diarrhea in many trials, mostly in children; effects on bloating and constipation were limited.',
+        ingredientScience: [
+            {
+                name: 'LGG® + BB-12® with antibiotics (study cited by The Good Bug)',
+                text: 'In a 2015 randomized, double-blind, placebo-controlled trial, 650 people taking standard antibiotic therapy for an H. pylori stomach infection also took LGG® and BB-12® (10⁸ to 10¹⁰ live bacteria per capsule) or a placebo, twice a day for 14 days. The probiotic group had a higher cure rate (87% vs 73%) and fewer treatment side effects, including less bloating and flatulence, in 7 of 10 tracked symptoms. Participants were on antibiotics, not people with everyday bloating, and two of the authors worked for JGL, which sells that probiotic.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4603068/', label: 'NIH (PMC): Probiotics for standard triple Helicobacter pylori eradication, randomized, double-blind, placebo-controlled trial (Hauser et al., Medicine 2015)' },
+                ],
+            },
+            {
+                name: 'Digestive enzymes (study cited by The Good Bug)',
+                text: 'In a 2024 double-blind, placebo-controlled crossover study, 20 healthy adults with daily post-meal bloating took a single dose of a supplement with 18 digestive enzymes plus ginger, fennel and peppermint, or a placebo, before a test meal, then switched after a one-week washout. The supplement reduced waist distension by 58% at 30 minutes and 68% at 90 minutes compared with placebo. The study tested HUM Nutrition\'s product, was funded by HUM, and its author worked there. Gut Balance\'s enzyme blend doesn\'t include the herbs.',
+                citations: [
+                    { url: 'https://doi.org/10.2147/NDS.S453377', label: 'Nutrition and Dietary Supplements (2024): A multi-digestive enzyme and herbal dietary supplement reduces bloating in a single use in healthy adults' },
+                ],
+            },
+            {
+                name: 'Lacticaseibacillus rhamnosus GG (LGG)',
+                text: 'The Good Bug calls this the world\'s most studied probiotic. A 2025 meta-analysis of 69 randomized trials found LGG reduced the risk of diarrhea and shortened it, with moderate-certainty evidence that was more consistent in children. It had limited effects on bloating, abdominal pain, constipation and nausea, and the authors said evidence in adults was limited.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/40702885/', label: 'PubMed: Effects of Lacticaseibacillus rhamnosus GG on gastrointestinal and respiratory outcomes, systematic review and meta-analysis (2025)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://thegoodbug.com/products/healthy-gut-balance',
+                        text: 'thegoodbug.com: Gut Balance customer reviews',
+                        summary: 'The Good Bug\'s own product page shows 4.6 out of 5 stars from 119 reviews.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-goodbug-good-to-glow',
+        name: 'The Good Bug Good To Glow SuperGut Stick',
+        brand: 'The Good Bug',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement', 'skin-hair'],
+        tags: ['goodbug', 'tgb', 'skin', 'hair', 'nails', 'probiotic', 'synbiotic', 'glutathione', 'beauty supplement', 'supplement'],
+        price: '$13 (list $14)',
+        whereToBuy: ['thegoodbug.com'],
+        url: 'https://thegoodbug.com/products/good-to-glow',
+        image: '/products/goodbug/good-to-glow.jpg', // supplied by ayna
+        summary: 'A daily synbiotic powder stick for skin, hair and nails "from within". It combines the probiotic Lactobacillus plantarum (5 billion CFU, per the box) with glutathione, trans-resveratrol, vitamin C, vitamin A, zinc, biotin, lycopene and inulin, in a berry flavor. The Good Bug says it brightens and hydrates skin, helps with sun damage, blemishes, dark spots and wrinkles, and strengthens hair and nails.',
+        ingredients: 'Full ingredient list per The Good Bug: Stabilizer [Xylitol (INS 967)], Sweetener [Sorbitol (INS 420(i))], Glutathione, Zinc Gluconate, Vitamin C, Lactobacillus plantarum, Trans Resveratrol, Inulin, Lycopene, Sweetener [Steviol Glycoside (INS 960)], Anti-Sticking Agent [Magnesium Stearate (INS 470(iii))], Vitamin A, Biotin. Contains added berry flavor. 3 g per stick; 5 billion CFU per the box.',
+        safety: {
+            fdaStatus: 'Sold in India as a nutraceutical (per the box). In the US this would be a dietary supplement, which the FDA does not evaluate for safety or efficacy claims.',
+            materials: 'Powder sticks, 3 g each; packs of 15, 30, 60 or 90. Sweetened with xylitol, sorbitol and stevia. The Good Bug doesn\'t list amounts of glutathione, vitamins or other actives. Made in India by Sundyota Numandis Probioceuticals for SevenTurns Private Limited. Best before 24 months from manufacture.',
+            recalls: 'No recalls found.',
+            sideEffects: 'The Good Bug says it isn\'t recommended for children, or for pregnant or breastfeeding women or anyone with a medical condition without checking with a healthcare professional first. It contains biotin, which the FDA warns can interfere with certain lab tests, so tell your doctor you take it before blood work. It also contains sugar alcohols (xylitol, sorbitol). Full warnings are listed below.',
+            opinionAlerts: 'Skin claims come from The Good Bug, and no independent study of this product was found. The Good Bug doesn\'t list how much glutathione or vitamins each stick contains.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from The Good Bug; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'The Good Bug says Good To Glow brightens and hydrates skin, helps with sun damage, blemishes and dark spots, reduces the look of wrinkles, and strengthens hair and nails. No independent study of this product was found, so what follows is what the research says about its main ingredients.\n\nGlutathione has the most direct evidence. In a randomized, double-blind, placebo-controlled trial of 60 medical students in Thailand, 500 mg a day of oral glutathione for 4 weeks lightened skin at two of six measured sites compared with placebo. A 2024 systematic review found oral glutathione at 250–500 mg a day reduced the skin\'s melanin index in five randomized trials, but called the results unsustainable and noted long-term safety isn\'t established. The Good Bug doesn\'t list how much glutathione each stick contains.\n\nFor Lactobacillus plantarum, the human evidence found was for a different form: in a Korean study, candy containing dead-bacteria fragments (lysate) of one specific strain, L. plantarum K8, improved skin hydration over 8 weeks compared with plain candy. Good To Glow\'s label doesn\'t name its strain, and it uses live bacteria, so that result may not apply.',
+        doctorOpinionShort: 'Oral glutathione lightened skin in small randomized trials, but long-term safety isn\'t established and this product doesn\'t list its dose. Evidence for its probiotic comes from a different form and strain. No independent study of this product was found.',
+        doctorOpinionCitations: [
+            { url: 'https://thegoodbug.com/products/good-to-glow', label: 'thegoodbug.com: Good To Glow, ingredients and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/20524875/', label: 'PubMed: Glutathione as an oral whitening agent, randomized, double-blind, placebo-controlled study', chipLabel: 'Oral glutathione trial, 60 people (2012)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/39444151/', label: 'PubMed: Glutathione as a skin-lightening agent and in melasma, systematic review', chipLabel: 'Glutathione systematic review (2024)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/25179904/', label: 'PubMed: Effects of oral intake of kimchi-derived Lactobacillus plantarum K8 lysates on skin moisturizing', chipLabel: 'L. plantarum K8 skin study (2015)' },
+        ],
+        whoItsFor: [
+            'Adults interested in an ingestible skin, hair and nail supplement alongside their skincare',
+            'People who prefer a flavored powder stick over capsules',
+            'Not for children, or during pregnancy or breastfeeding without checking with a clinician (per The Good Bug)',
+        ],
+        howToUse: {
+            intro: 'The Good Bug sizes its packs at one stick a day (15 sticks for 15 days, 30 for a month). Its Good To Glow page doesn\'t give mixing directions.',
+            steps: [
+                'Take one stick a day.',
+                'Keep using sunscreen daily; The Good Bug\'s own page recommends it alongside the product.',
+            ],
+            sourceUrl: 'https://thegoodbug.com/products/good-to-glow',
+            sourceLabel: 'thegoodbug.com: Good To Glow',
+        },
+        warnings: [
+            'Pregnant, breastfeeding, or managing a medical condition: check with a doctor first (per The Good Bug). Not for children.',
+            'Contains biotin: the FDA warns biotin can interfere with certain lab tests, so tell your doctor before blood work.',
+        ],
+        communityReview: 'The Good Bug\'s product page shows 4.3 out of 5 stars from 1,623 reviews: 36% five stars, 61% four stars, 2% three stars, and two one-star reviews. The first reviews shown describe brighter, glowing skin after about a month, for example: "within a month of using it, people started telling me that my skin is glowing." These are reviews on the brand\'s own site; no independent review data was found at time of writing.',
+        effectiveness: 'Oral glutathione lightened skin in small randomized trials; the probiotic\'s skin evidence comes from a different form and strain.',
+        ingredientScience: [
+            {
+                name: 'Glutathione (oral)',
+                text: 'The Good Bug states this brightens skin. In a randomized, double-blind, placebo-controlled trial of 60 people, 500 mg a day of oral glutathione for 4 weeks lightened skin at two of six measured sites (the face and a sun-exposed forearm) compared with placebo. A 2024 systematic review found five randomized trials where oral glutathione at 250–500 mg a day reduced the melanin index, but described the effect as unsustainable. Long-term safety isn\'t established. This product\'s glutathione amount isn\'t listed.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/20524875/', label: 'PubMed: Glutathione as an oral whitening agent, randomized, double-blind, placebo-controlled study (2012)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/39444151/', label: 'PubMed: Glutathione as a skin-lightening agent and in melasma, systematic review (2024)' },
+                ],
+            },
+            {
+                name: 'Lactobacillus plantarum',
+                text: 'The Good Bug states this revitalizes skin. In a Korean study, people who ate candy containing 2.1% dead-bacteria fragments (lysate) of L. plantarum strain K8 had better skin hydration after 4 and 8 weeks than people eating the same candy without it. Good To Glow uses live L. plantarum of an unnamed strain, so that result may not apply.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/25179904/', label: 'PubMed: Effects of oral intake of kimchi-derived Lactobacillus plantarum K8 lysates on skin moisturizing (2015)' },
+                ],
+            },
+        ],
+        scientificCitations: [
+            {
+                url: 'https://www.fda.gov/medical-devices/in-vitro-diagnostics/biotin-interference-troponin-lab-tests-assays-subject-biotin-interference',
+                text: 'FDA: Biotin interference with lab tests',
+                summary: 'The FDA says biotin, often found in dietary supplements, can significantly interfere with certain lab tests and cause incorrect results that may go undetected.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://thegoodbug.com/products/good-to-glow',
+                        text: 'thegoodbug.com: Good To Glow customer reviews',
+                        summary: 'The Good Bug\'s own product page shows 4.3 out of 5 stars from 1,623 reviews.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // Happy Head Hair Growth Supplements, verified against
+    // happyhead.com/products/hair-growth-supplements on 2026-10-07 (price,
+    // dose, ingredient names, pregnancy note). Happy Head doesn't publish
+    // ingredient amounts. Science read via NCBI E-utilities; ashwagandha
+    // safety from NIH NCCIH. Not a brand partner, no affiliate link.
+    {
+        id: 'p-happyhead-hair-growth-supplements',
+        name: 'Happy Head Hair Growth Supplements',
+        brand: 'Happy Head',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement', 'skin-hair'],
+        tags: ['happyhead', 'hair', 'hair growth', 'hair thinning', 'biotin', 'saw palmetto', 'ashwagandha', 'collagen', 'supplement', 'drug-free'],
+        price: '$79 for 60 capsules (1 month); $67/month with a subscription',
+        whereToBuy: ['happyhead.com'],
+        url: 'https://www.happyhead.com/products/hair-growth-supplements',
+        image: '/products/happyhead/hair-growth-supplements.jpg', // supplied by ayna
+        summary: 'A daily, drug-free hair supplement from Happy Head, a hair-loss company that also offers dermatologist-prescribed treatments. The blend\'s headline ingredients are biotin, collagen, keratin, saw palmetto, ashwagandha, and vitamins A and D (full list under Ingredients). Happy Head says it supports healthier hair and scalp and visibly thicker hair in 3 to 6 months. Take 2 capsules daily with a meal; a jar of 60 capsules lasts a month. No prescription needed.',
+        ingredients: 'Per Happy Head: biotin, collagen, keratin, saw palmetto, ashwagandha, probiotics, vitamin A, vitamin D. Happy Head doesn\'t publish the amount of each ingredient on its product page.',
+        safety: {
+            fdaStatus: 'Dietary supplement; not evaluated by the FDA for safety or efficacy claims.',
+            materials: '60 capsules per jar (2 a day, 1-month supply). Happy Head doesn\'t publish a Supplement Facts panel with ingredient amounts on its product page. Store in a cool, dry place; no refrigeration needed.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Contains ashwagandha. The NIH says ashwagandha should be avoided during pregnancy and breastfeeding, isn\'t recommended for people with thyroid or autoimmune disorders or before surgery, has been linked to rare cases of liver injury, and may interact with medicines for diabetes, blood pressure, thyroid, seizures and immune suppression, and with sedatives. Happy Head says to consult a physician if you are pregnant, nursing or planning to become pregnant. It also contains biotin, which the FDA warns can interfere with certain lab tests. Full warnings are listed below.',
+            opinionAlerts: 'Contains ashwagandha, which the NIH says to avoid during pregnancy and breastfeeding and with thyroid or autoimmune conditions. Happy Head doesn\'t publish ingredient amounts, so its doses can\'t be compared with the studies below.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Happy Head; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Happy Head says this dermatologist-developed blend supports fuller, thicker, stronger hair in 3 to 6 months. No independent study of this product was found, and Happy Head doesn\'t publish its ingredient amounts, so what follows is what the research says about its main ingredients.\n\nA 2023 JAMA Dermatology systematic review of 30 studies of supplements for hair loss in people without a known nutritional deficiency found the best evidence for specific products (Viviscal, Nourkrin, Nutrafol and others) and some single ingredients, with rare, mild side effects. It called for larger trials with active comparators.\n\nBiotin is the most popular hair ingredient but has the weakest case: a 2017 review found it helped only in people with an underlying cause such as biotin deficiency, and found no good evidence for healthy people. Saw palmetto has more support: a 2020 systematic review of 5 randomized trials and 2 other studies found oral or topical saw palmetto (100–320 mg) improved hair quality and density in people with pattern hair loss or shedding, though high-quality data are lacking. Saw palmetto is anti-androgenic.\n\nAshwagandha is the main safety concern for women: the NIH says to avoid it during pregnancy and breastfeeding, and with thyroid or autoimmune disorders.',
+        doctorOpinionShort: 'Saw palmetto has modest evidence for pattern hair loss; biotin helps only if you\'re deficient. Happy Head doesn\'t publish ingredient amounts, and no independent study of this product was found. It contains ashwagandha, which the NIH says to avoid during pregnancy, breastfeeding, and with thyroid or autoimmune conditions.',
+        doctorOpinionCitations: [
+            { url: 'https://www.happyhead.com/products/hair-growth-supplements', label: 'happyhead.com: Hair Growth Supplements, ingredients and claims' },
+            { url: 'https://www.nccih.nih.gov/health/ashwagandha', label: 'NIH NCCIH: Ashwagandha, safety' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/36449274/', label: 'PubMed: Evaluation of the safety and effectiveness of nutritional supplements for treating hair loss, systematic review (JAMA Dermatol 2023)', chipLabel: 'Hair supplements review, JAMA Derm (2023)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28879195/', label: 'PubMed: A review of the use of biotin for hair loss', chipLabel: 'Biotin for hair loss review (2017)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/33313047/', label: 'PubMed: Natural hair supplement, friend or foe? Saw palmetto, a systematic review in alopecia', chipLabel: 'Saw palmetto systematic review (2020)' },
+        ],
+        whoItsFor: [
+            'Adults with thinning hair looking for a drug-free supplement, ideally after a clinician has checked for causes like iron or thyroid problems',
+            'Not for pregnancy, breastfeeding, or trying to conceive, or for people with thyroid or autoimmune conditions (ashwagandha)',
+        ],
+        howToUse: {
+            intro: 'Per Happy Head: take consistently for 3 to 6 months to see results.',
+            steps: [
+                'Take 2 capsules by mouth daily with a meal.',
+                'Store in a cool, dry place with the lid tightly closed.',
+            ],
+            sourceUrl: 'https://www.happyhead.com/products/hair-growth-supplements',
+            sourceLabel: 'happyhead.com: Hair Growth Supplements',
+        },
+        warnings: [
+            'Pregnant, breastfeeding, or trying to conceive: the NIH says to avoid ashwagandha; Happy Head says to consult your physician first.',
+            'Thyroid or autoimmune condition, or surgery coming up: the NIH doesn\'t recommend ashwagandha.',
+            'Taking medicine for diabetes, blood pressure, thyroid, seizures, or immune suppression, or sedatives: ashwagandha may interact, so check with your doctor.',
+            'Contains biotin: the FDA warns biotin can interfere with certain lab tests, so tell your doctor before blood work.',
+            'Signs of liver problems: stop and see a doctor; the NIH notes rare liver injury linked to ashwagandha.',
+        ],
+        communityReview: 'Happy Head\'s product page shows a company-wide Trustpilot widget but no reviews specific to this supplement, and Trustpilot blocks automated access, so no product-specific review data was found at time of writing.',
+        effectiveness: 'Saw palmetto has modest, low-quality evidence for pattern hair loss and shedding; biotin hasn\'t been shown to help people who aren\'t deficient.',
+        ingredientScience: [
+            {
+                name: 'Supplements for hair loss (overall evidence)',
+                text: 'A 2023 JAMA Dermatology systematic review of 30 studies (17 randomized trials) in people without a known nutritional deficiency found the highest-quality evidence for specific branded supplements and some single ingredients. Side effects were rare and mild. The authors called for larger trials against active treatments.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/36449274/', label: 'PubMed: Evaluation of the safety and effectiveness of nutritional supplements for treating hair loss, systematic review (Drake et al., JAMA Dermatol 2023)' },
+                ],
+            },
+            {
+                name: 'Biotin',
+                text: 'A 2017 review found 18 reported cases where biotin improved hair or nails, all in people with an underlying problem such as biotin deficiency. The authors concluded there isn\'t enough evidence for biotin supplements in healthy people. The FDA also warns biotin can interfere with certain lab tests.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28879195/', label: 'PubMed: A review of the use of biotin for hair loss (Patel et al., 2017)' },
+                    { url: 'https://www.fda.gov/medical-devices/in-vitro-diagnostics/biotin-interference-troponin-lab-tests-assays-subject-biotin-interference', label: 'FDA: Biotin interference with lab tests' },
+                ],
+            },
+            {
+                name: 'Saw palmetto',
+                text: 'A 2020 systematic review of 5 randomized trials and 2 other studies found oral or topical saw palmetto (100–320 mg) improved overall hair quality, hair count and density in people with pattern hair loss and shedding, and was well tolerated. The authors said high-quality data are lacking and larger trials are needed. Saw palmetto is anti-androgenic.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33313047/', label: 'PubMed: Natural hair supplement, friend or foe? Saw palmetto, a systematic review in alopecia (Evron et al., 2020)' },
+                ],
+            },
+            {
+                name: 'Ashwagandha (safety)',
+                text: 'The NIH says ashwagandha may be safe short term (up to 3 months), long-term safety is unknown, and rare cases of liver injury have been linked to it. It should be avoided during pregnancy and breastfeeding, isn\'t recommended for people with thyroid or autoimmune disorders or before surgery, and may interact with several medications.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/ashwagandha', label: 'NIH NCCIH: Ashwagandha' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [] },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    // Magnum Solace Nighttime Magnesium Cream, verified against
+    // magnumsolace.com/products/nighttime-magnesium-cream on 2026-10-07
+    // (description, full ingredients, scents, price, how-to). Walmart
+    // listing supplied by ayna; Walmart blocks automated access, so no
+    // rating is quoted. Science read via NCBI E-utilities. Not a brand
+    // partner, no affiliate link.
+    {
+        id: 'p-magnumsolace-nighttime-magnesium-cream',
+        name: 'Magnum Solace Nighttime Magnesium Cream',
+        brand: 'Magnum Solace',
+        category: 'sleep',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sleep'],
+        tags: ['sleep', 'magnesium', 'magnesium cream', 'muscle', 'restless legs', 'relaxation', 'lavender', 'unscented option', 'magnumsolace'],
+        price: '$27.99 for 5 oz (list $39.99)',
+        whereToBuy: ['magnumsolace.com', 'Walmart'],
+        url: 'https://www.magnumsolace.com/products/nighttime-magnesium-cream',
+        image: '/products/magnumsolace/nighttime-magnesium-cream.jpg', // supplied by ayna
+        summary: 'A magnesium chloride body cream with shea butter and grapeseed oil, meant to be massaged into the legs, feet, arms or chest before bed. Magnum Solace says it eases muscle tension and restless legs and promotes relaxation and sleep, with 250 mg of magnesium per teaspoon. It comes in nine scents, including lavender, chamomile & lavender, and unscented. Made in small batches in Houston, Texas.',
+        ingredients: 'Full ingredient list per Magnum Solace: Purified Water (Aqua), Magnesium Chloride, Emulsifying Wax, Organic Butyrospermum Parkii (Shea Butter), Vitis Vinifera (Grape) Seed Oil, Tocopheryl Acetate (Vitamin E), Organic Helianthus Annuus (Sunflower) Oil, Phenoxyethanol. This published list contains no scent ingredients, so scented versions (such as Lavender) likely add essential oils or fragrance not listed here; check the jar.',
+        safety: {
+            fdaStatus: 'Cosmetic body cream; not an FDA-cleared drug or medical device. Magnum Solace\'s claims that it relieves restless legs, muscle tension and sleep problems have not been evaluated by the FDA.',
+            materials: '5 oz jar. Magnesium chloride (250 mg magnesium per teaspoon, per Magnum Solace) in a cream base of water, emulsifying wax, shea butter, grapeseed and sunflower oils, and vitamin E, preserved with phenoxyethanol.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Magnum Solace says to avoid broken skin and freshly shaved areas. Scented versions add scent ingredients that aren\'t in the published ingredient list; if you have sensitive skin, the unscented version avoids them. Full warnings are listed below.',
+            opinionAlerts: 'Magnum Solace says the cream delivers "100% absorbable" magnesium "directly to the cellular level." A 2017 scientific review concluded that claims of magnesium absorption through the skin are scientifically unsupported. It may still feel soothing to massage in as a moisturizing bedtime cream.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Magnum Solace; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Magnum Solace says the cream eases muscle tension and restless legs and helps with sleep, because magnesium is absorbed through the skin, "100% absorbable" and delivered "directly to the cellular level."\n\nThe evidence for that absorption is weak. A 2017 review in Nutrients concluded that the promotion of transdermal magnesium is scientifically unsupported, while oral magnesium is well documented for treating deficiency. The only human trial found was a 2017 pilot of 25 people: a magnesium cream (56 mg a day for two weeks) raised blood magnesium slightly compared with a placebo cream, but the change was statistically significant only in a subgroup of non-athletes. One author has a financial interest in a different magnesium cream.\n\nNo study of this product, or of magnesium cream for sleep or restless legs, was found. Massaging in a rich cream at bedtime may still feel relaxing. If you have ongoing restless legs or trouble sleeping, it\'s worth talking to a clinician.',
+        doctorOpinionShort: 'Its central claim, that magnesium absorbs through the skin, is unsupported according to a 2017 review; a small 2017 pilot found only a slight rise in blood magnesium. No study of this product or of magnesium cream for sleep was found. It may still work as a soothing bedtime massage cream.',
+        doctorOpinionCitations: [
+            { url: 'https://www.magnumsolace.com/products/nighttime-magnesium-cream', label: 'magnumsolace.com: Nighttime Magnesium Cream, ingredients and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28788060/', label: 'PubMed: Myth or reality, transdermal magnesium? (Nutrients 2017)', chipLabel: 'Transdermal magnesium review (2017)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28403154/', label: 'PubMed: Effect of transdermal magnesium cream on serum and urinary magnesium levels, pilot study', chipLabel: 'Magnesium cream pilot trial, 25 people (2017)' },
+        ],
+        whoItsFor: [
+            'People who like a rich, moisturizing massage cream as part of a bedtime routine',
+            'People who want an unscented option (one of its nine versions)',
+            'Not a substitute for seeing a clinician about ongoing restless legs, cramps or insomnia',
+        ],
+        howToUse: {
+            intro: 'Per Magnum Solace: use every night for at least two weeks for best results.',
+            steps: [
+                'Massage generously onto your legs, arms, chest or feet before going to sleep.',
+                'For restless legs, apply to your legs and the bottoms of your feet before bed.',
+                'Avoid broken skin and freshly shaved areas.',
+            ],
+            sourceUrl: 'https://www.magnumsolace.com/products/nighttime-magnesium-cream',
+            sourceLabel: 'magnumsolace.com: Nighttime Magnesium Cream',
+        },
+        warnings: [
+            'Don\'t apply to broken skin or freshly shaved areas (per Magnum Solace).',
+            'Sensitive skin or scent sensitivity: choose the unscented version or patch test first; scented versions\' added ingredients aren\'t listed.',
+            'Ongoing restless legs, cramps or trouble sleeping: see a clinician to check for underlying causes.',
+        ],
+        communityReview: 'Magnum Solace\'s product page shows six featured five-star testimonials from verified buyers, mentioning better sleep, eased restless legs and cramps, and a non-greasy feel, for example: "It helps with cramping and restless legs, feels wonderful!" The page doesn\'t show a total review count or average. It is also sold on Walmart, but Walmart blocks automated access, so no rating could be confirmed at time of writing.',
+        effectiveness: 'No study of this cream, or of magnesium cream for sleep or restless legs, was found.',
+        ingredientScience: [
+            {
+                name: 'Magnesium chloride (transdermal)',
+                text: 'Magnum Solace states its magnesium is absorbed through the skin. A 2017 review concluded that the promotion of transdermal magnesium is scientifically unsupported. A 2017 pilot of 25 people found a magnesium cream (56 mg a day for two weeks) raised blood magnesium slightly versus placebo, significant only in a subgroup of non-athletes; one author has a financial interest in a different magnesium cream.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28788060/', label: 'PubMed: Myth or reality, transdermal magnesium? (Gröber et al., Nutrients 2017)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28403154/', label: 'PubMed: Effect of transdermal magnesium cream on serum and urinary magnesium levels in humans, pilot study (Kass et al., 2017)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.walmart.com/ip/17531958604',
+                        text: 'Walmart: Magnum Solace Nighttime Magnesium Cream reviews',
+                        summary: 'Customer reviews on Walmart. A rating couldn\'t be confirmed at time of writing because Walmart blocks automated access.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.magnumsolace.com/products/nighttime-magnesium-cream',
+                        text: 'magnumsolace.com: featured customer testimonials',
+                        summary: 'Six featured five-star testimonials from verified buyers; no total count or average shown.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // InfiniWell PTD-DBM + Methyl Vanillate, verified against
+    // infiniwell.com/products/ptd-dbm-methyl-vanillate on 2026-10-07 (price,
+    // description, FAQ, how-to, review stats). Image supplied by ayna.
+    // Studies read via NCBI E-utilities. Not a brand partner, no affiliate link.
+    {
+        id: 'p-infiniwell-ptd-dbm',
+        name: 'InfiniWell PTD-DBM + Methyl Vanillate',
+        brand: 'InfiniWell',
+        category: 'hair',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['infiniwell', 'ptd-dbm', 'methyl vanillate', 'hair', 'scalp', 'hair serum', 'peptide', 'thinning', 'cosmetic'],
+        price: '$69.95 for 25 mL',
+        whereToBuy: ['infiniwell.com', 'Amazon'],
+        url: 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate',
+        whereToBuyLinks: {
+            'infiniwell.com': 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate',
+            Amazon: 'https://www.amazon.com/InfiniWell-Hair-Growth-Serum-Restoration/dp/B09J97Z29F',
+        },
+        image: '/products/infiniwell/ptd-dbm.webp', // supplied by ayna
+        summary: 'A leave-in scalp serum in a 25 mL dropper bottle, pairing the peptide PTD-DBM with methyl vanillate, a compound derived from vanillin. InfiniWell calls it physician-formulated and sells it as a cosmetic for fuller-looking hair, not as a hair-loss treatment. Apply to the scalp once a day; no rinsing. The research on PTD-DBM has only been done in cells and mice so far. InfiniWell offers a refund if you don\'t feel a difference in 30 days.',
+        ingredients: 'Per InfiniWell: PTD-DBM (a peptide) and methyl vanillate. InfiniWell doesn\'t list the full ingredients or the amount of either active as text on its product page.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic; not an FDA-approved drug for hair loss. InfiniWell says its statements haven\'t been evaluated by the FDA and that the product isn\'t formulated to treat hair loss.',
+            materials: '25 mL serum with a dropper. InfiniWell says it is made in a cGMP facility in the USA and third-party tested by ISO-certified labs.',
+            recalls: 'No recalls found.',
+            sideEffects: 'For external use only; avoid contact with eyes. InfiniWell says to consult a physician first if you take prescription medication, have a medical condition, or are pregnant or nursing, and to check with a professional if you also use medicated hair treatments. Not for children.',
+            opinionAlerts: 'No human trial of PTD-DBM or of this serum was found. InfiniWell describes methyl vanillate two ways: as nourishing hair follicles, and as an ingredient that helps the serum spread and absorb.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from InfiniWell; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'InfiniWell says PTD-DBM supports the Wnt/β-catenin pathway, a signaling pathway involved in hair follicle growth, and that the serum aims for visible results in less than 30 days. No study of this product was found.\n\nPTD-DBM comes from a 2017 Journal of Investigative Dermatology study. Researchers found a protein called CXXC5 that slows hair regrowth and is raised in balding human scalp. In human hair cells, CXXC5 slowed cell growth; in mice, a peptide that blocks it sped up hair regrowth. A 2023 study by the same group found the peptide also reversed hair loss caused by DHT and prostaglandin D2 in mice. The senior researcher is CEO of a company licensed to develop the peptide. So far, PTD-DBM research has only been done in cells and mice.\n\nThe human evidence is for methyl vanillate: a 2016 uncontrolled, open-label study of 20 women with female pattern hair loss used a 0.2% methyl vanillate spray for 6 months. Hair count rose 6% and hair mass index 12% from baseline, with no dropouts for side effects. There was no placebo group, and InfiniWell doesn\'t say how much methyl vanillate its serum contains.\n\nIf you have thinning hair, a dermatologist can check for causes and discuss treatments with stronger evidence, such as minoxidil.',
+        doctorOpinionShort: 'PTD-DBM has been tested only in cells and mice so far. Methyl vanillate has one small, uncontrolled study in 20 women (6% more hairs after 6 months). No study of this serum was found, and InfiniWell doesn\'t publish its ingredient amounts.',
+        doctorOpinionCitations: [
+            { url: 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate', label: 'infiniwell.com: PTD-DBM + Methyl Vanillate, claims and FAQ' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/28595998/', label: 'PubMed: Targeting of CXXC5 by a competing peptide stimulates hair regrowth and wound-induced hair neogenesis (J Invest Dermatol 2017)', chipLabel: 'PTD-DBM cell and mouse study (2017)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/36831222/', label: 'PubMed: CXXC5 mediates DHT-induced androgenetic alopecia via PGD2 (Cells 2023)', chipLabel: 'PTD-DBM mouse study (2023)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/27121450/', label: 'PubMed: Topical methyl vanillate increases hair count and hair mass index in women with androgenetic alopecia (J Cosmet Dermatol 2016)', chipLabel: 'Methyl vanillate open-label study, 20 women (2016)' },
+        ],
+        whoItsFor: [
+            'People with thinning hair who want a non-drug cosmetic scalp serum and are comfortable with early-stage evidence',
+            'Not a substitute for seeing a dermatologist about new or fast hair loss',
+            'Pregnant or nursing: InfiniWell says to check with your physician first',
+        ],
+        howToUse: {
+            intro: 'Per InfiniWell: use daily.',
+            steps: [
+                'Apply evenly to the affected areas of the scalp once a day.',
+                'No need to rinse; it can be used with your usual shampoo and conditioner.',
+                'Avoid contact with eyes.',
+            ],
+            sourceUrl: 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate',
+            sourceLabel: 'infiniwell.com: PTD-DBM + Methyl Vanillate',
+        },
+        warnings: [
+            'External use only; avoid contact with eyes.',
+            'Pregnant, nursing, on prescription medication, or have a medical condition: consult your physician before use (per InfiniWell).',
+            'Using medicated hair-loss treatments such as minoxidil: check with a healthcare professional first (per InfiniWell).',
+            'Not for children.',
+        ],
+        communityReview: 'InfiniWell\'s page shows two sets of numbers. A stats card says 217 verified customers rated it 4.6 out of 5 on average, and 20% (about 1 in 5) mentioned thicker- or fuller-looking hair without being asked. InfiniWell says these reviews were collected by post-purchase email through July 2026 and that most reviewers received an incentive. Separately, the page header shows 4.9 stars from 1,136 reviews, which appear to cover InfiniWell\'s products more broadly. On Amazon it has 3.3 out of 5 stars from 37 ratings.',
+        effectiveness: 'One small, uncontrolled study supports methyl vanillate in women with pattern hair loss.',
+        ingredientScience: [
+            {
+                name: 'PTD-DBM',
+                text: 'A peptide that blocks CXXC5, a protein that slows Wnt/β-catenin signaling and is raised in balding human scalp. In a 2017 study, CXXC5 slowed the growth of human hair follicle cells, and blocking it with the peptide sped up hair regrowth in mice. A 2023 study by the same group found it reversed hair loss caused by DHT and prostaglandin D2 in mice. The senior researcher is CEO of a company licensed to develop the peptide. So far, the research has only been done in cells and mice.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28595998/', label: 'PubMed: Targeting of CXXC5 by a competing peptide stimulates hair regrowth and wound-induced hair neogenesis (Lee et al., J Invest Dermatol 2017)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/36831222/', label: 'PubMed: CXXC5 mediates DHT-induced androgenetic alopecia via PGD2 (Ryu et al., Cells 2023)' },
+                ],
+            },
+            {
+                name: 'Methyl vanillate',
+                text: 'In a 2016 uncontrolled, open-label study, 20 women aged 25 to 57 with female pattern hair loss used a spray with 0.2% methyl vanillate for 6 months. Hair count rose 6% and hair mass index 12% compared with baseline, and no one stopped because of side effects. There was no placebo group. InfiniWell doesn\'t publish its serum\'s methyl vanillate concentration.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27121450/', label: 'PubMed: Topical application of the Wnt/β-catenin activator methyl vanillate increases hair count and hair mass index in women with androgenetic alopecia (Tosti et al., 2016)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://infiniwell.com/products/ptd-dbm-methyl-vanillate',
+                        text: 'infiniwell.com: PTD-DBM customer reviews',
+                        summary: '217 verified buyers average 4.6 out of 5, collected by post-purchase email; most reviewers received an incentive.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.amazon.com/InfiniWell-Hair-Growth-Serum-Restoration/dp/B09J97Z29F',
+                        text: 'Amazon: InfiniWell PTD-DBM Peptide Hair Serum reviews',
+                        summary: '3.3 out of 5 stars from 37 ratings at time of writing.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // Lilyeve Grow:Turn Ampoule, verified against
+    // lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100 on
+    // 2026-10-07 (price, full ingredients, how-to, claim images, review
+    // breakdown) and the Amazon listing B0DXPGSDZJ (rating, price). Image
+    // supplied by ayna. Studies read via NCBI E-utilities. Not a brand
+    // partner, no affiliate link.
+    {
+        id: 'p-lilyeve-growturn-ampoule',
+        name: 'Lilyeve Grow:Turn Ampoule (Hair Serum with Brush)',
+        brand: 'Lilyeve',
+        category: 'hair',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['skin-hair'],
+        tags: ['lilyeve', 'growturn', 'grow:turn', 'hair', 'scalp', 'hair serum', 'thinning', 'shedding', 'caffeine', 'heartleaf', 'exosome', 'korean', 'cosmetic'],
+        price: '$29.70',
+        whereToBuy: ['lilyeveus.com', 'Amazon'],
+        url: 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100',
+        whereToBuyLinks: {
+            'lilyeveus.com': 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100',
+            Amazon: 'https://www.amazon.com/dp/B0DXPGSDZJ',
+        },
+        image: '/products/lilyeve/growturn-ampoule.png', // supplied by ayna
+        summary: 'A Korean leave-in scalp serum in a 100 mL tube with a built-in 38-bristle brush head for massaging it in. Lilyeve says it reduces hair shedding and flakes and soothes the scalp, using caffeine, heartleaf (which it calls exosome-derived) and a herbal blend it calls Scalp Clera. Apply to a damp scalp after shampooing, morning and evening. It\'s sold for both men and women.',
+        ingredients: 'Full ingredient list per Lilyeve: Water, Alcohol Denat., Butylene Glycol, Caffeine, 1,2-Hexanediol, Hydroxyacetophenone, PEG-60 Hydrogenated Castor Oil, Carbomer, Tromethamine, Menthol, Trideceth-10, Betaine, Disodium EDTA, Glycerin, Eucalyptus Globulus Leaf Oil, Camellia Japonica Flower Extract, Prunus Mume Flower Extract, Prunus Persica (Peach) Flower Extract, Althaea Rosea Flower Extract, Viola Mandshurica Flower Extract, Helianthus Annuus (Sunflower) Flower Extract, Houttuynia Cordata (Heartleaf) Extract, Cyananthus Atratus Extract, Inula Britannica Flower Extract, Lysimachia Foenum-graecum Extract. No exosome ingredient is named in this list, and two of the three Scalp Clera herbs Lilyeve names (Cimicifuga heracleifolia and Pogostemon cablin) aren\'t in it either. The Amazon listing mentions biotin and peptides, which also aren\'t in this list.',
+        safety: {
+            fdaStatus: 'Sold as a cosmetic; not an FDA-approved drug for hair loss.',
+            materials: '100 mL tube with a twist-lock brush head (38 bristles). The second ingredient is denatured alcohol, and it contains menthol and eucalyptus leaf oil even though Lilyeve markets it as fragrance-free.',
+            recalls: 'No recalls found.',
+            sideEffects: 'No warnings are published on Lilyeve\'s product page. It contains denatured alcohol, menthol and eucalyptus oil, so patch test first if you have a sensitive scalp.',
+            opinionAlerts: 'Lilyeve\'s results (75.61% less hair fall after 4 weeks, 89.04% less flaking) are from its own unpublished testing, with no details on how many people took part or whether there was a comparison group.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from Lilyeve; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'Lilyeve says that, "based on clinical testing," four weeks of use cut hair fall by 75.61%, scalp flakiness by 89.04% and scalp irritation by 62.89%, and raised scalp hydration by 113.70%. It doesn\'t say how many people were tested, whether there was a comparison group, or who ran the test, and no published study of this product was found.\n\nCaffeine is the best-studied ingredient here. In a 2017 open-label randomized trial of 210 men with pattern hair loss, a 0.2% caffeine scalp liquid did about as well as 5% minoxidil after 6 months (anagen hairs improved 10.59% vs 11.68%). That trial was in men, and Lilyeve doesn\'t publish its caffeine concentration.\n\nHeartleaf (Houttuynia cordata) extract helped cultured human hair cells grow and kept lab-grown hair follicles in their growth phase longer in a 2019 lab study by a cosmetics company; it hasn\'t been tested on people\'s hair loss. Exosomes are a new area: a 2025 review found only 125 patients across the clinical studies of exosomes for hair loss and called for larger, well-designed trials. Lilyeve\'s ingredient list doesn\'t name an exosome ingredient.\n\nIf you have thinning hair, a dermatologist can check for causes and discuss treatments with stronger evidence, such as minoxidil.',
+        doctorOpinionShort: 'Lilyeve\'s results come from its own unpublished testing. Topical caffeine has one notable trial in 210 men, where it did about as well as minoxidil; heartleaf has been tested only in lab-grown hair cells, and exosomes for hair loss are still early. No published study of this serum was found.',
+        doctorOpinionCitations: [
+            { url: 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100', label: 'lilyeveus.com: Grow:Turn Ampoule, ingredients and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/29055953/', label: 'PubMed: Caffeine-based topical liquid 0.2% vs minoxidil 5% in male androgenetic alopecia, open-label randomized trial (Skin Pharmacol Physiol 2017)', chipLabel: 'Caffeine vs minoxidil trial, 210 men (2017)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31582654/', label: 'PubMed: Hair growth promoting effect of Houttuynia cordata extract in cultured human hair follicle dermal papilla cells (Biol Pharm Bull 2019)', chipLabel: 'Heartleaf lab study (2019)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/39447204/', label: 'PubMed: Exosomes for treating hair loss, a review of clinical studies (Dermatol Surg 2025)', chipLabel: 'Exosomes for hair loss review (2025)' },
+        ],
+        whoItsFor: [
+            'People with thinning hair or shedding who want a non-drug scalp serum with a built-in massage brush',
+            'People with a flaky or itchy scalp looking for a cooling, leave-in serum',
+            'Not a substitute for seeing a dermatologist about new or fast hair loss',
+        ],
+        howToUse: {
+            intro: 'Per Lilyeve: use twice daily, morning and evening.',
+            steps: [
+                'After shampooing, gently towel-dry your hair until damp.',
+                'Twist the brush head counterclockwise to unlock.',
+                'Apply directly to the scalp, focusing on thinning areas.',
+                'Twist the brush head clockwise to lock, then massage the scalp with the brush.',
+            ],
+            sourceUrl: 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100',
+            sourceLabel: 'lilyeveus.com: Grow:Turn Ampoule',
+        },
+        warnings: [
+            'Contains denatured alcohol, menthol and eucalyptus oil: patch test first if you have a sensitive scalp.',
+            'Using medicated hair-loss treatments such as minoxidil: check with a healthcare professional before combining.',
+        ],
+        communityReview: 'On lilyeveus.com, 1,434 of 1,642 reviews (87%) are five stars, and 35 are one or two stars. On Amazon it has 4.1 out of 5 stars from 954 ratings. Reviews on Lilyeve\'s site range from "seems to be working after a month" to "roots feel stronger but not like dramatic changes yet like in ads."',
+        effectiveness: 'No published study of this serum was found. Its best-studied ingredient, topical caffeine, did about as well as minoxidil in one trial in men.',
+        ingredientScience: [
+            {
+                name: 'Caffeine',
+                text: 'In a 2017 open-label, randomized trial of 210 men with pattern hair loss, a 0.2% caffeine scalp liquid was not inferior to 5% minoxidil after 6 months: the share of hairs in the growth (anagen) phase improved 10.59% with caffeine and 11.68% with minoxidil. The trial was in men only and wasn\'t blinded. Lilyeve doesn\'t publish its caffeine concentration.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/29055953/', label: 'PubMed: An open-label randomized multicenter study assessing the noninferiority of a caffeine-based topical liquid 0.2% versus minoxidil 5% solution in male androgenetic alopecia (Dhurat et al., 2017)' },
+                ],
+            },
+            {
+                name: 'Heartleaf (Houttuynia cordata)',
+                text: 'In a 2019 lab study by researchers at LG Household & Healthcare, heartleaf extract made cultured human hair papilla cells multiply and kept lab-grown human hair follicles in their growth phase longer. It hasn\'t been tested for hair loss in people.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31582654/', label: 'PubMed: Hair growth promoting effect of Houttuynia cordata extract in cultured human hair follicle dermal papilla cells (Kim et al., 2019)' },
+                ],
+            },
+            {
+                name: 'Exosomes',
+                text: 'A 2025 review of exosomes for hair loss found nine relevant clinical studies covering 125 patients in total. Side effects were rare, but the authors called for larger, well-designed trials and consistent manufacturing standards. Lilyeve says its exosomes come from heartleaf, but its ingredient list doesn\'t name an exosome ingredient.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/39447204/', label: 'PubMed: Exosomes for treating hair loss, a review of clinical studies (Queen & Avram, Dermatol Surg 2025)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.amazon.com/dp/B0DXPGSDZJ',
+                        text: 'Amazon: lilyeve GROWTURN Hair Growth Serum reviews',
+                        summary: '4.1 out of 5 stars from 954 ratings at time of writing.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100',
+                        text: 'lilyeveus.com: Grow:Turn customer reviews',
+                        summary: '1,642 reviews; 87% are five stars.',
+                    },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    // HerAuré HerMag Magnesium 20-in-1 Complex, verified against
+    // heraure.com/products/hermag-magnesium-20-in-1-complex on 2026-10-07
+    // (price, ingredient facts, usage, FAQ). Image supplied by ayna. NIH ODS
+    // magnesium fact sheet read in a browser (it blocks curl); studies read
+    // via NCBI E-utilities. Not a brand partner, no affiliate link.
+    {
+        id: 'p-heraure-hermag-magnesium',
+        name: 'HerAuré HerMag Magnesium 20-in-1 Complex',
+        brand: 'HerAuré',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['supplement', 'sleep'],
+        tags: ['heraure', 'hermag', 'magnesium', 'magnesium glycinate', 'l-theanine', 'lions mane', 'sleep', 'stress', 'relaxation', 'focus', 'supplement'],
+        price: '$29.99 for 90 capsules (list $49.99)',
+        whereToBuy: ['heraure.com'],
+        url: 'https://heraure.com/products/hermag-magnesium-20-in-1-complex',
+        image: '/products/heraure/hermag-magnesium.webp', // supplied by ayna
+        summary: 'A daily magnesium capsule made for women, combining 12 forms of magnesium (led by magnesium glycinate) with a brain blend of L-theanine, lion\'s mane, alpha-GPC, phosphatidylserine, PQQ, vitamin B6 and zinc, plus slippery elm. HerAuré says it supports relaxation, restful sleep, calm focus and steady energy. Take 2 capsules a day, which gives 300 mg of magnesium; a bottle lasts 45 days.',
+        ingredients: 'Per serving (2 capsules), per HerAuré: HerMag™ Magnesium Complex 800 mg (magnesium glycinate, malate, taurate, orotate, aspartate, lactate, ascorbate, gluconate, sulfate heptahydrate, citrate, oxide and chloride), providing 300 mg magnesium (71% DV). NeuroRadiance™ Blend 135 mg: L-theanine, lion\'s mane mushroom extract, alpha-GPC, phosphatidylserine, PQQ (disodium salt), vitamin B6, zinc (as zinc picolinate). Slippery elm bark extract 50 mg. Other ingredients: HPMC vegetarian capsules, rice flour, magnesium stearate, silicon dioxide. The amounts of each magnesium form and each blend ingredient aren\'t listed.',
+        safety: {
+            fdaStatus: 'Dietary supplement; not evaluated by the FDA for safety or efficacy claims.',
+            materials: '90 vegan capsules (2 a day, 45-day supply). Made in the USA, per the label.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Each serving has 300 mg of magnesium, under the NIH\'s 350 mg daily upper limit for magnesium from supplements; if you take other magnesium products, the total can go over it. The NIH says high supplement intakes can cause diarrhea, nausea and abdominal cramping. Full warnings are listed below.',
+            opinionAlerts: 'The label\'s "1685 mg" and "12x absorption" claims aren\'t explained on HerAuré\'s product page, which lists 800 mg of magnesium compounds giving 300 mg of magnesium per serving.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Product claims are sourced from HerAuré; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'HerAuré says this formula supports relaxation, restful sleep, calm focus and steady energy. No study of this product was found, and HerAuré doesn\'t list how much of each ingredient is in its blends, so what follows is what the research says about its main ingredients.\n\nThe evidence for magnesium and sleep is weak. A 2026 systematic review of 12 randomized trials concluded that current evidence doesn\'t support oral magnesium as a routine treatment for insomnia; it may modestly help some people, but results were inconsistent and the certainty of evidence was low to very low. An earlier 2021 review of 3 trials in 151 older adults found people fell asleep about 17 minutes faster on magnesium than placebo, also with low-quality evidence.\n\nL-theanine has somewhat more support: a 2025 meta-analysis of 18 trials (897 people) found small improvements in self-reported sleep quality and how quickly people fell asleep, though many studies didn\'t test L-theanine alone. This product\'s whole 7-ingredient brain blend is 135 mg, so its L-theanine dose is unknown.\n\nIf you have ongoing trouble sleeping, it\'s worth talking to a clinician.',
+        doctorOpinionShort: 'Evidence that magnesium helps sleep is low quality and inconsistent; L-theanine has small benefits for self-reported sleep. HerAuré doesn\'t publish the amount of each ingredient, and no study of this product was found. Its 300 mg of magnesium is under the NIH\'s 350 mg daily supplement limit.',
+        doctorOpinionCitations: [
+            { url: 'https://heraure.com/products/hermag-magnesium-20-in-1-complex', label: 'heraure.com: Magnesium 20-in-1 Complex, ingredients and claims' },
+            { url: 'https://ods.od.nih.gov/factsheets/Magnesium-Consumer/', label: 'NIH Office of Dietary Supplements: Magnesium, upper limits and interactions' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/42661485/', label: 'PubMed: Magnesium supplementation for sleep in adults, systematic review of randomized controlled trials (J Diet Suppl 2026)', chipLabel: 'Magnesium for sleep review, 12 trials (2026)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/33865376/', label: 'PubMed: Oral magnesium supplementation for insomnia in older adults, systematic review and meta-analysis (BMC Complement Med Ther 2021)', chipLabel: 'Magnesium for insomnia meta-analysis, 151 people (2021)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/40056718/', label: 'PubMed: The effects of L-theanine consumption on sleep outcomes, systematic review and meta-analysis (Sleep Med Rev 2025)', chipLabel: 'L-theanine sleep meta-analysis, 897 people (2025)' },
+        ],
+        whoItsFor: [
+            'Adults who want a magnesium supplement as part of a bedtime or daily routine',
+            'Pregnant, breastfeeding, on medication or managing a medical condition: HerAuré says to check with your healthcare professional first',
+            'Not a substitute for seeing a clinician about ongoing insomnia, anxiety or low energy',
+        ],
+        howToUse: {
+            intro: 'Per HerAuré: take it consistently; any time of day works, though many people take it in the evening.',
+            steps: [
+                'Take 2 capsules daily, with or without food.',
+            ],
+            sourceUrl: 'https://heraure.com/products/hermag-magnesium-20-in-1-complex',
+            sourceLabel: 'heraure.com: Magnesium 20-in-1 Complex',
+        },
+        warnings: [
+            'Pregnant, breastfeeding, taking medication or managing a medical condition: talk with your healthcare professional first (per HerAuré).',
+            'Taking other magnesium supplements or magnesium-containing medicines: the NIH\'s upper limit for magnesium from supplements and medications is 350 mg a day for adults, and this product alone has 300 mg.',
+            'Taking a bisphosphonate for osteoporosis: the NIH says these aren\'t well absorbed when taken too close to a magnesium supplement, so ask about timing.',
+            'Diarrhea, nausea or cramping: the NIH lists these as effects of too much supplemental magnesium.',
+        ],
+        communityReview: 'HerAuré\'s product page shows no customer reviews for this product yet.',
+        effectiveness: 'Evidence that magnesium improves sleep is low quality and inconsistent; L-theanine shows small benefits for self-reported sleep.',
+        ingredientScience: [
+            {
+                name: 'Magnesium (for sleep)',
+                text: 'A 2026 systematic review of 12 randomized trials found inconsistent results and low to very low certainty of evidence, and concluded that oral magnesium isn\'t supported as a routine insomnia treatment, though it may modestly help some people. A 2021 meta-analysis of 3 trials in 151 older adults found magnesium cut the time to fall asleep by about 17 minutes versus placebo; total sleep time didn\'t change significantly, and the evidence was low quality.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/42661485/', label: 'PubMed: Magnesium supplementation for sleep in adults, a systematic review of randomized controlled trials (Lopresti et al., J Diet Suppl 2026)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/33865376/', label: 'PubMed: Oral magnesium supplementation for insomnia in older adults, a systematic review & meta-analysis (Mah & Pitre, 2021)' },
+                ],
+            },
+            {
+                name: 'Magnesium (safety)',
+                text: 'The NIH sets the upper limit for magnesium from supplements and medications at 350 mg a day for adults. Too much can cause diarrhea, nausea and abdominal cramping, and magnesium supplements can interfere with some medicines, such as bisphosphonates for osteoporosis.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/Magnesium-Consumer/', label: 'NIH Office of Dietary Supplements: Magnesium fact sheet for consumers' },
+                ],
+            },
+            {
+                name: 'L-theanine',
+                text: 'A 2025 meta-analysis of 18 randomized trials (897 people) found L-theanine made small improvements in self-reported sleep quality, time to fall asleep and daytime functioning. The authors noted few studies tested L-theanine on its own. HerAuré doesn\'t list its L-theanine dose.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/40056718/', label: 'PubMed: The effects of L-theanine consumption on sleep outcomes, a systematic review and meta-analysis (Bulman et al., Sleep Med Rev 2025)' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [] },
         },
         integrations: [],
         badges: [],
@@ -3619,6 +5584,1607 @@ export const BRAND_PRODUCTS = [
                 { platform: 'instagram', url: 'https://www.instagram.com/livlabsfitness/', text: 'Liv Labs on Instagram', summary: 'Brand content and community posts.' },
             ] },
         },
+        isEmergingBrand: true,
+    },
+    // Alubri (alubri.com), catalog entries only. Alubri is NOT an ayna brand
+    // partner: keep it out of src/utils/partnerBrands.js's
+    // PARTNER_BRAND_ORDER and off the Brand Partnerships page
+    // (src/components/BrandPartners.jsx), so no partner badge or disclosure
+    // shows and Buy Now uses the standard (non-partner) route.
+    //
+    // Sourcing rule for these six entries: alubri.com ONLY (product pages,
+    // /pages/faq, /pages/science, /pages/about), fetched 2026-09-29. Prices,
+    // sizes, ingredient lists, directions, warnings, and clinical-study
+    // figures are all as alubri.com states them; no retailer listings,
+    // press releases, or Reddit are used as sources. Every clinical figure
+    // is the brand's own report, labeled as such. Two exceptions:
+    // ingredientScience (Scientific Literature tab) cites NIH sources
+    // (PubMed/PMC, NCCIH, MedlinePlus) for what each ingredient can do,
+    // ingredient-level evidence, not validation of Alubri's products; and
+    // every product's community links include its own Amazon listing (one
+    // ASIN per product, found 2026-09-29), plus Reddit threads on the Gel and
+    // Serum, as places to read real reviews. These sites block automated
+    // access, so no rating or quote is taken from them.
+    // whereToBuy is the retailer list from alubri.com's FAQ ("alubri.com and
+    // select retailers including Amazon, Walmart.com, Target.com, and
+    // Grove.com"); the site doesn't break that down per product. The
+    // Rejuvenate & Restore Kit (added to alubri.com 2026-09-28) lists
+    // alubri.com and Amazon, where its own listing (B0H73846JQ) exists.
+    // Product photos stored under public/products/alubri/.
+    {
+        id: 'p-alubri-vaginal-moisturizing-gel',
+        name: 'Alubri Vaginal Moisturizing Gel',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'menopause', 'hormone-free'],
+        price: '$29.99 (50 mL, 8 applicators)',
+        whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
+        url: 'https://alubri.com/products/vaginal-moisturizing-gel',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/vaginal-moisturizing-gel.webp',
+        summary: 'A hormone-free, fragrance-free internal vaginal moisturizer that Alubri says delivers up to 72 hours of hydration from one application. It pairs hyaluronic acid (sodium hyaluronate) and lactic acid with Alubri\'s proprietary "Activated Oil Complex" (pre-activated coconut and rosehip oils), which the brand says balances the vaginal microbiome. Each box is a 50 mL tube with 8 single-use applicators; used twice a week, one box lasts about 4 weeks.',
+        safety: {
+            fdaStatus: 'alubri.com presents it as a hormone-free personal-care moisturizer and does not describe it as an FDA-cleared device or drug.',
+            // Full ingredient list as printed on alubri.com, shown in full
+            // under "Materials" on the Evidence view (see buildFactRows in
+            // ProductModal.jsx, which doesn't truncate this field).
+            materials: '50 mL (1.7 fl oz) tube with 8 single-use applicators. Ingredients: aqua (water), glucomannan, hydrolyzed Rosa canina (rosehip) fruit oil, hydrolyzed Cocos nucifera (coconut) oil, sodium hyaluronate, lactic acid, Hylocereus undatus (dragon fruit) fruit extract, Aloe barbadensis leaf juice, propanediol, xanthan gum, potassium sorbate, sodium benzoate, benzyl alcohol, benzoic acid. Fragrance-free and hormone-free.',
+            recalls: 'No recalls are mentioned on alubri.com; check current regulator and manufacturer recall notices.',
+            sideEffects: 'Alubri says some women feel a mild warming or blushing sensation on first use, or brief stinging from the lactic acid, that usually fades within minutes. If discomfort persists, stop and see a doctor. Full warnings are listed below.',
+            opinionAlerts: 'The clinical figures (72-hour hydration, microbiome changes) come from a study Alubri describes on its own site; the full study isn\'t published there.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced only from Alubri\'s own site (alubri.com), not independent clinical literature.',
+        doctorOpinion: 'Alubri says the gel was developed by Dr. Nicole Kerner, its co-founder and Chief Medical Officer, a board-certified, menopause-certified OB-GYN with more than 20 years in women\'s health.\n\nThe brand cites an independent, third-party, IRB-approved study run under ISO Good Laboratory Practices: 51 symptomatic menopausal women used the gel twice a week for one month. Brand-reported results: one application raised vaginal hydration by 64% at 72 hours, and 94% said their vagina felt moisturized, 94% hydrated, and 92% soothed.\n\nAlubri also reports that a single application measurably increased Lactobacillus (the "good" vaginal bacteria) and decreased Gardnerella vaginalis, with the changes sustained over four weeks. These are brand-reported results; the full study isn\'t published on alubri.com.',
+        doctorOpinionShort: 'Alubri cites a third-party study of 51 menopausal women: one application raised vaginal hydration 64% at 72 hours, and 94% said they felt moisturized. Developed by a menopause-certified OB-GYN. Brand-reported results.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/vaginal-moisturizing-gel', label: 'alubri.com: where Alubri presents these results' },
+            { url: 'https://alubri.com/pages/science', label: 'alubri.com: Science (microbiome results)' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        // From the "Ideal for" list on alubri.com.
+        whoItsFor: [
+            'Vaginal dryness from perimenopause, menopause, or postmenopause',
+            'Hormone-related dryness from surgical menopause, breastfeeding, or certain medications (including aromatase inhibitors and anti-estrogen therapies)',
+            'Women who want a hormone-free option, including those with a history of estrogen-receptor-positive breast cancer',
+            'Anyone looking to support vaginal microbiome balance',
+        ],
+        // Rendered as a bulleted list on the Evidence view.
+        howToUse: {
+            intro: 'Per Alubri\'s own directions:',
+            steps: [
+                'Attach a single-use applicator to the tube and squeeze to fill to 3 grams.',
+                'Insert the applicator into the vagina and push to release the gel.',
+                'Remove the applicator and throw it away.',
+                'Use twice a week, ideally at bedtime, or as needed. For best absorption, lie flat for about 10 minutes afterward.',
+                'Using it during the day? Wait at least 10 minutes before swimming or bathing.',
+                'Also using vaginal estrogen? Alubri suggests using the gel on alternate nights (for example, estrogen Monday and Thursday, gel Tuesday and Friday).',
+            ],
+            sourceUrl: 'https://alubri.com/products/vaginal-moisturizing-gel',
+            sourceLabel: 'alubri.com: Vaginal Moisturizing Gel',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'A mild warming or blushing feeling on first use is normal per Alubri. If discomfort persists, stop and see a doctor.',
+            'Alubri says a slight increase in discharge is normal at first and should ease within a few uses.',
+            'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
+            'Not tested for compatibility with condoms, per Alubri.',
+        ],
+        communityReview: 'Customer reviews for this gel are on its Amazon listing, and a Reddit r/AskONLYWomenOver30 thread has women comparing the vaginal moisturizers they\'ve tried (both linked below). Neither site allows automated access, so ayna hasn\'t pulled a rating or quotes from them; read them directly. alubri.com itself shows no star rating, only the brand\'s own study results: 94% of participants said the fragrance-free gel smells good and 88% said it stayed put.',
+        effectiveness: 'Alubri reports a 64% increase in vaginal hydration 72 hours after one application, plus favorable microbiome changes, in its own study of 51 menopausal women. No independent study of this product is cited on alubri.com.',
+        // Plain-text ingredient summary, kept as a string since search
+        // indexing, the interaction checker, and DoctorPrep.jsx all read it.
+        ingredients: 'Sodium hyaluronate (hyaluronic acid), lactic acid, Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit extract, aloe, glucomannan.',
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
+        ingredientScience: [
+            {
+                name: 'Coconut and rosehip oils (Activated Oil Complex)',
+                text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/15724344/', label: 'PubMed (NIH): Virgin coconut oil vs. mineral oil for dry skin, randomized trial (Dermatitis, 2004)' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-inflammatory and skin barrier effects of plant oils, incl. rosehip (Int J Mol Sci, 2017)' },
+                ],
+            },
+            {
+                name: 'Lactic acid',
+                text: 'In a healthy vagina dominated by Lactobacillus, those bacteria make lactic acid, which keeps vaginal pH low and may help protect against infection. A 2021 systematic review found there isn\'t yet high-quality evidence that lactic acid products cure bacterial vaginosis or shift the vaginal microbiome, so they\'re best seen as pH support.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3819307/', label: 'NIH (PMC): Vaginal pH and lactic acid when lactobacilli dominate (PLoS One, 2013)' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7877752/', label: 'NIH (PMC): Lactic acid products for bacterial vaginosis, systematic review (PLoS One, 2021)' },
+                ],
+            },
+            {
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'Hyaluronic acid holds water in tissue. In a randomized trial of 144 postmenopausal women with vaginal dryness, a hyaluronic acid vaginal gel used every 3 days for 30 days improved dryness symptoms in 84% of women, about the same as estriol (estrogen) cream at 89%. That trial tested a different gel, so it supports the ingredient, not Alubri\'s product specifically.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23574713/', label: 'PubMed (NIH): Hyaluronic acid vaginal gel vs. estriol cream for vaginal dryness (J Sex Med, 2013)' },
+                ],
+            },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/AskONLYWomenOver30/comments/1wcgjzy/best_vaginal_moisturizer_youve_tried/', text: 'Reddit r/AskONLYWomenOver30: Best vaginal moisturizer you\'ve tried?', summary: 'A community thread where women over 30 share the vaginal moisturizers they\'ve used. Reddit blocks automated access, so ayna couldn\'t check which products are mentioned; read the thread directly.' },
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G4SG1WJY', text: 'Amazon: Alubri Vaginal Moisturizer, 72-Hour Hydration, Hormone-Free', summary: 'This gel\'s Amazon listing (1-month supply), with customer ratings and reviews. Amazon blocks automated access, so no rating is quoted here; read the reviews directly on the page.' },
+                    { platform: 'website', url: 'https://alubri.com/products/vaginal-moisturizing-gel', text: 'alubri.com: Vaginal Moisturizing Gel', summary: 'Alubri\'s own product page, with the brand\'s study results and directions.' },
+                    { platform: 'website', url: 'https://alubri.com/pages/faq', text: 'alubri.com: FAQ', summary: 'Alubri\'s answers on first-use sensations, discharge, condoms, and using the gel with vaginal estrogen.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-alubri-intimate-serum',
+        name: 'Alubri Intimate Serum',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'menopause', 'postpartum', 'hormone-free', 'external-only'],
+        price: '$24.99 (50 mL) · $12.99 (1.0 fl oz trial size)',
+        whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
+        url: 'https://alubri.com/products/intimate-serum',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/intimate-serum.webp',
+        summary: 'A lightweight, water-based serum for external intimate skin: the vulva, labia, and vaginal opening. It pairs hyaluronic acid (sodium hyaluronate) with inulin, which Alubri says also supports a healthy skin microbiome, plus aloe, green tea, and chamomile. The brand says it absorbs with no oily residue, feels cooling, and helps the skin hold on to its natural moisture. Hormone-free and fragrance-free. Sold in a 50 mL bottle or a 1.0 fl oz trial size.',
+        safety: {
+            fdaStatus: 'alubri.com presents it as a hormone-free personal-care serum and does not describe it as an FDA-cleared device or drug.',
+            materials: '50 mL (1.7 fl oz) pump bottle, or 1.0 fl oz trial size. Ingredients: aqua (water), betaine, inulin, sodium lactate, lactic acid, sodium hyaluronate, Aloe barbadensis leaf juice, Camellia sinensis (green tea) leaf extract, Chamomilla recutita (chamomile) flower extract, tocopherol, ethylhexylglycerin, hydroxyethylcellulose, xanthan gum, disodium phosphate, sodium phosphate, citric acid, phenoxyethanol, potassium sorbate, sodium benzoate, sodium hydroxide. Fragrance-free, hormone-free, hypoallergenic.',
+            recalls: 'No recalls are mentioned on alubri.com; check current regulator and manufacturer recall notices.',
+            sideEffects: 'For external use. Stop and see a doctor if irritation develops. Full warnings are listed below.',
+            opinionAlerts: 'Clinical figures (including the 152% hydration increase) come from studies Alubri describes on its own site; the full studies aren\'t published there.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced only from Alubri\'s own site (alubri.com), not independent clinical literature.',
+        doctorOpinion: 'Alubri says the serum was developed with Dr. Nicole Kerner, its co-founder and Chief Medical Officer, a board-certified, menopause-certified OB-GYN, and that it is gynecologist- and dermatologist-tested.\n\nThe brand reports that in an IRB-approved study run under ISO Good Laboratory Practices, one application raised vulvar hydration by 152% versus baseline, measured 72 hours later. In a separate independent, third-party study of 50 women using the serum for 2 weeks, 94% said their skin felt hydrated, 92% protected and moisturized, 90% soothed and nourished, and 90% said the hydration was long-lasting. These are brand-reported results.',
+        doctorOpinionShort: 'Alubri reports one application raised vulvar hydration 152% versus baseline, and in a 2-week study of 50 women, 94% said skin felt hydrated. Brand-reported results.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/intimate-serum', label: 'alubri.com: where Alubri presents these results' },
+            { url: 'https://alubri.com/pages/science', label: 'alubri.com: Science (vulvar hydration)' },
+        ],
+        // From the "Ideal for" list on alubri.com.
+        whoItsFor: [
+            'Daily vulvar dryness or discomfort from menopause, perimenopause, hormonal shifts, or medications',
+            'Skin recovery after shaving, waxing, or laser hair removal',
+            'Postpartum and breastfeeding dryness',
+            'Women who prefer non-hormonal intimate care, including those with a history of breast cancer or on anti-estrogen therapies',
+        ],
+        howToUse: {
+            intro: 'Per Alubri\'s own directions:',
+            steps: [
+                'First use: pump 10 to 15 times to prime the dispenser.',
+                'Dispense a small amount onto your fingertips.',
+                'Apply over the vulva, labia, and vaginal opening, and massage until absorbed. No need to rinse.',
+                'Use daily, or as needed: morning, evening, before or after intimacy, or after grooming.',
+            ],
+            sourceUrl: 'https://alubri.com/products/intimate-serum',
+            sourceLabel: 'alubri.com: Intimate Serum',
+        },
+        warnings: [
+            'For external intimate skin. For internal dryness, Alubri\'s internal product is the Vaginal Moisturizing Gel.',
+            'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
+            'Not tested for compatibility with condoms, per Alubri.',
+        ],
+        communityReview: 'Customer reviews for this serum are on its Amazon listing, and there\'s a Reddit post about it in r/Influenster (both linked below). Influenster is a product-testing community whose members often get products free to review, so weigh posts there with that in mind. Neither site allows automated access, so ayna hasn\'t pulled a rating or quotes; read them directly. alubri.com itself shows no star rating, only the brand\'s own study results (above).',
+        effectiveness: 'Alubri reports a 152% increase in vulvar hydration after one application, and high self-reported hydration after 2 weeks of use, in its own studies. No independent study of this product is cited on alubri.com.',
+        ingredients: 'Sodium hyaluronate (hyaluronic acid), inulin, betaine, lactic acid / sodium lactate, aloe, green tea extract, chamomile extract, vitamin E (tocopherol).',
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
+        ingredientScience: [
+            {
+                name: 'Inulin',
+                text: 'Inulin is a plant fiber best known as a prebiotic that feeds beneficial gut bacteria when eaten; an NIH-indexed review covers how ingested prebiotics may affect distant sites, including skin. ayna found no studies of inulin applied directly to skin, so Alubri\'s skin-microbiome claim for this serum hasn\'t been tested independently.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5037510/', label: 'NIH (PMC): Distant site effects of ingested prebiotics, incl. inulin (Nutrients, 2016)' },
+                ],
+            },
+            {
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'In a double-blind randomized trial of 36 older adults with dry skin, a lotion with low-molecular-weight hyaluronic acid raised skin hydration more than a plain lotion after 4 weeks, with no side effects. The study was on leg skin, not vulvar skin.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38829483/', label: 'PubMed (NIH): Topical hyaluronic acid for dry skin in older adults, randomized trial (Arch Dermatol Res, 2024)' },
+                ],
+            },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/Influenster/comments/1pnf635/alubri_intinate_serum/', text: 'Reddit r/Influenster: Alubri Intimate Serum', summary: 'A post about this serum in the Influenster community, where members often receive products free to review. Reddit blocks automated access, so read the post directly.' },
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G2N2TY1K', text: 'Amazon: Alubri Intimate Serum for Women, Water-Based, Fragrance-Free, 1.7oz', summary: 'This serum\'s Amazon listing (1.7 oz full size), with customer ratings and reviews for this specific product. Amazon blocks automated access, so no rating is quoted here; read the reviews directly on the page.' },
+                    { platform: 'website', url: 'https://alubri.com/products/intimate-serum', text: 'alubri.com: Intimate Serum', summary: 'Alubri\'s own product page, with the brand\'s study results and directions.' },
+                    { platform: 'website', url: 'https://alubri.com/pages/faq', text: 'alubri.com: FAQ', summary: 'Alubri\'s answers on sensitive skin, condoms, and how long a bottle lasts.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-alubri-calming-cream',
+        name: 'Alubri Calming Cream',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'menopause', 'hormone-free', 'external-only'],
+        price: '$29.99 (50 mL)',
+        whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
+        url: 'https://alubri.com/products/calming-cream',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/calming-cream.png',
+        summary: 'An over-the-counter anti-itch cream for external intimate skin, with 0.25% hydrocortisone to relieve itching and irritation. The base adds shea butter, hyaluronic acid, lactic acid, oat, aloe, and Alubri\'s Activated Oil Complex, which the brand says supports a balanced vulvar microbiome. Alubri positions it as giving the relief of an OTC ointment in a lightweight, non-greasy cream. Hormone-free and fragrance-free.',
+        safety: {
+            fdaStatus: 'An over-the-counter external analgesic (hydrocortisone 0.25%), per alubri.com. External use only.',
+            materials: '50 mL (1.7 fl oz) tube. Active ingredient: hydrocortisone 0.25% (external analgesic). Inactive ingredients: aqua (water), propanediol, cetearyl alcohol, isopropyl palmitate, Butyrospermum parkii (shea) butter, caprylic/capric triglycerides, dimethicone, Cocos nucifera (coconut) oil, glyceryl stearate, hydrolyzed Rosa canina (rosehip) fruit oil, hydrolyzed Cocos nucifera (coconut) oil, sodium hyaluronate, lactic acid, Avena sativa (oat) meal extract, tocopherol, Aloe barbadensis leaf juice, Lactobacillus ferment lysate, hydrogenated lecithin, cetearyl glucoside, sclerotium gum, dimethicone crosspolymer, xanthan gum, ethylhexylglycerin, butylene glycol, phenoxyethanol, isododecane.',
+            recalls: 'No recalls are mentioned on alubri.com; check current regulator and manufacturer recall notices.',
+            sideEffects: 'For external use only. Alubri says to check with a healthcare professional first if you have specific sensitivities or use prescription topical products. Full warnings are listed below.',
+            opinionAlerts: 'This is an OTC drug; alubri.com doesn\'t reproduce the full Drug Facts label, so read the warnings on the package before use. Clinical figures are brand-reported.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced only from Alubri\'s own site (alubri.com), not independent clinical literature.',
+        doctorOpinion: 'Alubri says the cream was developed with Dr. Nicole Kerner, its co-founder and Chief Medical Officer, a board-certified, menopause-certified OB-GYN. The brand says it chose 0.25% hydrocortisone as a strength that gives fast relief while staying gentle on sensitive skin.\n\nIn an independent, third-party study of 53 menopausal women who used the cream for 24 hours, Alubri reports that 94% said their skin felt soothed after one application, 94% protected, 96% nourished and conditioned, and 98% said it was easy to use. These are brand-reported results.\n\nAlubri\'s professional FAQ says the cream isn\'t intended to treat skin conditions, but may be used alongside doctor-prescribed treatment for conditions such as lichen sclerosus to help soothe and support comfort.',
+        doctorOpinionShort: 'An OTC 0.25% hydrocortisone cream. In Alubri\'s study of 53 menopausal women, 94% said skin felt soothed after one application. Brand-reported results.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/calming-cream', label: 'alubri.com: where Alubri presents these results' },
+            { url: 'https://alubri.com/pages/faq', label: 'alubri.com: FAQ (why 0.25% hydrocortisone)' },
+        ],
+        // From the "Ideal for" list on alubri.com.
+        whoItsFor: [
+            'Temporary relief of external feminine itching',
+            'Vulvar irritation from menopause, perimenopause, or hormonal changes',
+            'Itching and sensitivity from shaving, waxing, or friction',
+            'Itching and sensitivity after exercise or sex',
+        ],
+        howToUse: {
+            intro: 'Per Alubri\'s own directions:',
+            steps: [
+                'Apply a pea-size amount to the external vulvar area with clean fingers.',
+                'Add more as needed to cover the affected area in a thin layer.',
+                'Use up to 3 to 4 times a day as needed, or as directed by a healthcare provider.',
+                'Tip: use after intimacy, exercise, or friction. If certain activities tend to irritate your skin, Alubri suggests applying it beforehand.',
+            ],
+            sourceUrl: 'https://alubri.com/products/calming-cream',
+            sourceLabel: 'alubri.com: Calming Cream',
+        },
+        warnings: [
+            'External use only.',
+            'Contains hydrocortisone, a topical steroid. Read the Drug Facts label on the package before use.',
+            'Itching or irritation that persists can be a sign of infection. See a doctor.',
+            'Not tested for compatibility with condoms, per Alubri.',
+        ],
+        communityReview: 'Customer reviews for this cream are on its own Amazon listing (linked below). Amazon blocks automated access, so ayna hasn\'t pulled a rating or quotes; read them directly. alubri.com itself shows no star rating. The only customer feedback on the site is the brand\'s own study results: 92% said it isn\'t greasy and 100% said it was easy to use.',
+        effectiveness: 'Hydrocortisone is the active ingredient for itch relief. Alubri\'s own study of 53 women reports that 94% felt soothed after one application. No independent study of this product is cited on alubri.com.',
+        ingredients: 'Hydrocortisone 0.25% (active). Inactive highlights: shea butter, sodium hyaluronate (hyaluronic acid), lactic acid, oat extract, aloe, Activated Oil Complex (hydrolyzed coconut and rosehip oils), vitamin E (tocopherol).',
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
+        ingredientScience: [
+            {
+                name: 'Coconut and rosehip oils (Activated Oil Complex)',
+                text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/15724344/', label: 'PubMed (NIH): Virgin coconut oil vs. mineral oil for dry skin, randomized trial (Dermatitis, 2004)' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-inflammatory and skin barrier effects of plant oils, incl. rosehip (Int J Mol Sci, 2017)' },
+                ],
+            },
+            {
+                name: 'Hydrocortisone 0.25%',
+                text: 'NIH\'s MedlinePlus describes topical hydrocortisone as a corticosteroid used to treat redness, swelling, itching, and discomfort of skin conditions. It works by activating natural substances in the skin that reduce swelling, redness, and itching.',
+                citations: [
+                    { url: 'https://medlineplus.gov/druginfo/meds/a682793.html', label: 'NIH MedlinePlus: Hydrocortisone Topical' },
+                ],
+            },
+            {
+                name: 'Shea butter',
+                text: 'In a study of 34 children with eczema, a cream containing shea butter extract was well accepted and performed comparably to a ceramide-based product. Shea butter\'s triterpenes, tocopherols, and sterols have shown anti-inflammatory activity in lab studies.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26314567/', label: 'PubMed (NIH): Shea butter extract cream vs. ceramide product for eczema (Hong Kong Med J, 2015)' },
+                ],
+            },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G4SDS8Z5', text: 'Amazon: Alubri Calming Hydrocortisone Cream for Women, Feminine Itch, 1.7oz', summary: 'This cream\'s Amazon listing (1.7 oz), with customer ratings and reviews for this specific product. Amazon blocks automated access, so no rating is quoted here; read the reviews directly on the page.' },
+                    { platform: 'website', url: 'https://alubri.com/products/calming-cream', text: 'alubri.com: Calming Cream', summary: 'Alubri\'s own product page, with the brand\'s study results and directions.' },
+                    { platform: 'website', url: 'https://alubri.com/pages/faq', text: 'alubri.com: FAQ', summary: 'Alubri\'s answers on the hydrocortisone strength and use alongside prescribed treatment.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-alubri-vulva-balm',
+        name: 'Alubri Vulva Balm',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'menopause', 'hormone-free', 'external-only'],
+        price: '$24.99 (50 g)',
+        whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
+        url: 'https://alubri.com/products/vulva-balm',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/vulva-balm.png',
+        summary: 'A non-greasy daily moisturizer for the vulva that Alubri says hydrates, soothes, protects against dryness, and calms sensitive skin. It combines hyaluronic acid (sodium hyaluronate), a peptide, and Alubri\'s Activated Oil Complex with oat, green tea, dragon fruit, and Tasmanian pepperberry extracts. The brand describes a rich but lightweight balm that absorbs quickly to a soft, powdery finish. Hormone-free, fragrance-free, and hypoallergenic.',
+        safety: {
+            fdaStatus: 'alubri.com presents it as a hormone-free personal-care moisturizer and does not describe it as an FDA-cleared device or drug.',
+            materials: '50 g (1.7 oz) jar. Ingredients: aqua (water), dimethicone, isododecane, caprylic/capric triglyceride, ozokerite, propanediol, sorbitan oleate, dimethicone crosspolymer, ceresin, hydrolyzed Rosa canina (rosehip) fruit oil, hydrolyzed Cocos nucifera (coconut) oil, sodium hyaluronate, palmitoyl hexapeptide-52, Hylocereus undatus (dragon fruit) fruit extract, Tasmannia lanceolata (Tasmanian pepperberry) fruit extract, Avena sativa (oat) kernel extract, Camellia sinensis (green tea) leaf extract, Passiflora incarnata flower extract, tocopherol, alpha-glucan oligosaccharide, tocopheryl acetate, Lactobacillus ferment lysate, biosaccharide gum-4, adenosine, ethylhexylglycerin, phenoxyethanol, sodium chloride, benzyl alcohol, potassium sorbate, benzoic acid.',
+            recalls: 'No recalls are mentioned on alubri.com; check current regulator and manufacturer recall notices.',
+            sideEffects: 'For external use only. Alubri suggests testing a small amount on external skin first. Full warnings are listed below.',
+            opinionAlerts: 'Clinical figures (including the vulvar pH result) come from a study Alubri describes on its own site; the full study isn\'t published there.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced only from Alubri\'s own site (alubri.com), not independent clinical literature.',
+        doctorOpinion: 'Alubri says the balm was developed with Dr. Nicole Kerner, its co-founder and Chief Medical Officer, a board-certified, menopause-certified OB-GYN, and that it is gynecologist- and dermatologist-tested.\n\nIn an independent, third-party study of 50 women who used the balm daily for two weeks, Alubri reports that vulvar pH in menopausal women dropped significantly (from 6.3 to 6.0) at both 24 hours and two weeks. The brand notes that postmenopausal vaginal pH is typically well above the 3.8 to 4.5 range of reproductive-age women. Participants also reported that skin felt more hydrated (90%) and more conditioned (92%). These are brand-reported results.\n\nAlubri\'s professional FAQ says the balm isn\'t intended to treat skin conditions, but may be used alongside doctor-prescribed treatment for conditions such as lichen sclerosus.',
+        doctorOpinionShort: 'In Alubri\'s 2-week study of 50 women, vulvar pH fell from 6.3 to 6.0 and 90% said skin felt more hydrated. Developed by a menopause-certified OB-GYN. Brand-reported results.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/vulva-balm', label: 'alubri.com: where Alubri presents these results' },
+            { url: 'https://alubri.com/pages/science', label: 'alubri.com: Science (pH results)' },
+        ],
+        // From the "Ideal for" list on alubri.com.
+        whoItsFor: [
+            'Vulvar dryness from menopause, perimenopause, or hormonal changes',
+            'Women who want daily microbiome and pH support for intimate skin',
+            'Anyone who needs hormone-free vulvar care',
+            'A daily protective layer under clothing, or before workouts, beach days, or tight clothing',
+        ],
+        howToUse: {
+            intro: 'Per Alubri\'s own directions:',
+            steps: [
+                'Scoop a small amount onto your fingertips.',
+                'Apply over the vulva, labia, and surrounding external intimate skin.',
+                'Use daily, morning or evening, and reapply whenever skin feels dry.',
+                'Tip: apply after a shower, while skin is clean and slightly damp, to help lock in moisture.',
+            ],
+            sourceUrl: 'https://alubri.com/products/vulva-balm',
+            sourceLabel: 'alubri.com: Vulva Balm',
+        },
+        warnings: [
+            'For external use only.',
+            'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
+            'Not tested for compatibility with condoms, per Alubri.',
+        ],
+        communityReview: 'Customer reviews for this balm are on its own Amazon listing (linked below). Amazon blocks automated access, so ayna hasn\'t pulled a rating or quotes; read them directly. alubri.com itself shows no star rating. The only customer feedback on the site is the brand\'s own study results: 92% said it isn\'t greasy and 100% said it was easy to use.',
+        effectiveness: 'Alubri reports a significant drop in vulvar pH (6.3 to 6.0) after 24 hours and two weeks, plus high self-reported hydration, in its own study of 50 women. No independent study of this product is cited on alubri.com.',
+        ingredients: 'Sodium hyaluronate (hyaluronic acid), palmitoyl hexapeptide-52 (peptide), Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit extract, Tasmanian pepperberry extract, oat kernel extract, green tea extract, vitamin E (tocopherol).',
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
+        ingredientScience: [
+            {
+                name: 'Coconut and rosehip oils (Activated Oil Complex)',
+                text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/15724344/', label: 'PubMed (NIH): Virgin coconut oil vs. mineral oil for dry skin, randomized trial (Dermatitis, 2004)' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-inflammatory and skin barrier effects of plant oils, incl. rosehip (Int J Mol Sci, 2017)' },
+                ],
+            },
+            {
+                name: 'Allantoin',
+                text: 'Alubri lists allantoin as a key ingredient for softening and soothing skin, but it doesn\'t appear in the balm\'s published ingredient list on alubri.com. In an NIH-indexed study in rats, a 5% allantoin lotion sped wound healing by calming inflammation and supporting new tissue growth; ayna found no human studies of allantoin for vulvar skin.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/20877959/', label: 'PubMed (NIH): Wound healing profile of topical allantoin, rat study (Acta Cir Bras, 2010)' },
+                ],
+            },
+            {
+                name: 'Sodium hyaluronate (hyaluronic acid)',
+                text: 'In a double-blind randomized trial of 36 older adults with dry skin, a lotion with low-molecular-weight hyaluronic acid raised skin hydration more than a plain lotion after 4 weeks, with no side effects. The study was on leg skin, not vulvar skin.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/38829483/', label: 'PubMed (NIH): Topical hyaluronic acid for dry skin in older adults, randomized trial (Arch Dermatol Res, 2024)' },
+                ],
+            },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G4SHBN1T', text: 'Amazon: Alubri Vulva Balm, Intimate Moisturizer, Non-Greasy, Fragrance-Free, 1.7oz', summary: 'This balm\'s Amazon listing (1.7 oz full size), with customer ratings and reviews for this specific product. Amazon blocks automated access, so no rating is quoted here; read the reviews directly on the page.' },
+                    { platform: 'website', url: 'https://alubri.com/products/vulva-balm', text: 'alubri.com: Vulva Balm', summary: 'Alubri\'s own product page, with the brand\'s study results and directions.' },
+                    { platform: 'website', url: 'https://alubri.com/pages/faq', text: 'alubri.com: FAQ', summary: 'Alubri\'s answers on daily use, use with vaginal estrogen, and how long a jar lasts.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-alubri-vaginal-wellness-kit',
+        name: 'Alubri Vaginal Wellness Kit',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'menopause', 'hormone-free', 'travel-friendly'],
+        price: '$19.99 (2-week trial)',
+        whereToBuy: ['alubri.com', 'Amazon', 'Walmart', 'Target', 'Grove'],
+        url: 'https://alubri.com/products/vaginal-wellness-kit-bag-version',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/vaginal-wellness-kit.webp',
+        summary: 'A 2-week trial kit of Alubri\'s two core moisturizers in trial sizes: the Vaginal Moisturizing Gel (30 mL, with single-use applicators) for internal hydration and microbiome balance, and the Intimate Serum (30 mL) for external vulvar hydration. Alubri pitches it as an easy introduction to the brand.',
+        safety: {
+            fdaStatus: 'alubri.com presents both products as hormone-free personal-care moisturizers and does not describe either as an FDA-cleared device or drug.',
+            materials: '1 × 30 mL (1.0 fl oz) Vaginal Moisturizing Gel with single-use applicators, and 1 × 30 mL (1.0 fl oz) Intimate Serum. Full ingredient lists are on the Alubri Vaginal Moisturizing Gel and Alubri Intimate Serum entries. Hormone-free and fragrance-free.',
+            recalls: 'No recalls are mentioned on alubri.com; check current regulator and manufacturer recall notices.',
+            sideEffects: 'Alubri says some women feel mild warming or brief stinging on first use of the gel, which usually fades. If discomfort persists, stop and see a doctor. Full warnings are listed below.',
+            opinionAlerts: 'Clinical figures for each product are brand-reported (see the full-size Gel and Serum entries).',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced only from Alubri\'s own site (alubri.com), not independent clinical literature.',
+        doctorOpinion: 'The same two formulas as Alubri\'s full-size Vaginal Moisturizing Gel and Intimate Serum, developed with Dr. Nicole Kerner, Alubri\'s co-founder and Chief Medical Officer, a board-certified, menopause-certified OB-GYN.\n\nAlubri reports that in its study of 51 women using the gel twice a week for a month, 94% said their vagina felt moisturized and hydrated, 92% soothed, and 88% said the gel stayed put. In its 2-week study of 50 women using the serum, 94% said their skin felt hydrated and 90% said the hydration was long-lasting. These are brand-reported results.',
+        doctorOpinionShort: 'A 2-week trial of Alubri\'s internal gel and external serum. In the brand\'s studies, 94% said the gel left them feeling moisturized and 94% said the serum left skin hydrated. Brand-reported results.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/vaginal-wellness-kit-bag-version', label: 'alubri.com: Vaginal Wellness Kit' },
+        ],
+        // From the "Ideal for" list on alubri.com.
+        whoItsFor: [
+            'Women with dryness or discomfort tied to perimenopause, menopause, or hormonal shifts',
+            'Painful intimacy linked to dryness',
+            'Anyone who wants to try Alubri\'s internal and external moisturizers before buying full sizes',
+        ],
+        howToUse: {
+            intro: 'Per Alubri\'s own directions for each product:',
+            steps: [
+                'Gel (internal): attach a single-use applicator, squeeze to fill to 3 grams, insert, and push to release. Throw the applicator away. Use twice a week or as needed, ideally before bed, and lie flat for 10 minutes afterward.',
+                'Serum (external): apply over the vulva, clitoris, labia, and vaginal opening for daily hydration or intimate massage. Can also be used after grooming.',
+            ],
+            sourceUrl: 'https://alubri.com/products/vaginal-wellness-kit-bag-version',
+            sourceLabel: 'alubri.com: Vaginal Wellness Kit',
+        },
+        warnings: [
+            'A mild warming or blushing feeling on first use of the gel is normal per Alubri. If discomfort persists, stop and see a doctor.',
+            'Itching or irritation that persists despite a moisturizer can be a sign of infection. See a doctor.',
+            'Not tested for compatibility with condoms, per Alubri.',
+        ],
+        communityReview: 'Customer reviews for this kit are on its own Amazon listing (linked below). Amazon blocks automated access, so ayna hasn\'t pulled a rating or quotes; read them directly. alubri.com itself shows no star rating. The only customer feedback on the site is the brand\'s own study results for each product (above).',
+        effectiveness: 'Each product\'s results come from Alubri\'s own studies (see the full-size Gel and Serum entries). No independent study of either product is cited on alubri.com.',
+        ingredients: 'Gel: sodium hyaluronate, lactic acid, Activated Oil Complex (hydrolyzed coconut and rosehip oils), dragon fruit extract, aloe. Serum: sodium hyaluronate, inulin, betaine, lactic acid, aloe, green tea, chamomile.',
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
+        ingredientScience: [
+            {
+                name: 'Coconut and rosehip oils (Activated Oil Complex)',
+                text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/15724344/', label: 'PubMed (NIH): Virgin coconut oil vs. mineral oil for dry skin, randomized trial (Dermatitis, 2004)' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-inflammatory and skin barrier effects of plant oils, incl. rosehip (Int J Mol Sci, 2017)' },
+                ],
+            },
+            {
+                name: 'Inulin',
+                text: 'Inulin is a plant fiber best known as a prebiotic that feeds beneficial gut bacteria when eaten; an NIH-indexed review covers how ingested prebiotics may affect distant sites, including skin. ayna found no studies of inulin applied directly to skin, so Alubri\'s skin-microbiome claim for this serum hasn\'t been tested independently.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5037510/', label: 'NIH (PMC): Distant site effects of ingested prebiotics, incl. inulin (Nutrients, 2016)' },
+                ],
+            },
+            {
+                name: 'Aloe',
+                text: 'NIH\'s National Center for Complementary and Integrative Health says aloe gel on the skin is generally well tolerated, and small studies suggest it may speed burn healing and help some skin conditions. Evidence for other uses, like eczema, is too limited to say. Burning, itching, or rash have occasionally been reported.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/aloe-vera', label: 'NIH NCCIH: Aloe Vera' },
+                ],
+            },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0G4SFS9YN', text: 'Amazon: Alubri Vaginal Wellness Kit, Moisturizing Gel & Intimate Serum, 1 Fl Oz Ea', summary: 'This kit\'s Amazon listing, with customer ratings and reviews for this specific product. Amazon blocks automated access, so no rating is quoted here; read the reviews directly on the page.' },
+                    { platform: 'website', url: 'https://alubri.com/products/vaginal-wellness-kit-bag-version', text: 'alubri.com: Vaginal Wellness Kit', summary: 'Alubri\'s own product page, with kit contents, directions, and the brand\'s study results.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    // alubri.com's tagline for this kit names Vulva Balm, but its "Kit
+    // Contents", ingredient lists, directions, and product photo all show
+    // Intimate Serum + Calming Cream, the entry follows the contents.
+    {
+        id: 'p-alubri-rejuvenate-restore-kit',
+        name: 'Alubri Rejuvenate & Restore Kit',
+        brand: 'Alubri',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'menopause', 'hormone-free', 'external-only', 'travel-friendly'],
+        price: '$19.99 (trial sizes)',
+        whereToBuy: ['alubri.com', 'Amazon'],
+        url: 'https://alubri.com/products/rejuvenate-restore-kit',
+        faqUrl: 'https://alubri.com/pages/faq',
+        image: '/products/alubri/rejuvenate-restore-kit.png',
+        summary: 'A trial-size pair of Alubri\'s two external products for comfort before and after intimacy: the Intimate Serum (28 mL) for daily water-based hydration, and the Calming Cream (30 mL), an OTC 0.25% hydrocortisone cream for itching and irritation. Both are hormone-free and fragrance-free.',
+        safety: {
+            fdaStatus: 'The Calming Cream is an over-the-counter external analgesic (hydrocortisone 0.25%), per alubri.com. The Intimate Serum is presented as a personal-care serum and is not described as an FDA-cleared device or drug.',
+            materials: '1 × 28 mL (0.9 fl oz) Intimate Serum and 1 × 30 mL (1.0 fl oz) Calming Cream. Full ingredient lists are on the Alubri Intimate Serum and Alubri Calming Cream entries. Hormone-free and fragrance-free.',
+            recalls: 'No recalls are mentioned on alubri.com; check current regulator and manufacturer recall notices.',
+            sideEffects: 'Both products are for external use only. The cream contains hydrocortisone; read the Drug Facts label on the package before use. Full warnings are listed below.',
+            opinionAlerts: 'Clinical figures for each product are brand-reported (see the full-size Serum and Calming Cream entries).',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced only from Alubri\'s own site (alubri.com), not independent clinical literature.',
+        doctorOpinion: 'The same two formulas as Alubri\'s full-size Intimate Serum and Calming Cream, developed with Dr. Nicole Kerner, Alubri\'s co-founder and Chief Medical Officer, a board-certified, menopause-certified OB-GYN.\n\nAlubri reports that in its 2-week study of 50 women using the serum, 94% said their skin felt hydrated and 92% protected and moisturized. In its study of 53 women using the cream for 24 hours, 94% said their skin felt soothed and 96% nourished and conditioned. These are brand-reported results.',
+        doctorOpinionShort: 'Trial sizes of Alubri\'s external serum and 0.25% hydrocortisone cream. In the brand\'s studies, 94% said the serum left skin hydrated and 94% said the cream soothed. Brand-reported results.',
+        doctorOpinionCitations: [
+            { url: 'https://alubri.com/products/rejuvenate-restore-kit', label: 'alubri.com: Rejuvenate & Restore Kit' },
+        ],
+        // From the "Ideal for" list on alubri.com.
+        whoItsFor: [
+            'Tender, sensitive, dry, or itchy external intimate skin',
+            'Relief from discomfort after intimacy',
+            'Women whose skin needs are changing through menopause',
+        ],
+        howToUse: {
+            intro: 'Per Alubri\'s own directions for each product:',
+            steps: [
+                'Serum: with clean fingers, apply over the vulva (clitoris, labia, and vaginal opening) for hydration or intimate massage.',
+                'Cream: apply a pea-size amount to the external vulvar area with clean fingers, adding more as needed for a thin layer. Use up to 3 to 4 times a day as needed.',
+                'Tip: use the cream after intimacy, exercise, or anytime friction leaves skin tender.',
+            ],
+            sourceUrl: 'https://alubri.com/products/rejuvenate-restore-kit',
+            sourceLabel: 'alubri.com: Rejuvenate & Restore Kit',
+        },
+        warnings: [
+            'External use only.',
+            'The Calming Cream contains hydrocortisone, a topical steroid. Read the Drug Facts label on the package before use.',
+            'Itching or irritation that persists can be a sign of infection. See a doctor.',
+            'Not tested for compatibility with condoms, per Alubri.',
+        ],
+        communityReview: 'Customer reviews for this kit are on its own Amazon listing (linked below). Amazon blocks automated access, so ayna hasn\'t pulled a rating or quotes; read them directly. alubri.com itself shows no star rating. The only customer feedback on the site is the brand\'s own study results for each product (above).',
+        effectiveness: 'Each product\'s results come from Alubri\'s own studies (see the full-size Serum and Calming Cream entries). No independent study of either product is cited on alubri.com.',
+        ingredients: 'Serum: sodium hyaluronate, inulin, betaine, lactic acid, aloe, green tea, chamomile. Cream: hydrocortisone 0.25% (active), shea butter, sodium hyaluronate, lactic acid, oat extract, aloe, Activated Oil Complex (hydrolyzed coconut and rosehip oils).',
+        // Only the key ingredients alubri.com highlights for this product
+        // (not the full list, which is in safety.materials), each backed by
+        // ingredient-level NIH evidence (PubMed/PMC, NCCIH, MedlinePlus):
+        // what research says the ingredient can do, not proof this product works.
+        ingredientScienceNote: 'These are the key ingredients Alubri highlights on its site, not the full ingredient list. The complete list is under Materials on the Evidence view.',
+        ingredientScience: [
+            {
+                name: 'Hydrocortisone 0.25%',
+                text: 'NIH\'s MedlinePlus describes topical hydrocortisone as a corticosteroid used to treat redness, swelling, itching, and discomfort of skin conditions. It works by activating natural substances in the skin that reduce swelling, redness, and itching.',
+                citations: [
+                    { url: 'https://medlineplus.gov/druginfo/meds/a682793.html', label: 'NIH MedlinePlus: Hydrocortisone Topical' },
+                ],
+            },
+            {
+                name: 'Aloe',
+                text: 'NIH\'s National Center for Complementary and Integrative Health says aloe gel on the skin is generally well tolerated, and small studies suggest it may speed burn healing and help some skin conditions. Evidence for other uses, like eczema, is too limited to say. Burning, itching, or rash have occasionally been reported.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/aloe-vera', label: 'NIH NCCIH: Aloe Vera' },
+                ],
+            },
+            {
+                name: 'Coconut and rosehip oils (Activated Oil Complex)',
+                text: 'Applied to dry skin twice a day for 2 weeks, virgin coconut oil improved hydration as well as mineral oil in a randomized, double-blind trial. An NIH-indexed review notes rosehip oil is rich in linoleic acid and antioxidants that may help calm skin inflammation. These studies used ordinary oils on skin, not Alubri\'s "pre-activated" blend, so the brand\'s microbiome claims aren\'t tested by them.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/15724344/', label: 'PubMed (NIH): Virgin coconut oil vs. mineral oil for dry skin, randomized trial (Dermatitis, 2004)' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-inflammatory and skin barrier effects of plant oils, incl. rosehip (Int J Mol Sci, 2017)' },
+                ],
+            },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0H73846JQ', text: 'Amazon: Alubri Rejuvenate & Restore Kit, Serum 0.9 Fl Oz & Calming Cream 1 Fl Oz', summary: 'This kit\'s Amazon listing, with customer ratings and reviews for this specific product. Amazon blocks automated access, so no rating is quoted here; read the reviews directly on the page.' },
+                    { platform: 'website', url: 'https://alubri.com/products/rejuvenate-restore-kit', text: 'alubri.com: Rejuvenate & Restore Kit', summary: 'Alubri\'s own product page, with kit contents, directions, and the brand\'s study results.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    // VPod (hervpod.com, Cool Comforts Co.), catalog entries only, NOT an
+    // ayna brand partner unless added to src/utils/partnerBrands.js. The four
+    // pod products on hervpod.com (fetched 2026-09-29): Everyday Comfort
+    // (sold as "VPod") and Postpartum & Menopause Comfort (sold as "VPod
+    // Elite"), each as a single and a 3-pack. The V Pocket cover is sold out
+    // and left out. Product facts come from hervpod.com only; the Scientific
+    // Literature tab and the ayna Summary's source chips cite a Cochrane
+    // review and ACOG for cold therapy as a category (verificationLinks.
+    // scientific). Retailer links were supplied by VPod; Walmart listings were
+    // matched to products by their URL names, since Walmart blocks
+    // automated access. Product photos supplied by ayna, stored under
+    // public/products/vpod/.
+    {
+        id: 'p-vpod-everyday-comfort-single',
+        name: 'VPod Everyday Comfort Single Pack',
+        brand: 'VPod',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'comfort'],
+        tags: ['discomfort', 'comfort', 'menopause', 'postpartum', 'external-only', 'reusable', 'hormone-free'],
+        price: '$19.99 (1 pod)',
+        whereToBuy: ['hervpod.com', 'Amazon', 'Walmart'],
+        url: 'https://hervpod.com/products/vpod-regular-single-pack',
+        faqUrl: 'https://hervpod.com/pages/faq',
+        image: '/products/vpod/everyday-comfort-single.webp',
+        summary: 'A reusable, drug-free cooling gel pod you freeze and place in your underwear for up to 20 minutes of relief from external vulvar and vaginal itching, burning, dryness, irritation, or swelling. The curved, flexible pod has a 100% medical-grade silicone exterior that stays in place without adhesive. VPod markets it for yeast infections, BV, allergies, perimenopause and menopause, pregnancy and postpartum, and after sex or workouts; it eases symptoms but doesn’t treat their cause. One pod per pack.',
+        safety: {
+            fdaStatus: 'Registered with the FDA as an over-the-counter medical product, per hervpod.com. FDA registration means the company and product are listed with the FDA; it is not FDA clearance or approval.',
+            materials: 'Each pod is 3 in long x 2.5 in wide, with a 100% medical-grade silicone exterior and a flexible gel interior (the gel itself isn\'t disclosed). Hypoallergenic, odor-free, and sterile when packaged. Made in China for Cool Comforts Co. (Cincinnati, OH).',
+            recalls: 'No recalls are mentioned on hervpod.com; check current FDA and manufacturer recall notices.',
+            sideEffects: 'Cold can feel too intense on sensitive skin, so VPod says to test the temperature first and limit each use to 20 minutes. Full warnings are listed below.',
+            opinionAlerts: 'hervpod.com contradicts itself on reuse: the product page says single-use and "Do not reuse," but its FAQ and full instructions say the pod is reusable for up to 30 days with cleaning. ayna follows the detailed instructions; check the package insert.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of ACOG guidance and a Cochrane review; not a direct clinician quote. Product details are from hervpod.com.',
+        doctorOpinion: 'Cold therapy is a standard, low-risk way to ease vulvar and perineal soreness: ACOG recommends an ice pack or cold gel pack on the perineal area for 10 to 20 minutes at a time after birth, and a Cochrane review found cooling may reduce perineal pain in the first days postpartum (low-certainty evidence). VPod packages that idea as a curved silicone pod that stays in place in underwear.\n\nCooling only eases symptoms. It doesn\'t treat yeast infections, BV, allergies, or menopause-related dryness, so it should be used alongside the right treatment, not instead of it. See a doctor for itching or burning that doesn\'t go away, unusual discharge, or odor. VPod says it was developed with gynecologists; no study of VPod itself was found.',
+        doctorOpinionShort: 'Cold packs are an ACOG-recommended way to ease perineal soreness, and a Cochrane review found cooling may reduce postpartum perineal pain. VPod relieves symptoms but doesn\'t treat their cause. No study of VPod itself was found.',
+        whoItsFor: [
+            'Short-term relief from external vulvar itching, burning, swelling, or soreness',
+            'Discomfort from a yeast infection or BV while treatment starts working',
+            'Perimenopause and menopause discomfort, and irritation after sex, workouts, or on hot days',
+            'Anyone who wants drug-free, mess-free relief instead of creams or padsicles',
+        ],
+        howToUse: {
+            intro: 'Per VPod\'s full instructions:',
+            steps: [
+                'Put the unopened foil pack in the freezer for at least 1 hour, until the pod feels stiff.',
+                'Take it out and let it rest 3 to 5 minutes, then wash your hands and open the pack.',
+                'Touch the pod gently to your vulva first to check the temperature is comfortable.',
+                'Place it between the inner and outer labia (labia minora and majora), or in the center crotch of your underwear.',
+                'Wear it for up to 20 minutes, up to 3 times a day, waiting at least 10 minutes between uses.',
+                'After each use, rinse with warm water, wash with mild soap, and air dry; wipe with 70% isopropyl alcohol at least daily. Replace the pod after 30 days or if damaged.',
+            ],
+            sourceUrl: 'https://hervpod.com/pages/usage-instructions',
+            sourceLabel: 'hervpod.com: Instructions for Use',
+        },
+        warnings: [
+            'External use only. Do not insert into the vagina or anus, and do not ingest.',
+            'For temporary symptom relief only; it does not treat yeast infections, BV, or other conditions. See a doctor for itching or burning that doesn’t go away, unusual discharge, or odor.',
+            'Remove before urinating, and don’t flush it.',
+            'Don’t use with other silicone-based products.',
+            'If the pod ruptures, clean the skin and throw the pod away (the gel may be slippery).',
+        ],
+        communityReview: 'hervpod.com shows 6 customer reviews for this pod, all 5 stars; reviewers describe instant, mess-free relief while waiting for yeast-infection treatment to work, and one wished extra covers were easier to order. These are reviews on the brand’s own site. Amazon and Walmart listings are linked below; both block automated access, so ayna hasn’t pulled their ratings.',
+        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG, linked below). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
+        ingredients: 'Medical-grade silicone exterior with a gel interior (gel not disclosed). Drug-free; no active ingredients.',
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary (NIH, ACOG).
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
+                        text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
+                        summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
+                        text: 'ACOG: Postpartum Pain Management',
+                        summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                        text: 'ACOG: Vulvovaginal Health',
+                        summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
+                    },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/tag/vpod', text: 'TikTok: #vpod', summary: 'TikTok posts tagged #vpod. The hashtag isn\'t exclusive to this brand, so some posts may be about unrelated products; TikTok blocks automated access, so ayna hasn\'t reviewed them.' },
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0F9YXP4MR', text: 'Amazon: VPod Reusable Feminine Cooling Gel Pods, 1 Count', summary: 'This pod’s Amazon listing, with customer ratings and reviews. Amazon blocks automated access, so no rating is quoted here; read the reviews directly.' },
+                    { platform: 'walmart', url: 'https://www.walmart.com/ip/Vpod-Single-Pack/17868111516', text: 'Walmart: VPod Single Pack', summary: 'This pod’s Walmart listing, with customer reviews. The site blocks automated access, so no rating is quoted here; read the reviews directly.' },
+                    { platform: 'website', url: 'https://hervpod.com/products/vpod-regular-single-pack', text: 'hervpod.com: VPod Everyday Comfort Single Pack', summary: 'VPod’s own product page, which shows 6 customer reviews, all 5 stars.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-vpod-everyday-comfort-3-pack',
+        name: 'VPod Everyday Comfort 3 Pack',
+        brand: 'VPod',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'comfort'],
+        tags: ['discomfort', 'comfort', 'menopause', 'postpartum', 'external-only', 'reusable', 'hormone-free', 'cost'],
+        price: '$53.99 (3 pods)',
+        whereToBuy: ['hervpod.com', 'Walmart'],
+        url: 'https://hervpod.com/products/vpod-regular-multipack',
+        faqUrl: 'https://hervpod.com/pages/faq',
+        image: '/products/vpod/everyday-comfort-3-pack.webp',
+        summary: 'A reusable, drug-free cooling gel pod you freeze and place in your underwear for up to 20 minutes of relief from external vulvar and vaginal itching, burning, dryness, irritation, or swelling. The curved, flexible pod has a 100% medical-grade silicone exterior that stays in place without adhesive. VPod markets it for yeast infections, BV, allergies, perimenopause and menopause, pregnancy and postpartum, and after sex or workouts; it eases symptoms but doesn’t treat their cause. Three pods per pack.',
+        safety: {
+            fdaStatus: 'Registered with the FDA as an over-the-counter medical product, per hervpod.com. FDA registration means the company and product are listed with the FDA; it is not FDA clearance or approval.',
+            materials: 'Each pod is 3 in long x 2.5 in wide, with a 100% medical-grade silicone exterior and a flexible gel interior (the gel itself isn\'t disclosed). Hypoallergenic, odor-free, and sterile when packaged. Made in China for Cool Comforts Co. (Cincinnati, OH).',
+            recalls: 'No recalls are mentioned on hervpod.com; check current FDA and manufacturer recall notices.',
+            sideEffects: 'Cold can feel too intense on sensitive skin, so VPod says to test the temperature first and limit each use to 20 minutes. Full warnings are listed below.',
+            opinionAlerts: 'hervpod.com contradicts itself on reuse: the product page says single-use and "Do not reuse," but its FAQ and full instructions say the pod is reusable for up to 30 days with cleaning. ayna follows the detailed instructions; check the package insert.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of ACOG guidance and a Cochrane review; not a direct clinician quote. Product details are from hervpod.com.',
+        doctorOpinion: 'Cold therapy is a standard, low-risk way to ease vulvar and perineal soreness: ACOG recommends an ice pack or cold gel pack on the perineal area for 10 to 20 minutes at a time after birth, and a Cochrane review found cooling may reduce perineal pain in the first days postpartum (low-certainty evidence). VPod packages that idea as a curved silicone pod that stays in place in underwear.\n\nCooling only eases symptoms. It doesn\'t treat yeast infections, BV, allergies, or menopause-related dryness, so it should be used alongside the right treatment, not instead of it. See a doctor for itching or burning that doesn\'t go away, unusual discharge, or odor. VPod says it was developed with gynecologists; no study of VPod itself was found.',
+        doctorOpinionShort: 'Cold packs are an ACOG-recommended way to ease perineal soreness, and a Cochrane review found cooling may reduce postpartum perineal pain. VPod relieves symptoms but doesn\'t treat their cause. No study of VPod itself was found.',
+        whoItsFor: [
+            'Short-term relief from external vulvar itching, burning, swelling, or soreness',
+            'Discomfort from a yeast infection or BV while treatment starts working',
+            'Perimenopause and menopause discomfort, and irritation after sex, workouts, or on hot days',
+            'Anyone who wants drug-free, mess-free relief instead of creams or padsicles',
+        ],
+        howToUse: {
+            intro: 'Per VPod\'s full instructions:',
+            steps: [
+                'Put the unopened foil pack in the freezer for at least 1 hour, until the pod feels stiff.',
+                'Take it out and let it rest 3 to 5 minutes, then wash your hands and open the pack.',
+                'Touch the pod gently to your vulva first to check the temperature is comfortable.',
+                'Place it between the inner and outer labia (labia minora and majora), or in the center crotch of your underwear.',
+                'Wear it for up to 20 minutes, up to 3 times a day, waiting at least 10 minutes between uses.',
+                'After each use, rinse with warm water, wash with mild soap, and air dry; wipe with 70% isopropyl alcohol at least daily. Replace the pod after 30 days or if damaged.',
+            ],
+            sourceUrl: 'https://hervpod.com/pages/usage-instructions',
+            sourceLabel: 'hervpod.com: Instructions for Use',
+        },
+        warnings: [
+            'External use only. Do not insert into the vagina or anus, and do not ingest.',
+            'For temporary symptom relief only; it does not treat yeast infections, BV, or other conditions. See a doctor for itching or burning that doesn’t go away, unusual discharge, or odor.',
+            'Remove before urinating, and don’t flush it.',
+            'Don’t use with other silicone-based products.',
+            'If the pod ruptures, clean the skin and throw the pod away (the gel may be slippery).',
+        ],
+        communityReview: 'Customer reviews for this 3-pack are on its Walmart listings (linked below). Walmart blocks automated access, so ayna hasn’t pulled a rating; read them directly. hervpod.com shows no reviews on this pack’s page.',
+        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG, linked below). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
+        ingredients: 'Medical-grade silicone exterior with a gel interior (gel not disclosed). Drug-free; no active ingredients.',
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary (NIH, ACOG).
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
+                        text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
+                        summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
+                        text: 'ACOG: Postpartum Pain Management',
+                        summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                        text: 'ACOG: Vulvovaginal Health',
+                        summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
+                    },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/tag/vpod', text: 'TikTok: #vpod', summary: 'TikTok posts tagged #vpod. The hashtag isn\'t exclusive to this brand, so some posts may be about unrelated products; TikTok blocks automated access, so ayna hasn\'t reviewed them.' },
+                    { platform: 'walmart', url: 'https://www.walmart.com/ip/VPOD-MULTI-3CT/19585123681', text: 'Walmart: VPod Multi 3 Count', summary: 'This 3-pack’s Walmart listing, with customer reviews. The site blocks automated access, so no rating is quoted here; read the reviews directly.' },
+                    { platform: 'walmart', url: 'https://www.walmart.com/ip/2-pack-VPod-Instant-Cooling-Relief-for-Vaginal-Discomfort-3-Cooling-Gel-Pods-for-Symptom-Relief/20452465708', text: 'Walmart: 2-pack of VPod 3-pod boxes (6 pods)', summary: 'A Walmart listing for two of these 3-pod boxes, with its own customer reviews. The site blocks automated access, so no rating is quoted here; read the reviews directly.' },
+                    { platform: 'website', url: 'https://hervpod.com/products/vpod-regular-multipack', text: 'hervpod.com: VPod Everyday Comfort 3 Pack', summary: 'VPod’s own product page.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-vpod-elite-single',
+        name: 'VPod Postpartum & Menopause Comfort Single Pack',
+        brand: 'VPod',
+        category: 'postpartum',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'comfort'],
+        tags: ['discomfort', 'comfort', 'postpartum', 'pregnancy', 'menopause', 'external-only', 'reusable', 'hormone-free'],
+        price: '$21.99 (1 pod)',
+        whereToBuy: ['hervpod.com'],
+        url: 'https://hervpod.com/products/vpod-elite-single-pack',
+        faqUrl: 'https://hervpod.com/pages/faq',
+        image: '/products/vpod/elite-single.webp',
+        summary: 'VPod’s extra-soft cooling gel pod designed for new moms, for targeted relief of tearing, bruising, swelling, dryness, and irritation before and after birth, and for menopause-related discomfort. Like the Everyday pod, you freeze it and place it in your underwear for up to 20 minutes; it has a 100% medical-grade silicone exterior and is drug-free. It eases symptoms but doesn’t treat their cause. One pod per pack; sold as VPod Elite.',
+        safety: {
+            fdaStatus: 'Registered with the FDA as an over-the-counter medical product, per hervpod.com. FDA registration means the company and product are listed with the FDA; it is not FDA clearance or approval.',
+            materials: 'Each pod is 3 in long x 2.5 in wide, with a 100% medical-grade silicone exterior and a flexible gel interior (the gel itself isn\'t disclosed). Hypoallergenic, odor-free, and sterile when packaged. Made in China for Cool Comforts Co. (Cincinnati, OH).',
+            recalls: 'No recalls are mentioned on hervpod.com; check current FDA and manufacturer recall notices.',
+            sideEffects: 'Cold can feel too intense on sensitive skin, so VPod says to test the temperature first and limit each use to 20 minutes. Full warnings are listed below.',
+            opinionAlerts: 'hervpod.com contradicts itself on reuse: the product page says single-use and "Do not reuse," but its FAQ and full instructions say the pod is reusable for up to 30 days with cleaning. ayna follows the detailed instructions; check the package insert.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of ACOG guidance and a Cochrane review; not a direct clinician quote. Product details are from hervpod.com.',
+        doctorOpinion: 'Cold therapy is a standard, low-risk way to ease vulvar and perineal soreness: ACOG recommends an ice pack or cold gel pack on the perineal area for 10 to 20 minutes at a time after birth, and a Cochrane review found cooling may reduce perineal pain in the first days postpartum (low-certainty evidence). VPod packages that idea as a curved silicone pod that stays in place in underwear.\n\nCooling only eases symptoms. It doesn\'t treat yeast infections, BV, allergies, or menopause-related dryness, so it should be used alongside the right treatment, not instead of it. See a doctor for itching or burning that doesn\'t go away, unusual discharge, or odor. VPod says it was developed with gynecologists; no study of VPod itself was found.',
+        doctorOpinionShort: 'Cold packs are an ACOG-recommended way to ease perineal soreness, and a Cochrane review found cooling may reduce postpartum perineal pain. VPod relieves symptoms but doesn\'t treat their cause. No study of VPod itself was found.',
+        whoItsFor: [
+            'Prepartum and postpartum soreness, including perineal tears, episiotomy, bruising, and swelling',
+            'Menopause-related vulvar discomfort',
+            'Anyone wanting an extra-soft pod for very tender areas',
+        ],
+        howToUse: {
+            intro: 'Per VPod\'s full instructions:',
+            steps: [
+                'Put the unopened foil pack in the freezer for at least 1 hour, until the pod feels stiff.',
+                'Take it out and let it rest 3 to 5 minutes, then wash your hands and open the pack.',
+                'Touch the pod gently to your vulva first to check the temperature is comfortable.',
+                'Place it between the inner and outer labia (labia minora and majora), or in the center crotch of your underwear.',
+                'Wear it for up to 20 minutes, up to 3 times a day, waiting at least 10 minutes between uses.',
+                'After each use, rinse with warm water, wash with mild soap, and air dry; wipe with 70% isopropyl alcohol at least daily. Replace the pod after 30 days or if damaged.',
+            ],
+            sourceUrl: 'https://hervpod.com/pages/usage-instructions',
+            sourceLabel: 'hervpod.com: Instructions for Use',
+        },
+        warnings: [
+            'External use only. Do not insert into the vagina or anus, and do not ingest.',
+            'For temporary symptom relief only; it does not treat yeast infections, BV, or other conditions. See a doctor for itching or burning that doesn’t go away, unusual discharge, or odor.',
+            'Remove before urinating, and don’t flush it.',
+            'Don’t use with other silicone-based products.',
+            'If the pod ruptures, clean the skin and throw the pod away (the gel may be slippery).',
+        ],
+        communityReview: 'No customer reviews are shown on hervpod.com for this pack, and ayna didn’t find a retailer listing for the Elite single.',
+        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG, linked below). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
+        ingredients: 'Medical-grade silicone exterior with a gel interior (gel not disclosed). Drug-free; no active ingredients.',
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary (NIH, ACOG).
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
+                        text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
+                        summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
+                        text: 'ACOG: Postpartum Pain Management',
+                        summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                        text: 'ACOG: Vulvovaginal Health',
+                        summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
+                    },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/tag/vpod', text: 'TikTok: #vpod', summary: 'TikTok posts tagged #vpod. The hashtag isn\'t exclusive to this brand, so some posts may be about unrelated products; TikTok blocks automated access, so ayna hasn\'t reviewed them.' },
+                    { platform: 'website', url: 'https://hervpod.com/products/vpod-elite-single-pack', text: 'hervpod.com: VPod Postpartum & Menopause Comfort Single Pack', summary: 'VPod’s own product page.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-vpod-elite-3-pack',
+        name: 'VPod Postpartum & Menopause Comfort 3 Pack',
+        brand: 'VPod',
+        category: 'postpartum',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['vaginal-health', 'comfort'],
+        tags: ['discomfort', 'comfort', 'postpartum', 'pregnancy', 'menopause', 'external-only', 'reusable', 'hormone-free', 'cost'],
+        price: '$55.99 (3 pods)',
+        whereToBuy: ['hervpod.com', 'Walmart'],
+        url: 'https://hervpod.com/products/vpod-elite-multi-pack',
+        faqUrl: 'https://hervpod.com/pages/faq',
+        image: '/products/vpod/elite-3-pack.webp',
+        summary: 'VPod’s extra-soft cooling gel pod designed for new moms, for targeted relief of tearing, bruising, swelling, dryness, and irritation before and after birth, and for menopause-related discomfort. Like the Everyday pod, you freeze it and place it in your underwear for up to 20 minutes; it has a 100% medical-grade silicone exterior and is drug-free. It eases symptoms but doesn’t treat their cause. Three pods per pack; sold as VPod Elite.',
+        safety: {
+            fdaStatus: 'Registered with the FDA as an over-the-counter medical product, per hervpod.com. FDA registration means the company and product are listed with the FDA; it is not FDA clearance or approval.',
+            materials: 'Each pod is 3 in long x 2.5 in wide, with a 100% medical-grade silicone exterior and a flexible gel interior (the gel itself isn\'t disclosed). Hypoallergenic, odor-free, and sterile when packaged. Made in China for Cool Comforts Co. (Cincinnati, OH).',
+            recalls: 'No recalls are mentioned on hervpod.com; check current FDA and manufacturer recall notices.',
+            sideEffects: 'Cold can feel too intense on sensitive skin, so VPod says to test the temperature first and limit each use to 20 minutes. Full warnings are listed below.',
+            opinionAlerts: 'hervpod.com contradicts itself on reuse: the product page says single-use and "Do not reuse," but its FAQ and full instructions say the pod is reusable for up to 30 days with cleaning. ayna follows the detailed instructions; check the package insert.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of ACOG guidance and a Cochrane review; not a direct clinician quote. Product details are from hervpod.com.',
+        doctorOpinion: 'Cold therapy is a standard, low-risk way to ease vulvar and perineal soreness: ACOG recommends an ice pack or cold gel pack on the perineal area for 10 to 20 minutes at a time after birth, and a Cochrane review found cooling may reduce perineal pain in the first days postpartum (low-certainty evidence). VPod packages that idea as a curved silicone pod that stays in place in underwear.\n\nCooling only eases symptoms. It doesn\'t treat yeast infections, BV, allergies, or menopause-related dryness, so it should be used alongside the right treatment, not instead of it. See a doctor for itching or burning that doesn\'t go away, unusual discharge, or odor. VPod says it was developed with gynecologists; no study of VPod itself was found.',
+        doctorOpinionShort: 'Cold packs are an ACOG-recommended way to ease perineal soreness, and a Cochrane review found cooling may reduce postpartum perineal pain. VPod relieves symptoms but doesn\'t treat their cause. No study of VPod itself was found.',
+        whoItsFor: [
+            'Prepartum and postpartum soreness, including perineal tears, episiotomy, bruising, and swelling',
+            'Menopause-related vulvar discomfort',
+            'Anyone wanting an extra-soft pod for very tender areas',
+        ],
+        howToUse: {
+            intro: 'Per VPod\'s full instructions:',
+            steps: [
+                'Put the unopened foil pack in the freezer for at least 1 hour, until the pod feels stiff.',
+                'Take it out and let it rest 3 to 5 minutes, then wash your hands and open the pack.',
+                'Touch the pod gently to your vulva first to check the temperature is comfortable.',
+                'Place it between the inner and outer labia (labia minora and majora), or in the center crotch of your underwear.',
+                'Wear it for up to 20 minutes, up to 3 times a day, waiting at least 10 minutes between uses.',
+                'After each use, rinse with warm water, wash with mild soap, and air dry; wipe with 70% isopropyl alcohol at least daily. Replace the pod after 30 days or if damaged.',
+            ],
+            sourceUrl: 'https://hervpod.com/pages/usage-instructions',
+            sourceLabel: 'hervpod.com: Instructions for Use',
+        },
+        warnings: [
+            'External use only. Do not insert into the vagina or anus, and do not ingest.',
+            'For temporary symptom relief only; it does not treat yeast infections, BV, or other conditions. See a doctor for itching or burning that doesn’t go away, unusual discharge, or odor.',
+            'Remove before urinating, and don’t flush it.',
+            'Don’t use with other silicone-based products.',
+            'If the pod ruptures, clean the skin and throw the pod away (the gel may be slippery).',
+        ],
+        communityReview: 'Customer reviews for this 3-pack are on its Walmart listing (linked below). Walmart blocks automated access, so ayna hasn’t pulled a rating; read them directly. hervpod.com shows no reviews on this pack’s page.',
+        effectiveness: 'Cold therapy has category-level support for easing perineal pain (Cochrane; ACOG, linked below). No independent study of VPod was found, and cooling relieves symptoms only, not their underlying cause.',
+        ingredients: 'Medical-grade silicone exterior with a gel interior (gel not disclosed). Drug-free; no active ingredients.',
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary (NIH, ACOG).
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8094618/',
+                        text: 'Local cooling for relieving pain from perineal trauma sustained during childbirth (Cochrane review, 2020)',
+                        summary: 'A Cochrane review of 10 randomized trials (1,233 women) found that cooling with an ice pack or cold gel pad may reduce perineal pain in the first two days after birth, but the evidence is low to very low certainty. This is evidence for cold therapy in general, not for VPod specifically.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/postpartum-pain-management',
+                        text: 'ACOG: Postpartum Pain Management',
+                        summary: 'ACOG recommends applying an ice pack or cold gel pack to the perineal area for 10 to 20 minutes at a time to relieve discomfort after birth. This is clinical guidance for cold therapy as a category, not validation of a specific product.',
+                    },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                        text: 'ACOG: Vulvovaginal Health',
+                        summary: 'ACOG suggests cold packs for perineal pain and advises seeing an ob-gyn for itching, burning, or swelling that doesn’t go away, since yeast infections, BV, and other causes need their own treatment. Cooling eases symptoms but doesn’t treat the cause.',
+                    },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/tag/vpod', text: 'TikTok: #vpod', summary: 'TikTok posts tagged #vpod. The hashtag isn\'t exclusive to this brand, so some posts may be about unrelated products; TikTok blocks automated access, so ayna hasn\'t reviewed them.' },
+                    { platform: 'walmart', url: 'https://www.walmart.com/ip/Vpod-Elite-Multi-pack/19824372766', text: 'Walmart: VPod Elite Multi-pack', summary: 'This 3-pack’s Walmart listing, with customer reviews. The site blocks automated access, so no rating is quoted here; read the reviews directly.' },
+                    { platform: 'website', url: 'https://hervpod.com/products/vpod-elite-multi-pack', text: 'hervpod.com: VPod Postpartum & Menopause Comfort 3 Pack', summary: 'VPod’s own product page.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: false,
+    },
+    // Soonr (soonr.health, Vespexx Inc.), catalog entries only, NOT an ayna
+    // brand partner. Soonr sells two things, listed as two linked entries:
+    // the Soonr couples' preconception app (digital tracker) and the Surearly
+    // SMART hormone test reader it recommends, which is made by a different
+    // company (Sugentech / Surearly), sold separately on Amazon, and syncs
+    // to the app. soonr.health is a JavaScript app, so facts were read from
+    // its page bundle (2026-09-30), plus the App Store listing, its privacy
+    // policy, and the device's FDA GUDID record. App icon and device photo
+    // supplied by ayna, stored under public/products/soonr/.
+    {
+        id: 'd-soonr',
+        name: 'Soonr: Fertility App for Couples',
+        brand: 'Soonr',
+        category: 'tracker',
+        type: 'digital',
+        internal: false,
+        healthFunctions: ['cycle-tracking', 'fertility'],
+        tags: ['fertility', 'pregnancy', 'privacy'],
+        price: 'Free; Premium $12.99/month or $9.16/month billed yearly (launch price $5.50/month billed yearly)',
+        userRating: 4.7,
+        userRatingSourceUrl: 'https://apps.apple.com/us/app/soonr-fertility-for-couples/id6756647515',
+        whereToBuy: ['App Store', 'Google Play'],
+        platform: 'iOS, Android',
+        // Buy Now needs a page with a real path (not a bare homepage), so it
+        // opens the App Store listing; whereToBuyLinks adds Google Play.
+        url: 'https://apps.apple.com/us/app/soonr-fertility-for-couples/id6756647515',
+        website: 'https://soonr.health/',
+        whereToBuyLinks: { 'App Store': 'https://apps.apple.com/us/app/soonr-fertility-for-couples/id6756647515', 'Google Play': 'https://play.google.com/store/apps/details?id=com.health.soonr' },
+        image: '/products/soonr/soonr-app.png',
+        summary: 'A preconception app built for both partners. Each person logs their own health habits (exercise, meals, supplements, symptoms, and habits they’re avoiding), and both see each other’s progress; consistent logging fills a shared "Momentum Orb." It also tracks periods, discharge, ovulation test results, and basal body temperature, predicts the fertile window, and can sync Apple Watch wrist temperature through Apple Health. For hormone readings, it pairs with the separately sold Surearly SMART test reader.',
+        safety: {
+            fdaStatus: 'Not FDA-cleared. Soonr describes itself as a wellness tool, not medical advice.',
+            materials: 'N/A (app)',
+            recalls: 'N/A',
+            allergens: 'N/A',
+            sideEffects: 'N/A (software).',
+            opinionAlerts: 'Fertile-window predictions from period and symptom logs are estimates; Soonr suggests the Surearly SMART reader for actual hormone readings. The app is new (App Store release February 2026), so there’s little long-term user feedback yet.',
+        },
+        privacy: {
+            dataStorage: 'AWS servers in the United States and other countries, per Soonr’s privacy policy. Operated by Vespexx Inc.',
+            sellsData: 'Says it does not sell personal data or share it for cross-context behavioral advertising.',
+            hipaa: 'Not described as HIPAA-covered; consumer wellness app.',
+            keyPolicy: 'Health data is shared with a connected partner only with your explicit consent, and disconnecting removes previously shared data from the partner’s app.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of ACOG guidance and a Cochrane review; not a direct clinician quote. App details are from soonr.health, its App Store listing, and its privacy policy.',
+        doctorOpinion: 'Soonr’s focus on both partners matches clinical advice: ACOG’s prepregnancy guidance covers diet and a prenatal vitamin with folic acid, exercise, a healthy weight, and cutting out tobacco and alcohol, and partners’ habits matter too. An app that makes those habits shared and visible may help couples stay consistent, though no study of Soonr itself was found.\n\nFor timing, fertile-window predictions based on period logs are estimates. Urine LH testing is better supported: a 2023 Cochrane review found timing sex with ovulation tests probably improves pregnancy and live-birth rates, which is why pairing the app with a test reader can help. ACOG recommends a fertility evaluation after 1 year of trying, or 6 months if you’re over 35.',
+        doctorOpinionShort: 'A couples’ preconception tracker built around ACOG-style healthy habits for both partners. Fertile-window predictions are estimates; pairing it with LH testing, which Cochrane evidence supports, is more precise. No study of the app itself was found.',
+        whoItsFor: [
+            'Couples planning a pregnancy who want to work on health habits together',
+            'Partners who want to see each other’s cycle calendar, fertile window, and daily logs',
+            'Anyone who wants to log ovulation tests and BBT alongside lifestyle habits',
+        ],
+        howToUse: {
+            intro: 'Per Soonr’s own getting-started steps:',
+            steps: [
+                'Download the app and answer a few questions about your health, lifestyle, and goals.',
+                'Invite your partner with a link; you both agree on what health data is shared.',
+                'Log daily health factors (exercise, meals, symptoms, supplements, habits) in about 5 minutes a day.',
+                'Track your cycle; Soonr predicts the fertile window and shows it on a shared calendar.',
+                'Optional: connect the Surearly SMART reader (sold separately) for LH and progesterone-marker readings.',
+            ],
+            sourceUrl: 'https://soonr.health/',
+            sourceLabel: 'soonr.health',
+        },
+        warnings: [
+            'Soonr is a wellness tool, not medical advice or a diagnosis.',
+            'Not a form of birth control.',
+            'See a clinician if you haven’t conceived after 1 year of trying (6 months if you’re over 35), per ACOG.',
+        ],
+        communityReview: 'On the App Store, Soonr has a 4.7-star average from 21 ratings (as of September 30, 2026), a small number since the app launched in February 2026. Read the reviews directly on the App Store and Google Play listings linked below.',
+        effectiveness: 'No independent study of the Soonr app was found. Its fertile-window predictions are estimates; urine ovulation testing, which it can log and sync, has moderate-quality Cochrane evidence for improving pregnancy rates.',
+        integrations: ['Apple Health', 'Surearly SMART'],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10501857/', text: 'Timed intercourse for couples trying to conceive (Cochrane review, 2023)', summary: 'A Cochrane review of 7 randomized trials (2,464 women or couples) found that timing sex with urine ovulation (LH) tests probably increases the chance of pregnancy and live birth compared with not predicting ovulation (moderate-quality evidence). This supports ovulation testing in general, not a specific device or app.' },
+                    { url: 'https://www.acog.org/womens-health/faqs/good-health-before-pregnancy-prepregnancy-care', text: 'ACOG: Good Health Before Pregnancy (Prepregnancy Care)', summary: 'ACOG recommends steps before pregnancy such as a healthy diet and prenatal vitamin with folic acid, regular exercise, reaching a healthy weight, and stopping tobacco, alcohol, and other substances, and notes partners shouldn’t smoke around you. These are the kinds of habits the Soonr app tracks; this is general guidance, not validation of the app.' },
+                    { url: 'https://www.acog.org/womens-health/faqs/evaluating-infertility', text: 'ACOG: Evaluating Infertility', summary: 'ACOG explains that urine tests detect the rise in luteinizing hormone (LH) that comes before ovulation, and recommends a fertility evaluation after 1 year of trying (or 6 months if you’re over 35). This is clinical guidance for the category, not validation of a specific product.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://apps.apple.com/us/app/soonr-fertility-for-couples/id6756647515', text: 'App Store: Soonr: Fertility for Couples', summary: 'The app’s App Store listing: 4.7 stars from 21 ratings as of September 30, 2026.' },
+                    { url: 'https://play.google.com/store/apps/details?id=com.health.soonr', text: 'Google Play: Soonr', summary: 'The app’s Google Play listing, with Android user reviews.' },
+                    { url: 'https://soonr.health/', text: 'soonr.health', summary: 'Soonr’s own site, with features and pricing.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-surearly-smart-ovulation-test',
+        name: 'Surearly SMART Ovulation Test Reader (works with Soonr)',
+        brand: 'Surearly',
+        category: 'diagnostics',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['fertility', 'cycle-tracking'],
+        tags: ['fertility', 'pregnancy'],
+        price: 'See Amazon for current price (reader + 20 test sticks)',
+        whereToBuy: ['Amazon'],
+        // Buy Now goes to Amazon, so it carries ayna's Associates tag (see buyLink.test.js).
+        url: 'https://www.amazon.com/dp/B0H1BCL6NB?tag=aynahealth-20',
+        image: '/products/soonr/surearly-smart-reader.webp',
+        summary: 'A digital at-home urine test reader that measures two hormones from one stick: LH, whose surge predicts your fertile window, and P3G (a progesterone marker, also called PdG), which confirms ovulation happened. Results appear on the reader in about 5 minutes and sync by Bluetooth to the Soonr app (or Surearly’s own app), where you can see hormone trends across cycles and share them with a partner. Comes with 20 test sticks. Made by Sugentech (Surearly); Soonr sells it as its recommended hormone tester.',
+        safety: {
+            fdaStatus: 'Listed in the FDA’s device database (GUDID) as an over-the-counter LH test (product code NGE) made by Sugentech; no 510(k) clearance is listed. Soonr also describes it as CE-IVD marked.',
+            materials: 'Digital test reader with Bluetooth, plus 20 single-use urine test sticks. Detects LH at 10 mIU/mL or above and progesterone metabolite (P3G) at 5 µg/mL or above, per its FDA device listing.',
+            recalls: 'No recalls are listed in its FDA device record; check current FDA and manufacturer notices.',
+            sideEffects: 'None expected (urine test). Full notes are listed below.',
+            opinionAlerts: 'Accuracy figures (the box claims over 99% accuracy at detecting the LH surge) are the manufacturer’s. Surearly and Soonr are separate companies; Soonr promotes the device and its app syncs with it.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of ACOG guidance, a Cochrane review, and the device’s FDA listing; not a direct clinician quote.',
+        doctorOpinion: 'Urine LH testing is one of the better-supported tools for trying to conceive: ACOG explains that these tests detect the LH rise before ovulation, and a 2023 Cochrane review found timing sex with ovulation tests probably increases pregnancy and live-birth rates (moderate-quality evidence). Adding a progesterone-marker (P3G/PdG) reading can help confirm that ovulation actually happened, which LH alone can’t show.\n\nThe reader’s digital result removes the guesswork of reading faint lines. No independent study of this specific reader was found, and ovulation tests can’t diagnose infertility; ACOG recommends an evaluation after 1 year of trying, or 6 months if you’re over 35.',
+        doctorOpinionShort: 'LH ovulation testing has moderate-quality Cochrane evidence for improving pregnancy rates, and adding a progesterone-marker reading helps confirm ovulation. No study of this specific reader was found.',
+        whoItsFor: [
+            'People trying to conceive who want to pinpoint their fertile window',
+            'Anyone who wants to confirm ovulation happened, not just predict it',
+            'Soonr app users who want real hormone readings synced to their shared calendar',
+        ],
+        howToUse: {
+            intro: 'Per Soonr and the device’s FDA listing:',
+            steps: [
+                'Insert a test stick into the reader and apply urine as directed on the package insert.',
+                'Read the result on the reader in about 5 minutes.',
+                'Results sync by Bluetooth to the Soonr app (or the Surearly SMART app), where you can track LH and P3G across cycles.',
+            ],
+            sourceUrl: 'https://soonr.health/',
+            sourceLabel: 'soonr.health: Surearly SMART',
+        },
+        warnings: [
+            'Follow the package insert for when in your cycle to start testing and what time of day to test.',
+            'Ovulation tests predict and confirm ovulation; they can’t diagnose infertility or confirm pregnancy.',
+            'See a clinician if you haven’t conceived after 1 year of trying (6 months if you’re over 35), per ACOG.',
+        ],
+        communityReview: 'Customer reviews for this reader are on its Amazon listing (linked below). Amazon blocks automated access, so ayna hasn’t pulled a rating; read them directly.',
+        effectiveness: 'Urine LH testing probably improves pregnancy and live-birth rates when used to time sex (Cochrane 2023, moderate-quality evidence). No independent study of the Surearly SMART reader was found.',
+        integrations: ['Soonr', 'Surearly SMART app'],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10501857/', text: 'Timed intercourse for couples trying to conceive (Cochrane review, 2023)', summary: 'A Cochrane review of 7 randomized trials (2,464 women or couples) found that timing sex with urine ovulation (LH) tests probably increases the chance of pregnancy and live birth compared with not predicting ovulation (moderate-quality evidence). This supports ovulation testing in general, not a specific device or app.' },
+                    { url: 'https://www.acog.org/womens-health/faqs/evaluating-infertility', text: 'ACOG: Evaluating Infertility', summary: 'ACOG explains that urine tests detect the rise in luteinizing hormone (LH) that comes before ovulation, and recommends a fertility evaluation after 1 year of trying (or 6 months if you’re over 35). This is clinical guidance for the category, not validation of a specific product.' },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'amazon', url: 'https://www.amazon.com/dp/B0H1BCL6NB', text: 'Amazon: Surearly Digital Fertility Monitor, LH + PdG Ovulation Tracker with App', summary: 'This reader’s Amazon listing (reader + 20 test sticks), with customer reviews. Amazon blocks automated access, so no rating is quoted here; read the reviews directly.' },
+                    { url: 'https://accessgudid.nlm.nih.gov/devices/08809408863482', text: 'FDA device listing (GUDID): Surearly SMART Ovulation Test', summary: 'The device’s entry in the FDA/NIH device database: over-the-counter LH test by Sugentech, in commercial distribution.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    // Tampon Tribe (tampontribe.com), catalog entries only, NOT an ayna
+    // brand partner. First batch (2026-09-30): the five products matching
+    // the photos ayna supplied (stored under public/products/tampon-tribe/).
+    // Facts are from tampontribe.com (Shopify products.json + product pages);
+    // brand-site ratings are from its review widget. Options (absorbency,
+    // counts) cost the same and share one photo, so they're listed in the
+    // price text rather than as PRODUCT_VARIANTS; Buy Now opens the product
+    // page to choose. The store also has many duplicate "-copy" listings,
+    // masks, dispensers, and giveaway items, which aren't catalog products.
+    // Certification (2026-10-01): manufacturer Cohitech states GOTS/ICEA
+    // organic certification, and Tampon Tribe posts a June 2024 CALITEC LAB
+    // report on the raw cotton. Neither posts the GOTS certificate number;
+    // ayna is requesting it. When it arrives, link it in each product's
+    // verificationLinks.scientific and drop the "certificate number isn't
+    // posted" sentence from safety.opinionAlerts.
+    {
+        id: 'p-tampontribe-organic-tampons',
+        name: 'Tampon Tribe Organic Tampons',
+        brand: 'Tampon Tribe',
+        category: 'tampon',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['organic', 'sustainability', 'comfort', 'heavy-flow'],
+        price: '$10.60 per box, as a monthly subscription (Regular 16, Super 14, Super Plus 12, or a mixed or heavy-flow pack)',
+        userRating: 4.6,
+        userRatingSourceUrl: 'https://tampontribe.com/products/tampons',
+        whereToBuy: ['tampontribe.com'],
+        url: 'https://tampontribe.com/products/tampons',
+        image: '/products/tampon-tribe/organic-tampons.webp',
+        summary: 'Certified organic cotton tampons with a biodegradable cardboard "twist" applicator and no plastic anywhere, including the packaging. The absorbent core is wrapped in an organic cotton "safety veil" that the brand says keeps loose cotton strands from being left behind. No rayon/viscose, perfume, dyes, or chlorine bleaching. Sold as a monthly subscription you can customize, pause, or cancel, with free U.S. delivery; the first box arrives in a reusable jute bag, refills in recycled paper.',
+        safety: {
+            fdaStatus: 'Tampons are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA clearance details. The manufacturer, Cohitech, is FDA-registered and certified to ISO 13485 (medical-device quality management).',
+            materials: '100% organic cotton absorbent core and cover (certified organic under GOTS by ICEA) with an organic cotton safety veil around the core; biodegradable cardboard twist applicator with a rounded tip; paper wrapper. No superabsorbents, glue, rayon/viscose, perfume, or chlorine/dioxin bleaching.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic (independently dermatologist-tested, per manufacturer Cohitech), fragrance-free, dye-free, and vegan.',
+            sideEffects: 'Toxic shock syndrome (TSS) is rare but serious with any tampon: use the lowest absorbency you need and never wear one longer than 8 hours. Full warnings are listed below.',
+            opinionAlerts: 'Organic cotton avoids fragrance, dyes, and chlorine bleaching, but "100% cotton" isn’t automatically lower TSS risk: a 2018 lab study found cotton/rayon blend tampons grew less S. aureus than cotton-only ones. Absorbency and wear time matter most (FDA). Certification and testing: Tampon Tribe’s manufacturer, Cohitech (Spain), states its products are certified organic under GOTS by ICEA, and a June 2024 independent lab report (CALITEC LAB, Barcelona) found no pesticide residues, glyphosate, GMOs, formaldehyde, or detectable heavy metals in its organic cotton. Two limits: the lab tested a sample of raw organic cotton, not finished tampons, and neither Tampon Tribe nor Cohitech posts the GOTS certificate number, so the certification rests on Cohitech’s public statement plus that report; ayna will link the certificate once it’s provided. Separately, Tampon Tribe calls itself the only totally plastic-free U.S. period product; that’s a marketing claim the certifications don’t cover, and ayna couldn’t verify it.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Organic cotton with no fragrance, dyes, or chlorine bleaching is a reasonable choice for people with vulvar irritation or who want fewer additives. What the evidence doesn’t support is treating "100% organic cotton" as a TSS safety upgrade: FDA’s guidance focuses on using the lowest absorbency you need and changing every 4 to 8 hours, and a 2018 lab study actually found cotton/rayon blend tampons grew less Staphylococcus aureus than cotton-only ones.\n\nTampon Tribe’s cotton "safety veil" around the core is designed to keep fibers from shedding on removal, a concern with some cotton tampons. No independent study of Tampon Tribe tampons was found.',
+        doctorOpinionShort: 'A plastic-free, organic cotton tampon with a cardboard applicator. Organic cotton cuts additives but isn’t a proven TSS-risk downgrade; FDA says to use the lowest absorbency and change every 4 to 8 hours. No study of this brand was found.',
+        whoItsFor: [
+            'People who want organic cotton tampons with no plastic, fragrance, or dyes',
+            'Anyone who wants a cardboard applicator instead of plastic',
+            'Subscription shoppers who want a customizable monthly box with free U.S. delivery',
+        ],
+        howToUse: {
+            intro: 'Per Tampon Tribe’s directions and FDA tampon guidance:',
+            steps: [
+                'Unwrap the paper wrap.',
+                'Twist the top part of the applicator in the opposite direction from the base.',
+                'Push the base up slightly so the tip of the tampon shows, then insert.',
+                'Choose the lowest absorbency that handles your flow, and change every 4 to 8 hours; never longer than 8 hours (FDA).',
+            ],
+            sourceUrl: 'https://tampontribe.com/products/tampons',
+            sourceLabel: 'tampontribe.com: Organic Tampons',
+        },
+        warnings: [
+            'Toxic shock syndrome (TSS) is rare but serious. Remove the tampon and get emergency care for sudden high fever, vomiting, diarrhea, dizziness or fainting, or a sunburn-like rash during your period (FDA).',
+            'Use only during your period, with the lowest absorbency you need.',
+            'Not a form of contraception and does not protect against STIs.',
+        ],
+        communityReview: 'On tampontribe.com, Organic Tampons average 4.6 out of 5 from 401 reviews (reviews on the brand’s own site).',
+        effectiveness: 'Absorbency comes in Regular, Super, and Super Plus. No independent lab comparison of Tampon Tribe tampons against other brands was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-tampon-safety', text: 'FDA: Tampon Safety Facts', summary: 'FDA advises using the lowest absorbency tampon you need, changing every 4 to 8 hours and never wearing one longer than 8 hours, and knowing the signs of toxic shock syndrome (sudden high fever, vomiting, diarrhea, fainting or dizziness, or a sunburn-like rash). FDA also notes cleared tampons are made of cotton, rayon, or blends, bleached without elemental chlorine. This is category guidance, not validation of a specific product.' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5981080/', text: 'Impact of currently marketed tampons and menstrual cups on S. aureus growth and TSST-1 production in vitro (Nonfoux et al., 2018)', summary: 'In a lab study of 11 tampon types, tampons made of a cotton/rayon mix grew less Staphylococcus aureus than cotton-only tampons. It suggests "100% cotton" isn’t automatically lower TSS risk; absorbency and wear time matter more. Lab evidence, not a study of Tampon Tribe tampons.' },
+                    { url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications', text: 'Tampon Tribe: Third-Party Testing and Certifications', summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. This tested a sample of raw organic cotton from manufacturer Cohitech, not finished products, and isn’t a clinical study.' },
+                    { url: 'https://www.cohitech.net/en/', text: 'Cohitech (Cotton High Tech): manufacturer certifications', summary: 'Tampon Tribe’s manufacturer, the Spanish organic cotton producer named on its lab report. Cohitech states its products are certified organic under GOTS by ICEA and by Cotton Inc., that it is FDA-registered with ISO 13485/MDSAP medical-device quality certification, and that products are dermatologically tested by independent labs as hypoallergenic and non-irritating. Its site doesn’t post the GOTS certificate number.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://tampontribe.com/products/tampons', text: 'tampontribe.com: Organic Tampons reviews', summary: 'The brand’s product page: 4.6/5 from 401 reviews as of September 30, 2026.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-organic-pads',
+        name: 'Tampon Tribe Organic Pads',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['organic', 'sustainability', 'comfort'],
+        price: '$10.60 per box of 10, as a monthly subscription (Day, Night, or 7 Day + 3 Night)',
+        userRating: 4.8,
+        userRatingSourceUrl: 'https://tampontribe.com/products/pads',
+        whereToBuy: ['tampontribe.com'],
+        url: 'https://tampontribe.com/products/pads',
+        image: '/products/tampon-tribe/organic-pads.webp',
+        summary: 'Thin, winged pads made with certified organic cotton and no plastic. Day pads are 240 mm long with 100 ml absorbency; Night pads are 290 mm with 120 ml absorbency and double wings. "Gravity" anti-leak edges help keep you dry. Individually wrapped, with a plant-based backing and a vegan biopolymer adhesive instead of glue. Sold as a monthly subscription with free U.S. delivery.',
+        safety: {
+            fdaStatus: 'Menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details. The manufacturer, Cohitech, is FDA-registered and certified to ISO 13485 (medical-device quality management).',
+            materials: '100% organic cotton top layer and absorbent core (certified organic under GOTS by ICEA). No superabsorbent gel, perfume, dyes, or glue; plant-based backing with a vegan biopolymer adhesive. Vegan and hypoallergenic. Individually wrapped.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic (independently dermatologist-tested, per manufacturer Cohitech), fragrance-free, dye-free, and vegan.',
+            sideEffects: 'None expected. Stop using if you notice irritation. Full notes are listed below.',
+            opinionAlerts: 'Without superabsorbent gel, these rely on cotton alone, so they may need changing more often on heavy days. Certification and testing: Tampon Tribe’s manufacturer, Cohitech (Spain), states its products are certified organic under GOTS by ICEA, and a June 2024 independent lab report (CALITEC LAB, Barcelona) found no pesticide residues, glyphosate, GMOs, formaldehyde, or detectable heavy metals in its organic cotton. Two limits: the lab tested a sample of raw organic cotton, not finished pads, and neither Tampon Tribe nor Cohitech posts the GOTS certificate number, so the certification rests on Cohitech’s public statement plus that report; ayna will link the certificate once it’s provided. Separately, Tampon Tribe calls itself the only totally plastic-free U.S. period product; that’s a marketing claim the certifications don’t cover, and ayna couldn’t verify it.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Cotton pads without fragrance, dyes, or plastic top sheets are a sensible choice for people with vulvar irritation or sensitivity to synthetic materials. ACOG’s general advice applies: change a pad at least every 4 to 8 hours, or whenever it feels full or wet. Because they skip superabsorbent gel, they may need changing more often on heavy days. No independent study of these pads was found.',
+        doctorOpinionShort: 'Organic cotton, plastic-free pads with wings. A reasonable pick for sensitive skin; change every 4 to 8 hours per ACOG. No study of this brand was found.',
+        whoItsFor: [
+            'People with vulvar irritation or sensitivity to plastic or synthetic pad materials',
+            'Anyone who wants plastic-free, organic cotton pads',
+            'Light to moderate flow (Day) and overnight use (Night)',
+        ],
+        howToUse: {
+            intro: 'Per ACOG’s general pad guidance:',
+            steps: [
+                'Peel off the backing and press the pad into your underwear, folding the wings around the edges.',
+                'Change at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable.',
+                'Wrap the used pad and put it in the trash. Tampon Tribe says the pads will biodegrade, but it doesn’t recommend flushing them.',
+            ],
+            sourceUrl: 'https://www.acog.org/womens-health/faqs/your-first-period',
+            sourceLabel: 'ACOG: Your First Period',
+        },
+        warnings: [
+            'Don’t flush; Tampon Tribe itself doesn’t recommend it.',
+            'Stop using if you notice irritation or a rash.',
+        ],
+        communityReview: 'On tampontribe.com, Organic Pads average 4.8 out of 5 from 163 reviews (reviews on the brand’s own site).',
+        effectiveness: 'Day pads hold up to 100 ml and Night pads up to 120 ml, per the brand. No independent comparison with other pads was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                    { url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications', text: 'Tampon Tribe: Third-Party Testing and Certifications', summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. This tested a sample of raw organic cotton from manufacturer Cohitech, not finished products, and isn’t a clinical study.' },
+                    { url: 'https://www.cohitech.net/en/', text: 'Cohitech (Cotton High Tech): manufacturer certifications', summary: 'Tampon Tribe’s manufacturer, the Spanish organic cotton producer named on its lab report. Cohitech states its products are certified organic under GOTS by ICEA and by Cotton Inc., that it is FDA-registered with ISO 13485/MDSAP medical-device quality certification, and that products are dermatologically tested by independent labs as hypoallergenic and non-irritating. Its site doesn’t post the GOTS certificate number.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://tampontribe.com/products/pads', text: 'tampontribe.com: Organic Pads reviews', summary: 'The brand’s product page: 4.8/5 from 163 reviews as of September 30, 2026.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-pantyliners-bulk-buy',
+        name: 'Tampon Tribe Organic Pantyliners Bulk Buy (48)',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['organic', 'sustainability', 'comfort', 'cost'],
+        price: '$20 for 48 pantyliners (one-time purchase)',
+        whereToBuy: ['tampontribe.com'],
+        url: 'https://tampontribe.com/products/organic-pantyliners-bulk-buy',
+        image: '/products/tampon-tribe/pantyliners-bulk-buy.webp',
+        summary: 'A one-time bulk pack of 48 ultrathin organic cotton pantyliners in a jute bag. Each liner is individually wrapped in a starch film (not plastic) and uses a biodegradable polymer adhesive. No perfume, superabsorbent, or chlorine bleaching. The same liners are also sold as a subscription (24 or 48 per box).',
+        safety: {
+            fdaStatus: 'Pantyliners are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details. The manufacturer, Cohitech, is FDA-registered and certified to ISO 13485 (medical-device quality management).',
+            materials: '100% organic cotton absorbent core (certified organic under GOTS by ICEA) with a cotton non-woven top sheet designed not to leave fibers on skin; individually wrapped in starch film; biodegradable polymer adhesive strip. Perfume-free, superabsorbent-free, no chlorine or dioxin bleaching.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic (independently dermatologist-tested, per manufacturer Cohitech), fragrance-free, and vegan.',
+            sideEffects: 'None expected. Stop using if you notice irritation.',
+            opinionAlerts: 'For light days, discharge, or backup only; not enough for a full period. Certification and testing: Tampon Tribe’s manufacturer, Cohitech (Spain), states its products are certified organic under GOTS by ICEA, and a June 2024 independent lab report (CALITEC LAB, Barcelona) found no pesticide residues, glyphosate, GMOs, formaldehyde, or detectable heavy metals in its organic cotton. Two limits: the lab tested a sample of raw organic cotton, not finished pantyliners, and neither Tampon Tribe nor Cohitech posts the GOTS certificate number, so the certification rests on Cohitech’s public statement plus that report; ayna will link the certificate once it’s provided. Separately, Tampon Tribe calls itself the only totally plastic-free U.S. period product; that’s a marketing claim the certifications don’t cover, and ayna couldn’t verify it.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Fragrance-free cotton liners are a good choice for daily discharge or light spotting, especially for people who react to scented or plastic-topped liners. Change them as they get damp. No independent study of these liners was found.',
+        doctorOpinionShort: 'Unscented organic cotton liners for light days and discharge. A sensible choice for sensitive skin; no study of this brand was found.',
+        whoItsFor: [
+            'Daily discharge, spotting, or light days',
+            'Backup with a tampon or cup',
+            'People who react to scented or plastic-topped liners',
+        ],
+        howToUse: {
+            intro: 'General guidance:',
+            steps: [
+                'Unwrap, peel off the backing, and press into your underwear.',
+                'Change whenever it feels damp, and at least every 4 to 8 hours (ACOG’s pad guidance).',
+                'Throw used liners in the trash; don’t flush.',
+            ],
+            sourceUrl: 'https://www.acog.org/womens-health/faqs/your-first-period',
+            sourceLabel: 'ACOG: Your First Period',
+        },
+        warnings: [
+            'For light flow or discharge only; use a pad or tampon for your period.',
+            'Stop using if you notice irritation.',
+        ],
+        communityReview: 'This bulk listing shows no reviews of its own. The same liners’ regular Organic Pantyliners listing averages 4.5 out of 5 from 92 reviews on tampontribe.com.',
+        effectiveness: 'Ultrathin, for light absorbency. No independent comparison with other liners was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                    { url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications', text: 'Tampon Tribe: Third-Party Testing and Certifications', summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. This tested a sample of raw organic cotton from manufacturer Cohitech, not finished products, and isn’t a clinical study.' },
+                    { url: 'https://www.cohitech.net/en/', text: 'Cohitech (Cotton High Tech): manufacturer certifications', summary: 'Tampon Tribe’s manufacturer, the Spanish organic cotton producer named on its lab report. Cohitech states its products are certified organic under GOTS by ICEA and by Cotton Inc., that it is FDA-registered with ISO 13485/MDSAP medical-device quality certification, and that products are dermatologically tested by independent labs as hypoallergenic and non-irritating. Its site doesn’t post the GOTS certificate number.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://tampontribe.com/products/organic-pantyliners-bulk-buy', text: 'tampontribe.com: Organic Pantyliners Bulk Buy', summary: 'The brand’s bulk-buy page.' },
+                    { url: 'https://tampontribe.com/products/pantyliners', text: 'tampontribe.com: Organic Pantyliners reviews', summary: 'The same liners’ subscription listing: 4.5/5 from 92 reviews as of September 30, 2026.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-reusable-pads',
+        name: 'Tampon Tribe Reusable Pads, Organic Cotton (2-Pack)',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['organic', 'sustainability', 'reusable', 'cost'],
+        price: '$16.80 for 2 pads',
+        whereToBuy: ['tampontribe.com'],
+        url: 'https://tampontribe.com/products/reusable-pads-2-pack',
+        image: '/products/tampon-tribe/reusable-pads-2-pack.webp',
+        summary: 'Washable cloth pads made with ultra-soft certified organic cotton, sold in a 2-pack. Rated for medium flow, holding up to 3 tampons’ worth; change more often on heavy days. Three layers with odor control, a super-absorbent inner layer, "gravity" leak-guard edges, and V-shaped straps that fasten with a metal clasp behind your underwear. The brand says they’re PFAS-free, plant-based, and vegan, and offers a money-back guarantee.',
+        safety: {
+            fdaStatus: 'Reusable menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details.',
+            materials: 'Organic cotton top layer, 3-layer construction with an odor-control layer and an absorbent inner layer; V-shaped straps with a metal clasp. PFAS-free, plant-based, and vegan, per the brand.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic, per the brand.',
+            sideEffects: 'None expected with proper washing. Stop using if you notice irritation.',
+            opinionAlerts: 'The absorbent layer’s material isn’t specified, and the site calls the product plastic-free. Tampon Tribe publishes GOTS/ICEA certification (through its manufacturer Cohitech) and a June 2024 lab report for its organic cotton, but that lab tested raw cotton for the disposable line, not these cloth pads, and the GOTS certificate number isn’t posted; ayna will link the certificate once it’s provided. The PFAS-free claim specific to these reusable pads isn’t covered by that testing, and ayna couldn’t verify it. Tampon Tribe also calls itself the only totally plastic-free U.S. period product; that’s a marketing claim the certifications don’t cover.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Washable cloth pads are a reasonable, lower-waste option for light to medium flow and for people sensitive to disposable pad materials. The key is hygiene: change them as often as a disposable pad (ACOG suggests every 4 to 8 hours), and wash and fully dry them between uses. The "PFAS-free" claim is the brand’s own, without published test results. No independent study of these pads was found.',
+        doctorOpinionShort: 'Organic cotton cloth pads for medium flow. Lower waste and gentle on sensitive skin if washed and dried well between uses. PFAS-free claim is the brand’s own; no study of these pads was found.',
+        whoItsFor: [
+            'Light to medium flow, or backup',
+            'People who want to cut disposable waste',
+            'People sensitive to disposable pad materials',
+        ],
+        howToUse: {
+            intro: 'Per Tampon Tribe’s directions:',
+            steps: [
+                'Place the pad in your underwear and fasten the metal clasp behind your underwear.',
+                'Change at least every 4 to 8 hours, or sooner on heavy days (it holds about 3 tampons’ worth).',
+                'Rinse in cold water, wash with gentle soap, and hang to dry completely before reusing.',
+            ],
+            sourceUrl: 'https://tampontribe.com/products/reusable-pads-2-pack',
+            sourceLabel: 'tampontribe.com: Reusable Pads',
+        },
+        warnings: [
+            'Wash and dry completely between uses to avoid irritation and odor.',
+            'For medium flow; change more often, or pair with another product, on heavy days.',
+        ],
+        communityReview: 'No customer rating is shown for this pad on tampontribe.com. The brand offers a money-back guarantee if you’re unhappy with it.',
+        effectiveness: 'Holds up to about 3 tampons’ worth, per the brand. No independent absorbency or PFAS test was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                    { url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications', text: 'Tampon Tribe: Third-Party Testing and Certifications', summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. This tested a sample of raw organic cotton from manufacturer Cohitech, not finished products, and isn’t a clinical study.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://tampontribe.com/products/reusable-pads-2-pack', text: 'tampontribe.com: Reusable Pads (2-Pack)', summary: 'The brand’s product page, with care instructions and its money-back guarantee.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+    {
+        id: 'p-tampontribe-teen-pads',
+        name: 'Tampon Tribe Organic Teen Pads',
+        brand: 'Tampon Tribe',
+        category: 'pad',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['organic', 'sustainability', 'comfort', 'beginner-friendly'],
+        price: '$10 for 18 pads (individually boxed, or in a jute bag)',
+        whereToBuy: ['tampontribe.com'],
+        url: 'https://tampontribe.com/products/organic-teen-pads',
+        image: '/products/tampon-tribe/organic-teen-pads.webp',
+        summary: 'Smaller winged pads made for teens and tweens, sized to fit smaller bodies and underwear: 7.2 inches long with 40 ml absorbency. Made with certified organic cotton and no plastic, fragrance, or dyes, with "gravity" anti-leak edges. Individually wrapped, and available individually boxed so they’re easy to keep in a school bag.',
+        safety: {
+            fdaStatus: 'Menstrual pads are regulated by the FDA as medical devices; tampontribe.com doesn’t list this product’s FDA details. The manufacturer, Cohitech, is FDA-registered and certified to ISO 13485 (medical-device quality management).',
+            materials: 'Certified organic cotton (GOTS, certified by ICEA). No superabsorbent gel, perfume, dyes, or glue; plant-based backing with a vegan biopolymer adhesive. Vegan and hypoallergenic. Individually wrapped; optional individual boxes.',
+            recalls: 'No recalls are mentioned on tampontribe.com; check current FDA and manufacturer recall notices.',
+            allergens: 'Hypoallergenic (independently dermatologist-tested, per manufacturer Cohitech), fragrance-free, dye-free, and vegan.',
+            sideEffects: 'None expected. Stop using if you notice irritation.',
+            opinionAlerts: 'At 40 ml, these are for lighter days; heavier flow may need a full-size pad. Certification and testing: Tampon Tribe’s manufacturer, Cohitech (Spain), states its products are certified organic under GOTS by ICEA, and a June 2024 independent lab report (CALITEC LAB, Barcelona) found no pesticide residues, glyphosate, GMOs, formaldehyde, or detectable heavy metals in its organic cotton. Two limits: the lab tested a sample of raw organic cotton, not finished pads, and neither Tampon Tribe nor Cohitech posts the GOTS certificate number, so the certification rests on Cohitech’s public statement plus that report; ayna will link the certificate once it’s provided. Separately, Tampon Tribe calls itself the only totally plastic-free U.S. period product; that’s a marketing claim the certifications don’t cover, and ayna couldn’t verify it.',
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of FDA and ACOG guidance and peer-reviewed research; not a direct clinician quote. Product details are from tampontribe.com.',
+        doctorOpinion: 'Smaller, unscented cotton pads are a gentle way to start, since first periods are often irregular and lighter pads fit younger bodies better. ACOG’s advice for first periods applies: change a pad at least every 4 to 8 hours, or whenever it feels full or wet. Very heavy periods (soaking a pad every hour or two) are worth mentioning to a doctor. No independent study of these pads was found.',
+        doctorOpinionShort: 'Teen-sized, unscented organic cotton pads for lighter flow. Change every 4 to 8 hours per ACOG. No study of this brand was found.',
+        whoItsFor: [
+            'Teens and tweens starting their periods',
+            'Anyone with a smaller body or lighter flow who finds standard pads bulky',
+            'Keeping a discreet pad in a school bag',
+        ],
+        howToUse: {
+            intro: 'Per ACOG’s first-period guidance:',
+            steps: [
+                'Peel off the backing, press the pad into your underwear, and fold the wings around the edges.',
+                'Change at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable.',
+                'Wrap the used pad and put it in the trash; don’t flush.',
+            ],
+            sourceUrl: 'https://www.acog.org/womens-health/faqs/your-first-period',
+            sourceLabel: 'ACOG: Your First Period',
+        },
+        warnings: [
+            'Lighter absorbency (40 ml): switch to a larger pad on heavy days.',
+            'Stop using if you notice irritation or a rash.',
+        ],
+        communityReview: 'No customer rating is shown for the teen pads on tampontribe.com. Tampon Tribe’s regular Organic Pads average 4.8/5 from 163 reviews on its site.',
+        effectiveness: 'Holds up to 40 ml, per the brand. No independent comparison with other teen pads was found.',
+        integrations: [],
+        badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            // Also feeds the source chips under the ayna Summary.
+            scientific: {
+                links: [
+                    { url: 'https://www.acog.org/womens-health/faqs/your-first-period', text: 'ACOG: Your First Period', summary: 'ACOG advises changing a pad at least every 4 to 8 hours, or whenever it feels full, wet, or uncomfortable, and explains how pads with wings stay in place. General guidance for any pad, not validation of a specific product.' },
+                    { url: 'https://tampontribe.com/blogs/news/our-third-party-testing-and-certifications', text: 'Tampon Tribe: Third-Party Testing and Certifications', summary: 'Tampon Tribe’s testing page, linking its June 2024 independent lab analysis (CALITEC LAB, Barcelona) of its organic cotton: glyphosate and AMPA below 0.01 mg/kg, no multi-residue pesticides detected, GMO-negative, residual chlorine below 0.1 mg/L, formaldehyde below 0.01 mg/kg, and 9 heavy metals (including arsenic, lead, mercury, and cadmium) below detection limits. This tested a sample of raw organic cotton from manufacturer Cohitech, not finished products, and isn’t a clinical study.' },
+                    { url: 'https://www.cohitech.net/en/', text: 'Cohitech (Cotton High Tech): manufacturer certifications', summary: 'Tampon Tribe’s manufacturer, the Spanish organic cotton producer named on its lab report. Cohitech states its products are certified organic under GOTS by ICEA and by Cotton Inc., that it is FDA-registered with ISO 13485/MDSAP medical-device quality certification, and that products are dermatologically tested by independent labs as hypoallergenic and non-irritating. Its site doesn’t post the GOTS certificate number.' },
+                ],
+            },
+            community: {
+                links: [
+                    { url: 'https://tampontribe.com/products/organic-teen-pads', text: 'tampontribe.com: Organic Teen Pads', summary: 'The brand’s product page.' },
+                ],
+            },
+        },
+        isEmergingBrand: false,
+    },
+
+    // Rèsa brand partnership (2026-10-05), PRE-LAUNCH. Rèsa hasn't shipped
+    // yet: the only thing a user can do today is reserve a spot on the
+    // waitlist with a $9.90 early deposit. `prelaunch: true` drives the
+    // distinct "ayna Favorite · Waitlist" badge, the waitlist CTA, and the
+    // no-commission partner disclosure (see src/utils/partnerBrands.js).
+    // ayna earns NO commission on the deposit, the partnership is groundwork
+    // for the future wearable dashboard. affiliateUrl is the UTM-tagged
+    // shop link Rèsa supplied so referrals are trackable on their side.
+    // Facts below come from resa-labs.com, shop.resa-labs.com and Rèsa's
+    // 2026 product-intro deck, checked 2026-10-05; nothing is independently
+    // verified because there is no shipped device to verify yet.
+    {
+        id: 'p-resa-rhythm-bracelet',
+        name: 'Rèsa Rhythm Bracelet',
+        brand: 'Rèsa',
+        category: 'tracker',
+        type: 'physical',
+        internal: false,
+        prelaunch: true,
+        waitlistCtaLabel: 'Join waitlist · $9.90 deposit',
+        healthFunctions: ['cycle-tracking', 'fitness-cycle'],
+        tags: ['resa', 'wearable', 'jewelry', 'waitlist', 'pre-launch', 'sleep', 'stress', 'hrv', 'cycle', 'irregular', 'privacy'],
+        price: '$9.90 waitlist deposit',
+        whereToBuy: [], // pre-launch, direct-to-consumer reservation only
+        url: 'https://www.resa-labs.com/',
+        affiliateUrl: 'https://shop.resa-labs.com/?utm_source=ayna_partner&utm_medium=referral&utm_campaign=market_test',
+        image: '/products/resa/rhythm-bracelet.webp', // supplied by ayna 2026-10-05
+        summary: 'Rèsa is an 18K gold-plated bracelet that doubles as a wellness wearable built for female physiology. It continuously tracks heart-rate variability, resting heart rate, skin temperature, sleep, respiration and activity, combines that with your cycle information, and reads it against your personal baseline to make sense of three rhythms at once: hormonal, circadian and stress. Instead of scores, the Rèsa app gives one plain-language read and one suggestion for the day, then checks in on whether it helped.',
+        safety: {
+            fdaStatus: 'Consumer wellness wearable, not a medical device; not FDA-cleared, and not intended to diagnose or treat any condition.',
+            materials: '18K gold-plated bracelet, about 15g, 100% waterproof, roughly 7 days of battery per charge, per the brand.',
+            recalls: 'Not yet released, no recalls.',
+            sideEffects: 'None expected from wearing it. As with any metal jewelry, people with plating or metal sensitivities should check final material details at launch.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: "Sourced from Rèsa's own site and product-intro materials, not independent clinical literature.",
+        doctorOpinion: 'HRV, resting heart rate, skin temperature and sleep are well-established wearable signals, and skin and wrist temperature in particular track the post-ovulation temperature shift across the menstrual cycle. Rèsa\'s pitch is interpreting those signals together, against your own baseline, instead of one metric at a time. The device has not launched, so there is no published validation of its accuracy or of its hormone-trend ("Hormone Rhythm") estimates yet. Its scientific advisory board includes Prof. Tory Eisenlohr-Moul (hormone, mood and autonomic research), Prof. Sarah E. Hill (Texas Christian University, reproductive hormone neuroscience) and Dr. Daniela Avila-Varela (Universitat Pompeu Fabra, menstrual-cycle brain dynamics), per the brand.',
+        doctorOpinionShort: 'A promising idea built on established wearable signals, but pre-launch, so its accuracy and hormone-trend estimates are not yet validated.',
+        whoItsFor: [
+            'People who want wearable insight into how their cycle, sleep and stress interact, without wearing something that looks like a fitness tracker',
+            'Early adopters comfortable reserving a product before it ships',
+            'Not a substitute for clinical cycle, fertility or hormone testing',
+        ],
+        warnings: [
+            'Pre-launch: specs, final price and ship date are not final.',
+            'Wellness insights only. It is not contraception and does not diagnose hormonal conditions.',
+        ],
+        // The four papers Rèsa cites on shop.resa-labs.com for its claim that
+        // HRV, heart rate and skin temperature have to be read against the
+        // cycle. Links and findings checked 2026-10-05. They support the
+        // premise, not the accuracy of the (unreleased) Rèsa device itself.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/33526880/',
+                text: 'Pierson et al. Daily, weekly, seasonal and menstrual cycles in women\'s mood, behaviour and vital signs. Nature Human Behaviour (2021)',
+                summary: 'Analyzed 241 million observations from 3.3 million women in 109 countries using the Clue period-tracking app. Of the daily, weekly, seasonal and menstrual cycles, the menstrual cycle had the largest effect on most measures of mood, behaviour and vital signs, while sleep and exercise stayed more constant.',
+            },
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11666598/',
+                text: 'Jasinski et al. A novel method for quantifying fluctuations in wearable-derived daily cardiovascular parameters across the menstrual cycle. npj Digital Medicine (2024)',
+                summary: 'Wearable data from 11,590 people across 45,811 menstrual cycles. Resting heart rate and HRV rose and fell in a regular pattern through the cycle: resting heart rate lowest and HRV highest around day 5, resting heart rate highest around day 26 and HRV lowest around day 27. The swing was smaller in older participants and those using birth control.',
+            },
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7141121/',
+                text: 'Schmalenberger et al. Menstrual cycle changes in vagally-mediated heart rate variability are associated with progesterone. Journal of Clinical Medicine (2020)',
+                summary: 'Two within-person studies that measured hormones and HRV repeatedly across the cycle. Higher-than-usual progesterone predicted lower-than-usual HRV, and HRV was lowest in the mid-luteal phase; estradiol showed no significant effect. A practical example of why the same HRV number can mean different things depending on cycle phase.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/38767963/',
+                text: 'Gombert-Labedens et al. Using wearable skin temperature data to advance tracking and characterization of the menstrual cycle in a real-world setting. Journal of Biological Rhythms (2024)',
+                summary: 'Minute-by-minute wearable skin temperature from 120 women over a menstrual cycle. Temperature across the cycle was better described as a smooth rhythm (a cosinor model) than as a simple two-phase low/high step, which lets wearables measure the cycle\'s temperature rhythm in everyday life.',
+            },
+        ],
+        integrations: [],
+        badges: ['Pre-launch', 'Waitlist', 'Female-Founded'],
         isEmergingBrand: true,
     },
 ];

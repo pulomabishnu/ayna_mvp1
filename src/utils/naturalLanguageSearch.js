@@ -23,12 +23,20 @@ const STOP = new Set([
   'right', 'maybe', 'sure', 'okay', 'ok', 'yes', 'yeah', 'no', 'nah',
 ]);
 
+/**
+ * Lowercases and strips accents so a shopper typing "kiero" finds kieró and
+ * "resa" finds Rèsa. Applied to both product text and the query.
+ */
+export function foldForSearch(text) {
+  return String(text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
 /** Flatten item fields used for matching */
 export function buildSearchTextForItem(item, categoryLabels = {}) {
   const safetyStr = item.safety && typeof item.safety === 'object'
     ? [item.safety.fdaStatus, item.safety.materials, item.safety.recalls, item.safety.allergens].filter(Boolean).join(' ')
     : '';
-  return [
+  return foldForSearch([
     item.name,
     item.brand,
     item.summary,
@@ -43,7 +51,7 @@ export function buildSearchTextForItem(item, categoryLabels = {}) {
     categoryLabels[item.category],
     (item.badges || []).join(' '),
     (item.healthFunctions || []).join(' '),
-  ].filter(Boolean).join(' ').toLowerCase();
+  ].filter(Boolean).join(' '));
 }
 
 /**
@@ -59,7 +67,7 @@ export function buildSearchTextForItem(item, categoryLabels = {}) {
  * haystack to weight identity-field matches above prose-only ones.
  */
 export function buildIdentityTextForItem(item, categoryLabels = {}) {
-  return [
+  return foldForSearch([
     item.name,
     item.brand,
     (item.tags || []).join(' '),
@@ -67,7 +75,7 @@ export function buildIdentityTextForItem(item, categoryLabels = {}) {
     categoryLabels[item.category],
     (item.badges || []).join(' '),
     (item.healthFunctions || []).join(' '),
-  ].filter(Boolean).join(' ').toLowerCase();
+  ].filter(Boolean).join(' '));
 }
 
 /** True when `w` appears in `haystack` as its own word, not as a run inside a longer one. */
@@ -247,7 +255,7 @@ function termMatchesWithVariants(term, haystack) {
  * Tokenizes query, drops stop words and punctuation, keeps meaningful terms.
  */
 function meaningfulTerms(query) {
-  const q = query.toLowerCase().trim().replace(/[^\w\s'-]/g, ' ');
+  const q = foldForSearch(query).trim().replace(/[^\w\s'-]/g, ' ');
   // Single-character tokens used to be dropped outright (w.length > 1), which
   // silently collapsed "vitamin c" into a bare "vitamin" search, the "c" was
   // never tokenized at all, so C/D/E/B/K-specific vitamin queries (and things
@@ -284,7 +292,7 @@ function minHitsForMatch(termCount) {
  * haystack are unaffected.
  */
 export function scoreQueryAgainstProduct(query, haystackLower, identityHaystackLower = '') {
-  const raw = query.toLowerCase().trim();
+  const raw = foldForSearch(query).trim();
   if (!raw) return 0;
 
   const terms = meaningfulTerms(query);
@@ -358,4 +366,62 @@ export function scoreQueryAgainstProduct(query, haystackLower, identityHaystackL
   }
 
   return score;
+}
+
+// Deliberately high bar: only report a specific product when the search
+// reads as being FOR that product itself (a brand/product name, or close to
+// it), not a general symptom/category search that happens to score one
+// product slightly ahead of the others. PRODUCT_MATCH_SCORE_FLOOR (5) is
+// roughly two identity-field term hits — scoreQueryAgainstProduct above
+// weights an identity-field hit (the product's own name/brand/category/
+// tags, not incidental prose) at 2.5 points each. PRODUCT_MATCH_MARGIN_
+// MULTIPLIER (1.5x) rules out close calls where several products are all
+// plausible matches — a real single-product search should tower over the
+// runner-up, not edge it out narrowly.
+const PRODUCT_MATCH_SCORE_FLOOR = 5;
+const PRODUCT_MATCH_MARGIN_MULTIPLIER = 1.5;
+
+/**
+ * Best-effort: which single catalog product (if any) a search reads as
+ * being FOR, using this file's own scoring (the same scoring Discovery.jsx
+ * uses to rank Browse results) — never the raw query text. Returns
+ * undefined for anything short of a clear, dominant match; a generic
+ * symptom search that plausibly matches many products correctly returns
+ * nothing here, which is the point — false negatives (no signal) are fine,
+ * false positives (attaching the wrong product, or a weak coincidental one)
+ * are not.
+ *
+ * Used by Discovery.jsx's search_performed analytics event, deliberately
+ * kept here (not in that component file) since it's pure catalog-scoring
+ * logic with no React dependency — see naturalLanguageSearch.test.js.
+ *
+ * @param {string} query
+ * @param {Array<object>} catalog - items with at least an `id`.
+ * @param {Object<string, boolean>} [omittedProducts] - product IDs to
+ *   exclude, keyed by ID, truthy value means "hidden" (Discovery's own
+ *   omittedProducts shape).
+ * @param {Object<string, string>} [categoryLabels] - CATEGORY_LABELS from
+ *   ../data/products, passed through to buildSearchTextForItem/
+ *   buildIdentityTextForItem so a category code like 'cup' also matches its
+ *   human-readable label ("Menstrual Cup"). Not imported directly here to
+ *   keep this file's exports decoupled from the product catalog module.
+ * @returns {string|undefined}
+ */
+export function findConfidentProductMatch(query, catalog, omittedProducts, categoryLabels = {}) {
+  const q = (query || '').trim();
+  if (!q || !Array.isArray(catalog) || catalog.length === 0) return undefined;
+
+  const scored = catalog
+    .filter((item) => item?.id && !omittedProducts?.[item.id])
+    .map((item) => ({
+      id: item.id,
+      score: scoreQueryAgainstProduct(q, buildSearchTextForItem(item, categoryLabels), buildIdentityTextForItem(item, categoryLabels)),
+    }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  const [top, runnerUp] = scored;
+  if (!top || top.score < PRODUCT_MATCH_SCORE_FLOOR) return undefined;
+  if (runnerUp && top.score < runnerUp.score * PRODUCT_MATCH_MARGIN_MULTIPLIER) return undefined;
+  return top.id;
 }

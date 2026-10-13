@@ -6,7 +6,7 @@ import { exclusionLines } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
-import { isPartnerBrandItem } from '../utils/partnerBrands';
+import { isPartnerBrandItem, isPrelaunchPartnerItem, getPartnerDisclosureText } from '../utils/partnerBrands';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
@@ -21,7 +21,12 @@ import ComparePanel from './pdp/ComparePanel';
 import Breadcrumbs from './pdp/Breadcrumbs';
 import useJsonLd from './pdp/useJsonLd';
 import { jumpTo } from './pdp/jump';
-import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
+import { resolveBuyUrl, isAmazonUrl, buyGoesToAmazonListing } from '../utils/buyLink';
+import { getVariantSelection } from '../utils/productVariantSelection';
+import { recordRetailerVisit } from '../utils/feedbackClient';
+import { getAppSessionId } from '../utils/conversationId';
+import { productHref } from '../utils/productRoute';
+import { hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
 import '../styles/audit-pdp.css';
 import '../styles/verify-content.css';
@@ -85,6 +90,8 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
           aiInsights: aiContext || {},
           userContext: quizResults?.fullHealthIntake ? JSON.stringify(quizResults.fullHealthIntake).slice(0, 4000) : '',
           ecosystemProducts: Array.isArray(ecosystemProducts) ? ecosystemProducts.slice(0, 20) : [],
+          chatHistory: messages.slice(-6),
+          conversationId: getAppSessionId(),
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -245,29 +252,12 @@ function ImageLightbox({ src, alt, onClose }) {
   );
 }
 
-/**
- * Surfaces a real, already-on-file safety/opinion concern (e.g. the Always
- * Pads PFAS controversy) regardless of which tab is active. safety.recalls
- * and safety.opinionAlerts were both being written into the catalog with
- * real, accurate detail, but neither was ever rendered anywhere in this
- * file, the default "ayna summary" a user sees first is built only from
- * product.summary + product.effectiveness, both purely positive/performance
- * fields, so a product could read as unqualified positive even when the
- * SAME entry already had a well-documented concern on file just one tab
- * away (or, for opinionAlerts, nowhere at all, grep confirms zero
- * components read that field anywhere in the app before this).
- *
- * '⚠️' is the existing convention for "this is a real flagged concern," not
- * a new one, the same check Discovery.jsx's safety scoring and
- * Recommendations.jsx's "Safety note" badge already use. A product with no
- * flag returns null, so this only ever adds visibility to what the catalog
- * already documented, never invents a concern that isn't on file.
- */
-export function getSafetyAlertText(product) {
-  const recalls = product?.safety?.recalls;
-  if (!recalls || !String(recalls).includes('⚠️')) return null;
-  return product?.safety?.opinionAlerts || recalls;
-}
+// getSafetyAlertText and buildSummarySentences live in
+// ../utils/productSafetyAlert (shared with Discovery.jsx's safety scoring and
+// Recommendations.jsx's "Safety note" badge). Re-exported here so existing
+// imports of them from this module keep working.
+// eslint-disable-next-line react-refresh/only-export-components
+export { getSafetyAlertText, buildSummarySentences } from '../utils/productSafetyAlert';
 
 function normalizePercent(value) {
   if (value == null || value === '') return null;
@@ -291,80 +281,6 @@ function getRealMatchPercent(product) {
     const pct = normalizePercent(value);
     if (pct != null) return pct;
   }
-  return null;
-}
-
-/** True for a real URL with something after the domain, not just a bare homepage. */
-function hasRealPath(url) {
-  try {
-    const u = new URL(url);
-    return u.pathname.replace(/\/+$/, '').length > 0 || u.search.length > 0;
-  } catch {
-    return false;
-  }
-}
-
-function isSearchResultsUrl(url) {
-  try {
-    const u = new URL(url);
-    const path = u.pathname.toLowerCase().replace(/\/+$/, '');
-
-    // Search/category-result routes, including Amazon /s pages.
-    if (/(^|\/)(s|search)(\/|$)/.test(path)) return true;
-
-    if (
-      u.searchParams.has('k') ||
-      u.searchParams.has('searchTerm') ||
-      u.searchParams.has('Ntt') ||
-      u.searchParams.get('tbm') === 'shop'
-    ) return true;
-
-    return false;
-  } catch {
-    return true;
-  }
-}
-
-function isExactBuyUrl(value) {
-  const url = String(value || '').trim();
-
-  return (
-    /^https?:\/\//i.test(url) &&
-    hasRealPath(url) &&
-    !isSearchResultsUrl(url)
-  );
-}
-
-function getBuyUrl(product) {
-  // 1. Affiliate product URL wins when Ayna has one.
-  if (isExactBuyUrl(product?.affiliateUrl)) {
-    return String(product.affiliateUrl).trim();
-  }
-
-  // 2. Ayna's centrally verified exact destination.
-  const verifiedCatalogUrl = PRODUCT_BUY_URLS[product?.id];
-  if (isExactBuyUrl(verifiedCatalogUrl)) {
-    return verifiedCatalogUrl;
-  }
-
-  // 3. Explicit exact product URLs.
-  for (const candidate of [product?.productUrl, product?.buyUrl]) {
-    if (isExactBuyUrl(candidate)) return String(candidate).trim();
-  }
-
-  // 3. Existing catalog URL, but ONLY when it is a real product/service page.
-  // Bare homepages and search-result pages are rejected.
-  if (isExactBuyUrl(product?.url)) {
-    return String(product.url).trim();
-  }
-
-  // 4. Explicit retailer product URL only.
-  if (product?.whereToBuyLinks && typeof product.whereToBuyLinks === 'object') {
-    for (const value of Object.values(product.whereToBuyLinks)) {
-      if (isExactBuyUrl(value)) return String(value).trim();
-    }
-  }
-
   return null;
 }
 
@@ -411,6 +327,15 @@ function SaveMenu({ isSaved, onToggleSaved, onAddToPlaylist, product }) {
 
 const MOBILE_QUERY = '(max-width: 767px)';
 
+/** Canonical share link: the live domain, except on local/preview hosts. */
+function productShareUrl(product) {
+  const path = productHref(product);
+  if (typeof window === 'undefined') return `https://www.aynahealth.co${path}`;
+  const host = window.location.hostname;
+  const isPreview = host === 'localhost' || host === '127.0.0.1' || host.endsWith('.vercel.app');
+  return `${isPreview ? window.location.origin : 'https://www.aynahealth.co'}${path}`;
+}
+
 async function copyText(text) {
   try {
     if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(text); return true; }
@@ -453,6 +378,10 @@ export default function ProductModal({
   matchOpts = undefined,
   // Navigates to another product's own dedicated page.
   onOpenProduct = null,
+  // Set only when this product page was reached by clicking a search
+  // result, so Buy now can carry the same searchQuery (search -> click ->
+  // purchase in PostHog).
+  searchOrigin = null,
   // Optional: renders a visible in-page "Back" control.
   onBack = null,
   // Breadcrumbs: opens the Shop, filtered to a category when given one.
@@ -463,6 +392,15 @@ export default function ProductModal({
   onCommunityAction = null,
 }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  // Size / pack options (product.variants): Buy now, photo, name and price
+  // follow the chosen option.
+  // Keyed to the product id so moving to another product page starts from
+  // that product's own default option.
+  const [variantPick, setVariantPick] = useState({ productId: product?.id, id: product?.defaultVariantId || '' });
+  const selectedVariantId = variantPick.productId === product?.id ? variantPick.id : (product?.defaultVariantId || '');
+  const setSelectedVariantId = (id) => setVariantPick({ productId: product?.id, id });
+  const choice = getVariantSelection(product || {}, selectedVariantId);
+  const displayName = String(choice.displayName || product?.name || '').replace(/\s*\u2014\s*/g, ', ');
   const [showWhy, setShowWhy] = useState(false);
   const [photo, setPhoto] = useState(0);
   const [toast, setToast] = useState('');
@@ -476,18 +414,24 @@ export default function ProductModal({
 
   // P11: native share sheet on phones, copy + toast everywhere else.
   const handleShare = async () => {
-    const url = `${window.location.origin}/product/${encodeURIComponent(product?.id || '')}`;
+    const url = productShareUrl(product);
     const isPhone = typeof window.matchMedia === 'function' && window.matchMedia(MOBILE_QUERY).matches;
     if (isPhone && navigator.share) {
-      try { await navigator.share({ title: product?.name, url }); return; } catch (e) { if (e?.name === 'AbortError') return; }
+      try {
+        await navigator.share({ title: `${product?.name} | ayna`, url });
+        posthog.capture('product_shared', { productId: product?.id, category: product?.category, channel: 'native' });
+        return;
+      } catch (e) { if (e?.name === 'AbortError') return; }
     }
     const ok = await copyText(url);
+    if (ok) posthog.capture('product_shared', { productId: product?.id, category: product?.category, channel: 'copy_link' });
     showToast(ok ? 'Link copied' : 'Couldn’t copy the link');
   };
 
   const [reviewInput, setReviewInput] = useState('');
   const [hoverRating, setHoverRating] = useState(0);
-  const [resolvedModalImage, setResolvedModalImage] = useState('');
+  const [resolvedModalImage, setResolvedModalImage] = useState(null);
+  const imageIdentity = JSON.stringify([product?.id, product?.name, product?.brand, product?.url, product?.type, product?.image]);
 
   // Most catalog entries only ever carry a single `image` URL. When that's a
   // placeholder, this tries once to resolve a real product photo instead.
@@ -495,18 +439,19 @@ export default function ProductModal({
     let active = true;
     if (!product?.name) return () => { active = false; };
     if (!isPlaceholderProductImage(product.image, product.type === 'digital')) return () => { active = false; };
-    resolveProductImage(product.name, product.brand || '', '', product.type || '').then((url) => {
+    resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '').then((url) => {
       if (!active || !url) return;
-      setResolvedModalImage(url);
+      setResolvedModalImage({ identity: imageIdentity, url });
     });
     return () => { active = false; };
-  }, [product?.id, product?.name, product?.brand, product?.image, product?.type]);
+  }, [imageIdentity, product?.id, product?.name, product?.brand, product?.image, product?.url, product?.type]);
+  const resolvedImageUrl = resolvedModalImage?.identity === imageIdentity ? resolvedModalImage.url : '';
 
-  // Gallery: cover first, then any extra photos on file.
-  const images = useMemo(() => {
-    const list = galleryImages(product);
-    return list.length ? list : (resolvedModalImage ? [resolvedModalImage] : []);
-  }, [product, resolvedModalImage]);
+  // Gallery: cover first, then any extra photos on file. A chosen size/pack
+  // shows only its own photo (never another pack's box).
+  const variantImage = choice.variant ? (choice.image || '') : null;
+  const galleryList = variantImage != null ? (variantImage ? [variantImage] : []) : galleryImages(product);
+  const images = galleryList.length ? galleryList : (variantImage == null && resolvedImageUrl ? [resolvedImageUrl] : []);
   const heroImageSrc = images[Math.min(photo, Math.max(images.length - 1, 0))] || '';
 
   const explicitMatchPercent = useMemo(() => getRealMatchPercent(product), [product]);
@@ -524,12 +469,15 @@ export default function ProductModal({
   );
   const matchExclusions = matchDetails?.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
   const headMatchLine = useMemo(() => matchLine(matchDetails), [matchDetails]);
-  const buyUrl = useMemo(() => getBuyUrl(product), [product]);
-  const usesAffiliateLink = Boolean(
-    isExactBuyUrl(product?.affiliateUrl) &&
-    buyUrl === String(product.affiliateUrl).trim()
-  );
-  const retailers = useMemo(() => retailerLinks(product, buyUrl), [product, buyUrl]);
+  // utils/buyLink.js: partners go to their own link; everything else to
+  // ayna's Amazon link when Amazon carries it, else the brand/retailer page.
+  const buyUrl = product ? resolveBuyUrl(product, choice.variant) : null;
+  const sizeChosenOnAmazon = choice.hasVariants && product ? buyGoesToAmazonListing(product, choice.variant) : false;
+  const isAmazonBuyLink = isAmazonUrl(buyUrl);
+  const isPartner = isPartnerBrandItem(product);
+  const isPrelaunch = isPrelaunchPartnerItem(product);
+  const usesAffiliateLink = Boolean(!isPartner && !isAmazonBuyLink && product?.affiliateUrl && buyUrl === String(product.affiliateUrl).trim());
+  const retailers = retailerLinks(product, buyUrl);
 
   const aynaData = useMemo(
     () => (aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] }),
@@ -579,8 +527,11 @@ export default function ProductModal({
 
   if (!product) return null;
 
-  const price = priceParts(product);
-  const perUnit = perUnitLabel(product);
+  const basePrice = priceParts(product);
+  const price = choice.hasVariants
+    ? { known: true, main: choice.variant?.priceLabel || 'See retailer for price', sub: '', isPlaceholder: !choice.variant?.priceLabel }
+    : basePrice;
+  const perUnit = choice.hasVariants ? '' : perUnitLabel(product);
   const priceText = product.price || product.stage || '';
   const brand = glance?.brand && glance.brand.toLowerCase() !== String(product.name).toLowerCase() ? glance.brand : '';
   const openPlaylist = onCommunityAction ? () => onCommunityAction('playlist') : null;
@@ -589,9 +540,9 @@ export default function ProductModal({
     if (target && onOpenProduct) onOpenProduct(target);
   };
 
-  const partnerBadge = isPartnerBrandItem(product) ? (
-    <span className="pdp-partner" title="ayna has a partnership with this brand. It does not affect your recommendation.">
-      ayna partner
+  const partnerBadge = isPartner ? (
+    <span className={`pdp-partner${isPrelaunch ? ' pdp-partner--prelaunch' : ''}`} title="ayna has a partnership with this brand. It does not affect your recommendation.">
+      {isPrelaunch ? 'ayna partner · pre-launch waitlist' : 'ayna partner'}
     </span>
   ) : null;
 
@@ -601,13 +552,20 @@ export default function ProductModal({
       href={buyUrl}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => posthog.capture('product_buy_now_clicked', {
-        productId: product.id,
-        category: product.category,
-        destination: buyUrl,
-      })}
+      onClick={() => {
+        // Never let the purchase-feedback queue block opening the retailer.
+        try { recordRetailerVisit(product, choice.variant); } catch { /* ignore */ }
+        posthog.capture('product_buy_now_clicked', {
+          productId: product.id,
+          category: product.category,
+          destination: buyUrl,
+          variantId: choice.variant?.id,
+          source: searchOrigin?.source,
+          searchQuery: searchOrigin?.searchQuery,
+        });
+      }}
     >
-      {product.type === 'digital' ? 'Get started' : 'Buy now'}
+      {isPrelaunch ? (product.waitlistCtaLabel || 'Join the waitlist') : product.type === 'digital' ? 'Get started' : 'Buy now'}
     </a>
   ) : (
     <button type="button" className={`pdp-btn pdp-btn--navy pdp-btn--buy ${extraClass}`.trim()} disabled>
@@ -617,6 +575,25 @@ export default function ProductModal({
 
   const actionButtons = (
     <div className="pdp-actions pdp-buybox">
+      {choice.hasVariants && (
+        <label className="pdp-variant" style={{ display: 'block', width: '100%', marginBottom: '0.8rem', fontSize: '0.9rem' }}>
+          Size / option
+          <select
+            aria-label="Size / option"
+            value={selectedVariantId}
+            onChange={(event) => { setSelectedVariantId(event.target.value); setPhoto(0); }}
+            style={{ display: 'block', width: '100%', padding: '0.7rem', marginTop: '0.35rem', border: '1px solid #d6d0c7', borderRadius: '8px', background: '#fff', color: '#242a52' }}
+          >
+            <option value="">Choose a size / option</option>
+            {product.variants.map((variant) => <option key={variant.id} value={variant.id}>{variant.label}</option>)}
+          </select>
+          <small style={{ display: 'block', marginTop: '0.35rem' }}>
+            {sizeChosenOnAmazon
+              ? 'Buy now opens this product on Amazon. Pick the same size there, and confirm current price and availability with the retailer.'
+              : 'Buy now opens this exact option. Confirm current price and availability with the retailer.'}
+          </small>
+        </label>
+      )}
       <div className="pdp-actions__primary">
         {buyButton()}
         {onAddToEcosystem && (
@@ -655,6 +632,10 @@ export default function ProductModal({
         </div>
       )}
       {!buyUrl && <p className="pdp-buybox__note">We don’t have a direct link for this one yet. {(product.whereToBuy || []).length ? `Sold at ${product.whereToBuy.join(', ')}.` : ''}</p>}
+      {isPartner && <p className="pdp-buybox__note pdp-partner-note">{getPartnerDisclosureText(product)}</p>}
+      {buyUrl && isAmazonBuyLink && !isPartner && (
+        <p className="pdp-buybox__note pdp-amazon-disclosure">ayna receives a commission on purchases. We have no direct partnership with this brand.</p>
+      )}
       {usesAffiliateLink && <p className="pdp-buybox__note">ayna may earn a commission if you buy through this link.</p>}
     </div>
   );
@@ -666,13 +647,13 @@ export default function ProductModal({
           <button
             type="button"
             onClick={() => setLightboxOpen(true)}
-            aria-label={`View larger photo of ${product.name}`}
+            aria-label={`View larger photo of ${displayName}`}
             style={{ all: 'unset', display: 'block', width: '100%', height: '100%', cursor: 'zoom-in' }}
           >
             <img
               key={heroImageSrc}
               src={heroImageSrc}
-              alt={product.name}
+              alt={displayName}
               onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
               style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
             />
@@ -738,7 +719,22 @@ export default function ProductModal({
     </div>
   ) : null;
 
+  const safetySources = Array.isArray(product.safetyNoteSources) ? product.safetyNoteSources.filter((src) => src?.url) : [];
   const sectionExtras = {
+    // Links backing the safety note (product.safetyNoteSources, from main).
+    safety: safetySources.length > 0 ? (
+      <ul className="pdp-safety-alert__sources" style={{ margin: '0.5rem 0 0', paddingLeft: '1.1rem', fontSize: '0.8125rem', lineHeight: 1.5 }}>
+        {safetySources.map((src) => (
+          <li key={src.url}>
+            <a href={src.url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>
+              {src.label || hostLabel(src.url)}
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : null,
+    // Per-product note, e.g. that only the brand's key ingredients are listed.
+    inside: product.ingredientScienceNote ? <p className="pdp-buybox__note" style={{ marginTop: '0.5rem' }}>{product.ingredientScienceNote}</p> : null,
     people: rateControls,
     match: <button type="button" className="ay-psec-action" onClick={() => setShowWhy(true)}>See the full breakdown</button>,
   };
@@ -782,11 +778,11 @@ export default function ProductModal({
 
           <div className="pdp-head__detail pdp-h2">
             {(brand || partnerBadge) && <div className="pdp-head__eyebrow">{brand}{brand && partnerBadge && ' · '}{partnerBadge}</div>}
-            <h1 className="pdp-head__name">{product.name}</h1>
+            <h1 className="pdp-head__name">{displayName}</h1>
 
             {(price.known || perUnit) && (
               <div className="pdp-h2-price">
-                {price.known && <span className="pdp-h2-price__main">{price.main}</span>}
+                {price.known && <span className="pdp-h2-price__main" style={price.isPlaceholder ? { fontSize: '1rem' } : undefined}>{price.main}</span>}
                 {perUnit && <span className="pdp-h2-price__unit">{perUnit}</span>}
                 {price.known && price.sub && <small>{price.sub}</small>}
               </div>
@@ -884,7 +880,7 @@ export default function ProductModal({
 
       {lightboxOpen && heroImageSrc && (
         <section className="pdp-lightbox-host">
-          <ImageLightbox src={heroImageSrc} alt={product.name} onClose={() => setLightboxOpen(false)} />
+          <ImageLightbox src={heroImageSrc} alt={displayName} onClose={() => setLightboxOpen(false)} />
         </section>
       )}
     </div>

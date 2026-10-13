@@ -92,13 +92,14 @@ describe('ordering and tie-breaks', () => {
     const communityFirst = user({ ...base, trustRanking: ['Reviews and experiences from other women', 'Brand reputation or expert recommendations', 'Clinical or scientific evidence'], trustRankingTouched: true });
     const a = shelf(buildEcosystem(clinicalFirst, ALL_PRODUCTS, { picksPerNeed: 10 }), 'pain.menstrual_cramp');
     const b = shelf(buildEcosystem(communityFirst, ALL_PRODUCTS, { picksPerNeed: 10 }), 'pain.menstrual_cramp');
-    const direct = ['p-sootheher-elaris-pod', 'p-thermacare', 'p-portable-heating'];
+    // p-viboos-heating-pad joined the catalog on main and is direct cramp relief too.
+    const direct = ['p-sootheher-elaris-pod', 'p-thermacare', 'p-portable-heating', 'p-viboos-heating-pad'];
     expect(ids(a)[0]).toBe('p-sootheher-elaris-pod');
     expect(ids(b)[0]).not.toBe('p-sootheher-elaris-pod');
     // Direct cramp relief stays above secondary options under either ranking.
     for (const s of [a, b]) {
-      expect(ids(s).slice(0, 3).sort()).toEqual([...direct].sort());
-      s.picks.slice(3).forEach((p) => expect(p.relevance).toBeLessThan(1));
+      expect(ids(s).slice(0, direct.length).sort()).toEqual([...direct].sort());
+      s.picks.slice(direct.length).forEach((p) => expect(p.relevance).toBeLessThan(1));
     }
   });
 });

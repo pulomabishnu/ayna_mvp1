@@ -260,6 +260,8 @@ export function mapIntakeToLegacyQuizProfile(intake) {
   if (!support.length && (intake?.symptoms || []).includes('bloating')) frustrations.add('Hormonal bloating');
 
   return {
+    name: intake?.name || '',
+    firstName: intake?.name || '',
     age: intake?.age == null || String(intake.age).trim() === '' || Number(intake.age) === 0 ? null : intake.age,
     frustrations: [...frustrations],
     preference: intake?.productPreferences || [],
@@ -281,6 +283,9 @@ export function mapIntakeToLegacyQuizProfile(intake) {
 
 export function validateHealthIntake(intake) {
   const errors = {};
+  // Name is asked (and required) by the intake quiz itself. The profile
+  // editor has no name field, so requiring it here would block edits for
+  // anyone whose intake predates the name question.
   if (!intake?.age || Number.isNaN(Number(intake.age))) errors.age = 'Age is required.';
   const concerns = Array.isArray(intake?.primaryConcerns)
     ? intake.primaryConcerns

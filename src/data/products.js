@@ -21,6 +21,8 @@ import { getListingStatus as passportListingStatus } from './passport/index.js';
 import { needPhrase, canonicalNeedId, LIFE_STAGE_BY_ID, FORMAT_BY_ID, VALUE_BY_ID, ATTRIBUTE_PHRASE } from '../matching/ontology.js';
 import { getCareResourceBundle } from './careResources.js';
 import { withImageOverride } from './productImageOverrides.js';
+import { applyCatalogEvidence } from './catalogEvidence.js';
+import { productRouteKey, productSlug } from '../utils/productRoute.js';
 
 // Tags used for quiz → product matching
 // frustrations: heavy-flow, cramps, bloating, irregular, leaks, discomfort, safety-concern, uti, pcos, pelvic-floor
@@ -75,7 +77,7 @@ export const PHYSICAL_PRODUCTS = [
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
         whereToBuyInStock: { 'Amazon': true, 'Target': true, 'Walmart': true, 'CVS': true },
         image: 'https://images.ctfassets.net/o5hnyn1x0ewo/5fgLjs17hOqXoAJo2hEMQQ/5f3ad4cdbfc5e8f6df300602fd5b6512/Always-Infinity-Size-1-Regular-Pads-with-Wings_640x512.png?fm=webp',
-        summary: 'Ultra-thin FlexFoam pad that absorbs 10x its weight. Widely available and affordable.',
+        summary: 'Ultra-thin FlexFoam pad that absorbs 10x its weight, per Always. Widely available and affordable.',
         safety: {
             fdaStatus: 'FDA-registered medical device',
             materials: 'FlexFoam (polyethylene/polypropylene blend), fragrance-free options available',
@@ -122,16 +124,17 @@ export const PHYSICAL_PRODUCTS = [
     },
     {
         id: 'p-rael-organic-pad',
-        name: 'Rael Organic Cotton Pads',
+        name: 'Rael Large Organic Cotton Cover Pads With Wings',
         category: 'pad',
         type: 'physical',
         internal: false,
         healthFunctions: ['menstrual-collection', 'leak-protection'],
         tags: ['heavy-flow', 'leaks', 'organic', 'safety-concern', 'comfort'],
-        price: '$9 for 14',
+        price: '$14.99 (14 or 24 count)',
         userRating: 4.6,
-        whereToBuy: ['Target', 'Amazon', 'Walmart'],
-        image: 'https://m.media-amazon.com/images/I/71BjZn+VbJL.jpg_BO30,255,255,255_UF750,750_SR1910,1000,0,C_QL100_.jpg',
+        whereToBuy: ['Rael', 'Target', 'Amazon', 'Walmart'],
+        url: 'https://www.getrael.com/products/large-organic-cotton-pads',
+        image: '',
         summary: '100% organic cotton top sheet, free from chlorine bleach, toxins, and fragrances.',
         safety: {
             fdaStatus: 'FDA-registered',
@@ -185,10 +188,11 @@ export const PHYSICAL_PRODUCTS = [
         healthFunctions: ['menstrual-collection', 'cramp-relief'],
         tags: ['cramps', 'discomfort', 'organic', 'comfort'],
         avoidIfSensitivity: ['essential-oils', 'fragrance'],
-        price: '$10 for 16',
+        price: '$9.99 for 20',
         userRating: 4.2,
-        whereToBuy: ['Target', 'Walmart', 'Amazon'],
-        image: 'https://www.kroger.com/product/images/large/front/0085166900880',
+        whereToBuy: ['The Honey Pot', 'Target', 'Walmart', 'Amazon'],
+        url: 'https://thehoneypot.co/products/regular-herbal-pads-with-wings',
+        image: '',
         summary: 'Plant-derived pads infused with lavender and mint herbs for cooling comfort during cramps.',
         safety: {
             fdaStatus: 'FDA-registered',
@@ -196,11 +200,11 @@ export const PHYSICAL_PRODUCTS = [
             recalls: 'No recalls.',
             allergens: 'Contains herbal extracts. Check if sensitive to lavender or mint',
             sideEffects: 'Intense "cooling" or "tingling" sensation from mint can be uncomfortable or cause burning for users with sensitive skin.',
-            opinionAlerts: 'High rate of split opinions: half the users love the cooling effect for cramps, the other half find it too intense or irritating.'
+            opinionAlerts: 'High rate of split opinions: half the users love the cooling effect for cramps, the other half find it too intense or irritating. Vulvar skin is more permeable than skin elsewhere, so essential oils that are mild on the arm or leg can cause allergic or irritant contact dermatitis here, a consumer FDA MAUDE report (below) describes a severe reaction from Honey Pot’s herbal overnight pad.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Cooling herbs like peppermint may provide topical relief; some dermatologists warn essential oils can cause vulvar contact dermatitis in sensitive individuals.',
+        doctorOpinion: 'Vulvar skin is thinner and more permeable than skin elsewhere on the body, and clinicians generally advise against essential oils in this area for that reason. Peer-reviewed dermatology literature specifically names lavender, tea tree, and peppermint (the herbs used here) as common causes of vulvar contact dermatitis, and a fragranced pad worn for hours traps heat and moisture against the skin, which can make irritation worse. A consumer-submitted FDA MAUDE report describes a severe allergic reaction (progressing to an open wound requiring ER treatment) after use of Honey Pot’s herbal overnight pad; this is a single, self-reported, unverified incident, not proof this specific pad caused it, but it is consistent with the mechanism described in the literature.',
         communityReview: 'Community discussions note strong cooling effect for cramps; experiences are polarized.',
         ingredients: 'Plant-derived fiber, lavender oil, peppermint oil, aloe extract, wood pulp core.',
         effectiveness: 'Good absorption with added herbal comfort. Many users report cramp relief from cooling herbs.',
@@ -208,19 +212,23 @@ export const PHYSICAL_PRODUCTS = [
         badges: ['WOC Owned', 'Herbal Comfort', 'Sustainable'],
         verificationLinks: {
             doctor: {
-                aiSummary: "ayna has investigated clinical perspectives on Honey Pot's 'herbal-infused' pads. While medical professionals generally support the use of plant-based materials, some dermatologists warn that direct contact with essential oils like mint and lavender can cause vulvar contact dermatitis in sensitive individuals. No specific clinical studies on Honey Pot's formula were found.",
+                aiSummary: "Dermatology literature on vulvar contact dermatitis is consistent: the vulva has thinner, less protective skin than skin elsewhere on the body, so essential oils that are only mildly irritating on the arm or leg can cause allergic or irritant contact dermatitis here. Peer-reviewed reviews specifically name lavender, tea tree, and peppermint (the herbs in this pad) as common triggers, and warn against the assumption that a 'natural' or plant-derived ingredient is automatically gentle in this area. No study of this specific Honey Pot formula was found.",
                 links: [
-                    
+                    { url: 'https://www.mdpi.com/2313-5786/1/4/19', text: 'Corazza et al., Contact Dermatitis of the Vulva (Allergies, 2021)', summary: 'Reviews why the vulva, especially the non-keratinized vestibule, is more permeable to topically applied chemicals than extragenital skin, raising the risk of irritant and allergic contact dermatitis from products used there.', justification: 'Peer-reviewed review; cited by 10.' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23474446/', text: 'O’Gorman & Torgerson, Allergic Contact Dermatitis of the Vulva (Dermatitis, 2013)', summary: 'A multi-site patch-testing study of patients with chronic vulvar symptoms, finding contact allergy to be a frequent primary or secondary cause.', justification: 'Peer-reviewed clinical study; cited by 76.' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8243157/', text: 'Sindle & Martin, Essential Oils – Natural Products Not Necessarily Safe (International Journal of Women’s Dermatology, 2021)', summary: 'Documents allergic contact dermatitis from common essential oils including tea tree, lavender, and peppermint, and cautions against the assumption that a natural or botanical product is automatically safe to apply to inflamed or sensitive skin.', justification: 'Peer-reviewed article; cited by 92.' },
+                    { url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfmaude/detail.cfm?mdrfoi__id=21472387&pc=HHL', text: 'FDA MAUDE adverse event report: Honey Pot Herbal Overnight Menstrual Pad', summary: 'A consumer-submitted report to FDA’s device adverse-event database describes a 21-year-old who developed itchy bumps that progressed to burning, an open wound, and infection requiring ER treatment (steroids, antibiotics) after using Honey Pot’s herbal overnight pad. This is one self-reported, unverified incident, not a confirmed causal link, but it is the kind of reaction the mechanism above predicts.', justification: 'FDA MAUDE database record; a single consumer-reported, unverified adverse event, not a peer-reviewed study.' }
                 ]
             },
             scientific: {
-                aiSummary: "Scientific inquiry into herbal cooling for period pain is limited. While peppermint oil has documented topical analgesic effects, its long-term application in the vulvar region via menstrual products has not been rigorously studied for safety or effectiveness compared to standard analgesic methods.",
+                aiSummary: "The mechanism behind essential-oil contact dermatitis is well documented: fragrance compounds in lavender and mint (monoterpenes like linalool and limonene) are only weak allergens on their own, but oxidize with air and light exposure into hydroperoxides that are much stronger sensitizers and can trigger a T-cell-mediated allergic reaction. This is general evidence about these fragrance compounds and vulvar skin, not a study of this pad.",
                 links: [
-                    
+                    { url: 'https://onlinelibrary.wiley.com/doi/10.1111/cod.14064', text: 'Ogueta et al., Limonene and Linalool Hydroperoxides Review (Contact Dermatitis, 2022)', summary: 'Reviews how limonene and linalool, common in lavender and mint fragrance, oxidize into hydroperoxides that are much stronger skin allergens than the original unoxidized compounds.', justification: 'Peer-reviewed review; cited by 49.' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/29029310/', text: 'Raffalli et al., Fragrance Allergens Linalool and Limonene Allylic Hydroperoxides in Skin Allergy (Toxicological Sciences, 2017)', summary: 'Laboratory study of the mechanism by which oxidized linalool and limonene activate an allergic skin response, via the Nrf2 pathway.', justification: 'Peer-reviewed mechanistic study; cited by 27.' }
                 ]
             },
             community: {
-                aiSummary: "Community data indicates a highly polarized response. Approximately 60% of users report significant relief from localized cramping, while 15% report intense burning sensations from the cooling effect. We recommend a patch test or gradual introduction.",
+                aiSummary: "Community data indicates a highly polarized response. Some users report relief from cramping, while others report a burning sensation from the cooling herbs. We recommend a patch test or gradual introduction.",
                 links: [
                     { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=honey+pot+pads&restrict_sr=1', text: 'Reddit r/periods: Honey Pot', summary: 'Threads on the cooling sensation and cramp relief; mixed experiences.' },
                     { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=honey%20pot%20pads', text: 'TikTok: Honey Pot pads', summary: 'Short-form reviews on the herbal cooling effect and wear tests.' },
@@ -255,25 +263,35 @@ export const PHYSICAL_PRODUCTS = [
         safety: {
             fdaStatus: 'FDA-registered',
             materials: '100% organic cotton (tampon and string), BPA-free compact plastic applicator',
-            recalls: '⚠️ 2021: An active federal class-action (Manson v. ALYK Inc., S.D.N.Y., Case No. 7:21-cv-05688) alleges LOLA tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body during removal. No recall has been issued; LOLA/ALYK denies wrongdoing and continues to sell the product, and the case remains open as of 2026.',
+            recalls: '⚠️ 2021 lawsuit, later dropped: a proposed federal class action (Manson v. ALYK Inc., S.D.N.Y., No. 7:21-cv-05688) alleged LOLA tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body during removal. The plaintiff voluntarily dismissed the case without prejudice on February 22, 2022, before any ruling or settlement, so the allegations were never proven or disproven in court. No recall has been issued.',
             allergens: 'Hypoallergenic, fragrance-free, dye-free',
-            sideEffects: 'TSS risk, use the lowest absorbency for your flow and never wear longer than 8 hours. A subset of user reviews and the pending lawsuit above describe the tampon unraveling or shedding fibers on removal.',
-            opinionAlerts: 'A 2021 class-action complaint, still active as of 2026, alleges LOLA tampons shed cotton fibers inside the vaginal canal on removal because they lack the protective outer coating most competing tampons use, with some plaintiffs describing needing medical help to remove retained fibers; LOLA denies wrongdoing and no recall has followed. Separately, and unrelated to the lawsuit: research on cotton-only vs. cotton/rayon-blend tampons and bacterial toxin growth is genuinely mixed, a 2018 in-vitro comparison of currently marketed tampons found LOWER Staphylococcus aureus growth with cotton/rayon-blend tampons than with cotton-only tampons, which cuts against the common assumption that "all-organic-cotton" is automatically the lower-TSS-risk choice.'
+            sideEffects: 'TSS risk, use the lowest absorbency for your flow and never wear longer than 8 hours. A subset of user reviews, and the 2021 lawsuit above (since dropped), describe the tampon unraveling or shedding fibers on removal.',
+            opinionAlerts: 'A 2021 proposed class action alleged LOLA tampons can shed cotton fibers inside the vaginal canal on removal because they lack the protective outer coating most competing tampons use, with some users reportedly needing medical help to remove retained fibers. The plaintiff voluntarily dropped the case in February 2022, before any ruling or settlement, so the claims were never tested in court, and no recall has followed. Separately, and unrelated to the lawsuit: research on cotton-only vs. cotton/rayon-blend tampons and bacterial toxin growth is genuinely mixed, a 2018 in-vitro comparison of currently marketed tampons found LOWER Staphylococcus aureus growth with cotton/rayon-blend tampons than with cotton-only tampons, which cuts against the common assumption that "all-organic-cotton" is automatically the lower-TSS-risk choice.'
         },
+        // Links shown under the "Safety note" banner (see SafetyAlert in
+        // ProductModal.jsx). Case status checked against the court docket
+        // 2026-09-30: filed June 30, 2021; voluntarily dismissed without
+        // prejudice Feb 22, 2022, some law-firm sites still call it active.
+        safetyNoteSources: [
+            { url: 'https://www.pacermonitor.com/public/case/40832934/Manson_v_ALYK,_Inc', label: 'Court docket: Manson v. ALYK, Inc., S.D.N.Y. No. 7:21-cv-05688 (filed June 2021; voluntarily dismissed Feb. 2022)' },
+            { url: 'https://www.law360.com/cases/60dd2a3b5ea87cd44bcd8a76', label: 'Law360: Manson v. ALYK, Inc. case coverage' },
+            { url: 'https://topclassactions.com/lawsuit-settlements/medical-devices/womens-health-medical-devices/these-organic-tampons-can-unravel-inside-your-body-a-class-action-lawsuit-alleges/', label: 'Top Class Actions: summary of the complaint\'s allegations (2021)' },
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5981080/', label: 'NIH (PMC): Tampons and S. aureus growth / TSST-1 in vitro (Nonfoux et al., Appl Environ Microbiol, 2018)' },
+        ],
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Organic cotton, and freedom from added dyes, chlorine-bleaching byproducts, and synthetic fragrance, are things clinicians will generally support for someone with a history of vulvar irritation or contact sensitivity. What the evidence doesn\'t support is treating "100% organic cotton" as an automatic toxic-shock-syndrome safety upgrade: research comparing cotton-only to cotton/rayon-blend tampons is mixed, and a 2018 in-vitro study of currently marketed tampons actually found lower Staphylococcus aureus growth with cotton/rayon-blend tampons than with cotton-only tampons. Fiber type matters less for TSS risk than using the lowest absorbency that handles your flow and never wearing a tampon longer than 8 hours.\n\nIt\'s also worth knowing before buying: LOLA is currently a defendant in an active federal class-action, filed in 2021 in the Southern District of New York, alleging its tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body on removal, some plaintiffs describe needing medical help to remove retained pieces. The case is still open as of 2026, LOLA has not recalled the product and denies wrongdoing, but if a tampon feels like it\'s coming apart when you remove it, that\'s a documented, reported issue worth stopping and seeking care for, not dismissing.',
-        doctorOpinionShort: 'Organic cotton reduces exposure to dyes, bleaching byproducts, and fragrance, but isn\'t a proven TSS-risk downgrade, a 2018 study found cotton/rayon blends grew less bacteria than cotton-only tampons. LOLA is also a defendant in an active 2021 class-action alleging its tampons can unravel or shed fibers during removal.',
+        doctorOpinion: 'Organic cotton, and freedom from added dyes, chlorine-bleaching byproducts, and synthetic fragrance, are things clinicians will generally support for someone with a history of vulvar irritation or contact sensitivity. What the evidence doesn\'t support is treating "100% organic cotton" as an automatic toxic-shock-syndrome safety upgrade: research comparing cotton-only to cotton/rayon-blend tampons is mixed, and a 2018 in-vitro study of currently marketed tampons actually found lower Staphylococcus aureus growth with cotton/rayon-blend tampons than with cotton-only tampons. Fiber type matters less for TSS risk than using the lowest absorbency that handles your flow and never wearing a tampon longer than 8 hours.\n\nIt\'s also worth knowing before buying: a proposed federal class action filed in 2021 in the Southern District of New York alleged LOLA tampons lack a protective outer coating and can unravel or shed cotton fibers inside the body on removal, with some users describing needing medical help to remove retained pieces. The plaintiff voluntarily dismissed the case in February 2022, before any ruling, so the allegations were never proven, and LOLA has not recalled the product. Similar reports still show up in user reviews, so if a tampon feels like it\'s coming apart when you remove it, stop, check for retained pieces, and seek care if you can\'t confirm it came out intact.',
+        doctorOpinionShort: 'Organic cotton reduces exposure to dyes, bleaching byproducts, and fragrance, but isn\'t a proven TSS-risk downgrade, a 2018 study found cotton/rayon blends grew less bacteria than cotton-only tampons. LOLA was also named in a 2021 lawsuit alleging its tampons can unravel or shed fibers during removal; the plaintiff dropped it in 2022 without a ruling.',
         doctorOpinionCitations: [
             { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', label: 'FDA: Facts About Tampons and How to Use Them Safely' },
             { url: 'https://pubmed.ncbi.nlm.nih.gov/29678918/', label: 'PubMed: Tampon/menstrual cup S. aureus growth & TSST-1 production' },
-            { url: 'https://topclassactions.com/lawsuit-settlements/medical-devices/womens-health-medical-devices/these-organic-tampons-can-unravel-inside-your-body-a-class-action-lawsuit-alleges/', label: 'Top Class Actions: LOLA tampon unraveling lawsuit' },
+            { url: 'https://www.pacermonitor.com/public/case/40832934/Manson_v_ALYK,_Inc', label: 'Court docket: Manson v. ALYK, Inc. (S.D.N.Y. 7:21-cv-05688), filed 2021, voluntarily dismissed 2022' },
         ],
         whoItsFor: [
             'People who want full ingredient transparency and no synthetic fragrance, dyes, or chlorine-bleaching byproducts in a tampon',
             'Those with a history of vulvar or vaginal irritation from mainstream tampon materials',
             'Subscription shoppers who want a customizable period-product box',
-            'Not the pick for anyone who specifically wants a tampon brand without an open lawsuit over reported removal issues, LOLA currently has one active',
+            'Not the pick for anyone uneasy about unraveling reports: a 2021 lawsuit over removal issues was dropped in 2022 without a ruling, but some user reviews describe the same problem',
         ],
         howToUse: {
             intro: 'Per LOLA\'s own instructions and general FDA tampon guidance:',
@@ -288,10 +306,10 @@ export const PHYSICAL_PRODUCTS = [
         },
         warnings: [
             'Toxic shock syndrome (TSS) is rare but serious, remove within 8 hours and seek emergency care for sudden fever, rash, vomiting, or dizziness during your period.',
-            'An active class-action lawsuit alleges LOLA tampons can unravel or shed fibers on removal; if a tampon doesn\'t come out intact, check for retained fragments and contact a doctor if you\'re unsure it was fully removed.',
+            'A 2021 lawsuit (voluntarily dropped in 2022, never decided) and some user reviews describe LOLA tampons unraveling or shedding fibers on removal; if a tampon doesn\'t come out intact, check for retained fragments and contact a doctor if you\'re unsure it was fully removed.',
             'Not a form of contraception and does not protect against STIs.',
         ],
-        communityReview: 'Community sentiment is mixed. Many reviewers praise the organic cotton, subscription convenience, and clean packaging; others report slow or missing shipments, applicators that feel flimsy or occasionally collapse, and leakage on heavy-flow days. The unraveling/shedding-fiber complaints described in the pending class-action also show up in individual user reviews, not just the lawsuit filing.',
+        communityReview: 'Community sentiment is mixed. Many reviewers praise the organic cotton, subscription convenience, and clean packaging; others report slow or missing shipments, applicators that feel flimsy or occasionally collapse, and leakage on heavy-flow days. The unraveling/shedding-fiber complaints described in the 2021 lawsuit (since dropped) also show up in individual user reviews, not just the lawsuit filing.',
         ingredients: '100% organic cotton (tampon and string), BPA-free plastic applicator.',
         effectiveness: 'Reliable absorption for light-to-moderate days; compact applicator suits on-the-go use. No independent lab comparison of LOLA specifically against mainstream tampon brands for absorbency or leak rate was found.',
         badges: ['Female-Founded', 'Ingredient Transparency', 'Sustainable'],
@@ -334,7 +352,7 @@ export const PHYSICAL_PRODUCTS = [
         userRating: 4.6,
         whereToBuy: ['Target', 'Amazon', 'Saalt.com'],
         image: 'https://shop.periodnirvana.com/cdn/shop/files/saaltgreenproduct-regular_c9861160-2ce0-4c42-8b14-7e9bb2193b26.jpg?v=1692474680&width=1920',
-        summary: 'Medical-grade silicone cup. Holds 4x more than a tampon. Saves ~$150/year vs disposables.',
+        summary: 'Medical-grade silicone cup. Saalt says it holds 4x more than a tampon. Saves ~$150/year vs disposables.',
         safety: {
             fdaStatus: 'FDA-registered Class II medical device',
             materials: '100% medical-grade silicone, no BPA, latex, dyes, or chemicals',
@@ -344,9 +362,9 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product, and difficulty removing the cup (due to suction) is a recurring complaint that occasionally sends first-time users to urgent care.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Dr. Jen Gunter, OB-GYN. Source: ELLE Canada.',
-        doctorOpinion: '"You can\'t say that menstrual cups are medically better than tampons, but they\'re a great, valid choice for many women.". Dr. Jen Gunter, OB-GYN',
-        communityReview: 'Community discussions on Reddit r/menstrualcups note life-changing experiences and strong performance on heavy days.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Menstrual cups are a reusable menstrual-management option. Evidence supports their general safety and effectiveness when used correctly, but that evidence does not establish this specific cup as medically superior to other menstrual products.',
+        communityReview: 'Community discussions on Reddit r/menstrualcups include anecdotal experiences with menstrual cups, including use on heavier-flow days; individual experiences vary.',
         ingredients: '100% medical-grade silicone (USP Class VI certified).',
         effectiveness: 'Holds 25mL (regular) to 37mL (large). Significantly more than tampons. Up to 12-hour wear.',
         badges: ['Female-Owned', 'B-Corp', 'Sustainable'],
@@ -387,7 +405,7 @@ export const PHYSICAL_PRODUCTS = [
             'Amazon': 'https://www.amazon.com/Nature-Made-Ferrous-Sulfate-Tablets/dp/B003PGJLRO',
         },
         image: 'https://www.naturemade.com/cdn/shop/files/NM2612PK001234IRON_150ccfront_1500x.png?v=1717195534',
-        summary: '65 mg elemental iron (325 mg ferrous sulfate) per tablet. Supports red blood cell formation and energy. 180-day supply. USP verified, #1 pharmacist recommended vitamin brand.',
+        summary: '65 mg elemental iron (325 mg ferrous sulfate) per tablet. Supports red blood cell formation and energy. 180-day supply. USP verified, Nature Made says it is the #1 pharmacist-recommended vitamin brand.',
         safety: {
             fdaStatus: 'USP Verified dietary supplement',
             materials: 'Ferrous sulfate heptahydrate, cellulose, stearic acid, silicon dioxide. No gluten, no artificial colors or flavors.',
@@ -400,6 +418,14 @@ export const PHYSICAL_PRODUCTS = [
         clinicianAttribution: 'ayna synthesis of NIH ODS and ACOG guidance on iron supplementation.',
         doctorOpinion: 'Iron supplementation should be confirmed with bloodwork before starting. Over-supplementation can cause harm. Take with food and vitamin C to improve absorption and reduce GI side effects.',
         communityReview: 'Well-rated for effectiveness and price. Common feedback: take with food and vitamin C to reduce stomach upset, and expect darker stools.',
+        // 65 mg is a high elemental-iron dose, flagged live by a user
+        // 2026-09-24 asking for a visible "confirm with labs/clinician"
+        // message. The caution already existed in doctorOpinion/opinionAlerts
+        // above, but wasn't rendered anywhere prominent; `warnings` is.
+        warnings: [
+            'Confirm iron deficiency with bloodwork before starting, this is a high dose best guided by lab results and a clinician, not taken speculatively.',
+            'Accidental iron overdose is a leading cause of fatal poisoning in children under 6, keep out of reach.',
+        ],
         verificationLinks: {
             scientific: { links: [
                 
@@ -438,6 +464,14 @@ export const PHYSICAL_PRODUCTS = [
         clinicianAttribution: 'ayna synthesis of Endocrine Society and NIH ODS guidance on vitamin D supplementation.',
         doctorOpinion: 'A high-dose vitamin D supplement should be considered with a clinician after assessing vitamin D status and total daily intake.',
         communityReview: 'Highly rated. Users report improvements in mood, energy, and general wellbeing. Consistently well-reviewed for quality and value.',
+        // 5,000 IU is a high daily dose, flagged live by a user 2026-09-24
+        // asking for a visible "confirm with labs/clinician" message. The
+        // caution already existed in doctorOpinion/opinionAlerts above, but
+        // wasn't rendered anywhere prominent; `warnings` is.
+        warnings: [
+            'Confirm deficiency with a 25(OH)D blood test before starting, this is a high dose best guided by lab results and a clinician, not taken speculatively.',
+            'Do not combine with other high-dose vitamin D supplements without medical monitoring.',
+        ],
         verificationLinks: {
             scientific: { links: [
                 { url: 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/', text: 'NIH Office of Dietary Supplements: Vitamin D', summary: 'Vitamin D intake, upper limits, and risks from excessive supplementation.' }
@@ -464,22 +498,25 @@ export const PHYSICAL_PRODUCTS = [
             'Google': 'https://www.google.com/search?q=saalt+steamer',
         },
         image: 'https://saalt.com/cdn/shop/files/Saalt-Steamer-PDP-01-Rose-Quartz.jpg?v=1725669379',
-        summary: 'Portable UV-free steamer designed specifically to sterilize menstrual cups and discs in 3 minutes. Safe for all medical-grade silicone.',
+        summary: 'Portable steamer designed for menstrual cup and disc cleaning between uses. Follow the product manufacturer’s cleaning instructions for your specific cup or disc.',
         safety: {
             fdaStatus: 'N/A. Accessory for FDA-registered medical devices',
             materials: 'BPA-free plastic, stainless steel interior chamber',
             recalls: 'No known recalls',
             allergens: 'None',
-            sideEffects: 'None; steam sterilization is recommended by OB-GYNs over boiling for silicone cups',
+            sideEffects: 'Hot steam can cause burns if handled improperly. Cleaning method should follow the menstrual product manufacturer’s instructions.',
             opinionAlerts: 'Do not use with cups made from rubber or latex. Silicone only.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of clinical guidance on menstrual cup hygiene.',
-        doctorOpinion: 'Steam sterilization is the safest method for menstrual cup cleaning between cycles.',
+        doctorOpinion: 'Menstrual cups and discs should be cleaned according to manufacturer instructions. Evidence does not establish steamers as medically superior to other recommended cleaning methods.',
         communityReview: 'Highly rated by Saalt cup users for convenience and peace of mind between cycles.',
         verificationLinks: {
             doctor: { links: [
                 { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual Cup Care', summary: 'Guidance on proper cleaning and sterilization of menstrual cups.' }
+            ] },
+            scientific: { links: [
+                { url: 'https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use', text: 'FDA: Menstrual Product Options, Facts, and Safe Use', summary: 'FDA guidance recommends following menstrual-product instructions and appropriate hygiene. This is category-level guidance and does not establish steamers as superior to other manufacturer-recommended cleaning methods.' }
             ] },
             community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=steamer', text: 'Reddit r/menstrualcups: steamer discussion', summary: 'Community reviews of cup sterilization methods.' }
@@ -557,7 +594,7 @@ export const PHYSICAL_PRODUCTS = [
         safety: {
             fdaStatus: 'Not FDA-regulated (classified as apparel)',
             materials: 'Organic cotton, OEKO-TEX certified fabrics',
-            recalls: '⚠️ 2022: Thinx settled a $5M class-action lawsuit over PFAS in older products. Current line is PFAS-free.',
+            recalls: '2022: Thinx settled a $5M class-action lawsuit over PFAS in older products. Current line is PFAS-free.',
             allergens: 'Hypoallergenic in current PFAS-free line',
             sideEffects: 'Possibility of infection if not washed correctly or changed frequently enough.',
             opinionAlerts: 'Legacy "PFAS scare" still drives some user hesitation. Complicated laundry routine compared to disposables.'
@@ -600,7 +637,14 @@ export const PHYSICAL_PRODUCTS = [
         price: '$15 for 60 capsules',
         userRating: 4.5,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: 'https://www.naturemade.com/cdn/shop/files/NM2576PK001667MAGNESIUM_5A007225ccfront_1500x.png?v=1718994664',
+        // Was hotlinking a Nature Made CDN image that turned out to be a
+        // different SKU (Magnesium Extra Strength 400mg softgels), mismatched
+        // the real product this entry describes (High Absorption Magnesium
+        // Glycinate 200mg, 60 capsules, same product productBuyUrls.js links
+        // to). Flagged live by a user 2026-09-24: "I would want the image,
+        // formulation, dosage, title, and purchase link to match before
+        // considering a purchase." Now a local photo of the correct bottle.
+        image: '/products/naturemade/magnesium-glycinate-200mg.png',
         summary: 'Magnesium glycinate for cramp relief, better sleep, and mood support. USP verified.',
         safety: {
             fdaStatus: 'USP Verified',
@@ -610,8 +654,9 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'Mild digestive issues, loose stools (if dose too high), loss of appetite, occasional nausea.',
             opinionAlerts: 'Magnesium glycinate is often chosen for its tolerability, but users find Thorne/NatureMade capsules quite large.'
         },
-        clinicianOpinionSource: 'mixed',
-        doctorOpinion: 'Magnesium has been studied for menstrual cramps, though evidence and individual response vary. Magnesium glycinate is generally well tolerated.',
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Magnesium has been studied for menstrual symptoms, but evidence is limited and does not establish that this specific magnesium glycinate product will relieve cramps, improve sleep, or improve mood for every user.',
         communityReview: 'Community discussions on Reddit r/Supplements note significant cramp relief and improved sleep with magnesium glycinate.',
         ingredients: 'Magnesium glycinate 200mg, cellulose capsule, magnesium stearate.',
         effectiveness: 'Clinical studies show 200-400mg magnesium daily reduces menstrual pain by 30-50%. Also improves sleep quality.',
@@ -651,11 +696,11 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Main complaint is the high price point compared to standard CoQ10 supplements. Some users find the large softgels difficult to swallow.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Dr. Jolene Brighten, NMD, board-certified naturopathic endocrinologist; author (Beyond the Pill). Not brand-affiliated.',
-        doctorOpinion: '"Ubiquinol is frequently recommended for women over 35 to support mitochondrial health and egg quality. Thorne\'s NSF certification ensures purity and potency.". Dr. Jolene Brighten, NMD',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'CoQ10 and ubiquinol have been studied for mitochondrial function and reproductive-health outcomes, but ingredient-level evidence does not establish that this specific Thorne product improves egg quality or fertility outcomes.',
         communityReview: 'Community discussions on Reddit r/TTC35 note clinician recommendations and satisfaction with quality; NSF certification valued.',
         ingredients: 'Ubiquinol 100mg, Olive Oil, Gelatin, Glycerin, Water, Lycopene.',
-        effectiveness: 'Studies show Ubiquinol improves oocyte quality and mitochondrial function, potentially improving fertility outcomes.',
+        effectiveness: 'CoQ10 and ubiquinol have been studied for mitochondrial and reproductive-health outcomes. The evidence cited should not be interpreted as proof that this specific product improves fertility outcomes.',
         badges: ['Evidence Reviewed', 'High Bioavailability'],
         verificationLinks: {
             community: {
@@ -687,9 +732,9 @@ export const DIGITAL_PRODUCTS = [
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
         image: 'https://images.ctfassets.net/juauvlea4rbf/23G4fZ83x3DYLiCj6rNH7o/9e791f0a130e8c69a19d0857e232a540/Group_2297__1_.png?w=1172&h=990&q=50&fm=png',
-        summary: 'EU-based tracker with industry-leading privacy. Accurate predictions, no ads on free tier.',
+        summary: 'EU-based tracker with a focus on privacy. Accurate predictions, no ads on free tier.',
         safety: { fdaStatus: 'CE-marked in EU (medical device certification)', materials: 'N/A (software)', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A (Software)', opinionAlerts: 'Subscription cost ($10/mo) is a common pain point compared to free trackers.' },
-        privacy: { dataStorage: 'EU servers (Germany). GDPR-compliant', sellsData: '❌ Explicitly does NOT sell data', hipaa: 'Not HIPAA (EU-based, uses GDPR which is stricter)', keyPolicy: 'Published transparency report. Will not comply with US law enforcement requests for cycle data.' },
+        privacy: { dataStorage: 'EU servers (Germany). GDPR-compliant', sellsData: 'Explicitly does NOT sell data', hipaa: 'Not HIPAA (EU-based, uses GDPR which is stricter)', keyPolicy: 'Published transparency report. Will not comply with US law enforcement requests for cycle data.' },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Dr. Anna Druet, Clue Research Lead. Brand-affiliated.',
         doctorOpinion: 'Clue partners with universities for menstrual health research; brand emphasizes evidence-based design.',
@@ -727,18 +772,22 @@ export const DIGITAL_PRODUCTS = [
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
         image: 'https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/61/f9/de/61f9deb9-a4f6-de49-96c6-84eb25541edb/Placeholder.mill/1200x630wa.jpg',
-        summary: 'Privacy-first tracker with end-to-end encryption. Syncs with lunar cycles.',
+        summary: 'Period and cycle-tracking app with privacy-focused features and optional lunar-cycle features. Privacy practices should be reviewed against the app’s current policy.',
         safety: { fdaStatus: 'N/A (Software)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Lunar sync features are highly aesthetic but some users find them less "scientific" than Clue.' },
-        privacy: { dataStorage: 'End-to-end encrypted', sellsData: '❌ No', hipaa: 'No', keyPolicy: 'Uses dual-key encryption so even Stardust can\'t see your data.' },
+        privacy: { dataStorage: 'See current Stardust privacy policy', sellsData: 'See current Stardust privacy policy', hipaa: 'Not presented here as a HIPAA-covered service', keyPolicy: 'Review Stardust’s current privacy and security documentation for encryption and data-access practices.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'End-to-end encryption and privacy-first design are increasingly important for reproductive health data post-Roe.',
+        doctorOpinion: 'Privacy and data-security practices are important considerations when choosing a reproductive-health tracking app. Users should review the app’s current privacy policy and controls.',
         communityReview: 'Community discussions on Reddit r/periods note strong privacy features and UI design.',
         integrations: ['Apple Health'],
         badges: ['Female-Owned', 'Top Privacy'],
         verificationLinks: {
             doctor: { links: [
-                { url: 'https://stardust.app/privacy', text: 'Stardust Privacy Policy', summary: 'Detailed breakdown of their end-to-end encryption model.' }
+                { url: 'https://stardust.app/privacy', text: 'Stardust Privacy Policy', summary: 'Detailed breakdown of their end-to-end encryption model.' },
+                { url: 'https://www.wired.com/story/period-tracking-apps-privacy/', text: 'Wired: Period App Privacy', summary: 'Analysis of Stardust security in the context of reproductive health privacy.' }
+            ] },
+            scientific: { links: [
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/37697855/', text: 'Menstrual Cycle Tracking Apps: Medical and Data Privacy Scoring', summary: 'A peer-reviewed evaluation found substantial variation in medical quality and privacy practices across menstrual-tracking apps. This is category-level evidence and is not a clinical validation of Stardust.' }
             ] },
             community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Discussions on period trackers and privacy.' },
@@ -766,15 +815,20 @@ export const DIGITAL_PRODUCTS = [
         image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/04/8e/69/048e6912-3f1e-ece4-ab0f-40d22c4b4eb2/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg',
         summary: 'Dedicated menopause and perimenopause tracker. Log symptoms (hot flashes, sleep, mood), track patterns, and get insights. Built for midlife health.',
         safety: { fdaStatus: 'N/A (wellness app)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Use alongside clinician care for diagnosis and treatment.' },
-        privacy: { dataStorage: 'US servers', sellsData: '❌ Does not sell personal health data', hipaa: 'N/A', keyPolicy: 'Check app privacy policy for data sharing with researchers or partners.' },
+        privacy: { dataStorage: 'See current Balance privacy policy', sellsData: 'See current Balance privacy policy', hipaa: 'N/A', keyPolicy: 'Review the current privacy policy for storage, sharing, research, and partner practices.' },
         clinicianOpinionSource: 'independent',
-        doctorOpinion: 'Tracking perimenopause symptoms helps clinicians identify patterns and tailor treatment. Apps like Balance complement. Not replace. Clinical care.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Symptom tracking can help people organize patterns and prepare for clinician conversations, but a wellness app does not diagnose menopause or replace clinical evaluation.',
         communityReview: 'Community discussions on Reddit r/Menopause note focus on perimenopause and value of symptom logging for clinician visits.',
         integrations: ['Apple Health'],
         badges: ['Menopause Focus', 'Symptom Tracking'],
         verificationLinks: {
             doctor: { links: [
-                
+                { url: 'https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health', text: 'NAMS – Menopause FAQs', summary: 'Clinical guidance on menopause and perimenopause care.' }
+            ] },
+            scientific: { links: [
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/24569618/', text: 'Diary of hot flashes reported upon occurrence: results of a randomized double-blind study of raloxifene, placebo, and paroxetine (Menopause, 2014)', summary: 'Research supports structured symptom diaries for measuring menopausal hot-flash frequency and severity. This evidence supports symptom tracking generally and is not specific to Balance.' },
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/40526898/', text: 'Digital Menopause Intervention Randomized Trial', summary: 'A randomized trial found potential benefits from a menopause-focused digital intervention. The study evaluated a different app and does not establish effectiveness of Balance itself.' }
             ] },
             community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/', text: 'Reddit r/Menopause', summary: 'Community discussions on menopause trackers and symptom management.' }
@@ -793,6 +847,18 @@ export const DIGITAL_PRODUCTS = [
 // consumer product. Bring back once there's a clinician-facing surface.
 const TEMPORARILY_HIDDEN_IDS = new Set(['p-mypelvicbra-prolapse-chicken']);
 
+// Main's catalog corrections/packaging can rename a product (e.g. to its exact
+// packaged SKU name). Users' saved intake history and avoid lists store the
+// name they picked at the time, so keep the pre-correction name as
+// originalName for name-keyed lookups (resolveCatalogProduct).
+function withCatalogEvidence(product) {
+    const corrected = applyCatalogEvidence(product);
+    if (corrected && product?.name && corrected.name !== product.name && !corrected.originalName) {
+        return { ...corrected, originalName: product.name };
+    }
+    return corrected;
+}
+
 export const ALL_PRODUCTS = [
     ...PHYSICAL_PRODUCTS,
     ...DIGITAL_PRODUCTS,
@@ -807,7 +873,10 @@ export const ALL_PRODUCTS = [
     ...MENSTRUAL_PHYSICAL,
     ...BRAND_PRODUCTS,
     ...INCONTINENCE_PHYSICAL
-].filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id)).map(withImageOverride);
+]
+    .map(withCatalogEvidence)
+    .filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id))
+    .map(withImageOverride);
 
 /**
  * Look up a catalog product by id. Returns null for ids that don't exist in
@@ -817,9 +886,32 @@ export const ALL_PRODUCTS = [
  * @param {string} id
  * @returns {object | null}
  */
+// Built lazily: an exact-id Map first (hot path, called per product while
+// scoring), then readable route keys/slugs for shared /product/:slug links.
+let productByIdIndex = null;
+let productByRouteIndex = null;
+
 export function getProductById(id) {
     if (!id) return null;
-    return ALL_PRODUCTS.find((p) => p.id === id) || null;
+
+    const key = String(id).trim();
+
+    if (!productByIdIndex) productByIdIndex = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
+    const exact = productByIdIndex.get(key);
+    if (exact) return exact;
+
+    if (!productByRouteIndex) {
+        productByRouteIndex = new Map();
+        for (const p of ALL_PRODUCTS) {
+            const routeKey = productRouteKey(p);
+            if (routeKey && !productByRouteIndex.has(routeKey)) productByRouteIndex.set(routeKey, p);
+        }
+        for (const p of ALL_PRODUCTS) {
+            const slug = productSlug(p.name);
+            if (slug && !productByRouteIndex.has(slug)) productByRouteIndex.set(slug, p);
+        }
+    }
+    return productByRouteIndex.get(key) || null;
 }
 
 // Saved Ecosystem rows are deliberately compact and older rows omit the
@@ -864,7 +956,17 @@ export function createCustomEcosystemProducts(quizResults) {
             out[exact.id] = exact;
             return;
         }
-        const partial = ALL_PRODUCTS.find((p) => String(p.name || '').toLowerCase().includes(needle) || needle.includes(String(p.name || '').toLowerCase()));
+        // Partial matches must be specific: every word of what she typed has
+        // to appear in the product name (and it must be >= 2 words or a
+        // distinctive brand-length token). "pads" alone used to map to the
+        // first pad in the catalog and claim she already uses it.
+        const words = needle.split(/[^a-z0-9]+/).filter(Boolean);
+        if (words.length < 2 && needle.length < 5) return;
+        const partial = ALL_PRODUCTS.find((p) => {
+            const pn = String(p.name || '').toLowerCase();
+            return words.every((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(pn))
+                || (pn.length >= 8 && needle.includes(pn));
+        });
         if (partial) out[partial.id] = partial;
     });
 
@@ -887,6 +989,15 @@ export const CATEGORY_LABELS = {
     'fitness': 'Fitness',
     'fitness-cycle': 'Cycle Fitness',
     'pelvic-floor': 'Pelvic Floor',
+    // Split 2026-09-16 per Ayna's clinical correction: "Trainer" devices are
+    // biofeedback-only (Elvie, Perifit, Kegel balls), not FDA-cleared to
+    // activate anything, they just help you do Kegels yourself. "Exerciser"
+    // devices are FDA-cleared Class II stimulation devices that contract the
+    // pelvic floor FOR you (Emsella, Yarlap, Elitone, not Elitone URGE,
+    // which calms rather than exercises). Generic 'pelvic-floor' remains for
+    // items that are neither (garments, wands, dilators, apps, programs).
+    'pelvic-floor-trainer': 'Pelvic Floor Trainer',
+    'pelvic-floor-exerciser': 'Pelvic Floor Exerciser',
     'pelvic-health': 'Pelvic Health',
     'cramp-relief': 'Cramp Relief',
     'intimate-care': 'Intimate Care',
@@ -942,12 +1053,16 @@ export const MACRO_GROUPS = [
     // products use (see e.g. p-honeypot-wash, p-good-clean-love, p-v-wash) instead.
     { id: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'vulva', 'intimate', 'moisturizer', 'ph balance', 'ph-balanced', 'ph balanced', 'ph level', 'ph support'] },
     { id: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['lubricant', 'lube', 'condom', 'sexual wellness', 'intimacy'] },
-    { id: 'birth-control', label: 'Birth Control', categories: ['contraception'], keywords: ['contraception', 'contraceptive', 'emergency contraception', 'barrier'] },
+    // A bare 'barrier' keyword matched "skin barrier" and "moisture barrier" copy (kieró skincare,
+    // Joylux vaginal gel) and never a real contraceptive, so only explicit barrier-contraception
+    // phrasing counts (2026-10-07). 'condom' is deliberately absent: lubricant copy says
+    // "condom-compatible". Skin and hair categories stay opted out of the keyword scan.
+    { id: 'birth-control', label: 'Birth Control', categories: ['contraception'], keywords: ['contraception', 'contraceptive', 'emergency contraception', 'barrier method', 'barrier contraception'], excludeCategories: ['skin', 'skincare', 'body-care', 'hair', 'haircare'] },
     { id: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation', 'conceive', 'conception'] },
     { id: 'pregnancy', label: 'Pregnancy', categories: ['pregnancy'], keywords: ['pregnancy', 'prenatal'] },
     { id: 'postpartum', label: 'Postpartum', categories: ['postpartum'], keywords: ['postpartum', 'lactation', 'breastfeeding', 'perineal'] },
     { id: 'breast', label: 'Breast Care', categories: ['breast-care', 'lactation'], keywords: ['breast', 'breastfeeding', 'nipple', 'pump', 'lactation'] },
-    { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
+    { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
     { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
     // 'supplement' is a product-TYPE category shared by dozens of unrelated items (iron for
     // anemia, plain vitamin D, omega-3 for cramps, etc.), it used to be listed here directly,
@@ -984,6 +1099,34 @@ export const MACRO_GROUPS = [
     // (p-azo-test's "test strips", p-winx-uti-test-treat's "rapid test").
     { id: 'tests-devices', label: 'Tests + Devices', categories: ['tracker', 'diagnostics', 'hormone-monitoring'], keywords: ['test strip', 'test kit', 'rapid test', 'diagnostic test', 'lab test', 'tracker', 'wearable', 'monitor'] },
 ];
+
+// The Browse pills: a few BROAD groups that run in order through life, from
+// first period to post-menopause. They are a layer over MACRO_GROUPS (which stays
+// fine-grained because EcosystemBubbles, deep links and search nudges all key off
+// those ids), each pill simply covers several MACRO_GROUPS ids.
+export const BROWSE_GROUPS = [
+    { id: 'all', label: 'All', covers: [] },
+    { id: 'life-periods', label: 'Cycle', covers: ['period', 'hormones'] },
+    { id: 'life-intimate', label: 'Vaginal & Sexual', covers: ['intimate', 'sexual'] },
+    { id: 'life-pregnancy', label: 'Pregnancy', covers: ['pregnancy'] },
+    { id: 'life-postpartum', label: 'Postpartum', covers: ['postpartum', 'breast'] },
+    { id: 'life-pelvic', label: 'Pelvic Health', covers: ['pelvic'] },
+    // The catalog has no per-stage field: products are tagged/categorized 'menopause' as a
+    // whole. So Perimenopause and Postmenopause match on their own tag/wording, and Menopause
+    // stays the broad pill (it also covers everything general to all three stages).
+    { id: 'life-perimenopause', label: 'Perimenopause', covers: [], tags: ['perimenopause'], keywords: ['perimenopause', 'perimenopausal'] },
+    { id: 'life-menopause', label: 'Menopause', covers: ['menopause'] },
+    { id: 'life-postmenopause', label: 'Postmenopause', covers: [], tags: ['postmenopause'], keywords: ['postmenopause', 'post-menopause', 'postmenopausal', 'post-menopausal', 'after menopause', 'osteoporosis', 'bone density', 'vaginal atrophy', 'genitourinary syndrome'] },
+    { id: 'life-tests-telehealth', label: 'Tests & Telehealth', covers: ['tests-devices'], categories: ['telehealth'] },
+    { id: 'life-wellness', label: 'Wellness', covers: ['skin', 'hair', 'gut', 'sleep-stress', 'pain-recovery'] },
+];
+
+/** Maps any group id (a fine MACRO_GROUPS id or a BROWSE_GROUPS id) to the Browse pill that contains it. */
+export function browseGroupIdFor(groupId) {
+    if (!groupId || groupId === 'all') return 'all';
+    if (BROWSE_GROUPS.some((g) => g.id === groupId)) return groupId;
+    return BROWSE_GROUPS.find((g) => g.covers.includes(groupId))?.id || groupId;
+}
 
 // Some product copy legitimately advertises the ABSENCE of a property, e.g. Neycher's
 // intimate-care line describing itself as "hormone-free" / "non-hormonal", rather than the
@@ -1025,6 +1168,17 @@ export function productSearchText(item) {
 
 export function itemMatchesMacroGroup(item, groupId) {
     if (!groupId || groupId === 'all') return true;
+    const broad = BROWSE_GROUPS.find((g) => g.id === groupId);
+    if (broad) {
+        if (broad.covers.some((id) => itemMatchesMacroGroup(item, id))) return true;
+        if (Array.isArray(broad.categories) && broad.categories.includes(item?.category)) return true;
+        if (Array.isArray(broad.tags) && Array.isArray(item?.tags) && item.tags.some((t) => broad.tags.includes(t))) return true;
+        if (Array.isArray(broad.keywords) && broad.keywords.length) {
+            const text = productSearchText(item);
+            return broad.keywords.some((keyword) => text.includes(keyword));
+        }
+        return false;
+    }
     const group = MACRO_GROUPS.find((g) => g.id === groupId);
     if (!group) return true;
     if (group.categories.includes(item?.category)) return true;
@@ -1162,16 +1316,26 @@ const AVOID_TRIGGER_KEYWORDS = {
     'synthetic': [], // only use product.avoidIfSensitivity for synthetic to avoid over-excluding
 };
 
-function productMatchesAvoidTrigger(product, trigger) {
+// "Fragrance-free", "no latex", "unscented" etc. are the OPPOSITE of the
+// trigger. Before this, a fragrance-free product's own summary matched the
+// 'fragrance' keyword and it was hidden from fragrance-sensitive users.
+function stripNegatedTriggerPhrases(text) {
+    return text
+        .replace(/\b(fragrances?|scents?|perfumes?|parfum|latex|essential[\s-]oils?|dyes?)[\s-]*free\b/g, ' ')
+        .replace(/\b(no|without|free of|free from|zero|0%)\s+(added\s+|synthetic\s+)?(fragrances?|scents?|perfumes?|parfum|latex|essential oils?|dyes?)\b/g, ' ')
+        .replace(/\bunscented\b/g, ' ');
+}
+
+export function productMatchesAvoidTrigger(product, trigger) {
     if (product.avoidIfSensitivity && product.avoidIfSensitivity.includes(trigger)) return true;
     const keywords = AVOID_TRIGGER_KEYWORDS[trigger];
     if (!keywords || keywords.length === 0) return false;
-    const text = [
+    const text = stripNegatedTriggerPhrases([
         product.ingredients,
         product.summary,
         product.safety?.materials,
         product.safety?.allergens,
-    ].filter(Boolean).join(' ').toLowerCase();
+    ].flat().filter(Boolean).join(' ').toLowerCase());
     return keywords.some(kw => text.includes(kw.toLowerCase()));
 }
 
@@ -1397,6 +1561,18 @@ function asStringArray(value) {
     if (Array.isArray(value)) return value.filter(Boolean).map(String);
     if (value == null || value === '') return [];
     return [String(value)];
+}
+
+/**
+ * Whether the user has explicitly stated a life stage (e.g. "I am
+ * post-menopause"), a strong, standalone personalization signal. Callers use
+ * it to decide whether Discovery should default to personalized results even
+ * when no separate concerns were flagged.
+ */
+export function hasStatedLifeStage(quizAnswers) {
+    const intake = rawIntakeFromProfile(quizAnswers);
+    return asStringArray(intake?.lifeStageSelections).length > 0
+        || asStringArray(intake?.lifeStage).length > 0;
 }
 
 /** Accepts id arrays, Sets, product arrays, or { id: truthy } maps. */

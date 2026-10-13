@@ -4,7 +4,6 @@ import {
     getNeedMatchesForProduct, getEcosystemSeedFromQuiz, getRecommendationMatchesAndRest, getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct,
     getMatchCareFlags, getEcosystemAlternatives, getRecommendationExplanation,
 } from './products';
-import { STARTUPS } from './startups';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake';
 
 describe('getPersonalizedProductIds', () => {
@@ -42,7 +41,9 @@ describe('getPersonalizedProductIds', () => {
 });
 
 describe('personalized relevance scoring', () => {
-    const elitone = STARTUPS.find((p) => p.id === 's-elitone');
+    // The duplicate s-elitone startup listing was removed on main; the catalog
+    // entry p-elitone is the same device.
+    const elitone = ALL_PRODUCTS.find((p) => p.id === 'p-elitone');
     const oura = ALL_PRODUCTS.find((p) => p.id === 'd-oura');
 
     it('does not turn fibroid concerns into a period-product or hormone-supplement match', () => {
@@ -459,5 +460,30 @@ describe('ASK2 adapters', () => {
         const { getCheckinRecommendations } = await import('./products');
         const recs = getCheckinRecommendations({ frustrations: [] }, { focusAreas: [] }, [{ date: '2026-10-01' }], [{ symptoms: ['hot flashes'] }]);
         expect(recs).toEqual([]);
+    });
+});
+
+describe('postmenopausal profile regression', () => {
+    // Ported from main's recommendation-formula tests. The matching engine
+    // keeps the full catalog as a browse tail in getRecommendations(), so the
+    // "trackers absent from the tail" check does not apply here; the
+    // personalized set must still never infer these needs from life stage.
+    const quiz = { fullHealthIntake: {
+        age: '60+', lifeStageSelections: ['I am post-menopause'],
+        supportSelections: ['Strength and maintaining muscle', 'Bone health', 'Sleep', 'GLP-1 medication side effects and nausea'],
+        supportOtherText: 'Chronic pain / CRPS',
+    } };
+    it('does not infer intimate, bladder, hot-flash or hormone-testing needs from life stage alone', () => {
+        const ids = getPersonalizedProductIds(quiz);
+        for (const id of ['p-proov-empower', 'p-elitone', 'p-elitone-urge', 'p-kindra-lotion', 'p-oboo-woosh-warming-wand', 'p-remifemin', 'p-estroven-mood', 'p-poise-ultra-thin-moderate']) expect(ids, id).not.toContain(id);
+        expect(ids).toContain('p-citracal-bone-health');
+    });
+    it('does not interpret medication nausea as hormone imbalance or select high-dose nutrients for sleep', () => {
+        const ids = getPersonalizedProductIds(quiz);
+        for (const id of ['p-vitex', 'p-inositol-wholesome', 'p-flo-gummies', 'p-nature-made-iron-65mg', 'p-natures-bounty-d3-125mcg']) expect(ids, id).not.toContain(id);
+    });
+    it('never personalizes period or fertility trackers for a postmenopausal profile', () => {
+        const ids = getPersonalizedProductIds(quiz);
+        for (const id of ['d-clue', 'd-stardust', 'd-glow', 'd-inito']) expect(ids, id).not.toContain(id);
     });
 });

@@ -1,15 +1,15 @@
+import { compactLegacyAuthMetadata } from './authMetadataCleanup';
+import { filterProductMapToCatalog } from './catalogIntegrity';
+
 /**
  * Wishlist / Save for later persistence.
  *
- * localStorage keeps the UI instant. Supabase user_ecosystems is the primary
- * sync layer, but the live table may be missing is_saved or blocked by RLS.
- * user_metadata is therefore a small authenticated fallback so saved products
- * still come back after logout/login instead of disappearing with a false
- * "could not save" banner.
+ * localStorage keeps the UI instant. Supabase user_ecosystems is the durable
+ * sync layer. Saved-product blobs must never be stored in Auth user_metadata,
+ * because Supabase embeds user_metadata in the JWT sent on every API request.
  */
 
 const LS_KEY = 'ayna_saved_for_later_v1';
-const META_KEY = 'ayna_saved_products_v1';
 let remoteColumnMissing = false;
 const UNDEFINED_COLUMN = '42703';
 
@@ -18,27 +18,12 @@ function isMissingColumn(error) {
   return error.code === UNDEFINED_COLUMN || /column .*is_saved.* does not exist/i.test(error.message || '');
 }
 
-function compactProduct(product) {
-  if (!product?.id) return null;
-  const keys = [
-    'id', 'name', 'brand', 'category', 'type', 'price', 'priceDisplay', 'stage',
-    'image', 'imageUrl', 'images', 'summary', 'description', 'url', 'website',
-    'buyUrl', 'purchaseUrl', 'affiliateUrl', 'aynaMatch', 'aynaMatchPercent',
-    'matchPercent', 'matchPercentage',
-  ];
-  const out = {};
-  for (const key of keys) {
-    const value = product[key];
-    if (value !== undefined && value !== null && value !== '') out[key] = value;
-  }
-  return out;
-}
-
 export function loadSavedProducts() {
   try {
     const raw = localStorage.getItem(LS_KEY);
     const parsed = raw ? JSON.parse(raw) : {};
-    return parsed && typeof parsed === 'object' ? parsed : {};
+    // PRODUCT INTEGRITY: only catalog products, with current catalog facts.
+    return parsed && typeof parsed === 'object' ? filterProductMapToCatalog(parsed) : {};
   } catch {
     return {};
   }
@@ -60,39 +45,15 @@ export function clearSavedProducts() {
   }
 }
 
-async function loadMetadataSaved(supabase, userId) {
-  if (!supabase || !userId) return {};
-  try {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || data?.user?.id !== userId) return {};
-    const raw = data.user.user_metadata?.[META_KEY];
-    return raw && typeof raw === 'object' ? raw : {};
-  } catch {
-    return {};
-  }
-}
-
-async function writeMetadataSaved(supabase, userId, map) {
-  if (!supabase || !userId) return false;
-  try {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || data?.user?.id !== userId) return false;
-    const current = data.user.user_metadata || {};
-    const { error: updateError } = await supabase.auth.updateUser({
-      data: { ...current, [META_KEY]: map || {} },
-    });
-    return !updateError;
-  } catch {
-    return false;
-  }
-}
-
-/** id -> product, merging the table with authenticated metadata fallback. */
+/** id -> product from the user_ecosystems table. */
 export async function loadSavedForUser(supabase, userId) {
   if (!supabase || !userId) return null;
-  const metadataSaved = await loadMetadataSaved(supabase, userId);
 
-  if (remoteColumnMissing) return metadataSaved;
+  try { await compactLegacyAuthMetadata(supabase); } catch (error) {
+    console.warn('[Ayna] legacy wishlist auth metadata cleanup deferred:', error?.message || error);
+  }
+
+  if (remoteColumnMissing) return null;
 
   const { data, error } = await supabase
     .from('user_ecosystems')
@@ -102,11 +63,11 @@ export async function loadSavedForUser(supabase, userId) {
 
   if (error) {
     if (isMissingColumn(error)) remoteColumnMissing = true;
-    else console.warn('[Ayna] wishlist table read unavailable; using auth fallback:', error.message || error);
-    return metadataSaved;
+    else console.warn('[Ayna] wishlist table read unavailable; keeping local copy:', error.message || error);
+    return null;
   }
 
-  const out = { ...metadataSaved };
+  const out = {};
   for (const row of data || []) {
     out[row.product_id] = row.product_data || {
       id: row.product_id,
@@ -116,26 +77,15 @@ export async function loadSavedForUser(supabase, userId) {
       type: row.product_type,
     };
   }
-  return out;
+  return filterProductMapToCatalog(out);
 }
 
-/**
- * Set or clear a saved product. The table write is tried first; auth
- * metadata is only written as a fallback when that write actually fails
- * (missing column, RLS, etc). Writing it unconditionally on every save used
- * to make user_metadata grow without bound, it rides along in the auth JWT
- * on every request, so that eventually blew past header size limits (HTTP
- * 431) even once the table itself was working fine.
- */
+/** Set or clear a saved product in user_ecosystems only. */
 export async function setSavedForUser(supabase, userId, product, isSaved) {
   if (!supabase || !userId || !product?.id) return false;
+  if (remoteColumnMissing) return false;
 
-  const existing = await loadMetadataSaved(supabase, userId);
-  const nextMetadata = { ...existing };
-  if (isSaved) nextMetadata[product.id] = compactProduct(product);
-  else delete nextMetadata[product.id];
-
-  if (remoteColumnMissing) return writeMetadataSaved(supabase, userId, nextMetadata);
+  try { await compactLegacyAuthMetadata(supabase); } catch (_) {}
 
   const { error } = await supabase
     .from('user_ecosystems')
@@ -156,8 +106,8 @@ export async function setSavedForUser(supabase, userId, product, isSaved) {
 
   if (error) {
     if (isMissingColumn(error)) remoteColumnMissing = true;
-    else console.warn('[Ayna] wishlist table write unavailable; auth fallback retained:', error.message || error);
-    return writeMetadataSaved(supabase, userId, nextMetadata);
+    else console.warn('[Ayna] wishlist table write unavailable; local copy retained:', error.message || error);
+    return false;
   }
   return true;
 }

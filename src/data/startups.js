@@ -23,6 +23,8 @@ export const STARTUPS = [
     {
         id: 's-inne',
         name: 'inne',
+        communityReview: 'Trustpilot rates inne 4.1/5 from 276 reviews (59% 5-star, 10% 1-star). Reviewers praise easy-to-use app and effective cycle tracking / pregnancy planning. Common complaints: needs wifi and is hard to use with shift-work schedules. One reviewer: "The app is user-friendly, with a clear and comprehensive layout that made the learning curve fast and easy."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/inne.io', text: 'Trustpilot: inne', summary: 'Trustpilot rates inne 4.1/5 from 276 reviews (59% 5-star, 10% 1-star). Reviewers praise easy-to-use app and effective cycle tracking / pregnancy planning. Common complaints: needs wifi and is hard to use with shift-work schedules. One reviewer: "The app is user-friendly, with a clear and comprehensive layout that made the learning curve fast and easy."' }] } },
         tagline: 'At-home saliva hormone monitoring',
         description: 'A minilab that reads your progesterone from saliva daily. Gives real hormone data, not estimates, to understand your fertility window and cycle health.',
         tags: ['irregular', 'pcos', 'fertility', 'sustainability'],
@@ -37,6 +39,8 @@ export const STARTUPS = [
     {
         id: 's-daye',
         name: 'Daye',
+        communityReview: 'Trustpilot rates Daye 4.3/5 from 700 reviews (83% 5-star, 7% 1-star). Reviewers praise innovative at-home testing and eco-friendly products. Common complaints: slow customer-service replies and delivery issues. One reviewer: "The microbiome screen test is a game changer. No second guessing or self medicating before knowing what is really going on."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/yourdaye.com', text: 'Trustpilot: Daye', summary: 'Trustpilot rates Daye 4.3/5 from 700 reviews (83% 5-star, 7% 1-star). Reviewers praise innovative at-home testing and eco-friendly products. Common complaints: slow customer-service replies and delivery issues. One reviewer: "The microbiome screen test is a game changer. No second guessing or self medicating before knowing what is really going on."' }] } },
         tagline: 'CBD-infused tampons + at-home vaginal microbiome screening',
         description: 'Tampons with pain-relieving CBD coating, plus an at-home screening kit that tests your vaginal microbiome for infections like BV using the tampon you already wore.',
         tags: ['cramps', 'discomfort', 'organic', 'safety-concern', 'heavy-flow'],
@@ -51,6 +55,8 @@ export const STARTUPS = [
     {
         id: 's-allara',
         name: 'Allara',
+        communityReview: 'Trustpilot rates Allara 4.4/5 from 1,002 reviews (81% 5-star, 13% 1-star). Reviewers praise attentive, knowledgeable providers and convenient telehealth. Common complaints: unexpected billing and unclear insurance coverage. One reviewer: "Providers are knowledgeable, empathetic, listen carefully to symptoms"',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/allarahealth.com', text: 'Trustpilot: Allara', summary: 'Trustpilot rates Allara 4.4/5 from 1,002 reviews (81% 5-star, 13% 1-star). Reviewers praise attentive, knowledgeable providers and convenient telehealth. Common complaints: unexpected billing and unclear insurance coverage. One reviewer: "Providers are knowledgeable, empathetic, listen carefully to symptoms"' }] } },
         tagline: 'Comprehensive PCOS care. Virtual clinic',
         description: 'Telehealth-first PCOS clinic with OB-GYNs, endocrinologists, dietitians, and mental health therapists. Complete care plans instead of "just take birth control."',
         tags: ['pcos', 'irregular', 'heavy-flow'],
@@ -62,37 +68,13 @@ export const STARTUPS = [
         url: 'https://www.allarahealth.com',
         image: 'https://shop.allarahealth.com/cdn/shop/files/AntiInflamm_Reg_442362ee-3292-4b49-8ed8-b41871dc24f7.png?v=1764652085'
     },
-    {
-        id: 's-evernow',
-        name: 'Evernow',
-        tagline: 'Menopause treatment. Personalized HRT delivered',
-        description: 'Board-certified menopause specialists prescribe personalized hormone replacement therapy with ongoing support. Prescription meds delivered to your door.',
-        tags: ['discomfort', 'menopause', 'sustainability'],
-        healthFunctions: ['telehealth'],
-        category: 'menopause',
-        stage: 'Live in all 50 states',
-        productReleased: true,
-        spotsLeft: 200,
-        url: 'https://www.evernow.com',
-        image: 'https://cdn.prod.website-files.com/62039cc91acccd69bbc3274f/688160514b07e4e99ece9b1d_hair%20foam-hero.webp'
-    },
-    {
-        id: 's-midi',
-        name: 'Midi Health',
-        tagline: 'Midlife women\'s health. Perimenopause to post-menopause',
-        description: 'Virtual clinic specializing in the 20+ symptoms of perimenopause and menopause. Clinicians trained specifically in midlife hormonal care.',
-        tags: ['discomfort', 'irregular', 'menopause', 'heavy-flow'],
-        healthFunctions: ['telehealth'],
-        category: 'menopause',
-        stage: 'Insurance-covered in many states',
-        productReleased: true,
-        spotsLeft: 380,
-        url: 'https://www.joinmidi.com',
-        image: 'https://images.prismic.io/joinmidi-marketing/Z7z_GJ7c43Q3gKMS_DHEA-cream.png?auto=format,compress'
-    },
+    // 's-evernow' removed 2026-10-04: duplicated d-evernow on Browse.
+    // 's-midi' removed 2026-10-04: duplicated d-midi-health on Browse.
     {
         id: 's-hertility',
         name: 'Hertility',
+        communityReview: 'Trustpilot rates Hertility 4.1/5 from 1,276 reviews (72% 5-star, 9% 1-star). Reviewers praise supportive staff and fast, detailed results. Common complaints: painful finger-prick collection and some follow-ups feeling generic. One reviewer: "friendly, supportive, and empathetic"',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/hertilityhealth.com', text: 'Trustpilot: Hertility', summary: 'Trustpilot rates Hertility 4.1/5 from 1,276 reviews (72% 5-star, 9% 1-star). Reviewers praise supportive staff and fast, detailed results. Common complaints: painful finger-prick collection and some follow-ups feeling generic. One reviewer: "friendly, supportive, and empathetic"' }] } },
         tagline: 'At-home hormone & fertility testing',
         description: 'Finger-prick blood test that measures up to 10 key reproductive hormones. Results reviewed by reproductive scientists with personalized care plan.',
         tags: ['irregular', 'pcos', 'safety-concern', 'fertility'],
@@ -108,7 +90,7 @@ export const STARTUPS = [
         id: 's-oova',
         name: 'Oova',
         tagline: 'Personalized fertility tracking from urine',
-        description: 'At-home urine test that measures your actual hormone levels (LH + progesterone). Not population averages. Built for women with irregular cycles, PCOS, and thyroid conditions.',
+        description: 'At-home urine test that measures three hormones: LH, E3G (an estrogen marker), and PdG (a progesterone marker). Oova markets it for trying to conceive, perimenopause, PCOS, and cycle tracking.',
         tags: ['irregular', 'pcos', 'fertility'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
@@ -121,8 +103,8 @@ export const STARTUPS = [
     {
         id: 's-delune',
         name: 'De Lune',
-        tagline: 'Science-backed supplements for period pain',
-        description: 'Cramp Aid formula with magnesium, zinc, B vitamins, and dong quai. Clinically studied ingredients for menstrual pain. Founded by a woman who suffered debilitating cramps.',
+        tagline: 'Herbal tinctures for period symptoms',
+        description: 'Herbal remedies for the menstrual cycle. Its Cramp Aid is a liquid extract of herbs and nutrients sold for period cramps ($78 for three periods). De Lune doesn’t publish the ingredient list on its product page.',
         tags: ['cramps', 'discomfort', 'organic'],
         healthFunctions: ['cramp-relief', 'supplement'],
         category: 'supplement',
@@ -177,7 +159,7 @@ export const STARTUPS = [
         id: 's-mira',
         name: 'Mira Fertility',
         tagline: 'AI-powered home fertility monitor',
-        description: 'Measures actual hormone concentrations (LH, E3G, PdG) from urine with lab-grade accuracy. AI predicts your fertile window with 99% accuracy.',
+        description: 'At-home urine hormone monitor. Depending on the kit, it measures LH, E3G (an estrogen marker), PdG (a progesterone marker), and FSH, using fluorescent test technology Mira compares to lab methods.',
         tags: ['irregular', 'pcos', 'fertility'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
@@ -186,39 +168,8 @@ export const STARTUPS = [
         url: 'https://www.miracare.com',
         image: 'https://shop.miracare.com/cdn/shop/products/mira00956-plus_5d9965da-80d4-42af-ac33-1b0167e26005.jpg?v=1685519249&width=1920'
     },
-    {
-        id: 's-elvie',
-        name: 'Elvie',
-        tagline: 'Smart pelvic floor trainer + silent breast pump',
-        description: 'Award-winning Kegel trainer with biofeedback via app. Also makes the world\'s first silent wearable breast pump. Technology designed around women\'s bodies.',
-        tags: ['discomfort', 'leaks', 'pelvic-floor'],
-        healthFunctions: ['vaginal-health'],
-        category: 'pelvic-health',
-        stage: 'Available, established',
-        productReleased: true,
-        spotsLeft: 100,
-        url: 'https://www.elvie.com',
-        image: 'https://thebreastfeedingshop.com/wp-content/uploads/2021/05/616uFLoLPrL._SL1500_.jpg'
-    },
-    {
-        id: 's-wisp',
-        name: 'Wisp',
-        tagline: 'UTI treatment & birth control. Same-day delivery',
-        description: 'Get UTI antibiotics or birth control prescribed online and delivered to your door. Same-day or next-day options in many areas. No in-person visit needed.',
-        tags: ['uti', 'contraception', 'privacy', 'comfort'],
-        healthFunctions: ['uti-prevention', 'telehealth', 'contraception'],
-        category: 'telehealth',
-        stage: 'Available in most US states',
-        productReleased: true,
-        spotsLeft: 500,
-        url: 'https://hellowisp.com',
-        // Was a mismatched third-party trade-press photo of a DIFFERENT
-        // startup's product (Qvin's Q-Pad, from clpmag.com), verified
-        // replacement is Wisp's own hero image, fetched live from
-        // hellowisp.com and confirmed to return a real image (200,
-        // image/jpeg) before use.
-        image: 'https://cms.hellowisp.io/uploads/Desk_Hero_3200x1200x_e4eae71989.jpg'
-    },
+    // 's-elvie' removed 2026-10-04: duplicated p-elvie-trainer on Browse.
+    // 's-wisp' removed 2026-10-04: duplicated d-wisp-bc on Browse.
     {
         id: 's-wildai',
         name: 'Wild.AI',
@@ -231,33 +182,13 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 260,
         url: 'https://www.wild.ai',
-        image: ''
+        // Wild.AI's Google Play Store app icon, verified to load (512x512).
+        image: 'https://play-lh.googleusercontent.com/eSpZpjrxOFnyEeCGChJbVvKkvJAe2Mph3fZjLq3zzr2hltwXbTUEDTDoZai-mrvNo0j3xiKdmHHtkRdqGZT8drg=s512-rw'
     },
     // ─── Fertility & pregnancy ─────────────────────────────
-    {
-        id: 's-natalist',
-        name: 'Natalist',
-        tagline: 'Evidence-based fertility and pregnancy products',
-        description: 'DTC brand for ovulation tests, prenatal vitamins, and pregnancy tests developed with OB-GYNs. Focus on transparency and science-backed formulations.',
-        tags: ['fertility', 'safety-concern', 'organic'],
-        healthFunctions: ['cycle-tracking'],
-        category: 'fertility',
-        stage: 'Available, DTC',
-        productReleased: true,
-        spotsLeft: 400,
-        // natalist.com now 302-redirects to everlywell.com, same pattern as
-        // the Favor/Nurx entry fixed earlier today (brand acquired, catalog
-        // entry gone stale). Flagging for a content decision rather than
-        // guessing: merge into an Everlywell entry, or confirm Natalist still
-        // operates as its own storefront under Everly Health and find its
-        // real current URL.
-        url: 'https://natalist.com',
-        // Was a completely unrelated wild boar stock photo (img.freepik.com)
-        //, cleared rather than guessing a replacement; falls back to the
-        // clean initial-letter placeholder until a real, verified photo is
-        // sourced.
-        image: ''
-    },
+    // 's-natalist' removed 2026-10-02: Everly Health bought Natalist in 2021 and
+    // its direct-to-consumer shop closed in early 2025; natalist.com now
+    // redirects to everlywell.com.
     {
         id: 's-kindbody',
         name: 'Kindbody',
@@ -275,6 +206,8 @@ export const STARTUPS = [
     {
         id: 's-maven',
         name: 'Maven',
+        communityReview: 'Trustpilot rates Maven 3.6/5 from 13 reviews (69% 5-star, 23% 1-star). Reviewers praise same- or next-day specialist access during pregnancy and postpartum. Common complaints: a confusing, slow Maven Wallet reimbursement process. One reviewer: "Having the ability to get care within the same day or next day was invaluable to my postpartum experience." Small sample.',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/mavenclinic.com', text: 'Trustpilot: Maven', summary: 'Trustpilot rates Maven 3.6/5 from 13 reviews (69% 5-star, 23% 1-star). Reviewers praise same- or next-day specialist access during pregnancy and postpartum. Common complaints: a confusing, slow Maven Wallet reimbursement process. One reviewer: "Having the ability to get care within the same day or next day was invaluable to my postpartum experience." Small sample.' }] } },
         tagline: 'Digital clinic for women and family health',
         description: 'Largest digital health clinic for women. Fertility, pregnancy, postpartum, parenting, and menopause. Used by employers and health plans.',
         tags: ['fertility', 'menopause', 'discomfort', 'privacy'],
@@ -314,20 +247,10 @@ export const STARTUPS = [
         url: 'https://app.myparla.com',
         image: '/startup_placeholder.png'
     },
-    {
-        id: 's-proov',
-        name: 'Proov',
-        tagline: 'At-home PdG tests for ovulation confirmation',
-        description: 'First FDA-cleared at-home test to confirm successful ovulation via PdG (urine progesterone). Helps identify if you ovulate and if levels are sufficient.',
-        tags: ['fertility', 'irregular', 'pcos'],
-        healthFunctions: ['cycle-tracking'],
-        category: 'fertility',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 290,
-        url: 'https://proovtest.com/?irclickid=092RZoWR3xyZWgGydJzTuXX9UkrxvuV9I08LVk0&sharedid=&irpid=7622078&utm_source=7622078&utm_medium=affiliate&irgwc=1&afsrc=1&tw_source=impact&tw_campaign=7622078',
-        image: 'https://proovtest.com/cdn/shop/products/1_ProHero.jpg?v=1669147223&width=3840'
-    },
+    // 's-proov' removed 2026-09-07: Proov is now a confirmed brand partner
+    // with 5 real, individually-linked products in src/data/brands.js
+    // (BRAND_PRODUCTS), replacing this single generic entry and its stale
+    // affiliate URL.
     {
         id: 's-premom',
         name: 'Premom',
@@ -399,25 +322,12 @@ export const STARTUPS = [
         url: 'https://elektrahealth.com',
         image: 'https://i.vimeocdn.com/video/1607189844-00be211e412cac07e4a7b79a46d3d66f346dbb1cadecc1124a10eccd97821b1e-d?f=webp'
     },
-    {
-        id: 's-gennev',
-        name: 'Gennev',
-        tagline: 'Menopause telehealth and support',
-        description: 'On-demand menopause care with OB-GYNs and health coaches. Symptom management, HRT, and lifestyle support for perimenopause and menopause.',
-        tags: ['menopause', 'discomfort', 'sustainability'],
-        healthFunctions: ['telehealth'],
-        category: 'menopause',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 330,
-        url: 'https://gennev.com',
-        image: 'https://gennev.com/wp-content/uploads/2025/05/65e626b823c2e022a3cbd26d_62689486b8427a092ac2f085_yWfe6jrySnOSp2ANHeFm.png'
-    },
+    // 's-gennev' removed 2026-10-04: duplicated p-gennev-care on Browse.
     {
         id: 's-embr',
         name: 'Embr Labs',
         tagline: 'Wearable cooling for hot flashes',
-        description: 'Ember Wave bracelet uses thermal technology to cool the wrist and reduce hot flash intensity. FDA-cleared, drug-free relief for menopause symptoms.',
+        description: 'Embr Wave is a wrist-worn device that uses thermal (cooling and warming) technology, marketed to ease how hot flashes feel. It is drug-free. It is not FDA-cleared; no FDA clearance or device listing was found (checked 2026-10-02).',
         tags: ['menopause', 'discomfort', 'comfort'],
         healthFunctions: [],
         category: 'menopause',
@@ -431,7 +341,7 @@ export const STARTUPS = [
         id: 's-lisahealth',
         name: 'Lisa Health',
         tagline: 'Menopause and midlife health platform',
-        description: 'Personalized menopause programs with clinicians, symptom tracking, and community. Focus on holistic care and evidence-based treatments.',
+        description: 'Makes Midday, a menopause app that uses AI and wearable data to personalize symptom tracking and guidance, developed in collaboration with Mayo Clinic.',
         tags: ['menopause', 'discomfort', 'irregular'],
         healthFunctions: ['telehealth', 'mental-health'],
         category: 'menopause',
@@ -470,28 +380,12 @@ export const STARTUPS = [
         image: 'https://www.peppyforall.com/cdn/shop/files/1_4.jpg?v=1700559327&width=510'
     },
     // ─── Contraception & sexual health ────────────────────
-    {
-        id: 's-nurx',
-        name: 'Nurx',
-        tagline: 'Birth control and STI testing online',
-        description: 'Get birth control, emergency contraception, and STI testing prescribed online and delivered. Available in most US states with flexible pricing.',
-        tags: ['contraception', 'privacy', 'comfort'],
-        healthFunctions: ['telehealth', 'contraception'],
-        category: 'telehealth',
-        stage: 'Available in most US states',
-        productReleased: true,
-        spotsLeft: 480,
-        url: 'https://www.nurx.com',
-        // Was a single unrelated SKU from Nurx's own catalog (a hair-regrowth
-        // product bottle, RegrowRX, reads like a lipstick tube in a small
-        // card, not representative of the birth-control service this entry
-        // is about). Verified replacement is Nurx's own homepage hero image,
-        // fetched live and confirmed to return a real image (200, image/png).
-        image: 'https://nurx-www.imgix.net/wp-content/uploads/2024/12/31130006/HeroStaticHomepage-Desktop-1920x640-1.png'
-    },
+    // 's-nurx' removed 2026-10-04: duplicated d-nurx-bc on Browse.
     {
         id: 's-pandia',
         name: 'Pandia Health',
+        communityReview: 'Trustpilot rates Pandia Health 4.9/5 from 557 reviews (95% 5-star, 3% 1-star). Reviewers praise responsive, helpful staff. Common complaints: initial setup challenges and occasional missed messages. One reviewer: "They\'re very reliable and responsive which is extremely helpful for busy people like me."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/pandiahealth.com', text: 'Trustpilot: Pandia Health', summary: 'Trustpilot rates Pandia Health 4.9/5 from 557 reviews (95% 5-star, 3% 1-star). Reviewers praise responsive, helpful staff. Common complaints: initial setup challenges and occasional missed messages. One reviewer: "They\'re very reliable and responsive which is extremely helpful for busy people like me."' }] } },
         tagline: 'Birth control delivery by women doctors',
         description: 'Telehealth birth control prescriptions and delivery. Founded by women physicians. Accepts insurance and offers affordable options.',
         tags: ['contraception', 'privacy', 'comfort'],
@@ -522,14 +416,14 @@ export const STARTUPS = [
         id: 's-august',
         name: 'August',
         tagline: 'Period care you actually want to use',
-        description: 'Sustainable period products and body care. Subscription pads, tampons, and wipes with transparent ingredients and modern design.',
+        description: 'Period care brand selling organic cotton tampons, pads, and liners, plus a period cup, by subscription or one-time order, and at Target.',
         tags: ['heavy-flow', 'organic', 'sustainability'],
         healthFunctions: ['menstrual-collection'],
         category: 'period-care',
         stage: 'Available, DTC',
         productReleased: true,
         spotsLeft: 460,
-        url: 'https://august.com',
+        url: 'https://www.itsaugust.co',
         image: 'https://media.macphun.com/img/uploads/customer/blog/3654/Why_Use_a_White_Background-9096.png?q=85&w=1680'
     },
     {
@@ -544,65 +438,20 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 420,
         url: 'https://thehoneypot.co',
-        image: ''
+        // The Honey Pot's own og:image logo asset, verified to load (208x70).
+        image: 'https://cdn.shopify.com/s/files/1/0510/5657/files/Asset_3_4b2a4423-11e7-40ce-a377-2be6ea68752e.png'
     },
-    {
-        id: 's-lovewellness',
-        name: 'Love Wellness',
-        tagline: 'Clean wellness and feminine care by women',
-        description: 'Supplements, probiotics, and feminine care for bladder, vaginal, and gut health. OB-GYN developed formulas and transparent ingredients.',
-        tags: ['uti', 'discomfort', 'organic', 'vaginal-health'],
-        healthFunctions: ['vaginal-health', 'supplement'],
-        category: 'intimate-care',
-        stage: 'Available, DTC and retail',
-        productReleased: true,
-        spotsLeft: 390,
-        url: 'https://lovewellness.com',
-        image: 'http://lovewellness.com/cdn/shop/files/01_LW_DLE_Silo_a5657d39-129c-4b59-8599-dffc1b1ccfb8.jpg?v=1774346766'
-    },
-    {
-        id: 's-rory',
-        name: 'Rory',
-        tagline: 'Menopause and skincare from Ro',
-        description: 'Ro’s women’s health brand. Telehealth for menopause (HRT, symptom support) and dermatology. Prescriptions and products delivered.',
-        tags: ['menopause', 'discomfort', 'privacy'],
-        healthFunctions: ['telehealth'],
-        category: 'menopause',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 280,
-        url: 'https://www.rory.com',
-        image: 'https://roryfacestuff.co/cdn/shop/files/RORY_Face_Stuff_Mother_Lovin_Trio.png?v=1759992264&width=1178'
-    },
+    // 's-lovewellness' removed 2026-10-04: duplicated Love Wellness products (p-love-wellness-*) on Browse.
+    // 's-rory' removed 2026-10-02: rory.com now says the domain was acquired and
+    // redirects to an unrelated company; the Rory brand is no longer operating.
     // ─── Pelvic health & diagnostics ──────────────────────
-    {
-        id: 's-joylux',
-        name: 'Joylux',
-        tagline: 'Vaginal health and wellness devices',
-        description: 'vFit and other FDA-cleared devices for vaginal rejuvenation, dryness, and pelvic floor. At-home, clinically studied treatments.',
-        tags: ['discomfort', 'pelvic-floor', 'menopause'],
-        healthFunctions: ['vaginal-health'],
-        category: 'pelvic-health',
-        stage: 'Available, DTC',
-        productReleased: true,
-        spotsLeft: 320,
-        url: 'https://www.joylux.com',
-        image: 'http://joylux.com/cdn/shop/articles/femtech-leader-joylux-closes-on-oversubscribed-13m-series-a-round-to-expand-menopause-platform-686703.jpg?v=1667362254'
-    },
-    {
-        id: 's-elitone',
-        name: 'Elitone',
-        tagline: 'Wearable pelvic floor therapy',
-        description: 'FDA-cleared wearable device for at-home pelvic floor strengthening. No insertion; used externally to improve bladder control and strength.',
-        tags: ['bladder-leaks', 'incontinence', 'urinary', 'pelvic-floor', 'discomfort'],
-        healthFunctions: ['vaginal-health'],
-        category: 'pelvic-health',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 410,
-        url: 'https://elitone.com/?af=aynahealth',
-        image: 'https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp'
-    },
+    // 's-joylux' removed 2026-10-02: Joylux is a company with several
+    // products, now listed individually in src/data/brands.js
+    // (p-joylux-*), each with its own verified FDA status.
+    // 's-elitone' removed 2026-09-07: Elitone is now a confirmed brand
+    // partner with 2 real, individually-detailed products in
+    // src/data/brands.js (BRAND_PRODUCTS), replacing this single generic
+    // entry.
     {
         id: 's-kegg',
         name: 'Kegg',
@@ -618,20 +467,7 @@ export const STARTUPS = [
         image: 'https://kegg.tech/cdn/shop/files/kegg_3.webp?v=1745860535&width=1200'
     },
     // ─── Pregnancy & postpartum ───────────────────────────
-    {
-        id: 's-bodily',
-        name: 'Bodily',
-        tagline: 'Postpartum and nursing essentials',
-        description: 'Evidence-based postpartum recovery kits, nursing wear, and education. Designed with OB-GYNs and doulas for the fourth trimester.',
-        tags: ['discomfort', 'comfort', 'postpartum'],
-        healthFunctions: ['vaginal-health'],
-        category: 'postpartum',
-        stage: 'Available, DTC',
-        productReleased: true,
-        spotsLeft: 440,
-        url: 'https://itsbodily.com',
-        image: ''
-    },
+    // 's-bodily' removed 2026-10-04: duplicated p-bodily-kit on Browse.
     {
         id: 's-oula',
         name: 'Oula',
@@ -672,7 +508,8 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 370,
         url: 'https://poppyseedhealth.com',
-        image: ''
+        // Poppy Seed Health's own og:image, verified to load (1000x500).
+        image: 'https://static1.squarespace.com/static/5e31fe690dc60436b86c7f8c/t/609dd736564b372494c75eff/1620956982978/SOCIAL_SHARING_IMAGE2.png'
     },
     {
         id: 's-milkstork',
@@ -689,20 +526,7 @@ export const STARTUPS = [
         image: 'https://go.milkstork.com/hs-fs/hubfs/for-parent-page-01-2.png?width=1200&height=900&name=for-parent-page-01-2.png'
     },
     // ─── Mental health & wellness ─────────────────────────
-    {
-        id: 's-hers',
-        name: 'Hers',
-        tagline: 'Mental health and skincare from Ro',
-        description: 'Ro’s brand for women. Telehealth for anxiety, depression, and skin. Prescriptions and products delivered with ongoing support.',
-        tags: ['discomfort', 'privacy', 'mental-health'],
-        healthFunctions: ['mental-health', 'telehealth'],
-        category: 'mental-health',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 400,
-        url: 'https://www.forhers.com',
-        image: 'https://www.forhers.com/forhims/image/upload/w_440,q_auto:good:sensitive,fl_lossy,c_scale,f_auto,dpr_1.0/Hers-pdp-hair-shampoo-conditioner-5050-01-d-2x'
-    },
+    // 's-hers' removed 2026-10-04: duplicated d-hers on Browse.
     {
         id: 's-cleo',
         name: 'Cleo',
@@ -714,8 +538,12 @@ export const STARTUPS = [
         stage: 'Enterprise',
         productReleased: true,
         spotsLeft: 220,
-        url: 'https://www.cleo.com',
-        image: ''
+        // Was 'https://www.cleo.com', which resolves to an unrelated
+        // supply-chain/EDI software company, not this Cleo. Real site is
+        // hicleo.com (verified via web search).
+        url: 'https://hicleo.com',
+        // hicleo.com's own logo, verified to load (512x236).
+        image: 'https://hicleo.com/wp-content/uploads/2022/07/cropped-logo-cleo.png'
     },
     // ─── Diagnostics & biotech ─────────────────────────────
     {
@@ -732,34 +560,11 @@ export const STARTUPS = [
         url: 'https://dotlab.com',
         image: 'https://assets.website-files.com/5daccee8d26b0a2091d9bcf8/5f7ce4abf2008605a73e005c_Science_coolpink_cricle.png'
     },
-    {
-        id: 's-femtec',
-        name: 'FemTec Health',
-        tagline: 'At-home women’s health diagnostics',
-        description: 'At-home tests for hormones, fertility, menopause, and sexual health. Integrated with telehealth and personalized recommendations.',
-        tags: ['fertility', 'menopause', 'irregular', 'safety-concern'],
-        healthFunctions: ['cycle-tracking', 'diagnostics'],
-        category: 'diagnostics',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 350,
-        url: 'https://femtechealth.com',
-        image: 'http://joylux.com/cdn/shop/articles/femtech-leader-joylux-closes-on-oversubscribed-13m-series-a-round-to-expand-menopause-platform-686703.jpg?v=1667362254'
-    },
-    {
-        id: 's-sandstone',
-        name: 'Sandstone Diagnostics',
-        tagline: 'Menopause and hormone testing',
-        description: 'At-home hormone and menopause-related testing. Part of larger diagnostics portfolio for reproductive and metabolic health.',
-        tags: ['menopause', 'irregular', 'safety-concern'],
-        healthFunctions: ['cycle-tracking'],
-        category: 'diagnostics',
-        stage: 'Available, DTC',
-        productReleased: true,
-        spotsLeft: 420,
-        url: 'https://sandstonedx.com',
-        image: 'https://www.hbarsci.com/cdn/shop/products/tb9ankw82eblofth2xqu_aac989b6-121f-4432-831a-d13057c9555c_1024x1024.jpg?v=1748464437'
-    },
+    // 's-femtec' removed 2026-10-02: FemTec Health wound down in May 2023
+    // (assignment for the benefit of creditors; Axios, 2023-05-23).
+    // 's-sandstone' removed 2026-10-02: described as "menopause and hormone
+    // testing", but Sandstone Diagnostics' verifiable product (Trak) is an
+    // at-home sperm test, and its site didn't load to confirm anything else.
     {
         id: 's-alyce',
         name: 'Alyce Health',
@@ -821,6 +626,8 @@ export const STARTUPS = [
     {
         id: 's-naturalcycles',
         name: 'Natural Cycles',
+        communityReview: 'Trustpilot rates Natural Cycles 4.2/5 from 1,885 reviews (77% 5-star, 14% 1-star). Reviewers praise an easy-to-use app that helps people understand their cycles. Common complaints: steep price increases and subscription-renewal frustration. One reviewer: "Easy to use and I\'m learning a lot about my cycles!"',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/naturalcycles.com', text: 'Trustpilot: Natural Cycles', summary: 'Trustpilot rates Natural Cycles 4.2/5 from 1,885 reviews (77% 5-star, 14% 1-star). Reviewers praise an easy-to-use app that helps people understand their cycles. Common complaints: steep price increases and subscription-renewal frustration. One reviewer: "Easy to use and I\'m learning a lot about my cycles!"' }] } },
         tagline: 'FDA-cleared birth control app',
         description: 'First FDA-cleared app for contraception and pregnancy planning. Uses basal body temperature and algorithm to identify fertile days.',
         tags: ['contraception', 'fertility', 'irregular'],
@@ -830,7 +637,8 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 290,
         url: 'https://www.naturalcycles.com',
-        image: ''
+        // Natural Cycles' own og:image, verified to load (3150x2100).
+        image: 'https://www.datocms-assets.com/21281/1762899321-us-not-fertile-new-screen-rachel-hand-holding-phone.png'
     },
     {
         id: 's-clue',
@@ -844,7 +652,8 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 340,
         url: 'https://helloclue.com',
-        image: ''
+        // Clue's own og:image, verified to load (2400x1254).
+        image: 'https://images.ctfassets.net/juauvlea4rbf/2dX5DYLHtXaEbqIvVxQyRx/39c7a79e61861f9bd3a734f323168299/open_graph_about__1_.png'
     },
     {
         id: 's-ovia',
@@ -858,21 +667,36 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 380,
         url: 'https://www.oviahealth.com',
-        image: 'https://oviawellness.com/cdn/shop/files/Endurance_1_46a87c26-cb00-4128-a7e4-669a59c0a19f.webp?v=1771708037&width=3840'
+        // Reuses the same local verified asset as the existing d-ovia
+        // catalog entry (same company).
+        image: '/products/verified/d-ovia.jpg'
     },
     {
         id: 's-femometry',
-        name: 'Femometry',
-        tagline: 'Hormone and cycle insights from at-home tests',
-        description: 'At-home hormone testing paired with app for cycle and fertility insights. For people with irregular cycles and PCOS.',
+        name: 'Femometer',
+        tagline: 'Smart ring for cycle, temperature, and sleep tracking',
+        description: 'Women-focused smart rings (Ring Gen 2 and Ring Air) that track overnight basal body temperature with three sensors to predict ovulation and period, plus sleep, heart rate, HRV, blood oxygen, stress, and recovery. Regularly $199.99. Up to 7-day battery, IP68 water resistant, and no subscription needed for core insights.',
         tags: ['fertility', 'irregular', 'pcos'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
-        stage: 'Available in US',
+        stage: '$199.99 · Available in US',
         productReleased: true,
         spotsLeft: 430,
-        url: 'https://femometry.com',
-        image: 'https://i.ytimg.com/vi/P6Z8f3PcZxg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC9m7w-IaatPOF3INeupFtf0E4atQ'
+        url: 'https://www.femometer.com/',
+        image: 'https://s.femometer.com/products/smart-ring-air/femometer-ring-air.webp',
+        communityReview: 'Reviews are mixed but lean positive on Amazon. The Ring Air listing is rated 4.1/5 from 61 ratings (64% 5-star, 12% 1-star). Customers call it comfortable and an affordable way to track health metrics, especially for trying to conceive or natural family planning, though fit gets mixed feedback and some reviewers had sizing problems. Critical reviewers mention the gold finish scratching off within a month, sleep tracking that felt inaccurate, and one who preferred the RingConn. TikTok reviewers and independent write-ups also praise the price versus subscription-based rings and the overnight temperature charts. A 2024 independent reviewer found early charts jumpy, noted it measures skin temperature rather than true BBT, and would not rely on it alone to avoid pregnancy. Trustpilot is negative (2.3/5 from only 7 reviews for femometer.com): reviewers report battery failure after a few months, the ring cracking or the shell separating, and slow or unresolved refunds. Walmart reviews and Reddit threads could not be verified at time of writing.',
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [
+                { platform: 'tiktok', url: 'https://www.tiktok.com/@dr.randiblikely/video/7636209543688506654', text: 'TikTok: Femometer vs RingConn', summary: 'A creator video titled "Help me decide between RingConn Smart Ring or Femometer," one of many TikTok comparisons of Femometer against other smart rings. Video contents could not be read automatically; open the link for the full review.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/@daniellencarey/video/7646871798360853791', text: 'TikTok: comparing smart rings I have tried', summary: 'A creator video comparing several smart rings, including Femometer, RingConn, and others. Video contents could not be read automatically; open the link for the full comparison.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/femometer_ring/', text: 'Instagram @femometer_ring', summary: "Femometer's own account (about 6.3k followers) with highlights for Smart Ring, BBT, Review, and Giveaway. This is brand-run content, not independent reviews." },
+                { url: 'https://www.trustpilot.com/review/femometer.com', text: 'Trustpilot: femometer.com', summary: 'Rated 2.3/5 from 7 reviews, all 1 or 2 stars. Reviewers describe battery failure after about 4 months, the ring cracking in half or the shell separating from the electronics, and slow or unresolved refunds and customer service. A very small sample.' },
+                { url: 'https://www.amazon.com/dp/B0H2VQQKKB', text: 'Amazon: femometer Ring Air (4.1/5, 61 ratings)', summary: 'Amazon rating 4.1 out of 5 from 61 ratings: 64% 5-star, 13% 4-star, 4% 3-star, 7% 2-star, 12% 1-star. Amazon’s review summary says customers find it comfortable and an affordable way to track health metrics, with mixed feedback on fit. Reviewers say: "So far I am very pleased with my ring!", "I like it but it’s been less than a month and the gold is scratching off", "Not impressed. Gen Air 2 RingConn better", and "Only reads bbt .. not accurate on sleep and was too loose (got size 8)".' },
+                { url: 'https://cedarcreekholistic.com/femometer-ring/', text: 'Independent review (Cedar Creek Holistic, Aug 2024)', summary: 'Hands-on review of the first-generation ring. Praises price, overnight convenience, 7-10 day battery, and firmware improvements. Notes early jumpy temperatures, that it measures skin rather than true basal temperature, and does not recommend it as a sole method for avoiding pregnancy.' }
+            ] }
+        }
     },
     // ─── UNRELEASED STARTUPS (Startups / waitlist page only) ─
     {

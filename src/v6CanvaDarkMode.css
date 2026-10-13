@@ -1,0 +1,66 @@
+/* Cover both the real intake dark class and the QA/site-theme dark attribute. */
+html[data-v6-site-theme='dark'] body,
+html[data-v6-site-theme='dark'] #root,
+html[data-v6-site-theme='dark'] .app-container,
+html[data-v6-site-theme='dark'] .ayna-intake-root,
+html .ayna-intake-root.v6-quiz-dark{
+  color:#FFFCF9!important;
+  background:
+    radial-gradient(circle at 85% 8%,rgba(106,72,91,.78),transparent 34%),
+    radial-gradient(circle at 9% 96%,rgba(240,168,75,.17),transparent 24%),
+    radial-gradient(circle at 47% 56%,rgba(63,52,87,.70),transparent 47%),
+    #242A52!important;
+}
+html[data-v6-site-theme='dark'] .app-nav,
+html[data-v6-site-theme='dark'] .app-nav--cream,
+html[data-v6-site-theme='dark'] .app-nav--landing{
+  background:rgba(36,42,82,.94)!important;
+  color:#FFFCF9!important;
+  border-bottom-color:rgba(255,252,249,.15)!important;
+  box-shadow:none!important;
+}
+html[data-v6-site-theme='dark'] .app-nav__logo,
+html[data-v6-site-theme='dark'] .app-nav a,
+html[data-v6-site-theme='dark'] .app-nav button{color:#FFFCF9!important}
+html[data-v6-site-theme='dark'] .ayna-intake-card,
+html[data-v6-site-theme='dark'] .ayna-intake-question,
+html[data-v6-site-theme='dark'] .ayna-question-card,
+html .ayna-intake-root.v6-quiz-dark .ayna-intake-card,
+html .ayna-intake-root.v6-quiz-dark .ayna-intake-question,
+html .ayna-intake-root.v6-quiz-dark .ayna-question-card{
+  background:rgba(36,42,82,.46)!important;
+  color:#FFFCF9!important;
+  border-color:rgba(255,252,249,.16)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(3px)!important;
+}
+html[data-v6-site-theme='dark'] .ayna-intake-root h1,
+html[data-v6-site-theme='dark'] .ayna-intake-root h2,
+html[data-v6-site-theme='dark'] .ayna-intake-root h3,
+html[data-v6-site-theme='dark'] .ayna-intake-root p,
+html[data-v6-site-theme='dark'] .ayna-intake-root label,
+html[data-v6-site-theme='dark'] .ayna-intake-root .ayna-intake-hint{color:#FFFCF9!important}
+html[data-v6-site-theme='dark'] .ayna-intake-root input,
+html[data-v6-site-theme='dark'] .ayna-intake-root textarea,
+html[data-v6-site-theme='dark'] .ayna-intake-root select{
+  background:rgba(255,252,249,.07)!important;
+  color:#FFFCF9!important;
+  border-color:rgba(255,252,249,.25)!important;
+  box-shadow:none!important;
+}
+html[data-v6-site-theme='dark'] .ayna-intake-root input::placeholder,
+html[data-v6-site-theme='dark'] .ayna-intake-root textarea::placeholder{color:rgba(255,252,249,.55)!important}
+html[data-v6-site-theme='dark'] .ayna-intake-root .ayna-choice,
+html[data-v6-site-theme='dark'] .ayna-intake-root .ayna-chip,
+html[data-v6-site-theme='dark'] .ayna-intake-root .v6-support-suggestion-chip,
+html[data-v6-site-theme='dark'] .ayna-intake-root .ayna-option-button{
+  background:rgba(255,252,249,.04)!important;
+  color:#FFFCF9!important;
+  border-color:rgba(255,252,249,.24)!important;
+  box-shadow:none!important;
+}
+html[data-v6-site-theme='dark'] .ayna-intake-root .ayna-continue{
+  background:#F0A84B!important;
+  color:#292524!important;
+  border-color:#F0A84B!important;
+}

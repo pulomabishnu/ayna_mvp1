@@ -10,6 +10,8 @@
  * retryable or not.
  */
 
+import { emitTrace } from './_prismTrace.js';
+
 /** ayna copy never uses em dashes (founder rule). Applied to every model reply. */
 export function noEmDash(text) {
   if (typeof text !== 'string' || !text.includes('\u2014')) return text;
@@ -108,7 +110,7 @@ async function requestWithRetry(url, init, { provider, timeoutMs, maxAttempts, s
  *   `truncated` is true when the model hit max_tokens, the caller must treat
  *   the payload as incomplete rather than trying to parse a half-written object.
  */
-export async function callAnthropic({
+async function callAnthropicUntraced({
   system,
   prompt,
   maxTokens = 4000,
@@ -149,7 +151,7 @@ export async function callAnthropic({
   return { text: noEmDash(text), stopReason, truncated: stopReason === 'max_tokens', provider: 'anthropic' };
 }
 
-export async function callOpenAI({
+async function callOpenAIUntraced({
   system,
   prompt,
   maxTokens = 4000,
@@ -221,7 +223,7 @@ function geminiCredentials() {
   return null;
 }
 
-export async function callGemini({
+async function callGeminiUntraced({
   system,
   prompt,
   maxTokens = 4000,
@@ -292,6 +294,54 @@ export async function callGemini({
   }
   return { text: noEmDash(text), stopReason, truncated: stopReason === 'MAX_TOKENS', provider: 'gemini' };
 }
+
+/**
+ * Every provider call is reported to PRISM (api/_prismTrace.js), success or
+ * failure. Callers may pass `trace: { name, sessionId }` to label the route and
+ * group a conversation, plus `messages` ([{role, content}] — the chat turns
+ * as the user saw them) so the trace reads as a conversation rather than one
+ * rendered prompt, and `formatOutput(text)` to turn a JSON reply into the text
+ * the user actually sees (the raw reply is kept in metadata); it is stripped before the provider request is built.
+ */
+function withPrismTrace(provider, fn, defaultModel) {
+  return async function traced({ trace, ...args } = {}) {
+    const started = Date.now();
+    const base = {
+      name: trace?.name,
+      sessionId: trace?.sessionId,
+      messages: trace?.messages,
+      provider,
+      model: args.model || defaultModel(),
+      system: args.system,
+      prompt: args.prompt,
+    };
+    try {
+      const out = await fn(args);
+      let output = out.text;
+      if (typeof trace?.formatOutput === 'function') {
+        try { output = trace.formatOutput(out.text) || out.text; } catch { /* keep raw */ }
+      }
+      await emitTrace({
+        ...base,
+        output,
+        rawOutput: output !== out.text ? out.text : undefined,
+        stopReason: out.stopReason,
+        latencyMs: Date.now() - started,
+      });
+      return out;
+    } catch (e) {
+      await emitTrace({ ...base, error: e, latencyMs: Date.now() - started });
+      throw e;
+    }
+  };
+}
+
+export const callAnthropic = withPrismTrace('anthropic', callAnthropicUntraced,
+  () => process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001');
+export const callOpenAI = withPrismTrace('openai', callOpenAIUntraced,
+  () => process.env.OPENAI_MODEL || 'gpt-4o-mini');
+export const callGemini = withPrismTrace('gemini', callGeminiUntraced,
+  () => geminiCredentials()?.model || 'gemini');
 
 export function providerConfigured(name) {
   const n = name === 'claude' ? 'anthropic' : name;

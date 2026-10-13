@@ -86,7 +86,15 @@ export default function Recalls({ myProducts = {} }) {
                             ) : filteredRecalls.map(recall => (
                                 <article key={recall.id} className={`ay-info-card ay-info-card--pad ay-info-note ay-info-note--${recall.severity}`}>
                                     <div className="ay-info-note__head">
-                                        <h3 className="ay-info-card__title">{recall.productName}</h3>
+                                        <h3 className="ay-info-card__title ay-info-note__title">
+                                            {recall.productName}
+                                            {recall.severity === 'critical' && (
+                                                <span className="ay-info__pill ay-info-note__sev ay-info-note__sev--critical">Critical</span>
+                                            )}
+                                            {recall.severity === 'high' && (
+                                                <span className="ay-info__pill ay-info-note__sev ay-info-note__sev--high">High</span>
+                                            )}
+                                        </h3>
                                         <span className="ay-info__pill">{recall.date}</span>
                                     </div>
                                     <p className="ay-info__body"><strong>Why:</strong> {recall.reason}</p>

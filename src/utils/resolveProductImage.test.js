@@ -24,10 +24,6 @@ describe('isPlaceholderProductImage', () => {
     expect(isPlaceholderProductImage('https://libresse.com/apple-touch-icon.png')).toBe(true);
   });
 
-  // Real production bugs, both found live in src/data/mvpProducts.js — a
-  // hardcoded catalog `image` field, unlike a live-resolved URL, never goes
-  // through the server's resolver at all, so this function is the ONLY
-  // thing standing between bad catalog data and the screen.
   it('flags a hardcoded brand-logo image (Cora Organic Pads/Tampons)', () => {
     expect(
       isPlaceholderProductImage(
@@ -44,18 +40,13 @@ describe('isPlaceholderProductImage', () => {
     ).toBe(true);
   });
 
-  // "hero" is deliberately NOT a flagged keyword — "hero shot"/"hero image"
-  // is standard product-photography terminology. Confirmed live: Elvie
-  // Pelvic Floor Trainer's real studio photo is literally named
-  // "..._Web_Hero_1200x1200...", and Stayfree's real package photo is
-  // "1_Hero_...". Flagging "hero" would reject genuine product photos.
   it('does not flag a real product photo whose filename happens to contain "hero" or "silicone"', () => {
     expect(isPlaceholderProductImage('https://cdn.shopify.com/files/IMD_UK_Trainer_Web_Hero_1200x1200_V2.jpg')).toBe(false);
     expect(isPlaceholderProductImage('https://cdn.shopify.com/files/1_Hero_a48c1149.jpg')).toBe(false);
     expect(isPlaceholderProductImage('https://cdn.shopify.com/files/Hello_Caddy_silicone_storage_case.png')).toBe(false);
   });
 
-  it('does not flag a real photo with a promotional callout baked into its own filename (not a standalone badge asset)', () => {
+  it('does not flag a real photo with a promotional callout baked into its own filename', () => {
     expect(isPlaceholderProductImage('https://thehoneypot.co/cdn/shop/files/SensitiveWashMother-MOBadge-Nude.jpg')).toBe(false);
   });
 
@@ -92,13 +83,58 @@ describe('safeProductImageSrc', () => {
     expect(safeProductImageSrc('https://brand.com/logo.png')).toBe('');
   });
 
-  it('returns the URL as-is for a real photo', () => {
-    expect(safeProductImageSrc('https://m.media-amazon.com/images/I/61-qjpBT8oL.jpg')).toBe(
-      'https://m.media-amazon.com/images/I/61-qjpBT8oL.jpg'
-    );
+  it('routes external product photos through the same-origin image proxy', () => {
+    const original = 'https://m.media-amazon.com/images/I/61-qjpBT8oL.jpg';
+    expect(safeProductImageSrc(original)).toBe(`/api/image-proxy?url=${encodeURIComponent(original)}`);
   });
 
-  it('forwards allowBrandLogo through to isPlaceholderProductImage', () => {
-    expect(safeProductImageSrc('https://brand.com/logo.png', true)).toBe('https://brand.com/logo.png');
+  it('leaves local image paths unchanged', () => {
+    expect(safeProductImageSrc('/brands/buni.png', true)).toBe('/brands/buni.png');
+  });
+
+  it('forwards allowBrandLogo through to isPlaceholderProductImage while still proxying the external URL', () => {
+    const original = 'https://brand.com/logo.png';
+    expect(safeProductImageSrc(original, true)).toBe(`/api/image-proxy?url=${encodeURIComponent(original)}`);
+  });
+});
+
+describe('image cache identity and recovery', () => {
+  it('never replaces missing physical packaging with an unreviewed page photo', async () => {
+    const { vi } = await import('vitest');
+    const fetchMock = vi.fn(); vi.stubGlobal('fetch', fetchMock);
+    try {
+      const { resolveProductImage } = await import('./resolveProductImage');
+      expect(await resolveProductImage('Pads', 'Brand', 'https://brand.test/pads', 'physical')).toBe('');
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally { vi.unstubAllGlobals(); }
+  });
+  it('allows a corrected URL to replace a previously resolved variant', async () => {
+    const { vi } = await import('vitest');
+    vi.resetModules();
+    const storage = new Map();
+    vi.stubGlobal('localStorage', { getItem: (key) => storage.get(key), setItem: (key, value) => storage.set(key, value) });
+    const fetchMock = vi.fn().mockResolvedValueOnce({ ok: true, json: async () => ({ imageUrl: 'https://brand.test/wrong.jpg' }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ imageUrl: 'https://brand.test/right.jpg' }) });
+    vi.stubGlobal('fetch', fetchMock);
+    try {
+      const { resolveProductImage } = await import('./resolveProductImage');
+      expect(await resolveProductImage('App', 'Brand', '', 'digital')).toBe('');
+      expect(await resolveProductImage('App', 'Brand', 'https://brand.test/old-app', 'digital')).toContain('wrong.jpg');
+      expect(await resolveProductImage('App', 'Brand', 'https://brand.test/new-app', 'digital')).toContain('right.jpg');
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    } finally { vi.unstubAllGlobals(); }
+  });
+  it('does not permanently cache a missing image', async () => {
+    const { vi } = await import('vitest');
+    vi.resetModules();
+    vi.stubGlobal('localStorage', { getItem: () => null, setItem: vi.fn() });
+    const fetchMock = vi.fn().mockResolvedValueOnce({ ok: true, json: async () => ({ imageUrl: '' }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ imageUrl: 'https://brand.test/fixed.jpg' }) });
+    vi.stubGlobal('fetch', fetchMock);
+    try {
+      const { resolveProductImage } = await import('./resolveProductImage');
+      expect(await resolveProductImage('App', 'Brand', 'https://brand.test/product', 'digital')).toBe('');
+      expect(await resolveProductImage('App', 'Brand', 'https://brand.test/product', 'digital')).toContain('fixed.jpg');
+    } finally { vi.unstubAllGlobals(); }
   });
 });

@@ -13,10 +13,9 @@
  * SAFETY CONTRACT, read before changing anything in this file.
  *
  * Every row this endpoint writes goes in as source='discovered',
- * is_active=false, review_status='pending', UNLESS it clears the narrow
- * auto-approval gate in isAutoApprovable() (a fully-answered, clean FDA
- * recall check AND a real https source URL the model was confident enough to
- * name), see that function for exactly what "narrow" means. Everything else
+ * is_active=false, review_status='pending'. Auto-approval was REMOVED in the
+ * 2026-09-22 product-integrity audit: isAutoApprovable()/verifyUrlIsLive()
+ * are now only review HINTS surfaced to the human reviewer. Everything
  * stays pending until a human runs scripts/review-discovered-products.mjs and
  * explicitly approves it (which flips is_active=true). The is_active=false
  * default (and the auto-approval gate's conditions) are enforced twice
@@ -33,7 +32,7 @@
  * secret must be set at all before anything runs, not just checked.
  */
 import { createClient } from '@supabase/supabase-js';
-import { ALL_PRODUCTS } from '../src/data/products.js';
+import { ALL_PRODUCTS, CATEGORY_LABELS } from '../src/data/products.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate } from './_llm.js';
 import { checkRecallsForProduct } from './fda-recall.js';
 import { lookupDsldProduct } from './llm-recommendations.js';
@@ -53,7 +52,16 @@ export const CATEGORIES = [
   { category: 'cup', label: 'menstrual cups' },
   { category: 'period-underwear', label: 'period underwear' },
   { category: 'supplement', label: 'women\'s health supplements' },
-  { category: 'pelvic-floor', label: 'pelvic floor devices' },
+  // Split 2026-09-16 from a single 'pelvic-floor' slot: that slot's prompt
+  // had no way to tell the model to distinguish a biofeedback-only trainer
+  // from an FDA-cleared Class II exerciser, and it also had no rule against
+  // returning a generic descriptor (e.g. "Pelvic Floor Trainer") in `name`
+  // instead of a real product name — found live when a discovered "Yoni"
+  // listing's name field was literally the category label. See the
+  // trainer/exerciser distinction spelled out in buildDiscoveryPrompt below
+  // and the isGenericName() backstop.
+  { category: 'pelvic-floor-trainer', label: 'pelvic floor trainers (biofeedback-only Kegel devices)' },
+  { category: 'pelvic-floor-exerciser', label: 'pelvic floor exercisers (weighted Kegel balls/cones, or FDA-cleared Class II stimulation devices)' },
   { category: 'postpartum', label: 'postpartum recovery products' },
   { category: 'pregnancy', label: 'pregnancy support products' },
   { category: 'menopause', label: 'menopause and perimenopause products' },
@@ -128,7 +136,44 @@ export function slugify(s) {
  * split. Concatenating first means both produce the identical slug.
  */
 export function normalizeKey(name, brand) {
-  return slugify(`${brand || ''} ${name || ''}`);
+  // Catalog rows also exist with the brand BOTH in `brand` and repeated at
+  // the start of `name` ({ brand: 'LOLA', name: 'LOLA Organic Cotton Pads' }).
+  // Strip a leading copy of the brand from the name so all three shapes
+  // collapse to the same key instead of "lola-lola-organic-cotton-pads".
+  const b = String(brand || '').trim();
+  let n = String(name || '').trim();
+  if (b && slugify(n).startsWith(`${slugify(b)}-`)) {
+    n = n.slice(b.length).replace(/^[\s\-\u2013\u2014:|]+/, '');
+  }
+  return slugify(`${b} ${n}`);
+}
+
+// Code-level backstop for the NAME rule in buildDiscoveryPrompt — a prompt
+// instruction is advisory, and this exact failure mode was found live
+// (2026-09-16): a discovered "Yoni" listing's `name` was literally "Pelvic
+// Floor Trainer", the category label, instead of a real product name.
+// Rejects a candidate whose name (once a leading brand is stripped) is
+// nothing more than one of the site's own category labels.
+const GENERIC_CATEGORY_LABELS = [...new Set(Object.values(CATEGORY_LABELS).map((l) => l.toLowerCase()))];
+// A handful of filler words a model tacks onto a bare category label instead
+// of naming the actual product — "Pelvic Floor Exerciser with App" was found
+// live (2026-09-16) riding past an exact-match-only check for exactly this
+// reason. Matched as a whole trailing clause, not a substring, so a real
+// product name that happens to contain one of these words elsewhere isn't
+// falsely caught.
+const GENERIC_TRAILERS = /^(with app|app|device|kit|system|program|tool|for women)$/;
+export function isGenericName(name, brand) {
+  const n = String(name || '').trim().toLowerCase();
+  if (!n) return true;
+  const b = String(brand || '').trim().toLowerCase();
+  const stripped = b && n.startsWith(b) ? n.slice(b.length).trim() : n;
+  if (GENERIC_CATEGORY_LABELS.includes(stripped)) return true;
+  for (const label of GENERIC_CATEGORY_LABELS) {
+    if (!stripped.startsWith(label)) continue;
+    const trailer = stripped.slice(label.length).trim();
+    if (!trailer || GENERIC_TRAILERS.test(trailer)) return true;
+  }
+  return false;
 }
 
 async function searchForCategory(categoryLabel) {
@@ -172,6 +217,12 @@ ANTI-HALLUCINATION, this is the most important rule:
 
 QUALITY BAR, only include a product if it plausibly has: majority positive reviews from real women, a real US-available brand, and no obvious red flags. Do not include anything you're not confident is real and currently sold.
 
+NAME: "name" must be the specific product line or SKU a shopper would see on the package or product page (e.g. "Lily Cup Compact", "Kegel8 Ultra 20"), never a generic category description like "Pelvic Floor Trainer" or "Menstrual Cup", that belongs in "category", not "name". If you can't name the specific product, don't include it.
+${
+  category === 'pelvic-floor-trainer' || category === 'pelvic-floor-exerciser'
+    ? `\nPELVIC FLOOR DEVICES: use "pelvic-floor-trainer" ONLY for biofeedback devices that guide the user's own contractions, usually through an app (e.g. Elvie, Perifit). Use "pelvic-floor-exerciser" for weighted Kegel balls or cones the user exercises with (e.g. Intimina Laselle, which Intimina itself calls an "Exerciser"), and for FDA-cleared Class II devices that electrically stimulate and contract the pelvic floor FOR the user (e.g. Emsella, INNOVO, Yarlap, Elitone, never Elitone URGE, which calms an overactive bladder rather than exercising the pelvic floor). Never call a stimulation device or weighted Kegel balls a "trainer," and never call a biofeedback device an "exerciser." This run is scoped to "${category}", only suggest products of that specific kind, not the other one.\n`
+    : ''
+}
 TASK: Suggest up to ${MAX_CANDIDATES_PER_RUN} real, currently-sold products in this category that are NOT in the exclusion list above. Fewer is fine if you're not confident about more, never pad the list with a guess.
 
 Return ONLY valid JSON, exactly this shape:
@@ -342,19 +393,6 @@ export async function verifyUrlIsLive(url) {
   }
 }
 
-function autoApprove(row) {
-  return {
-    ...row,
-    review_status: 'approved',
-    is_active: true,
-    discovery_meta: {
-      ...row.discovery_meta,
-      autoApproved: true,
-      autoApprovedAt: new Date().toISOString(),
-    },
-  };
-}
-
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method !== 'GET' && req.method !== 'POST') {
@@ -402,6 +440,14 @@ export default async function handler(req, res) {
       maxTokens: 3000,
       timeoutMs: 25_000,
       signal: AbortSignal.timeout(FUNCTION_BUDGET_MS - 8000),
+      trace: {
+        name: 'discover-products',
+        // Scheduled catalog job, not a user conversation: one session per run.
+        sessionId: `discover-products:${category}:${new Date(startedAt).toISOString().slice(0, 13)}`,
+        messages: [{ role: 'user', content: `Find new ${label} not already in the catalog` }],
+        formatOutput: (text) => (tryParseJsonCandidate(text)?.products || [])
+          .map((p) => `- ${[p?.brand, p?.name].filter(Boolean).join(' ')}`).join('\n'),
+      },
     });
 
     const parsed = tryParseJsonCandidate(out.text);
@@ -413,6 +459,7 @@ export default async function handler(req, res) {
     const seenThisRun = new Set();
     const fresh = rawCandidates.filter((c) => {
       if (!c?.name || !c?.brand) return false;
+      if (isGenericName(c.name, c.brand)) return false;
       const key = normalizeKey(c.name, c.brand);
       if (excludeKeys.has(key) || seenThisRun.has(key)) return false;
       seenThisRun.add(key);
@@ -453,20 +500,12 @@ export default async function handler(req, res) {
       .in('id', rows.map((r) => r.id));
     const alreadyReviewed = new Map((existingReviewed || []).map((r) => [r.id, r.review_status]));
 
-    // Auto-approval only ever applies to brand-new rows, never to
-    // toUpdateMetaOnly, a human's prior verdict on an id is never touched.
-    // verifyUrlIsLive is a real network call, so only pay for it on rows that
-    // already cleared the (free, synchronous) rest of isAutoApprovable, a
-    // row failing on the recall check shouldn't also wait on a fetch whose
-    // result can't change the outcome.
-    const newRows = rows.filter((r) => !alreadyReviewed.has(r.id));
-    const toInsert = await Promise.all(
-      newRows.map(async (r) => {
-        if (!isAutoApprovable(r)) return r;
-        const urlIsLive = await verifyUrlIsLive(r.url);
-        return urlIsLive ? autoApprove(r) : r;
-      })
-    );
+    // PRODUCT INTEGRITY (2026-09-22 audit): AI-discovered candidates are
+    // NEVER auto-approved. A clean recall check + a live URL proves a page
+    // exists, not that the model's name/summary/price/brand pairing is true,
+    // so every discovered row goes in as is_active=false / pending and only a
+    // human review (scripts/review-discovered-products.mjs) can publish it.
+    const toInsert = rows.filter((r) => !alreadyReviewed.has(r.id));
     const toUpdateMetaOnly = rows.filter((r) => alreadyReviewed.has(r.id));
 
     let inserted = 0;
@@ -489,7 +528,7 @@ export default async function handler(req, res) {
       found: rawCandidates.length,
       afterDedup: fresh.length,
       inserted,
-      autoApproved: toInsert.filter((r) => r.discovery_meta?.autoApproved).length,
+      autoApproved: 0,
       metaRefreshed: toUpdateMetaOnly.length,
       insertedIds: toInsert.map((r) => r.id),
     });

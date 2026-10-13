@@ -121,8 +121,6 @@ export const PRODUCT_IMAGE_OVERRIDES = Object.freeze({
     ],
   },
   'p-mystery-vibe': '/products/catalog/p-mystery-vibe.webp',
-  'p-neycher-botanical-vulva-balm': '/products/catalog/p-neycher-botanical-vulva-balm.webp',
-  'p-neycher-goodbye-dryness-bundle': '/products/catalog/p-neycher-goodbye-dryness-bundle.webp',
   'p-neycher-hydrobloom-gel': '/products/catalog/p-neycher-hydrobloom-gel.webp',
   'p-neycher-odor-be-gone': '/products/catalog/p-neycher-odor-be-gone.webp',
   'p-neycher-vaginal-moisturizer': '/products/catalog/p-neycher-vaginal-moisturizer.webp',

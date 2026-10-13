@@ -1,6 +1,7 @@
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
+import ResaPartnershipModal from './ResaPartnershipModal';
 import {
     ALL_PRODUCTS,
     CATEGORY_LABELS,
@@ -586,7 +587,7 @@ function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, res
                         <button type="button" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onToggleProduct(alt)}>
                             {inEco ? '✓ In ecosystem' : '+ Add to Ecosystem'}
                         </button>
-                        <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(alt)}>
+                        <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(alt, { source: 'recommendation' })}>
                             Details
                         </button>
                         {buyUrl && (
@@ -728,7 +729,7 @@ function IntakeRecommendationsProductCard({
                     <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onToggleCompare(compareKey)}>
                         {compareOn ? 'Hide compare' : 'Compare'}
                     </button>
-                    <button type="button" className="btn btn-primary" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onOpenProduct(product)}>
+                    <button type="button" className="btn btn-primary" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
                         Details
                     </button>
                     {buyUrl && (
@@ -954,6 +955,7 @@ export default function MyEcosystem({
     const [showMoreTools, setShowMoreTools] = useState(false);
     const careNearYouDetailsRef = useRef(null);
     const [showSyncPaywall, setShowSyncPaywall] = useState(false);
+    const [showResaPartnership, setShowResaPartnership] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [ecosystemCompareOpen, setEcosystemCompareOpen] = useState({});
     const [ecosystemAltMiniKey, setEcosystemAltMiniKey] = useState('');
@@ -988,6 +990,7 @@ export default function MyEcosystem({
         } catch (_) {}
         return 0;
     });
+    const [completedGenerationNonce, setCompletedGenerationNonce] = useState(0);
     const [phoneNumberInfo, setPhoneNumberInfo] = useState(null);
     const [smsCardCopied, setSmsCardCopied] = useState(false);
     const [smsCardShown, setSmsCardShown] = useState(() => {
@@ -1208,6 +1211,9 @@ export default function MyEcosystem({
             setLlmNotice(rec.notice || '');
             setLlmPartialConcerns(rec.partialConcerns || []);
             setLlmLoadStartedAt(rec.startedAt);
+            if (recommendationRefreshNonce > 0 && !rec.loading && !rec.error && rec.tiered.length > 0) {
+                setCompletedGenerationNonce(recommendationRefreshNonce);
+            }
         };
 
         const unsubscribe = subscribeToGeneration(intakeFingerprint, onUpdate, (rec) => {
@@ -1306,7 +1312,24 @@ export default function MyEcosystem({
                     });
 
                     if (rec.cancelled) return;
-                    const recs = accumulated;
+                    // Preserve screened local picks when AI returns only part
+                    // of the requested ecosystem or too few distinct options.
+                    const aiByConcern = new Map(accumulated.map((entry) => [String(entry.concern || '').toLowerCase(), entry]));
+                    const recs = accumulated.length ? instantLocal.map((local) => {
+                        const key = String(local.concern || '').toLowerCase();
+                        const ai = aiByConcern.get(key);
+                        if (!ai) return local;
+                        aiByConcern.delete(key);
+                        const tiers = Array.isArray(ai.tiers) ? [...ai.tiers] : [];
+                        const chosen = new Set(tiers.map((tier) => String(tier?.product?.name || '').toLowerCase()));
+                        for (const tier of local.tiers || []) {
+                            if (tiers.length >= 3) break;
+                            const name = String(tier?.product?.name || '').toLowerCase();
+                            if (name && !chosen.has(name)) { tiers.push(tier); chosen.add(name); }
+                        }
+                        return { ...ai, tiers: tiers.slice(0, 5) };
+                    }) : [];
+                    recs.push(...aiByConcern.values());
                     console.log('[Ayna LLM] Done. Sections:', recs.length, '| errors:', errorCount);
 
                     // Swap in the completed AI result only after all batches finish.
@@ -1562,35 +1585,50 @@ export default function MyEcosystem({
         });
     }, [recommendedProductsForDisplay]);
 
-    // When LLM results arrive, push ALL tier products into the ecosystem (supplement + physical + telehealth)
+    // Save the completed recommendation set after generation finishes.
     useEffect(() => {
-        // Guard: only fire when we have actual LLM results, not the rule-based fallback
+        // The local set remains visible during generation and can be the final
+        // fallback if the AI service fails.
         if (!llmTiered.length) return;
         if (!recommendedProductsForDisplay.length || !onBuildEcosystemFromLlm) return;
         // Only build the ecosystem when explicitly requested:
         // quiz completion sets ayna_force_llm_refresh → nonce=1, rebuild button increments nonce
         // Never auto-generate on page load or login, even if ecosystem is empty
-        if (recommendationRefreshNonce === 0) return;
-        // Each concern has 3 tiers (supplement, physical, telehealth), add each as its own ecosystem card
-        const enrichedProducts = recommendedProductsForDisplay
-            .flatMap(section =>
-                (section.tiers || []).map(tier => {
-                    const product = tier?.product;
-                    if (!product) return null;
-                    return {
-                        ...product,
-                        // Always re-derive from concern, never trust healthFunctions the LLM may have added
-                        healthFunctions: inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
-                        _llmAlternatives: (tier.alternatives || []).filter(p => p && p.id !== product.id).slice(0, 3),
-                        _llmConcern: section.concern || '',
-                    };
-                })
-            )
-            .filter(Boolean);
+        if (recommendationRefreshNonce === 0 || completedGenerationNonce !== recommendationRefreshNonce || llmLoading) return;
+        // Add each available distinct tier as its own ecosystem card.
+        // Coverage first: put the strongest product from every distinct concern
+        // into the ecosystem before adding a second or third product from any
+        // one concern. This keeps broad profiles from being visually dominated
+        // by several products for the same need while other selected needs are
+        // pushed to the bottom.
+        const enrichedProducts = [];
+        const seenProductIds = new Set();
+        const sectionsWithTiers = recommendedProductsForDisplay.map((section) => ({
+            section,
+            tiers: Array.isArray(section?.tiers) ? section.tiers : [],
+        }));
+        const maxTierCount = Math.max(0, ...sectionsWithTiers.map(({ tiers }) => tiers.length));
+
+        for (let tierIndex = 0; tierIndex < maxTierCount; tierIndex += 1) {
+            sectionsWithTiers.forEach(({ section, tiers }) => {
+                const tier = tiers[tierIndex];
+                const product = tier?.product;
+                if (!product?.id || seenProductIds.has(product.id)) return;
+
+                seenProductIds.add(product.id);
+                enrichedProducts.push({
+                    ...product,
+                    // Always re-derive from concern, never trust healthFunctions the LLM may have added
+                    healthFunctions: inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
+                    _llmAlternatives: (tier.alternatives || []).filter(p => p && p.id !== product.id).slice(0, 3),
+                    _llmConcern: section.concern || '',
+                });
+            });
+        }
         if (!enrichedProducts.length) return;
         onBuildEcosystemFromLlm(enrichedProducts);
         posthog.capture('recommendation_viewed', { concernCount: recommendedProductsForDisplay.length });
-    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce]);
+    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce, completedGenerationNonce, llmLoading]);
 
     // Bounded worker pool, mirrors the fix already applied to Discovery.jsx.
     // Both effects below used to fire one request per product with no cap: a
@@ -2200,6 +2238,25 @@ export default function MyEcosystem({
                             </p>
                         </div>
                     </details>
+                    {/* Rèsa: pre-launch partner, not syncable yet (from main). Opens the
+                        partnership explainer for everyone, Premium or not. */}
+                    <div className="eco3-details__card">
+                        <p className="eco3-details__title">Rèsa, an ayna partner</p>
+                        <div className="eco3-details__row">
+                            <button
+                                type="button"
+                                className="eco3-pill"
+                                onClick={() => {
+                                    posthog.capture('resa_sync_chip_clicked');
+                                    setShowResaPartnership(true);
+                                }}
+                                title="Rèsa, an ayna partner. Coming soon. Read about the partnership"
+                            >
+                                Read about the partnership
+                            </button>
+                        </div>
+                        <p className="eco3-details__soon">Sync coming soon.</p>
+                    </div>
                     {!smsCardShown && <p className="eco3-details__soon eco3-details__soon--solo">Wearable sync is coming.</p>}
                 </div>
 
@@ -2298,6 +2355,9 @@ export default function MyEcosystem({
                 onClose={() => setShowSyncPaywall(false)}
                 featureName="wearable and health app syncing"
             />
+        )}
+        {showResaPartnership && (
+            <ResaPartnershipModal onClose={() => setShowResaPartnership(false)} />
         )}
         </>
     );

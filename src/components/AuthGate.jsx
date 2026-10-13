@@ -20,13 +20,41 @@ function Field({ id, label, error, children }) {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Three statements, one checkbox each. The AI statement's wording and the
+// 18+ confirmation come from the 2026-09 legal hardening on main (ayna
+// accounts are 18+ only); the 18+ confirmation is its own sentence on the
+// third statement so the form keeps three boxes.
 const CONSENT_ITEMS = [
   'The health information I share with ayna is self-reported wellness information, not a clinical record.',
-  'My wellness data may be processed by an external AI service to personalize recommendations. ayna takes measures to anonymize and secure this information and never sells it.',
-  'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
+  'When I intentionally use an AI-powered feature, limited relevant wellness context may be processed by an external AI provider to generate my requested response. ayna minimizes the context sent, protects it in transit, and does not sell it.',
+  'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider. I confirm that I am at least 18 years old.',
 ];
 
-export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem, initialMode, summary = null, allowSignup = false }) {
+const AGE_REQUIREMENT_VERSION = '18plus-v1';
+
+/** "Where did you hear about us?" as the label string main's admin reviews
+ * (api/reviews-admin.js) read from `heard_about_us`, written next to our
+ * structured `heard_about` / `heard_about_other` fields. */
+function heardAboutUsLabel(value, otherText) {
+  const option = HEARD_ABOUT_OPTIONS.find((o) => o.value === value);
+  if (!option) return '';
+  const other = String(otherText || '').trim().replace(/\s+/g, ' ').slice(0, HEARD_ABOUT_OTHER_MAX);
+  return value === 'other' && other ? `Other: ${other}` : option.label;
+}
+
+/** Consent + 18+ fields recorded on every new account (all signup paths and ConsentGate). */
+function consentMetadata() {
+  const now = new Date().toISOString();
+  return {
+    consent_given_at: now,
+    consent_version: CONSENT_VERSION,
+    age_18_confirmed: true,
+    age_18_confirmed_at: now,
+    age_requirement_version: AGE_REQUIREMENT_VERSION,
+  };
+}
+
+export default function AuthGate({ isModal = false, embedded = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem, initialMode, summary = null, allowSignup = false, onAuthenticated }) {
   useEscapeToClose(isModal, onSkip);
   // 'signup' | 'signin'. An account can only be created in the save step after
   // the quiz (allowSignup). Every other entry point is sign-in only, with
@@ -46,7 +74,8 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   // Optional "Where did you hear about us?" (saved in user metadata).
   const [heardAbout, setHeardAbout] = useState('');
   const [heardOther, setHeardOther] = useState('');
-  const heardMeta = heardAboutMetadata(heardAbout, heardOther);
+  const heardLabel = heardAboutUsLabel(heardAbout, heardOther);
+  const heardMeta = { ...heardAboutMetadata(heardAbout, heardOther), ...(heardLabel ? { heard_about_us: heardLabel } : {}) };
   // Two real signups reported never getting a confirmation email
   // (2026-08-25), Supabase's built-in email sender has a very low rate
   // limit and no delivery guarantee, so a signup silently succeeding with
@@ -58,6 +87,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
+  // Email signups verify with the 8-digit code Supabase emails ('details' ->
+  // 'code'), not a confirmation link (main, 2026-09).
+  const [emailSignupStep, setEmailSignupStep] = useState('details');
+  const [emailCode, setEmailCode] = useState('');
   // Signup via native Supabase phone-OTP auth instead of email/password
   // requested 2026-08-25 as an alternative for anyone whose confirmation
   // email never arrives (see the resend feature above). Fully independent
@@ -76,6 +109,29 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const allConsented = checked.every(Boolean);
   const isSignup = allowSignup && mode === 'signup';
   const subtitle = isSignup && summary ? 'Save your matches. Create an account to keep them.' : SUBTITLES[mode];
+
+  // Password reset (2026-09-22 audit): the emailed link lands on
+  // /auth/callback, which handles type=recovery with a new-password form.
+  const [resetting, setResetting] = useState(false);
+  const handleForgotPassword = async () => {
+    const cleanEmail = email.trim().toLowerCase();
+    setError('');
+    setSuccessMsg('');
+    if (!cleanEmail) { setFieldErrors((prev) => ({ ...prev, email: 'Add your email, then tap "Forgot password?".' })); return; }
+    if (!supabase) return;
+    setResetting(true);
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      });
+      if (resetError) throw resetError;
+      setSuccessMsg(`If an account exists for ${cleanEmail}, we sent a link to reset your password.`);
+    } catch (e) {
+      setError(e?.message || 'Could not send a reset email right now. Please try again.');
+    } finally {
+      setResetting(false);
+    }
+  };
 
   // Health-data consent stays explicit: one checkbox per statement.
   const toggleCheck = (i) => {
@@ -108,11 +164,11 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setNeedsConfirmation(false);
     setLoading(true);
     try {
+      const cleanEmail = email.trim().toLowerCase();
       if (isSignup) {
-        const consentAt = new Date().toISOString();
         const cleanFirstName = firstName.trim();
         const { data, error } = await supabase.auth.signUp({
-          email,
+          email: cleanEmail,
           password,
           options: {
             emailRedirectTo: 'https://www.aynahealth.co/confirmed',
@@ -120,8 +176,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               ...heardMeta,
               first_name: cleanFirstName,
               full_name: cleanFirstName,
-              consent_given_at: consentAt,
-              consent_version: CONSENT_VERSION,
+              ...consentMetadata(),
             },
           },
         });
@@ -138,22 +193,30 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           // she's already signed in, which App.jsx's onAuthStateChange handler
           // is about to act on.
           setSuccessMsg('You\'re all set. Signing you in...');
+          onAuthenticated?.(data.user || data.session.user, data.session);
         } else {
-          setSuccessMsg('Almost there! A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
+          setEmailSignupStep('code');
+          setEmailCode('');
+          setSuccessMsg(`We sent a verification code to ${cleanEmail}. Enter it below to finish creating your account.`);
           setNeedsConfirmation(true);
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
         if (error) {
           // Real, known failure mode (found live 2026-08-25): a user whose
-          // confirmation email never arrived tries to sign in anyway and
-          // hits this exact, stable Supabase error string. Surface a resend
-          // option right here instead of a dead-end error.
-          if (/email not confirmed/i.test(error.message || '')) {
+          // email was never verified tries to sign in anyway. Offer the
+          // verification code step right here instead of a dead-end error.
+          if (error.code === 'email_not_confirmed' || /email[_ ]not[_ ]confirmed|confirm your email|not verified/i.test(error.message || '')) {
             setNeedsConfirmation(true);
+            setEmailSignupStep('code');
+            setEmailCode('');
+            setSuccessMsg('Your email still needs verification. Enter the code from your email below.');
           }
           throw error;
         }
+        if (!data?.session?.user) throw new Error('Sign-in succeeded but no session was created. Please try again.');
+        setSuccessMsg('Signed in. Welcome back…');
+        onAuthenticated?.(data.user || data.session.user, data.session);
       }
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -169,15 +232,51 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     try {
       const { error } = await supabase.auth.resend({
         type: 'signup',
-        email,
+        email: email.trim().toLowerCase(),
         options: { emailRedirectTo: 'https://www.aynahealth.co/confirmed' },
       });
       if (error) throw error;
-      setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
+      setResendMsg('New code sent. Check your inbox and spam folder.');
     } catch (err) {
       setResendMsg(err.message || 'Could not resend right now. Try again in a moment.');
     } finally {
       setResending(false);
+    }
+  };
+
+  const handleVerifyEmailOtp = async (e) => {
+    e.preventDefault();
+    if (!supabase || !email) return;
+    const token = emailCode.replace(/\D/g, '').slice(0, 8);
+    if (!/^\d{8}$/.test(token)) {
+      setError('Enter the 8-digit verification code from your email.');
+      return;
+    }
+    setError('');
+    setSuccessMsg('');
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: email.trim().toLowerCase(),
+        token,
+        type: 'email',
+      });
+      if (error) throw error;
+      if (!data?.session) {
+        throw new Error('Your email was verified, but we could not start your session. Please sign in.');
+      }
+      setNeedsConfirmation(false);
+      setResendMsg('');
+      setSuccessMsg('Email verified. Signing you in...');
+      onAuthenticated?.(data.user || data.session.user, data.session);
+    } catch (err) {
+      setError(
+        /expired|invalid|token/i.test(err?.message || '')
+          ? 'That code is invalid or expired. Request a new code and try again.'
+          : (err.message || 'Could not verify that code. Please try again.')
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -197,12 +296,16 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
   const handleSendPhoneOtp = async (e) => {
     e.preventDefault();
+    // Phone signup creates the account too, so the same consent bar applies.
+    if (!allConsented) {
+      setFieldErrors((prev) => ({ ...prev, consent: 'Please tick all three to continue.' }));
+      return;
+    }
     setError('');
     setLoading(true);
     try {
       const e164 = normalizePhoneE164(phoneNumber);
       if (!e164) throw new Error('Please enter a valid 10-digit phone number.');
-      const consentAt = new Date().toISOString();
       const cleanFirstName = firstName.trim();
       const { error } = await supabase.auth.signInWithOtp({
         phone: e164,
@@ -211,8 +314,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
             ...heardMeta,
             first_name: cleanFirstName,
             full_name: cleanFirstName,
-            consent_given_at: consentAt,
-            consent_version: CONSENT_VERSION,
+            ...consentMetadata(),
           },
         },
       });
@@ -231,14 +333,15 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setError('');
     setLoading(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({
+      const { data, error } = await supabase.auth.verifyOtp({
         phone: phoneNumber,
         token: phoneCode.trim(),
         type: 'sms',
       });
       if (error) throw error;
-      // Session now exists, App.jsx's onAuthStateChange SIGNED_IN handler
-      // takes it from here, same as any other sign-in path.
+      // Session now exists. Hand it to App directly (main, 2026-09: waiting
+      // only on onAuthStateChange could hang), the SIGNED_IN handler still runs.
+      if (data?.session?.user) onAuthenticated?.(data.user || data.session.user, data.session);
     } catch (err) {
       setError(err.message || 'That code is wrong or expired. Please try again.');
     } finally {
@@ -259,13 +362,18 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setGoogleLoading(true);
     try {
       // Persist consent so AuthCallback can write it to user metadata after the
-      // redirect. Stored in BOTH modes: Supabase's Google provider
-      // auto-provisions an account for any unseen Google address, so a
-      // first-time visitor who happens to click the "Sign in" toggle used to get
-      // an account created, and reach the health intake, with the consent
-      // checkboxes never shown and no consent record written at all.
-      stashPendingSignupMeta(isSignup ? heardMeta : null);
-      stashPendingConsent();
+      // redirect, ONLY when the boxes were actually ticked (signup mode).
+      // Supabase's Google provider auto-provisions an account for any unseen
+      // Google address, so a first-time visitor using "Sign in" still gets an
+      // account; recording consent for her would claim agreement she never
+      // gave. App shows ConsentGate (below) to any OAuth account with no
+      // consent on record instead (main, 2026-09).
+      if (isSignup) {
+        stashPendingSignupMeta({ ...heardMeta, ...consentMetadata() });
+        stashPendingConsent();
+      } else {
+        stashPendingSignupMeta(null);
+      }
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -294,10 +402,13 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setAppleLoading(true);
     try {
       // Same reasoning as handleGoogle just above: Apple's provider also
-      // auto-provisions an account for any unseen Apple ID, so consent has
-      // to be stashed here too, not only on the email/password path.
-      stashPendingSignupMeta(isSignup ? heardMeta : null);
-      stashPendingConsent();
+      // auto-provisions an account for any unseen Apple ID.
+      if (isSignup) {
+        stashPendingSignupMeta({ ...heardMeta, ...consentMetadata() });
+        stashPendingConsent();
+      } else {
+        stashPendingSignupMeta(null);
+      }
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
@@ -319,6 +430,11 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setSuccessMsg('');
     setAuthMethod('email');
     setPhoneStep('number');
+    setChecked([false, false, false]);
+    setEmailSignupStep('details');
+    setEmailCode('');
+    setNeedsConfirmation(false);
+    setResendMsg('');
   };
 
   const switchAuthMethod = (next) => {
@@ -327,6 +443,9 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setSuccessMsg('');
     setNeedsConfirmation(false);
     setPhoneStep('number');
+    setEmailSignupStep('details');
+    setEmailCode('');
+    setResendMsg('');
   };
 
   const overlayStyle = isModal ? {
@@ -340,6 +459,14 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     background: 'rgba(29, 26, 43, 0.6)',
     zIndex: 1700,
     padding: '96px 16px 24px',
+  } : embedded ? {
+    // Inline on a page (no overlay), e.g. a landing section.
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    background: 'transparent',
+    padding: 0,
   } : {
     minHeight: '100dvh',
     display: 'flex',
@@ -370,10 +497,9 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           // The Google button already surfaced this same problem via its own
           // error state; email/password had no equivalent, so it looked
           // exactly like a hang rather than a config gap.
+          // (Public copy: no env var names on a live page.)
           <p style={styles.configWarning}>
-            Sign-in isn't configured on this device: VITE_SUPABASE_URL and
-            VITE_SUPABASE_ANON_KEY are missing or empty in .env.local. Add them
-            and restart the dev server.
+            Sign-in isn't configured on this device: the connection is unavailable. Please try again later.
           </p>
         )}
 
@@ -444,7 +570,9 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           onSubmit={
             isSignup && authMethod === 'phone'
               ? (phoneStep === 'number' ? handleSendPhoneOtp : handleVerifyPhoneOtp)
-              : handleEmailAuth
+              : authMethod === 'email' && emailSignupStep === 'code'
+                ? handleVerifyEmailOtp
+                : handleEmailAuth
           }
           style={styles.form}
           noValidate
@@ -500,6 +628,46 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
                 </button>
               </>
             )
+          ) : authMethod === 'email' && emailSignupStep === 'code' ? (
+            <>
+              <p style={{ ...styles.success, color: 'var(--color-text-muted)' }}>
+                Enter the verification code sent to <strong>{email}</strong>.
+              </p>
+              <Field id="auth-email-code" label="Verification code">
+                <input
+                  id="auth-email-code"
+                  name="emailCode"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="8-digit code"
+                  value={emailCode}
+                  onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                  style={styles.input}
+                  autoComplete="one-time-code"
+                  maxLength={8}
+                  autoFocus
+                />
+              </Field>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  className="ay-auth-linkbtn"
+                  onClick={() => {
+                    setEmailSignupStep('details');
+                    setEmailCode('');
+                    setError('');
+                    setSuccessMsg('');
+                    setResendMsg('');
+                  }}
+                >
+                  Change email
+                </button>
+                <button type="button" className="ay-auth-linkbtn" onClick={handleResend} disabled={resending}>
+                  {resending ? 'Sending…' : 'Resend code'}
+                </button>
+              </div>
+              {resendMsg && <p style={{ ...styles.success, margin: 0 }}>{resendMsg}</p>}
+            </>
           ) : (
             <>
           {isSignup && (
@@ -557,6 +725,17 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
             </div>
             {isSignup && !fieldErrors.password && <p className="ay-auth-hint">At least 8 characters.</p>}
           </Field>
+          {!isSignup && (
+            <button
+              type="button"
+              className="ay-auth-linkbtn ay-auth-forgot"
+              onClick={handleForgotPassword}
+              disabled={resetting}
+              style={{ alignSelf: 'flex-start' }}
+            >
+              {resetting ? 'Sending reset link…' : 'Forgot password?'}
+            </button>
+          )}
           {isSignup && (
             <div className="ay-auth-field ay-auth-heard">
               <label htmlFor="auth-heard">Where did you hear about us? <span className="ay-auth-optional">Optional</span></label>
@@ -593,16 +772,25 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
           {error && <p style={styles.error}>{error}</p>}
           {successMsg && <p style={styles.success}>{successMsg}</p>}
-          {needsConfirmation && authMethod === 'email' && (
+          {needsConfirmation && authMethod === 'email' && emailSignupStep !== 'code' && (
             <p style={{ ...styles.error, color: 'var(--color-text-muted)' }}>
-              Didn&apos;t get it?{' '}
+              Your email still needs verification.{' '}
+              <button
+                type="button"
+                onClick={() => { setEmailSignupStep('code'); setEmailCode(''); setError(''); }}
+                style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer' }}
+              >
+                Enter verification code
+              </button>
+              <br />
+              Didn&apos;t get a code?{' '}
               <button
                 type="button"
                 onClick={handleResend}
                 disabled={resending}
                 style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: resending ? 'not-allowed' : 'pointer' }}
               >
-                {resending ? 'Sending…' : 'Resend confirmation email'}
+                {resending ? 'Sending…' : 'Resend code'}
               </button>
               {resendMsg && <><br />{resendMsg}</>}
             </p>
@@ -620,12 +808,16 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               ? 'Please wait…'
               : isSignup && authMethod === 'phone'
                 ? (phoneStep === 'number' ? 'Send code' : 'Verify')
-                : isSignup ? 'Create account' : 'Sign in'}
+                : authMethod === 'email' && emailSignupStep === 'code'
+                  ? 'Verify email'
+                  : isSignup ? 'Create account' : 'Sign in'}
           </button>
           {isSignup && (
             <p className="ay-auth-legal">
-              By creating an account you agree to our{' '}
+              ayna accounts are for adults 18+. By creating an account you agree to our{' '}
               <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+              {', '}
+              <a href="/consumer-health-data.html" target="_blank" rel="noopener noreferrer">Consumer Health Data Privacy Notice</a>
               {' '}and{' '}
               <a href="/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of Use</a>.
               {' '}
@@ -672,7 +864,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
         {!isSignup && (
           <p style={styles.fine}>
-            By continuing you agree to our{' '}
+            ayna is for adults 18+. By continuing you agree to our{' '}
             <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Privacy Policy</a>
             {' '}and{' '}
             <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Terms of Use</a>.
@@ -684,12 +876,118 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
             Don’t have an account? <b>Build your ecosystem</b>
           </button>
         )}
+        {!isSignup && (
+          <p style={styles.fine}>New to ayna? Continuing with Google or Apple creates your account. We&apos;ll ask you to confirm a few statements first.</p>
+        )}
 
         {isModal && onSkip && context !== 'login' && (
           <button type="button" onClick={onSkip} style={styles.skipBtn}>
             Skip for now
           </button>
         )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Shown to a signed-in Google/Apple user whose account has no recorded
+ * consent, i.e. one auto-created by "Continue with Google/Apple" in sign-in
+ * mode, which skips the create-account form where the three statements
+ * (incl. 18+) and "Where did you hear about us?" are collected. She can
+ * agree, or sign out. Rendered by App.jsx (main, 2026-09).
+ */
+export function ConsentGate({ onAgreed, onDecline }) {
+  const [checked, setChecked] = useState([false, false, false]);
+  const [heardAbout, setHeardAbout] = useState('');
+  const [heardOther, setHeardOther] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const allChecked = checked.every(Boolean);
+
+  const submit = async () => {
+    if (!allChecked) { setError('Please tick all three to continue.'); return; }
+    const supabase = getSupabaseClient();
+    if (!supabase) { setError('Sign-in is unavailable right now. Please try again later.'); return; }
+    setSaving(true);
+    setError('');
+    const label = heardAboutUsLabel(heardAbout, heardOther);
+    try {
+      const { data, error: updateError } = await supabase.auth.updateUser({
+        data: {
+          ...heardAboutMetadata(heardAbout, heardOther),
+          ...(label ? { heard_about_us: label } : {}),
+          ...consentMetadata(),
+        },
+      });
+      if (updateError) throw updateError;
+      onAgreed?.(data?.user || null);
+    } catch (err) {
+      setError(err?.message || 'Could not save that. Please try again.');
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div
+      className="ay-auth-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ay-consent-gate-title"
+      style={{
+        position: 'fixed', inset: 0, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', overflowY: 'auto',
+        background: 'rgba(29, 26, 43, 0.6)', zIndex: 1710, padding: '96px 16px 24px',
+      }}
+    >
+      <div className="ay-auth-card" style={styles.card}>
+        <div className="ay-auth-logo" style={styles.logo}>ayna</div>
+        <p id="ay-consent-gate-title" className="ay-auth-tagline" style={styles.tagline}>One more step. Please confirm the following to finish setting up your account.</p>
+        <div style={styles.form}>
+          <div className="ay-auth-field ay-auth-heard">
+            <label htmlFor="consent-gate-heard">Where did you hear about us? <span className="ay-auth-optional">Optional</span></label>
+            <select id="consent-gate-heard" name="heardAbout" value={heardAbout} onChange={(e) => setHeardAbout(e.target.value)} className={heardAbout ? '' : 'is-empty'}>
+              <option value="">Choose one</option>
+              {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+            {heardAbout === 'other' && (
+              <input name="heardAboutOther" type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX}
+                value={heardOther} onChange={(e) => setHeardOther(e.target.value)} style={styles.input} autoComplete="off" />
+            )}
+          </div>
+          <fieldset className="ay-auth-consent">
+            <legend>How we handle your data</legend>
+            {CONSENT_ITEMS.map((text, i) => (
+              <label key={text} className="ay-auth-check">
+                <input
+                  type="checkbox"
+                  name={`consent-gate-${i + 1}`}
+                  checked={checked[i]}
+                  onChange={() => { setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v))); setError(''); }}
+                />
+                <span>{text}</span>
+              </label>
+            ))}
+          </fieldset>
+          {error && <p className="ay-auth-err" role="alert">{error}</p>}
+          <button
+            type="button"
+            className="ay-auth-submit"
+            onClick={submit}
+            disabled={saving}
+            style={{ ...styles.primaryBtn, ...(!allChecked || saving ? styles.primaryBtnDisabled : {}) }}
+          >
+            {saving ? 'Saving…' : 'Agree and continue'}
+          </button>
+          <p className="ay-auth-legal">
+            ayna accounts are for adults 18+. By continuing you agree to our{' '}
+            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+            {', '}
+            <a href="/consumer-health-data.html" target="_blank" rel="noopener noreferrer">Consumer Health Data Privacy Notice</a>
+            {' '}and{' '}
+            <a href="/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of Use</a>.
+          </p>
+        </div>
+        <button type="button" onClick={onDecline} style={styles.skipBtn}>No thanks, sign me out</button>
       </div>
     </div>
   );

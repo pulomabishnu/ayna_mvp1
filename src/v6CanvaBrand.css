@@ -1,0 +1,130 @@
+/* ayna Canva-aligned brand system
+ * Visual source: Premium Cinematic Minimal Canva prototype.
+ * Branch-only styling layer. Product/auth/data behavior remains in React.
+ */
+:root {
+  --ayna-cream:#F3EFE9;
+  --ayna-paper:#FFFCF9;
+  --ayna-ink:#292524;
+  --ayna-muted:#78716C;
+  --ayna-navy:#242A52;
+  --ayna-indigo:#303354;
+  --ayna-plum:#4E3866;
+  --ayna-terra:#A2603C;
+  --ayna-amber:#F0A84B;
+  --ayna-amber-soft:#FFC774;
+  --ayna-pale:#FFEFD6;
+  --ayna-line:rgba(41,37,36,.14);
+  --ayna-line-strong:rgba(41,37,36,.22);
+  --ayna-line-dark:rgba(255,252,249,.16);
+  --ayna-serif:'Playfair Display','Cormorant Garamond',Georgia,serif;
+  --ayna-sans:'DM Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --ayna-ease:cubic-bezier(.2,.72,.2,1);
+}
+
+html,body,#root{background:var(--ayna-cream)!important;color:var(--ayna-ink)!important}
+body{font-family:var(--ayna-sans)!important}
+body::after{opacity:.028!important;mix-blend-mode:multiply!important;pointer-events:none!important}
+::selection{background:rgba(240,168,75,.24)!important}
+
+h1,h2,h3,.pdp-head__name,.ayna-browse__heading h2,.v6-eco-copy h1,.v6-settings-head h2,.ayna-intake-question h1,.ayna-intake-question h2{font-family:var(--ayna-serif)!important;font-weight:500!important;letter-spacing:-.045em!important}
+
+/* NAV */
+.app-nav,.app-nav--cream,.app-nav--landing{background:rgba(243,239,233,.94)!important;color:var(--ayna-ink)!important;border-bottom:1px solid var(--ayna-line)!important;box-shadow:none!important;backdrop-filter:blur(14px)!important}
+.app-nav__logo{font-family:var(--ayna-serif)!important;color:var(--ayna-ink)!important;font-weight:500!important;letter-spacing:-.04em!important}
+.app-nav a,.app-nav button{font-family:var(--ayna-sans)!important;color:inherit!important}
+.app-nav a:hover,.app-nav button:hover{opacity:.72!important}
+
+/* SHARED LIGHT SURFACES */
+.app-container,.ayna-browse,.pdp-shell,.v6-eco-page,.v6-settings-page,.ayna-intake-root:not(.v6-quiz-dark){background:var(--ayna-cream)!important;color:var(--ayna-ink)!important}
+.card,.pdp-summary-card,.v6-settings-card,.v6-submitted-card,.ayna-auth-card,.auth-card{background:var(--ayna-paper)!important;border:1px solid var(--ayna-line)!important;box-shadow:none!important}
+
+/* BUTTONS */
+.btn,.pdp-btn,.ayna-continue,.ayna-browse button,.v6-settings-page button,.v6-eco-page button{font-family:var(--ayna-sans)!important;box-shadow:none!important;transition:background .2s ease,color .2s ease,border-color .2s ease,transform .2s var(--ayna-ease)!important}
+.btn-primary,.btn-navy,.pdp-btn--navy,.ayna-continue,.ayna-auth-primary,.v6-settings-primary{background:var(--ayna-navy)!important;border-color:var(--ayna-navy)!important;color:var(--ayna-paper)!important}
+.btn-primary:hover,.btn-navy:hover,.pdp-btn--navy:hover,.ayna-continue:hover,.ayna-auth-primary:hover,.v6-settings-primary:hover{background:var(--ayna-indigo)!important;border-color:var(--ayna-indigo)!important;transform:translateY(-1px)!important}
+
+/* FORMS */
+input,textarea,select{font-family:var(--ayna-sans)!important;color:var(--ayna-ink)!important}
+input:not([type='checkbox']):not([type='radio']),textarea,select{background:var(--ayna-paper)!important;border-color:var(--ayna-line)!important;box-shadow:none!important}
+input:focus,textarea:focus,select:focus{border-color:var(--ayna-plum)!important;outline:none!important;box-shadow:0 0 0 2px rgba(78,56,102,.08)!important}
+:focus-visible{outline:2px solid var(--ayna-amber)!important;outline-offset:3px!important}
+
+/* BROWSE */
+.ayna-browse__heading h2{color:var(--ayna-ink)!important}
+.ayna-browse__heading p,.ayna-browse__meta,.ayna-browse-card__brand,.ayna-browse-card__price{color:var(--ayna-muted)!important}
+.ayna-browse__toolbar,.ayna-browse__categories,.v6-browse-needs-menu{background:var(--ayna-cream)!important;border-color:var(--ayna-line)!important;box-shadow:none!important}
+.ayna-browse__filter-button,.v6-browse-needs-trigger,.ayna-browse__sort,.ayna-browse__personalized-switch{background:var(--ayna-paper)!important;border:1px solid var(--ayna-line)!important;color:var(--ayna-ink)!important;box-shadow:none!important}
+.ayna-browse-card,.ayna-discover-card{background:transparent!important;border:0!important;box-shadow:none!important}
+.ayna-discover-card__tile{background:#E8E0D7!important;border-radius:0!important;overflow:hidden!important}
+.ayna-browse-card__name{font-family:var(--ayna-sans)!important;color:var(--ayna-ink)!important}
+.ayna-browse-card__wishlist{background:rgba(255,252,249,.92)!important;border:1px solid rgba(41,37,36,.10)!important;color:var(--ayna-ink)!important;box-shadow:none!important}
+.ayna-browse-card__affiliate{background:var(--ayna-pale)!important;color:var(--ayna-plum)!important;border:1px solid rgba(160,96,60,.16)!important}
+
+/* REAL HEALTH MATCH HOVER */
+html.v6-signed-in .ayna-browse-card__match{background:var(--ayna-navy)!important;color:var(--ayna-paper)!important;border:0!important;box-shadow:none!important}
+html.v6-signed-in .ayna-browse-card__match::after{color:rgba(255,252,249,.78)!important}
+html.v6-signed-in .ayna-browse-card__match .ayna-match-gauge{--gauge-hole:var(--ayna-navy)!important;--gauge-track:rgba(255,252,249,.18)!important;--gauge-text:var(--ayna-paper)!important;--gauge-ring:var(--ayna-amber)!important}
+
+/* PDP */
+.pdp-shell{background:var(--ayna-cream)!important}
+.pdp-head,.pdp-body,.pdp-section{border-color:var(--ayna-line)!important}
+.pdp-head__name{color:var(--ayna-ink)!important}
+.pdp-head__brand,.pdp-muted,.pdp-section__kicker{color:var(--ayna-muted)!important}
+.pdp-media,.pdp-gallery,.pdp-image-shell{background:#E8E0D7!important;border-color:var(--ayna-line)!important;box-shadow:none!important}
+.pdp-summary-card{background:var(--ayna-paper)!important;border-color:var(--ayna-line)!important}
+.pdp-chip,.pdp-tag{background:transparent!important;color:var(--ayna-plum)!important;border:1px solid var(--ayna-line)!important}
+
+/* ECOSYSTEM */
+.v6-eco-page{background:var(--ayna-cream)!important}
+.v6-eco-copy h1{color:var(--ayna-ink)!important}
+.v6-eco-copy p,.v6-eco-muted{color:var(--ayna-muted)!important}
+.v6-eco-tabs{border-color:var(--ayna-line)!important}
+.v6-eco-tabs button{background:transparent!important;color:var(--ayna-muted)!important;border-radius:0!important;border-bottom:1px solid transparent!important}
+.v6-eco-tabs button.is-active,.v6-eco-tabs button[aria-selected='true']{color:var(--ayna-ink)!important;border-bottom-color:var(--ayna-ink)!important}
+.v6-eco-product-card{background:transparent!important;border:0!important;box-shadow:none!important}
+.v6-eco-product-card img{background:#E8E0D7!important}
+
+/* INTAKE LIGHT */
+.ayna-intake-root:not(.v6-quiz-dark){background:linear-gradient(135deg,var(--ayna-paper),var(--ayna-cream) 68%,#ECE5DB)!important}
+.ayna-intake-root:not(.v6-quiz-dark) .ayna-intake-card,.ayna-intake-root:not(.v6-quiz-dark) .ayna-intake-question{background:rgba(255,252,249,.9)!important;border-color:var(--ayna-line)!important;box-shadow:none!important}
+.ayna-intake-root:not(.v6-quiz-dark) .ayna-intake-question h1,.ayna-intake-root:not(.v6-quiz-dark) .ayna-intake-question h2{color:var(--ayna-ink)!important}
+
+/* INTAKE DARK / CINEMATIC */
+.ayna-intake-root.v6-quiz-dark{color:var(--ayna-paper)!important;background:radial-gradient(circle at 85% 8%,rgba(106,72,91,.78),transparent 34%),radial-gradient(circle at 9% 96%,rgba(240,168,75,.17),transparent 24%),radial-gradient(circle at 47% 56%,rgba(63,52,87,.70),transparent 47%),var(--ayna-navy)!important}
+body:has(.ayna-intake-root.v6-quiz-dark),body:has(.ayna-intake-root.v6-quiz-dark) .app-nav{background:var(--ayna-navy)!important;color:var(--ayna-paper)!important}
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav{border-bottom-color:var(--ayna-line-dark)!important}
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav__logo{color:var(--ayna-paper)!important}
+.ayna-intake-root.v6-quiz-dark .ayna-intake-card,.ayna-intake-root.v6-quiz-dark .ayna-intake-question{background:rgba(36,42,82,.36)!important;border-color:var(--ayna-line-dark)!important;box-shadow:none!important}
+.ayna-intake-root.v6-quiz-dark .ayna-intake-question h1,.ayna-intake-root.v6-quiz-dark .ayna-intake-question h2,.ayna-intake-root.v6-quiz-dark label{color:var(--ayna-paper)!important}
+.ayna-intake-root.v6-quiz-dark input,.ayna-intake-root.v6-quiz-dark textarea,.ayna-intake-root.v6-quiz-dark select{background:rgba(255,252,249,.07)!important;color:var(--ayna-paper)!important;border-color:rgba(255,252,249,.24)!important}
+.ayna-intake-root.v6-quiz-dark .ayna-choice,.ayna-intake-root.v6-quiz-dark .ayna-chip,.ayna-intake-root.v6-quiz-dark button:not(.ayna-continue){background:transparent!important;color:var(--ayna-paper)!important;border-color:rgba(255,252,249,.22)!important}
+.ayna-intake-root.v6-quiz-dark .ayna-choice.selected,.ayna-intake-root.v6-quiz-dark .ayna-chip.selected{background:var(--ayna-pale)!important;color:var(--ayna-ink)!important;border-color:var(--ayna-terra)!important}
+.ayna-intake-root.v6-quiz-dark .ayna-continue{background:var(--ayna-amber)!important;color:var(--ayna-ink)!important;border-color:var(--ayna-amber)!important}
+
+/* AUTH / MODALS */
+.v6-auth-overlay,.ayna-auth-overlay{background:rgba(36,42,82,.88)!important;backdrop-filter:blur(10px)!important}
+.v6-auth-sheet,.ayna-auth-card,.auth-card{background:var(--ayna-paper)!important;color:var(--ayna-ink)!important;border-color:var(--ayna-line)!important;box-shadow:0 24px 80px rgba(20,18,31,.18)!important}
+
+/* ASK AYNA */
+.ayna-ask-launcher,.v6-ask-locked-fallback{background:radial-gradient(circle at 78% 14%,rgba(106,72,91,.75),transparent 36%),radial-gradient(circle at 15% 92%,rgba(240,168,75,.14),transparent 30%),var(--ayna-navy)!important;color:var(--ayna-paper)!important;border:1px solid rgba(255,252,249,.14)!important;box-shadow:none!important}
+.ayna-chatbot,.ayna-chatbot-panel,.profile-chatbot{background:var(--ayna-paper)!important;color:var(--ayna-ink)!important;border-color:var(--ayna-line)!important;box-shadow:0 24px 80px rgba(20,18,31,.16)!important}
+
+/* SETTINGS */
+.v6-settings-page{background:var(--ayna-cream)!important}
+.v6-settings-head h2{color:var(--ayna-ink)!important}
+.v6-settings-card{background:var(--ayna-paper)!important;border-color:var(--ayna-line)!important}
+
+/* FOOTER / DARK CONTENT */
+.app-footer,.ayna-footer,footer{background:var(--ayna-navy)!important;color:var(--ayna-paper)!important;border-color:var(--ayna-line-dark)!important}
+.app-footer a,.ayna-footer a,footer a{color:var(--ayna-paper)!important}
+
+/* REMOVE SAAS-Y DEPTH */
+.card,.ayna-browse-card,.ayna-discover-card,.pdp-summary-card,.v6-eco-product-card,.v6-settings-card,.ayna-intake-card,.ayna-intake-question{box-shadow:none!important}
+
+/* MOBILE */
+@media(max-width:767px){
+  .app-nav,.app-nav--cream,.app-nav--landing{background:rgba(243,239,233,.97)!important}
+  .ayna-browse-card__match{width:58px!important;height:58px!important}
+  .ayna-ask-launcher,.v6-ask-locked-fallback{transform:scale(.9)!important;transform-origin:bottom right!important}
+}

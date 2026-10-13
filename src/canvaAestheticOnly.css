@@ -1,0 +1,403 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap');
+
+@layer canva-minimal {
+
+/* Important declarations in this layer take precedence over older unlayered
+   skins, without escalating selector specificity.
+   Visual layer only. Existing page geometry, responsive rules, locks and
+   interaction states stay in their original stylesheets and components. */
+:root {
+  --canva-cream: #F3EFE9 !important;
+  --canva-paper: #FFFCF9 !important;
+  --canva-ink: #292524 !important;
+  --canva-muted: #78716C !important;
+  --canva-navy: #242A52 !important;
+  --canva-plum: #4E3866 !important;
+  --canva-terra: #A2603C !important;
+  --canva-on-navy: #FFFCF9 !important;
+  --canva-control: #242A52 !important;
+  --canva-control-text: #FFFCF9 !important;
+  --canva-line: rgba(41, 37, 36, .14) !important;
+  --canva-serif: 'Playfair Display', Georgia, serif !important;
+  --canva-sans: 'DM Sans', system-ui, sans-serif !important;
+  --v6-light-gradient: var(--canva-cream) !important;
+  --v6-dark-gradient: var(--canva-navy) !important;
+  --mockup-hero-gradient: var(--canva-navy) !important;
+  --v6-ink: var(--canva-ink) !important;
+  --v6-muted: var(--canva-muted) !important;
+  --v6-navy: var(--canva-navy) !important;
+  --v6-plum: var(--canva-plum) !important;
+  --v6-terracotta: var(--canva-terra) !important;
+  --v6-border: var(--canva-line) !important;
+  --font-body: var(--canva-sans) !important;
+  --font-heading: var(--canva-serif) !important;
+  --font-serif: var(--canva-serif) !important;
+  --v6-serif: var(--canva-serif) !important;
+  --v6-sans: var(--canva-sans) !important;
+  --v6-mono: var(--canva-sans) !important;
+}
+
+/* Dark is the initial appearance; saved appearance choices still win. */
+:root[data-v6-site-theme='dark'] {
+  color-scheme: dark;
+  --canva-cream: #242A52 !important;
+  --canva-paper: #30304A !important;
+  --canva-ink: #FFFCF9 !important;
+  --canva-muted: #C9C2CB !important;
+  --canva-plum: #D1BDE1 !important;
+  --canva-terra: #E6B18C !important;
+  --canva-line: rgba(255,252,249,.2) !important;
+  --canva-control: #E6B18C !important;
+  --canva-control-text: #242A52 !important;
+}
+:root[data-v6-site-theme='light'] { color-scheme: light; }
+
+html, body, #root, .app-container, .v6-home-shell, .ayna-browse,
+.v6-page-shell, .v6-explore, .pdp-page, .product-page, .pdp-shell,
+.v6-eco, .v6-eco-page, .my-ecosystem, .ecosystem-page,
+.articles-page, .article-page, .article-body, .about-page, .hiw {
+  background: var(--canva-cream) !important;
+  color: var(--canva-ink) !important;
+  font-family: var(--canva-sans) !important;
+}
+
+/* Retire decorative effects from earlier skins, including their dark variants. */
+html body::before, html body::after,
+.app-container::before, .app-container::after,
+.v6-cabinet-grid::before, .v6-cabinet-grid::after,
+.film-dark::after, .hero-image-wrap::after,
+.v6-film-vignette, .v6-camcorder-hud, .ayna-intake-glow,
+.v6-cabinet-door, .v6-cabinet-topper, .v6-cabinet-drawers {
+  display: none !important;
+  content: none !important;
+  animation: none !important;
+}
+
+h1, h2, h3, .serif, .article-title, .pdp-head__name,
+.app-nav__logo, .v6-bubble-copy h3 {
+  font-family: var(--canva-serif) !important;
+  font-weight: 500 !important;
+  letter-spacing: -.03em !important;
+}
+button, input, select, textarea { font-family: var(--canva-sans) !important; }
+.v6-home-hero h1, .v6-cabinet-copy h2, .v6-section-head h2,
+.ayna-browse__heading h1, .pdp-head__name, .v6-eco-copy h1 {
+  color: var(--canva-ink) !important;
+}
+.v6-home-hero h1 em, .v6-cabinet-copy h2 em, .v6-section-head h2 em,
+.ayna-discover-card__category, .pdp-head__brand, .pdp-kicker,
+.pdp-eyebrow, .article-category, .article-body a {
+  color: var(--canva-plum) !important;
+}
+.v6-home-hero > p, .v6-cabinet-copy > p, .v6-explore-meta p,
+.v6-bubble-copy p, .ayna-discover-card__price, .v6-eco-copy p,
+.pdp-muted, .pdp-copy, .pdp-subcopy, .article-card p {
+  color: var(--canva-muted) !important;
+}
+.v6-eyebrow, .v6-eco-kicker, .hiw-kicker {
+  font-family: var(--canva-sans) !important;
+  color: var(--canva-terra) !important;
+}
+.v6-scribble { color: var(--canva-terra) !important; }
+
+.app-nav, .app-nav--landing, .app-nav--cream {
+  background: var(--canva-cream) !important;
+  color: var(--canva-ink) !important;
+  border-bottom: 1px solid var(--canva-line) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.v6-home-hero, .v6-cabinet-zone, .v6-wood-cabinet,
+.v6-product-bubble, .v6-unlock-card, .v6-home-search,
+.ayna-browse-card, .ayna-discover-card, .v6-category-card,
+.v6-eco-product-card, .v6-eco-card, .ecosystem-card, .ecosystem-shelf,
+.pdp-summary-card, .pdp-evidence-card, .pdp-safety-card, .pdp-review-card,
+.article-card, .about-card, .hiw-card, .hiw-gate,
+.auth-card, .ayna-auth-card, .v6-auth-card,
+.v6-ask-panel, .ask-ayna-panel {
+  background: var(--canva-paper) !important;
+  color: var(--canva-ink) !important;
+  border: 1px solid var(--canva-line) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+.v6-home-hero { border: 0 !important; border-radius: 0 !important; }
+.v6-wood-cabinet { perspective: none !important; }
+.v6-cabinet-grid, .ayna-discover-card__body {
+  background: transparent !important;
+  border-color: var(--canva-line) !important;
+  box-shadow: none !important;
+}
+.v6-shelf-product {
+  background: var(--canva-paper) !important;
+  color: var(--canva-ink) !important;
+  border: 1px solid var(--canva-line) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+.v6-shelf-product:hover, .v6-shelf-product.is-active {
+  background: var(--canva-cream) !important;
+  border-color: var(--canva-plum) !important;
+}
+.v6-category-media, .ayna-discover-card__tile {
+  background: var(--canva-cream) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+/* Remove photo grading only; signed-out privacy blur remains on its containers. */
+html body .v6-product-visual img, html body .ayna-discover-card__tile img,
+html body .v6-eco-product-card img, html body .ecosystem-card img,
+html body .article-card img, html body .hero-photo {
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+.v6-home-search input, .ayna-browse__search input,
+.ayna-browse input[type='search'], .auth-card input, .ayna-auth-card input,
+.v6-ask-panel input, .ask-ayna-panel input {
+  background: var(--canva-paper) !important;
+  color: var(--canva-ink) !important;
+  border-color: var(--canva-line) !important;
+  box-shadow: none !important;
+}
+.v6-home-search input { border: 0 !important; border-radius: 0 !important; }
+.v6-home-search input::placeholder { color: var(--canva-muted) !important; }
+
+.v6-home-search button, .v6-cabinet-copy button,
+.v6-bubble-actions .primary, .v6-unlock-actions .primary,
+.pdp-buy-button, .pdp-primary-button, .pdp button.primary,
+.auth-card button.primary, .ayna-auth-card button.primary,
+.app-nav__account-button, .app-nav__profile-button {
+  background: var(--canva-control) !important;
+  color: var(--canva-control-text) !important;
+  border: 1px solid var(--canva-control) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+.v6-quick-links button, .ayna-browse__categories button,
+.ayna-browse__filter-button, .v6-browse-needs-trigger,
+.v6-browse-needs-panel button, .ayna-browse__sort select,
+.v6-bubble-tags span, .pdp-chip, .pdp-tag {
+  background: transparent !important;
+  color: var(--canva-plum) !important;
+  border: 1px solid var(--canva-line) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+.v6-quick-links button:hover, .v6-quick-links button:focus-visible,
+.ayna-browse__categories button.is-active,
+.ayna-browse__categories button[aria-pressed='true'],
+.v6-browse-needs-panel button:hover {
+  background: var(--canva-control) !important;
+  color: var(--canva-control-text) !important;
+  border-color: var(--canva-control) !important;
+}
+.ayna-browse-card__wishlist {
+  background: var(--canva-paper) !important;
+  color: var(--canva-plum) !important;
+  box-shadow: none !important;
+}
+.v6-section-head, .ayna-browse__toolbar, .ayna-browse__categories,
+.ayna-browse__filters, .v6-browse-needs-panel, .pdp-head, .pdp-summary,
+.pdp-section, .v6-eco-tabs, .ecosystem-tabs {
+  border-color: var(--canva-line) !important;
+  box-shadow: none !important;
+}
+.v6-eco-tabs button.is-active, .v6-eco-tabs button[aria-selected='true'],
+.ecosystem-tabs button.is-active, .ecosystem-tabs button[aria-selected='true'],
+.article-body blockquote, .v6-bubble-score { border-color: var(--canva-terra) !important; }
+
+.ayna-intake-root:not(.v6-quiz-dark) {
+  background: var(--canva-cream) !important;
+  color: var(--canva-ink) !important;
+}
+.ayna-intake-root:not(.v6-quiz-dark) .ayna-intake-question {
+  background: var(--canva-paper) !important;
+  border: 1px solid var(--canva-line) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+/* Keep the existing optional dark intake theme, with a flat navy surface. */
+html .ayna-intake-root.v6-quiz-dark,
+html[data-v6-site-theme='dark'] .ayna-intake-root,
+.hiw-band, .hiw-gate--dark, .about-dark, .film-dark,
+.v6-ask-launcher, .ask-ayna-launcher, .ask-ayna-trigger,
+.ayna-ask-launcher, .v6-ask-locked-fallback {
+  background: var(--canva-navy) !important;
+  color: var(--canva-on-navy) !important;
+  box-shadow: none !important;
+}
+html body .ayna-intake-root.v6-quiz-dark .ayna-intake-question {
+  background: var(--canva-navy) !important;
+  border: 1px solid rgba(255,252,249,.25) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+.v6-auth-overlay, .ayna-auth-overlay, .auth-overlay {
+  background: rgba(36,42,82,.65) !important;
+}
+/* The cabinet lock remains functional, including its privacy blur. */
+.v6-cabinet-lock { background: transparent !important; }
+footer.site-footer, .app-footer, .ayna-footer {
+  background: var(--canva-paper) !important;
+  color: var(--canva-ink) !important;
+  border-color: var(--canva-line) !important;
+  box-shadow: none !important;
+}
+button:focus-visible, a:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--canva-terra) !important;
+  outline-offset: 4px !important;
+}
+
+/* Flat fields and readable inherited copy in both appearance modes. */
+html body input:not([type='checkbox']):not([type='radio']):not([type='range']),
+html body select, html body textarea {
+  background: var(--canva-paper) !important;
+  color: var(--canva-ink) !important;
+  border-color: var(--canva-line) !important;
+  box-shadow: none !important;
+}
+html body .v6-home-search input { border: 0 !important; }
+.app-nav button, .app-nav a, .app-nav__logo,
+.v6-category-card strong, .v6-category-card small,
+.ayna-discover-card__name, .v6-bubble-copy h3,
+.v6-unlock-copy strong, .v6-unlock-copy span,
+.site-footer__columns div, .site-footer__columns button, .site-footer__columns a,
+.site-footer__baseline, .site-footer__legal, .site-footer__legal a, .site-footer__legal button {
+  color: var(--canva-ink) !important;
+}
+
+/* Dark text uses opaque cream, including legacy inline labels and tab copy.
+   Low specificity lets the explicit accent and primary-button rules above win. */
+:where(html[data-v6-site-theme='dark']) :where(main, footer, .v6-settings-panel)
+:where(h1, h2, h3, h4, p, div, strong, em, b, span, small, label, li, dt, dd, a, button) {
+  color: var(--canva-ink) !important;
+}
+:where(html[data-v6-site-theme='dark']) :where(button, a) :where(span, div, strong, em, svg) {
+  color: inherit !important;
+}
+:where(html[data-v6-site-theme='dark']) :where(input, textarea)::placeholder {
+  color: var(--canva-muted) !important;
+  opacity: 1 !important;
+}
+.pdp-back, .pdp-head__eyebrow, .pdp-head__price, .pdp-head__link,
+.pdp-actions__ecosystem, .pdp-tabs button, .pdp-summary-card__meta,
+.pdp-summary-card__foot, .ayna-intake-subtitle, .ayna-intake-hint,
+.ayna-intake-section-label, .ayna-age-value, .ayna-skip {
+  color: var(--canva-ink) !important;
+}
+.pdp-head__badge, .pdp-layout-toggle button,
+.ayna-age-btn, .ayna-choice-card, .ayna-seg-option, .ayna-pill,
+.ayna-white-card, .ayna-list-panel, .ayna-token-card, .ayna-product-row {
+  background: var(--canva-paper) !important;
+  color: var(--canva-ink) !important;
+  border-color: var(--canva-line) !important;
+  box-shadow: none !important;
+}
+.pdp-btn--navy, .pdp-layout-toggle button.is-active, .ayna-continue,
+.ayna-choice-card.selected, .ayna-seg-option.selected, .ayna-pill.selected {
+  background: var(--canva-control) !important;
+  color: var(--canva-control-text) !important;
+  border-color: var(--canva-control) !important;
+  box-shadow: none !important;
+}
+
+.about-advisor__photo, .about-advisor__initials {
+  background: var(--canva-paper) !important;
+  color: var(--canva-ink) !important;
+}
+
+/* A signed-out preview should not become a tall blurred stack on small screens. */
+@media (max-width: 900px) {
+  .v6-cabinet-zone.is-locked {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-height: 180px !important;
+    padding: 18px 12px !important;
+    gap: 0 !important;
+  }
+  .v6-cabinet-zone.is-locked > .v6-cabinet-copy,
+  .v6-cabinet-zone.is-locked > .v6-product-bubble { display: none !important; }
+  .v6-cabinet-zone.is-locked > .v6-wood-cabinet {
+    position: absolute !important;
+    inset: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    height: calc(100% - 24px) !important;
+    margin: 0 !important;
+  }
+  .v6-cabinet-zone.is-locked .v6-cabinet-lock {
+    position: relative !important;
+    inset: auto !important;
+    padding: 0 !important;
+    backdrop-filter: none !important;
+  }
+  .v6-unlock-card.v6-unlock-card--slim {
+    width: 100% !important;
+    max-width: 580px !important;
+    padding: 12px !important;
+    grid-template-columns: 28px minmax(0, 1fr) !important;
+    grid-template-areas: 'icon copy' 'actions actions' !important;
+    gap: 10px !important;
+  }
+  .v6-unlock-card--slim .v6-unlock-copy { grid-area: copy !important; }
+  .v6-unlock-card--slim .v6-unlock-actions {
+    grid-area: actions !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    white-space: normal !important;
+  }
+  .v6-unlock-card--slim .v6-unlock-actions button {
+    display: inline-flex !important;
+    min-height: 40px !important;
+    align-items: center !important;
+  }
+}
+
+/* Keep the live site's purple-to-terracotta hero, without grain or film overlays. */
+.v6-home-hero {
+  background: linear-gradient(125deg, #242A52 0%, #33305F 32%, #4E3866 58%, #7A4A55 82%, #A2603C 100%) !important;
+}
+.v6-home-hero h1, .v6-home-hero h1 em, .v6-home-hero > p,
+.v6-home-hero .v6-eyebrow {
+  color: #FFFCF9 !important;
+}
+.v6-quick-links {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: auto !important;
+  margin: 16px auto 0 !important;
+}
+.v6-quick-links button {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 32px !important;
+  padding: 7px 13px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,252,249,.35) !important;
+  background: rgba(36,42,82,.3) !important;
+  color: #FFFCF9 !important;
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+  animation: canva-chip-in 280ms ease both !important;
+}
+.v6-quick-links button:hover, .v6-quick-links button:focus-visible {
+  background: #242A52 !important;
+  color: #FFFCF9 !important;
+  border-color: #FFFCF9 !important;
+}
+@keyframes canva-chip-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v6-quick-links button { animation: none !important; }
+}
+}

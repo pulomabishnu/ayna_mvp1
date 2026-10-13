@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ALL_PRODUCTS, getProductById } from '../data/products';
+import { applyCatalogCorrections } from '../data/catalogCorrections';
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { productImageOverride } from '../data/productImageOverrides';
@@ -72,13 +73,16 @@ const CATALOG_BY_NORMALIZED_NAME = new Map(
  * even for a product that's actually in the catalog under the same name).
  * Falls back to the product's own (possibly placeholder) image.
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function resolveCatalogProductImage(product) {
   const allowBrandLogo = product?.type === 'digital';
   // Cleaned white-background studio photo wins over any stored/catalog image.
   const override = productImageOverride(product);
   if (override) return override;
   const byId = product?.id ? getProductById(product.id) : null;
-  if (byId && !isPlaceholderProductImage(byId.image, byId.type === 'digital' || allowBrandLogo)) return byId.image;
+  if (byId) return applyCatalogCorrections(byId).image || '';
+  const corrected = applyCatalogCorrections(product);
+  if (corrected !== product) return corrected.image || '';
   const byName = CATALOG_BY_NORMALIZED_NAME.get(String(product?.name || '').trim().toLowerCase());
   if (byName && productImageOverride(byName)) return productImageOverride(byName);
   if (byName && !isPlaceholderProductImage(byName.image, byName.type === 'digital' || allowBrandLogo)) return byName.image;
@@ -99,49 +103,44 @@ export function resolveCatalogProductImage(product) {
 // is always a meaningful description for a product photo, so it's the
 // default now instead of blank; an explicit alt (including "" for a
 // genuinely decorative use) still overrides it.
-export default function ProductTileImage({ product, alt, imgStyle, imgClassName, letterNode }) {
+export default function ProductTileImage({ product, alt, imgStyle, imgClassName, letterNode, loading = 'lazy' }) {
+  product = applyCatalogCorrections(product);
   const resolvedAlt = alt !== undefined ? alt : (product?.name || '');
   const allowBrandLogo = product?.type === 'digital';
   const initial = resolveCatalogProductImage(product);
-  const [resolved, setResolved] = useState('');
-  const attemptedRef = useRef(null);
+  const identity = JSON.stringify([product?.id, product?.name, product?.brand, product?.url, product?.type, initial]);
+  const [resolved, setResolved] = useState(null);
+  const [failedSrc, setFailedSrc] = useState('');
 
   useEffect(() => {
-    setResolved('');
-    attemptedRef.current = null;
-  }, [product?.id, product?.name]);
-
-  useEffect(() => {
-    if (!product?.name) return;
-    if (!isPlaceholderProductImage(initial, allowBrandLogo)) return;
-    if (attemptedRef.current === product.id) return;
-    attemptedRef.current = product.id;
+    if (!product?.name || !isPlaceholderProductImage(initial, allowBrandLogo)) return;
     let active = true;
     resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '').then((url) => {
-      if (active && url) setResolved(url);
+      if (active && url) setResolved({ identity, url });
     });
     return () => { active = false; };
-  }, [initial, product?.id, product?.name, product?.brand, product?.url]);
+  }, [identity, initial, product?.name, product?.brand, product?.url, product?.type, allowBrandLogo]);
 
-  // `resolved` came back from the server's /api/product-image, which already
-  // applied the type-aware (allowBrandLogo) check, re-running it through
-  // isPlaceholderProductImage here would reject a legitimate app/telehealth
-  // logo again, since that heuristic has no idea the product is 'digital'.
-  const finalSrc = resolved || safeProductImageSrc(initial, allowBrandLogo);
-  if (finalSrc) {
+  // Both catalog and dynamically resolved external photos pass through the
+  // same same-origin image cache. allowBrandLogo preserves valid app/
+  // telehealth artwork that the physical-product placeholder heuristic would
+  // otherwise reject.
+  const finalSrc = safeProductImageSrc((resolved?.identity === identity ? resolved.url : '') || initial, allowBrandLogo);
+  if (finalSrc && failedSrc !== finalSrc) {
     return (
       <img
+        key={finalSrc}
         src={finalSrc}
         alt={resolvedAlt}
-        loading="lazy"
+        loading={loading}
         className={imgClassName}
-        style={imgStyle}
+        style={allowBrandLogo ? imgStyle : { ...imgStyle, objectFit: 'contain' }}
         // A backgrounded tab can abort an in-flight/lazy image load with a
         // genuine `error` event even though the URL is completely fine
         // one retry before actually giving up and hiding it.
-        onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
+        onError={(e) => handleImageErrorWithRetry(e, () => setFailedSrc(finalSrc))}
       />
     );
   }
-  return letterNode;
+  return letterNode || <ProductImageFallback style={imgStyle} className={imgClassName} />;
 }

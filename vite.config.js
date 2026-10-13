@@ -92,7 +92,7 @@ function apiDevProxy(routes, env) {
             console.error(`[dev] /api/${route} proxy failed:`, err)
             res.statusCode = 500
             res.setHeader('Content-Type', 'application/json')
-            res.end(JSON.stringify({ error: 'Local dev proxy error — check the terminal running `npm run dev`.' }))
+            res.end(JSON.stringify({ error: 'Local dev proxy error, check the terminal running `npm run dev`.' }))
           }
         })
       })
@@ -112,6 +112,12 @@ export default defineConfig(async ({ command, mode }) => {
       // Enforce exactly the port we just picked rather than letting Vite's
       // own fallback logic re-climb past it if something raced us for it.
       strictPort: true,
+    },
+    // Keep implementation/source paths out of the public production artifact.
+    // Vite defaults to false, but make the security expectation explicit so a
+    // future config change cannot silently publish source maps.
+    build: {
+      sourcemap: false,
     },
     test: {
       environment: 'node',

@@ -130,16 +130,38 @@ function norm(text) {
  * Canonical id for an ingredient string, or null when it is not in the
  * registry (unknown stays unknown, it is never guessed).
  */
+// Alias word-boundary patterns, compiled once (they were rebuilt on every
+// call, which made scoring a large catalog slow). Results are memoized per
+// normalized phrase; the function is pure, so this changes no output.
+const ALIAS_PATTERNS = new Map();
+function aliasPattern(a) {
+  let re = ALIAS_PATTERNS.get(a);
+  if (!re) {
+    re = new RegExp(`(^|[^a-z0-9])${a.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}($|[^a-z0-9])`);
+    ALIAS_PATTERNS.set(a, re);
+  }
+  return re;
+}
+const CANONICAL_CACHE = new Map();
+
 export function canonicalizeIngredient(name) {
   const n = norm(name);
   if (!n) return null;
+  if (CANONICAL_CACHE.has(n)) return CANONICAL_CACHE.get(n);
+  const id = canonicalizeNormalized(n);
+  if (CANONICAL_CACHE.size > 5000) CANONICAL_CACHE.clear();
+  CANONICAL_CACHE.set(n, id);
+  return id;
+}
+
+function canonicalizeNormalized(n) {
   // Exact alias first, then the longest alias contained in the phrase.
   let best = null;
   for (const ing of INGREDIENTS) {
     for (const a of ing.aliases) {
       if (typeof a === 'string') {
         if (n === a) return ing.id;
-        const re = new RegExp(`(^|[^a-z0-9])${a.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}($|[^a-z0-9])`);
+        const re = aliasPattern(a);
         if (re.test(n) && (!best || a.length > best.len)) best = { id: ing.id, len: a.length };
       } else if (a.test(n) && (!best || 6 > best.len)) {
         best = { id: ing.id, len: 6 };

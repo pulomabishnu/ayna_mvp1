@@ -15,6 +15,7 @@ import {
     saveCachedLlmRecommendations,
     clearCachedLlmRecommendations,
 } from '../utils/fetchLlmRecommendations';
+import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 
 const TYPE_OPTIONS = [
     { value: 'all', label: 'All types' },
@@ -220,7 +221,7 @@ export default function Recommendations({
                         display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)'
                     }}
                     title="Don't recommend this again"
-                >✕</button>
+                >X</button>
 
                 <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative', background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))' }}>
                     <ProductTileImage
@@ -243,7 +244,7 @@ export default function Recommendations({
                             background: 'var(--color-primary)', color: 'white', padding: '0.25rem 0.6rem',
                             borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '600'
                         }}>
-                            ✓ Tracked
+                            Tracked
                         </span>
                     )}
                     {product.outOfBusiness && (
@@ -291,13 +292,13 @@ export default function Recommendations({
                     )}
 
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                        {product.safety?.recalls && !product.safety.recalls.includes('⚠️') && (
-                            <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
+                        {product.safety?.recalls && !hasFlaggedRecall(product.safety.recalls) && (
+                            <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No recall alert</span>
                         )}
-                        {product.safety?.recalls && product.safety.recalls.includes('⚠️') && (
+                        {product.safety?.recalls && hasFlaggedRecall(product.safety.recalls) && (
                             <span style={{ fontSize: '0.75rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>Safety note</span>
                         )}
-                        {product.privacy?.sellsData?.includes('❌') && (
+                        {product.privacy?.sellsData?.includes('\u274C') && (
                             <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No data selling</span>
                         )}
                     </div>
@@ -313,7 +314,7 @@ export default function Recommendations({
                         </span>
                         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                             <button className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => toggleMyProduct(product)}>
-                                {isInEcosystem ? '✓ Added' : '+ Add'}
+                                {isInEcosystem ? 'Added' : '+ Add'}
                             </button>
                             {buyUrl && (
                                 <a
@@ -326,7 +327,7 @@ export default function Recommendations({
                                     Buy ↗
                                 </a>
                             )}
-                            <button className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onOpenProduct(product)}>
+                            <button className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
                                 Details
                             </button>
                         </div>
@@ -460,7 +461,7 @@ export default function Recommendations({
                                                         <button
                                                             type="button"
                                                             style={{ marginTop: '0.25rem', background: 'none', border: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '700', cursor: 'pointer' }}
-                                                            onClick={() => onOpenProduct(tier.product)}
+                                                            onClick={() => onOpenProduct(tier.product, { source: 'recommendation' })}
                                                         >
                                                             {tier.product.name}
                                                         </button>
@@ -485,7 +486,7 @@ export default function Recommendations({
                                                                             type="button"
                                                                             className="btn btn-outline"
                                                                             style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem' }}
-                                                                            onClick={() => onOpenProduct(alt)}
+                                                                            onClick={() => onOpenProduct(alt, { source: 'recommendation' })}
                                                                         >
                                                                             {alt.name}
                                                                         </button>
@@ -631,7 +632,7 @@ export default function Recommendations({
                                             background: 'white', border: '1px solid var(--color-border)',
                                             padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-pill)',
                                             fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer'
-                                        }} onClick={() => onOpenProduct(product)}>
+                                        }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
                                             {product.name}
                                         </span>
                                     );

@@ -9,10 +9,14 @@ import { loadProductCatalog } from '../utils/productCatalog';
 import { scoreSearchMatch, correctedSearchQuery } from '../utils/search/index.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import SearchAssist from './search/SearchAssist.jsx';
+import { findConfidentProductMatch } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
-import { isPartnerBrandItem } from '../utils/partnerBrands';
+import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
+import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
+import useStaticPlaceholder from '../utils/useStaticPlaceholder';
 import { getVerificationLinks } from '../utils/verificationLinks';
+import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
@@ -34,7 +38,23 @@ import { isPlainLeftClick } from '../utils/productRoute';
 
 // Re-exported for unit testing of the category-chip filtering logic (see
 // Discovery.macroGroupFilter.test.js), which imports these from here.
-export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice };
+export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice, pickOnePerPartnerBrand };
+
+// Example searches for the Browse search box's placeholder: one is picked at random each time
+// Browse is opened or refreshed and then stays put. Grouped by care theme, in life-stage order,
+// for an 18+ audience.
+const SEARCH_PLACEHOLDER_THEMES = [
+    ['magnesium for period cramps', 'organic tampons for a heavy flow', 'period underwear for overnight leaks'],
+    ['non-hormonal vaginal moisturizers', 'lubricant for sensitive skin', 'pH-balanced intimate wash'],
+    ['prenatal vitamins with choline', 'pregnancy pillow for back pain', 'morning sickness relief'],
+    ['postpartum recovery kit', 'wearable breast pump for work', 'nipple balm for breastfeeding'],
+    ['pelvic floor trainer for leaks', 'bladder leak pads that stay dry', 'pelvic floor therapy app'],
+    ['best perimenopause telehealth provider', 'supplements for perimenopause sleep', 'perimenopause mood and anxiety support'],
+    ['hot flash relief without hormones', 'cooling products for night sweats', 'menopause telehealth clinics'],
+    ['postmenopausal bone health supplements', 'vaginal dryness after menopause', 'calcium and vitamin D for bone density'],
+    ['at-home hormone test', 'sleep support for hormonal changes', 'probiotics for bloating'],
+];
+const SEARCH_PLACEHOLDER_EXAMPLES = SEARCH_PLACEHOLDER_THEMES.flat();
 
 /** Natural-language phrase for the browse-AI extension's `query` param, prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
@@ -86,19 +106,7 @@ function getExplicitEligibility(item) {
     return { fsa, hsa };
 }
 
-function matchesPreference(item, filter) {
-    if (filter === 'all') return true;
-    const text = productSearchText(item);
-    const exact = {
-        'fragrance-free': ['fragrance free', 'fragrance-free'],
-        'sensitive-skin': ['sensitive skin'],
-        vegan: ['vegan'],
-        'cruelty-free': ['cruelty free', 'cruelty-free'],
-        organic: ['organic'],
-        'clean-ingredients': ['clean ingredients'],
-    };
-    return (exact[filter] || []).some((needle) => text.includes(needle));
-}
+const matchesPreference = matchesProductPreference;
 
 function hasClinicianSupport(item) {
     const links = getVerificationLinks(item, 'doctor');
@@ -134,6 +142,13 @@ function getExplicitMatchPercent(item) {
     return null;
 }
 
+const SUSTAINABILITY_OPTIONS = [
+    { value: 'reusable', label: 'Reusable' },
+    { value: 'recyclable', label: 'Recyclable' },
+    { value: 'low-waste', label: 'Low Waste' },
+    { value: 'packaging', label: 'Sustainable Packaging' },
+];
+
 function matchesSustainability(item, filter) {
     if (filter === 'all') return true;
     const text = productSearchText(item);
@@ -152,7 +167,7 @@ function matchesLifeStage(item, filter) {
 }
 
 // Kept for sub-filter pills within a selected group
-const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
+const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'incontinence', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 
 /** Extract a numeric price for sorting (rough proxy: first $ amount, or monthly equivalent when obvious). */
 /**
@@ -218,7 +233,7 @@ function getQualityScore(item, aynaReviews = {}) {
     // Same idea for rating: no rating yet isn't evidence of a bad product, just an unrated one
     // default to a neutral 0.7 (out of 1) instead of 0.
     const rating = hasRating ? ratedValue : 0.7;
-    const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
+    const safetyOk = hasFlaggedRecall(item.safety?.recalls) ? 0 : 1;
     return (rating * 2) + consensusScore + safetyOk;
 }
 
@@ -248,6 +263,41 @@ const COLD_START_JITTER_RANGE = 3;
 function shuffleJitter(item, seed, baseScore = 0) {
     const range = baseScore < COLD_START_QUALITY_THRESHOLD ? COLD_START_JITTER_RANGE : SHUFFLE_JITTER_RANGE;
     return hashToUnitInterval(`${seed}:${item?.id || ''}`) * range;
+}
+
+// Requested 2026-09-16: until each partner brand's full catalog is
+// incorporated and a real per-product ranking exists, show only ONE product
+// per partner brand in general Browse — not every SKU from every partner —
+// and rotate which one on every fresh page load (same seed mechanism as
+// shuffleJitter/shuffleSeed above: stable for a single visit, different on
+// the next). Non-partner items are untouched. Scoped to the same
+// browsingWithoutTextQuery && !personalizationFilter condition as the
+// partner-rank sort below, for the same reason: partnership must never
+// affect search results or personalized recommendations.
+function pickOnePerPartnerBrand(items, seed) {
+    const groups = new Map();
+    const result = [];
+    for (const item of items) {
+        const rank = getPartnerBrandRank(item);
+        if (rank === null) {
+            result.push(item);
+            continue;
+        }
+        if (!groups.has(rank)) groups.set(rank, []);
+        groups.get(rank).push(item);
+    }
+    for (const [rank, group] of groups) {
+        if (group.length === 1) {
+            result.push(group[0]);
+            continue;
+        }
+        const idx = Math.min(
+            group.length - 1,
+            Math.floor(hashToUnitInterval(`${seed}:partner-brand:${rank}`) * group.length)
+        );
+        result.push(group[idx]);
+    }
+    return result;
 }
 
 // Even with the wider cold-start jitter band above, simulating the real catalog (154 products +
@@ -418,7 +468,7 @@ function FilterSheet({ groups, personalizedToggle, resultCount, activeCount, onC
                 </header>
                 <div className="ay-shopfilters__body">
                     {personalizedToggle && <div className="ay-shopfilters__group is-mobile-only">{personalizedToggle}</div>}
-                    {groups.map(([label, value, set, options]) => (
+                    {groups.filter((g) => g[3].length > 0).map(([label, value, set, options]) => (
                         <fieldset key={label} className="ay-shopfilters__group">
                             <legend>{label}</legend>
                             <div className="ay-shopfilters__chips">
@@ -454,6 +504,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
+    const searchPlaceholder = useStaticPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
     // Freshly generated on every mount, Discovery unmounts/remounts on each navigation to it,
@@ -694,8 +745,21 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
 
 
-    const filtered = useMemo(() => {
-        const applyFilters = (items, skipCategory = false) => items.filter((item) => {
+    // Shared by the catalog grid AND the AI-suggestion merge below. AI
+    // suggestions used to be appended after filtering, so a selected
+    // preference/price/rating/FSA filter didn't apply to them (2026-09-22 audit).
+    const preferenceOptions = useMemo(() => availablePreferenceOptions(combined), [combined]);
+    // Only offer filter values that match at least one real product — options
+    // that always returned an empty grid (4+ stars with no verified ratings,
+    // Recyclable, Low Waste) read as broken controls (2026-09-22 audit).
+    const sustainabilityOptions = useMemo(() => SUSTAINABILITY_OPTIONS
+        .filter((opt) => opt.value === sustainabilityFilter || combined.some((item) => matchesSustainability(item, opt.value))), [combined, sustainabilityFilter]);
+    const hasFourPlusRated = useMemo(() => combined.some((item) => {
+        const rating = item.ratingNote ? null : (getAynaRating(item, aynaReviews[item.id]) ?? (item.userRating != null ? Number(item.userRating) : null));
+        return Number.isFinite(rating) && rating >= 4;
+    }), [combined, aynaReviews]);
+
+    const passesActiveFilters = useCallback((item, skipCategory = false) => {
             if (omittedProducts[item.id]) return false;
             // An explicit FSA/HSA filter should search the full eligible catalog,
             // not only the user's personalized subset.
@@ -739,7 +803,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (!matchesSustainability(item, sustainabilityFilter)) return false;
             if (!matchesLifeStage(item, lifeStageFilter)) return false;
             return true;
-        });
+    }, [omittedProducts, personalizationFilter, eligibilityFilter, personalizedSet, macroGroup, categoryFilter, typeFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, priceFilter, ratingFilter, aynaReviews, aynaFilter, quizResults, healthProfile, myProducts, preferenceFilter, sustainabilityFilter, lifeStageFilter, matchOpts]);
+
+    const filtered = useMemo(() => {
+        const applyFilters = (items, skipCategory = false) => items.filter((item) => passesActiveFilters(item, skipCategory));
 
         let list = applyFilters(combined);
 
@@ -815,6 +882,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             });
         } else {
             const browsingWithoutTextQuery = !scoreById;
+            if (browsingWithoutTextQuery && !personalizationFilter) {
+                list = pickOnePerPartnerBrand(list, shuffleSeed);
+            }
             list = [...list].sort((a, b) => {
                 const m = matchTieBreak(a, b);
                 if (m !== 0) return m;
@@ -828,27 +898,42 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const sb = combinedRelevance.get(b.id) ?? 0;
                     if (sa !== sb) return sb - sa;
                 }
-                // Brand partners are pinned to the top of the default browsing sort
-                // (but not when personalized results are on, a partnership doesn't
-                // buy placement in a real recommendation, only visibility on the
-                // page you browse freely, per How We Make Money).
+                // Partners are pinned AND ordered (by PARTNER_BRAND_ORDER's explicit
+                // priority, requested 2026-09-16) in general browse only.
+                // Partnership never changes personalized match scores or recommendation order.
                 if (browsingWithoutTextQuery && !personalizationFilter) {
-                    const pa = isPartnerBrandItem(a) ? 1 : 0;
-                    const pb = isPartnerBrandItem(b) ? 1 : 0;
-                    if (pa !== pb) return pb - pa;
+                    const ra = getPartnerBrandRank(a);
+                    const rb = getPartnerBrandRank(b);
+                    if (ra !== null && rb !== null) {
+                        if (ra !== rb) return ra - rb;
+                    } else if (ra !== null || rb !== null) {
+                        return ra !== null ? -1 : 1;
+                    }
                 }
+
                 const baseA = getQualityScore(a, aynaReviews);
                 const baseB = getQualityScore(b, aynaReviews);
-                const qa = baseA + (browsingWithoutTextQuery ? shuffleJitter(a, shuffleSeed, baseA) : 0);
-                const qb = baseB + (browsingWithoutTextQuery ? shuffleJitter(b, shuffleSeed, baseB) : 0);
+                // Jitter used to be limited to plain browsing (no text query), but a text
+                // search produces the exact same large tied-relevance buckets browsing does
+                // (e.g. every product whose only hit is one shared tag/category, all scoring
+                // identically) — without jitter here, ties fall back to pure getQualityScore,
+                // which stacks every cold-start item at the bottom of its bucket every time
+                // (found live, 2026-09-15: two brand-new pelvic-health devices, tagged and
+                // scoring correctly for "menopause"/"postpartum" searches, never appeared
+                // because ~30 other equally-relevant products all outrank them on reviews).
+                const qa = baseA + shuffleJitter(a, shuffleSeed, baseA);
+                const qb = baseB + shuffleJitter(b, shuffleSeed, baseB);
                 return qb - qa;
             });
-            if (browsingWithoutTextQuery && !personalizationFilter) {
+            // Same reasoning as the jitter above: a cold-start product needs a guaranteed
+            // shot at page 1 whether the tied bucket it's sitting in came from browsing or
+            // from a text search — the visibility problem is identical either way.
+            if (!personalizationFilter) {
                 list = applyColdStartFloor(list, PAGE_SIZE);
             }
         }
         return list;
-    }, [combined, macroGroup, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, myProducts, matchOpts]);
+    }, [combined, passesActiveFilters, categoryFilter, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, shuffleSeed]);
 
     // Back to the first page whenever the underlying result set actually
     // changes (new filter/search/sort), not when AI suggestions arrive later
@@ -913,10 +998,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // product instantly through `filtered`.
         const catalog = filtered;
         const names = new Set(catalog.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
+        const ids = new Set(catalog.map((p) => p.id));
         const out = [...catalog];
+        // A typed query already defines the product type, so AI matches may
+        // cross the category tab — but every other active filter still applies.
+        const skipCategoryForAi = !!qTrimForAi;
         for (const p of enrichedAiSuggestions) {
             const n = (p.name || '').trim().toLowerCase();
-            if (n && names.has(n)) continue;
+            if ((n && names.has(n)) || ids.has(p.id)) continue;
+            if (!passesActiveFilters(p, skipCategoryForAi)) continue;
+            names.add(n);
+            ids.add(p.id);
             out.push(p);
         }
         // Round-accumulated AI suggestions (from "Load more", browse-mode rounds when no
@@ -930,8 +1022,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             const outNames = new Set(out.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
             for (const p of enrichedBrowseAiSuggestions) {
                 const n = (p.name || '').trim().toLowerCase();
-                if (n && outNames.has(n)) continue;
+                if ((n && outNames.has(n)) || ids.has(p.id)) continue;
+                if (!passesActiveFilters(p, skipCategoryForAi)) continue;
                 outNames.add(n);
+                ids.add(p.id);
                 out.push(p);
             }
         }
@@ -954,7 +1048,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             return [...ranked.filter((p) => !p.llmGenerated), ...ranked.filter((p) => p.llmGenerated)];
         }
         return [...out.filter((p) => !p.llmGenerated), ...out.filter((p) => p.llmGenerated)];
-    }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi]);
+    }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi, passesActiveFilters]);
     const firstWebIndex = useMemo(() => gridItems.findIndex((p) => p.llmGenerated), [gridItems]);
 
     useEffect(() => {
@@ -1238,7 +1332,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const q = (rawQuery || '').trim();
         if (!q || q.length < 2) return;
         setSearchQuery(q);
-        posthog.capture('search_performed', { queryLength: q.length });
         // Typos fixed before the category nudges and live search ("tampoons" -> "tampons").
         const qFixed = correctedSearchQuery(q);
         const qLower = qFixed.toLowerCase();
@@ -1254,12 +1347,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             { test: (s) => s.includes('tampon'), cat: 'tampon' },
             { test: (s) => (s.includes('cup') && s.includes('menstrual')) || (s.includes('cup') && !s.includes('supplement')), cat: 'cup' },
             { test: (s) => s.includes('disc') && !s.includes('discover'), cat: 'disc' },
-            { test: (s) => s.includes('menopause') || s.includes('perimenopause'), cat: 'menopause' },
+            { test: (s) => s.includes('menopause') || s.includes('perimenopause'), cat: 'menopause', macro: 'menopause' },
             { test: (s) => s.includes('pregnancy') || s.includes('prenatal'), cat: 'pregnancy' },
-            { test: (s) => s.includes('postpartum') || s.includes('breastfeeding') || s.includes('nursing'), cat: 'postpartum' },
+            { test: (s) => s.includes('postpartum') || s.includes('breastfeeding') || s.includes('nursing'), cat: 'postpartum', macro: 'postpartum' },
             { test: (s) => s.includes('fertility') || s.includes('conceive') || s.includes('ttc'), cat: 'fertility' },
             { test: (s) => s.includes('cramp') || s.includes('dysmenorrhea'), cat: 'cramp-relief' },
-            { test: (s) => s.includes('pelvic floor') || s.includes('kegel'), cat: 'pelvic-floor' },
+            // Routed through the 'pelvic' macro group, not a strict category filter — a
+            // pelvic-floor-exerciser device like Elitone is categorized 'incontinence'
+            // (its primary shopping aisle), so a strict `item.category !== 'pelvic-floor'`
+            // filter silently dropped it, same bug class as the menopause/postpartum
+            // nudges above (see their comment for the 2026-09-15 live repro).
+            { test: (s) => s.includes('pelvic floor') || s.includes('kegel'), cat: 'pelvic-floor', macro: 'pelvic' },
             { test: (s) => s.includes('tracker') || s.includes('tracking') || s.includes('wearable'), cat: 'tracker' },
         ];
 
@@ -1268,11 +1366,49 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const prevInferred = inferredCategoryRef.current;
         const baseCategory = prevInferred && categoryFilter === prevInferred.cat ? prevInferred.prev : categoryFilter;
         let resolvedCategory = baseCategory;
+        // What this search was classified as (analytics + live search); for a
+        // macro nudge the grid filter itself resets to 'all'.
+        let searchCategory = baseCategory;
         inferredCategoryRef.current = null;
-        for (const { test, cat } of categoryNudges) {
-            if (test(qLower)) { resolvedCategory = cat; if (cat !== baseCategory) inferredCategoryRef.current = { cat, prev: baseCategory }; break; }
+        for (const { test, cat, macro } of categoryNudges) {
+            if (test(qLower)) {
+                if (macro) {
+                    // Life-stage concerns (menopause, postpartum, pelvic floor) span several
+                    // real `category` values plus tag/keyword-only matches (e.g. Elitone's
+                    // incontinence devices are tagged menopause/postpartum but categorized
+                    // 'incontinence'), so a strict category filter drops them. Route through
+                    // the lenient macro-group membership the care-area chips already use
+                    // (from main, found live 2026-09-15).
+                    setMacroGroup(macro);
+                    resolvedCategory = 'all';
+                    searchCategory = cat;
+                } else {
+                    resolvedCategory = cat;
+                    searchCategory = cat;
+                    if (cat !== baseCategory) inferredCategoryRef.current = { cat, prev: baseCategory };
+                }
+                break;
+            }
         }
         if (resolvedCategory !== categoryFilter) setCategoryFilter(resolvedCategory);
+
+        // `category` is one of a small, fixed set of catalog buckets (or
+        // 'all' when nothing matched) — the same classification this
+        // function already does to pick which products to show, just also
+        // reported here. `topMatchedProductId` is similarly a fixed catalog
+        // ID, only ever attached for a clear, dominant single-product match
+        // (see findConfidentProductMatch in naturalLanguageSearch.js) — a
+        // vague symptom search correctly leaves it undefined. Deliberately
+        // never the raw query text either way: these answer "what kind of
+        // thing" / "which specific product" without answering "what exactly
+        // did they type", which could be an entire sentence naming a
+        // specific condition, medication, or life event in the user's own
+        // words.
+        posthog.capture('search_performed', {
+            category: searchCategory,
+            queryLength: q.length,
+            topMatchedProductId: findConfidentProductMatch(q, combined, omittedProducts, CATEGORY_LABELS),
+        });
 
         if (qLower.includes('waitlist') || qLower.includes('startup')) {
             if (setCurrentView) setCurrentView('waitlist');
@@ -1286,7 +1422,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         }
 
         // Trigger AI search immediately with resolved category
-        runAiSearch(qFixed, resolvedCategory, symptomFilter);
+        runAiSearch(qFixed, searchCategory, symptomFilter);
     };
 
     const handleSmartSearch = (e) => {
@@ -1392,7 +1528,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             if (value.trim().length >= 2) runSearch(value);
                         }, 600);
                     }}
-                    placeholder="Search products"
+                    placeholder={searchPlaceholder}
                     aria-label="Search products"
                 />
                 <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
@@ -1453,8 +1589,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–50'], ['50-100', '$50–100'], ['100-plus', '$100+']]],
                         ['Eligibility', eligibilityFilter, setEligibilityFilter, [['fsa-hsa', 'FSA or HSA'], ['fsa', 'FSA'], ['hsa', 'HSA']]],
                         ['Life stage', lifeStageFilter, setLifeStageFilter, [['fertility', 'Fertility'], ['pregnancy', 'Pregnancy'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause'], ['menopause', 'Menopause']]],
-                        ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']]],
-                        ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Better packaging']]],
+                        ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']].filter(([v]) => v === preferenceFilter || preferenceOptions.some((o) => o.value === v))],
+                        ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Better packaging']].filter(([v]) => sustainabilityOptions.some((o) => o.value === v))],
                         ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favourite'], ...(user ? [['best-match', 'Best matches'], ['ecosystem', 'In my ecosystem']] : [])]],
                     ]}
                     personalizedToggle={user ? personalizedToggle : null}
@@ -1525,7 +1661,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             matchLabel={badge ? badge.label : ''}
                             isSaved={isWishlisted}
                             inEcosystem={isInEcosystem}
-                            onOpen={onOpenProduct}
+                            onOpen={(p) => onOpenProduct?.(p, searchSubmitted
+                                ? { source: 'search_results', searchQuery: submittedQuery, position: idx }
+                                : { source: 'browse', position: idx })}
                             onToggleSaved={onToggleSaved}
                             labels={<>
                                 {isSponsoredItem(item) && <span className="ayna-browse-card__sponsored">Sponsored</span>}
@@ -1654,7 +1792,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Checking the government database…</p>
                     )}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
-                        {dsldProducts.map((product) => (
+                        {dsldProducts.map((product, dsldIdx) => (
                             <div key={product.id} className="card hover-lift" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ height: '120px', width: '100%', overflow: 'hidden', position: 'relative', background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)' }}>
                                     {safeProductImageSrc(product.image) ? (
@@ -1681,7 +1819,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                             {myProducts?.[product.id] ? 'Added' : 'Add'}
                                         </button>
                                         <button className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', flex: 1 }}
-                                            onClick={() => onOpenProduct && onOpenProduct(product)}>
+                                            onClick={() => onOpenProduct && onOpenProduct(product, { source: 'search_results', searchQuery: submittedQuery, position: dsldIdx })}>
                                             Details
                                         </button>
                                     </div>

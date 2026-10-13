@@ -1,0 +1,358 @@
+/* V6 lo-fi indie film material pass. Loaded after all other V6 styling. */
+
+html {
+  --v6-film-ink: #403b40;
+  --v6-film-muted: #756d72;
+  --v6-film-plum: #625665;
+  --v6-film-plum-deep: #504652;
+  --v6-film-terracotta: #8f695b;
+  --v6-film-amber: #b78d61;
+  --v6-film-paper: #dad4d2;
+  --v6-film-paper-soft: #d3c9cf;
+  --v6-film-border: rgba(67, 56, 64, .15);
+  --v6-film-shadow: rgba(48, 40, 47, .10);
+}
+
+html[data-v6-site-theme='light'] {
+  --color-bg: #dad4d2;
+  --color-surface: #d8cfd2;
+  --color-surface-soft: #ddd5d3;
+  --color-text-main: #403b40;
+  --color-text-muted: #756d72;
+  --color-primary: #625665;
+  --color-primary-hover: #554a58;
+  --v6-ws-ink: #403b40;
+  --v6-ws-plum: #625665;
+  --v6-ws-amber: #b78d61;
+  --v6-ws-border: rgba(67, 56, 64, .15);
+}
+
+html[data-v6-site-theme='dark'] {
+  --color-bg: #2f3042;
+  --color-surface: #3e3947;
+  --color-surface-soft: #47404a;
+  --color-text-main: #e8e0d7;
+  --color-text-muted: #b9afb0;
+  --color-primary: #baa17f;
+  --color-primary-hover: #c6ab87;
+  --v6-ws-cream: #e8e0d7;
+  --v6-ws-plum: #685a69;
+  --v6-ws-amber: #c09a6e;
+  --v6-ws-border: rgba(236, 225, 216, .12);
+}
+
+html[data-v6-site-theme='light'] body {
+  background:
+    radial-gradient(circle at 81% 13%, rgba(157, 112, 91, .10), transparent 31%),
+    radial-gradient(circle at 8% 88%, rgba(104, 86, 112, .09), transparent 34%),
+    linear-gradient(135deg, #d7d5d8 0%, #d6cbd2 52%, #ddc7bc 100%) fixed !important;
+}
+
+html[data-v6-site-theme='dark'] body {
+  background:
+    radial-gradient(circle at 84% 16%, rgba(153, 104, 81, .11), transparent 30%),
+    linear-gradient(135deg, #303246 0%, #504556 54%, #785c53 100%) fixed !important;
+}
+
+/* 16mm-style moving grain. It is intentionally visible, but never intercepts UI. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: -22%;
+  z-index: 2147483000;
+  pointer-events: none;
+  opacity: .15;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='4' seed='17' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.96'/%3E%3C/svg%3E");
+  background-size: 190px 190px;
+  animation: v6-film-grain .42s steps(2, end) infinite;
+}
+
+html[data-v6-site-theme='dark'] body::after { opacity: .18; }
+
+@keyframes v6-film-grain {
+  0% { transform: translate3d(-1.8%, -1.1%, 0) scale(1.03); }
+  25% { transform: translate3d(1.2%, -.5%, 0) scale(1.035); }
+  50% { transform: translate3d(-.7%, 1.4%, 0) scale(1.03); }
+  75% { transform: translate3d(1.5%, .7%, 0) scale(1.035); }
+  100% { transform: translate3d(-1.1%, -1.4%, 0) scale(1.03); }
+}
+
+/* Matte paper and dusty vintage grading instead of glossy digital surfaces. */
+.v6-home-shell,
+.ayna-browse,
+.v6-ecosystem-page,
+.ayna-intake-root,
+.pdp-page,
+.pdp-root {
+  isolation: isolate;
+}
+
+.v6-home-search,
+.v6-live-search-dropdown,
+.v6-product-bubble,
+.v6-unlock-card,
+.v6-auth-card,
+.ayna-intake-question,
+.ayna-browse__filters,
+.v6-eco-product-card,
+.eco2-sidebar__card,
+.eco2-details__item,
+.pdp-head__gallery,
+.pdp-gallery,
+[class*='pdp-card'] {
+  box-shadow: 0 14px 38px var(--v6-film-shadow) !important;
+  backdrop-filter: blur(3px) saturate(.74) !important;
+  -webkit-backdrop-filter: blur(3px) saturate(.74) !important;
+}
+
+html[data-v6-site-theme='light'] .v6-home-hero,
+html[data-v6-site-theme='light'] .v6-explore,
+html[data-v6-site-theme='light'] .ayna-browse {
+  color: var(--v6-film-ink) !important;
+}
+
+/* Product photography gets a quiet vintage grade without obscuring packaging. */
+.ayna-discover-card__tile img,
+.discovery-card img,
+.v6-product-visual img,
+.v6-eco-product-image img,
+.pdp-gallery img,
+.pdp-head__gallery img,
+.v6-typeahead-visual img {
+  filter: saturate(.78) contrast(.94) brightness(.985) sepia(.055) drop-shadow(0 10px 14px rgba(53, 42, 48, .09)) !important;
+  transition: transform 260ms ease, filter 260ms ease !important;
+}
+
+.ayna-discover-card:hover .ayna-discover-card__tile img,
+.discovery-card:hover img,
+.v6-shelf-product:hover img,
+.v6-category-card:hover img {
+  transform: translate3d(0, -4px, 0) scale(1.018) !important;
+  filter: saturate(.80) contrast(.93) brightness(.985) sepia(.06) blur(.16px) drop-shadow(0 13px 17px rgba(53, 42, 48, .11)) !important;
+}
+
+/* Dustier product tiles and search surfaces. */
+html[data-v6-site-theme='light'] .ayna-discover-card__tile,
+html[data-v6-site-theme='light'] .discovery-card [class*='image'],
+html[data-v6-site-theme='light'] .discovery-card > div:first-child {
+  background:
+    radial-gradient(circle at 74% 12%, rgba(255, 250, 244, .15), transparent 31%),
+    linear-gradient(145deg, rgba(187, 176, 184, .72), rgba(173, 158, 171, .52)) !important;
+  border-color: rgba(66, 55, 63, .10) !important;
+  box-shadow: 0 9px 25px rgba(53, 42, 49, .06) !important;
+}
+
+html[data-v6-site-theme='dark'] .ayna-discover-card__tile,
+html[data-v6-site-theme='dark'] .discovery-card [class*='image'],
+html[data-v6-site-theme='dark'] .discovery-card > div:first-child {
+  background: linear-gradient(145deg, rgba(111, 98, 111, .28), rgba(91, 72, 79, .22)) !important;
+  border-color: rgba(232, 224, 216, .09) !important;
+}
+
+.v6-live-search-dropdown {
+  background: linear-gradient(145deg, rgba(207, 198, 203, .985), rgba(190, 179, 187, .985)) !important;
+  border-color: rgba(66, 55, 63, .15) !important;
+  box-shadow: 0 18px 46px rgba(44, 36, 42, .15) !important;
+  backdrop-filter: blur(5px) saturate(.72) !important;
+}
+
+html[data-v6-site-theme='dark'] .v6-live-search-dropdown {
+  background: linear-gradient(145deg, rgba(57, 52, 65, .99), rgba(75, 61, 68, .99)) !important;
+}
+
+/* The missing-product action now uses the same row language as intake/ecosystem. */
+.v6-typeahead-add {
+  min-height: 46px !important;
+  margin: 6px 2px 1px !important;
+  padding: 8px 9px 8px 12px !important;
+  grid-template-columns: minmax(0, 1fr) 29px !important;
+  gap: 10px !important;
+  border: 1px solid rgba(75, 62, 71, .13) !important;
+  border-radius: 11px !important;
+  background: rgba(183, 168, 179, .33) !important;
+}
+
+.v6-typeahead-add:hover,
+.v6-typeahead-add.is-keyboard-active {
+  background: rgba(171, 154, 167, .43) !important;
+  border-color: rgba(75, 62, 71, .20) !important;
+}
+
+.v6-typeahead-addcopy {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+}
+
+.v6-typeahead-addcopy strong {
+  font: 600 11.5px/1.25 var(--font-body, sans-serif) !important;
+  color: var(--v6-film-ink) !important;
+}
+
+.v6-typeahead-addcopy small {
+  margin-top: 2px !important;
+  font-size: 9.5px !important;
+  color: var(--v6-film-muted) !important;
+}
+
+.v6-typeahead-plus {
+  grid-column: 2;
+  grid-row: 1;
+  width: 27px !important;
+  height: 27px !important;
+  border-radius: 50% !important;
+  background: rgba(214, 203, 210, .42) !important;
+  border: 1px solid rgba(78, 60, 82, .18) !important;
+  color: var(--v6-film-plum) !important;
+  font: 400 17px/1 var(--font-body, sans-serif) !important;
+}
+
+.v6-typeahead-add > em { display: none !important; }
+
+html[data-v6-site-theme='dark'] .v6-typeahead-add {
+  background: rgba(255, 248, 242, .045) !important;
+  border-color: rgba(255, 248, 242, .11) !important;
+}
+html[data-v6-site-theme='dark'] .v6-typeahead-add:hover { background: rgba(255, 248, 242, .07) !important; }
+html[data-v6-site-theme='dark'] .v6-typeahead-addcopy strong { color: #e8e0d7 !important; }
+html[data-v6-site-theme='dark'] .v6-typeahead-addcopy small { color: rgba(232, 224, 215, .58) !important; }
+html[data-v6-site-theme='dark'] .v6-typeahead-plus {
+  background: rgba(255, 248, 242, .045) !important;
+  border-color: rgba(255, 248, 242, .14) !important;
+  color: #d4b087 !important;
+}
+
+/* Fallback helper below Browse search uses the same compact + row. */
+.v6-add-product-helper {
+  width: 100%;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 10px !important;
+  margin: 7px 0 0 !important;
+  padding: 8px 9px 8px 12px !important;
+  border: 1px solid rgba(75, 62, 71, .13);
+  border-radius: 11px;
+  background: rgba(183, 168, 179, .28);
+  color: var(--v6-film-ink) !important;
+}
+.v6-add-product-helper[hidden] { display: none !important; }
+.v6-add-product-copy { font-size: 11.5px !important; font-weight: 600; }
+.v6-add-product-helper button {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(78, 60, 82, .18) !important;
+  background: rgba(214, 203, 210, .40) !important;
+  color: var(--v6-film-plum) !important;
+}
+.v6-add-product-helper button b { font-size: 17px !important; color: inherit !important; }
+.v6-add-product-helper button span { display: none !important; }
+.v6-add-product-status { grid-column: 1 / -1; font-size: 9.5px; color: #80695f !important; }
+
+html[data-v6-site-theme='dark'] .v6-add-product-helper {
+  background: rgba(255, 248, 242, .04) !important;
+  border-color: rgba(255, 248, 242, .11) !important;
+  color: #e8e0d7 !important;
+}
+html[data-v6-site-theme='dark'] .v6-add-product-helper button {
+  background: rgba(255, 248, 242, .04) !important;
+  border-color: rgba(255, 248, 242, .14) !important;
+  color: #d4b087 !important;
+}
+
+/* Intake is the same V6 layout, but less bright and more like matte film stock. */
+.ayna-intake-root.v6-quiz-light {
+  background:
+    radial-gradient(circle at 81% 17%, rgba(158, 111, 90, .11), transparent 30%),
+    linear-gradient(135deg, #d7d5d9 0%, #d4cbd2 54%, #dec9bf 100%) !important;
+}
+.ayna-intake-root.v6-quiz-light .ayna-intake-question {
+  background: rgba(197, 187, 194, .89) !important;
+  border-color: rgba(255, 250, 244, .20) !important;
+}
+
+.ayna-intake-root.v6-quiz-dark {
+  background: linear-gradient(135deg, #303246 0%, #504556 57%, #785c53 100%) !important;
+  color: #e8e0d7 !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-intake-question {
+  background: linear-gradient(145deg, rgba(55, 51, 65, .92), rgba(68, 55, 65, .87)) !important;
+  color: #e8e0d7 !important;
+  border-color: rgba(232, 224, 215, .10) !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-intake-question > h1,
+.ayna-intake-root.v6-quiz-dark .ayna-intake-subtitle,
+.ayna-intake-root.v6-quiz-dark .ayna-category-title,
+.ayna-intake-root.v6-quiz-dark .ayna-row-choice,
+.ayna-intake-root.v6-quiz-dark .ayna-choice-card,
+.ayna-intake-root.v6-quiz-dark .ayna-seg-option,
+.ayna-intake-root.v6-quiz-dark .ayna-pill,
+.ayna-intake-root.v6-quiz-dark .ayna-trust-item {
+  color: #e8e0d7 !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-text-input,
+.ayna-intake-root.v6-quiz-dark .ayna-textarea,
+.ayna-intake-root.v6-quiz-dark .ayna-inline-input,
+.ayna-intake-root.v6-quiz-dark .ayna-search-wrap input,
+.ayna-intake-root.v6-quiz-dark .ayna-smart-search-line,
+.ayna-intake-root.v6-quiz-dark .ayna-choice-card,
+.ayna-intake-root.v6-quiz-dark .ayna-seg-option,
+.ayna-intake-root.v6-quiz-dark .ayna-pill,
+.ayna-intake-root.v6-quiz-dark .ayna-trust-item,
+.ayna-intake-root.v6-quiz-dark .v6-support-category {
+  background: rgba(255, 248, 242, .045) !important;
+  border-color: rgba(255, 248, 242, .105) !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-text-input,
+.ayna-intake-root.v6-quiz-dark .ayna-textarea,
+.ayna-intake-root.v6-quiz-dark .ayna-inline-input,
+.ayna-intake-root.v6-quiz-dark .ayna-search-wrap input { color: #e8e0d7 !important; }
+
+/* Ecosystem gets the same desaturated film stock treatment while staying full-screen V6. */
+html[data-v6-site-theme='dark'] .v6-ecosystem-panel {
+  background:
+    radial-gradient(circle at 81% 15%, rgba(169, 117, 88, .11), transparent 29%),
+    linear-gradient(135deg, #303246 0%, #504556 55%, #785c53 100%) !important;
+}
+html[data-v6-site-theme='light'] .v6-ecosystem-panel {
+  background:
+    radial-gradient(circle at 83% 17%, rgba(155, 109, 89, .13), transparent 29%),
+    radial-gradient(circle at 8% 82%, rgba(102, 83, 111, .10), transparent 32%),
+    linear-gradient(135deg, #c9c9cf 0%, #d0c5cc 53%, #d9c0b5 100%) !important;
+}
+
+.v6-orbit-ring { opacity: .76; }
+.v6-care-bubble,
+.v6-universe-center,
+.v6-eco-product-card { box-shadow: none !important; }
+
+/* Sign in should feel like a faded film still, not a glossy modal. */
+.v6-auth-card {
+  background:
+    radial-gradient(circle at 83% 10%, rgba(149, 102, 82, .09), transparent 29%),
+    linear-gradient(145deg, rgba(202, 193, 198, .985), rgba(185, 174, 182, .98)) !important;
+  border-color: rgba(255, 250, 244, .20) !important;
+  box-shadow: 0 18px 48px rgba(43, 35, 41, .16) !important;
+}
+.v6-auth-input,
+.v6-auth-google { background: rgba(169, 157, 166, .48) !important; }
+
+/* Lower-spec/mobile devices still get grain, but not constant animation. */
+@media (max-width: 760px) {
+  body::after { opacity: .12; animation-duration: .7s; }
+  .v6-typeahead-add { min-height: 44px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none !important; transform: none !important; }
+  .ayna-discover-card__tile img,
+  .discovery-card img,
+  .v6-product-visual img,
+  .v6-eco-product-image img { transition: none !important; }
+}

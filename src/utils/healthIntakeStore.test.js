@@ -8,7 +8,11 @@ let calls;
 beforeEach(() => {
   rows = new Map(); calls = [];
   const local = new Map();
-  vi.stubGlobal('window', { localStorage: { getItem: (key) => local.get(key) || null, setItem: (key, value) => local.set(key, value) } });
+  const session = new Map();
+  vi.stubGlobal('window', {
+    localStorage: { getItem: (key) => local.get(key) || null, setItem: (key, value) => local.set(key, value), removeItem: (key) => local.delete(key) },
+    sessionStorage: { getItem: (key) => session.get(key) || null, setItem: (key, value) => session.set(key, value), removeItem: (key) => session.delete(key) },
+  });
   mock.sb = { from(table) {
     const call = { table }; calls.push(call);
     const query = {

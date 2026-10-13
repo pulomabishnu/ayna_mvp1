@@ -179,7 +179,9 @@ export function normalizeName(value) {
 export function resolveCatalogProduct(name, catalog) {
   const target = normalizeName(name);
   if (!target || !Array.isArray(catalog) || !catalog.length) return null;
-  const exact = catalog.find((p) => normalizeName(p.name) === target);
+  const exact = catalog.find((p) => normalizeName(p.name) === target)
+    // A catalog correction may have renamed the product since the user saved it.
+    || catalog.find((p) => p.originalName && normalizeName(p.originalName) === target);
   if (exact) return exact;
   const tokens = target.split(' ').filter((t) => t.length > 1);
   if (tokens.length < 2) return null;

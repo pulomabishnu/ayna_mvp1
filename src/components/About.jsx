@@ -1,19 +1,23 @@
 import React from 'react';
 import { InfoPage, InfoSection } from './InfoPage';
-import { TEAM_PHOTO, TEAM_CAPTION } from '../data/welcomeSlides.js';
+import { TEAM_CAPTION } from '../data/welcomeSlides.js';
 
 /**
- * About = people, mission and advisors (audit HW01). The method itself
+ * About = people, story, mission and advisors (audit HW01). The method itself
  * (profile, market, evidence, shop) lives on How It Works only.
  *
- * Only real, already-published information is used here: the team photo,
- * the founders' names, and the advisor list this page already carried.
+ * Only real, already-published information is used here: the founders' story,
+ * team and portrait photos (public/about/), founder titles, LinkedIn links and
+ * the advisor list. A missing photo falls back to initials, so nothing breaks.
  */
 
+const TEAM_PHOTO = '/about/team.jpg';
+
 const FOUNDERS = [
-  { name: 'Puloma Bishnu', role: 'Co-founder & CEO' },
-  { name: 'Ameera Omar', role: 'Co-founder, CMO & interim CTO' },
-  { name: 'Eliz Celik', role: 'Co-founder & COO' },
+  // position: which part of the photo stays in frame in the 4:3 crop.
+  { name: 'Puloma Bishnu', role: 'Co-founder & CEO', photo: '/about/puloma.jpg', position: '50% 22%', linkedin: 'https://www.linkedin.com/in/pulomabishnu/' },
+  { name: 'Eliz Celik', role: 'Co-founder & COO', photo: '/about/eliz.jpg', position: '50% 38%', linkedin: 'https://www.linkedin.com/in/eliz-celik-098215216/' },
+  { name: 'Ameera Omar', role: 'Co-founder, CMO & Interim CTO', photo: '/about/ameera.jpg', position: '50% 50%', linkedin: 'https://www.linkedin.com/in/ameera-omar/' },
 ];
 // Advisors in discussion stay off the public page until confirmed.
 const SHOW_ADVISOR_IN_DISCUSSION = false;
@@ -25,14 +29,51 @@ const PRINCIPLES = [
   { title: 'Never pay-to-match', body: 'Sponsorship is never a match input.' },
 ];
 
+const HELPS = [
+  {
+    title: 'Start with your needs',
+    body: 'Explore by wellness concern or share your preferences for a more personalized experience.',
+    icon: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <path d="M15.5 15.5 21 21" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Look beyond the label',
+    body: 'Find ingredient details, available research and product information together, with sources you can explore further.',
+    icon: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z" />
+        <path d="M14 3v5h5M8.5 12.5h7M8.5 16h7" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Hear other perspectives',
+    body: 'Read consumer experiences alongside product information. Someone else’s experience can offer context, even when their needs differ from yours.',
+    icon: (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+        <circle cx="9" cy="8" r="3.5" />
+        <path d="M2.5 20c.8-3.5 3.3-5.5 6.5-5.5s5.7 2 6.5 5.5" />
+        <circle cx="17" cy="9" r="2.8" />
+        <path d="M17.5 14.5c2.3.3 3.6 2 4 4.5" />
+      </svg>
+    ),
+  },
+];
+
 const ADVISORS = [
-  { name: 'Dr. David Orbach', title: 'BME, MD, Startup Advisor', photo: '/advisors/david-orbach.png' },
-  { name: 'Gwyn Blanton', title: 'Former Director of Ethics & Compliance, Deloitte', photo: '/advisors/gwyn-blanton.png' },
-  { name: 'Albert Charles', title: 'Co-Founder, Gorges Ventures', photo: '/advisors/albert-charles.png' },
-  { name: 'Erika Demonsant', title: 'Healthcare Consultant, Huron', photo: '/advisors/erika-demonsant.png' },
-  { name: 'Pamela Nasr', title: 'Product Lead, Benchling', photo: '/advisors/pamela-nasr.png' },
-  { name: 'Nishtha Kaushik', title: 'Advisor', linkedin: 'https://www.linkedin.com/in/nkaushik29/' },
-  { name: 'Navneet Kaur', title: 'Advisor', linkedin: 'https://www.linkedin.com/in/navneet-kaur-80109b227' },
+  { name: 'Dr. David Orbach', title: 'BME, MD, Startup Advisor', photo: '/advisors/david-orbach.png', linkedin: 'https://www.linkedin.com/in/davidorbach/' },
+  { name: 'Gwyn Blanton', title: 'Former Director of Ethics & Compliance, Deloitte', photo: '/advisors/gwyn-blanton.png', linkedin: 'https://www.linkedin.com/in/gwyn-blanton-8910638/' },
+  { name: 'Albert Charles', title: 'Co-Founder, Gorges Ventures', photo: '/advisors/albert-charles.png', linkedin: 'https://www.linkedin.com/in/albert-charles-6800a41a1/' },
+  { name: 'Erika Demonsant', title: 'Healthcare Consultant, Huron', photo: '/advisors/erika-demonsant.png', linkedin: 'https://www.linkedin.com/in/erikalacey/' },
+  { name: 'Pamela Nasr', title: 'Product Lead, Benchling', photo: '/advisors/pamela-nasr.png', linkedin: 'https://www.linkedin.com/in/pamelatnasr/' },
+  { name: 'Nishtha Kaushik', title: 'Advisor', photo: '/advisors/nishtha-kaushik.jpg', linkedin: 'https://www.linkedin.com/in/nkaushik29/' },
+  { name: 'Navneet Kaur', title: 'Advisor', photo: '/advisors/navneet-kaur.jpg', linkedin: 'https://www.linkedin.com/in/navneet-kaur-80109b227' },
+  // No LinkedIn found; links her Houston Methodist physician profile instead.
+  { name: 'Dr. Anuja Vyas', title: 'Board-Certified OB/GYN, Advisor', photo: '/advisors/anuja-vyas.jpg', linkedin: 'https://www.houstonmethodist.org/doctor/anuja-vyas/', linkLabel: 'Profile' },
 ];
 
 /** Not yet a confirmed advisor. Kept separate from ADVISORS rather than
@@ -58,41 +99,51 @@ function AdvisorPhoto({ advisor, small = false }) {
   const [failed, setFailed] = React.useState(false);
   const cls = `ay-info-advisor__photo${small ? ' ay-info-advisor__photo--sm' : ''}`;
   if (advisor.photo && !failed) {
-    return <img className={cls} src={advisor.photo} alt="" onError={() => setFailed(true)} />;
+    return <img className={cls} src={advisor.photo} alt="" loading="lazy" onError={() => setFailed(true)} />;
   }
   return <div className={`${cls} ay-info-advisor__photo--initials`} aria-hidden="true">{initials(advisor.name)}</div>;
 }
 
-export default function About({ onBack }) {
+function FounderPhoto({ founder }) {
+  const [failed, setFailed] = React.useState(false);
+  if (founder.photo && !failed) {
+    return (
+      <img
+        className="ay-info-founder__photo"
+        src={founder.photo}
+        alt={founder.name}
+        loading="lazy"
+        style={founder.position ? { objectPosition: founder.position } : undefined}
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+  return <div className="ay-info-founder__photo ay-info-founder__photo--initials" aria-hidden="true">{initials(founder.name)}</div>;
+}
+
+function TeamPhoto() {
+  const [failed, setFailed] = React.useState(false);
+  if (failed) return null;
+  return (
+    <figure className="ay-info-team__photo ay-info-story__photo">
+      <img src={TEAM_PHOTO} alt="The ayna founding team" style={{ objectPosition: '50% 70%' }} onError={() => setFailed(true)} />
+      <figcaption>{TEAM_CAPTION}</figcaption>
+    </figure>
+  );
+}
+
+export default function About({ onBack, onExplore, onStart }) {
   return (
     <InfoPage
       eyebrow="About ayna"
-      title={<>Made for the whole you.</>}
-      lede="Women's health isn't one-size-fits-all. ayna helps you explore options with the context, evidence and explanations you deserve."
+      title={<>We built the place we wished we could turn to.</>}
+      lede="Women’s wellness discovery, shaped around you."
       onBack={onBack}
     >
-      <InfoSection eyebrow="The people" title="Who's behind ayna">
-        <div className="ay-info-team">
-          <figure className="ay-info-team__photo">
-            <img src={TEAM_PHOTO} alt="The ayna founders together outdoors" />
-            <figcaption>{TEAM_CAPTION}</figcaption>
-          </figure>
-          <div className="ay-info-card ay-info-team__card">
-            <span className="ay-info__pill">Founders</span>
-            <ul className="ay-info-team__names">
-              {FOUNDERS.map((f) => <li key={f.name}><strong>{f.name}</strong><span className="ay-info-team__role">{f.role}</span></li>)}
-            </ul>
-            <p className="ay-info__body">
-              Real people building a place to explore women's health with more clarity, care and community.
-            </p>
-          </div>
-        </div>
-      </InfoSection>
-
       <InfoSection
         eyebrow="Our mission"
-        title="Discovery with context."
-        intro="ayna is a place to discover women's health products with more context. You tell us about your goals and preferences. We help you find relevant options and show why they may fit."
+        title="Your body. Your questions. A clearer place to start."
+        intro="ayna helps you discover women’s wellness products with your needs in mind. Explore product information, research and reviews in one place, so you can spend less time searching and more time understanding your options."
       >
         <div className="ay-info-grid ay-info-grid--4">
           {PRINCIPLES.map((p, i) => (
@@ -104,8 +155,75 @@ export default function About({ onBack }) {
         </div>
       </InfoSection>
 
+      <InfoSection eyebrow="Our story" title="Different stories. One shared question.">
+        <div className="ay-info-story">
+          <div className="ay-info-card ay-info-card--pad ay-info-story__text">
+            <p className="ay-info__body">
+              For our co-founder Puloma, getting a PMOS diagnosis took visits to three doctors. When she asked her OB-GYN
+              which products could help manage her symptoms, she was told to “look it up.” Finding guidance on
+              non-prescription products brought another challenge: figuring out where to begin.
+            </p>
+            <p className="ay-info__body">
+              For Eliz and Ameera, growing up in households where intimate health wasn’t openly discussed meant looking
+              online for answers to questions that were difficult to ask elsewhere.
+            </p>
+            <p className="ay-info__body">
+              We met at Cornell, bringing different experiences to the same question:{' '}
+              <em>why does understanding our options require so much searching?</em>
+            </p>
+            <p className="ay-info__body">
+              ayna grew out of that question. We’re building a place where women can explore wellness products,
+              understand the information behind them and find options that reflect their individual needs.
+            </p>
+          </div>
+          <TeamPhoto />
+        </div>
+        <div className="ay-info-card ay-info-card--pad ay-info-card--butter ay-info-mirror">
+          <h3 className="ay-info-card__title">ayna means “mirror.”</h3>
+          <p className="ay-info__body">
+            Our name means mirror in Bengali and Turkish. To us, it expresses what we want this experience to feel like:
+            a place that reflects you, your questions and what matters to you.
+          </p>
+        </div>
+      </InfoSection>
+
+      <InfoSection eyebrow="How ayna helps" title="More context for the choices you make.">
+        <div className="ay-info-grid ay-info-grid--3">
+          {HELPS.map((item) => (
+            <div key={item.title} className="ay-info-card ay-info-card--pad ay-info-help">
+              <span className="ay-info-help__icon">{item.icon}</span>
+              <h3 className="ay-info-card__title">{item.title}</h3>
+              <p className="ay-info__body">{item.body}</p>
+            </div>
+          ))}
+        </div>
+      </InfoSection>
+
+      <InfoSection
+        eyebrow="Meet the founders"
+        title="Three founders. A shared reason to build."
+        intro="We’re Puloma, Eliz and Ameera: three women who met at Cornell and wanted a better starting point for women navigating wellness products."
+      >
+        <ul className="ay-info-grid ay-info-grid--3 ay-info-founders">
+          {FOUNDERS.map((f) => (
+            <li key={f.name} className="ay-info-card ay-info-founder">
+              <FounderPhoto founder={f} />
+              <div className="ay-info-founder__body">
+                <h3 className="ay-info-card__title">{f.name}</h3>
+                <div className="ay-info-team__role">{f.role}</div>
+                {f.linkedin && (
+                  <a className="ay-info-advisor__link" href={f.linkedin} target="_blank" rel="noopener noreferrer">
+                    LinkedIn <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </InfoSection>
+
       <InfoSection eyebrow="Advisors" title="Guided by real expertise.">
-        <ul className="ay-info-advisors">
+        <ul className="ay-info-advisors" id="advisors">
           {ADVISORS.map((advisor) => (
             <li key={advisor.name} className="ay-info-advisor">
               <AdvisorPhoto advisor={advisor} />
@@ -113,7 +231,7 @@ export default function About({ onBack }) {
               <div className="ay-info-advisor__title">{advisor.title}</div>
               {advisor.linkedin && (
                 <a className="ay-info-advisor__link" href={advisor.linkedin} target="_blank" rel="noopener noreferrer">
-                  LinkedIn <span aria-hidden="true">↗</span>
+                  {advisor.linkLabel || 'LinkedIn'} <span aria-hidden="true">↗</span>
                 </a>
               )}
             </li>
@@ -126,6 +244,24 @@ export default function About({ onBack }) {
             <div className="ay-info-advisor-note__label">In conversation with ayna, not yet a confirmed advisor</div>
           </div>
         </div>}
+      </InfoSection>
+
+      <InfoSection>
+        <div className="ay-info-card ay-info-card--pad ay-info-card--peri ay-info-cta">
+          <div>
+            <h2 className="ay-info__h2 ay-info__h2--sm">A place to return to as your needs change.</h2>
+            <p className="ay-info__body">
+              The questions you have about your body can change over time. We want ayna to grow with those questions,
+              making women’s wellness easier to explore at every stage.
+            </p>
+          </div>
+          {(onStart || onExplore) && (
+            <div className="ay-info-btn-row">
+              {onStart && <button type="button" className="ay-info-btn" onClick={() => onStart()}>Find your starting point</button>}
+              {onExplore && <button type="button" className="ay-info-btn ay-info-btn--ghost" onClick={() => onExplore()}>Explore ayna</button>}
+            </div>
+          )}
+        </div>
       </InfoSection>
     </InfoPage>
   );

@@ -1,14 +1,24 @@
+import posthog from 'posthog-js';
+import { getSupabaseClient } from './supabaseClient';
+import { getCompactAccessToken } from './authMetadataCleanup';
+import {
+  loadLearningMemorySession,
+  saveLearningMemorySession,
+  saveLearningMemoryForUser,
+} from './learningMemoryStore';
+import { filterRecommendationsToCatalog } from './catalogIntegrity';
+import { getAppSessionId } from './conversationId';
+
 const API_PATH = '/api/llm-recommendations';
-/** Prevents the ecosystem page from showing “Loading…” forever if the server never responds. */
-// Must sit ABOVE the server's function ceiling (vercel.json maxDuration = 60s)
-// plus network overhead. The old 150s value was paired with a client that
-// batched work assuming a 252s server budget, so the client aborted ~100s
-// before the server could possibly finish and threw the work away.
 const DEFAULT_FETCH_TIMEOUT_MS = 75_000;
-const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
-/** Persistent cache so re-login does not re-call the LLM for the same intake. */
-const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v2';
-const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v2';
+// v3: bumped in the 2026-09-22 integrity audit so caches holding free-form
+// model products from older builds are never read back.
+const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v4';
+const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v4';
+
+function captureRecommendationAnalytics(event, properties) {
+  try { posthog.capture(event, properties); } catch { /* analytics must never break recommendations */ }
+}
 
 function stableStringify(val) {
   if (val === null || typeof val !== 'object') return JSON.stringify(val);
@@ -17,11 +27,21 @@ function stableStringify(val) {
   return '{' + keys.map(k => JSON.stringify(k) + ':' + stableStringify(val[k])).join(',') + '}';
 }
 
-/**
-  * Stable id for one ecosystem build, derived from the intake fingerprint.
-  * The server claims quota against this rather than per request, so every batch
-  * of a build shares one claim and a retry after failure costs nothing.
-  */
+function migrateLegacyCacheKey(key) {
+  if (typeof window === 'undefined') return null;
+  try {
+    const current = window.sessionStorage.getItem(key);
+    if (current != null) return current;
+    const legacy = window.localStorage.getItem(key);
+    if (legacy == null) return null;
+    try { window.sessionStorage.setItem(key, legacy); } catch (_) {}
+    try { window.localStorage.removeItem(key); } catch (_) {}
+    return legacy;
+  } catch {
+    return null;
+  }
+}
+
 export function buildIdFromFingerprint(fingerprint) {
   const s = String(fingerprint || '');
   let h1 = 0x811c9dc5, h2 = 0x01000193;
@@ -44,33 +64,28 @@ export function fingerprintIntake(intake) {
 export function loadCachedLlmRecommendations(fingerprint) {
   if (!fingerprint || typeof window === 'undefined') return null;
   try {
-    const raw = window.localStorage.getItem(RECS_CACHE_KEY);
+    const raw = migrateLegacyCacheKey(RECS_CACHE_KEY);
     if (!raw) return null;
     const o = JSON.parse(raw);
     if (!o || o.fingerprint !== fingerprint) return null;
-    const recs = o.recommendations;
-    return Array.isArray(recs) && recs.length > 0 ? recs : null;
+    const recs = filterRecommendationsToCatalog(o.recommendations);
+    return recs.length > 0 ? recs : null;
   } catch {
     return null;
   }
 }
 
-/**
-  * @returns {boolean} whether the payload was actually persisted. The caller MUST
-  * check this before recording the fingerprint as fetched: a swallowed
-  * QuotaExceededError plus a recorded fingerprint is the exact combination that
-  * leaves the ecosystem permanently empty with no error.
-  */
 export function saveCachedLlmRecommendations(fingerprint, recommendations) {
   if (!fingerprint || typeof window === 'undefined') return false;
   try {
-    window.localStorage.setItem(
+    window.sessionStorage.setItem(
       RECS_CACHE_KEY,
       JSON.stringify({ fingerprint, recommendations })
     );
+    try { window.localStorage.removeItem(RECS_CACHE_KEY); } catch (_) {}
     return true;
   } catch (e) {
-    console.warn('[Ayna] could not cache recommendations (quota or private mode):', e?.name);
+    console.warn('[Ayna] could not cache recommendations for this session:', e?.name);
     return false;
   }
 }
@@ -78,6 +93,8 @@ export function saveCachedLlmRecommendations(fingerprint, recommendations) {
 export function clearCachedLlmRecommendations() {
   try {
     if (typeof window === 'undefined') return;
+    window.sessionStorage.removeItem(RECS_CACHE_KEY);
+    window.sessionStorage.removeItem(FETCHED_FINGERPRINT_KEY);
     window.localStorage.removeItem(RECS_CACHE_KEY);
     window.localStorage.removeItem(FETCHED_FINGERPRINT_KEY);
   } catch {
@@ -88,7 +105,7 @@ export function clearCachedLlmRecommendations() {
 export function loadFetchedLlmFingerprint() {
   if (typeof window === 'undefined') return '';
   try {
-    return String(window.localStorage.getItem(FETCHED_FINGERPRINT_KEY) || '');
+    return String(migrateLegacyCacheKey(FETCHED_FINGERPRINT_KEY) || '');
   } catch {
     return '';
   }
@@ -97,7 +114,8 @@ export function loadFetchedLlmFingerprint() {
 export function saveFetchedLlmFingerprint(fingerprint) {
   if (!fingerprint || typeof window === 'undefined') return;
   try {
-    window.localStorage.setItem(FETCHED_FINGERPRINT_KEY, String(fingerprint));
+    window.sessionStorage.setItem(FETCHED_FINGERPRINT_KEY, String(fingerprint));
+    try { window.localStorage.removeItem(FETCHED_FINGERPRINT_KEY); } catch (_) {}
   } catch {
     // no-op
   }
@@ -137,23 +155,26 @@ export function buildLlmRecommendationsRequestBody({
 }
 
 export function loadLearningMemory() {
-  try {
-    if (typeof window === 'undefined') return {};
-    const raw = window.localStorage.getItem(MEMORY_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
+  return loadLearningMemorySession();
 }
 
 export function saveLearningMemory(memory) {
+  saveLearningMemorySession(memory);
+
   try {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem(MEMORY_KEY, JSON.stringify(memory || {}));
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+    supabase.auth.getSession()
+      .then(({ data }) => {
+        const userId = data?.session?.user?.id;
+        if (!userId) return;
+        return saveLearningMemoryForUser(supabase, userId, memory || {});
+      })
+      .catch((error) => {
+        console.warn('[Ayna] could not sync learning memory:', error?.message || 'save_failed');
+      });
   } catch {
-    // no-op
+    // Session cache still works; server sync will retry on the next build.
   }
 }
 
@@ -169,6 +190,34 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
 
   const timeoutMs = typeof fetchOpts.timeoutMs === 'number' ? fetchOpts.timeoutMs : DEFAULT_FETCH_TIMEOUT_MS;
   const { authToken, signal: externalSignal } = fetchOpts;
+  const analyticsBase = {
+    batchIndex: typeof body.batchIndex === 'number' ? body.batchIndex : 0,
+    hasBatching: typeof body.batchSize === 'number',
+    trackedCount: body.feedback?.trackedProductIds?.length || 0,
+    ecosystemCount: body.feedback?.ecosystemProductIds?.length || 0,
+    omittedCount: body.feedback?.omittedProductIds?.length || 0,
+  };
+
+  // Older builds stored whole ecosystem/wishlist snapshots in Supabase Auth
+  // user_metadata. Because Supabase embeds that metadata in the JWT, affected
+  // users can carry a 30KB+ Authorization header that Vercel rejects before
+  // this endpoint ever runs. Compact the legacy metadata and use the freshly
+  // issued token before every recommendation request. The helper deduplicates
+  // concurrent cleanup, so the seven batch calls share one refresh.
+  let requestAuthToken = authToken || '';
+  if (requestAuthToken) {
+    try {
+      const supabase = getSupabaseClient();
+      requestAuthToken = await getCompactAccessToken(supabase, requestAuthToken);
+    } catch (error) {
+      captureRecommendationAnalytics('ai_recommendations_failed', {
+        ...analyticsBase,
+        code: error?.code || 'auth_token_cleanup_failed',
+      });
+      throw error;
+    }
+  }
+
   const controller = new AbortController();
   const tid = setTimeout(() => controller.abort(), timeoutMs);
   const onExternalAbort = () => controller.abort();
@@ -183,13 +232,15 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+        ...(requestAuthToken ? { Authorization: `Bearer ${requestAuthToken}` } : {}),
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ ...body, conversationId: getAppSessionId() }),
       signal: controller.signal,
     });
   } catch (e) {
     if (e?.name === 'AbortError') {
+      const code = externalSignal?.aborted ? 'cancelled' : 'timeout';
+      captureRecommendationAnalytics('ai_recommendations_failed', { ...analyticsBase, code });
       if (externalSignal?.aborted) {
         const err = new Error('Cancelled');
         err.code = 'cancelled';
@@ -199,26 +250,53 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
       err.code = 'timeout';
       throw err;
     }
+    captureRecommendationAnalytics('ai_recommendations_failed', { ...analyticsBase, code: 'network_error' });
     throw e;
   } finally {
     clearTimeout(tid);
     if (externalSignal) externalSignal.removeEventListener('abort', onExternalAbort);
   }
 
+  const raw = await res.text();
   let data;
   try {
-    data = await res.json();
+    data = raw ? JSON.parse(raw) : {};
   } catch {
-    throw new Error('Invalid recommendation response');
+    const code = res.status === 494 ? 'request_header_too_large' : 'invalid_response';
+    captureRecommendationAnalytics('ai_recommendations_failed', { ...analyticsBase, code, status: res.status });
+    const err = new Error(
+      res.status === 494
+        ? 'Recommendation request was rejected because the authentication header is too large. Please sign out and back in.'
+        : 'Invalid recommendation response'
+    );
+    err.status = res.status;
+    err.code = code;
+    throw err;
   }
 
   if (!res.ok) {
     const msg = data?.message || data?.error || `HTTP ${res.status}`;
+    captureRecommendationAnalytics('ai_recommendations_failed', {
+      ...analyticsBase,
+      code: data?.error || 'request_failed',
+      status: res.status,
+    });
     const err = new Error(msg);
     err.status = res.status;
     err.code = data?.error;
     throw err;
   }
 
+  // Belt and braces: the server already hydrates from the catalog.
+  if (Array.isArray(data?.recommendations)) {
+    data.recommendations = filterRecommendationsToCatalog(data.recommendations);
+  }
+
+  captureRecommendationAnalytics('ai_recommendations_completed', {
+    ...analyticsBase,
+    providerUsed: typeof data?.providerUsed === 'string' && data.providerUsed ? data.providerUsed : 'unknown',
+    recommendationCount: Array.isArray(data?.recommendations) ? data.recommendations.length : 0,
+    concernsTotal: Number.isFinite(Number(data?.concernsTotal)) ? Number(data.concernsTotal) : undefined,
+  });
   return data;
 }

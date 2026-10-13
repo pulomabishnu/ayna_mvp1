@@ -1,7 +1,9 @@
+import FeedbackPrompts from './components/FeedbackPrompts';
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
+import ConsentBanner from './components/ConsentBanner';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import WebIntake from './components/WebIntake';
@@ -10,6 +12,8 @@ import WebCommunity from './components/WebCommunity';
 import WebWrapped from './components/WebWrapped';
 import { useThemeMode } from './mobile/hooks/useThemeMode.js';
 import HealthProfileEditor from './components/HealthProfileEditor';
+import DeleteAccountPage from './components/DeleteAccountPage';
+import AdminReviewsPage from './components/AdminReviewsPage';
 import PhoneVerification from './components/PhoneVerification';
 import Recommendations from './components/Recommendations';
 import TrackedItems from './components/TrackedItems';
@@ -30,12 +34,12 @@ const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
 // Internal, read-only product passport audit (dev, or ?internal=1 opt-in).
 const ProductAudit = React.lazy(() => import('./components/ProductAudit'));
-import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById } from './data/products';
+const CampusResources = React.lazy(() => import('./components/CampusResources'));
+import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage } from './data/products';
 import { behaviorFrom } from './utils/matchDisplay';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
-import { useEscapeToClose } from './utils/useEscapeToClose';
 import ProductModal from './components/ProductModal';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
 import ProfileChatbot from './components/ProfileChatbot';
@@ -43,7 +47,7 @@ import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataPr
 import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from './utils/healthProfileStore';
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
-import AuthGate from './components/AuthGate';
+import AuthGate, { ConsentGate } from './components/AuthGate';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import HowWeMakeMoney from './components/HowWeMakeMoney';
 import HowItWorks from './components/HowItWorks';
@@ -60,14 +64,14 @@ import AuthCallback from './components/AuthCallback';
 import AuthConfirm from './components/AuthConfirm';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
-import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from './utils/ecosystemStore';
+import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser, removeGeneratedProductsFromEcosystem } from './utils/ecosystemStore';
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchLlmRecommendations';
 import posthog from 'posthog-js';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
-import { productHref, parseProductIdFromPath } from './utils/productRoute';
+import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
 import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from './mobile/data/intakeModel';
 import './styles/flow.css';
 import './styles/web-neon-dark.css';
@@ -78,7 +82,16 @@ import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/Ecosy
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
-const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about'];
+const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about', 'how-it-works'];
+
+const HEALTH_PROFILE_UPDATE_CUTOFF = Date.parse('2026-09-05T02:56:40.000Z');
+const HEALTH_PROFILE_UPDATE_NOTICE_KEY = 'ayna_health_profile_update_2026_09_05_seen';
+
+function accountFirstName(user) {
+  const meta = user?.user_metadata || {};
+  const rawName = meta.full_name || meta.name || meta.first_name || meta.given_name || '';
+  return String(rawName).trim().split(/\s+/).filter(Boolean)[0] || '';
+}
 
 const ecosystemResetKey = (userId) => `ayna_ecosystem_reset_at:${userId || 'anon'}`;
 
@@ -101,32 +114,39 @@ function clearPendingEcosystemReset(userId) {
 
 const VIEW_TO_PATH = {
   welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem', you: '/you', community: '/community',
-  discovery: '/shop', waitlist: '/startups',
+  discovery: '/shop', waitlist: '/startups', recommendations: '/recommendations',
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
+  'delete-account': '/delete-account',
   'privacy-policy': '/privacy-policy',
   'terms-of-use': '/terms-of-use',
   'how-we-make-money': '/how-we-make-money',
   'how-it-works': '/how-it-works',
   about: '/about',
   contact: '/contact',
+  'campus-resources': '/campus-resources',
   'auth-callback': '/auth/callback',
   'auth-confirm': '/auth/confirm',
   'confirmed': '/confirmed',
   'product-audit': '/internal/product-audit',
+  // Not linked from any nav: internal, reached by typing the URL directly.
+  // Real access control is server-side (api/reviews-admin checks ADMIN_EMAILS).
+  'admin-reviews': '/admin/reviews',
 };
 // Friendly document.title per view'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
 const VIEW_TITLES = {
   quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Shop', you: 'You', community: 'Community',
-  waitlist: 'Startups', articles: 'Health Library', screenings: 'Screenings',
+  waitlist: 'Startups', recommendations: 'Your Recommendations', articles: 'Health Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
-  'phone-verify': 'Verify Phone', tracked: 'Tracked Products',
+  'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account',
   'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
+  'campus-resources': 'Campus Sexual Assault Support Resources',
+  'admin-reviews': 'All Reviews',
 };
 
 const DEFAULT_DESCRIPTION = "Personalized women's health product recommendations, matched to your body and backed by real research, doctor input, and other women's experiences.";
@@ -137,6 +157,7 @@ const VIEW_DESCRIPTIONS = {
   community: 'Real experiences with women\'s health products from the ayna community.',
   'how-it-works': 'How ayna matches products to you: your profile, the market, the evidence and your shop.',
   'not-found': "This page doesn't exist on ayna.",
+  'campus-resources': 'Find verified sexual assault support, advocacy, reporting, medical, and campus resources for your college or university.',
 };
 function setMetaDescription(text) {
   let el = document.querySelector('meta[name="description"]');
@@ -176,7 +197,9 @@ function getInitialView() {
   // anything was wrong (found live, 2026-08-24 bug bash). The root path
   // itself is explicitly mapped in PATH_TO_VIEW, so this only ever affects
   // a genuinely unknown path, never '/'.
-  return PATH_TO_VIEW[path] || 'not-found';
+  // Tolerate a trailing slash (e.g. /campus-resources/ from a shared link).
+  const trimmed = path.length > 1 ? path.replace(/\/+$/, '') : path;
+  return PATH_TO_VIEW[path] || PATH_TO_VIEW[trimmed] || 'not-found';
 }
 
 function getInitialProductId() {
@@ -256,6 +279,8 @@ function App() {
   // it) so VIEW_TO_PATH/PATH_TO_VIEW stay simple static maps for every other
   // route.
   const [productRouteId, setProductRouteId] = useState(getInitialProductId);
+  const [publicRouteProduct, setPublicRouteProduct] = useState(null);
+  const [publicRouteProductLoading, setPublicRouteProductLoading] = useState(false);
   // Ref always mirrors currentView synchronously, safe to read inside Supabase callbacks
   // that run outside React's render cycle.
   const currentViewRef = useRef(getInitialView());
@@ -269,12 +294,24 @@ function App() {
   // entry before the app even loads, making history.length > 1 true even
   // with zero in-app navigation.
   const inAppPushCountRef = useRef(0);
+  // Lets a product opened from Browse keep Browse mounted (hidden) behind it,
+  // so clicking a card then going back doesn't blow away the personalization
+  // toggle, filters, sort, or scroll position — see the Discovery render
+  // block and the scroll-restore effect below. Reset on every genuine
+  // navigation in setCurrentView, so leaving to a different tab and coming
+  // back still gives Browse a clean, freshly-initialized mount.
+  const discoveryKeepAliveRef = useRef(false);
+  const discoveryScrollYRef = useRef(0);
   const pathForView = useCallback((view, id) => {
     if (view === 'product') return id ? productHref(id) : '/';
     return VIEW_TO_PATH[view] || '/';
   }, []);
   const setCurrentView = useCallback((view, { replace = false } = {}) => {
     if (view === 'profile-edit' && currentViewRef.current !== 'profile-edit') profileEditFromRef.current = currentViewRef.current || 'ecosystem';
+    // Any explicit navigation (nav tab, "browse products" button, etc.) is a
+    // genuine departure from wherever Shop's kept-alive state came from, so
+    // the next time Shop mounts it's a clean, fresh instance.
+    discoveryKeepAliveRef.current = false;
     currentViewRef.current = view;
     setCurrentViewRaw(view);
     if (view !== 'product') setProductRouteId(null);
@@ -285,15 +322,34 @@ function App() {
     }
   }, [pathForView]);
   /** Navigate to a specific product's dedicated page, a real URL, not modal state. */
-  const navigateToProduct = useCallback((id, { replace = false } = {}) => {
-    if (!id) return;
+  const navigateToProduct = useCallback((productOrId, { replace = false } = {}) => {
+    const routeKey = productRouteKey(productOrId);
+    if (!routeKey) return;
+
+    const internalId = productOrId && typeof productOrId === 'object'
+      ? productOrId.id
+      : productOrId;
+
+    // Opened straight from Shop: keep it mounted (hidden) behind the
+    // product page so browser-back restores it exactly as it was, instead
+    // of remounting a fresh one. A product-to-product hop (e.g. a "related
+    // products" link) leaves this alone, so the chain still traces back to
+    // the original Browse session rather than clearing it.
+    if (currentViewRef.current === 'discovery') {
+      discoveryKeepAliveRef.current = true;
+      discoveryScrollYRef.current = window.scrollY;
+    }
+
     currentViewRef.current = 'product';
     setCurrentViewRaw('product');
-    setProductRouteId(id);
-    const path = productHref(id);
+    setProductRouteId(routeKey);
+
+    const path = productHref(productOrId);
+
     if (window.location.pathname !== path) {
-      if (replace) window.history.replaceState({ view: 'product', productId: id }, '', path);
-      else { window.history.pushState({ view: 'product', productId: id }, '', path); inAppPushCountRef.current += 1; window.scrollTo(0, 0); }
+      const state = { view: 'product', productId: internalId, productRouteKey: routeKey };
+      if (replace) window.history.replaceState(state, '', path);
+      else { window.history.pushState(state, '', path); inAppPushCountRef.current += 1; window.scrollTo(0, 0); }
     }
   }, []);
   /** Back control for the product page: real in-app back if we got here by
@@ -313,7 +369,7 @@ function App() {
     // A 404 keeps the URL she typed (it used to be rewritten to '/').
     const keepPath = currentView === 'not-found' || viewFromSubPath(window.location.pathname) === currentView;
     const path = keepPath ? window.location.pathname : pathForView(currentView, productRouteId);
-    const initialUrl = currentView === 'auth-callback'
+    const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources')
       ? `${path}${window.location.search}${window.location.hash}`
       : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
@@ -322,7 +378,7 @@ function App() {
   useEffect(() => {
     const onPop = (e) => {
       const pathProductId = parseProductIdFromPath(window.location.pathname);
-      const view = pathProductId ? 'product' : (viewFromSubPath(window.location.pathname) || e.state?.view || PATH_TO_VIEW[window.location.pathname] || 'not-found');
+      const view = pathProductId ? 'product' : (viewFromSubPath(window.location.pathname) || e.state?.view || PATH_TO_VIEW[window.location.pathname] || PATH_TO_VIEW[window.location.pathname.replace(/\/+$/, '')] || 'not-found');
       setSelectedArticleId(articleIdFromPath(window.location.pathname));
       setCommunityHandle(communityHandleFromPath(window.location.pathname));
       currentViewRef.current = view;
@@ -360,7 +416,13 @@ function App() {
   // is not a Back/Forward restore in progress.
   useEffect(() => {
     if (isRestoringScroll()) return;
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    // Returning to a kept-alive Shop (product card -> back) restores the
+    // exact scroll spot instead of jumping to top.
+    if (currentView === 'discovery' && discoveryKeepAliveRef.current) {
+      window.scrollTo({ top: discoveryScrollYRef.current, left: 0, behavior: 'auto' });
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
   }, [currentView, productRouteId]);
   const [quizResults, setQuizResults] = useState(null);
   const [trackedProducts, setTrackedProducts] = useState({});
@@ -402,13 +464,20 @@ function App() {
   // Set to true once the LLM builds the ecosystem this session, prevents
   // Supabase token-refresh reloads from overwriting in-memory LLM products.
   const llmBuiltThisSessionRef = useRef(false);
+  const myProductsRef = useRef({});
+  const seedSavePromiseRef = useRef(Promise.resolve());
+  useEffect(() => { myProductsRef.current = myProducts; }, [myProducts]);
   const [authLoading, setAuthLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(false);
+  // Google account with no recorded consent (created straight from Log in): gate until agreed.
+  const [consentGateOpen, setConsentGateOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
   // Ref mirrors pendingAction so onAuthStateChange (async callback) can read it synchronously
   const pendingActionRef = useRef(null);
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
+  const [showHealthProfileUpdateNotice, setShowHealthProfileUpdateNotice] = useState(false);
+
   // Requested 2026-08-24 meeting: "sign-in required to build an ecosystem,
   // accompanied by a popup warning to prevent loss of unsaved progress." The
   // sign-in requirement already existed (handleQuizComplete gates on `user`
@@ -450,8 +519,6 @@ function App() {
   // Light / dark, shared with the app's own setting on this browser.
   const { theme, setThemeMode } = useThemeMode();
   useEffect(() => { document.documentElement.dataset.ayTheme = theme; }, [theme]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  useEscapeToClose(showDeleteModal, () => setShowDeleteModal(false));
   const [saveError, setSaveError] = useState(null);
   const reportSaveFailure = useCallback((what, err) => {
     console.error('[Ayna] save failed:', what, err);
@@ -485,6 +552,7 @@ function App() {
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
+  const hasStatedQuizLifeStage = useMemo(() => hasStatedLifeStage(quizResults), [quizResults]);
   const hasCompletedPersonalization = useMemo(() => {
     if (!quizResults) return false;
     if (quizResults?.personalizationCompleted === true) return true;
@@ -533,6 +601,11 @@ function App() {
         .then(({ data: { session } }) => {
           setUser(session?.user ?? null);
           setUserSession(session ?? null);
+
+          if (session?.user) {
+            posthog.identify(session.user.id, { email: session.user.email });
+            tagInternalUserIfNeeded(posthog);
+          }
         })
         .catch((e) => {
           console.error('[Ayna] getSession failed:', e);
@@ -555,12 +628,14 @@ function App() {
     // production. (PROTECTED_VIEWS below is what actually guards private ones.)
     const STATIC_VIEWS = [
       'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
-      'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles', 'you', 'community',
-      'how-it-works', 'how-we-make-money',
+      'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
+      'how-it-works', 'how-we-make-money', 'campus-resources',
     ];
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null);
-      setUserSession(session ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setUser(session.user);
+        setUserSession(session);
+      }
       if (event === 'SIGNED_IN' && session?.user) {
         posthog.identify(session.user.id, { email: session.user.email });
         tagInternalUserIfNeeded(posthog);
@@ -584,6 +659,9 @@ function App() {
         posthog.reset();
       }
       if (!session) {
+        // Leave Supabase's auth callback before checking the session again.
+        // Awaiting an auth method here can block the sign-in event itself.
+        setTimeout(async () => {
         // supabase-js is known to emit a spurious SIGNED_OUT (session: null)
         // on a transient background token-refresh failure, a brief network
         // blip, not a real sign-out. This block wipes EVERY piece of local
@@ -604,6 +682,8 @@ function App() {
           // unrelated network error, same as every other best-effort check
           // in this handler.
         }
+        setUser(null);
+        setUserSession(null);
         setMyProducts({});
         setTrackedProducts({});
         setOmittedProducts({});
@@ -635,6 +715,7 @@ function App() {
           localStorage.removeItem('ayna_health_profile_v1');
           sessionStorage.removeItem('ayna_force_llm_refresh');
         } catch (_) {}
+        }, 0);
       }
     });
     return () => subscription.unsubscribe();
@@ -762,13 +843,34 @@ function App() {
       setQuizResults(pendingQuizResults);
       const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
       setEcosystemSeedMeta(seedMeta);
-      const instantProducts = (mergedProducts || {});
+      // Tagged so a later AI rebuild can tell these generated picks apart from
+      // products she added herself (handleBuildEcosystemFromLlm).
+      const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
       setMyProducts(instantProducts);
       setEcosystemOrder(Object.keys(instantProducts));
       clearCachedLlmRecommendations();
       try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
       const _supabase = getSupabaseClient();
-      if (_supabase && user) resetRemoteEcosystemBestEffort(_supabase, user.id);
+      if (_supabase && user) {
+        // Persist the instant seed right away rather than waiting on the async
+        // LLM build (handleBuildEcosystemFromLlm) to be the only thing that
+        // ever writes to user_ecosystems. That build can fail (provider error,
+        // 502, the tab closing mid-fetch) and previously left NOTHING saved —
+        // the seed only ever lived in React state + a sessionStorage shadow,
+        // so it silently evaporated the moment the session ended, even though
+        // it was visibly "in" her ecosystem the whole time. Chained after the
+        // reset (not fired in parallel) so the clear-then-seed writes can't
+        // race and have the seed's `in_ecosystem: true` lost to the reset's
+        // `in_ecosystem: false` landing second.
+        seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => resetRemoteEcosystemBestEffort(_supabase, user.id)).then(() => {
+          const seeded = Object.values(instantProducts);
+          if (seeded.length) {
+            return upsertProductsBatch(_supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
+          }
+        }).then(result => {
+          if (result?.synced === false) reportSaveFailure('Could not save your ecosystem', new Error('The server did not accept the product update.'));
+        }).catch(e => reportSaveFailure('Could not save your ecosystem', e));
+      }
       setCurrentView('ecosystem');
       // Persist the RAW intake, not the legacy wrapper. `pendingQuizResults` is
       // already the output of mapIntakeToLegacyQuizProfile(), so saving it stored
@@ -786,6 +888,10 @@ function App() {
       handleViewDiscovery('');
     } else if (pendingAction === 'login') {
       setCurrentView('ecosystem');
+    } else if (pendingAction === 'delete-account') {
+      // Returning from the Google re-confirmation redirect the delete-account
+      // page kicks off before it lets someone delete a Google-linked account.
+      setCurrentView('delete-account');
     }
     setPendingAction(null); pendingActionRef.current = null;
   }, [user, pendingAction]);
@@ -828,7 +934,29 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings'];
+  // (main's "profile-less sign-in goes straight to the quiz" redirect is
+  // covered here by the new-account guard above, NewAccountStart.)
+
+  // A Google account with no consent on record (created straight from Log in, which skips the
+  // signup form) must confirm 18+ / consent / referral before going further. Waits briefly so a
+  // signup-form Google account, whose consent is written right after the redirect, never flashes it.
+  useEffect(() => {
+    const isGoogle = user?.app_metadata?.provider === 'google'
+      || (Array.isArray(user?.identities) && user.identities.some((i) => i?.provider === 'google'));
+    const missingConsent = Boolean(user) && isGoogle && !user.user_metadata?.consent_given_at;
+    if (!missingConsent || authLoading || currentView === 'auth-callback' || currentView === 'campus-resources') {
+      setConsentGateOpen(false);
+      return undefined;
+    }
+    const timer = setTimeout(() => {
+      let pendingStash = false;
+      try { pendingStash = Boolean(sessionStorage.getItem('ayna_pending_consent')); } catch (_) {}
+      if (!pendingStash) setConsentGateOpen(true);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [user, authLoading, currentView]);
+
+  const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account'];
   useEffect(() => {
     if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
       setCurrentView('welcome', { replace: true });
@@ -935,6 +1063,88 @@ function App() {
   const accountInitials = avatarInitials(user);
 
 
+  useEffect(() => {
+    if (!user || authLoading || dataLoading || !quizResults) {
+      setShowHealthProfileUpdateNotice(false);
+      return;
+    }
+
+    const createdAt = Date.parse(user.created_at || '');
+    const completedAt = Date.parse(
+      quizResults?.personalizationCompletedAt
+      || quizResults?.fullHealthIntake?.personalizationCompletedAt
+      || ''
+    );
+
+    let seenLocally = false;
+    try {
+      seenLocally = localStorage.getItem(
+        `${HEALTH_PROFILE_UPDATE_NOTICE_KEY}:${user.id}`
+      ) === '1';
+    } catch (_) {}
+
+    const seenInAccount = user?.user_metadata?.[HEALTH_PROFILE_UPDATE_NOTICE_KEY] === true;
+
+    const hasCompletedProfile =
+      quizResults?.personalizationCompleted === true
+      || quizResults?.fullHealthIntake?.personalizationCompleted === true;
+
+    const profilePredatesCutoff = Number.isFinite(completedAt)
+      ? completedAt < HEALTH_PROFILE_UPDATE_CUTOFF
+      : hasCompletedProfile;
+
+    const eligible =
+      Number.isFinite(createdAt)
+      && createdAt < HEALTH_PROFILE_UPDATE_CUTOFF
+      && hasCompletedProfile
+      && profilePredatesCutoff
+      && !seenLocally
+      && !seenInAccount;
+
+    setShowHealthProfileUpdateNotice(eligible);
+  }, [user, authLoading, dataLoading, quizResults]);
+
+  const markHealthProfileUpdateNoticeSeen = async () => {
+    if (!user?.id) return;
+
+    try {
+      localStorage.setItem(`${HEALTH_PROFILE_UPDATE_NOTICE_KEY}:${user.id}`, '1');
+    } catch (_) {}
+
+    setShowHealthProfileUpdateNotice(false);
+
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || data?.user?.id !== user.id) return;
+
+      const current = data.user.user_metadata || {};
+      const { data: updated, error: updateError } = await supabase.auth.updateUser({
+        data: {
+          ...current,
+          [HEALTH_PROFILE_UPDATE_NOTICE_KEY]: true,
+        },
+      });
+
+      if (!updateError && updated?.user) {
+        setUser(updated.user);
+      }
+    } catch (error) {
+      console.warn('[Ayna] Could not persist health-profile update notice state:', error);
+    }
+  };
+
+  const handleKeepCurrentHealthProfile = () => {
+    markHealthProfileUpdateNoticeSeen();
+  };
+
+  const handleRedoUpdatedHealthProfile = () => {
+    markHealthProfileUpdateNoticeSeen();
+    setCurrentView('quiz');
+  };
+
   const handleStartQuiz = () => setCurrentView('quiz');
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
   // Leave the profile editor without saving anything (the editor only writes
@@ -961,6 +1171,7 @@ function App() {
     setCurrentView('quiz');
   };
   const handleOpenPhoneVerification = () => setCurrentView('phone-verify');
+  const handleOpenDeleteAccount = () => setCurrentView('delete-account');
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
   const handleViewWishlist = () => {
@@ -1063,7 +1274,9 @@ function App() {
     setQuizResults(completedResults);
     const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
-    const instantProducts = (mergedProducts || {});
+    // Tagged so a later AI rebuild can tell these generated picks apart from
+    // products she added herself (handleBuildEcosystemFromLlm).
+    const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
     setMyProducts(instantProducts);
     setEcosystemOrder(Object.keys(instantProducts));
     llmBuiltThisSessionRef.current = false;
@@ -1071,7 +1284,22 @@ function App() {
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
     // Local reset is immediate; remote sync is best-effort and never blocks build.
-    if (supabase && user) await resetRemoteEcosystemBestEffort(supabase, user.id);
+    // Persist the instant seed too (chained after the reset, not fired in
+    // parallel, so a race can't have the reset's in_ecosystem:false land
+    // after the seed's in_ecosystem:true) — otherwise the seed only lives in
+    // React state + a sessionStorage shadow and is gone the moment the
+    // session ends if the async LLM build (the only other thing that writes
+    // to user_ecosystems) never finishes.
+    if (supabase && user) {
+      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => resetRemoteEcosystemBestEffort(supabase, user.id)).then(() => {
+        const seeded = Object.values(instantProducts);
+        if (seeded.length) {
+          return upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
+        }
+      }).then(result => {
+        if (result?.synced === false) reportSaveFailure('Could not save your ecosystem', new Error('The server did not accept the product update.'));
+      }).catch(e => reportSaveFailure('Could not save your ecosystem', e));
+    }
     posthog.capture('intake_completed', {
       concernsCount: Array.isArray(completedResults.primaryConcerns) ? completedResults.primaryConcerns.length : 0,
       conditionsCount: Array.isArray(completedResults.conditions) ? completedResults.conditions.length : 0,
@@ -1088,7 +1316,9 @@ function App() {
     setQuizResults(updatedResults);
     const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
-    const instantProducts = (mergedProducts || {});
+    // Tagged so a later AI rebuild can tell these generated picks apart from
+    // products she added herself (handleBuildEcosystemFromLlm).
+    const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
     setMyProducts(instantProducts);
     setEcosystemOrder(Object.keys(instantProducts));
     llmBuiltThisSessionRef.current = false;
@@ -1096,7 +1326,20 @@ function App() {
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
     // Local reset is immediate; remote sync is best-effort and never blocks build.
-    if (supabase && user) await resetRemoteEcosystemBestEffort(supabase, user.id);
+    // Persist the instant seed too (chained after the reset, not fired in
+    // parallel — see handleQuizComplete for why) so an edited profile's
+    // re-seeded ecosystem survives even if the async LLM rebuild never
+    // completes.
+    if (supabase && user) {
+      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => resetRemoteEcosystemBestEffort(supabase, user.id)).then(() => {
+        const seeded = Object.values(instantProducts);
+        if (seeded.length) {
+          return upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
+        }
+      }).then(result => {
+        if (result?.synced === false) reportSaveFailure('Could not save your ecosystem', new Error('The server did not accept the product update.'));
+      }).catch(e => reportSaveFailure('Could not save your ecosystem', e));
+    }
     setCurrentView('ecosystem');
   };
 
@@ -1202,7 +1445,13 @@ function App() {
     });
 
     if (!wasIn) {
-      posthog.capture('product_added', { category: product.category, type: product.type });
+      const origin = lastOpenOrigin?.productId === product.id ? lastOpenOrigin : null;
+      posthog.capture('product_added', {
+        category: product.category,
+        type: product.type,
+        source: origin?.source,
+        searchQuery: origin?.searchQuery,
+      });
     }
     if (user) {
       upsertProductState(getSupabaseClient(), user.id, product, {
@@ -1268,15 +1517,21 @@ function App() {
     llmBuiltThisSessionRef.current = true;
     const valid = products.filter(p => p?.id);
     const llmIdSet = new Set(valid.map(p => p.id));
-    let manualIds = [];
+    const staleGeneratedIds = Object.values(myProductsRef.current)
+      .filter(p => p?.id && (p.llmGenerated || p.intakeGenerated) && !p._userSwapped && !llmIdSet.has(p.id))
+      .map(p => p.id);
+    const manualIds = Object.keys(myProductsRef.current).filter(id => {
+      const product = myProductsRef.current[id];
+      return product && ((!product.llmGenerated && !product.intakeGenerated) || product._userSwapped);
+    });
     setMyProducts(prev => {
       // Preserve manually-added products (DB products without llmGenerated flag)
       // so navigating away and back doesn't wipe things like the Saalt steamer
-      manualIds = Object.keys(prev).filter(id => {
+      const currentManualIds = Object.keys(prev).filter(id => {
         const p = prev[id];
-        return p && (!p.llmGenerated && !p.intakeGenerated) || p?._userSwapped;
+        return p && ((!p.llmGenerated && !p.intakeGenerated) || p._userSwapped);
       });
-      const manual = Object.fromEntries(manualIds.map(id => [id, prev[id]]));
+      const manual = Object.fromEntries(currentManualIds.map(id => [id, prev[id]]));
       return { ...valid.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}), ...manual };
     });
     setEcosystemOrder(() => [
@@ -1285,12 +1540,19 @@ function App() {
     ]);
     const supabase = getSupabaseClient();
     if (supabase && user) {
-      // One request per 100 products instead of one per product. The old
-      // Promise.all fired up to ~50 individual POSTs, any subset of which could
-      // fail independently; the .catch reported only the first rejection, so a
-      // partially-saved ecosystem looked identical to a fully-saved one.
-      upsertProductsBatch(supabase, user.id, valid, { inEcosystem: true, isTracked: false, isOmitted: false })
-        .catch(e => reportSaveFailure('Could not save your ecosystem', e));
+      // The seed write may still be running. Replace its generated picks only
+      // after it finishes, while leaving manual, tracked and saved rows intact.
+      seedSavePromiseRef.current = seedSavePromiseRef.current.then(async () => {
+        if (staleGeneratedIds.length) {
+          try {
+            await removeGeneratedProductsFromEcosystem(supabase, user.id, staleGeneratedIds);
+          } catch (error) {
+            reportSaveFailure('Could not remove old ecosystem picks', error);
+          }
+        }
+        const result = await upsertProductsBatch(supabase, user.id, valid, { inEcosystem: true, isTracked: false, isOmitted: false });
+        if (result?.synced === false) reportSaveFailure('Could not save your ecosystem', new Error('The server did not accept the product update.'));
+      }).catch(e => reportSaveFailure('Could not save your ecosystem', e));
     }
   }, [user, reportSaveFailure]);
 
@@ -1301,6 +1563,11 @@ function App() {
   // link, browser back/forward) won't have this and falls back to
   // `resolvedProduct` below, which looks the id up from real state instead.
   const [lastClickedProduct, setLastClickedProduct] = useState(null);
+  // Tracks whether the currently open product was reached from a search
+  // result, so downstream events (buy now, add to ecosystem) can carry the
+  // same searchQuery and let us trace search -> click -> purchase in
+  // PostHog. Cleared whenever a product is opened from anywhere else.
+  const [lastOpenOrigin, setLastOpenOrigin] = useState(null);
 
   const omittedCount = Object.keys(omittedProducts).length;
   const ecosystemCount = Object.keys(myProducts).length;
@@ -1310,15 +1577,23 @@ function App() {
   // Declared here, below ecosystemCount, and not up with the other nav flags
   // reading ecosystemCount before its `const` is a temporal dead zone error,
   // and && short-circuiting hid it from every signed-out check.
-  const navGradientVariant = currentView === 'about'
+  const navGradientVariant = (currentView === 'about' || currentView === 'how-it-works')
     ? ' app-nav--about'
     : (user && ecosystemCount > 0) ? ' app-nav--returning' : '';
-  const handleOpenProduct = (product) => {
+  const handleOpenProduct = (product, meta = {}) => {
     if (!product?.id) return;
     const p = product?.llmGenerated ? enrichLlmProductForDiscovery(product) : product;
-    posthog.capture('product_card_opened', { category: p?.category });
+    const source = meta.source || 'browse';
+    posthog.capture('product_card_opened', {
+      productId: p?.id,
+      category: p?.category,
+      source,
+      searchQuery: source === 'search_results' ? meta.searchQuery : undefined,
+      position: meta.position,
+    });
+    setLastOpenOrigin(source === 'search_results' ? { productId: p.id, source, searchQuery: meta.searchQuery } : null);
     setLastClickedProduct(p);
-    navigateToProduct(p.id);
+    navigateToProduct(p);
   };
 
   // Resolves the product for the current /product/:id route. Checked in order:
@@ -1330,16 +1605,84 @@ function App() {
   // state instead of a premature "not found".
   const resolvedProduct = useMemo(() => {
     if (!productRouteId) return null;
-    if (lastClickedProduct?.id === productRouteId) return lastClickedProduct;
-    const raw = myProducts[productRouteId]
-      || savedProducts[productRouteId]
-      || trackedProducts[productRouteId]
-      || omittedProducts[productRouteId]
-      || getProductById(productRouteId);
+
+    if (lastClickedProduct && productRouteKey(lastClickedProduct) === productRouteId) {
+      return lastClickedProduct;
+    }
+
+    const stores = [myProducts, savedProducts, trackedProducts, omittedProducts];
+
+    let raw = null;
+
+    for (const store of stores) {
+      raw = store[productRouteId]
+        || Object.values(store).find((p) => productRouteKey(p) === productRouteId)
+        || null;
+
+      if (raw) break;
+    }
+
+    raw ||= getProductById(productRouteId);
+
     if (!raw) return null;
     return raw.llmGenerated ? enrichLlmProductForDiscovery(raw) : raw;
   }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts]);
-  const productStillResolving = !resolvedProduct && (authLoading || dataLoading);
+  useEffect(() => {
+    let cancelled = false;
+    const controller = new AbortController();
+
+    setPublicRouteProduct(null);
+
+    if (
+      currentView !== 'product'
+      || !productRouteId
+      || resolvedProduct
+      || authLoading
+      || dataLoading
+    ) {
+      setPublicRouteProductLoading(false);
+      return () => {
+        cancelled = true;
+        controller.abort();
+      };
+    }
+
+    setPublicRouteProductLoading(true);
+
+    fetch(`/api/public-product?slug=${encodeURIComponent(productRouteId)}`, {
+      method: 'GET',
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    })
+      .then(async (response) => {
+        if (response.status === 404) return null;
+        if (!response.ok) throw new Error(`public_product_${response.status}`);
+        const body = await response.json();
+        return body?.product || null;
+      })
+      .then((product) => {
+        if (!cancelled) setPublicRouteProduct(product);
+      })
+      .catch((error) => {
+        if (!cancelled && error?.name !== 'AbortError') {
+          console.error('[product-route] public product lookup failed:', error?.message);
+          setPublicRouteProduct(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setPublicRouteProductLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [currentView, productRouteId, resolvedProduct, authLoading, dataLoading]);
+
+  const displayedProduct = resolvedProduct || publicRouteProduct;
+
+  const productStillResolving = !displayedProduct
+    && (authLoading || dataLoading || publicRouteProductLoading);
 
   // Every route showed the identical generic <title> from index.html, no
   // way to tell tabs apart, bookmark a specific page, or get a useful link
@@ -1348,9 +1691,9 @@ function App() {
   useEffect(() => {
     const base = "ayna | Personalized Women's Health Product Recommendations";
     if (currentView === 'product') {
-      document.title = resolvedProduct?.name
-        ? `${resolvedProduct.name} | ayna`
-        : (productStillResolving ? 'Loading… | ayna' : base);
+      document.title = displayedProduct?.name
+        ? `${displayedProduct.name} | ayna`
+        : (productStillResolving ? 'Loading… | ayna' : 'Product Not Found | ayna');
       return;
     }
     const label = VIEW_TITLES[currentView];
@@ -1371,7 +1714,7 @@ function App() {
       setMetaDescription(`@${communityHandle} on the ayna community: product reviews, saves and questions.`);
     }
     return () => { cancelled = true; };
-  }, [currentView, resolvedProduct, productStillResolving, selectedArticleId, communityHandle]);
+  }, [currentView, displayedProduct, productStillResolving, selectedArticleId, communityHandle]);
 
   const handleRateProduct = (product, rating) => {
     const next = addRating(product.id, rating);
@@ -1541,6 +1884,7 @@ function App() {
 
         {(currentView === 'welcome' || currentView === 'hero') && (
           <AynaLanding
+            onLogIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             onStartQuiz={handleStartQuiz}
             onViewDiscovery={handleViewDiscovery}
             onOpenProduct={handleOpenProduct}
@@ -1553,6 +1897,7 @@ function App() {
             onToggleSaved={toggleSavedProduct}
             loading={authLoading || (!!user && dataLoading)}
             hasProfile={!!quizResults}
+            healthIntake={quizResults?.fullHealthIntake || quizResults}
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
             initialCategory={homeCategory}
@@ -1617,7 +1962,7 @@ function App() {
             onOpenStartups={() => setCurrentView('waitlist')}
             onOpenProduct={handleOpenProduct}
             onSignOut={handleSignOut}
-            onDeleteAccount={() => setShowDeleteModal(true)}
+            onDeleteAccount={handleOpenDeleteAccount}
             theme={theme}
             onThemeChange={setThemeMode}
           />
@@ -1625,6 +1970,7 @@ function App() {
         {currentView === 'quiz' && (
           <WebIntake key={quizResume ? 'quiz-resume' : `quiz-${quizRun}`} introEnabled={!quizResume} initialSnapshot={quizResume ? null : quizResults?.fullHealthIntake || null} onComplete={handleQuizComplete} onBrowseLibrary={handleViewArticles} />
         )}
+
         {currentView === 'profile-edit' && (
           <div className="ay-flow-editbar">
             <button type="button" className="ay-flow-back" onClick={handleExitProfileEdit}>
@@ -1642,6 +1988,13 @@ function App() {
             onComplete={handleHealthProfileEditorSave}
             onBrowseLibrary={handleViewArticles}
           />
+        )}
+        {currentView === 'delete-account' && (
+          <DeleteAccountPage onBack={() => setCurrentView('you')} />
+        )}
+        <FeedbackPrompts key={user?.id || 'guest'} user={user} authLoading={authLoading} currentView={currentView} />
+        {currentView === 'admin-reviews' && (
+          <AdminReviewsPage onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'phone-verify' && (
           <PhoneVerification
@@ -1690,6 +2043,7 @@ function App() {
               onOpenProduct={handleOpenProduct}
               myProducts={myProducts}
               onAddToEcosystem={toggleMyProduct}
+              onBrowseBrand={handleViewDiscovery}
             />
           </Suspense>
         )}
@@ -1721,16 +2075,22 @@ function App() {
           />
         )}
         {currentView === 'about' && (
-          <About onBack={handleBackFromStandalonePage} />
+          <About onBack={handleBackFromStandalonePage} onExplore={() => handleViewDiscovery()} onStart={handleStartQuiz} />
         )}
         {currentView === 'contact' && (
           <Contact onBack={handleBackFromStandalonePage} />
+        )}
+        {currentView === 'campus-resources' && (
+          <Suspense fallback={<ViewLoadingFallback />}>
+            <CampusResources />
+          </Suspense>
         )}
         {currentView === 'auth-callback' && (
           <AuthCallback onAuthenticated={(user) => {
             // Navigation is handled by the restored pendingAction effect so
             // Google OAuth follows the same post-login path as email/password.
             setUser(user);
+            if (!pendingActionRef.current) setCurrentView('welcome', { replace: true });
           }} />
         )}
         {currentView === 'auth-confirm' && (
@@ -1803,7 +2163,8 @@ function App() {
             onBrowse={() => handleViewDiscovery('')}
           />
         )}
-        {currentView === 'discovery' && (
+        {(currentView === 'discovery' || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
+          <div style={currentView === 'discovery' ? undefined : { display: 'none' }}>
           <Suspense fallback={<ViewLoadingFallback />}>
           <Discovery
             matchOpts={matchOpts}
@@ -1830,6 +2191,7 @@ function App() {
             onToggleSaved={toggleSavedProduct}
             hasQuizFrustrations={!!(quizResults?.frustrations?.length)}
             hasHealthImport={hasHealthImport}
+            hasStatedLifeStage={hasStatedQuizLifeStage}
             quizResults={quizResults}
             healthProfile={healthProfile}
             user={user}
@@ -1837,6 +2199,7 @@ function App() {
             onAsk={(q) => openAsk(`Help me find ${q}`)}
           />
           </Suspense>
+          </div>
         )}
         {currentView === 'screenings' && (
           <Screenings checkinData={checkinData} onNavigate={setCurrentView} onOpenProduct={handleOpenProduct} />
@@ -1915,7 +2278,7 @@ function App() {
           />
         )}
 
-        {currentView !== 'quiz' && (
+        {currentView !== 'quiz' && currentView !== 'campus-resources' && (
           <ProfileChatbot
             onRequireAuth={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             openSignal={askOpenSignal}
@@ -1946,25 +2309,25 @@ function App() {
           />
         )}
         {currentView === 'product' && (
-          resolvedProduct ? (
+          displayedProduct ? (
             // Keying by id forces a clean remount when navigating from one
             // product's page straight to another's, every internal tab,
             // the Summary/Evidence toggle, and the chat thread reset to that
             // product's own defaults instead of carrying the previous
             // product's state over.
             <ProductModal
-              key={resolvedProduct.id}
-              product={resolvedProduct}
-              isTracked={!!trackedProducts[resolvedProduct.id]}
+              key={displayedProduct.id}
+              product={displayedProduct}
+              isTracked={!!trackedProducts[displayedProduct.id]}
               onTrack={toggleTrackProduct}
               onOmit={toggleOmitProduct}
-              isOmitted={!!omittedProducts[resolvedProduct.id]}
+              isOmitted={!!omittedProducts[displayedProduct.id]}
               onToggleCompare={toggleCompare}
-              isInCompare={compareList.some(p => p.id === resolvedProduct.id)}
+              isInCompare={compareList.some(p => p.id === displayedProduct.id)}
               onAddToEcosystem={toggleMyProduct}
-              isInEcosystem={!!myProducts[resolvedProduct.id]}
+              isInEcosystem={!!myProducts[displayedProduct.id]}
               onToggleSaved={toggleSavedProduct}
-              isSaved={!!savedProducts[resolvedProduct.id]}
+              isSaved={!!savedProducts[displayedProduct.id]}
               savedProducts={savedProducts}
               userZipCode={userZipCode || undefined}
               aynaReviews={aynaReviews}
@@ -1980,7 +2343,7 @@ function App() {
               onBack={handleBackFromProduct}
               onOpenShop={(category) => handleViewDiscovery(category ? { initialCategory: category } : '')}
               onCommunityAction={(kind) => {
-                const seed = { kind, productId: resolvedProduct?.id || null, token: Date.now() };
+                const seed = { kind, productId: displayedProduct?.id || null, token: Date.now() };
                 if (!user && kind !== 'post') {
                   setCommunitySeed(null);
                   setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
@@ -1988,6 +2351,7 @@ function App() {
                 }
                 setComposerSeed(seed);
               }}
+              searchOrigin={lastOpenOrigin?.productId === displayedProduct.id ? lastOpenOrigin : null}
             />
           ) : productStillResolving ? (
             <ViewLoadingFallback />
@@ -2014,56 +2378,120 @@ function App() {
           />
         )}
 
-        {showDeleteModal && (
+        {showHealthProfileUpdateNotice && user && currentView !== 'campus-resources' && (
           <div
-            onClick={() => setShowDeleteModal(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ayna-health-profile-update-title"
             style={{
-              position: 'fixed', inset: 0, zIndex: 2000,
-              background: 'rgba(28,25,23,0.55)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              padding: '1.5rem',
+              position: 'fixed',
+              inset: 0,
+              zIndex: 10050,
+              background: 'rgba(28, 19, 43, 0.58)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              display: 'grid',
+              placeItems: 'center',
+              padding: '20px',
             }}
           >
             <div
-              onClick={e => e.stopPropagation()}
               style={{
-                background: 'var(--color-surface)',
-                borderRadius: 'var(--radius-lg)',
-                boxShadow: 'var(--shadow-lg)',
-                padding: '2rem',
-                maxWidth: '420px',
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem',
-                position: 'relative',
+                width: 'min(460px, 100%)',
+                borderRadius: '24px',
+                background: '#FFF9F2',
+                color: '#2A1F4E',
+                padding: '30px',
+                boxShadow: '0 28px 80px rgba(28,19,43,.28)',
+                border: '1px solid rgba(42,31,78,.08)',
               }}
             >
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                aria-label="Close"
+              <div
                 style={{
-                  position: 'absolute', top: '1rem', right: '1rem',
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  fontSize: '1.4rem', lineHeight: 1, color: 'var(--color-text-muted)',
-                  padding: '0.1rem 0.3rem',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  letterSpacing: '.08em',
+                  textTransform: 'uppercase',
+                  color: '#D97A2B',
+                  marginBottom: '10px',
                 }}
-              >×</button>
-              <h2 style={{ fontSize: '1.05rem', fontWeight: '700', color: 'var(--color-text-main)', margin: 0, fontFamily: 'var(--font-heading)' }}>
-                Delete account
+              >
+                Health profile update
+              </div>
+
+              <h2
+                id="ayna-health-profile-update-title"
+                style={{
+                  margin: '0 0 10px',
+                  fontFamily: 'var(--font-serif, Georgia, serif)',
+                  fontSize: '28px',
+                  fontWeight: 500,
+                  lineHeight: 1.15,
+                }}
+              >
+                {accountFirstName(user) ? `Hi ${accountFirstName(user)},` : 'Hi,'}
               </h2>
-              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
-                To request deletion of your entire account and data, email{' '}
-                <a
-                  href="mailto:puloma@aynahealth.co?subject=Account%20Deletion%20Request"
-                  style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontWeight: '500' }}
-                >
-                  puloma@aynahealth.co
-                </a>
-                {' '}from the email address associated with your account.
+
+              <p
+                style={{
+                  margin: '0 0 22px',
+                  color: '#6F6580',
+                  fontSize: '14px',
+                  lineHeight: 1.6,
+                }}
+              >
+                We’ve updated our health profile to make personalization more useful.
+                You can redo it now, or keep your current profile exactly as it is.
               </p>
-              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
-                This request will be processed within <strong style={{ color: 'var(--color-text-main)' }}>1 week</strong>.
+
+              <div style={{ display: 'grid', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={handleRedoUpdatedHealthProfile}
+                  style={{
+                    width: '100%',
+                    border: 'none',
+                    borderRadius: '999px',
+                    background: '#2A1F4E',
+                    color: '#FFF9F2',
+                    padding: '13px 18px',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Redo health profile
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleKeepCurrentHealthProfile}
+                  style={{
+                    width: '100%',
+                    border: '1px solid rgba(42,31,78,.16)',
+                    borderRadius: '999px',
+                    background: 'transparent',
+                    color: '#2A1F4E',
+                    padding: '12px 18px',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Keep my current profile
+                </button>
+              </div>
+
+              <p
+                style={{
+                  margin: '14px 0 0',
+                  color: '#8C8078',
+                  fontSize: '11.5px',
+                  lineHeight: 1.5,
+                  textAlign: 'center',
+                }}
+              >
+                Keeping your current profile will not change or remove any saved information.
               </p>
             </div>
           </div>
@@ -2079,9 +2507,26 @@ function App() {
           </button>,
           document.body,
         )}
+        {consentGateOpen && user && (
+          <ConsentGate
+            onAgreed={(updatedUser) => { if (updatedUser) setUser(updatedUser); setConsentGateOpen(false); }}
+            onDecline={async () => {
+              setConsentGateOpen(false);
+              try { await getSupabaseClient()?.auth.signOut(); } catch (_) {}
+            }}
+          />
+        )}
+
         {showAuthModal && (
           <AuthGate
             isModal
+            onAuthenticated={(authenticatedUser, session) => {
+              if (!authenticatedUser) return;
+              setUser(authenticatedUser);
+              if (session) setUserSession(session);
+              setAuthLoading(false);
+              setShowAuthModal(false);
+            }}
             summary={pendingAction === 'quiz-complete' && guestPreview ? {
               count: guestPreview.products.length,
               products: guestPreview.products,
@@ -2136,6 +2581,10 @@ function App() {
           onViewTermsOfUse={() => setCurrentView('terms-of-use')}
         onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
       />
+      {/* Outside the currentView switch on purpose — the same bar on every
+          view, fixed to the bottom of the viewport, so DOM order here is
+          only about it never being unmounted by navigation. */}
+      {currentView !== 'campus-resources' && <ConsentBanner />}
     </div>
   );
 }

@@ -155,7 +155,7 @@ describe('GET /api/discover-products — access control', () => {
 });
 
 describe('GET /api/discover-products — happy path', () => {
-  it('auto-approves a candidate with a clean recall check AND a real, live source URL', async () => {
+  it('never auto-approves an AI-discovered candidate, even with a clean recall check AND a live URL', async () => {
     globalThis.__mockAdmin = makeMockAdmin();
     globalThis.fetch = vi.fn(async (url) => {
       const u = String(url);
@@ -170,14 +170,14 @@ describe('GET /api/discover-products — happy path', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.inserted).toBe(1);
-    expect(res.body.autoApproved).toBe(1);
+    expect(res.body.autoApproved).toBe(0);
     expect(globalThis.__mockAdmin.inserted).toHaveLength(1);
 
     const row = globalThis.__mockAdmin.inserted[0];
     expect(row.source).toBe('discovered');
-    expect(row.review_status).toBe('approved');
-    expect(row.is_active).toBe(true);
-    expect(row.discovery_meta.autoApproved).toBe(true);
+    expect(row.review_status).toBe('pending');
+    expect(row.is_active).toBe(false);
+    expect(row.discovery_meta.autoApproved).toBeUndefined();
     expect(row.name).toBe('Test Pad Pro');
     expect(row.brand).toBe('TestBrand');
   });
@@ -426,9 +426,10 @@ describe('pure helpers', () => {
     expect(day2).not.toEqual(day1);
   });
 
-  it('a full 15-category rotation completes within 5 days at 3 runs/day', () => {
+  it('a full category rotation completes within ceil(CATEGORIES.length / RUN_HOURS_UTC.length) days', () => {
+    const days = Math.ceil(CATEGORIES.length / RUN_HOURS_UTC.length);
     const seen = new Set();
-    for (let day = 0; day < 5; day++) {
+    for (let day = 0; day < days; day++) {
       for (const h of RUN_HOURS_UTC) {
         seen.add(pickCategory({ query: {} }, new Date(Date.UTC(2026, 5, 15 + day, h))).category);
       }

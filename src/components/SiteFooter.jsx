@@ -14,17 +14,13 @@ import { installReferralCapture } from '../utils/badges';
  * The legal row is the ONE place the medical disclaimer appears on the
  * website (audit G21), and it carries the same items as the app's
  * LegalFooter (audit AP04): 18+ only, Privacy Policy, Consumer Health Data
- * Privacy, Terms, How We Make Money, and the usage-analytics switch.
+ * Privacy (the standalone /consumer-health-data.html notice), Terms, How We
+ * Make Money, and the usage-analytics switch.
  *
  * The analytics switch uses the same analyticsConsent helpers as the
  * consent notice and account settings, so the choice is persisted by
  * PostHog's own opt-out state (plus the shared consent record).
  */
-
-/** Section of the privacy policy that covers health data. There is no
- * standalone Consumer Health Data page in this repo, so the link opens the
- * privacy policy and scrolls to that section. */
-const CONSUMER_HEALTH_ANCHOR = 'sensitiveinfo';
 
 function readAnalyticsOff() {
   try {
@@ -33,18 +29,6 @@ function readAnalyticsOff() {
   } catch {
     return false;
   }
-}
-
-function scrollToWhenReady(id, tries = 40) {
-  const el = typeof document !== 'undefined' ? document.getElementById(id) : null;
-  if (el) {
-    // Let the view change finish its own scroll-to-top first.
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      el.scrollIntoView({ block: 'start' });
-    }));
-    return;
-  }
-  if (tries > 0) setTimeout(() => scrollToWhenReady(id, tries - 1), 50);
 }
 
 function AnalyticsToggle() {
@@ -107,11 +91,6 @@ export default function SiteFooter({
     installReferralCapture(getSupabaseClient());
   }, []);
 
-  const openConsumerHealth = () => {
-    onViewPrivacyPolicy?.();
-    scrollToWhenReady(CONSUMER_HEALTH_ANCHOR);
-  };
-
   return (
     <footer className="site-footer ay-footer">
       <div className="site-footer__columns ay-footer__columns">
@@ -126,6 +105,7 @@ export default function SiteFooter({
           <a className="ay-footer-link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How It Works</a>
           <a className="ay-footer-link" href="/shop" onClick={(e) => footerGo(e, () => onViewDiscovery?.(''))}>Shop</a>
           <a className="ay-footer-link" href="/library" onClick={(e) => footerGo(e, onViewArticles)}>Library</a>
+          <a className="ay-footer-link" href="/campus-resources">Campus Resources</a>
         </FooterColumn>
 
         <FooterColumn title="Company">
@@ -153,7 +133,7 @@ export default function SiteFooter({
         </p>
         <nav className="ay-footer-legal__links" aria-label="Legal">
           <button type="button" className="ay-footer-legal__link" onClick={onViewPrivacyPolicy}>Privacy Policy</button>
-          <button type="button" className="ay-footer-legal__link" onClick={openConsumerHealth}>Consumer Health Data Privacy</button>
+          <a className="ay-footer-legal__link" href="/consumer-health-data.html">Consumer Health Data Privacy</a>
           <button type="button" className="ay-footer-legal__link" onClick={onViewTermsOfUse}>Terms of Use</button>
           <button type="button" className="ay-footer-legal__link" onClick={onViewHowWeMakeMoney}>How We Make Money</button>
           <AnalyticsToggle />

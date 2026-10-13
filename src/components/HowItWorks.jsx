@@ -3,7 +3,8 @@ import HowItWorksFunnel from './HowItWorksFunnel';
 import { getSampleFunnel, SAMPLE_PROFILE_CHIPS } from '../utils/sampleFunnel';
 import { InfoPage, InfoSection } from './InfoPage';
 
-const SIGNALS = ['Published research', 'Clinical guidance', 'Clinician input', 'Community experience'];
+// What a personalized match is built from. Sponsorship is never one of them.
+const MATCH_INPUTS = ['Your profile', 'Published research', 'Clinical guidance + clinician input', 'Community experience'];
 
 export default function HowItWorks({ onBack, onViewSources }) {
   const funnel = getSampleFunnel();
@@ -16,20 +17,20 @@ export default function HowItWorks({ onBack, onViewSources }) {
     <InfoPage
       eyebrow="How it works"
       title="No mystery box."
-      lede="ayna filters the open market against your profile, then against published research. Anything that fails a step never reaches your shop."
+      lede="ayna compares products with the health profile and preferences you choose to share, then adds cited research, clinical guidance, safety information and community context where available."
       onBack={onBack}
       width="wide"
     >
       <InfoSection
-        eyebrow="The method"
-        title="Four steps, one example."
+        eyebrow="The process"
+        title="Four steps, in order."
         intro="The numbers below are a sample profile run live on today's catalog, not your results."
       >
         <ol className="ay-info-steps">
           <li className="ay-info-card ay-info-step">
             <span className="ay-info__pill">Step 01</span>
             <h3 className="ay-info-step__title">You tell us</h3>
-            <p className="ay-info-step__body">Stage of life, goals, sensitivities, city.</p>
+            <p className="ay-info-step__body">Stage of life, goals, sensitivities and the details you choose to share.</p>
             <div className="ay-info-step__demo">
               <span className="ay-info-example">Sample profile</span>
               <div className="ay-info-chip-row">
@@ -39,8 +40,8 @@ export default function HowItWorks({ onBack, onViewSources }) {
           </li>
           <li className="ay-info-card ay-info-step">
             <span className="ay-info__pill">Step 02</span>
-            <h3 className="ay-info-step__title">We scan the market</h3>
-            <p className="ay-info-step__body">Everything pulled in, then cut down.</p>
+            <h3 className="ay-info-step__title">We narrow the market</h3>
+            <p className="ay-info-step__body">Products across the open market are filtered for category fit, known safety conflicts and relevance.</p>
             <div className="ay-info-step__demo">
               <span className="ay-info-example">Sample profile</span>
               <div className="ay-info-metric"><span>In the catalog</span><strong>{funnel.catalog.toLocaleString()}</strong></div>
@@ -49,18 +50,19 @@ export default function HowItWorks({ onBack, onViewSources }) {
           </li>
           <li className="ay-info-card ay-info-step">
             <span className="ay-info__pill">Step 03</span>
-            <h3 className="ay-info-step__title">Evidence check</h3>
-            <p className="ay-info-step__body">Checked against published guidance. Fails are dropped.</p>
+            <h3 className="ay-info-step__title">We add evidence</h3>
+            <p className="ay-info-step__body">Published research, clinical guidance, product and safety sources, and community experience, where available.</p>
             <div className="ay-info-step__demo">
               <div className="ay-info-chip-row">
                 {['NIH research', 'ACOG guidance', 'CDC data'].map((t) => <span key={t} className="ay-info-chip">{t}</span>)}
               </div>
+              <p className="ay-info__small">Unsupported claims are labeled, not upgraded into facts.</p>
             </div>
           </li>
           <li className="ay-info-card ay-info-step ay-info-step--done">
             <span className="ay-info__pill">Step 04</span>
             <h3 className="ay-info-step__title">Your ecosystem</h3>
-            <p className="ay-info-step__body">What's left is ranked, with the reason attached.</p>
+            <p className="ay-info-step__body">Your strongest fits, each shown with its match reason and source context.</p>
             <div className="ay-info-step__demo">
               <span className="ay-info-example">Sample profile</span>
               <div className="ay-info-metric ay-info-metric--big"><strong>{funnel.strong}</strong><span>strong matches, each with its match reason</span></div>
@@ -69,7 +71,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
         </ol>
       </InfoSection>
 
-      <InfoSection eyebrow="The funnel" title="The narrowing down, in one picture.">
+      <InfoSection eyebrow="The funnel" title="Broad in. Focused out.">
         <div className="ay-info-card ay-info-card--pad">
           <HowItWorksFunnel />
         </div>
@@ -80,19 +82,26 @@ export default function HowItWorks({ onBack, onViewSources }) {
           <div className="ay-info-card ay-info-card--pad">
             <h3 className="ay-info-card__title">Signals we look at</h3>
             <div className="ay-info-chip-row">
-              {SIGNALS.map((s) => <span key={s} className="ay-info-chip">{s}</span>)}
+              {MATCH_INPUTS.map((s) => <span key={s} className="ay-info-chip">{s}</span>)}
             </div>
           </div>
           <div className="ay-info-card ay-info-card--pad">
             <h3 className="ay-info-card__title">What never counts</h3>
-            <p className="ay-info__body">Sponsorship is never a match input. Partner brands can be shown higher in Browse, always with a label.</p>
+            <p className="ay-info__body">
+              Personalized picks are ranked on relevance to you, not on commission rate or partnership status.
+              Sponsorship is never a match input. Partner brands can be shown higher in Browse, always with a label.
+            </p>
           </div>
         </div>
       </InfoSection>
 
-      <InfoSection eyebrow="Sources" title="See where it comes from.">
+      <InfoSection eyebrow="Sources" title="ayna is not a doctor, and never pretends to be.">
         <div className="ay-info-card ay-info-card--pad ay-info-cta">
-          <p className="ay-info__body">Summaries are AI-written from cited sources and clinician input.</p>
+          <p className="ay-info__body">
+            Summaries may be AI-assisted and are grounded in cited sources where available. “Clinical context” can
+            include published guidance, clinician-authored sources or clearly labeled brand-provided clinician claims;
+            it does not mean every product has been independently reviewed by an ayna clinician.
+          </p>
           <button type="button" className="ay-info-btn" onClick={openSources}>Read our sources</button>
         </div>
       </InfoSection>

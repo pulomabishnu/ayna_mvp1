@@ -1,3 +1,4 @@
+import { applyCatalogCorrections } from '../data/catalogCorrections.js';
 /**
  * Catalog loader.
  *
@@ -27,8 +28,11 @@
 import { ALL_PRODUCTS as BUNDLED_FALLBACK } from '../data/products.js';
 
 const API_PATH = '/api/products';
-const CACHE_KEY = 'ayna_product_catalog_v1';
-const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+const CACHE_KEY = 'ayna_product_catalog_v4';
+// Matches api/products.js's s-maxage — was 1hr on both layers, so a
+// confirmed-correct SQL Editor fix could take up to 2hrs to actually show
+// up on the site (found live 2026-09-16). Lowered together.
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const REQUEST_TIMEOUT_MS = 10_000;
 
 let inFlight = null;
@@ -41,7 +45,7 @@ function readCache() {
     const { ts, products } = JSON.parse(raw);
     if (!Array.isArray(products) || !products.length) return null;
     if (Date.now() - ts > CACHE_TTL_MS) return null;
-    return products;
+    return products.map(applyCatalogCorrections);
   } catch {
     return null;
   }
@@ -78,7 +82,7 @@ export async function loadProductCatalog() {
       const res = await fetch(API_PATH, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      const products = Array.isArray(data?.products) ? data.products : [];
+      const products = Array.isArray(data?.products) ? data.products.map(applyCatalogCorrections) : [];
       if (!products.length) throw new Error('empty catalog');
       writeCache(products);
       memo = { products, source: 'api' };

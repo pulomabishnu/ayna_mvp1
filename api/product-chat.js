@@ -4,9 +4,11 @@
  * plus core product data as context, so we don't need a full retrieval pass.
  */
 /* global process */
+import { loadGroundingCatalog, buildCatalogIndex, resolveCatalogProduct } from './_catalogGrounding.js';
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder, stripDiagnosticLanguage } from './_llm.js';
+import { traceSessionId, traceMessages } from './_prismTrace.js';
 import { fetchOfficialSiteText } from './_officialSiteFetch.js';
 
 /**
@@ -86,6 +88,7 @@ RULES:
 - When comparing products, weigh the user's health profile, her conditions, concerns, and preferences, to give a personally relevant answer.
 - NEVER diagnose, under any framing, this means never naming, listing, or suggesting specific medical conditions as a possible cause for symptoms the user mentions, even hedged ("this could be X, Y, or Z" still counts as diagnosing). Never prescribe or tell the user what to do medically. For medical decisions or symptom-related questions, say to consult her healthcare provider, while still answering the product question itself as helpfully as possible.
 - Never fabricate specific ingredient lists or clinical study data you don't know.
+- If discussing protein or muscle-preservation needs (including for a collagen product itself), collagen is not a complete protein and should not be recommended as someone's primary or sole protein source; note that and point to complete protein sources (e.g. whey, eggs, legumes, meat/fish) for muscle maintenance, even if collagen still comes up as a supporting option for skin/joint support.
 - Do not say you "haven't recommended" a product or that it's "not in your context", if the user asks about it, engage with it.
 
 PRODUCT IN VIEW:
@@ -151,12 +154,23 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_json' });
   }
 
-  const { question, product, aiInsights, userContext, ecosystemProducts } = body || {};
+  const { question, product: clientProduct, aiInsights, userContext, ecosystemProducts, conversationId, chatHistory } = body || {};
   if (!question || typeof question !== 'string' || !question.trim()) {
     return res.status(400).json({ error: 'question is required' });
   }
-  if (!product || typeof product !== 'object') {
+  if (!clientProduct || typeof clientProduct !== 'object') {
     return res.status(400).json({ error: 'product is required' });
+  }
+  // PRODUCT INTEGRITY: the product the model is grounded on (and whose URL
+  // gets fetched) is the reviewed catalog record, never the client's copy —
+  // a stale saved snapshot or tampered body could carry invented facts/URLs.
+  const catalogIndex = buildCatalogIndex(await loadGroundingCatalog());
+  const product = resolveCatalogProduct(clientProduct, catalogIndex);
+  if (!product) {
+    return res.status(404).json({
+      error: 'product_not_in_catalog',
+      answer: "I can only answer questions about products in Ayna's reviewed catalog, and I couldn't find this one.",
+    });
   }
 
   // Free (no LLM cost), so this runs before quota reservation, same
@@ -211,6 +225,11 @@ export default async function handler(req, res) {
       prompt,
       maxTokens: 1024,
       timeoutMs: 20_000,
+      trace: {
+        name: 'product-chat',
+        sessionId: traceSessionId({ conversationId, userId: user.id }),
+        messages: traceMessages(chatHistory, question),
+      },
     });
     answer = stripDiagnosticLanguage(out.text.trim());
   } catch (e) {

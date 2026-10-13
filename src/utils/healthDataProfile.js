@@ -23,14 +23,29 @@ const KEYWORD_TAGS = [
   { re: /steps|active calories|workout|walking|exercise minutes/i, tags: ['comfort'] },
 ];
 
+/**
+ * Supabase is the durable source of truth for imported health context. We keep
+ * only an active-tab cache in sessionStorage so a refresh is smooth without
+ * leaving conditions/medications/allergies on a shared computer indefinitely.
+ * Older localStorage copies are migrated once and immediately removed.
+ */
 export function loadHealthProfile() {
   try {
     if (typeof window === 'undefined') return null;
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const p = JSON.parse(raw);
-    if (!p || typeof p !== 'object') return null;
-    return normalizeProfile(p);
+    const sessionRaw = window.sessionStorage.getItem(STORAGE_KEY);
+    if (sessionRaw) {
+      const parsed = JSON.parse(sessionRaw);
+      return parsed && typeof parsed === 'object' ? normalizeProfile(parsed) : null;
+    }
+
+    const legacyRaw = window.localStorage.getItem(STORAGE_KEY);
+    if (!legacyRaw) return null;
+    const parsed = JSON.parse(legacyRaw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    const normalized = normalizeProfile(parsed);
+    try { window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(normalized)); } catch (_) {}
+    try { window.localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+    return normalized;
   } catch {
     return null;
   }
@@ -40,7 +55,8 @@ export function saveHealthProfile(profile) {
   if (typeof window === 'undefined') return null;
   const next = normalizeProfile(profile);
   next.updatedAt = new Date().toISOString();
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  try { window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch (_) {}
+  try { window.localStorage.removeItem(STORAGE_KEY); } catch (_) {}
   return next;
 }
 

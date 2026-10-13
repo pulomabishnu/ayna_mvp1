@@ -154,6 +154,28 @@ describe('itemMatchesMacroGroup — skin (excludeCategories)', () => {
   });
 });
 
+describe('itemMatchesMacroGroup — birth control (excludeCategories)', () => {
+  it('does NOT match a skin-care serum just because its copy says "skin barrier"', () => {
+    const serum = { id: 'p-kiero-essential-boost-serum', category: 'skincare', tags: ['skin', 'serum'], summary: 'Hydrates and strengthens the skin barrier.' };
+    expect(itemMatchesMacroGroup(serum, 'birth-control')).toBe(false);
+  });
+
+  it('does NOT match a vaginal moisturizer just because its copy says "moisture barrier"', () => {
+    const gel = { id: 'p-joylux-juicy-like-a-peach', category: 'intimate-care', tags: ['dryness'], summary: 'Joylux says it forms a moisture barrier on vaginal tissue.' };
+    expect(itemMatchesMacroGroup(gel, 'birth-control')).toBe(false);
+  });
+
+  it('DOES match barrier-method contraception described as such', () => {
+    const diaphragm = { id: 'p-test-diaphragm', category: 'intimate-care', tags: [], summary: 'A reusable silicone diaphragm, a barrier method of birth control.' };
+    expect(itemMatchesMacroGroup(diaphragm, 'birth-control')).toBe(true);
+  });
+
+  it('DOES still match a contraception product', () => {
+    const pill = { id: 'p-opill', category: 'contraception', tags: [], summary: 'Over-the-counter daily birth control pill.' };
+    expect(itemMatchesMacroGroup(pill, 'birth-control')).toBe(true);
+  });
+});
+
 describe('itemMatchesMacroGroup — hair (excludeCategories)', () => {
   it('does NOT match a vaginal lotion just because its copy says "thinning" (vaginal tissue thinning, not hair)', () => {
     const lotion = { id: 'p-kindra-lotion', category: 'menopause', tags: ['discomfort', 'comfort', 'non-hormonal'], summary: 'Hormone-free daily lotion to address vaginal dryness and thinning associated with menopause.' };

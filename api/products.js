@@ -15,6 +15,7 @@
  * safety object), so every existing consumer works unchanged.
  */
 import { createClient } from '@supabase/supabase-js';
+import { applyCatalogEvidence } from '../src/data/catalogEvidence.js';
 
 let _client = null;
 function getClient() {
@@ -27,7 +28,7 @@ function getClient() {
 }
 
 /** DB row -> the object shape the app has always consumed. */
-function toClientProduct(row) {
+export function toClientProduct(row) {
   const p = {
     id: row.id,
     name: row.name,
@@ -60,7 +61,28 @@ function toClientProduct(row) {
   // Provenance travels with the product so the UI can never present a
   // non-curated row with verified-clinician affordances.
   p.source = row.source || 'curated';
-  return p;
+  // PRODUCT INTEGRITY (2026-09-22 audit): the DB rows skipped the guardrails
+  // the bundled catalog already runs (src/data/catalogEvidence.js), so the
+  // live feed — which the iOS app renders directly — showed unsourced star
+  // ratings (145 rows), unsourced community-review claims and unlabeled
+  // clinician text. Same guardrails, applied at the API boundary.
+  return applyCatalogEvidence(p);
+}
+
+/**
+ * PRODUCT INTEGRITY (2026-09-22 audit): is_active alone is not enough.
+ * The live catalog carried ~150 source='discovered' rows written by the AI
+ * discovery job — model-written summaries, guessed price ranges, homepage
+ * URLs, no images. None of them carry a record of a human reviewing the
+ * product facts, so every discovered row is withheld until someone runs
+ * `scripts/review-discovered-products.mjs approve <id>`, which stamps
+ * discovery_meta.humanReviewedAt. Curated rows are unaffected.
+ */
+export function isPublishable(row) {
+  if (!row || row.is_active === false) return false;
+  if ((row.source || 'curated') !== 'discovered') return true;
+  if (row.review_status !== 'approved') return false;
+  return Boolean(row.discovery_meta?.humanReviewedAt);
 }
 
 export default async function handler(req, res) {
@@ -84,7 +106,7 @@ export default async function handler(req, res) {
 
     if (error) throw new Error(error.message);
 
-    const products = (data || []).map(toClientProduct);
+    const products = (data || []).filter(isPublishable).map(toClientProduct);
 
     if (products.length === 0) {
       // An empty table almost certainly means "not seeded yet", which is very
@@ -94,9 +116,15 @@ export default async function handler(req, res) {
       return res.status(503).json({ error: 'catalog_empty', products: [] });
     }
 
-    // Catalog changes are rare and every visitor needs it; this is the single
-    // highest-value cache in the app.
-    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+    // Catalog changes are rare and every visitor needs it, so this is still
+    // the single highest-value cache in the app — but s-maxage was 3600
+    // (1hr), which combined with the client's own 1hr localStorage cache
+    // (see src/utils/productCatalog.js) meant a SQL Editor fix to a bad
+    // listing could take up to 2 hours to actually appear on the site. Found
+    // live 2026-09-16 when a confirmed-correct DB fix looked like it "did
+    // nothing." 300s trades a little origin load during active catalog
+    // cleanup for fixes actually being visible within minutes.
+    res.setHeader('Cache-Control', 'public, s-maxage=300, must-revalidate');
     return res.status(200).json({ products, count: products.length, source: 'product_catalog' });
   } catch (e) {
     console.error('[products] query failed:', e?.message);

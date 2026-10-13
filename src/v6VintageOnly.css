@@ -1,0 +1,253 @@
+/* Final visual intent: grainy vintage indie-film texture, not literal camera UI. */
+
+/* Remove every literal camcorder/HUD treatment. */
+.v6-camcorder-hud,
+.v6-hud-rec,
+.v6-hud-battery,
+.v6-hud-time,
+.v6-hud-mark {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Keep the analog atmosphere subtle and readable. */
+body::after {
+  opacity: .06 !important;
+  mix-blend-mode: soft-light !important;
+  animation-duration: .62s !important;
+}
+
+html[data-v6-site-theme='dark'] body::after {
+  opacity: .075 !important;
+}
+
+.v6-film-vignette {
+  pointer-events: none !important;
+  box-shadow:
+    inset 0 0 90px rgba(47, 37, 42, .12),
+    inset 0 0 18px rgba(47, 37, 42, .045) !important;
+}
+
+html[data-v6-site-theme='dark'] .v6-film-vignette {
+  box-shadow:
+    inset 0 0 105px rgba(8, 8, 12, .22),
+    inset 0 0 22px rgba(8, 8, 12, .07) !important;
+}
+
+/* Vintage editorial texture without pretending the website is a camera. */
+html.v6-vintage-only .app-nav,
+html.v6-vintage-only .v6-home-search,
+html.v6-vintage-only .ayna-intake-question,
+html.v6-vintage-only .ayna-discover-card,
+html.v6-vintage-only .v6-product-bubble,
+html.v6-vintage-only .v6-auth-card,
+html.v6-vintage-only .v6-eco-product-card {
+  box-shadow: none !important;
+}
+
+html.v6-vintage-only .app-nav,
+html.v6-vintage-only .v6-home-search,
+html.v6-vintage-only .ayna-intake-question,
+html.v6-vintage-only .ayna-discover-card__tile,
+html.v6-vintage-only .v6-auth-card,
+html.v6-vintage-only .v6-live-search-dropdown {
+  border-style: solid !important;
+}
+
+/* The synthetic first-name step must use the same readable ink as the rest of light intake. */
+html:not([data-v6-site-theme='dark']) .v6-name-step h1,
+.ayna-intake-root:not(.v6-quiz-dark) .v6-name-step h1 {
+  color: #373238 !important;
+}
+
+/* Safety and suggestion metadata must remain readable in dark intake. */
+.ayna-intake-root.v6-quiz-dark .ayna-intake-hint,
+.ayna-intake-root.v6-quiz-dark .v6-support-suggestion-label,
+.ayna-intake-root.v6-quiz-dark .v6-support-bubble,
+.ayna-intake-root.v6-quiz-dark .v6-master-suggestion-bubble {
+  color: #e8e0d7 !important;
+}
+
+/* The intake-only moon toggle should visually carry the nav into the same dark sibling. */
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav,
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav--cream,
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav--landing {
+  background: rgba(47, 48, 66, .94) !important;
+  border-bottom-color: rgba(232, 224, 215, .14) !important;
+  color: #e8e0d7 !important;
+}
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav button,
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav a,
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav svg {
+  color: #e8e0d7 !important;
+  stroke: currentColor !important;
+}
+
+/* Short intake questions should hug their content rather than inherit the old tall panel. */
+.ayna-intake-question:has(.ayna-age-card),
+.ayna-intake-question:has(> .ayna-text-input[inputmode='numeric'][maxlength='5']),
+.ayna-intake-question.v6-master-support {
+  min-height: 0 !important;
+  height: auto !important;
+  padding-top: 42px !important;
+  padding-bottom: 42px !important;
+}
+
+.ayna-intake-question:has(.ayna-age-card) .ayna-intake-actions,
+.ayna-intake-question:has(> .ayna-text-input[inputmode='numeric'][maxlength='5']) .ayna-intake-actions,
+.ayna-intake-question.v6-master-support .ayna-intake-actions {
+  margin-top: 30px !important;
+}
+
+@media (max-width: 760px) {
+  .ayna-intake-question:has(.ayna-age-card),
+  .ayna-intake-question:has(> .ayna-text-input[inputmode='numeric'][maxlength='5']),
+  .ayna-intake-question.v6-master-support {
+    min-height: 0 !important;
+    padding-top: 32px !important;
+    padding-bottom: 32px !important;
+  }
+  .ayna-intake-question:has(.ayna-age-card) .ayna-intake-actions,
+  .ayna-intake-question:has(> .ayna-text-input[inputmode='numeric'][maxlength='5']) .ayna-intake-actions,
+  .ayna-intake-question.v6-master-support .ayna-intake-actions {
+    margin-top: 24px !important;
+  }
+
+  /* Keep the required floating Ask ayna control away from intake choices and the Continue bar. */
+  body:has(.ayna-intake-root) .v6-ask-locked-fallback,
+  body:has(.ayna-intake-root) .ayna-ask-launcher {
+    top: 72px !important;
+    right: 8px !important;
+    bottom: auto !important;
+    width: 56px !important;
+    min-width: 56px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    padding: 6px !important;
+  }
+  body:has(.ayna-intake-root) .v6-ask-locked-fallback__label,
+  body:has(.ayna-intake-root) .ayna-ask-launcher__label {
+    font-size: 8px !important;
+  }
+  body:has(.ayna-intake-root) .v6-ask-locked-fallback__star {
+    font-size: 11px !important;
+  }
+  body:has(.ayna-intake-root) .v6-ask-locked-fallback__lock {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  /* Outside intake, keep the mobile launcher dainty enough that it does not cover headings/cards. */
+  body:not(:has(.ayna-intake-root)) .v6-ask-locked-fallback,
+  body:not(:has(.ayna-intake-root)) .ayna-ask-launcher {
+    right: 9px !important;
+    bottom: 18px !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 6px !important;
+  }
+  body:not(:has(.ayna-intake-root)) .v6-ask-locked-fallback__label,
+  body:not(:has(.ayna-intake-root)) .ayna-ask-launcher__label {
+    font-size: 8px !important;
+  }
+}
+
+@media (min-width: 900px) {
+  /* Reserve the footer's lower-right corner so the fixed launcher cannot cover legal links. */
+  .site-footer { padding-right: 136px !important; }
+}
+
+/* Make the search-first support step reliable even if older quiz CSS loads first. */
+.v6-master-support:not(.v6-support-browse-all) .ayna-list-panel,
+.v6-support-search-only:not(.v6-support-browse-all) .ayna-list-panel {
+  display: none !important;
+}
+
+.v6-master-support.v6-support-browse-all .ayna-list-panel,
+.v6-support-search-only.v6-support-browse-all .ayna-list-panel {
+  display: block !important;
+}
+
+/* Native compact signed-out prompt. */
+.v6-unlock-card.v6-unlock-card--slim {
+  width: min(680px, calc(100vw - 32px)) !important;
+  min-height: 0 !important;
+  padding: 10px 12px !important;
+  display: grid !important;
+  grid-template-columns: 34px minmax(0, 1fr) auto !important;
+  gap: 10px !important;
+  align-items: center !important;
+  text-align: left !important;
+}
+
+.v6-unlock-card--slim .v6-unlock-icon {
+  width: 32px !important;
+  height: 32px !important;
+  margin: 0 !important;
+}
+
+.v6-unlock-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.v6-unlock-copy strong {
+  color: var(--v6-aa-light-text, #373238) !important;
+  font-size: 14px !important;
+  line-height: 1.15 !important;
+  font-weight: 600 !important;
+}
+
+.v6-unlock-copy span {
+  color: var(--v6-aa-light-muted, #50484e) !important;
+  font-size: 10.5px !important;
+  line-height: 1.3 !important;
+}
+
+html[data-v6-site-theme='dark'] .v6-unlock-copy strong {
+  color: var(--v6-aa-dark-text, #e8e0d7) !important;
+}
+
+html[data-v6-site-theme='dark'] .v6-unlock-copy span {
+  color: var(--v6-aa-dark-muted, #c7bbc3) !important;
+}
+
+.v6-unlock-card--slim .v6-unlock-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+
+.v6-unlock-card--slim .v6-unlock-actions button {
+  min-height: 32px !important;
+  padding: 6px 10px !important;
+  font-size: 10px !important;
+}
+
+@media (max-width: 680px) {
+  .v6-unlock-card.v6-unlock-card--slim {
+    grid-template-columns: 30px minmax(0, 1fr) !important;
+  }
+
+  .v6-unlock-card--slim .v6-unlock-actions {
+    grid-column: 1 / -1;
+    margin-top: 2px !important;
+    flex-wrap: wrap !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .v6-unlock-copy span { display: none !important; }
+  .v6-unlock-card.v6-unlock-card--slim { padding: 9px 10px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none !important; }
+}

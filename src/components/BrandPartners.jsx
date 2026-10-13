@@ -4,6 +4,7 @@ import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
 import { InfoPage } from './InfoPage';
+import { RESA_PARTNER_BLURB, RESA_SITE_URL, RESA_WAITLIST_CTA, RESA_WAITLIST_URL } from '../data/resaPartnership';
 
 /**
  * Brands, the partnership page.
@@ -22,6 +23,15 @@ import { InfoPage } from './InfoPage';
  * been dropped at public/brands/neycher.png yet, so BrandMark below falls
  * back to a text wordmark until one is added; that's an existing, working
  * fallback, not a bug.
+ *
+ * Added 2026-10-05: Rèsa, confirmed brand partnership, PRE-LAUNCH. Rèsa
+ * hasn't shipped; users can only join the waitlist with a $9.90 early
+ * deposit, and ayna earns no commission on it (the partnership is
+ * groundwork for the future wearable dashboard). `prelaunch: true` gives the
+ * card a distinct waitlist highlight and a "Join the waitlist" CTA pointing
+ * at `waitlistUrl`, the UTM-tagged link Rèsa supplied so referrals are
+ * trackable. Shared copy lives in src/data/resaPartnership.js. Logo saved
+ * from resa-labs.com at public/brands/resa.png.
  */
 
 const PARTNERS = [
@@ -38,21 +48,21 @@ const PARTNERS = [
     logo: 'https://connectpelvicfloorfitness.com/wp-content/uploads/2026/05/social-share-homepage.jpg',
     url: 'https://goto.connectpelvicfloorfitness.com/YVk7WO',
     blurb:
-      'DPT-led pelvic floor fitness with guided workouts designed to build strength, reduce symptoms and support whole-body movement.',
+      'App and web membership for progressive pelvic floor training. Guided strength, HIIT, yoga and mobility workouts built by a pelvic floor physical therapist.',
   },
   {
     brand: 'Elitone',
     logo: 'https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp',
     url: 'https://elitone.com/?af=aynahealth',
     blurb:
-      'FDA-cleared wearable pelvic floor therapy designed for at-home strengthening and bladder leak support without insertion.',
+      'FDA-cleared, external at-home devices for bladder leaks. A wearable gel pad does pelvic floor stimulation for you, no insertion, no prescription needed.',
   },
   {
     brand: 'Proov',
     logo: 'https://proovtest.com/cdn/shop/products/1_ProHero.jpg?v=1669147223&width=3840',
     url: 'https://proovtest.com/?irclickid=092RZoWR3xyZWgGydJzTuXX9UkrxvuV9I08LVk0&sharedid=&irpid=7622078&utm_source=7622078&utm_medium=affiliate&irgwc=1&afsrc=1&tw_source=impact&tw_campaign=7622078',
     blurb:
-      'At-home fertility testing designed to help track hormones and confirm ovulation.',
+      'At-home fertility and hormone testing. Track your full cycle, confirm ovulation, screen for common fertility factors, and get personalized next steps.',
   },
   {
     // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
@@ -62,7 +72,7 @@ const PARTNERS = [
     logo: 'https://www.limmethod.com/cdn/shop/files/IMG_2821.jpg?v=1696450654&width=1946',
     url: 'https://www.limmethod.com/?ref=Ayna_Health',
     blurb:
-      'Guided pelvic-floor wellness kit built by a pelvic floor occupational therapist, combining low-impact movement training with a sliding board and accessories.',
+      'Pelvic-floor wellness through guided, low-impact multidirectional movement using the LiM Sliding Board, accessories, and expert-led Movement Sessions.',
   },
   {
     // Confirmed partner since 2026-09-07 (see src/utils/partnerBrands.js) but
@@ -121,6 +131,17 @@ const PARTNERS = [
     blurb:
       'Hormone-free vaginal moisturizing glides and applicator refills for intimate comfort.',
   },
+  {
+    // Last on purpose (2026-10-05): pre-launch, so it sits after the shipping
+    // partners but keeps its highlighted waitlist card.
+    brand: 'Rèsa',
+    logo: '/brands/resa.png',
+    url: RESA_SITE_URL,
+    prelaunch: true,
+    waitlistUrl: RESA_WAITLIST_URL,
+    waitlistCta: RESA_WAITLIST_CTA,
+    blurb: RESA_PARTNER_BLURB,
+  },
   // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner, its
   // two products stay in the catalog (src/data/brands.js) so they still
   // surface in Discovery/search, but intentionally left off this page and
@@ -148,29 +169,50 @@ function BrandMark({ partner }) {
   return <div className="brand-partner__wordmark">{partner.brand}</div>;
 }
 
-export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem }) {
+export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem, onBrowseBrand }) {
   return (
     <InfoPage
       eyebrow="Partnerships"
       title={PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
       lede={PARTNERS.length > 0
-        ? 'Partner brands may get added visibility in Browse. Partnerships never affect your personal matches or recommendations.'
-        : 'Check back soon. Partner brands may get added visibility in Browse. Partnerships never affect your personal matches or recommendations.'}
+        ? 'Partner products may be featured higher in general Browse. Partnership never changes your personalized match scores or recommendation order.'
+        : 'Check back soon. When partnerships go live, they may be featured in general Browse, but partnership will never change personalized match scores or recommendation order.'}
       width="wide"
     >
       <div className="ay-info-partners">
         {PARTNERS.map((partner) => {
           const products = ALL_PRODUCTS.filter((p) => p.brand === partner.brand);
           return (
-            <article key={partner.brand} className="brand-partner">
+            <article key={partner.brand} className={`brand-partner${partner.prelaunch ? ' brand-partner--prelaunch' : ''}`}>
               <header className="brand-partner__head">
                 <BrandMark partner={partner} />
                 <div>
-                  <div className="brand-partner__name">{partner.brand}</div>
+                  <div className="brand-partner__name">
+                    {partner.brand}
+                    {partner.prelaunch && <span className="brand-partner__prelaunch-tag">Pre-launch · Waitlist</span>}
+                  </div>
                   <p className="brand-partner__blurb">{partner.blurb}</p>
-                  <div className="brand-partner__affiliate-label">Affiliate link</div>
-                  <a className="brand-partner__link" href={partner.url} target="_blank" rel="noopener noreferrer">
-                    Visit {partner.brand} ↗
+                  {partner.waitlistUrl && (
+                    <a
+                      className="brand-partner__waitlist-cta"
+                      href={partner.waitlistUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {partner.waitlistCta || 'Join the waitlist'} →
+                    </a>
+                  )}
+                  <a
+                    className="brand-partner__link"
+                    href={`/shop?q=${encodeURIComponent(partner.brand)}`}
+                    onClick={(e) => {
+                      if (!onBrowseBrand) return;
+                      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                      e.preventDefault();
+                      onBrowseBrand(partner.brand);
+                    }}
+                  >
+                    Browse {partner.brand} →
                   </a>
                 </div>
               </header>

@@ -7,18 +7,13 @@ import './index.css'
 import './styles/search-focus.css'
 import { installNoEmDash } from './utils/noEmDashDom.js'
 import posthog from 'posthog-js'
-import { tagInternalUserIfNeeded } from './utils/posthogInternal'
+import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'
+import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'
+import { applyStoredConsent, getStoredConsent, isMandatoryGpcVisitor } from './utils/analyticsConsent'
 
-
-// Keep the public Vercel alias from becoming a second app origin.
-// Auth, local storage, and session storage should all live on the canonical site.
-// Unique Vercel preview deployment URLs are intentionally left untouched.
 if (window.location.hostname === 'aynamvp1.vercel.app') {
   window.location.replace(
-    'https://www.aynahealth.co' +
-    window.location.pathname +
-    window.location.search +
-    window.location.hash
+    'https://www.aynahealth.co' + window.location.pathname + window.location.search + window.location.hash
   );
 }
 
@@ -30,14 +25,122 @@ const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 // project, same data, just routed through our own domain so it isn't
 // recognizable as third-party analytics traffic.
 const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest';
+const GPC_ENABLED = typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
+const STORED_ANALYTICS_PREF = getStoredConsent();
+const ANALYTICS_ID_PREFIX = 'ayna_analytics_id_v1:';
+
+// PostHog must not use the same identifier as Supabase. A random analytics ID
+// per signed-in account/browser keeps product analytics useful without making
+// the analytics warehouse directly joinable to reproductive-health rows by ID.
+function opaqueAccountKey(value) {
+  const s = String(value || '');
+  let h1 = 0x811c9dc5;
+  let h2 = 0x9e3779b9;
+  for (let i = 0; i < s.length; i += 1) {
+    const c = s.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 16777619);
+    h2 = Math.imul(h2 ^ c, 2246822519);
+  }
+  return `${(h1 >>> 0).toString(36)}${(h2 >>> 0).toString(36)}`;
+}
+
+function randomAnalyticsId() {
+  try {
+    if (globalThis.crypto?.randomUUID) return `ayna_${globalThis.crypto.randomUUID()}`;
+  } catch (_) {}
+  return `ayna_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 14)}`;
+}
+
+function analyticsIdForAuthId(authId) {
+  if (!authId || typeof window === 'undefined') return randomAnalyticsId();
+  const key = `${ANALYTICS_ID_PREFIX}${opaqueAccountKey(authId)}`;
+  try {
+    const existing = window.localStorage.getItem(key);
+    if (existing?.startsWith('ayna_')) return existing;
+    const next = randomAnalyticsId();
+    window.localStorage.setItem(key, next);
+    return next;
+  } catch {
+    // Private mode: keep analytics working for this session without falling
+    // back to the Supabase UUID.
+    return randomAnalyticsId();
+  }
+}
+
+// App.jsx still calls posthog.identify(supabaseUserId, { email }) in two legacy
+// auth paths. Intercept at the analytics boundary: discard those PII person
+// properties and substitute a dedicated random analytics identifier. The email
+// is inspected locally only to recognize the three founders; it is never passed
+// through to PostHog.
+const originalIdentify = typeof posthog.identify === 'function'
+  ? posthog.identify.bind(posthog)
+  : null;
+if (originalIdentify) {
+  posthog.identify = (authId, properties = {}) => {
+    const analyticsId = analyticsIdForAuthId(authId);
+    const result = originalIdentify(analyticsId);
+
+    // Founder filtering is account-based, so a new phone/laptop/browser becomes
+    // internal as soon as Ameera, Eliz, or Puloma signs in once. The helper also
+    // persists a local browser marker for future signed-out visits.
+    tagFounderAnalyticsIfNeeded(posthog, properties?.email);
+
+    // Preserve the older explicit-ID filter for previously-known internal test
+    // devices and accounts.
+    try {
+      const internalIds = getInternalIds();
+      if (internalIds.has(String(authId)) || internalIds.has(analyticsId)) {
+        posthog.register?.({ is_internal: true });
+        posthog.people?.set?.({ is_internal: true });
+      }
+    } catch (_) {}
+    return result;
+  };
+}
+
+// Health-related free text and direct account identifiers should never become
+// analytics payload. Exact keys only so useful non-sensitive counters such as
+// queryLength/concernsCount and product/category analytics remain available.
+const SENSITIVE_ANALYTICS_KEYS = new Set([
+  'query', 'searchquery', 'search_query', 'email', 'useremail', 'prompt', 'message', 'notes',
+  'healthprofile', 'health_profile', 'fullhealthintake', 'full_health_intake',
+  'conditions', 'medications', 'allergies', 'symptoms', 'diagnosis', 'diagnoses',
+  'concerns', 'intake', 'fhirsummary', 'fhir_summary', 'wearablesummary',
+  'wearable_summary', 'freetext', 'free_text', 'supportothertext',
+  'support_other_text', 'customconcerns', 'custom_concerns',
+  'userid', 'user_id', 'authuserid', 'auth_user_id', 'phone', 'phonenumber',
+  'phone_number', 'zipcode', 'zip', 'full_name', 'first_name', 'last_name',
+]);
+
+function sanitizeAnalyticsObject(value) {
+  if (Array.isArray(value)) return value.map(sanitizeAnalyticsObject);
+  if (!value || typeof value !== 'object') return value;
+
+  const clean = {};
+  for (const [key, nestedValue] of Object.entries(value)) {
+    const normalized = String(key).toLowerCase();
+    if (SENSITIVE_ANALYTICS_KEYS.has(normalized)) continue;
+    clean[key] = sanitizeAnalyticsObject(nestedValue);
+  }
+  return clean;
+}
+
+function sanitizePosthogEvent(event) {
+  // Once this browser has been recognized as one of the three founders, do not
+  // send further analytics at all. The PostHog person is also tagged internal
+  // at sign-in so any earlier anonymous events from a brand-new browser can be
+  // excluded by the internal-user filter after identity merge.
+  if (hasInternalBrowserMarker()) return null;
+  // Campus Resources (sexual-assault support directory): never send ANY event
+  // from this page. A pageview or click there would reveal that a specific
+  // visitor looked for these resources.
+  if (typeof window !== 'undefined' && /^\/campus-resources(\/|$)/.test(window.location.pathname)) return null;
+  if (!event?.properties) return event;
+  return { ...event, properties: sanitizeAnalyticsObject(event.properties) };
+}
 
 if (!POSTHOG_KEY) {
-  console.warn(
-    '[Ayna/PostHog] VITE_PUBLIC_POSTHOG_KEY is not set. ' +
-    'PostHog will not initialize. ' +
-    'Add it to Vercel environment variables. ' +
-    'Get the key from: app.posthog.com → Settings → Project API Key'
-  );
+  console.warn('[Ayna/PostHog] VITE_PUBLIC_POSTHOG_KEY is not set; analytics are disabled.');
 } else {
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
@@ -52,27 +155,49 @@ if (!POSTHOG_KEY) {
     mask_all_text: true,
     disable_session_recording: true,
     ip: false,
-    // Catches uncaught JS errors and unhandled promise rejections anywhere
-    // in the app (event handlers, async code) and reports them to PostHog's
-    // Error tracking automatically. Doesn't cover React render errors caught
-    // by ErrorBoundary below, those are explicitly reported via
-    // posthog.captureException() in componentDidCatch, since React swallows
-    // them before they'd ever reach window.onerror.
-    errorTracking: { autocaptureExceptions: true },
+    // Usage analytics are on by default, but a prior opt-out or Global
+    // Privacy Control must be honored before PostHog can emit the initial
+    // pageview. Health free text and direct identifiers are still stripped by
+    // before_send below, and session recording/autocapture remain disabled.
+    //
+    // Every GPC sender starts opted out here, synchronously, regardless of
+    // which state they're in. Confirming whether their specific state's law
+    // actually mandates honoring GPC requires an async geolocation lookup
+    // (isMandatoryGpcVisitor() in `loaded` below), which can't complete
+    // before this init call returns. This is the conservative direction to
+    // fail in: worst case a GPC visitor outside a mandatory state stays
+    // opted out a few hundred ms longer than strictly required; capturing
+    // before confirming they're NOT in a mandatory state is not a trade
+    // worth making for a slightly earlier pageview.
+    opt_out_capturing_by_default: GPC_ENABLED || STORED_ANALYTICS_PREF === 'denied',
+    before_send: sanitizePosthogEvent,
+    // Automatic exception capture can include raw error messages/stacks. In a
+    // health product those may accidentally contain user-entered context, so
+    // we send only a coarse, explicitly-sanitized app_error event below.
+    errorTracking: { autocaptureExceptions: false },
     loaded: (ph) => {
-      // Expose on window so Puloma can verify from browser console in any environment:
-      // Run: window.posthog.get_distinct_id()
-      // Run: window.posthog.get_property('is_internal')
       window.posthog = ph;
-
-      console.info(
-        '[Ayna/PostHog] Initialized successfully. ' +
-        'Distinct ID: ' + ph.get_distinct_id() + '. ' +
-        'To verify internal filtering: ' +
-        'window.posthog.get_property("is_internal") should return true ' +
-        'if this device is in the internal ID list.'
-      );
-
+      if (GPC_ENABLED) {
+        // isMandatoryGpcVisitor() only makes a network call (to
+        // /api/gpc-region) because GPC is active here, see
+        // analyticsConsent.js. If this state's law doesn't actually mandate
+        // honoring GPC, correct the synchronous default above via
+        // set_config rather than opt_in_capturing(): set_config live-updates
+        // opt_out_capturing_by_default without ever recording an explicit
+        // SDK decision, so this visitor ends up in EXACTLY the same state as
+        // anyone else who's never touched the notice: captured by default,
+        // consent still "pending", opt-out notice still showing (see
+        // ConsentBanner.jsx, which asks the same isMandatoryGpcVisitor()
+        // question for that same reason). Calling opt_in_capturing() here
+        // instead would mark their consent explicit and wrongly suppress
+        // the notice, as if they'd already answered it themselves.
+        isMandatoryGpcVisitor().then((mandatory) => {
+          if (!mandatory) ph.set_config?.({ opt_out_capturing_by_default: false });
+        });
+      } else {
+        applyStoredConsent(ph);
+      }
+      tagFounderAnalyticsIfNeeded(ph);
       tagInternalUserIfNeeded(ph);
     },
   });
@@ -90,15 +215,18 @@ if (!POSTHOG_KEY) {
 // of reload-looping forever.
 const CHUNK_RELOAD_KEY = 'ayna_chunk_reload_attempted';
 function isChunkLoadError(error) {
-  const msg = String(error?.message || error || '');
-  return /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i.test(msg);
+  return /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i.test(
+    String(error?.message || error || '')
+  );
 }
 
 class ErrorBoundary extends React.Component {
-  state = { hasError: false, error: null, recovering: false }
+  state = { hasError: false, error: null, recovering: false };
+
   static getDerivedStateFromError(error) {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
+
   componentDidMount() {
     // A clean mount means this reload (if any) actually fixed things, clear
     // the one-shot flag so a LATER, unrelated chunk error in the same tab
@@ -106,44 +234,48 @@ class ErrorBoundary extends React.Component {
     // its own automatic retry instead of going straight to the error screen.
     try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch (_) { /* private mode */ }
   }
-  componentDidCatch(error, info) {
-    console.error('App error:', error, info)
+
+  componentDidCatch(error) {
+    console.error('App error:', error);
     try {
-      posthog.captureException(error, {
-        componentStack: info?.componentStack,
+      posthog.capture('app_error', {
+        errorName: String(error?.name || 'Error').slice(0, 64),
         isChunkLoadError: isChunkLoadError(error),
       });
-    } catch (_) { /* posthog not initialized (missing key), never block error handling on this */ }
-    if (isChunkLoadError(error)) {
-      let alreadyTried = false;
-      try { alreadyTried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1'; } catch (_) { /* private mode */ }
-      if (!alreadyTried) {
-        try { sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch (_) { /* private mode */ }
-        this.setState({ recovering: true });
-        window.location.reload();
-      } else {
-        try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch (_) { /* private mode */ }
-      }
+    } catch { /* analytics unavailable */ }
+
+    if (!isChunkLoadError(error)) return;
+
+    let alreadyTried = false;
+    try { alreadyTried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1'; } catch { /* storage unavailable */ }
+
+    if (!alreadyTried) {
+      try { sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch { /* storage unavailable */ }
+      this.setState({ recovering: true });
+      window.location.reload();
+    } else {
+      try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* storage unavailable */ }
     }
   }
+
   render() {
     if (this.state.recovering) {
-      return (
-        <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '600px', margin: '2rem auto', color: '#666' }}>
-          Updating…
-        </div>
-      )
+      return <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto', color: '#666' }}>Updating…</div>;
     }
+
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '600px', margin: '2rem auto' }}>
+        <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto' }}>
           <h1>Something went wrong</h1>
-          <p style={{ color: '#666' }}>{String(this.state.error?.message || this.state.error)}</p>
-          <button onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', marginTop: '1rem' }}>Reload</button>
+          <p style={{ color: '#666' }}>Please reload the page and try again.</p>
+          <button type="button" onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', marginTop: '1rem' }}>
+            Reload
+          </button>
         </div>
-      )
+      );
     }
-    return this.props.children
+
+    return this.props.children;
   }
 }
 
@@ -173,5 +305,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ErrorBoundary>
       {isMobilePreview ? <MobileApp /> : <App />}
     </ErrorBoundary>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);

@@ -3,6 +3,7 @@ import { useSpeechToText } from '../hooks/useSpeechToText';
 import SearchMicButton from './SearchMicButton';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
+import { getAppSessionId } from '../utils/conversationId';
 
 /** Merges a profileUpdate the backend returned into the current profile, deduping against what's already there. */
 function mergeProfileUpdate(currentProfile, update) {
@@ -276,6 +277,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
           message: msg,
           profileSummary: summarizeProfile(profile || {}),
           chatHistory: messages.slice(-6),
+          conversationId: getAppSessionId(),
         }),
       });
       const data = await res.json().catch(() => ({}));

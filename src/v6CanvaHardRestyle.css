@@ -1,0 +1,579 @@
+/* Final visual match layer for the original ayna information architecture.
+   This deliberately changes materials/typography/shape language, not React content or page order. */
+
+:root{
+  --cv-cream:#F3EFE9;
+  --cv-paper:#FFFCF9;
+  --cv-ink:#292524;
+  --cv-muted:#78716C;
+  --cv-navy:#242A52;
+  --cv-indigo:#303354;
+  --cv-plum:#4E3866;
+  --cv-terra:#A2603C;
+  --cv-amber:#F0A84B;
+  --cv-champagne:#FFC774;
+  --cv-stone:#EAE2D9;
+  --cv-nav:#DED8DB;
+  --cv-line:rgba(41,37,36,.14);
+  --cv-serif:'Playfair Display',Georgia,serif;
+  --cv-sans:'DM Sans',system-ui,sans-serif;
+}
+
+/* Kill the old lavender/orange V6 identity completely. */
+html,body,#root,html body .app-container{
+  background:var(--cv-cream)!important;
+  color:var(--cv-ink)!important;
+}
+html body .app-container::before,
+html body .app-container::after{display:none!important}
+html body .app-container{background-image:none!important}
+
+/* Canva screenshot nav: cool paper strip, italic wordmark, hairline only. */
+html body .app-nav,
+html body .app-nav--cream,
+html body .app-nav--landing{
+  height:62px!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0 clamp(28px,4vw,58px)!important;
+  background:rgba(222,216,219,.94)!important;
+  color:var(--cv-ink)!important;
+  border-bottom:1px solid rgba(41,37,36,.18)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(12px)!important;
+}
+html body .app-nav__logo{
+  color:var(--cv-ink)!important;
+  font:italic 500 30px/1 var(--cv-serif)!important;
+  letter-spacing:-.045em!important;
+}
+html body .app-nav a,
+html body .app-nav button{
+  color:var(--cv-ink)!important;
+  font-family:var(--cv-sans)!important;
+  font-size:12px!important;
+  font-weight:500!important;
+}
+
+/* HOME: retain the same section order and interactions, use the Canva composition language. */
+html body .v6-home-shell{
+  max-width:1440px!important;
+  margin:0 auto!important;
+  padding:0 clamp(28px,4vw,58px) 40px!important;
+  background:var(--cv-cream)!important;
+}
+html body .v6-home-hero{
+  min-height:500px!important;
+  padding:88px 0 72px!important;
+  text-align:center!important;
+  background:
+    radial-gradient(circle at 82% 14%,rgba(255,199,116,.09),transparent 30%),
+    linear-gradient(180deg,var(--cv-paper),var(--cv-cream))!important;
+  border:0!important;
+  border-bottom:1px solid var(--cv-line)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+html body .v6-eyebrow{
+  color:#51484B!important;
+  font:600 9px/1.2 var(--cv-sans)!important;
+  letter-spacing:.22em!important;
+  text-transform:uppercase!important;
+}
+html body .v6-home-hero h1{
+  max-width:980px!important;
+  margin:30px auto 0!important;
+  color:var(--cv-ink)!important;
+  font-family:var(--cv-serif)!important;
+  font-size:clamp(68px,8vw,112px)!important;
+  font-weight:500!important;
+  line-height:.88!important;
+  letter-spacing:-.072em!important;
+}
+html body .v6-home-hero h1 em{
+  color:var(--cv-plum)!important;
+  font-style:italic!important;
+  font-weight:500!important;
+}
+html body .v6-home-hero>p{
+  width:auto!important;
+  max-width:610px!important;
+  margin:28px auto 36px!important;
+  white-space:normal!important;
+  color:#5F5956!important;
+  font:400 16px/1.72 var(--cv-sans)!important;
+}
+html body .v6-home-search{
+  width:min(760px,94%)!important;
+  height:62px!important;
+  margin:auto!important;
+  padding:0 10px 0 20px!important;
+  gap:12px!important;
+  border:1px solid rgba(41,37,36,.16)!important;
+  border-radius:16px!important;
+  background:rgba(255,252,249,.96)!important;
+  color:var(--cv-plum)!important;
+  box-shadow:none!important;
+}
+html body .v6-home-search input{
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  color:var(--cv-ink)!important;
+  font:400 14px var(--cv-sans)!important;
+}
+html body .v6-home-search input::placeholder{color:#80777A!important}
+html body .v6-home-search button{
+  width:64px!important;
+  height:42px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:11px!important;
+  background:var(--cv-navy)!important;
+  color:var(--cv-paper)!important;
+  box-shadow:none!important;
+}
+html body .v6-quick-links{
+  margin-top:20px!important;
+  gap:20px!important;
+}
+html body .v6-quick-links button{
+  padding:0 0 3px!important;
+  border:0!important;
+  border-bottom:1px solid transparent!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#756D69!important;
+  font:500 11px var(--cv-sans)!important;
+}
+html body .v6-quick-links button:hover{
+  color:var(--cv-plum)!important;
+  border-bottom-color:var(--cv-plum)!important;
+}
+
+/* PERSONALIZATION: same 3-column information, no furniture/card-soup look. */
+html body .v6-cabinet-zone{
+  min-height:360px!important;
+  margin:0!important;
+  padding:68px 0!important;
+  gap:34px!important;
+  border:0!important;
+  border-bottom:1px solid var(--cv-line)!important;
+  border-radius:0!important;
+  background:var(--cv-paper)!important;
+  color:var(--cv-ink)!important;
+  overflow:visible!important;
+}
+html body .v6-cabinet-copy h2{
+  margin:18px 0 20px!important;
+  color:var(--cv-ink)!important;
+  font-family:var(--cv-serif)!important;
+  font-size:clamp(42px,4.2vw,64px)!important;
+  font-weight:500!important;
+  line-height:.94!important;
+  letter-spacing:-.06em!important;
+}
+html body .v6-cabinet-copy h2 em{
+  color:var(--cv-plum)!important;
+  font-style:italic!important;
+}
+html body .v6-cabinet-copy>p{
+  color:var(--cv-muted)!important;
+  font-size:13px!important;
+  line-height:1.65!important;
+}
+html body .v6-cabinet-copy>button{
+  margin-top:20px!important;
+  padding:11px 15px!important;
+  border:1px solid var(--cv-navy)!important;
+  border-radius:8px!important;
+  background:var(--cv-navy)!important;
+  color:var(--cv-paper)!important;
+  box-shadow:none!important;
+  font-size:11px!important;
+}
+html body .v6-scribble{
+  margin-top:24px!important;
+  color:var(--cv-terra)!important;
+  font:italic 500 17px/1.1 var(--cv-serif)!important;
+  transform:none!important;
+}
+
+/* The functional cabinet becomes a dark editorial product field, not literal furniture. */
+html body .v6-wood-cabinet{
+  height:238px!important;
+  position:relative!important;
+  overflow:hidden!important;
+  border:1px solid rgba(255,252,249,.16)!important;
+  border-radius:4px!important;
+  background:
+    radial-gradient(circle at 83% 8%,rgba(78,56,102,.68),transparent 34%),
+    linear-gradient(135deg,var(--cv-navy),var(--cv-indigo) 60%,var(--cv-plum))!important;
+  box-shadow:none!important;
+  perspective:none!important;
+}
+html body .v6-cabinet-door,
+html body .v6-cabinet-topper,
+html body .v6-cabinet-drawers{display:none!important}
+html body .v6-cabinet-grid{
+  position:absolute!important;
+  inset:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,1fr)!important;
+  gap:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  overflow:hidden!important;
+}
+html body .v6-cabinet-grid::before,
+html body .v6-cabinet-grid::after{display:none!important}
+html body .v6-shelf-product{
+  height:100%!important;
+  padding:18px 10px 10px!important;
+  justify-content:center!important;
+  border:0!important;
+  border-right:1px solid rgba(255,252,249,.12)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--cv-paper)!important;
+}
+html body .v6-shelf-product:last-child{border-right:0!important}
+html body .v6-shelf-product .v6-product-visual{height:155px!important}
+html body .v6-shelf-product>span{
+  margin-top:8px!important;
+  color:rgba(255,252,249,.78)!important;
+  font-size:9px!important;
+  opacity:.78!important;
+  transform:none!important;
+}
+html body .v6-shelf-product:hover,
+html body .v6-shelf-product.is-active{
+  background:rgba(255,252,249,.055)!important;
+}
+html body .v6-shelf-product:hover .v6-product-visual img,
+html body .v6-shelf-product.is-active .v6-product-visual img{
+  transform:translateY(-3px) scale(1.025)!important;
+  filter:drop-shadow(0 10px 14px rgba(0,0,0,.18))!important;
+}
+
+html body .v6-product-bubble{
+  min-height:238px!important;
+  padding:24px!important;
+  border:1px solid var(--cv-line)!important;
+  border-radius:4px!important;
+  background:var(--cv-cream)!important;
+  color:var(--cv-ink)!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+}
+html body .v6-product-bubble h3{
+  color:var(--cv-ink)!important;
+  font-family:var(--cv-serif)!important;
+  font-size:24px!important;
+  letter-spacing:-.035em!important;
+}
+html body .v6-product-bubble p{color:var(--cv-muted)!important}
+html body .v6-bubble-tags{
+  gap:0!important;
+}
+html body .v6-bubble-tags span{
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--cv-plum)!important;
+  font-size:9px!important;
+}
+html body .v6-bubble-tags span+span::before{
+  content:' · ';
+  color:var(--cv-terra)!important;
+}
+html body .v6-bubble-actions button{
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+html body .v6-bubble-actions .primary{
+  background:var(--cv-navy)!important;
+  border-color:var(--cv-navy)!important;
+  color:var(--cv-paper)!important;
+}
+
+html body .v6-cabinet-lock{
+  background:rgba(36,42,82,.18)!important;
+  backdrop-filter:blur(5px)!important;
+}
+html body .v6-unlock-card{
+  width:min(560px,92vw)!important;
+  padding:32px 38px!important;
+  border:1px solid var(--cv-line)!important;
+  border-radius:8px!important;
+  background:var(--cv-paper)!important;
+  color:var(--cv-ink)!important;
+  box-shadow:none!important;
+}
+html body .v6-unlock-icon{
+  background:var(--cv-cream)!important;
+  border-color:var(--cv-line)!important;
+}
+
+/* EXPLORE: Canva's oversized editorial type + thin rule + sparse product objects. */
+html body .v6-explore{
+  padding:90px 0 110px!important;
+  background:var(--cv-cream)!important;
+}
+html body .v6-section-head{
+  padding:0 0 34px!important;
+  border-bottom:1px solid var(--cv-line)!important;
+}
+html body .v6-section-head h2{
+  max-width:760px!important;
+  margin-top:18px!important;
+  color:var(--cv-ink)!important;
+  font-family:var(--cv-serif)!important;
+  font-size:clamp(58px,6vw,86px)!important;
+  font-weight:500!important;
+  line-height:.90!important;
+  letter-spacing:-.068em!important;
+}
+html body .v6-section-head h2 em{color:var(--cv-plum)!important}
+html body .v6-explore-meta p{
+  max-width:340px!important;
+  color:var(--cv-muted)!important;
+  font-size:12px!important;
+  line-height:1.6!important;
+}
+html body .v6-explore-refresh{
+  padding:0 0 3px!important;
+  border:0!important;
+  border-bottom:1px solid var(--cv-line)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--cv-ink)!important;
+  box-shadow:none!important;
+}
+html body .v6-category-grid{gap:32px 18px!important}
+html body .v6-category-card{
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  text-align:left!important;
+}
+html body .v6-category-media{
+  border:0!important;
+  border-radius:4px!important;
+  background:var(--cv-stone)!important;
+}
+html body .v6-category-card>div:last-child{padding:12px 1px 0!important}
+html body .v6-category-card strong{
+  color:var(--cv-ink)!important;
+  font-family:var(--cv-sans)!important;
+  font-size:13px!important;
+  font-weight:600!important;
+}
+html body .v6-category-card small{
+  color:var(--cv-muted)!important;
+  font-size:10px!important;
+}
+html body .v6-category-card em{
+  color:var(--cv-plum)!important;
+  font-family:var(--cv-sans)!important;
+  font-size:10px!important;
+  font-style:normal!important;
+}
+
+/* BROWSE: premium commerce, no generic card containers. */
+html body .ayna-browse{
+  background:var(--cv-cream)!important;
+}
+html body .ayna-browse__heading h2{
+  color:var(--cv-ink)!important;
+  font-family:var(--cv-serif)!important;
+  font-size:clamp(62px,6vw,88px)!important;
+  font-weight:500!important;
+  line-height:.92!important;
+  letter-spacing:-.065em!important;
+}
+html body .ayna-browse__search input{
+  min-height:58px!important;
+  border:1px solid var(--cv-line)!important;
+  border-radius:14px!important;
+  background:var(--cv-paper)!important;
+  box-shadow:none!important;
+}
+html body .ayna-browse__categories,
+html body .ayna-browse__toolbar,
+html body .ayna-browse__filters{
+  background:transparent!important;
+  border-color:var(--cv-line)!important;
+  box-shadow:none!important;
+}
+html body .ayna-browse__categories button,
+html body .ayna-browse__filter-button,
+html body .v6-browse-needs-trigger,
+html body .ayna-browse__sort select{
+  border:1px solid var(--cv-line)!important;
+  border-radius:999px!important;
+  background:transparent!important;
+  color:var(--cv-ink)!important;
+  box-shadow:none!important;
+}
+html body .ayna-browse__categories button.is-active{
+  background:var(--cv-navy)!important;
+  color:var(--cv-paper)!important;
+  border-color:var(--cv-navy)!important;
+}
+html body .ayna-browse-card,
+html body .ayna-discover-card{
+  overflow:visible!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+html body .ayna-discover-card__tile{
+  overflow:hidden!important;
+  border:0!important;
+  border-radius:4px!important;
+  background:var(--cv-stone)!important;
+  box-shadow:none!important;
+}
+html body .ayna-discover-card__tile>img{
+  box-sizing:border-box!important;
+  padding:clamp(22px,8%,40px)!important;
+  object-fit:contain!important;
+  filter:saturate(.90) contrast(.98)!important;
+  transition:transform 220ms ease,filter 180ms ease!important;
+}
+html body .ayna-browse-card:hover .ayna-discover-card__tile>img,
+html body .ayna-browse-card:focus-within .ayna-discover-card__tile>img{
+  transform:scale(1.02)!important;
+  filter:saturate(.98) contrast(1)!important;
+}
+html body .ayna-discover-card__body{
+  padding:13px 1px 0!important;
+  background:transparent!important;
+  border:0!important;
+}
+html body .ayna-discover-card__category{
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--cv-plum)!important;
+  font:700 9px/1.2 var(--cv-sans)!important;
+  letter-spacing:.16em!important;
+  text-transform:uppercase!important;
+}
+html body .ayna-discover-card__name{
+  margin-top:7px!important;
+  color:var(--cv-ink)!important;
+  font:600 15px/1.28 var(--cv-sans)!important;
+  letter-spacing:-.016em!important;
+}
+html body .ayna-discover-card__price{
+  margin-top:7px!important;
+  color:var(--cv-muted)!important;
+  font:400 12px/1.3 var(--cv-sans)!important;
+}
+html body .ayna-browse-card__wishlist{
+  top:12px!important;
+  right:12px!important;
+  width:38px!important;
+  height:38px!important;
+  border:1px solid rgba(41,37,36,.10)!important;
+  border-radius:50%!important;
+  background:rgba(255,252,249,.92)!important;
+  color:var(--cv-ink)!important;
+  box-shadow:none!important;
+}
+html.v6-signed-in body .ayna-browse-card__match{
+  width:58px!important;
+  height:58px!important;
+  border:0!important;
+  border-radius:56% 44% 52% 48% / 47% 55% 45% 53%!important;
+  background:var(--cv-navy)!important;
+  color:var(--cv-paper)!important;
+  box-shadow:none!important;
+}
+
+/* Shared information surfaces: mostly paper + rules, not floating SaaS cards. */
+html body .pdp-summary-card,
+html body .v6-settings-card,
+html body .v6-submitted-card,
+html body .article-card,
+html body .about-card,
+html body .v6-eco-product-card,
+html body .ayna-auth-card,
+html body .auth-card{
+  background:var(--cv-paper)!important;
+  border:1px solid var(--cv-line)!important;
+  border-radius:6px!important;
+  box-shadow:none!important;
+}
+html body .pdp-head__name,
+html body .article-title,
+html body .articles-page h1,
+html body .about-page h1,
+html body .about-page h2,
+html body .v6-eco-copy h1{
+  color:var(--cv-ink)!important;
+  font-family:var(--cv-serif)!important;
+  font-weight:500!important;
+  letter-spacing:-.06em!important;
+}
+
+/* Intake/auth: cinematic when dark, paper when light. */
+html body .ayna-intake-root:not(.v6-quiz-dark) .ayna-intake-question{
+  background:var(--cv-paper)!important;
+  border:1px solid var(--cv-line)!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+html body .ayna-intake-root.v6-quiz-dark,
+html[data-v6-site-theme='dark'] body .ayna-intake-root{
+  background:
+    radial-gradient(circle at 84% 8%,rgba(78,56,102,.72),transparent 36%),
+    radial-gradient(circle at 10% 96%,rgba(240,168,75,.10),transparent 25%),
+    linear-gradient(135deg,var(--cv-navy),var(--cv-indigo) 58%,var(--cv-plum))!important;
+}
+html body .v6-auth-overlay,
+html body .ayna-auth-overlay{
+  background:rgba(36,42,82,.82)!important;
+}
+
+/* Dark end-caps: same Canva navy/plum film material. */
+html body .film-dark,
+html body footer,
+html body .app-footer,
+html body .ayna-footer{
+  background:
+    radial-gradient(circle at 86% 8%,rgba(78,56,102,.55),transparent 34%),
+    linear-gradient(135deg,var(--cv-navy),var(--cv-indigo) 58%,var(--cv-plum))!important;
+  color:var(--cv-paper)!important;
+  box-shadow:none!important;
+}
+
+@media(max-width:900px){
+  html body .v6-home-hero{min-height:0!important;padding:64px 0 54px!important}
+  html body .v6-home-hero h1{font-size:clamp(58px,12vw,86px)!important}
+  html body .v6-cabinet-zone{padding:50px 0!important}
+  html body .v6-section-head h2{font-size:clamp(52px,9vw,72px)!important}
+}
+@media(max-width:620px){
+  html body .app-nav{padding:0 18px!important}
+  html body .v6-home-shell{padding-left:18px!important;padding-right:18px!important}
+  html body .v6-home-hero{padding-top:52px!important}
+  html body .v6-home-hero h1{font-size:clamp(50px,15vw,68px)!important;line-height:.90!important}
+  html body .v6-home-search{height:58px!important;border-radius:14px!important;padding-left:16px!important}
+  html body .v6-cabinet-zone{padding:42px 0!important}
+  html body .v6-wood-cabinet{border-radius:3px!important}
+  html body .v6-product-bubble{border-radius:3px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html body .ayna-discover-card__tile>img{transition:none!important}
+}

@@ -14,7 +14,9 @@ const MIN_TIER_SCORE = 50;
 // each concern's products come from the engine needs it contains
 // (LEGACY_CONCERN_BY_ITEM for current answers, LEGACY_CONCERN_NEEDS for older
 // saved profiles). `tags` still order concerns (concernRelevanceScore).
-const CONCERN_CONFIG = [
+// Exported: api/llm-recommendations.js scopes its per-concern catalog slice
+// with these same keys/tags/categories.
+export const CONCERN_CONFIG = [
   { key: 'Period care (pads, tampons, cups, discs, underwear)', tags: ['heavy-flow', 'leaks', 'cramps'], categories: ['pad', 'liner', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'] },
   { key: 'Cramp and pain relief (devices, supplements, heat)', tags: ['cramps'], categories: ['cramp-relief', 'supplement'] },
   { key: 'Hormone balance (supplements, lifestyle)', tags: ['pcos', 'irregular', 'bloating'], categories: ['supplement'] },
@@ -33,7 +35,7 @@ const CONCERN_CONFIG = [
   { key: 'STI support', tags: ['sti', 'std', 'sexual-health'], categories: ['telehealth', 'diagnostics'] },
   { key: 'Gut and vaginal health (probiotics, pH balance)', tags: ['vaginal-health', 'probiotic', 'ph-balance'], categories: ['supplement', 'intimate-care'] },
   { key: 'Perimenopause and menopause support', tags: ['menopause'], categories: ['menopause', 'supplement', 'telehealth'] },
-  { key: 'Sexual health and comfort (lubricants, pelvic floor)', tags: ['pelvic-floor'], categories: ['sex-tech', 'intimate-care', 'pelvic-floor'] },
+  { key: 'Sexual health and comfort (lubricants, pelvic floor)', tags: ['pelvic-floor'], categories: ['sex-tech', 'intimate-care', 'pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser'] },
   { key: 'Mental health and cycle mood support', tags: ['mood', 'anxiety'], categories: ['mental-health'] },
   { key: 'Sleep and energy', tags: ['sleep', 'energy'], categories: ['sleep', 'supplement'] },
   // No live product currently carries category 'skin'/'skincare'/'hair'/'haircare', a real
@@ -103,9 +105,15 @@ function textForSafety(product) {
     .toLowerCase();
 }
 
+// catalogEvidence.js rewrites a bare "No recalls" to this neutral reminder.
+// It is not a recall and must not drop the product from every tier.
+const NEUTRAL_RECALL_NOTE = 'check current regulator and manufacturer recall notices';
+
 function hasRecall(product) {
   const recalls = String(product?.safety?.recalls || '').toLowerCase();
-  return recalls.includes('⚠️') || (recalls.includes('recall') && !recalls.includes('no recalls'));
+  if (recalls.includes('⚠️')) return true;
+  if (recalls.includes(NEUTRAL_RECALL_NOTE)) return false;
+  return recalls.includes('recall') && !recalls.includes('no recalls');
 }
 
 function includesAny(text, terms) {

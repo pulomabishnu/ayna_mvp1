@@ -1,15 +1,10 @@
 /* global process */
-// Returns a product image URL for a given product name/brand/official-page
-// URL. Previously used the Serper.dev Google Image Search API, that key
-// ran out of credits ("Not enough credits" from a direct API test), and
-// every lookup silently returned empty. Replaced with two free, no-quota
-// methods tried in order against the product's official page URL:
-//   1. Shopify storefronts publicly expose /products.json, fuzzy-match the
-//      product name against it for the real per-SKU photo.
-//   2. Fall back to the page's og:image/twitter:image meta tag, rejecting
-//      anything that looks like a logo/banner/social-share asset by
-//      filename rather than risk mislabeling a brand logo as a product photo.
-// Both reuse the SSRF-safe fetch pattern in ./_ssrfSafeFetch.js.
+// Returns a product image URL only from the exact official page URL already
+// attached to the catalog item. We intentionally do NOT fuzzy-match a whole
+// storefront, supplement database, or open-web image index: a missing photo
+// is preferable to showing the wrong formulation, dosage, count, or category.
+// The exact page's og:image/twitter:image is still rejected when it looks like
+// a logo/banner/social-share asset.
 //
 // `url` is optional, the hardcoded catalog mostly doesn't have one yet, and
 // without it there's no page to resolve against, so this returns empty
@@ -20,10 +15,9 @@
 // cost is per PRODUCT rather than per product-per-browser, edge caching,
 // input caps, and a request timeout on every outbound fetch.
 
+import { createHash } from 'node:crypto';
 import { rateLimit, getClientIp } from './_rateLimit.js';
-import { matchShopifyProduct } from './_shopifyProductMatch.js';
 import { fetchOgImage, isLikelyNonProductImageUrl } from './_ogImageFetch.js';
-import { lookupSerperImage } from './_serperImageSearch.js';
 
 const MAX_TERM_LEN = 120;
 const MAX_URL_LEN = 500;
@@ -71,47 +65,8 @@ function allowedOrigin(req) {
   return configured.includes(origin) ? origin : null;
 }
 
-/** Tries Shopify catalog match first, then og:image, first hit wins. */
-async function resolveImageFromUrl(pageUrl, name, brand, allowBrandLogo) {
-  const shopifyImage = await matchShopifyProduct(pageUrl, name, brand);
-  if (shopifyImage) return shopifyImage;
-  const ogImage = await fetchOgImage(pageUrl, allowBrandLogo);
-  if (ogImage) return ogImage;
-  return '';
-}
-
-// llm-recommendations.js's enrichProduct() always sets `type` to exactly
-// 'digital' or 'physical' (defaulting to 'physical'), a cleaner, more
-// reliable signal for "does this even have a physical form to photograph"
-// than guessing off `category` (an open-ended string with dozens of
-// values). Apps/telehealth services (Brightside, Clue) are 'digital': a
-// brand logo/icon genuinely IS the product's real "photo" there. Everything
-// 'physical' keeps the strict logo/SVG rejection, a logo standing in for
-// an actual product photo is a real bug there (Pure Encapsulations'
-// Shopify catalog resolving to its theme logo instead of a bottle photo).
-
-/**
- * Third, URL-independent fallback: NIH's Dietary Supplement Label Database.
- * Free, keyless, no hallucination risk (it's a real government database
- * matched by fuzzy product name, already used for the same purpose in
- * api/llm-recommendations.js), a much better fit than trying to guess a
- * retailer product URL for an LLM-suggested product, since a large share of
- * AI-suggested products are supplements with no usable page URL at all (the
- * model either omits `officialUrl` or, before this file's other fix, gave a
- * brand homepage that has no product-specific og:image). Only ever helps
- * (returns a real label photo) or does nothing (name doesn't match DSLD's
- * supplement-only catalog), never a source of a wrong image, since it
- * requires an actual database match, not a guess.
- */
-async function resolveImageFromDsld(name) {
-  try {
-    const { lookupDsldProduct } = await import('./llm-recommendations.js');
-    const hit = await lookupDsldProduct(name);
-    return hit?.imageUrl || '';
-  } catch (e) {
-    console.error('[product-image] DSLD fallback failed:', e?.message);
-    return '';
-  }
+async function resolveImageFromUrl(pageUrl, allowBrandLogo, name) {
+  return (await fetchOgImage(pageUrl, allowBrandLogo, name)) || '';
 }
 
 export default async function handler(req, res) {
@@ -131,20 +86,17 @@ export default async function handler(req, res) {
   const allowBrandLogo = type === 'digital';
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  // Bumped v9 -> v10: the v9 brand-gate required name-overlap on TOP of a
-  // confirmed brand match, which rejected real, brand-confirmed results
-  // whenever the catalog's own generic product description didn't share
-  // enough words with the brand's actual commercial product name (e.g.
-  // "Kegel8 Pelvic Floor Exerciser" vs the real "Kegel8 Ultra 20 V2
-  // Electronic Pelvic Toner"), confirmed live, cached negative under v9.
-  const cacheKey = `ayna:img:v10:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  // v12 also includes the exact source page, so corrected variants do not
+  // collide with prior photos under the same name and brand.
+  const identity = createHash('sha256').update(JSON.stringify([type, brand.toLowerCase(), name.toLowerCase(), pageUrl])).digest('hex');
+  const cacheKey = `ayna:img:v12:${identity}`;
   const redis = getRedis();
 
   if (redis) {
     try {
       const hit = await (await redis).get(cacheKey);
       if (typeof hit === 'string') {
-        res.setHeader('Cache-Control', 'public, s-maxage=2592000, stale-while-revalidate=86400');
+        res.setHeader('Cache-Control', hit ? 'public, s-maxage=86400' : 'no-store');
         return res.status(200).json({ imageUrl: hit, cached: true });
       }
     } catch (e) {
@@ -160,41 +112,20 @@ export default async function handler(req, res) {
 
   let imageUrl = '';
   try {
-    // isLikelyNonProductImageUrl is the final authority regardless of
-    // source, matchShopifyProduct trusts whatever image field the matched
-    // catalog entry has with no filename check of its own (a real
-    // production case: Pure Encapsulations' Shopify catalog resolved to
-    // their own theme logo SVG, not a per-SKU photo). Rejecting BEFORE the
-    // "still empty?" check, rather than after, means a rejected logo still
-    // falls through to try DSLD instead of giving up.
+    // Product integrity > image coverage. Only trust the exact catalog URL.
+    // If it is absent, generic, blocked, or returns a non-product asset, the
+    // UI deliberately shows its honest fallback instead of guessing.
     if (pageUrl) {
-      imageUrl = await resolveImageFromUrl(pageUrl, name, brand, allowBrandLogo);
+      imageUrl = await resolveImageFromUrl(pageUrl, allowBrandLogo, name);
       if (isLikelyNonProductImageUrl(imageUrl, allowBrandLogo)) imageUrl = '';
-    }
-    if (!imageUrl) {
-      imageUrl = await resolveImageFromDsld(name);
-      if (isLikelyNonProductImageUrl(imageUrl)) imageUrl = '';
-    }
-    // True last resort, a real image-search index, unlike every resolver
-    // above, doesn't depend on the brand's own site being reachable or
-    // scrapable (a large share of real brands actively block bots) and
-    // works for a product with no catalog `url` at all, including one an
-    // AI search just generated on the fly. No-ops (returns null
-    // immediately) when SERPER_API_KEY isn't configured.
-    if (!imageUrl) {
-      imageUrl = (await lookupSerperImage(name, brand)) || '';
     }
   } catch (e) {
     console.error('[product-image] resolution failed:', e?.message);
   }
 
   if (redis) {
-    // Only pin a negative result once every resolver that COULD have found
-    // something has actually been tried, a page URL (Shopify/og:image), or
-    // Serper configured (works with no URL at all). Otherwise a product
-    // with no URL yet and no Serper key might still resolve later via a
-    // different path, so don't cache that as permanent.
-    const shouldCacheNegative = (pageUrl != null && pageUrl !== '') || Boolean(process.env.SERPER_API_KEY);
+    // Only cache a negative when an exact page URL was actually checked.
+    const shouldCacheNegative = Boolean(pageUrl);
     try {
       if (imageUrl || shouldCacheNegative) {
         await (await redis).set(cacheKey, imageUrl, { ex: imageUrl ? CACHE_TTL_SEC : NEGATIVE_TTL_SEC });
@@ -204,6 +135,6 @@ export default async function handler(req, res) {
     }
   }
 
-  res.setHeader('Cache-Control', 'public, s-maxage=2592000, stale-while-revalidate=86400');
+  res.setHeader('Cache-Control', imageUrl ? 'public, s-maxage=86400' : 'no-store');
   return res.status(200).json({ imageUrl });
 }

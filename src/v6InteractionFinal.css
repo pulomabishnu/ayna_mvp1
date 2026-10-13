@@ -1,0 +1,184 @@
+/* Final interaction/spacing overrides. Loaded after v6InteractionFixes.css. */
+
+/* Search dropdown should read as part of the field, not a floating unrelated panel. */
+.v6-typeahead-host{isolation:isolate!important}
+.v6-live-search-dropdown{
+  top:calc(100% + 5px)!important;
+  border-radius:16px!important;
+  padding:6px!important;
+  box-shadow:0 18px 48px rgba(45,33,44,.14)!important;
+}
+.v6-typeahead-row,.v6-typeahead-add{min-height:48px!important;padding:6px 8px!important}
+.v6-typeahead-copy strong{font-size:12.5px!important}
+.v6-typeahead-copy small{font-size:10px!important}
+.v6-typeahead-visual{width:34px!important;height:34px!important;border-radius:10px!important}
+.v6-typeahead-open{z-index:12000!important}
+.v6-typeahead-open .v6-live-search-dropdown{z-index:12010!important}
+.v6-auth-overlay.v6-auth-sheet-mode{z-index:9000!important}
+
+/* v6WholeSite intentionally gives ordinary inputs a filled treatment. The
+   editorial home search owns its surrounding field, so its inner input must
+   stay visually transparent instead of inheriting that legacy mini-pill. */
+html body .app-container .v6-home-shell.v6e-home form.v6e-search > input:not([type='checkbox']):not([type='radio']):not([type='range']){
+  display:block!important;
+  align-self:stretch!important;
+  width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  outline:0!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  box-shadow:none!important;
+  color:#25232a!important;
+  -webkit-appearance:none!important;
+  appearance:none!important;
+}
+
+/* The Browse-by-Need menu is intentionally a floating panel. The older layout
+   pulls the toolbar upward with a negative margin, so define the stack
+   explicitly: trigger > toolbar controls > open menu. This keeps both Browse
+   by Need and Filters genuine first-click targets. */
+.v6-browse-needs-trigger{
+  position:relative!important;
+  z-index:50!important;
+}
+.ayna-browse.v6-browse-live .ayna-browse__toolbar{
+  position:relative!important;
+  z-index:40!important;
+}
+.ayna-browse.v6-browse-live .ayna-browse__toolbar button,
+.ayna-browse.v6-browse-live .ayna-browse__toolbar label,
+.ayna-browse.v6-browse-live .ayna-browse__toolbar select{
+  position:relative!important;
+  z-index:41!important;
+}
+.ayna-browse.v6-browse-live .ayna-browse__categories.v6-browse-needs-menu{
+  z-index:30!important;
+}
+
+/* Ayna Match is a reveal, not a permanently stamped badge. The score itself is
+   still the real MatchGauge value from Discovery, never generated here. */
+.ayna-browse-card .ayna-browse-card__match{
+  top:12px!important;
+  left:12px!important;
+  width:58px!important;
+  height:58px!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:56% 44% 52% 48% / 47% 55% 45% 53%!important;
+  background:rgba(247,239,233,.94)!important;
+  border:1px solid rgba(85,69,97,.18)!important;
+  box-shadow:0 8px 22px rgba(49,40,62,.10)!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  transform:translateY(5px) scale(.92)!important;
+  transition:opacity 170ms ease,transform 180ms ease,visibility 0s linear 180ms!important;
+  pointer-events:none!important;
+}
+.ayna-browse-card .ayna-browse-card__match .ayna-match-gauge{
+  transform:scale(1.8)!important;
+  transform-origin:center!important;
+}
+.ayna-browse-card:hover .ayna-browse-card__match,
+.ayna-browse-card:focus-within .ayna-browse-card__match,
+.ayna-browse-card.v6-match-revealed .ayna-browse-card__match{
+  opacity:1!important;
+  visibility:visible!important;
+  transform:translateY(0) scale(1)!important;
+  transition-delay:0s!important;
+}
+html[data-v6-site-theme='dark'] .ayna-browse-card .ayna-browse-card__match{
+  background:rgba(55,48,65,.95)!important;
+  border-color:rgba(255,248,242,.20)!important;
+}
+/* No account/profile means no Match reveal at all, including hover/touch. */
+.v6-signed-out .ayna-browse-card .ayna-browse-card__match{
+  display:none!important;
+}
+
+/* Intake: one scroll surface only. The stage scrolls, not a panel inside the stage. */
+.ayna-intake-root .ayna-intake-question{
+  height:min(560px,calc(100dvh - 112px))!important;
+  max-height:560px!important;
+  min-height:420px!important;
+  padding:18px 28px 14px!important;
+}
+.ayna-intake-root .ayna-intake-question>h1{font-size:clamp(27px,2.8vw,38px)!important}
+.ayna-intake-root .ayna-intake-icon{width:36px!important;height:36px!important;margin-bottom:7px!important}
+.ayna-intake-root .ayna-intake-stage{margin-top:11px!important;overflow:auto!important}
+.ayna-intake-root .ayna-list-panel{
+  max-height:none!important;
+  overflow:visible!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+.ayna-intake-root .ayna-search-wrap{margin-bottom:7px!important}
+.ayna-intake-root .v6-intake-search-dropdown{z-index:12500!important;max-height:220px!important}
+.ayna-intake-root .ayna-smart-dropdown{z-index:12500!important}
+.ayna-intake-root .ayna-continue-wrap{margin-top:8px!important}
+.ayna-intake-root .ayna-skip{margin-top:5px!important}
+
+/* When an intake suggestion menu is open, do not clip it at the question edge. */
+.ayna-intake-root .ayna-intake-question:has(.v6-intake-typeahead-open),
+.ayna-intake-root .ayna-intake-question:has(.ayna-smart-dropdown:not([hidden])){overflow:visible!important;z-index:80!important}
+.ayna-intake-root .ayna-intake-stage:has(.v6-intake-typeahead-open),
+.ayna-intake-root .ayna-intake-stage:has(.ayna-smart-dropdown:not([hidden])){overflow:visible!important}
+
+/* Sign in stays compact and to the side so Browse/search remain usable. */
+.v6-auth-overlay.v6-auth-sheet-mode{padding:68px 18px 16px!important}
+.v6-auth-overlay.v6-auth-sheet-mode .v6-auth-card{
+  width:min(380px,calc(100vw - 28px))!important;
+  max-height:calc(100dvh - 84px)!important;
+  padding:23px 24px 21px!important;
+}
+
+/* Ecosystem: exact V6 feeling. The universe owns the whole first viewport. */
+.v6-page-ecosystem .v6-ecosystem-page{
+  width:100vw!important;
+  max-width:none!important;
+  margin-left:calc(50% - 50vw)!important;
+  margin-right:calc(50% - 50vw)!important;
+  padding:0!important;
+}
+.v6-page-ecosystem .v6-ecosystem-panel{
+  min-height:calc(100dvh - 62px)!important;
+  border-radius:0!important;
+  border-left:0!important;
+  border-right:0!important;
+  padding:clamp(34px,4.2vw,58px) clamp(26px,5vw,72px) 28px!important;
+  justify-content:center!important;
+}
+.v6-page-ecosystem .v6-eco-main{
+  flex:1 1 auto!important;
+  align-items:center!important;
+  min-height:0!important;
+}
+.v6-page-ecosystem .v6-universe-wrap{width:min(610px,47vw)!important}
+.v6-page-ecosystem .v6-eco-stats{margin-top:auto!important;padding-top:18px!important}
+.v6-page-ecosystem .eco2-body{margin-top:0!important;padding-top:54px!important}
+
+@media(max-height:760px) and (min-width:761px){
+  .ayna-intake-root .ayna-intake-question{height:calc(100dvh - 106px)!important;max-height:none!important;min-height:0!important;padding-top:15px!important}
+  .ayna-intake-root .ayna-intake-icon{width:32px!important;height:32px!important;margin-bottom:5px!important}
+  .ayna-intake-root .ayna-intake-question>h1{font-size:32px!important}
+  .ayna-intake-root .ayna-intake-stage{margin-top:9px!important}
+}
+
+@media(max-width:760px){
+  .ayna-intake-root .ayna-intake-question{height:calc(100dvh - 104px)!important;max-height:none!important;min-height:0!important;padding:16px 14px 12px!important}
+  .ayna-intake-root .ayna-list-panel{grid-template-columns:1fr!important}
+  .v6-auth-overlay.v6-auth-sheet-mode{padding:8px!important}
+  .v6-auth-overlay.v6-auth-sheet-mode .v6-auth-card{width:100%!important;max-height:82dvh!important}
+  .v6-page-ecosystem .v6-ecosystem-panel{min-height:calc(100dvh - 58px)!important;padding:24px 14px 20px!important}
+  .v6-page-ecosystem .v6-universe-wrap{width:min(390px,100%)!important}
+  .v6-page-ecosystem .eco2-body{padding-top:36px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .ayna-browse-card .ayna-browse-card__match{transition:none!important;transform:none!important}
+}

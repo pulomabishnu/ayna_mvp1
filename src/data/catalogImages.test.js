@@ -1,6 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { ALL_PRODUCTS } from './products.js';
+import { applyCatalogCorrections } from './catalogCorrections.js';
 import { isPlaceholderProductImage } from '../utils/resolveProductImage.js';
+
+// The catalog actually rendered by the app is ALL_PRODUCTS with
+// applyCatalogCorrections applied on top (see buyLink.js, products.js
+// consumers, etc.) — CATALOG_CORRECTIONS can itself set a bad `image`
+// (or silently blank out a good one from the raw data file underneath),
+// and none of that would ever be visible to a test that only looked at
+// the pre-correction ALL_PRODUCTS. Test the corrected catalog so this
+// file's guarantee actually matches what ships.
+const CORRECTED_PRODUCTS = ALL_PRODUCTS.map(applyCatalogCorrections);
 
 /**
  * Permanent guard against the recurring "hardcoded logo/banner shown as a
@@ -25,7 +35,7 @@ import { isPlaceholderProductImage } from '../utils/resolveProductImage.js';
  */
 describe('catalog product images', () => {
   it('has no product with a hardcoded logo/icon/banner/SVG masquerading as its photo', () => {
-    const offenders = ALL_PRODUCTS.filter((p) => {
+    const offenders = CORRECTED_PRODUCTS.filter((p) => {
       const image = String(p?.image || '').trim();
       if (!image) return false; // empty is fine — not what this test is for
       const allowBrandLogo = p?.type === 'digital';
