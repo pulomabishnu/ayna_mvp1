@@ -294,7 +294,7 @@ function BuildHero({ onStartQuiz, onViewDiscovery, onOpenProduct, greeting }) {
               Build your ecosystem
               <Arrow />
             </button>
-            <p className="lx-hero__note">Six questions, then a shop matched to you.</p>
+            <p className="lx-hero__note">A few quick questions, then a shop matched to you.</p>
           </div>
           <HeroSearch onViewDiscovery={onViewDiscovery} />
         </div>

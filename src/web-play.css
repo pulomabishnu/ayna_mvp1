@@ -1160,3 +1160,6 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
   .app-container .ayna-browse__toolbar-left { flex-wrap: wrap; min-width: 0; }
   .app-container .ayna-browse__toolbar select { max-width: 100%; }
 }
+
+/* Swipe deck percents use the one ink match pill. */
+.app-container .wdeck-copy em, .app-container .ay-deck-meta em { display: inline-flex; align-items: baseline; padding: 5px 10px; border-radius: 99px; background: var(--ay-ink) !important; color: var(--ay-paper) !important; font-style: normal; font-weight: 700; font-size: 12px; line-height: 1; }

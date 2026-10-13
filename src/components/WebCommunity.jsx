@@ -402,7 +402,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     } catch (e) { notifyError(e); }
   };
   const saveProfile = async () => {
-    if (!user || !profileName.trim() || !profileHandle.trim()) return;
+    if (!user || !profileName.trim() || !profileHandle.trim() || breaksCommunityRules(profileName, profileHandle)) return;
     setBusy(true); setError('');
     try { setProfile(await community.upsertCommunityProfile(supabase, user.id, { username: profileHandle, displayName: profileName })); setNotice('Profile saved'); }
     catch (e) { notifyError(e); } finally { setBusy(false); }
@@ -588,9 +588,9 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const composeSheet = compose && <Sheet title={KIND_TITLES[compose]} onClose={closeCompose} className="wc-compose">
       <div className="wc-seg wc-kinds" role="group" aria-label="What are you sharing?">{Object.keys(KIND_TITLES).map((k) => <button type="button" key={k} aria-pressed={compose === k} onClick={() => openCompose(k)}>{k[0].toUpperCase() + k.slice(1)}</button>)}</div>
       {composeOnly && user && profileChecked && !profile && <div className="wc-card wc-join"><h3>Pick a name first</h3><p className="wc-muted">Your health answers stay private.</p>
-        <input value={profileName} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" />
-        <input value={profileHandle} onChange={(e) => setProfileHandle(e.target.value.toLowerCase())} placeholder="Username" aria-label="Username" />
-        <button type="button" className="wc-btn is-ghost" disabled={busy || !profileName.trim() || !profileHandle.trim()} onClick={saveProfile}>Create profile</button></div>}
+        <RuleField as="input" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" onShowRules={openRules} />
+        <RuleField as="input" value={profileHandle} maxLength={30} onChange={(e) => setProfileHandle(e.target.value.toLowerCase())} placeholder="Username" aria-label="Username" onShowRules={openRules} />
+        <button type="button" className="wc-btn is-ghost" disabled={busy || !profileName.trim() || !profileHandle.trim() || breaksCommunityRules(profileName, profileHandle)} onClick={saveProfile}>Create profile</button></div>}
       {compose === 'playlist' ? <>
         <section className="wc-group">
           <label className="wc-label" htmlFor="wc-pl-name">Name</label>
@@ -819,9 +819,9 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       <nav className="wc-nav" aria-label="Community">
         <div className="wc-tabs" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className={onFeed && tab === k ? 'is-on' : ''} onClick={() => switchTab(k)}>{l}</button>)}</div>
         {user && !profile ? <div className="wc-card wc-join"><h3>Join Community</h3><p className="wc-muted">Your health answers stay private.</p>
-          <input value={profileName} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" />
-          <input value={profileHandle} onChange={(e) => setProfileHandle(e.target.value.toLowerCase())} placeholder="Username" aria-label="Username" />
-          <button type="button" className="wc-btn" disabled={busy} onClick={saveProfile}>Create profile</button></div>
+          <RuleField as="input" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" onShowRules={openRules} />
+          <RuleField as="input" value={profileHandle} maxLength={30} onChange={(e) => setProfileHandle(e.target.value.toLowerCase())} placeholder="Username" aria-label="Username" onShowRules={openRules} />
+          <button type="button" className="wc-btn" disabled={busy || !profileName.trim() || !profileHandle.trim() || breaksCommunityRules(profileName, profileHandle)} onClick={saveProfile}>Create profile</button></div>
           : <div className="wc-me"><Avatar size={40} name={profile?.display_name || 'Guest'} path={profile?.avatar_url} anonymous={!profile} /><div><strong>{profile?.display_name || 'Guest'}</strong><small>{profile ? `@${profile.username}` : 'Posting anonymously'}</small></div>
             {profile ? <button type="button" className="wc-link wc-me-btn" onClick={() => openProfile(profile.username)}>View profile</button> : <button type="button" className="wc-link wc-me-btn" onClick={() => requireAccount('your Community profile')}>Sign in</button>}</div>}
         <button type="button" className="wc-rules-btn" onClick={openRules}><span aria-hidden="true">§</span>Community rules</button>

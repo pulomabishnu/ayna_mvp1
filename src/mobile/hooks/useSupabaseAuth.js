@@ -79,7 +79,9 @@ export function useSupabaseAuth() {
   // "Got the app" badge: any signed-in user in the app counts, recorded once
   // in her account metadata (ayna_app_signed_in_at) and on this device.
   useEffect(() => {
-    if (user?.id) recordAppSignIn(getSupabaseClient(), user);
+    // Only the installed app earns "Got the app": the web /mobile-preview runs this
+    // same code but is not the app.
+    if (user?.id && Capacitor.isNativePlatform()) recordAppSignIn(getSupabaseClient(), user);
   }, [user]);
 
   useEffect(() => {
