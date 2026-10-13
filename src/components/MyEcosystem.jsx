@@ -2,13 +2,17 @@ import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react'
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import {
     ALL_PRODUCTS,
+    CATEGORY_LABELS,
     getEcosystemAlternatives,
     getRecommendationExplanation,
 } from '../data/products';
 import ProductTileImage, { resolveCatalogProductImage, ProductImageFallback } from './ProductTileImage';
 import CareNearYouPanel from './CareNearYouPanel';
-import EcosystemBubbles, { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
-import EcosystemShelf from './EcosystemShelf';
+import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
+import ProductCard from './ProductCard';
+import WebEcosystemChart from './WebEcosystemChart';
+import { areaTone } from './ecosystemAreaTone';
+import '../styles/eco-redesign.css';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
@@ -50,10 +54,6 @@ const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
 const SMS_CARD_DISMISS_KEY = 'ayna_sms_card_dismissed_at';
 const SMS_CARD_RESHOWN_KEY = 'ayna_sms_card_last_reshown_at';
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-
-// Sidebar area-breakdown bar/legend colors, in the order shelfAreaBreakdown
-// sorts by count (largest first) — real design tokens (index.css), not new colors.
-const SHELF_AREA_COLORS = ['var(--color-navy)', 'var(--color-plum)', 'var(--color-terracotta)', 'var(--color-amber)', 'var(--color-amber-deep)'];
 
 const SYNC_SOURCES = [
   { id: 'apple-health', label: 'Apple Health' },
@@ -1041,27 +1041,6 @@ export default function MyEcosystem({
     // Use ecosystemOrder for stable card positions; fall back to insertion order
     const myProductIds = ecosystemOrder.length ? ecosystemOrder.filter(id => myProducts[id]) : Object.keys(myProducts);
     const myProductList = myProductIds.map(id => myProducts[id]).filter(Boolean);
-    // Broader "shelf" areas (Cycle care, Pelvic floor, Clinicians, ...) — the
-    // same grouping EcosystemBubbles/EcosystemShelf use, matching the mockup's
-    // sidebar row labels. Groups by care AREA, not raw catalog category (e.g.
-    // 'pad', 'tampon' would otherwise be separate rows) — too fine-grained
-    // for a sidebar summary.
-    const shelfAreaBreakdown = useMemo(() => {
-        const byArea = new Map();
-        myProductList.forEach((p) => {
-            const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
-            const key = area ? area.key : 'other';
-            if (!byArea.has(key)) byArea.set(key, []);
-            byArea.get(key).push(p);
-        });
-        const filled = ECOSYSTEM_AREAS
-            .filter((a) => byArea.has(a.key))
-            .map((a) => ({ ...a, count: byArea.get(a.key).length }))
-            .sort((a, b) => b.count - a.count);
-        const gap = ECOSYSTEM_AREAS.find((a) => !byArea.has(a.key)) || null;
-        const clinicianCount = byArea.get('care')?.length || 0;
-        return { filled, gap, clinicianCount };
-    }, [myProductList]);
     const estimatedMonthlyTotal = useMemo(() => {
         let total = 0;
         let counted = 0;
@@ -1075,6 +1054,48 @@ export default function MyEcosystem({
         });
         return { total: Math.round(total * 100) / 100, counted, totalItems: myProductList.length };
     }, [myProductList]);
+
+    // Page layout (Oct 2026 redesign, matches the app's Ecosystem screen):
+    // one section per area of care she has products in, largest first, plus
+    // up to six "Add a shelf" chips for areas she hasn't started.
+    const [ecoQuery, setEcoQuery] = useState('');
+    const areaGroups = useMemo(() => {
+        const byArea = new Map();
+        myProductList.forEach((p) => {
+            const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
+            const key = area ? area.key : 'other';
+            if (!byArea.has(key)) byArea.set(key, []);
+            byArea.get(key).push(p);
+        });
+        const groups = ECOSYSTEM_AREAS
+            .filter((a) => byArea.has(a.key))
+            .map((a) => ({ ...a, products: byArea.get(a.key) }));
+        if (byArea.has('other')) groups.push({ key: 'other', label: 'Other', categories: [], products: byArea.get('other') });
+        return groups.sort((a, b) => b.products.length - a.products.length);
+    }, [myProductList]);
+    const gapAreas = useMemo(
+        () => ECOSYSTEM_AREAS.filter((a) => !areaGroups.some((g) => g.key === a.key)).slice(0, 6),
+        [areaGroups]
+    );
+    const ecoQueryTrimmed = ecoQuery.trim();
+    const visibleAreaGroups = useMemo(() => {
+        const words = ecoQueryTrimmed.toLowerCase().split(/\s+/).filter(Boolean);
+        if (!words.length) return areaGroups;
+        return areaGroups
+            .map((g) => ({
+                ...g,
+                products: g.products.filter((p) => {
+                    const text = [
+                        p.name, p.brand, p.category, CATEGORY_LABELS[p.category], g.label,
+                        ...(Array.isArray(p.tags) ? p.tags : []),
+                    ].filter(Boolean).join(' ').toLowerCase();
+                    return words.every((w) => text.includes(w));
+                }),
+            }))
+            .filter((g) => g.products.length > 0);
+    }, [areaGroups, ecoQueryTrimmed]);
+    const visibleMatchCount = visibleAreaGroups.reduce((n, g) => n + g.products.length, 0);
+    const searchShop = (q) => onGoToSearch?.(q ? { query: q } : '');
     const filteredProducts = useMemo(() => {
         const words = searchTerm.toLowerCase().trim().split(/\s+/).filter(Boolean);
         if (!words.length) return ALL_PRODUCTS.filter(p => !omittedProducts[p.id]);
@@ -1783,201 +1804,262 @@ export default function MyEcosystem({
 
     return (
         <>
-            <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-                {/* Board 2a ("Ecosystem page, restructured") from the Aug 2026
-                    mockup pass: one persistent left summary, one scrolling
-                    content column, nothing competing for the top of the page —
-                    replaces the old Overview/Details tab switcher, which
-                    duplicated "your ecosystem" as two separate stacked headers. */}
-                <EcosystemBubbles
-                    myProducts={myProducts}
-                    quizResults={quizResults}
-                    healthProfile={healthProfile}
-                    user={user}
-                    onOpenProduct={onOpenProduct}
-                    onExploreArea={(area) => onGoToSearch?.(exploreAreaOptions(area))}
-                    onToggleProduct={onToggleProduct}
-                />
+            <section className="eco3 mockup-page animate-fade-in-up" aria-labelledby="eco3-title">
+                {/* Oct 2026 redesign: the website version of the app's
+                    Ecosystem screen. Header + search, the ring overview, then
+                    one section per area of care using the Shop card. */}
+                <header className="eco3-head">
+                    <div className="eco3-head__text">
+                        <h1 id="eco3-title">Your ecosystem</h1>
+                        <p className="eco3-head__sub">
+                            {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : (
+                                <>
+                                    {myProductList.length} pick{myProductList.length === 1 ? '' : 's'}
+                                    {' · '}
+                                    {areaGroups.length} area{areaGroups.length === 1 ? '' : 's'} of care
+                                </>
+                            )}
+                        </p>
+                    </div>
+                    <div className="eco3-actions" role="group" aria-label="Ecosystem actions">
+                        {typeof onEditHealthProfile === 'function' && (
+                            <button type="button" className="eco3-pill" onClick={onEditHealthProfile}>Update profile</button>
+                        )}
+                        {typeof onOpenDoctorPrep === 'function' && (
+                            <button type="button" className="eco3-pill" onClick={onOpenDoctorPrep}>Doctor prep</button>
+                        )}
+                        <button type="button" className="eco3-pill" onClick={() => setShowMoreTools(true)}>More tools</button>
+                        {typeof onBuildEcosystem === 'function' && (
+                            <button type="button" className="eco3-pill eco3-pill--ink" onClick={onBuildEcosystem}>
+                                {myProductList.length ? 'Rebuild' : 'Build ecosystem'}
+                            </button>
+                        )}
+                    </div>
+                </header>
+
+                <form
+                    className="ayna-browse__search eco3-search"
+                    role="search"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!ecoQueryTrimmed) return;
+                        if (myProductList.length === 0 || visibleMatchCount === 0) searchShop(ecoQueryTrimmed);
+                    }}
+                >
+                    <input
+                        type="search"
+                        value={ecoQuery}
+                        onChange={(e) => setEcoQuery(e.target.value)}
+                        placeholder={myProductList.length ? 'Search your ecosystem' : 'Search the Shop'}
+                        aria-label={myProductList.length ? 'Search your ecosystem' : 'Search the Shop'}
+                    />
+                    <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
+                </form>
+                {ecoQueryTrimmed && (
+                    <div className="eco3-searchbar-row" role="status">
+                        <span>
+                            {myProductList.length === 0
+                                ? 'Your ecosystem is empty.'
+                                : visibleMatchCount === 0
+                                    ? 'Nothing in your ecosystem matches.'
+                                    : `${visibleMatchCount} in your ecosystem`}
+                        </span>
+                        <button type="button" onClick={() => searchShop(ecoQueryTrimmed)}>
+                            Search Shop for &ldquo;{ecoQueryTrimmed}&rdquo; →
+                        </button>
+                    </div>
+                )}
 
                 {llmError && !llmLoading && (
-                    <div className="eco2-notice" role="status">
+                    <div className="eco3-notice" role="status">
                         {/premium/i.test(llmError) ? llmError : (
                             <>Couldn&apos;t refresh your matches. <button type="button" onClick={handleRefreshRecommendations}>Try again</button></>
                         )}
                     </div>
                 )}
+                {llmPartialConcerns.length > 0 && !llmError && !llmLoading && (
+                    <div className="eco3-notice eco3-notice--soft" role="status">
+                        Couldn&apos;t generate picks for {llmPartialConcerns.map(normalizeConcernLabel).join(', ')} this time.{' '}
+                        <button type="button" onClick={handleRefreshRecommendations}>Refresh to try again</button>
+                    </div>
+                )}
+                {llmLoading && (
+                    <div className="eco3-notice eco3-notice--soft" role="status">
+                        Building your matches…{' '}
+                        <button type="button" onClick={handleCancelRecommendations}>Stop</button>
+                    </div>
+                )}
 
-                <div className="eco2-body">
-                    <aside className="eco2-sidebar">
-                        <div className="eco2-sidebar__card">
-                            <p className="eco2-sidebar__eyebrow">Your ecosystem</p>
-                            {llmLoading ? (
-                                <p className="eco2-sidebar__loading">Building your matches…</p>
+                {!ecoQueryTrimmed && (
+                    areaGroups.length > 0 ? (
+                        <div className="eco3-overview">
+                            <WebEcosystemChart groups={areaGroups} sectionId={(key) => `eco-area-${key}`} />
+                            <div className="eco3-overview__side">
+                                {gapAreas.length > 0 && typeof onGoToSearch === 'function' && (
+                                    <div className="eco3-next">
+                                        <p className="eco3-next__eyebrow">Next step</p>
+                                        <p className="eco3-next__title">Start your {gapAreas[0].label} shelf</p>
+                                        <button type="button" className="eco3-pill eco3-pill--ink" onClick={() => onGoToSearch(exploreAreaOptions(gapAreas[0]))}>
+                                            Browse {gapAreas[0].label}
+                                        </button>
+                                    </div>
+                                )}
+                                {estimatedMonthlyTotal.counted > 0 && (
+                                    <p className="eco3-overview__cost">
+                                        About ${estimatedMonthlyTotal.total.toFixed(0)}{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''} a month
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    ) : !llmLoading && (
+                        <div className="eco3-empty">
+                            <p className="eco3-empty__title">Nothing here yet</p>
+                            <p className="eco3-empty__body">Answer a few questions or pick things from the Shop.</p>
+                            <div className="eco3-empty__actions">
+                                {typeof onBuildEcosystem === 'function' && (
+                                    <button type="button" className="eco3-pill eco3-pill--ink" onClick={onBuildEcosystem}>Build ecosystem</button>
+                                )}
+                                <button type="button" className="eco3-pill" onClick={() => searchShop('')}>Go to Shop</button>
+                            </div>
+                        </div>
+                    )
+                )}
+
+                {visibleAreaGroups.map((group) => {
+                    const toneIndex = areaGroups.findIndex((g) => g.key === group.key);
+                    return (
+                        <section
+                            key={group.key}
+                            id={`eco-area-${group.key}`}
+                            className="eco3-area"
+                            style={{ '--area-color': areaTone(toneIndex) }}
+                            aria-labelledby={`eco-area-title-${group.key}`}
+                        >
+                            <div className="eco3-area__head">
+                                <h2 id={`eco-area-title-${group.key}`}>
+                                    <small aria-hidden="true">{String(toneIndex + 1).padStart(2, '0')}</small>
+                                    {group.label}
+                                </h2>
+                                <span className="eco3-area__count">{group.products.length}</span>
+                                {group.key !== 'other' && typeof onGoToSearch === 'function' && (
+                                    <button type="button" className="eco3-area__more" onClick={() => onGoToSearch(exploreAreaOptions(group))}>Add more</button>
+                                )}
+                            </div>
+                            <div className="eco3-grid">
+                                {group.products.map((product) => (
+                                    <ProductCard
+                                        key={product.id}
+                                        product={product}
+                                        onOpen={onOpenProduct}
+                                        action={(
+                                            <div className="eco3-card-actions">
+                                                {group.key !== 'other' && (
+                                                    <button type="button" className="eco3-card-actions__swap" onClick={() => onGoToSearch?.(exploreAreaOptions(group))}>Swap</button>
+                                                )}
+                                                <button type="button" className="eco3-card-actions__why" onClick={() => onOpenProduct?.(product)}>Why this?</button>
+                                                {onToggleProduct && (
+                                                    <button type="button" className="eco3-card-actions__remove" onClick={() => onToggleProduct(product)} aria-label={`Remove ${product.name} from your ecosystem`} title="Remove">
+                                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })}
+
+                {!ecoQueryTrimmed && (
+                    <div className="eco3-addrow">
+                        {gapAreas.length > 0 && typeof onGoToSearch === 'function' && (
+                            <div className="eco3-addrow__shelf">
+                                <span className="eco3-addrow__label">Add a shelf</span>
+                                <div className="eco3-addrow__chips">
+                                    {gapAreas.map((area) => (
+                                        <button key={area.key} type="button" className="eco3-chip" onClick={() => onGoToSearch(exploreAreaOptions(area))}>
+                                            + {area.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        <button type="button" className="eco3-pill" onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
+                    </div>
+                )}
+
+                <div className="eco3-details">
+                    {smsCardShown && (
+                        <div className="eco3-details__card eco3-details__sms">
+                            <button type="button" className="eco3-details__close" onClick={handleDismissSmsCard} aria-label="Dismiss">✕</button>
+                            {phoneNumberInfo?.is_verified ? (
+                                <>
+                                    <p className="eco3-details__title">Text Ayna to get quick health answers</p>
+                                    {AYNA_SMS_NUMBER && <p className="eco3-details__number">{AYNA_SMS_NUMBER}</p>}
+                                    <div className="eco3-details__row">
+                                        {AYNA_SMS_NUMBER && (
+                                            <a className="eco3-pill" href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)} download="Ayna.vcf">Save to Contacts</a>
+                                        )}
+                                        <button type="button" className="eco3-pill" onClick={handleCopySmsNumber}>
+                                            {smsCardCopied ? 'Copied!' : 'Copy number'}
+                                        </button>
+                                    </div>
+                                </>
                             ) : (
                                 <>
-                                    <h2 className="eco2-sidebar__count">
-                                        {myProductList.length} pick{myProductList.length === 1 ? '' : 's'}
-                                    </h2>
-                                    {estimatedMonthlyTotal.counted > 0 && (
-                                        <p className="eco2-sidebar__sub">
-                                            About ${estimatedMonthlyTotal.total.toFixed(0)}{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''} a month
-                                        </p>
-                                    )}
-                                </>
-                            )}
-                            {shelfAreaBreakdown.filled.length > 0 && (
-                                <>
-                                    <div className="eco2-sidebar__bar">
-                                        {shelfAreaBreakdown.filled.map((area, i) => (
-                                            <i
-                                                key={area.key}
-                                                style={{
-                                                    width: `${(area.count / myProductList.length) * 100}%`,
-                                                    background: SHELF_AREA_COLORS[i % SHELF_AREA_COLORS.length],
-                                                }}
-                                            />
-                                        ))}
+                                    <p className="eco3-details__title">Get ayna by text.</p>
+                                    <div className="eco3-details__row">
+                                        <button type="button" className="eco3-pill eco3-pill--ink" onClick={onOpenPhoneVerify}>Verify your number</button>
                                     </div>
-                                    <ul className="eco2-sidebar__legend">
-                                        {shelfAreaBreakdown.filled.map((area, i) => (
-                                            <li key={area.key}>
-                                                <span className="eco2-dot" style={{ background: SHELF_AREA_COLORS[i % SHELF_AREA_COLORS.length] }} />
-                                                {area.label}
-                                                <strong>{area.count}</strong>
-                                            </li>
-                                        ))}
-                                        {shelfAreaBreakdown.gap && (
-                                            <li className="eco2-sidebar__legend--gap">
-                                                <span className="eco2-dot eco2-dot--empty" />
-                                                {shelfAreaBreakdown.gap.label}
-                                                {typeof onGoToSearch === 'function' && (
-                                                    <button type="button" onClick={() => onGoToSearch(exploreAreaOptions(shelfAreaBreakdown.gap))}>Add</button>
-                                                )}
-                                            </li>
-                                        )}
-                                    </ul>
                                 </>
                             )}
-                            {typeof onBuildEcosystem === 'function' && (
-                                <button type="button" className="btn btn-primary" style={{ width: '100%', marginTop: '0.75rem' }} onClick={onBuildEcosystem}>
-                                    {myProductList.length ? 'Rebuild' : 'Build ecosystem'}
-                                </button>
-                            )}
+                            <p className="eco3-details__soon">Wearable sync is coming.</p>
                         </div>
+                    )}
 
-                        <div className="eco2-sidebar__card">
-                            <p className="eco2-sidebar__eyebrow">Tools</p>
-                            {typeof onEditHealthProfile === 'function' && (
-                                <button type="button" className="eco2-tool-row" onClick={onEditHealthProfile}>Update profile<span>›</span></button>
-                            )}
-                            {typeof onOpenDoctorPrep === 'function' && (
-                                <button type="button" className="eco2-tool-row" onClick={onOpenDoctorPrep}>Doctor prep<span>›</span></button>
-                            )}
-                            <button type="button" className="eco2-tool-row" onClick={() => setShowMoreTools(true)}>More tools<span>›</span></button>
+                    <details className="eco3-details__card eco3-details__item" ref={careNearYouDetailsRef}>
+                        <summary>
+                            <span className="eco3-details__title">Care near you</span>
+                            <span className="eco3-details__hint">Find a clinician, HRSA and Planned Parenthood links, and matching virtual care</span>
+                        </summary>
+                        <div className="eco3-details__body">
+                            <CareNearYouPanel
+                                compact
+                                quizResults={quizResults}
+                                healthProfile={healthProfile}
+                                userZipCode={userZipCode}
+                                onZipCodeChange={onZipCodeChange}
+                                onOpenProduct={onOpenProduct}
+                                onEditHealthProfile={onEditHealthProfile}
+                            />
                         </div>
-                    </aside>
+                    </details>
 
-                    <main className="eco2-main">
-                        <div className="eco2-main__head">
-                            <h2>Your shelves</h2>
-                            {typeof onGoToSearch === 'function' && (
-                                <button type="button" className="eco2-main__fill-gaps" onClick={() => onGoToSearch('')}>Fill the gaps →</button>
-                            )}
+                    <details className="eco3-details__card eco3-details__item">
+                        <summary>
+                            <span className="eco3-details__title">Why these matches</span>
+                            <span className="eco3-details__hint">Sources and scoring behind your picks</span>
+                        </summary>
+                        <div className="eco3-details__body">
+                            <p>
+                                ayna scores products against your intake answers (stage, goals, sensitivities
+                                and life stage) plus published clinical, community, and safety sources per
+                                product. When the catalog has no strong fit for a concern, ayna searches for and
+                                adds a real, currently-sold product rather than leaving the shelf empty. Update
+                                your profile any time and your picks recompute against the new answers.
+                            </p>
                         </div>
-                        <EcosystemShelf
-                            hideTitle
-                            myProducts={myProducts}
-                            onOpenProduct={onOpenProduct}
-                            onExploreArea={(area) => onGoToSearch?.(exploreAreaOptions(area))}
-                        />
-                        <div style={{ textAlign: 'center', margin: '1rem 0 2rem' }}>
-                            <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
-                        </div>
-
-                        <h2 className="eco2-main__details-title">Details</h2>
-                        <div className="eco2-details">
-                            {smsCardShown && (
-                                <div className="eco2-details__sms">
-                                    <button
-                                        type="button"
-                                        onClick={handleDismissSmsCard}
-                                        aria-label="Dismiss"
-                                        style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--color-text-muted)' }}
-                                    >
-                                        ✕
-                                    </button>
-                                    {phoneNumberInfo?.is_verified ? (
-                                        <>
-                                            <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text Ayna to get quick health answers</p>
-                                            {AYNA_SMS_NUMBER && (
-                                                <p style={{ margin: '0 0 0.6rem', fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary)' }}>{AYNA_SMS_NUMBER}</p>
-                                            )}
-                                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                                {AYNA_SMS_NUMBER && (
-                                                    <a className="btn btn-outline" href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)} download="Ayna.vcf">
-                                                        Save to Contacts
-                                                    </a>
-                                                )}
-                                                <button type="button" className="btn btn-outline" onClick={handleCopySmsNumber}>
-                                                    {smsCardCopied ? 'Copied!' : 'Copy number'}
-                                                </button>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get ayna by text.</p>
-                                            <button type="button" className="btn btn-primary" onClick={onOpenPhoneVerify}>Verify your number</button>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-
-                            <p className="eco2-details__soon">Wearable sync is coming.</p>
-
-                            <details className="eco2-details__item" ref={careNearYouDetailsRef}>
-                                <summary>
-                                    <span>Care near you</span>
-                                    <span className="eco2-details__hint">Find a clinician, HRSA/Planned Parenthood links, and matching virtual care</span>
-                                </summary>
-                                <div className="eco2-details__body">
-                                    <CareNearYouPanel
-                                        compact
-                                        quizResults={quizResults}
-                                        healthProfile={healthProfile}
-                                        userZipCode={userZipCode}
-                                        onZipCodeChange={onZipCodeChange}
-                                        onOpenProduct={onOpenProduct}
-                                        onEditHealthProfile={onEditHealthProfile}
-                                    />
-                                </div>
-                            </details>
-
-                            <details className="eco2-details__item">
-                                <summary>
-                                    <span>Why these matches</span>
-                                    <span className="eco2-details__hint">Sources and scoring behind your shelves</span>
-                                </summary>
-                                <div className="eco2-details__body">
-                                    <p style={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--color-text-main)' }}>
-                                        ayna scores products against your intake answers (stage, goals, sensitivities
-                                        and life stage) plus published clinical, community, and safety sources per
-                                        product. When the catalog has no strong fit for a concern, ayna searches for and
-                                        adds a real, currently-sold product rather than leaving the shelf empty. Update
-                                        your profile any time and your shelves recompute against the new answers.
-                                    </p>
-                                </div>
-                            </details>
-
-                        </div>
-                    </main>
+                    </details>
+                    {!smsCardShown && <p className="eco3-details__soon eco3-details__soon--solo">Wearable sync is coming.</p>}
                 </div>
 
                 {showMoreTools && (
-                    <div className="eco2-sheet-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowMoreTools(false); }}>
-                        <div className="eco2-sheet">
+                    <div className="eco2-sheet-overlay eco3-sheet-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowMoreTools(false); }}>
+                        <div className="eco2-sheet eco3-sheet" role="dialog" aria-modal="true" aria-labelledby="eco3-sheet-title">
                             <button type="button" className="eco2-sheet__close" onClick={() => setShowMoreTools(false)} aria-label="Close">✕</button>
                             <p className="eco2-sidebar__eyebrow">More tools</p>
-                            <h2 className="eco2-sheet__title">One thing you can do.</h2>
+                            <h2 id="eco3-sheet-title" className="eco2-sheet__title">One thing you can do.</h2>
                             <button
                                 type="button"
                                 className="eco2-tool-row"

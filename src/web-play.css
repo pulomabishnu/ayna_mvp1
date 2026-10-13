@@ -970,7 +970,7 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 
 /* ---------- Wider content (team review 12 Oct): more width, smaller side margins ---------- */
 @media (min-width: 900px) {
-  :root:has(.app-container), .app-container { --mockup-page-width: 1320px; --mockup-gutter: 40px; --ay-web-max: 1320px; --ay-web-gutter: 40px; }
+  :root:has(.app-container), .app-container { --mockup-page-width: 1680px; --mockup-gutter: clamp(24px, 3vw, 48px); --ay-web-max: 1680px; --ay-web-gutter: clamp(24px, 3vw, 48px); }
 }
 
 /* ---------- Product tiles without color backgrounds (team review 12 Oct) ---------- */
@@ -1144,3 +1144,10 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
   .app-container main .ayna-browse__sort select { width: auto !important; min-width: 0; max-width: 170px; }
 }
 .app-container .ay-web-discover__go { background: var(--ay-ink) !important; color: var(--ay-cream) !important; }
+
+/* Logged-in home: the Ecosystem ring in a card, same as the Ecosystem page */
+.app-container .ay-home2-ring { width: 100%; max-width: 520px; padding: 24px; border: 2px solid var(--ay-ink); border-radius: 24px; background: var(--ay-paper); box-shadow: var(--ay-shadow-lg); }
+.app-container .ay-home2-hero__inner { min-height: 0 !important; padding-top: 56px !important; padding-bottom: 56px !important; }
+.app-container .mockup-landing--first .ayna-landing-hero { min-height: 0 !important; padding-top: 56px !important; padding-bottom: 56px !important; }
+/* Hero copy lines up with the logo and every section edge (one left edge) */
+.app-container .mockup-landing.mockup-landing--first .ayna-landing-hero .ayna-landing-hero-col { margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important; max-width: 640px !important; justify-self: start; }

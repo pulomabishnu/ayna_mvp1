@@ -24,10 +24,11 @@ const CONSENT_ITEMS = [
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
 ];
 
-export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem, initialMode }) {
+export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem, initialMode, summary = null }) {
   useEscapeToClose(isModal, onSkip);
   // 'signup' | 'signin'. After the quiz, creating an account is the likely next step.
-  const [mode, setMode] = useState(() => (initialMode === 'signup' || initialMode === 'signin' ? initialMode : context === 'quiz' ? 'signup' : 'signin'));
+  // No ecosystem yet = log in only; new accounts start by building an ecosystem.
+  const [mode, setMode] = useState(() => (onStartEcosystem ? 'signin' : initialMode === 'signup' || initialMode === 'signin' ? initialMode : context === 'quiz' ? 'signup' : 'signin'));
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -67,7 +68,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const supabase = getSupabaseClient();
   const allConsented = checked.every(Boolean);
   const isSignup = mode === 'signup';
-  const subtitle = SUBTITLES[mode];
+  const subtitle = isSignup && summary ? 'Save your matches. Create an account to keep them.' : SUBTITLES[mode];
 
   // Health-data consent stays explicit: one checkbox per statement.
   const toggleCheck = (i) => {
@@ -365,7 +366,21 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           </p>
         )}
 
-        <div className="ay-auth-toggle" style={styles.toggleRow}>
+        {isSignup && summary && (
+          <div className="ay-auth-summary">
+            <div className="ay-auth-summary__thumbs" aria-hidden="true">
+              {(summary.products || []).slice(0, 4).map((p) => (
+                <span key={p.id}>{p.image ? <img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : null}</span>
+              ))}
+            </div>
+            <div>
+              <strong>{summary.count} pick{summary.count === 1 ? '' : 's'}{summary.areas?.length ? ` · ${summary.areas.length} area${summary.areas.length === 1 ? '' : 's'}` : ''}</strong>
+              <span>{(summary.areas || []).slice(0, 3).join(', ')}</span>
+            </div>
+          </div>
+        )}
+
+        {!onStartEcosystem && <div className="ay-auth-toggle" style={styles.toggleRow}>
           <button
             type="button"
             className={isSignup ? 'is-on' : ''}
@@ -382,7 +397,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           >
             Sign in
           </button>
-        </div>
+        </div>}
 
         {showPhoneNotice && (
           <div

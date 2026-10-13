@@ -13,18 +13,18 @@ export default function SavedForLater({
 
   return (
     <section id="ayna-wishlist" className="eco-saved mockup-page wishlist-section">
-      <div className="eco2-main__head eco-saved__head">
+      <div className="eco3-area__head eco-saved__head">
         <h2>Saved</h2>
-        {items.length > 0 && <span className="eco-saved__count">{items.length}</span>}
+        {items.length > 0 && <span className="eco3-area__count eco-saved__count">{items.length}</span>}
       </div>
 
       {items.length === 0 ? (
         <div className="wishlist-empty">
           <p>Nothing saved yet. Tap the heart on anything in Shop.</p>
-          <button type="button" className="ay-card-add" style={{ width: "auto", padding: "0 20px" }} onClick={onBrowse}>Go to Shop</button>
+          <button type="button" className="eco3-pill" onClick={onBrowse}>Go to Shop</button>
         </div>
       ) : (
-        <div className="ayna-browse__grid eco-saved__grid">
+        <div className="ayna-browse__grid eco3-grid eco-saved__grid">
           {items.map((product) => {
             const inEcosystem = !!myProducts[product.id];
             return (

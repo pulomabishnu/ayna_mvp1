@@ -373,6 +373,8 @@ function App() {
   const [communityHandle, setCommunityHandle] = useState(() => communityHandleFromPath(window.location.pathname));
   // Product page: the post/review composer opens over the page (P07).
   const [composerSeed, setComposerSeed] = useState(null);
+  // Signed-out quiz finish: her matches, shown before the sign-up ask.
+  const [guestPreview, setGuestPreview] = useState(null);
   useEffect(() => { if (currentView !== 'product') setComposerSeed(null); }, [currentView]);
   const [aynaReviews, setAynaReviews] = useState({});
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
@@ -983,9 +985,15 @@ function App() {
       personalizationCompletedAt: new Date().toISOString(),
     };
     if (!user) {
+      // Signed out: show her matches first (the same reveal signed-in users
+      // get), then ask her to create an account to keep them.
       setPendingQuizResults(completedResults);
       setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
-      setShowAuthModal(true);
+      const { mergedProducts: guestSeed } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
+      const guestProducts = Object.values(guestSeed || {}).length
+        ? Object.values(guestSeed)
+        : getRecommendations(completedResults, healthProfile).slice(0, 6);
+      setGuestPreview({ results: completedResults, products: guestProducts });
       return;
     }
     setQuizResults(completedResults);
@@ -1414,10 +1422,8 @@ function App() {
                 <button
                   type="button"
                   className="app-nav__circle app-nav__circle--account ay-login"
-                  onClick={() => setShowAccountMenu(v => !v)}
-                  aria-haspopup="menu"
-                  aria-expanded={showAccountMenu}
-                  aria-label="Log in or sign up"
+                  onClick={() => { setShowAccountMenu(false); setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+                  aria-label="Log in"
                 >
                   <span className="ay-login-text">Log in</span>
                 </button>
@@ -1471,7 +1477,7 @@ function App() {
                 <button className="mobile-drawer-item is-quiet" onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}>Log out</button>
               ) : (
                 <>
-                  <button className="mobile-drawer-item" onClick={() => { setCurrentView('quiz'); setMobileMenuOpen(false); }}>Sign up</button>
+                  <button className="mobile-drawer-item" onClick={() => { setCurrentView('quiz'); setMobileMenuOpen(false); }}>Build your ecosystem</button>
                   <button className="mobile-drawer-item is-quiet" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); setMobileMenuOpen(false); }}>Log in</button>
                 </>
               )}
@@ -1498,6 +1504,16 @@ function App() {
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
             initialCategory={homeCategory}
+          />
+        )}
+        {guestPreview && !guestPreview.done && !user && (
+          <WebWrapped
+            products={guestPreview.products}
+            quizResults={guestPreview.results}
+            primaryLabel="Save my matches →"
+            onPrimary={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
+            onClose={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
+            onBrowse={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
           />
         )}
         {showWrapped && (
@@ -1977,7 +1993,12 @@ function App() {
         {showAuthModal && (
           <AuthGate
             isModal
-            onStartEcosystem={quizResults ? null : () => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setCurrentView('quiz'); }}
+            summary={pendingAction === 'quiz-complete' && guestPreview ? {
+              count: guestPreview.products.length,
+              products: guestPreview.products,
+              areas: [...new Set(guestPreview.products.map((p) => String(CATEGORY_LABELS[p.category] || p.category || '').replace(/^[^\w]+\s*/, '')).filter(Boolean))],
+            } : null}
+            onStartEcosystem={(quizResults || pendingQuizResults || pendingAction === 'quiz-complete') ? null : () => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setCurrentView('quiz'); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
             onBeforeOAuthRedirect={() => {
               try {

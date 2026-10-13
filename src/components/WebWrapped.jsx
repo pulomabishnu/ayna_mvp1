@@ -17,7 +17,7 @@ function Photo({ product }) {
   return <ProductTileImage product={product} imgStyle={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: '12%' }} letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />} />;
 }
 
-export default function WebWrapped({ products = [], quizResults, onClose, onBrowse }) {
+export default function WebWrapped({ products = [], quizResults, onClose, onBrowse, primaryLabel = 'Open my Ecosystem →', onPrimary }) {
   const picks = products.filter(Boolean);
   const top = picks.slice(0, 4);
   const first = top[0];
@@ -113,7 +113,7 @@ export default function WebWrapped({ products = [], quizResults, onClose, onBrow
             </ul>
           </div>
           <div className="wwr-actions">
-            <button type="button" className="wwr-cta" onClick={onClose}>Open my Ecosystem →</button>
+            <button type="button" className="wwr-cta" onClick={onPrimary || onClose}>{primaryLabel}</button>
             <button type="button" className="wwr-link" onClick={share}>Share as image</button>
             <button type="button" className="wwr-link" onClick={onBrowse}>Browse instead</button>
             {shareState && <small role="status">{shareState}</small>}

@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import WebHeroCarousel from './WebHeroCarousel';
-import HeroOrbit from './HeroOrbit';
+import { ProductMosaic, ExploreByNeed } from './HomeShowcase';
+import WebEcosystemChart from './WebEcosystemChart';
+import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
+import '../styles/eco-redesign.css';
 import useReveal from '../utils/useReveal';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } from '../data/products';
 import ProductCard from './ProductCard';
@@ -427,6 +430,19 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
     return group || null;
   }, [myProducts]);
   const picks = Object.keys(myProducts || {}).length;
+  // Same area grouping and ring as the Ecosystem page.
+  const ecoGroups = useMemo(() => {
+    const byArea = new Map();
+    Object.values(myProducts || {}).forEach((p) => {
+      const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
+      const key = area ? area.key : 'other';
+      if (!byArea.has(key)) byArea.set(key, []);
+      byArea.get(key).push(p);
+    });
+    const groups = ECOSYSTEM_AREAS.filter((a) => byArea.has(a.key)).map((a) => ({ ...a, products: byArea.get(a.key) }));
+    if (byArea.has('other')) groups.push({ key: 'other', label: 'Other', products: byArea.get('other') });
+    return groups.sort((x, y) => y.products.length - x.products.length);
+  }, [myProducts]);
 
   return (
     <div className="mockup-landing mockup-landing--returning mockup-landing--home2">
@@ -439,7 +455,7 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
             </h1>
             <p className="ay-home2-sub">
               {picks > 0
-                ? `${picks} pick${picks === 1 ? '' : 's'} · ${areas.length} area${areas.length === 1 ? '' : 's'} of care`
+                ? `${picks} pick${picks === 1 ? '' : 's'} · ${ecoGroups.length} area${ecoGroups.length === 1 ? '' : 's'} of care`
                 : 'Six questions, then a shop matched to you.'}
             </p>
             <div className="ay-home2-actions">
@@ -456,14 +472,13 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
             )}
           </div>
           <div className="ay-home2-hero__visual">
-            <HeroOrbit
-              areas={picks > 0 ? areas.map((a) => ({ label: a.label, count: a.count, category: a.category })) : null}
-              centre={picks > 0 ? String(picks) : 'you'}
-              hint={picks > 0 ? (picks === 1 ? 'pick' : 'picks') : 'your ecosystem'}
-              addLabel={picks > 0 ? '+ Add' : null}
-              onAdd={() => onViewDiscovery?.('')}
-              onPick={(label) => (picks > 0 ? onViewEcosystem?.() : onViewDiscovery?.(discoveryTargetFor(label)))}
-            />
+            {picks > 0 ? (
+              <div className="ay-home2-ring">
+                <WebEcosystemChart groups={ecoGroups} onPick={() => onViewEcosystem?.()} />
+              </div>
+            ) : (
+              <ProductMosaic onOpenProduct={onOpenProduct} />
+            )}
           </div>
         </div>
       </section>
@@ -602,6 +617,9 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
           )}
         </div>
       </section>
+      <div className="ay-reveal is-in">
+        <ExploreByNeed onOpenProduct={onOpenProduct} onExplore={(n) => onViewDiscovery?.(n.group ? { initialMacroGroup: n.group } : (n.keywords?.[0] || ''))} />
+      </div>
     </div>
   );
 }
@@ -734,7 +752,7 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
           </div>
         </div>
         <div className="ayna-landing-hero-visual">
-          <HeroOrbit onPick={(label) => onViewDiscovery?.(discoveryTargetFor(label))} />
+          <ProductMosaic onOpenProduct={onOpenProduct} />
         </div>
       </section>
 
@@ -750,23 +768,6 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
         </div>
       </section>
 
-      <section className="ayna-landing-band ay-reveal">
-        <div className="mockup-page ayna-landing-band__inner">
-          <div className="ayna-landing-band__copy">
-            Tell us about your body once.
-            <span>Six questions, and your shop rebuilds around you.</span>
-          </div>
-          <button type="button" className="ayna-landing-btn ayna-landing-btn--navy" onClick={onStartQuiz}>
-            Build your ecosystem
-          </button>
-        </div>
-      </section>
-
-      <section className="ayna-landing-news ay-reveal" aria-label="What's new">
-        <div className="mockup-page">
-          <WebHeroCarousel onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
-        </div>
-      </section>
 
       <section className="ayna-landing-shop ay-reveal">
         <div className="mockup-page">
@@ -889,6 +890,15 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
 
           <ShopGrid items={shown} onOpenProduct={onOpenProduct} />
           <div className="ay-see-all"><button type="button" onClick={() => onViewDiscovery?.('')}>See all in Shop →</button></div>
+        </div>
+      </section>
+      <div className="ay-reveal">
+        <ExploreByNeed onOpenProduct={onOpenProduct} onExplore={(n) => onViewDiscovery?.(n.group ? { initialMacroGroup: n.group } : (n.keywords?.[0] || ''))} />
+      </div>
+
+      <section className="ayna-landing-news ay-reveal" aria-label="What's new">
+        <div className="mockup-page">
+          <WebHeroCarousel onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
         </div>
       </section>
     </div>
