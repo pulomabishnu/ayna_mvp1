@@ -4,7 +4,7 @@
 -- twice for the SAME recall on the SAME product, even if the sweep runs
 -- concurrently or is retried.
 --
--- Service-role only: RLS enabled with NO client policies — same reasoning as
+-- Service-role only: RLS enabled with NO client policies, same reasoning as
 -- product_recall_state.sql. There is no user-facing "notification history" UI
 -- today; this exists purely as the sweep's own bookkeeping.
 create table if not exists public.recall_notifications (
@@ -29,4 +29,4 @@ where status = 'sent';
 alter table public.recall_notifications enable row level security;
 
 grant all on public.recall_notifications to service_role;
--- No grant to `authenticated` — this table has no legitimate client use.
+-- No grant to `authenticated`, this table has no legitimate client use.

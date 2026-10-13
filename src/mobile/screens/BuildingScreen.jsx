@@ -1,50 +1,27 @@
 import { useEffect, useState } from 'react';
+import '../wrapped.css';
 
-const DEFAULT_STATUSES = [
-  'matching symptoms to evidence',
-  'filtering for your medicine cabinet',
-  'fitting your budget',
-  'arranging your pillars',
-];
+const STEPS = ['Reading your answers', 'Checking the evidence', 'Picking your matches'];
 
-export default function BuildingScreen({ onFinish, statuses = DEFAULT_STATUSES, headline = 'Reading your answers' }) {
-  const [statusIndex, setStatusIndex] = useState(0);
+// Short branded pause between the last question and the wrapped story.
+export default function BuildingScreen({ onFinish, onBack }) {
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
-    const stepTimers = statuses.map((_, i) => setTimeout(() => setStatusIndex(i), 900 * i));
-    const finishTimer = setTimeout(() => {
-      if (onFinish) onFinish();
-    }, 900 * statuses.length + 300);
-    return () => {
-      stepTimers.forEach(clearTimeout);
-      clearTimeout(finishTimer);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const timers = STEPS.map((_, index) => window.setTimeout(() => setStep(index), index * 700));
+    const finish = window.setTimeout(() => onFinish?.(), 2400);
+    return () => { timers.forEach(window.clearTimeout); window.clearTimeout(finish); };
+  }, [onFinish]);
 
-  return (
-    <div
-      style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(165deg,#242A52 0%,#4E3866 58%,#A2603C 100%)',
-        color: '#FFFCF9',
-        padding: 40,
-        animation: 'ay-page .25s ease-out',
-      }}
-    >
-      <div style={{ position: 'relative', width: 150, height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 34 }}>
-        <div style={{ position: 'absolute', inset: 0, borderRadius: 99, border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 2.6s ease-out infinite' }} />
-        <div style={{ position: 'absolute', inset: 0, borderRadius: 99, border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 2.6s ease-out infinite 1.3s' }} />
-        <div style={{ width: 66, height: 66, borderRadius: 99, background: '#FFC774', animation: 'ay-float 3.4s ease-in-out infinite' }} />
-      </div>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', textAlign: 'center', lineHeight: 1.3 }}>{headline}</div>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.6px', opacity: 0.72, marginTop: 12, textAlign: 'center' }}>
-        {statuses[statusIndex]}
-      </div>
+  return <div className="ayna-wrapped ayw-building" role="status" aria-live="polite">
+    <div className="ayw-top">
+      <button type="button" onClick={onBack} aria-label="Back to answers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>
+      <span>ayna</span><span className="ayw-top-spacer" />
     </div>
-  );
+    <div className="ayw-deck" aria-hidden="true"><i /><i /><i /><i /></div>
+    <div className="ayw-building-copy">
+      <span>{String(step + 1).padStart(2, '0')} / 03</span>
+      <strong key={step}>{STEPS[step]}…</strong>
+    </div>
+  </div>;
 }

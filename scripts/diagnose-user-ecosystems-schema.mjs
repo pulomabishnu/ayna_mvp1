@@ -7,7 +7,7 @@
  * If that migration was never run against this Supabase project, every
  * save/swap/track write hits Postgres error 42703 (undefined column),
  * which is exactly what triggers savedProductsStore.js's/ecosystemStore.js's
- * auth-metadata fallback — the thing that keeps bloating the login token
+ * auth-metadata fallback, the thing that keeps bloating the login token
  * past HTTP 431's header size limit.
  *
  *   node scripts/diagnose-user-ecosystems-schema.mjs
@@ -40,17 +40,17 @@ for (const col of expectedColumns) {
   if (error && (error.code === '42703' || /does not exist/i.test(error.message || ''))) {
     missing.push({ col, message: error.message });
   } else if (error) {
-    console.log(`  ${col}: unexpected error — ${error.message}`);
+    console.log(`  ${col}: unexpected error, ${error.message}`);
   }
 }
 
 if (!missing.length) {
-  console.log('✅ all expected columns exist. The schema is not the problem — look elsewhere (RLS, primary key constraint).\n');
+  console.log('✅ all expected columns exist. The schema is not the problem, look elsewhere (RLS, primary key constraint).\n');
   process.exit(0);
 }
 
 console.log('❌ MISSING COLUMNS:\n');
-for (const m of missing) console.log(`  ${m.col} — ${m.message}`);
+for (const m of missing) console.log(`  ${m.col}, ${m.message}`);
 
 console.log(`
 This is why table writes fail and the app falls back to writing (large)

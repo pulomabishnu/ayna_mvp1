@@ -158,7 +158,7 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>Menstrual cycle</span>
             {/* Was a free-text input holding the raw stored value ("yes",
-                "irregular", ...) — easy to enter something that doesn't match
+                "irregular", ...), easy to enter something that doesn't match
                 any real option and easy to misread (found live, 2026-08-24
                 bug bash). Same CYCLE_OPTIONS the quiz itself uses. */}
             <select value={draft.menstrualCycle || ''} onChange={(e) => setField('menstrualCycle', e.target.value)}>

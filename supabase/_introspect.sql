@@ -5,7 +5,7 @@
 --
 -- WHY: `create table if not exists` SKIPS a table that already exists. Four of
 -- these tables were created by hand in the dashboard and hold real user data, so
--- the migrations will not touch them — and if their live columns differ from
+-- the migrations will not touch them, and if their live columns differ from
 -- what the application expects, the app still breaks after a "successful"
 -- migration. This dumps what is actually there so it can be diffed against the
 -- committed definitions.
@@ -15,7 +15,7 @@
 --   psql:  psql "$DB_URL" -At -f supabase/_introspect.sql > live-schema.json
 --
 -- The output contains column names, types, constraints, policies and function
--- signatures. It contains NO row data — no health information, no phone
+-- signatures. It contains NO row data, no health information, no phone
 -- numbers, no tokens.
 
 with tables as (

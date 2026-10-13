@@ -1,0 +1,128 @@
+/* Anonymous suggestion box (src/components/SuggestBox.jsx).
+   Shared by the website (.app-container) and the app (.ayna-mobile); both
+   shells define the --ay-* tokens, so light and dark follow automatically. */
+
+.ay-suggest {
+  --sg-ink: var(--ay-ink, #1d1a2b);
+  --sg-soft: var(--ay-ink-soft, rgba(29, 26, 43, .62));
+  --sg-faint: var(--ay-ink-faint, rgba(29, 26, 43, .16));
+  --sg-paper: var(--ay-paper, #fffcf5);
+  --sg-tile: var(--ay-tile, #eeeae0);
+  --sg-on-pastel: #1d1a2b;
+  --sg-ui: var(--ay-font-ui, 'Poppins', system-ui, sans-serif);
+  --sg-display: var(--ay-font-display, 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif);
+  box-sizing: border-box;
+  width: 100%;
+  margin: 48px 0 0;
+  padding: 16px;
+  border: 2px solid var(--sg-ink);
+  border-radius: 20px;
+  background: var(--sg-paper);
+  color: var(--sg-ink);
+  box-shadow: var(--ay-shadow, 3px 3px 0 #1d1a2b);
+  font-family: var(--sg-ui);
+  text-align: left;
+}
+.app-container[data-theme='dark'] .ay-suggest { --sg-on-pastel: #f4f2ff; --sg-tile: #22212c; }
+.ayna-mobile[data-theme='dark'] .ay-suggest { --sg-tile: rgba(255, 255, 255, .08); }
+.ay-suggest *, .ay-suggest *::before, .ay-suggest *::after { box-sizing: border-box; }
+
+.ay-suggest.ay-suggest :is(h2, p) { margin: 0; color: var(--sg-ink); letter-spacing: 0; text-transform: none; }
+.ay-suggest.ay-suggest h2 { font: 800 20px/1.15 var(--sg-display); letter-spacing: -.02em; }
+.ay-suggest.ay-suggest p { font: 500 16px/1.4 var(--sg-ui); color: var(--sg-soft); }
+.ay-suggest svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* Collapsed */
+.ay-suggest__intro { display: flex; align-items: center; gap: 16px; }
+.ay-suggest__copy { display: grid; gap: 4px; flex: 1; min-width: 0; }
+.ay-suggest__icon, .ay-suggest__check { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border: 2px solid var(--sg-ink); border-radius: 14px; background: var(--ay-butter, #f7e78e); color: var(--sg-on-pastel); }
+.ay-suggest__icon.is-read { background: var(--ay-peri, #b9c2f4); }
+.ay-suggest__check { border-radius: 50%; background: var(--ay-mint, #bdebd6); }
+.ay-suggest__icon svg, .ay-suggest__check svg { width: 24px; height: 24px; }
+
+/* Buttons */
+.ay-suggest.ay-suggest .ay-suggest__btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 24px; flex: none;
+  border: 2px solid var(--sg-ink); border-radius: 99px;
+  background: var(--sg-ink); color: var(--sg-paper);
+  font: 700 16px/1 var(--sg-ui); letter-spacing: 0; text-transform: none; text-decoration: none; white-space: nowrap;
+  box-shadow: none; cursor: pointer;
+  transition: transform .15s ease, opacity .15s ease;
+}
+.ay-suggest.ay-suggest .ay-suggest__btn:active { transform: scale(.98); }
+.ay-suggest.ay-suggest .ay-suggest__btn:disabled { opacity: .4; cursor: default; transform: none; }
+.ay-suggest.ay-suggest .ay-suggest__ghost {
+  min-height: 44px; padding: 0 20px; border: 2px solid var(--sg-ink); border-radius: 99px;
+  background: var(--sg-paper); color: var(--sg-ink); font: 700 16px/1 var(--sg-ui); letter-spacing: 0; text-decoration: none; cursor: pointer;
+  transition: transform .15s ease;
+}
+.ay-suggest.ay-suggest .ay-suggest__ghost.is-quiet { border-color: transparent; background: transparent; }
+.ay-suggest.ay-suggest .ay-suggest__ghost:active { transform: scale(.98); }
+.ay-suggest.ay-suggest .ay-suggest__close {
+  display: grid; place-items: center; width: 44px; height: 44px; margin: -8px -8px -8px 0; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: var(--sg-ink); cursor: pointer;
+}
+.ay-suggest :is(button, input, textarea):focus-visible { outline: 3px solid var(--ay-peri, #b9c2f4); outline-offset: 2px; }
+
+/* Open form */
+.ay-suggest__form { display: grid; gap: 16px; }
+.ay-suggest__head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.ay-suggest__seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 99px; background: var(--sg-tile); }
+.ay-suggest.ay-suggest .ay-suggest__seg button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px;
+  border: 2px solid transparent; border-radius: 99px; background: transparent; color: var(--sg-soft); text-decoration: none;
+  font: 700 16px/1 var(--sg-ui); letter-spacing: 0; cursor: pointer; transition: background .15s ease, color .15s ease;
+}
+.ay-suggest.ay-suggest .ay-suggest__seg button.is-on { border-color: var(--sg-ink); background: var(--sg-paper); color: var(--sg-ink); }
+.ay-suggest__fields { display: grid; gap: 12px; }
+.ay-suggest__field { display: grid; gap: 8px; margin: 0; }
+.ay-suggest.ay-suggest .ay-suggest__field > span { color: var(--sg-ink); font: 700 14px/1.2 var(--sg-ui); letter-spacing: 0; text-transform: none; }
+.ay-suggest .ay-suggest__field em { margin-left: 4px; color: var(--sg-soft); font-style: normal; font-weight: 500; }
+.ay-suggest.ay-suggest .ay-suggest__field :is(input, textarea) {
+  width: 100%; min-height: 48px; margin: 0; padding: 12px 16px;
+  border: 2px solid var(--sg-faint); border-radius: 14px; background: var(--sg-paper); color: var(--sg-ink);
+  font: 500 16px/1.4 var(--sg-ui); box-shadow: none; resize: vertical; transition: border-color .15s ease;
+}
+.ay-suggest .ay-suggest__field textarea { min-height: 96px; }
+.ay-suggest.ay-suggest .ay-suggest__field :is(input, textarea):focus { border-color: var(--sg-ink); outline: none; }
+.ay-suggest .ay-suggest__field :is(input, textarea)::placeholder { color: var(--sg-soft); opacity: .8; }
+.ay-suggest__trap { position: absolute !important; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.ay-suggest.ay-suggest .ay-suggest__crisis { margin-top: 4px; color: var(--sg-ink); font-weight: 600; }
+.ay-suggest.ay-suggest .ay-suggest__error { color: var(--ay-alert, #b4402a); font-weight: 600; }
+.ay-suggest__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 4px; }
+.ay-suggest.ay-suggest .ay-suggest__anon { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.ay-suggest__anon svg { width: 16px; height: 16px; }
+
+/* Thank-you */
+.ay-suggest__thanks { display: flex; align-items: center; gap: 16px; outline: none; animation: ay-suggest-in .15s ease-out; }
+.ay-suggest__thanks-actions { display: flex; gap: 8px; flex: none; }
+@keyframes ay-suggest-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* Website: a calm full-width band; form capped to a readable width */
+.ay-suggest.is-web { padding: 24px; }
+.ay-suggest.is-web.is-open:not(.is-sent) { max-width: 640px; margin-left: auto; margin-right: auto; }
+
+/* Narrow (phones, app) */
+@media (max-width: 640px) {
+  .ay-suggest__intro, .ay-suggest__thanks { flex-wrap: wrap; }
+  .ay-suggest__intro .ay-suggest__btn, .ay-suggest__thanks-actions { width: 100%; }
+  .ay-suggest__thanks-actions > * { flex: 1; }
+  .ay-suggest__foot { flex-direction: column; align-items: stretch; }
+  .ay-suggest__foot .ay-suggest__btn { width: 100%; }
+}
+.ay-suggest.is-app { margin: 32px 0 0; padding: 16px; }
+.ay-suggest.is-app .ay-suggest__intro, .ay-suggest.is-app .ay-suggest__thanks { flex-wrap: wrap; }
+.ay-suggest.is-app .ay-suggest__intro .ay-suggest__btn, .ay-suggest.is-app .ay-suggest__thanks-actions { width: 100%; }
+.ay-suggest.is-app .ay-suggest__thanks-actions > * { flex: 1; }
+.ay-suggest.is-app .ay-suggest__foot { flex-direction: column; align-items: stretch; }
+.ay-suggest.is-app .ay-suggest__foot .ay-suggest__btn { width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ay-suggest *, .ay-suggest__thanks { animation: none !important; transition: none !important; }
+}
+
+/* Placement wrappers */
+.ayna-mobile .ay-app-suggest-wrap { padding: 0 var(--ay-gutter, 20px); }
+.ayna-mobile .ay-lib .ay-app-suggest-wrap { padding-top: 8px; }
+.app-container .ay-web-lib-suggest { margin-top: 64px; }

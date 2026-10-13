@@ -1,22 +1,22 @@
 /**
- * /api/ask-ayna — the GLOBAL "Ask Ayna" widget's real backend.
+ * /api/ask-ayna, the GLOBAL "Ask Ayna" widget's real backend.
  *
  * WHY THIS EXISTS: the widget previously only ran a client-side keyword
  * parser (parseMessageIntoProfile in ProfileChatbot.jsx) that tried to fold
  * a message into her health profile and, if nothing matched, replied with a
- * canned "I didn't spot specific concerns or preferences to add" — it never
+ * canned "I didn't spot specific concerns or preferences to add", it never
  * actually answered a question. Asking "How do I insert a menstrual cup?"
  * got that same non-answer, while the product-page "Ask Ayna" tab (backed
- * by api/product-chat.js) answered fine — the same feature name meant two
+ * by api/product-chat.js) answered fine, the same feature name meant two
  * very different things depending on where you found it (found live,
  * 2026-08-24 bug bash). This endpoint gives the global widget the same real
- * LLM answer capability, plus keeps the one thing the old parser did well —
- * folding a stated concern/sensitivity/preference into her profile — but as
+ * LLM answer capability, plus keeps the one thing the old parser did well
+ * folding a stated concern/sensitivity/preference into her profile, but as
  * a structured field the model returns alongside its answer, not a second,
  * disconnected system guessing at the same message.
  *
  * Same auth/quota pattern as product-chat.js, sharing its 'chat' usage
- * bucket — both are chat-type LLM usage against the same weekly budget.
+ * bucket, both are chat-type LLM usage against the same weekly budget.
  */
 /* global process */
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
@@ -29,23 +29,23 @@ function clamp(v, max) {
 }
 
 const PROFILE_CATEGORIES = `
-- frustrations: health concerns she's mentioned (examples already in use: "Heavy flow", "Painful cramps", "Hormonal bloating", "Irregular cycles", "Leaks & staining", "General discomfort", "Recurrent UTIs", "PCOS symptoms", "Pelvic pain", "Menopause symptoms", "Endometriosis", "Fertility / TTC" — reuse an existing label when the message clearly matches one, otherwise write a short new one in the same style)
+- frustrations: health concerns she's mentioned (examples already in use: "Heavy flow", "Painful cramps", "Hormonal bloating", "Irregular cycles", "Leaks & staining", "General discomfort", "Recurrent UTIs", "PCOS symptoms", "Pelvic pain", "Menopause symptoms", "Endometriosis", "Fertility / TTC", reuse an existing label when the message clearly matches one, otherwise write a short new one in the same style)
 - sensitivities: things her body reacts badly to (e.g. "Fragrance sensitivity", "Latex allergy", "Synthetic materials", "Other allergies")
 - productsToAvoid: specific ingredients/materials she wants avoided in recommendations (e.g. "Essential oils", "Fragrance / scented products", "Latex", "Synthetic materials")
-- preference: ONE overall priority if she stated one ("Organic/Natural only", "Lower cost", "Comfort/Convenience", "Privacy & data security", "Sustainability/Zero-waste") — null if none stated`;
+- preference: ONE overall priority if she stated one ("Organic/Natural only", "Lower cost", "Comfort/Convenience", "Privacy & data security", "Sustainability/Zero-waste"), null if none stated`;
 
 function buildPrompt({ message, profileSummary, historyText }) {
   return `You are Ayna, a knowledgeable and warm women's health assistant inside the Ayna app. Answer the user's message directly and helpfully.
 
 RULES:
-- Answer the actual question or statement — do not deflect to "I didn't understand" unless the message is truly unintelligible.
+- Answer the actual question or statement, do not deflect to "I didn't understand" unless the message is truly unintelligible.
 - 2-5 concise sentences, conversational, specific.
-- You are not a doctor. NEVER diagnose, under any framing — this means never naming, listing, or suggesting specific medical conditions as a possible explanation for symptoms she describes, even hedged ("this could be X, Y, or Z" still counts as diagnosing). Never prescribe treatment or tell her what medication to take. When she describes symptoms or asks what might be going on, answer with general, non-diagnostic guidance instead — what that kind of symptom commonly involves, general self-care, what to track or watch for — without naming any candidate condition, and firmly direct her to a healthcare provider for an actual diagnosis. Always still give a substantively useful answer alongside that guidance, never just the disclaimer alone.
-- If anything in her message sounds like it could be urgent (severe or worsening pain, heavy or prolonged bleeding, signs of infection like fever, fainting, or anything she describes as sudden/severe) — say so directly and tell her to seek medical care promptly, before anything else in your answer.
+- You are not a doctor. NEVER diagnose, under any framing, this means never naming, listing, or suggesting specific medical conditions as a possible explanation for symptoms she describes, even hedged ("this could be X, Y, or Z" still counts as diagnosing). Never prescribe treatment or tell her what medication to take. When she describes symptoms or asks what might be going on, answer with general, non-diagnostic guidance instead, what that kind of symptom commonly involves, general self-care, what to track or watch for, without naming any candidate condition, and firmly direct her to a healthcare provider for an actual diagnosis. Always still give a substantively useful answer alongside that guidance, never just the disclaimer alone.
+- If anything in her message sounds like it could be urgent (severe or worsening pain, heavy or prolonged bleeding, signs of infection like fever, fainting, or anything she describes as sudden/severe), say so directly and tell her to seek medical care promptly, before anything else in your answer.
 - Never fabricate specific studies, statistics, or product facts you don't actually know.
 - If she asks how to browse or find products (e.g. "show me pads", "I need supplements for cramps"), tell her what you're doing for her in the answer AND set "browseIntent" (see JSON shape) so the app can actually take her there.
 
-SEPARATELY, decide whether this message reveals something worth remembering in her health profile — a real stated concern, sensitivity, avoidance, or priority, not just a passing question. Only include a category below if she clearly stated something new; leave arrays empty / preference null otherwise. Do not invent something she didn't say.
+SEPARATELY, decide whether this message reveals something worth remembering in her health profile, a real stated concern, sensitivity, avoidance, or priority, not just a passing question. Only include a category below if she clearly stated something new; leave arrays empty / preference null otherwise. Do not invent something she didn't say.
 ${PROFILE_CATEGORIES}
 
 ${profileSummary ? `HER CURRENT PROFILE (don't re-add anything already listed):\n${profileSummary}\n` : ''}${historyText ? `RECENT CONVERSATION:\n${historyText}\n` : ''}

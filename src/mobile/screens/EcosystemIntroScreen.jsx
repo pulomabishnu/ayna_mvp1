@@ -1,72 +1,106 @@
+import { useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
-import OrbHero from '../components/OrbHero.jsx';
+import '../ecointro.css';
 
-export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrowse, headerInitial = 'A', onOpenProfile }) {
-  return (
-    <div
-      style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        position: 'relative',
-        background: 'linear-gradient(168deg,#242A52 0%,#4E3866 52%,#A2603C 100%)',
-        color: '#FFF9F2',
-        animation: 'ay-page .25s ease-out',
+// The three parts of the intake, in the order it asks them.
+const PARTS = [
+  { key: 'goals', label: 'Goals', tone: 'butter', note: 'What you want support with.' },
+  { key: 'health', label: 'Health', tone: 'pink', note: 'Your cycle, conditions and medications.' },
+  { key: 'preferences', label: 'Preferences', tone: 'mint', note: 'Formats, budget, brands and what to avoid.' },
+];
+
+// Same slide-to-start control as the welcome screen (.ayna-slide-start*),
+// labelled "Continue". Slide past ~72% or tap the handle.
+function SlideToContinue({ onComplete, label = 'Continue', hint = 'slide' }) {
+  const trackRef = useRef(null);
+  const draggingRef = useRef(false);
+  const completedBySlideRef = useRef(false);
+  const movedRef = useRef(false);
+  const startXRef = useRef(0);
+  const [distance, setDistance] = useState(0);
+  const travel = () => Math.max(0, (trackRef.current?.clientWidth || 0) - 66);
+  const position = (event) => {
+    const rect = trackRef.current?.getBoundingClientRect();
+    if (!rect) return 0;
+    return Math.min(travel(), Math.max(0, event.clientX - rect.left - 31));
+  };
+  const start = (event) => {
+    draggingRef.current = true;
+    movedRef.current = false;
+    startXRef.current = event.clientX;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    setDistance(position(event));
+  };
+  const move = (event) => {
+    if (!draggingRef.current) return;
+    if (Math.abs(event.clientX - startXRef.current) > 8) movedRef.current = true;
+    setDistance(position(event));
+  };
+  const finish = (event) => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    const completed = position(event) >= travel() * .72;
+    setDistance(0);
+    if (completed) { completedBySlideRef.current = true; onComplete?.(); }
+  };
+  return <div className="ayna-slide-start ay-intro-slide" ref={trackRef}>
+    <span className="ayna-slide-start-fill" style={{ width: distance > 0 ? `${distance + 56}px` : 0 }} aria-hidden="true" />
+    <span className="ayna-slide-start-label" aria-hidden="true">{label} <span>{hint}</span></span>
+    <button
+      type="button"
+      className="ayna-slide-start-handle"
+      aria-label={`${label}: slide or tap`}
+      onPointerDown={start}
+      onPointerMove={move}
+      onPointerUp={finish}
+      onPointerCancel={() => { draggingRef.current = false; movedRef.current = true; setDistance(0); }}
+      onClick={() => {
+        if (completedBySlideRef.current) { completedBySlideRef.current = false; return; }
+        if (movedRef.current) { movedRef.current = false; return; }
+        onComplete?.();
       }}
+      style={{ transform: `translateX(${distance}px)` }}
     >
-      <MobileHeader variant="dark" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onOpenProfile={onOpenProfile} />
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 12h16m-7-7 7 7-7 7" /></svg>
+    </button>
+  </div>;
+}
 
-      <div
-        style={{
-          position: 'absolute',
-          top: -70,
-          right: -80,
-          width: 260,
-          height: 260,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle,rgba(255,199,116,.34),rgba(255,199,116,0) 70%)',
-          animation: 'ay-drift 15s ease-in-out infinite',
-          pointerEvents: 'none',
-        }}
-      />
+export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount, authUser, onOpenSaved, onBrowse, onGoCommunity, headerInitial = 'A', onOpenProfile, hasIntakeDraft = false }) {
+  const [focus, setFocus] = useState('goals');
+  const active = PARTS.find((part) => part.key === focus) || PARTS[0];
+  return <main className="ayna-ecosystem-start ay-intro">
+    <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} onGoCommunity={onGoCommunity} onOpenProfile={onOpenProfile} />
+    <div className="ayna-ecosystem-start-scroll ay-intro-body">
+      <header className="ay-intro-head">
+        <h1>{hasIntakeDraft ? 'Your Ecosystem is taking shape.' : 'Make it yours.'}</h1>
+        <p>{hasIntakeDraft ? 'Pick up where you left off.' : 'A few questions in three parts.'}</p>
+      </header>
 
-      <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '6px 24px 20px' }}>
-        <OrbHero showYou={false} />
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.16, textAlign: 'center' }}>
-          Build your
-          <br />
-          ecosystem
-        </div>
-      </div>
-
-      <div style={{ position: 'relative', padding: '8px 24px 40px' }}>
-        <div
-          onClick={onStartQuiz}
-          style={{
-            background: '#FFC774',
-            color: '#231A12',
-            textAlign: 'center',
-            padding: 16,
-            borderRadius: 99,
-            fontFamily: "'DM Sans',sans-serif",
-            fontWeight: 600,
-            fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
-            cursor: 'pointer',
-            boxShadow: '0 18px 34px -16px rgba(255,199,116,.8)',
-            animation: 'ay-bob 2.5s ease-in-out infinite',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 9,
-          }}
-        >
-          Start the intake
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#231A12" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14M13 6l6 6-6 6" />
+      <section className="ay-intro-map" aria-label="What shapes your Ecosystem">
+        <div className="ay-intro-diagram" data-focus={focus}>
+          <svg aria-hidden="true" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <line className="is-goals" x1="50" y1="54" x2="50" y2="15" />
+            <line className="is-health" x1="50" y1="54" x2="83" y2="77" />
+            <line className="is-preferences" x1="50" y1="54" x2="17" y2="77" />
           </svg>
+          <span className="ay-intro-ripple" aria-hidden="true" />
+          <span className="ay-intro-you" aria-hidden="true">you</span>
+          <span className={`ay-intro-pulse to-${focus}`} key={focus} aria-hidden="true" />
+          {PARTS.map((part) => (
+            <button key={part.key} type="button" className={`ay-intro-part is-${part.key} tone-${part.tone}`} aria-pressed={focus === part.key} onClick={() => setFocus(part.key)}>
+              {part.label}
+            </button>
+          ))}
         </div>
+        <p className="ay-intro-note" aria-live="polite" key={active.key}><strong>{active.label}</strong>{active.note}</p>
+      </section>
+
+      {/* Continue resumes the quiz draft where she left off (IntakeScreen reads it), or starts fresh. */}
+      <div className="ayna-ecosystem-start-actions ay-intro-actions">
+        <SlideToContinue onComplete={onStartQuiz} label="Continue" hint={hasIntakeDraft ? 'where you left off' : 'slide to start'} />
+        {!authUser && <p className="ay-intro-signin">Already have an account? <button type="button" onClick={onAlreadyHaveAccount}>Sign in</button></p>}
       </div>
     </div>
-  );
+  </main>;
 }

@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
-import { CONSENT_VERSION, stashPendingConsent } from '../utils/pendingConsent.js';
+import { CONSENT_VERSION, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
+import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../utils/heardAbout.js';
+import '../styles/audit-qya.css';
+import './AuthGate.css';
 
-const SUBTITLES = {
-  quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
-  browse: 'Create an account to save your discoveries and track products over time.',
-  login: 'Welcome back. Sign in to access your health ecosystem.',
-  personalize: 'Personalized results are matched to your health profile — sign in or create an account to turn this on.',
-  default: 'Your personal women\'s health manager',
-};
+// One short line per tab (audit AU01).
+const SUBTITLES = { signup: 'Make your shop yours.', signin: 'Welcome back.' };
+
+/** Visible label above an input, with its error underneath (audit AU03). */
+function Field({ id, label, error, children }) {
+  return <div className="ay-auth-field">
+    <label htmlFor={id}>{label}</label>
+    {children}
+    {error && <p id={`${id}-err`} className="ay-auth-err" role="alert">{error}</p>}
+  </div>;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const CONSENT_ITEMS = [
   'The health information I share with ayna is self-reported wellness information, not a clinical record.',
@@ -17,9 +26,12 @@ const CONSENT_ITEMS = [
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
 ];
 
-export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
+export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem, initialMode, summary = null, allowSignup = false }) {
   useEscapeToClose(isModal, onSkip);
-  const [mode, setMode] = useState('signin');
+  // 'signup' | 'signin'. An account can only be created in the save step after
+  // the quiz (allowSignup). Every other entry point is sign-in only, with
+  // "Don't have an account? Build your ecosystem" starting the quiz instead.
+  const [mode, setMode] = useState(() => (allowSignup && initialMode !== 'signin' ? 'signup' : 'signin'));
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,12 +39,16 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [googleLoading, setGoogleLoading] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConsentDetails, setShowConsentDetails] = useState(false);
   const [checked, setChecked] = useState([false, false, false]);
+  // Optional "Where did you hear about us?" (saved in user metadata).
+  const [heardAbout, setHeardAbout] = useState('');
+  const [heardOther, setHeardOther] = useState('');
+  const heardMeta = heardAboutMetadata(heardAbout, heardOther);
   // Two real signups reported never getting a confirmation email
-  // (2026-08-25) — Supabase's built-in email sender has a very low rate
+  // (2026-08-25), Supabase's built-in email sender has a very low rate
   // limit and no delivery guarantee, so a signup silently succeeding with
   // no email actually arriving is a known, real failure mode, not a fluke.
   // Can't fix the underlying sender from this codebase (Supabase Dashboard
@@ -42,13 +58,13 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
-  // Signup via native Supabase phone-OTP auth instead of email/password —
+  // Signup via native Supabase phone-OTP auth instead of email/password
   // requested 2026-08-25 as an alternative for anyone whose confirmation
   // email never arrives (see the resend feature above). Fully independent
   // of email confirmation: a verified phone creates/signs in the account
   // directly, no email step involved at all. Requires Twilio to actually be
   // configured as Supabase's SMS provider (Authentication → Phone in the
-  // Supabase Dashboard) — this code can't set that up, only use it once set.
+  // Supabase Dashboard), this code can't set that up, only use it once set.
   const [authMethod, setAuthMethod] = useState('email');
   const [showPhoneNotice, setShowPhoneNotice] = useState(false);
   const [phoneStep, setPhoneStep] = useState('number');
@@ -57,19 +73,35 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [phoneSending, setPhoneSending] = useState(false);
 
   const supabase = getSupabaseClient();
-  const subtitle = SUBTITLES[context] || SUBTITLES.default;
   const allConsented = checked.every(Boolean);
-  const isSignup = mode === 'signup';
+  const isSignup = allowSignup && mode === 'signup';
+  const subtitle = isSignup && summary ? 'Save your matches. Create an account to keep them.' : SUBTITLES[mode];
 
-  const toggleCheck = (i) =>
-    setChecked(prev => prev.map((v, idx) => (idx === i ? !v : v)));
+  // Health-data consent stays explicit: one checkbox per statement.
+  const toggleCheck = (i) => {
+    setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
+    setFieldErrors((prev) => (prev.consent ? { ...prev, consent: '' } : prev));
+  };
+  const clearFieldError = (key) => setFieldErrors((prev) => (prev[key] ? { ...prev, [key]: '' } : prev));
+  const fieldProps = (key) => ({
+    'aria-invalid': fieldErrors[key] ? true : undefined,
+    'aria-describedby': fieldErrors[key] ? `auth-${key}-err` : undefined,
+  });
+  const validate = () => {
+    const next = {};
+    if (isSignup && !firstName.trim()) next.firstName = 'Add your first name.';
+    if (!email.trim()) next.email = 'Add your email.';
+    else if (!EMAIL_RE.test(email.trim())) next.email = 'That email doesn’t look right.';
+    if (!password) next.password = 'Add your password.';
+    else if (isSignup && password.length < 8) next.password = 'Use at least 8 characters.';
+    if (isSignup && !allConsented) next.consent = 'Please tick all three to continue.';
+    setFieldErrors(next);
+    return Object.values(next).every((v) => !v);
+  };
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
-    if (isSignup && !allConsented) {
-      setError("Please agree to the three statements above before creating your account.");
-      return;
-    }
+    if (!validate()) return;
     setError('');
     setSuccessMsg('');
     setResendMsg('');
@@ -85,6 +117,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           options: {
             emailRedirectTo: 'https://www.aynahealth.co/confirmed',
             data: {
+              ...heardMeta,
               first_name: cleanFirstName,
               full_name: cleanFirstName,
               consent_given_at: consentAt,
@@ -100,7 +133,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         }
         if (data.session) {
           // Supabase already returned a live session, meaning this project's
-          // "Confirm email" setting is off — no confirmation email is coming.
+          // "Confirm email" setting is off, no confirmation email is coming.
           // Telling her to go check her inbox here would be actively wrong:
           // she's already signed in, which App.jsx's onAuthStateChange handler
           // is about to act on.
@@ -142,14 +175,14 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       if (error) throw error;
       setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
     } catch (err) {
-      setResendMsg(err.message || 'Could not resend right now — try again in a moment.');
+      setResendMsg(err.message || 'Could not resend right now. Try again in a moment.');
     } finally {
       setResending(false);
     }
   };
 
   // Same US-default E.164 normalization as the server's normalizeE164
-  // (api/_otp.js) — kept independent since that one's server-only, but
+  // (api/_otp.js), kept independent since that one's server-only, but
   // matching it means a number that works for one phone feature works for
   // this one too, no surprise "invalid number" for something the rest of
   // the app already accepts.
@@ -175,6 +208,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         phone: e164,
         options: {
           data: {
+            ...heardMeta,
             first_name: cleanFirstName,
             full_name: cleanFirstName,
             consent_given_at: consentAt,
@@ -203,7 +237,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         type: 'sms',
       });
       if (error) throw error;
-      // Session now exists — App.jsx's onAuthStateChange SIGNED_IN handler
+      // Session now exists, App.jsx's onAuthStateChange SIGNED_IN handler
       // takes it from here, same as any other sign-in path.
     } catch (err) {
       setError(err.message || 'That code is wrong or expired. Please try again.');
@@ -214,7 +248,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
   const handleGoogle = async () => {
     if (isSignup && !allConsented) {
-      setError("Please agree to the three statements above before continuing.");
+      setFieldErrors((prev) => ({ ...prev, consent: 'Please tick all three to continue.' }));
       return;
     }
     if (!supabase) {
@@ -228,8 +262,9 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       // redirect. Stored in BOTH modes: Supabase's Google provider
       // auto-provisions an account for any unseen Google address, so a
       // first-time visitor who happens to click the "Sign in" toggle used to get
-      // an account created — and reach the health intake — with the consent
+      // an account created, and reach the health intake, with the consent
       // checkboxes never shown and no consent record written at all.
+      stashPendingSignupMeta(isSignup ? heardMeta : null);
       stashPendingConsent();
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
@@ -248,7 +283,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
   const handleApple = async () => {
     if (isSignup && !allConsented) {
-      setError("Please agree to the three statements above before continuing.");
+      setFieldErrors((prev) => ({ ...prev, consent: 'Please tick all three to continue.' }));
       return;
     }
     if (!supabase) {
@@ -261,6 +296,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       // Same reasoning as handleGoogle just above: Apple's provider also
       // auto-provisions an account for any unseen Apple ID, so consent has
       // to be stashed here too, not only on the email/password path.
+      stashPendingSignupMeta(isSignup ? heardMeta : null);
       stashPendingConsent();
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
@@ -279,6 +315,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const switchMode = (next) => {
     setMode(next);
     setError('');
+    setFieldErrors({});
     setSuccessMsg('');
     setAuthMethod('email');
     setPhoneStep('number');
@@ -299,10 +336,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     alignItems: 'flex-start',
     justifyContent: 'center',
     overflowY: 'auto',
-    background: 'linear-gradient(135deg, rgba(36, 42, 82, 0.94) 0%, rgba(78, 56, 102, 0.94) 58%, rgba(162, 96, 60, 0.88) 100%)',
-    backdropFilter: 'blur(5px)',
-    zIndex: 1000,
-    padding: '7.5rem 1rem 1.5rem',
+    // Ink at 60% over everything, header included (audit AU04).
+    background: 'rgba(29, 26, 43, 0.6)',
+    zIndex: 1700,
+    padding: '96px 16px 24px',
   } : {
     minHeight: '100dvh',
     display: 'flex',
@@ -314,20 +351,21 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
   return (
     <div
+      className={isModal ? 'ay-auth-overlay' : undefined}
       style={overlayStyle}
       onClick={isModal && onSkip ? (e) => { if (e.target === e.currentTarget) onSkip(); } : undefined}
     >
-      <div style={styles.card}>
+      <div className="ay-auth-card" style={styles.card}>
         {isModal && onSkip && (
-          <button type="button" onClick={onSkip} style={styles.closeBtn} aria-label="Skip for now">×</button>
+          <button type="button" className="ay-auth-close" onClick={onSkip} style={styles.closeBtn} aria-label="Close">×</button>
         )}
 
-        <div style={styles.logo}>ayna</div>
-        <p style={styles.tagline}>{subtitle}</p>
+        <div className="ay-auth-logo" style={styles.logo}>ayna</div>
+        <p className="ay-auth-tagline" style={styles.tagline}>{subtitle}</p>
 
         {!supabase && (
           // Without this, a missing/blank .env.local silently disabled the
-          // email/password submit button with zero feedback — clicking it
+          // email/password submit button with zero feedback, clicking it
           // did nothing, no error, no console output, nothing to search for.
           // The Google button already surfaced this same problem via its own
           // error state; email/password had no equivalent, so it looked
@@ -339,9 +377,24 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           </p>
         )}
 
-        <div style={styles.toggleRow}>
+        {isSignup && summary && (
+          <div className="ay-auth-summary">
+            <div className="ay-auth-summary__thumbs" aria-hidden="true">
+              {(summary.products || []).slice(0, 4).map((p) => (
+                <span key={p.id}>{p.image ? <img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : null}</span>
+              ))}
+            </div>
+            <div>
+              <strong>{summary.count} pick{summary.count === 1 ? '' : 's'}{summary.areas?.length ? ` · ${summary.areas.length} area${summary.areas.length === 1 ? '' : 's'}` : ''}</strong>
+              <span>{(summary.areas || []).slice(0, 3).join(', ')}</span>
+            </div>
+          </div>
+        )}
+
+        {allowSignup && <div className="ay-auth-toggle" style={styles.toggleRow}>
           <button
             type="button"
+            className={isSignup ? 'is-on' : ''}
             style={{ ...styles.toggleBtn, ...(isSignup ? styles.toggleBtnActive : {}) }}
             onClick={() => switchMode('signup')}
           >
@@ -349,12 +402,13 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           </button>
           <button
             type="button"
+            className={!isSignup ? 'is-on' : ''}
             style={{ ...styles.toggleBtn, ...(!isSignup ? styles.toggleBtnActive : {}) }}
             onClick={() => switchMode('signin')}
           >
             Sign in
           </button>
-        </div>
+        </div>}
 
         {showPhoneNotice && (
           <div
@@ -393,64 +447,8 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               : handleEmailAuth
           }
           style={styles.form}
+          noValidate
         >
-          {isSignup && (
-            <>
-              <div style={styles.consentSection}>
-                <button
-                  type="button"
-                  onClick={() => setShowConsentDetails(v => !v)}
-                  style={styles.consentToggle}
-                  aria-expanded={showConsentDetails}
-                >
-                  <span>How we handle your data</span>
-                  <span style={{ transform: showConsentDetails ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>⌄</span>
-                </button>
-
-                {showConsentDetails && (
-                  <div style={styles.consentDetails}>
-                    {CONSENT_ITEMS.map((text, i) => (
-                      <label key={i} style={styles.consentItem}>
-                        <input
-                          type="checkbox"
-                          checked={checked[i]}
-                          onChange={() => toggleCheck(i)}
-                          style={styles.checkbox}
-                        />
-                        <span style={styles.consentText}>{text}</span>
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <p style={styles.legalNotice}>
-                By creating an account you agree to ayna's{' '}
-                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={styles.link}>Privacy Policy</a>
-                {' '}and{' '}
-                <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={styles.link}>Terms of Service</a>.
-              </p>
-
-              {authMethod === 'email' ? (
-                <button
-                  type="button"
-                  onClick={() => setShowPhoneNotice(true)}
-                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
-                >
-                  Use my phone number instead
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => switchAuthMethod('email')}
-                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
-                >
-                  Use email instead
-                </button>
-              )}
-            </>
-          )}
-
           {isSignup && authMethod === 'phone' && (
             <input
               type="text"
@@ -505,49 +503,91 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           ) : (
             <>
           {isSignup && (
-            <input
-              type="text"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-              style={styles.input}
-              autoComplete="given-name"
-              maxLength={50}
-            />
+            <Field id="auth-firstName" label="First name" error={fieldErrors.firstName}>
+              <input
+                id="auth-firstName"
+                name="firstName"
+                type="text"
+                value={firstName}
+                onChange={(e) => { setFirstName(e.target.value); clearFieldError('firstName'); }}
+                style={styles.input}
+                autoComplete="given-name"
+                maxLength={50}
+                {...fieldProps('firstName')}
+              />
+            </Field>
           )}
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={styles.input}
-            autoComplete="email"
-          />
-          <div style={{ position: 'relative' }}>
+          <Field id="auth-email" label="Email" error={fieldErrors.email}>
             <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{
-                ...styles.input,
-                width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem',
-              }}
-              autoComplete={isSignup ? 'new-password' : 'current-password'}
-              minLength={isSignup ? 8 : undefined}
+              id="auth-email"
+              name="email"
+              type="email"
+              inputMode="email"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); clearFieldError('email'); }}
+              style={styles.input}
+              autoComplete="email"
+              {...fieldProps('email')}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(v => !v)}
-              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1 }}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
+          </Field>
+          <Field id="auth-password" label="Password" error={fieldErrors.password}>
+            <div style={{ position: 'relative' }}>
+              <input
+                id="auth-password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); clearFieldError('password'); }}
+                style={{
+                  ...styles.input,
+                  width: '100%', boxSizing: 'border-box', paddingRight: '4rem',
+                }}
+                autoComplete={isSignup ? 'new-password' : 'current-password'}
+                {...fieldProps('password')}
+              />
+              <button
+                type="button"
+                className="ay-auth-show"
+                onClick={() => setShowPassword(v => !v)}
+                style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '0.85rem', padding: '0.25rem', lineHeight: 1 }}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+            {isSignup && !fieldErrors.password && <p className="ay-auth-hint">At least 8 characters.</p>}
+          </Field>
+          {isSignup && (
+            <div className="ay-auth-field ay-auth-heard">
+              <label htmlFor="auth-heard">Where did you hear about us? <span className="ay-auth-optional">Optional</span></label>
+              <select id="auth-heard" name="heardAbout" value={heardAbout} onChange={(e) => setHeardAbout(e.target.value)} className={heardAbout ? '' : 'is-empty'}>
+                <option value="">Choose one</option>
+                {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+              {heardAbout === 'other' && (
+                <input id="auth-heard-other" name="heardAboutOther" type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX}
+                  value={heardOther} onChange={(e) => setHeardOther(e.target.value)} style={styles.input} autoComplete="off" />
+              )}
+            </div>
+          )}
+          {isSignup && (
+            <fieldset className="ay-auth-consent" aria-describedby={fieldErrors.consent ? 'auth-consent-err' : undefined}>
+              <legend>How we handle your data</legend>
+              {CONSENT_ITEMS.map((text, i) => (
+                <label key={text} className="ay-auth-check">
+                  <input
+                    type="checkbox"
+                    name={`consent-${i + 1}`}
+                    checked={checked[i]}
+                    onChange={() => toggleCheck(i)}
+                    aria-invalid={fieldErrors.consent && !checked[i] ? true : undefined}
+                  />
+                  <span>{text}</span>
+                </label>
+              ))}
+              {fieldErrors.consent && <p id="auth-consent-err" className="ay-auth-err" role="alert">{fieldErrors.consent}</p>}
+            </fieldset>
+          )}
             </>
           )}
 
@@ -570,6 +610,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
           <button
             type="submit"
+            className="ay-auth-submit"
             disabled={loading || !supabase}
             style={{
               ...styles.primaryBtn,
@@ -581,6 +622,20 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
                 ? (phoneStep === 'number' ? 'Send code' : 'Verify')
                 : isSignup ? 'Create account' : 'Sign in'}
           </button>
+          {isSignup && (
+            <p className="ay-auth-legal">
+              By creating an account you agree to our{' '}
+              <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+              {' '}and{' '}
+              <a href="/terms-of-use" target="_blank" rel="noopener noreferrer">Terms of Use</a>.
+              {' '}
+              {authMethod === 'email' ? (
+                <button type="button" className="ay-auth-linkbtn" onClick={() => setShowPhoneNotice(true)}>Use my phone number instead</button>
+              ) : (
+                <button type="button" className="ay-auth-linkbtn" onClick={() => switchAuthMethod('email')}>Use email instead</button>
+              )}
+            </p>
+          )}
         </form>
 
         <div style={styles.divider}>
@@ -589,7 +644,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           <span style={styles.dividerLine} />
         </div>
 
-        <div style={styles.oauthRow}>
+        <div className="ay-auth-oauth" style={styles.oauthRow}>
           <button
             type="button"
             onClick={handleGoogle}
@@ -622,6 +677,12 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
             {' '}and{' '}
             <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Terms of Use</a>.
           </p>
+        )}
+
+        {!isSignup && !allowSignup && onStartEcosystem && (
+          <button type="button" className="ay-auth-new" onClick={onStartEcosystem}>
+            Don’t have an account? <b>Build your ecosystem</b>
+          </button>
         )}
 
         {isModal && onSkip && context !== 'login' && (
@@ -662,7 +723,7 @@ const styles = {
     border: '1px solid rgba(255,255,255,0.18)',
     boxShadow: '0 34px 80px rgba(24, 18, 36, 0.34)',
     padding: '1.65rem 2rem 1.6rem',
-    margin: 'auto',
+    margin: '0 auto',
     width: '100%',
     maxWidth: '440px',
     maxHeight: 'calc(100dvh - 2rem)',
@@ -673,8 +734,8 @@ const styles = {
   },
   closeBtn: {
     position: 'absolute',
-    top: '0.75rem',
-    right: '0.75rem',
+    top: '12px',
+    right: '12px',
     width: '36px',
     height: '36px',
     display: 'flex',
@@ -834,7 +895,6 @@ const styles = {
     color: '#1E1430',
     border: 'none',
     borderRadius: '12px',
-    boxShadow: '0 8px 20px rgba(209, 154, 62, 0.18)',
     cursor: 'pointer',
     transition: 'background var(--transition-fast)',
     marginTop: '0.25rem',
@@ -893,7 +953,7 @@ const styles = {
     textAlign: 'center',
     // No forced nowrap: at the narrowest phone widths the card itself is
     // narrower than 2*(button content), so keeping nowrap here overflowed
-    // the card instead of wrapping — minWidth:0 lets the flex item actually
+    // the card instead of wrapping, minWidth:0 lets the flex item actually
     // shrink so it can wrap to two lines there instead of clipping.
     minWidth: 0,
     flex: 1,

@@ -4,15 +4,15 @@
  *
  * Thin wrapper over the shared durable limiter in _rateLimit.js. This used to carry its
  * own separate Upstash + in-memory implementation and, unlike every other rate-limited
- * route in this codebase, never failed closed when Upstash wasn't configured — it just
+ * route in this codebase, never failed closed when Upstash wasn't configured, it just
  * fell back to a per-isolate memory counter, so concurrent cold starts could bypass the
  * cap entirely. That's the same cost-abuse shape (unlimited billed calls) the SMS limiter
  * in _rateLimit.js was built to close; these two routes now get the same protection.
  *
  * Env:
- *   AI_INSIGHTS_RATE_LIMIT_MAX — max requests per window (default 15)
- *   AI_INSIGHTS_RATE_LIMIT_WINDOW — e.g. "1 h", "30 m" (default "1 h")
- *   DISABLE_AI_INSIGHTS_RATE_LIMIT — set to "1" or "true" to skip (local dev only)
+ *   AI_INSIGHTS_RATE_LIMIT_MAX, max requests per window (default 15)
+ *   AI_INSIGHTS_RATE_LIMIT_WINDOW, e.g. "1 h", "30 m" (default "1 h")
+ *   DISABLE_AI_INSIGHTS_RATE_LIMIT, set to "1" or "true" to skip (local dev only)
  */
 
 import { rateLimit, getClientIp } from './_rateLimit.js';
@@ -58,7 +58,7 @@ export async function checkProductInsightsRateLimit(req) {
   const windowSec = parseWindowToSec(process.env.AI_INSIGHTS_RATE_LIMIT_WINDOW || DEFAULT_WINDOW_STR);
 
   // TEMPORARY: failClosed is false again. Provisioning the real Upstash
-  // credentials in Vercel hit an unresolved inconsistency — Production and
+  // credentials in Vercel hit an unresolved inconsistency, Production and
   // Preview keep reading back empty even after `vercel env add --force`
   // reports success (Development got a working value; native
   // KV_REST_API_URL/TOKEN for the same integration read back fine in every

@@ -1,5 +1,5 @@
 /**
- * /api/phone-verify-send — Start phone verification for the authenticated user.
+ * /api/phone-verify-send, Start phone verification for the authenticated user.
  *
  * Uses plain Twilio SMS + a self-issued peppered OTP (stored in
  * pending_phone_verifications) instead of the Twilio Verify product, since
@@ -8,7 +8,7 @@
  *
  * The pending row is written with the SERVICE-ROLE key, not the caller's JWT:
  * the table's SELECT policy has been dropped so `code_hash` is never readable
- * by the client. Ownership is still enforced — user.id comes from the verified
+ * by the client. Ownership is still enforced, user.id comes from the verified
  * token and every query is scoped to it.
  */
 /* global process */
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
   const code = generateCode();
 
   // PERSIST BEFORE SENDING. The old order sent the SMS first, so a failed write
-  // meant the user was billed for a code that could never validate — and every
+  // meant the user was billed for a code that could never validate, and every
   // retry burned another message with a 0% chance of succeeding.
   const { error: upsertError } = await admin
     .from('pending_phone_verifications')

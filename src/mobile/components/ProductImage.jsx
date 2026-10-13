@@ -1,10 +1,19 @@
-import { useState } from 'react';
-import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
-import { ProductImageFallback } from '../../components/ProductTileImage.jsx';
+import { useEffect, useState } from 'react';
+import { safeProductImageSrc, resolveProductImage } from '../../utils/resolveProductImage.js';
+import { productImageOverride } from '../../data/productImageOverrides.js';
+
+function PhotoPlaceholder({ style }) {
+  return (
+    <div className="ayna-fresh-photo-placeholder" role="img" aria-label="Product photo unavailable" style={{ position: 'absolute', inset: 0, ...style }}>
+      <span aria-hidden="true" className="ayna-fresh-photo-placeholder-shape" />
+      <span aria-hidden="true" className="ayna-fresh-photo-placeholder-mark">ayna</span>
+    </div>
+  );
+}
 
 /**
  * Fills its (position: relative) parent with either the product's real
- * photo or the shared "ayna" watermark placeholder — used instead of a bare
+ * photo or the shared "ayna" watermark placeholder, used instead of a bare
  * CSS backgroundImage everywhere a product image renders in the mobile app.
  * backgroundImage has no onError, so a dead external hotlink (a brand's CDN
  * asset that starts 403ing/404ing after the catalog entry was written)
@@ -14,12 +23,28 @@ import { ProductImageFallback } from '../../components/ProductTileImage.jsx';
  * so a prop change to a different src is automatically treated as
  * untried/not-errored during render, with no effect needed to clear it.
  */
-export default function ProductImage({ src, alt, allowBrandLogo = false, compact = false, style }) {
-  const safeSrc = safeProductImageSrc(src, allowBrandLogo);
+export default function ProductImage({ src, alt, allowBrandLogo = false, style, product }) {
+  // Cleaned white-background studio photo (by catalog id) wins over `src`.
+  const directSrc = productImageOverride(product) || safeProductImageSrc(src, allowBrandLogo);
+  // Same live photo lookup the website always used (/api/product-image via
+  // resolveProductImage) when the catalog has no usable photo, so cards
+  // stop showing the placeholder for products that do have a real image.
+  const [looked, setLooked] = useState({ key: '', url: '' });
+  const lookupKey = product?.name ? `${product.brand || ''}|${product.name}` : '';
+  const needsLookup = !!lookupKey && !directSrc;
+  useEffect(() => {
+    if (!needsLookup) return undefined;
+    let active = true;
+    resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '')
+      .then((url) => { if (active && url) setLooked({ key: lookupKey, url }); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [needsLookup, lookupKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const safeSrc = directSrc || (looked.key === lookupKey ? looked.url : '');
   const [erroredSrc, setErroredSrc] = useState(null);
 
   if (!safeSrc || erroredSrc === safeSrc) {
-    return <ProductImageFallback compact={compact} style={{ position: 'absolute', inset: 0, ...style }} />;
+    return <PhotoPlaceholder style={style} />;
   }
   return (
     <img

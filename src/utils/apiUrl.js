@@ -1,9 +1,9 @@
 import { Capacitor } from '@capacitor/core';
 
-// The native iOS app has no server of its own — capacitor.config.json has
+// The native iOS app has no server of its own, capacitor.config.json has
 // no `server.url`, so it loads its bundled dist/ assets from a local
 // capacitor:// origin. A plain relative fetch('/api/...') resolves against
-// THAT origin, not the real backend, so it never reaches anything — no
+// THAT origin, not the real backend, so it never reaches anything, no
 // CORS error, no timeout, just an immediate failure (this is what broke the
 // Early Stage tab and Ask Ayna natively; the same relative-path pattern is
 // used everywhere else too, just without a visible error banner for most of

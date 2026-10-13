@@ -1,0 +1,287 @@
+// Ecosystem shelves: one shelf per selected need.
+//
+// - Only products that pass safety AND reach the minimum tier (exploratory,
+//   score >= 50, by default) are placed. "Restricted" products (a required
+//   safety answer is missing) are held back and counted, never shown as a
+//   low match.
+// - A product appears only on shelves where it actually scores.
+// - Picks per need controls quantity, never quality: if fewer products
+//   qualify, the shelf is shorter. Standards are never lowered to fill it.
+// - Ordering: score first. Close scores are ordered by a small tie-break
+//   bonus used only for sorting (displayed scores are unchanged):
+//     FSA/HSA eligible (when she has an account)            up to 1.5 points
+//     preference, trust, brand exploration, confidence,
+//     product quality (cold-start prior) and community        up to 1.0 point
+//   so 94 vs 93-and-eligible can flip, 94 vs 55 never does. Community and
+//   popularity only act here, after eligibility and relevance.
+// - Diversity: picks are re-ranked so a shelf is not five products from one
+//   brand or five of the same approach (a few points at most).
+// - Every shelf answers "do we have a good recommendation?" (quality) and
+//   names "best for" roles when they are true.
+
+import { buildProductProfile } from './productProfile.js';
+import { scoreProductForNeed, evaluateSafety, evidenceChannels, TIERS, REQUIRED_FIELD_TEXT, PRODUCT_INFO_TEXT } from './score.js';
+import { NEED_BY_ID, needPhrase } from './ontology.js';
+
+export const TIE_BREAK = { fsaHsa: 1.5, other: 1.0 };
+export const DIVERSITY_PENALTY = { brand: 3, mechanism: 1.5, format: 1 };
+
+// Which care resources a shelf needs, keyed by need id. Labels match
+// FRUSTRATION_TO_TAG in src/data/careResources.js so getCareResourceBundle
+// can add the right links. Keyed by the exact need, never by the UI section
+// (night sweats and hot flashes do not get menopause care links unless she
+// shared the menopause transition).
+const CARE_FRUSTRATION_BY_NEED = {
+  'urinary.burning': 'Recurrent UTIs', 'urinary.frequency': null, 'urinary.urgency': null, 'urinary.recurrent_uti': 'Recurrent UTIs',
+  'menopause.body_changes': 'Menopause symptoms', 'condition_support.endometriosis': 'Endometriosis', 'condition_support.pcos': 'PCOS symptoms',
+  'fertility.ttc': 'Fertility / TTC', 'fertility.support': 'Fertility / TTC', 'pregnancy.prenatal': 'Pregnancy', 'pregnancy.discomfort': 'Pregnancy',
+  'postpartum.recovery': 'Postpartum recovery', 'pain.pelvic': 'Pelvic pain', 'pain.menstrual_cramp': 'Painful cramps', 'period.heavy': 'Heavy flow',
+};
+function careFrustrationsFor(needIds, up) {
+  const out = needIds.map((id) => CARE_FRUSTRATION_BY_NEED[id]).filter(Boolean);
+  if (up.contexts?.menopause_transition && needIds.some((id) => id.startsWith('vasomotor.'))) out.push('Menopause symptoms');
+  return [...new Set(out)];
+}
+
+/** Brand category for exploration: user_trusted | user_known | catalog_established | emerging (new_to_user is implied by not known). */
+export function brandCategory(pp, up) {
+  const key = pp.brand.key;
+  if (key && up.shopping.trustedBrands.some((t) => t.key === key)) return 'user_trusted';
+  if (key && up.experience.history.some((h) => h.brandKey === key || h.resolvedProduct?.id === pp.product_id)) return 'user_known';
+  if (pp.brand.emerging) return 'emerging';
+  return 'catalog_established';
+}
+
+function explorationFit(pp, up) {
+  const e = up.shopping.brandExploration;
+  const cat = brandCategory(pp, up);
+  if (cat === 'user_trusted' || cat === 'user_known') return 1 - e;
+  if (cat === 'emerging') return e;
+  return 0.5;
+}
+
+/**
+ * Product quality prior (cold start): metadata completeness, evidence and
+ * community signal. Weighs more when she told us little (spec B: adapt the
+ * strength of personalization to how much she shared).
+ */
+export function qualityPrior(pp) {
+  if (!pp?.evidence) return 0;
+  const ch = evidenceChannels(pp);
+  return Math.max(0, Math.min(1, 0.4 * (pp.metadata_confidence || 0) + 0.35 * Math.max(ch.clinical, ch.expert) + 0.25 * ch.community));
+}
+
+function tieBreakBonus(result, pp, up) {
+  if (!pp) return 0;
+  const hasAccount = ['fsa', 'hsa', 'both'].includes(up.shopping.fsaHsa);
+  const fsa = hasAccount && pp.fsa_hsa === 'yes' ? TIE_BREAK.fsaHsa : 0;
+  const c = result.components || {};
+  const pref = c.preference ?? 0.6;
+  const evid = c.evidence ?? 0.5;
+  const coldStart = 1 - (up.completeness ?? 0.5);
+  const other = TIE_BREAK.other * Math.min(1,
+    0.3 * pref + 0.2 * evid + 0.2 * explorationFit(pp, up) + 0.15 * (result.confidence ?? 0.6) + 0.15 * qualityPrior(pp) * (0.5 + coldStart));
+  return fsa + other;
+}
+
+/** Sort results by score with the tie-break bonus. Pure; returns a new array. */
+export function sortResults(results, up, profilesById) {
+  return [...results]
+    .map((r) => ({ r, key: r.score + tieBreakBonus(r, profilesById.get(r.productId), up) }))
+    .sort((a, b) => b.key - a.key || String(a.r.productId).localeCompare(String(b.r.productId)))
+    .map((x) => x.r);
+}
+
+/**
+ * Diversity re-rank (spec B): greedy, so the best product stays first and a
+ * later product from the same brand / approach / format gives way to an
+ * equally good different one. Penalties are a few points, so a much better
+ * product is never pushed down.
+ */
+export function diversify(sorted, profilesById, up, limit = sorted.length) {
+  const pool = sorted.map((r, i) => ({ r, key: r.score + tieBreakBonus(r, profilesById.get(r.productId), up) - i * 1e-6 }));
+  const out = [];
+  while (pool.length && out.length < limit) {
+    let bestIdx = 0;
+    let bestKey = -Infinity;
+    pool.forEach((c, idx) => {
+      const pp = profilesById.get(c.r.productId);
+      let pen = 0;
+      for (const o of out) {
+        const op = profilesById.get(o.productId);
+        if (!pp || !op) continue;
+        if (pp.brand.key && pp.brand.key === op.brand.key) pen += DIVERSITY_PENALTY.brand;
+        if (pp.mechanism?.rules?.[0] && pp.mechanism.rules[0] === op.mechanism?.rules?.[0]) pen += DIVERSITY_PENALTY.mechanism;
+        if (pp.formats?.length && pp.formats.join() === (op.formats || []).join()) pen += DIVERSITY_PENALTY.format;
+      }
+      const k = c.key - Math.min(pen, 4);
+      if (k > bestKey) { bestKey = k; bestIdx = idx; }
+    });
+    out.push(pool.splice(bestIdx, 1)[0].r);
+  }
+  return out;
+}
+
+/** "Why is A above B for her?" (pairwise): the dimensions where A is clearly better. */
+export function compareResults(a, b) {
+  if (!a || !b) return [];
+  const out = [];
+  if ((a.relevance - b.relevance) >= 0.1) out.push({ dimension: 'relevance', text: `More directly matches the ${needPhrase(a.needId)} you selected` });
+  const dv = (k) => (a.dimensions?.values?.[k] ?? null) != null && (b.dimensions?.values?.[k] ?? null) != null ? a.dimensions.values[k] - b.dimensions.values[k] : 0;
+  if (dv('format') >= 0.3) out.push({ dimension: 'format', text: 'In a format you prefer' });
+  if (dv('price') >= 0.15) out.push({ dimension: 'price', text: 'Closer to your budget' });
+  if (dv('values') >= 0.3) out.push({ dimension: 'values', text: 'Matches more of what you asked for' });
+  if (dv('evidence') >= 0.2) out.push({ dimension: 'evidence', text: 'Stronger on what you trust most' });
+  if (((a.points?.experience ?? 0) - (b.points?.experience ?? 0)) >= 3) out.push({ dimension: 'experience', text: 'Closer to what has worked for you' });
+  if (((a.confidence ?? 0) - (b.confidence ?? 0)) >= 0.15) out.push({ dimension: 'confidence', text: 'We have more complete information on it' });
+  return out;
+}
+
+/**
+ * "Best for" roles (spec B), only when the role is true:
+ *   best_overall, best_budget, strongest_evidence, preferred_format,
+ *   familiar_brand, alternative_approach.
+ */
+export function assignRoles(qualified, profilesById, up) {
+  const roles = {};
+  if (!qualified.length) return roles;
+  const top = qualified[0];
+  roles.best_overall = top.productId;
+  const near = (r, pts) => r.score >= top.score - pts;
+  const cost = (r) => { const pp = profilesById.get(r.productId); return pp?.pricing?.per_month ?? pp?.price?.amount ?? null; };
+  const topCost = cost(top);
+  const budget = qualified.filter((r) => near(r, 12) && cost(r) != null).sort((a, b) => cost(a) - cost(b))[0];
+  if (budget && (topCost == null || cost(budget) <= topCost * 0.85) && budget.productId !== top.productId) roles.best_budget = budget.productId;
+  const evScore = (r) => { const e = r.evidence?.forThisNeed; return e ? 2 * (e.product_specific || 0) + (e.clinical_guideline || 0) + 0.5 * (e.ingredient_specific || 0) : 0; };
+  const strongest = qualified.filter((r) => near(r, 15) && evScore(r) > 0).sort((a, b) => evScore(b) - evScore(a))[0];
+  if (strongest) roles.strongest_evidence = strongest.productId;
+  if (up.shopping.formats.preferred.length) {
+    const pf = qualified.find((r) => (profilesById.get(r.productId)?.formats || []).some((f) => up.shopping.formats.preferred.includes(f)));
+    if (pf) roles.preferred_format = pf.productId;
+  }
+  const familiar = qualified.find((r) => ['user_trusted', 'user_known'].includes(brandCategory(profilesById.get(r.productId), up)));
+  if (familiar) roles.familiar_brand = familiar.productId;
+  const topPP = profilesById.get(top.productId);
+  const alt = qualified.find((r) => {
+    if (r.productId === top.productId) return false;
+    const pp = profilesById.get(r.productId);
+    return pp && topPP && pp.mechanism?.rules?.[0] !== topPP.mechanism?.rules?.[0] && pp.formats.join() !== topPP.formats.join();
+  });
+  if (alt) roles.alternative_approach = alt.productId;
+  return roles;
+}
+
+function careBundleFor(shelfNeeds, up, getCareResourceBundle) {
+  if (typeof getCareResourceBundle !== 'function') return null;
+  return getCareResourceBundle({ frustrations: careFrustrationsFor(shelfNeeds, up) }, null, up.access.zip || '');
+}
+
+/**
+ * "Do we actually have a good recommendation?" for one shelf.
+ *   good     at least one strong (65+) pick we are reasonably confident in
+ *   limited  only exploratory picks, or limited confidence
+ *   none     nothing qualifies: show fewer or zero products, never filler
+ */
+function shelfQuality(picks, restrictedCount, needId, userFieldsMissing = true) {
+  const phrase = needPhrase(needId);
+  if (!picks.length) {
+    if (restrictedCount && !userFieldsMissing) return { quality: 'none', note: `We are still checking safety details for the products that fit ${phrase}, so we are holding them back.` };
+    return restrictedCount
+      ? { quality: 'none', note: `We need a couple of safety details before we can suggest products for ${phrase}.` }
+      : { quality: 'none', note: `We do not have a product we can stand behind for ${phrase} yet, so we are not showing filler.` };
+  }
+  const strong = picks.some((p) => p.score >= 65 && p.confidence >= 0.5);
+  return strong ? { quality: 'good', note: null } : { quality: 'limited', note: `Only a few looser matches for ${phrase}.` };
+}
+
+/**
+ * Build need shelves.
+ * @param {object} up buildUserProfile() result
+ * @param {object[]} products catalog products
+ * @param {{ picksPerNeed?: number, minTier?: 'excellent'|'strong'|'exploratory'|'browse', minScore?: number,
+ *   getCareResourceBundle?: Function, includeRestricted?: boolean, diversity?: boolean }} [options]
+ *   getCareResourceBundle: pass the function from src/data/careResources.js to attach
+ *   care links; omitted in tests to keep this module pure.
+ */
+export function buildEcosystem(up, products, options = {}) {
+  const picksPerNeed = options.picksPerNeed ?? up.shopping.picksPerNeed ?? 3;
+  const minScore = options.minScore ?? TIERS.find((t) => t.id === (options.minTier || 'exploratory')).min;
+  const profilesById = new Map();
+  const safetyById = new Map();
+  for (const p of products || []) {
+    const pp = buildProductProfile(p);
+    if (!pp?.product_id || profilesById.has(pp.product_id)) continue;
+    profilesById.set(pp.product_id, pp);
+    safetyById.set(pp.product_id, evaluateSafety(pp, up));
+  }
+
+  const shelves = [];
+  let anyCareProminent = up.safety.careProminent;
+  for (const need of up.healthIntent.needs) {
+    const results = [];
+    let excludedCount = 0;
+    let belowThreshold = 0;
+    let restrictedCount = 0;
+    const missingFields = new Set();
+    const missingProductInfo = new Set();
+    let careProminent = up.safety.careProminent;
+    for (const pp of profilesById.values()) {
+      if (!pp.health_need_relevance[need.id]) continue; // only shelves where it actually scores
+      const r = scoreProductForNeed(pp, up, need.id, { safety: safetyById.get(pp.product_id) });
+      careProminent = careProminent || r.careProminent;
+      if (!r.safety.eligible) { excludedCount += 1; continue; }
+      if (r.filtered) { excludedCount += 1; continue; }
+      if (r.score < minScore || !r.explainable) { belowThreshold += 1; continue; }
+      if (r.restricted && !options.includeRestricted) {
+        restrictedCount += 1;
+        r.safety.missingFields.forEach((f) => missingFields.add(f));
+        (r.safety.missingProductInfo || []).forEach((f) => missingProductInfo.add(f));
+        continue;
+      }
+      results.push(r);
+    }
+    const sorted = sortResults(results, up, profilesById);
+    const picks = (options.diversity === false ? sorted : diversify(sorted, profilesById, up, picksPerNeed)).slice(0, picksPerNeed);
+    const roles = assignRoles(sorted, profilesById, up);
+    picks.forEach((p, i) => {
+      p.roles = Object.entries(roles).filter(([, id]) => id === p.productId).map(([role]) => role);
+      p.aboveNext = picks[i + 1] ? compareResults(p, picks[i + 1]) : [];
+    });
+    anyCareProminent = anyCareProminent || careProminent;
+    const care = (careProminent || need.id.startsWith('care.')) ? careBundleFor([need.id], up, options.getCareResourceBundle) : null;
+    const quality = shelfQuality(picks, restrictedCount, need.id, missingFields.size > 0);
+    shelves.push({
+      needId: need.id,
+      label: need.label,
+      source: need.source,
+      kind: need.kind || NEED_BY_ID[need.id]?.kind || null,
+      picks,
+      qualifiedCount: sorted.length,
+      excludedCount,
+      belowThresholdCount: belowThreshold,
+      restrictedCount,
+      missingSafetyFields: [...missingFields],
+      missingSafetyText: [...missingFields].map((f) => REQUIRED_FIELD_TEXT[f]).filter(Boolean),
+      missingProductInfo: [...missingProductInfo],
+      missingProductInfoText: [...missingProductInfo].map((f) => PRODUCT_INFO_TEXT[f]).filter(Boolean),
+      shortBy: Math.max(0, picksPerNeed - picks.length),
+      emptyReason: picks.length ? null : restrictedCount ? 'needs_safety_details' : sorted.length === 0 && belowThreshold > 0 ? 'no_product_meets_quality_bar' : 'no_matching_products',
+      quality: quality.quality,
+      qualityNote: quality.note,
+      roles,
+      careFirst: up.safety.careFirst,
+      careProminent,
+      care,
+    });
+  }
+
+  return {
+    shelves,
+    careFirst: up.safety.careFirst,
+    careProminent: anyCareProminent,
+    care: up.safety.careFirst || up.safety.careProminent ? careBundleFor(up.healthIntent.needs.map((n) => n.id), up, options.getCareResourceBundle) : null,
+    picksPerNeed,
+    minScore,
+    completeness: up.completeness ?? null,
+  };
+}

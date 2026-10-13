@@ -1,5 +1,5 @@
 /* global process */
-// NIH Dietary Supplement Label Database (DSLD) — free, no API key required
+// NIH Dietary Supplement Label Database (DSLD), free, no API key required
 // 200,000+ verified supplement labels with real ingredient data
 // Docs: https://api.ods.od.nih.gov/dsld/v9/docs
 
@@ -88,8 +88,8 @@ export default async function handler(req, res) {
         price: 'See retailer',
         tags: ['supplement', 'nih-verified'],
         safety: {
-          // Deliberately empty. This route only queries NIH DSLD — it never
-          // contacts the FDA — so it must not assert anything about recalls.
+          // Deliberately empty. This route only queries NIH DSLD, it never
+          // contacts the FDA, so it must not assert anything about recalls.
           // It previously stamped "No active FDA recalls on file at time of
           // retrieval" onto every supplement, which reads as the result of a
           // live check that never happened. The live check is /api/fda-recall.
@@ -108,7 +108,7 @@ export default async function handler(req, res) {
     }).filter((p) => p.name && p.name.length > 2);
 
     // Pure function of the query against a slowly-changing NIH label database,
-    // so this is an ideal edge-cache candidate. Set on the SUCCESS path only —
+    // so this is an ideal edge-cache candidate. Set on the SUCCESS path only
     // the two failure branches above return 200 with an empty product list, and
     // caching those would pin an upstream blip for a day.
     res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');

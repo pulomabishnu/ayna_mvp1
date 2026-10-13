@@ -158,8 +158,8 @@ export function saveLearningMemory(memory) {
 }
 
 /**
- * @param {object} options — passed to build body (intake, feedback maps, etc.)
- * @param {{ timeoutMs?: number, signal?: AbortSignal }} [fetchOpts] — `signal` lets a caller
+ * @param {object} options, passed to build body (intake, feedback maps, etc.)
+ * @param {{ timeoutMs?: number, signal?: AbortSignal }} [fetchOpts]`signal` lets a caller
  *   cancel the request directly (e.g. a user-clicked Cancel button), distinct from the
  *   internal timeout-based abort.
  */

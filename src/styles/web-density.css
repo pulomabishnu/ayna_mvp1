@@ -1,0 +1,53 @@
+/* Website density pass (round 6): founder asked for everything "just a little
+   smaller". One step down on headings, section padding and primary buttons;
+   pills and nav a touch tighter. Body stays >= 16px, targets stay >= 44px
+   (nothing here reduces a control's height below what it was).
+   `.app-container.app-container` outranks the per-page rules (which use
+   `.app-container .x` + !important) without touching their files. */
+
+/* ---------- Headings: one step smaller ---------- */
+/* Landing H1: cap 60px (was 72) */
+.app-container.app-container .lx .lx-hero__title { font-size: clamp(32px, 22px + 2.8vw, 60px) !important; }
+/* Section heads: cap 36px (was 40) */
+.app-container.app-container .lx .lx-h2,
+.app-container.app-container .hs-needs__head h2 { font-size: clamp(26px, 1.4rem + .9vw, 36px) !important; }
+.app-container.app-container .lx :is(.lx-values__list, .lx-how__steps) h3,
+.app-container.app-container .hs-need h3 { font-size: 22px !important; }
+/* Learn carousel on the landing: title 48 -> 40, glossary term 64 -> 52 */
+.app-container.app-container .whc .whc-title { font-size: clamp(30px, 3vw, 40px) !important; }
+.app-container.app-container .whc .whc-title--term { font-size: clamp(36px, 3.6vw, 52px) !important; }
+.app-container.app-container .whc .whc-chapters__label { font-size: 28px; }
+/* Page titles: Shop / Library 56 -> 48, Ecosystem 64 -> 52, Community 40 -> 36 */
+.app-container.app-container .ayna-browse__heading h1,
+.app-container.app-container .ay-web-lib-head h1 { font-size: clamp(34px, 3.4vw, 48px) !important; }
+.app-container.app-container .eco3-head h1 { font-size: clamp(36px, 3.6vw, 52px) !important; }
+.app-container.app-container .wc3 .wc-head h1 { font-size: clamp(30px, 2.6vw, 36px) !important; }
+.app-container.app-container .ay-web-lib-cat > h2 { font-size: 24px !important; }
+.app-container.app-container .eco-saved__head h2 { font-size: clamp(26px, 2.2vw, 32px) !important; }
+/* Product page title 48 -> 40 */
+.app-container.app-container .pdp-head__name { font-size: clamp(30px, 2.8vw, 40px) !important; }
+
+/* ---------- Section padding: 96 -> 80 (desktop/tablet only; mobile already 64) ---------- */
+@media (min-width: 768px) {
+  .app-container.app-container :is(.lx-values, .lx-how, .lx-final, .lx-shop) { padding-block: 80px; }
+  .app-container.app-container .lx-values__list li { padding: 24px; }
+}
+@media (min-width: 640px) { .app-container.app-container .hs-needs { padding-block: 80px; } }
+@media (min-width: 861px) { .app-container.app-container .whc { padding-block: 80px; } }
+
+/* ---------- Primary button: 56 -> 48 tall ---------- */
+.app-container.app-container .lx .lx-cta { min-height: 48px; padding: 0 6px 0 20px; font-size: 16px; }
+.app-container.app-container .lx .lx-cta__arrow { width: 36px; height: 36px; }
+
+/* ---------- Nav: slightly tighter ---------- */
+@media (min-width: 901px) {
+  .app-container.app-container .app-nav { padding-block: 16px; }
+  .app-container.app-container .app-nav.app-nav--landing { padding-top: 16px !important; padding-bottom: 16px !important; }
+}
+.app-container.app-container .app-nav.app-nav .app-nav__logo { font-size: 28px !important; }
+.app-container.app-container .app-nav.app-nav .app-nav__tab { padding: 0 14px !important; }
+
+/* ---------- Pills and chips: a touch less side padding (heights unchanged) ---------- */
+.app-container.app-container :is(.eco3-pill, .ayna-browse__filter-button, .ayna-browse__personalize-cta) { padding-inline: 14px !important; }
+.app-container.app-container .eco3-chip { padding-inline: 12px !important; }
+.app-container.app-container :is(.ay-web-lib-filter, .wc-tabs) > button { padding-inline: 14px !important; }

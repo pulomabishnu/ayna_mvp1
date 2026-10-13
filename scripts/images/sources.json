@@ -1,0 +1,1072 @@
+{
+ "p-aisle-underwear": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/1904/9001/files/Aisle_FW26_B01_Flat-Lay_Brief_Navy.jpg",
+  "previous": "http://periodaisle.com/cdn/shop/files/S25_PA_Cheeky_Merlot_M02_31558_Cheeky_Merlot_33347_ad13f801-02fa-4756-a17d-1ba3518c930c.jpg?v=1767893880"
+ },
+ "p-always-liners": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/81r2XaKrw-L._AC_SL1000_.jpg",
+  "previous": ""
+ },
+ "p-bambody-underwear": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0684/7892/6893/files/71S5UJHWGjL._AC_SL1500.jpg",
+  "previous": "",
+  "note": "cropped flat-lay (icons removed)"
+ },
+ "p-bambody-underwear-2": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0684/7892/6893/files/611IHjwrcnL.jpg",
+  "previous": "",
+  "note": "cropped to the flat-lay column (model removed)"
+ },
+ "p-belly-bandit": {
+  "kind": "retouched",
+  "source": "https://cdn.shopify.com/s/files/1/1608/0129/files/belly-bandit-upsie-belly-black-2400X3680-05.jpg",
+  "previous": "",
+  "note": "brand product shot; callout labels and lines painted out"
+ },
+ "p-bodily-kit": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0099/4584/1761/files/bodily-postpartum-essentials-bundle-cushion-peri-wash-bottle-mesh-undies-3-pack-cozy-sockspostpartum-care-v2.jpg",
+  "previous": ""
+ },
+ "p-boric-acid": {
+  "kind": "cleaned",
+  "source": "https://thehoneypot.co/cdn/shop/products/Suppositories_Front.jpg?v=1675876514&width=1200",
+  "previous": "https://thehoneypot.co/cdn/shop/products/Suppositories_Front.jpg?v=1675876514&width=1200"
+ },
+ "p-buni-bundle": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/619R25gup5L._AC_SL1000_.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-bundle-product-page-main.webp?v=1776772005"
+ },
+ "p-buni-rejuvenate-vulva-balm": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/61g4AVp2xAL._AC_SL1000_.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-vulva-balm-product-page-main.webp?v=1776773714"
+ },
+ "p-buni-soothe-nipple-lip-balm": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/617I8voe77L._AC_SL1000_.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-nipple-lip-balm-product-page-main_1.webp?v=1776774214"
+ },
+ "p-buni-transform-scar-body-oil": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/611EjYR+gTL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Amazon main image"
+ },
+ "p-citracal-bone-health": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71zoHBcXURL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Amazon main, Citracal Maximum Plus (catalog buy link)"
+ },
+ "p-citracal-bone-health-2": {
+  "kind": "gallery",
+  "source": "https://m.media-amazon.com/images/I/51fEbO1pP-L._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "bottle label side"
+ },
+ "p-citracal-bone-health-3": {
+  "kind": "gallery",
+  "source": "https://m.media-amazon.com/images/I/71B4fvesPKL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "supplement facts panel"
+ },
+ "p-cora-disc": {
+  "kind": "cleaned",
+  "source": "https://target.scene7.com/is/image/Target/GUEST_adc9d805-99e0-40ac-8a00-2203a093b2a3",
+  "previous": "https://target.scene7.com/is/image/Target/GUEST_adc9d805-99e0-40ac-8a00-2203a093b2a3"
+ },
+ "p-cora-organic-pads": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71K002nGKpL._AC_SL1000_.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_POM_Pads_Regular_1000X1000_9e847653-7318-46fb-9fdf-a714e0931031.png?v=1787080092"
+ },
+ "p-cora-organic-tampons": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71cZfrC-drL._AC_SL1000_.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_Applicator_Tampons_V3_1000X1000_7f00668b-f217-4371-b8a1-1c3b4ab16741.png?v=1787190945"
+ },
+ "p-cora-overnight": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71TwfeGMy0L._AC_SL1000_.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_POM_Maxi_Overnight_1000X1000_1c7cdd2e-9eab-43c1-a8dc-52b28f7052c2.png?v=1787166033"
+ },
+ "p-creatine-womens": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71-lmdLaYmL._AC_SL1000_.jpg",
+  "previous": "https://d1vo8zfysxy97v.cloudfront.net/media/product/sf903__ve8382489c6ce9fb7f28cdddef00e6f1ece146591.png"
+ },
+ "p-cystex": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71vMthUNYcL._AC_SL1000_.jpg",
+  "previous": "https://www.cystex.com/wp-content/uploads/2023/03/cystex-opengraph.png"
+ },
+ "p-cystex-2": {
+  "kind": "gallery",
+  "source": "https://m.media-amazon.com/images/I/81p3Q3gOLIL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "drug facts panel"
+ },
+ "p-dear-kate-underwear": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0152/4745/files/AdaBriefMiniBeigeFront.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0152/4745/products/DSC01403.jpg?v=1578089113"
+ },
+ "p-diva-cup": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/51aAdLGzfRL._AC_SL1000_.jpg",
+  "previous": "https://media.istockphoto.com/id/1086919730/photo/pink-menstrual-cup-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=US3IMihnEbHr5zeY2NnkFrR8IUSAdoZlKHotkferstQ="
+ },
+ "p-elitone": {
+  "kind": "cut-out",
+  "source": "https://elitone.com/wp-content/uploads/2021/05/Both-Products-1200x800-AVIF.avif",
+  "previous": "",
+  "note": "two controllers masked out of a lifestyle shot"
+ },
+ "p-elitone-urge": {
+  "kind": "cleaned",
+  "source": "https://elitone.com/wp-content/uploads/2023/02/UUI-Galleries-091026-09.avif",
+  "previous": "",
+  "note": "cropped to box + GelPads (text removed)"
+ },
+ "p-elvie-trainer": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0685/2322/9340/files/IMD_UK_Trainer_Web_Hero_1200x1200_V2.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0685/2322/9340/files/IMD_UK_Trainer_Web_Hero_1200x1200_V2.jpg?v=1767622990"
+ },
+ "p-estroven-mood": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0038/4188/4230/products/estroven-mood-boost-front-view.jpg?v=1699478289",
+  "previous": "https://cdn.shopify.com/s/files/1/0038/4188/4230/products/estroven-mood-boost-front-view.jpg?v=1699478289"
+ },
+ "p-femmycycle": {
+  "kind": "cleaned",
+  "source": "https://menstrualcupreviews.net/wp-content/uploads/2020/06/femmycycle-regular-cup.jpg",
+  "previous": "",
+  "note": "brand site is gone; only source found, reflection cropped, low-res (300px)"
+ },
+ "p-flex-cup": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/1097/9960/files/menstrual-cup-with-storage-pouch.webp",
+  "previous": "https://cdn.shopify.com/s/files/1/1097/9960/files/menstrual-cup-with-ring-stem-held-in-hand.png?v=1763752341"
+ },
+ "p-flex-disc": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/61JKd-2HWKL._AC_SL1500_.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/1097/9960/files/person-holding-menstrual-disc-closeup.jpg?v=1763748081",
+  "note": "Amazon main, 12ct box (previous was clipped)"
+ },
+ "p-gina-insertion-applicator-refills": {
+  "kind": "cut-out",
+  "source": "https://cdn.shopify.com/s/files/1/0770/7593/9551/files/gina-applicator-finger-sleeves_0ea5ca45-354f-4892-bfbb-6e3da377be5d.jpg",
+  "previous": "",
+  "note": "hand-traced cut-out"
+ },
+ "p-gina-insertion-applicator-refills-2": {
+  "kind": "cut-out",
+  "source": "https://cdn.shopify.com/s/files/1/0770/7593/9551/files/insertionapplicatorrefills_051e785d-0717-4419-a336-386a23a2a2ff.jpg",
+  "previous": "",
+  "note": "box, hand-traced cut-out"
+ },
+ "p-gina-vaginal-moisturizing-glides": {
+  "kind": "cut-out",
+  "source": "https://cdn.shopify.com/s/files/1/0770/7593/9551/files/gina-glide-box-stacked_1.jpg",
+  "previous": "",
+  "note": "hand-traced cut-out"
+ },
+ "p-gina-vaginal-moisturizing-glides-2": {
+  "kind": "cut-out",
+  "source": "https://cdn.shopify.com/s/files/1/0770/7593/9551/files/gina-single.jpg",
+  "previous": ""
+ },
+ "p-gina-vaginal-moisturizing-glides-3": {
+  "kind": "cut-out",
+  "source": "https://cdn.shopify.com/s/files/1/0770/7593/9551/files/gina-glide-suppository-blister-pack-top_2_1aa74f58-86e0-4e3c-91de-d7a7e94a7fe8.jpg",
+  "previous": ""
+ },
+ "p-gina-vaginal-moisturizing-glides-4": {
+  "kind": "cut-out",
+  "source": "https://cdn.shopify.com/s/files/1/0770/7593/9551/files/gina-glide-suppository-hydration_1.jpg",
+  "previous": ""
+ },
+ "p-good-kitty-uti-biome-shield": {
+  "kind": "cut-out",
+  "source": "https://cdn.shopify.com/s/files/1/0782/7043/1544/files/1-1_counter.webp",
+  "previous": "",
+  "note": "tin, capsule dish and applicator masked off marble (previous image was an unrelated logo)"
+ },
+ "p-good-kitty-uti-biome-shield-2": {
+  "kind": "cut-out",
+  "source": "https://cdn.shopify.com/s/files/1/0782/7043/1544/files/1-1_counter.webp",
+  "previous": "",
+  "note": "tin only"
+ },
+ "p-hatch-oil": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/51Jf3NLvBOL._AC_SL1000_.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/1991/8975/files/Hatch-49_1.jpg?v=1763657501"
+ },
+ "p-hello-disc": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/61HilmayHVL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Amazon main, boxed disc (previous was the Hello Caddy)"
+ },
+ "p-hello-disc-2": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/Three_Colours_Hello_Disc_1.png",
+  "previous": ""
+ },
+ "p-honeypot-wash": {
+  "kind": "cleaned",
+  "source": "https://thehoneypot.co/cdn/shop/files/SensitiveWashMother-MOBadge-Nude.jpg?v=1771432432&width=1200",
+  "previous": "https://thehoneypot.co/cdn/shop/files/SensitiveWashMother-MOBadge-Nude.jpg?v=1771432432&width=1200"
+ },
+ "p-intimina-kegel": {
+  "kind": "replaced",
+  "source": "https://assets.intimina.com/files/static/product-images/2019-12/2400x2400_laselle_routine_RGB_300dpi-min.jpg",
+  "previous": "",
+  "note": "Laselle Weighted Exerciser Set box"
+ },
+ "p-intimina-kegel-2": {
+  "kind": "gallery",
+  "source": "https://assets.intimina.com/files/static/product-images/2019-12/INTIMINA_Routine_OpenPack_1772-min.jpg",
+  "previous": "",
+  "note": "contents"
+ },
+ "p-intimina-lily": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/61TVXRFnnQL._AC_SL1000_.jpg",
+  "previous": "https://assets.intimina.com/files/static/product-images/2022-04/550x550_Lily%20Cup_EN.jpg?VersionId=ETb1DKiGPOOFTBT12hVX8D6SkbVdSlsG"
+ },
+ "p-kindra-lotion": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/1600/4387/files/Daily_V_Lotion_1oz_Box_-_Front_Back_5.jpg",
+  "previous": "https://ourkindra.com/cdn/shop/files/Kindra_ProductShot_LotionPackagingOTC_FSA2.jpg?v=1738344965"
+ },
+ "p-knix-underwear": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0668/8591/0570/files/FK483LeakproofInvisibleCottonNo-ShowBikini_Black2_2x_e93523cc-e017-47a8-a188-4f927efb60eb.webp",
+  "previous": "https://cdn.shopify.com/s/files/1/0668/8591/0570/files/Kt_StageProof_Leakproof_UltraThin_No-Show_Dance_Underwear_Black_1_2x_06e19858-52bc-46c1-b6ab-5068d8363039.webp?v=1779240155"
+ },
+ "p-kotex-security": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71F2yB9rZoL._AC_SL1000_.jpg",
+  "previous": ""
+ },
+ "p-lena-cup": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_PUR-S.png",
+  "previous": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Blue_Cotton_Bag.png?v=1777479161"
+ },
+ "p-lim-method-bundle": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0764/6573/3920/files/lim-bundle-product-image-1-blue_0c6c59a3-681f-4f34-9dfa-847bcddb5382.png",
+  "previous": "",
+  "note": "bundle contents (previous was the kneeling pad only)"
+ },
+ "p-lim-method-kneeling-pad": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0764/6573/3920/files/lim-kneeling-pad-1.png",
+  "previous": "/products/limmethod/lim-bundle-lunge.webp"
+ },
+ "p-lim-method-shoe-covers": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0764/6573/3920/files/lim-shoe-covers-1.png",
+  "previous": "https://www.limmethod.com/cdn/shop/files/IMG_2821.jpg?v=1696450654&width=1946"
+ },
+ "p-livlabs-pippa-fit-kit": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0771/1087/0265/files/Fit_Kit_Pouch_on_Square.png",
+  "previous": "/products/livlabs/pippa-fit-kit.webp"
+ },
+ "p-livlabs-pippa-starter-kit": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0771/1087/0265/files/Starter_Kit_Pouch_Square.png",
+  "previous": "/products/livlabs/pippa-starter-kit.webp"
+ },
+ "p-love-wellness-bloat": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/1288/3849/files/Bye_Bye_Bloat_6d6e1fa7-5661-41b0-b480-a2876d8adf4b.png",
+  "previous": "https://cdn.shopify.com/s/files/1/1288/3849/files/01_LW_PDP_BBB_Silo_d91565b2-159b-4249-8db3-633000ab49bf.jpg?v=1762521813"
+ },
+ "p-lumma-disc": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0788/5298/0993/files/pack-lumma-disc-pinklove-transparent.webp",
+  "previous": "https://mylumma.com/cdn/shop/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416"
+ },
+ "p-lunette-cup": {
+  "kind": "cleaned",
+  "source": "https://www.lunette.com/cdn/shop/files/Sizes.jpg?v=1766745881&width=3840",
+  "previous": "https://www.lunette.com/cdn/shop/files/Sizes.jpg?v=1766745881&width=3840"
+ },
+ "p-maude-vibe": {
+  "kind": "cleaned",
+  "source": "http://shopstonedfox.com/cdn/shop/products/VIBE-MAUDE.jpg?v=1659724639",
+  "previous": "http://shopstonedfox.com/cdn/shop/products/VIBE-MAUDE.jpg?v=1659724639"
+ },
+ "p-mypelvicbra-classic": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/ClassicPelvicBra.jpg",
+  "previous": "",
+  "note": "on mannequin, lavender backdrop removed"
+ },
+ "p-mypelvicbra-classic-plus": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/mPB_Classic_Plus4.png",
+  "previous": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/6.png?v=1788247226"
+ },
+ "p-mypelvicbra-classic-plus-2": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/mPB_Classic_Plus1.png",
+  "previous": ""
+ },
+ "p-mypelvicbra-classic-plus-3": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/mPB_Classic_Plus2.png",
+  "previous": ""
+ },
+ "p-mypelvicbra-classic-plus-4": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/mPB_Classic_Plus4.png",
+  "previous": ""
+ },
+ "p-mypelvicbra-sports": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/SportsPelvicBra.jpg",
+  "previous": "",
+  "note": "on mannequin, lavender backdrop removed"
+ },
+ "p-mypelvicbra-waistband-extenders": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/WaistbandExtenders_2.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/WaistbandExtenders_4.jpg?v=1766335111"
+ },
+ "p-mypelvicbra-waistband-extenders-2": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/WaistbandExtenders_4.jpg",
+  "previous": ""
+ },
+ "p-mypelvicbra-waistband-extenders-3": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/0640/1513/8877/files/WaistbandExtenders_2.jpg",
+  "previous": ""
+ },
+ "p-mystery-vibe": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0082/8879/6719/files/P-Crescendo-2-Bend-Cream-3000x2000_ef8e0576-a31c-415f-9ec3-275583b3e5ff.jpg?v=1762871502",
+  "previous": "https://cdn.shopify.com/s/files/1/0082/8879/6719/files/P-Crescendo-2-Bend-Cream-3000x2000_ef8e0576-a31c-415f-9ec3-275583b3e5ff.jpg?v=1762871502"
+ },
+ "p-neycher-botanical-vulva-balm": {
+  "kind": "cleaned",
+  "source": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686ecba35751d51959233c9e_botanical%20vulva%20balm.jpg",
+  "previous": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686ecba35751d51959233c9e_botanical%20vulva%20balm.jpg"
+ },
+ "p-neycher-goodbye-dryness-bundle": {
+  "kind": "cleaned",
+  "source": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/68650ca0d383b3c169e56331_6.webp",
+  "previous": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/68650ca0d383b3c169e56331_6.webp"
+ },
+ "p-neycher-hydrobloom-gel": {
+  "kind": "cleaned",
+  "source": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp",
+  "previous": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp"
+ },
+ "p-neycher-odor-be-gone": {
+  "kind": "cleaned",
+  "source": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/6a0b3e76d248803f468a5c1e_Frame%201000011416%20(1).webp",
+  "previous": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/6a0b3e76d248803f468a5c1e_Frame%201000011416%20(1).webp"
+ },
+ "p-neycher-vaginal-moisturizer": {
+  "kind": "cleaned",
+  "source": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg",
+  "previous": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg"
+ },
+ "p-nixit": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0015/4478/1896/files/website_-_condoms_1.png",
+  "previous": "https://nixit.com/cdn/shop/files/4_9f6ddd26-7a61-4d08-b865-16adac0ff5b0_300x300_crop_center.png?v=1770330830"
+ },
+ "p-ob-original-multipack-40": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0597/4310/9179/files/OBMultipack-1.jpg",
+  "previous": ""
+ },
+ "p-ob-original-multipack-80": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0597/4310/9179/files/OBMultipack-1.jpg",
+  "previous": "",
+  "note": "same 40ct box (listing is a pack of 2)"
+ },
+ "p-ob-original-regular-40": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0597/4310/9179/files/OBRegular-1.jpg",
+  "previous": ""
+ },
+ "p-ob-original-super-40": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0597/4310/9179/files/OBSuper-1.jpg",
+  "previous": ""
+ },
+ "p-ob-original-super-plus-40": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0597/4310/9179/files/OBSuperPlus-1.jpg",
+  "previous": ""
+ },
+ "p-ob-original-ultra-40": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0597/4310/9179/files/OBUltra-1.jpg",
+  "previous": ""
+ },
+ "p-ob-procomfort-mini-16": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71R9+pNQ8FL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Amazon main"
+ },
+ "p-ob-procomfort-mini-32": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71-e13ea2GL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Amazon main"
+ },
+ "p-oboo-boom": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/boom-1.webp?v=1776110193",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/boom-1.webp?v=1776110193"
+ },
+ "p-oboo-cool-spray": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/Cool_Spray_2048_Opt.webp?v=1777066860",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/Cool_Spray_2048_Opt.webp?v=1777066860"
+ },
+ "p-oboo-groove": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/groove-1.webp?v=1776110671",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/groove-1.webp?v=1776110671"
+ },
+ "p-oboo-loob-arousal": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_LoobAOpt.webp?v=1777048741",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_LoobAOpt.webp?v=1777048741"
+ },
+ "p-oboo-loob-arousal-2": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/5_LoobAOpt.webp",
+  "previous": "",
+  "note": "both sizes"
+ },
+ "p-oboo-loob-daily": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/LoobDaily1_1_1.webp?v=1776815937",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/LoobDaily1_1_1.webp?v=1776815937"
+ },
+ "p-oboo-loob-daily-2": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/LoobDaily2.1.webp",
+  "previous": "",
+  "note": "both sizes"
+ },
+ "p-oboo-mood-drops": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_MoodOpt_1.webp?v=1777323933",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_MoodOpt_1.webp?v=1777323933"
+ },
+ "p-oboo-moon": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/moon-1.webp?v=1776110735",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/moon-1.webp?v=1776110735"
+ },
+ "p-oboo-nook": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/nook-1.webp?v=1776109186",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/nook-1.webp?v=1776109186"
+ },
+ "p-oboo-nook-2": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/nook-4.webp",
+  "previous": "",
+  "note": "with pouch"
+ },
+ "p-oboo-oooh": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/oooh-1.webp?v=1776110805",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/oooh-1.webp?v=1776110805"
+ },
+ "p-oboo-shoop": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/shoop-1.webp?v=1776110893",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/shoop-1.webp?v=1776110893"
+ },
+ "p-oboo-smooch": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/smooch-1_c677b43e-a1a0-4e15-9b19-9c729e6eef5c.webp?v=1776111135",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/smooch-1_c677b43e-a1a0-4e15-9b19-9c729e6eef5c.webp?v=1776111135"
+ },
+ "p-oboo-smooth-arousal": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/Smooth_Arousal_2048_Opt.webp?v=1777049060",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/Smooth_Arousal_2048_Opt.webp?v=1777049060"
+ },
+ "p-oboo-smooth-daily": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_SmoothDOpt.webp?v=1777050035",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/1_SmoothDOpt.webp?v=1777050035"
+ },
+ "p-oboo-woo": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/woo-1.webp?v=1776111204",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/woo-1.webp?v=1776111204"
+ },
+ "p-oboo-woosh-warming-wand": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/WooshOpt1.webp?v=1776054530",
+  "previous": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/WooshOpt1.webp?v=1776054530"
+ },
+ "p-organicup": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0628/0508/2324/files/3x4_Menstrual_Cup.jpg",
+  "previous": "http://allmatters.com/cdn/shop/files/AllMatters_54_02_84104b40-8478-4db2-adc7-9044fc418f04.jpg?v=1753083478"
+ },
+ "p-pelvic-wand": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0910/9374/files/Bendable_Wand_Gif_2.gif",
+  "previous": "https://cdn.shopify.com/s/files/1/0910/9374/files/BendablePelvicWand_Amanda_1500x1500_676edf52-0bd5-4cc3-9472-9226f31cfb2a.jpg?v=1740149967"
+ },
+ "p-period-co-underwear": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/51jbU2MvMxL._AC_SL1000_.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0306/8837/8939/files/Pouch_Hand_Transparent.png?v=1785180628"
+ },
+ "p-period-nirvana-disc": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/Three_Colours_Hello_Disc_1.png",
+  "previous": "",
+  "note": "no Period-Nirvana-branded disc exists; this is the Hello Disc that Kim Rosas (Period Nirvana) co-designed"
+ },
+ "p-period-nirvana-disc-2": {
+  "kind": "gallery",
+  "source": "https://m.media-amazon.com/images/I/61HilmayHVL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Hello Disc box"
+ },
+ "p-probiotics-women": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/81JXAZDNVSL._AC_SL1000_.jpg",
+  "previous": "https://www.gardenoflife.com/media/catalog/product/6/5/658010118323-1_1.jpg?optimize=medium&fit=bounds&height=625&width=625&canvas=625:625"
+ },
+ "p-proof-period": {
+  "kind": "retouched",
+  "source": "https://m.media-amazon.com/images/I/71CY8b55taL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Proof flat brief; corner badge removed by mirroring the symmetric left half"
+ },
+ "p-proov-balance-bundle": {
+  "kind": "retouched",
+  "source": "https://cdn.shopify.com/s/files/1/0038/5417/2275/files/BalanceSupplementBundle_2.png",
+  "previous": "",
+  "note": "'new packaging' badge painted out"
+ },
+ "p-proov-complete": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/51DZqJi-gHL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Amazon main cropped to the box (phone removed)"
+ },
+ "p-proov-empower": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0038/5417/2275/files/Empower-PDP-HSA_FSA.png",
+  "previous": "",
+  "note": "cropped to the box (phone removed)"
+ },
+ "p-proov-his-hers": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/614ouUaOjyL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Amazon main cropped to the boxes (phone removed)"
+ },
+ "p-proov-path-to-pregnancy": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0038/5417/2275/files/PPP-PDP-HSA_FSA_1.png",
+  "previous": "",
+  "note": "cropped to kits + Rx bottle (phone removed); brand 'x3' badge kept"
+ },
+ "p-rael-organic-pad": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/2246/3213/files/DTC_Regular_Pads_16_CT_Front_Main_Image_2048x2048_1.png",
+  "previous": "https://m.media-amazon.com/images/I/71BjZn+VbJL.jpg_BO30,255,255,255_UF750,750_SR1910,1000,0,C_QL100_.jpg"
+ },
+ "p-remifemin": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/61fjjqNkIWL._AC_SL1000_.jpg",
+  "previous": ""
+ },
+ "p-rituals-prenatal": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71SKj8V6JLL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Amazon main"
+ },
+ "p-rituals-prenatal-2": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/0626/8842/8126/files/pdp-hero-EPRE-02.jpg",
+  "previous": "",
+  "note": "capsules"
+ },
+ "p-ruby-cup": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/07_Ruby_Cup_image_of_a_red_Ruby_Cup.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/Ruby_Cup_menstrual_cup_duo_bundle.png?v=1765449371"
+ },
+ "p-saalt-cup": {
+  "kind": "replaced",
+  "source": "saalt.com/products/saalt-cup (image 17, packaging + cup)",
+  "previous": "https://shop.periodnirvana.com/cdn/shop/files/saaltgreenproduct-regular_c9861160-2ce0-4c42-8b14-7e9bb2193b26.jpg?v=1692474680&width=1920"
+ },
+ "p-seventh-gen-pad": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/81N+yxL6APL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "Amazon main (B07C57MK7P)"
+ },
+ "p-seventh-gen-pad-2": {
+  "kind": "gallery",
+  "source": "https://m.media-amazon.com/images/I/71cfB8ZptpL._AC_SL1500_.jpg",
+  "previous": "",
+  "note": "back panel"
+ },
+ "p-seventh-gen-tampon": {
+  "kind": "replaced",
+  "source": "https://i5.walmartimages.com/seo/Seventh-Generation-Organic-Tampons-with-Applicator-18-Pack-Multiple-Sizes_d48629f4-38ca-4ac4-a48b-86740ac90163.dc03c96bcacf63483d0595b503bcabb0.jpeg",
+  "previous": "",
+  "note": "Walmart main, 18ct"
+ },
+ "p-silverette-cups": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71yx7do6g4L._AC_SL1000_.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0403/8465/files/37c1b22d59e214d67f59cf957ad479377e3e253f_1.jpg?v=1764866452"
+ },
+ "p-snoogle-pillow": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0730/4943/products/SNG-CHIC-XL-PO-Splash-Gray.webp",
+  "previous": "https://cdn.shopify.com/s/files/1/0730/4943/products/Snoogle-Supreme-CBL-4.webp?v=1673993532"
+ },
+ "p-softdisc": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0597/6313/0435/files/220428_Softdisc_Amazon_0_c54ca2dd-0766-4028-aca2-790812e606cf.jpg?v=1727390547",
+  "previous": "https://cdn.shopify.com/s/files/1/0597/6313/0435/files/220428_Softdisc_Amazon_0_c54ca2dd-0766-4028-aca2-790812e606cf.jpg?v=1727390547"
+ },
+ "p-sootheher-elaris-pod": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0871/6894/2437/files/IMG_6919.png",
+  "previous": "https://sootheher.com/assets/elaris-butterfly-hero-DnUO3OIN.webp"
+ },
+ "p-sootheher-gel-pad-refills": {
+  "kind": "cleaned",
+  "source": "/products/sootheher/gel-pad-refills.png",
+  "previous": "/products/sootheher/gel-pad-refills.png"
+ },
+ "p-tampax-pure": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/71-PhbmuB8L._AC_UF350,350_QL50_.jpg",
+  "previous": "https://m.media-amazon.com/images/I/71-PhbmuB8L._AC_UF350,350_QL50_.jpg"
+ },
+ "p-tampax-radiant": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/81sm2Ywse0L._AC_SL1000_.jpg",
+  "previous": ""
+ },
+ "p-thermacare": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/71GZxI7spjL._AC_SL1000_.jpg",
+  "previous": "https://www.thermacare.com/wp-content/uploads/2024/02/thermacare-share-2024.png"
+ },
+ "p-u-kotex-pad": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/91WAESuhosL._AC_SL1000_.jpg",
+  "previous": ""
+ },
+ "p-uqora-control": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0839/0671/files/In_Control.jpg",
+  "previous": "https://cdn.shopify.com/s/files/1/0839/0671/files/3_month.jpg?v=1762457618"
+ },
+ "p-vio2-mouth-tape": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0600/5004/7153/files/vio2tape-health-beauty-1-pack-try-it-vio2-unscented-mouth-tape-33555330531505.png",
+  "previous": "https://www.vio2tape.com/cdn/shop/files/vio2tape-health-beauty-1-pack-try-it-vio2-unscented-mouth-tape-33555330531505_1024x874.png?v=1781819129"
+ },
+ "p-willow-pump": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/1595/8015/files/willow360_pump_carousel_10.jpg",
+  "previous": "",
+  "note": "Willow 360 box (catalog buy link)"
+ },
+ "p-willow-pump-2": {
+  "kind": "gallery",
+  "source": "https://cdn.shopify.com/s/files/1/1595/8015/files/PDP_Willow360_01_Option2.jpg",
+  "previous": ""
+ },
+ "p-winx-uti-test-treat": {
+  "kind": "retouched",
+  "source": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png",
+  "previous": "",
+  "note": "'Get Rx treatment' sticker painted out"
+ },
+ "p-winx-vaginal-health-test-treat": {
+  "kind": "retouched",
+  "source": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Vaginal_Health_Test_Treat_Graphic.png",
+  "previous": "",
+  "note": "'Get Rx treatment' sticker painted out"
+ },
+ "p-wuka-underwear": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/1839/4125/files/6-stretch-midi-brief-black-heavy-flow-cutout.jpg",
+  "previous": "https://wuka.co.uk/cdn/shop/files/1-stretch-midi-brief-black-heavy-flow-full-length.jpg"
+ },
+ "p-always-discreet-boutique-liners": {
+  "kind": "cleaned",
+  "source": "https://target.scene7.com/is/image/Target/GUEST_7e6e8ee3-b160-4a67-a42c-bc572977875a",
+  "previous": "https://target.scene7.com/is/image/Target/GUEST_7e6e8ee3-b160-4a67-a42c-bc572977875a"
+ },
+ "p-always-infinity": {
+  "kind": "cleaned",
+  "source": "https://images.ctfassets.net/o5hnyn1x0ewo/5fgLjs17hOqXoAJo2hEMQQ/5f3ad4cdbfc5e8f6df300602fd5b6512/Always-Infinity-Size-1-Regular-Pads-with-Wings_640x512.png?fm=webp",
+  "previous": "https://images.ctfassets.net/o5hnyn1x0ewo/5fgLjs17hOqXoAJo2hEMQQ/5f3ad4cdbfc5e8f6df300602fd5b6512/Always-Infinity-Size-1-Regular-Pads-with-Wings_640x512.png?fm=webp"
+ },
+ "p-azo-test": {
+  "kind": "cleaned",
+  "source": "https://azoproducts.com/cdn/shop/files/azo-urinary-health-uti-test-strips-3-count_large.webp?v=1752257921",
+  "previous": "https://azoproducts.com/cdn/shop/files/azo-urinary-health-uti-test-strips-3-count_large.webp?v=1752257921"
+ },
+ "p-b-complex": {
+  "kind": "cleaned",
+  "source": "https://d1vo8zfysxy97v.cloudfront.net/media/product/b112__vee5e350a0551e93986381fda90af486aba9927b0.png",
+  "previous": "https://d1vo8zfysxy97v.cloudfront.net/media/product/b112__vee5e350a0551e93986381fda90af486aba9927b0.png"
+ },
+ "p-bodyform-pad": {
+  "kind": "cleaned",
+  "source": "https://libresse-images.essity.com/images-c5/497/702497/optimized-AzureJPG615CropUp/bodyform-phoenix-v3-ultimate-ultra-regular-plus-promo-x12-towels-7322542533789.jpg?w=295&h=295&imPolicy=dynamic",
+  "previous": "https://libresse-images.essity.com/images-c5/497/702497/optimized-AzureJPG615CropUp/bodyform-phoenix-v3-ultimate-ultra-regular-plus-promo-x12-towels-7322542533789.jpg?w=295&h=295&imPolicy=dynamic"
+ },
+ "p-boppy-pillow": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow-protective-liner00067022210490-2282656.png?v=1779347293",
+  "previous": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow-protective-liner00067022210490-2282656.png?v=1779347293"
+ },
+ "p-carefree-liners": {
+  "kind": "cleaned",
+  "source": "https://carefreeliners.com/cdn/shop/files/CFR_656900_PDP-Beauty_Pack_Tiles_-_ATF_1_WRAPPED_Regular_20_CT_1024x.webp?v=1781797888",
+  "previous": "https://carefreeliners.com/cdn/shop/files/CFR_656900_PDP-Beauty_Pack_Tiles_-_ATF_1_WRAPPED_Regular_20_CT_1024x.webp?v=1781797888"
+ },
+ "p-cranberry-supplement": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/51mvl7K-N4L.jpg",
+  "previous": "https://m.media-amazon.com/images/I/51mvl7K-N4L.jpg"
+ },
+ "p-d-mannose-now": {
+  "kind": "cleaned",
+  "source": "https://target.scene7.com/is/image/Target/GUEST_127d7700-f673-4c0d-8564-e47ca95076b3?wid=800&hei=800&qlt=80&fmt=pjpeg",
+  "previous": "https://target.scene7.com/is/image/Target/GUEST_127d7700-f673-4c0d-8564-e47ca95076b3?wid=800&hei=800&qlt=80&fmt=pjpeg"
+ },
+ "p-dame-arc": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/1027/2873/files/arc-1-ice.png?v=1776325628",
+  "previous": "https://cdn.shopify.com/s/files/1/1027/2873/files/arc-1-ice.png?v=1776325628"
+ },
+ "p-depend-silhouette-underwear": {
+  "kind": "cleaned",
+  "source": "https://target.scene7.com/is/image/Target/GUEST_e9213c42-1912-4667-aecc-fe66a250fd69?wid=800&hei=800&fmt=pjpeg",
+  "previous": "https://target.scene7.com/is/image/Target/GUEST_e9213c42-1912-4667-aecc-fe66a250fd69?wid=800&hei=800&fmt=pjpeg"
+ },
+ "p-evening-primrose": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/716A2d7a6EL.jpg",
+  "previous": "https://m.media-amazon.com/images/I/716A2d7a6EL.jpg"
+ },
+ "p-fish-oil": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0511/3059/7560/files/01780RJ1-OmegaWomanR_120_Box_Front.jpg?v=1754421038",
+  "previous": "https://cdn.shopify.com/s/files/1/0511/3059/7560/files/01780RJ1-OmegaWomanR_120_Box_Front.jpg?v=1754421038"
+ },
+ "p-flo-gummies": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/81RReWPD2+L.jpg",
+  "previous": "https://m.media-amazon.com/images/I/81RReWPD2+L.jpg"
+ },
+ "p-frida-mom-kit": {
+  "kind": "cleaned",
+  "source": "https://frida.com/cdn/shop/files/FM_RecoveryEssentialsKit_Thumbnail_992x.jpg?v=1714489405",
+  "previous": "https://frida.com/cdn/shop/files/FM_RecoveryEssentialsKit_Thumbnail_992x.jpg?v=1714489405"
+ },
+ "p-good-clean-love": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/71UTcfCq9uL.jpg",
+  "previous": "https://m.media-amazon.com/images/I/71UTcfCq9uL.jpg"
+ },
+ "p-haakaa-pump": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/1101/9058/files/glassbottlkbreastpum.png?v=1778802275",
+  "previous": "https://cdn.shopify.com/s/files/1/1101/9058/files/glassbottlkbreastpum.png?v=1778802275"
+ },
+ "p-hanes-period": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/71Ph1Q772PL._AC_UL1500_.jpg",
+  "previous": "https://m.media-amazon.com/images/I/71Ph1Q772PL._AC_UL1500_.jpg"
+ },
+ "p-honeypot-pad": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0510/5657/files/TGTProductCoolingSuper1.jpg?v=1775766632",
+  "previous": "https://www.kroger.com/product/images/large/front/0085166900880",
+  "note": "catalog Kroger image not reachable; brand packshot of Cooling Herbal Super Pads 16ct (matches \"16\" count); pink \"same products new designs\" overlay badge painted out"
+ },
+ "p-hum-flatter-me": {
+  "kind": "cleaned",
+  "source": "https://target.scene7.com/is/image/Target/GUEST_f78049ce-0562-4b34-8acf-e7476d83d21c?wid=300&hei=300&fmt=pjpeg",
+  "previous": "https://target.scene7.com/is/image/Target/GUEST_f78049ce-0562-4b34-8acf-e7476d83d21c?wid=300&hei=300&fmt=pjpeg"
+ },
+ "p-inositol-wholesome": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Inositol_Front_Panel_V.A_Rev_1_3_25.png?v=1742858533",
+  "previous": "https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Inositol_Front_Panel_V.A_Rev_1_3_25.png?v=1742858533"
+ },
+ "p-intimate-rose": {
+  "kind": "cleaned",
+  "source": "https://www.intimaterose.com/cdn/shop/files/Dilators_Size1-8.jpg?v=1749126284&width=1946",
+  "previous": "https://www.intimaterose.com/cdn/shop/files/Dilators_Size1-8.jpg?v=1749126284&width=1946"
+ },
+ "p-kotex-tampon": {
+  "kind": "cleaned",
+  "source": "https://target.scene7.com/is/image/Target/GUEST_34cb7fec-ee4d-4c3b-aecc-707f88afee36",
+  "previous": "https://target.scene7.com/is/image/Target/GUEST_34cb7fec-ee4d-4c3b-aecc-707f88afee36"
+ },
+ "p-l-pad": {
+  "kind": "cleaned",
+  "source": "https://images.ctfassets.net/hk5leik3t8gi/1nN6axTA4awH3RdrWrtS1r/6de2af4a9dd989e9596fe287c5038af7/00073010719613_C1N1.png",
+  "previous": "https://images.ctfassets.net/hk5leik3t8gi/1nN6axTA4awH3RdrWrtS1r/6de2af4a9dd989e9596fe287c5038af7/00073010719613_C1N1.png"
+ },
+ "p-lansinoh-pads": {
+  "kind": "replaced",
+  "source": "https://m.media-amazon.com/images/I/61UZcjLBkdL._SL1200_.jpg",
+  "previous": "https://aeroflowbreastpumps.com/media/catalog/product/l/a/lansinoh-stay-dry-nursing-pads_1.jpg?quality=90&bg-color=255,255,255&fit=bounds&height=500&width=500&canvas=500:500",
+  "note": "catalog host (aeroflowbreastpumps.com) blocks cross-origin reads; Amazon gallery shot of the Stay Dry 60-count box (B004ALE1LE)"
+ },
+ "p-lelo-sona": {
+  "kind": "cleaned",
+  "source": "https://assets.lelo.com/dx/product-images/2026-07/LELO_SONA_ProductShot_Pink_Front_2000_0.webp?VersionId=PnjshiQe_cpsN.oz1VQ56EMDFmCHL3pA",
+  "previous": "https://assets.lelo.com/dx/product-images/2026-07/LELO_SONA_ProductShot_Pink_Front_2000_0.webp?VersionId=PnjshiQe_cpsN.oz1VQ56EMDFmCHL3pA"
+ },
+ "p-lola-pad": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/71j3reiHuBL.jpg",
+  "previous": "https://m.media-amazon.com/images/I/71j3reiHuBL.jpg"
+ },
+ "p-lola-tampon": {
+  "kind": "cleaned",
+  "source": "https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946",
+  "previous": "https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946"
+ },
+ "p-luna-wash": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/41-RVVZ5OkL.jpg",
+  "previous": "https://m.media-amazon.com/images/I/41-RVVZ5OkL.jpg"
+ },
+ "p-magnesium-glycinate": {
+  "kind": "cleaned",
+  "source": "https://www.naturemade.com/cdn/shop/files/NM2576PK001667MAGNESIUM_5A007225ccfront_1500x.png?v=1718994664",
+  "previous": "https://www.naturemade.com/cdn/shop/files/NM2576PK001667MAGNESIUM_5A007225ccfront_1500x.png?v=1718994664"
+ },
+ "p-modibodi": {
+  "kind": "cleaned",
+  "source": "https://www.theperiod.co/cdn/shop/products/MB_Classic_Bikini_Beige_LM_Front_1024x1024_2x_efb90db8-2189-49af-a8ce-f2f048c0f5b3.jpg?v=1616507387&width=2000",
+  "previous": "https://www.theperiod.co/cdn/shop/products/MB_Classic_Bikini_Beige_LM_Front_1024x1024_2x_efb90db8-2189-49af-a8ce-f2f048c0f5b3.jpg?v=1616507387&width=2000"
+ },
+ "p-natracare-pad": {
+  "kind": "cleaned",
+  "source": "http://shop.natracare.com/cdn/shop/files/natracare-ultra-pads-regular-800.jpg?v=1715939406",
+  "previous": "http://shop.natracare.com/cdn/shop/files/natracare-ultra-pads-regular-800.jpg?v=1715939406"
+ },
+ "p-natracare-tampon": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0830/8821/2316/files/natracare-tampons-non-applicator-regular-800.jpg?v=1715939336",
+  "previous": "https://www.natracare.com/images/products/medium/Tampons-Non-Applicator-Regular-600.jpg",
+  "note": "same brand render as the catalog image (www.natracare.com blocks cross-origin reads), served from shop.natracare.com"
+ },
+ "p-nature-made-iron-65mg": {
+  "kind": "cleaned",
+  "source": "https://www.naturemade.com/cdn/shop/files/NM2612PK001234IRON_150ccfront_1500x.png?v=1717195534",
+  "previous": "https://www.naturemade.com/cdn/shop/files/NM2612PK001234IRON_150ccfront_1500x.png?v=1717195534"
+ },
+ "p-natures-bounty-d3-125mcg": {
+  "kind": "cleaned",
+  "source": "https://naturesbounty.com/cdn/shop/products/089377.png",
+  "previous": "https://naturesbounty.com/cdn/shop/products/089377.png"
+ },
+ "p-ob-tampon": {
+  "kind": "cleaned",
+  "source": "https://target.scene7.com/is/image/Target/GUEST_b762b05c-343e-4d2d-924f-b6aa6a3b6057",
+  "previous": "https://target.scene7.com/is/image/Target/GUEST_b762b05c-343e-4d2d-924f-b6aa6a3b6057"
+ },
+ "p-organyc-pad": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/71sNubnvkkL.jpg",
+  "previous": "https://m.media-amazon.com/images/I/71sNubnvkkL.jpg"
+ },
+ "p-organyc-tampon": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/61jUe05jVPL.jpg",
+  "previous": "https://m.media-amazon.com/images/I/61jUe05jVPL.jpg"
+ },
+ "p-phd-wash": {
+  "kind": "cleaned",
+  "source": "https://i5.walmartimages.com/seo/pH-D-Feminine-Health-Boric-Acid-Sensitive-Foam-Wash-6-oz-1-Count_ef0c5b77-cf7f-485d-9566-bafafa7c46db.a8db6f10e1f5a3a7842630e0147b3261.jpeg",
+  "previous": "https://i5.walmartimages.com/seo/pH-D-Feminine-Health-Boric-Acid-Sensitive-Foam-Wash-6-oz-1-Count_ef0c5b77-cf7f-485d-9566-bafafa7c46db.a8db6f10e1f5a3a7842630e0147b3261.jpeg"
+ },
+ "p-playtex-sport": {
+  "kind": "cleaned",
+  "source": "https://target.scene7.com/is/image/Target/GUEST_b674b28e-9c6c-4d6d-a291-d45ab5200ba5",
+  "previous": "https://target.scene7.com/is/image/Target/GUEST_b674b28e-9c6c-4d6d-a291-d45ab5200ba5"
+ },
+ "p-poise-ultra-thin-moderate": {
+  "kind": "cleaned",
+  "source": "https://target.scene7.com/is/image/Target/GUEST_64344ed6-a572-4af5-863a-8a83b7c09bc1",
+  "previous": "https://target.scene7.com/is/image/Target/GUEST_64344ed6-a572-4af5-863a-8a83b7c09bc1"
+ },
+ "p-portable-heating": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0351/7841/4215/files/9242_8f24fbaa-6e24-472c-8fb9-5e83c21fbfec.webp?v=1778655302",
+  "previous": "https://comfytemp.com/cdn/shop/files/1_3bed29dd-ce12-4a06-ba16-229eaf24898b.webp?v=1768274967",
+  "note": "catalog image had a lifestyle inset with a person; clean product-only shot from the same Comfytemp \"Portable Heating Pad For Belly & Back\" gallery"
+ },
+ "p-rael-liners": {
+  "kind": "cleaned",
+  "source": "https://www.getrael.com/cdn/shop/files/ORGANIC_COTTON_COVER_PANTY_LINERS_RAEL-LN-03_DTC_60COUNT_REGULAR_PACK_FRONT_6f4b0e7e-aa38-482b-8206-02e3ab8fa67f.webp?v=1738800023&width=2048",
+  "previous": "https://www.getrael.com/cdn/shop/files/ORGANIC_COTTON_COVER_PANTY_LINERS_RAEL-LN-03_DTC_60COUNT_REGULAR_PACK_FRONT_6f4b0e7e-aa38-482b-8206-02e3ab8fa67f.webp?v=1738800023&width=2048"
+ },
+ "p-rael-overnight": {
+  "kind": "cleaned",
+  "source": "https://www.getrael.com/cdn/shop/files/DTC_Overnight_Pads_12_CT_Lower_Count_2048x2048_1.png?v=1787356458&width=2048",
+  "previous": "https://www.getrael.com/cdn/shop/files/DTC_Overnight_Pads_12_CT_Lower_Count_2048x2048_1.png?v=1787356458&width=2048"
+ },
+ "p-rael-tampon": {
+  "kind": "cleaned",
+  "source": "https://www.getrael.com/cdn/shop/files/SITE_GetRael_BPA-Free_Organic_Cotton_Applicators_Regular_Super_32_CT_Updated_Packaging_1.png?v=1754670100&width=2048",
+  "previous": "https://www.getrael.com/cdn/shop/files/SITE_GetRael_BPA-Free_Organic_Cotton_Applicators_Regular_Super_32_CT_Updated_Packaging_1.png?v=1754670100&width=2048"
+ },
+ "p-rubylove": {
+  "kind": "cleaned",
+  "source": "https://www.rubylove.com/cdn/shop/products/90570b_98f3627ab6704aca9e0bb9fe909ce6b2_mv2_109afb71-c986-4e86-b418-0bf261924c31.jpg?v=1655836506",
+  "previous": "https://www.rubylove.com/cdn/shop/products/90570b_98f3627ab6704aca9e0bb9fe909ce6b2_mv2_109afb71-c986-4e86-b418-0bf261924c31.jpg?v=1655836506"
+ },
+ "p-saalt-cup-steamer": {
+  "kind": "cleaned",
+  "source": "https://saalt.com/cdn/shop/files/Saalt-Steamer-PDP-01-Rose-Quartz.jpg?v=1725669379",
+  "previous": "https://saalt.com/cdn/shop/files/Saalt-Steamer-PDP-01-Rose-Quartz.jpg?v=1725669379"
+ },
+ "p-saalt-disc": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Disc-PDP-Coastal-Blue-01_01.jpg?v=1775642489",
+  "previous": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Disc-PDP-Coastal-Blue-01_01.jpg?v=1775642489"
+ },
+ "p-spearmint-pcos": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint-CAN-FF-eng-P103350-01_2.png?v=1775664934",
+  "previous": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint-CAN-FF-eng-P103350-01_2.png?v=1775664934"
+ },
+ "p-stayfree-ultra": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0624/0079/0583/files/1_Hero_a48c1149-5da1-4ffe-a484-ad5690213b56.jpg?v=1774904068",
+  "previous": "https://cdn.shopify.com/s/files/1/0624/0079/0583/files/1_Hero_a48c1149-5da1-4ffe-a484-ad5690213b56.jpg?v=1774904068"
+ },
+ "p-sweet-spot-wipes": {
+  "kind": "cleaned",
+  "source": "https://shop.sweetspotlabs.com/cdn/shop/products/Individual_Wipettes_Vanilla_Blossom-7count_1.jpg?v=1668707188",
+  "previous": "https://shop.sweetspotlabs.com/cdn/shop/products/Individual_Wipettes_Vanilla_Blossom-7count_1.jpg?v=1668707188"
+ },
+ "p-sweetspot-buff-brighten": {
+  "kind": "cleaned",
+  "source": "https://shop.sweetspotlabs.com/cdn/shop/products/buff_brightenjarcopy.jpg?v=1658328685",
+  "previous": "https://shop.sweetspotlabs.com/cdn/shop/products/buff_brightenjarcopy.jpg?v=1658328685"
+ },
+ "p-tena-intimates-very-light-liner": {
+  "kind": "cleaned",
+  "source": "https://tena-images.essity.com/images-c5/138/498138/optimized-AzurePNG2K/tena-sen-car-ex-cov-very-light-liner-4x50-beauty-no-counts-3000x3000px.png?w=800&h=944&imPolicy=dynamic",
+  "previous": "https://tena-images.essity.com/images-c5/138/498138/optimized-AzurePNG2K/tena-sen-car-ex-cov-very-light-liner-4x50-beauty-no-counts-3000x3000px.png?w=800&h=944&imPolicy=dynamic"
+ },
+ "p-thinx": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/819zMD5-brL._AC_UY1000_.jpg",
+  "previous": "https://m.media-amazon.com/images/I/819zMD5-brL._AC_UY1000_.jpg"
+ },
+ "p-tomboyx-period": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0204/2302/files/Plum_FL_Period_Bikini_1.jpg?v=1782399837",
+  "previous": "https://cdn.shopify.com/s/files/1/0204/2302/files/Plum_FL_Period_Bikini_1.jpg?v=1782399837"
+ },
+ "p-uberlube": {
+  "kind": "cleaned",
+  "source": "http://l-n-w.com/cdn/shop/files/55ml2.jpg?v=1765835524",
+  "previous": "http://l-n-w.com/cdn/shop/files/55ml2.jpg?v=1765835524"
+ },
+ "p-ubiquinol-thorne": {
+  "kind": "cleaned",
+  "source": "https://d1vo8zfysxy97v.cloudfront.net/media/product/sp624__v0e9c43db03041def65f6aef69118044fc2cc0839.png",
+  "previous": "https://d1vo8zfysxy97v.cloudfront.net/media/product/sp624__v0e9c43db03041def65f6aef69118044fc2cc0839.png"
+ },
+ "p-v-wash": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/5188cGUuY8L.jpg",
+  "previous": "https://m.media-amazon.com/images/I/5188cGUuY8L.jpg"
+ },
+ "p-veeda-pad": {
+  "kind": "replaced",
+  "source": "https://cdn.shopify.com/s/files/1/0394/7497/products/thumbnail_dae04116-e126-4d9c-9ea5-2b6e851c9620.png?v=1626101539",
+  "previous": "https://m.media-amazon.com/images/I/719IxnrixmL.jpg",
+  "note": "catalog image was the Veeda tampon box with a text banner; brand packshot of the 14ct Natural Cotton Pads from veedausa.com, cropped to drop the \"14 pads\" badge"
+ },
+ "p-vitex": {
+  "kind": "cleaned",
+  "source": "https://res.cloudinary.com/dqi4zho6f/image/upload/v1762990920/products/fae9d8b3-f564-4fd6-b3d4-9b5a677e3a87/image/89cf145fb4e6f6a4.png",
+  "previous": "https://res.cloudinary.com/dqi4zho6f/image/upload/v1762990920/products/fae9d8b3-f564-4fd6-b3d4-9b5a677e3a87/image/89cf145fb4e6f6a4.png"
+ },
+ "p-winx-pregnancy-tests": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Early_Pregnancy_Tests.png?v=1775185073",
+  "previous": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Early_Pregnancy_Tests.png?v=1775185073"
+ },
+ "p-winx-uti-daily-defense": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxDailyDefenseHero.png?v=1771339808",
+  "previous": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxDailyDefenseHero.png?v=1771339808"
+ },
+ "p-winx-uti-pain-relief": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxUTIPainReliefHero.png?v=1771347535",
+  "previous": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxUTIPainReliefHero.png?v=1771347535"
+ },
+ "p-winx-vaginal-probiotic": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01_Winx_probiotic_Hero.png?v=1771347498",
+  "previous": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01_Winx_probiotic_Hero.png?v=1771347498"
+ },
+ "p-womaness-me": {
+  "kind": "cleaned",
+  "source": "https://cdn.shopify.com/s/files/1/0506/9189/9575/files/MNP-front.jpg?v=1773928360",
+  "previous": "https://cdn.shopify.com/s/files/1/0506/9189/9575/files/MNP-front.jpg?v=1773928360"
+ },
+ "p-ziggy-disc": {
+  "kind": "cleaned",
+  "source": "https://assets.intimina.com/files/static/product-images/2021-12/INTIMINA_Ziggy2_ProductShot_SizeA_Angle_425.jpg",
+  "previous": "https://assets.intimina.com/files/static/product-images/2021-12/INTIMINA_Ziggy2_ProductShot_SizeA_Angle_425.jpg"
+ },
+ "p-zinc": {
+  "kind": "cleaned",
+  "source": "https://m.media-amazon.com/images/I/81kiWOsohsL.jpg",
+  "previous": "https://m.media-amazon.com/images/I/81kiWOsohsL.jpg"
+ }
+}

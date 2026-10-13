@@ -1,47 +1,47 @@
 /* global process */
 /**
- * Admin-triggered brand catalog import — pulls a brand's REAL product feed
+ * Admin-triggered brand catalog import, pulls a brand's REAL product feed
  * instead of asking an LLM to guess at what it sells.
  *
  * WHY THIS EXISTS: twice in one session (2026-08-24), a real partner brand
  * (Oboo, Winx Health) turned out to have only 1 of its real N products in
  * the catalog, because api/discover-products.js's LLM-generation path
- * suggests a handful of plausible products per CATEGORY — it has no notion
+ * suggests a handful of plausible products per CATEGORY, it has no notion
  * of "this specific brand sells N products, go get all of them." Both gaps
  * were fixed by hand: find the brand's Shopify store, pull
  * `{domain}/products.json` (a complete, authoritative, zero-hallucination-
- * risk product list — real prices, real images, real URLs), filter out
+ * risk product list, real prices, real images, real URLs), filter out
  * bundles/prescriptions/merch, and write catalog rows. This endpoint
  * automates exactly that manual process.
  *
- * TRIGGER — deliberately admin-triggered (POST from a known brand/domain),
+ * TRIGGER, deliberately admin-triggered (POST from a known brand/domain),
  * not fully autonomous. When someone (Aditi, or later a review workflow)
  * notices a "brand shows too few products" gap, hitting this endpoint with
  * that brand's domain does the research automatically instead of by hand.
- * A fully autonomous version — e.g. api/search-suggestions.js's live Serper
+ * A fully autonomous version, e.g. api/search-suggestions.js's live Serper
  * grounding (searchWebForQuery) noticing a query resolves to a Shopify
- * domain and firing this off itself — was deliberately NOT built here: any
+ * domain and firing this off itself, was deliberately NOT built here: any
  * search becoming a trigger for a bulk catalog write is a real abuse/cost
  * surface (rate limiting, dedup-across-users, "is this actually the brand's
  * real store" verification all need to be solid before that's safe to wire
  * up unattended). If that's built later, the natural hook is right after
- * searchWebForQuery resolves a hit whose hostname matches the query brand —
+ * searchWebForQuery resolves a hit whose hostname matches the query brand
  * check it's a Shopify store with isShopifyStore(), then call
  * fetchAndImportBrandCatalog() with heavy rate limiting/dedup, same as this
  * endpoint does internally.
  *
- * SAFETY CONTRACT — identical bar to api/discover-products.js, reused
+ * SAFETY CONTRACT, identical bar to api/discover-products.js, reused
  * directly rather than re-implemented: every row lands as
  * source='discovered', is_active=false, review_status='pending' UNLESS it
  * clears isAutoApprovable() (clean FDA recall check + a URL verifyUrlIsLive
- * actually confirms resolves to the same domain) — see that file's own
+ * actually confirms resolves to the same domain), see that file's own
  * SAFETY CONTRACT comment for why this bar exists at all. A product this
  * endpoint can't confidently classify into a real category NEVER
  * auto-approves regardless of recall/URL status (see categoryConfident
- * below) — an ambiguous product is exactly the kind of "not actually sure
+ * below), an ambiguous product is exactly the kind of "not actually sure
  * this belongs here" case a human should see before it's shown to users.
  *
- * Same CRON_SECRET Bearer-auth pattern as api/discover-products.js — this
+ * Same CRON_SECRET Bearer-auth pattern as api/discover-products.js, this
  * is a privileged background-operation endpoint, not a public one, even
  * though it's triggered by a person rather than a cron schedule.
  */
@@ -53,7 +53,7 @@ import { HEALTH_FUNCTIONS } from '../src/data/products.js';
 const VALID_HEALTH_FUNCTIONS = new Set(Object.keys(HEALTH_FUNCTIONS));
 
 // Broader than discover-products.js's own CATEGORIES (that array is just the
-// LLM-generation rotation list) — this is the actual category vocabulary
+// LLM-generation rotation list), this is the actual category vocabulary
 // product_catalog rows use across the app (e.g. 'diagnostics', used by the
 // Winx Health test-kit products added by hand earlier this session).
 export const VALID_CATEGORIES = new Set([
@@ -64,9 +64,9 @@ export const VALID_CATEGORIES = new Set([
 ]);
 
 // Mirrors PRESCRIPTION_DRUG_PATTERN in api/llm-recommendations.js and
-// api/search-suggestions.js — keep all three in sync. A Shopify feed also
+// api/search-suggestions.js, keep all three in sync. A Shopify feed also
 // commonly says this in plain English in the title itself (found live,
-// Winx Health: "UTI Antibiotics Online Prescription") — \bprescription\b
+// Winx Health: "UTI Antibiotics Online Prescription"), \bprescription\b
 // alone already catches every one of those without needing the brand/drug
 // list, but the full list stays here too in case a title names the drug
 // without the word "prescription" (e.g. a store selling Zofran by name).
@@ -90,7 +90,7 @@ const PRESCRIPTION_DRUG_PATTERN = new RegExp(
     // Emergency contraception is technically OTC in the US, but Winx Health's
     // own "Restart(TM)" line is sold bundled with a required telehealth
     // consult on their site (same "Online Prescription"-adjacent pattern as
-    // their explicitly-Rx SKUs) — excluded here for the same reason: this
+    // their explicitly-Rx SKUs), excluded here for the same reason: this
     // endpoint imports standalone shoppable SKUs, not
     // prescription/consult-gated ones, regardless of legal OTC status.
     'morning-after', 'emergency contracept',
@@ -101,9 +101,9 @@ const PRESCRIPTION_DRUG_PATTERN = new RegExp(
 // Shopify's own product_type field is the strongest signal when a store
 // tags it (confirmed live: Oboo tags every kit/bundle product_type==='Bundle'
 // exactly). Title-based fallback covers stores that don't tag consistently.
-// "kit"/"combo"/"set"/"duo" alone is NOT enough — some brands use those words
+// "kit"/"combo"/"set"/"duo" alone is NOT enough, some brands use those words
 // for a genuinely single-purpose product (Oboo's "Moon Anal Training Kit" is
-// one real SKU, not a bundle of other SKUs on the same feed) — so those only
+// one real SKU, not a bundle of other SKUs on the same feed), so those only
 // downgrade a product out of auto-approval eligibility (see
 // categoryConfident) rather than excluding it outright; only the
 // high-confidence words below are hard exclusions.
@@ -115,7 +115,7 @@ const MERCH_EXCLUDE_PATTERN = /\b(crewneck|hoodie|t-?shirt|tote\s*bag|baseball c
 /**
  * Ordered keyword classifier: title/body/product_type/tags -> Ayna category
  * + health functions. Deliberately rule-based (not an LLM call per product)
- * — transparent, free, fast, and testable; a brand's full feed can be
+ *, transparent, free, fast, and testable; a brand's full feed can be
  * dozens of SKUs and this runs on every one of them per request.
  *
  * Order matters: earlier rules win. "Test"/"diagnostic" language is checked
@@ -123,7 +123,7 @@ const MERCH_EXCLUDE_PATTERN = /\b(crewneck|hoodie|t-?shirt|tote\s*bag|baseball c
  * 'pregnancy'/'supplement' just because those words also appear.
  *
  * Returns { category, healthFunctions, confident }. confident=false means
- * nothing matched clearly (category fell back to 'other') — these still get
+ * nothing matched clearly (category fell back to 'other'), these still get
  * inserted (pending review can still be useful), but categoryConfident
  * being false additionally blocks auto-approval regardless of recall/URL
  * status, on top of isAutoApprovable's own checks.
@@ -187,7 +187,7 @@ export function normalizeDomain(input) {
   try {
     const withProto = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
     // Strips a leading "www." so "www.oboo.love" and "oboo.love" (or an https
-    // URL with either) all normalize to the same bare domain — otherwise the
+    // URL with either) all normalize to the same bare domain, otherwise the
     // same brand submitted two slightly different ways would import twice.
     const host = new URL(withProto).hostname.toLowerCase().replace(/^www\./, '');
     return host || null;
@@ -199,7 +199,7 @@ export function normalizeDomain(input) {
 /**
  * Fetches {domain}/products.json and returns the raw product array, or null
  * if this isn't a Shopify store (or the fetch fails). Shape-checked, not
- * just status-checked — a non-Shopify site typically 404s or serves its
+ * just status-checked, a non-Shopify site typically 404s or serves its
  * normal HTML at this path with a 200, neither of which is
  * `{ products: [...] }` JSON with the fields a real Shopify feed always has.
  */
@@ -229,7 +229,7 @@ export async function fetchShopifyProducts(domain) {
   if (!data || !Array.isArray(data.products)) return null;
   // Shape check beyond "has a products array": a real Shopify product has a
   // title and a variants array with a price. An empty store (0 products) is
-  // still a valid Shopify store — genuinely nothing to import, not an error.
+  // still a valid Shopify store, genuinely nothing to import, not an error.
   if (data.products.length > 0) {
     const sample = data.products[0];
     const looksReal = typeof sample?.title === 'string' && Array.isArray(sample?.variants) && sample.variants.length > 0;
@@ -333,7 +333,7 @@ export default async function handler(req, res) {
   if (rawProducts === null) {
     return res.status(200).json({
       domain, brand, isShopify: false,
-      message: `${domain} doesn't look like a Shopify store (no valid /products.json feed found) — nothing imported.`,
+      message: `${domain} doesn't look like a Shopify store (no valid /products.json feed found), nothing imported.`,
     });
   }
   if (rawProducts.length === 0) {
@@ -358,7 +358,7 @@ export default async function handler(req, res) {
     });
   }
 
-  // Dedup against the entire existing catalog (not scoped to one category —
+  // Dedup against the entire existing catalog (not scoped to one category
   // a brand's products can land in several), same key function the LLM
   // discovery path uses.
   const { data: existingRows, error: existingError } = await admin
@@ -383,15 +383,15 @@ export default async function handler(req, res) {
     }
 
     const recall = await checkRecallsForProduct({ name: candidate.name, brand: candidate.brand, category }).catch(() => null);
-    if (!recall || recall.status === 'failed') continue; // unknown safety state — skip this run, pick up next time
+    if (!recall || recall.status === 'failed') continue; // unknown safety state, skip this run, pick up next time
 
     const row = toRow(
-      { ...candidate, safety: { ...candidate.safety, recalls: recall.hasRecalls ? '⚠️ Active FDA recall record(s) found — review before approving.' : 'No recalls found.' } },
+      { ...candidate, safety: { ...candidate.safety, recalls: recall.hasRecalls ? '⚠️ Active FDA recall record(s) found, review before approving.' : 'No recalls found.' } },
       { category, searchHits: [], provider: 'shopify-feed' }
     );
     row.id = id;
     // toRow() only fills these from `candidate` for the fields the
-    // LLM-generation path already sets on its own candidates — the rest
+    // LLM-generation path already sets on its own candidates, the rest
     // (clinician_opinion_source, clinician_attribution, effectiveness) it
     // hardcodes to null regardless of input, so they're set here instead,
     // matching the honest-brand-sourced style established by hand for
@@ -413,7 +413,7 @@ export default async function handler(req, res) {
   const toInsert = await Promise.all(
     rows.map(async ({ row, categoryConfident }) => {
       // categoryConfident gates auto-approval on top of isAutoApprovable's
-      // own recall+URL checks — a product this classifier couldn't place
+      // own recall+URL checks, a product this classifier couldn't place
       // confidently should never silently go live even if otherwise clean.
       if (!categoryConfident || !isAutoApprovable(row)) return row;
       const urlIsLive = await verifyUrlIsLive(row.url);

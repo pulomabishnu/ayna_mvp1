@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 const KEY = 'ayna_mobile_text_size_v1';
 
 // Four steps, applied app-wide via the --ayna-text-scale CSS custom property
-// (set on .ayna-mobile in MobileApp.jsx) — every fontSize in src/mobile is
+// (set on .ayna-mobile in MobileApp.jsx), every fontSize in src/mobile is
 // `calc(Npx * var(--ayna-text-scale, 1))` rather than a raw px number. A CSS
 // custom property only affects rendered glyph size through normal font-size
 // inheritance, unlike the CSS `zoom` property this used to use: zoom

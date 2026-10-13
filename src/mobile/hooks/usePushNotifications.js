@@ -4,14 +4,14 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { registerDeviceToken } from '../utils/deviceTokenApi.js';
 
 /**
- * Requests push permission and starts native registration once, on mount —
+ * Requests push permission and starts native registration once, on mount
  * iOS only for now, per the current ask; Android can be added the same way
  * once it's wanted. Runs regardless of sign-in state (the OS permission
  * prompt isn't gated on having an account), and whenever a real device
  * token AND a signed-in userId both exist, sends the token to
  * /api/device-tokens so it's stored against that account.
  *
- * Registration + storage only — nothing here sends a push. That needs the
+ * Registration + storage only, nothing here sends a push. That needs the
  * APNs auth key wired in server-side, a separate, later piece of work.
  */
 export function usePushNotifications(userId) {

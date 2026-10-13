@@ -2,7 +2,7 @@
 /**
  * Shared harness for driving route handlers end-to-end in tests.
  *
- * Mocks only the two edges — Supabase and fetch — so everything between the
+ * Mocks only the two edges, Supabase and fetch, so everything between the
  * request and the response is the real code path: auth, quota accounting,
  * validation, prompt construction, error mapping.
  */
@@ -36,7 +36,7 @@ export function mockReq({ method = 'POST', body = {}, query = {}, headers = {} }
  * Fake Supabase admin client.
  *
  * `rpcResults` maps an RPC name to the value it returns; `rpcCalls` records
- * every invocation so a test can assert on ORDER — which is the whole point for
+ * every invocation so a test can assert on ORDER, which is the whole point for
  * quota accounting (consume must precede the provider call, refund must follow
  * a failure).
  */
@@ -118,7 +118,7 @@ export function anthropicOk(text, stopReason = 'end_turn') {
   };
 }
 
-/** OpenAI-shaped success response for a mocked fetch — for testing the actual
+/** OpenAI-shaped success response for a mocked fetch, for testing the actual
  * cross-provider fallback (Anthropic fails, OpenAI picks it up), not just the
  * Anthropic-only path most callers exercise. */
 export function openaiOk(text, finishReason = 'stop') {

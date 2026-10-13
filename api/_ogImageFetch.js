@@ -2,30 +2,30 @@ import { isSafePublicUrl } from './_ssrfSafeFetch.js';
 
 /**
  * Pulls a real image straight off a brand's own official page, instead of a
- * third-party image-search API. No paid API, no quota to run out of — reuses
+ * third-party image-search API. No paid API, no quota to run out of, reuses
  * the shared SSRF-safe fetch pattern from _ssrfSafeFetch.js (private-IP/DNS-
  * rebinding checks). Tries, in order: og:image, then twitter:image. Does NOT
- * fall back to the page's favicon/apple-touch-icon — a live QA pass this
+ * fall back to the page's favicon/apple-touch-icon, a live QA pass this
  * session found a site's favicon.ico being rendered full-size on a product
  * card as if it were the product photo (intimina.com). A tiny site icon
  * blown up to card size reads as a broken/wrong image, not "better than
- * nothing" — the initial-letter avatar fallback the UI already has for a
+ * nothing", the initial-letter avatar fallback the UI already has for a
  * missing image is more honest than a mislabeled icon.
  */
 
 const FETCH_TIMEOUT_MS = 4000;
 
-// Read only up to MAX_HTML_BYTES — og:image/favicon links are always in
+// Read only up to MAX_HTML_BYTES, og:image/favicon links are always in
 // <head>, no need to buffer an entire large page into memory.
 const MAX_HTML_BYTES = 500_000;
 
 // Filenames that indicate a logo/icon/banner rather than an actual product
-// photo — brand pages frequently set these as og:image on non-product pages,
+// photo, brand pages frequently set these as og:image on non-product pages,
 // and mislabeling a logo as "the product" is worse than showing no photo.
 // "header" added after a live production case: Saalt's og:image resolved to
 // a small decorative "Fancy-Monogram-header_03.png" asset.
 //
-// Uses letter-adjacency lookaround, NOT \b — see the matching comment on
+// Uses letter-adjacency lookaround, NOT \b, see the matching comment on
 // src/utils/resolveProductImage.js's copy of this pattern (that file is the
 // one that actually gates hardcoded catalog data, which is where this was
 // audited against real cases). Shopify's filename convention is
@@ -34,7 +34,7 @@ const MAX_HTML_BYTES = 500_000;
 // exists for; digits/underscores/punctuation still count as a boundary,
 // only an adjacent letter blocks the match.
 //
-// Deliberately does NOT include "hero" — tried and reverted after it
+// Deliberately does NOT include "hero", tried and reverted after it
 // flagged two genuine studio product photos in the catalog sweep (Elvie
 // Pelvic Floor Trainer, Stayfree) that just happen to use "hero
 // shot"/"hero image," standard product-photography terminology, in their
@@ -42,7 +42,7 @@ const MAX_HTML_BYTES = 500_000;
 const NON_PRODUCT_IMAGE_PATTERN = /(?<![a-z])(?:logo|icon|badge|favicon|banner|header|sprite|placeholder|social[-_]?share|og[-_]?default)(?![a-z])/i;
 
 // Some CDNs bake an explicit tiny size into the URL's own query string (e.g.
-// Shopify's `?width=32&height=32` image-resizing params) — a strong signal
+// Shopify's `?width=32&height=32` image-resizing params), a strong signal
 // the asset is an icon/thumbnail regardless of filename. Same production
 // case as above: the Saalt monogram header carried `height=32&width=32`.
 const TINY_DIMENSION_PATTERN = /[?&](?:width|height|w|h)=(\d{1,2})\b/i;
@@ -51,7 +51,7 @@ function looksLikeTinyAsset(url) {
   return matches.some((m) => Number(m[1]) <= 64);
 }
 
-// Product photography is essentially never vector art — SVGs found on a
+// Product photography is essentially never vector art, SVGs found on a
 // brand's page are wordmarks/icons/illustrations. Caught in production:
 // Pure Encapsulations' Shopify catalog resolved every product's image to
 // /cdn/shop/files/pure-encapsulations.svg (the store theme's own logo file,
@@ -67,9 +67,9 @@ export function isVectorAssetUrl(url) {
 
 /**
  * A real product photo is always served from the brand's own domain or a
- * CDN actually fronting it — never a totally unrelated third party. Caught
+ * CDN actually fronting it, never a totally unrelated third party. Caught
  * in production: helloclue.com's own og:image meta tag resolved to an image
- * hosted entirely on zurb.com (a design agency with no connection to Clue —
+ * hosted entirely on zurb.com (a design agency with no connection to Clue
  * almost certainly a stale template default nobody updated on their site).
  */
 const KNOWN_IMAGE_CDN_SUFFIXES = [
@@ -77,7 +77,7 @@ const KNOWN_IMAGE_CDN_SUFFIXES = [
   'cloudfront.net', 'akamaized.net', 'fastly.net', 'imgix.net',
   'cloudinary.com', 'wp.com', 'squarespace.com', 'squarespace-cdn.com',
   'amazonaws.com', 'googleusercontent.com', 'bigcommerce.com',
-  // 'contentful.com' is Contentful's own marketing domain — the CDN that
+  // 'contentful.com' is Contentful's own marketing domain, the CDN that
   // actually serves a Contentful-hosted site's images is 'ctfassets.net'.
   // Caught live: helloclue.com's real og:image is served from
   // images.ctfassets.net, which the wrong domain name rejected as
@@ -107,7 +107,7 @@ export function isRelatedImageHost(imageUrl, pageUrl) {
   }
 }
 
-// Even for a logo-allowed product (an app, a telehealth service — see
+// Even for a logo-allowed product (an app, a telehealth service, see
 // allowBrandLogo below), a bare site favicon/apple-touch-icon is still
 // wrong: it's a 16-32px browser-tab icon, not a real app icon/wordmark, and
 // looks broken blown up to card size regardless of category.
@@ -121,7 +121,7 @@ const ALWAYS_REJECT_PATTERN = /favicon|apple-touch-icon/i;
  * own logo/banner asset and a product card.
  *
  * @param {boolean} [allowBrandLogo] - true for products with no physical
- *   form (apps, telehealth/virtual-care services) — a brand logo/icon IS
+ *   form (apps, telehealth/virtual-care services), a brand logo/icon IS
  *   the real "photo" there, unlike a supplement or device where a logo
  *   standing in for the product is a real bug (Pure Encapsulations'
  *   Shopify catalog resolving to its theme logo instead of a bottle photo).
@@ -160,7 +160,7 @@ function extractMetaContent(html, property) {
 const MAX_REDIRECT_HOPS = 5;
 
 // A generic bot-labeled UA gets flagged by some WAFs even for a plain page
-// fetch — a realistic browser UA/Accept set gets through more often without
+// fetch, a realistic browser UA/Accept set gets through more often without
 // materially changing what's being verified (the response is still only ever
 // read for its og:image meta tag, never executed).
 const BROWSER_HEADERS = {
@@ -186,7 +186,7 @@ async function readCappedText(res) {
   return html;
 }
 
-/** Multiple safe, re-validated redirect hops — enterprise brand sites commonly
+/** Multiple safe, re-validated redirect hops, enterprise brand sites commonly
  * chain 2-3 redirects (apex -> www -> locale path, sometimes via a different
  * intermediate domain entirely), so following only one hop failed on exactly
  * the sites most worth reaching. Each hop's target is re-checked against the

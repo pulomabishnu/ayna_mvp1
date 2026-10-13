@@ -181,7 +181,7 @@ function parseTranscriptToProfile(transcript) {
   };
   const add = (arr, item) => { if (item && !arr.includes(item)) arr.push(item); };
 
-  // Frustrations — broad phrase coverage so profile reflects what was said
+  // Frustrations, broad phrase coverage so profile reflects what was said
   const frustrationPhrases = [
     { keys: ['heavy', 'heavy flow', 'heavy period', 'really heavy', 'bleeding a lot', 'heavy bleeding'], value: 'Heavy flow' },
     { keys: ['cramp', 'cramping', 'pain', 'painful period', 'bad cramps', 'really painful', 'hurt'], value: 'Painful cramps' },
@@ -203,7 +203,7 @@ function parseTranscriptToProfile(transcript) {
     if (value && keys.some(k => text.includes(k)) && !out.frustrations.includes(value)) out.frustrations.push(value);
   });
 
-  // Preference — can select multiple (e.g. organic AND non-hormonal)
+  // Preference, can select multiple (e.g. organic AND non-hormonal)
   const prefAdd = (p) => { if (p && !out.preference.includes(p)) out.preference.push(p); };
   if (text.includes('organic') || text.includes('natural') || text.includes('clean') || text.includes('chemical')) prefAdd('Organic/Natural only');
   if (text.includes('non-hormonal') || text.includes('nonhormonal') || text.includes('hormone-free') || text.includes('hormone free') || text.includes('no hormones')) prefAdd('Non-hormonal / hormone-free');
@@ -248,7 +248,7 @@ function parseTranscriptToProfile(transcript) {
   if (text.includes('wisp') || text.includes('nurx') || text.includes('telehealth') || text.includes('online doctor')) add(out.currentUse, 'Telehealth (Wisp, Nurx, etc.)');
   if (text.includes('nothing') || text.includes('none') && (text.includes('use') || text.includes('currently'))) add(out.currentUse, 'None');
 
-  // Age — more patterns and number ranges
+  // Age, more patterns and number ranges
   if (text.match(/\bunder\s*25\b/) || text.match(/\b(19|20|21|22|23|24)\s*(years?|y\.?o\.?|and)/) || text.includes('early 20') || text.includes('early twenties')) out.age = 'Under 25';
   else if (text.match(/\b(25|26|27|28|29|30|31|32|33|34)\s*(years?|y\.?o\.?|and)/) || text.includes('late 20') || text.includes('early 30') || text.includes('twenties') || text.includes('thirties')) out.age = '25-34';
   else if (text.match(/\b(35|36|37|38|39|40|41|42|43|44)\s*(years?|y\.?o\.?|and)/) || text.includes('mid 30') || text.includes('late 30') || text.includes('early 40')) out.age = '35-44';
@@ -502,7 +502,7 @@ export default function Quiz({ onComplete }) {
     }
   }, [voicePhase, voiceTranscript]);
 
-  // —— Mode choice (step-by-step vs voice) ——
+  //, , Mode choice (step-by-step vs voice), 
   if (completionMode === null) {
     return (
       <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '700px' }}>
@@ -530,7 +530,7 @@ export default function Quiz({ onComplete }) {
     );
   }
 
-  // —— Voice flow: guiding questions + record + confirm ——
+  //, , Voice flow: guiding questions + record + confirm, 
   if (completionMode === 'voice') {
     if (voicePhase === 'prompt') {
       return (

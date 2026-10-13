@@ -1,0 +1,231 @@
+/* Website home (AynaLanding). Classes are lx-* so none of the older
+   .ayna-landing-* rules in web-play.css reach them. Tokens only: dark mode
+   comes from the --ay-* values on .app-container[data-theme='dark'].
+   Spacing on the 8pt scale (4/8/12/16/24/32/48/64/96), content capped at
+   1200px inside the --mockup-page-width shell, body text >= 16px, one
+   primary-styled button (.lx-cta) per viewport, motion 150-400ms. */
+
+.app-container .lx { background: var(--ay-cream) !important; color: var(--ay-ink); overflow-x: clip; }
+.app-container .lx .mockup-page { max-width: calc(1200px + 2 * var(--mockup-gutter)); }
+.app-container .lx h1, .app-container .lx h2:not(.ay-partners-title), .app-container .lx h3 { text-transform: none; }
+.app-container .lx .lx-h2 { margin: 0 !important; color: var(--ay-ink) !important; font: 800 clamp(28px, 1.6rem + 1vw, 40px)/1.2 var(--ay-font-display) !important; letter-spacing: -.035em !important; text-wrap: balance; }
+.app-container .lx .lx-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- Buttons ---------- */
+/* Primary: the only filled button style on the page. */
+.app-container .lx .lx-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 0 8px 0 24px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-ink); color: var(--ay-cream); font: 600 18px/24px var(--ay-font-ui); letter-spacing: -.01em; cursor: pointer; transition: transform .15s ease-out, box-shadow .15s ease-out; }
+.app-container .lx .lx-cta:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ay-pink); }
+.app-container .lx .lx-cta:active { transform: scale(.98); box-shadow: none; }
+.app-container .lx .lx-cta:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .lx .lx-cta__arrow { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ay-butter); color: var(--ay-ink); transition: transform .15s ease-out; }
+.app-container[data-theme='dark'] .lx .lx-cta__arrow { background: #f7e78e; color: #1d1a2b; }
+.app-container .lx .lx-cta:hover .lx-cta__arrow { transform: translateX(4px); }
+.app-container .lx .lx-cta__arrow svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+/* Secondary: outline. Tertiary: text link. */
+.app-container .lx .lx-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 24px; border: 2px solid var(--ay-ink); border-radius: 99px; background: transparent; color: var(--ay-ink); font: 600 16px/24px var(--ay-font-ui); cursor: pointer; transition: background-color .15s ease-out; }
+.app-container .lx .lx-ghost:hover { background: var(--ay-cream); }
+.app-container .lx .lx-ghost:focus-visible, .app-container .lx .lx-link:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .lx .lx-link { min-height: 44px; padding: 0 8px; border: 0; background: none; color: var(--ay-ink); font: 600 16px/24px var(--ay-font-ui); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; cursor: pointer; }
+
+/* ---------- Hero ---------- */
+.app-container .lx-hero { position: relative; padding: 64px 0; }
+.app-container .lx-hero__inner { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: center; gap: 64px; }
+.app-container .lx-hero__copy { min-width: 0; }
+.app-container .lx .lx-hero__hello { margin: 0 0 16px; color: var(--ay-ink); font: 600 18px/28px var(--ay-font-ui); }
+.app-container .lx .lx-hero__title { margin: 0 !important; color: var(--ay-ink) !important; font: 800 clamp(32px, 24px + 3.334vw, 72px)/1.12 var(--ay-font-display) !important; letter-spacing: -.045em !important; text-wrap: balance; animation: lxRise .4s ease-out both; }
+/* "ecosystem." sits on a tilted butter sticker: the one playful mark. */
+.app-container .lx .lx-mark { display: inline-block; margin-top: .08em; padding: 0 .16em .04em; border: 2px solid var(--ay-ink); border-radius: .32em; background: var(--ay-butter); box-shadow: var(--ay-shadow); transform: rotate(-2deg); transform-origin: 10% 60%; }
+.app-container .lx .lx-hero__sub { max-width: 32em; margin: 24px 0 0; color: var(--ay-ink-soft); font: 500 18px/28px var(--ay-font-ui); text-wrap: pretty; }
+.app-container .lx-hero__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; margin-top: 32px; }
+.app-container .lx .lx-hero__note { margin: 0; color: var(--ay-ink-soft); font: 500 16px/24px var(--ay-font-ui); }
+@keyframes lxRise { from { opacity: 0; transform: translateY(16px); } }
+
+/* Hero search (secondary action): quiet outline, no fill, no shadow. */
+.app-container .lx .lx-search { display: flex; align-items: center; gap: 8px; max-width: 560px; height: 64px; margin-top: 32px; padding: 0 8px 0 0; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); transition: box-shadow .15s ease-out; }
+.app-container .lx .lx-search:has(input:focus-visible) { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .lx .lx-search__field { position: relative; display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; height: 100%; padding-left: 24px; cursor: text; }
+.app-container .lx .lx-search__icon { flex: none; width: 24px; height: 24px; fill: none; stroke: var(--ay-ink); stroke-width: 2.2; stroke-linecap: round; }
+.app-container main .lx .lx-search__field input:not(#lx-x) { position: relative; z-index: 1; flex: 1; min-width: 0; width: 100%; height: 100% !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; outline: none; background: transparent !important; box-shadow: none !important; color: var(--ay-ink) !important; font: 500 18px/24px var(--ay-font-ui) !important; -webkit-appearance: none; appearance: none; }
+.app-container .lx .lx-search__field input::-webkit-search-cancel-button { display: none; }
+.app-container .lx .lx-search__hint { position: absolute; left: 60px; right: 0; top: 0; bottom: 0; display: flex; align-items: center; gap: .3em; overflow: hidden; color: var(--ay-ink-soft); font: 500 18px/24px var(--ay-font-ui); white-space: nowrap; pointer-events: none; }
+.app-container .lx .lx-search__hint b { overflow: hidden; color: var(--ay-ink); font-weight: 600; text-overflow: ellipsis; animation: lxHint .3s ease-out both; }
+@keyframes lxHint { from { opacity: 0; transform: translateY(8px); } }
+.app-container .lx .lx-search__go { display: grid; place-items: center; flex: none; width: 48px; height: 48px; min-height: 0; padding: 0; border: 2px solid var(--ay-ink); border-radius: 50%; background: transparent; color: var(--ay-ink); cursor: pointer; transition: background-color .15s ease-out; }
+.app-container .lx .lx-search__go:hover { background: var(--ay-butter); }
+.app-container .lx .lx-search__go:active { transform: scale(.98); }
+.app-container .lx .lx-search__go:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .lx .lx-search__go svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.app-container .lx-hero__visual { display: grid; place-items: center; min-width: 0; animation: lxFade .4s ease-out both; }
+@keyframes lxFade { from { opacity: 0; } }
+
+/* Orbit: a small, still preview. Three needs land once, then it rests. */
+.app-container .lx-orbit { position: relative; width: min(100%, 440px); aspect-ratio: 1; container-type: inline-size; }
+.app-container .lx-orbit__disc { position: absolute; inset: 4%; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-peri); box-shadow: var(--ay-shadow-lg); }
+.app-container .lx-orbit__ring { position: absolute; border: 2px dashed color-mix(in srgb, var(--ay-ink) 28%, transparent); border-radius: 50%; }
+.app-container .lx-orbit__ring.is-outer { inset: 14%; }
+.app-container .lx-orbit__ring.is-inner { inset: 32%; }
+.app-container .lx-orbit__spin { position: absolute; inset: 0; }
+.app-container .lx-orbit__links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.app-container .lx-orbit__links line { stroke: var(--ay-ink); stroke-width: 2px; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: .7; }
+.app-container .lx-orbit__links line.is-on { animation: lxDraw .4s .1s ease-out forwards; }
+@keyframes lxDraw { to { stroke-dashoffset: 0; } }
+.app-container .lx-orbit__moon { position: absolute; left: 50%; top: 50%; width: 3.2cqi; height: 3.2cqi; margin: -1.6cqi; border: 2px solid var(--ay-ink); border-radius: 50%; }
+.app-container .lx-orbit__moon.is-a { background: var(--ay-butter); transform: rotate(20deg) translateX(36cqi); }
+.app-container .lx-orbit__moon.is-b { background: var(--ay-pink); transform: rotate(150deg) translateX(18cqi); }
+.app-container .lx-orbit__moon.is-c { background: var(--ay-mint); transform: rotate(290deg) translateX(36cqi); }
+.app-container .lx-sat { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform: rotate(var(--a)) translateX(calc(var(--rr, 29) * 1cqi)) rotate(calc(-1 * var(--a))); }
+.app-container .lx-sat__upright { position: absolute; left: 0; top: 0; }
+.app-container .lx .lx-sat__card, .app-container .lx .lx-sat__empty { position: absolute; left: 0; top: 0; translate: -50% -50%; }
+.app-container .lx .lx-sat__card { translate: -50% calc(-1 * var(--img) / 2); display: flex; flex-direction: column; align-items: center; gap: 8px; --img: 18cqi; width: 34cqi; padding: 0; border: 0; background: none; color: var(--ay-ink); cursor: pointer; animation: lxLand .3s ease-out both; }
+@keyframes lxLand { from { opacity: 0; scale: .6; } }
+.app-container .lx .lx-sat__img { position: relative; display: grid; place-items: center; width: var(--img); height: var(--img); flex: none; border: 2px solid var(--ay-ink); border-radius: 50%; background: #fff; box-shadow: var(--ay-shadow); overflow: hidden; transition: transform .15s ease-out; }
+.app-container .lx .lx-sat__card:hover .lx-sat__img { transform: scale(1.06); }
+.app-container .lx .lx-sat__card:focus-visible { outline: none; }
+.app-container .lx .lx-sat__card:focus-visible .lx-sat__img { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .lx .lx-sat__img img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; padding: 16%; }
+.app-container .lx .lx-sat__img i { position: absolute; color: #1d1a2b; opacity: .2; font: 800 8cqi/1 var(--ay-font-display); font-style: normal; }
+.app-container .lx .lx-sat__label { padding: 4px 12px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 12px/16px var(--ay-font-ui); white-space: nowrap; }
+.app-container .lx .lx-sat__card.tone-pink .lx-sat__label { background: var(--ay-pink); }
+.app-container .lx .lx-sat__card.tone-mint .lx-sat__label { background: var(--ay-mint); }
+.app-container .lx .lx-sat__card.tone-butter .lx-sat__label { background: var(--ay-butter); }
+.app-container .lx .lx-sat__name { display: none; }
+.app-container .lx .lx-sat__empty { display: grid; place-items: center; width: 12cqi; height: 12cqi; border: 2px dashed color-mix(in srgb, var(--ay-ink) 45%, transparent); border-radius: 50%; color: color-mix(in srgb, var(--ay-ink) 55%, transparent); font: 600 5cqi/1 var(--ay-font-ui); }
+.app-container .lx-orbit__you { position: absolute; left: 50%; top: 50%; display: grid; place-items: center; width: 22cqi; height: 22cqi; translate: -50% -50%; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); color: var(--ay-ink); font: 800 6cqi/1 var(--ay-font-display); letter-spacing: -.04em; }
+
+/* Signed-in hero: ring card + the one next step */
+.app-container .lx-ring-card { width: 100%; max-width: 440px; padding: 24px; border: 2px solid var(--ay-ink); border-radius: 32px; background: var(--ay-paper); box-shadow: var(--ay-shadow-lg); }
+.app-container .lx .lx-next { display: inline-flex; align-items: center; gap: 12px; min-height: 48px; margin-top: 24px; padding: 8px 24px; border: 2px dashed var(--ay-ink); border-radius: 24px; background: transparent; color: var(--ay-ink); font: 500 16px/24px var(--ay-font-ui); text-align: left; cursor: pointer; transition: background-color .15s ease-out; }
+.app-container .lx .lx-next:hover { background: var(--ay-paper); }
+.app-container .lx .lx-next:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .lx .lx-next b { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.app-container .lx .lx-next__dot { flex: none; width: 12px; height: 12px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-butter); }
+
+/* ---------- Trust strip ---------- */
+/* Keep PartnerStrip's own label style against the site-wide h2 rules. */
+.app-container .lx .ay-partners .ay-partners-title { font: 700 14px/20px var(--ay-font-ui) !important; letter-spacing: .04em !important; text-transform: uppercase !important; color: var(--ay-ink-soft) !important; }
+.app-container .lx-trust { padding: 32px 0; border-block: 2px solid var(--ay-ink); background: var(--ay-paper); }
+
+/* ---------- Why ayna ---------- */
+.app-container .lx-values { padding: 96px 0; }
+.app-container .lx-values__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 48px 0 0; padding: 0; list-style: none; }
+.app-container .lx-values__list li { display: grid; align-content: start; gap: 8px; padding: 32px; border: 2px solid var(--ay-ink); border-radius: 24px; background: var(--ay-paper); }
+.app-container .lx-values__icon { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 16px; border: 2px solid var(--ay-ink); border-radius: 50%; }
+.app-container .lx-values__list .tone-pink .lx-values__icon { background: var(--ay-pink); }
+.app-container .lx-values__list .tone-butter .lx-values__icon { background: var(--ay-butter); }
+.app-container .lx-values__list .tone-mint .lx-values__icon { background: var(--ay-mint); }
+.app-container .lx-values__icon svg { width: 24px; height: 24px; fill: none; stroke: var(--ay-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .lx .lx-values__list h3, .app-container .lx .lx-how__steps h3 { margin: 0 !important; color: var(--ay-ink) !important; font: 800 24px/32px var(--ay-font-display) !important; letter-spacing: -.03em !important; }
+.app-container .lx .lx-values__list p, .app-container .lx .lx-how__steps p { margin: 0; max-width: 32ch; color: var(--ay-ink-soft); font: 500 16px/24px var(--ay-font-ui); }
+
+/* ---------- How it works ---------- */
+.app-container .lx-how { padding: 96px 0; border-top: 2px solid var(--ay-ink); background: var(--ay-paper); }
+.app-container .lx-how__steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 48px 0 0; padding: 0; list-style: none; }
+.app-container .lx-how__steps li { position: relative; display: grid; align-content: start; gap: 8px; }
+.app-container .lx-how__steps li:not(:last-child)::after { content: ''; position: absolute; top: 24px; left: 64px; right: 0; border-top: 2px dashed color-mix(in srgb, var(--ay-ink) 40%, transparent); }
+.app-container .lx .lx-how__steps b { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 16px; border: 2px solid var(--ay-ink); border-radius: 50%; color: var(--ay-ink); font: 800 24px/1 var(--ay-font-display); }
+.app-container .lx .lx-how__steps .tone-pink b { background: var(--ay-pink); }
+.app-container .lx .lx-how__steps .tone-butter b { background: var(--ay-butter); }
+.app-container .lx .lx-how__steps .tone-peri b { background: var(--ay-peri); }
+.app-container .lx-how__cta { margin-top: 48px; }
+
+/* ---------- Shop by need + stories ---------- */
+.app-container .lx-needs-wrap { border-top: 2px solid var(--ay-ink); }
+
+/* ---------- Final CTA band ---------- */
+.app-container .lx-final { padding: 96px 0; }
+.app-container .lx-final__card { display: grid; justify-items: center; gap: 8px; padding: 64px 32px; border: 2px solid var(--ay-ink); border-radius: 32px; background: var(--ay-peri); box-shadow: var(--ay-shadow-lg); text-align: center; }
+.app-container .lx .lx-final__card p { margin: 0; color: var(--ay-ink); font: 500 18px/28px var(--ay-font-ui); }
+.app-container .lx-final__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 24px; margin-top: 24px; }
+
+/* ---------- Shop (signed in: Picked for you) ---------- */
+.app-container .lx-shop { padding: 96px 0; border-top: 2px solid var(--ay-ink); background: var(--ay-paper); }
+.app-container .lx-shop__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
+.app-container .lx-shop__tools { display: flex; align-items: center; gap: 16px; }
+.app-container .lx .lx-pill { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); color: var(--ay-ink); font: 600 16px/24px var(--ay-font-ui); cursor: pointer; transition: transform .15s ease-out, box-shadow .15s ease-out; }
+.app-container .lx .lx-pill:hover { transform: translate(-2px, -2px); box-shadow: var(--ay-shadow); }
+.app-container .lx .lx-pill:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .lx .lx-pill.is-on { background: var(--ay-tile); }
+.app-container .lx .lx-pill.is-butter { background: var(--ay-butter); }
+.app-container .lx .lx-pill svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.app-container .lx .lx-toggle { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: var(--ay-ink); font: 600 16px/24px var(--ay-font-ui); cursor: pointer; }
+.app-container .lx .lx-toggle [role='switch']:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .lx-chips { display: flex; gap: 8px; margin-top: 32px; padding: 4px 4px 8px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, var(--ay-fade-s, #000), #000 32px, #000 calc(100% - 32px), var(--ay-fade-e, #000)); mask-image: linear-gradient(90deg, var(--ay-fade-s, #000), #000 32px, #000 calc(100% - 32px), var(--ay-fade-e, #000)); }
+.app-container .lx-chips[data-fade-start='1'] { --ay-fade-s: transparent; }
+.app-container .lx-chips[data-fade-end='1'] { --ay-fade-e: transparent; }
+.app-container .lx-chips::-webkit-scrollbar { display: none; }
+.app-container .lx .lx-chips button { flex: none; min-height: 44px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: transparent; color: var(--ay-ink); font: 600 16px/24px var(--ay-font-ui); cursor: pointer; transition: background-color .15s ease-out; }
+.app-container .lx .lx-chips button:hover { background: var(--ay-cream); }
+.app-container .lx .lx-chips button:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 2px; }
+.app-container .lx .lx-chips button.is-on { background: var(--ay-peri); }
+.app-container .lx .lx-chips .lx-chips__more { border-color: transparent; text-decoration: underline; text-underline-offset: 4px; }
+.app-container .lx .lx-filter-panel { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 24px; margin-top: 24px; padding: 24px; border: 2px solid var(--ay-ink); border-radius: 24px; background: var(--ay-cream); }
+.app-container .lx .lx-filter-panel label { display: grid; gap: 8px; min-width: 0; }
+.app-container .lx .lx-filter-panel label > span { color: var(--ay-ink); font: 600 14px/20px var(--ay-font-ui); }
+.app-container .lx .lx-filter-panel select { width: 100%; min-height: 48px; padding: 0 12px; font-size: 16px; cursor: pointer; }
+.app-container .lx .lx-filter-panel > button { grid-column: 1 / -1; justify-self: start; min-height: 44px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 99px; background: transparent; color: var(--ay-ink); font: 600 16px/24px var(--ay-font-ui); cursor: pointer; }
+.app-container .lx-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin-top: 32px; }
+.app-container .lx-empty { margin-top: 32px; padding: 48px; border: 2px dashed var(--ay-ink-faint); border-radius: 24px; color: var(--ay-ink-soft); font: 500 16px/24px var(--ay-font-ui); text-align: center; }
+.app-container .lx-shop__foot { display: flex; justify-content: center; margin-top: 48px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .app-container .lx-hero__inner { gap: 32px; }
+  .app-container .lx-hero--home .lx-hero__inner { grid-template-columns: minmax(0, 1fr); }
+  .app-container .lx-hero--home .lx-hero__visual { justify-self: stretch; }
+  .app-container .lx-values__list { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .app-container .lx-values__list li { grid-template-columns: 48px minmax(0, 1fr); column-gap: 24px; row-gap: 4px; padding: 24px; }
+  .app-container .lx-values__icon { grid-row: span 2; margin: 0; }
+  .app-container .lx-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .app-container .lx .lx-filter-panel { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .app-container .lx-hero { padding: 32px 0 48px; }
+  .app-container .lx-hero__inner { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .app-container .lx .lx-hero__hello { margin-bottom: 8px; font-size: 16px; line-height: 24px; }
+  .app-container .lx .lx-hero__sub { margin-top: 16px; font-size: 16px; line-height: 24px; }
+  .app-container .lx-hero__cta { margin-top: 24px; }
+  .app-container .lx .lx-hero__cta .lx-cta { width: 100%; }
+  .app-container .lx .lx-cta { font-size: 16px; }
+  .app-container .lx-needs-wrap .hs-need:nth-child(n+5) { display: none; }
+  .app-container .lx .lx-search { max-width: none; height: 56px; margin-top: 16px; padding-right: 4px; }
+  .app-container .lx .lx-search__field { padding-left: 16px; gap: 8px; }
+  .app-container .lx .lx-search__hint { left: 48px; }
+  .app-container main .lx .lx-search__field input:not(#lx-x), .app-container .lx .lx-search__hint { font-size: 16px !important; }
+  .app-container .lx .lx-search__go { width: 44px; height: 44px; }
+  .app-container .lx-orbit { width: min(100%, 288px); }
+  .app-container .lx-hero__visual { justify-self: stretch; }
+  .app-container .lx .lx-sat__label { padding: 0 8px; }
+  .app-container .lx-ring-card { padding: 16px; border-radius: 24px; }
+  .app-container .lx .lx-next { width: 100%; margin-top: 16px; padding: 8px 16px; }
+
+  .app-container .lx-trust { padding: 24px 0; }
+  .app-container .lx-values, .app-container .lx-how, .app-container .lx-final, .app-container .lx-shop { padding: 64px 0; }
+  .app-container .lx-values__list, .app-container .lx-how__steps { margin-top: 32px; }
+  .app-container .lx-values__list li { column-gap: 16px; padding: 16px; }
+  .app-container .lx .lx-values__list h3, .app-container .lx .lx-how__steps h3 { font-size: 20px !important; line-height: 28px !important; }
+
+  .app-container .lx-how__steps { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .app-container .lx-how__steps li { grid-template-columns: 48px minmax(0, 1fr); column-gap: 16px; row-gap: 4px; }
+  .app-container .lx .lx-how__steps b { grid-row: span 2; margin: 0; }
+  .app-container .lx-how__steps li:not(:last-child)::after { top: 56px; bottom: -16px; left: 23px; right: auto; border-top: 0; border-left: 2px dashed color-mix(in srgb, var(--ay-ink) 40%, transparent); }
+  .app-container .lx-how__cta { margin-top: 32px; }
+  .app-container .lx .lx-how__cta .lx-cta, .app-container .lx .lx-final__actions .lx-cta { width: 100%; }
+
+  .app-container .lx-final__card { justify-items: stretch; padding: 32px 16px; border-radius: 24px; }
+  .app-container .lx-final__actions { flex-direction: column; align-items: stretch; gap: 8px; }
+
+  .app-container .lx-shop__head { align-items: center; }
+  .app-container .lx-shop__head .lx-h2 { width: 100%; }
+  .app-container .lx-shop__tools { width: 100%; justify-content: space-between; }
+  .app-container .lx-chips { margin-top: 24px; margin-inline: calc(-1 * var(--mockup-gutter)); padding-inline: var(--mockup-gutter); }
+  .app-container .lx-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
+  .app-container .lx .lx-filter-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 16px; }
+  .app-container .lx-shop__foot { margin-top: 32px; }
+  .app-container .lx .lx-shop__foot .lx-ghost { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-container .lx *, .app-container .lx *::after { animation: none !important; transition: none !important; }
+  .app-container .lx .lx-orbit__links line.is-on { stroke-dashoffset: 0; }
+}

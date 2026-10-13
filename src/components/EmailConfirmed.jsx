@@ -10,7 +10,7 @@ export default function EmailConfirmed({ onAuthenticated }) {
 
     const hash = new URLSearchParams(window.location.hash.slice(1));
     // Scrub the fragment immediately. The client uses Supabase's `implicit`
-    // flow, so access AND refresh tokens arrive in window.location.hash — and
+    // flow, so access AND refresh tokens arrive in window.location.hash, and
     // they were left there, meaning a long-lived refresh token for a women's
     // health account sat in browser history, in `document.location`, and
     // readable by any third-party script on the page.
@@ -21,13 +21,13 @@ export default function EmailConfirmed({ onAuthenticated }) {
     const refreshToken = hash.get('refresh_token');
 
     if (accessToken && refreshToken) {
-      // Supabase returned tokens — establish the session.
+      // Supabase returned tokens, establish the session.
       // This writes to localStorage, which fires onAuthStateChange in any
       // other open Ayna tab, making it navigate to ecosystem automatically.
       supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
         .then(({ data, error }) => {
           if (!error && data.session?.user) {
-            // Try to close this tab — works when email client opens links as popups.
+            // Try to close this tab, works when email client opens links as popups.
             // If browser blocks it, navigate to ecosystem in this tab instead.
             window.close();
             setTimeout(() => onAuthenticated(data.session.user), 300);
@@ -36,7 +36,7 @@ export default function EmailConfirmed({ onAuthenticated }) {
           }
         });
     } else {
-      // No tokens in URL — email confirmed but no auto-login.
+      // No tokens in URL, email confirmed but no auto-login.
       // Existing tab will stay where it is; user signs in manually.
       setStatus('manual');
     }

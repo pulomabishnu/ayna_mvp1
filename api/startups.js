@@ -1,6 +1,6 @@
 /* global process */
 /**
- * /api/startups — serves Airtable-sourced early-stage startups from
+ * /api/startups, serves Airtable-sourced early-stage startups from
  * early_stage_startups, structured identically to api/products.js.
  *
  * Read-only and public, same as /api/products: this is public startup
@@ -10,7 +10,7 @@
  * Rows are mapped to the same shape as src/data/startups.js's hardcoded
  * STARTUPS entries (id, name, tagline, description, category, stage,
  * productReleased, url, image, tags, healthFunctions), plus waitlistUrl,
- * badges, and featured — so getPersonalizedStartups() and WaitlistHub.jsx
+ * badges, and featured, so getPersonalizedStartups() and WaitlistHub.jsx
  * can treat these identically to the hardcoded array.
  */
 import { createClient } from '@supabase/supabase-js';
@@ -69,7 +69,7 @@ export default async function handler(req, res) {
 
     const startups = (data || []).map(toClientStartup);
 
-    // Empty here just means "not synced yet" — degrade to an empty list
+    // Empty here just means "not synced yet", degrade to an empty list
     // rather than an error, since the hardcoded UNRELEASED_STARTUPS array
     // already covers the Startups page on its own.
     res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');

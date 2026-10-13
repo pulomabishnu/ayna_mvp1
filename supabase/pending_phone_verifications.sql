@@ -9,7 +9,7 @@
 -- It previously had a "select own" policy, which was an account-takeover path:
 -- an attacker starts verification for the VICTIM's phone number, so the pending
 -- row is created under the ATTACKER's user_id and RLS happily hands them their
--- own row — including code_hash. The hash was an unsalted
+-- own row, including code_hash. The hash was an unsalted
 -- sha256(`${user_id}:${code}`) over a 10^6 keyspace with a user_id they already
 -- know, so it fell to an offline brute force in under 2 seconds (measured).
 -- They then confirmed the code and bound someone else's number to their account.

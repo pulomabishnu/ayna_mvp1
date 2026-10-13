@@ -12,7 +12,7 @@
  *  2. Maps each one to an early_stage_startups row and upserts it on
  *     airtable_record_id, so re-running is always safe.
  *  3. Soft-deletes (is_active = false) any row whose airtable_record_id was
- *     NOT seen in this run — that's how archiving a startup in Airtable
+ *     NOT seen in this run, that's how archiving a startup in Airtable
  *     (Status -> Archived, or deleting the record) propagates here.
  *
  * CATEGORY MAPPING: confirmed against a live fetch of the base (2026-09-05).
@@ -27,7 +27,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-const AIRTABLE_TABLE_ID = 'tbl8E6VojepaM6eN3'; // "Startups" table — specific to this one integration
+const AIRTABLE_TABLE_ID = 'tbl8E6VojepaM6eN3'; // "Startups" table, specific to this one integration
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -48,19 +48,19 @@ const CATEGORY_MAP = {
   'Menopause': 'menopause',
   'Mental Health': 'mental-health',
   // Both Level Zero Health and Clair Health (Airtable's only two
-  // "Hormonal Health" entries so far) are hormone-monitoring wearables —
+  // "Hormonal Health" entries so far) are hormone-monitoring wearables
   // the same real category the hardcoded inne entry already uses.
   'Hormonal Health': 'hormone-monitoring',
-  // "Nutrition" == supplement companies (DITTO Daily, Earthful.me) — same
+  // "Nutrition" == supplement companies (DITTO Daily, Earthful.me), same
   // bucket as the hardcoded De Lune/Wile/Fullwell/Perelel/Needed entries.
   // Note: WaitlistHub.jsx's categoryLabels object has a pre-existing typo
   // ('supplements' plural) that doesn't match this slug (singular, what the
-  // data actually uses) — not introduced here, not fixed here either.
+  // data actually uses), not introduced here, not fixed here either.
   'Nutrition': 'supplement',
-  // Coologics/UVISA/Metri.Bio are vaginal/reproductive health products —
+  // Coologics/UVISA/Metri.Bio are vaginal/reproductive health products
   // the same real category the hardcoded Honey Pot/Love Wellness entries use.
   'Sexual Health': 'intimate-care',
-  // No existing slug fit either of these — confirmed against a live fetch,
+  // No existing slug fit either of these, confirmed against a live fetch,
   // not guessed.
   'Maternal Health': 'maternal-health',
   'General Wellness': 'general-wellness',
@@ -153,7 +153,7 @@ if (upsertError) {
 }
 console.log('  upsert ok');
 
-// Soft-delete anything no longer in this run's active set — that's how an
+// Soft-delete anything no longer in this run's active set, that's how an
 // Airtable-side archive (Status -> Archived, or deleting the record)
 // propagates, without ever hard-deleting a row something else might reference.
 const seenIds = new Set(records.map((r) => r.id));

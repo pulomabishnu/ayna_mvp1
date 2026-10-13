@@ -1,0 +1,54 @@
+.wdeck-backdrop { position: fixed; inset: 0; z-index: 3000; display: grid; place-items: center; padding: 16px; background: rgba(29, 26, 43, .5); }
+.wdeck { --ink: #1d1a2b; --paper: #fffcf5; --cream: #faf8f1; display: flex; flex-direction: column; width: min(460px, 100%); height: min(720px, calc(100dvh - 32px)); padding: 18px; border: 2px solid var(--ink); border-radius: 28px; background: var(--peri, #b9c2f4); box-shadow: 6px 6px 0 var(--ink); color: var(--ink); font-family: 'Poppins', system-ui, sans-serif; animation: wdeck-in .25s ease-out both; }
+@keyframes wdeck-in { from { opacity: 0; transform: translateY(20px); } }
+.wdeck button { font-family: inherit; cursor: pointer; }
+.wdeck-head { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 14px; }
+.wdeck-head strong { font: 800 24px/1 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.03em; }
+.wdeck-head span { font: 700 14px/1 'Poppins', sans-serif; font-variant-numeric: tabular-nums; }
+.wdeck-head button { width: 40px; height: 40px; border: 2px solid var(--ink); border-radius: 50%; background: var(--paper); color: var(--ink); font-size: 22px; line-height: 1; }
+.wdeck-stage { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; margin: 16px 0; }
+.wdeck-card { position: absolute; inset: 0; display: flex; flex-direction: column; border: 2px solid var(--ink); border-radius: 24px; background: var(--paper); box-shadow: 4px 4px 0 var(--ink); overflow: hidden; touch-action: none; cursor: grab; transition: transform .24s ease; user-select: none; }
+.wdeck-card.is-dragging { transition: none; cursor: grabbing; }
+.wdeck-card.is-behind { transform: translateY(calc(var(--depth) * 10px)) scale(calc(1 - var(--depth) * .04)); background: var(--cream); }
+.wdeck-photo { position: relative; flex: 1; min-height: 0; margin: 12px 12px 0; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1.5px rgba(29, 26, 43, .1); overflow: hidden; }
+.wdeck-photo img { mix-blend-mode: normal; border-radius: 12px; }
+.wdeck-copy { display: grid; gap: 4px; padding: 14px 16px 18px; }
+.wdeck-copy span { color: rgba(29, 26, 43, .62); font: 600 13px/1 'Poppins', sans-serif; }
+.wdeck-copy strong { font: 800 22px/1.12 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.025em; }
+.wdeck-copy div { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.wdeck-copy b { font: 700 15px/1 'Poppins', sans-serif; }
+.wdeck-copy em { padding: 5px 10px; border: 1.5px solid var(--ink); border-radius: 99px; background: #f7e78e; font: 700 12px/1 'Poppins', sans-serif; font-style: normal; }
+.wdeck-stamp { position: absolute; z-index: 2; top: 24px; padding: 6px 14px; border: 3px solid currentColor; border-radius: 10px; background: var(--paper); font: 800 24px/1 'Bricolage Grotesque', 'Poppins', sans-serif; text-transform: uppercase; }
+.wdeck-stamp.is-save { left: 24px; color: #2f7a52; rotate: -10deg; }
+.wdeck-stamp.is-skip { right: 24px; color: #b4402a; rotate: 10deg; }
+.wdeck-actions { display: flex; align-items: center; justify-content: center; gap: 18px; }
+.wdeck-round { width: 64px; height: 64px; border: 2px solid var(--ink); border-radius: 50%; background: var(--paper); color: var(--ink); font-size: 22px; box-shadow: 3px 3px 0 var(--ink); transition: transform .15s; }
+.wdeck-round:active { transform: scale(.92); }
+.wdeck-round.is-save { background: #f7badd; }
+.wdeck-view { min-height: 46px; padding: 0 20px; border: 2px solid var(--ink); border-radius: 99px; background: var(--ink); color: var(--paper); font: 700 15px/1 'Poppins', sans-serif; }
+.wdeck-hint { margin: 12px 0 0; text-align: center; color: rgba(29, 26, 43, .7); font: 500 12px/1 'Poppins', sans-serif; }
+.wdeck-done { display: grid; gap: 10px; justify-items: center; padding: 24px; border: 2px solid var(--ink); border-radius: 24px; background: var(--paper); text-align: center; }
+.wdeck-done strong { font: 800 28px/1 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.03em; }
+.wdeck-done p { margin: 0; font: 500 15px/1.4 'Poppins', sans-serif; }
+.wdeck-done div { display: flex; gap: 10px; margin-top: 6px; }
+.wdeck-done button { min-height: 44px; padding: 0 18px; border: 2px solid var(--ink); border-radius: 99px; background: var(--paper); color: var(--ink); font: 700 14px/1 'Poppins', sans-serif; }
+.wdeck-done button.is-dark { background: var(--ink); color: var(--paper); }
+@media (prefers-reduced-motion: reduce) { .wdeck, .wdeck-card { animation: none; transition: none; } }
+.wdeck-why { display: block; margin-top: 6px; color: rgba(29,26,43,.7); font: 600 13px/1.3 'Poppins', sans-serif; } .wdeck-hint kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 4px; border: 1.5px solid #1d1a2b; border-radius: 6px; background: #fffcf5; font: 700 12px/1 'Poppins', sans-serif; }
+
+/* Card flip: front = product, back = why it fits */
+.wdeck-flip { position: relative; flex: 1; min-height: 0; display: grid; transform-style: preserve-3d; transform: perspective(1400px) rotateY(0deg); transition: transform .5s cubic-bezier(.3, 1.3, .5, 1); }
+.wdeck-flip.is-flipped { transform: perspective(1400px) rotateY(180deg); }
+.wdeck-face { grid-area: 1 / 1; display: flex; flex-direction: column; min-height: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.wdeck-face.is-back { transform: rotateY(180deg); justify-content: flex-start; gap: 10px; padding: 24px 22px; background: #bdebd6; overflow-y: auto; }
+.wdeck-tap { color: rgba(29, 26, 43, .55); font: 600 12px/1 'Poppins', sans-serif; }
+.wdeck-back__brand { color: rgba(29, 26, 43, .62); font: 600 13px/1 'Poppins', sans-serif; }
+.wdeck-back__name { font: 800 24px/1.1 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.025em; }
+.wdeck-back__label { margin-top: 8px; font: 700 13px/1.2 'Poppins', sans-serif; }
+.wdeck-back__reasons { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.wdeck-back__reasons li { padding: 10px 12px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); font: 600 14px/1.3 'Poppins', sans-serif; }
+.wdeck-back__summary { margin: 4px 0 0; color: rgba(29, 26, 43, .8); font: 500 14px/1.45 'Poppins', sans-serif; }
+.wdeck-back__price { display: grid; gap: 2px; margin-top: auto; padding-top: 8px; }
+.wdeck-back__price b { font: 700 16px/1 'Poppins', sans-serif; }
+.wdeck-back__price small { color: rgba(29, 26, 43, .62); font: 500 12px/1.3 'Poppins', sans-serif; }
+@media (prefers-reduced-motion: reduce) { .wdeck-flip { transition: none; } }

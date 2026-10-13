@@ -1,7 +1,7 @@
 import PrivacyPreferencesLink from '../../components/PrivacyPreferencesLink.jsx';
 
 // Same absolute URLs already used by the Legal screen in ProfileFlow.jsx
-// (PRIVACY_POLICY_URL/TERMS_URL) and by desktop's SiteFooter — kept here
+// (PRIVACY_POLICY_URL/TERMS_URL) and by desktop's SiteFooter, kept here
 // too rather than threading in-app navigation callbacks through every
 // screen this footer appears on.
 const PRIVACY_POLICY_URL = 'https://www.aynahealth.co/privacy-policy';
@@ -16,7 +16,7 @@ const LINK_STYLE = {
 
 /**
  * The same legal disclosure that appears in SiteFooter.jsx on the desktop
- * site (main branch) — mobile has no shared footer component of its own, so
+ * site (main branch), mobile has no shared footer component of its own, so
  * this is a mobile-styled port of that exact copy and those exact links
  * (PrivacyPreferencesLink and analyticsConsent.js are also ported verbatim
  * from main, unmodified, since the "Turn usage analytics off/on" toggle
@@ -28,7 +28,7 @@ const LINK_STYLE = {
  *
  * variant="light" is for the handful of screens with a fixed dark gradient
  * background regardless of light/dark theme (Landing, Signin, the ecosystem
- * intro/building/reveal flow) — var(--ayna-text-faint) is tuned for a light
+ * intro/building/reveal flow), var(--ayna-text-faint) is tuned for a light
  * surface and would be low-contrast against those, so this uses the same
  * translucent-white treatment those screens already use for secondary text.
  */
@@ -36,9 +36,10 @@ export default function LegalFooter({ variant = 'default' }) {
   const light = variant === 'light';
   return (
     <div
+      className="ay-legal"
       style={{
-        fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))',
-        lineHeight: 1.6,
+        fontSize: 'calc(11px * var(--ayna-text-scale, 1))',
+        lineHeight: 2,
         color: light ? 'rgba(255,249,242,.62)' : 'var(--ayna-text-faint)',
         textAlign: 'center',
         padding: '22px 24px max(22px, env(safe-area-inset-bottom))',

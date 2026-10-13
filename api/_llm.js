@@ -10,6 +10,14 @@
  * retryable or not.
  */
 
+/** ayna copy never uses em dashes (founder rule). Applied to every model reply. */
+export function noEmDash(text) {
+  if (typeof text !== 'string' || !text.includes('\u2014')) return text;
+  return text
+    .replace(/[ \t]*\u2014[ \t]*(?=[.,;:!?)\]]|$)/gm, '')
+    .replace(/[ \t]*\u2014[ \t]*/g, ', ');
+}
+
 export class LlmError extends Error {
   constructor(message, { provider, status = 0, retryable = false, body = '' } = {}) {
     super(message);
@@ -33,7 +41,7 @@ function isRetryableStatus(status) {
 
 /**
  * Honor the provider's own backoff hint when present, else exponential with
- * jitter. Jitter matters because our concerns fan out concurrently — without
+ * jitter. Jitter matters because our concerns fan out concurrently, without
  * it every worker retries on the same tick and re-triggers the same 429.
  */
 function backoffMs(attempt, retryAfterHeader) {
@@ -69,7 +77,7 @@ async function requestWithRetry(url, init, { provider, timeoutMs, maxAttempts, s
     try {
       res = await fetch(url, { ...init, signal: attemptSignal(timeoutMs, signal) });
     } catch (e) {
-      // Network error or timeout — transient by nature.
+      // Network error or timeout, transient by nature.
       last = new LlmError(`${provider} request failed: ${e?.message || e}`, {
         provider, status: 0, retryable: true,
       });
@@ -84,7 +92,7 @@ async function requestWithRetry(url, init, { provider, timeoutMs, maxAttempts, s
     last = new LlmError(`${provider} returned ${res.status}`, {
       provider, status: res.status, retryable, body: body.slice(0, 400),
     });
-    // A bad key or bad model will fail identically forever — don't burn the budget.
+    // A bad key or bad model will fail identically forever, don't burn the budget.
     if (!retryable) throw last;
     if (attempt < maxAttempts - 1) {
       await sleep(backoffMs(attempt, res.headers.get('retry-after')), signal);
@@ -97,7 +105,7 @@ async function requestWithRetry(url, init, { provider, timeoutMs, maxAttempts, s
 
 /**
  * @returns {Promise<{text: string, stopReason: string, truncated: boolean, provider: string}>}
- *   `truncated` is true when the model hit max_tokens — the caller must treat
+ *   `truncated` is true when the model hit max_tokens, the caller must treat
  *   the payload as incomplete rather than trying to parse a half-written object.
  */
 export async function callAnthropic({
@@ -138,7 +146,7 @@ export async function callAnthropic({
   if (typeof text !== 'string' || !text.trim()) {
     throw new LlmError('anthropic returned no text', { provider: 'anthropic', status: res.status });
   }
-  return { text, stopReason, truncated: stopReason === 'max_tokens', provider: 'anthropic' };
+  return { text: noEmDash(text), stopReason, truncated: stopReason === 'max_tokens', provider: 'anthropic' };
 }
 
 export async function callOpenAI({
@@ -180,7 +188,7 @@ export async function callOpenAI({
   if (typeof text !== 'string' || !text.trim()) {
     throw new LlmError('openai returned no text', { provider: 'openai', status: res.status });
   }
-  return { text, stopReason, truncated: stopReason === 'length', provider: 'openai' };
+  return { text: noEmDash(text), stopReason, truncated: stopReason === 'length', provider: 'openai' };
 }
 
 function firstEnv(...names) {
@@ -255,7 +263,7 @@ export async function callGemini({
     if (typeof text !== 'string' || !text.trim()) {
       throw new LlmError('gemini (gateway) returned no text', { provider: 'gemini', status: res.status });
     }
-    return { text, stopReason, truncated: stopReason === 'length', provider: 'gemini' };
+    return { text: noEmDash(text), stopReason, truncated: stopReason === 'length', provider: 'gemini' };
   }
 
   const res = await requestWithRetry(
@@ -282,7 +290,7 @@ export async function callGemini({
   if (!text.trim()) {
     throw new LlmError('gemini returned no text', { provider: 'gemini', status: res.status });
   }
-  return { text, stopReason, truncated: stopReason === 'MAX_TOKENS', provider: 'gemini' };
+  return { text: noEmDash(text), stopReason, truncated: stopReason === 'MAX_TOKENS', provider: 'gemini' };
 }
 
 export function providerConfigured(name) {
@@ -305,7 +313,7 @@ export function parseProviderOrder(envName, fallback) {
 /**
  * Try providers in order. Unlike the previous per-route loops, a non-retryable
  * failure on provider A still falls through to provider B, but the reason is
- * preserved and re-thrown if every provider fails — so the caller can return a
+ * preserved and re-thrown if every provider fails, so the caller can return a
  * real status code instead of a generic 502.
  */
 export async function callWithFallback(order, args = {}) {
@@ -417,8 +425,8 @@ export function tryParseJsonCandidate(raw) {
  * (ask-ayna.js, product-chat.js): a prompt instruction alone is a request,
  * not a guarantee, so this catches the model literally using diagnostic
  * language even after being told not to. It cannot catch every way a model
- * could still name a condition without the word itself — the prompt rule is
- * the real defense — this is only the net under it.
+ * could still name a condition without the word itself, the prompt rule is
+ * the real defense, this is only the net under it.
  */
 const DIAGNOSTIC_LANGUAGE_PATTERNS = [
   [/\bdiagnos(e[sd]?|is|ing|able)\b/gi, "can't say for certain"],

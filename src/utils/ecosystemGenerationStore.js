@@ -1,6 +1,6 @@
 /**
  * Module-level (not component state) so an in-flight ecosystem generation
- * survives MyEcosystem unmounting and remounting — e.g. the component
+ * survives MyEcosystem unmounting and remounting, e.g. the component
  * re-rendering somewhere upstream, navigating to another page, or any other
  * transient reason the tree gets torn down mid-generation. Previously the
  * generation lived entirely in component state/refs, so a remount aborted
@@ -21,19 +21,19 @@ export const activeGenerations = new Map();
 // How long an in-flight generation is kept alive after its last subscriber
 // unmounts, before being aborted as abandoned. Generation itself is 4 batches
 // of up to 3 concerns each, run concurrently, each within a 60s serverless
-// ceiling — so total wall time is roughly one batch's worst case, well under
+// ceiling, so total wall time is roughly one batch's worst case, well under
 // 60s in practice. This used to be 3000ms, which only covered an instant
 // remount (e.g. a re-render tearing the tree down and back up in the same
-// tick). Any real "leave the page" — switching to Discovery, checking
-// another tab, glancing away for half a minute — blew past 3s, so the
+// tick). Any real "leave the page", switching to Discovery, checking
+// another tab, glancing away for half a minute, blew past 3s, so the
 // in-flight (already-billed) generation got aborted and deleted, and
 // returning to MyEcosystem started a brand new one from Date.now(), which is
 // what read as "the timer keeps resetting when you leave the page." 5 minutes
 // comfortably covers realistic in-app navigation while it's running, without
-// leaking forever — a generation that finishes (success or failure) removes
+// leaking forever, a generation that finishes (success or failure) removes
 // its own record immediately via the `finally` block below regardless of
 // this timer, and a genuinely abandoned tab (closed, session ended) takes
-// its whole JS heap — this Map included — with it anyway.
+// its whole JS heap, this Map included, with it anyway.
 export const GENERATION_ABANDON_GRACE_MS = 5 * 60 * 1000;
 
 export function notifyGeneration(rec) {
@@ -48,7 +48,7 @@ export function notifyGeneration(rec) {
  * Only call this from the place that's actually allowed to KICK OFF a
  * generation (MyEcosystem's own effect). A passive observer that must never
  * start a generation itself (e.g. the global status bar) should use
- * `peekGeneration` + `subscribeIfActive` instead — see below.
+ * `peekGeneration` + `subscribeIfActive` instead, see below.
  */
 export function subscribeToGeneration(fingerprint, onUpdate, onStart) {
   let rec = activeGenerations.get(fingerprint);
@@ -58,7 +58,7 @@ export function subscribeToGeneration(fingerprint, onUpdate, onStart) {
     activeGenerations.set(fingerprint, rec);
   } else if (rec.gcTimer) {
     // A previous mount's cleanup was about to give up on this generation
-    // (no subscribers left) — a new mount just showed up wanting it, so
+    // (no subscribers left), a new mount just showed up wanting it, so
     // cancel the pending abandon-and-abort.
     clearTimeout(rec.gcTimer);
     rec.gcTimer = null;
@@ -77,7 +77,7 @@ export function subscribeToGeneration(fingerprint, onUpdate, onStart) {
       if (rec.subscribers.size > 0) return;
       rec.controller?.abort();
       rec.cancelled = true;
-      // Only remove the map entry if it's still *this* record — an
+      // Only remove the map entry if it's still *this* record, an
       // explicit refresh (discardGeneration) or a fresh start could have
       // already replaced it with a newer generation under the same key.
       if (activeGenerations.get(fingerprint) === rec) activeGenerations.delete(fingerprint);
@@ -100,7 +100,7 @@ export function discardGeneration(fingerprint) {
  * Returns the record (or null) WITHOUT creating one and WITHOUT subscribing.
  * Used by passive observers (the global status bar) to poll for "has one
  * started yet" without racing subscribeToGeneration's create-if-missing
- * behavior — a component that must never itself trigger a generation should
+ * behavior, a component that must never itself trigger a generation should
  * never call subscribeToGeneration directly, since finding no record there
  * always creates one and calls onStart.
  */
@@ -111,7 +111,7 @@ export function peekGeneration(fingerprint) {
 
 /**
  * Subscribe to an ALREADY-ACTIVE generation, or do nothing if none exists.
- * Never creates a record and never calls an onStart-style callback — safe
+ * Never creates a record and never calls an onStart-style callback, safe
  * for a passive, read-only observer. Returns an unsubscribe function, or
  * null if there was nothing to subscribe to (caller should poll again via
  * peekGeneration on some interval to notice a generation starting later).

@@ -8,7 +8,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
         : (quizResults?.frustration || 'General Wellness');
     const age = quizResults?.age || 'N/A';
     // An empty array is truthy in JS, so `quizResults.sensitivities || 'None reported'`
-    // never fired when it was `[]` — the line rendered "Sensitivities:" with nothing
+    // never fired when it was `[]`, the line rendered "Sensitivities:" with nothing
     // after it instead of falling back (found live, 2026-08-24 bug bash).
     const sensitivitiesList = Array.isArray(quizResults?.sensitivities)
         ? quizResults.sensitivities
@@ -85,7 +85,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                                     <strong style={{ fontSize: '0.95rem', display: 'block', marginBottom: '0.35rem' }}>{p.name}</strong>
                                     <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
                                         <strong style={{ color: 'var(--color-text-main)' }}>Main ingredients:</strong>{' '}
-                                        {p.ingredients || p.tagline || 'Not listed — check the product label or brand website for the full ingredient list.'}
+                                        {p.ingredients || p.tagline || 'Not listed, check the product label or brand website for the full ingredient list.'}
                                     </span>
                                 </li>
                             ))}
@@ -99,7 +99,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                 <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '2rem' }}>
                     <h4 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Suggested Questions for Your Provider</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        {/* Pure questions, not a re-quote of the Health Summary card above —
+                        {/* Pure questions, not a re-quote of the Health Summary card above
                             the provider already sees the goal and product list there, so
                             repeating them here word-for-word was pure redundancy, not new
                             information (found live, 2026-08-24 bug bash). */}

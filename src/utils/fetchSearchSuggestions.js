@@ -68,7 +68,7 @@ export async function fetchSearchSuggestions(opts) {
   const profileSummary = typeof opts?.profileSummary === 'string' ? opts.profileSummary : '';
   const dislikedProducts = typeof opts?.dislikedProducts === 'string' ? opts.dislikedProducts : '';
   const maxResults = typeof opts?.maxResults === 'number' ? opts.maxResults : 20;
-  // Don't cache personalized results — they're user-specific
+  // Don't cache personalized results, they're user-specific
   const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom, maxResults);
   if (cacheKey) {
     const cached = readSessionCache(cacheKey);
@@ -86,7 +86,7 @@ export async function fetchSearchSuggestions(opts) {
 
   if (res.status === 401) {
     // AI search is gated to signed-in users on this deployment. Not an error
-    // state — Discovery still shows catalog results.
+    // state, Discovery still shows catalog results.
     return {
       suggestions: [],
       querySummary: '',
@@ -120,7 +120,7 @@ export async function fetchSearchSuggestions(opts) {
     const raw = data?.error || '';
     const friendly =
       raw === 'claude_failed' || raw === 'invalid_model_json' || res.status === 502
-        ? 'AI search is having trouble right now — try again in a moment.'
+        ? 'AI search is having trouble right now, try again in a moment.'
         : raw === 'query_too_short'
           ? 'Type a little more to search.'
           : 'Could not load suggestions.';

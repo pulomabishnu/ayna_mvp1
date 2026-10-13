@@ -1,14 +1,26 @@
+import SmartSearchInput from './search/SmartSearchInput.jsx';
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import {
     ALL_PRODUCTS,
+    CATEGORY_LABELS,
     getEcosystemAlternatives,
     getRecommendationExplanation,
+    getEcosystemSeedFromQuiz,
+    getSelectedNeeds,
+    getProductById,
 } from '../data/products';
+import { behaviorFrom, careNotes, shortNeedLabel, tierWord } from '../utils/matchDisplay';
+import '../styles/match-ui.css';
 import ProductTileImage, { resolveCatalogProductImage, ProductImageFallback } from './ProductTileImage';
 import CareNearYouPanel from './CareNearYouPanel';
-import EcosystemBubbles, { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
-import EcosystemShelf from './EcosystemShelf';
+import CareNote from './CareNote';
+import { summarizeCareNotes } from '../utils/careSummary';
+import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
+import ProductCard from './ProductCard';
+import WebEcosystemChart from './WebEcosystemChart';
+import { areaTone } from './ecosystemAreaTone';
+import '../styles/eco-redesign.css';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
@@ -39,9 +51,9 @@ import posthog from 'posthog-js';
 
 // Ecosystem products are stored as a full snapshot of the product object at
 // the moment they're added (toggleMyProduct in App.jsx), not a live ID
-// reference — see ProductTileImage.jsx (shared with SavedForLater.jsx,
+// reference, see ProductTileImage.jsx (shared with SavedForLater.jsx,
 // EcosystemShelf.jsx, TrackedItems.jsx, Comparison.jsx, Recalls.jsx,
-// OmittedProducts.jsx, AynaLanding.jsx, Recommendations.jsx — every place
+// OmittedProducts.jsx, AynaLanding.jsx, Recommendations.jsx, every place
 // that renders one of these snapshots) for the full history of why a
 // synchronous catalog lookup alone isn't enough and a live resolution
 // fallback is needed too.
@@ -50,10 +62,6 @@ const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
 const SMS_CARD_DISMISS_KEY = 'ayna_sms_card_dismissed_at';
 const SMS_CARD_RESHOWN_KEY = 'ayna_sms_card_last_reshown_at';
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-
-// Sidebar area-breakdown bar/legend colors, in the order shelfAreaBreakdown
-// sorts by count (largest first) — real design tokens (index.css), not new colors.
-const SHELF_AREA_COLORS = ['var(--color-navy)', 'var(--color-plum)', 'var(--color-terracotta)', 'var(--color-amber)', 'var(--color-amber-deep)'];
 
 const SYNC_SOURCES = [
   { id: 'apple-health', label: 'Apple Health' },
@@ -66,13 +74,13 @@ const SYNC_SOURCES = [
 ];
 
 // Clicking "Swap" on a product, or an area bubble, used to always land on
-// unfiltered Browse — the specific area clicked was received then discarded
+// unfiltered Browse, the specific area clicked was received then discarded
 // (found live, 2026-08-24 bug bash: "Sleep" showed tampons and supplements,
 // nothing sleep-related). An area with more than one underlying catalog
 // category (e.g. "Period" covers pads/tampons/cups/discs/...) maps to
 // Discovery's broader initialMacroGroup, so every category in it stays
 // visible; a single-category area (Clinicians -> telehealth, Supplements ->
-// supplement — EcosystemBubbles' own additions, not real MACRO_GROUPS
+// supplement, EcosystemBubbles' own additions, not real MACRO_GROUPS
 // entries) maps to the narrower initialCategory instead, since there's only
 // one real thing to show either way.
 function exploreAreaOptions(area) {
@@ -174,14 +182,14 @@ function EcosystemFunctionProductCard({
     const rawSummary = (product.summary || '').trim();
     const summaryShort = rawSummary.length > 110 ? `${rawSummary.slice(0, 107)}…` : rawSummary;
     // resolvedCardImage came back from the server's type-aware
-    // /api/product-image resolution — trust it as-is rather than re-running
+    // /api/product-image resolution, trust it as-is rather than re-running
     // it through isPlaceholderProductImage, which doesn't know the product
     // is 'digital' and would reject a legitimate app/telehealth logo again.
     // Same reasoning for the resolveCatalogProductImage(product) fallback below:
     // its own product.image can itself already be a server-resolved value
     // merged in by the caller (recommendedSwapByKey/tier.product rendering
     // above), and resolveCatalogProductImage() already gates its own catalog
-    // lookups internally — wrapping the result in safeProductImageSrc again
+    // lookups internally, wrapping the result in safeProductImageSrc again
     // re-applies the type-blind heuristic to that already-vetted value.
     const displayImage = resolvedCardImage || resolveCatalogProductImage(product) || '';
 
@@ -327,7 +335,7 @@ function toConciseReason(text, fallback) {
     return `${candidate.slice(0, maxLen - 1).trim()}…`;
 }
 
-// Client-side mirror of api/llm-recommendations.js's PRESCRIPTION_DRUG_PATTERN —
+// Client-side mirror of api/llm-recommendations.js's PRESCRIPTION_DRUG_PATTERN
 // a defense-in-depth backstop for ecosystems generated before this filter
 // existed (and cached), not just newly-generated ones. Keep these two lists
 // in sync.
@@ -775,7 +783,7 @@ function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = ''
     const type = String(product.type || '').toLowerCase();
     const sub = String(tierSubcategory || '').toLowerCase();
 
-    // ── Concern is the primary signal — all product types go under the same concern category ──
+    // ── Concern is the primary signal, all product types go under the same concern category ──
     if (c.includes('pcos') || c.includes('polycystic')) return ['pcos-management'];
     if (c.includes('endometriosis') || c.includes('endo')) return ['endometriosis'];
     if (c.includes('hormone balance') || c.includes('hormonal') || c.includes('bloating') || c.includes('thyroid') || c.includes('irregular cycle') || c.includes('irregular period')) return ['hormone-balance'];
@@ -823,7 +831,7 @@ function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = ''
     if (cat.includes('pcos') || cat.includes('hormone')) return ['pcos-management'];
 
     // ── True last resort: digital → routine-building, physical → hormone-balance ──
-    // Never map LLM products to 'supplement' — that category is for legacy DB products only
+    // Never map LLM products to 'supplement', that category is for legacy DB products only
     return type === 'digital' ? ['routine-building'] : ['hormone-balance'];
 }
 
@@ -839,7 +847,7 @@ function estimateMonthlyCost(priceStr, product) {
     if (perMonthMatch) return parseFloat(perMonthMatch[1]);
 
     // Range: "$25–$38", "$25–38", "$25-38" → use average. Only real
-    // range-separator characters here — a literal '.' or ' ' would false-match
+    // range-separator characters here, a literal '.' or ' ' would false-match
     // any two dollar amounts sitting near each other in the string.
     const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–‒\-]+\s*\$?(\d+(?:\.\d+)?)/);
     if (rangeMatch) {
@@ -848,7 +856,7 @@ function estimateMonthlyCost(priceStr, product) {
         if (/one.?time|one purchase|reusable|device|wearable|ring|tracker/i.test(s)) return avg / 24;
         // Supplements and consumables: treat range as monthly price
         if (/supplement|vitamin|probiotic|powder|capsule|tablet|softgel|tea|extract/i.test(s + ' ' + category)) return avg;
-        // Telehealth: initial visit price is not monthly — skip to avoid inflating estimate
+        // Telehealth: initial visit price is not monthly, skip to avoid inflating estimate
         if (/initial|visit|consult|appointment/i.test(s)) return null;
         return avg; // default: treat as monthly consumable
     }
@@ -938,7 +946,8 @@ export default function MyEcosystem({
     onOpenPhoneVerify,
     user = null,
     userSession = null,
-    isPremium = false,
+    isPremium: _isPremium = false,
+    matchOpts: matchOptsProp = null,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
     useEscapeToClose(showAddModal, () => setShowAddModal(false));
@@ -951,14 +960,16 @@ export default function MyEcosystem({
     const [llmTiered, setLlmTiered] = useState([]);
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
-    // Distinct from llmError: some concerns didn't generate but others DID —
+    // Quiet, neutral status (e.g. a refresh when nothing new can be built).
+    const [llmNotice, setLlmNotice] = useState('');
+    // Distinct from llmError: some concerns didn't generate but others DID
     // the ecosystem is functionally built, just missing a couple of sections.
     // Kept separate so this never renders under the "We couldn't build your
     // ecosystem" framing, which used to fire for this case too (see rec.error
     // vs rec.partialConcerns below).
     const [llmPartialConcerns, setLlmPartialConcerns] = useState([]);
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
-    // Last known-good complete recommendation set — restored if a rebuild is cancelled mid-flight.
+    // Last known-good complete recommendation set, restored if a rebuild is cancelled mid-flight.
     const previousLlmTieredRef = useRef([]);
     const [resolvedImages, setResolvedImages] = useState({});
     const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
@@ -1041,27 +1052,6 @@ export default function MyEcosystem({
     // Use ecosystemOrder for stable card positions; fall back to insertion order
     const myProductIds = ecosystemOrder.length ? ecosystemOrder.filter(id => myProducts[id]) : Object.keys(myProducts);
     const myProductList = myProductIds.map(id => myProducts[id]).filter(Boolean);
-    // Broader "shelf" areas (Cycle care, Pelvic floor, Clinicians, ...) — the
-    // same grouping EcosystemBubbles/EcosystemShelf use, matching the mockup's
-    // sidebar row labels. Groups by care AREA, not raw catalog category (e.g.
-    // 'pad', 'tampon' would otherwise be separate rows) — too fine-grained
-    // for a sidebar summary.
-    const shelfAreaBreakdown = useMemo(() => {
-        const byArea = new Map();
-        myProductList.forEach((p) => {
-            const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
-            const key = area ? area.key : 'other';
-            if (!byArea.has(key)) byArea.set(key, []);
-            byArea.get(key).push(p);
-        });
-        const filled = ECOSYSTEM_AREAS
-            .filter((a) => byArea.has(a.key))
-            .map((a) => ({ ...a, count: byArea.get(a.key).length }))
-            .sort((a, b) => b.count - a.count);
-        const gap = ECOSYSTEM_AREAS.find((a) => !byArea.has(a.key)) || null;
-        const clinicianCount = byArea.get('care')?.length || 0;
-        return { filled, gap, clinicianCount };
-    }, [myProductList]);
     const estimatedMonthlyTotal = useMemo(() => {
         let total = 0;
         let counted = 0;
@@ -1075,6 +1065,81 @@ export default function MyEcosystem({
         });
         return { total: Math.round(total * 100) / 100, counted, totalItems: myProductList.length };
     }, [myProductList]);
+
+    // Page layout (Oct 2026 redesign, matches the app's Ecosystem screen):
+    // one section per area of care she has products in, largest first, plus
+    // up to six "Add a shelf" chips for areas she hasn't started.
+    const [ecoQuery, setEcoQuery] = useState('');
+    const areaGroups = useMemo(() => {
+        const byArea = new Map();
+        myProductList.forEach((p) => {
+            const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
+            const key = area ? area.key : 'other';
+            if (!byArea.has(key)) byArea.set(key, []);
+            byArea.get(key).push(p);
+        });
+        const groups = ECOSYSTEM_AREAS
+            .filter((a) => byArea.has(a.key))
+            .map((a) => ({ ...a, products: byArea.get(a.key) }));
+        if (byArea.has('other')) groups.push({ key: 'other', label: 'Other', categories: [], products: byArea.get('other') });
+        return groups.sort((a, b) => b.products.length - a.products.length);
+    }, [myProductList]);
+    // Matching engine shelves: one per selected need (picks, shortBy,
+    // emptyReason) plus care flags. Behavior (Not for me, in her ecosystem)
+    // is passed so hidden products never come back here.
+    const matchOpts = useMemo(
+        () => matchOptsProp || behaviorFrom({ omitted: omittedProducts, inEcosystem: myProducts }),
+        [matchOptsProp, omittedProducts, myProducts]
+    );
+    const needSeed = useMemo(
+        () => (quizResults ? getEcosystemSeedFromQuiz(quizResults, healthProfile, matchOpts) : null),
+        [quizResults, healthProfile, matchOpts]
+    );
+    const needPhrases = useMemo(
+        () => new Map((quizResults ? getSelectedNeeds(quizResults, healthProfile, matchOpts) : []).map((n) => [n.id, n.phrase])),
+        [quizResults, healthProfile, matchOpts]
+    );
+    const needShelves = useMemo(() => needSeed?.shelves || [], [needSeed]);
+    const careFlags = needSeed?.careFlags || null;
+    const careFirst = Boolean(careFlags?.careFirst);
+    const careNoteLines = careNotes(careFlags);
+    const careSummaryLines = useMemo(() => summarizeCareNotes(careFlags), [careFlags]);
+    // Care links keyed to the needs she actually chose (the engine's reading),
+    // not the older broad concern mapping.
+    const careQuizResults = useMemo(
+        () => (quizResults && needShelves.length ? { ...quizResults, frustrations: needShelves.map((shelf) => shelf.label) } : quizResults),
+        [quizResults, needShelves]
+    );
+    // "Next step" highlights a different empty area on every page load.
+    const [gapSpin] = useState(() => Math.floor(Math.random() * 97));
+    const gapAreas = useMemo(
+        () => {
+            const gaps = ECOSYSTEM_AREAS.filter((a) => !areaGroups.some((g) => g.key === a.key));
+            if (gaps.length < 2) return gaps.slice(0, 6);
+            const start = gapSpin % gaps.length;
+            return [...gaps.slice(start), ...gaps.slice(0, start)].slice(0, 6);
+        },
+        [areaGroups, gapSpin]
+    );
+    const ecoQueryTrimmed = ecoQuery.trim();
+    const visibleAreaGroups = useMemo(() => {
+        const words = ecoQueryTrimmed.toLowerCase().split(/\s+/).filter(Boolean);
+        if (!words.length) return areaGroups;
+        return areaGroups
+            .map((g) => ({
+                ...g,
+                products: g.products.filter((p) => {
+                    const text = [
+                        p.name, p.brand, p.category, CATEGORY_LABELS[p.category], g.label,
+                        ...(Array.isArray(p.tags) ? p.tags : []),
+                    ].filter(Boolean).join(' ').toLowerCase();
+                    return words.every((w) => text.includes(w));
+                }),
+            }))
+            .filter((g) => g.products.length > 0);
+    }, [areaGroups, ecoQueryTrimmed]);
+    const visibleMatchCount = visibleAreaGroups.reduce((n, g) => n + g.products.length, 0);
+    const searchShop = (q) => onGoToSearch?.(q ? { query: q } : '');
     const filteredProducts = useMemo(() => {
         const words = searchTerm.toLowerCase().trim().split(/\s+/).filter(Boolean);
         if (!words.length) return ALL_PRODUCTS.filter(p => !omittedProducts[p.id]);
@@ -1102,7 +1167,7 @@ export default function MyEcosystem({
 
     useEffect(() => {
         if (!intakeFingerprint) {
-            // Intake is still loading from Supabase — don't clear the cache or it will
+            // Intake is still loading from Supabase, don't clear the cache or it will
             // wipe valid recommendations before the fingerprint is available.
             setLlmTiered([]);
             setLlmLoading(false);
@@ -1131,7 +1196,7 @@ export default function MyEcosystem({
                 // A prior failed generation used to poison this intake forever:
                 // the fingerprint was recorded even when no recommendations were
                 // cached, so a reload would refuse to try again. If there is no
-                // cached payload, retry normally instead of trapping the user —
+                // cached payload, retry normally instead of trapping the user
                 // the instant local ecosystem below already gives her something
                 // useful while this retry runs, so there's no need to interrupt
                 // her with an error just because a past attempt didn't cache.
@@ -1139,7 +1204,7 @@ export default function MyEcosystem({
             }
         } else {
             // Explicit refresh: any existing record for this fingerprint (in-flight
-            // or otherwise) reflects stale intent — replace it, don't attach to it.
+            // or otherwise) reflects stale intent, replace it, don't attach to it.
             discardGeneration(intakeFingerprint);
         }
 
@@ -1147,6 +1212,7 @@ export default function MyEcosystem({
             setLlmTiered(rec.tiered);
             setLlmLoading(rec.loading);
             setLlmError(rec.error);
+            setLlmNotice(rec.notice || '');
             setLlmPartialConcerns(rec.partialConcerns || []);
             setLlmLoadStartedAt(rec.startedAt);
         };
@@ -1159,6 +1225,7 @@ export default function MyEcosystem({
             rec.startedAt = Date.now();
             rec.loading = true;
             rec.error = '';
+            rec.notice = '';
             rec.partialConcerns = [];
             rec.tiered = [];
             notifyGeneration(rec);
@@ -1172,7 +1239,7 @@ export default function MyEcosystem({
             }
 
             (async () => {
-                // Per-attempt state — the shared record only needs the fields
+                // Per-attempt state, the shared record only needs the fields
                 // consumers read (tiered/loading/error/startedAt); these are
                 // internal to this one generation run.
                 let limitReached = false;
@@ -1189,7 +1256,7 @@ export default function MyEcosystem({
                     // ceiling instead of needing a 252s budget that never existed.
                     // 7 x 3 covers the server's MAX_CONCERNS cap of 20 (raised from
                     // 6 x 3 / cap 18 on 2026-08-25, when the quiz grew from 16 to 18
-                    // checkbox options — same silent-truncation risk as the original
+                    // checkbox options, same silent-truncation risk as the original
                     // 12/4 bug if this isn't kept in lockstep with the server cap;
                     // keeping BATCH_SIZE at 3 rather than raising it preserves the
                     // per-invocation timing this was already tuned for, just runs one
@@ -1215,7 +1282,7 @@ export default function MyEcosystem({
                                     // sections than she asked for, with no signal.
                                     partialConcerns.push(...d.failedConcerns);
                                     // Reason travels with the response so this is
-                                    // diagnosable from the browser console alone — a
+                                    // diagnosable from the browser console alone, a
                                     // live 2026-08-22 incident (2 concerns failed
                                     // ~20s in) was undiagnosable after the fact
                                     // because nothing captured *why*, and by the
@@ -1232,6 +1299,9 @@ export default function MyEcosystem({
                             .catch(e => {
                                 console.error(`[Ayna LLM] batch ${i} error:`, e?.status || '', e?.message);
                                 if (e?.status === 429) {
+                                    // One 429 means every batch will get one: stop the rest
+                                    // instead of firing six more doomed requests.
+                                    if (!limitReached) { try { rec.controller.abort(); } catch { /* already done */ } }
                                     limitReached = true;
                                 } else if (e?.status === 401) {
                                     authFailed = true;
@@ -1259,7 +1329,29 @@ export default function MyEcosystem({
                         // The app already has a vetted local recommendation engine;
                         // use it as an immediate fallback for network/5xx/404/timeouts.
                         if (limitReached) {
-                            rec.error = "You've already generated your ayna ecosystem. Regenerating is a premium feature. Email puloma@aynahealth.co to upgrade.";
+                            // Quota used: keep the instant local ecosystem quietly and
+                            // cache it, so later visits make no requests at all.
+                            const prior = previousLlmTieredRef.current;
+                            if (bypassCache && Array.isArray(prior) && prior.length > 0) {
+                                // She tapped refresh: keep what she had, with a quiet neutral line.
+                                rec.tiered = prior;
+                                rec.error = '';
+                                rec.notice = 'Your ecosystem is up to date.';
+                                notifyGeneration(rec);
+                                return;
+                            }
+                            const localRecs = generateTieredRecommendations(intake);
+                            if (Array.isArray(localRecs) && localRecs.length > 0) {
+                                rec.tiered = localRecs;
+                                rec.error = '';
+                                notifyGeneration(rec);
+                                if (saveCachedLlmRecommendations(intakeFingerprint, localRecs)) saveFetchedLlmFingerprint(intakeFingerprint);
+                                previousLlmTieredRef.current = localRecs;
+                                return;
+                            }
+                            // Nothing new to show: keep the current ecosystem silently.
+                            if (Array.isArray(prior) && prior.length > 0) rec.tiered = prior;
+                            rec.error = '';
                             notifyGeneration(rec);
                             return;
                         }
@@ -1297,7 +1389,7 @@ export default function MyEcosystem({
                     // produced a permanently empty ecosystem with no error.
                     if (cachedOk) saveFetchedLlmFingerprint(intakeFingerprint);
                     if (partialConcerns.length > 0) {
-                        // NOT rec.error — this branch only runs when recs.length > 0
+                        // NOT rec.error, this branch only runs when recs.length > 0
                         // (the recs.length === 0 case above already returned), so the
                         // ecosystem DID build, just missing a couple of sections. Every
                         // rec.error reader in this file renders an alarming "We
@@ -1342,7 +1434,7 @@ export default function MyEcosystem({
                         rec.startedAt = 0;
                         notifyGeneration(rec);
                     }
-                    // Only remove the map entry if it's still *this* record — a
+                    // Only remove the map entry if it's still *this* record, a
                     // cancel/refresh that discarded this generation may have
                     // already replaced it with a newer one under the same key.
                     if (activeGenerations.get(intakeFingerprint) === rec) activeGenerations.delete(intakeFingerprint);
@@ -1411,7 +1503,7 @@ export default function MyEcosystem({
                             // The server generates these (ingredient and contraindication
                             // warnings tailored to endometriosis / PCOS / TTC status) and
                             // this mapping used to drop the field entirely, so they were
-                            // never rendered on the primary ecosystem surface —
+                            // never rendered on the primary ecosystem surface
                             // Recommendations.jsx shows them, but that view renders the
                             // rule-based engine, not LLM output.
                             safetyFlags: Array.isArray(tier?.safetyFlags)
@@ -1441,6 +1533,7 @@ export default function MyEcosystem({
                 return {
                     id: `${concern}-${idx}`,
                     concern,
+                    displayLabel: String(entry?.displayLabel || '').trim() || null,
                     tag: null,
                     topProduct: normalizedTiers[0]?.product || fallbackTop || null,
                     alternatives: normalizedTiers[0]?.alternatives || fallbackAlternatives,
@@ -1485,7 +1578,7 @@ export default function MyEcosystem({
         // quiz completion sets ayna_force_llm_refresh → nonce=1, rebuild button increments nonce
         // Never auto-generate on page load or login, even if ecosystem is empty
         if (recommendationRefreshNonce === 0) return;
-        // Each concern has 3 tiers (supplement, physical, telehealth) — add each as its own ecosystem card
+        // Each concern has 3 tiers (supplement, physical, telehealth), add each as its own ecosystem card
         const enrichedProducts = recommendedProductsForDisplay
             .flatMap(section =>
                 (section.tiers || []).map(tier => {
@@ -1493,7 +1586,7 @@ export default function MyEcosystem({
                     if (!product) return null;
                     return {
                         ...product,
-                        // Always re-derive from concern — never trust healthFunctions the LLM may have added
+                        // Always re-derive from concern, never trust healthFunctions the LLM may have added
                         healthFunctions: inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
                         _llmAlternatives: (tier.alternatives || []).filter(p => p && p.id !== product.id).slice(0, 3),
                         _llmConcern: section.concern || '',
@@ -1506,13 +1599,13 @@ export default function MyEcosystem({
         posthog.capture('recommendation_viewed', { concernCount: recommendedProductsForDisplay.length });
     }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce]);
 
-    // Bounded worker pool — mirrors the fix already applied to Discovery.jsx.
+    // Bounded worker pool, mirrors the fix already applied to Discovery.jsx.
     // Both effects below used to fire one request per product with no cap: a
     // freshly-generated ecosystem can carry a top product + up to 3
     // alternatives across a dozen-plus concerns, all placeholder-imaged, so a
     // single render could burst 40-50+ concurrent /api/product-image calls.
     // Some of those got rate-limited or timed out, and a failed lookup is
-    // recorded as "resolved to no image" (never retried this mount) — so
+    // recorded as "resolved to no image" (never retried this mount), so
     // under load, some cards permanently kept the generic placeholder even
     // though the image existed and a later, unthrottled request would have
     // found it.
@@ -1552,13 +1645,13 @@ export default function MyEcosystem({
     }, [activeTiered]);
 
     useEffect(() => {
-        // myProductList is deliberately excluded here — ProductTileImage
+        // myProductList is deliberately excluded here, ProductTileImage
         // (used everywhere "Your products" tiles render) now resolves those
         // images itself on demand. Keeping this effect's own fetch for the
         // same items too meant every ecosystem product ran two independent
         // resolveProductImage() calls per mount; resolveProductImage()'s
         // shared memCache/localStorage dedupes the network cost, but it's
-        // still redundant work. recommendedProducts still needs this path —
+        // still redundant work. recommendedProducts still needs this path
         // it feeds IntakeRecommendationsProductCard/IntakeRecAltMini, which
         // don't use ProductTileImage.
         const recommendedProducts = recommendedProductsForDisplay
@@ -1592,7 +1685,7 @@ export default function MyEcosystem({
     }, []);
 
     const handleRefreshRecommendations = useCallback(() => {
-        // Deliberately don't clear llmTiered or the cache here — the current
+        // Deliberately don't clear llmTiered or the cache here, the current
         // (old) ecosystem stays on screen and in cache until a full new set
         // successfully replaces it, so a cancelled rebuild has something to fall back to.
         setLlmError('');
@@ -1648,7 +1741,7 @@ export default function MyEcosystem({
                     We couldn't load your recommendations: {llmError}
                 </p>
             )}
-            {/* Partial success, not a failure — most of the ecosystem DID build.
+            {/* Partial success, not a failure, most of the ecosystem DID build.
                 Deliberately neutral styling (not the red "couldn't build" banner
                 elsewhere in this file), since a couple of missing sections isn't
                 the same as the whole build failing. */}
@@ -1686,7 +1779,7 @@ export default function MyEcosystem({
                                     }}
                                 >
                                     <span style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-main)' }}>
-                                        {normalizeConcernLabel(section.concern)}
+                                        {section.displayLabel || normalizeConcernLabel(section.concern)}
                                     </span>
                                     <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>{isOpen ? 'Hide ▴' : 'Show ▾'}</span>
                                 </button>
@@ -1698,7 +1791,7 @@ export default function MyEcosystem({
                                                     const swapKey = `${section.id}::${tier.id || tierIdx}`;
                                                     const product = recommendedSwapByKey[swapKey] || tier.product;
                                                     if (!product) return null;
-                                                    // Always rotate within the fixed 4-product pool — never repopulate
+                                                    // Always rotate within the fixed 4-product pool, never repopulate
                                                     const tierPool = [tier.product, ...(tier.alternatives || [])].filter(Boolean);
                                                     const rotatedAlternatives = tierPool.filter(p => p?.id !== product.id).slice(0, 3);
                                                     const llmReason = String(product?.whyItWorks || '').trim();
@@ -1706,7 +1799,7 @@ export default function MyEcosystem({
                                                     const fallbackReason = String(reasonRaw).replace(/^Why it could work:\s*/i, '').trim();
                                                     const tierReason = toConciseReason(
                                                         llmReason || String(tier.matchExplanation || '').trim() || fallbackReason,
-                                                        `Matched to your concern: ${section.concern}.`
+                                                        `Matches the ${(section.displayLabel || section.concern).toLowerCase()} you selected.`
                                                     );
                                                     return (
                                                         <div key={swapKey} style={{ minWidth: 0 }}>
@@ -1761,237 +1854,368 @@ export default function MyEcosystem({
 
     return (
         <>
-            <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-                {/* Board 2a ("Ecosystem page, restructured") from the Aug 2026
-                    mockup pass: one persistent left summary, one scrolling
-                    content column, nothing competing for the top of the page —
-                    replaces the old Overview/Details tab switcher, which
-                    duplicated "your ecosystem" as two separate stacked headers. */}
-                <EcosystemBubbles
-                    myProducts={myProducts}
-                    quizResults={quizResults}
-                    healthProfile={healthProfile}
-                    user={user}
-                    onOpenProduct={onOpenProduct}
-                    onExploreArea={(area) => onGoToSearch?.(exploreAreaOptions(area))}
-                    onToggleProduct={onToggleProduct}
-                />
+            <section className="eco3 mockup-page animate-fade-in-up" aria-labelledby="eco3-title">
+                {/* Oct 2026 redesign: the website version of the app's
+                    Ecosystem screen. Header + search, the ring overview, then
+                    one section per area of care using the Shop card. */}
+                <header className="eco3-head">
+                    <div className="eco3-head__text">
+                        <h1 id="eco3-title">Your ecosystem</h1>
+                        <p className="eco3-head__sub">
+                            {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : (
+                                <>
+                                    {myProductList.length} pick{myProductList.length === 1 ? '' : 's'}
+                                    {' · '}
+                                    {areaGroups.length} area{areaGroups.length === 1 ? '' : 's'} of care
+                                </>
+                            )}
+                        </p>
+                    </div>
+                    <div className="eco3-actions" role="group" aria-label="Ecosystem actions">
+                        {typeof onEditHealthProfile === 'function' && (
+                            <button type="button" className="eco3-pill" onClick={onEditHealthProfile}>Update profile</button>
+                        )}
+                        {typeof onOpenDoctorPrep === 'function' && (
+                            <button type="button" className="eco3-pill" onClick={onOpenDoctorPrep}>Doctor prep</button>
+                        )}
+                        <button type="button" className="eco3-pill" onClick={() => setShowMoreTools(true)}>More tools</button>
+                        {typeof onBuildEcosystem === 'function' && (
+                            <button type="button" className="eco3-pill eco3-pill--ink" onClick={onBuildEcosystem}>
+                                {myProductList.length ? 'Rebuild' : 'Build ecosystem'}
+                            </button>
+                        )}
+                    </div>
+                </header>
 
-                {llmError && !llmLoading && (
-                    <div style={{ textAlign: 'center', padding: '0.75rem', margin: '0 auto 1.5rem', maxWidth: '900px', background: '#FEF2F2', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: '#991B1B', border: '1px solid #FCA5A5' }}>
-                        Couldn&apos;t refresh your matches. <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
+                {careFirst && (
+                    <section className="eco3-carefirst" aria-labelledby="eco3-carefirst-title">
+                        <p className="eco3-carefirst__eyebrow">Care first</p>
+                        <h2 id="eco3-carefirst-title">Reach a clinician first</h2>
+                        {careNoteLines.map((n) => <p key={n} className="eco3-carefirst__note">{n}</p>)}
+                        <CareNearYouPanel
+                            compact
+                            quizResults={careQuizResults}
+                            healthProfile={healthProfile}
+                            userZipCode={userZipCode}
+                            onZipCodeChange={onZipCodeChange}
+                            onOpenProduct={onOpenProduct}
+                            onEditHealthProfile={onEditHealthProfile}
+                        />
+                    </section>
+                )}
+
+                <div className={careFirst ? 'eco3-secondary' : undefined}>
+                {careFirst && <p className="eco3-secondary__label">Products, when you are ready</p>}
+                <form
+                    className="ayna-browse__search eco3-search"
+                    role="search"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!ecoQueryTrimmed) return;
+                        if (myProductList.length === 0 || visibleMatchCount === 0) searchShop(ecoQueryTrimmed);
+                    }}
+                >
+                    <SmartSearchInput
+                        type="search"
+                        value={ecoQuery}
+                        onChange={(e) => setEcoQuery(e.target.value)}
+                        placeholder={myProductList.length ? 'Search your ecosystem' : 'Search the Shop'}
+                        aria-label={myProductList.length ? 'Search your ecosystem' : 'Search the Shop'}
+                    />
+                    <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
+                </form>
+                {ecoQueryTrimmed && (
+                    <div className="eco3-searchbar-row" role="status">
+                        <span>
+                            {myProductList.length === 0
+                                ? 'Your ecosystem is empty.'
+                                : visibleMatchCount === 0
+                                    ? 'Nothing in your ecosystem matches.'
+                                    : `${visibleMatchCount} in your ecosystem`}
+                        </span>
+                        <button type="button" onClick={() => searchShop(ecoQueryTrimmed)}>
+                            Search Shop for &ldquo;{ecoQueryTrimmed}&rdquo; →
+                        </button>
                     </div>
                 )}
 
-                <div className="eco2-body">
-                    <aside className="eco2-sidebar">
-                        <div className="eco2-sidebar__card">
-                            <p className="eco2-sidebar__eyebrow">Your ecosystem</p>
-                            {llmLoading ? (
-                                <p className="eco2-sidebar__loading">Building your matches…</p>
+                {llmError && !llmLoading && (
+                    <div className="eco3-notice" role="status">
+                        Couldn&apos;t refresh your matches. <button type="button" onClick={handleRefreshRecommendations}>Try again</button>
+                    </div>
+                )}
+                {llmNotice && !llmError && !llmLoading && (
+                    <div className="eco3-notice eco3-notice--soft" role="status">{llmNotice}</div>
+                )}
+                {llmPartialConcerns.length > 0 && !llmError && !llmLoading && (
+                    <div className="eco3-notice eco3-notice--soft" role="status">
+                        Couldn&apos;t generate picks for {llmPartialConcerns.map(normalizeConcernLabel).join(', ')} this time.{' '}
+                        <button type="button" onClick={handleRefreshRecommendations}>Refresh to try again</button>
+                    </div>
+                )}
+                {llmLoading && (
+                    <div className="eco3-notice eco3-notice--soft" role="status">
+                        Building your matches…{' '}
+                        <button type="button" onClick={handleCancelRecommendations}>Stop</button>
+                    </div>
+                )}
+
+                {!ecoQueryTrimmed && (
+                    areaGroups.length > 0 ? (
+                        <div className="eco3-overview">
+                            <WebEcosystemChart groups={areaGroups} sectionId={(key) => `eco-area-${key}`} />
+                            <div className="eco3-overview__side">
+                                {gapAreas.length > 0 && typeof onGoToSearch === 'function' && (
+                                    <div className="eco3-next">
+                                        <p className="eco3-next__eyebrow">Next step</p>
+                                        <p className="eco3-next__title">Start your {gapAreas[0].label} shelf</p>
+                                        <button type="button" className="eco3-pill eco3-pill--ink" onClick={() => onGoToSearch(exploreAreaOptions(gapAreas[0]))}>
+                                            Browse {gapAreas[0].label}
+                                        </button>
+                                    </div>
+                                )}
+                                {estimatedMonthlyTotal.counted > 0 && (
+                                    <p className="eco3-overview__cost">
+                                        About ${estimatedMonthlyTotal.total.toFixed(0)}{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''} a month
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    ) : !llmLoading && (
+                        <div className="eco3-empty">
+                            <p className="eco3-empty__title">Nothing here yet</p>
+                            <p className="eco3-empty__body">Answer a few questions or pick things from the Shop.</p>
+                            <div className="eco3-empty__actions">
+                                {typeof onBuildEcosystem === 'function' && (
+                                    <button type="button" className="eco3-pill eco3-pill--ink" onClick={onBuildEcosystem}>Build ecosystem</button>
+                                )}
+                                <button type="button" className="eco3-pill" onClick={() => searchShop('')}>Go to Shop</button>
+                            </div>
+                        </div>
+                    )
+                )}
+
+                {!ecoQueryTrimmed && needShelves.length > 0 && (
+                    <section className="eco3-needs" aria-labelledby="eco3-needs-title">
+                        <div className="eco3-needs__head">
+                            <h2 id="eco3-needs-title">For your needs</h2>
+                            <span className="eco3-needs__sub">Our strongest picks for each need you chose</span>
+                        </div>
+                        <ul className="eco3-needs__list">
+                            {[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => {
+                                const phrase = needPhrases.get(shelf.needId) || shelf.label.toLowerCase();
+                                const short = shortNeedLabel(shelf.label);
+                                const picks = shelf.picks.map((pick) => ({ ...pick, product: myProducts[pick.productId] || getProductById(pick.productId) })).filter((p) => p.product);
+                                return (
+                                    <li key={shelf.needId} className={`eco3-need${picks.length ? '' : ' is-empty'}`}>
+                                        <div className="eco3-need__label">
+                                            <strong>{shelf.label}</strong>
+                                            {picks.length > 0 && shelf.shortBy > 0 && (
+                                                <span className="eco3-need__short">Only {picks.length} strong match{picks.length === 1 ? '' : 'es'} for {phrase} so far</span>
+                                            )}
+                                        </div>
+                                        {picks.length > 0 ? (
+                                            <div className="eco3-need__picks">
+                                                {picks.map(({ product, score, tier, productId }) => {
+                                                    const owned = Boolean(myProducts[productId]);
+                                                    return (
+                                                        <div key={productId} className={`eco3-pick${owned ? ' is-owned' : ''}`}>
+                                                            <button type="button" className="eco3-pick__open" onClick={() => onOpenProduct?.(product)} title={`${score}% for ${phrase}`}>
+                                                                <span className="eco3-pick__img" aria-hidden="true">
+                                                                    <ProductTileImage product={product} alt="" imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }} letterNode={<ProductImageFallback compact />} />
+                                                                </span>
+                                                                <span className="eco3-pick__text">
+                                                                    <span className="eco3-pick__name">{product.name}</span>
+                                                                    <span className="eco3-pick__score"><b>{score}</b> {tierWord(tier, score)}</span>
+                                                                </span>
+                                                            </button>
+                                                            {owned ? (
+                                                                <span className="eco3-pick__state">In ecosystem</span>
+                                                            ) : onToggleProduct && (
+                                                                <button type="button" className="eco3-pick__add" onClick={() => onToggleProduct(product)} aria-label={`Add ${product.name} to your ecosystem`}>+ Add</button>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <div className="eco3-need__empty">
+                                                <span>No strong matches for {phrase} yet.</span>
+                                                {typeof onGoToSearch === 'function' && (
+                                                    <button type="button" className="eco3-pill" onClick={() => onGoToSearch({ query: short })}>Shop {short.toLowerCase()}</button>
+                                                )}
+                                            </div>
+                                        )}
+                                        {shelf.care && !careFirst && (
+                                            <details className="eco3-need__care">
+                                                <summary>Care options for {phrase}</summary>
+                                                <ul>
+                                                    {[...(shelf.care.clinicLinks || []), ...(shelf.care.telehealthLinks || [])].slice(0, 4).map((link) => (
+                                                        <li key={link.href}><a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a> <span>{link.hint}</span></li>
+                                                    ))}
+                                                </ul>
+                                            </details>
+                                        )}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </section>
+                )}
+
+                {/* Care note sits after her first shelf block (never on top unless urgent; urgent uses the care-first panel above). */}
+                {!careFirst && !ecoQueryTrimmed && careSummaryLines.length > 0 && (
+                    <CareNote
+                        className="eco3-carenote2"
+                        lines={careSummaryLines}
+                        prominent={Boolean(careFlags?.careProminent)}
+                        onFindCare={() => {
+                            const el = careNearYouDetailsRef.current;
+                            if (el) {
+                                el.open = true;
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }}
+                    />
+                )}
+
+                {visibleAreaGroups.map((group) => {
+                    const toneIndex = areaGroups.findIndex((g) => g.key === group.key);
+                    return (
+                        <section
+                            key={group.key}
+                            id={`eco-area-${group.key}`}
+                            className="eco3-area"
+                            style={{ '--area-color': areaTone(toneIndex) }}
+                            aria-labelledby={`eco-area-title-${group.key}`}
+                        >
+                            <div className="eco3-area__head">
+                                <h2 id={`eco-area-title-${group.key}`}>
+                                    <small aria-hidden="true">{String(toneIndex + 1).padStart(2, '0')}</small>
+                                    {group.label}
+                                </h2>
+                                <span className="eco3-area__count">{group.products.length}</span>
+                                {group.key !== 'other' && typeof onGoToSearch === 'function' && (
+                                    <button type="button" className="eco3-area__more" onClick={() => onGoToSearch(exploreAreaOptions(group))}>Add more</button>
+                                )}
+                            </div>
+                            <div className="eco3-grid">
+                                {group.products.map((product) => (
+                                    <ProductCard
+                                        key={product.id}
+                                        product={product}
+                                        onOpen={onOpenProduct}
+                                        action={(
+                                            <div className="eco3-card-actions">
+                                                {group.key !== 'other' && (
+                                                    <button type="button" className="eco3-card-actions__swap" onClick={() => onGoToSearch?.(exploreAreaOptions(group))}>Swap</button>
+                                                )}
+                                                <button type="button" className="eco3-card-actions__why" onClick={() => onOpenProduct?.(product)}>Why this?</button>
+                                                {onToggleProduct && (
+                                                    <button type="button" className="eco3-card-actions__remove" onClick={() => onToggleProduct(product)} aria-label={`Remove ${product.name} from your ecosystem`} title="Remove">
+                                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })}
+
+                {!ecoQueryTrimmed && (
+                    <div className="eco3-addrow">
+                        {gapAreas.length > 0 && typeof onGoToSearch === 'function' && (
+                            <div className="eco3-addrow__shelf">
+                                <span className="eco3-addrow__label">Add a shelf</span>
+                                <div className="eco3-addrow__chips">
+                                    {gapAreas.map((area) => (
+                                        <button key={area.key} type="button" className="eco3-chip" onClick={() => onGoToSearch(exploreAreaOptions(area))}>
+                                            + {area.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        <button type="button" className="eco3-pill" onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
+                    </div>
+                )}
+
+                </div>
+
+                <div className="eco3-details">
+                    {smsCardShown && (
+                        <div className="eco3-details__card eco3-details__sms">
+                            <button type="button" className="eco3-details__close" onClick={handleDismissSmsCard} aria-label="Dismiss">✕</button>
+                            {phoneNumberInfo?.is_verified ? (
+                                <>
+                                    <p className="eco3-details__title">Text Ayna to get quick health answers</p>
+                                    {AYNA_SMS_NUMBER && <p className="eco3-details__number">{AYNA_SMS_NUMBER}</p>}
+                                    <div className="eco3-details__row">
+                                        {AYNA_SMS_NUMBER && (
+                                            <a className="eco3-pill" href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)} download="Ayna.vcf">Save to Contacts</a>
+                                        )}
+                                        <button type="button" className="eco3-pill" onClick={handleCopySmsNumber}>
+                                            {smsCardCopied ? 'Copied!' : 'Copy number'}
+                                        </button>
+                                    </div>
+                                </>
                             ) : (
                                 <>
-                                    <h2 className="eco2-sidebar__count">
-                                        {myProductList.length} product{myProductList.length === 1 ? '' : 's'}
-                                    </h2>
-                                    {(shelfAreaBreakdown.clinicianCount > 0 || estimatedMonthlyTotal.counted > 0) && (
-                                        <p className="eco2-sidebar__sub">
-                                            {[
-                                                shelfAreaBreakdown.clinicianCount > 0 ? `${shelfAreaBreakdown.clinicianCount} clinician${shelfAreaBreakdown.clinicianCount === 1 ? '' : 's'}` : null,
-                                                estimatedMonthlyTotal.counted > 0 ? `~$${estimatedMonthlyTotal.total.toFixed(0)}${estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}/mo` : null,
-                                            ].filter(Boolean).join(' · ')}
-                                        </p>
-                                    )}
+                                    <p className="eco3-details__title">Get ayna by text.</p>
+                                    <div className="eco3-details__row">
+                                        <button type="button" className="eco3-pill eco3-pill--ink" onClick={onOpenPhoneVerify}>Verify your number</button>
+                                    </div>
                                 </>
                             )}
-                            {shelfAreaBreakdown.filled.length > 0 && (
-                                <>
-                                    <div className="eco2-sidebar__bar">
-                                        {shelfAreaBreakdown.filled.map((area, i) => (
-                                            <i
-                                                key={area.key}
-                                                style={{
-                                                    width: `${(area.count / myProductList.length) * 100}%`,
-                                                    background: SHELF_AREA_COLORS[i % SHELF_AREA_COLORS.length],
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
-                                    <ul className="eco2-sidebar__legend">
-                                        {shelfAreaBreakdown.filled.map((area, i) => (
-                                            <li key={area.key}>
-                                                <span className="eco2-dot" style={{ background: SHELF_AREA_COLORS[i % SHELF_AREA_COLORS.length] }} />
-                                                {area.label}
-                                                <strong>{area.count}</strong>
-                                            </li>
-                                        ))}
-                                        {shelfAreaBreakdown.gap && (
-                                            <li className="eco2-sidebar__legend--gap">
-                                                <span className="eco2-dot eco2-dot--empty" />
-                                                {shelfAreaBreakdown.gap.label}
-                                                {typeof onGoToSearch === 'function' && (
-                                                    <button type="button" onClick={() => onGoToSearch(exploreAreaOptions(shelfAreaBreakdown.gap))}>Add</button>
-                                                )}
-                                            </li>
-                                        )}
-                                    </ul>
-                                </>
-                            )}
-                            {typeof onBuildEcosystem === 'function' && (
-                                <button type="button" className="btn btn-primary" style={{ width: '100%', marginTop: '0.75rem' }} onClick={onBuildEcosystem}>
-                                    {myProductList.length ? 'Rebuild' : 'Build ecosystem'}
-                                </button>
-                            )}
+                            <p className="eco3-details__soon">Wearable sync is coming.</p>
                         </div>
+                    )}
 
-                        <div className="eco2-sidebar__card">
-                            <p className="eco2-sidebar__eyebrow">Tools</p>
-                            {typeof onEditHealthProfile === 'function' && (
-                                <button type="button" className="eco2-tool-row" onClick={onEditHealthProfile}>Update profile<span>›</span></button>
-                            )}
-                            {typeof onOpenDoctorPrep === 'function' && (
-                                <button type="button" className="eco2-tool-row" onClick={onOpenDoctorPrep}>Doctor prep<span>›</span></button>
-                            )}
-                            <button type="button" className="eco2-tool-row" onClick={() => setShowMoreTools(true)}>More tools<span>›</span></button>
+                    <details className="eco3-details__card eco3-details__item" ref={careNearYouDetailsRef}>
+                        <summary>
+                            <span className="eco3-details__title">Care near you</span>
+                            <span className="eco3-details__hint">Find a clinician, HRSA and Planned Parenthood links, and matching virtual care</span>
+                        </summary>
+                        <div className="eco3-details__body">
+                            <CareNearYouPanel
+                                compact
+                                quizResults={careQuizResults}
+                                healthProfile={healthProfile}
+                                userZipCode={userZipCode}
+                                onZipCodeChange={onZipCodeChange}
+                                onOpenProduct={onOpenProduct}
+                                onEditHealthProfile={onEditHealthProfile}
+                            />
                         </div>
-                    </aside>
+                    </details>
 
-                    <main className="eco2-main">
-                        <div className="eco2-main__head">
-                            <h2>Your shelves</h2>
-                            {typeof onGoToSearch === 'function' && (
-                                <button type="button" className="eco2-main__fill-gaps" onClick={() => onGoToSearch('')}>Fill the gaps →</button>
-                            )}
+                    <details className="eco3-details__card eco3-details__item">
+                        <summary>
+                            <span className="eco3-details__title">Why these matches</span>
+                            <span className="eco3-details__hint">Sources and scoring behind your picks</span>
+                        </summary>
+                        <div className="eco3-details__body">
+                            <p>
+                                ayna matches products to what you shared: the needs you picked, plus your life
+                                stage, safety answers and preferences when you give them. Skipped questions never
+                                lower a match; they only make us less certain. When nothing is a strong fit for a
+                                need, that shelf stays short or empty instead of being filled. We never guess why
+                                you have a symptom. Update your profile any time and your picks recompute.
+                            </p>
                         </div>
-                        <EcosystemShelf
-                            hideTitle
-                            myProducts={myProducts}
-                            onOpenProduct={onOpenProduct}
-                            onExploreArea={(area) => onGoToSearch?.(exploreAreaOptions(area))}
-                        />
-                        <div style={{ textAlign: 'center', margin: '1rem 0 2rem' }}>
-                            <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
-                        </div>
-
-                        <h2 className="eco2-main__details-title">Details</h2>
-                        <div className="eco2-details">
-                            {smsCardShown && (
-                                <div className="eco2-details__sms">
-                                    <button
-                                        type="button"
-                                        onClick={handleDismissSmsCard}
-                                        aria-label="Dismiss"
-                                        style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--color-text-muted)' }}
-                                    >
-                                        ✕
-                                    </button>
-                                    {phoneNumberInfo?.is_verified ? (
-                                        <>
-                                            <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text Ayna to get quick health answers</p>
-                                            {AYNA_SMS_NUMBER && (
-                                                <p style={{ margin: '0 0 0.6rem', fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary)' }}>{AYNA_SMS_NUMBER}</p>
-                                            )}
-                                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                                {AYNA_SMS_NUMBER && (
-                                                    <a className="btn btn-outline" href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)} download="Ayna.vcf">
-                                                        Save to Contacts
-                                                    </a>
-                                                )}
-                                                <button type="button" className="btn btn-outline" onClick={handleCopySmsNumber}>
-                                                    {smsCardCopied ? 'Copied!' : 'Copy number'}
-                                                </button>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get Ayna by text. Verify your number</p>
-                                            <button type="button" className="btn btn-primary" onClick={onOpenPhoneVerify}>Verify your number</button>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-
-                            <details className="eco2-details__item" open>
-                                <summary>
-                                    <span>Sync wearable &amp; app data</span>
-                                    <span className="eco2-details__hint">Sharpens your matches. Nothing is shared.</span>
-                                </summary>
-                                <div className="eco2-details__body">
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.85rem' }}>
-                                        {SYNC_SOURCES.map((src) => (
-                                            <button
-                                                key={src.id}
-                                                type="button"
-                                                onClick={() => !isPremium && setShowSyncPaywall(true)}
-                                                title={isPremium ? `Connect ${src.label}` : `${src.label}. Requires ayna Premium`}
-                                                style={{
-                                                    display: 'flex', alignItems: 'center', gap: '0.4rem',
-                                                    padding: '0.4rem 0.85rem',
-                                                    border: '1px solid var(--color-border)',
-                                                    borderRadius: 'var(--radius-pill)',
-                                                    background: 'var(--color-surface)',
-                                                    fontSize: '0.82rem', fontWeight: '500',
-                                                    color: isPremium ? 'var(--color-text-main)' : 'var(--color-text-muted)',
-                                                    cursor: isPremium ? 'default' : 'pointer',
-                                                    opacity: isPremium ? 0.7 : 1,
-                                                }}
-                                            >
-                                                <span>{src.label}</span>
-                                                {!isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· Premium</span>}
-                                                {isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· coming soon</span>}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem', opacity: 0.6, cursor: 'default' }} disabled>
-                                        Coming soon
-                                    </button>
-                                </div>
-                            </details>
-
-                            <details className="eco2-details__item" ref={careNearYouDetailsRef}>
-                                <summary>
-                                    <span>Care near you</span>
-                                    <span className="eco2-details__hint">Find a clinician, HRSA/Planned Parenthood links, and matching telehealth</span>
-                                </summary>
-                                <div className="eco2-details__body">
-                                    <CareNearYouPanel
-                                        compact
-                                        quizResults={quizResults}
-                                        healthProfile={healthProfile}
-                                        userZipCode={userZipCode}
-                                        onZipCodeChange={onZipCodeChange}
-                                        onOpenProduct={onOpenProduct}
-                                        onEditHealthProfile={onEditHealthProfile}
-                                    />
-                                </div>
-                            </details>
-
-                            <details className="eco2-details__item">
-                                <summary>
-                                    <span>Why these matches</span>
-                                    <span className="eco2-details__hint">Sources and scoring behind your shelves</span>
-                                </summary>
-                                <div className="eco2-details__body">
-                                    <p style={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--color-text-main)' }}>
-                                        ayna scores products against your intake answers — stage, goals, sensitivities,
-                                        and life stage — plus published clinical, community, and safety sources per
-                                        product. When the catalog has no strong fit for a concern, ayna searches for and
-                                        adds a real, currently-sold product rather than leaving the shelf empty. Update
-                                        your profile any time and your shelves recompute against the new answers.
-                                    </p>
-                                </div>
-                            </details>
-
-                        </div>
-                    </main>
+                    </details>
+                    {!smsCardShown && <p className="eco3-details__soon eco3-details__soon--solo">Wearable sync is coming.</p>}
                 </div>
 
                 {showMoreTools && (
-                    <div className="eco2-sheet-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowMoreTools(false); }}>
-                        <div className="eco2-sheet">
+                    <div className="eco2-sheet-overlay eco3-sheet-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowMoreTools(false); }}>
+                        <div className="eco2-sheet eco3-sheet" role="dialog" aria-modal="true" aria-labelledby="eco3-sheet-title">
                             <button type="button" className="eco2-sheet__close" onClick={() => setShowMoreTools(false)} aria-label="Close">✕</button>
                             <p className="eco2-sidebar__eyebrow">More tools</p>
-                            <h2 className="eco2-sheet__title">One thing you can do.</h2>
+                            <h2 id="eco3-sheet-title" className="eco2-sheet__title">One thing you can do.</h2>
                             <button
                                 type="button"
                                 className="eco2-tool-row"
@@ -2008,7 +2232,7 @@ export default function MyEcosystem({
                                 <span className="eco2-tool-row__hint">In-network, near you</span>
                             </button>
                             {/* Log a symptom, check an ingredient, and export my data aren't
-                                real features yet anywhere in this app — deliberately not
+                                real features yet anywhere in this app, deliberately not
                                 shown here rather than shipped as dead buttons. */}
                         </div>
                     </div>

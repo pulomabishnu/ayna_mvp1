@@ -4,7 +4,7 @@
  *
  * The in-process `Map` limiters previously used for phone verification do not
  * work on Vercel: each concurrent request can land on a cold isolate with an
- * empty Map, so a "3 per hour" cap became "3 per hour PER ISOLATE" — which an
+ * empty Map, so a "3 per hour" cap became "3 per hour PER ISOLATE", which an
  * attacker controls by simply firing requests in parallel. For SMS that is
  * toll-fraud exposure (any E.164 number was accepted, including premium-rate
  * international ranges), so those call sites now FAIL CLOSED when no durable
@@ -84,7 +84,7 @@ export async function rateLimit(key, { max, windowSec, failClosed = false } = {}
   } else if (failClosed) {
     console.error(
       `[rateLimit] no durable store configured and "${key}" is fail-closed. ` +
-      'Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN — an in-process ' +
+      'Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN, an in-process ' +
       'counter cannot rate limit a serverless function.'
     );
     return { ok: false, retryAfterSec: 60, limiter: 'none-failclosed' };

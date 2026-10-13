@@ -12,7 +12,7 @@ import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 // options on its own (16 raised to 18 on 2026-08-25, adding Pregnancy
 // support and Postpartum recovery per real beta feedback), before any
 // conditions/symptoms/goals-derived concerns are added on top in
-// selectedConcerns() below — a user who picked more than 12 checkboxes (not
+// selectedConcerns() below, a user who picked more than 12 checkboxes (not
 // an edge case; the quiz explicitly says "Pick as many as you want") had the
 // excess truncated with no error, no UI signal, nothing (found live
 // 2026-08-25). Raised to comfortably cover all 18 real options plus some
@@ -65,7 +65,7 @@ function selectedConcerns(intake = {}) {
   const blocked = new Set(['general discomfort', 'other']);
   const concerns = new Set();
 
-  // 1. Explicitly selected by user (plus anything she typed herself —
+  // 1. Explicitly selected by user (plus anything she typed herself
   // customConcerns was collected by HealthProfileEditor and then never read,
   // so user-authored concerns produced no recommendations at all).
   const explicit = [
@@ -118,10 +118,10 @@ function selectedConcerns(intake = {}) {
   if ((intake.menstrualCycle === 'no_menopause' || intake.menstrualCycle === 'irregular_perimenopause') && !hasConcern('menopause'))
     concerns.add('Perimenopause and menopause support');
 
-  // 5. Direct goal → concern mapping — every selected goal gets its own product track
-  // "find safer products" and "reduce chemical exposure" are NOT separate tracks —
+  // 5. Direct goal → concern mapping, every selected goal gets its own product track
+  // "find safer products" and "reduce chemical exposure" are NOT separate tracks
   // they are cross-cutting preferences injected into every prompt instead (see buildPromptForOneConcern).
-  // Each entry: [concern label, dedup keyword] — skip if hasConcern(keyword) already true
+  // Each entry: [concern label, dedup keyword], skip if hasConcern(keyword) already true
   const GOAL_CONCERN = {
     'track my cycle':                                    ['Cycle tracking (apps, wearables, devices)', 'cycle tracking'],
     'learn what ingredients to avoid for my conditions': null,
@@ -161,7 +161,7 @@ function safeHttpsUrl(u) {
 }
 
 // "Never name prescription medications" is already a prompt rule (see SCOPE
-// below), but the model doesn't reliably follow it — tranexamic acid/Lysteda
+// below), but the model doesn't reliably follow it, tranexamic acid/Lysteda
 // kept slipping through despite an explicit prompt line naming it, which is
 // why this backstop exists at all. Rather than add one drug at a time as each
 // one is spotted live, this covers the classes of Rx drug most likely to come
@@ -327,11 +327,11 @@ function enrichRecommendations(recs, requestedConcern = '') {
 }
 
 // DSLD's free-text search returns its best-effort top hit even when nothing
-// in the database is actually a good match — it's search, not verification.
+// in the database is actually a good match, it's search, not verification.
 // Blindly trusting hit #1 (the original implementation) matched "Always
 // Infinity" (a menstrual pad) to "Rhino Infinity 10K" (an unrelated men's
 // supplement) purely because both contain the word "infinity", and that
-// wrong supplement's label photo then rendered as the pad's product image —
+// wrong supplement's label photo then rendered as the pad's product image
 // confirmed live in production. Score each candidate against the query the
 // same way _shopifyProductMatch.js does (token containment, not a plain
 // substring/ES-score check) and reject anything that isn't a genuine match.
@@ -360,7 +360,7 @@ function dsldMatchScore(queryTokens, candidateName) {
 export async function lookupDsldProduct(name) {
   if (!name || name.length < 3) return null;
   try {
-    // WAS `/dsld/v9/label?name=...` — that path returns the API's own HTML
+    // WAS `/dsld/v9/label?name=...`, that path returns the API's own HTML
     // docs page (not JSON) for any request; it silently failed every single
     // call and nobody noticed because the try/catch swallowed it and every
     // caller just treated "no DSLD data" as a normal, expected miss. Found by
@@ -374,7 +374,7 @@ export async function lookupDsldProduct(name) {
     if (!r.ok) return null;
     const data = await r.json();
     // Flat `hits: [...]`, not the ES-style nested `hits.hits` the old code
-    // assumed — also confirmed live, not guessed.
+    // assumed, also confirmed live, not guessed.
     const candidates = Array.isArray(data?.hits) ? data.hits : [];
     if (candidates.length === 0) return null;
 
@@ -394,7 +394,7 @@ export async function lookupDsldProduct(name) {
       }
     }
     // Same bar as the Shopify matcher: the smaller token set must be almost
-    // fully contained in the other, and at least 2 real tokens in common —
+    // fully contained in the other, and at least 2 real tokens in common
     // this is a fuzzy match against a database that will always return
     // SOMETHING, not a search engine, so err toward no image over a wrong one.
     if (!top || bestScore < 0.75 || bestOverlap < 2) return null;
@@ -407,7 +407,7 @@ export async function lookupDsldProduct(name) {
     const ingredients = Array.isArray(hit.allIngredients)
       ? hit.allIngredients.map((i) => i.name).filter(Boolean).slice(0, 8)
       : [];
-    // The label JSON has no image field at all — the real photo lives at a
+    // The label JSON has no image field at all, the real photo lives at a
     // predictable S3 thumbnail path keyed by the same id, confirmed by
     // loading a real label page in a browser and reading its actual <img>
     // src rather than guessing a URL shape.
@@ -489,7 +489,7 @@ async function mapConcurrent(items, fn, limit = 4) {
       try {
         results[i] = await fn(items[i], i);
       } catch (e) {
-        // Backstop only — fn (the per-concern callback below) already has its
+        // Backstop only, fn (the per-concern callback below) already has its
         // own try/catch, so this only fires on a genuine bug in that callback
         // itself. Still returns the same {failed, concern, reason} shape as a
         // normal per-concern failure so it isn't silently dropped from
@@ -512,7 +512,7 @@ function formatSearchContextForConcern(concern, hits) {
     if (h.snippet) lines.push(`     ${h.snippet}`);
     if (h.url) lines.push(`     Source: ${h.url}`);
   });
-  lines.push('Use as discovery signal only — quality bar still applies.');
+  lines.push('Use as discovery signal only, quality bar still applies.');
   return lines.join('\n');
 }
 
@@ -558,42 +558,42 @@ PATIENT PROFILE:
 - TTC: ${intake?.tryingToConceive || 'unknown'}, Birth control: ${intake?.hormonalBirthControl || 'unknown'}${intake?.hormonalBirthControlType ? ` (${intake.hormonalBirthControlType})` : ''}
 - Preferences (hard filters): ${(Array.isArray(intake?.productPreferences) ? intake.productPreferences : []).join(', ') || 'none'}
 - Products currently using: ${(Array.isArray(intake?.currentProducts) ? intake.currentProducts : []).join(', ') || 'none'}
-- Tried and disliked: ${intake?.dislikedProductsText || 'none'} — reason: ${intake?.dislikedReason || 'none'}
+- Tried and disliked: ${intake?.dislikedProductsText || 'none'}, reason: ${intake?.dislikedReason || 'none'}
 - Goals: ${(Array.isArray(intake?.goals) ? intake.goals : []).join(', ') || 'none'}
 - Wearable data: ${intake?.wearableSummary?.text || intake?.healthDataText || 'none'}
 - Ecosystem (already has): ${capIdList(feedback?.ecosystemProductIds)}
 - Hidden products: ${capIdList(feedback?.omittedProductIds)}
 ${knowledgeContext ? `\nCLINICAL KNOWLEDGE:\n${knowledgeContext}` : ''}${searchHits ? '\n' + formatSearchContextForConcern(concern, searchHits) : ''}
 
-SCOPE: Never name a prescription medication as a product recommendation, in any tier or alternative — this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, prescription weight-loss drugs (GLP-1s), and any other drug that legally requires a doctor's prescription in the US, even if it's commonly discussed for this concern. If the best answer to a concern is a prescription drug, say so only inside a telehealth tier's whyItWorks/matchExplanation text (e.g. "a clinician may discuss birth control options") and let the telehealth PRODUCT itself (the platform/service) be the recommendation — never the drug. If a concern requires diagnosis or labs, lead with telehealth. Pain 8+/10: always include telehealth.${saferProductsInstruction}
+SCOPE: Never name a prescription medication as a product recommendation, in any tier or alternative, this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, prescription weight-loss drugs (GLP-1s), and any other drug that legally requires a doctor's prescription in the US, even if it's commonly discussed for this concern. If the best answer to a concern is a prescription drug, say so only inside a telehealth tier's whyItWorks/matchExplanation text (e.g. "a clinician may discuss birth control options") and let the telehealth PRODUCT itself (the platform/service) be the recommendation, never the drug. If a concern requires diagnosis or labs, lead with telehealth. Pain 8+/10: always include telehealth.${saferProductsInstruction}
 
 QUALITY BAR: Every product must have (a) majority positive reviews from real women, (b) clinical/scientific support for the mechanism, (c) established US-available brand. No fabricated brands.
 
-REPUTABILITY RANKING — when multiple products could fit a concern, rank candidates by these three signals and pick the highest-scoring one as the top pick:
+REPUTABILITY RANKING, when multiple products could fit a concern, rank candidates by these three signals and pick the highest-scoring one as the top pick:
 1. Social media & community sentiment: does the product have predominantly positive sentiment from real women on Reddit, TikTok, Instagram, and women's health forums? Products with mixed or predominantly negative sentiment rank lower even if well-known.
 2. Scientific research alignment: does the available research (clinical studies, meta-analyses, published trials) support the specific claims the product makes? A product whose claims are backed by research ranks above one whose claims are unsupported or contradicted by evidence.
 3. Clinician endorsement: do OB/GYNs, women's health NPs, dietitians, or other relevant clinicians publicly recommend or commonly suggest this product to patients?
 A product that scores well on all three (positive community sentiment + research-supported claims + clinician-backed) is always the top pick over one that only scores on one. Never pick a product solely because it is famous or has high marketing spend.
 
-ANTI-HALLUCINATION — this is the most important rule:
+ANTI-HALLUCINATION, this is the most important rule:
 - ONLY recommend brands you are CERTAIN exist and currently sell products in the US market. The test: can you state the brand's real website domain (e.g. thinx.com, pureenapsulations.com)? If you cannot recall the actual domain with confidence, do NOT recommend that brand.
-- Never invent a brand name, product line, or product SKU. If you are uncertain whether a specific product exists, use the brand's main product line name instead (e.g. "Rael Organic Cotton Pads" not a specific SKU you're unsure about). Do not include body-part marketing suffixes in product names — write "Thermacare Heat Wraps" not "Thermacare Heat Wraps Lower Back & Hip". Use the clean brand + product line name only.
-- Do not combine real brand names with invented product lines (e.g. "Nike CyclePad" — Nike doesn't make period products; "Saalt Gua Sha Roller" — Saalt makes period cups/underwear, not gua sha tools). Every brand+product combination must actually exist — the brand must genuinely manufacture or sell that specific product category.
-- If you cannot find a real, confident brand for a track, choose a different product type you DO know a real brand for. Never fall back to a generic description — every recommended product must be a specific, purchasable item from a real brand.
-- NEVER combine two products or services into one entry using "or", "/", or parenthetical alternatives (e.g. "Ro or Everlywell", "Thermacare (or Bed Buddy)"). Each product field must be ONE specific product from ONE specific brand. If you want to offer alternatives, put them in the "alternatives" array — that is what it is for.
+- Never invent a brand name, product line, or product SKU. If you are uncertain whether a specific product exists, use the brand's main product line name instead (e.g. "Rael Organic Cotton Pads" not a specific SKU you're unsure about). Do not include body-part marketing suffixes in product names, write "Thermacare Heat Wraps" not "Thermacare Heat Wraps Lower Back & Hip". Use the clean brand + product line name only.
+- Do not combine real brand names with invented product lines (e.g. "Nike CyclePad", Nike doesn't make period products; "Saalt Gua Sha Roller", Saalt makes period cups/underwear, not gua sha tools). Every brand+product combination must actually exist, the brand must genuinely manufacture or sell that specific product category.
+- If you cannot find a real, confident brand for a track, choose a different product type you DO know a real brand for. Never fall back to a generic description, every recommended product must be a specific, purchasable item from a real brand.
+- NEVER combine two products or services into one entry using "or", "/", or parenthetical alternatives (e.g. "Ro or Everlywell", "Thermacare (or Bed Buddy)"). Each product field must be ONE specific product from ONE specific brand. If you want to offer alternatives, put them in the "alternatives" array, that is what it is for.
 - Well-known, safe brands for common categories: heat packs (Thermacare, Bed Buddy, Sunbeam), organic pads (Rael, The Honest Company, Cora, L. Organic), period underwear (Thinx, Knix, Saalt, Modibodi), PCOS supplements (Thorne, Pure Encapsulations, Jarrow, Garden of Life), telehealth (Allara Health, Ro, Nurx, Maven Clinic, Midi Health).
 
 PERSONALIZATION:
-- Product preferences are HARD FILTERS — if she prefers organic/fragrance-free, every physical product must meet that.
-- FSA/HSA prioritization: if "FSA/HSA" in the profile above is not "not provided", prioritize FSA/HSA-eligible products (physical products/supplements sold as FSA/HSA-eligible in the US) when choosing between otherwise-comparable candidates for a track, and say so briefly in whyItWorks when it's a real factor in the pick. This is a real stated financial constraint, not a soft preference — weight it accordingly — but don't force a clearly worse product into the top spot just because it's eligible when a genuinely better-fit option isn't.
+- Product preferences are HARD FILTERS, if she prefers organic/fragrance-free, every physical product must meet that.
+- FSA/HSA prioritization: if "FSA/HSA" in the profile above is not "not provided", prioritize FSA/HSA-eligible products (physical products/supplements sold as FSA/HSA-eligible in the US) when choosing between otherwise-comparable candidates for a track, and say so briefly in whyItWorks when it's a real factor in the pick. This is a real stated financial constraint, not a soft preference, weight it accordingly, but don't force a clearly worse product into the top spot just because it's eligible when a genuinely better-fit option isn't.
 - Never recommend a brand she listed as disliked.
-- whyItWorks must be in plain everyday language — no medical jargon. Explain: (1) simply how the product works (mechanism in lay terms), (2) why it fits her specific profile (condition, pain level, preference), (3) what makes it the top pick over the alternatives. A user should read this and immediately understand why you chose THIS product for HER over everything else available.
-- CURRENTLY-USED BRAND COMPARISON: If "Products currently using" lists a brand in the same category as your top product recommendation, you MUST include one sentence in whyItWorks explaining what specifically makes your recommended product a better fit than the brand she already uses — whether it is ingredient quality, clinical evidence strength, organic certification, lower cost, better fit for her conditions, or another concrete reason. Be direct: "Compared to [brand she uses], [recommended product] offers [specific advantage] which matters for [her condition/preference]." Also include her currently-used brand as one of the alternatives so she can still choose it.
+- whyItWorks must be in plain everyday language, no medical jargon. Explain: (1) simply how the product works (mechanism in lay terms), (2) why it fits her specific profile (condition, pain level, preference), (3) what makes it the top pick over the alternatives. A user should read this and immediately understand why you chose THIS product for HER over everything else available.
+- CURRENTLY-USED BRAND COMPARISON: If "Products currently using" lists a brand in the same category as your top product recommendation, you MUST include one sentence in whyItWorks explaining what specifically makes your recommended product a better fit than the brand she already uses, whether it is ingredient quality, clinical evidence strength, organic certification, lower cost, better fit for her conditions, or another concrete reason. Be direct: "Compared to [brand she uses], [recommended product] offers [specific advantage] which matters for [her condition/preference]." Also include her currently-used brand as one of the alternatives so she can still choose it.
 - Recommend specific product names (e.g. "Thinx Hiphugger Period Underwear"), not company names. Exception: telehealth platforms and apps.
 - Never recommend products she has hidden.
 - Never recommend tranexamic acid products.
 
-PRODUCT SPECIFICITY RULES — critical for quality:
+PRODUCT SPECIFICITY RULES, critical for quality:
 - The physical product tier MUST be a health/wellness product specifically designed for this concern. Do NOT use generic consumer items (water bottles, blankets, heating pads for non-cramp concerns) or period collection products (pads, cups, tampons, period underwear) for any concern other than Period Care.
 - The telehealth/app tier MUST use the platform most relevant to this specific concern. Match the platform to the concern: UTI → Wisp, Nurx, or HealthTap; mental health → Brightside, Headway, or Talkspace; sleep → sleep coaching apps like Sleepio or Rise; skin/hair → Curology or Hims & Hers Derm; gut/vaginal health → Evvy or Wisp; sexual health → Planned Parenthood Direct or HealthySexual; cycle tracking → Natural Cycles, Clue, or Oura; PCOS → Allara Health. Use Allara Health ONLY for PCOS-specific concerns, not as a default for unrelated concerns.
 - Do not recommend generic hydration (water bottles) or lifestyle items as health products. Every product must be a purpose-built health, wellness, or medical product.
@@ -602,7 +602,7 @@ TASK: Generate recommendations for this ONE concern only: "${concern}"${concernF
 
 Generate exactly 3 solution tracks for this concern: (1) supplement or wellness product, (2) physical device specifically designed for this concern, (3) app or telehealth service specifically designed for this concern. If a track isn't clinically relevant, substitute another supplement or digital tool rather than using an unrelated product. Each track: 1 top product + 2 brief alternatives.
 
-Return ONLY valid JSON — exactly this shape:
+Return ONLY valid JSON, exactly this shape:
 {
   "recommendations": [
     {
@@ -752,7 +752,7 @@ async function handleRequest(req, res) {
     concerns,
     async (concern, idx) => {
       if (budgetExhausted()) {
-        console.warn(`[llm-recs] skipping concern ${idx + 1}/${concerns.length} — function budget exhausted`);
+        console.warn(`[llm-recs] skipping concern ${idx + 1}/${concerns.length}, function budget exhausted`);
         return { failed: true, concern, reason: 'function_budget_exhausted' };
       }
       const searchHits = searchResults?.[concern] || null;
@@ -761,7 +761,7 @@ async function handleRequest(req, res) {
         const out = await callWithFallback(order, {
           system: 'Return a single valid JSON object only. No markdown code fences.',
           prompt,
-          // The OpenAI fallback must keep response_format: json_object — it is
+          // The OpenAI fallback must keep response_format: json_object, it is
           // what forces parseable output from that provider.
           jsonMode: true,
           // Raised from 5000: the schema requires 9 product objects per concern,
@@ -771,7 +771,7 @@ async function handleRequest(req, res) {
           signal: deadline,
         });
         if (out.truncated) {
-          console.warn(`[llm-recs] concern ${idx + 1} hit max_tokens — output truncated`);
+          console.warn(`[llm-recs] concern ${idx + 1} hit max_tokens, output truncated`);
         }
         const parsed = tryParseJsonCandidate(out.text);
         console.log(`[llm-recs] concern ${idx + 1}/${concerns.length} | provider: ${out.provider} | bytes: ${out.text.length} | parsed: ${!!parsed}`);
@@ -779,7 +779,7 @@ async function handleRequest(req, res) {
         return { failed: true, concern, reason: 'unparseable_response' };
       } catch (e) {
         // Carry the actual reason back to the client instead of just the
-        // concern's name — a live incident (2026-08-22: "Hormone balance" and
+        // concern's name, a live incident (2026-08-22: "Hormone balance" and
         // "Gut and vaginal health" failed after ~20s) turned out to be
         // undiagnosable after the fact because nothing but this server
         // console.error captured *why*, and Vercel's CLI log retention didn't
@@ -790,22 +790,22 @@ async function handleRequest(req, res) {
       }
     },
     // Each of the client's NUM_BATCHES=4 invocations (src/components/MyEcosystem.jsx)
-    // fires as a SEPARATE, genuinely-parallel HTTP request — Vercel doesn't
+    // fires as a SEPARATE, genuinely-parallel HTTP request, Vercel doesn't
     // serialize them, and they share one Anthropic account's rate limit.
     // A prior comment here sized this concurrency (3) against ONE invocation's
     // own token usage (~33K TPM) and called that "comfortably under" a ~50K TPM
-    // ceiling — true in isolation, but wrong for the actual traffic pattern:
+    // ceiling, true in isolation, but wrong for the actual traffic pattern:
     // all 4 invocations can fire their first calls within the same second, so
     // real peak load is up to 4x that estimate (~132K TPM), not ~33K. That
     // mismatch is the most likely cause of the "some concerns failed" partial-
     // failure pattern users hit around the ~20s mark (a burst of concurrent
     // 429s that retry+backoff can absorb SOME but not all of within the 28s
     // per-call timeout). Lowered to 2: peak combined load drops to ~4x22K =
-    // ~88K TPM — still not a hard guarantee (there's no cross-invocation
+    // ~88K TPM, still not a hard guarantee (there's no cross-invocation
     // coordination without a real distributed limiter, which is a bigger
     // change), but a meaningfully smaller blast radius for the same reason a
     // single invocation's own concurrency was capped in the first place.
-    // Separately — and this matters more than the exact number here — the
+    // Separately, and this matters more than the exact number here, the
     // OpenAI fallback this code path assumes exists is NOT actually
     // configured (OPENAI_API_KEY is unset in this project's Vercel env as of
     // 2026-08-22), so Anthropic is a single point of failure regardless of
@@ -814,7 +814,7 @@ async function handleRequest(req, res) {
   );
 
   const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';
-  // Every concern now returns a truthy object (success OR failure — see above,
+  // Every concern now returns a truthy object (success OR failure, see above,
   // failures carry a reason instead of being null) so `.filter(Boolean)` alone
   // would wrongly count failures as successes. Discriminate on the shape.
   const succeeded = perConcernResults.filter((r) => r && !r.failed);
@@ -826,7 +826,7 @@ async function handleRequest(req, res) {
 
   // Enrich PER CONCERN so each entry is stamped with the concern it was actually
   // requested for. Previously flatMap discarded that mapping and the code trusted
-  // whatever label the model echoed back — a shortened label broke the client's
+  // whatever label the model echoed back, a shortened label broke the client's
   // exact-match sort and mis-bucketed the section.
   const recs = succeeded.flatMap((r) => {
     const entries = Array.isArray(r.parsed?.recommendations) ? r.parsed.recommendations : [];
@@ -836,7 +836,7 @@ async function handleRequest(req, res) {
   });
 
   if (!recs.length) {
-    // Nothing usable — hand the build back so the user can retry. Without this
+    // Nothing usable, hand the build back so the user can retry. Without this
     // a failed generation permanently consumed their one lifetime build.
     if (claimed) await releaseEcosystemBuild(admin, user.id, buildId);
     return res.status(502).json({
@@ -854,8 +854,8 @@ async function handleRequest(req, res) {
   }
 
   // DSLD verification is applied to the TIER products, which is what the UI
-  // actually renders. It previously only rewrote `entry.topProduct` — a separate
-  // object reference that MyEcosystem never reads (it renders `tier.product`) —
+  // actually renders. It previously only rewrote `entry.topProduct`, a separate
+  // object reference that MyEcosystem never reads (it renders `tier.product`)
   // so every NIH round trip was pure latency and the verified brand, label URL
   // and ingredient list were all discarded.
   const applyDsld = (product, dsld) => ({
@@ -872,7 +872,7 @@ async function handleRequest(req, res) {
     safety: {
       ...product.safety,
       materials: dsld.ingredients.slice(0, 5).join(', ') || product.safety?.materials || '',
-      // NOT a recall clearance — DSLD is a label database. /api/fda-recall is
+      // NOT a recall clearance, DSLD is a label database. /api/fda-recall is
       // the only thing allowed to make a recall statement.
       recalls: '',
     },
@@ -909,7 +909,7 @@ async function handleRequest(req, res) {
     // notice instead of silently showing fewer sections than were asked for.
     failedConcerns,
     // Same list, but with WHY each one failed (provider+status, or a reason
-    // code like 'unparseable_response'/'function_budget_exhausted') — so a
+    // code like 'unparseable_response'/'function_budget_exhausted'), so a
     // future incident is diagnosable from this response / the browser
     // console alone, without needing server log access (which wasn't
     // available when this exact bug was first reported).

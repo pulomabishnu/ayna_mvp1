@@ -5,15 +5,16 @@ import { Browser } from '@capacitor/browser';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { CONSENT_VERSION, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
 import { resetChipPosition } from '../utils/askAynaChipPosition.js';
+import { recordAppSignIn } from '../../utils/badges.js';
 
-// Real Supabase identity for the mobile app — separate from
+// Real Supabase identity for the mobile app, separate from
 // useEcosystemSession.js's local app-data cache (products, quiz answers),
 // which stays device-local for now; this hook is only about who's signed
 // in. Every call here mirrors src/components/AuthGate.jsx's calls exactly
 // (same options shapes, same consent metadata, same confirmation-email
 // target), so mobile authenticates through the exact same Supabase
 // project/flow as desktop instead of a second, parallel auth system.
-// aynahealth.co, not window.location.origin — a confirmation email has to
+// aynahealth.co, not window.location.origin, a confirmation email has to
 // link somewhere that works for the person reading it, not wherever this
 // build happens to be running (localhost, a preview URL). Matches
 // AuthGate.jsx's own hardcoded target exactly.
@@ -22,7 +23,7 @@ const EMAIL_CONFIRM_REDIRECT = 'https://www.aynahealth.co/confirmed';
 // Google's OAuth redirect leaves the app entirely and comes back on
 // /auth/callback, which main.jsx always renders via the DESKTOP App.jsx
 // (it picks App vs MobileApp purely by URL path, before any React code
-// runs) — this flag is how AuthCallback.jsx knows to send that redirect
+// runs), this flag is how AuthCallback.jsx knows to send that redirect
 // back to /mobile-preview instead of running desktop's own post-auth
 // navigation, and how MobileApp.jsx then knows this particular mount is
 // "returning from a sign-in that just completed," not just an ordinary
@@ -33,7 +34,7 @@ export const MOBILE_OAUTH_PENDING_KEY = 'ayna_mobile_oauth_pending';
 const NATIVE_OAUTH_REDIRECT = 'co.aynahealth.app://auth/callback';
 
 // On native, point email confirmation at the exact same custom-scheme URL as
-// Google/Apple sign-in — handleNativeOAuthUrl below already parses any
+// Google/Apple sign-in, handleNativeOAuthUrl below already parses any
 // co.aynahealth.app://auth/callback hit for access/refresh tokens and calls
 // setSession() with no regard for which flow produced them, so reusing that
 // URL means email confirmation lands back in THIS app's own auth state, no
@@ -45,7 +46,7 @@ function emailConfirmRedirect() {
   return Capacitor.isNativePlatform() ? NATIVE_OAUTH_REDIRECT : EMAIL_CONFIRM_REDIRECT;
 }
 
-// SigninScreen listens for this — a failure inside handleNativeOAuthUrl
+// SigninScreen listens for this, a failure inside handleNativeOAuthUrl
 // otherwise only reaches console.error, which is invisible on a real device
 // with no debugger attached and looks identical to just landing back on the
 // sign-in screen for no reason.
@@ -57,7 +58,7 @@ export function useSupabaseAuth() {
   const [user, setUser] = useState(null);
   // Starts false (nothing to wait for) when there's no client at all, so
   // the effect below never needs to set state synchronously in that branch
-  // — it only ever calls setAuthLoading from the getSession() callback.
+  //, it only ever calls setAuthLoading from the getSession() callback.
   const [authLoading, setAuthLoading] = useState(() => Boolean(getSupabaseClient()));
 
   useEffect(() => {
@@ -75,8 +76,16 @@ export function useSupabaseAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // "Got the app" badge: any signed-in user in the app counts, recorded once
+  // in her account metadata (ayna_app_signed_in_at) and on this device.
   useEffect(() => {
-    // Native (iOS or Android) only — this catches the co.aynahealth.app://
+    // Only the installed app earns "Got the app": the web /mobile-preview runs this
+    // same code but is not the app.
+    if (user?.id && Capacitor.isNativePlatform()) recordAppSignIn(getSupabaseClient(), user);
+  }, [user]);
+
+  useEffect(() => {
+    // Native (iOS or Android) only, this catches the co.aynahealth.app://
     // custom-scheme redirect Browser.open leaves the OS to hand back to the
     // app; the web build never gets this URL at all (AuthCallback.jsx
     // handles its own /auth/callback route instead).
@@ -134,7 +143,7 @@ export function useSupabaseAuth() {
       }
 
       // This native flow never passes through AuthCallback.jsx (that only
-      // renders for the web/preview OAuth redirect) — it's the one place
+      // renders for the web/preview OAuth redirect), it's the one place
       // that would otherwise silently skip writing the consent stashed
       // before the redirect by signInWithGoogle below.
       await flushPendingConsent(supabase);
@@ -162,7 +171,8 @@ export function useSupabaseAuth() {
     };
   }, []);
 
-  async function signUpWithPassword({ email, password, firstName }) {
+  // `metadata`: extra sign-up answers (e.g. heard_about) saved with the name.
+  async function signUpWithPassword({ email, password, firstName, metadata = {} }) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
     const consentAt = new Date().toISOString();
@@ -172,6 +182,9 @@ export function useSupabaseAuth() {
       options: {
         emailRedirectTo: emailConfirmRedirect(),
         data: {
+          ...metadata,
+          // Main's admin tools read heard_about_us; the website writes both.
+          ...(metadata.heard_about ? { heard_about_us: metadata.heard_about } : {}),
           first_name: firstName,
           full_name: firstName,
           consent_given_at: consentAt,
@@ -186,7 +199,7 @@ export function useSupabaseAuth() {
       throw dup;
     }
     // A live session here means this project's "Confirm email" setting is
-    // off — no confirmation email is coming, and onAuthStateChange above
+    // off, no confirmation email is coming, and onAuthStateChange above
     // has already picked up the new session.
     return { needsConfirmation: !data.session };
   }
@@ -209,7 +222,7 @@ export function useSupabaseAuth() {
     if (error) throw error;
   }
 
-  async function signInWithGoogle() {
+  async function signInWithGoogle({ mode = 'signin' } = {}) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
 
@@ -219,11 +232,11 @@ export function useSupabaseAuth() {
       // Storage unavailable.
     }
 
-    // Stashed before EITHER redirect path below, same as AuthGate.jsx's
-    // handleGoogle — Supabase's Google provider auto-provisions a real
-    // account for any unseen address the instant this redirect completes,
-    // with no consent checkboxes shown at all in mobile's "sign in" mode.
-    stashPendingConsent();
+    // Stashed before EITHER redirect path below, but ONLY when she came from
+    // the sign-up flow, where the consent checkboxes were actually shown.
+    // Stashing on plain sign-in used to record consent she never ticked;
+    // a brand-new OAuth account from sign-in now gets ConsentGate instead.
+    if (mode === 'save') stashPendingConsent();
 
     if (Capacitor.isNativePlatform()) {
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -267,9 +280,9 @@ export function useSupabaseAuth() {
   // Required alongside Google per App Store Review Guideline 4.8: an app
   // offering a third-party login must offer Sign in with Apple as an
   // equivalent option. Same native OAuth treatment as signInWithGoogle
-  // above — appUrlOpen's handleNativeOAuthUrl doesn't care which provider
+  // above, appUrlOpen's handleNativeOAuthUrl doesn't care which provider
   // produced the redirect, so no changes needed there.
-  async function signInWithApple() {
+  async function signInWithApple({ mode = 'signin' } = {}) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
 
@@ -279,7 +292,7 @@ export function useSupabaseAuth() {
       // Storage unavailable.
     }
 
-    stashPendingConsent();
+    if (mode === 'save') stashPendingConsent();
 
     if (Capacitor.isNativePlatform()) {
       const { data, error } = await supabase.auth.signInWithOAuth({

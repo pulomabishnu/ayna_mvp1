@@ -1,24 +1,24 @@
 import { useCallback, useState } from 'react';
 
-// Persists the mock "signed-in" state — ecosystem membership, quiz answers,
-// display name — so refreshing the app (or relaunching the native shell)
-// doesn't wipe it back to a blank slate. There's no real Supabase session
-// wired into the mobile UI yet (that's a separate, larger integration), so
-// this is a local stand-in for "remember me" using the same localStorage
-// pattern as useSavedProducts/useThemeMode/useRoutine.
+// Local cache for immediate rendering and anonymous onboarding. Signed-in
+// account hydration and durable Supabase writes live in MobileApp.jsx.
 const SESSION_KEY = 'ayna_ecosystem_session_v1';
 
 const DEFAULT_SESSION = {
   hasEcosystem: false,
   myProducts: [],
   lastQuizAnswers: null,
-  // Empty, not 'You' — this used to be a baked-in literal, which meant it
+  pendingIntakeSync: false,
+  // Empty, not 'You', this used to be a baked-in literal, which meant it
   // was always truthy and MobileApp.jsx's `userName || <real fallback>`
   // could never actually reach the real Supabase name for a returning
   // Google sign-in. "You" is purely a last-resort display fallback now,
   // applied at each render site (ProfileFlow, AccountInfoScreen, etc.),
   // not baked into the stored value itself.
   userName: '',
+  // "Not for me": { [productId]: true }. Passed to the matching engine as
+  // omitted so these never come back in recommendations, seeds or swaps.
+  omittedProducts: {},
 };
 
 function loadSession() {
@@ -30,7 +30,9 @@ function loadSession() {
       hasEcosystem: Boolean(parsed?.hasEcosystem),
       myProducts: Array.isArray(parsed?.myProducts) ? parsed.myProducts : [],
       lastQuizAnswers: parsed?.lastQuizAnswers && typeof parsed.lastQuizAnswers === 'object' ? parsed.lastQuizAnswers : null,
+      pendingIntakeSync: parsed?.pendingIntakeSync === true,
       userName: typeof parsed?.userName === 'string' ? parsed.userName : '',
+      omittedProducts: parsed?.omittedProducts && typeof parsed.omittedProducts === 'object' && !Array.isArray(parsed.omittedProducts) ? parsed.omittedProducts : {},
     };
   } catch {
     return DEFAULT_SESSION;
@@ -41,7 +43,7 @@ function persistSession(session) {
   try {
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   } catch {
-    // Best-effort — same as savedProductsStore, a full/unavailable
+    // Best-effort, same as savedProductsStore, a full/unavailable
     // localStorage shouldn't crash the app.
   }
 }

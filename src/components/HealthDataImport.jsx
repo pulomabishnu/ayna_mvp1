@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Disclaimer from './Disclaimer';
 import { loadHealthProfile, saveHealthProfile, parseFhirBundleText } from '../utils/healthDataProfile';
 import { summarizeAppleHealthExport } from '../utils/parseAppleHealthExport';
 
@@ -247,7 +246,6 @@ export default function HealthDataImport({ onUpdate }) {
           </span>
         )}
       </div>
-      <Disclaimer compact style={{ marginTop: '1rem' }} />
     </div>
   );
 }

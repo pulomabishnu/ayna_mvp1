@@ -1,93 +1,101 @@
 import React from 'react';
 import HowItWorksFunnel from './HowItWorksFunnel';
+import { getSampleFunnel, SAMPLE_PROFILE_CHIPS } from '../utils/sampleFunnel';
+import { InfoPage, InfoSection } from './InfoPage';
+
+const SIGNALS = ['Published research', 'Clinical guidance', 'Clinician input', 'Community experience'];
 
 export default function HowItWorks({ onBack, onViewSources }) {
+  const funnel = getSampleFunnel();
   const openSources = () => {
     if (onViewSources) onViewSources();
     else if (onBack) onBack();
   };
 
   return (
-    <div className="hiw-mockup">
-      <div className="hiw-mockup__inner">
-        <div className="hiw-mockup__kicker">HOW IT WORKS</div>
-
-        <h1 className="hiw-mockup__title">No mystery box.</h1>
-
-        <p className="hiw-mockup__intro">
-          ayna filters the open market against your profile, then against published research.
-          <br className="hiw-desktop-break" />
-          Anything that fails a step never reaches your shop.
-        </p>
-
-        <div className="hiw-mockup__steps">
-          <article className="hiw-mockup__step">
-            <div className="hiw-mockup__stepno">STEP 01</div>
-            <h2>You tell us</h2>
-            <p>Stage of life, goals, sensitivities, city.</p>
-
-            <div className="hiw-mockup__profile-card">
-              Postpartum · 8 weeks · sensitive skin · NYC
+    <InfoPage
+      eyebrow="How it works"
+      title="No mystery box."
+      lede="ayna filters the open market against your profile, then against published research. Anything that fails a step never reaches your shop."
+      onBack={onBack}
+      width="wide"
+    >
+      <InfoSection
+        eyebrow="The method"
+        title="Four steps, one example."
+        intro="The numbers below are a sample profile run live on today's catalog, not your results."
+      >
+        <ol className="ay-info-steps">
+          <li className="ay-info-card ay-info-step">
+            <span className="ay-info__pill">Step 01</span>
+            <h3 className="ay-info-step__title">You tell us</h3>
+            <p className="ay-info-step__body">Stage of life, goals, sensitivities, city.</p>
+            <div className="ay-info-step__demo">
+              <span className="ay-info-example">Sample profile</span>
+              <div className="ay-info-chip-row">
+                {SAMPLE_PROFILE_CHIPS.map((t) => <span key={t} className="ay-info-chip">{t}</span>)}
+              </div>
             </div>
-          </article>
-
-          <article className="hiw-mockup__step">
-            <div className="hiw-mockup__stepno">STEP 02</div>
-            <h2>We scan the market</h2>
-            <p>Everything pulled in, then cut down.</p>
-
-            <div className="hiw-mockup__metric">
-              <span>Pulled in</span>
-              <strong>3,140</strong>
+          </li>
+          <li className="ay-info-card ay-info-step">
+            <span className="ay-info__pill">Step 02</span>
+            <h3 className="ay-info-step__title">We scan the market</h3>
+            <p className="ay-info-step__body">Everything pulled in, then cut down.</p>
+            <div className="ay-info-step__demo">
+              <span className="ay-info-example">Sample profile</span>
+              <div className="ay-info-metric"><span>In the catalog</span><strong>{funnel.catalog.toLocaleString()}</strong></div>
+              <div className="ay-info-metric"><span>Matched to this profile</span><strong>{funnel.matched}</strong></div>
             </div>
-
-            <div className="hiw-mockup__metric">
-              <span>Relevant to you</span>
-              <strong>212</strong>
+          </li>
+          <li className="ay-info-card ay-info-step">
+            <span className="ay-info__pill">Step 03</span>
+            <h3 className="ay-info-step__title">Evidence check</h3>
+            <p className="ay-info-step__body">Checked against published guidance. Fails are dropped.</p>
+            <div className="ay-info-step__demo">
+              <div className="ay-info-chip-row">
+                {['NIH research', 'ACOG guidance', 'CDC data'].map((t) => <span key={t} className="ay-info-chip">{t}</span>)}
+              </div>
             </div>
-          </article>
-
-          <article className="hiw-mockup__step">
-            <div className="hiw-mockup__stepno">STEP 03</div>
-            <h2>Evidence check</h2>
-            <p>Checked against published guidance.</p>
-
-            <div className="hiw-mockup__evidence">NIH research</div>
-            <div className="hiw-mockup__evidence">ACOG guidance</div>
-            <div className="hiw-mockup__evidence">CDC data</div>
-            <div className="hiw-mockup__dropped">Fails → dropped</div>
-          </article>
-
-          <article className="hiw-mockup__step">
-            <div className="hiw-mockup__stepno">STEP 04</div>
-            <h2>Your ecosystem</h2>
-            <p>What's left is ranked, with the reason attached.</p>
-
-            <div className="hiw-mockup__ecosystem-card">
-              <strong>14</strong>
-              <span>products, each with its match reason</span>
+          </li>
+          <li className="ay-info-card ay-info-step ay-info-step--done">
+            <span className="ay-info__pill">Step 04</span>
+            <h3 className="ay-info-step__title">Your ecosystem</h3>
+            <p className="ay-info-step__body">What's left is ranked, with the reason attached.</p>
+            <div className="ay-info-step__demo">
+              <span className="ay-info-example">Sample profile</span>
+              <div className="ay-info-metric ay-info-metric--big"><strong>{funnel.strong}</strong><span>strong matches, each with its match reason</span></div>
             </div>
-          </article>
-        </div>
+          </li>
+        </ol>
+      </InfoSection>
 
-        <div className="hiw-mockup__funnel-section">
-          <h2>The narrowing down, in one picture</h2>
+      <InfoSection eyebrow="The funnel" title="The narrowing down, in one picture.">
+        <div className="ay-info-card ay-info-card--pad">
           <HowItWorksFunnel />
         </div>
+      </InfoSection>
 
-        <div className="hiw-mockup__disclaimer">
-          <div>
-            <h2>ayna is not a doctor, and never pretends to be.</h2>
-            <p>
-              Summaries are AI-written from cited sources and clinician input.
-            </p>
+      <InfoSection eyebrow="What shapes a match" title="Relevant, not paid-first.">
+        <div className="ay-info-split">
+          <div className="ay-info-card ay-info-card--pad">
+            <h3 className="ay-info-card__title">Signals we look at</h3>
+            <div className="ay-info-chip-row">
+              {SIGNALS.map((s) => <span key={s} className="ay-info-chip">{s}</span>)}
+            </div>
           </div>
-
-          <button type="button" onClick={openSources}>
-            Read our sources
-          </button>
+          <div className="ay-info-card ay-info-card--pad">
+            <h3 className="ay-info-card__title">What never counts</h3>
+            <p className="ay-info__body">Sponsorship is never a match input. Partner brands can be shown higher in Browse, always with a label.</p>
+          </div>
         </div>
-      </div>
-    </div>
+      </InfoSection>
+
+      <InfoSection eyebrow="Sources" title="See where it comes from.">
+        <div className="ay-info-card ay-info-card--pad ay-info-cta">
+          <p className="ay-info__body">Summaries are AI-written from cited sources and clinician input.</p>
+          <button type="button" className="ay-info-btn" onClick={openSources}>Read our sources</button>
+        </div>
+      </InfoSection>
+    </InfoPage>
   );
 }

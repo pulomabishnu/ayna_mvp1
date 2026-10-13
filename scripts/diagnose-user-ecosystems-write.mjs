@@ -5,7 +5,7 @@
  * service role so RLS can't hide the real error. If this fails, the error
  * code tells us exactly what's broken (missing unique constraint for
  * ON CONFLICT, RLS-adjacent issue, etc). Inserts one throwaway test row for
- * the given user and deletes it again immediately after — never leaves
+ * the given user and deletes it again immediately after, never leaves
  * anything behind.
  *
  *   node scripts/diagnose-user-ecosystems-write.mjs <email>
@@ -58,13 +58,13 @@ const { error: upsertError } = await admin
   );
 
 if (upsertError) {
-  console.log('❌ UPSERT FAILED — this is the same failure the app hits on every save:\n');
+  console.log('❌ UPSERT FAILED, this is the same failure the app hits on every save:\n');
   console.log(`  code:    ${upsertError.code}`);
   console.log(`  message: ${upsertError.message}`);
   console.log(`  details: ${upsertError.details || '(none)'}`);
   console.log(`  hint:    ${upsertError.hint || '(none)'}\n`);
   if (upsertError.code === '42P10') {
-    console.log('This means there is no unique/primary-key constraint on (user_id, product_id) —');
+    console.log('This means there is no unique/primary-key constraint on (user_id, product_id)');
     console.log('the exact thing supabase/user_ecosystems.sql\'s `primary key (user_id, product_id)`');
     console.log('is supposed to set up. Open Supabase dashboard -> SQL Editor and run:\n');
     console.log('  alter table public.user_ecosystems add primary key (user_id, product_id);\n');
@@ -74,7 +74,7 @@ if (upsertError) {
   process.exit(1);
 }
 
-console.log('✅ upsert succeeded — the table write itself works fine as service role.\n');
+console.log('✅ upsert succeeded, the table write itself works fine as service role.\n');
 
 const { error: deleteError } = await admin
   .from('user_ecosystems')

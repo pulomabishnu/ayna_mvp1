@@ -2,7 +2,7 @@ import { safeFetch } from './_ssrfSafeFetch.js';
 
 /**
  * Many DTC/indie brand storefronts run Shopify, which publicly exposes the
- * full catalog at /products.json with no auth — no scraping, no paid API.
+ * full catalog at /products.json with no auth, no scraping, no paid API.
  * Given a page URL on the brand's site, this tries that origin's
  * /products.json, fuzzy-matches the product title, and returns the first
  * product image if a confident match is found. Returns null (never throws)
@@ -22,7 +22,7 @@ function normalize(s) {
  * Containment score: overlap divided by the SMALLER of the two token sets.
  * A plain overlap/queryTokens.length ratio misses real matches where the
  * store's actual title is terser than the AI's more descriptive name (e.g.
- * query "Saalt Menstrual Cup Regular" vs. catalog title "Saalt Cup" — every
+ * query "Saalt Menstrual Cup Regular" vs. catalog title "Saalt Cup", every
  * title token is in the query, but only 2 of the query's 4 tokens are in
  * the title, so a query-length-denominator score never reaches a sane
  * threshold). Scoring against the smaller set catches that case in either
@@ -74,7 +74,7 @@ export async function matchShopifyProduct(pageUrl, productName, brand) {
 
   // Strip the brand's own tokens out of the query first, so the score
   // reflects only the words that actually distinguish this product from the
-  // rest of the brand's catalog — otherwise ANY product from the same store
+  // rest of the brand's catalog, otherwise ANY product from the same store
   // can win purely on brand-name overlap.
   const brandTokens = new Set(normalize(brand).split(' ').filter(Boolean));
   const queryNorm = normalize(productName);
@@ -98,7 +98,7 @@ export async function matchShopifyProduct(pageUrl, productName, brand) {
   }
 
   // Require the smaller of {query, title} token set to be (almost) fully
-  // contained in the other, AND at least 2 real tokens in common — a lone
+  // contained in the other, AND at least 2 real tokens in common, a lone
   // brand-word match (e.g. just "saalt") scoring 1.0 by coincidence isn't
   // enough to trust. This is a fuzzy match, not a search engine, so err
   // toward "no image" over attaching a wrong product's photo.

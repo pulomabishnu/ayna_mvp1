@@ -4,40 +4,50 @@
  * Matched against brand+name, case-insensitively, with word boundaries so e.g. "oboo"
  * doesn't accidentally match inside an unrelated word.
  *
- * Emptied 2026-08-24, refilled 2026-08-25: Neycher signed a real, official partnership —
+ * Emptied 2026-08-24, refilled 2026-08-25: Neycher signed a real, official partnership
  * confirmed by Aditi. The other 3 brands that were here before the empty (winx, oboo, lola)
  * are still just in discussion, not re-added. Add a brand here only once its partnership is
  * actually contracted, not before.
  *
- * Added 2026-08-27: Connect Pelvic Floor Fitness — confirmed affiliate partnership.
+ * Added 2026-08-27: Connect Pelvic Floor Fitness, confirmed affiliate partnership.
  *
- * Added 2026-09-07: VIO2 — confirmed affiliate partnership.
+ * Added 2026-09-07: VIO2, confirmed affiliate partnership.
  *
- * Added 2026-09-07: Proov — confirmed affiliate partnership.
+ * Added 2026-09-07: Proov, confirmed affiliate partnership.
  *
- * Added 2026-09-07: Elitone — confirmed affiliate partnership.
+ * Added 2026-09-07: Elitone, confirmed affiliate partnership.
  *
- * Added 2026-09-07: My Pelvic Bra — confirmed affiliate partnership.
+ * Added 2026-09-07: My Pelvic Bra, confirmed affiliate partnership.
  *
- * Added 2026-09-11: BUNI — confirmed brand partnership. Direct brand
+ * Added 2026-09-11: BUNI, confirmed brand partnership. Direct brand
  * affiliate link pending; current product purchase links use Amazon Associates.
  *
- * Added 2026-09-11: LiM Method — confirmed affiliate partnership. Ayna affiliate
+ * Added 2026-09-11: LiM Method, confirmed affiliate partnership. Ayna affiliate
  * links use the ref=Ayna_Health parameter supplied by the partnership team.
  *
- * Added 2026-09-23: Winx Health, SootheHer, gina — confirmed brand partnerships.
+ * Added 2026-09-23: Winx Health, SootheHer, gina, confirmed brand partnerships.
  *
- * Added 2026-09-23: LOLA — confirmed affiliate partnership (was still "in
+ * Added 2026-09-23: LOLA, confirmed affiliate partnership (was still "in
  * discussion" per the note above as of 2026-08-25; contracted since).
  *
- * Liv Labs (Pippa Resistance Spring) — NOT a confirmed partner. Its two
+ * Liv Labs (Pippa Resistance Spring), NOT a confirmed partner. Its two
  * products stay in the catalog (src/data/brands.js) so they still surface
  * in Discovery/search, but deliberately left out of this allowlist (no
  * "ayna Partner" badge) until a partnership is actually contracted. Distinct
- * from LiM Method above despite the similar name — different company
+ * from LiM Method above despite the similar name, different company
  * (livlabsfitness.com vs. limmethod.com).
  */
 export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/, /\bproov\b/, /\belitone\b/, /\bmy pelvic bra\b/, /\bbuni\b/, /\blim method\b/, /\bwinx health\b/, /\bsootheher\b/, /\bgina\b/, /\blola\b/];
+
+/**
+ * Display names for the contracted partners above, in the same order, each
+ * paired with its matching pattern. Used by the "Our brand partners" strip
+ * (src/components/PartnerStrip.jsx). Keep in sync with PARTNER_BRAND_PATTERNS.
+ */
+export const PARTNER_BRANDS = [
+  'Neycher', 'Connect Pelvic Floor Fitness', 'VIO2', 'Proov', 'Elitone', 'My Pelvic Bra',
+  'BUNI', 'LiM Method', 'Winx Health', 'SootheHer', 'gina', 'LOLA',
+].map((name, i) => ({ name, pattern: PARTNER_BRAND_PATTERNS[i] }));
 
 export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
@@ -45,7 +55,7 @@ export function isPartnerBrandItem(item) {
 }
 
 // Brands where "personally spoken with" would overstate how the partnership
-// was vetted — these get the softer "personally vetted" phrasing instead.
+// was vetted, these get the softer "personally vetted" phrasing instead.
 const VETTED_ONLY_PATTERNS = [/\bconnect pelvic floor fitness\b/, /\bmy pelvic bra\b/, /\blim method\b/];
 
 const DEFAULT_PARTNER_DISCLOSURE =

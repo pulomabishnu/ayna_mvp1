@@ -26,7 +26,7 @@ export function parseProductIdFromPath(pathname) {
 
 /**
  * True when a click should be handled as an in-app navigation rather than
- * left to the browser's default <a> behavior — i.e. a plain left click with
+ * left to the browser's default <a> behavior, i.e. a plain left click with
  * no modifier keys held. Cmd/Ctrl/Shift/middle-click (button 1) should still
  * open the link normally (new tab/window), matching real link semantics.
  */

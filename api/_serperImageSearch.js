@@ -4,7 +4,7 @@
  *
  * Everything else in the resolution chain (Shopify catalog match, og:image
  * scraping, DSLD) only works when a brand's own site is reachable and
- * scrapable — a large share of real brands (Kimberly-Clark, P&G, Walmart,
+ * scrapable, a large share of real brands (Kimberly-Clark, P&G, Walmart,
  * several sex-tech DTC brands) actively block bots, and AI-generated search
  * results have no catalog entry to hand-fix an image into at all. A real
  * image search index is the only thing that reliably finds a photo for an
@@ -25,7 +25,7 @@ import { isLikelyNonProductImageUrl } from './_ogImageFetch.js';
 const SEARCH_TIMEOUT_MS = 5000;
 
 // A hard ceiling on how many Serper credits this app will spend in a single
-// day, regardless of how many products need resolving — cheap insurance
+// day, regardless of how many products need resolving, cheap insurance
 // against a bug or traffic spike draining the account unexpectedly. Well
 // above realistic organic demand (this only fires on a cache miss after
 // every free resolver has already failed) but far below "the whole free
@@ -37,14 +37,14 @@ async function dailyBudgetOk() {
   return rl.ok;
 }
 
-// Serper returns each result's actual pixel dimensions — a far more
+// Serper returns each result's actual pixel dimensions, a far more
 // reliable "is this a real photo, not an icon" signal than guessing from a
 // filename. A logo/icon thumbnail is reliably small on both axes; real
 // product photography from a retailer or brand site is not.
 const MIN_DIMENSION_PX = 200;
 
 // Google Image Search always returns its best-effort top hits, even when
-// nothing in the index is a real match — the exact same failure mode fixed
+// nothing in the index is a real match, the exact same failure mode fixed
 // for DSLD earlier (see lookupDsldProduct in llm-recommendations.js: "Always
 // Infinity" matched "Rhino Infinity 10K" on the shared word "infinity").
 // Caught live here too: querying "Happi Pelvic Floor App" (a catalog entry
@@ -55,7 +55,7 @@ const MIN_DIMENSION_PX = 200;
 //
 // A first pass at scoring the whole query ("<brand> <name>") against the
 // title as one undifferentiated word bag was NOT enough: "Happy Floor..."
-// shares "pelvic"/"floor"/"app" with the query — 3 of 4 tokens — purely
+// shares "pelvic"/"floor"/"app" with the query, 3 of 4 tokens, purely
 // because those are generic category words any pelvic-floor-app
 // description would contain, clearing the same 0.75 threshold proven safe
 // for Shopify/DSLD even with ZERO actual brand-name match ("happi" vs
@@ -70,7 +70,7 @@ const MIN_DIMENSION_PX = 200;
 // competitor's listing too.
 //
 // Once the brand IS confirmed, name-token overlap is used only to RANK
-// between brand-confirmed candidates, not as a second hard gate — caught
+// between brand-confirmed candidates, not as a second hard gate, caught
 // live: "Kegel8 Pelvic Floor Exerciser" (the catalog's own generic
 // description) has real, brand-confirmed image results (Kegel8's actual
 // products: "Ultra 20 V2 Electronic Pelvic Toner", "Tight & Tone
@@ -79,14 +79,14 @@ const MIN_DIMENSION_PX = 200;
 // enough words with Kegel8's actual commercial product names. Requiring
 // near-full name overlap on top of an already-confirmed brand match was
 // double-guarding against the same risk (wrong result) the brand gate
-// alone already closes — and rejected real, correct results as a result.
+// alone already closes, and rejected real, correct results as a result.
 // With no brand to check at all, the original strict threshold is still
 // the only signal available and stays in place.
-// Crude singularization (strip a lone trailing "s", never "ss") — real
+// Crude singularization (strip a lone trailing "s", never "ss"), real
 // listings routinely phrase the same product as singular/plural
 // differently ("Crystal Wand" vs "Crystal Pleasure Wands"). Without this,
 // a genuinely correct match (chakrubs.com's own listing for exactly this
-// product) scored 2/3 — below threshold — purely because "wand" and
+// product) scored 2/3, below threshold, purely because "wand" and
 // "wands" didn't match as exact strings, a false NEGATIVE on top of the
 // false-POSITIVE risk this scoring already guards against.
 function singularize(t) {
@@ -149,11 +149,11 @@ export async function lookupSerperImage(name, brand) {
     const images = Array.isArray(data?.images) ? data.images : [];
 
     // Two independent tracks: brand-confirmed candidates are ranked purely
-    // by name-overlap (no minimum required — the brand match is already
+    // by name-overlap (no minimum required, the brand match is already
     // the safety gate), and any candidate that never had a brand to check
     // against falls back to the original strict threshold. A candidate
-    // with a brand to check that DOESN'T match it is dropped entirely —
-    // never falls through to the strict track — since trusting name-
+    // with a brand to check that DOESN'T match it is dropped entirely
+    // never falls through to the strict track, since trusting name-
     // overlap alone once we know a brand mismatch exists is exactly the
     // Happi failure mode.
     let brandGatedBest = null;
@@ -176,7 +176,7 @@ export async function lookupSerperImage(name, brand) {
       const { score, overlap } = titleMatchScore(nameTokens, titleTokens);
 
       if (brandTokens.length > 0) {
-        if (!brandTokens.some((t) => titleSet.has(t))) continue; // wrong brand — drop, never falls back
+        if (!brandTokens.some((t) => titleSet.has(t))) continue; // wrong brand, drop, never falls back
         if (score > brandGatedScore) {
           brandGatedScore = score;
           brandGatedBest = url;
@@ -192,7 +192,7 @@ export async function lookupSerperImage(name, brand) {
     }
 
     if (brandGatedBest) return brandGatedBest;
-    // Same threshold already proven for Shopify catalog matching and DSLD —
+    // Same threshold already proven for Shopify catalog matching and DSLD
     // only reached when there was no brand at all to gate on, so this is
     // the sole signal available; err toward no image over a wrong one.
     if (noBrandBest && noBrandScore >= 0.75 && noBrandOverlap >= 2) return noBrandBest;

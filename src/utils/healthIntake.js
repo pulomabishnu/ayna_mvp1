@@ -1,3 +1,5 @@
+import { canonicalize, needIdForOption } from '../matching/ontology.js';
+
 export const FLOW_LEVELS = ['light', 'medium', 'heavy', 'very heavy'];
 
 export const CYCLE_STATUSES = ['yes', 'no', 'irregular'];
@@ -73,8 +75,8 @@ export const PREFERRED_PRODUCT_TYPES = [
 ];
 
 export const INSURANCE_TYPES = [
-  { value: 'employer_ppo', label: 'Insurance from my job (PPO — can see any doctor)' },
-  { value: 'employer_hmo', label: 'Insurance from my job (HMO — pick a main doctor first)' },
+  { value: 'employer_ppo', label: 'Insurance from my job (PPO, can see any doctor)' },
+  { value: 'employer_hmo', label: 'Insurance from my job (HMO, pick a main doctor first)' },
   { value: 'marketplace_aca', label: 'Insurance I bought myself (ACA / healthcare.gov plan)' },
   { value: 'medicaid', label: 'Medicaid (free or low-cost insurance)' },
   { value: 'medicare', label: 'Medicare (insurance for people 65+)' },
@@ -108,7 +110,7 @@ export const GOALS = [
 ];
 
 // Shared between the quiz (HealthIntakeForm.jsx) and the profile editor
-// (HealthProfileEditor.jsx) — the editor used to re-implement these two
+// (HealthProfileEditor.jsx), the editor used to re-implement these two
 // fields as free-text inputs holding the literal word "Yes"/"yes" instead
 // of a real select, easy to enter garbage into and easy to misread (found
 // live, 2026-08-24 bug bash). One shared vocabulary now, not two that can
@@ -145,25 +147,53 @@ export const CONCERN_AREAS = [
 
 export const OTHER_CONCERN_OPTION = 'Other (type your own)';
 
+// Legacy "frustration" labels are still read by older screens (care links,
+// articles, check-ins). UI categories are navigation, not causes (ASK2), so
+// a frustration is only derived when the answer NAMES that exact thing:
+// "Gut and vaginal health" is not "Recurrent UTIs", "Hormone balance" and
+// "Skin and hair" are not "Hormonal bloating", "Sexual health" is not
+// "Pelvic pain", and "Night sweats" is not "Menopause symptoms".
 const PRIMARY_CONCERN_TO_FRUSTRATION = {
   'Period care (pads, tampons, cups, discs, underwear)': 'Leaks & staining',
   'Cramp and pain relief (devices, supplements, heat)': 'Painful cramps',
-  'Hormone balance (supplements, lifestyle)': 'Hormonal bloating',
+  'Hormonal bloating': 'Hormonal bloating',
   'PCOS management (supplements, telehealth, apps)': 'PCOS symptoms',
   'Endometriosis management (supplements, devices, telehealth)': 'Endometriosis',
   'Fertility and conception (supplements, trackers, telehealth)': 'Fertility / TTC',
-  'Pregnancy support (prenatal vitamins, trackers, comfort)': 'General discomfort',
-  'Postpartum recovery (nursing, healing, comfort)': 'General discomfort',
+  'Pregnancy support (prenatal vitamins, trackers, comfort)': 'Pregnancy',
+  'Postpartum recovery (nursing, healing, comfort)': 'Postpartum recovery',
   'UTI support': 'Recurrent UTIs',
-  'STI support': 'General discomfort',
-  'Gut and vaginal health (probiotics, pH balance)': 'Recurrent UTIs',
   'Perimenopause and menopause support': 'Menopause symptoms',
-  'Sexual health and comfort (lubricants, pelvic floor)': 'Pelvic pain',
-  'Mental health and cycle mood support': 'General discomfort',
-  'Sleep and energy': 'General discomfort',
-  'Skin and hair (hormone-related)': 'Hormonal bloating',
-  'Telehealth and provider matching': 'General discomfort',
 };
+
+// Current "What needs support?" answers, one specific need each. Only exact
+// equivalents get a legacy label; everything else stays unlabeled.
+const SUPPORT_ITEM_TO_FRUSTRATION = {
+  'Heavy periods': 'Heavy flow',
+  'Cramps or period pain': 'Painful cramps',
+  'Cycle-related bloating': 'Hormonal bloating',
+  'Irregular periods': 'Irregular cycles',
+  'Recurrent UTI-like symptoms': 'Recurrent UTIs',
+  'PCOS support': 'PCOS symptoms',
+  'Pelvic pain': 'Pelvic pain',
+  'Menopause-related body changes': 'Menopause symptoms',
+  'Endometriosis support': 'Endometriosis',
+  'Trying to conceive': 'Fertility / TTC',
+  'Fertility support': 'Fertility / TTC',
+  'Prenatal or pregnancy support': 'Pregnancy',
+  'Pregnancy-related discomfort': 'Pregnancy',
+  'Postpartum recovery': 'Postpartum recovery',
+  'Bladder leakage or incontinence': 'Urinary incontinence',
+};
+// The same, by engine need id (for typed concerns).
+const NEED_TO_FRUSTRATION = {
+  'period.heavy': 'Heavy flow', 'pain.menstrual_cramp': 'Painful cramps', 'bloating.cycle_related': 'Hormonal bloating',
+  'cycle.irregular': 'Irregular cycles', 'urinary.recurrent_uti': 'Recurrent UTIs', 'condition_support.pcos': 'PCOS symptoms',
+  'pain.pelvic': 'Pelvic pain', 'menopause.body_changes': 'Menopause symptoms', 'condition_support.endometriosis': 'Endometriosis',
+  'fertility.ttc': 'Fertility / TTC', 'fertility.support': 'Fertility / TTC', 'pregnancy.prenatal': 'Pregnancy', 'pregnancy.discomfort': 'Pregnancy',
+  'postpartum.recovery': 'Postpartum recovery', 'urinary.incontinence': 'Urinary incontinence',
+};
+const STAGE_TO_FRUSTRATION = { perimenopause: 'Menopause symptoms', menopause: 'Menopause symptoms', postmenopause: 'Menopause symptoms' };
 
 const GOAL_TO_FRUSTRATION = {
   'find safer products': 'General discomfort',
@@ -174,22 +204,22 @@ const GOAL_TO_FRUSTRATION = {
   'build my health routine': 'General discomfort',
 };
 
+/**
+ * Typed concerns -> legacy frustration labels, through the matching
+ * ontology (specific needs and explicit life stages only). "vaginal",
+ * "gut", "pain" or "cycle" alone no longer map to UTIs, cramps or
+ * irregular cycles.
+ */
 function inferFrustrationsFromFreeTextConcerns(textItems = []) {
-  const joined = textItems.join(' ').toLowerCase();
   const out = new Set();
-  if (/heavy|bleeding a lot|flooding/.test(joined)) out.add('Heavy flow');
-  if (/leak|stain|spot through|bleed through/.test(joined)) out.add('Leaks & staining');
-  if (/cramp|pain/.test(joined)) out.add('Painful cramps');
-  if (/bloat/.test(joined)) out.add('Hormonal bloating');
-  if (/irregular|cycle/.test(joined)) out.add('Irregular cycles');
-  if (/pcos/.test(joined)) out.add('PCOS symptoms');
-  if (/endo/.test(joined)) out.add('Endometriosis');
-  if (/fertility|conceive|ttc/.test(joined)) out.add('Fertility / TTC');
-  if (/uti|vaginal|gut|ph/.test(joined)) out.add('Recurrent UTIs');
-  if (/sti|std|sexual infection/.test(joined)) out.add('General discomfort');
-  if (/menopause|perimenopause/.test(joined)) out.add('Menopause symptoms');
-  if (/pelvic|sex|comfort|vaginismus|vulvodynia/.test(joined)) out.add('Pelvic pain');
-  if (/provider|doctor|telehealth/.test(joined)) out.add('General discomfort');
+  for (const text of textItems) {
+    const c = canonicalize(text, { kinds: ['need', 'condition', 'life_stage'] });
+    if (!c.canonical_id || c.confidence < 0.85 || c.contextual_only) continue;
+    if (c.kind === 'need' && NEED_TO_FRUSTRATION[c.canonical_id]) out.add(NEED_TO_FRUSTRATION[c.canonical_id]);
+    if (c.kind === 'condition' && c.canonical_id === 'pcos') out.add('PCOS symptoms');
+    if (c.kind === 'condition' && c.canonical_id === 'endometriosis') out.add('Endometriosis');
+    if (c.kind === 'life_stage' && STAGE_TO_FRUSTRATION[c.canonical_id]) out.add(STAGE_TO_FRUSTRATION[c.canonical_id]);
+  }
   return [...out];
 }
 
@@ -198,10 +228,24 @@ export function mapIntakeToLegacyQuizProfile(intake) {
   const concerns = Array.isArray(intake?.primaryConcerns)
     ? intake.primaryConcerns
     : (intake?.primaryConcern ? [intake.primaryConcern] : []);
-  concerns.forEach((c) => {
-    if (PRIMARY_CONCERN_TO_FRUSTRATION[c]) frustrations.add(PRIMARY_CONCERN_TO_FRUSTRATION[c]);
-  });
+  const support = Array.isArray(intake?.supportSelections) ? intake.supportSelections.filter(Boolean) : [];
+  if (support.length) {
+    // Current intake: each answer is its own need. The broad concern areas
+    // generated from it (buildSnapshot) are UI groupings and are not used.
+    support.forEach((item) => {
+      if (SUPPORT_ITEM_TO_FRUSTRATION[item]) frustrations.add(SUPPORT_ITEM_TO_FRUSTRATION[item]);
+      else if (!needIdForOption(item)) inferFrustrationsFromFreeTextConcerns([item]).forEach((f) => frustrations.add(f));
+    });
+    (Array.isArray(intake?.lifeStageSelections) ? intake.lifeStageSelections : []).forEach((stage) => {
+      if (/perimenopause|menopause|post-menopause/i.test(stage)) frustrations.add('Menopause symptoms');
+    });
+  } else {
+    concerns.forEach((c) => {
+      if (PRIMARY_CONCERN_TO_FRUSTRATION[c]) frustrations.add(PRIMARY_CONCERN_TO_FRUSTRATION[c]);
+    });
+  }
   (intake?.customConcerns || []).forEach((txt) => {
+    if (support.includes(txt)) return;
     inferFrustrationsFromFreeTextConcerns([txt]).forEach((f) => frustrations.add(f));
   });
   (intake?.goals || []).forEach((g) => {
@@ -211,10 +255,12 @@ export function mapIntakeToLegacyQuizProfile(intake) {
   if ((intake?.conditions || []).includes('endometriosis')) frustrations.add('Endometriosis');
   if ((intake?.flowLevel || '').toLowerCase().includes('heavy')) frustrations.add('Heavy flow');
   if ((intake?.symptoms || []).includes('cramps')) frustrations.add('Painful cramps');
-  if ((intake?.symptoms || []).includes('bloating')) frustrations.add('Hormonal bloating');
+  // The generated "bloating" token covers digestive bloating too; only the
+  // first quiz's cycle-symptom list (no current support answers) means cycle bloating.
+  if (!support.length && (intake?.symptoms || []).includes('bloating')) frustrations.add('Hormonal bloating');
 
   return {
-    age: intake?.age || '',
+    age: intake?.age == null || String(intake.age).trim() === '' || Number(intake.age) === 0 ? null : intake.age,
     frustrations: [...frustrations],
     preference: intake?.productPreferences || [],
     currentUse: intake?.preferredProductTypes || [],

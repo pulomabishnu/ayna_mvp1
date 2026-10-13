@@ -1,6 +1,6 @@
 // Thin client for /api/notification-preferences and the existing
 // /api/phone-verify-send /-confirm routes, all of which authenticate via a
-// real Supabase JWT (see api/_usageLimit.js's verifyUser) — never a
+// real Supabase JWT (see api/_usageLimit.js's verifyUser), never a
 // client-supplied user id. Uses the same shared Supabase client singleton
 // as the rest of the app (src/utils/supabaseClient.js) so this picks up
 // whatever real session already exists, the moment mobile has one; it does

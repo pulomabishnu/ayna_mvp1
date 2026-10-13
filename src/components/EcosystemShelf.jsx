@@ -3,9 +3,9 @@ import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 /**
- * "Four shelves, built for you." — mockup board 1e, the alternate/organized
+ * "Four shelves, built for you.", mockup board 1e, the alternate/organized
  * view of the same ecosystem EcosystemBubbles (1d) draws as a circle. Same
- * area grouping, same real data — just a row-per-area layout instead of a
+ * area grouping, same real data, just a row-per-area layout instead of a
  * ring, for anyone who reads a list faster than a diagram.
  */
 
@@ -53,7 +53,7 @@ export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExplo
     <section className="eco-shelf mockup-page">
       {!hideTitle && <h2 className="eco-shelf__title">Your shelves.</h2>}
       <p className="eco-shelf__lede">
-        Each row is an area of care. Swap anything, or leave a shelf empty and we'll keep watching for a match.
+        Each row is an area of care. Tap anything to see why it&apos;s here.
       </p>
 
       <div className="eco-shelf__rows">
@@ -86,17 +86,18 @@ export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExplo
           );
         })}
 
-        {gaps.map((area) => (
-          <div key={area.key} className="eco-shelf__row eco-shelf__row--gap">
-            <div className="eco-shelf__row-label">
-              <span className="eco-shelf__row-eyebrow eco-shelf__row-eyebrow--muted">{area.label}</span>
-              <span className="eco-shelf__row-count eco-shelf__row-count--muted">Not tracked</span>
+        {gaps.length > 0 && (
+          <div className="eco-shelf__addrow">
+            <span className="eco-shelf__addrow-label">Add a shelf</span>
+            <div className="eco-shelf__addrow-chips">
+              {gaps.map((area) => (
+                <button key={area.key} type="button" className="eco-shelf__addchip" onClick={() => onExploreArea?.(area)}>
+                  + {area.label}
+                </button>
+              ))}
             </div>
-            <button type="button" className="eco-shelf__row-prompt" onClick={() => onExploreArea?.(area)}>
-              See matches →
-            </button>
           </div>
-        ))}
+        )}
       </div>
     </section>
   );

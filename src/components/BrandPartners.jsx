@@ -3,9 +3,10 @@ import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
+import { InfoPage } from './InfoPage';
 
 /**
- * Brands — the partnership page.
+ * Brands, the partnership page.
  *
  * This replaced the old Brands page, which was a general Ayna waitlist form
  * plus a list of unreleased startups to join waitlists for. Neither is what
@@ -17,7 +18,7 @@ import { ProductImageFallback } from './ProductTileImage';
  * rather than only src/data/brands.js.
  *
  * Emptied 2026-08-24 (no contract signed yet), refilled 2026-08-25: Neycher
- * signed a real, official partnership — confirmed by Aditi. No logo file has
+ * signed a real, official partnership, confirmed by Aditi. No logo file has
  * been dropped at public/brands/neycher.png yet, so BrandMark below falls
  * back to a text wordmark until one is added; that's an existing, working
  * fallback, not a bug.
@@ -55,7 +56,7 @@ const PARTNERS = [
   },
   {
     // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
-    // missing from this page until 2026-09-23 — folded in alongside the
+    // missing from this page until 2026-09-23, folded in alongside the
     // Winx/SootheHer/gina additions below.
     brand: 'LiM Method',
     logo: 'https://www.limmethod.com/cdn/shop/files/IMG_2821.jpg?v=1696450654&width=1946',
@@ -79,7 +80,7 @@ const PARTNERS = [
     logo: '',
     url: 'https://pelvic-bra.myshopify.com/nlbs3u',
     blurb:
-      'A discreet, adjustable compression garment for pelvic heaviness, pressure, bulging, and leakage — worn during daily activity, not a corrective device.',
+      'A discreet, adjustable compression garment for pelvic heaviness, pressure, bulging, and leakage, worn during daily activity, not a corrective device.',
   },
   {
     // Confirmed partner since 2026-09-11 (see src/utils/partnerBrands.js) but
@@ -92,7 +93,7 @@ const PARTNERS = [
   },
   {
     // Confirmed partner since 2026-09-23 (see src/utils/partnerBrands.js).
-    // No single shared affiliate link — each LOLA product below has its own.
+    // No single shared affiliate link, each LOLA product below has its own.
     brand: 'LOLA',
     logo: '',
     url: 'https://mylola.com/',
@@ -120,7 +121,7 @@ const PARTNERS = [
     blurb:
       'Hormone-free vaginal moisturizing glides and applicator refills for intimate comfort.',
   },
-  // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner — its
+  // Liv Labs (Pippa Resistance Spring) is NOT yet a confirmed partner, its
   // two products stay in the catalog (src/data/brands.js) so they still
   // surface in Discovery/search, but intentionally left off this page and
   // out of partnerBrands.js's allowlist until a partnership is confirmed.
@@ -149,20 +150,15 @@ function BrandMark({ partner }) {
 
 export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem }) {
   return (
-    <section className="brands">
-      <div className="mockup-page brands__head">
-        <div className="brands__kicker">Partnerships</div>
-        <h1 className="brands__title">
-          {PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
-        </h1>
-        <p className="brands__lede">
-          {PARTNERS.length > 0
-            ? "Partner brands may receive added visibility in Browse, but partnerships never affect personalized matching or recommendations."
-            : "Something exciting is brewing — check back soon. Partner brands may receive added visibility in Browse, but partnerships never affect personalized matching or recommendations."}
-        </p>
-      </div>
-
-      <div className="mockup-page">
+    <InfoPage
+      eyebrow="Partnerships"
+      title={PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
+      lede={PARTNERS.length > 0
+        ? 'Partner brands may get added visibility in Browse. Partnerships never affect your personal matches or recommendations.'
+        : 'Check back soon. Partner brands may get added visibility in Browse. Partnerships never affect your personal matches or recommendations.'}
+      width="wide"
+    >
+      <div className="ay-info-partners">
         {PARTNERS.map((partner) => {
           const products = ALL_PRODUCTS.filter((p) => p.brand === partner.brand);
           return (
@@ -227,8 +223,8 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
           );
         })}
 
-        {PARTNERS.length > 0 && <p className="brands__more">More coming soon</p>}
+        {PARTNERS.length > 0 && <p className="ay-info-partners__more">More coming soon</p>}
       </div>
-    </section>
+    </InfoPage>
   );
 }

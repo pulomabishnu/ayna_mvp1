@@ -3,7 +3,7 @@
 -- NOTE ON SENSITIVITY: message_body holds the full plaintext of every health
 -- question a user texts and every answer Ayna sends. The file header in
 -- api/sms-webhook.js says "never the phone number itself", which is true of the
--- columns — but the message bodies are the more sensitive data, and SMS is
+-- columns, but the message bodies are the more sensitive data, and SMS is
 -- unencrypted in transit by design. Retention is bounded below.
 create table if not exists public.sms_conversations (
   id uuid primary key default gen_random_uuid(),
@@ -45,7 +45,7 @@ on public.sms_conversations for select
 to authenticated using (auth.uid() = user_id);
 
 -- The webhook writes with the service-role key (Twilio's request carries no
--- Supabase session), and the service role bypasses RLS — so no INSERT policy is
+-- Supabase session), and the service role bypasses RLS, so no INSERT policy is
 -- needed for it. Relying on the implicit bypass is fragile though: swapping in a
 -- user-scoped client would make every write fail SILENTLY and the whole
 -- conversation log would go dark with no error.

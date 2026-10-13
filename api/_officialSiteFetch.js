@@ -3,22 +3,22 @@ import { safeFetch } from './_ssrfSafeFetch.js';
 /**
  * Fetch and extract readable text from a product's official site, so chat
  * answers about a specific branded product can be grounded ONLY in verified
- * content instead of the model's general/training knowledge — general
+ * content instead of the model's general/training knowledge, general
  * knowledge about a specific product can be wrong or outdated, and that's a
  * real liability risk for a health app. No paid API involved: this is a
  * plain HTTP fetch, not a search API call.
  *
- * Also used for a product's brand FAQ page (product.faqUrl) — same function,
+ * Also used for a product's brand FAQ page (product.faqUrl), same function,
  * same trust model, just a different field/section in the prompt.
  *
- * SECURITY: `url` here is CLIENT-SUPPLIED — product-chat.js takes the whole
- * product object from the request body, not a server-side catalog lookup —
+ * SECURITY: `url` here is CLIENT-SUPPLIED, product-chat.js takes the whole
+ * product object from the request body, not a server-side catalog lookup
  * so this is a genuine SSRF surface, guarded by the shared safeFetch() check
  * (resolved-IP validation + no redirects) in ./_ssrfSafeFetch.js.
  */
 
 const MAX_TEXT_LEN = 3000;
-const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour, in-memory only — best-effort, resets on cold start.
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour, in-memory only, best-effort, resets on cold start.
 const CACHE_MAX_ENTRIES = 500;
 
 const cache = new Map();

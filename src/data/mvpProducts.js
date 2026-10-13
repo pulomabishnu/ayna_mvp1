@@ -1,5 +1,5 @@
 // ============================================================
-// MVP Focus Products — UTIs, organic cotton, sustainable, PCOS,
+// MVP Focus Products, UTIs, organic cotton, sustainable, PCOS,
 // endometriosis, hormonal health, contraception, pelvic floor,
 // heavy menstrual bleeding, perimenopause/menopause
 // ============================================================
@@ -93,7 +93,7 @@ export const MVP_PHYSICAL = [
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=cystex&restrict_sr=1', text: 'Reddit r/HealthyHooha: Cystex', summary: 'Community discussions on OTC UTI symptom relief.' }] }
     }
   },
-  // ─── ORGANIC COTTON (Cora brand — products listed separately) ─
+  // ─── ORGANIC COTTON (Cora brand, products listed separately) ─
   {
     id: 'p-cora-organic-pads',
     name: 'Cora Organic Pads',
@@ -108,13 +108,13 @@ export const MVP_PHYSICAL = [
     whereToBuy: ['Cora.life', 'Target', 'Amazon'],
     url: 'https://cora.life/',
     // Cora rebranded away from "Organic Pads" naming (their live catalog
-    // now calls this "The Peace-of-Mind Pad") — the live resolver's fuzzy
+    // now calls this "The Peace-of-Mind Pad"), the live resolver's fuzzy
     // name match can't bridge that gap, so hardcoding their verified
     // current photo directly rather than leaving this on a letter avatar.
     // Confirmed live at cora.life/products.json before using.
     image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_POM_Pads_Regular_1000X1000_9e847653-7318-46fb-9fdf-a714e0931031.png?v=1787080092',
     summary: '100% organic cotton pads from Cora. Subscription or one-time. B-Corp, plastic-free packaging.',
-    safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No formal recalls. Note: a 2024 independent lab investigation (Mamavation, using an EPA-certified lab) found organic fluorine — an indicator of PFAS "forever chemicals" — at roughly 30 ppm in a Cora organic-cotton liner product, despite the brand\'s organic marketing. The same investigation found PFAS indicators in about half of tested pad/liner brands, including several other organic ones, while some organic brands tested clean.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.', opinionAlerts: 'Since the 2024 PFAS lab testing news, some shoppers have expressed concern about organic-marketed pads generally, including Cora, and a subset have shifted toward brands that tested clean.' },
+    safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No formal recalls. Note: a 2024 independent lab investigation (Mamavation, using an EPA-certified lab) found organic fluorine, an indicator of PFAS "forever chemicals", at roughly 30 ppm in a Cora organic-cotton liner product, despite the brand\'s organic marketing. The same investigation found PFAS indicators in about half of tested pad/liner brands, including several other organic ones, while some organic brands tested clean.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.', opinionAlerts: 'Since the 2024 PFAS lab testing news, some shoppers have expressed concern about organic-marketed pads generally, including Cora, and a subset have shifted toward brands that tested clean.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Organic cotton reduces exposure to dyes and fragrances that can irritate sensitive skin.',
@@ -146,7 +146,7 @@ export const MVP_PHYSICAL = [
     url: 'https://cora.life/',
     // Cora rebranded away from "Organic Tampons" naming (live catalog now
     // splits this into "The Comfort Fit Tampon" [applicator] and "The
-    // Applicator-Free Tampon") — hardcoding the applicator version's
+    // Applicator-Free Tampon"), hardcoding the applicator version's
     // verified current photo, since applicator is the more common default
     // for a generic "tampons" listing. Confirmed live before using.
     image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_Applicator_Tampons_V3_1000X1000_7f00668b-f217-4371-b8a1-1c3b4ab16741.png?v=1787190945',
@@ -177,23 +177,24 @@ export const MVP_PHYSICAL = [
     type: 'physical',
     internal: false,
     healthFunctions: ['supplement'],
-    tags: ['pcos', 'irregular', 'fertility', 'bloating'],
+    evidenceStrength: 'limited',
+    tags: ['pcos'],
     price: '$25 for 30 servings',
     userRating: null,
     ratingNote: 'Amazon reviews may be incentivized (RateBud analysis). See Community tab for details.',
     incentivizedReviewSites: [{ site: 'Amazon', source: 'RateBud analysis' }],
     whereToBuy: ['Amazon', 'WholesomeStory.com'],
     image: 'https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Inositol_Front_Panel_V.A_Rev_1_3_25.png?v=1742858533',
-    summary: '40:1 ratio of myo-inositol and D-chiro inositol. Commonly used for PCOS, cycle regularity, and metabolic support.',
+    summary: '40:1 ratio of myo-inositol and D-chiro-inositol. People use inositol for PCOS, but clinical benefits are uncertain. The 2023 international PCOS guideline considers inositol experimental for infertility.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Inositols', recalls: 'No recalls.', allergens: 'Vegan', opinionAlerts: 'Generally positive reception on Reddit r/PCOS for cycle regularity.', sideEffects: 'Generally well tolerated at typical doses. Occasional mild nausea, gas, or headache reported, especially when starting.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-    doctorOpinion: 'Inositol supplementation is often recommended in PCOS for insulin sensitivity and cycle regulation.',
+    doctorOpinion: 'The international PCOS guideline says benefits are limited or uncertain and recommends discussing complementary therapies with a healthcare professional.',
     communityReview: 'Community discussions on Reddit r/PCOS note cycle regularization after several months of use.',
     ingredients: 'Myo-inositol, D-chiro inositol.',
-    effectiveness: 'Evidence supports use in PCOS for metabolic and cycle benefits.',
-    badges: ['PCOS Focus', 'Research Backed'],
-    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS: inositol', summary: 'Community discussions on inositol for PCOS.' }] } }
+    effectiveness: 'Evidence for specific clinical outcomes in PCOS is limited and uncertain; do not rely on it as fertility treatment.',
+    badges: ['PCOS Focus'],
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://academic.oup.com/jcem/article/108/10/2447/7242360', text: '2023 international PCOS guideline', summary: 'Guideline recommendations for inositol and other complementary therapies.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS: inositol', summary: 'Community discussions on inositol for PCOS.' }] } }
   },
   {
     id: 'p-spearmint-pcos',
@@ -203,20 +204,21 @@ export const MVP_PHYSICAL = [
     type: 'physical',
     internal: false,
     healthFunctions: ['supplement'],
+    evidenceStrength: 'limited',
     tags: ['pcos', 'organic'],
     price: '$8–15',
     userRating: 4.2,
     whereToBuy: ['Amazon', 'Whole Foods', 'iHerb'],
     image: 'https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint-CAN-FF-eng-P103350-01_2.png?v=1775664934',
-    summary: 'Spearmint may help lower free testosterone in PCOS. Caffeine-free herbal tea, typically brewed twice daily.',
+    summary: 'Caffeine-free spearmint tea. A small short-term study in PCOS found changes in androgen levels; clinical benefit has not been established.',
     safety: { fdaStatus: 'Dietary supplement / food', materials: 'Spearmint', recalls: 'No recalls.', allergens: 'Mint family', sideEffects: 'Generally safe as a tea. Some people notice mild stomach upset. Spearmint may reduce milk supply. Best avoided while breastfeeding or trying to conceive without a clinician\'s guidance.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-    doctorOpinion: 'Some studies show spearmint tea can reduce androgens in PCOS. Discuss with your provider.',
+    doctorOpinion: 'Evidence for spearmint tea as a PCOS treatment is preliminary. Discuss persistent symptoms with a clinician.',
     communityReview: 'Community discussions on Reddit r/PCOS note improvement in acne and hair growth with daily use.',
     ingredients: 'Spearmint leaf.',
-    effectiveness: 'Small studies support anti-androgen effects in PCOS.',
-    badges: ['Natural', 'PCOS Support'],
+    effectiveness: 'A small 30-day study measured androgen changes; it did not establish lasting symptom improvement.',
+    badges: ['PCOS Interest'],
     verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Spearmint and androgens', summary: 'Study on spearmint tea and testosterone in PCOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=spearmint&restrict_sr=1', text: 'Reddit r/PCOS: spearmint', summary: 'Community discussions on spearmint for PCOS.' }] } }
   },
   // ─── ENDOMETRIOSIS ───────────────────────────────────────
@@ -253,12 +255,12 @@ export const MVP_PHYSICAL = [
     type: 'physical',
     internal: false,
     healthFunctions: ['supplement'],
-    tags: ['bloating', 'discomfort', 'organic', 'pcos'],
+    tags: ['bloating', 'discomfort', 'organic'],
     price: '$22 for 30 capsules',
     userRating: 4.3,
     whereToBuy: ['Amazon', 'PinkStork.com', 'Target'],
     // Was a hardcoded SVG brand-logo image (Pink Stork's own wordmark, not
-    // a bottle photo) — caught by the catalog-wide image sweep.
+    // a bottle photo), caught by the catalog-wide image sweep.
     image: '',
     summary: 'Herbal blend with fennel, dandelion, and ginger to support digestion and ease cycle-related bloating and water retention.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Fennel, dandelion root, ginger, organic ingredients', recalls: 'No recalls.', allergens: 'Vegan, gluten-free', sideEffects: 'Generally well tolerated. Fennel and dandelion may interact with blood thinners or diuretics. Check with a clinician if you take either. Occasional mild GI upset reported.' },
@@ -300,7 +302,7 @@ export const MVP_PHYSICAL = [
     type: 'physical',
     internal: false,
     healthFunctions: ['supplement'],
-    tags: ['bloating', 'discomfort', 'organic', 'pcos'],
+    tags: ['bloating', 'discomfort', 'organic'],
     price: '$24 for 60 capsules',
     userRating: 4.2,
     whereToBuy: ['Amazon', 'LoveWellness.com', 'Target', 'Ulta'],
@@ -490,7 +492,7 @@ export const MVP_DIGITAL = [
     whereToBuy: ['Nurx.com'],
     platform: 'Web, app',
     url: 'https://www.nurx.com/',
-    // App Store icon — confirmed via Apple's iTunes Search API (real, brand-
+    // App Store icon, confirmed via Apple's iTunes Search API (real, brand-
     // name-matched result: "Nurx: Birth Control Delivered" by Thirty Madison,
     // Inc., the real company behind Nurx). Verified the icon loads before using.
     image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4b/c9/d9/4bc9d930-40a1-9566-2ec1-83a23ae06789/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg',
@@ -543,9 +545,9 @@ export const MVP_DIGITAL = [
     userRating: 4.4,
     whereToBuy: ['App Store', 'Google Play'],
     platform: 'iOS, Android',
-    // happiapp.com is a HugeDomains parking listing, not this app's real site —
+    // happiapp.com is a HugeDomains parking listing, not this app's real site
     // couldn't confirm an official domain to source a real image from. Empty,
-    // not the literal /ayna_placeholder.png path — that file is Ayna's own
+    // not the literal /ayna_placeholder.png path, that file is Ayna's own
     // marketing image, hardcoding it here would render OUR branding as if it
     // were a photo of Happi's app. Empty correctly falls back to a letter avatar.
     image: '',

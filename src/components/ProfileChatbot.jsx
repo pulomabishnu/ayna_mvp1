@@ -50,22 +50,28 @@ function getFirstName(user) {
     meta.full_name,
   ].find((value) => typeof value === 'string' && value.trim());
 
-  return raw ? raw.trim().split(/\\s+/)[0] : '';
+  return raw ? raw.trim().split(/\s+/)[0] : '';
 }
 
-function buildWelcome(firstName) {
-  const greeting = firstName ? `Hey, ${firstName}.` : 'Hey.';
+const STARTERS = ['What helps with period cramps?', 'What fits heavy periods?', 'Fragrance-free options for sensitive skin'];
+
+function buildWelcome() {
+  // Name is already in the panel header; the first bubble goes straight to
+  // what she can ask. Starter prompts render under it.
   return [{
     role: 'assistant',
-    text: `${greeting} I'm Ayna. Tell me what you're looking for, what isn't working for you, or what you want to avoid. I can use that context to personalize your profile and help you browse.`,
+    text: 'Ask about a symptom, a product or something you want to avoid. I can point you to products and, if you say so, add it to your profile.',
+    starters: true,
   }];
 }
 
-export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations }) {
+export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery, onViewRecommendations, openSignal = 0, prefill = '', onRequireAuth }) {
   const firstName = getFirstName(user);
   const [open, setOpen] = useState(false);
+  // The header's Ask ayna button bumps openSignal to open the chat.
+  useEffect(() => { if (openSignal) { setOpen(true); if (prefill) setInput(prefill); } }, [openSignal]); // eslint-disable-line react-hooks/exhaustive-deps
   const [messages, setMessages] = useState(
-    chatHistory?.length > 0 ? chatHistory : buildWelcome(firstName)
+    chatHistory?.length > 0 ? chatHistory : buildWelcome()
   );
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -154,18 +160,23 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     window.speechSynthesis.speak(utterance);
   };
 
-  // A fixed-position launcher this size inevitably risks sitting over
-  // something in the bottom-right corner on some page somewhere — found
-  // live, 2026-08-24 bug bash, partially covering product-card corners and
-  // (before an unrelated layout fix) a Wishlist button. Shrinking to an
-  // icon-only state once the page is scrolled keeps its footprint small
-  // for most of a session instead of a permanent full-width pill.
-  const [compact, setCompact] = useState(false);
+  // Always visible (testers missed it when it shrank on scroll). It can be
+  // tucked to the right edge as a small tab if it's in the way; that choice
+  // is remembered per browser.
+  // On the home page the launcher waits until she scrolls past the hero so it
+  // never sits on the main "Build my ecosystem" button.
+  const [homeTop, setHomeTop] = useState(() => typeof window !== 'undefined' && window.location.pathname === '/' && window.scrollY < 320);
   useEffect(() => {
-    const onScroll = () => setCompact(window.scrollY > 200);
+    const onScroll = () => setHomeTop(window.location.pathname === '/' && window.scrollY < 320);
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('popstate', onScroll);
+    const t = window.setInterval(onScroll, 1000);
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('popstate', onScroll); window.clearInterval(t); };
   }, []);
+  const TUCK_KEY = 'ayna_ask_tucked_v1';
+  const [tucked, setTucked] = useState(() => { try { return localStorage.getItem(TUCK_KEY) === '1'; } catch { return false; } });
+  const setTuck = (v) => { setTucked(v); try { localStorage.setItem(TUCK_KEY, v ? '1' : '0'); } catch { /* storage unavailable */ } };
 
   useEffect(() => {
     let cancelled = false;
@@ -184,9 +195,25 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     if (chatHistory?.length > 0) setMessages(chatHistory);
   }, [chatHistory?.length]);
 
+  const messagesRef = useRef(null);
+  // New answer: bring the TOP of the answer into view so she reads from the
+  // start; her own message or "Thinking…" just scrolls to the bottom.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    const box = messagesRef.current;
+    const last = messages[messages.length - 1];
+    if (box && last && last.role !== 'user') {
+      const answers = box.querySelectorAll('.ayna-ask-message--ayna:not(.ayna-ask-message--typing)');
+      const target = answers[answers.length - 1];
+      if (target) { box.scrollTo({ top: target.offsetTop - box.offsetTop - 8, behavior: 'smooth' }); return; }
+    }
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages, sending]);
+
+  const updateMessage = (index, patch) => setMessages((prev) => {
+    const next = prev.map((m, i) => (i === index ? { ...m, ...patch } : m));
+    onChatHistoryUpdate?.(next);
+    return next;
+  });
 
   useEffect(() => {
     if (
@@ -258,32 +285,31 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
 
       const newMessages = [...messagesWithUser, { role: 'assistant', text: data.answer }];
 
-      // Fold any profile update in AND say exactly what changed, as its own
-      // message — not baked wordlessly into the prose answer — with a way to
-      // actually see the effect (found live, 2026-08-24 bug bash: chat
-      // updates used to happen silently). Never adds a PRODUCT to her
-      // ecosystem on its own — only her health profile, same as retaking
-      // the quiz; adding a product is still always her own separate choice.
+      // Nothing happens without her tap: a profile change is OFFERED with
+      // Add / Not now, and a browse suggestion is a button, never an
+      // automatic page change (launch audit A01).
       const merged = mergeProfileUpdate(profile || {}, data.profileUpdate || {});
-      if (merged) {
-        onProfileUpdate(merged.profile);
+      const category = data.browseIntent?.category && onNavigateToDiscovery ? data.browseIntent.category : null;
+      if (merged || category) {
         const parts = [];
-        if (merged.added.frustrations.length) parts.push(`Concerns: ${merged.added.frustrations.join(', ')}`);
-        if (merged.added.sensitivities.length) parts.push(`Sensitivities: ${merged.added.sensitivities.join(', ')}`);
-        if (merged.added.productsToAvoid.length) parts.push(`Avoiding: ${merged.added.productsToAvoid.join(', ')}`);
-        if (merged.added.preference) parts.push(`Priority: ${merged.added.preference}`);
-        newMessages.push({ role: 'system', text: `Updated your profile — ${parts.join(' · ')}.`, showViewRecommendations: true });
-      }
-
-      if (data.browseIntent?.category && onNavigateToDiscovery) {
-        onNavigateToDiscovery({ initialCategory: data.browseIntent.category });
+        if (merged?.added.frustrations.length) parts.push(merged.added.frustrations.join(', '));
+        if (merged?.added.sensitivities.length) parts.push(`sensitive to ${merged.added.sensitivities.join(', ')}`);
+        if (merged?.added.productsToAvoid.length) parts.push(`avoid ${merged.added.productsToAvoid.join(', ')}`);
+        if (merged?.added.preference) parts.push(`priority: ${merged.added.preference}`);
+        newMessages.push({
+          role: 'system',
+          text: parts.length ? `Add “${parts.join(' · ')}” to your profile so Shop can match it?` : '',
+          pendingProfile: merged ? merged.profile : null,
+          browseCategory: category,
+          browseLabel: category ? (data.browseIntent.label || String(category).replace(/[-_]/g, ' ')) : '',
+        });
       }
 
       setMessages(newMessages);
       onChatHistoryUpdate?.(newMessages);
     } catch (err) {
       if (err?.code === 'not_signed_in') {
-        setSendError('Sign in to ask Ayna anything — free accounts get a few AI chats per week.');
+        setSendError('Sign in to ask ayna anything. Free accounts get a few chats each week.');
       } else if (err?.code === 'weekly_limit_reached') {
         setSendError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
       } else {
@@ -296,20 +322,32 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
 
   return (
     <>
-      <button
-        type="button"
-        className={`ayna-ask-launcher${compact && !open ? ' is-compact' : ''}`}
-        aria-label="Ask Ayna"
-        aria-expanded={open}
-        onClick={() => setOpen(!open)}
-        disabled={disabled}
-      >
-        <span className="ayna-ask-orb" aria-hidden="true" />
-        <span className="ayna-ask-launcher__label">Ask Ayna</span>
-      </button>
+      {tucked && !open ? (
+        <button type="button" className="ayna-ask-tab" aria-label="Show Ask ayna" onClick={() => setTuck(false)}>
+          <span className="ayna-ask-orb ayna-ask-orb--small" aria-hidden="true" />
+          <span className="ayna-ask-tab__chev" aria-hidden="true">‹</span>
+        </button>
+      ) : (
+        <div className={`ayna-ask-dock${homeTop && !open ? ' is-waiting' : ''}`}>
+          <button
+            type="button"
+            className="ayna-ask-launcher"
+            aria-label="Ask ayna"
+            aria-expanded={open}
+            onClick={() => (onRequireAuth && !user ? onRequireAuth() : setOpen(!open))}
+            disabled={disabled}
+          >
+            <span className="ayna-ask-orb" aria-hidden="true" />
+            <span className="ayna-ask-launcher__label">Ask ayna</span>
+          </button>
+          {!open && (
+            <button type="button" className="ayna-ask-tuck" aria-label="Move Ask ayna to the side" title="Move to the side" onClick={() => setTuck(true)}>›</button>
+          )}
+        </div>
+      )}
 
       {open && (
-        <section className="ayna-ask-panel" aria-label="Ask Ayna">
+        <section className="ayna-ask-panel" aria-label="Ask ayna">
           <header className="ayna-ask-panel__header">
             <div className="ayna-ask-panel__identity">
               <span className="ayna-ask-orb ayna-ask-orb--small" aria-hidden="true" />
@@ -324,7 +362,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             <button
               type="button"
               className="ayna-ask-panel__close"
-              aria-label="Close Ask Ayna"
+              aria-label="Close Ask ayna"
               onClick={() => setOpen(false)}
             >
               ×
@@ -336,6 +374,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
               type="button"
               className={mode === 'chat' ? 'is-active' : ''}
               onClick={() => setMode('chat')}
+              title="Type your question"
             >
               Chat
             </button>
@@ -345,6 +384,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
               className={mode === 'talk' ? 'is-active' : ''}
               onClick={() => setMode('talk')}
               disabled={!canTalk}
+              title={canTalk ? 'Speak out loud and hear the answer' : 'Voice isn’t available in this browser'}
             >
               Talk
             </button>
@@ -365,8 +405,8 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                   {speech.isRecording
                     ? 'Listening…'
                     : speaking
-                      ? 'Ayna is speaking…'
-                      : 'Talk to Ayna'}
+                      ? 'ayna is speaking…'
+                      : 'Talk to ayna'}
                 </strong>
 
                 <span>
@@ -380,14 +420,19 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             </div>
           )}
 
-          <div className="ayna-ask-panel__messages">
+          <div className="ayna-ask-panel__messages" ref={messagesRef}>
             {messages.map((m, i) => (
               m.role === 'system' ? (
                 <div key={i} className="ayna-ask-message ayna-ask-message--system">
-                  <span>{m.text}</span>
-                  {m.showViewRecommendations && onViewRecommendations && (
-                    <button type="button" onClick={onViewRecommendations}>View Recommendations</button>
-                  )}
+                  {m.text && <span>{m.text}</span>}
+                  <div className="ayna-ask-actions">
+                    {m.pendingProfile && !m.decided && <>
+                      <button type="button" className="is-primary" onClick={() => { onProfileUpdate(m.pendingProfile); updateMessage(i, { decided: 'added', text: 'Added to your profile.' }); }}>Add</button>
+                      <button type="button" onClick={() => updateMessage(i, { decided: 'skipped', text: 'Okay, nothing changed.' })}>Not now</button>
+                    </>}
+                    {m.decided === 'added' && onViewRecommendations && <button type="button" onClick={onViewRecommendations}>See my matches</button>}
+                    {m.browseCategory && <button type="button" onClick={() => onNavigateToDiscovery({ initialCategory: m.browseCategory })}>See {m.browseLabel} →</button>}
+                  </div>
                 </div>
               ) : (
                 <div
@@ -399,6 +444,11 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                   }`}
                 >
                   {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
+                  {m.starters && messages.length === 1 && (
+                    <div className="ayna-ask-starters">
+                      {STARTERS.map((q) => <button type="button" key={q} onClick={() => setInput(q)}>{q}</button>)}
+                    </div>
+                  )}
                 </div>
               )
             ))}
@@ -422,7 +472,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={mode === 'talk'
                   ? 'Or type while in Talk mode…'
-                  : 'Ask Ayna anything…'}
+                  : 'Ask ayna anything…'}
                 disabled={disabled || sending || speech.isRecording}
               />
 

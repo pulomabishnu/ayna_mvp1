@@ -1,0 +1,17 @@
+/* App header: the saved (heart) button speaks the Ask ayna pill's language:
+   same 40px height, round, 2px ink outline, small offset shadow. */
+.ayna-mobile .ay-header-actions .ayna-shared-header-action.ay-header-saved {
+  position: relative; width: 40px !important; height: 40px !important; min-width: 40px; min-height: 40px;
+  border: 2px solid var(--ay-ink) !important; border-radius: 50% !important;
+  background: var(--ay-paper) !important; color: var(--ay-ink) !important;
+  box-shadow: 2px 2px 0 var(--ay-ink) !important;
+  transition: transform .14s var(--ay-ease), box-shadow .14s;
+}
+.ayna-mobile .ay-header-actions .ay-header-saved::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; }
+.ayna-mobile .ay-header-actions .ay-header-saved svg { width: 20px; height: 20px; stroke-width: 2; }
+.ayna-mobile .ay-header-actions .ay-header-saved:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ay-ink) !important; }
+.ayna-mobile[data-theme='dark'] .ay-header-actions .ayna-shared-header-action.ay-header-saved {
+  border-color: var(--ay-butter) !important; background: #101116 !important; color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(245, 255, 104, .3) !important;
+}
+@media (prefers-reduced-motion: reduce) { .ayna-mobile .ay-header-actions .ay-header-saved { transition: none; } }

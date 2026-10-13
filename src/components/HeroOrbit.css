@@ -1,0 +1,63 @@
+.hero-orbit {
+  --size: min(500px, 40vw);
+  --r: calc(var(--size) * .4);
+  position: relative;
+  width: var(--size);
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
+.hero-orbit__ring { position: absolute; inset: 0; margin: auto; border: 2px dashed rgba(29, 26, 43, .28); border-radius: 50%; }
+.hero-orbit__ring--outer { width: 80%; height: 80%; }
+.hero-orbit__ring--inner { width: 46%; height: 46%; border-style: solid; border-color: rgba(29, 26, 43, .14); }
+.hero-orbit__centre {
+  position: absolute; inset: 0; margin: auto; width: 34%; height: 34%;
+  display: grid; place-content: center; gap: 4px; text-align: center;
+  border: 2px solid #1d1a2b; border-radius: 50%; background: #1d1a2b; color: #fffcf5;
+  box-shadow: 5px 5px 0 #fffcf5;
+  animation: orbitBreathe 4.5s ease-in-out infinite;
+}
+.hero-orbit__you { font: 800 clamp(30px, 3.4vw, 48px)/.9 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.06em; }
+.hero-orbit__hint { font: 600 12px/1.2 'Poppins', sans-serif; opacity: .7; }
+.hero-orbit__spin { position: absolute; inset: 0; animation: orbitSpin 48s linear infinite; }
+.hero-orbit:hover .hero-orbit__spin, .hero-orbit:hover .hero-orbit__bubble, .hero-orbit:focus-within .hero-orbit__spin, .hero-orbit:focus-within .hero-orbit__bubble { animation-play-state: paused; }
+.hero-orbit__seat {
+  position: absolute; left: 50%; top: 50%; width: 0; height: 0;
+  transform: rotate(calc(360deg / var(--n) * var(--i))) translateY(calc(var(--r) * -1)) rotate(calc(-360deg / var(--n) * var(--i)));
+}
+.hero-orbit__bubble {
+  position: absolute; left: 0; top: 0;
+  translate: -50% -50%;
+  min-height: 44px; padding: 0 18px;
+  border: 2px solid #1d1a2b; border-radius: 99px; background: #fffcf5; color: #1d1a2b;
+  font: 700 15px/1 'Poppins', sans-serif; white-space: nowrap; cursor: pointer;
+  box-shadow: 3px 3px 0 #1d1a2b;
+  animation: orbitCounter 48s linear infinite;
+  transition: box-shadow .15s, scale .15s;
+}
+.hero-orbit__bubble:hover, .hero-orbit__bubble:focus-visible { scale: 1.06; box-shadow: 5px 5px 0 #1d1a2b; }
+.hero-orbit__bubble.is-pink { background: #f7badd; }
+.hero-orbit__bubble.is-butter { background: #f7e78e; }
+.hero-orbit__bubble.is-mint { background: #bdebd6; }
+.hero-orbit__spark { position: absolute; width: 14px; height: 14px; border: 2px solid #1d1a2b; border-radius: 50%; background: #fffcf5; animation: orbitFloat 5s ease-in-out infinite; }
+.hero-orbit__spark.is-a { left: 6%; top: 18%; }
+.hero-orbit__spark.is-b { right: 4%; top: 62%; width: 10px; height: 10px; background: #f7e78e; animation-delay: -1.6s; }
+.hero-orbit__spark.is-c { left: 22%; bottom: 4%; width: 8px; height: 8px; background: #f7badd; animation-delay: -3.2s; }
+
+@keyframes orbitSpin { to { transform: rotate(360deg); } }
+@keyframes orbitCounter { to { rotate: -360deg; } }
+@keyframes orbitBreathe { 0%, 100% { scale: 1; } 50% { scale: 1.04; } }
+@keyframes orbitFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+
+.app-container[data-theme='dark'] .hero-orbit__ring { border-color: rgba(244, 242, 255, .3); }
+.app-container[data-theme='dark'] .hero-orbit__centre { border-color: #f4f2ff; box-shadow: 5px 5px 0 rgba(244, 242, 255, .55); }
+
+@media (max-width: 900px) {
+  .hero-orbit { --size: min(360px, 86vw); }
+  .hero-orbit__bubble { min-height: 36px; padding: 0 12px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-orbit__spin, .hero-orbit__bubble, .hero-orbit__centre, .hero-orbit__spark { animation: none; }
+}
+.hero-orbit__bubble small { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: 8px; padding: 0 6px; border-radius: 99px; background: #1d1a2b; color: #fffcf5; font: 700 12px/1 'Poppins', sans-serif; }
+.hero-orbit__bubble.is-add { border-style: dashed; background: transparent; box-shadow: none; }
+.hero-orbit--compact { --size: min(420px, 34vw); }

@@ -1,0 +1,168 @@
+/* Website dark mode, neon edition (round 5).
+   Same language as the app's dark theme (src/mobile/app-play.css "Dark mode:
+   Ayna's neon palette on a quiet cyber grid"): near-black canvas with a faint
+   periwinkle grid, #101116 panels, thin neon pastel outlines, soft glows on
+   primary elements, neon fills only with dark ink text on top.
+   Light mode is untouched: every rule is scoped to dark. */
+
+:root[data-ay-theme='dark']:has(.app-container),
+.app-container.app-container[data-theme='dark'] {
+  --ay-neon-peri: #a8b5ff;
+  --ay-neon-pink: #ff78cf;
+  --ay-neon-mint: #69ffc1;
+  --ay-neon-butter: #f5ff68;
+  --ay-neon-ink: #050506;
+  --ay-edge: rgba(168, 181, 255, .5);
+  --ay-cream: #050506;
+  --ay-paper: #101116;
+  --ay-tile: #17181f;
+  --ay-line: rgba(168, 181, 255, .16);
+  --ay-ink-faint: rgba(168, 181, 255, .28);
+  /* Muted pastel fills stay (light ink reads on them) but sit a touch deeper. */
+  --ay-peri: #252a63;
+  --ay-pink: #4c1d3e;
+  --ay-mint: #123f36;
+  --ay-butter: #2c2a14;
+  /* Offset shadows become glows. */
+  --ay-shadow: 0 0 0 1px rgba(168, 181, 255, .08), 0 0 18px rgba(168, 181, 255, .16);
+  --ay-shadow-lg: 0 0 0 1px rgba(168, 181, 255, .1), 0 0 28px rgba(168, 181, 255, .2);
+  --ay-product-tile: #ffffff;
+  --ay-cyber-grid:
+    linear-gradient(rgba(168, 181, 255, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 181, 255, .045) 1px, transparent 1px),
+    radial-gradient(circle at 85% 4%, rgba(168, 181, 255, .12), transparent 32%),
+    radial-gradient(circle at 8% 58%, rgba(105, 255, 193, .06), transparent 38%);
+  --mockup-cream: #050506;
+  --brand-paper: #050506;
+}
+
+/* Canvas: the app's quiet grid. */
+:root[data-ay-theme='dark'] body:has(.app-container) { background: #050506 !important; }
+.app-container.app-container[data-theme='dark'] {
+  background-color: #050506 !important;
+  background-image: var(--ay-cyber-grid) !important;
+  background-size: 28px 28px, 28px 28px, auto, auto !important;
+}
+/* Full-bleed bands that painted their own cream let the grid through. */
+.app-container.app-container[data-theme='dark'] :is(main, .mockup-landing, .lx, .lx-hero, .lx-trust, .lx-shop, .ayna-landing-shop, .ayna-landing-shop--returning, .ayna-browse, .eco3, .ay-web-lib, .wc-page, .pdp, .ay-info) {
+  background-color: transparent !important;
+}
+
+/* Every outline turns into a thin neon edge (colour only: borders stay where
+   they were, nothing gains a border it did not have). */
+.app-container.app-container.app-container[data-theme='dark'] :is(main, .app-nav, .ayna-ask-launcher, .ayna-ask-tuck) :not(svg):not(svg *) ,
+.app-container.app-container.app-container[data-theme='dark'] :is(.ayna-ask-launcher, .ayna-ask-tuck, .app-nav__circle, .app-nav__tab) {
+  border-color: var(--ay-edge) !important;
+}
+.app-container.app-container.app-container[data-theme='dark'] .app-nav.app-nav {
+  background: rgba(9, 9, 13, .94) !important;
+  border-bottom: 1px solid rgba(168, 181, 255, .42) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Cards: panel fill, neon edge cycling pink / mint / butter / peri, soft glow. */
+.app-container.app-container.app-container[data-theme='dark'] :is(
+  .ayna-discover-card, .ay-web-lib-card, .wc-post, .wc-mod, .wc-me, .wc-composer,
+  .pdp-panel, .pdp-buybox, .eco3-details__card, .ay-info-advisor, .ay-info-card, .ay-info-tile,
+  .lx-ring-card, .ay-suggest, .eco3-empty, .ay-partner-btn, .ay-carenote, .ay-badges__item
+) {
+  background-color: #101116 !important;
+  border-color: rgba(168, 181, 255, .55) !important;
+  box-shadow: 0 0 18px rgba(168, 181, 255, .09) !important;
+}
+.app-container.app-container.app-container[data-theme='dark'] :is(.ayna-discover-card, .ay-web-lib-card, .wc-post, .ay-info-advisor, .ay-partner-btn, .ay-info-tile):nth-child(4n + 1) { border-color: rgba(255, 120, 207, .65) !important; }
+.app-container.app-container.app-container[data-theme='dark'] :is(.ayna-discover-card, .ay-web-lib-card, .wc-post, .ay-info-advisor, .ay-partner-btn, .ay-info-tile):nth-child(4n + 2) { border-color: rgba(105, 255, 193, .65) !important; }
+.app-container.app-container.app-container[data-theme='dark'] :is(.ayna-discover-card, .ay-web-lib-card, .wc-post, .ay-info-advisor, .ay-partner-btn, .ay-info-tile):nth-child(4n + 3) { border-color: rgba(245, 255, 104, .6) !important; }
+.app-container.app-container.app-container[data-theme='dark'] :is(.ayna-discover-card, .ay-web-lib-card, .wc-post, .ay-info-advisor, .ay-partner-btn, .ay-info-tile):nth-child(4n + 4) { border-color: rgba(168, 181, 255, .65) !important; }
+.app-container.app-container.app-container[data-theme='dark'] :is(.ayna-discover-card, .ay-web-lib-card, .wc-post, .ay-partner-btn):hover {
+  box-shadow: 0 0 24px rgba(168, 181, 255, .2) !important;
+}
+.app-container.app-container.app-container[data-theme='dark'] .lx-ring-card { border-color: var(--ay-neon-peri) !important; box-shadow: inset 0 0 22px rgba(168, 181, 255, .1), 0 0 24px rgba(168, 181, 255, .14) !important; }
+.app-container.app-container.app-container[data-theme='dark'] .ay-carenote { border-color: rgba(255, 120, 207, .6) !important; box-shadow: 0 0 18px rgba(255, 120, 207, .1) !important; }
+.app-container.app-container.app-container[data-theme='dark'] .ay-carenote__icon { background: #101116 !important; border-color: var(--ay-neon-pink) !important; color: var(--ay-neon-pink) !important; box-shadow: 0 0 12px rgba(255, 120, 207, .35); }
+
+/* Inputs and search: mint edge, like the app's search. */
+.app-container.app-container.app-container[data-theme='dark'] :is(.lx-search, .ay-web-lib-search, .wc-search, .ayna-browse__search input, .eco3-search input, main input[type='search'], main select) {
+  background-color: #101116 !important;
+  border-color: rgba(105, 255, 193, .55) !important;
+  box-shadow: 0 0 14px rgba(105, 255, 193, .08) !important;
+}
+
+/* Primary actions: neon pink fill, dark ink, glow (the app's dark CTA). */
+.app-container.app-container.app-container[data-theme='dark'] :is(
+  .lx-cta, .eco3-pill--ink, .btn-primary, .btn-navy, .pdp-btn--navy, .pdp-btn--buy, .ay-suggest__btn,
+  .ayna-landing-btn, .wyou-btn, .wc-btn, .wq-btn:not(:disabled), button.is-primary, .ay-web-lib-match
+) {
+  background: var(--ay-neon-pink) !important;
+  border-color: var(--ay-neon-pink) !important;
+  color: var(--ay-neon-ink) !important;
+  box-shadow: 0 0 18px rgba(255, 120, 207, .38) !important;
+}
+.app-container.app-container.app-container[data-theme='dark'] :is(.lx-cta, .eco3-pill--ink, .btn-primary, .pdp-btn--buy, .ay-suggest__btn, button.is-primary) :is(span, b, strong, svg) { color: var(--ay-neon-ink) !important; }
+
+/* Selected chips / toggles: neon periwinkle fill with dark ink. */
+.app-container.app-container.app-container[data-theme='dark'] main :is(button.is-on, button.is-active, [aria-pressed='true'].lx-pill, .eco3-chip.is-active) {
+  background: var(--ay-neon-peri) !important;
+  border-color: var(--ay-neon-peri) !important;
+  color: var(--ay-neon-ink) !important;
+  box-shadow: 0 0 14px rgba(168, 181, 255, .35) !important;
+}
+
+/* Nav: active tab is the app's glowing butter pill. */
+.app-container.app-container.app-container[data-theme='dark'] .app-nav.app-nav .app-nav__tab--active {
+  background: var(--ay-neon-butter) !important;
+  border-color: var(--ay-neon-butter) !important;
+  color: var(--ay-neon-ink) !important;
+  box-shadow: 0 0 16px rgba(245, 255, 104, .34) !important;
+}
+.app-container.app-container.app-container[data-theme='dark'] .app-nav.app-nav .app-nav__tab:not(.app-nav__tab--active) { border-color: transparent !important; }
+.app-container.app-container.app-container[data-theme='dark'] .app-nav.app-nav .app-nav__tab:not(.app-nav__tab--active):hover { border-color: var(--ay-edge) !important; }
+.app-container.app-container.app-container[data-theme='dark'] .app-nav.app-nav .app-nav__beta-badge { background: var(--ay-neon-butter) !important; border-color: var(--ay-neon-butter) !important; color: var(--ay-neon-ink) !important; }
+
+/* Ask ayna launcher: neon butter pill, like the app header. */
+.app-container.app-container.app-container[data-theme='dark'] .ayna-ask-launcher {
+  background: var(--ay-neon-butter) !important;
+  border-color: var(--ay-neon-butter) !important;
+  color: var(--ay-neon-ink) !important;
+  box-shadow: 0 0 18px rgba(245, 255, 104, .34) !important;
+}
+.app-container.app-container.app-container[data-theme='dark'] .ayna-ask-launcher * { color: var(--ay-neon-ink) !important; }
+.app-container.app-container.app-container[data-theme='dark'] .ayna-ask-launcher .ayna-ask-orb { background: #fff !important; border-color: var(--ay-neon-ink) !important; }
+
+/* Highlighted hero word: neon butter mark, dark ink. */
+.app-container.app-container.app-container[data-theme='dark'] .lx-mark {
+  background: var(--ay-neon-butter) !important;
+  border-color: var(--ay-neon-butter) !important;
+  color: var(--ay-neon-ink) !important;
+  box-shadow: 0 0 22px rgba(245, 255, 104, .3) !important;
+}
+
+/* Product photos always sit on plain white tiles. */
+.app-container.app-container.app-container[data-theme='dark'] :is(.ayna-landing-tile, .ayna-discover-card__tile, .discovery-card__tile, .pdp-head__tile, .eco3-pick__img) {
+  background: #ffffff !important;
+}
+
+/* Ecosystem ring: neon segments and swatches (no text sits on them). */
+.app-container.app-container[data-theme='dark'] :is(.eco3-chart, .lx-ring-card) {
+  --ay-pink: #ff78cf; --ay-mint: #69ffc1; --ay-peri: #a8b5ff; --ay-butter: #f5ff68;
+}
+.app-container.app-container[data-theme='dark'] .eco3-chart__segment { filter: drop-shadow(0 0 6px rgba(168, 181, 255, .35)); }
+.app-container.app-container[data-theme='dark'] .eco3-chart__swatch { box-shadow: 0 0 8px var(--area-color); }
+/* Brand partner chips share one calm edge (they are not a card grid). */
+.app-container.app-container.app-container.app-container[data-theme='dark'] .ay-partner-btn { border-color: rgba(168, 181, 255, .5) !important; }
+
+/* Library cards live one per <li>: cycle the edge on the list item. */
+.app-container.app-container.app-container.app-container[data-theme='dark'] .ay-web-lib-grid > li:nth-child(4n + 1) .ay-web-lib-card { border-color: rgba(255, 120, 207, .65) !important; }
+.app-container.app-container.app-container.app-container[data-theme='dark'] .ay-web-lib-grid > li:nth-child(4n + 2) .ay-web-lib-card { border-color: rgba(105, 255, 193, .65) !important; }
+.app-container.app-container.app-container.app-container[data-theme='dark'] .ay-web-lib-grid > li:nth-child(4n + 3) .ay-web-lib-card { border-color: rgba(245, 255, 104, .6) !important; }
+.app-container.app-container.app-container.app-container[data-theme='dark'] .ay-web-lib-grid > li:nth-child(4n + 4) .ay-web-lib-card { border-color: rgba(168, 181, 255, .65) !important; }
+/* Ask ayna orb: white disc, dark star (as in the app). */
+.app-container.app-container.app-container[data-theme='dark'] .ayna-ask-launcher .ayna-ask-orb::before { background: #050506 !important; }
+
+/* Small add buttons: neon butter, dark ink. Next-step card: panel with butter edge. */
+.app-container.app-container.app-container[data-theme='dark'] .eco3-pick__add {
+  background: var(--ay-neon-butter) !important; border-color: var(--ay-neon-butter) !important; color: var(--ay-neon-ink) !important;
+}
+.app-container.app-container.app-container[data-theme='dark'] .eco3-next {
+  background: #101116 !important; border-color: rgba(245, 255, 104, .6) !important; box-shadow: 0 0 18px rgba(245, 255, 104, .1) !important;
+}

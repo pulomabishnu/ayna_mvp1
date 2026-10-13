@@ -1,0 +1,27 @@
+/* Search fields that live inside a pill/box container (an icon + input +
+   maybe a clear/go button): the INPUT itself must not draw its own focus
+   outline or glow (it showed as a blue box inside the pill). The container
+   carries the focus indicator instead: a 3px ring with a 2px offset
+   (rulebook C7/X2). Inputs that ARE the visible box (Shop, Ecosystem search)
+   get the same ink ring outside their own border. */
+
+/* ---------- Website ---------- */
+.app-container :is(.lx-search, .lx-search__bar, .lx-search__field, .wc-search, .wq-search, .ay-web-lib-search, .ayna-landing-searchbar, .ayna-landing-search, .ayna-landing-glass) input:is(:focus, :focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+.app-container :is(.lx-search__bar, .wc-search, .wq-search, .ay-web-lib-search, .ayna-landing-searchbar, .ayna-landing-search, .ayna-landing-glass):has(input:focus-visible) {
+  outline: 3px solid var(--ay-ink, #1d1a2b) !important;
+  outline-offset: 2px !important;
+}
+
+/* Inputs that are the box themselves: same ink ring as the pills, outside the border */
+.app-container .ayna-browse__search input:focus-visible {
+  outline: 3px solid var(--ay-ink, #1d1a2b) !important;
+  outline-offset: 2px !important;
+}
+
+/* ---------- App ----------
+   The app already strips input outlines inside search pills (and, by an
+   earlier founder decision, any ring on tap) in src/mobile/no-focus-ring.css,
+   so nothing is added here. */

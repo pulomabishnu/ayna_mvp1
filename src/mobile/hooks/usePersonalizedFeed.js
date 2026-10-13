@@ -1,26 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-const KEY = 'ayna_mobile_personalized_v1';
+const KEY = 'ayna_mobile_personalized_v2';
+const keyFor = (userId) => `${KEY}:${userId || 'guest'}`;
 
-function loadPersonalized() {
+function loadPreference(userId) {
   try {
-    return localStorage.getItem(KEY) === '1';
-  } catch {
-    return false;
-  }
+    const stored = localStorage.getItem(keyFor(userId));
+    if (stored != null) return stored === '1';
+  } catch { /* Storage may be unavailable. */ }
+  return Boolean(userId);
 }
 
-// Lives in MobileApp.jsx (above BrowseScreen) so the "For You" toggle
-// survives navigating away from Browse and back — Browse fully unmounts
-// when the screen changes (see SCREENS map in MobileApp.jsx), so state
-// local to it can't outlive that. It should stay on until the user
-// explicitly turns it off, not reset just from leaving the tab.
-export function usePersonalizedFeed() {
-  const [personalized, setPersonalized] = useState(loadPersonalized);
+// Remember the Browse choice for each account. A signed-in member starts in
+// For You once, and a later manual choice remains theirs across navigation.
+export function usePersonalizedFeed(userId) {
+  const key = keyFor(userId);
+  const [selection, setSelection] = useState(() => ({ key, value: loadPreference(userId) }));
+  const personalized = selection.key === key ? selection.value : loadPreference(userId);
 
-  useEffect(() => {
-    try { localStorage.setItem(KEY, personalized ? '1' : '0'); } catch { /* private mode */ }
-  }, [personalized]);
+  const setPersonalized = (updater) => {
+    const next = typeof updater === 'function' ? updater(personalized) : updater;
+    setSelection({ key, value: next });
+    try { localStorage.setItem(key, next ? '1' : '0'); } catch { /* private mode */ }
+  };
 
   return [personalized, setPersonalized];
 }

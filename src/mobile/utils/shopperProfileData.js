@@ -29,7 +29,7 @@ const PREFERENCE_LABEL = {
 };
 
 // Keyword match against a product's safety.allergens text / tags. Only
-// 'Fragrance sensitivity' can actually be produced today —
+// 'Fragrance sensitivity' can actually be produced today
 // mapIntakeToLegacyQuizProfile() (src/utils/healthIntake.js) derives it from
 // the intake form's 'fragrance-free' product preference; there's no current
 // question that produces 'Latex allergy' or 'Synthetic materials', but they're
@@ -43,10 +43,10 @@ const SENSITIVITY_KEYWORDS = {
 // The catalog's `safety.recalls` field is free text, mostly boilerplate
 // ("No recalls.", "N/A", "No known recalls"). The data authors already mark
 // the handful of entries actually worth surfacing with a ⚠️ prefix, or with
-// a "No formal recalls. Note: ..." aside — that's a far more reliable signal
+// a "No formal recalls. Note: ..." aside, that's a far more reliable signal
 // than trying to pattern-match every "no recall" phrasing there could ever
 // be. Some of those ⚠️ entries explicitly deny an FDA recall (e.g. "has not
-// been subject to FDA recall but...") — those are safety concerns, not
+// been subject to FDA recall but..."), those are safety concerns, not
 // recalls, so a second check looks for a real, non-negated "recall" event
 // to decide which badge to show.
 function classifySafetyNote(text) {
@@ -99,7 +99,7 @@ export function getSafetyAlerts(myProducts = [], quizAnswers = null) {
         id: `sensitivity-${s}`,
         kind: 'sensitivity',
         title: `${label} flagged in ${matches.length} item${matches.length === 1 ? '' : 's'}`,
-        body: `You told us about a ${s.toLowerCase()} during intake — ${matches.map((m) => m.name).join(', ')}.`,
+        body: `You told us about a ${s.toLowerCase()} during intake, ${matches.map((m) => m.name).join(', ')}.`,
         product: matches[0],
       });
     }
@@ -126,7 +126,7 @@ export function getBrandAffinity(quizAnswers, myProducts = []) {
 }
 
 // Most/least represented categories across everything the user owns
-// (ecosystem) or has saved — a real proxy for "what they care about",
+// (ecosystem) or has saved, a real proxy for "what they care about",
 // since there's no page-view tracking to draw on.
 export function getCategoryInsights(myProducts = [], savedMap = {}, allProducts = []) {
   const counts = new Map();

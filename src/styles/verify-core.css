@@ -1,0 +1,103 @@
+/* Verify pass (core area): fixes measured on the running site. Website only: every rule is scoped to .app-container. */
+
+/* G04 / G05 / M4: one count badge. The app's achievement-tile rule (.ay-badge,
+   min-height 100px) leaked into the site header and stretched every count to
+   100px tall. Reset it, and pin the Ecosystem count to the tab's corner so it
+   never takes layout width (no reserved gap, no shift when it arrives). */
+.app-container .ay-badge { min-height: 0 !important; height: 20px !important; min-width: 20px !important; padding: 0 6px !important; gap: 0 !important; align-content: center !important; animation: none !important; border: 2px solid var(--ay-ink) !important; font: 700 11px/1 var(--ay-font-ui) !important; font-variant-numeric: tabular-nums; }
+.app-container .app-nav.app-nav a.app-nav__tab { position: relative; }
+.app-container .app-nav .app-nav__tab .ay-badge { position: absolute !important; top: -6px; right: -6px; box-shadow: 0 0 0 2px var(--ay-paper); }
+.app-container .app-nav .ay-badge.is-empty { display: none !important; }
+.app-container .app-nav .ay-badge.is-corner { top: -6px !important; right: -6px !important; }
+
+/* M5: centre the beta pill on the wordmark's x-height (measured 2.6px high) */
+.app-container .app-nav__logo .app-nav__beta-badge { transform: translateY(2.5px); }
+/* The landing header variant paints every span cream (!important); counts must stay ink on butter. */
+.app-container .app-nav .ay-badge, .app-container .mobile-nav-drawer .ay-badge { color: var(--ay-ink) !important; -webkit-text-fill-color: currentColor; background: var(--ay-butter) !important; font-family: var(--ay-font-ui) !important; }
+
+/* S12 / M11: titles reserve two lines (a 1.5em-tall eyebrow row is already fixed),
+   so the main price line sits at the same height across a row; a unit or list
+   price drops below it instead of pushing it up. */
+.app-container .ayna-browse-card .ayna-discover-card__name { min-height: 2.5em !important; }
+.app-container .ayna-browse-card .ayna-discover-card__price { margin-top: 0 !important; padding-top: 4px !important; }
+.app-container .ayna-browse-card__labels { height: 20px; min-height: 20px; overflow: hidden; }
+/* M3: one "lifted" shadow token (3px) for nav pill and card hover alike */
+.app-container :is(.ayna-landing-shop-card, .ayna-browse-card):hover { transform: translate(-2px, -2px) !important; box-shadow: var(--ay-shadow) !important; }
+
+/* S06: empty-state suggestion pills are buttons, not underlined links */
+.app-container .ayna-browse__empty-actions button { text-decoration: none !important; }
+
+/* E06: Saved uses the same section heading as Your shelves; count is the standard badge */
+.app-container .eco-saved__head { justify-content: flex-start !important; align-items: center !important; gap: 12px !important; }
+.app-container .eco-saved__head h2 { font: 800 clamp(1.9rem, 3vw, 2.4rem)/1.05 var(--ay-font-display) !important; letter-spacing: -.045em !important; }
+.app-container .eco-saved__count { min-width: 24px !important; height: 24px !important; padding: 0 7px !important; border: 2px solid var(--ay-ink) !important; background: var(--ay-butter) !important; color: var(--ay-ink) !important; font: 700 12px/1 var(--ay-font-ui) !important; font-variant-numeric: tabular-nums; }
+/* Ecosystem card: the product name is a text link, not a boxed button */
+.app-container .eco-bubbles__card-name { border: 0 !important; background: none !important; padding: 0 !important; box-shadow: none !important; border-radius: 0 !important; text-decoration: underline !important; text-decoration-thickness: 2px !important; text-underline-offset: 4px; }
+/* Shelves: product names get room (were squeezed into 120px and wrapped to 5 lines) */
+.app-container .eco-shelf__row-tiles { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important; align-items: center; }
+.app-container .eco-shelf__tile-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* M37 / M38 / G15: empty slots share one dash (2px ink), no grey dashed boxes */
+.app-container :is(.eco-shelf__addchip, .eco-shelf__tile--add, .eco-bubble--gap) { border: 2px dashed var(--ay-ink) !important; }
+
+/* MW05: one 20px gutter on phones. The landing hero column and the ecosystem
+   sections added their own 16 to 20px on top of the page gutter (36 to 40px). */
+@media (max-width: 767px) {
+  .app-container .mockup-landing .ayna-landing-hero .ayna-landing-hero-col { padding-left: 0 !important; padding-right: 0 !important; }
+  .app-container main .container .mockup-page { padding-left: 0 !important; padding-right: 0 !important; }
+}
+
+/* MW02: the sheet covered the header's X, so it gets its own 44px close target;
+   G17: the Ask launcher hides while the menu is open. */
+.app-container .mobile-nav-close { position: absolute; top: 18px; right: 16px; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); color: var(--ay-ink); cursor: pointer; }
+.app-container .mobile-nav-close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+body:has(.mobile-nav-drawer) .app-container :is(.ayna-ask-dock, .ayna-ask-tab) { display: none !important; }
+
+/* MW06: on phones Filters sits at the left edge, Personalize at the right */
+@media (max-width: 767px) {
+  .app-container .ayna-landing-shop-head .ayna-landing-filter-toggle { justify-self: start !important; margin-left: 0 !important; }
+  .app-container .ayna-landing-shop-head :is(.ayna-landing-personalize, .ay-personalize-cta) { justify-self: end !important; }
+}
+
+/* HI06 / M22: chip rows fade only the edge where chips are actually cut off */
+.app-container :is(.ayna-browse__categories, .ayna-landing-filters)[data-fade-start] {
+  --ay-fade-s: #000; --ay-fade-e: #000;
+  -webkit-mask-image: linear-gradient(90deg, var(--ay-fade-s) 0, #000 28px, #000 calc(100% - 28px), var(--ay-fade-e) 100%) !important;
+  mask-image: linear-gradient(90deg, var(--ay-fade-s) 0, #000 28px, #000 calc(100% - 28px), var(--ay-fade-e) 100%) !important;
+}
+.app-container :is(.ayna-browse__categories, .ayna-landing-filters)[data-fade-start='1'] { --ay-fade-s: transparent; }
+.app-container :is(.ayna-browse__categories, .ayna-landing-filters)[data-fade-end='1'] { --ay-fade-e: transparent; }
+@media (min-width: 900px) { .app-container .mockup-landing .ayna-landing-shop-head .ayna-landing-filters[data-fade-start] { -webkit-mask-image: none !important; mask-image: none !important; } }
+
+/* M13 / S17: an image-less product uses the same plain tile as every other card (no mint wash) */
+.app-container [role='img'][aria-label='Product image not found'] { background: var(--ay-product-tile, var(--ay-paper)) !important; }
+
+/* M47: snap the ecosystem Details drawers to the type scale (12 / 14 / 16) */
+.app-container .eco2-details summary > span:not(.eco2-details__hint), .app-container .eco2-details summary strong { font-size: 16px !important; }
+.app-container .eco2-details .eco2-details__hint { font-size: 12px !important; }
+.app-container .eco2-details__body :is(p, label, a, li, button, input, select) { font-size: 14px !important; }
+.app-container .eco2-details__body div:not(:has(*)) { font-size: 14px !important; }
+.app-container .eco2-details__body :is(h3, h4) { font-size: 16px !important; font-weight: 700 !important; font-family: var(--ay-font-ui) !important; letter-spacing: 0 !important; }
+.app-container .eco2-details__body :is(h3, h4, h5) { color: var(--ay-ink) !important; }
+
+/* E08: the refresh notice spans exactly the content column below it */
+.app-container .eco2-notice { max-width: 1100px; margin-left: auto !important; margin-right: auto !important; box-sizing: border-box; }
+
+/* Header is the same 82px on every page (Home used 90px, so the nav jumped 4px between pages) */
+.app-container .app-nav.app-nav--landing { padding-top: 20px !important; padding-bottom: 20px !important; }
+
+/* Article and product titles are now the page H1 (G19); keep their look */
+.app-container .ay-web-lib-article > h1.ay-article-title { font: 800 clamp(32px, 3vw, 44px)/1.02 var(--ay-font-display) !important; letter-spacing: -.035em !important; color: var(--ay-ink) !important; }
+/* Footer text on the type scale */
+.app-container .site-footer :is(p, a, button, span, li) { font-size: 14px; }
+.app-container .site-footer .site-footer__legal, .app-container .site-footer .site-footer__legal * { font-size: 12px !important; }
+/* Ask ayna on the product page: compact orb so it can't cover the Community column */
+@media (min-width: 768px) {
+  .app-container:has(.pdp-page) .ayna-ask-dock .ayna-ask-launcher__label { display: none !important; }
+  .app-container:has(.pdp-page) .ayna-ask-dock .ayna-ask-launcher { width: 52px; height: 52px; padding: 0 !important; justify-content: center; }
+}
+/* Phones: keep page content clear of the floating button */
+@media (max-width: 767px) {
+  .app-container main { padding-bottom: 88px !important; }
+}
+/* Care near you headings: site display type, not Bricolage 400 */
+.app-container .eco2-details__body :is(h3, h4) { font-family: var(--ay-font-ui) !important; font-weight: 700 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--ay-ink) !important; }

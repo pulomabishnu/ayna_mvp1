@@ -1,9 +1,9 @@
 -- Fixes confirmed-dead or dangerous Buy Now links, found via a full audit of
 -- every product's Buy Now target on 2026-08-24. Each statement touches ONLY
--- the url / where_to_buy column of the one row named — nothing else.
+-- the url / where_to_buy column of the one row named, nothing else.
 --
 -- Most severe: PauseWellAging.com and Maude.com have expired and now
--- redirect elsewhere — PauseWellAging.com currently redirects to an
+-- redirect elsewhere, PauseWellAging.com currently redirects to an
 -- unrelated gambling/betting site. Ayna's own "Buy Now" button was sending
 -- users there.
 
@@ -24,7 +24,7 @@ update product_catalog set where_to_buy = '["joinmidi.com"]'::jsonb
 where id = 'd-midi-health';
 
 -- The following all have a confirmed-dead per-product url (404, or a
--- redirect to an unrelated/broken page) — cleared so Buy Now falls back to
+-- redirect to an unrelated/broken page), cleared so Buy Now falls back to
 -- a real retailer search (or the brand's live homepage) instead of a dead
 -- link. Never replaced with a guessed URL.
 update product_catalog set url = null where id in (

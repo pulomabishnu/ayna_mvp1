@@ -1,0 +1,185 @@
+/* Landing, one column on an 8pt grid. Everything shares the 24px gutter edge.
+   Widget content floats on the page colour (no card behind it). */
+.ayna-mobile.ayna-mobile .ay-cover {
+  --lp-gutter: 24px;
+  display: flex; flex-direction: column;
+  padding: max(20px, env(safe-area-inset-top)) var(--lp-gutter) max(24px, env(safe-area-inset-bottom)) !important;
+  background: var(--ay-peri) !important; color: var(--ay-ink);
+}
+
+/* Header */
+.ayna-mobile.ayna-mobile .ay-cover-top { min-height: 48px; }
+.ayna-mobile.ayna-mobile .ay-cover-top button {
+  min-height: 44px; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important;
+  font: 700 15px/1 var(--ay-font-ui) !important; color: var(--ay-ink) !important;
+  text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px;
+}
+
+/* Sparkles: two, quiet, outside the content edges */
+.ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(1) { left: 6px !important; top: 21% !important; width: 20px !important; height: 20px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(2) { right: 6px !important; left: auto !important; top: 52% !important; width: 24px !important; height: 24px !important; }
+
+/* Reel: takes the free space, content centred in it, full column width */
+.ayna-mobile.ayna-mobile .ay-cover-reel { flex: 1 1 auto; min-height: 0 !important; display: flex !important; align-items: center; padding: 24px 0 !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget { width: 100% !important; max-width: none !important; filter: none !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-pink,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-mint,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-peri {
+  --reel-bg: transparent; height: 320px; padding: 0 !important; border: 0 !important; border-radius: 0 !important;
+  background: transparent !important; box-shadow: none !important; overflow: visible !important;
+}
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-head { font: 700 15px/1 var(--ay-font-ui) !important; letter-spacing: -.01em !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-head span:last-child { font-variant-numeric: tabular-nums; opacity: .6; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { padding: 16px 0; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-eco { gap: 8px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track { min-height: 64px; padding: 0 16px 0 12px !important; gap: 16px; border: 1.5px solid var(--ay-ink) !important; border-radius: 16px; background: var(--ay-paper); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track:first-child { background: var(--ay-ink); color: var(--ay-paper); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-cover { width: 40px !important; height: 40px !important; border-width: 1.5px; border-radius: 10px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track strong { font: 700 18px/1 var(--ay-font-ui) !important; letter-spacing: -.02em; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track:not(:first-child) .ay-reel-eq { color: var(--ay-ink); opacity: .2; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { height: 4px; background: rgba(29, 26, 43, .16); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause { width: 40px; height: 40px; border-width: 1.5px; background: var(--ay-paper); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-ask p { border-width: 1.5px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span { border-width: 1.5px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck span { border-width: 1.5px; }
+
+/* Copy */
+.ayna-mobile.ayna-mobile .ay-cover-copy h1 {
+  margin: 0; font: 800 calc(clamp(40px, 11vw, 48px) * var(--ayna-text-scale, 1))/1 var(--ay-font-display) !important;
+  letter-spacing: -.045em !important; color: var(--ay-ink) !important; text-wrap: balance;
+}
+.ayna-mobile.ayna-mobile .ay-cover-copy p { margin: 8px 0 0 !important; font: 600 15px/1.4 var(--ay-font-ui) !important; color: var(--ay-ink) !important; opacity: .68; }
+
+/* Actions */
+.ayna-mobile.ayna-mobile .ay-cover-actions { margin-top: 32px !important; gap: 8px !important; }
+.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start { box-sizing: border-box; height: 64px; border: 0 !important; background: var(--ay-ink) !important; }
+.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-handle { top: 6px !important; left: 6px !important; width: 52px !important; height: 52px !important; background: var(--ay-butter) !important; color: var(--ay-ink) !important; box-shadow: none !important; }
+.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-fill { inset: 6px auto 6px 6px !important; background: var(--ay-butter) !important; opacity: .22 !important; }
+.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-label { inset: 0 24px 0 76px !important; font: 700 18px/1 var(--ay-font-ui) !important; color: var(--ay-paper); }
+.ayna-mobile.ayna-mobile .ay-cover .ayna-slide-start-label span { font: 600 12px/1 var(--ay-font-ui) !important; opacity: .6 !important; }
+.ayna-mobile.ayna-mobile .ay-cover-actions > div { padding: 0; }
+.ayna-mobile.ayna-mobile .ay-cover-actions > div button { min-height: 44px; padding: 0 !important; font: 700 15px/1 var(--ay-font-ui) !important; text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
+
+@media (max-height: 740px) {
+  .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel { height: 264px; }
+  .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track { min-height: 52px; }
+  .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-cover { width: 32px !important; height: 32px !important; }
+  .ayna-mobile.ayna-mobile .ay-cover-actions { margin-top: 24px !important; }
+}
+/* Scale the reel with the screen so the free space isn't two big gaps */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel { height: clamp(272px, 46vh, 420px) !important; }
+.ayna-mobile.ayna-mobile .ay-cover-reel { padding: 16px 0 !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-eco { gap: 12px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track { min-height: clamp(52px, 8vh, 72px); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match svg { width: clamp(150px, 26vh, 220px); height: clamp(150px, 26vh, 220px); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck { width: clamp(130px, 22vh, 190px); height: clamp(156px, 26vh, 228px); }
+/* Sparkles live in the space under the header, clear of every control */
+.ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(1) { left: auto !important; right: 28% !important; top: 76px !important; width: 18px !important; height: 18px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(2) { right: 20px !important; top: 92px !important; width: 12px !important; height: 12px !important; }
+/* Match frame: sticker ring (ink edge, paper track, butter fill) + palette tags */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match .edge { fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 18; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match .track { stroke: var(--ay-paper); stroke-width: 14; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match .fill { stroke: var(--ay-pink); stroke-width: 14; stroke-linecap: butt; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span:nth-child(1) { background: var(--ay-mint); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span:nth-child(2) { background: var(--ay-butter); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span:nth-child(3) { background: var(--ay-pink); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags { margin-top: 16px; gap: 8px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags span { padding: 7px 12px; font-size: 12px; }
+/* Tap-to-advance overlay: no ring on tap; rounded ring only for keyboard users */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-next { outline: none; border-radius: 20px; -webkit-tap-highlight-color: transparent; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-next:focus-visible { outline: 2px solid var(--ay-ink); outline-offset: 8px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause:focus:not(:focus-visible) { outline: none; }
+/* Ask frame: answer in mint so it isn't just ink and cream */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-ask .a { background: var(--ay-mint); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-ask p { font-size: 17px; }
+/* Centre the score on the ring itself (not on ring + tags) */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match { display: grid; grid-template-columns: auto; justify-content: center; justify-items: center; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match > svg,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { grid-area: 1 / 1; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { position: static !important; translate: none !important; align-self: center; justify-self: center; display: grid; justify-items: center; gap: 4px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags { grid-row: 2; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { position: relative !important; z-index: 1; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-score { top: auto !important; left: auto !important; }
+
+/* Discover frame, clean swipe loop (3s, matches the frame length):
+   rest → bookmark pops (saved) → card swipes off fast → next card rises from the deck. No lingering ghost. */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { overflow: hidden; margin-inline: calc(-1 * var(--lp-gutter)); padding-inline: var(--lp-gutter); }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c1 { background: var(--ay-butter); rotate: -9deg; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c2 { background: var(--ay-mint); rotate: 5deg; animation: lp-deck-lift 3s var(--ay-ease) infinite; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c3 { background: var(--ay-paper); box-shadow: 0 4px 0 var(--ay-ink); animation: lp-swipe 3s var(--ay-ease) infinite; will-change: transform, opacity; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c3 svg { width: 52px; height: 52px; fill: var(--ay-paper); stroke: var(--ay-ink); stroke-width: 1.8; animation: lp-save 3s var(--ay-ease) infinite; }
+@keyframes lp-swipe {
+  0%, 38% { transform: none; opacity: 1; }
+  56% { transform: translateX(160%) rotate(22deg); opacity: 1; }
+  57% { transform: translateX(160%) rotate(22deg); opacity: 0; }
+  58% { transform: translateY(18px) scale(.92); opacity: 0; }
+  80%, 100% { transform: none; opacity: 1; }
+}
+@keyframes lp-save {
+  0%, 14% { fill: var(--ay-paper); transform: scale(1); }
+  22% { fill: var(--ay-pink); transform: scale(1.22); }
+  30%, 56% { fill: var(--ay-pink); transform: scale(1); }
+  58%, 100% { fill: var(--ay-paper); transform: scale(1); }
+}
+@keyframes lp-deck-lift {
+  0%, 40% { rotate: 5deg; transform: none; }
+  58% { rotate: 1deg; transform: translateY(-6px) scale(1.02); }
+  80%, 100% { rotate: 5deg; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck span, .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck svg { animation: none !important; }
+  .ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck .c3 svg { fill: var(--ay-pink); }
+}
+
+/* Spacing system (8pt): header 48 → 32 → reel title → [stage: the only flexible space] → progress → 40 → headline → 8 → line → 32 → slider → 8 → links */
+.ayna-mobile.ayna-mobile .ay-cover-reel { flex: 1 1 auto; display: flex !important; flex-direction: column; align-items: stretch !important; min-height: 0 !important; padding: 0 !important; margin: 32px 0 40px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-pink,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-mint,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-peri { flex: 1 1 auto; height: auto !important; min-height: 248px; max-height: 520px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { flex: 1 1 auto; min-height: 0; padding-block: 24px; display: grid; place-items: center; }
+.ayna-mobile.ayna-mobile .ay-cover-reel { justify-content: center; }
+.ayna-mobile.ayna-mobile .ay-cover-actions { margin-top: 32px !important; }
+/* One small sparkle in the 32px band under the header; the second sits by the headline */
+.ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(1) { right: 30% !important; top: 72px !important; width: 16px !important; height: 16px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-art i:nth-child(2) { display: none !important; }
+/* Stars: a loose constellation around the edges, varied size/colour, staggered twinkle, never over controls */
+.ayna-mobile.ayna-mobile .ay-cover-stars i { display: block !important; position: absolute; border: 0 !important; border-radius: 0 !important; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); background: var(--ay-butter) !important; animation: lp-twinkle 3.6s ease-in-out infinite; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(1) { left: auto !important; right: 30% !important; top: 70px !important; width: 18px !important; height: 18px !important; animation-delay: 0s; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(2) { display: block !important; left: 6px !important; right: auto !important; top: 30% !important; width: 14px !important; height: 14px !important; background: var(--ay-paper) !important; animation-delay: -1.2s; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(3) { right: 5px !important; left: auto !important; top: 47% !important; width: 22px !important; height: 22px !important; animation-delay: -2.1s; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(4) { right: 64px; bottom: 262px; width: 26px; height: 26px; animation-delay: -.6s; }
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(5) { right: 40px; bottom: 300px; width: 11px; height: 11px; background: var(--ay-paper) !important; animation-delay: -2.8s; }
+@keyframes lp-twinkle { 0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; } 50% { transform: scale(.7) rotate(20deg); opacity: .7; } }
+@media (prefers-reduced-motion: reduce) { .ayna-mobile.ayna-mobile .ay-cover-stars i { animation: none; } }
+/* Narrow phones: keep the headline to two lines */
+.ayna-mobile.ayna-mobile .ay-cover-copy h1 { font-size: calc(clamp(32px, 10.2vw, 48px) * var(--ayna-text-scale, 1)) !important; }
+
+/* Proximity (Figma UI principles): the reel is one tight group, title, art, progress
+   and leftover height becomes equal white space around the group, never inside it. */
+.ayna-mobile.ayna-mobile .ay-cover-reel { flex: 1 1 auto; display: flex !important; flex-direction: column; justify-content: center; margin: 0 !important; padding: 32px 0 40px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget { flex: 0 0 auto !important; display: block; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-pink,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-mint,
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel.is-peri { flex: none !important; height: auto !important; min-height: 0 !important; max-height: none !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-stage { flex: none !important; height: clamp(232px, 34vh, 312px); padding-block: 24px !important; box-sizing: border-box; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-match > svg { width: clamp(136px, 21vh, 196px) !important; height: clamp(136px, 21vh, 196px) !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-tags { margin-top: 16px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-track { min-height: clamp(48px, 7vh, 64px) !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-eco { gap: 8px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-deck { width: clamp(124px, 19vh, 168px) !important; height: clamp(150px, 23vh, 200px) !important; }
+/* Stars follow the groups: one by the reel title, one at each side of the art, two by the headline */
+.ayna-mobile.ayna-mobile .ay-cover-stars i:nth-child(1) { top: 76px !important; right: 34% !important; }
+/* Play/pause: 28px visual, 44px tap target */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause { position: relative; width: 28px !important; height: 28px !important; border-width: 1.5px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause::before { content: ''; position: absolute; inset: -8px; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-pause svg { width: 10px !important; height: 10px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-foot { gap: 12px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { height: 3px !important; }
+/* Compact progress: four short segments + pause, centred under the art */
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-foot { justify-content: center; gap: 12px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress { flex: none !important; gap: 4px !important; }
+.ayna-mobile.ayna-mobile .ay-cover-widget .ay-reel-progress i { flex: none !important; width: 24px; height: 3px !important; }

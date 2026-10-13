@@ -53,7 +53,7 @@ export function buildSearchTextForItem(item, categoryLabels = {}) {
  *
  * WHY THIS EXISTS: a query like "vitamins" used to score a pregnancy skin oil
  * (whose doctorOpinion happens to mention "Vitamin E" in passing) identically
- * to an actual "Ritual Prenatal Vitamin" product — buildSearchTextForItem's
+ * to an actual "Ritual Prenatal Vitamin" product, buildSearchTextForItem's
  * flattened haystack can't tell an incidental prose mention from a product's
  * actual identity. scoreQueryAgainstProduct uses this second, narrower
  * haystack to weight identity-field matches above prose-only ones.
@@ -79,7 +79,7 @@ function boundaryMatch(w, haystack) {
 function wordMatchesInHaystack(word, haystack) {
   if (!word) return false;
   // Every word length used to go through this word-boundary check ONLY for
-  // single characters — the comment here explained exactly why ("c" inside
+  // single characters, the comment here explained exactly why ("c" inside
   // "cup"/"cream") but the same failure mode exists for any word length: a
   // plain haystack.includes(word) matches "hair" inside "chair" ("Emsella
   // Chair Treatment" topping a search for "hair", found live) exactly the
@@ -91,7 +91,7 @@ function wordMatchesInHaystack(word, haystack) {
   return false;
 }
 
-/** Spoken language often differs from product copy — treat related words as a hit for the same term */
+/** Spoken language often differs from product copy, treat related words as a hit for the same term */
 const TERM_ALIASES = {
   period: ['menstrual', 'menstruation', 'cycle', 'menses'],
   periods: ['menstrual', 'menstruation', 'cycle', 'menses'],
@@ -100,8 +100,8 @@ const TERM_ALIASES = {
   pregnancy: ['pregnant', 'prenatal', 'maternity'],
   // "conceive"/"conceiving"/"TTC" (a very common fertility-community
   // abbreviation for "trying to conceive") had no alias entry at all, so a
-  // query as plain as "conceive" — or the natural phrase "trying to
-  // conceive" — scored 0 even though "fertility" alone matches real
+  // query as plain as "conceive", or the natural phrase "trying to
+  // conceive", scored 0 even though "fertility" alone matches real
   // products (Thorne Ubiquinol, Wholesome Story Inositol, Pomelo Care).
   fertility: ['fertile', 'ovulation', 'conceive', 'conceiving', 'ttc'],
   conceive: ['fertility', 'fertile', 'ovulation', 'conceiving', 'ttc'],
@@ -114,10 +114,10 @@ const TERM_ALIASES = {
   uti: ['urinary', 'bladder', 'infection'],
   pcos: ['polycystic', 'ovarian'],
   /** Live bug: "sti" returned nothing even though Wisp/Planned Parenthood
-   * Direct genuinely offer STI care — their summaries said "STI" but their
+   * Direct genuinely offer STI care, their summaries said "STI" but their
    * tags/healthFunctions (the identity fields) didn't, so the single-term
    * identity-hit gate below rejected the match as a passing prose mention.
-   * The real fix is tagging those products (see supabase/seed) — this alias
+   * The real fix is tagging those products (see supabase/seed), this alias
    * is defense-in-depth so "std" also finds a product tagged only "sti"
    * and vice versa, without needing every spelling duplicated in every tag. */
   sti: ['std', 'stds', 'stis', 'sexually-transmitted', 'sexual-health'],
@@ -140,7 +140,7 @@ const TERM_ALIASES = {
   underwear: ['period-underwear', 'panty', 'panties', 'briefs', 'absorbent', 'leak-proof', 'leakproof'],
   panty: ['panties', 'underwear', 'period-underwear', 'briefs'],
   panties: ['panty', 'underwear', 'period-underwear', 'briefs'],
-  /** Underwear-shaped / minimal coverage — product copy rarely says "thong" */
+  /** Underwear-shaped / minimal coverage, product copy rarely says "thong" */
   thong: ['thongs', 'bikini', 'g-string', 'underwear', 'liner', 'liners', 'discreet', 'narrow', 'gusset', 'invisible', 'mini', 'light', 'string'],
   thongs: ['thong', 'bikini', 'g-string', 'underwear', 'liner', 'liners', 'discreet', 'narrow', 'gusset', 'invisible', 'mini', 'light', 'string'],
 };
@@ -169,7 +169,7 @@ function levenshteinDistance(a, b) {
 // For words this short, only a SAME-LENGTH edit (a substitution, e.g.
 // "poize"->"poise") is trusted as a typo. Allowing a shorter/longer word
 // within the same edit distance lets a single inserted/deleted letter turn
-// one real word into a completely different real word — "hair" -> "chair"
+// one real word into a completely different real word"hair" -> "chair"
 // via one inserted "c" is exactly this failure mode, and is covered by this
 // file's own regression test (naturalLanguageSearch.test.js). Longer words
 // are safe to compare across a length difference too, since an accidental
@@ -181,7 +181,7 @@ const FUZZY_SAME_LENGTH_MAX = 5;
  * candidates (a substitution or transposition, e.g. "concieve"/"conceive")
  * get the full distance budget for their length. Cross-length candidates (an
  * inserted/deleted letter) are capped at distance 1 regardless of word
- * length — "thinning" vs "winning" is a real distance-2, different-length
+ * length"thinning" vs "winning" is a real distance-2, different-length
  * pair that a looser cap let through (found live: matched two unrelated
  * menstrual cups via their "award winning" tag) even though "thinning" and
  * "winning" are two completely different words, not typos of each other.
@@ -197,7 +197,7 @@ function fuzzyEditDistanceAllows(word, candidate) {
 /**
  * Typo tolerance: only reached when the exact word-boundary check (and its
  * alias list) already missed. Compares the query term against every word in
- * the haystack and accepts a close-enough edit distance — catches ordinary
+ * the haystack and accepts a close-enough edit distance, catches ordinary
  * misspellings like "concieve"/"conceive" or "endometriosis"/"endometreosis"
  * without needing every typo hardcoded as an alias.
  */
@@ -211,7 +211,7 @@ const TERM_ALIAS_KEYS = Object.keys(TERM_ALIASES);
 
 /**
  * A typo can land on a term whose CORRECT spelling has an alias list, but
- * the alias lookup is a plain dictionary keyed by exact spelling — "conceive"
+ * the alias lookup is a plain dictionary keyed by exact spelling"conceive"
  * has aliases, "concieve" (typo) does not. This finds the closest known
  * alias key to a misspelled term and returns that key's real aliases, so
  * "concieve" still resolves to conceive's aliases (fertility/ovulation/ttc)
@@ -249,11 +249,11 @@ function termMatchesWithVariants(term, haystack) {
 function meaningfulTerms(query) {
   const q = query.toLowerCase().trim().replace(/[^\w\s'-]/g, ' ');
   // Single-character tokens used to be dropped outright (w.length > 1), which
-  // silently collapsed "vitamin c" into a bare "vitamin" search — the "c" was
+  // silently collapsed "vitamin c" into a bare "vitamin" search, the "c" was
   // never tokenized at all, so C/D/E/B/K-specific vitamin queries (and things
   // like "omega 3") couldn't distinguish themselves from the generic term.
   // Now kept, since wordMatchesInHaystack requires a real word-boundary match
-  // for single characters rather than a substring check — "a"/"i" (the only
+  // for single characters rather than a substring check"a"/"i" (the only
   // single letters that are themselves common noise words) are still caught
   // by STOP below.
   return q.split(/\s+/).map((w) => w.replace(/^'+|'+$/g, '')).filter((w) => w.length > 0 && !STOP.has(w));
@@ -266,7 +266,7 @@ function meaningfulTerms(query) {
 function minHitsForMatch(termCount) {
   if (termCount <= 0) return 0;
   if (termCount === 1) return 1;
-  /** Two-word questions (e.g. "pads thongs") often pair a category word with a rare use case — require one strong hit */
+  /** Two-word questions (e.g. "pads thongs") often pair a category word with a rare use case, require one strong hit */
   if (termCount === 2) return 1;
   return Math.max(2, Math.ceil(termCount * 0.35));
 }
@@ -278,7 +278,7 @@ function minHitsForMatch(termCount) {
  * term that hits in name/brand/category/tags/healthFunctions score above one
  * that only hits somewhere in prose (doctorOpinion, ingredients, etc). Without
  * it, hit-counting alone can't distinguish a product that genuinely IS what
- * the query asked for from one that just mentions the word in passing —
+ * the query asked for from one that just mentions the word in passing
  * omitting this argument preserves the exact old (pre-identity-weighting)
  * scoring behavior, so existing callers/tests that only pass the full
  * haystack are unaffected.
@@ -317,18 +317,18 @@ export function scoreQueryAgainstProduct(query, haystackLower, identityHaystackL
   // real catalog: "vitamins" matched a lubricant, a UTI product, and a
   // maternity pillow (all mentioning "vitamin" once, in passing); "stress"
   // matched a Kegel exerciser and a breast pump; "iron" matched a heating
-  // pad — none of these are what the product actually IS, they just contain
+  // pad, none of these are what the product actually IS, they just contain
   // the word somewhere in several paragraphs of copy. Reject a match like
   // that unless it's backed by SOME identity-field signal (the product's own
   // name/brand/category/tags/healthFunctions really is about this term, not
   // just a passing prose mention) or, for 2-term queries, by genuine full
-  // coverage (both terms present somewhere, even in prose — a much stronger
+  // coverage (both terms present somewhere, even in prose, a much stronger
   // signal than either alone). Longer natural-language queries (3+ terms)
   // are deliberately left alone: minHitsForMatch already requires multiple
   // independent term hits there, a much weaker coincidence risk, and this
   // file's whole design intent is that a long spoken sentence can still
   // match on partial prose coverage without also needing a tag/category hit.
-  // Only enforced when a caller actually supplied identity text — without it
+  // Only enforced when a caller actually supplied identity text, without it
   // there's no way to tell "genuinely no identity signal" apart from "this
   // caller doesn't distinguish identity from prose at all" (a few tests, and
   // any future caller, intentionally use the simpler 2-arg form and get the
@@ -344,7 +344,7 @@ export function scoreQueryAgainstProduct(query, haystackLower, identityHaystackL
 
   let score = hits;
   // A term matching in an identity field means the product IS about that
-  // term, not just mentioning it somewhere in a paragraph — weight it well
+  // term, not just mentioning it somewhere in a paragraph, weight it well
   // above a plain prose hit (which is worth 1 point via `hits` above).
   const IDENTITY_BONUS_PER_TERM = 2.5;
   score += identityHits * IDENTITY_BONUS_PER_TERM;

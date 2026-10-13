@@ -87,36 +87,73 @@ describe('generateTieredRecommendations — every CONCERN_AREAS checkbox produce
 // be prioritized when a user has one. Aditi said it should already be
 // integrated — it wasn't. scoreProduct had zero FSA/HSA logic at all.
 describe('scoreProduct — FSA/HSA prioritization', () => {
-  const concern = { key: 'test', tags: [] };
+  const concern = { key: 'Period care', tags: ['heavy-flow'] };
+  const relevant = { id: 'pad', name: 'Flow pad', category: 'pad', tags: ['heavy-flow'], healthFunctions: ['menstrual-collection'] };
+  const profile = { supportSelections: ['Heavy periods'] };
 
   it('scores an FSA-eligible product higher when the user has an FSA', () => {
-    const eligible = { tags: [], fsaEligible: true };
-    const notEligible = { tags: [] };
-    const intake = { fsaHsa: 'fsa' };
+    const eligible = { ...relevant, fsaEligible: true };
+    const notEligible = { ...relevant };
+    const intake = { ...profile, fsaHsa: 'fsa' };
     expect(scoreProduct(eligible, intake, concern)).toBeGreaterThan(scoreProduct(notEligible, intake, concern));
   });
 
   it('does not boost an FSA-only-eligible product for a user who only has an HSA', () => {
-    const fsaOnly = { tags: [], fsaEligible: true };
-    const intake = { fsaHsa: 'hsa' };
-    expect(scoreProduct(fsaOnly, intake, concern)).toBe(scoreProduct({ tags: [] }, intake, concern));
+    const fsaOnly = { ...relevant, fsaEligible: true };
+    const intake = { ...profile, fsaHsa: 'hsa' };
+    expect(scoreProduct(fsaOnly, intake, concern)).toBe(scoreProduct({ ...relevant }, intake, concern));
   });
 
   it('"both" matches a product eligible for either', () => {
-    const hsaOnly = { tags: [], hsaEligible: true };
-    const intake = { fsaHsa: 'both' };
-    expect(scoreProduct(hsaOnly, intake, concern)).toBeGreaterThan(scoreProduct({ tags: [] }, intake, concern));
+    const hsaOnly = { ...relevant, hsaEligible: true };
+    const intake = { ...profile, fsaHsa: 'both' };
+    expect(scoreProduct(hsaOnly, intake, concern)).toBeGreaterThan(scoreProduct({ ...relevant }, intake, concern));
   });
 
   it('does not boost anything when the user never answered the FSA/HSA question', () => {
-    const eligible = { tags: [], fsaHsaEligible: true };
-    const intake = { fsaHsa: '' };
-    expect(scoreProduct(eligible, intake, concern)).toBe(scoreProduct({ tags: [] }, intake, concern));
+    const eligible = { ...relevant, fsaHsaEligible: true };
+    const intake = { ...profile, fsaHsa: '' };
+    expect(scoreProduct(eligible, intake, concern)).toBe(scoreProduct({ ...relevant }, intake, concern));
   });
 
   it('respects the snake_case field variant the catalog also uses', () => {
-    const eligible = { tags: [], fsa_eligible: true };
-    const intake = { fsaHsa: 'fsa' };
-    expect(scoreProduct(eligible, intake, concern)).toBeGreaterThan(scoreProduct({ tags: [] }, intake, concern));
+    const eligible = { ...relevant, fsa_eligible: true };
+    const intake = { ...profile, fsaHsa: 'fsa' };
+    expect(scoreProduct(eligible, intake, concern)).toBeGreaterThan(scoreProduct({ ...relevant }, intake, concern));
+  });
+});
+
+// Step 2: tiers are built on the matching engine (src/matching).
+describe('generateTieredRecommendations — matching engine', () => {
+  it('scores a concern only on the needs she selected inside it, and every tier clears the 50 bar', () => {
+    const intake = {
+      supportSelections: ['Heavy periods', 'Cramps or period pain'],
+      primaryConcerns: ['Period care (pads, tampons, cups, discs, underwear)', 'Cramp and pain relief (devices, supplements, heat)'],
+      periodFlow: 'Very heavy',
+    };
+    const result = generateTieredRecommendations(intake);
+    const period = result.find((r) => r.concern.startsWith('Period care'));
+    expect(period.needIds).toEqual(['period.heavy']);
+    expect(period.tiers.length).toBeGreaterThan(0);
+    period.tiers.forEach((t) => {
+      expect(t.needId).toBe('period.heavy');
+      expect(t.score).toBeGreaterThanOrEqual(50);
+      expect(t.product.category).not.toBe('cramp-relief');
+    });
+    expect(period.notes.some((n) => /Very heavy periods/.test(n))).toBe(true);
+    const cramps = result.find((r) => r.concern.startsWith('Cramp'));
+    expect(cramps.needIds).toEqual(['pain.menstrual_cramp']);
+  });
+
+  it('returns fewer tiers instead of weak ones', () => {
+    const result = generateTieredRecommendations({ supportSelections: ['Joint aches'], primaryConcerns: ['Perimenopause and menopause support'] });
+    expect(result[0].tiers.every((t) => t.score >= 50)).toBe(true);
+    expect(result[0].tiers.length).toBeLessThan(5);
+  });
+
+  it('never tiers an excluded product', () => {
+    const result = generateTieredRecommendations({ supportSelections: ['Cramps or period pain'], primaryConcerns: ['Cramp and pain relief (devices, supplements, heat)'], avoidRepeat: ['ThermaCare'] });
+    const ids = result[0].tiers.flatMap((t) => [t.product.id, ...t.alternatives.map((a) => a.id)]);
+    expect(ids.some((id) => /thermacare/.test(id))).toBe(false);
   });
 });

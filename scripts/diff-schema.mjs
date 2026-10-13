@@ -42,7 +42,7 @@ const live = load(resolve(process.cwd(), livePath));
 
 const findings = [];
 // `fix` is the SQL that resolves the finding. Emitted as a reviewable script
-// rather than applied — these are writes against a database holding real user
+// rather than applied, these are writes against a database holding real user
 // data, so a human reads them first.
 const add = (level, where, msg, why, fix = null) => findings.push({ level, where, msg, why, fix });
 
@@ -51,7 +51,7 @@ const CONSEQUENCE = {
   user_ecosystems: 'ecosystem products cannot be saved or loaded',
   user_reviews: 'ratings and reviews cannot be saved',
   user_learning_memory: 'learning signals cannot be saved',
-  user_ai_usage: 'AI quotas fail OPEN — unmetered spend',
+  user_ai_usage: 'AI quotas fail OPEN, unmetered spend',
   user_ecosystem_builds: 'the ecosystem build quota fails OPEN',
   user_health_profiles: 'imported conditions/medications are not persisted',
   health_intakes: 'the health intake cannot be saved',
@@ -81,7 +81,7 @@ for (const [name, exp] of Object.entries(expected.tables)) {
           'every write touching this column errors; `create table if not exists` will NOT add it',
           `alter table public.${name} add column if not exists ${col} ${e.type}` +
           `${e.default ? ` default ${e.default}` : ''}` +
-          // Never add a NOT NULL column to a populated table without a default —
+          // Never add a NOT NULL column to a populated table without a default
           // it fails outright. Add it nullable and tighten separately.
           `${e.notnull && e.default ? ' not null' : ''};` +
           `${e.notnull && !e.default ? `\n-- then, once backfilled: alter table public.${name} alter column ${col} set not null;` : ''}`);
@@ -89,7 +89,7 @@ for (const [name, exp] of Object.entries(expected.tables)) {
     }
     if (g.type !== e.type) {
       // jsonb vs json, text vs varchar etc. are real and worth surfacing.
-      add('WARNING', `${name}.${col}`, `type differs — live "${g.type}", expected "${e.type}"`,
+      add('WARNING', `${name}.${col}`, `type differs, live "${g.type}", expected "${e.type}"`,
           'may silently coerce or reject values');
     }
     if (g.notnull && !e.notnull) {
@@ -104,7 +104,7 @@ for (const [name, exp] of Object.entries(expected.tables)) {
       const g = gotCols.get(col);
       if (g.notnull && !g.default) {
         add('BLOCKING', `${name}.${col}`, 'extra live column is NOT NULL with no default',
-            'every INSERT from the app will fail — it does not know to supply this');
+            'every INSERT from the app will fail, it does not know to supply this');
       }
     }
   }
@@ -112,7 +112,7 @@ for (const [name, exp] of Object.entries(expected.tables)) {
   // Composite keys the upserts target.
   //
   // Compare by COLUMN SET, not by definition string. ON CONFLICT needs a unique
-  // index over those columns — a PRIMARY KEY and a UNIQUE constraint both
+  // index over those columns, a PRIMARY KEY and a UNIQUE constraint both
   // provide one, so a live UNIQUE(user_id, product_id) satisfies an expected
   // PRIMARY KEY(user_id, product_id). Matching on the string reported a
   // still-broken schema after the fix had already worked.
@@ -125,8 +125,8 @@ for (const [name, exp] of Object.entries(expected.tables)) {
   const gotKeys = new Set(got.constraints.filter(isKey).map(keyCols).filter(Boolean));
   for (const k of expKeys) {
     if (!gotKeys.has(k)) {
-      add('BLOCKING', name, `no unique index over (${k}) — required by ON CONFLICT`,
-          'upserts using onConflict raise 42P10 — the UI shows success and the data is lost',
+      add('BLOCKING', name, `no unique index over (${k}), required by ON CONFLICT`,
+          'upserts using onConflict raise 42P10, the UI shows success and the data is lost',
           // A surrogate `id` PK is the usual cause (the dashboard table editor
           // adds one by default). Adding a UNIQUE alongside it is enough for
           // ON CONFLICT and is far less invasive than replacing the PK.
@@ -154,7 +154,7 @@ for (const [name, exp] of Object.entries(expected.tables)) {
           ? 'using (auth.uid() = user_id) with check (auth.uid() = user_id)'
           : 'using (auth.uid() = user_id)';
       add('BLOCKING', name, `no ${cmd} policy live`,
-          `under RLS a missing policy is a SILENT no-op, not an error — ${cmd} requests affect 0 rows`,
+          `under RLS a missing policy is a SILENT no-op, not an error, ${cmd} requests affect 0 rows`,
           `create policy "${name}_${cmd.toLowerCase()}_own" on public.${name}\n  for ${cmd.toLowerCase()} to authenticated ${clause};`);
     }
   }
@@ -166,7 +166,7 @@ for (const [name, exp] of Object.entries(expected.tables)) {
     if (readable) {
       const bad = got.policies.filter((p) => (p.command === 'SELECT' || p.command === 'ALL') && (p.roles || []).includes('authenticated'));
       add('BLOCKING', name, 'SECURITY: readable by authenticated users',
-          'account-takeover path — the attacker owns the row created for the victim\'s number and can read code_hash',
+          'account-takeover path, the attacker owns the row created for the victim\'s number and can read code_hash',
           bad.map((p) => `drop policy "${p.name}" on public.${name};`).join('\n') +
           `\nrevoke select on public.${name} from authenticated, anon;`);
     }
@@ -188,7 +188,7 @@ for (const f of expected.functions || []) {
   if (!g) {
     add('BLOCKING', sig(f), 'function MISSING live',
         f.name === 'claim_otp_attempt' ? '/api/phone-verify-confirm returns 500 on EVERY attempt'
-        : f.name.includes('usage') ? 'quotas fail OPEN — unmetered LLM spend'
+        : f.name.includes('usage') ? 'quotas fail OPEN, unmetered LLM spend'
         : f.name.includes('build') ? 'the ecosystem build quota fails OPEN'
         : 'the API calls this by name');
     continue;
@@ -214,7 +214,7 @@ console.log(`\nlive tables: ${Object.keys(live.tables).length}  |  reference tab
 console.log(`live functions: ${(live.functions || []).length}  |  reference functions: ${(expected.functions || []).length}\n`);
 
 if (!findings.length) {
-  console.log('✅ live schema matches the repo — the migrations are safe to apply as-is.\n');
+  console.log('✅ live schema matches the repo, the migrations are safe to apply as-is.\n');
   process.exit(0);
 }
 
@@ -244,7 +244,7 @@ if (fixes.length) {
     'commit;',
   ].join('\n');
   writeFileSync(resolve(process.cwd(), 'schema-remediation.sql'), script + '\n');
-  console.log(`\n📝 wrote schema-remediation.sql (${fixes.length} statements) — REVIEW before running\n`);
+  console.log(`\n📝 wrote schema-remediation.sql (${fixes.length} statements), REVIEW before running\n`);
 } else {
   console.log('');
 }

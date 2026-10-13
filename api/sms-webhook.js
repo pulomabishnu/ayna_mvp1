@@ -1,5 +1,5 @@
 /**
- * /api/sms-webhook — Twilio inbound SMS webhook.
+ * /api/sms-webhook, Twilio inbound SMS webhook.
  * Looks up the texting user by phone number, loads her real health profile,
  * and replies via Claude at a 6th-grade reading level. Logs every inbound
  * and outbound message to sms_conversations (never the phone number itself).
@@ -95,20 +95,20 @@ ${knowledgeContext ? `${knowledgeContext}\n\n` : ''}${historyLines ? `RECENT CON
 Reply to her text now, following all the rules above.`;
 }
 
-const SMS_SYSTEM_PROMPT = `You are Ayna, a warm and knowledgeable friend texting with a woman about her health. She has already completed a health profile on the Ayna app — always answer using her actual profile (conditions, symptoms, preferences), never a generic answer.
+const SMS_SYSTEM_PROMPT = `You are Ayna, a warm and knowledgeable friend texting with a woman about her health. She has already completed a health profile on the Ayna app, always answer using her actual profile (conditions, symptoms, preferences), never a generic answer.
 
-READING LEVEL — this is critical, many of the women you text have low literacy or limited healthcare access:
+READING LEVEL, this is critical, many of the women you text have low literacy or limited healthcare access:
 - Write at a 6th-grade reading level. Short sentences. Common words.
 - If you must use a medical term, define it in plain words right after, in the same sentence.
 
 TONE:
-- Warm, like a knowledgeable friend texting back — never clinical, cold, or robotic.
+- Warm, like a knowledgeable friend texting back, never clinical, cold, or robotic.
 - Never say "diagnose," "treat," or "cure." Say "may help with" instead.
 
 OTC-FIRST, ESCALATE WHEN WARRANTED:
 - Lead with free or low-cost over-the-counter (OTC) options when appropriate for her symptoms.
 - Escalate to "this needs an in-person visit" only when her symptom severity or duration warrants it (for example: pain she rates 8 or higher out of 10, symptoms lasting an unusually long time, or red-flag symptoms like heavy bleeding or fever).
-- When escalating: first acknowledge her reality (for example, "I know getting to a doctor isn't always easy"). Then name ONE specific resource — a real clinic, mobile health unit, or telehealth service (like Allara Health, Nurx, or Maven Clinic) — never just "see a doctor." Frame it as an option she can choose, not a directive (for example, "one option is..." not "you need to...").
+- When escalating: first acknowledge her reality (for example, "I know getting to a doctor isn't always easy"). Then name ONE specific resource, a real clinic, mobile health unit, or telehealth service (like Allara Health, Nurx, or Maven Clinic), never just "see a doctor." Frame it as an option she can choose, not a directive (for example, "one option is..." not "you need to...").
 
 LOCATION-SPECIFIC ANSWERS:
 - If she names a location or pharmacy, give a specific, realistic answer about what's typically available there and at what price point, using your general knowledge.
@@ -116,10 +116,10 @@ LOCATION-SPECIFIC ANSWERS:
 LENGTH:
 - Keep replies under 320 characters (about 2 text messages) whenever possible. Only go longer if the situation truly needs more detail to be safe and clear.
 
-Reply only with the text message itself — no preamble, no signature.`;
+Reply only with the text message itself, no preamble, no signature.`;
 
 /**
- * Was Anthropic-only via a hand-rolled fetch — a single provider's outage
+ * Was Anthropic-only via a hand-rolled fetch, a single provider's outage
  * (e.g. the account running out of credits, found live 2026-08-25 alongside
  * the same gap in api/search-suggestions.js) left every texted question
  * unanswerable with no fallback. Now goes through the same multi-provider
@@ -156,7 +156,7 @@ export default async function handler(req, res) {
   // the handler would look her up, load her health_intakes profile, and return
   // an answer derived from it in the HTTP response body.
   if (!authToken) {
-    console.error('[sms-webhook] TWILIO_AUTH_TOKEN is not set — refusing to process unverified webhook');
+    console.error('[sms-webhook] TWILIO_AUTH_TOKEN is not set, refusing to process unverified webhook');
     return res.status(500).send('Server error');
   }
   if (!signature) {
@@ -169,7 +169,7 @@ export default async function handler(req, res) {
     try {
       valid = twilio.validateRequest(authToken, signature, url, params);
     } catch (e) {
-      // validateRequest calls new URL(url) unguarded — a missing Host header
+      // validateRequest calls new URL(url) unguarded, a missing Host header
       // threw an uncaught TypeError and surfaced as a 500 instead of a 403.
       console.error('[sms-webhook] signature validation error:', e?.message);
       return res.status(403).send('Forbidden');
@@ -215,7 +215,7 @@ export default async function handler(req, res) {
     if (optOutError) {
       // Do NOT confirm an unsubscribe that did not happen.
       console.error('[sms-webhook] OPT-OUT WRITE FAILED for user', userId, optOutError.message);
-      return sendTwiml(res, "Sorry — we couldn't process that just now. Please reply STOP again, or email pulomabishnu@gmail.com.");
+      return sendTwiml(res, "Sorry, we couldn't process that just now. Please reply STOP again, or email pulomabishnu@gmail.com.");
     }
     await logMessage(admin, userId, 'inbound', text);
     await logMessage(admin, userId, 'outbound', "You're unsubscribed from Ayna texts. Reply START to opt back in.");
@@ -237,7 +237,7 @@ export default async function handler(req, res) {
       .eq('user_id', userId);
     if (optInError) {
       console.error('[sms-webhook] OPT-IN WRITE FAILED for user', userId, optInError.message);
-      return sendTwiml(res, "Sorry — we couldn't process that just now. Please reply START again.");
+      return sendTwiml(res, "Sorry, we couldn't process that just now. Please reply START again.");
     }
     await logMessage(admin, userId, 'inbound', text);
     await logMessage(admin, userId, 'outbound', "You're back in! Text me anytime, like 'what helps with PCOS bloating'.");
@@ -253,7 +253,7 @@ export default async function handler(req, res) {
       .eq('message_sid', messageSid)
       .maybeSingle();
     if (seen) {
-      console.warn('[sms-webhook] duplicate delivery for', messageSid, '— ignoring');
+      console.warn('[sms-webhook] duplicate delivery for', messageSid, ', ignoring');
       return res.status(200).send('');
     }
   }
@@ -286,11 +286,11 @@ export default async function handler(req, res) {
   const burst = await rateLimit(`sms:in:${userId}`, { max: 6, windowSec: 60, failClosed: false });
   if (!burst.ok) {
     await logMessage(admin, userId, 'outbound', 'rate limited');
-    return sendTwiml(res, "You're sending messages quickly — give me a minute and text again.");
+    return sendTwiml(res, "You're sending messages quickly, give me a minute and text again.");
   }
   const { allowed: smsAllowed } = await consumeUsage(admin, userId, 'sms');
   if (!smsAllowed) {
-    const msg = "You've reached this week's Ayna text limit. It resets Monday — or use the app anytime at https://ayna.health";
+    const msg = "You've reached this week's Ayna text limit. It resets Monday, or use the app anytime at https://ayna.health";
     await logMessage(admin, userId, 'outbound', msg);
     return sendTwiml(res, msg);
   }

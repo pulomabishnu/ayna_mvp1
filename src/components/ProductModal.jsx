@@ -1,36 +1,39 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import ProductEvidenceRail from './ProductEvidenceRail';
-import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { ProductImageFallback } from './ProductTileImage';
+import ProductCard from './ProductCard';
+import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, CATEGORY_LABELS } from '../data/products';
+import { exclusionLines } from '../utils/matchDisplay';
+import '../styles/match-ui.css';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { isPartnerBrandItem } from '../utils/partnerBrands';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
-import MatchGauge from './MatchGauge';
+import WhyMatchPanel from './WhyMatchPanel';
+import MatchPill from './MatchPill';
+import ProductSections from './passport/ProductSections';
+import { matchLine, priceParts } from '../data/passport/content';
+import { buildGlance, perUnitLabel } from './pdp/glance';
+import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
+import GalleryThumbs from './pdp/GalleryThumbs';
+import ComparePanel from './pdp/ComparePanel';
+import Breadcrumbs from './pdp/Breadcrumbs';
+import useJsonLd from './pdp/useJsonLd';
+import { jumpTo } from './pdp/jump';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
-import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
-
-/** Remembers whether this browser prefers the tabs (1f) or evidence rail (1g) layout. */
-const PRODUCT_VIEW_KEY = 'ayna_product_detail_view_v1';
-
-const AYNA_TABS = [
-  { id: 'summary', label: 'ayna summary' },
-  { id: 'clinician', label: 'Clinician opinion' },
-  { id: 'scientific', label: 'Scientific literature' },
-  { id: 'community', label: 'Social Media' },
-  { id: 'ask', label: 'Ask Ayna' },
-];
+import '../styles/audit-pdp.css';
+import '../styles/verify-content.css';
+import './pdp/pdp.css';
 
 /**
- * Product Q&A — for a user who doesn't know what a product actually IS (a
+ * Product Q&A, for a user who doesn't know what a product actually IS (a
  * real MVP report: a first-time viewer saw a "pelvic wand" and the static
  * summary didn't explain what it does or how it's used). api/product-chat.js
  * already existed, fully built and tested (auth, quota, prompt-injection
  * guards, official-site grounding) but had zero frontend callers anywhere in
- * the app — this is that first caller, not a new chat system.
+ * the app, this is that first caller, not a new chat system.
  */
 function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts }) {
   const [messages, setMessages] = useState([]);
@@ -44,7 +47,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
     const supabase = getSupabaseClient();
     // getSupabaseClient() returns null when Supabase env vars aren't
     // configured (local dev without .env.local, or a misconfigured
-    // deploy) — every other call site in this app treats that as "not
+    // deploy), every other call site in this app treats that as "not
     // signed in" rather than crashing, so match that here.
     if (!supabase) {
       setSession(null);
@@ -91,9 +94,9 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
       setMessages((prev) => [...prev, { role: 'assistant', text: data.answer }]);
     } catch (e) {
       if (e?.code === 'not_signed_in') {
-        setError('Sign in to ask Ayna about this product — free accounts get a few AI chats per week.');
+        setError('Sign in to ask ayna about this product. Free accounts get a few AI chats each week.');
       } else if (e?.code === 'weekly_limit_reached') {
-        setError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
+        setError('You’ve used your free chats for this week. They reset weekly.');
       } else {
         setError(e?.message || 'Something went wrong. Try again in a moment.');
       }
@@ -108,7 +111,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
       {messages.length === 0 && (
         <>
           <p className="pdp-summary-card__body" style={{ marginTop: 0 }}>
-            New to this kind of product, or not sure what it's actually for? Ask Ayna anything about it.
+            New to this kind of product? Ask ayna anything about it.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {suggestions.map((s) => (
@@ -133,8 +136,8 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
               style={{
                 alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
                 maxWidth: '85%',
-                background: m.role === 'user' ? 'var(--color-primary)' : 'var(--color-secondary-fade)',
-                color: m.role === 'user' ? '#fff' : 'inherit',
+                background: m.role === 'user' ? 'var(--ay-ink)' : 'var(--ay-cream)',
+                color: m.role === 'user' ? 'var(--ay-paper)' : 'inherit',
                 borderRadius: '12px',
                 padding: '0.55rem 0.8rem',
                 fontSize: '0.9rem',
@@ -147,7 +150,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
           ))}
           {sending && (
             <div style={{ alignSelf: 'flex-start', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-              Ayna is thinking…
+              ayna is thinking…
             </div>
           )}
         </div>
@@ -175,42 +178,26 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
         </button>
       </form>
       <p className="pdp-summary-card__foot" style={{ margin: 0 }}>
-        Ayna's answers are educational, not medical advice.
+        ayna’s answers are educational, not medical advice.
       </p>
     </div>
   );
 }
 
-/** Full-size photo view — click to enlarge, click backdrop/X/Escape to close. */
-// A dense, un-collapsible safety paragraph (e.g. Always Infinity FlexFoam's
-// ~75-word PFAS note) could push Buy Now/Wishlist below the fold on a normal
-// screen — a first-time visitor scrolled straight into a wall of red-flagged
-// text before ever seeing the purchase buttons (found live, 2026-08-24 bug
-// bash). Collapsed to one line by default; the warning icon/label always
-// stays visible (this is exactly the content that shouldn't be missable),
-// only the full paragraph is hidden until tapped.
-function SafetyAlert({ text }) {
-  const [expanded, setExpanded] = useState(false);
+// A dense safety paragraph must never push Buy now below the fold, but the
+// flag itself must never be missable either (2026-08-24 bug bash). The
+// header shows one line that jumps to the full note in the Safety section.
+function SafetyFlag() {
   return (
-    <div className="pdp-safety-alert">
-      <button
-        type="button"
-        className="pdp-safety-alert__toggle"
-        onClick={() => setExpanded((v) => !v)}
-        aria-expanded={expanded}
-      >
-        <strong>⚠️ Safety note</strong>
-        <span className="pdp-safety-alert__chevron" aria-hidden="true">{expanded ? '▴' : '▾'}</span>
-      </button>
-      {expanded ? (
-        <p>{text}</p>
-      ) : (
-        <p className="pdp-safety-alert__preview">{text}</p>
-      )}
-    </div>
+    <button type="button" className="pdp-safety-flag" onClick={() => jumpTo('ay-sec-safety')}>
+      <span aria-hidden="true">⚠️</span>
+      <strong>Safety note on file</strong>
+      <span>See it</span>
+    </button>
   );
 }
 
+/** Full-size photo view: click to enlarge, click backdrop/X/Escape to close. */
 function ImageLightbox({ src, alt, onClose }) {
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -258,27 +245,20 @@ function ImageLightbox({ src, alt, onClose }) {
   );
 }
 
-function truncate(s, max) {
-  if (!s || typeof s !== 'string') return '';
-  const t = s.trim();
-  if (t.length <= max) return t;
-  return `${t.slice(0, max - 1)}…`;
-}
-
 /**
  * Surfaces a real, already-on-file safety/opinion concern (e.g. the Always
  * Pads PFAS controversy) regardless of which tab is active. safety.recalls
  * and safety.opinionAlerts were both being written into the catalog with
  * real, accurate detail, but neither was ever rendered anywhere in this
- * file — the default "ayna summary" a user sees first is built only from
+ * file, the default "ayna summary" a user sees first is built only from
  * product.summary + product.effectiveness, both purely positive/performance
  * fields, so a product could read as unqualified positive even when the
  * SAME entry already had a well-documented concern on file just one tab
- * away (or, for opinionAlerts, nowhere at all — grep confirms zero
+ * away (or, for opinionAlerts, nowhere at all, grep confirms zero
  * components read that field anywhere in the app before this).
  *
  * '⚠️' is the existing convention for "this is a real flagged concern," not
- * a new one — the same check Discovery.jsx's safety scoring and
+ * a new one, the same check Discovery.jsx's safety scoring and
  * Recommendations.jsx's "Safety note" badge already use. A product with no
  * flag returns null, so this only ever adds visibility to what the catalog
  * already documented, never invents a concern that isn't on file.
@@ -288,56 +268,6 @@ export function getSafetyAlertText(product) {
   if (!recalls || !String(recalls).includes('⚠️')) return null;
   return product?.safety?.opinionAlerts || recalls;
 }
-
-/** First sentence only, so a long safety/materials blob stays a spec row, not a paragraph — cut on a word boundary. */
-function firstSentence(text, max = 140) {
-  const t = String(text || '').trim();
-  if (!t) return '';
-  const cut = t.split(/(?<=[.!?])\s/)[0] || t;
-  if (cut.length <= max) return cut;
-  const truncated = cut.slice(0, max);
-  const lastSpace = truncated.lastIndexOf(' ');
-  return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
-}
-
-function humanizeTag(tag) {
-  return String(tag || '')
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-/**
- * The three short fact rows shown in the evidence layout's center column,
- * next to the product name (mockup 1g: "Best for / Time per day / Skip if").
- * Our catalog has no per-product usage cadence, so this maps the mockup's
- * intent onto the real fields we do have and only returns rows with
- * something real to say.
- */
-function buildFactRows(product) {
-  const bestFor = (product.healthFunctions || []).concat(product.tags || [])
-    .slice(0, 3)
-    .map(humanizeTag)
-    .join(', ');
-  // Not truncated like the other rows — a curated materials/ingredient list
-  // (e.g. Neycher's) is meant to be read in full here, not cut at the first
-  // period, which would chop it after "10 suppositories per box." and drop
-  // the actual ingredient list entirely.
-  const materials = (product.safety?.materials || '').trim();
-  const skipIf = firstSentence(product.safety?.sideEffects, 56) || firstSentence(product.safety?.allergens, 56);
-  return [
-    bestFor ? { label: 'Best for', value: bestFor } : null,
-    materials ? { label: 'Materials', value: materials } : null,
-    skipIf ? { label: 'Skip if', value: skipIf } : null,
-  ].filter(Boolean);
-}
-
-const PLATFORM_LABELS = {
-  reddit: 'Reddit',
-  tiktok: 'TikTok',
-  youtube: 'YouTube',
-  instagram: 'Instagram',
-  facebook: 'Facebook',
-};
 
 function normalizePercent(value) {
   if (value == null || value === '') return null;
@@ -364,7 +294,7 @@ function getRealMatchPercent(product) {
   return null;
 }
 
-/** True for a real URL with something after the domain — not just a bare homepage. */
+/** True for a real URL with something after the domain, not just a bare homepage. */
 function hasRealPath(url) {
   try {
     const u = new URL(url);
@@ -438,64 +368,130 @@ function getBuyUrl(product) {
   return null;
 }
 
+const HEART_PATH = 'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z';
+
+/** Heart = Save. Opens a tiny menu when there is also a playlist to add to. */
+function SaveMenu({ isSaved, onToggleSaved, onAddToPlaylist, product }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDoc); document.removeEventListener('keydown', onKey); };
+  }, [open]);
+  const label = isSaved ? 'Saved' : 'Save';
+  if (!onAddToPlaylist) {
+    return (
+      <button type="button" className={`pdp-actions__heart${isSaved ? ' is-on' : ''}`} aria-pressed={isSaved} aria-label={label} title={label} onClick={() => onToggleSaved(product)}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg>
+      </button>
+    );
+  }
+  return (
+    <div className="pdp-save" ref={ref}>
+      <button type="button" className={`pdp-actions__heart${isSaved ? ' is-on' : ''}`} aria-haspopup="menu" aria-expanded={open} aria-label={`${label} options`} title={label} onClick={() => setOpen((v) => !v)}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg>
+      </button>
+      {open && (
+        <div className="pdp-save__menu" role="menu">
+          <button type="button" role="menuitem" onClick={() => { onToggleSaved(product); setOpen(false); }}>
+            {isSaved ? 'Remove from saved' : 'Save for later'}
+          </button>
+          <button type="button" role="menuitem" onClick={() => { onAddToPlaylist(); setOpen(false); }}>
+            Add to a playlist
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const MOBILE_QUERY = '(max-width: 767px)';
+
+async function copyText(text) {
+  try {
+    if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(text); return true; }
+  } catch { /* fall through */ }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
 export default function ProductModal({
   product,
   onOmit,
   isOmitted,
-  onToggleCompare,
-  isInCompare,
   onAddToEcosystem,
   isInEcosystem,
   onToggleSaved,
   isSaved = false,
+  // Optional map of saved product ids, so suggestion cards can show the
+  // right heart state. Without it, suggestion cards show no heart.
+  savedProducts = null,
   aynaReviews = null,
   onRate,
   onReview,
   quizResults = null,
   healthProfile = null,
   ecosystemProducts = null,
-  // Navigates to another product's own dedicated page (e.g. from "Pairs
-  // with your ecosystem"). Same handler every other product card in the
-  // app already uses — clicking one here is real in-app navigation, not a
-  // nested modal.
+  // Memoized { behavior } for the matching engine (App.jsx), so the score
+  // here matches Shop and Ecosystem.
+  matchOpts = undefined,
+  // Navigates to another product's own dedicated page.
   onOpenProduct = null,
-  // Optional: renders a visible in-page "Back" control. Product pages are
-  // real routes (/product/:id) reachable via direct/shared links, so unlike
-  // a nested modal there's no other on-screen way back to Discovery.
+  // Optional: renders a visible in-page "Back" control.
   onBack = null,
+  // Breadcrumbs: opens the Shop, filtered to a category when given one.
+  // Without it the crumbs are plain links to /shop.
+  onOpenShop = null,
+  // Opens the composer with this product attached ('post' | 'review' |
+  // 'playlist' | 'recommend').
+  onCommunityAction = null,
 }) {
-  // The mockup draws the product page two ways — 1f, tabs with the Ayna
-  // summary, and 1g, an evidence rail beside the specs. Both are built, and
-  // this toggle switches between them so MVP users can tell us which one
-  // they prefer. The choice is remembered per browser and reported to PostHog.
-  const [detailView, setDetailView] = useState(() => {
-    try {
-      const stored = localStorage.getItem(PRODUCT_VIEW_KEY);
-      return stored === 'rail' || stored === 'tabs' ? stored : 'tabs';
-    } catch {
-      return 'tabs';
-    }
-  });
-  const chooseDetailView = (next) => {
-    setDetailView(next);
-    try { localStorage.setItem(PRODUCT_VIEW_KEY, next); } catch { /* private mode */ }
-    posthog.capture('product_detail_view_changed', { view: next, productId: product?.id });
-  };
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [showWhy, setShowWhy] = useState(false);
+  const [photo, setPhoto] = useState(0);
+  const [toast, setToast] = useState('');
+  const toastTimer = useRef(0);
+  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
+  const showToast = (msg) => {
+    setToast(msg);
+    window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setToast(''), 2200);
+  };
 
-  const [activeTab, setActiveTab] = useState('summary');
+  // P11: native share sheet on phones, copy + toast everywhere else.
+  const handleShare = async () => {
+    const url = `${window.location.origin}/product/${encodeURIComponent(product?.id || '')}`;
+    const isPhone = typeof window.matchMedia === 'function' && window.matchMedia(MOBILE_QUERY).matches;
+    if (isPhone && navigator.share) {
+      try { await navigator.share({ title: product?.name, url }); return; } catch (e) { if (e?.name === 'AbortError') return; }
+    }
+    const ok = await copyText(url);
+    showToast(ok ? 'Link copied' : 'Couldn’t copy the link');
+  };
+
   const [reviewInput, setReviewInput] = useState('');
   const [hoverRating, setHoverRating] = useState(0);
   const [resolvedModalImage, setResolvedModalImage] = useState('');
 
-  // Most catalog entries only ever carry a single `image` URL — when that's a
+  // Most catalog entries only ever carry a single `image` URL. When that's a
   // placeholder, this tries once to resolve a real product photo instead.
-  // There is never a plural `images` array in our data, so the gallery never
-  // shows thumbnails: a fake multi-image gallery would just be invented UI.
   useEffect(() => {
-    // No reset-to-'' here: App.jsx remounts this component fresh (key={id})
-    // on every product change, so resolvedModalImage already starts at its
-    // initial '' for the new product without an extra setState in the effect.
     let active = true;
     if (!product?.name) return () => { active = false; };
     if (!isPlaceholderProductImage(product.image, product.type === 'digital')) return () => { active = false; };
@@ -504,835 +500,392 @@ export default function ProductModal({
       setResolvedModalImage(url);
     });
     return () => { active = false; };
-  }, [product?.id, product?.name, product?.brand, product?.image]);
+  }, [product?.id, product?.name, product?.brand, product?.image, product?.type]);
 
-  const heroImageSrc = resolvedModalImage || product?.image || '';
+  // Gallery: cover first, then any extra photos on file.
+  const images = useMemo(() => {
+    const list = galleryImages(product);
+    return list.length ? list : (resolvedModalImage ? [resolvedModalImage] : []);
+  }, [product, resolvedModalImage]);
+  const heroImageSrc = images[Math.min(photo, Math.max(images.length - 1, 0))] || '';
 
-  const matchLabels = useMemo(
-    () => getProfileMatchLabelsForProduct(product, quizResults, healthProfile),
-    [product, quizResults, healthProfile]
-  );
   const explicitMatchPercent = useMemo(() => getRealMatchPercent(product), [product]);
   const profileMatchPercent = useMemo(
-    () => getProfileMatchPercentForProduct(product, quizResults, healthProfile),
-    [product, quizResults, healthProfile]
+    () => getProfileMatchPercentForProduct(product, quizResults, healthProfile, matchOpts),
+    [product, quizResults, healthProfile, matchOpts]
   );
-  const hasEcosystemContext = isInEcosystem || (Array.isArray(ecosystemProducts) && ecosystemProducts.length > 0);
   const matchPercent = profileMatchPercent ?? explicitMatchPercent;
-  const headMatchLabel = matchLabels[0] || null;
+  // The engine's per-need view feeds the one-line "what it matches" and the
+  // "Why ayna matched it to you" section. Raw per-need numbers are never
+  // shown in the header.
+  const matchDetails = useMemo(
+    () => (quizResults ? getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts) : null),
+    [product, quizResults, healthProfile, matchOpts]
+  );
+  const matchExclusions = matchDetails?.matchStatus === 'excluded' ? exclusionLines(matchDetails) : [];
+  const headMatchLine = useMemo(() => matchLine(matchDetails), [matchDetails]);
   const buyUrl = useMemo(() => getBuyUrl(product), [product]);
   const usesAffiliateLink = Boolean(
     isExactBuyUrl(product?.affiliateUrl) &&
     buyUrl === String(product.affiliateUrl).trim()
   );
+  const retailers = useMemo(() => retailerLinks(product, buyUrl), [product, buyUrl]);
 
   const aynaData = useMemo(
     () => (aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] }),
     [aynaReviews, product]
   );
-  const aynaReviewCount = (aynaData.reviews || []).length;
-  const aynaRating = getAynaRating(product, aynaData) ?? product?.userRating ?? null;
+  // Only ratings real people left on ayna. The catalog's userRating has no
+  // count or source behind it, so it is not shown.
+  const aynaRating = getAynaRating(product, aynaData);
+  const ratingCount = Array.isArray(aynaData?.ratings) ? aynaData.ratings.length : 0;
 
-  // Board 1f's "Pairs with your ecosystem" strip. The mockup hardcodes four
-  // sample products — this uses the signed-in user's own tracked products
-  // instead, so it's never invented. Hidden entirely when she has none yet,
-  // rather than backfilling with catalog filler that isn't actually "hers".
-  const pairsWithEcosystem = useMemo(() => {
-    if (!Array.isArray(ecosystemProducts) || !product) return [];
-    return ecosystemProducts
-      .filter((p) => p && p.id && p.id !== product.id && p.name)
-      .slice(0, 4);
-  }, [ecosystemProducts, product]);
+  const glance = useMemo(
+    () => buildGlance(product, { details: matchDetails, aynaData, aynaRating }),
+    [product, matchDetails, aynaData, aynaRating]
+  );
 
-  const eyebrow = useMemo(() => {
-    if (!product) return '';
-    const categoryLabel = String(CATEGORY_LABELS[product.category] || product.type || '').replace(/^[^\w]+\s*/, '');
-    return [categoryLabel, product.brand].filter(Boolean).join(' · ').toUpperCase();
-  }, [product]);
-
-  // ayna summary card: the catalog's own short, single-sentence fields —
-  // never a live AI call, so there's no loading state, quota, or paywall to
-  // show, and nothing here is longer than what's actually on file.
-  const summarySentences = useMemo(() => {
-    if (!product) return [];
-    const parts = [product.summary, product.effectiveness]
-      .map((s) => (s || '').trim())
-      .filter(Boolean);
-    const out = [];
-    for (const p of parts) {
-      const already = out.some((o) => o.toLowerCase() === p.toLowerCase() || o.toLowerCase().includes(p.slice(0, 30).toLowerCase()));
-      if (!already) out.push(p);
+  // Bottom of the page: close alternatives in a compare table, then picks
+  // that fit this person (when they have a profile) or things for the same
+  // need from other categories.
+  const suggestions = useMemo(() => {
+    if (!product) return { compare: [], more: [] };
+    const owned = new Set((ecosystemProducts || []).map((p) => p?.id).filter(Boolean));
+    const pool = ALL_PRODUCTS.filter((p) => p && p.id && p.name && p.id !== product.id);
+    const compare = similarProducts(product, { pool, limit: 3 });
+    const used = new Set([...compare.map((p) => p.id), ...owned]);
+    let more = [];
+    if (quizResults) {
+      more = pool
+        .filter((p) => !used.has(p.id))
+        .map((p) => ({ p, m: getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts) }))
+        .filter((x) => Number.isFinite(x.m) && x.m >= 50)
+        .sort((x, y) => y.m - x.m)
+        .slice(0, 4)
+        .map((x) => ({ ...x.p, _match: Math.round(x.m) }));
     }
-    return out.slice(0, 2);
-  }, [product]);
-
-  const safetyAlert = useMemo(() => getSafetyAlertText(product), [product]);
-
-  // "Who it's for" / "How to use" only exist as tabs for the handful of
-  // products with that level of brand-supplied detail on file — inserted
-  // dynamically rather than added to the static AYNA_TABS list so every
-  // other product doesn't grow two permanently-empty tabs.
-  const visibleTabs = useMemo(() => {
-    const extra = [];
-    if (Array.isArray(product?.whoItsFor) && product.whoItsFor.length > 0) {
-      extra.push({ id: 'whoitsfor', label: 'Who it’s for' });
+    if (more.length < 4) {
+      const have = new Set([...used, ...more.map((p) => p.id)]);
+      more = [...more, ...sameNeedProducts(product, { pool, limit: 4 - more.length, exclude: [...have] })];
     }
-    if (product?.howToUse?.steps?.length > 0) {
-      extra.push({ id: 'howtouse', label: 'How to use' });
-    }
-    if (extra.length === 0) return AYNA_TABS;
-    // After Social Media, not before — inserted ahead of 'ask' (Ask Ayna),
-    // which always stays last.
-    const askIdx = AYNA_TABS.findIndex((t) => t.id === 'ask');
-    return [...AYNA_TABS.slice(0, askIdx), ...extra, ...AYNA_TABS.slice(askIdx)];
-  }, [product]);
+    return { compare, more, personal: Boolean(quizResults) && more.some((p) => p._match) };
+  }, [product, ecosystemProducts, quizResults, healthProfile, matchOpts]);
 
-  const sourceCounts = useMemo(() => {
-    const doctor = getVerificationLinks(product, 'doctor').length;
-    const scientific = getVerificationLinks(product, 'scientific').length;
-    const community = getVerificationLinks(product, 'community').length;
-    return { doctor, scientific, community, total: doctor + scientific + community };
-  }, [product]);
-
-  const sourceChips = useMemo(() => {
-    if (!product) return [];
-    const allLinks = [
-      ...getVerificationLinks(product, 'doctor'),
-      ...getVerificationLinks(product, 'scientific'),
-    ];
-    const chips = [];
-    const seenLabels = new Set();
-    for (const chip of toSourceChips(allLinks)) {
-      if (seenLabels.has(chip.label)) continue;
-      seenLabels.add(chip.label);
-      chips.push(chip);
-      if (chips.length >= 2) break;
-    }
-    if (aynaReviewCount > 0) {
-      chips.push({ label: `${aynaReviewCount} community report${aynaReviewCount === 1 ? '' : 's'}`, url: null });
-    }
-    return chips.slice(0, 3);
-  }, [product, aynaReviewCount]);
-
-  // The clinician-opinion tab states a claim ("hormonal birth control can
-  // deplete B vitamins…") with no link a reader can check — the actual
-  // citations only ever showed up as generic chips on a different tab
-  // (ayna summary), disconnected from the claim they support. Flagged live
-  // 2026-08-25: "if we're stating stuff we need to have links to sources."
-  // Doctor + scientific links both back clinical claims, so both show here.
-  const clinicianSourceLinks = useMemo(() => toSourceChips([
-    ...getVerificationLinks(product, 'doctor'),
-    ...getVerificationLinks(product, 'scientific'),
-  ]), [product]);
-
-  // Dedicated "Scientific literature" tab: every doctor + scientific citation
-  // in full (not the small link-chip form used elsewhere), each with its own
-  // summary/text so a reader can see what a source actually says before
-  // clicking through. Flagged live 2026-08-25 — "ALL PRODUCTS MUST HAVE
-  // SOURCES AND REVIEWS."
-  const scientificLiteratureEntries = useMemo(() => {
-    const seenUrls = new Set();
-    const entries = [];
-    for (const [key, kind] of [['scientific', 'Scientific'], ['doctor', 'Clinical']]) {
-      for (const link of getVerificationLinks(product, key)) {
-        const url = link?.url || link?.href;
-        if (!url || seenUrls.has(url)) continue;
-        const label = hostLabel(url);
-        if (!label) continue;
-        seenUrls.add(url);
-        entries.push({ url, label, kind, text: link.text || null, summary: link.summary || null });
-      }
-    }
-    return entries;
-  }, [product]);
-
-  // Curated category-level citations (product.scientificCitations) — kept
-  // out of verificationLinks for the same reason as ingredientCitationEntries
-  // below: that data also feeds the Clinician opinion card's chip row, which
-  // here only wants doctorOpinionCitations (the two clinical-study links).
-  const curatedScientificEntries = useMemo(() => {
-    const seenUrls = new Set();
-    const entries = [];
-    for (const c of product?.scientificCitations || []) {
-      if (!c.url || seenUrls.has(c.url)) continue;
-      const label = hostLabel(c.url);
-      if (!label) continue;
-      seenUrls.add(c.url);
-      entries.push({ url: c.url, label, kind: 'Scientific', text: c.text || null, summary: c.summary || null });
-    }
-    return entries;
-  }, [product]);
-
-  // Per-ingredient citations, rendered as extra cards on the Scientific
-  // literature tab only — deliberately NOT part of verificationLinks, since
-  // that also feeds the Clinician opinion card's chip row (pools doctor +
-  // scientific), and 7 ingredient-level NIH links there would bury the 1-2
-  // study-level citations that chip row actually wants to surface.
-  const ingredientCitationEntries = useMemo(() => {
-    const seenUrls = new Set();
-    const entries = [];
-    for (const item of product?.ingredientScience || []) {
-      // When one ingredient entry cites more than one source (vitamins E
-      // and A share a paragraph but each has its own NIH fact sheet), the
-      // citation's own label distinguishes the cards instead of both
-      // showing the same shared ingredient name and text.
-      const multi = (item.citations || []).length > 1;
-      for (const c of item.citations || []) {
-        if (!c.url || seenUrls.has(c.url)) continue;
-        const label = hostLabel(c.url);
-        if (!label) continue;
-        seenUrls.add(c.url);
-        entries.push({ url: c.url, label, kind: 'Scientific', text: multi ? c.label : item.name, summary: item.text });
-      }
-    }
-    return entries;
-  }, [product]);
-
-  // Every social-media "review" now carries its own link, right next to the
-  // review text it belongs to — the old version showed a synthesized
-  // paragraph with 3 generic platform badges underneath, disconnected from
-  // any specific claim. Flagged live 2026-08-25: "the social media page must
-  // have reviews with links." Falls back to the synthesized summary only
-  // when there's no real per-source citation to show instead.
-  const communityCitationEntries = useMemo(() => {
-    const seenUrls = new Set();
-    const entries = [];
-    for (const link of getVerificationLinks(product, 'community')) {
-      const url = link?.url || link?.href;
-      if (!url || seenUrls.has(url)) continue;
-      const label = PLATFORM_LABELS[link.platform] || hostLabel(url);
-      if (!label) continue;
-      seenUrls.add(url);
-      entries.push({ url, label, text: link.text || null, summary: link.summary || null });
-    }
-    return entries;
-  }, [product]);
-
-  const communitySnippets = useMemo(() => {
-    // The Community tab is where someone reads the full thing, not a
-    // preview card — a synthesized communityReview is one short paragraph
-    // to begin with, so it shouldn't be cut off at all. Real user-submitted
-    // reviews (aynaData.reviews) get a much more generous cap than before
-    // (220 chars was cutting off ordinary-length reviews mid-sentence).
-    if ((aynaData.reviews || []).length > 0) {
-      return aynaData.reviews.slice(0, 2).map((r) => truncate(r.text, 2000)).filter(Boolean);
-    }
-    if (product?.communityReview) return [product.communityReview];
-    return [];
-  }, [aynaData, product]);
-
-  const factRows = useMemo(() => (product ? buildFactRows(product) : []), [product]);
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.aynahealth.co';
+  useJsonLd('ay-pdp-jsonld', product ? [
+    productJsonLd(product, { origin, buyUrl, aynaRating, ratingCount }),
+    breadcrumbJsonLd(product, { origin }),
+  ] : []);
 
   if (!product) return null;
 
-  const ecosystemBtnLabel = isInEcosystem ? 'In ecosystem' : 'Add to ecosystem';
-  const wishlistBtnLabel = isSaved ? 'Wishlisted' : 'Wishlist';
+  const price = priceParts(product);
+  const perUnit = perUnitLabel(product);
+  const priceText = product.price || product.stage || '';
+  const brand = glance?.brand && glance.brand.toLowerCase() !== String(product.name).toLowerCase() ? glance.brand : '';
+  const openPlaylist = onCommunityAction ? () => onCommunityAction('playlist') : null;
+  const openProductByName = (name) => {
+    const target = ALL_PRODUCTS.find((p) => String(p?.name || '').toLowerCase() === String(name || '').toLowerCase());
+    if (target && onOpenProduct) onOpenProduct(target);
+  };
+
+  const partnerBadge = isPartnerBrandItem(product) ? (
+    <span className="pdp-partner" title="ayna has a partnership with this brand. It does not affect your recommendation.">
+      ayna partner
+    </span>
+  ) : null;
+
+  const buyButton = (extraClass = '') => (buyUrl ? (
+    <a
+      className={`pdp-btn pdp-btn--navy pdp-btn--buy ${extraClass}`.trim()}
+      href={buyUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => posthog.capture('product_buy_now_clicked', {
+        productId: product.id,
+        category: product.category,
+        destination: buyUrl,
+      })}
+    >
+      {product.type === 'digital' ? 'Get started' : 'Buy now'}
+    </a>
+  ) : (
+    <button type="button" className={`pdp-btn pdp-btn--navy pdp-btn--buy ${extraClass}`.trim()} disabled>
+      Buy now
+    </button>
+  ));
 
   const actionButtons = (
-    <div className="pdp-actions">
+    <div className="pdp-actions pdp-buybox">
       <div className="pdp-actions__primary">
-        {buyUrl ? (
-          <a
-            className="pdp-btn pdp-btn--navy pdp-btn--buy"
-            href={buyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => posthog.capture('product_buy_now_clicked', {
-              productId: product.id,
-              category: product.category,
-              destination: buyUrl,
-            })}
+        {buyButton()}
+        {onAddToEcosystem && (
+          <button
+            type="button"
+            className={`pdp-btn pdp-actions__ecosystem${isInEcosystem ? ' is-on' : ''}`}
+            aria-pressed={isInEcosystem}
+            title={isInEcosystem ? 'Removes it from your ecosystem' : 'Adds it to your ecosystem'}
+            onClick={() => onAddToEcosystem(product)}
           >
-            Buy Now
-          </a>
-        ) : (
-          <button type="button" className="pdp-btn pdp-btn--navy pdp-btn--buy" disabled>
-            Buy Now
+            {isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
           </button>
         )}
         {onToggleSaved && (
-          <button
-            type="button"
-            className={`pdp-btn ${isSaved ? 'pdp-btn--outline-on' : 'pdp-btn--outline'}`}
-            aria-pressed={isSaved}
-            onClick={() => onToggleSaved(product)}
-          >
-            {wishlistBtnLabel}
-          </button>
+          <SaveMenu isSaved={isSaved} onToggleSaved={onToggleSaved} onAddToPlaylist={openPlaylist} product={product} />
         )}
       </div>
-      {onAddToEcosystem && (
-        <button
-          type="button"
-          className="pdp-actions__ecosystem"
-          aria-pressed={isInEcosystem}
-          onClick={() => onAddToEcosystem(product)}
-        >
-          {ecosystemBtnLabel}
-        </button>
+      {retailers.length > 0 && (
+        <div className="ay-retailers">
+          <span id="pdp-also-at">Also at</span>
+          <ul aria-labelledby="pdp-also-at">
+          {retailers.map((r) => (
+            <li key={r.url}>
+              <a
+                href={r.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name })}
+              >
+                {r.name}
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+              </a>
+            </li>
+          ))}
+          </ul>
+        </div>
       )}
-      {isPartnerBrandItem(product) && (
-        <span className="pdp-head__badge" title="ayna has a partnership with this brand. It does not affect your recommendation.">
-          ayna Partner
-        </span>
-      )}
+      {!buyUrl && <p className="pdp-buybox__note">We don’t have a direct link for this one yet. {(product.whereToBuy || []).length ? `Sold at ${product.whereToBuy.join(', ')}.` : ''}</p>}
+      {usesAffiliateLink && <p className="pdp-buybox__note">ayna may earn a commission if you buy through this link.</p>}
     </div>
   );
 
   const galleryTile = (
-    <div className="pdp-head__tile" style={{ position: 'relative' }}>
-      {usesAffiliateLink && (
-        <span
-          title="ayna may earn a commission if you purchase through this link."
-          style={{
-            position: 'absolute',
-            top: '0.55rem',
-            right: '0.55rem',
-            zIndex: 2,
-            fontSize: '0.62rem',
-            lineHeight: 1,
-            color: 'var(--color-text-muted)',
-            background: 'rgba(255,255,255,0.88)',
-            padding: '0.3rem 0.4rem',
-            borderRadius: '999px',
-          }}
-        >
-          Affiliate link
-        </span>
-      )}
-      {/* resolvedModalImage, when set, came back from the server's
-          type-aware /api/product-image — trust it as-is instead of
-          re-running it through isPlaceholderProductImage, which doesn't
-          know the product is 'digital' and would reject a legitimate
-          app/telehealth logo again. Only the raw catalog fallback still
-          needs that heuristic. */}
-      {heroImageSrc && (resolvedModalImage || !isPlaceholderProductImage(heroImageSrc, product.type === 'digital')) ? (
-        <button
-          type="button"
-          onClick={() => setLightboxOpen(true)}
-          aria-label={`View larger photo of ${product.name}`}
-          style={{ all: 'unset', display: 'block', width: '100%', height: '100%', cursor: 'zoom-in' }}
-        >
-          <img
-            src={heroImageSrc}
-            alt={product.name}
-            onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
-            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-          />
-        </button>
-      ) : (
-        <ProductImageFallback />
-      )}
+    <div className="pdp-gallery">
+      <div className="pdp-head__tile" style={{ position: 'relative' }}>
+        {heroImageSrc ? (
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(true)}
+            aria-label={`View larger photo of ${product.name}`}
+            style={{ all: 'unset', display: 'block', width: '100%', height: '100%', cursor: 'zoom-in' }}
+          >
+            <img
+              key={heroImageSrc}
+              src={heroImageSrc}
+              alt={product.name}
+              onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
+              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+            />
+          </button>
+        ) : (
+          <ProductImageFallback />
+        )}
+      </div>
+      <GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={product.name} />
     </div>
   );
 
-  const relatedGrid = pairsWithEcosystem.length > 0 && (
-    <div style={{ padding: '0 clamp(1rem, 5vw, 2.5rem) 2.5rem' }}>
-      <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1.4rem', marginBottom: '1.25rem' }}>
-        Pairs with your ecosystem
-      </h3>
-      <div className="pdp-related-grid">
-        {pairsWithEcosystem.map((related) => (
+  const ownedIds = new Set((ecosystemProducts || []).map((p) => p?.id).filter(Boolean));
+  const suggestionCard = (item) => (
+    <ProductCard
+      key={item.id}
+      product={item}
+      matchPercent={item._match || null}
+      isSaved={Boolean(savedProducts && savedProducts[item.id])}
+      inEcosystem={ownedIds.has(item.id)}
+      onOpen={(p) => onOpenProduct && onOpenProduct(p)}
+      onToggleSaved={savedProducts && onToggleSaved ? onToggleSaved : undefined}
+    />
+  );
+
+  const matchFor = quizResults ? (p) => getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts) : null;
+  const compareThumb = (p) => {
+    const src = galleryImages(p)[0];
+    return src ? <img src={src} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : null;
+  };
+
+  const rateControls = isInEcosystem && onRate ? (
+    <div className="pdp-rate">
+      <span className="ay-gl-label">Rate it</span>
+      <div className="pdp-community__rate">
+        {[1, 2, 3, 4, 5].map((star) => (
           <button
-            key={related.id}
+            key={star}
             type="button"
-            onClick={() => onOpenProduct && onOpenProduct(related)}
-            style={{
-              background: 'none', border: 'none', padding: 0, textAlign: 'left', cursor: 'pointer',
-              display: 'flex', flexDirection: 'column', gap: 0,
-            }}
+            className={`pdp-community__star${star <= (hoverRating || 0) ? ' is-on' : ''}`}
+            onMouseEnter={() => setHoverRating(star)}
+            onMouseLeave={() => setHoverRating(0)}
+            onClick={() => onRate(product, star)}
+            aria-label={`Rate ${star} star${star === 1 ? '' : 's'}`}
           >
-            <span style={{
-              aspectRatio: '1.2', borderRadius: '8px',
-              background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '2rem', color: '#D9A96B',
-              overflow: 'hidden',
-            }} aria-hidden="true">
-              <ProductTileImage
-                product={related}
-                imgStyle={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }}
-                letterNode={<ProductImageFallback compact />}
-              />
-            </span>
-            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', lineHeight: 1.3, marginTop: '0.6rem', color: 'var(--color-text-main)' }}>
-              {related.name}
-            </span>
-            {related.price && (
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.15rem' }}>
-                {related.price}
-              </span>
-            )}
+            ★
           </button>
         ))}
       </div>
+      {onReview && (
+        <div className="pdp-community__reviewrow">
+          <input type="text" value={reviewInput} onChange={(e) => setReviewInput(e.target.value)} placeholder="Add a short review…" aria-label="Short review" />
+          <button
+            type="button"
+            className="pdp-btn pdp-btn--outline"
+            disabled={!reviewInput.trim()}
+            onClick={() => { if (reviewInput.trim()) { onReview(product, reviewInput.trim()); setReviewInput(''); } }}
+          >
+            Post
+          </button>
+        </div>
+      )}
     </div>
-  );
+  ) : null;
+
+  const sectionExtras = {
+    people: rateControls,
+    match: <button type="button" className="ay-psec-action" onClick={() => setShowWhy(true)}>See the full breakdown</button>,
+  };
+  const extraNav = [
+    { id: 'ask', label: 'Ask ayna' },
+    ...(suggestions.compare.length ? [{ id: 'compare', label: 'Compare' }] : []),
+  ];
 
   return (
-    <div className="mockup-page" style={{ marginTop: '2rem', marginBottom: '3rem' }}>
-      <div style={{
-        backgroundColor: 'var(--color-bg)', borderRadius: 'var(--radius-lg)',
-        width: '100%', maxWidth: 'min(1180px, 100%)', margin: '0 auto',
-        boxShadow: 'var(--shadow-lg)', position: 'relative'
-      }}>
+    <div className="mockup-page pdp-page-wrap">
+      <div className="pdp-page pdp-page--glance">
 
-        {onBack && (
-          <button type="button" className="pdp-back" onClick={onBack}>
-            ← Back
-          </button>
-        )}
+        {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} />}
 
-        {/* Which of the mockup's two product layouts to show (1f / 1g). */}
-        <div className="pdp-viewswitch" style={{ paddingTop: '1.5rem' }}>
-          <div className="pdp-viewswitch__group" role="group" aria-label="Product detail layout">
-            <button
-              type="button"
-              className={detailView === 'tabs' ? 'is-active' : undefined}
-              aria-pressed={detailView === 'tabs'}
-              onClick={() => chooseDetailView('tabs')}
-            >
-              Summary
-            </button>
-            <button
-              type="button"
-              className={detailView === 'rail' ? 'is-active' : undefined}
-              aria-pressed={detailView === 'rail'}
-              onClick={() => chooseDetailView('rail')}
-            >
-              Evidence
+        <div className="pdp-topbar">
+          <div className="pdp-topbar__left">
+            {onBack && (
+              <button type="button" className="pdp-back" onClick={onBack} aria-label="Back">
+                ← <span>Back</span>
+              </button>
+            )}
+            <Breadcrumbs product={product} onNavigate={onOpenShop} />
+          </div>
+          <div className="pdp-topbar__right">
+            {!(matchPercent > 0) && quizResults && (
+              <button type="button" className="pdp-fit-link" onClick={() => setShowWhy(true)}>
+                How this fits you
+              </button>
+            )}
+            <button type="button" className="pdp-share" onClick={handleShare} aria-label={`Share ${product?.name || 'this product'}`}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
+              Share
             </button>
           </div>
         </div>
 
-        {detailView === 'tabs' && (<>
-          {/* Product head — mockup board 1f: square product tile beside the
-              eyebrow / name / price / actions column. */}
-          <div className="pdp-head">
-            <div>
-              {galleryTile}
-
-              {/* Fills the dead space below a short square image while the
-                  detail column (name/price/tabs/tab content) runs much
-                  taller — same fix as the Evidence view's left column. Only
-                  on the Scientific literature tab (where this ingredient
-                  detail is relevant), not shown under every tab, and only
-                  when a catalog entry has this on file. */}
-              {activeTab === 'scientific' && Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
-                <div style={{ marginTop: 20 }}>
-                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
-                    INSIDE
-                  </div>
-                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    {product.ingredientScience.map((item) => (
-                      <li key={item.name} style={{ fontSize: 13, lineHeight: 1.5, color: '#3f3831', marginBottom: 10 }}>
-                        <strong>{item.name}:</strong> {item.text}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            <div className="pdp-head__detail">
-              <div className="pdp-head__eyebrow">{eyebrow}</div>
-
-              <h2 className="pdp-head__name">{product.name}</h2>
-
-              <div className="pdp-head__pricerow">
-                {(product.price || product.stage) && (
-                  <span className="pdp-head__price">{product.price || product.stage}</span>
-                )}
-                {matchPercent != null ? (
-                  <span className="pdp-head__match pdp-head__match--gauge">
-                    <MatchGauge percent={matchPercent} size={28} theme="light" />
-                    match
-                  </span>
-                ) : isInEcosystem ? (
-                  <span className="pdp-head__match">In your ecosystem</span>
-                ) : headMatchLabel ? (
-                  <span className="pdp-head__match">{headMatchLabel}</span>
-                ) : null}
-              </div>
-
-              {safetyAlert && <SafetyAlert text={safetyAlert} />}
-
-              {actionButtons}
-
-              {/* Small tabs, matching mockup 1f — dark underline on the active
-                  tab, muted text on the rest, one compact card below. */}
-              <div className="pdp-tabpanel">
-                <div className="pdp-tabs" role="tablist" aria-label="Product information">
-                  {visibleTabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      role="tab"
-                      aria-selected={activeTab === tab.id}
-                      className={activeTab === tab.id ? 'is-active' : undefined}
-                      onClick={() => setActiveTab(tab.id)}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-
-                {activeTab === 'summary' && (
-                  <div className="pdp-summary-card">
-                    {sourceCounts.total > 0 && (
-                      <div className="pdp-summary-card__meta">
-                        <span className="pdp-summary-card__dot" />
-                        ayna SUMMARY · {sourceCounts.total} SOURCE{sourceCounts.total === 1 ? '' : 'S'}
-                      </div>
-                    )}
-                    {summarySentences.length > 0 ? (
-                      <p className="pdp-summary-card__body">{summarySentences.join(' ')}</p>
-                    ) : (
-                      <p className="pdp-summary-card__empty">No summary yet.</p>
-                    )}
-                    {sourceChips.length > 0 && (
-                      <div className="pdp-summary-card__chips">
-                        {sourceChips.map((chip) => (
-                          chip.url ? (
-                            <a
-                              key={chip.label}
-                              className="pdp-head__badge"
-                              href={chip.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {chip.label}
-                            </a>
-                          ) : (
-                            <span key={chip.label} className="pdp-head__badge">{chip.label}</span>
-                          )
-                        ))}
-                      </div>
-                    )}
-                    <div className="pdp-summary-card__foot">Research + review summary. Not medical advice.</div>
-                    {(onToggleCompare || onOmit) && (
-                      <div className="pdp-specs__utility">
-                        {onToggleCompare && (
-                          <button type="button" className="pdp-head__link" onClick={() => onToggleCompare(product)}>
-                            {isInCompare ? 'In comparison' : 'Add to compare'}
-                          </button>
-                        )}
-                        {onOmit && (
-                          <button type="button" className="pdp-head__link" onClick={() => onOmit(product)}>
-                            {isOmitted ? 'Restore' : 'Omit'}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {activeTab === 'clinician' && (
-                  <div className="pdp-summary-card">
-                    {product.doctorOpinion ? (
-                      <>
-                        <p className="pdp-summary-card__body" style={{ marginTop: 0, whiteSpace: 'pre-line' }}>{product.doctorOpinion}</p>
-                        {product.clinicianAttribution && (
-                          <div className="pdp-summary-card__foot">{product.clinicianAttribution}</div>
-                        )}
-                        {(clinicianSourceLinks.length > 0 || Array.isArray(product.doctorOpinionCitations)) && (
-                          <div className="pdp-summary-card__chips">
-                            {clinicianSourceLinks.map((chip) => (
-                              <a
-                                key={chip.url}
-                                className="pdp-head__badge"
-                                href={chip.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title={chip.text || chip.url}
-                              >
-                                {chip.label}
-                              </a>
-                            ))}
-                            {/* Kept out of verificationLinks on purpose — that data
-                                also feeds the Scientific literature tab's citation
-                                list, and this link (the VSQ questionnaire Neycher
-                                says it used) belongs only here, on the clinical
-                                claim it backs, not mixed into that list. */}
-                            {(product.doctorOpinionCitations || []).map((c) => (
-                              <a
-                                key={c.url}
-                                className="pdp-head__badge"
-                                href={c.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title={c.label}
-                              >
-                                {hostLabel(c.url) || c.label}
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <p className="pdp-summary-card__empty">No clinician note yet.</p>
-                    )}
-                  </div>
-                )}
-
-                {activeTab === 'whoitsfor' && (
-                  <div className="pdp-summary-card">
-                    <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                      {(product.whoItsFor || []).map((item) => (
-                        <li key={item} style={{ display: 'flex', gap: 10, fontSize: 14, lineHeight: 1.55, color: '#3f3831', marginBottom: 10 }}>
-                          <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {activeTab === 'howtouse' && (
-                  <div className="pdp-summary-card">
-                    {product.howToUse?.intro && (
-                      <p className="pdp-summary-card__body" style={{ marginTop: 0 }}>{product.howToUse.intro}</p>
-                    )}
-                    <ul style={{ margin: '12px 0 0', padding: 0, listStyle: 'none' }}>
-                      {(product.howToUse?.steps || []).map((step) => (
-                        <li key={step} style={{ display: 'flex', gap: 10, fontSize: 14, lineHeight: 1.55, color: '#3f3831', marginBottom: 10 }}>
-                          <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
-                          <span>{step}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    {product.howToUse?.sourceUrl && (
-                      <div style={{ marginTop: 10 }}>
-                        <a
-                          href={product.howToUse.sourceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="pdp-head__badge"
-                          title={product.howToUse.sourceLabel || product.howToUse.sourceUrl}
-                        >
-                          {hostLabel(product.howToUse.sourceUrl) || 'Source'}
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {activeTab === 'community' && (
-                  <div className="pdp-summary-card">
-                    {(aynaRating != null || aynaReviewCount > 0) && (
-                      <div className="pdp-community__rating">
-                        {aynaRating != null && <strong>{aynaRating.toFixed(1)}</strong>}
-                        {aynaReviewCount > 0 && <span>{aynaReviewCount} review{aynaReviewCount === 1 ? '' : 's'}</span>}
-                      </div>
-                    )}
-                    {communityCitationEntries.length > 0 ? (
-                      <div className="pdp-scientific__list">
-                        {communityCitationEntries.map((entry) => (
-                          <a
-                            key={entry.url}
-                            className="pdp-scientific__entry"
-                            href={entry.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <div className="pdp-scientific__entry-head">
-                              <span className="pdp-scientific__entry-source">{entry.label}</span>
-                            </div>
-                            {entry.text && <p className="pdp-scientific__entry-text">{entry.text}</p>}
-                            {entry.summary && <p className="pdp-scientific__entry-summary">{entry.summary}</p>}
-                          </a>
-                        ))}
-                      </div>
-                    ) : communitySnippets.length > 0 ? (
-                      communitySnippets.map((snippet, i) => (
-                        <p key={i} className="pdp-community__snippet">{snippet}</p>
-                      ))
-                    ) : aynaRating == null && aynaReviewCount === 0 ? (
-                      <p className="pdp-summary-card__empty">No community notes yet.</p>
-                    ) : null}
-                    {isInEcosystem && onRate && (
-                      <>
-                        <div className="pdp-community__rate">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <button
-                              key={star}
-                              type="button"
-                              className={`pdp-community__star${star <= (hoverRating || 0) ? ' is-on' : ''}`}
-                              onMouseEnter={() => setHoverRating(star)}
-                              onMouseLeave={() => setHoverRating(0)}
-                              onClick={() => onRate(product, star)}
-                              aria-label={`Rate ${star} star${star === 1 ? '' : 's'}`}
-                            >
-                              ★
-                            </button>
-                          ))}
-                        </div>
-                        {onReview && (
-                          <div className="pdp-community__reviewrow">
-                            <input
-                              type="text"
-                              value={reviewInput}
-                              onChange={(e) => setReviewInput(e.target.value)}
-                              placeholder="Add a short review…"
-                            />
-                            <button
-                              type="button"
-                              className="pdp-btn pdp-btn--outline"
-                              disabled={!reviewInput.trim()}
-                              onClick={() => {
-                                if (reviewInput.trim()) {
-                                  onReview(product, reviewInput.trim());
-                                  setReviewInput('');
-                                }
-                              }}
-                            >
-                              Post
-                            </button>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {activeTab === 'ask' && (
-                  <AskAynaProductTab
-                    product={product}
-                    aiContext={{}}
-                    quizResults={quizResults}
-                    ecosystemProducts={ecosystemProducts}
-                  />
-                )}
-
-                {activeTab === 'scientific' && (
-                  <div className="pdp-summary-card">
-                    {(scientificLiteratureEntries.length + curatedScientificEntries.length + ingredientCitationEntries.length) > 0 ? (
-                      <div className="pdp-scientific__list">
-                        {[...scientificLiteratureEntries, ...curatedScientificEntries, ...ingredientCitationEntries].map((entry) => (
-                          <a
-                            key={entry.url}
-                            className="pdp-scientific__entry"
-                            href={entry.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <div className="pdp-scientific__entry-head">
-                              <span className="pdp-scientific__entry-kind">{entry.kind}</span>
-                              <span className="pdp-scientific__entry-source">{entry.label}</span>
-                            </div>
-                            {entry.text && <p className="pdp-scientific__entry-text">{entry.text}</p>}
-                            {entry.summary && <p className="pdp-scientific__entry-summary">{entry.summary}</p>}
-                          </a>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="pdp-summary-card__empty">No scientific literature yet.</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+        <div className="pdp-head">
+          <div>
+            {galleryTile}
           </div>
 
-          {relatedGrid}
-        </>)}
+          <div className="pdp-head__detail pdp-h2">
+            {(brand || partnerBadge) && <div className="pdp-head__eyebrow">{brand}{brand && partnerBadge && ' · '}{partnerBadge}</div>}
+            <h1 className="pdp-head__name">{product.name}</h1>
 
-        {detailView === 'rail' && (
-          <div className="pdp-evidence-head">
-            <div>
-              {galleryTile}
+            {(price.known || perUnit) && (
+              <div className="pdp-h2-price">
+                {price.known && <span className="pdp-h2-price__main">{price.main}</span>}
+                {perUnit && <span className="pdp-h2-price__unit">{perUnit}</span>}
+                {price.known && price.sub && <small>{price.sub}</small>}
+              </div>
+            )}
 
-              {/* Sits under the product image, in the same left column — not
-                  every product has this (only rendered when a catalog entry
-                  carries whoItsFor/howToUse), so it's invisible for the vast
-                  majority of products without this level of brand-supplied
-                  detail on file. Filling the dead space below a short square
-                  image beats stacking these under the much taller middle
-                  info column, which pushed them far down the page. */}
-              {Array.isArray(product.whoItsFor) && product.whoItsFor.length > 0 && (
-                <div style={{ marginTop: 20 }}>
-                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
-                    WHO IT&apos;S FOR
-                  </div>
-                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    {product.whoItsFor.map((item) => (
-                      <li key={item} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 8 }}>
-                        <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+            {aynaRating != null && ratingCount > 0 && (
+              <p className="ay-pdp-rating"><span aria-hidden="true">★</span> {aynaRating.toFixed(1)} <span>from {ratingCount} ayna member rating{ratingCount === 1 ? '' : 's'}</span></p>
+            )}
 
-              {product.howToUse?.steps?.length > 0 && (
-                <div style={{ marginTop: 20 }}>
-                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
-                    HOW TO USE
-                  </div>
-                  {product.howToUse.intro && (
-                    <p style={{ fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', margin: '0 0 8px' }}>{product.howToUse.intro}</p>
-                  )}
-                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    {product.howToUse.steps.map((step) => (
-                      <li key={step} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 8 }}>
-                        <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {product.howToUse.sourceUrl && (
-                    <div style={{ marginTop: 10 }}>
-                      <a
-                        href={product.howToUse.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="pdp-head__badge"
-                        title={product.howToUse.sourceLabel || product.howToUse.sourceUrl}
-                      >
-                        {hostLabel(product.howToUse.sourceUrl) || 'Source'}
-                      </a>
-                    </div>
-                  )}
-                </div>
-              )}
+            {matchPercent > 0 && (
+              <div className="pdp-h2-match">
+                <MatchPill percent={matchPercent} onClick={() => setShowWhy(true)} label={`${matchPercent}% match${headMatchLine ? `. ${headMatchLine}` : ''}. See why`} />
+                {headMatchLine && <span className="pdp-h2-match__line">{headMatchLine}</span>}
+              </div>
+            )}
+            {!(matchPercent > 0) && matchExclusions.length > 0 && (
+              <button type="button" className="pdp-h2-fitnote" onClick={() => setShowWhy(true)}>
+                {matchExclusions[0]}
+              </button>
+            )}
+            {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
+              <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
+            )}
+
+            {glance?.alert && <SafetyFlag />}
+
+            {actionButtons}
+          </div>
+        </div>
+
+        <div className="pdp-below pdp-below--glance">
+          <ProductSections
+            key={product.id}
+            glance={glance}
+            extras={sectionExtras}
+            extraNav={extraNav}
+            onXref={openProductByName}
+          />
+
+          <section className="pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="pdp-ask-h">
+            <div className="ay-pdp-sechead">
+              <h2 id="pdp-ask-h">Questions? Ask ayna</h2>
+              <p>Ask anything about this product. Answers use what’s on this page and the brand’s own site.</p>
             </div>
+            <AskAynaProductTab product={product} aiContext={{}} quizResults={quizResults} ecosystemProducts={ecosystemProducts} />
+          </section>
 
-            <div className="pdp-evidence-head__info">
-              <div className="pdp-head__eyebrow">{eyebrow}</div>
-              <h2 className="pdp-head__name" style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)' }}>{product.name}</h2>
-              {(product.price || product.stage) && (
-                <span className="pdp-head__price">{product.price || product.stage}</span>
-              )}
-              {summarySentences[0] && (
-                <p className="pdp-evidence-head__desc">{summarySentences[0]}</p>
-              )}
-              {safetyAlert && <SafetyAlert text={safetyAlert} />}
-              {actionButtons}
-              {factRows.length > 0 && (
-                <div className="pdp-rail__specs">
-                  {factRows.map((row, i) => (
-                    <div key={row.label} className={`pdp-rail__spec${i === factRows.length - 1 ? ' pdp-rail__spec--last' : ''}`}>
-                      <span>{row.label}</span>
-                      <span>{row.value}</span>
-                    </div>
+          {suggestions.compare.length > 0 && (
+            <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />
+          )}
+
+          {suggestions.more.length > 0 && (
+            <section className="pdp-suggest pdp-suggest--glance" aria-labelledby="pdp-more-h">
+              <div className="ay-pdp-sechead">
+                <h2 id="pdp-more-h">You may also like</h2>
+                <p>{suggestions.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p>
+              </div>
+              <div className="pdp-suggest__grid">{suggestions.more.map(suggestionCard)}</div>
+            </section>
+          )}
+
+          {(onCommunityAction || onOmit) && (
+            <section className="pdp-community-actions pdp-community-actions--flat" aria-labelledby="pdp-community-h">
+              {onCommunityAction && <>
+                <h3 id="pdp-community-h">Community</h3>
+                <div className="pdp-community-actions__grid">
+                  {[['post', 'Mention in a post'], ['review', 'Write a review'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
+                    <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
                   ))}
                 </div>
+              </>}
+              {onOmit && (
+                <button type="button" className="pdp-omit-link" onClick={() => onOmit(product)}>
+                  {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
+                </button>
               )}
-            </div>
-
-            <ProductEvidenceRail
-              product={product}
-              matchLabels={matchLabels}
-              matchPercent={matchPercent}
-              aynaReviewCount={aynaReviewCount}
-            />
-          </div>
-        )}
+            </section>
+          )}
+        </div>
       </div>
 
+      {/* P13: sticky Buy bar on phones. */}
+      <aside className="pdp-sticky" aria-label="Buy">
+        {priceText && <span className="pdp-sticky__price">{price.known ? price.main : priceText}</span>}
+        {buyButton('pdp-sticky__buy')}
+        {onToggleSaved && (
+          <button type="button" className={`pdp-actions__heart${isSaved ? ' is-on' : ''}`} aria-pressed={isSaved} aria-label={isSaved ? 'Saved' : 'Save'} onClick={() => onToggleSaved(product)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg>
+          </button>
+        )}
+      </aside>
+
+      {/* Not divs: web-play.css styles every direct child div of this page as the old card. */}
+      <p className="pdp-toast-region" role="status" aria-live="polite">{toast && <span className="pdp-toast">{toast}</span>}</p>
+
       {lightboxOpen && heroImageSrc && (
-        <ImageLightbox src={heroImageSrc} alt={product.name} onClose={() => setLightboxOpen(false)} />
+        <section className="pdp-lightbox-host">
+          <ImageLightbox src={heroImageSrc} alt={product.name} onClose={() => setLightboxOpen(false)} />
+        </section>
       )}
     </div>
   );

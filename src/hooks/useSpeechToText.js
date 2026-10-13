@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 
 /**
- * Web Speech API (Chrome/Edge) — continuous dictation with final segments accumulated.
+ * Web Speech API (Chrome/Edge), continuous dictation with final segments accumulated.
  * Same pattern as Quiz voice flow.
  */
 export function useSpeechToText() {

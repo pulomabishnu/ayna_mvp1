@@ -2,6 +2,7 @@ import { getSupabaseClient, getSupabaseUser } from './supabaseClient';
 
 const TABLE = 'health_intakes';
 const LOCAL_PREFIX = 'ayna_health_intake_v2:';
+const RESET_MARKER = '__aynaIntakeResetAt';
 
 function storageKey(userId) {
   return `${LOCAL_PREFIX}${userId || 'anonymous'}`;
@@ -11,7 +12,7 @@ function readLocal(userId) {
   try {
     const raw = window.localStorage.getItem(storageKey(userId));
     return raw ? JSON.parse(raw) : null;
-  } catch (_) {
+  } catch {
     return null;
   }
 }
@@ -24,7 +25,7 @@ async function resolveUserId(supabase) {
   try {
     const { data } = await supabase.auth.getSession();
     return data?.session?.user?.id || null;
-  } catch (_) {
+  } catch {
     return null;
   }
 }
@@ -33,7 +34,7 @@ function writeLocal(userId, profile) {
   try {
     window.localStorage.setItem(storageKey(userId), JSON.stringify(profile || {}));
     return true;
-  } catch (_) {
+  } catch {
     return false;
   }
 }
@@ -42,6 +43,17 @@ export async function loadHealthIntakeForCurrentUser() {
   const supabase = getSupabaseClient();
   const userId = await resolveUserId(supabase);
   const local = readLocal(userId);
+
+  // Keep a confirmed reset authoritative on this device while a remote
+  // deletion is pending (for example, when the account is temporarily offline).
+  if (local?.[RESET_MARKER]) {
+    if (supabase && userId) {
+      supabase.from(TABLE).delete().eq('user_id', userId).then(({ error }) => {
+        if (error) console.warn('[healthIntakeStore] reset sync pending:', error.message || error);
+      }).catch(() => {});
+    }
+    return null;
+  }
 
   if (!supabase || !userId) return local;
 
@@ -118,5 +130,22 @@ export async function saveHealthIntakeForCurrentUser(profile) {
   } catch (error) {
     console.warn('[healthIntakeStore] server save threw; local copy retained:', error);
     return { saved: false, localSaved, reason: error?.message || 'server_save_failed' };
+  }
+}
+
+/** Clear intake answers while preserving the account and other app data. */
+export async function clearHealthIntakeForCurrentUser() {
+  const supabase = getSupabaseClient();
+  const userId = await resolveUserId(supabase);
+  const localSaved = writeLocal(userId, { [RESET_MARKER]: Date.now() });
+  if (!supabase || !userId) return { localSaved, synced: !userId };
+
+  try {
+    const { error } = await supabase.from(TABLE).delete().eq('user_id', userId);
+    if (error) throw error;
+    return { localSaved, synced: true };
+  } catch (error) {
+    console.warn('[healthIntakeStore] server reset pending; local answers cleared:', error?.message || error);
+    return { localSaved, synced: false };
   }
 }

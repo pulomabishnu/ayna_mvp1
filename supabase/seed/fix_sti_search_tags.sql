@@ -1,5 +1,5 @@
 -- Searching "sti" returned zero results even though Wisp and Planned
--- Parenthood Direct genuinely offer STI care — "STI" only appeared in their
+-- Parenthood Direct genuinely offer STI care"STI" only appeared in their
 -- prose summary, not in tags/healthFunctions (the identity fields the search
 -- scorer weights), so it was rejected as a passing mention, not a real match.
 -- Appends to existing tags/health_functions rather than replacing them.

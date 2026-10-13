@@ -1,9 +1,9 @@
 // ============================================================
-// Ayna Product Database — Bladder Leak / Urinary Incontinence
+// Ayna Product Database, Bladder Leak / Urinary Incontinence
 // A real, previously-missing category: every "leak"-tagged product elsewhere
 // in this catalog is menstrual (period underwear, pads). Urinary incontinence
 // is a distinct condition and one of the most common perimenopause/menopause
-// symptoms — searches like "panty liners for bladder leaks" had nothing
+// symptoms, searches like "panty liners for bladder leaks" had nothing
 // relevant to surface. Products verified against brand/retailer listings; see
 // each entry's sourcing note.
 //

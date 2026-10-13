@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getCareResourceBundle } from '../data/careResources';
-import Disclaimer from './Disclaimer';
 
 /**
- * Care near you + telehealth — driven by quiz, chat-updated profile, imported records, and wearable summary.
+ * Care near you + telehealth, driven by quiz, chat-updated profile, imported records, and wearable summary.
  */
 export default function CareNearYouPanel({
   quizResults,
@@ -32,18 +31,23 @@ export default function CareNearYouPanel({
 
   return (
     <div
-      style={{
+      className={`care-near-panel${compact ? ' care-near-panel--compact' : ''}`}
+      style={compact ? undefined : {
         maxWidth: '900px',
         margin: '0 auto var(--spacing-xl)',
-        padding: compact ? '1rem 1.25rem' : '1.5rem 1.75rem',
+        padding: '1.5rem 1.75rem',
         background: 'linear-gradient(135deg, #f8fafc 0%, #f5f3ff 100%)',
         borderRadius: 'var(--radius-lg)',
         border: '1px solid var(--color-border)',
       }}
     >
-      <h3 style={{ fontSize: compact ? '1.05rem' : '1.2rem', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>
-        Care near you &amp; telehealth
-      </h3>
+      {/* Compact (inside My Ecosystem's "Care near you" card): the card
+          already carries the title and frame, so no second box or heading. */}
+      {!compact && (
+        <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>
+          Care near you &amp; telehealth
+        </h3>
+      )}
       <p style={{ fontSize: '0.92rem', color: 'var(--color-text-muted)', lineHeight: 1.55, marginBottom: '1rem' }}>
         {bundle.intro}
       </p>
@@ -130,7 +134,7 @@ export default function CareNearYouPanel({
       {bundle.catalogTelehealth.length > 0 && onOpenProduct && (
         <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--color-border)' }}>
           <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
-            Telehealth platforms in our catalog (matched to your profile when possible)
+            Virtual care in our catalog, matched to you when possible
           </h4>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {bundle.catalogTelehealth.map((p) => (
@@ -148,7 +152,6 @@ export default function CareNearYouPanel({
         </div>
       )}
 
-      <Disclaimer compact style={{ marginTop: '1rem' }} />
     </div>
   );
 }

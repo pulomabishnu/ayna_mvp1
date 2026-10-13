@@ -1,0 +1,35 @@
+/* App density pass (round 6): founder asked for everything "a tiny bit
+   smaller". Headings and big numbers ~8-10% smaller, card padding one step
+   tighter, header and pills slightly tighter. Body text and 44px tap targets
+   are untouched. Imported once, last, from MobileApp.jsx; the repeated
+   .ayna-mobile class outranks the per-screen rules without editing them.
+   Every size keeps the text-size preference (--ayna-text-scale). */
+
+/* ---------- Headings ---------- */
+/* Welcome cover: 40 -> 36 */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-cover-copy h1 { font-size: calc(clamp(30px, 9.2vw, 44px) * var(--ayna-text-scale, 1)) !important; }
+/* Page titles */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero h1 { font-size: calc(clamp(29px, 8.2vw, 36px) * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-shop-titlebar h1 { font-size: calc(30px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-title h1 { font-size: calc(32px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .am-top .am-title h1 { font-size: calc(28px * var(--ayna-text-scale, 1)) !important; }
+/* Section heads and empty states */
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-empty h2 { font-size: calc(26px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-cabinet-reads .ayna-cabinet-section-head h2,
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-area-collection .ayna-cabinet-section-head h2 { font-size: calc(22px * var(--ayna-text-scale, 1)) !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-badges2__head h2 { font-size: calc(18px * var(--ayna-text-scale, 1)) !important; }
+/* Profile hub: name 27 -> 24 (inline size, so !important) */
+.ayna-mobile.ayna-mobile .ayna-fresh-profile-hub .ay-hub-avatar + div > div:first-child { font-size: calc(24px * var(--ayna-text-scale, 1)) !important; }
+
+/* ---------- Header: slightly tighter ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shared-header { min-height: 60px; padding-bottom: 8px; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shared-header .ayna-shared-wordmark { font-size: calc(25px * var(--ayna-text-scale, 1)); }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-header-ask-pill { padding-right: 12px !important; }
+
+/* ---------- Cards: one step tighter ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-hero { padding-block: 20px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-home-today { padding: 16px !important; }
+
+/* ---------- Pills: a touch less side padding (heights unchanged) ---------- */
+.ayna-mobile.ayna-mobile.ayna-mobile .ayna-shop-category { padding-inline: 12px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-topics button { padding-inline: 14px; }

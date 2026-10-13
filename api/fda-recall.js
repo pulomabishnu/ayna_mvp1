@@ -2,11 +2,11 @@
 import { createClient } from '@supabase/supabase-js';
 import twilio from 'twilio';
 
-// OpenFDA recall lookup — free, no API key required for basic use.
+// OpenFDA recall lookup, free, no API key required for basic use.
 // Add OPENFDA_API_KEY to Vercel env vars for higher rate limits (free at open.fda.gov).
 // Docs: https://open.fda.gov/apis/
 //
-// SAFETY CONTRACT — read before changing anything in this file.
+// SAFETY CONTRACT, read before changing anything in this file.
 //
 // This endpoint decides whether a woman is told her product has been recalled.
 // Both error directions are harmful, so the response distinguishes THREE states
@@ -14,7 +14,7 @@ import twilio from 'twilio';
 //
 //   status: 'ok'      every relevant dataset answered; `hasRecalls` is meaningful
 //   status: 'partial' at least one dataset answered and at least one failed
-//   status: 'failed'  nothing answered — we know NOTHING about this product
+//   status: 'failed'  nothing answered, we know NOTHING about this product
 //
 // The previous version returned `{ hasRecalls: false }` for every failure mode,
 // which the product modal rendered as a green "No FDA Recalls Found". A timeout,
@@ -22,7 +22,7 @@ import twilio from 'twilio';
 //
 // Note on OpenFDA semantics: a search with zero matches returns HTTP 404 with
 // `{"error":{"code":"NOT_FOUND"}}`. So `res.ok === false` is the NORMAL empty
-// case and cannot be treated as failure — the body must be inspected.
+// case and cannot be treated as failure, the body must be inspected.
 
 const MAX_TERM_LEN = 120;
 const REQUEST_TIMEOUT_MS = 8000;
@@ -40,7 +40,7 @@ const DATASETS = {
 
 /**
  * Recency sort field PER DATASET. These schemas differ: the enforcement
- * datasets carry `report_date`, but device/recall.json does not — and OpenFDA
+ * datasets carry `report_date`, but device/recall.json does not, and OpenFDA
  * rejects a sort on an unknown field with a 400, which would fail the lookup
  * outright rather than merely returning it unsorted.
  */
@@ -64,7 +64,7 @@ function datasetsForCategory(cat) {
        'pelvic-floor', 'hormone-monitoring', 'contraception'].includes(cat)) {
     return ['deviceRecall', 'deviceEnforcement'];
   }
-  // Unknown category — search everything rather than guess.
+  // Unknown category, search everything rather than guess.
   return ['deviceRecall', 'deviceEnforcement', 'drugEnforcement', 'foodEnforcement'];
 }
 
@@ -84,11 +84,11 @@ function cleanTerm(v) {
 /**
  * Core recall lookup for one product. Pulled out of the handler so the
  * recall-monitoring sweep (below) can check many products without going
- * through HTTP — same logic, same result shape, no res/req coupling.
+ * through HTTP, same logic, same result shape, no res/req coupling.
  */
 export async function checkRecallsForProduct({ name, brand, category }) {
   if (NON_PHYSICAL_CATEGORIES.has(category)) {
-    // Explicitly "not applicable" — distinct from "we checked and found nothing".
+    // Explicitly "not applicable", distinct from "we checked and found nothing".
     return {
       status: 'skipped', hasRecalls: false, hasHistoricalRecalls: false,
       recalls: [], historicalRecalls: [],
@@ -103,7 +103,7 @@ export async function checkRecallsForProduct({ name, brand, category }) {
 
   // Query BROADLY and let the post-filter provide precision. The previous
   // version searched for the exact quoted phrase `"<brand> <name>"` inside
-  // product_description — but FDA descriptions are free text written by the
+  // product_description, but FDA descriptions are free text written by the
   // recalling firm ("PRENATAL MULTIVITAMIN (Ritual) 30ct"), so the adjacent
   // in-order phrase almost never appears and real recalls were missed.
   const clauses = [`product_description:"${escapeLucene(name)}"`];
@@ -129,7 +129,7 @@ export async function checkRecallsForProduct({ name, brand, category }) {
           const json = await r.json();
           return { key, ok: true, results: Array.isArray(json?.results) ? json.results : [] };
         }
-        // 404 + NOT_FOUND is OpenFDA's "zero matches" — a successful empty answer,
+        // 404 + NOT_FOUND is OpenFDA's "zero matches", a successful empty answer,
         // NOT a failure. This is the distinction the old code could not make.
         if (r.status === 404) {
           const body = await r.json().catch(() => null);
@@ -161,7 +161,7 @@ export async function checkRecallsForProduct({ name, brand, category }) {
   if (status === 'failed') {
     console.error('[fda-recall] all datasets failed for', name, failed.map((f) => `${f.key}=${f.reason}`).join(','));
     return {
-      // Must never be cached — a transient outage would be pinned into the CDN
+      // Must never be cached, a transient outage would be pinned into the CDN
       // as a false all-clear.
       status: 'failed', hasRecalls: null, hasHistoricalRecalls: null,
       recalls: [], historicalRecalls: [],
@@ -211,7 +211,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Cron-triggered sweep mode — see runRecallSweep below. Checked before the
+  // Cron-triggered sweep mode, see runRecallSweep below. Checked before the
   // name-based validation since a sweep request carries no `name` param.
   if (req.query.sweep === '1') return handleSweepRequest(req, res);
 
@@ -241,8 +241,8 @@ const HISTORICAL_AFTER_YEARS = 2;
  * A recall is HISTORICAL when it has been terminated and is old.
  *
  * drug/enforcement retains `status: "Terminated"` rows back to 2012, and the
- * previous code captured `status` but never used it — so a terminated 2013
- * single-lot recall surfaced today as "⚠️ FDA Recall Records Found — review
+ * previous code captured `status` but never used it, so a terminated 2013
+ * single-lot recall surfaced today as "⚠️ FDA Recall Records Found, review
  * carefully before purchasing". False alarms on a safety surface cost you the
  * true positives, so these are returned but flagged, and excluded from the
  * top-level hasRecalls signal.
@@ -305,7 +305,7 @@ function flattenOpenfda(val) {
 /**
  * Fields are matched INDIVIDUALLY. The previous version joined them with a
  * space and matched phrases against the concatenation, so a phrase could match
- * across a field boundary — "...100% Cotton" + "Tampons may contain..." matched
+ * across a field boundary"...100% Cotton" + "Tampons may contain..." matched
  * a product named "Cotton Tampons" from an unrelated recall.
  */
 function recallFields(item) {
@@ -349,20 +349,20 @@ export function wordOrPhraseMatches(blob, token) {
 // ─── Recall-monitoring sweep ────────────────────────────────────────────────
 //
 // Makes the "🔔 Monitor Safety Recalls" button on a product page actually do
-// something. Previously it only flipped `user_ecosystems.is_tracked` — nothing
+// something. Previously it only flipped `user_ecosystems.is_tracked`, nothing
 // ever read that flag. This is cron-triggered (Vercel Cron, see vercel.json),
 // checks every distinct product any user has flagged as tracked, and texts
 // (via the Twilio integration already used for OTP/SMS elsewhere in this repo)
 // any user newly affected by an ACTIVE recall that wasn't there last check.
 //
 // Safety gates, both required before a single real SMS goes out:
-//   1. CRON_SECRET must be set and match the request's Authorization header —
+//   1. CRON_SECRET must be set and match the request's Authorization header
 //      otherwise sweep mode 401s. Nothing about this endpoint's existence is
 //      revealed to an unauthenticated caller beyond the 401 itself.
-//   2. RECALL_SWEEP_ENABLED must be exactly "1" — otherwise the sweep still
+//   2. RECALL_SWEEP_ENABLED must be exactly "1", otherwise the sweep still
 //      runs (so you can watch the logs and confirm behavior) but makes ZERO
 //      writes: no recall_notifications rows, no product_recall_state updates,
-//      no Twilio calls. This is deliberate — a dry run that persisted state
+//      no Twilio calls. This is deliberate, a dry run that persisted state
 //      would let a recall "expire" out of detection before it was ever really
 //      sent, once the real switch is flipped on.
 
@@ -394,7 +394,7 @@ async function mapConcurrent(items, fn, limit = 5) {
   return results;
 }
 
-/** Stable identity for "the current active recall set" — order-independent, so
+/** Stable identity for "the current active recall set", order-independent, so
  *  re-fetching the same recalls in a different order never looks like a change. */
 function computeRecallSignature(activeRecalls) {
   return activeRecalls
@@ -413,7 +413,7 @@ function buildRecallSmsBody(productName, reason) {
  * Notify every user tracking `productId` about a newly-detected active
  * recall. Claim-then-send: the recall_notifications insert (status: 'sent')
  * happens BEFORE the Twilio call and is what the unique index on
- * (user_id, product_id, recall_signature) guards — if the insert 23505s,
+ * (user_id, product_id, recall_signature) guards, if the insert 23505s,
  * this exact user/product/recall combination was already handled (by a
  * previous run, or a concurrent one), so we skip rather than double-text.
  */
@@ -442,11 +442,11 @@ async function notifyUsersOfRecall(admin, { productId, productName, recallSignat
     const hasUsableNumber = phoneRow?.phone_number && phoneRow.is_verified && !phoneRow.sms_opted_out;
 
     if (dryRun) {
-      // Zero writes in dry run — see the header comment above for why.
+      // Zero writes in dry run, see the header comment above for why.
       console.log(
         hasUsableNumber
-          ? `[fda-recall sweep] DRY RUN — would text user ${user_id} about ${productName}`
-          : `[fda-recall sweep] DRY RUN — would SKIP user ${user_id} (no verified/opted-in number) for ${productName}`
+          ? `[fda-recall sweep] DRY RUN, would text user ${user_id} about ${productName}`
+          : `[fda-recall sweep] DRY RUN, would SKIP user ${user_id} (no verified/opted-in number) for ${productName}`
       );
       if (hasUsableNumber) notified++; else skipped++;
       return;
@@ -462,7 +462,7 @@ async function notifyUsersOfRecall(admin, { productId, productName, recallSignat
     }
 
     // Claim first. A 23505 here means this exact (user, product, recall set)
-    // was already sent — by an earlier run or a concurrent one — so stop.
+    // was already sent, by an earlier run or a concurrent one, so stop.
     const { error: claimError } = await admin.from('recall_notifications').insert({
       user_id, product_id: productId, product_name: productName,
       recall_signature: recallSignature, status: 'sent',
@@ -579,7 +579,7 @@ async function handleSweepRequest(req, res) {
 
   const dryRun = process.env.RECALL_SWEEP_ENABLED !== '1';
   if (dryRun) {
-    console.warn('[fda-recall sweep] RECALL_SWEEP_ENABLED is not "1" — running in dry-run mode, no SMS will send and no state will be written.');
+    console.warn('[fda-recall sweep] RECALL_SWEEP_ENABLED is not "1", running in dry-run mode, no SMS will send and no state will be written.');
   }
 
   try {

@@ -1,6 +1,6 @@
 /* global process */
 /**
- * /api/products — serves the curated catalog from product_catalog.
+ * /api/products, serves the curated catalog from product_catalog.
  *
  * Replaces ~5,500 lines of product data that were bundled into the client, so
  * (a) the catalog is no longer downloaded by every visitor as part of the JS
@@ -8,7 +8,7 @@
  * a code change and a redeploy.
  *
  * Read-only and public: this is product information, and Discovery is browsable
- * signed-out. Served with the anon key so RLS applies — the service-role key is
+ * signed-out. Served with the anon key so RLS applies, the service-role key is
  * never needed for a public read.
  *
  * The rows are returned in the CLIENT's historical shape (camelCase, nested
@@ -90,7 +90,7 @@ export default async function handler(req, res) {
       // An empty table almost certainly means "not seeded yet", which is very
       // different from "no products". Say so rather than serving an empty
       // catalog the client would render as a working, product-less app.
-      console.error('[products] product_catalog is empty — run supabase/seed/product_catalog.sql');
+      console.error('[products] product_catalog is empty, run supabase/seed/product_catalog.sql');
       return res.status(503).json({ error: 'catalog_empty', products: [] });
     }
 

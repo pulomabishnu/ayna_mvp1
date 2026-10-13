@@ -4,13 +4,13 @@
 -- files in src/data/, which meant (a) every visitor downloaded the entire
 -- catalog as part of a 1.37 MB bundle, (b) correcting a price or a safety note
 -- required a code change and a redeploy, and (c) there was no single source of
--- truth — the same product shape was duplicated across six modules.
+-- truth, the same product shape was duplicated across six modules.
 --
 -- WHAT THIS IS NOT: a replacement for the curated content with generated
 -- content. `safety`, `doctor_opinion` and `clinician_attribution` are
 -- human-verified claims on a health product. Ayna already generates products
 -- for everything OUTSIDE this catalog (api/llm-recommendations,
--- api/search-suggestions) — this table is the verified core those paths fall
+-- api/search-suggestions), this table is the verified core those paths fall
 -- back from, and `source` below keeps the two provenances distinguishable
 -- forever.
 create table if not exists public.product_catalog (
@@ -80,7 +80,7 @@ alter table public.product_catalog enable row level security;
 grant select on public.product_catalog to anon, authenticated;
 grant all on public.product_catalog to service_role;
 
--- The catalog is public product information — readable by anyone, including
+-- The catalog is public product information, readable by anyone, including
 -- signed-out visitors browsing Discovery. Writes are service-role only, so the
 -- curated content cannot be edited from a browser.
 drop policy if exists "product_catalog_read_all" on public.product_catalog;

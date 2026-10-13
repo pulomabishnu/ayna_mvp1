@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
+
+// Tapping a starter fills the box so the person can edit before asking.
+const ASK_STARTERS = ['What helps with cramps?', 'Is this safe with my birth control?', 'Explain my top match'];
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import { apiUrl } from '../../utils/apiUrl.js';
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
- * (src/components/ProfileChatbot.jsx) — same /api/ask-ayna contract, same
+ * (src/components/ProfileChatbot.jsx), same /api/ask-ayna contract, same
  * profile-update shape. Duplicated rather than imported so this file has no
  * dependency on the desktop component's own JSX/CSS.
  */
@@ -44,25 +47,21 @@ function summarizeProfile(profile) {
   return parts.join(' ');
 }
 
-function buildWelcome(firstName) {
-  const greeting = firstName ? `Hey, ${firstName}.` : 'Hey.';
-  return [{
-    role: 'assistant',
-    text: `${greeting} I'm Ayna. Tell me what you're looking for, what isn't working for you, or what you want to avoid. I can use that context to personalize your profile and help you browse.`,
-  }];
+function buildWelcome() {
+  return [{ role: 'assistant', text: 'What are you looking for?' }];
 }
 
 /**
  * Mobile equivalent of ProfileChatbot.jsx, adapted to a full-screen overlay
  * instead of a corner-anchored panel (mobile has no room for that) and to
  * this app's own nav-style callbacks instead of desktop's. Voice ("Talk")
- * mode is intentionally left out — it depends on the browser
+ * mode is intentionally left out, it depends on the browser
  * SpeechRecognition API, which the Capacitor WKWebView shell doesn't
  * support without a native plugin this change doesn't add.
  */
 export default function AskAynaModal({
   open,
-  onClose,
+  enabled = true,
   profile,
   onProfileUpdate,
   chatHistory = [],
@@ -70,12 +69,14 @@ export default function AskAynaModal({
   name,
   onNavigateToDiscovery,
   onViewRecommendations,
+  onRequireAuth,
 }) {
   const [messages, setMessages] = useState(chatHistory.length > 0 ? chatHistory : buildWelcome(name));
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
+  const [hasOpened, setHasOpened] = useState(open);
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -94,18 +95,25 @@ export default function AskAynaModal({
 
   useEffect(() => {
     if (chatHistory.length > 0) setMessages(chatHistory);
-  }, [chatHistory.length]);
+  }, [chatHistory]);
+
+  useEffect(() => {
+    if (open) setHasOpened(true);
+  }, [open]);
 
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, open]);
+    // Reopening preserves the existing scroll position.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
 
-  if (!open) return null;
+  if (!enabled || (!open && !hasOpened)) return null;
 
   const handleSend = async (e) => {
     e.preventDefault();
     const msg = input.trim();
     if (!msg || sending) return;
+    if (!session?.access_token) { onRequireAuth?.('Ask Ayna'); return; }
     setInput('');
     setSendError('');
     const userMsg = { role: 'user', text: msg };
@@ -140,7 +148,7 @@ export default function AskAynaModal({
         if (merged.added.sensitivities.length) parts.push(`Sensitivities: ${merged.added.sensitivities.join(', ')}`);
         if (merged.added.productsToAvoid.length) parts.push(`Avoiding: ${merged.added.productsToAvoid.join(', ')}`);
         if (merged.added.preference) parts.push(`Priority: ${merged.added.preference}`);
-        newMessages.push({ role: 'system', text: `Updated your profile — ${parts.join(' · ')}.`, showViewRecommendations: true });
+        newMessages.push({ role: 'system', text: `Updated your profile, ${parts.join(' · ')}.`, showViewRecommendations: true });
       }
 
       if (data.browseIntent?.category && onNavigateToDiscovery) {
@@ -151,7 +159,7 @@ export default function AskAynaModal({
       onChatHistoryUpdate?.(newMessages);
     } catch (err) {
       if (err?.code === 'not_signed_in') {
-        setSendError('Sign in to ask Ayna anything — free accounts get a few AI chats per week.');
+        onRequireAuth?.('Ask Ayna');
       } else if (err?.code === 'weekly_limit_reached') {
         setSendError("You've used your free chats for this week. They reset weekly.");
       } else {
@@ -164,16 +172,18 @@ export default function AskAynaModal({
 
   return (
     <div
+      className="ayna-ask-drawer"
+      data-open={open ? 'true' : 'false'}
       style={{
-        position: 'fixed',
-        inset: 0,
+        position: 'absolute',
+        inset: '0 0 var(--ayna-bottom-nav-height) 0',
         zIndex: 60,
         background: 'var(--ayna-bg)',
         display: 'flex',
         flexDirection: 'column',
-        animation: 'ay-page .25s ease-out',
       }}
     >
+      <div className="ayna-ask-drawer-content" role="dialog" aria-label="Ask Ayna" aria-modal={open ? true : undefined} aria-hidden={!open} inert={!open ? true : undefined}>
       <div
         style={{
           paddingTop: 'max(20px, env(safe-area-inset-top))',
@@ -186,40 +196,8 @@ export default function AskAynaModal({
           borderBottom: '1px solid var(--ayna-border)',
         }}
       >
-        <div
-          style={{
-            width: 34,
-            height: 34,
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg,#242A52,#4E3866 55%,#A2603C)',
-            animation: 'ay-float 3s ease-in-out infinite',
-            flex: 'none',
-          }}
-        />
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
-            Ask Ayna
-          </div>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>
-            {name ? `Hey, ${name}.` : 'Hey.'}
-          </div>
-        </div>
-        <div
-          onClick={onClose}
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            fontSize: 'calc(20px * var(--ayna-text-scale, 1))',
-            color: 'var(--ayna-text-muted)',
-            background: 'var(--ayna-chip-bg)',
-          }}
-        >
-          ×
+          <h1 className="ay-ask-title">Ask ayna</h1>
         </div>
       </div>
 
@@ -245,7 +223,7 @@ export default function AskAynaModal({
                 onClick={onViewRecommendations}
                 style={{
                   marginTop: 6,
-                  fontFamily: "'DM Sans',sans-serif",
+                  fontFamily: "var(--ayna-font-ui)",
                   fontWeight: 600,
                   fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
                   color: 'var(--ayna-accent-dark)',
@@ -258,7 +236,12 @@ export default function AskAynaModal({
             )}
           </div>
         ))}
-        {sending && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
+        {!messages.some((m) => m.role === 'user') && !sending && (
+          <div className="ay-ask-starters" aria-label="Try asking">
+            {ASK_STARTERS.map((q, i) => <button type="button" key={q} className="ay-ask-starter" style={{ '--i': i }} onClick={() => setInput(q)}>{q}</button>)}
+          </div>
+        )}
+        {sending && <div className="ay-typing" role="status" aria-label="ayna is thinking"><i /><i /><i /></div>}
         <div ref={bottomRef} />
       </div>
 
@@ -284,6 +267,7 @@ export default function AskAynaModal({
           disabled={sending || session === undefined}
           style={{
             flex: 1,
+            minWidth: 0,
             padding: '12px 16px',
             borderRadius: 99,
             border: '1px solid var(--ayna-border)',
@@ -301,7 +285,7 @@ export default function AskAynaModal({
             border: 'none',
             background: 'var(--ayna-cta-bg)',
             color: 'var(--ayna-cta-text)',
-            fontFamily: "'DM Sans',sans-serif",
+            fontFamily: "var(--ayna-font-ui)",
             fontWeight: 600,
             fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
@@ -311,6 +295,7 @@ export default function AskAynaModal({
           Ask
         </button>
       </form>
+      </div>
     </div>
   );
 }

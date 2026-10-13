@@ -1,14 +1,15 @@
+import SmartSearchInput from './search/SmartSearchInput.jsx';
 import React, { useState } from 'react';
-import { findGlossaryTermInText } from '../data/glossary';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import { InfoPage, InfoSection } from './InfoPage';
 
-// EDITORIALLY CURATED HIGHLIGHTS — not a recall feed and not a complete list.
+// EDITORIALLY CURATED HIGHLIGHTS, not a recall feed and not a complete list.
 //
 // This page previously presented these two hardcoded rows as the output of
 // continuous multi-source monitoring ("Real-time monitoring", "scans the
 // following sources daily: FDA · CPSC · EPA · Community Watch"). No code for
 // CPSC, EPA or community scanning exists anywhere in the repo, and this
-// component never called the live FDA endpoint at all — so searching for any
+// component never called the live FDA endpoint at all, so searching for any
 // product outside these two rows printed an affirmative "No alerts found",
 // which is an all-clear the app had not earned.
 //
@@ -34,8 +35,7 @@ const CURATED_SAFETY_NOTES = [
     // Additional recalls can be layered in here as needed.
 ];
 
-export default function Recalls({ trackedProducts, myProducts = {} }) {
-    const trackedList = Object.values(trackedProducts);
+export default function Recalls({ myProducts = {} }) {
     const ecosystemList = Object.values(myProducts);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -45,91 +45,71 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
     );
 
     return (
-        <div className="container animate-fade-in" style={{ padding: 'var(--spacing-lg) var(--spacing-md)' }}>
-            <div style={{ marginBottom: '3rem' }}>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Safety & Recall Center</h2>
-                <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-                    Editorially curated safety notes, plus a live FDA recall check on every product page.
-                    This page is not a complete recall list. Always confirm against the FDA database directly.
-                </p>
-
-                <input
-                    type="text"
-                    placeholder="Search for a brand or product (e.g., Always, Kotex)..."
+        <InfoPage
+            className="ay-recalls"
+            eyebrow="Safety"
+            title="Safety and recall center"
+            lede="Curated safety notes, plus a live FDA recall check on every product page. This is not a complete recall list, so always confirm with the FDA."
+            width="wide"
+        >
+            <div className="ay-info-search">
+                <label htmlFor="recalls-search" className="ay-info-label">Search the curated notes</label>
+                <SmartSearchInput
+                    id="recalls-search"
+                    type="search"
+                    placeholder="Brand or product, e.g. Always, Kotex"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{
-                        width: '100%', maxWidth: '600px', padding: '1rem',
-                        borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)',
-                        fontSize: '1rem', outline: 'none'
-                    }}
                 />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '3rem' }}>
-                {/* Active Alerts */}
+            <div className="ay-info-split ay-info-split--main">
                 <div>
-                    <h3 style={{ fontSize: '1.3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        Curated Safety Notes
-                    </h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        {filteredRecalls.length === 0 ? (
-                            // Deliberately NOT "No alerts found for X" — this list is a
-                            // handful of curated entries, so absence from it says nothing
-                            // about whether a product has been recalled.
-                            <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-                                Nothing in ayna&apos;s curated notes matches &quot;{searchQuery}&quot;. This is not a recall search.
-                                open the product to run a live FDA check, or{' '}
-                                <a
-                                    href="https://www.accessdata.fda.gov/scripts/enforcement/enforce_rpt-Product-Tabs.cfm"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}
-                                >
-                                    search the FDA enforcement database
-                                </a>.
-                            </p>
-                        ) : filteredRecalls.map(recall => (
-                            <div key={recall.id} style={{
-                                padding: '1.5rem',
-                                background: recall.severity === 'critical' ? '#FEF2F2' : 'var(--color-surface)',
-                                border: `1px solid ${recall.severity === 'critical' ? '#FEE2E2' : 'var(--color-border)'}`,
-                                borderRadius: 'var(--radius-md)',
-                                borderLeft: `5px solid ${recall.severity === 'critical' ? '#EF4444' : (recall.severity === 'high' ? '#F59E0B' : '#FCD34D')}`
-                            }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                                    <h4 style={{ fontWeight: '700', fontSize: '1.1rem' }}>{recall.productName}</h4>
-                                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{recall.date}</span>
-                                </div>
-                                <p style={{ fontSize: '0.95rem', marginBottom: '1rem', color: recall.severity === 'critical' ? '#991B1B' : 'var(--color-text-main)' }}>
-                                    <strong>Reason:</strong> {recall.reason}
+                    <InfoSection title="Curated safety notes">
+                        <div className="ay-info-stack ay-info-stack--tight">
+                            {filteredRecalls.length === 0 ? (
+                                // Deliberately NOT "No alerts found for X": this list is a
+                                // handful of curated entries, so absence from it says nothing
+                                // about whether a product has been recalled.
+                                <p className="ay-info__body ay-info__muted">
+                                    Nothing in ayna&apos;s curated notes matches &quot;{searchQuery}&quot;. This is not a recall search.
+                                    Open the product to run a live FDA check, or{' '}
+                                    <a
+                                        className="ay-info-link"
+                                        href="https://www.accessdata.fda.gov/scripts/enforcement/enforce_rpt-Product-Tabs.cfm"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        search the FDA enforcement database
+                                    </a>.
                                 </p>
-                                <div style={{ background: 'rgba(255,255,255,0.5)', padding: '0.75rem', borderRadius: 'var(--radius-sm)', fontSize: '0.9rem' }}>
-                                    <strong>Required Action:</strong> {recall.action}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ) : filteredRecalls.map(recall => (
+                                <article key={recall.id} className={`ay-info-card ay-info-card--pad ay-info-note ay-info-note--${recall.severity}`}>
+                                    <div className="ay-info-note__head">
+                                        <h3 className="ay-info-card__title">{recall.productName}</h3>
+                                        <span className="ay-info__pill">{recall.date}</span>
+                                    </div>
+                                    <p className="ay-info__body"><strong>Why:</strong> {recall.reason}</p>
+                                    <p className="ay-info-note__action"><strong>What to do:</strong> {recall.action}</p>
+                                </article>
+                            ))}
+                        </div>
+                    </InfoSection>
 
-                    <div style={{ marginTop: '3rem', position: 'relative' }}>
-                        <h3 style={{ fontSize: '1.3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            Your Monitored Products
-                        </h3>
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
-                            ayna checks the FDA recall database for a product when you open it. There is no
-                            background monitoring and no alerting. Open a product to run its check.
-                        </p>
-
+                    <InfoSection
+                        title="Your products"
+                        intro="ayna checks the FDA recall database for a product when you open it. There is no background monitoring and no alerting."
+                    >
                         {ecosystemList.length === 0 ? (
-                            <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Add products to your Ecosystem to monitor them for safety recalls.</p>
+                            <p className="ay-info__body ay-info__muted">Add products to your ecosystem to see them here.</p>
                         ) : (
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <ul className="ay-info-grid ay-info-grid--2 ay-recalls__mon">
                                 {ecosystemList.map(p => (
-                                    <div key={p.id} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '1rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface)' }}>
+                                    <li key={p.id} className="ay-info-card ay-info-product">
                                         <ProductTileImage
                                             product={p}
-                                            alt={p.name}
-                                            imgStyle={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%' }}
+                                            alt=""
+                                            imgStyle={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '50%' }}
                                             letterNode={(
                                                 <div style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0, overflow: 'hidden' }}>
                                                     <ProductImageFallback compact />
@@ -137,47 +117,42 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                                             )}
                                         />
                                         <div>
-                                            <h4 style={{ fontSize: '0.9rem', fontWeight: '600' }}>{p.name}</h4>
+                                            <div className="ay-info-product__name">{p.name}</div>
                                             {/* Was a hardcoded green "MONITORED" badge that reflected
                                                 no check of any kind. */}
-                                            <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: '600' }}>Checked on open</span>
+                                            <div className="ay-info__small">Checked when you open it</div>
                                         </div>
-                                    </div>
+                                    </li>
                                 ))}
-                            </div>
+                            </ul>
                         )}
-                    </div>
+                    </InfoSection>
                 </div>
 
-                {/* Safety Insights */}
-                <div>
-                    <div className="card" style={{ background: 'var(--color-surface-soft)', border: 'none' }}>
-                        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>What ayna actually checks</h3>
-                        <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: '1.6', marginBottom: '1.5rem' }}>
-                            When you open a product, ayna queries OpenFDA live for that specific product:
-                        </p>
+                <aside className="ay-info-stack ay-info-stack--tight">
+                    <div className="ay-info-card ay-info-card--pad ay-info-card--peri">
+                        <h2 className="ay-info__h3">What ayna actually checks</h2>
+                        <p className="ay-info__body">When you open a product, ayna queries OpenFDA live for that product:</p>
                         {/* CPSC, EPA and "Community Watch" were listed here as daily-scanned
                             sources. None of them exist in the codebase. Only the datasets
                             actually queried by api/fda-recall.js are listed now. */}
-                        <ul style={{ paddingLeft: '1.2rem', fontSize: '0.9rem', color: 'var(--color-text-main)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                            <li><strong>FDA device recalls &amp; enforcement:</strong> for cups, discs, tampons, pads and devices.</li>
-                            <li><strong>FDA food enforcement:</strong> where dietary supplement recalls are filed.</li>
-                            <li><strong>FDA drug enforcement:</strong> for drug-classified products.</li>
+                        <ul className="ay-info-list">
+                            <li><strong>Device recalls and enforcement:</strong> cups, discs, tampons, pads and devices.</li>
+                            <li><strong>Food enforcement:</strong> where supplement recalls are filed.</li>
+                            <li><strong>Drug enforcement:</strong> drug-classified products.</li>
                         </ul>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: '1.6', marginTop: '1rem' }}>
-                            If the FDA database can&apos;t be reached, ayna says so rather than showing an all-clear.
-                            Checks run on demand, not on a schedule.
+                        <p className="ay-info__small">
+                            If the FDA database can&apos;t be reached, ayna says so rather than showing an all-clear. Checks run on demand, not on a schedule.
                         </p>
                     </div>
-
-                    <div style={{ marginTop: '2rem', padding: '1.5rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)' }}>
-                        <h4 style={{ fontSize: '0.9rem', fontWeight: '700', textTransform: 'uppercase', marginBottom: '1rem', color: 'var(--color-primary)' }}>Coming Soon</h4>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                            <strong>Ingredient Watchlist:</strong> Automatically get notified if a product in your ecosystem updates its ingredients to include something on your sensitivity list.
+                    <div className="ay-info-card ay-info-card--pad">
+                        <span className="ay-info__pill">Coming soon</span>
+                        <p className="ay-info__body">
+                            <strong>Ingredient watchlist:</strong> get notified if a product in your ecosystem adds something on your sensitivity list.
                         </p>
                     </div>
-                </div>
+                </aside>
             </div>
-        </div>
+        </InfoPage>
     );
 }

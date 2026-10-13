@@ -1,58 +1,37 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
-import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import WebHeroCarousel from './WebHeroCarousel';
+import { ExploreByNeed } from './HomeShowcase';
+import { EcoOrbit } from './EcoBuilder';
+import PartnerStrip from './PartnerStrip';
+import { useEcoSlots, useNeeds } from './landingNeeds';
+import WebEcosystemChart from './WebEcosystemChart';
+import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
+import '../styles/eco-redesign.css';
+import '../styles/landing.css';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } from '../data/products';
+import ProductCard from './ProductCard';
+import SmartSearchInput from './search/SmartSearchInput.jsx';
+import { edgeFadeRef } from '../utils/edgeFade';
 import { getVerificationLinks } from '../utils/verificationLinks';
 
 /**
- * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
- * mockup ("Ayna Mockups").
+ * Website home, laid out by the design rulebook (/tmp figma RULEBOOK §14):
  *
- *   1a  first-time visitor: gradient hero, search, "Tell us about your body
- *       once" band, then Shop.
- *   1c  returning user with an ecosystem: "Welcome back" hero with the
- *       ecosystem summary card, then a personalized Shop.
+ *   FirstVisitLanding  hero (Build your ecosystem + search + a small orbit),
+ *                      brand partner strip, why ayna (3), how it works (3 +
+ *                      CTA), shop by need, stories, final CTA band.
+ *   WelcomeBack        signed in: greeting hero with the ecosystem ring (or
+ *                      the build hero when it is empty), partner strip,
+ *                      Picked for you.
  *
- * The mockup's decision notes are what settle the shape here: the shop lives
- * on the landing page for everyone, the pre-ecosystem section is called Shop
- * (not "Curated for you"), and returning users get rebuild-or-browse rather
- * than being sent straight back into the quiz.
- *
- * Numbers below are the mockup's literal values, not the app's design tokens,
- * because the point is to reproduce those two boards.
+ * One primary-styled button per viewport (.lx-cta); everything else is an
+ * outline or text button. Styles: src/styles/landing.css (classes lx-*).
  */
 
-/** The eight products in board 1a's Shop grid, with the mockup's own category eyebrows. */
-const SHOP_LINEUP = [
-  { id: 'p-lola-pad', label: 'PADS' },
-  { id: 'p-elvie-trainer', label: 'PELVIC FLOOR' },
-  { id: 'p-wuka-underwear', label: 'PERIOD WEAR' },
-  { id: 'p-b-complex', label: 'SUPPLEMENTS' },
-  { id: 'p-silverette-cups', label: 'POSTPARTUM' },
-  { id: 'p-neycher-vaginal-moisturizer', label: 'INTIMATE CARE' },
-  { id: 'p-lola-tampon', label: 'TAMPONS' },
-  { id: 'p-dame-arc', label: 'INTIMACY' },
-];
-
-const CHIP_SETS = [
-  ['Postpartum recovery', 'Organic pads', 'Pelvic floor', 'Supplements for cramps'],
-  ['Vaginal dryness', 'Ovulation tests', 'PCOS support', 'Sensitive skin'],
-  ['Period underwear', 'Menopause', 'Hair thinning', 'Sleep support'],
-  ['Fertility', 'Intimate care', 'Hot flashes', 'Cycle support'],
-];
-
-const SHOP_FILTERS = [
-  { key: 'all', label: 'All', categories: [], keywords: [] },
-  { key: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'], keywords: ['period', 'menstrual'] },
-  { key: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'intimate', 'moisturizer', 'ph'] },
-  { key: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['intimacy', 'lubricant', 'lube'] },
-  { key: 'postpartum', label: 'Postpartum', categories: ['postpartum', 'pregnancy'], keywords: ['postpartum', 'nursing', 'lactation'] },
-  { key: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health'], keywords: ['pelvic', 'kegel'] },
-  { key: 'hormones', label: 'Hormones', categories: ['supplement', 'hormone-monitoring'], keywords: ['pms', 'pcos', 'hormone', 'cycle'] },
-  { key: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
-  { key: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation'] },
-  { key: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'spf', 'acne'] },
-  { key: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo'] },
-];
+// One category list everywhere (HI05): the same chips as Shop.
+// Home shows the first few (same order as Shop); the rest are one tap away.
+const HOME_CHIPS = 9;
+const SHOP_FILTERS = MACRO_GROUPS.map((g) => ({ key: g.id, label: g.label }));
 
 function productText(product) {
   return [product?.name, product?.brand, product?.category, product?.summary, product?.description, ...(product?.tags || [])]
@@ -60,12 +39,7 @@ function productText(product) {
 }
 
 function matchesShopFilter(product, key) {
-  if (!key || key === 'all') return true;
-  const filter = SHOP_FILTERS.find((item) => item.key === key);
-  if (!filter) return true;
-  if (filter.categories.includes(product?.category)) return true;
-  const text = productText(product);
-  return filter.keywords.some((keyword) => text.includes(keyword));
+  return itemMatchesMacroGroup(product, key);
 }
 
 function priceNumber(product) {
@@ -143,7 +117,7 @@ function productTypeOptions() {
 }
 
 /** Mirrors Discovery's "Ayna" match-quality filter, minus the quiz-derived
- * best-match ranking that only Discovery has access to — here "Best Match"
+ * best-match ranking that only Discovery has access to, here "Best Match"
  * just means "already recommended to you," and "In My Ecosystem" is only
  * meaningful (and only passed) for the returning-user shop. */
 function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
@@ -158,7 +132,7 @@ function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
 /**
  * Turn a free-text query into the discovery view's filter options, so the hero
  * search and the chips land on a pre-filtered feed instead of a raw text search.
- * Carried over from the previous hero — the routing rules are unchanged.
+ * Carried over from the previous hero, the routing rules are unchanged.
  */
 function discoveryTargetFor(text) {
   const q = String(text || '').trim();
@@ -199,99 +173,17 @@ function displayNameFromUser(user) {
   return '';
 }
 
-function productById(id) {
-  return ALL_PRODUCTS.find((p) => p.id === id) || null;
-}
-
-/** Cream tile with the product photo, falling back to the mockup's initial-on-cream block. */
-function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }) {
+function HomeSkeleton() {
   return (
-    <div
-      className="ayna-landing-tile"
-      style={{
-        aspectRatio: String(aspectRatio),
-        borderRadius: `${radius}px`,
-        background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)',
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        padding: '12px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <ProductTileImage
-        product={product}
-        alt={product?.name || ''}
-        imgStyle={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'contain',
-          padding: '14px',
-        }}
-        letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />}
-      />
-
-      {badge && (
-        <span style={{
-          position: 'relative',
-          font: "500 9px 'DM Mono', monospace",
-          letterSpacing: '0.08em',
-          background: 'rgba(255,255,255,0.9)',
-          padding: '5px 9px',
-          borderRadius: '999px',
-          color: '#B4732A',
-        }}>
-          {badge}
-        </span>
-      )}
-      {showHeart && (
-        <span aria-hidden className="ayna-landing-heart"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" /></svg></span>
-      )}
-    </div>
-  );
-}
-
-/** Board 1a's Shop grid: 4-up, cream tiles, DM Mono eyebrow, Playfair name, muted price. */
-function ShopGrid({ items, onOpenProduct }) {
-  return (
-    <div className="ayna-landing-shop-grid">
-      {items.map(({ product, label, badge }) => (
-        <button
-          key={product.id}
-          type="button"
-          className="ayna-landing-shop-card"
-          onClick={() => onOpenProduct?.(product)}
-        >
-          <ProductTile product={product} badge={badge} />
-          <div style={{
-            font: "500 9.5px 'DM Mono', monospace",
-            letterSpacing: '0.1em',
-            color: '#C0761F',
-            marginTop: '12px',
-          }}>
-            {label}
-          </div>
-          <div style={{
-            font: "400 16px/1.3 'Playfair Display', serif",
-            marginTop: '4px',
-            color: '#171429',
-          }}>
-            {product.name}
-          </div>
-          <div style={{ fontSize: '12.5px', color: '#6f6880', marginTop: '3px' }}>
-            {product.price}
-          </div>
-        </button>
-      ))}
+    <div className="mockup-landing ay-home-skeleton" aria-busy="true" aria-label="Loading">
+      <section className="ay-home-skeleton__hero"><div className="mockup-page"><i className="is-eyebrow" /><i className="is-title" /><i className="is-sub" /><i className="is-btn" /></div></section>
+      <section className="mockup-page ay-home-skeleton__grid">{Array.from({ length: 4 }, (_, i) => <i key={i} />)}</section>
     </div>
   );
 }
 
 /** The mockup's 38×22 pill toggle. Off = grey track, knob left; on = knob right. */
-function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#242A52', onKnob = '#F0A84B', ...rest }) {
+function Toggle({ on, offTrack = '#DCD5CB', onTrack = 'var(--color-primary)', onKnob = 'var(--color-citric)', ...rest }) {
   return (
     <span
       role="switch"
@@ -324,22 +216,297 @@ function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#242A52', onKnob = '#F0A8
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* 1c — returning user                                                 */
-/* ------------------------------------------------------------------ */
+const SEARCH_HINTS = ['organic pads', 'PCOS support', 'postpartum recovery', 'vaginal dryness', 'pelvic floor', 'sleep support', 'period underwear'];
 
-function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
-  const name = displayNameFromUser(user) || 'there';
-  const [filter, setFilter] = useState(initialCategory || 'all');
-  // A shop category pick was pure local state with no URL round-trip —
-  // clicking into a product from a filtered Shop view and hitting Back
-  // always landed on "All". Mirrors Discovery's ?q= pattern: read the
-  // initial value from App.jsx (which reads the URL), and keep the URL in
-  // sync as the filter changes so a real browser Back restores it.
-  // Flagged live 2026-08-25.
+function useRotating(length, ms) {
+  const [i, setI] = useState(0);
   useEffect(() => {
+    if (typeof window === 'undefined' || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const t = window.setInterval(() => { if (!document.hidden) setI((v) => (v + 1) % length); }, ms);
+    return () => window.clearInterval(t);
+  }, [length, ms]);
+  return i;
+}
+
+const Arrow = () => (
+  <span className="lx-cta__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" /></svg></span>
+);
+
+/** The hero's secondary action: one wide search field with a rotating example. */
+function HeroSearch({ onViewDiscovery }) {
+  const [query, setQuery] = useState('');
+  const hint = useRotating(SEARCH_HINTS.length, 2600);
+  const submit = (e) => {
+    e.preventDefault();
+    onViewDiscovery?.(discoveryTargetFor(query));
+  };
+  return (
+    <form className="lx-search" role="search" onSubmit={submit}>
+      <label className="lx-search__field">
+        <span className="lx-sr">Search products</span>
+        <svg className="lx-search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
+        <SmartSearchInput
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }}
+          onPick={(s) => onViewDiscovery?.(discoveryTargetFor(s.query))}
+          anchor=".lx-search"
+          placeholder=" "
+          enterKeyHint="search"
+          autoComplete="off"
+        />
+        {!query && (
+          <span className="lx-search__hint" aria-hidden="true">
+            Search <b key={hint}>{SEARCH_HINTS[hint]}</b>
+          </span>
+        )}
+      </label>
+      <button type="submit" className="lx-search__go" aria-label="Search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+      </button>
+    </form>
+  );
+}
+
+function HeroTitle({ lead, word }) {
+  return (
+    <h1 id="lx-hero-title" className="lx-hero__title">
+      {lead} <span className="lx-mark">{word}</span>
+    </h1>
+  );
+}
+
+/** "Build your ecosystem": headline, one primary CTA, search, a small orbit. */
+function BuildHero({ onStartQuiz, onViewDiscovery, onOpenProduct, greeting }) {
+  const needs = useNeeds();
+  // Plays once: three needs land in orbit, then it rests.
+  const { slots } = useEcoSlots(needs, { loop: false, step: 900 });
+  return (
+    <section className="lx-hero" aria-labelledby="lx-hero-title">
+      <div className="mockup-page lx-hero__inner">
+        <div className="lx-hero__copy">
+          {greeting && <p className="lx-hero__hello">{greeting}</p>}
+          <HeroTitle lead="Build your" word="ecosystem." />
+          <p className="lx-hero__sub">Health products matched to your body, with the evidence beside each one.</p>
+          <div className="lx-hero__cta">
+            <button type="button" className="lx-cta" onClick={onStartQuiz}>
+              Build your ecosystem
+              <Arrow />
+            </button>
+            <p className="lx-hero__note">A few quick questions, then a shop matched to you.</p>
+          </div>
+          <HeroSearch onViewDiscovery={onViewDiscovery} />
+        </div>
+        <div className="lx-hero__visual">
+          <EcoOrbit needs={needs} slots={slots} onOpenProduct={onOpenProduct} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Trust({ onViewDiscovery }) {
+  return (
+    <div className="lx-trust">
+      <div className="mockup-page">
+        <PartnerStrip variant="web" title={'Shop ayna\u2019s favorites'} onSelectBrand={(name) => onViewDiscovery?.(name)} />
+      </div>
+    </div>
+  );
+}
+
+const VALUE_PROPS = [
+  { tone: 'pink', title: 'Matched to you', text: 'Your shop is ranked around your body and what you avoid.', icon: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></> },
+  { tone: 'butter', title: 'Evidence beside each pick', text: 'Every match shows why it fits and where that comes from.', icon: <><path d="M7 4h7l4 4v12H7z" /><path d="M10 12h5M10 16h5" /></> },
+  { tone: 'mint', title: 'Your data stays yours', text: 'We do not sell your personal health information.', icon: <><rect x="6" y="10" width="12" height="10" rx="2" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /></> },
+];
+
+function ValueProps() {
+  return (
+    <section className="lx-values" aria-labelledby="lx-values-title">
+      <div className="mockup-page">
+        <h2 id="lx-values-title" className="lx-h2">Why ayna</h2>
+        <ul className="lx-values__list">
+          {VALUE_PROPS.map((v) => (
+            <li key={v.title} className={`tone-${v.tone}`}>
+              <span className="lx-values__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{v.icon}</svg></span>
+              <h3>{v.title}</h3>
+              <p>{v.text}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorks({ onStartQuiz }) {
+  return (
+    <section className="lx-how" aria-labelledby="lx-how-title">
+      <div className="mockup-page">
+        <h2 id="lx-how-title" className="lx-h2">How it works</h2>
+        <ol className="lx-how__steps">
+          <li className="tone-pink"><b>1</b><h3>Answer six questions</h3><p>About your body and what you avoid.</p></li>
+          <li className="tone-butter"><b>2</b><h3>We check the evidence</h3><p>Across products, apps and care.</p></li>
+          <li className="tone-peri"><b>3</b><h3>Get your ecosystem</h3><p>Ranked for you. You decide.</p></li>
+        </ol>
+        <div className="lx-how__cta">
+          <button type="button" className="lx-cta" onClick={onStartQuiz}>
+            Build your ecosystem
+            <Arrow />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FinalCta({ onStartQuiz, onViewDiscovery }) {
+  return (
+    <section className="lx-final" aria-labelledby="lx-final-title">
+      <div className="mockup-page">
+        <div className="lx-final__card">
+          <h2 id="lx-final-title" className="lx-h2">Start with six questions.</h2>
+          <p>Then a shop matched to you.</p>
+          <div className="lx-final__actions">
+            <button type="button" className="lx-cta" onClick={onStartQuiz}>
+              Build your ecosystem
+              <Arrow />
+            </button>
+            <button type="button" className="lx-link" onClick={() => onViewDiscovery?.('')}>Browse the Shop</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FilterPanel({ f, set, productTypes, ecosystem = false, onClear }) {
+  return (
+    <div className="lx-filter-panel">
+      <label>
+        <span>Product type</span>
+        <select value={f.productType} onChange={(e) => set('productType', e.target.value)}>
+          <option value="all">All</option>
+          {productTypes.map((category) => (
+            <option key={category} value={category}>{CATEGORY_LABELS[category] || category.replace(/-/g, ' ')}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        <span>Price</span>
+        <select value={f.price} onChange={(e) => set('price', e.target.value)}>
+          <option value="all">Any</option>
+          <option value="under-25">Under $25</option>
+          <option value="25-50">$25-$50</option>
+          <option value="50-100">$50-$100</option>
+          <option value="100-plus">$100+</option>
+        </select>
+      </label>
+      <label>
+        <span>ayna</span>
+        <select value={f.ayna} onChange={(e) => set('ayna', e.target.value)}>
+          <option value="all">Any</option>
+          {ecosystem && <option value="best-match">Best Match</option>}
+          <option value="clinician">Clinician Backed</option>
+          <option value="community">Community Favorite</option>
+          {ecosystem && <option value="ecosystem">In My Ecosystem</option>}
+        </select>
+      </label>
+      <label>
+        <span>Preferences</span>
+        <select value={f.preference} onChange={(e) => set('preference', e.target.value)}>
+          <option value="all">Any</option>
+          <option value="organic">Organic</option>
+          <option value="fragrance-free">Fragrance Free</option>
+          <option value="sensitive-skin">Sensitive Skin</option>
+          <option value="vegan">Vegan</option>
+          <option value="cruelty-free">Cruelty Free</option>
+          <option value="reusable">Reusable</option>
+        </select>
+      </label>
+      <label>
+        <span>Sustainability</span>
+        <select value={f.sustainability} onChange={(e) => set('sustainability', e.target.value)}>
+          <option value="all">Any</option>
+          <option value="reusable">Reusable</option>
+          <option value="recyclable">Recyclable</option>
+          <option value="low-waste">Low Waste</option>
+          <option value="packaging">Sustainable Packaging</option>
+        </select>
+      </label>
+      <label>
+        <span>Life stage</span>
+        <select value={f.lifeStage} onChange={(e) => set('lifeStage', e.target.value)}>
+          <option value="all">Any</option>
+          <option value="fertility">Fertility</option>
+          <option value="pregnancy">Pregnancy</option>
+          <option value="postpartum">Postpartum</option>
+          <option value="perimenopause">Perimenopause</option>
+          <option value="menopause">Menopause</option>
+        </select>
+      </label>
+      <label>
+        <span>Rating</span>
+        <select value={f.rating} onChange={(e) => set('rating', e.target.value)}>
+          <option value="all">Any</option>
+          <option value="4-plus">4+ stars</option>
+        </select>
+      </label>
+      <label>
+        <span>Eligibility</span>
+        <select value={f.eligibility} onChange={(e) => set('eligibility', e.target.value)}>
+          <option value="all">Any</option>
+          <option value="fsa-hsa">FSA/HSA Eligible</option>
+          <option value="fsa">FSA Eligible</option>
+          <option value="hsa">HSA Eligible</option>
+        </select>
+      </label>
+      <button type="button" onClick={onClear}>Clear</button>
+    </div>
+  );
+}
+
+const NO_FILTERS = { productType: 'all', price: 'all', ayna: 'all', preference: 'all', sustainability: 'all', lifeStage: 'all', rating: 'all', eligibility: 'all' };
+
+function applyFilters(list, f, ctx) {
+  let out = list;
+  if (f.productType !== 'all') out = out.filter((p) => p.category === f.productType);
+  if (f.ayna !== 'all') out = out.filter((p) => matchesAyna(p, f.ayna, ctx));
+  if (f.price !== 'all') {
+    out = out.filter((p) => {
+      const price = priceNumber(p);
+      if (price == null) return false;
+      if (f.price === 'under-25') return price < 25;
+      if (f.price === '25-50') return price >= 25 && price <= 50;
+      if (f.price === '50-100') return price > 50 && price <= 100;
+      if (f.price === '100-plus') return price > 100;
+      return true;
+    });
+  }
+  if (f.eligibility !== 'all') {
+    out = out.filter((p) => {
+      const e = explicitEligibility(p);
+      if (f.eligibility === 'fsa-hsa') return e.fsa || e.hsa;
+      return f.eligibility === 'fsa' ? e.fsa : e.hsa;
+    });
+  }
+  out = out.filter((p) => matchesPreference(p, f.preference));
+  out = out.filter((p) => matchesSustainability(p, f.sustainability));
+  out = out.filter((p) => matchesLifeStage(p, f.lifeStage));
+  if (f.rating === '4-plus') out = out.filter((p) => (explicitRating(p) ?? 0) >= 4);
+  return out;
+}
+
+/** Category filter kept in ?category= so Back from a product restores it. */
+function useCategoryParam(initialCategory) {
+  const [filter, setFilter] = useState(initialCategory || 'all');
+  const [seen, setSeen] = useState(initialCategory);
+  if (initialCategory !== seen) {
+    setSeen(initialCategory);
     if (initialCategory) setFilter(initialCategory);
-  }, [initialCategory]);
+  }
   useEffect(() => {
     const url = new URL(window.location.href);
     if (filter && filter !== 'all') url.searchParams.set('category', filter);
@@ -348,595 +515,202 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
       window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
     }
   }, [filter]);
-  const [personalize, setPersonalize] = useState(true);
-  const [showShopFilters, setShowShopFilters] = useState(false);
-  const [priceFilter, setPriceFilter] = useState('all');
-  const [eligibilityFilter, setEligibilityFilter] = useState('all');
-  const [preferenceFilter, setPreferenceFilter] = useState('all');
-  const [sustainabilityFilter, setSustainabilityFilter] = useState('all');
-  const [lifeStageFilter, setLifeStageFilter] = useState('all');
-  const [ratingFilter, setRatingFilter] = useState('all');
-  const [productTypeFilter, setProductTypeFilter] = useState('all');
-  const [aynaFilter, setAynaFilter] = useState('all');
+  return [filter, setFilter];
+}
 
-  const areas = useMemo(() => {
-    const byCategory = new Map();
-    Object.values(myProducts || {}).forEach((p) => {
-      const key = p.category || 'other';
-      byCategory.set(key, (byCategory.get(key) || 0) + 1);
-    });
-    return Array.from(byCategory.entries())
-      .map(([category, count]) => ({
-        category,
-        label: String(CATEGORY_LABELS[category] || category).replace(/^[^\w]+\s*/, ''),
-        count,
-      }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 4);
-  }, [myProducts]);
+/** Shop section shared by both homes: title, chips, Filters, Personalize, grid. */
+function ShopSection({ title, chips, filter, setFilter, filters, setFilters, productTypes, ecosystem, personalizeControl, onViewDiscovery, children }) {
+  const [open, setOpen] = useState(false);
+  const active = Object.keys(NO_FILTERS).filter((k) => filters[k] !== 'all').length;
+  return (
+    <section className="lx-shop" aria-labelledby="lx-shop-title">
+      <div className="mockup-page">
+        <div className="lx-shop__head">
+          <h2 id="lx-shop-title" className="lx-h2">{title}</h2>
+          <div className="lx-shop__tools">
+            <button type="button" className={`lx-pill${open ? ' is-on' : ''}`} onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
+              Filters{active ? ` (${active})` : ''}
+            </button>
+            {personalizeControl}
+          </div>
+        </div>
+        <div className="lx-chips" ref={edgeFadeRef}>
+          {chips.map((item) => (
+            <button key={item.key} type="button" aria-pressed={filter === item.key} className={filter === item.key ? 'is-on' : undefined} onClick={() => setFilter(item.key)}>
+              {item.label}
+            </button>
+          ))}
+          <button type="button" className="lx-chips__more" onClick={() => onViewDiscovery?.('')}>More in Shop</button>
+        </div>
+        {open && (
+          <FilterPanel
+            f={filters}
+            set={(k, v) => setFilters((prev) => ({ ...prev, [k]: v }))}
+            productTypes={productTypes}
+            ecosystem={ecosystem}
+            onClear={() => { setFilters(NO_FILTERS); setFilter('all'); }}
+          />
+        )}
+        {children}
+        <div className="lx-shop__foot">
+          <button type="button" className="lx-ghost" onClick={() => onViewDiscovery?.('')}>See all in Shop</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const exploreTarget = (n) => (n.group ? { initialMacroGroup: n.group } : (n.keywords?.[0] || ''));
+
+/* ------------------------------------------------------------------ */
+/* Logged in                                                           */
+/* ------------------------------------------------------------------ */
+
+function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null, savedProducts = {}, onToggleSaved }) {
+  const name = displayNameFromUser(user) || 'there';
+  const [filter, setFilter] = useCategoryParam(initialCategory);
+  const [personalize, setPersonalize] = useState(true);
+  const [filters, setFilters] = useState(NO_FILTERS);
 
   const ownedIds = useMemo(() => new Set(Object.keys(myProducts || {})), [myProducts]);
   const recommendedIds = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
+  const ownedCategories = useMemo(() => new Set(Object.values(myProducts || {}).map((p) => p.category).filter(Boolean)), [myProducts]);
 
-  const availableShopFilters = useMemo(
-    () => SHOP_FILTERS.filter((item) => item.key === 'all' || ALL_PRODUCTS.some((product) => matchesShopFilter(product, item.key))),
+  const chips = useMemo(
+    () => SHOP_FILTERS.filter((item) => item.key === 'all' || ALL_PRODUCTS.some((product) => matchesShopFilter(product, item.key))).slice(0, HOME_CHIPS),
     [],
   );
-
-  const availableProductTypes = useMemo(() => productTypeOptions(), []);
+  const productTypes = useMemo(() => productTypeOptions(), []);
 
   const shownProducts = useMemo(() => {
-    let list = ALL_PRODUCTS.filter((product) => product?.id && product?.name && matchesShopFilter(product, filter));
-
-    if (productTypeFilter !== 'all') list = list.filter((product) => product.category === productTypeFilter);
-    if (aynaFilter !== 'all') list = list.filter((product) => matchesAyna(product, aynaFilter, { ownedIds, recommendedIds }));
-
-    if (priceFilter !== 'all') {
-      list = list.filter((product) => {
-        const price = priceNumber(product);
-        if (price == null) return false;
-        if (priceFilter === 'under-25') return price < 25;
-        if (priceFilter === '25-50') return price >= 25 && price <= 50;
-        if (priceFilter === '50-100') return price > 50 && price <= 100;
-        if (priceFilter === '100-plus') return price > 100;
-        return true;
-      });
-    }
-
-    if (eligibilityFilter !== 'all') {
-      list = list.filter((product) => {
-        const eligibility = explicitEligibility(product);
-        if (eligibilityFilter === 'fsa-hsa') return eligibility.fsa || eligibility.hsa;
-        if (eligibilityFilter === 'fsa') return eligibility.fsa;
-        if (eligibilityFilter === 'hsa') return eligibility.hsa;
-        return true;
-      });
-    }
-
-    list = list.filter((product) => matchesPreference(product, preferenceFilter));
-    list = list.filter((product) => matchesSustainability(product, sustainabilityFilter));
-    list = list.filter((product) => matchesLifeStage(product, lifeStageFilter));
-    if (ratingFilter === '4-plus') list = list.filter((product) => (explicitRating(product) ?? 0) >= 4);
-
+    let list = ALL_PRODUCTS.filter((p) => p?.id && p?.name && !ownedIds.has(p.id) && matchesShopFilter(p, filter));
+    list = applyFilters(list, filters, { ownedIds, recommendedIds });
     if (personalize) {
-      list = [...list].sort((a, b) => {
-        const score = (product) => {
-          if (ownedIds.has(product.id)) return 3;
-          if (recommendedIds.has(product.id)) return 2;
-          if (areas.some((area) => area.category === product.category)) return 1;
-          return 0;
-        };
-        return score(b) - score(a);
-      });
+      const score = (p) => (recommendedIds.has(p.id) ? 2 : ownedCategories.has(p.category) ? 1 : 0);
+      list = [...list].sort((a, b) => score(b) - score(a));
     }
-
     return list.slice(0, 8);
-  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas]);
+  }, [filter, filters, personalize, ownedIds, recommendedIds, ownedCategories]);
 
-  const clearShopFilters = () => {
-    setFilter('all');
-    setProductTypeFilter('all');
-    setAynaFilter('all');
-    setPriceFilter('all');
-    setEligibilityFilter('all');
-    setPreferenceFilter('all');
-    setSustainabilityFilter('all');
-    setLifeStageFilter('all');
-    setRatingFilter('all');
-  };
+  // HI03: the one next step. A random empty core area, picked once per page load
+  // (seed fixed at mount so it does not flicker when her shelf changes).
+  const [nextSeed] = useState(() => Math.random());
+  const nextArea = useMemo(() => {
+    const owned = Object.values(myProducts || {});
+    const core = ['period', 'intimate', 'hormones', 'pelvic', 'sleep-stress', 'skin'];
+    const empty = MACRO_GROUPS.filter((g) => core.includes(g.id) && !owned.some((p) => itemMatchesMacroGroup(p, g.id)));
+    return empty.length ? empty[Math.floor(nextSeed * empty.length)] : null;
+  }, [myProducts, nextSeed]);
+  const picks = Object.keys(myProducts || {}).length;
+  // Same area grouping and ring as the Ecosystem page.
+  const ecoGroups = useMemo(() => {
+    const byArea = new Map();
+    Object.values(myProducts || {}).forEach((p) => {
+      const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
+      const key = area ? area.key : 'other';
+      if (!byArea.has(key)) byArea.set(key, []);
+      byArea.get(key).push(p);
+    });
+    const groups = ECOSYSTEM_AREAS.filter((a) => byArea.has(a.key)).map((a) => ({ ...a, products: byArea.get(a.key) }));
+    if (byArea.has('other')) groups.push({ key: 'other', label: 'Other', products: byArea.get('other') });
+    return groups.sort((x, y) => y.products.length - x.products.length);
+  }, [myProducts]);
 
   return (
-    <div className="mockup-landing mockup-landing--returning">
-      <section className="ayna-landing-hero ayna-landing-hero--returning">
-        <div className="mockup-page ayna-landing-welcomeback">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div className="ayna-landing-eyebrow">Hello, {name}</div>
-            <h1 className="ayna-landing-headline ayna-landing-headline--returning">
-              {ecosystemCount > 0 ? (
-                <>
-                  Your ecosystem is{' '}
-                  <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>
-                    {ecosystemCount} product{ecosystemCount === 1 ? '' : 's'}
-                  </span>{' '}
-                  strong.
-                </>
-              ) : (
-                <>Build your <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>ecosystem</span>.</>
-              )}
-            </h1>
-            <p style={{
-              fontSize: '16px',
-              lineHeight: 1.55,
-              color: 'rgba(244,240,250,0.78)',
-              maxWidth: '420px',
-              margin: 0,
-            }}>
-              Personalized products, all in one place.
-            </p>
-            <div style={{ display: 'flex', gap: '13px', marginTop: '6px', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                className="ayna-landing-btn ayna-landing-btn--amber"
-                onClick={ecosystemCount > 0 ? onViewEcosystem : onStartQuiz}
-              >
-                {ecosystemCount > 0 ? 'Edit ecosystem' : 'Build your ecosystem'}
-              </button>
-              <button type="button" className="ayna-landing-btn ayna-landing-btn--browse" onClick={() => onViewDiscovery?.('')}>
-                Browse
-              </button>
-            </div>
-          </div>
-
-          <button type="button" className="ayna-landing-ecocard" onClick={onViewEcosystem}>
-            <div style={{
-              font: "500 10px 'DM Mono', monospace",
-              letterSpacing: '0.1em',
-              color: 'rgba(244,240,250,0.6)',
-            }}>
-              YOUR ECOSYSTEM
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '12px' }}>
-              {areas.length === 0 ? (
-                <div className="ayna-landing-ecocard__empty">Start here</div>
-              ) : areas.map((a, i) => (
-                <div
-                  key={a.category}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '12px 0',
-                    borderBottom: i === areas.length - 1 ? 'none' : '1px solid rgba(244,240,250,0.14)',
-                  }}
-                >
-                  <span style={{ font: "400 15px 'Playfair Display', serif" }}>{a.label}</span>
-                  <span style={{ fontSize: '11.5px', color: '#F0A84B' }}>
-                    {a.count} {a.count === 1 ? 'pick' : 'picks'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </button>
-        </div>
-      </section>
-
-      <section className="ayna-landing-shop ayna-landing-shop--returning">
-        <div className="mockup-page">
-          <div className="ayna-landing-shop-head">
-            <div className="ayna-landing-shop-title ayna-landing-shop-title--returning">Trending on ayna</div>
-            <div className="ayna-landing-shop-controls">
-              <div className="ayna-landing-filters">
-                {availableShopFilters.map((item) => (
-                  <button
-                    key={item.key}
-                    type="button"
-                    className={filter === item.key ? 'is-active' : undefined}
-                    onClick={() => setFilter(item.key)}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-              <button
-                type="button"
-                className="ayna-landing-filter-toggle"
-                onClick={() => setShowShopFilters((value) => !value)}
-                aria-expanded={showShopFilters}
-              >
-                Filters
-              </button>
-              <div className="ayna-landing-personalize">
-                <span>{personalize ? 'Personalized' : 'Personalize'}</span>
-                <Toggle on={personalize} onTrack="#4E3866" onClick={() => setPersonalize((value) => !value)} />
-              </div>
-            </div>
-          </div>
-
-          {showShopFilters && (
-            <div className="ayna-landing-filter-panel">
-              <label>
-                <span>Product type</span>
-                <select value={productTypeFilter} onChange={(e) => setProductTypeFilter(e.target.value)}>
-                  <option value="all">All</option>
-                  {availableProductTypes.map((category) => (
-                    <option key={category} value={category}>{CATEGORY_LABELS[category] || category.replace(/-/g, ' ')}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                <span>Price</span>
-                <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="under-25">Under $25</option>
-                  <option value="25-50">$25-$50</option>
-                  <option value="50-100">$50-$100</option>
-                  <option value="100-plus">$100+</option>
-                </select>
-              </label>
-              <label>
-                <span>ayna</span>
-                <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="best-match">Best Match</option>
-                  <option value="clinician">Clinician Backed</option>
-                  <option value="community">Community Favorite</option>
-                  <option value="ecosystem">In My Ecosystem</option>
-                </select>
-              </label>
-              <label>
-                <span>Preferences</span>
-                <select value={preferenceFilter} onChange={(e) => setPreferenceFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="organic">Organic</option>
-                  <option value="fragrance-free">Fragrance Free</option>
-                  <option value="sensitive-skin">Sensitive Skin</option>
-                  <option value="vegan">Vegan</option>
-                  <option value="cruelty-free">Cruelty Free</option>
-                  <option value="reusable">Reusable</option>
-                </select>
-              </label>
-              <label>
-                <span>Sustainability</span>
-                <select value={sustainabilityFilter} onChange={(e) => setSustainabilityFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="reusable">Reusable</option>
-                  <option value="recyclable">Recyclable</option>
-                  <option value="low-waste">Low Waste</option>
-                  <option value="packaging">Sustainable Packaging</option>
-                </select>
-              </label>
-              <label>
-                <span>Life stage</span>
-                <select value={lifeStageFilter} onChange={(e) => setLifeStageFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="fertility">Fertility</option>
-                  <option value="pregnancy">Pregnancy</option>
-                  <option value="postpartum">Postpartum</option>
-                  <option value="perimenopause">Perimenopause</option>
-                  <option value="menopause">Menopause</option>
-                </select>
-              </label>
-              <label>
-                <span>Rating</span>
-                <select value={ratingFilter} onChange={(e) => setRatingFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="4-plus">4+ stars</option>
-                </select>
-              </label>
-              <label>
-                <span>Eligibility</span>
-                <select value={eligibilityFilter} onChange={(e) => setEligibilityFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="fsa-hsa">FSA/HSA Eligible</option>
-                  <option value="fsa">FSA Eligible</option>
-                  <option value="hsa">HSA Eligible</option>
-                </select>
-              </label>
-              <button type="button" onClick={clearShopFilters}>Clear</button>
-            </div>
-          )}
-
-          <div className="ayna-landing-shop-grid ayna-landing-shop-grid--returning">
-            {shownProducts.map((product) => {
-              const badge = ownedIds.has(product.id)
-                ? 'IN YOUR ECOSYSTEM'
-                : (personalize && recommendedIds.has(product.id) ? 'FOR YOU' : null);
-              return (
-                <button
-                  key={product.id}
-                  type="button"
-                  className="ayna-landing-shop-card"
-                  onClick={() => onOpenProduct?.(product)}
-                >
-                  <ProductTile product={product} aspectRatio={1.1} badge={badge} />
-                  <div style={{ font: "400 15px/1.3 'Playfair Display', serif", marginTop: '10px', color: '#171429' }}>
-                    {product.name}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#6f6880', marginTop: '3px' }}>{product.price}</div>
+    <div className="mockup-landing mockup-landing--returning lx">
+      {picks > 0 ? (
+        <section className="lx-hero lx-hero--home" aria-labelledby="lx-hero-title">
+          <div className="mockup-page lx-hero__inner">
+            <div className="lx-hero__copy">
+              <p className="lx-hero__hello">Hello, {name}</p>
+              <HeroTitle lead="Your" word="ecosystem." />
+              <p className="lx-hero__sub">
+                {picks} pick{picks === 1 ? '' : 's'} across {ecoGroups.length} area{ecoGroups.length === 1 ? '' : 's'} of care.
+              </p>
+              <div className="lx-hero__cta">
+                <button type="button" className="lx-cta" onClick={onViewEcosystem}>
+                  Open my ecosystem
+                  <Arrow />
                 </button>
-              );
-            })}
+              </div>
+              {nextArea && (
+                <button type="button" className="lx-next" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
+                  <span className="lx-next__dot" aria-hidden="true" />
+                  <span>Your {nextArea.label} shelf is empty. <b>Add one</b></span>
+                </button>
+              )}
+            </div>
+            <div className="lx-hero__visual">
+              <div className="lx-ring-card">
+                <WebEcosystemChart groups={ecoGroups} onPick={() => onViewEcosystem?.()} />
+              </div>
+            </div>
           </div>
-          {shownProducts.length === 0 && (
-            <div className="ayna-landing-shop-empty">No matches yet. Try another filter.</div>
-          )}
+        </section>
+      ) : (
+        <BuildHero greeting={`Hello, ${name}`} onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} onOpenProduct={onOpenProduct} />
+      )}
+
+      <Trust onViewDiscovery={onViewDiscovery} />
+
+      <ShopSection
+        title={personalize ? 'Picked for you' : 'Popular on ayna'}
+        chips={chips}
+        filter={filter}
+        setFilter={setFilter}
+        filters={filters}
+        setFilters={setFilters}
+        productTypes={productTypes}
+        ecosystem
+        onViewDiscovery={onViewDiscovery}
+        personalizeControl={(
+          <label className="lx-toggle">
+            <span>Personalized</span>
+            <Toggle on={personalize} onClick={() => setPersonalize((v) => !v)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPersonalize((v) => !v); } }} />
+          </label>
+        )}
+      >
+        <div className="lx-grid">
+          {shownProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              isSaved={!!savedProducts?.[product.id]}
+              onOpen={onOpenProduct}
+              onToggleSaved={onToggleSaved}
+              labels={personalize && recommendedIds.has(product.id) ? <span className="ay-for-you">For you</span> : null}
+            />
+          ))}
         </div>
-      </section>
+        {shownProducts.length === 0 && <div className="lx-empty">No matches yet. Try another filter.</div>}
+      </ShopSection>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 1a — first visit                                                    */
+/* Logged out                                                          */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
-  const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState(initialCategory || 'all');
-  // See the matching effect in WelcomeBack for why — same fix, same pattern.
-  useEffect(() => {
-    if (initialCategory) setFilter(initialCategory);
-  }, [initialCategory]);
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    if (filter && filter !== 'all') url.searchParams.set('category', filter);
-    else url.searchParams.delete('category');
-    if (url.search !== window.location.search) {
-      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
-    }
-  }, [filter]);
-  const [personalize, setPersonalize] = useState(false);
-  const [chipSetIndex, setChipSetIndex] = useState(0);
-  const [showShopFilters, setShowShopFilters] = useState(false);
-  const [priceFilter, setPriceFilter] = useState('all');
-  const [eligibilityFilter, setEligibilityFilter] = useState('all');
-  const [preferenceFilter, setPreferenceFilter] = useState('all');
-  const [sustainabilityFilter, setSustainabilityFilter] = useState('all');
-  const [lifeStageFilter, setLifeStageFilter] = useState('all');
-  const [ratingFilter, setRatingFilter] = useState('all');
-  const [productTypeFilter, setProductTypeFilter] = useState('all');
-  const [aynaFilter, setAynaFilter] = useState('all');
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setChipSetIndex((current) => (current + 1) % CHIP_SETS.length);
-    }, 3800);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  const lineup = useMemo(
-    () => SHOP_LINEUP
-      .map(({ id, label }) => ({ product: productById(id), label }))
-      .filter((x) => x.product),
-    [],
-  );
-
-  const availableShopFilters = useMemo(
-    () => SHOP_FILTERS.filter((item) => item.key === 'all' || lineup.some(({ product }) => matchesShopFilter(product, item.key))),
-    [lineup],
-  );
-
-  const availableProductTypes = useMemo(
-    () => Array.from(new Set(lineup.map(({ product }) => product.category).filter(Boolean))).sort(),
-    [lineup],
-  );
-
-  const shown = useMemo(() => {
-    let list = lineup.filter(({ product }) => matchesShopFilter(product, filter));
-    if (productTypeFilter !== 'all') list = list.filter(({ product }) => product.category === productTypeFilter);
-    if (aynaFilter !== 'all') list = list.filter(({ product }) => matchesAyna(product, aynaFilter));
-    if (priceFilter !== 'all') {
-      list = list.filter(({ product }) => {
-        const price = priceNumber(product);
-        if (price == null) return false;
-        if (priceFilter === 'under-25') return price < 25;
-        if (priceFilter === '25-50') return price >= 25 && price <= 50;
-        if (priceFilter === '50-100') return price > 50 && price <= 100;
-        if (priceFilter === '100-plus') return price > 100;
-        return true;
-      });
-    }
-    if (eligibilityFilter !== 'all') {
-      list = list.filter(({ product }) => {
-        const e = explicitEligibility(product);
-        if (eligibilityFilter === 'fsa-hsa') return e.fsa || e.hsa;
-        return eligibilityFilter === 'fsa' ? e.fsa : e.hsa;
-      });
-    }
-    list = list.filter(({ product }) => matchesPreference(product, preferenceFilter));
-    list = list.filter(({ product }) => matchesSustainability(product, sustainabilityFilter));
-    list = list.filter(({ product }) => matchesLifeStage(product, lifeStageFilter));
-    if (ratingFilter === '4-plus') list = list.filter(({ product }) => (explicitRating(product) ?? 0) >= 4);
-    if (personalize && profileCategories?.length) {
-      const rank = new Set(profileCategories);
-      list = [...list].sort(
-        (a, b) => (rank.has(b.product.category) ? 1 : 0) - (rank.has(a.product.category) ? 1 : 0),
-      );
-    }
-    return list;
-  }, [lineup, filter, personalize, profileCategories, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter]);
-
-  const submitSearch = (e) => {
-    if (e && typeof e.preventDefault === 'function') e.preventDefault();
-    onViewDiscovery?.(discoveryTargetFor(query));
-  };
-
+function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onViewDiscovery, onOpenProduct }) {
   return (
-    <div className="mockup-landing">
-      <section className="ayna-landing-hero">
-        <div className="ayna-landing-hero-col">
-          <div className="ayna-landing-eyebrow">Women&apos;s health, personalized</div>
-          <h1 className="ayna-landing-headline">
-            Care that&apos;s <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>matched</span> to your body.
-          </h1>
-          <p className="ayna-landing-sub">
-            Real research, doctor input, and other women&apos;s experiences in one place.
-          </p>
-
-          <form className="ayna-landing-searchbar" onSubmit={submitSearch}>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="What are you looking for?"
-              aria-label="Search products"
-            />
-            <button type="submit">Search</button>
-          </form>
-
-          <div key={chipSetIndex} className="ayna-landing-chips ayna-landing-chips--rotating" aria-label="Popular searches">
-            {CHIP_SETS[chipSetIndex].map((chip) => (
-              <button key={chip} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(chip))}>
-                {chip}
-              </button>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      <section className="ayna-landing-band">
-        <div className="mockup-page ayna-landing-band__inner">
-          <div className="ayna-landing-band__copy">
-            Tell us about your body once.
-            <span>Six questions, and your shop rebuilds around you.</span>
-          </div>
-          <button type="button" className="ayna-landing-btn ayna-landing-btn--navy" onClick={onStartQuiz}>
-            Build your ecosystem
-          </button>
-        </div>
-      </section>
-
-      <section className="ayna-landing-shop">
-        <div className="mockup-page">
-          <div className="ayna-landing-shop-head">
-            <div className="ayna-landing-shop-title">Trending on ayna</div>
-            <div className="ayna-landing-shop-controls">
-              <div className="ayna-landing-filters">
-                {availableShopFilters.map((f) => (
-                  <button
-                    key={f.key}
-                    type="button"
-                    className={filter === f.key ? 'is-active' : undefined}
-                    onClick={() => setFilter(f.key)}
-                  >
-                    {f.label}
-                  </button>
-                ))}
-              </div>
-              <button type="button" className="ayna-landing-filter-toggle" onClick={() => setShowShopFilters((value) => !value)} aria-expanded={showShopFilters}>
-                Filters
-              </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '11px', fontSize: '12.5px', color: '#6f6880' }}>
-                Personalize
-                <Toggle
-                  on={personalize}
-                  onClick={() => {
-                    if (!hasProfile) { onStartQuiz?.(); return; }
-                    setPersonalize((v) => !v);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key !== 'Enter' && e.key !== ' ') return;
-                    e.preventDefault();
-                    if (!hasProfile) { onStartQuiz?.(); return; }
-                    setPersonalize((v) => !v);
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {showShopFilters && (
-            <div className="ayna-landing-filter-panel">
-              <label>
-                <span>Product type</span>
-                <select value={productTypeFilter} onChange={(e) => setProductTypeFilter(e.target.value)}>
-                  <option value="all">All</option>
-                  {availableProductTypes.map((category) => (
-                    <option key={category} value={category}>{CATEGORY_LABELS[category] || category.replace(/-/g, ' ')}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                <span>Price</span>
-                <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="under-25">Under $25</option>
-                  <option value="25-50">$25-$50</option>
-                  <option value="50-100">$50-$100</option>
-                  <option value="100-plus">$100+</option>
-                </select>
-              </label>
-              <label>
-                <span>ayna</span>
-                <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="clinician">Clinician Backed</option>
-                  <option value="community">Community Favorite</option>
-                </select>
-              </label>
-              <label>
-                <span>Preferences</span>
-                <select value={preferenceFilter} onChange={(e) => setPreferenceFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="organic">Organic</option>
-                  <option value="fragrance-free">Fragrance Free</option>
-                  <option value="sensitive-skin">Sensitive Skin</option>
-                  <option value="vegan">Vegan</option>
-                  <option value="cruelty-free">Cruelty Free</option>
-                  <option value="reusable">Reusable</option>
-                </select>
-              </label>
-              <label>
-                <span>Sustainability</span>
-                <select value={sustainabilityFilter} onChange={(e) => setSustainabilityFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="reusable">Reusable</option>
-                  <option value="recyclable">Recyclable</option>
-                  <option value="low-waste">Low Waste</option>
-                  <option value="packaging">Sustainable Packaging</option>
-                </select>
-              </label>
-              <label>
-                <span>Life stage</span>
-                <select value={lifeStageFilter} onChange={(e) => setLifeStageFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="fertility">Fertility</option>
-                  <option value="pregnancy">Pregnancy</option>
-                  <option value="postpartum">Postpartum</option>
-                  <option value="perimenopause">Perimenopause</option>
-                  <option value="menopause">Menopause</option>
-                </select>
-              </label>
-              <label>
-                <span>Rating</span>
-                <select value={ratingFilter} onChange={(e) => setRatingFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="4-plus">4+ stars</option>
-                </select>
-              </label>
-              <label>
-                <span>Eligibility</span>
-                <select value={eligibilityFilter} onChange={(e) => setEligibilityFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="fsa-hsa">FSA/HSA Eligible</option>
-                  <option value="fsa">FSA Eligible</option>
-                  <option value="hsa">HSA Eligible</option>
-                </select>
-              </label>
-              <button
-                type="button"
-                onClick={() => { setPriceFilter('all'); setEligibilityFilter('all'); setPreferenceFilter('all'); setSustainabilityFilter('all'); setLifeStageFilter('all'); setRatingFilter('all'); setFilter('all'); setProductTypeFilter('all'); setAynaFilter('all'); }}
-              >
-                Clear
-              </button>
-            </div>
-          )}
-
-          <ShopGrid items={shown} onOpenProduct={onOpenProduct} />
-        </div>
-      </section>
+    <div className="mockup-landing mockup-landing--first lx">
+      <BuildHero onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} onOpenProduct={onOpenProduct} />
+      <Trust onViewDiscovery={onViewDiscovery} />
+      <ValueProps />
+      <HowItWorks onStartQuiz={onStartQuiz} />
+      <div className="lx-needs-wrap">
+        <ExploreByNeed
+          onOpenProduct={onOpenProduct}
+          onExplore={(n) => onViewDiscovery?.(exploreTarget(n))}
+          onViewAll={() => onViewDiscovery?.('')}
+        />
+      </div>
+      <div className="lx-stories">
+        <WebHeroCarousel onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
+      </div>
+      <FinalCta onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
     </div>
   );
 }
@@ -946,20 +720,26 @@ export default function AynaLanding({
   onViewDiscovery,
   onOpenProduct,
   onViewEcosystem,
+  onViewArticles,
+  onViewCommunity,
   user,
   myProducts,
-  ecosystemCount = 0,
-  hasProfile = false,
-  profileCategories,
   recommendedProductIds = [],
   initialCategory = null,
+  loading = false,
+  savedProducts = {},
+  onToggleSaved,
 }) {
+  // HI01: hold a skeleton until the session and profile resolve, so a
+  // returning user never sees the new-visitor page flash first.
+  if (loading) return <HomeSkeleton />;
   if (user) {
     return (
       <WelcomeBack
         user={user}
         myProducts={myProducts}
-        ecosystemCount={ecosystemCount}
+        savedProducts={savedProducts}
+        onToggleSaved={onToggleSaved}
         recommendedProductIds={recommendedProductIds}
         onStartQuiz={onStartQuiz}
         onViewDiscovery={onViewDiscovery}
@@ -973,11 +753,10 @@ export default function AynaLanding({
   return (
     <FirstVisitLanding
       onStartQuiz={onStartQuiz}
+      onViewArticles={onViewArticles}
+      onViewCommunity={onViewCommunity}
       onViewDiscovery={onViewDiscovery}
       onOpenProduct={onOpenProduct}
-      hasProfile={hasProfile}
-      profileCategories={profileCategories}
-      initialCategory={initialCategory}
     />
   );
 }

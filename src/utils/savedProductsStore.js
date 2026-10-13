@@ -48,7 +48,7 @@ export function persistSavedProducts(map) {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(map || {}));
   } catch {
-    // Private mode / quota — the in-memory copy still works for this session.
+    // Private mode / quota, the in-memory copy still works for this session.
   }
 }
 
@@ -123,7 +123,7 @@ export async function loadSavedForUser(supabase, userId) {
  * Set or clear a saved product. The table write is tried first; auth
  * metadata is only written as a fallback when that write actually fails
  * (missing column, RLS, etc). Writing it unconditionally on every save used
- * to make user_metadata grow without bound — it rides along in the auth JWT
+ * to make user_metadata grow without bound, it rides along in the auth JWT
  * on every request, so that eventually blew past header size limits (HTTP
  * 431) even once the table itself was working fine.
  */

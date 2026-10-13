@@ -1,0 +1,27 @@
+<!doctype html>
+<!-- Image audit contact sheet. Open locally with ?start=0&n=48. ITEMS is injected by build step. -->
+<meta charset="utf-8">
+<style>
+body{margin:0;background:#888;font:11px/1.2 system-ui;color:#000}
+.g{display:grid;grid-template-columns:repeat(8,170px);gap:6px;padding:6px}
+.c{background:#bdbdbd;height:200px;display:flex;flex-direction:column}
+.c div.im{height:170px;display:flex;align-items:center;justify-content:center}
+.c img{max-width:170px;max-height:170px}
+.c span{background:#fff;padding:2px;white-space:nowrap;overflow:hidden;height:26px}
+</style>
+<div class="g" id="g"></div>
+<script>
+const ITEMS = /*ITEMS*/[];
+const q=new URLSearchParams(location.search);const s=+(q.get('start')||0),n=+(q.get('n')||48);
+const g=document.getElementById('g');
+for(const it of ITEMS.slice(s,s+n)){const c=document.createElement('div');c.className='c';
+c.innerHTML='<div class="im">'+(it.u?'<img referrerpolicy="no-referrer" src="'+it.u+'">':'(none)')+'</div><span><b>'+it.i+'</b> '+(it.b||'')+' '+it.n+'</span>';g.appendChild(c);}
+async function stats(it){ if(!it.u) return {i:it.i,err:'none'};
+ return new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';im.referrerPolicy='no-referrer';
+ im.onload=()=>{try{const w=im.naturalWidth,h=im.naturalHeight,S=200,cv=document.createElement('canvas');cv.width=S;cv.height=S;const x=cv.getContext('2d');x.drawImage(im,0,0,S,S);const d=x.getImageData(0,0,S,S).data;
+ let bw=0,bt=0,tr=0,sum=[0,0,0],nb=0;const B=4;
+ for(let y=0;y<S;y++)for(let X=0;X<S;X++){if(y>=B&&y<S-B&&X>=B&&X<S-B)continue;const o=(y*S+X)*4;nb++;const a=d[o+3];if(a<20){tr++;continue}const r=d[o],gg=d[o+1],b=d[o+2];sum[0]+=r;sum[1]+=gg;sum[2]+=b;if(r>=245&&gg>=245&&b>=245)bw++; if(r>=225&&gg>=225&&b>=225&&Math.max(r,gg,b)-Math.min(r,gg,b)<18)bt++;}
+ const op=nb-tr;res({i:it.i,w,h,white:+(bw/nb).toFixed(2),light:+(bt/nb).toFixed(2),transp:+(tr/nb).toFixed(2),avg:op?sum.map(v=>Math.round(v/op)):null})}catch(e){res({i:it.i,w:im.naturalWidth,h:im.naturalHeight,err:'cors'})}};
+ im.onerror=()=>res({i:it.i,err:'load'});im.src=it.u;});}
+window.runStats=async()=>{const out=[];const L=ITEMS;for(let k=0;k<L.length;k+=12){out.push(...await Promise.all(L.slice(k,k+12).map(stats)))}return out};
+</script>

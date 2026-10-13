@@ -5,7 +5,7 @@ const CYCLE_MS = 2500;
 const FADE_MS = 400;
 
 /**
- * One span, imperative text + animation — same as ayna_waitlist (avoids React fighting textContent).
+ * One span, imperative text + animation, same as ayna_waitlist (avoids React fighting textContent).
  * @see https://github.com/pulomabishnu/ayna_waitlist/blob/main/index.html
  */
 export default function RotatingWordHeadline({

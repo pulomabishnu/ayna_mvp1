@@ -12,7 +12,7 @@ create table if not exists public.user_ecosystems (
   brand text,
   category text,
   product_type text,
-  -- Full product object. LLM-generated products exist only here — there is no
+  -- Full product object. LLM-generated products exist only here, there is no
   -- catalog row to join against, so the whole payload is denormalized.
   product_data jsonb,
   in_ecosystem boolean not null default false,

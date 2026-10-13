@@ -1,9 +1,9 @@
 /**
- * /api/notification-preferences — GET/PATCH the authenticated user's
+ * /api/notification-preferences, GET/PATCH the authenticated user's
  * notification + delivery preferences ("How Ayna reaches you").
  *
  * Same auth pattern as phone-verify-send/confirm: verifyUser() reads the
- * caller's Supabase JWT from Authorization: Bearer <token> — a user id is
+ * caller's Supabase JWT from Authorization: Bearer <token>, a user id is
  * never trusted from the request body. Reads/writes use the service-role
  * client in deployed environments. Local development can fall back to a
  * caller-scoped Supabase client using the public key; the existing RLS

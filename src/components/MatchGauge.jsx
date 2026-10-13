@@ -2,7 +2,7 @@ import React from 'react';
 
 /**
  * The radial "% match" gauge previously only existed on the Evidence tab
- * (.pdp-rail__match-ring, dark-card themed) — the Summary tab showed a flat
+ * (.pdp-rail__match-ring, dark-card themed), the Summary tab showed a flat
  * text badge, and Browse cards showed a flat badge too (when populated at
  * all). Same number, three different presentations depending on where you
  * looked (found live, 2026-08-24 bug bash: "using the same radial gauge
@@ -13,10 +13,10 @@ import React from 'react';
 export default function MatchGauge({ percent, size = 44, theme = 'light', label = 'match' }) {
   if (!Number.isFinite(percent)) return null;
   const pct = Math.max(0, Math.min(100, percent));
-  const ringColor = '#F0A84B';
+  const ringColor = 'var(--color-citric)';
   const trackColor = theme === 'dark' ? 'rgba(255,255,255,.16)' : 'rgba(36,42,82,0.12)';
   const holeColor = theme === 'dark' ? '#2E315D' : '#FFFFFF';
-  const textColor = theme === 'dark' ? '#F0A84B' : '#242A52';
+  const textColor = theme === 'dark' ? 'var(--color-citric)' : 'var(--color-primary)';
 
   return (
     <div

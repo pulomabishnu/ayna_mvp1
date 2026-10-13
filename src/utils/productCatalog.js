@@ -1,7 +1,7 @@
 /**
  * Catalog loader.
  *
- * MIGRATION STATE — read this before deleting anything in src/data/.
+ * MIGRATION STATE, read this before deleting anything in src/data/.
  *
  * The catalog is moving out of the JS bundle and into product_catalog, served
  * by /api/products. Until the table is seeded and verified in every
@@ -16,10 +16,10 @@
  *   1. delete the `import { ALL_PRODUCTS }` line below and the BUNDLED_FALLBACK
  *      reference;
  *   2. delete src/data/{products,mvpProducts,productsExtended,productsExtended2,
- *      categoryFillers,menstrualProducts}.js — keeping the pure functions
+ *      categoryFillers,menstrualProducts}.js, keeping the pure functions
  *      (getRecommendations, CATEGORY_LABELS, HEALTH_FUNCTIONS, ...) which are
  *      logic, not data;
- *   3. rerun `npm run build` — the bundle should drop by roughly 40%.
+ *   3. rerun `npm run build`, the bundle should drop by roughly 40%.
  *
  * Keep `scripts/export-catalog.mjs` either way: it is how the seed file is
  * regenerated, and `--check` proves the export is lossless.
@@ -51,7 +51,7 @@ function writeCache(products) {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), products }));
   } catch {
-    // Quota or private mode — the in-memory memo still serves this session.
+    // Quota or private mode, the in-memory memo still serves this session.
   }
 }
 
@@ -100,7 +100,7 @@ export function getLoadedCatalog() {
   return memo?.products || BUNDLED_FALLBACK;
 }
 
-/** Force a refetch — used after an admin edit, or to recover from the fallback. */
+/** Force a refetch, used after an admin edit, or to recover from the fallback. */
 export function invalidateProductCatalog() {
   memo = null;
   try {
