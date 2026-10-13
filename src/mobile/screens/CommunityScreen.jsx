@@ -25,7 +25,7 @@ import './community-mobile.css';
 import '../community-play.css';
 import { displayName } from '../utils/displayName.js';
 
-const TABS = [ ['announcements', 'Announcements'], ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'] ];
+const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements'] ];
 const POST_KINDS = { question: 'Question', review: 'Review', post: 'Post' };
 const timeLabel = (value) => value ? new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
 
