@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { getSupabaseClient } from '../utils/supabaseClient';
+import React, { useState } from 'react';
+import { getGooglePkceClient, getSupabaseClient } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
-import { CONSENT_VERSION, flushPendingConsent, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
+import { CONSENT_VERSION, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../utils/heardAbout.js';
 import '../styles/audit-qya.css';
 import './AuthGate.css';
@@ -31,74 +31,6 @@ const CONSENT_ITEMS = [
 ];
 
 const AGE_REQUIREMENT_VERSION = '18plus-v1';
-const GOOGLE_CLIENT_ID = '843025315064-3ca5s0v4ddnoq741hhhcfqj0tqk982ti.apps.googleusercontent.com';
-let googleScriptPromise;
-
-function loadGoogleScript() {
-  if (window.google?.accounts?.id) return Promise.resolve();
-  if (!googleScriptPromise) {
-    googleScriptPromise = new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.onload = resolve;
-      script.onerror = () => reject(new Error('Google sign-in could not load. Please try again.'));
-      document.head.appendChild(script);
-    }).catch((error) => {
-      googleScriptPromise = null;
-      throw error;
-    });
-  }
-  return googleScriptPromise;
-}
-
-async function createGoogleNonce() {
-  const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))));
-  const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(nonce));
-  const hashedNonce = Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join('');
-  return { nonce, hashedNonce };
-}
-
-function GoogleSignInButton({ onCredential, onError, loading }) {
-  const buttonRef = useRef(null);
-  const callbackRef = useRef(onCredential);
-  const errorRef = useRef(onError);
-  useEffect(() => {
-    callbackRef.current = onCredential;
-    errorRef.current = onError;
-  }, [onCredential, onError]);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function render() {
-      try {
-        await loadGoogleScript();
-        const { nonce, hashedNonce } = await createGoogleNonce();
-        if (cancelled || !buttonRef.current) return;
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          nonce: hashedNonce,
-          callback: (response) => callbackRef.current(response?.credential, nonce),
-        });
-        window.google.accounts.id.renderButton(buttonRef.current, {
-          type: 'standard',
-          theme: 'outline',
-          shape: 'pill',
-          text: 'continue_with',
-          size: 'large',
-          width: 280,
-        });
-      } catch (error) {
-        if (!cancelled) errorRef.current(error);
-      }
-    }
-    void render();
-    return () => { cancelled = true; };
-  }, []);
-
-  return <div className="ay-google-signin" aria-label="Continue with Google" aria-busy={loading} ref={buttonRef} />;
-}
-
 /** "Where did you hear about us?" as the label string main's admin reviews
  * (api/reviews-admin.js) read from `heard_about_us`, written next to our
  * structured `heard_about` / `heard_about_other` fields. */
@@ -415,25 +347,20 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     }
   };
 
-  const handleGoogleCredential = async (credential, nonce) => {
+  const handleGoogle = async () => {
     if (isSignup && !allConsented) {
       setFieldErrors((prev) => ({ ...prev, consent: 'Please tick all three to continue.' }));
       return;
     }
-    if (!supabase) {
+    const googleClient = getGooglePkceClient();
+    if (!googleClient) {
       setError('Supabase is not configured. Check environment variables.');
       return;
     }
     setError('');
-    if (!credential) {
-      setError('Google sign-in did not return an account. Please try again.');
-      return;
-    }
     setGoogleLoading(true);
     try {
-      // Record consent only after the signup boxes are checked. Google ID-token
-      // sign-in establishes the Supabase session without the failing OAuth
-      // redirect/state round trip.
+      // Record consent only after the signup boxes are checked.
       // Supabase's Google provider auto-provisions an account for any unseen
       // Google address, so a first-time visitor using "Sign in" still gets an
       // account; recording consent for her would claim agreement she never
@@ -446,25 +373,16 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         stashPendingSignupMeta(null);
       }
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
-      const { data, error } = await supabase.auth.signInWithIdToken({
+      const { error } = await googleClient.auth.signInWithOAuth({
         provider: 'google',
-        token: credential,
-        nonce,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: { prompt: 'select_account' },
+        },
       });
       if (error) throw error;
-      await flushPendingConsent(supabase);
-      try {
-        sessionStorage.removeItem('ayna_pending_auth_action');
-        sessionStorage.removeItem('ayna_pending_quiz_results');
-      } catch { /* Current page already has the pending action in memory. */ }
-      if (data?.session?.user) onAuthenticated?.(data.user || data.session.user, data.session);
     } catch (err) {
       setError(err.message || 'Could not sign in with Google.');
-      try {
-        sessionStorage.removeItem('ayna_pending_auth_action');
-        sessionStorage.removeItem('ayna_pending_quiz_results');
-      } catch { /* ignore unavailable storage */ }
-    } finally {
       setGoogleLoading(false);
     }
   };
@@ -917,11 +835,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         </div>
 
         <div className="ay-auth-oauth" style={styles.oauthRow}>
-          <GoogleSignInButton
-            onCredential={handleGoogleCredential}
-            onError={(err) => setError(err.message || 'Google sign-in could not load. Please try again.')}
-            loading={googleLoading}
-          />
+          <button type="button" onClick={handleGoogle} disabled={googleLoading} style={{ ...styles.googleBtn, width: 'min(280px, 100%)' }}>
+            <GoogleIcon />
+            {googleLoading ? 'Redirecting…' : 'Continue with Google'}
+          </button>
 
           <button
             type="button"
@@ -1065,6 +982,17 @@ export function ConsentGate({ onAgreed, onDecline }) {
         <button type="button" onClick={onDecline} style={styles.skipBtn}>No thanks, sign me out</button>
       </div>
     </div>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" style={{ flexShrink: 0 }}>
+      <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+      <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+      <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/>
+      <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z"/>
+    </svg>
   );
 }
 
