@@ -54,11 +54,16 @@ function authStorageKey(url) {
 // Google starts through a PKCE-capable client, but deliberately uses the SAME
 // browser storage and SAME Supabase auth key as the main client. It only needs
 // to exist on the page that starts the redirect so it can generate the PKCE
-// verifier. After Google returns, the page reload means this instance is gone;
-// getSupabaseClient() below becomes the PKCE callback client and exchanges the
-// code directly into the main persisted session. No session-copy step is used.
+// verifier. After Google returns, getSupabaseClient() is the PKCE callback
+// client. AuthCallback still asks for getWebGoogleOAuthClient(), so on that
+// callback page return the main client itself instead of creating a second one.
 export function getWebGoogleOAuthClient() {
   if (typeof window === 'undefined' || Capacitor.isNativePlatform()) return null;
+
+  const isCallback = window.location.pathname === '/auth/callback'
+    && new URLSearchParams(window.location.search).has('code');
+  if (isCallback) return getSupabaseClient();
+
   if (webGoogleOAuthClient) return webGoogleOAuthClient;
 
   const url = import.meta.env.VITE_SUPABASE_URL;
@@ -129,6 +134,31 @@ export function getSupabaseClient() {
           callback(event, session);
         });
       };
+
+      if (isWebGooglePkceCallback) {
+        // AuthCallback's older handoff code calls setSession() after the code
+        // exchange. Now that exchange already happened on THIS same client,
+        // that second setSession is redundant and triggers an unnecessary
+        // /auth/v1/user validation request. Production was returning 500 for
+        // that extra validation even though /token succeeded. If the exact
+        // same tokens are already active, return the existing local session
+        // instead of making the duplicate server call.
+        const setSession = client.auth.setSession.bind(client.auth);
+        client.auth.setSession = async (tokens) => {
+          try {
+            const { data } = await client.auth.getSession();
+            const current = data?.session;
+            if (
+              current
+              && tokens?.access_token === current.access_token
+              && tokens?.refresh_token === current.refresh_token
+            ) {
+              return { data: { user: current.user, session: current }, error: null };
+            }
+          } catch { /* fall through to the real setSession */ }
+          return setSession(tokens);
+        };
+      }
 
       // Start WEB Google OAuth with PKCE. The callback itself is handled by the
       // main client above, not by this temporary starter client.
