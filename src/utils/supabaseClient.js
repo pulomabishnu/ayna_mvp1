@@ -42,13 +42,21 @@ normalizeWebOAuthReturnPath();
 let client = null;
 let webGoogleOAuthClient = null;
 
-// Google OAuth on the web uses a dedicated PKCE client. The production Auth
-// service began issuing a valid Google session and then returning
-// `bad_oauth_state` for the same implicit-flow callback. PKCE keeps the server
-// flow state through the provider callback and returns a one-time code instead,
-// avoiding that broken implicit callback path. Keep its verifier in
-// sessionStorage so it survives the Google round trip without changing the
-// app's normal Supabase session storage or any native auth behavior.
+function authStorageKey(url) {
+  try {
+    const projectRef = new URL(url).hostname.split('.')[0];
+    return projectRef ? `sb-${projectRef}-auth-token` : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+// Google starts through a PKCE-capable client, but deliberately uses the SAME
+// browser storage and SAME Supabase auth key as the main client. It only needs
+// to exist on the page that starts the redirect so it can generate the PKCE
+// verifier. After Google returns, the page reload means this instance is gone;
+// getSupabaseClient() below becomes the PKCE callback client and exchanges the
+// code directly into the main persisted session. No session-copy step is used.
 export function getWebGoogleOAuthClient() {
   if (typeof window === 'undefined' || Capacitor.isNativePlatform()) return null;
   if (webGoogleOAuthClient) return webGoogleOAuthClient;
@@ -58,19 +66,15 @@ export function getWebGoogleOAuthClient() {
   if (!url || !anonKey) return null;
 
   try {
+    const storageKey = authStorageKey(url);
     webGoogleOAuthClient = createClient(url, anonKey, {
       auth: {
         flowType: 'pkce',
         detectSessionInUrl: false,
         persistSession: true,
         autoRefreshToken: false,
-        storage: window.sessionStorage,
-        // Do not let the temporary Google PKCE client share Supabase's
-        // default auth storage/broadcast key with the main app client. Two
-        // GoTrue clients on the same key can signal auth changes to each other
-        // even when they use different storage backends, leaving React signed
-        // in while PostgREST requests still run as anon.
-        storageKey: 'supabase.auth.ayna-google-pkce',
+        storage: window.localStorage,
+        ...(storageKey ? { storageKey } : {}),
       },
     });
   } catch (e) {
@@ -87,37 +91,36 @@ export function getSupabaseClient() {
   const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   if (!url || !anonKey) return null;
   try {
+    const isNative = Capacitor.isNativePlatform();
+    const isWebGooglePkceCallback = !isNative
+      && typeof window !== 'undefined'
+      && window.location.pathname === '/auth/callback'
+      && new URLSearchParams(window.location.search).has('code');
+    const storageKey = authStorageKey(url);
+
     client = createClient(url, anonKey, {
       auth: {
-        flowType: 'implicit',
-        // AuthCallback.jsx owns both implicit hash tokens and the web Google
-        // PKCE code exchange. Leaving automatic URL detection on here races the
-        // dedicated PKCE client and tries to exchange the code without its
-        // verifier.
+        // Keep the existing implicit flow everywhere except the web Google
+        // callback. On that callback page the SAME main client performs the
+        // PKCE code exchange, so the resulting access token is also the token
+        // used automatically by PostgREST for ecosystems, reviews, etc.
+        flowType: isWebGooglePkceCallback ? 'pkce' : 'implicit',
         detectSessionInUrl: false,
         persistSession: true,
+        ...(!isNative && storageKey ? { storage: window.localStorage, storageKey } : {}),
         // GoTrueClient auto-selects the browser's navigator.locks API to
         // serialize auth calls whenever it's merely present, true in a
         // WKWebView, but not necessarily reliable there. processLock is
-        // Supabase's own single-process alternative, built for exactly
-        // this (their docs: "React Native or other non-browser
-        // single-process environments"), same category as a Capacitor
-        // native app, so used there instead.
-        ...(Capacitor.isNativePlatform() ? { lock: processLock } : {}),
+        // Supabase's own single-process alternative for Capacitor/native.
+        ...(isNative ? { lock: processLock } : {}),
       },
     });
 
-    if (!Capacitor.isNativePlatform()) {
-      // A subscription created while /auth/callback is mounting receives the
-      // main client's normal INITIAL_SESSION(null) before AuthCallback has had
-      // time to copy the successful Google PKCE session into this client.
-      // App.jsx historically treated ANY null-session event as a real logout,
-      // scheduled a 1.5s cleanup, and that cleanup could win after SIGNED_IN:
-      // the user visibly appeared logged in for a moment and was then cleared.
-      // Ignore only that one startup event for subscriptions created on the
-      // callback route. Real SIGNED_OUT events still pass through untouched,
-      // and subscriptions created anywhere else keep Supabase's normal event
-      // stream. This changes no account/profile/database data.
+    if (!isNative) {
+      // A subscription created while /auth/callback is mounting receives a
+      // normal INITIAL_SESSION(null) before the PKCE exchange finishes. Do not
+      // let that startup event masquerade as a real logout. Real SIGNED_OUT
+      // events still pass through untouched.
       const onAuthStateChange = client.auth.onAuthStateChange.bind(client.auth);
       client.auth.onAuthStateChange = (callback) => {
         const subscribedOnAuthCallback = window.location.pathname === '/auth/callback';
@@ -127,9 +130,8 @@ export function getSupabaseClient() {
         });
       };
 
-      // Route every WEB Google OAuth start through the isolated PKCE client,
-      // including sign-in, quiz save, and Google re-auth flows. Apple and native
-      // Google keep their existing behavior.
+      // Start WEB Google OAuth with PKCE. The callback itself is handled by the
+      // main client above, not by this temporary starter client.
       const signInWithOAuth = client.auth.signInWithOAuth.bind(client.auth);
       client.auth.signInWithOAuth = (credentials) => {
         if (credentials?.provider === 'google') {
