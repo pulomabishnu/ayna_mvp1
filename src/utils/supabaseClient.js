@@ -101,10 +101,29 @@ export function getSupabaseClient() {
       },
     });
 
-    // Route every WEB Google OAuth start through the isolated PKCE client,
-    // including sign-in, quiz save, and Google re-auth flows. Apple and native
-    // Google keep their existing behavior.
     if (!Capacitor.isNativePlatform()) {
+      // A subscription created while /auth/callback is mounting receives the
+      // main client's normal INITIAL_SESSION(null) before AuthCallback has had
+      // time to copy the successful Google PKCE session into this client.
+      // App.jsx historically treated ANY null-session event as a real logout,
+      // scheduled a 1.5s cleanup, and that cleanup could win after SIGNED_IN:
+      // the user visibly appeared logged in for a moment and was then cleared.
+      // Ignore only that one startup event for subscriptions created on the
+      // callback route. Real SIGNED_OUT events still pass through untouched,
+      // and subscriptions created anywhere else keep Supabase's normal event
+      // stream. This changes no account/profile/database data.
+      const onAuthStateChange = client.auth.onAuthStateChange.bind(client.auth);
+      client.auth.onAuthStateChange = (callback) => {
+        const subscribedOnAuthCallback = window.location.pathname === '/auth/callback';
+        return onAuthStateChange((event, session) => {
+          if (subscribedOnAuthCallback && event === 'INITIAL_SESSION' && !session) return;
+          callback(event, session);
+        });
+      };
+
+      // Route every WEB Google OAuth start through the isolated PKCE client,
+      // including sign-in, quiz save, and Google re-auth flows. Apple and native
+      // Google keep their existing behavior.
       const signInWithOAuth = client.auth.signInWithOAuth.bind(client.auth);
       client.auth.signInWithOAuth = (credentials) => {
         if (credentials?.provider === 'google') {
