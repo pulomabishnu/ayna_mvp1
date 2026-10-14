@@ -1,10 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { productsForNeed } from './landingNeeds';
-import { productHref, isPlainLeftClick } from '../utils/productRoute';
-import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
-import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
 import PartnerStrip from './PartnerStrip';
-import { getRecommendedArticles } from './articleRecommendations';
 import WebEcosystemChart from './WebEcosystemChart';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import '../styles/eco-redesign.css';
@@ -13,7 +8,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } fr
 import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { edgeFadeRef } from '../utils/edgeFade';
-import { getDailyFact } from '../data/welcomeSlides';
+import LandingV2 from './LandingV2';
 import { getVerificationLinks } from '../utils/verificationLinks';
 
 /**
@@ -327,306 +322,6 @@ function BuildHero({ onStartQuiz, onViewDiscovery, greeting }) {
 }
 
 
-/* ---------- First-visit landing (photo-led, Glow-style layout) ----------
- * what -> why -> how -> proof -> experience -> action:
- *   PhotoHero (what, the primary action) -> ShopRow (the real product, by
- *   need) -> TrustBand (proof) -> How it works -> Founders -> photo band ->
- *   Reads -> final CTA. One expressive face (Bricolage), her photographs,
- *   a yellow marker underline and a round sticker as the signature devices. */
-const HERO_PHOTOS = [
-  { src: '/landing/tub-girls.webp', alt: 'Two friends getting ready together in a bathtub, surrounded by makeup', pos: '50% 35%', w: 736, h: 1104 },
-  { src: '/landing/robe-kiss.webp', alt: 'A woman in a striped robe blowing a kiss to the mirror light', pos: '50% 30%', w: 736, h: 981 },
-  { src: '/landing/bed-selfie.webp', alt: 'A woman lying on a bed taking a selfie, her beauty routine laid out around her', pos: '50% 40%', w: 736, h: 1104 },
-];
-
-/** Gentle scroll reveal for a few sections. Content is visible without JS or
- * IntersectionObserver, and for reduced-motion users. */
-function useReveal() {
-  const ref = React.useRef(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof window === 'undefined' || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
-    el.setAttribute('data-reveal', 'wait');
-    let done = false;
-    const show = () => {
-      if (done) return;
-      done = true;
-      el.setAttribute('data-reveal', 'in');
-      window.removeEventListener('scroll', check);
-      window.removeEventListener('resize', check);
-    };
-    // Scroll position is the source of truth (an IntersectionObserver can miss
-    // fast scrolls), and a timer guarantees nothing stays hidden.
-    function check() {
-      const r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight * 0.92) show();
-    }
-    window.addEventListener('scroll', check, { passive: true });
-    window.addEventListener('resize', check);
-    const t = window.setTimeout(check, 100);
-    const safety = window.setTimeout(show, 6000);
-    return () => { window.clearTimeout(t); window.clearTimeout(safety); window.removeEventListener('scroll', check); window.removeEventListener('resize', check); };
-  }, []);
-  return ref;
-}
-
-function LandingSearch({ onViewDiscovery, className = '' }) {
-  const [query, setQuery] = useState('');
-  const hint = useRotating(SEARCH_HINTS.length, 2600);
-  const submit = (e) => { e.preventDefault(); onViewDiscovery?.(discoveryTargetFor(query)); };
-  return (
-    <form className={`lx-search lx-search--hero ${className}`} role="search" onSubmit={submit}>
-      <label className="lx-search__field">
-        <span className="lx-sr">Search products</span>
-        <svg className="lx-search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
-        <SmartSearchInput
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }}
-          onPick={(s) => onViewDiscovery?.(discoveryTargetFor(s.query))}
-          anchor=".lx-search--hero"
-          placeholder=" "
-          enterKeyHint="search"
-          autoComplete="off"
-        />
-        {!query && (
-          <span className="lx-search__hint" aria-hidden="true">
-            Search <b key={hint}>{SEARCH_HINTS[hint]}</b>
-          </span>
-        )}
-      </label>
-      <button type="submit" className="lx-search__go" aria-label="Search">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
-      </button>
-    </form>
-  );
-}
-
-/** Y2K four-point sparkle, decorative. */
-function Sparkle({ className = '', style }) {
-  return (
-    <svg className={`lx-sparkle ${className}`} style={style} viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z" /></svg>
-  );
-}
-
-function WinBar({ title }) {
-  return (
-    <div className="lx-win" aria-hidden="true"><span className="lx-win__dots"><i /><i /><i /></span><span className="lx-win__title">{title}</span></div>
-  );
-}
-
-function Ticker() {
-  const names = PARTNER_BRANDS.map((b) => b.name);
-  const row = (hidden) => (
-    <ul className="lx-ticker__row" aria-hidden={hidden || undefined}>
-      {[...names, ...names].map((t, i) => (<li key={i}>{t}<span aria-hidden="true">{'\u2605'}</span></li>))}
-    </ul>
-  );
-  return (
-    <div className="lx-ticker" role="presentation">
-      <div className="lx-ticker__track">{row(false)}{row(true)}</div>
-    </div>
-  );
-}
-
-function PhotoHero({ onStartQuiz, onViewDiscovery }) {
-  return (
-    <section className="lx-phero" aria-labelledby="lx-hero-title">
-      <div className="lx-phero__photos">
-        {HERO_PHOTOS.map((ph, i) => (
-          <img
-            key={ph.src}
-            src={ph.src}
-            alt={ph.alt}
-            width={ph.w}
-            height={ph.h}
-            style={{ objectPosition: ph.pos }}
-            {...(i === 0 ? { fetchPriority: 'high' } : {})}
-          />
-        ))}
-      </div>
-      <div className="lx-phero__copy">
-        <p className="lx-tag">Evidence beside every pick</p>
-        <h1 id="lx-hero-title" className="lx-phero__title"><span className="lx-rise" style={{ '--i': 0 }}>Build your</span> <span className="lx-script lx-rise" style={{ '--i': 1 }}>ecosystem.</span></h1>
-        <p className="lx-phero__sub">Health products matched to your body, with the evidence beside each one.</p>
-        <button type="button" className="lx-cta lx-cta--photo" onClick={onStartQuiz}>
-          See my matches
-          <Arrow />
-        </button>
-        <p className="lx-phero__note">Six quick questions.</p>
-        <LandingSearch onViewDiscovery={onViewDiscovery} />
-      </div>
-      <Sparkle className="lx-sp lx-sp--a" />
-      <Sparkle className="lx-sp lx-sp--b" />
-      <Sparkle className="lx-sp lx-sp--c" />
-      <div className="lx-stamp" aria-hidden="true">
-        <svg viewBox="0 0 200 200">
-          <defs><linearGradient id="lx-holo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ffd3f0" /><stop offset=".35" stopColor="#cbd7ff" /><stop offset=".65" stopColor="#c3f6ee" /><stop offset="1" stopColor="#fff3b0" /></linearGradient><path id="lx-stamp-path" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" /></defs>
-          <circle cx="100" cy="100" r="98" className="lx-stamp__disc" />
-          <text><textPath href="#lx-stamp-path" startOffset="0" textLength="455" lengthAdjust="spacing">MATCHED TO YOU {'\u2605'} MATCHED TO YOU {'\u2605'}</textPath></text>
-        </svg>
-        <span className="lx-stamp__core">you</span>
-      </div>
-      <div className="lx-sticker" aria-hidden="true"><span>You<br />decide</span></div>
-    </section>
-  );
-}
-
-// Brands whose catalog photos are still lifestyle shots / awaiting brand-supplied images stay off the landing.
-const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
-
-/** Shop by need: pick a need, see four real products (partner brands first). */
-function ShopRow({ onOpenProduct, onViewDiscovery }) {
-  const needs = useMemo(() => MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => ({ id: g.id, label: g.label, group: g.id })).map((n) => ({ ...n, pool: productsForNeed(n).filter(NEEDS_PHOTO).sort((a, b) => Number(isPartnerBrandItem(b)) - Number(isPartnerBrandItem(a))) })).filter((n) => n.pool.length >= 2), []);
-  const [needId, setNeedId] = useState(needs[0]?.id);
-  const need = needs.find((n) => n.id === needId) || needs[0];
-  const ref = useReveal();
-  if (!need) return null;
-  return (
-    <section ref={ref} className="lx-shopshelf lx-band" aria-labelledby="lx-shop-title">
-      <div className="mockup-page">
-        <header className="lx-shopshelf__head">
-          <Sparkle className="lx-sp lx-sp--l" />
-          <h2 id="lx-shop-title" className="lx-display">Shop by <span className="lx-script">need</span></h2>
-          <Sparkle className="lx-sp lx-sp--r" />
-        </header>
-        <div className="lx-needchips" role="group" aria-label="Choose a need">
-          {needs.map((n) => (
-            <button key={n.id} type="button" className={n.id === need.id ? 'is-on' : ''} aria-pressed={n.id === need.id} onClick={() => setNeedId(n.id)}>{n.label}</button>
-          ))}
-        </div>
-        <ShelfList products={need.pool.slice(0, 4)} onOpenProduct={onOpenProduct} />
-        <div className="lx-shopshelf__foot">
-          <button type="button" className="lx-ghost" onClick={() => onViewDiscovery?.(exploreTarget(need))}>See all {need.label.toLowerCase()}</button>
-          <button type="button" className="lx-link" onClick={() => onViewDiscovery?.('')}>Browse the whole Shop</button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ShelfList({ products, onOpenProduct, numbered = false }) {
-  return (
-    <ul className={`lx-shelf${numbered ? ' lx-shelf--num' : ''}`}>
-      {products.map((p, i) => (
-        <li key={p.id} style={{ '--i': i }}>
-          <a
-            className="lx-shelf__item"
-            href={productHref(p.id)}
-            onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(p); }}
-          >
-            <span className="lx-shelf__img">{numbered && <span className="lx-burst lx-burst--n lx-shelf__rank" aria-hidden="true"><b>{i + 1}</b></span>}<img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />{isPartnerBrandItem(p) && <span className="lx-shelf__badge">ayna<br />favorite</span>}</span>
-            <span className="lx-shelf__row">
-              <span className="lx-shelf__name">{p.name}</span>
-              {/^\$/.test(String(p.price || '')) && <span className="lx-shelf__price">{String(p.price).split(/\s*[(\u2013-]\s*/)[0]}</span>}
-            </span>
-            {p.brand && <span className="lx-shelf__brand">{p.brand}</span>}
-          </a>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-const DECODED = [
-  { title: 'Matched to your body', text: 'See how well each product fits you, based on what you tell us.', tone: 'pink', icon: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></> },
-  { title: 'The evidence, right there', text: 'What the research says sits beside each product, with sources.', tone: 'butter', icon: <><path d="M7 4h7l4 4v12H7z" /><path d="M10 12h5M10 16h5" /></> },
-  { title: 'Real experiences', text: 'Reviews and posts from women who have used it.', tone: 'peri', icon: <><path d="M5 5h14v10H10l-5 4z" /><path d="M9 9h6" /></> },
-  { title: 'Your whole routine', text: 'Save what you use and see what fits next.', tone: 'mint', icon: <><circle cx="12" cy="12" r="3" /><circle cx="12" cy="12" r="8" /><circle cx="18.5" cy="8" r="1.2" /></> },
-];
-
-/** "Your counter, decoded": four numbered, tappable reasons (auto-cycles until you tap). */
-function CounterDecoded() {
-  const ref = useReveal();
-  const [active, setActive] = useState(0);
-  const [touched, setTouched] = useState(false);
-  useEffect(() => {
-    if (touched || typeof window === 'undefined' || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
-    const t = setInterval(() => setActive((a) => (a + 1) % DECODED.length), 4200);
-    return () => clearInterval(t);
-  }, [touched]);
-  const pick = (i) => { setTouched(true); setActive(i); };
-  return (
-    <section ref={ref} className="lx-decoded" aria-labelledby="lx-decoded-title">
-      <div className="mockup-page">
-        <div className="lx-decoded__panel lx-winbox">
-          <WinBar title="counter.exe" />
-          <figure className="lx-decoded__fig">
-            <img src="/landing/marble-counter.webp" alt="A woman doing her makeup at a marble bathroom counter, photographed from above" width="736" height="1308" loading="lazy" />
-            <span className="lx-grain" aria-hidden="true" />
-            <figcaption key={active} className={`lx-decoded__tag tone-${DECODED[active].tone}`} aria-hidden="true"><b>{active + 1}</b> {DECODED[active].title}</figcaption>
-          </figure>
-          <div className="lx-decoded__head">
-            <h2 id="lx-decoded-title" className="lx-h2">Your counter, <span className="lx-script">decoded.</span></h2>
-                      </div>
-          <ol className="lx-decoded__list">
-            {DECODED.map((d, i) => (
-              <li key={d.title} className={`tone-${d.tone}${i === active ? ' is-on' : ''}`}>
-                <button type="button" aria-pressed={i === active} onClick={() => pick(i)} onMouseEnter={() => { setTouched(true); setActive(i); }}>
-                  <span className="lx-burst lx-burst--n" aria-hidden="true"><b>{i + 1}</b></span>
-                  <svg className="lx-how__icon" viewBox="0 0 24 24" aria-hidden="true">{d.icon}</svg>
-                  <span className="lx-decoded__txt"><strong>{d.title}</strong><em>{d.text}</em></span>
-                </button>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** "Today on ayna": the daily fact (from the reviewed glossary) beside ayna news. */
-function TodayStrip({ onViewArticles, onViewCommunity }) {
-  const fact = useMemo(() => getDailyFact(), []);
-  const ref = useReveal();
-  if (!fact) return null;
-  return (
-    <section ref={ref} className="lx-today" aria-label="Today on ayna">
-      <div className="mockup-page lx-today__grid">
-        <article className="lx-today__card lx-today__fact lx-winbox">
-                    <p className="lx-today__kicker"><span className="lx-today__dot" aria-hidden="true" />Fact of the day</p>
-          <h2 className="lx-today__term"><span>{fact.term}</span></h2>
-          <p className="lx-today__text">{fact.text}</p>
-          <button type="button" className="lx-ghost" onClick={() => onViewArticles?.()}>Read more</button>
-        </article>
-        <article className="lx-today__card lx-today__news lx-winbox">
-                    <p className="lx-today__kicker"><span className="lx-today__dot" aria-hidden="true" />ayna news</p>
-          <h2 className="lx-today__headline">Now introducing <span className="lx-script">ayna Community.</span></h2>
-          <ul className="lx-today__posts" aria-hidden="true">
-            <li><i /><b /><b className="is-short" /></li>
-            <li><i /><b /><b className="is-short" /></li>
-            <li><i /><b /><b className="is-short" /></li>
-          </ul>
-          <button type="button" className="lx-cta" onClick={() => onViewCommunity?.()}>
-            See Community
-            <Arrow />
-          </button>
-        </article>
-      </div>
-    </section>
-  );
-}
-
-/** This week's Trending on ayna lineup (same rotation as the signed-in home). */
-function TrendingRow({ onOpenProduct, onViewDiscovery }) {
-  const items = useMemo(() => getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product).filter((p) => p?.image && NEEDS_PHOTO(p)).slice(0, 4), []);
-  const ref = useReveal();
-  if (items.length < 2) return null;
-  return (
-    <section ref={ref} className="lx-trending" aria-labelledby="lx-trending-title">
-      <div className="mockup-page">
-        <div className="lx-trending__head">
-          <h2 id="lx-trending-title" className="lx-h2">Trending on <span className="lx-script">ayna</span></h2>
-          <button type="button" className="lx-ghost" onClick={() => onViewDiscovery?.('')}>See the Shop</button>
-        </div>
-        <ShelfList products={items} onOpenProduct={onOpenProduct} numbered />
-      </div>
-    </section>
-  );
-}
-
 function Trust({ onViewDiscovery }) {
   return (
     <div className="lx-trust">
@@ -634,128 +329,6 @@ function Trust({ onViewDiscovery }) {
         <PartnerStrip variant="web" title={'Shop ayna\u2019s favorites'} onSelectBrand={(name) => onViewDiscovery?.(name)} />
       </div>
     </div>
-  );
-}
-
-/** Founders, high on the page: the real team photo, two lines, a link. */
-function FoundersMoment({ onViewAbout }) {
-  const ref = useReveal();
-  return (
-    <section ref={ref} className="lx-founders" aria-labelledby="lx-founders-title">
-      <div className="mockup-page lx-founders__inner">
-        <div className="lx-founders__copy">
-          <p className="lx-script lx-founders__label">who we are</p>
-          <h2 id="lx-founders-title" className="lx-h2">Built by three women who wanted better answers.</h2>
-          <p className="lx-founders__sub">Meet Puloma, Eliz and Ameera.</p>
-          <button type="button" className="lx-ghost" onClick={onViewAbout}>Meet us</button>
-        </div>
-        <figure className="lx-founders__photo">
-          <img src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1800" height="1198" />
-          <span className="lx-grain" aria-hidden="true" />
-          <figcaption className="lx-script">the ayna team</figcaption>
-        </figure>
-      </div>
-    </section>
-  );
-}
-
-/* A short photo interruption between UI sections: the founder's own shots. */
-const BAND_PHOTOS = [
-  { src: '/landing/curlers-call.webp', alt: 'A woman in hair curlers laughing on the phone in her bathroom', pos: '50% 20%' },
-  { src: '/landing/sink-flatlay.webp', alt: 'A sink full of brushes, makeup and hair tools, photographed from above', pos: '50% 50%' },
-  { src: '/landing/laundry-duo.webp', alt: 'Two friends in curlers and a towel reading magazines in a laundry room', pos: '50% 40%' },
-  { src: '/landing/sink-heels-dryer.webp', alt: 'A vintage sink piled with a hair dryer, sunglasses and a pair of heels', pos: '50% 50%' },
-  { src: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, photographed from above', pos: '50% 35%' },
-  { src: '/landing/robe-vanity.webp', alt: 'A woman in a white robe sitting at a marble vanity in a pink room', pos: '50% 50%' },
-  { src: '/landing/vanity-hairdryer.webp', alt: 'A woman drying her hair at a crowded bedroom vanity', pos: '50% 50%' },
-  { src: '/landing/pad-thread-art.webp', alt: 'Red thread arranged over a white pad, photographed as still life', pos: '50% 50%' },
-  { src: '/landing/sink-tea.webp', alt: 'A bathroom sink holding heels, sunglasses, a cup of tea and makeup', pos: '50% 50%' },
-  { src: '/landing/bag-tubes.webp', alt: 'A vintage leather bag overflowing with colorful product tubes', pos: '50% 50%' },
-];
-
-function PhotoBand() {
-  const list = (hidden) => (
-    <ul className="lx-photoband__row" aria-hidden={hidden || undefined}>
-      {BAND_PHOTOS.map((p) => (
-        <li key={p.src}><img src={p.src} alt={hidden ? '' : p.alt} loading="lazy" style={{ objectPosition: p.pos }} /></li>
-      ))}
-    </ul>
-  );
-  return (
-    <section className="lx-photoband" aria-label="Photographs from ayna">
-      <div className="lx-photoband__track">{list(false)}{list(true)}</div>
-    </section>
-  );
-}
-
-/** A small Reads preview: three real Library articles, then the Library. */
-function ReadsPreview({ onViewArticle, onViewArticles }) {
-  const reads = useMemo(() => getRecommendedArticles(null).slice(0, 3), []);
-  const ref = useReveal();
-  if (!reads.length) return null;
-  const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };
-  return (
-    <section ref={ref} className="lx-reads" aria-labelledby="lx-reads-title">
-      <div className="mockup-page">
-        <div className="lx-reads__head">
-          <h2 id="lx-reads-title" className="lx-h2">Short reads, real sources.</h2>
-          <button type="button" className="lx-ghost" onClick={() => onViewArticles?.()}>Open the Library</button>
-        </div>
-        <div className="lx-reads__grid">
-          {reads.map((a) => (
-            <article key={a.id} className="lx-read">
-              <button type="button" className="lx-read__btn" onClick={() => open(a.id)}>
-                <span className="lx-read__img" aria-hidden="true">
-                  <img src={`/articles/${a.id}.webp`} alt="" loading="lazy" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} />
-                </span>
-                <h3>{a.title}</h3>
-                <p>{a.teaser}</p>
-              </button>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-const STEPS = [
-  { n: 1, tone: 'pink', title: 'Answer six questions', text: 'About your body and what you avoid.', icon: <><rect x="6" y="4" width="12" height="16" rx="2" /><path d="M9 9l1.5 1.5L13 8M9 15h6" /></> },
-  { n: 2, tone: 'butter', title: 'We check the evidence', text: 'Across products, apps and care.', icon: <><circle cx="11" cy="11" r="6" /><path d="M20 20l-4.5-4.5M9 11h4" /></> },
-  { n: 3, tone: 'peri', title: 'Get your ecosystem', text: 'Ranked for you. You decide.', icon: <><circle cx="12" cy="12" r="3" /><circle cx="12" cy="12" r="8" /><circle cx="18.5" cy="8" r="1.2" /></> },
-];
-
-/** Pink "start" card + how it works, side by side (the one big block). */
-function StartBlock({ onStartQuiz, onViewDiscovery }) {
-  return (
-    <section className="lx-start" aria-labelledby="lx-start-title">
-      <div className="mockup-page lx-start__inner">
-        <div className="lx-start__card lx-winbox">
-          <WinBar title="start.exe" />
-          <h2 id="lx-start-title" className="lx-display lx-start__title">Start with <span className="lx-script">six</span> questions.</h2>
-          <img className="lx-start__photo" src="/landing/stalls-trio.webp" alt="Three friends chatting from neighboring bathroom stalls" width="734" height="397" loading="lazy" />
-          <p className="lx-start__sub">Then a shop matched to you. Nothing is bought until you decide.</p>
-          <button type="button" className="lx-cta" onClick={onStartQuiz}>
-            See my matches
-            <Arrow />
-          </button>
-          <button type="button" className="lx-link" onClick={() => onViewDiscovery?.('')}>Browse the Shop</button>
-        </div>
-        <div className="lx-how" aria-labelledby="lx-how-title">
-          <h2 id="lx-how-title" className="lx-h2">How it <span className="lx-script">works</span></h2>
-          <ol className="lx-how__steps">
-            {STEPS.map((st) => (
-              <li key={st.n} className={`tone-${st.tone}`}>
-                <span className="lx-burst lx-burst--n" aria-hidden="true"><b>{st.n}</b></span>
-                <svg className="lx-how__icon" viewBox="0 0 24 24" aria-hidden="true">{st.icon}</svg>
-                <h3>{st.title}</h3>
-                <p>{st.text}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -938,8 +511,6 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
   );
 }
 
-const exploreTarget = (n) => (n.group ? { initialMacroGroup: n.group } : (n.keywords?.[0] || ''));
-
 /* ------------------------------------------------------------------ */
 /* Logged in                                                           */
 /* ------------------------------------------------------------------ */
@@ -1072,17 +643,17 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
 
 function FirstVisitLanding({ onStartQuiz, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onViewDiscovery, onOpenProduct }) {
   return (
-    <div className="mockup-landing mockup-landing--first lx lx--photo">
-      <Ticker />
-      <PhotoHero onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
-      <FoundersMoment onViewAbout={onViewAbout} />
-      <TrendingRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
-      <TodayStrip onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
-      <ShopRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
-      <PhotoBand />
-      <CounterDecoded />
-      <ReadsPreview onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
-      <StartBlock onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
+    <div className="mockup-landing mockup-landing--first">
+      <LandingV2
+        onStartQuiz={onStartQuiz}
+        onViewDiscovery={onViewDiscovery}
+        onOpenProduct={onOpenProduct}
+        onViewArticles={onViewArticles}
+        onViewArticle={onViewArticle}
+        onViewAbout={onViewAbout}
+        onViewCommunity={onViewCommunity}
+        onSearch={(q) => onViewDiscovery?.(discoveryTargetFor(q))}
+      />
     </div>
   );
 }

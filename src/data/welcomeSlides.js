@@ -21,3 +21,13 @@ export function getDailyFact(date = new Date()) {
   const label = term.includes(' / ') ? term.split(' / ')[0] : term;
   return { term: label.charAt(0).toUpperCase() + label.slice(1), text: GLOSSARY[term] };
 }
+
+/** Fact at an offset from today (for the shuffle button). */
+export function getFactAt(offset = 0, date = new Date()) {
+  const terms = FACT_TERMS.filter((t) => GLOSSARY[t]);
+  if (!terms.length) return null;
+  const day = Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000);
+  const term = terms[(((day + offset) % terms.length) + terms.length) % terms.length];
+  const label = term.includes(' / ') ? term.split(' / ')[0] : term;
+  return { term: label.charAt(0).toUpperCase() + label.slice(1), text: GLOSSARY[term], count: terms.length };
+}

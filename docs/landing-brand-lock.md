@@ -1,6 +1,6 @@
 # ayna landing: locked brand system
 
-Source of truth: the `BRAND LOCK` block at the end of `src/styles/landing.css` (tokens on `.app-container .lx`).
+Source of truth: `src/styles/landing-v2.css` (tokens on `.lv`) and `src/components/LandingV2.jsx`. Palette rule: lilac and mint are not used.
 
 ## Color (60-30-10, WCAG AA checked)
 Researched rule: one dominant color (60%), one secondary (30%), one scarce accent (10%); accent only on key actions; text 4.5:1, large text and UI 3:1.
