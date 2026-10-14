@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getDailyFact } from '../data/welcomeSlides.js';
+import { getSupabaseClient } from '../utils/supabaseClient';
+import { listAnnouncements } from '../utils/community/announcementsStore';
 import './WebHeroCarousel.css';
 
 // Website welcome stories: the app, what ayna does, today's fact and
@@ -54,11 +56,29 @@ function FactSlide({ fact, onViewArticles }) {
   </>;
 }
 
-function NewsSlide({ onViewCommunity }) {
+// Latest real announcement from the ayna team, when the announcements table
+// exists and has a post. Any failure (no client, table not created yet,
+// offline) quietly falls back to the Community launch slide.
+function useLatestAnnouncement() {
+  const [item, setItem] = useState(null);
+  useEffect(() => {
+    let live = true;
+    const supabase = getSupabaseClient();
+    if (!supabase) return undefined;
+    listAnnouncements(supabase, { limit: 1 })
+      .then(({ rows }) => { const a = rows?.[0]; if (live && a?.title) setItem({ title: String(a.title).slice(0, 120) }); })
+      .catch(() => {});
+    return () => { live = false; };
+  }, []);
+  return item;
+}
+
+function NewsSlide({ onViewCommunity, news }) {
   return <>
     <div className="whc-copy">
-      <h2 className="whc-title">Now introducing ayna Community.</h2>
-      <button type="button" className="whc-cta" onClick={onViewCommunity}>See Community</button>
+      {news && <p className="whc-note">ayna news</p>}
+      <h2 className="whc-title">{news ? news.title : 'Now introducing ayna Community.'}</h2>
+      <button type="button" className="whc-cta" onClick={onViewCommunity}>{news ? 'Read it in Community' : 'See Community'}</button>
     </div>
     <div className="whc-art whc-posts" aria-hidden="true">
       <span className="whc-post"><i className="is-pink" /><b /><b className="is-short" /></span>
@@ -70,12 +90,13 @@ function NewsSlide({ onViewCommunity }) {
 
 export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCommunity }) {
   const fact = useMemo(() => getDailyFact(), []);
+  const news = useLatestAnnouncement();
   const slides = useMemo(() => [
     { key: 'app', label: 'The app', tone: 'butter' },
     { key: 'about', label: 'What ayna does', tone: 'mint' },
     ...(fact ? [{ key: 'fact', label: 'Daily ayna fact', tone: 'cream' }] : []),
-    { key: 'news', label: 'New: ayna Community', tone: 'pink' },
-  ], [fact]);
+    { key: 'news', label: news ? 'ayna news' : 'New: ayna Community', tone: 'pink' },
+  ], [fact, news]);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [hover, setHover] = useState(false);
@@ -109,7 +130,7 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
     if (key === 'about') return <AboutSlide onStartQuiz={onStartQuiz} />;
     if (key === 'app') return <AppSlide />;
     if (key === 'fact') return <FactSlide fact={fact} onViewArticles={onViewArticles} />;
-    return <NewsSlide onViewCommunity={onViewCommunity} />;
+    return <NewsSlide onViewCommunity={onViewCommunity} news={news} />;
   };
 
   return <section
