@@ -17,6 +17,7 @@ import PlaylistCoverPicker from '../components/PlaylistCoverPicker.jsx';
 import PlaylistAudiencePicker from '../components/PlaylistAudiencePicker.jsx';
 import { makePlaylistCoverFile } from '../components/playlistCoverImage.js';
 import { RuleField, CommunityRulesList } from '../../components/community/RuleField.jsx';
+import { CommunityRichTextContent } from '../../components/community/CommunityRichText.jsx';
 import { VerifiedBadge } from '../../components/community/VerifiedBadge.jsx';
 import { useTeamBadges } from '../../components/community/useTeamBadges.js';
 import Announcements from '../../components/community/Announcements.jsx';
@@ -278,7 +279,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   };
   const openPlaylist = async (playlist) => {
     setEditingPlaylist(false); setProductId(null); setPage({ type: 'playlist', id: playlist.id }); setDetails(playlist); setError('');
-    setItems((playlist.preview_product_ids || []).map((product_id) => ({ product_id })));
+    setItems((playlist.preview_product_ids || []).map((product_id) => ({ product_id }));
     try { setItems(await community.listPlaylistItems(supabase, playlist.id)); }
     catch (e) { if (!playlist.preview_product_ids?.length) notifyError(e); }
   };
@@ -538,7 +539,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
         </div>
       </div>
       {post.kind === 'review' && <span className="am-post-stars" role="img" aria-label={`Rated ${post.rating || 0} out of 5`}>{[1, 2, 3, 4, 5].map((n) => <svg key={n} viewBox="0 0 24 24" aria-hidden="true" className={n <= (post.rating || 0) ? 'is-on' : ''}><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z" /></svg>)}</span>}
-      <button type="button" className="am-postbody" onClick={() => openPost(post)}>{post.body}</button>
+      <button type="button" className="am-postbody" onClick={() => openPost(post)}><CommunityRichTextContent body={post.body} richBody={post.rich_body} /></button>
       {(post.media || []).length > 0 && <button type="button" className="am-photo-grid" onClick={() => openPost(post)} aria-label="Open post photos">{post.media.slice(0, 4).map((photo) => <img key={photo.path} src={publicMediaUrl(photo.path)} alt="" loading="lazy" />)}</button>}
       {postProductIds(post).slice(0, 1).map((id) => <ProductMention key={id} productId={id} productsById={productsById} quizAnswers={quizAnswers} onOpenProduct={onOpenProduct} />)}
       <div className="am-actions">
