@@ -378,3 +378,21 @@ body:has(.lv)::after { content: ''; position: fixed; inset: 0; z-index: 9999; po
 body:has(.lv)::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .14;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .15 0 0 0 0 .14 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 @media print { body:has(.lv)::after { display: none; } }
+/* palette v3: header + footer pick up espresso / pink / cream so nothing is left in the old ink */
+body:has(.lv) .app-nav, body:has(.lv) .site-footer { --ink: #3e2723; color: #3e2723 !important; }
+body:has(.lv) .app-nav :is(.app-nav__logo, .app-nav__tab, .app-nav__beta-badge, .app-nav__circle, a, button, span) { color: #3e2723 !important; border-color: #3e2723 !important; }
+body:has(.lv) .app-nav .app-nav__beta-badge { background: #f7badd !important; }
+body:has(.lv) .app-nav .app-nav__circle { background: #fff8dc !important; }
+body:has(.lv) .app-nav :is(svg, svg *) { stroke: currentColor; }
+body:has(.lv) .app-nav svg[fill="black"], body:has(.lv) .app-nav svg :is([fill="black"], [fill="#000"], [fill="#000000"]) { fill: currentColor !important; }
+body:has(.lv) .app-nav [class*=login], body:has(.lv) .app-nav [class*=login] * { background-color: #3e2723 !important; color: #fff8dc !important; border-color: #3e2723 !important; }
+body:has(.lv) .site-footer :is(.ay-footer-col__title) { color: rgba(62,39,35,.7) !important; }
+body:has(.lv) .site-footer :is(.site-footer__legal) { border-color: rgba(62,39,35,.15) !important; }
+body:has(.lv) .site-footer :is(a, p, span, li, small, h2, h3, h4) { color: #3e2723; }
+.app-container .lv .lv-search input { background: #fff8dc !important; }
+body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .app-nav, body:has(.lv) .app-container .site-footer {
+  --ay-ink: #3e2723 !important; --ay-paper: #fff8dc !important; --ay-butter: #f7badd !important; --ay-shadow: 3px 3px 0 #3e2723 !important; }
+html body:has(.lv) .app-container .ay-footer .ay-footer-col__title { color: rgba(62,39,35,.75) !important; }
+html body:has(.lv) .app-container .site-footer .site-footer__legal { border-color: rgba(62,39,35,.15) !important; }
+.app-container .lv .lv-stamp svg { fill: var(--ink); }
+body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .site-footer { --ay-ink-soft: rgba(62,39,35,.72) !important; }
