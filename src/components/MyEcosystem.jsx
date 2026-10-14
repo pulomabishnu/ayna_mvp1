@@ -2,6 +2,7 @@ import SmartSearchInput from './search/SmartSearchInput.jsx';
 import PhotoPile from './v3/PhotoPile.jsx';
 import EcoCabinet from './v3/EcoCabinet.jsx';
 import NeedCluster from './v3/NeedCluster.jsx';
+import ShelfDrawers from './v3/ShelfDrawers.jsx';
 import CorkStrings from './v3/CorkStrings.jsx';
 import { SUPPORT_GROUPS } from '../mobile/data/intakeModel.js';
 
@@ -2296,60 +2297,16 @@ export default function MyEcosystem({
                 )}
 
                 {visibleAreaGroups.length > 0 && <header className="eco3-sechead"><p className="eco3-needs__kicker">Your cabinet</p><h2 className="eco3-shelves__title" id="eco3-shelves-title">Your <em>shelves.</em></h2><span className="eco3-needs__sub">Everything you use, sorted by area of care.</span></header>}
-                {visibleAreaGroups.length > 0 && <div className="eco3-shelves">
-                {visibleAreaGroups.map((group) => {
-                    const toneIndex = areaGroups.findIndex((g) => g.key === group.key);
-                    return (
-                        <section
-                            key={group.key}
-                            id={`eco-area-${group.key}`}
-                            className="eco3-area"
-                            style={{ '--area-color': areaTone(toneIndex) }}
-                            aria-labelledby={`eco-area-title-${group.key}`}
-                        >
-                            <div className="eco3-area__head">
-                                <h2 id={`eco-area-title-${group.key}`}>
-                                    <small aria-hidden="true">{String(toneIndex + 1).padStart(2, '0')}</small>
-                                    {group.label}
-                                </h2>
-                                <span className="eco3-area__count">{group.products.length}</span>
-                                {group.key !== 'other' && typeof onGoToSearch === 'function' && (
-                                    <button type="button" className="eco3-area__more" onClick={() => onGoToSearch(exploreAreaOptions(group))}>Add more</button>
-                                )}
-                            </div>
-                            <div className="eco3-grid">
-                                {group.products.map((product) => (
-                                    <ProductCard
-                                        key={product.id}
-                                        product={product}
-                                        onOpen={onOpenProduct}
-                                        action={(
-                                            <div className="eco3-card-actions">
-                                                {group.key !== 'other' && (
-                                                    <button type="button" className="eco3-card-actions__swap" onClick={() => onGoToSearch?.(exploreAreaOptions(group))}>Swap</button>
-                                                )}
-                                                <button type="button" className="eco3-card-actions__why" onClick={() => onOpenProduct?.(product)}>Why this?</button>
-                                                {onToggleProduct && (
-                                                    <button type="button" className="eco3-card-actions__remove" onClick={() => onToggleProduct(product)} aria-label={`Remove ${product.name} from your ecosystem`} title="Remove">
-                                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
-                                                    </button>
-                                                )}
-                                            </div>
-                                        )}
-                                    />
-                                ))}
-                                {group.key !== 'other' && typeof onGoToSearch === 'function' && (
-                                    <button type="button" className="eco3-slot" onClick={() => onGoToSearch(exploreAreaOptions(group))}>
-                                        <span aria-hidden="true">+</span>
-                                        <b>Room on this shelf</b>
-                                        <small>Find more for {String(group.label).toLowerCase()}</small>
-                                    </button>
-                                )}
-                            </div>
-                        </section>
-                    );
-                })}
-                </div>}
+                {visibleAreaGroups.length > 0 && (
+                    <ShelfDrawers
+                        key={visibleAreaGroups.map((g) => g.key).join('|')}
+                        groups={visibleAreaGroups}
+                        toneOf={(key) => { const i = areaGroups.findIndex((g) => g.key === key); return { color: ['#f7badd', '#ffedac', '#cfe0ee', '#fde3ef'][Math.max(0, i) % 4], no: String(i + 1).padStart(2, '0') }; }}
+                        onOpenProduct={onOpenProduct}
+                        onToggleProduct={onToggleProduct}
+                        onAddMore={typeof onGoToSearch === 'function' ? (group) => onGoToSearch(exploreAreaOptions(group)) : null}
+                    />
+                )}
 
                 {!ecoQueryTrimmed && (
                     <div className="eco3-addrow">

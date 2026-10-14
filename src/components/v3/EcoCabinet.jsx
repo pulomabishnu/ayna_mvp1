@@ -15,6 +15,7 @@ export default function EcoCabinet({ areaGroups = [], total = 0, name = '', onBu
   }, [reduce, total]);
   const shelves = areaGroups.slice(0, 4);
   const jump = (key) => {
+    try { window.dispatchEvent(new CustomEvent('ay-open-area', { detail: key })); } catch { /* ignore */ }
     const el = document.getElementById(`eco-area-${key}`);
     if (el) el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
   };
