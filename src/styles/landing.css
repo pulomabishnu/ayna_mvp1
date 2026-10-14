@@ -619,3 +619,6 @@
 .app-container .lx .lx-decoded__list em { font: 500 15px/22px var(--ay-font-ui); font-style: normal; }
 @media (max-width: 1023px) { .app-container .lx-decoded__inner { grid-template-columns: minmax(0, 1fr); gap: 64px; } .app-container .lx-decoded__photo { margin-inline: auto; } }
 @media (max-width: 767px) { .app-container .lx-decoded { padding-top: 80px; } }
+/* Round sticker moves to the bottom-left so the two circles sit in different corners */
+.app-container .lx-sticker { right: auto; left: 56px; background: var(--ay-pink); }
+@media (max-width: 1023px) { .app-container .lx-sticker { left: 32px; } }

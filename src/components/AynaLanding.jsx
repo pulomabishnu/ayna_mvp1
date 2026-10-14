@@ -447,11 +447,11 @@ function PhotoHero({ onStartQuiz, onViewDiscovery }) {
         <svg viewBox="0 0 200 200">
           <defs><path id="lx-stamp-path" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" /></defs>
           <circle cx="100" cy="100" r="98" className="lx-stamp__disc" />
-          <text><textPath href="#lx-stamp-path" startOffset="0">MATCHED TO YOU {'\u2605'} MATCHED TO YOU {'\u2605'} MATCHED TO YOU {'\u2605'}</textPath></text>
+          <text><textPath href="#lx-stamp-path" startOffset="0" textLength="455" lengthAdjust="spacing">MATCHED TO YOU {'\u2605'} MATCHED TO YOU {'\u2605'}</textPath></text>
         </svg>
         <span className="lx-stamp__core">you</span>
       </div>
-      <div className="lx-sticker" aria-hidden="true"><span>Matched<br />to you</span></div>
+      <div className="lx-sticker" aria-hidden="true"><span>You<br />decide</span></div>
     </section>
   );
 }
