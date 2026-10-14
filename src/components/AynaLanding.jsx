@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import WebHeroCarousel from './WebHeroCarousel';
-import { ExploreByNeed } from './HomeShowcase';
+import { NEEDS, productsForNeed } from './landingNeeds';
+import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import PartnerStrip from './PartnerStrip';
 import { getRecommendedArticles } from './articleRecommendations';
 import WebEcosystemChart from './WebEcosystemChart';
@@ -323,6 +323,123 @@ function BuildHero({ onStartQuiz, onViewDiscovery, greeting }) {
   );
 }
 
+
+/* ---------- First-visit landing (photo-led, Glow-style layout) ----------
+ * what -> why -> how -> proof -> experience -> action:
+ *   PhotoHero (what, the primary action) -> ShopRow (the real product, by
+ *   need) -> TrustBand (proof) -> How it works -> Founders -> photo band ->
+ *   Reads -> final CTA. One expressive face (Bricolage), her photographs,
+ *   a yellow marker underline and a round sticker as the signature devices. */
+const HERO_PHOTOS = [
+  { src: '/landing/curlers-call.webp', alt: 'A woman in hair curlers laughing on the phone in her bathroom', pos: '50% 30%', w: 736, h: 1110 },
+  { src: '/landing/pink-tile-shelf.webp', alt: 'Everyday care products lined up on a pink tiled bathroom ledge', pos: '50% 55%', w: 667, h: 1000 },
+  { src: '/landing/laundry-duo.webp', alt: 'Two friends in curlers reading magazines on a laundry room floor', pos: '40% 45%', w: 736, h: 981 },
+];
+
+function PhotoHero({ onStartQuiz }) {
+  return (
+    <section className="lx-phero" aria-labelledby="lx-hero-title">
+      <div className="lx-phero__photos">
+        {HERO_PHOTOS.map((ph, i) => (
+          <img
+            key={ph.src}
+            src={ph.src}
+            alt={ph.alt}
+            width={ph.w}
+            height={ph.h}
+            style={{ objectPosition: ph.pos }}
+            {...(i === 0 ? { fetchPriority: 'high' } : {})}
+          />
+        ))}
+      </div>
+      <div className="lx-phero__copy">
+        <h1 id="lx-hero-title" className="lx-phero__title">Build your ecosystem.</h1>
+        <p className="lx-phero__sub">Health products matched to your body, with the evidence beside each one.</p>
+        <button type="button" className="lx-cta lx-cta--photo" onClick={onStartQuiz}>
+          See my matches
+          <Arrow />
+        </button>
+        <p className="lx-phero__note">Six quick questions.</p>
+      </div>
+      <div className="lx-sticker" aria-hidden="true"><span>Matched<br />to you</span></div>
+    </section>
+  );
+}
+
+/** The real catalog, by need: pick a need, see four real products. */
+function ShopRow({ onOpenProduct, onViewDiscovery }) {
+  const needs = useMemo(() => NEEDS.map((n) => ({ ...n, pool: productsForNeed(n) })).filter((n) => n.pool.length >= 2), []);
+  const [needId, setNeedId] = useState(needs[0]?.id);
+  const need = needs.find((n) => n.id === needId) || needs[0];
+  const [query, setQuery] = useState('');
+  const hint = useRotating(SEARCH_HINTS.length, 2600);
+  if (!need) return null;
+  const picks = need.pool.slice(0, 4);
+  const submit = (e) => { e.preventDefault(); onViewDiscovery?.(discoveryTargetFor(query)); };
+  return (
+    <section className="lx-shopshelf" aria-labelledby="lx-shop-title">
+      <div className="mockup-page">
+        <header className="lx-shopshelf__head">
+          <h2 id="lx-shop-title" className="lx-display">Shop</h2>
+          <p className="lx-shopshelf__by">by what you care about</p>
+        </header>
+        <form className="lx-search lx-search--center" role="search" onSubmit={submit}>
+          <label className="lx-search__field">
+            <span className="lx-sr">Search products</span>
+            <svg className="lx-search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
+            <SmartSearchInput
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              suggest={{ kinds: ['need', 'category', 'brand', 'product'], limit: 6 }}
+              onPick={(s) => onViewDiscovery?.(discoveryTargetFor(s.query))}
+              anchor=".lx-search--center"
+              placeholder=" "
+              enterKeyHint="search"
+              autoComplete="off"
+            />
+            {!query && (
+              <span className="lx-search__hint" aria-hidden="true">
+                Search <b key={hint}>{SEARCH_HINTS[hint]}</b>
+              </span>
+            )}
+          </label>
+          <button type="submit" className="lx-search__go" aria-label="Search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+          </button>
+        </form>
+        <div className="lx-needchips" role="group" aria-label="Choose a need">
+          {needs.map((n) => (
+            <button key={n.id} type="button" className={n.id === need.id ? 'is-on' : ''} aria-pressed={n.id === need.id} onClick={() => setNeedId(n.id)}>{n.label}</button>
+          ))}
+        </div>
+        <ul className="lx-shelf">
+          {picks.map((p) => (
+            <li key={p.id}>
+              <a
+                className="lx-shelf__item"
+                href={productHref(p.id)}
+                onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(p); }}
+              >
+                <span className="lx-shelf__img"><img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} /></span>
+                <span className="lx-shelf__row">
+                  <span className="lx-shelf__name">{p.name}</span>
+                  {/^\$/.test(String(p.price || '')) && <span className="lx-shelf__price">{String(p.price).split(/\s*[(–-]\s*/)[0]}</span>}
+                </span>
+                {p.brand && <span className="lx-shelf__brand">{p.brand}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div className="lx-shopshelf__foot">
+          <button type="button" className="lx-ghost" onClick={() => onViewDiscovery?.(exploreTarget(need))}>See all {need.label.toLowerCase()}</button>
+          <button type="button" className="lx-link" onClick={() => onViewDiscovery?.('')}>Browse the whole Shop</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Trust({ onViewDiscovery }) {
   return (
     <div className="lx-trust">
@@ -372,7 +489,6 @@ function FoundersMoment({ onViewAbout }) {
           <img src="/about/team.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1600" height="1065" />
         </figure>
         <div className="lx-founders__copy">
-          <p className="lx-eyebrow">Who makes ayna</p>
           <h2 id="lx-founders-title" className="lx-h2">Built by three women who wanted better answers.</h2>
           <p className="lx-founders__sub">Puloma, Eliz and Ameera started ayna after one too many &ldquo;look it up&rdquo; answers to real health questions.</p>
           <button type="button" className="lx-ghost" onClick={onViewAbout}>Meet us</button>
@@ -412,10 +528,7 @@ function ReadsPreview({ onViewArticle, onViewArticles }) {
     <section className="lx-reads" aria-labelledby="lx-reads-title">
       <div className="mockup-page">
         <div className="lx-reads__head">
-          <div>
-            <p className="lx-eyebrow">From the Library</p>
-            <h2 id="lx-reads-title" className="lx-h2">Short reads, real sources.</h2>
-          </div>
+          <h2 id="lx-reads-title" className="lx-h2">Short reads, real sources.</h2>
           <button type="button" className="lx-ghost" onClick={() => onViewArticles?.()}>Open the Library</button>
         </div>
         <div className="lx-reads__grid">
@@ -436,22 +549,16 @@ function ReadsPreview({ onViewArticle, onViewArticles }) {
   );
 }
 
-function HowItWorks({ onStartQuiz }) {
+function HowItWorks() {
   return (
     <section className="lx-how" aria-labelledby="lx-how-title">
-      <div className="mockup-page">
+      <div className="mockup-page lx-how__inner">
         <h2 id="lx-how-title" className="lx-h2">How it works</h2>
         <ol className="lx-how__steps">
           <li className="tone-pink"><b>1</b><h3>Answer six questions</h3><p>About your body and what you avoid.</p></li>
           <li className="tone-butter"><b>2</b><h3>We check the evidence</h3><p>Across products, apps and care.</p></li>
           <li className="tone-peri"><b>3</b><h3>Get your ecosystem</h3><p>Ranked for you. You decide.</p></li>
         </ol>
-        <div className="lx-how__cta">
-          <button type="button" className="lx-cta" onClick={onStartQuiz}>
-            Build your ecosystem
-            <Arrow />
-          </button>
-        </div>
       </div>
     </section>
   );
@@ -460,17 +567,14 @@ function HowItWorks({ onStartQuiz }) {
 function FinalCta({ onStartQuiz, onViewDiscovery }) {
   return (
     <section className="lx-final" aria-labelledby="lx-final-title">
-      <div className="mockup-page">
-        <div className="lx-final__card">
-          <h2 id="lx-final-title" className="lx-h2">Start with six questions.</h2>
-          <p>Then a shop matched to you.</p>
-          <div className="lx-final__actions">
-            <button type="button" className="lx-cta" onClick={onStartQuiz}>
-              Build your ecosystem
-              <Arrow />
-            </button>
-            <button type="button" className="lx-link" onClick={() => onViewDiscovery?.('')}>Browse the Shop</button>
-          </div>
+      <div className="mockup-page lx-final__inner">
+        <h2 id="lx-final-title" className="lx-display lx-final__title">Start with six questions.</h2>
+        <div className="lx-final__actions">
+          <button type="button" className="lx-cta" onClick={onStartQuiz}>
+            See my matches
+            <Arrow />
+          </button>
+          <button type="button" className="lx-link" onClick={() => onViewDiscovery?.('')}>Browse the Shop</button>
         </div>
       </div>
     </section>
@@ -788,25 +892,16 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
 /* Logged out                                                          */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewArticle, onViewAbout, onViewCommunity, onViewDiscovery, onOpenProduct }) {
+function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewArticle, onViewAbout, onViewDiscovery, onOpenProduct }) {
   return (
-    <div className="mockup-landing mockup-landing--first lx">
-      <BuildHero onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
-      <div className="lx-needs-wrap">
-        <ExploreByNeed
-          onOpenProduct={onOpenProduct}
-          onExplore={(n) => onViewDiscovery?.(exploreTarget(n))}
-          onViewAll={() => onViewDiscovery?.('')}
-        />
-      </div>
+    <div className="mockup-landing mockup-landing--first lx lx--photo">
+      <PhotoHero onStartQuiz={onStartQuiz} />
+      <ShopRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
       <TrustBand onViewDiscovery={onViewDiscovery} />
+      <HowItWorks />
       <FoundersMoment onViewAbout={onViewAbout} />
-      <HowItWorks onStartQuiz={onStartQuiz} />
       <PhotoBand />
       <ReadsPreview onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
-      <div className="lx-stories">
-        <WebHeroCarousel onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
-      </div>
       <FinalCta onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
     </div>
   );
