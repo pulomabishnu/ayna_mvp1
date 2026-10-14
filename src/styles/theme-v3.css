@@ -2349,3 +2349,25 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'])
 .app-container .ay3-cab__door { z-index: 4; }
 html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved, html body .app-container:not([data-theme='dark']) .ay-saved { justify-content: safe center; }
 .app-container .ay-saved__nav { justify-content: center; }
+
+/* ---- One sticky bar under the hero: search spans the width, section links on the right ---- */
+.app-container:not([data-theme='dark']) .eco3-stickybar { position: sticky; top: 74px; z-index: 30; display: flex; align-items: center; gap: 12px; margin: -28px 0 40px; padding: 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: #ffedac; box-shadow: 4px 4px 0 var(--ay-ink); }
+.app-container:not([data-theme='dark']) .eco3-stickybar .eco3-search { flex: 1 1 auto; min-width: 0; margin: 0 !important; }
+.app-container:not([data-theme='dark']) .eco3-stickybar .eco3-search input { height: 46px !important; border: 0 !important; border-radius: 99px !important; background: #fff !important; box-shadow: none !important; }
+.app-container:not([data-theme='dark']) .eco3-stickybar .eco3-jump { position: static; flex: none; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; width: auto; flex-wrap: nowrap; }
+.app-container:not([data-theme='dark']) .eco3-stickybar .eco3-jump a:hover { background: #fff; }
+@media (max-width: 900px) {
+  .app-container:not([data-theme='dark']) .eco3-stickybar { flex-direction: column; align-items: stretch; gap: 8px; border-radius: 22px; top: 68px; }
+  .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-jump { overflow-x: auto; justify-content: space-between; gap: 4px; }
+  .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-jump a { padding: 4px 8px 4px 4px; font-size: 12.5px; white-space: nowrap; }
+  .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-jump a b { width: 20px; height: 20px; font-size: 11px; }
+}
+
+/* ---- No colour clashes: an accent never matches what it sits on ---- */
+/* tape is never butter (cards are butter) */
+.app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card:nth-child(3n) { --tape: rgba(247, 186, 221, .9); }
+/* on pink pages tape is sky; on blue pages tape is rose */
+.app-container:not([data-theme='dark']):is([data-view='discovery'], [data-view='you'], [data-view='waitlist'], [data-view='doctor-prep'], [data-view='comparison'], [data-view='not-found']) .ayna-discover-card.ayna-browse-card:nth-child(n) { --tape: rgba(118, 158, 190, .85); }
+.app-container:not([data-theme='dark']):is([data-view='ecosystem'], [data-view='contact'], [data-view='recommendations'], [data-view='recalls']) .ayna-discover-card.ayna-browse-card:nth-child(n) { --tape: rgba(247, 186, 221, .9); }
+.app-container .eco3-flow { display: contents; }
+html body .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-search input { border: 0 !important; background: transparent !important; box-shadow: none !important; height: 44px !important; }

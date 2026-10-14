@@ -1996,14 +1996,9 @@ export default function MyEcosystem({
                     </section>
                 )}
 
-                <div className={careFirst ? 'eco3-secondary' : undefined}>
+                <div className={careFirst ? 'eco3-secondary' : 'eco3-flow'}>
                 {careFirst && <p className="eco3-secondary__label">Products, when you are ready</p>}
-                <nav className="eco3-jump" aria-label="On this page">
-                    {!ecoQueryTrimmed && needShelves.length > 0 && <a href="#eco3-needs-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-needs-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>1</b>Recommendations</a>}
-                    {visibleAreaGroups.length > 0 && <a href="#eco3-shelves-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-shelves-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>2</b>Shelves</a>}
-                    <a href="#eco3-tools-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-tools-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>3</b>Tools</a>
-                    <a href="#ayna-wishlist" onClick={(e) => { e.preventDefault(); document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>4</b>Saved</a>
-                </nav>
+                <div className="eco3-stickybar">
                 <form
                     className="ayna-browse__search eco3-search"
                     role="search"
@@ -2022,6 +2017,13 @@ export default function MyEcosystem({
                     />
                     <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
                 </form>
+                <nav className="eco3-jump" aria-label="On this page">
+                    {!ecoQueryTrimmed && needShelves.length > 0 && <a href="#eco3-needs-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-needs-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>1</b>Recommendations</a>}
+                    {visibleAreaGroups.length > 0 && <a href="#eco3-shelves-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-shelves-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>2</b>Shelves</a>}
+                    <a href="#eco3-tools-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-tools-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>3</b>Tools</a>
+                    <a href="#ayna-wishlist" onClick={(e) => { e.preventDefault(); document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>4</b>Saved</a>
+                </nav>
+                </div>
                 {ecoQueryTrimmed && (
                     <div className="eco3-searchbar-row" role="status">
                         <span>
