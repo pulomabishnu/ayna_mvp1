@@ -5,6 +5,7 @@ import {
   communityRichTextToPlainText,
   plainTextToCommunityRichText,
   sanitizeCommunityRichTextDoc,
+  setActiveCommunityRichTextDraft,
   truncateCommunityRichText,
 } from '../../utils/community/richText.js';
 import { RuleNote } from './RuleField.jsx';
@@ -197,6 +198,11 @@ export function CommunityRichTextEditor({
   const check = useMemo(() => checkCommunityText(value), [value]);
   const describe = [describedBy, noteId].filter(Boolean).join(' ');
 
+  const publishDraft = (doc) => {
+    setActiveCommunityRichTextDraft(doc);
+    onRichChange?.(doc);
+  };
+
   const emit = () => {
     const root = editorRef.current;
     if (!root) return;
@@ -210,8 +216,8 @@ export function CommunityRichTextEditor({
     }
     root.dataset.empty = plain ? 'false' : 'true';
     lastPlainRef.current = plain;
+    publishDraft(doc);
     onChange?.({ target: { value: plain } });
-    onRichChange?.(doc);
     try { setBoldActive(Boolean(document.queryCommandState?.('bold'))); } catch { setBoldActive(false); }
   };
 
@@ -226,6 +232,7 @@ export function CommunityRichTextEditor({
     const plain = communityRichTextToPlainText(initial);
     root.dataset.empty = plain ? 'false' : 'true';
     lastPlainRef.current = plain;
+    publishDraft(initial);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -239,7 +246,8 @@ export function CommunityRichTextEditor({
     const plain = communityRichTextToPlainText(next);
     root.dataset.empty = plain ? 'false' : 'true';
     lastPlainRef.current = plain;
-  }, [value, richValue, maxLength]);
+    publishDraft(next);
+  }, [value, richValue, maxLength]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const syncSoon = () => window.requestAnimationFrame(emit);
   const toggleBold = () => {
