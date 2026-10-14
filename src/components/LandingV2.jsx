@@ -205,12 +205,12 @@ function Strip() {
   return <div className="lv-strip" aria-label="Photographs from ayna"><div className="lv-strip__track">{list(false)}{list(true)}</div></div>;
 }
 
-/* ---------- why: four tappable reasons ---------- */
+/* ---------- why: numbered hotspots on the photo (tap a dot, or the list) ---------- */
 const WHY = [
-  { t: 'Matched to your body', d: 'See how well each product fits you.' },
-  { t: 'Evidence beside each pick', d: 'What the research says, with sources.' },
-  { t: 'Real experiences', d: 'Posts from women who have used it.' },
-  { t: 'Your whole routine', d: 'Save what you use. See what fits next.' },
+  { t: 'Matched to your body', d: 'See how well each product fits you, based on what you tell us.', x: 58, y: 40 },
+  { t: 'Evidence beside each pick', d: 'What the research says, with sources, right next to the product.', x: 30, y: 84 },
+  { t: 'Real experiences', d: 'Posts from women who have actually used it.', x: 78, y: 70 },
+  { t: 'Your whole routine', d: 'Save what you use and see what fits next.', x: 22, y: 30 },
 ];
 
 function Why({ paused }) {
@@ -225,20 +225,24 @@ function Why({ paused }) {
   const pick = (i) => { setTouched(true); setA(i); };
   return (
     <section ref={ref} className="lv-sec" aria-labelledby="lv-why-title">
-      <div className="lv-why lv-card">
-        <Win title="counter.exe" />
-        <figure className="lv-why__fig">
-          <img src="/landing/marble-counter.webp" alt="A woman doing her makeup at a marble bathroom counter, from above" loading="lazy" width="736" height="1308" />
-          <figcaption key={a} aria-hidden="true"><b>{a + 1}</b> {WHY[a].t}</figcaption>
-        </figure>
+      <div className="lv-why">
+        <div className="lv-why__stage">
+          <img src="/landing/marble-counter.webp" alt="A woman doing her makeup at a marble bathroom counter, photographed from above" loading="lazy" width="736" height="1308" />
+          {WHY.map((w, i) => (
+            <button key={w.t} type="button" className={`lv-spot${i === a ? ' is-on' : ''}`} style={{ left: `${w.x}%`, top: `${w.y}%` }} aria-label={`${i + 1}. ${w.t}`} aria-pressed={i === a} onClick={() => pick(i)}>{i + 1}</button>
+          ))}
+          <p key={a} className="lv-why__card" aria-live="polite"><b>{a + 1}</b><span><strong>{WHY[a].t}</strong>{WHY[a].d}</span></p>
+        </div>
         <div className="lv-why__body">
+          <p className="lv-script">what ayna actually is</p>
           <h2 id="lv-why-title">Your counter, <em>decoded.</em></h2>
+          <p className="lv-why__lead">Tap a number on the photo.</p>
           <ol>
             {WHY.map((w, i) => (
               <li key={w.t} className={i === a ? 'is-on' : ''}>
-                <button type="button" aria-pressed={i === a} onClick={() => pick(i)} onMouseEnter={() => pick(i)}>
+                <button type="button" aria-pressed={i === a} onClick={() => pick(i)}>
                   <b aria-hidden="true">{i + 1}</b>
-                  <span><strong>{w.t}</strong><span className="lv-desc">{w.d}</span></span>
+                  <strong>{w.t}</strong>
                 </button>
               </li>
             ))}
@@ -302,40 +306,45 @@ function Reads({ onViewArticle, onViewArticles }) {
   );
 }
 
-/* ---------- start: pink card + how it works (tap through) ---------- */
+/* ---------- how it works: four photos, each numbered (Eliz's mockup), then the start card ---------- */
 const STEPS = [
-  { t: 'Answer six questions', d: 'About your body and what you avoid.' },
-  { t: 'We check the evidence', d: 'Across products, apps and care.' },
-  { t: 'Get your ecosystem', d: 'Ranked for you. You decide.' },
+  { t: 'Answer six questions', d: 'About your body and what you avoid.', src: '/landing/pink-tile-shelf.webp', alt: 'A pink tiled ledge crowded with everyday care products and a hair dryer', pos: '50% 60%' },
+  { t: 'We check the evidence', d: 'Across products, apps and care.', src: '/landing/blue-sink.webp', alt: 'A woman at a bathroom sink with products spread across it, blue wall behind', pos: '50% 50%' },
+  { t: 'Get your ecosystem', d: 'Ranked for you.', src: '/landing/robe-pickles.webp', alt: 'A woman in a white robe and hair curlers sitting in her bathroom', pos: '50% 35%' },
+  { t: 'You decide', d: 'Nothing is bought until you say so.', src: '/landing/pink-stripe-floor.webp', alt: 'A woman sitting on a pink striped bathroom floor with her things around her', pos: '50% 40%' },
 ];
 
 function Start({ onStartQuiz, onViewDiscovery }) {
   const ref = useReveal();
   const [s, setS] = useState(0);
   return (
-    <section ref={ref} className="lv-sec lv-start" aria-labelledby="lv-start-title">
+    <section ref={ref} className="lv-sec lv-start" aria-labelledby="lv-how-title">
+      <header className="lv-head">
+        <h2 id="lv-how-title">How it <em>works</em></h2>
+      </header>
+      <ol className="lv-steps">
+        {STEPS.map((st, i) => (
+          <li key={st.t} className={i === s ? 'is-on' : ''} onMouseEnter={() => setS(i)} onFocus={() => setS(i)}>
+            <figure>
+              <img src={st.src} alt={st.alt} style={{ objectPosition: st.pos }} loading="lazy" />
+              <b aria-hidden="true">{i + 1}</b>
+            </figure>
+            <h3>{st.t}</h3>
+            <p>{st.d}</p>
+          </li>
+        ))}
+      </ol>
       <div className="lv-start__card lv-card">
         <Win title="start.exe" />
-        <h2 id="lv-start-title">Start with <em>six</em> questions.</h2>
-        <img src="/landing/stalls-trio.webp" alt="Three friends chatting from neighboring bathroom stalls" loading="lazy" width="734" height="397" />
-        <p>Then a shop matched to you. Nothing is bought until you decide.</p>
-        <div className="lv-start__cta">
-          <button type="button" className="lv-btn lv-btn--ink" onClick={onStartQuiz}>See my matches<Arrow /></button>
-          <button type="button" className="lv-link" onClick={() => onViewDiscovery?.('')}>Browse the Shop</button>
+        <div className="lv-start__copy">
+          <h2 id="lv-start-title">Start with <em>six</em> questions.</h2>
+          <p>Then a shop matched to you.</p>
+          <div className="lv-start__cta">
+            <button type="button" className="lv-btn lv-btn--ink" onClick={onStartQuiz}>See my matches<Arrow /></button>
+            <button type="button" className="lv-link" onClick={() => onViewDiscovery?.('')}>Browse the Shop</button>
+          </div>
         </div>
-      </div>
-      <div className="lv-how">
-        <h2>How it <em>works</em></h2>
-        <ol>
-          {STEPS.map((st, i) => (
-            <li key={st.t} className={i === s ? 'is-on' : ''}>
-              <button type="button" aria-pressed={i === s} onClick={() => setS(i)} onMouseEnter={() => setS(i)}>
-                <b aria-hidden="true">{i + 1}</b>
-                <span><strong>{st.t}</strong><span className="lv-desc">{st.d}</span></span>
-              </button>
-            </li>
-          ))}
-        </ol>
+        <img src="/landing/stalls-trio.webp" alt="Three friends chatting from neighboring bathroom stalls" loading="lazy" width="734" height="397" />
       </div>
     </section>
   );
