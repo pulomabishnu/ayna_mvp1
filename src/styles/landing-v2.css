@@ -357,10 +357,24 @@
 .app-container .lv .lv-strip__row img { display: block; }
 .app-container .lv .lv-purpose { margin-top: 0; }
 /* soft teal page colour: clashes with the pink on purpose */
-.app-container .lv { --teal: #c2efe3; background: var(--teal); }
+.app-container .lv { --teal: #ffedac; background: var(--teal); }
 .app-container .mockup-landing--first { background: var(--teal); }
 /* header + footer take the same teal on the landing page only */
-body:has(.lv) .app-nav, body:has(.lv) .site-footer { background: var(--teal, #c2efe3) !important; }
-body:has(.lv) main { background: #c2efe3 !important; }
-body:has(.lv) .site-footer, body:has(.lv) .site-footer > *, body:has(.lv) .ay-footer { background: #c2efe3 !important; }
-html body:has(.lv) .app-container footer.site-footer.ay-footer, html body:has(.lv) .app-container nav.app-nav.app-nav--landing { background: #c2efe3 !important; background-color: #c2efe3 !important; }
+body:has(.lv) .app-nav, body:has(.lv) .site-footer { background: var(--teal, #ffedac) !important; }
+body:has(.lv) main { background: #ffedac !important; }
+body:has(.lv) .site-footer, body:has(.lv) .site-footer > *, body:has(.lv) .ay-footer { background: #ffedac !important; }
+html body:has(.lv) .app-container footer.site-footer.ay-footer, html body:has(.lv) .app-container nav.app-nav.app-nav--landing { background: #ffedac !important; background-color: #ffedac !important; }
+/* palette v3 (Oct 14): butter page, espresso ink, sky + pink accents, vintage grain */
+.app-container .lv { --ink: #3e2723 !important; --ink-2: #5a4540 !important; --paper: #fff8dc !important; --pink: #769ebe !important; --butter: #f7badd !important; --teal: #ffedac; background: #ffedac; }
+body:has(.lv)::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .14;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .15 0 0 0 0 .14 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media print { body:has(.lv)::after { display: none; } }
+/* palette v3 (Oct 14): butter page, espresso ink, sky + pink accents, vintage grain.
+   Variable names kept for the cascade: --pink now holds sky, --butter holds pink. */
+.app-container .lv { --ink: #3e2723 !important; --ink-2: #5a4540 !important; --paper: #fff8dc !important; --pink: #769ebe !important; --butter: #f7badd !important; --teal: #ffedac; background: #ffedac;
+  --display: 'DM Serif Display', Georgia, serif !important; --label: 'Archivo Black', 'DM Sans', sans-serif; }
+.app-container .lv :is(h1, h2, h3) { font-weight: 400 !important; letter-spacing: -.01em !important; }
+.app-container .lv :is(.lv-kicker, .lv-ticker__row li, .lv-stamp span) { font-family: var(--label) !important; font-weight: 400 !important; letter-spacing: .08em; }
+body:has(.lv)::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .14;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .15 0 0 0 0 .14 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+@media print { body:has(.lv)::after { display: none; } }

@@ -31,3 +31,6 @@ Her photographs only, vintage filter + grain, no photo used twice on the page. P
 
 ## Update (Oct 14)
 Page color is now soft teal #c2efe3 (header and footer included, landing only). Ink is near-black #161616 (was indigo). Pink, butter and ink unchanged otherwise. Teal replaces cream as the 60 percent.
+
+## Palette v3 (Oct 14, late)
+Butter page #ffedac (header and footer too), espresso #3e2723 for ink and the dark band, sky #769ebe and pink #f7badd as accents, light vintage grain over the page. Fonts: DM Serif Display headings, Archivo Black for small labels, DM Sans body. Source: Rise Marketing Studio palette post Ameera shared.
