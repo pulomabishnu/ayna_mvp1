@@ -2281,3 +2281,32 @@ html body .app-container:not([data-theme='dark']) .eco-saved__sub { grid-column:
 html body .app-container:not([data-theme='dark']) .eco3-extras .eco3-sechead { gap: 6px !important; }
 html body .app-container:not([data-theme='dark']) .eco3-extras :is(#eco3-tools-title, #ayna-wishlist h2) { margin: 4px 0 0 !important; line-height: 1.05 !important; }
 html body .app-container:not([data-theme='dark']) .ay-saved__price { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 4px); }
+
+/* ---- Ecosystem hero, cleaned: plain rose, no title box, mirror cabinet as the star ---- */
+.app-container:not([data-theme='dark'])[data-view='ecosystem'] .ay3-ecohero { border-image: linear-gradient(#f7badd, #f7badd) fill 0 / / 0 100vw !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-head__text { padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .ay3-kicker { display: inline-block; margin: 0 0 14px !important; padding: 5px 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: #ffedac; font: 400 12px/1 var(--ay-font-label) !important; letter-spacing: .12em; }
+.app-container:not([data-theme='dark']) .ay3-ecohero h1 { font-size: clamp(48px, 2rem + 4vw, 92px) !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-head__sub { margin-top: 14px !important; font-size: 18px !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-pill { box-shadow: none !important; background: #ffedac !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-pill:hover { transform: none; background: #fff !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-pill.eco3-pill--ink { background: var(--ay-ink) !important; }
+@media (min-width: 900px) {
+  .app-container:not([data-theme='dark']) .ay3-ecohero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 26px 64px; padding-top: 56px !important; padding-bottom: 72px !important; }
+  .app-container:not([data-theme='dark']) .ay3-ecohero .ay3-cab { justify-self: center; }
+}
+/* the door swings open, then gets out of the way */
+.app-container .ay3-cab__door { transition: transform .9s cubic-bezier(.5, -.2, .2, 1.15), box-shadow .9s, opacity .35s .75s, visibility 0s 1.1s; }
+.app-container .ay3-cab.is-open .ay3-cab__door { opacity: 0; visibility: hidden; pointer-events: none; }
+.app-container .ay3-cab__box { width: clamp(300px, 32vw, 440px); aspect-ratio: 1 / 1.05; }
+.app-container .ay3-cab__hint { margin-top: 10px; }
+/* saved: one row that scrolls, with arrows underneath */
+html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved, html body .app-container:not([data-theme='dark']) .ay-saved { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 10px 6px 12px; }
+.app-container .ay-saved::-webkit-scrollbar { display: none; }
+html body .app-container:not([data-theme='dark']) .ay-saved__item, html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved__item { flex: 0 0 calc((100% - 40px) / 3); min-width: 150px; scroll-snap-align: start; }
+.app-container .ay-saved__nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+.app-container:not([data-theme='dark']) .ay-saved__nav button { width: 36px; height: 36px; border: 1.5px solid var(--ay-ink); border-radius: 50%; background: #ffedac; color: var(--ay-ink); font: 600 16px/1 var(--ay-font-ui); cursor: pointer; }
+.app-container:not([data-theme='dark']) .ay-saved__nav button:hover:not(:disabled) { background: var(--ay-ink); color: #ffedac; }
+.app-container .ay-saved__nav button:disabled { opacity: .35; cursor: default; }
+@media (max-width: 700px) { html body .app-container:not([data-theme='dark']) .ay-saved__item, html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved__item { flex-basis: calc((100% - 20px) / 2); } }
+@media (min-width: 900px) { .app-container:not([data-theme='dark']) .ay3-ecohero { padding-top: 40px !important; padding-bottom: 56px !important; } }
