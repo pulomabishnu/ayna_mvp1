@@ -559,3 +559,4 @@ html body:has(.lv) .app-container, html body:has(.lv) .app-container main, html 
 html body:has(.lv) .app-container footer.site-footer { margin-top: 0 !important; }
 .app-container .lv .lv-wrap { padding-bottom: var(--sec); }
 @media (max-width: 767px) { .app-container .lv .lv-wrap { padding-bottom: 0; } }
+.app-container .lv .whc { --ay-ink-faint: rgba(62,39,35,.16); }
