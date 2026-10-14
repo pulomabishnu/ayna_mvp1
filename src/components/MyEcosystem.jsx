@@ -1,6 +1,7 @@
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import PhotoPile from './v3/PhotoPile.jsx';
 import EcoCabinet from './v3/EcoCabinet.jsx';
+import CorkStrings from './v3/CorkStrings.jsx';
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import ResaPartnershipModal from './ResaPartnershipModal';
@@ -2076,6 +2077,7 @@ export default function MyEcosystem({
 
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-needs ay3-corkband" ref={needsBoardRef} aria-labelledby="eco3-needs-title">
+                        <CorkStrings rootRef={needsBoardRef} arcUp selectors={['.eco3-need:nth-child(1)', '.eco3-need:nth-child(2)', '.eco3-need:nth-child(3)', '.eco3-need:nth-child(4)', '.eco3-need:nth-child(5)', '.eco3-need:nth-child(6)', '.eco3-need:nth-child(7)', '.eco3-need:nth-child(8)']} />
                         <div className="eco3-needs__head">
                             <p className="eco3-needs__kicker">Your prescriptions</p>
                             <h2 id="eco3-needs-title">For your <em>needs.</em></h2>

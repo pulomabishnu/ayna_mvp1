@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react';
 /* Pink "investigation board" string between pinned items on the product
    page. Finds the pinned elements inside `rootRef` (by selector, in order),
    and draws a sagging string from pin to pin. Purely decorative. */
-export default function CorkStrings({ rootRef, selectors, hub = false }) {
+export default function CorkStrings({ rootRef, selectors, hub = false, arcUp = false }) {
   const [paths, setPaths] = useState([]);
   const key = selectors.join('|');
   const star = Boolean(hub);
+  const up = Boolean(arcUp) || star;
   useEffect(() => {
     const root = rootRef.current;
     if (!root || typeof ResizeObserver === 'undefined') return undefined;
@@ -27,7 +28,8 @@ export default function CorkStrings({ rootRef, selectors, hub = false }) {
         for (let i = 1; i < pts.length; i += 1) {
           const [x1, y1] = star ? pts[0] : pts[i - 1]; const [x2, y2] = pts[i];
           const sag = Math.min(90, Math.hypot(x2 - x1, y2 - y1) * 0.18);
-          out.push(`M${x1.toFixed(1)} ${y1.toFixed(1)} Q${((x1 + x2) / 2).toFixed(1)} ${(Math.max(y1, y2) + sag).toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`);
+          const cy = up ? Math.min(y1, y2) - Math.min(48, sag * 0.6) : Math.max(y1, y2) + sag;
+          out.push(`M${x1.toFixed(1)} ${y1.toFixed(1)} Q${((x1 + x2) / 2).toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`);
         }
         setPaths(out);
       });
@@ -41,7 +43,7 @@ export default function CorkStrings({ rootRef, selectors, hub = false }) {
     root.addEventListener('load', draw, true);
     root.addEventListener('transitionend', draw, true);
     return () => { cancelAnimationFrame(frame); ro.disconnect(); window.removeEventListener('resize', draw); window.clearTimeout(t); window.clearInterval(tick); root.removeEventListener('load', draw, true); root.removeEventListener('transitionend', draw, true); };
-  }, [rootRef, key, star]);
+  }, [rootRef, key, star, up]);
   if (!paths.length) return null;
   return (
     <svg className="ay3-strings" aria-hidden="true" focusable="false">

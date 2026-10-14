@@ -695,7 +695,7 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
    ===================================================================== */
 .app-container:not([data-theme='dark']) { --ay-page: #ffedac; }
 .app-container:not([data-theme='dark']):is([data-view='discovery'], [data-view='ecosystem'], [data-view='contact'], [data-view='recommendations'], [data-view='recalls']) { --ay-page: #769ebe; --ay-ink-soft: #3e2723; }
-.app-container:not([data-theme='dark']):is([data-view='product'], [data-view='articles'], [data-view='how-it-works'], [data-view='how-we-make-money'], [data-view='privacy-policy'], [data-view='terms-of-use'], [data-view='tracked'], [data-view='omitted'], [data-view='campus-resources']) { --ay-page: #fff8dc; }
+.app-container:not([data-theme='dark']):is([data-view='product'], [data-view='articles'], [data-view='how-it-works'], [data-view='how-we-make-money'], [data-view='privacy-policy'], [data-view='terms-of-use'], [data-view='tracked'], [data-view='omitted'], [data-view='campus-resources']) { --ay-page: #ffedac; }
 .app-container:not([data-theme='dark']):is([data-view='community'], [data-view='you'], [data-view='waitlist'], [data-view='doctor-prep'], [data-view='comparison'], [data-view='not-found']) { --ay-page: #f7badd; }
 .app-container:not([data-theme='dark'])[data-view] { background: var(--ay-page) !important; }
 .app-container:not([data-theme='dark'])[data-view] > main, .app-container:not([data-theme='dark'])[data-view] :is(main, .cr-page) { background: var(--ay-page) !important; }
@@ -1474,3 +1474,80 @@ html body .app-container:not([data-theme='dark']) .eco-saved .eco-saved__head h2
 .app-container:not([data-theme='dark']) .ay3-simple .ay-glance { grid-area: glance; margin-top: 24px !important; }
 .app-container:not([data-theme='dark']) .ay3-simple .ay-glance__top { display: grid !important; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; }
 @media (max-width: 900px) { .app-container:not([data-theme='dark']) .pdp-head.ay3-simple { grid-template-areas: 'photo' 'detail' 'glance'; } .app-container:not([data-theme='dark']) .ay3-simple .ay-glance__top { grid-template-columns: minmax(0, 1fr); } }
+
+/* =====================================================================
+   Product board, cleaned up: cork + pins + pink string kept; every note
+   is a straight, plain white card with big readable type. Layout:
+   name + price on the left, photo in the middle, buy + community right.
+   ===================================================================== */
+.app-container:not([data-theme='dark']) .pdp-head.ay3-board--clean { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr) !important;
+  grid-template-areas:
+    'brand photo buy'
+    'name  photo buy'
+    'price photo comm'
+    'safety photo comm'
+    'glance glance glance' !important;
+  gap: 26px 44px !important; padding-top: 64px !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean::before { grid-row: 1 / 5 !important; margin: -64px 0 -56px !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-gallery { align-self: center; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-actions { grid-area: buy !important; align-self: start; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-community-actions { grid-area: comm !important; align-self: start; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .ay-glance { margin-top: 88px !important; }
+/* every note: straight white card, same border + shadow, one pin */
+.app-container:not([data-theme='dark']) .ay3-board--clean :is(.pdp-head__tile, .pdp-head__name, .pdp-h2-price, .pdp-actions.pdp-buybox, .pdp-community-actions) {
+  position: relative; transform: none !important; border: 2px solid var(--ay-ink) !important; border-radius: 6px !important; background: #fffdf6 !important; box-shadow: 4px 5px 0 rgba(62, 39, 35, .75) !important; animation: none !important; filter: none !important; clip-path: none !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean :is(.pdp-head__tile, .pdp-head__name, .pdp-h2-price, .pdp-actions.pdp-buybox, .pdp-community-actions)::before {
+  content: '' !important; display: block !important; position: absolute; z-index: 6; top: -11px; left: 50%; width: 22px; height: 22px; margin-left: -11px; border: 2px solid var(--ay-ink); border-radius: 50%; background: radial-gradient(circle at 35% 32%, #fff 0 2.5px, transparent 3.5px), var(--pin, #f7badd); box-shadow: 2px 3px 0 rgba(62, 39, 35, .45); transform: none; -webkit-mask: none; mask: none; inset: auto; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-head__tile { --pin: #769ebe; padding: 18px !important; background: #fff !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-head__tile::after { content: none !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-head__name { padding: 26px 22px 22px !important; margin: 0 !important; font: 400 clamp(34px, 1.2rem + 2vw, 50px)/1.08 var(--ay-font-display) !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-head__eyebrow { grid-area: brand; justify-self: start; padding: 6px 14px !important; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: var(--ay-rose) !important; box-shadow: none !important; transform: none !important; color: var(--ay-ink) !important; font: 700 15px/1 var(--ay-font-ui) !important; letter-spacing: .04em !important; text-transform: uppercase !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-h2-price { --pin: #ffedac; display: flex !important; flex-direction: column; gap: 4px; justify-self: stretch; margin: 0 !important; padding: 22px 22px 18px !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-h2-price::after { content: none !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-h2-price__main { font: 700 26px/1.15 var(--ay-font-ui) !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-h2-price__unit { font: 500 15px/1.3 var(--ay-font-ui) !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-safety-flag { grid-area: safety; justify-self: stretch; padding: 14px 18px !important; border: 2px solid var(--ay-ink) !important; border-radius: 6px !important; background: #fde3ef !important; box-shadow: 4px 5px 0 rgba(62, 39, 35, .75) !important; transform: none !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-safety-flag::after { content: none !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-actions.pdp-buybox { --pin: #769ebe; padding: 26px 20px 20px !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-btn--buy { min-height: 54px !important; font-size: 17px !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-community-actions { --pin: #f7badd; padding: 26px 20px 20px !important; background: #fde3ef !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .pdp-community-actions h3 { font: 400 24px/1.1 var(--ay-font-display) !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean :is(p, small, label) { font-size: max(14px, 1em); }
+/* string: one calm line, drawn under the notes */
+.app-container:not([data-theme='dark']) .ay3-board--clean .ay3-strings { z-index: 1; }
+.app-container:not([data-theme='dark']) .ay3-board--clean > :not(.ay3-strings) { z-index: 2; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .ay3-strings path { stroke-width: 2.6; }
+@media (max-width: 960px) {
+  .app-container:not([data-theme='dark']) .pdp-head.ay3-board--clean { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: 'brand' 'name' 'photo' 'price' 'safety' 'buy' 'comm' 'glance' !important; gap: 26px !important; padding-top: 40px !important; }
+  .app-container:not([data-theme='dark']) .ay3-board--clean::before { grid-row: 1 / 8 !important; margin: -40px 0 -36px !important; }
+  .app-container:not([data-theme='dark']) .ay3-board--clean .ay-glance { margin-top: 56px !important; }
+}
+
+/* no cream page backgrounds: cream (#fff8dc) is only for cards */
+.app-container:not([data-theme='dark']) .cr-page { background: var(--ay-page, #ffedac) !important; }
+.app-container:not([data-theme='dark']) .ay3-band--paper { --ay3-bg: #f7badd; }
+.app-container:not([data-theme='dark']) .ay3-infohero.ay3-band--paper, .app-container:not([data-theme='dark']) .ay3-pagehead.ay3-band--paper { border-bottom: 0 !important; }
+/* clean board pins: always centered on the top edge */
+.app-container:not([data-theme='dark']) .ay3-board--clean :is(.pdp-head__tile, .pdp-head__name, .pdp-h2-price, .pdp-actions.pdp-buybox, .pdp-community-actions)::before { left: 50% !important; right: auto !important; top: -11px !important; bottom: auto !important; margin-left: -11px !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .ay3-strings { z-index: 5 !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean :is(.pdp-head__tile, .pdp-head__name, .pdp-h2-price, .pdp-actions.pdp-buybox, .pdp-community-actions)::before { z-index: 7 !important; }
+.app-container:not([data-theme='dark']) .ay3-board--clean .ay3-strings path { opacity: .85; }
+/* clean board: strings only between the three top notes, arcing over the cork */
+@media (min-width: 961px) {
+  .app-container:not([data-theme='dark']) .pdp-head.ay3-board--clean { grid-template-areas: 'name photo buy' 'price photo buy' 'safety photo comm' 'brand photo comm' 'glance glance glance' !important; align-items: start; padding-top: 88px !important; }
+  .app-container:not([data-theme='dark']) .ay3-board--clean::before { margin-top: -88px !important; }
+  .app-container:not([data-theme='dark']) .ay3-board--clean .pdp-gallery { align-self: start; }
+  .app-container:not([data-theme='dark']) .ay3-board--clean .pdp-head__eyebrow { align-self: start; }
+}
+.app-container:not([data-theme='dark']) .ay3-board--clean :is(.pdp-h2-price, .pdp-community-actions, .pdp-safety-flag) { --pin: transparent; }
+.app-container:not([data-theme='dark']) .ay3-board--clean :is(.pdp-h2-price, .pdp-community-actions)::before { display: none !important; }
+/* ecosystem needs board: string runs pin to pin over the top of the slips */
+.app-container:not([data-theme='dark']) .ay3-corkband .ay3-strings { z-index: 5 !important; }
+.app-container:not([data-theme='dark']) .ay3-corkband .eco3-need::before { z-index: 6 !important; }
+.app-container:not([data-theme='dark']) .ay3-corkband .eco3-needs__list { padding-top: 26px; row-gap: 64px !important; }
+.app-container .ay-gl-group + .ay-gl-group { margin-top: 26px; padding-top: 22px; border-top: 1.5px dashed rgba(62, 39, 35, .35); }
+.app-container .ay-glance__top + .ay-gl-digest + .ay-gl-group, .app-container .ay-gl-digest + .ay-gl-group { margin-top: 28px; }
+.app-container .ay-gl-grouph { margin: 0 0 10px !important; font: 400 26px/1.15 var(--ay-font-display, inherit) !important; }
+.app-container .ay-gl-digest__kind { font: 600 12px/1.3 var(--ay-font-ui, inherit) !important; letter-spacing: 0 !important; text-transform: none !important; opacity: .85; }
+html body .app-container:not([data-theme='dark']) .ay-glance.is-tabbed .ay-glance__nav li button.is-on { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+.app-container:not([data-theme='dark']) .ay-glance.is-tabbed .ay-glance__nav button { font-size: 16px !important; padding: 12px 20px !important; }

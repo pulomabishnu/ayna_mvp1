@@ -277,13 +277,21 @@ function Section({ section, plan, sources, extra, onXref, bare = false }) {
   );
 }
 
+/* Tabs are grouped so there are only a few, in plain words:
+   summary (plus why it matched), research and safety, reviews, sources. */
+const TAB_GROUPS = [
+  { id: 'research', label: 'Research & safety', ids: ['evidence', 'safety', 'inside', 'howto', 'unknown'], tone: 'peri' },
+  { id: 'reviews', label: 'Reviews', ids: ['people', 'brand'], tone: 'pink' },
+];
+const groupOf = (id) => (id === 'match' ? 'glance' : (TAB_GROUPS.find((g) => g.ids.includes(id)) || {}).id || id);
+
 export default function ProductSections({ glance, extras = {}, extraNav = [], onXref = null }) {
   const plan = glance?.glossary || {};
   const [tab, setTab] = useState('glance');
   useEffect(() => {
     const on = (e) => {
       const id = e.detail;
-      if (id === 'sources' || (glance?.sections || []).some((x) => x.id === id)) setTab(id);
+      if (id === 'sources' || (glance?.sections || []).some((x) => x.id === id)) setTab(groupOf(id));
     };
     window.addEventListener('ay-open-section', on);
     return () => window.removeEventListener('ay-open-section', on);
@@ -294,13 +302,15 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
 
   const tabs = [
     { id: 'glance', label: 'ayna summary', tone: 'butter' },
-    ...glance.sections.map((sec) => ({ id: sec.id, label: (nav.find((n) => n.id === sec.id) || {}).label || sec.title, tone: TONE[sec.kind] || 'mint' })),
+    ...TAB_GROUPS.filter((g) => glance.sections.some((sec) => g.ids.includes(sec.id))).map((g) => ({ id: g.id, label: g.label, tone: g.tone })),
     ...(sources.length ? [{ id: 'sources', label: `Sources (${sources.length})`, tone: 'cream' }] : []),
   ];
-  const outside = nav.filter((n) => !tabs.some((t) => t.id === n.id) && n.id !== 'glance');
+  void nav; void extraNav;
   const cur = tabs.find((t) => t.id === tab) || tabs[0];
-  const curSection = glance.sections.find((x) => x.id === cur.id);
-  const title = cur.id === 'glance' ? 'ayna summary' : cur.id === 'sources' ? 'Where this comes from' : (curSection?.title || cur.label);
+  const curGroup = TAB_GROUPS.find((g) => g.id === cur.id);
+  const groupSections = curGroup ? glance.sections.filter((sec) => curGroup.ids.includes(sec.id)) : [];
+  const matchSection = glance.sections.find((sec) => sec.id === 'match');
+  const title = cur.id === 'glance' ? 'ayna summary' : cur.id === 'sources' ? 'Where this comes from' : cur.label;
 
   return (
     <section className="ay-glance is-tabbed" id="ay-sec-glance" tabIndex={-1} aria-label="Product information">
@@ -309,11 +319,6 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
           {tabs.map((t) => (
             <li key={t.id}>
               <button type="button" role="tab" id={`ay-tab-${t.id}`} aria-selected={t.id === cur.id} aria-controls="ay-tabpanel" className={t.id === cur.id ? 'is-on' : undefined} onClick={() => setTab(t.id)}>{t.label}</button>
-            </li>
-          ))}
-          {outside.map((n) => (
-            <li key={n.id}>
-              <button type="button" onClick={() => jumpTo(`ay-sec-${n.id}`)}>{n.label}</button>
             </li>
           ))}
         </ul>
@@ -368,18 +373,19 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
         </dl>
       </div>
         )}
-        {cur.id === 'glance' && glance.sections.length > 0 && (
+        {cur.id === 'glance' && tabs.length > 1 && (
           <div className="ay-gl-digest">
-            <Label>Everything on file, in one line each</Label>
+            <Label>More on this product</Label>
             <ul>
-              {glance.sections.map((sec) => {
-                const line = sectionDigest(sec);
-                const t = tabs.find((x) => x.id === sec.id);
+              {tabs.filter((t) => t.id !== 'glance').map((t) => {
+                const g = TAB_GROUPS.find((x) => x.id === t.id);
+                const secs = g ? glance.sections.filter((sec) => g.ids.includes(sec.id)) : [];
+                const line = secs.map(sectionDigest).find(Boolean) || (t.id === 'sources' ? `${sources.length} sources behind this page.` : '');
                 return (
-                  <li key={sec.id} data-tone={t?.tone}>
-                    <button type="button" onClick={() => { setTab(sec.id); document.getElementById('ay-sec-glance')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
-                      <span className="ay-gl-digest__kind">{KIND_LABEL[sec.kind] || t?.label || ''}</span>
-                      <strong>{t?.label || sec.title}</strong>
+                  <li key={t.id} data-tone={t.tone}>
+                    <button type="button" onClick={() => { setTab(t.id); document.getElementById('ay-sec-glance')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
+                      <strong>{t.label}</strong>
+                      {secs.length > 0 && <span className="ay-gl-digest__kind">{secs.map((sec) => sec.title).join(' · ')}</span>}
                       {line && <span className="ay-gl-digest__line">{line}</span>}
                       <span className="ay-gl-digest__more">Read more <span aria-hidden="true">→</span></span>
                     </button>
@@ -389,10 +395,18 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
             </ul>
           </div>
         )}
-
-        {cur.id !== 'glance' && cur.id !== 'sources' && curSection && (
-          <Section bare section={curSection} plan={plan} sources={sources} extra={extras[curSection.id]} onXref={onXref} />
+        {cur.id === 'glance' && matchSection && (
+          <div className="ay-gl-group" id="ay-sec-match-inline">
+            <h3 className="ay-gl-grouph">{matchSection.title}</h3>
+            <Section bare section={matchSection} plan={plan} sources={sources} extra={extras.match} onXref={onXref} />
+          </div>
         )}
+        {groupSections.map((sec) => (
+          <div key={sec.id} className="ay-gl-group">
+            <h3 className="ay-gl-grouph">{sec.title}</h3>
+            <Section bare section={sec} plan={plan} sources={sources} extra={extras[sec.id]} onXref={onXref} />
+          </div>
+        ))}
         {cur.id === 'sources' && (
           <ol className="ay-gl-srclist">
             {sources.map((src) => (
