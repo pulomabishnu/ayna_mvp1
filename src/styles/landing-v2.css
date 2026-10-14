@@ -334,3 +334,24 @@
 .app-container .lv .lv-ticker { margin: 0; }
 .app-container .lv .lv-hero { margin-top: 0; }
 .app-container .lv .lv-wrap { padding-top: 0; }
+/* today slider */
+.app-container .lv .lv-today { display: block; }
+.lv-today__tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
+.lv-today__tabs > button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 8px; border: var(--bw) solid var(--ink); border-radius: 999px; background: var(--white); color: var(--ink); font: 600 var(--fs-small)/1 var(--ui); cursor: pointer; transition: transform var(--m-fast) var(--ease), background var(--m-fast) var(--ease); }
+.lv-today__tabs > button:hover { transform: translateY(-2px); }
+.lv-today__tabs > button b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--pink); font: 700 14px/1 var(--display); }
+.lv-today__tabs > button.is-on { background: var(--butter); box-shadow: 3px 3px 0 var(--ink); }
+.lv-today__arrows { margin-left: auto; display: flex; gap: 8px; }
+.lv-today__arrows button { width: 44px; height: 44px; border: var(--bw) solid var(--ink); border-radius: 50%; background: var(--white); color: var(--ink); font-size: 18px; cursor: pointer; }
+.lv-today__card { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; padding: var(--pad); border: var(--bw) solid var(--ink); border-radius: var(--r-lg); animation: lvIn var(--m-slow) var(--ease) both; }
+.lv-today__news, .lv-today__app { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 32px; align-items: center; }
+.lv-today__app { background: var(--butter); }
+.lv-today__news > div, .lv-today__app > div:first-child { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+.lv-today__app h2 em { display: block; }
+.lv-phone { justify-self: center; display: grid; gap: 10px; width: min(220px, 70%); padding: 28px 16px 20px; border: var(--bw) solid var(--ink); border-radius: 32px; background: var(--white); box-shadow: 4px 4px 0 var(--ink); }
+.lv-phone span { font: 700 22px/1 var(--display); text-align: center; }
+.lv-phone i { height: 34px; border: var(--bw) solid var(--ink); border-radius: var(--r-md); background: var(--pink); }
+.lv-phone i:nth-of-type(2n) { background: var(--butter); }
+@media (max-width: 767px) { .lv-today__news, .lv-today__app { grid-template-columns: minmax(0, 1fr); } }
+.app-container .lv .lv-strip__row { gap: 0; padding-right: 0; }
+.app-container .lv .lv-strip__row img { display: block; }

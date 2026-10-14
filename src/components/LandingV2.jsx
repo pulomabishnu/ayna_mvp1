@@ -256,26 +256,59 @@ function Why({ paused }) {
 /* ---------- today: fact of the day (shuffle) + news ---------- */
 function Today({ onViewArticles, onViewCommunity }) {
   const [n, setN] = useState(0);
+  const [tab, setTab] = useState(0);
   const fact = useMemo(() => getFactAt(n), [n]);
   const ref = useReveal();
   if (!fact) return null;
+  const TABS = [{ k: 'fact', label: 'Fact of the day' }, { k: 'news', label: 'ayna news' }, { k: 'app', label: 'The app' }];
+  const go = (d) => setTab((t) => (t + d + TABS.length) % TABS.length);
   return (
     <section ref={ref} className="lv-sec lv-today" aria-label="Today on ayna">
-      <article className="lv-today__fact">
-        <p className="lv-kicker">Fact of the day</p>
-        <h2 key={fact.term}><span>{fact.term}</span></h2>
-        <p key={`t${fact.term}`} className="lv-today__text">{fact.text}</p>
-        <div className="lv-today__actions">
-          <button type="button" className="lv-btn lv-btn--line" onClick={() => setN((v) => v + 1)}>Another fact</button>
-          <button type="button" className="lv-link" onClick={() => onViewArticles?.()}>Read more</button>
-        </div>
-      </article>
-      <article className="lv-today__news">
-        <p className="lv-kicker">ayna news</p>
-        <h2>Now introducing <em>ayna Community.</em></h2>
-        <ul aria-hidden="true"><li><i /><b /><b /></li><li><i /><b /><b /></li><li><i /><b /><b /></li></ul>
-        <button type="button" className="lv-btn lv-btn--ink" onClick={() => onViewCommunity?.()}>See Community<Arrow /></button>
-      </article>
+      <div className="lv-today__tabs" role="tablist" aria-label="Today on ayna">
+        {TABS.map((t, i) => (
+          <button key={t.k} type="button" role="tab" aria-selected={tab === i} className={tab === i ? 'is-on' : ''} onClick={() => setTab(i)}>
+            <b>{i + 1}</b>{t.label}
+          </button>
+        ))}
+        <span className="lv-today__arrows">
+          <button type="button" aria-label="Previous" onClick={() => go(-1)}>&larr;</button>
+          <button type="button" aria-label="Next" onClick={() => go(1)}>&rarr;</button>
+        </span>
+      </div>
+      {tab === 0 && (
+        <article key="fact" className="lv-today__card lv-today__fact" role="tabpanel">
+          <p className="lv-kicker">Fact of the day</p>
+          <h2 key={fact.term}><span>{fact.term}</span></h2>
+          <p key={`t${fact.term}`} className="lv-today__text">{fact.text}</p>
+          <div className="lv-today__actions">
+            <button type="button" className="lv-btn lv-btn--line" onClick={() => setN((v) => v + 1)}>Another fact</button>
+            <button type="button" className="lv-link" onClick={() => onViewArticles?.()}>Read more</button>
+          </div>
+        </article>
+      )}
+      {tab === 1 && (
+        <article key="news" className="lv-today__card lv-today__news" role="tabpanel">
+          <div>
+            <p className="lv-kicker">ayna news</p>
+            <h2>Now introducing <em>ayna Community.</em></h2>
+            <button type="button" className="lv-btn lv-btn--ink" onClick={() => onViewCommunity?.()}>See Community<Arrow /></button>
+          </div>
+          <ul aria-hidden="true"><li><i /><b /><b /></li><li><i /><b /><b /></li><li><i /><b /><b /></li></ul>
+        </article>
+      )}
+      {tab === 2 && (
+        <article key="app" className="lv-today__card lv-today__app" role="tabpanel">
+          <div>
+            <p className="lv-kicker">The app</p>
+            <h2>ayna, in your <em>pocket.</em></h2>
+            <a className="lv-btn lv-btn--ink" href="/mobile-preview">Try the app<Arrow /></a>
+          </div>
+          <div className="lv-phone" aria-hidden="true">
+            <span>ayna</span>
+            <i /><i /><i /><i />
+          </div>
+        </article>
+      )}
     </section>
   );
 }
