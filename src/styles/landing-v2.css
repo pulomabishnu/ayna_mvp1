@@ -355,3 +355,4 @@
 @media (max-width: 767px) { .lv-today__news, .lv-today__app { grid-template-columns: minmax(0, 1fr); } }
 .app-container .lv .lv-strip__row { gap: 0; padding-right: 0; }
 .app-container .lv .lv-strip__row img { display: block; }
+.app-container .lv .lv-purpose { margin-top: 0; }
