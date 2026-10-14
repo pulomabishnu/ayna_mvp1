@@ -5,7 +5,7 @@ import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
 import { getRecommendedArticles } from './articleRecommendations';
 import { ALL_PRODUCTS, MACRO_GROUPS } from '../data/products';
-import { getFactAt } from '../data/welcomeSlides';
+import WebHeroCarousel from './WebHeroCarousel.jsx';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import '../styles/landing-v2.css';
 
@@ -252,84 +252,6 @@ function Why({ paused }) {
   );
 }
 
-/* ---------- today: fact of the day (shuffle) + news ---------- */
-const STAGE_MS = 6500;
-function Today({ onViewArticles, onViewCommunity, paused }) {
-  const [n, setN] = useState(0);
-  const [tab, setTab] = useState(0);
-  const [touched, setTouched] = useState(false);
-  const fact = useMemo(() => getFactAt(n), [n]);
-  const ref = useReveal();
-  const TABS = [
-    { k: 'news', label: 'ayna news', sub: 'Community is here' },
-    { k: 'fact', label: 'Fact of the day', sub: fact?.term || '' },
-    { k: 'app', label: 'The app', sub: 'ayna, in your pocket' },
-  ];
-  const auto = !touched && !paused && !reducedMotion();
-  useEffect(() => {
-    if (!auto) return undefined;
-    const t = window.setTimeout(() => setTab((v) => (v + 1) % 3), STAGE_MS);
-    return () => window.clearTimeout(t);
-  }, [auto, tab]);
-  const pick = (i) => { setTouched(true); setTab(((i % 3) + 3) % 3); };
-  if (!fact) return null;
-  return (
-    <section ref={ref} className="lv-sec lv-stage" aria-roledescription="carousel" aria-label="Today on ayna">
-      <div className="lv-stage__in">
-        <div className="lv-stage__side">
-          <p className="lv-kicker">Today on ayna</p>
-          <ol className="lv-stage__chapters">
-            {TABS.map((t, i) => (
-              <li key={t.k}>
-                <button type="button" aria-current={tab === i} className={tab === i ? 'is-on' : ''} onClick={() => pick(i)}>
-                  <b>{i + 1}</b>
-                  <span><strong>{t.label}</strong><small>{t.sub}</small></span>
-                  <i aria-hidden="true"><em key={`${tab}-${i}-${auto}`} className={tab === i && auto ? 'is-run' : tab === i ? 'is-full' : ''} style={{ animationDuration: `${STAGE_MS}ms` }} /></i>
-                </button>
-              </li>
-            ))}
-          </ol>
-          <div className="lv-stage__arrows">
-            <button type="button" aria-label="Previous" onClick={() => pick(tab - 1)}><Arrow /></button>
-            <button type="button" aria-label="Next" onClick={() => pick(tab + 1)}><Arrow /></button>
-          </div>
-        </div>
-        <div className="lv-stage__card" aria-live={touched ? 'polite' : 'off'}>
-          {tab === 0 && (
-            <article key="news" className="lv-slide lv-slide--news">
-              <div>
-                <p className="lv-kicker">ayna news</p>
-                <h2>Now introducing <em>ayna Community.</em></h2>
-                <button type="button" className="lv-btn lv-btn--ink" onClick={() => onViewCommunity?.()}>See Community<Arrow /></button>
-              </div>
-            </article>
-          )}
-          {tab === 1 && (
-            <article key="fact" className="lv-slide lv-slide--fact">
-              <p className="lv-kicker">Fact of the day</p>
-              <h2 key={fact.term}><span>{fact.term}</span></h2>
-              <p key={`t${fact.term}`} className="lv-today__text">{fact.text}</p>
-              <div className="lv-today__actions">
-                <button type="button" className="lv-btn lv-btn--line" onClick={() => { setTouched(true); setN((v) => v + 1); }}>Another fact</button>
-                <button type="button" className="lv-link" onClick={() => onViewArticles?.()}>Read more</button>
-              </div>
-            </article>
-          )}
-          {tab === 2 && (
-            <article key="app" className="lv-slide lv-slide--app">
-              <div>
-                <p className="lv-kicker">The app</p>
-                <h2>ayna, in your <em>pocket.</em></h2>
-                <a className="lv-btn lv-btn--ink" href="/mobile-preview">Try the app<Arrow /></a>
-              </div>
-            </article>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ---------- reads ---------- */
 function Reads({ onViewArticle, onViewArticles }) {
   const reads = useMemo(() => getRecommendedArticles(null).slice(0, 3), []);
@@ -413,11 +335,15 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
         <Strip />
         <Why paused={paused} />
-        <Today onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} paused={paused} />
+        <div className="lv-sec lv-carousel"><WebHeroCarousel onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} onStartQuiz={onStartQuiz} /></div>
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
       </div>
-      <button type="button" className="lv-pause" aria-pressed={paused} onClick={() => setPaused((v) => !v)}>{paused ? 'Play motion' : 'Pause motion'}</button>
+      <button type="button" className="lv-pause" aria-pressed={paused} aria-label={paused ? 'Play motion' : 'Pause motion'} title={paused ? 'Play motion' : 'Pause motion'} onClick={() => setPaused((v) => !v)}>
+        {paused
+          ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" /></svg>
+          : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /></svg>}
+      </button>
     </div>
   );
 }
