@@ -810,17 +810,36 @@ export default function ProductModal({
             {glance?.alert && <SafetyFlag />}
 
             {actionButtons}
+
+            <ProductSections
+              key={product.id}
+              glance={glance}
+              extras={sectionExtras}
+              extraNav={extraNav}
+              onXref={openProductByName}
+            />
+
+            {(onCommunityAction || onOmit) && (
+              <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
+                {onCommunityAction && <>
+                  <h3 id="pdp-community-h">Community</h3>
+                  <div className="pdp-community-actions__grid">
+                    {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
+                      <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
+                    ))}
+                  </div>
+                </>}
+                {onOmit && (
+                  <button type="button" className="pdp-omit-link" onClick={() => onOmit(product)}>
+                    {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
+                  </button>
+                )}
+              </section>
+            )}
           </div>
         </div>
 
         <div className="pdp-below pdp-below--glance">
-          <ProductSections
-            key={product.id}
-            glance={glance}
-            extras={sectionExtras}
-            extraNav={extraNav}
-            onXref={openProductByName}
-          />
 
           <section className="pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="pdp-ask-h">
             <div className="ay-pdp-sechead">
@@ -844,23 +863,6 @@ export default function ProductModal({
             </section>
           )}
 
-          {(onCommunityAction || onOmit) && (
-            <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
-              {onCommunityAction && <>
-                <h3 id="pdp-community-h">Community</h3>
-                <div className="pdp-community-actions__grid">
-                  {[['post', 'Mention in a post'], ['review', 'Write a review'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
-                    <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
-                  ))}
-                </div>
-              </>}
-              {onOmit && (
-                <button type="button" className="pdp-omit-link" onClick={() => onOmit(product)}>
-                  {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
-                </button>
-              )}
-            </section>
-          )}
         </div>
       </div>
 
