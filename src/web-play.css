@@ -1228,20 +1228,30 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 
 /* Product page photo sits in a pink frame, like the original page. */
 
-/* Product page photo: pink frame with the photo inset, as in the original page (founder). */
-.app-container .pdp-page .pdp-head .pdp-head__tile { background: var(--ay-pink) !important; padding: 8% !important; box-sizing: border-box; box-shadow: none; }
-.app-container .pdp-page .pdp-head .pdp-head__tile { padding: 0 !important; }
-.app-container .pdp-page .pdp-head .pdp-head__tile img { position: absolute !important; inset: 9% !important; width: 82% !important; height: 82% !important; padding: 0 !important; border-radius: 6px; background: #fff; }
 
 /* Original layout: tabs, panel and the pink Community card live in the right column beside the photo. */
 .app-container .pdp-page .pdp-head { align-items: start !important; }
-.app-container .pdp-page .pdp-head > div:first-child { position: sticky !important; top: 96px; }
+.app-container .pdp-page .pdp-head > .pdp-head__media { position: static !important; display: grid; gap: 24px; align-content: start; min-width: 0; }
 .app-container .pdp-page .pdp-head__detail { display: grid; gap: 16px; align-content: start; min-width: 0; }
-.app-container .pdp-page .pdp-head__detail .ay-glance.is-tabbed { margin-top: 8px; padding-top: 16px !important; border-top: 1.5px solid var(--ay-line) !important; }
-.app-container .pdp-page .pdp-head__detail .ay-glance__panel { padding: 16px; }
-.app-container .pdp-page .pdp-head__detail .ay-glance__panelhead { margin: -16px -16px 0; padding: 12px 16px; }
+.app-container .pdp-page .pdp-head__media .ay-glance.is-tabbed { margin: 0; padding: 0 !important; border: 0 !important; }
 .app-container .pdp-page .pdp-head__detail .pdp-community-actions { margin-top: 8px !important; max-width: none; padding: 16px !important; border: 2px solid var(--ay-ink) !important; border-radius: 22px !important; background: var(--ay-pink) !important; box-shadow: 3px 3px 0 var(--ay-ink) !important; }
 .app-container .pdp-page .pdp-head__detail .pdp-community-actions__grid { grid-template-columns: 1fr 1fr !important; }
 .app-container .pdp-page .pdp-head__detail .pdp-community-actions__grid button { border-radius: 14px !important; }
 .app-container .pdp-page .pdp-head__eyebrow { justify-self: start; padding: 4px 10px; border: 1.5px solid var(--ay-ink); border-radius: 999px; background: var(--ay-butter); color: var(--ay-ink) !important; font: 800 11px/1.2 var(--ay-font-ui) !important; letter-spacing: .04em; text-transform: uppercase; }
 @media (max-width: 900px) { .app-container .pdp-page .pdp-head > div:first-child { position: static !important; } }
+
+/* Product page: white photo tile, tabs + yellow panel sit UNDER the photo, plain buy area. */
+.app-container .pdp-page .pdp-head__tile { background: #fff !important; box-shadow: inset 0 0 0 1.5px var(--ay-line); }
+.app-container .pdp-page .pdp-head__tile img { padding: 8% !important; }
+.app-container .pdp-page .pdp-buybox { display: grid; gap: 14px; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+.app-container .pdp-page .pdp-buybox .pdp-actions__primary { display: flex; flex-wrap: wrap; gap: 12px; }
+.app-container .pdp-page .pdp-buybox .pdp-actions__primary > * { min-height: 48px; padding: 0 28px; border-radius: 999px; font: 700 16px/1 var(--ay-font-ui); }
+.app-container .pdp-page .pdp-actions__wishlist { border: 2px solid var(--ay-ink); background: var(--ay-paper); color: var(--ay-ink); cursor: pointer; }
+.app-container .pdp-page .pdp-actions__wishlist.is-on { background: var(--ay-pink); }
+.app-container .pdp-page .pdp-ecolink { justify-self: start; padding: 0; border: 0; background: none; color: var(--ay-ink); font: 700 15px/1.2 var(--ay-font-ui); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: pointer; }
+.app-container .pdp-page .pdp-chiprow { display: flex; margin: 0; }
+.app-container .pdp-page .pdp-chip { display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border: 1.5px solid var(--ay-ink); border-radius: 999px; background: var(--ay-paper); color: var(--ay-ink); font: 700 12px/1 var(--ay-font-ui); }
+.app-container .pdp-page .pdp-chip.is-ok { background: var(--ay-mint); }
+.app-container .pdp-page .pdp-chip.is-partner { background: var(--ay-mint); cursor: pointer; }
+.app-container .pdp-page .pdp-buybox__note { margin: 0; color: var(--ay-ink-soft); font: 500 13px/1.5 var(--ay-font-ui); }
+.app-container .pdp-page .pdp-head__detail .pdp-actions.pdp-buybox { padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }

@@ -402,6 +402,7 @@ export default function ProductModal({
   const choice = getVariantSelection(product || {}, selectedVariantId);
   const displayName = String(choice.displayName || product?.name || '').replace(/\s*\u2014\s*/g, ', ');
   const [showWhy, setShowWhy] = useState(false);
+  const [showDisclosure, setShowDisclosure] = useState(false);
   const [photo, setPhoto] = useState(0);
   const [toast, setToast] = useState('');
   const toastTimer = useRef(0);
@@ -534,17 +535,12 @@ export default function ProductModal({
   const perUnit = choice.hasVariants ? '' : perUnitLabel(product);
   const priceText = product.price || product.stage || '';
   const brand = glance?.brand && glance.brand.toLowerCase() !== String(product.name).toLowerCase() ? glance.brand : '';
-  const openPlaylist = onCommunityAction ? () => onCommunityAction('playlist') : null;
   const openProductByName = (name) => {
     const target = ALL_PRODUCTS.find((p) => String(p?.name || '').toLowerCase() === String(name || '').toLowerCase());
     if (target && onOpenProduct) onOpenProduct(target);
   };
 
-  const partnerBadge = isPartner ? (
-    <span className={`pdp-partner${isPrelaunch ? ' pdp-partner--prelaunch' : ''}`} title="ayna has a partnership with this brand. It does not affect your recommendation.">
-      {isPrelaunch ? 'ayna partner · pre-launch waitlist' : 'ayna partner'}
-    </span>
-  ) : null;
+  const noRecalls = (() => { const r = String(product?.safety?.recalls || ''); return Boolean(r) && !r.includes('\u26a0'); })();
 
   const buyButton = (extraClass = '') => (buyUrl ? (
     <a
@@ -594,23 +590,30 @@ export default function ProductModal({
           </small>
         </label>
       )}
+      {noRecalls && <p className="pdp-chiprow"><span className="pdp-chip is-ok">{'\u2713'} No recalls on file</span></p>}
       <div className="pdp-actions__primary">
         {buyButton()}
-        {onAddToEcosystem && (
-          <button
-            type="button"
-            className={`pdp-btn pdp-actions__ecosystem${isInEcosystem ? ' is-on' : ''}`}
-            aria-pressed={isInEcosystem}
-            title={isInEcosystem ? 'Removes it from your ecosystem' : 'Adds it to your ecosystem'}
-            onClick={() => onAddToEcosystem(product)}
-          >
-            {isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
+        {onToggleSaved && (
+          <button type="button" className={`pdp-btn pdp-actions__wishlist${isSaved ? ' is-on' : ''}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}>
+            {isSaved ? 'Saved' : 'Wishlist'}
           </button>
         )}
-        {onToggleSaved && (
-          <SaveMenu isSaved={isSaved} onToggleSaved={onToggleSaved} onAddToPlaylist={openPlaylist} product={product} />
-        )}
       </div>
+      {onAddToEcosystem && (
+        <button
+          type="button"
+          className={`pdp-ecolink${isInEcosystem ? ' is-on' : ''}`}
+          aria-pressed={isInEcosystem}
+          onClick={() => onAddToEcosystem(product)}
+        >
+          {isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
+        </button>
+      )}
+      {isPartner && (
+        <p className="pdp-chiprow">
+          <button type="button" className="pdp-chip is-partner" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>ayna Partner</button>
+        </p>
+      )}
       {retailers.length > 0 && (
         <div className="ay-retailers">
           <span id="pdp-also-at">Also at</span>
@@ -632,7 +635,7 @@ export default function ProductModal({
         </div>
       )}
       {!buyUrl && <p className="pdp-buybox__note">We don’t have a direct link for this one yet. {(product.whereToBuy || []).length ? `Sold at ${product.whereToBuy.join(', ')}.` : ''}</p>}
-      {isPartner && <p className="pdp-buybox__note pdp-partner-note">{getPartnerDisclosureText(product)}</p>}
+      {isPartner && showDisclosure && <p className="pdp-buybox__note pdp-partner-note">{getPartnerDisclosureText(product)}</p>}
       {buyUrl && isAmazonBuyLink && !isPartner && (
         <p className="pdp-buybox__note pdp-amazon-disclosure">ayna receives a commission on purchases. We have no direct partnership with this brand.</p>
       )}
@@ -772,12 +775,19 @@ export default function ProductModal({
         </div>
 
         <div className="pdp-head">
-          <div>
+          <div className="pdp-head__media">
             {galleryTile}
+            <ProductSections
+            key={product.id}
+            glance={glance}
+            extras={sectionExtras}
+            extraNav={extraNav}
+            onXref={openProductByName}
+            />
           </div>
 
           <div className="pdp-head__detail pdp-h2">
-            {(brand || partnerBadge) && <div className="pdp-head__eyebrow">{brand}{brand && partnerBadge && ' · '}{partnerBadge}</div>}
+            {brand && <div className="pdp-head__eyebrow">{brand}</div>}
             <h1 className="pdp-head__name">{displayName}</h1>
 
             {(price.known || perUnit) && (
@@ -795,8 +805,7 @@ export default function ProductModal({
             {matchPercent > 0 && (
               <div className="pdp-h2-match">
                 <MatchPill percent={matchPercent} onClick={() => setShowWhy(true)} label={`${matchPercent}% match${headMatchLine ? `. ${headMatchLine}` : ''}. See why`} />
-                {headMatchLine && <span className="pdp-h2-match__line">{headMatchLine}</span>}
-              </div>
+                              </div>
             )}
             {!(matchPercent > 0) && matchExclusions.length > 0 && (
               <button type="button" className="pdp-h2-fitnote" onClick={() => setShowWhy(true)}>
@@ -811,13 +820,6 @@ export default function ProductModal({
 
             {actionButtons}
 
-            <ProductSections
-              key={product.id}
-              glance={glance}
-              extras={sectionExtras}
-              extraNav={extraNav}
-              onXref={openProductByName}
-            />
 
             {(onCommunityAction || onOmit) && (
               <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
