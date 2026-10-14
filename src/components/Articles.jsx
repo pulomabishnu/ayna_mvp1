@@ -691,7 +691,8 @@ function ArticleCover({ art, large = false }) {
 
 function renderArticleCard(art, setSelectedId, progress = 0) {
   return (
-    <button type="button" className="ay-web-lib-card ay-lib-card" onClick={() => setSelectedId(art.id)}>
+    <button type="button" className="ay-web-lib-card ay-lib-card ay3-clip" onClick={() => setSelectedId(art.id)}>
+      <span className="ay3-clip__mast" aria-hidden="true"><span>ayna library</span><span>{minutesFor(art)} min</span></span>
       <ArticleCover art={art} />
       <h3>{art.title}</h3>
       <p>{art.teaser}</p>
@@ -772,6 +773,15 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const [topic, setTopic] = useState('all');
   const [progress, setProgress] = useState(loadReadProgress);
   const selected = ARTICLES.find((a) => a.id === selectedId);
+  // Opening a read un-crumples the page; closing crumples it back before the
+  // shelf returns. Reduced motion skips the delay.
+  const [closing, setClosing] = useState(false);
+  const closeRead = () => {
+    const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { setSelectedId(null); return; }
+    setClosing(true);
+    window.setTimeout(() => { setClosing(false); setSelectedId(null); }, 520);
+  };
 
   // Same personalised shelves as the app's Library: reads matched to the
   // quiz answers first, then each topic with no repeats.
@@ -865,8 +875,8 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
   const open = (id) => setSelectedId(id);
   const card = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a))}</li>;
-  const shelf = (id, label, items) => items.length > 0 && <div key={id} className="ay-web-lib-cat">
-    <h2>{label}</h2>
+  const shelf = (id, label, items) => items.length > 0 && <div key={id} className="ay-web-lib-cat ay3-news">
+    <h2><span>{label}</span></h2>
     <ul className="ay-web-lib-grid ay-lib-shelf">{items.map(card)}</ul>
   </div>;
 
@@ -878,13 +888,13 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       <section className="container animate-fade-in-up ay-web-library ay-lib-reading">
         <div className="ay-lib-status" ref={statusRef} role="status" aria-live="polite">
           <div className="ay-lib-status__in">
-            <button type="button" onClick={() => setSelectedId(null)}><span aria-hidden="true">←</span> Library</button>
+            <button type="button" onClick={closeRead}><span aria-hidden="true">←</span> Library</button>
             <ProgressBar value={done ? 1 : scrolled} className="ay-lib-bar--wide" />
             <small>{label}</small>
           </div>
         </div>
-        <article className="ay-web-lib-article">
-          <p className="ay3-kicker">{minutesFor(selected)} min read</p>
+        <article key={selected.id} className={`ay-web-lib-article ay3-paper${closing ? ' is-crumpling' : ''}`}>
+          <p className="ay3-masthead" aria-hidden="true"><span>The ayna Library</span><span>{(selected.tags || [])[0] || 'Health'}</span><span>{minutesFor(selected)} min read</span></p>
           <h1 className="ay-article-title">{selected.title}</h1>
           <div className="ay-lib-article__tags">
             {selected.tags.map((t) => <span key={t} className="ay-lib-tag">{t}</span>)}
@@ -946,6 +956,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
       </div>}
       </div>
+      <p className="ay3-news-mast" aria-hidden="true"><span>Vol. 1</span><strong>The ayna Library</strong><span>{ARTICLES.length} reads · all sourced</span></p>
       {body}
       <FilmStrip photos={['robe-vanity', 'sink-flatlay', 'laundry-duo', 'sink-heels-dryer', 'pajamas-overhead', 'vanity-hairdryer', 'lilies', 'curlers-call']} />
       <SuggestBox mode="read" context="library" className="ay-web-lib-suggest" />
