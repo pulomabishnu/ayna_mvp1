@@ -924,3 +924,31 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container:not([data-theme='dark']) .eco3-card-actions { margin-top: 12px; }
 .app-container:not([data-theme='dark']) .eco3-grid > * { margin-bottom: 30px; }
 .app-container:not([data-theme='dark']) .eco3-area__count { font: 700 26px/1 var(--ay-hand) !important; }
+
+/* =====================================================================
+   Community: notes passed around. Posts are torn-off notebook notes,
+   alternately tilted, with a strip of tape; the composer is a sticky note.
+   ===================================================================== */
+.app-container:not([data-theme='dark']) .wc3 .wc-post { position: relative; border-radius: 3px !important; background: repeating-linear-gradient(#fffdf6 0 27px, rgba(118, 158, 190, .28) 27px 28px) !important; background-position: 0 12px !important; box-shadow: 4px 5px 0 var(--ay-ink) !important; transform: rotate(-.5deg); transition: transform .3s cubic-bezier(.3, 1.4, .5, 1), box-shadow .2s !important;
+  -webkit-mask: radial-gradient(5px at 50% 0, #0000 97%, #000) 0 0 / 14px 51% repeat-x, linear-gradient(#000 0 0) 0 100% / 100% 51% no-repeat;
+          mask: radial-gradient(5px at 50% 0, #0000 97%, #000) 0 0 / 14px 51% repeat-x, linear-gradient(#000 0 0) 0 100% / 100% 51% no-repeat; padding-top: 22px !important; }
+.app-container:not([data-theme='dark']) .wc3 .wc-post:nth-child(even) { transform: rotate(.6deg); }
+.app-container:not([data-theme='dark']) .wc3 .wc-post:hover { transform: rotate(0) translateY(-3px) !important; }
+.app-container:not([data-theme='dark']) .wc3 .wc-post .wc-body { font-size: 16.5px !important; line-height: 1.55 !important; }
+.app-container:not([data-theme='dark']) .wc3 .wc-post-head strong, .app-container:not([data-theme='dark']) .wc3 .wc-post-head b { font: 700 22px/1 var(--ay-hand) !important; }
+.app-container:not([data-theme='dark']) .wc3 .wc-mention { border-style: dashed !important; background: var(--ay-paper) !important; }
+.app-container:not([data-theme='dark']) .wc3 .wc-composer, .app-container:not([data-theme='dark']) .wc3 [class*='wc-compose']:not(.wc-sheet) { border-radius: 2px !important; background: var(--ay-cream) !important; box-shadow: 0 14px 14px -12px rgba(62, 39, 35, .5), 3px 3px 0 var(--ay-ink) !important; }
+.app-container:not([data-theme='dark']) .wc3 .wc-nav .wc-tabs button { font: 700 16px/1 var(--ay-font-ui) !important; }
+
+/* =====================================================================
+   You: a membership card. The hero is an ID card with a hole punch,
+   a barcode strip and a stamp; stat cards are ticket stubs.
+   ===================================================================== */
+.app-container:not([data-theme='dark']) .wyou-hero { position: relative; border-radius: 16px !important; background: linear-gradient(90deg, var(--ay-sky) 0 68%, var(--ay-paper) 68%) !important; box-shadow: 6px 7px 0 var(--ay-ink) !important; overflow: visible !important; }
+.app-container:not([data-theme='dark']) .wyou-hero::before { content: 'ayna member'; position: absolute; top: -14px; left: 24px; padding: 4px 12px; border: 2px solid var(--ay-ink); background: var(--ay-rose); font: 400 11px/1 var(--ay-font-label); letter-spacing: .14em; text-transform: uppercase; transform: rotate(-2deg); }
+.app-container:not([data-theme='dark']) .wyou-hero::after { content: ''; position: absolute; right: 18px; bottom: 12px; width: 120px; height: 26px; background: repeating-linear-gradient(90deg, var(--ay-ink) 0 2px, transparent 2px 4px, var(--ay-ink) 4px 7px, transparent 7px 9px, var(--ay-ink) 9px 10px, transparent 10px 13px); opacity: .85; }
+.app-container:not([data-theme='dark']) .wyou-hero .wyou-shapes { display: none !important; }
+.app-container:not([data-theme='dark']) .wyou-hero h1, .app-container:not([data-theme='dark']) .wyou-who :is(h1, h2, strong) { font-family: var(--ay-font-display) !important; font-weight: 400 !important; }
+.app-container:not([data-theme='dark']) .wyou-stats > :not(:has(button)) { position: relative; background: var(--ay-paper) !important; padding: 16px 20px !important; border: 2px dashed var(--ay-ink) !important; border-radius: 6px !important; -webkit-mask: radial-gradient(9px at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(9px at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat; mask: radial-gradient(9px at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(9px at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat; border-style: dashed !important; }
+.app-container:not([data-theme='dark']) .wyou-stats strong, .app-container:not([data-theme='dark']) .wyou-stats b { font: 400 34px/1 var(--ay-font-display) !important; }
+.app-container:not([data-theme='dark']) .wyou-card h2, .app-container:not([data-theme='dark']) .wyou-col h2 { font: 400 26px/1.1 var(--ay-font-display) !important; }
