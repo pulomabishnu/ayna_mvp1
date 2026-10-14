@@ -9,6 +9,7 @@
  */
 
 import { topicForHashtag } from './topics';
+import { clearActiveCommunityRichTextDraft, getActiveCommunityRichTextDraftForBody, sanitizeCommunityRichTextDoc } from './richText.js';
 
 export const PAGE_SIZE = 20;
 
@@ -149,11 +150,14 @@ export async function getFeedPost(supabase, postId) {
   return check(await supabase.from('community_feed_posts').select('*').eq('id', postId).maybeSingle());
 }
 
-export async function createPost(supabase, userId, { kind, body, topics = [], isAnonymous = false, productId = null, rating = null, wouldRecommend = null, photoUrl = null, taggedProductIds = [], media = [] }) {
+export async function createPost(supabase, userId, { kind, body, topics = [], isAnonymous = false, productId = null, rating = null, wouldRecommend = null, photoUrl = null, taggedProductIds = [], media = [], richBody = null }) {
+  const plainBody = String(body || '').trim();
+  const safeRichBody = sanitizeCommunityRichTextDoc(richBody) || getActiveCommunityRichTextDraftForBody(plainBody);
   const row = {
     author_id: userId,
     kind,
-    body: String(body || '').trim(),
+    body: plainBody,
+    rich_body: safeRichBody || null,
     topics: [...new Set(topics)].slice(0, 5),
     is_anonymous: Boolean(isAnonymous),
     photo_url: photoUrl || null,
@@ -184,11 +188,14 @@ export async function createPost(supabase, userId, { kind, body, topics = [], is
       throw error;
     }
   }
+  clearActiveCommunityRichTextDraft();
   return post;
 }
 
-export async function updatePostBody(supabase, postId, body) {
-  check(await supabase.from('community_posts').update({ body: String(body).trim() }).eq('id', postId));
+export async function updatePostBody(supabase, postId, body, richBody = null) {
+  const plainBody = String(body).trim();
+  const safeRichBody = sanitizeCommunityRichTextDoc(richBody) || getActiveCommunityRichTextDraftForBody(plainBody);
+  check(await supabase.from('community_posts').update({ body: plainBody, rich_body: safeRichBody || null }).eq('id', postId));
 }
 
 export async function deletePost(supabase, postId, userId) {
