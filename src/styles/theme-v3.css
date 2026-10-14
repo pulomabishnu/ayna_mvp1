@@ -1049,3 +1049,58 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container:not([data-theme='dark']) .ay3-shophero .ayna-browse__heading { margin-bottom: 14px !important; }
 .app-container:not([data-theme='dark']) .ay3-shophero .ay3-title { font-size: clamp(40px, 1.6rem + 3vw, 64px) !important; }
 @media (max-width: 767px) { .app-container:not([data-theme='dark']) .ay3-shophero .ay3-pile { display: none; } }
+
+/* =====================================================================
+   My Ecosystem hero: the medicine cabinet (ayna = mirror)
+   ===================================================================== */
+.app-container[data-theme='dark'] .ay3-cab { display: none; }
+.app-container .ay3-cab { flex: none; display: grid; justify-items: center; gap: 10px; perspective: 1400px; }
+.app-container .ay3-cab__box { position: relative; width: clamp(280px, 30vw, 420px); aspect-ratio: 4 / 4.6; padding: 14px; border: 3px solid #3e2723; border-radius: 22px 22px 10px 10px; background: #fff8dc; box-shadow: 8px 9px 0 #3e2723, inset 0 0 0 6px #f7badd; }
+.app-container .ay3-cab__box::before { content: ''; position: absolute; left: 50%; top: -18px; width: 54%; height: 18px; margin-left: -27%; border: 3px solid #3e2723; border-bottom: 0; border-radius: 14px 14px 0 0; background: #f7badd; }
+/* shelves */
+.app-container .ay3-cab__shelves { position: absolute; inset: 14px; display: grid; grid-auto-rows: 1fr; gap: 0; padding: 6px 10px; border: 2px solid #3e2723; border-radius: 12px 12px 4px 4px; background: linear-gradient(180deg, #fdf3d4, #f6e3b2); overflow: hidden; }
+.app-container .ay3-cab__shelf { position: relative; display: grid; grid-template-rows: 1fr auto; align-items: end; width: 100%; padding: 6px 4px 0; border: 0; border-bottom: 7px solid #3e2723; background: none; cursor: pointer; text-align: left; transition: background .2s; }
+.app-container .ay3-cab__shelf::after { content: ''; position: absolute; left: -10px; right: -10px; bottom: -7px; height: 4px; background: rgba(255, 255, 255, .35); }
+.app-container .ay3-cab__shelf:hover { background: rgba(247, 186, 221, .35); }
+.app-container .ay3-cab__shelf:focus-visible { outline: 3px solid #769ebe; outline-offset: -3px; }
+.app-container .ay3-cab__items { display: flex; align-items: flex-end; gap: 6px; height: 100%; min-height: 0; }
+.app-container .ay3-cab__item { position: relative; display: block; flex: 0 1 25%; height: 86%; max-height: 92px; border-radius: 6px; overflow: hidden; background: #fff; border: 1.5px solid rgba(62, 39, 35, .5); transform: translateY(110%); transition: transform .5s cubic-bezier(.3, 1.4, .5, 1); transition-delay: calc(.55s + var(--i) * .07s); }
+.app-container .ay3-cab.is-open .ay3-cab__item { transform: none; }
+.app-container .ay3-cab__item img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+.app-container .ay3-cab__shelf:hover .ay3-cab__item { transform: translateY(-4px) rotate(calc((var(--i) - 1.5) * 2deg)); transition-delay: 0s; }
+.app-container .ay3-cab__more { align-self: center; font: 700 22px/1 'Caveat', cursive; color: #3e2723; }
+.app-container .ay3-cab__label { justify-self: start; margin: 4px 0 4px; padding: 2px 8px; border: 1.5px solid #3e2723; border-radius: 3px; background: #f7badd; color: #3e2723; font: 500 11px/1.2 'DM Mono', ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; }
+.app-container .ay3-cab__shelf:nth-child(even) .ay3-cab__label { background: #fff8dc; }
+.app-container .ay3-cab__empty { display: grid; place-content: center; gap: 12px; height: 100%; text-align: center; font: 700 26px/1.1 'Caveat', cursive; color: #3e2723; }
+.app-container .ay3-cab__btn { justify-self: center; padding: 10px 18px; border: 2px solid #3e2723; border-radius: 99px; background: #3e2723; color: #fff8dc; font: 700 14px/1 'DM Sans', sans-serif; cursor: pointer; }
+/* the mirror door */
+.app-container .ay3-cab__door { position: absolute; inset: 8px; z-index: 3; padding: 10px; border: 3px solid #3e2723; border-radius: 16px 16px 6px 6px; background: #f7badd; cursor: pointer; transform-origin: 0 50%; transition: transform .9s cubic-bezier(.5, -.2, .2, 1.15), box-shadow .9s; box-shadow: 0 0 0 rgba(62, 39, 35, 0); }
+.app-container .ay3-cab.is-open .ay3-cab__door { transform: rotateY(-104deg); box-shadow: -14px 0 18px rgba(62, 39, 35, .25); }
+.app-container .ay3-cab__door:hover { transform: rotateY(-8deg); }
+.app-container .ay3-cab.is-open .ay3-cab__door:hover { transform: rotateY(-98deg); }
+.app-container .ay3-cab__door:focus-visible { outline: 3px solid #3e2723; outline-offset: 4px; }
+.app-container .ay3-cab__glass { position: absolute; inset: 10px; display: grid; align-content: center; justify-items: center; gap: 4px; border: 2px solid #3e2723; border-radius: 10px 10px 4px 4px; overflow: hidden;
+  background: linear-gradient(115deg, transparent 0 28%, rgba(255, 255, 255, .75) 30% 34%, transparent 36% 44%, rgba(255, 255, 255, .5) 46% 48%, transparent 50%) , linear-gradient(160deg, #e9f2f8, #c9dcea 55%, #b7cfe1); }
+.app-container .ay3-cab__glass::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, .7) 40%, transparent 60%) -160% 0 / 200% 100% no-repeat; animation: ay3Sheen 4.5s 1.5s ease-in-out 2; }
+@keyframes ay3Sheen { to { background-position: 160% 0; } }
+.app-container .ay3-cab__lip { position: relative; z-index: 1; color: #c2185b; font: 700 30px/1 'Caveat', cursive; transform: rotate(-6deg); text-shadow: 0 1px 0 rgba(255, 255, 255, .5); }
+.app-container .ay3-cab__lip.is-big { font-size: clamp(56px, 6vw, 84px); line-height: .9; transform: rotate(-4deg); }
+.app-container .ay3-cab__lip:last-child { transform: rotate(-2deg); }
+.app-container .ay3-cab__knob { position: absolute; right: 2px; top: 50%; width: 10px; height: 34px; margin-top: -17px; border: 2px solid #3e2723; border-radius: 6px; background: #fff8dc; }
+.app-container .ay3-cab__hint { margin: 2px 0 0; padding: 2px 10px; border: 2px solid #3e2723; border-radius: 99px; background: #fff8dc; color: #3e2723; font: 700 13px/1.2 'DM Sans', sans-serif; transform: rotate(-2deg); }
+@media (prefers-reduced-motion: reduce) { .app-container :is(.ay3-cab__door, .ay3-cab__item) { transition: none !important; } .app-container .ay3-cab__glass::after { animation: none; } }
+/* hero layout with the cabinet */
+@media (min-width: 900px) {
+  .app-container:not([data-theme='dark']) .ay3-ecohero { display: grid !important; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 't c' 'a c'; align-items: center; gap: 22px 56px; padding-top: 64px !important; padding-bottom: 64px !important; }
+  .app-container:not([data-theme='dark']) .ay3-ecohero .eco3-head__text { grid-area: t; align-self: end; }
+  .app-container:not([data-theme='dark']) .ay3-ecohero .eco3-actions { grid-area: a; align-self: start; }
+  .app-container:not([data-theme='dark']) .ay3-ecohero .ay3-cab { grid-area: c; }
+}
+@media (max-width: 899px) { .app-container:not([data-theme='dark']) .ay3-ecohero .ay3-cab { order: 2; width: 100%; margin-top: 18px; } .app-container .ay3-cab__box { width: min(340px, 86vw); } }
+.app-container .ay3-cab__lip { transition: opacity .25s; }
+.app-container .ay3-cab.is-open .ay3-cab__lip { opacity: 0; transition-delay: .25s; }
+.app-container .ay3-cab.is-open .ay3-cab__glass { background: linear-gradient(90deg, #fff8dc, #f3e2b0); }
+.app-container .ay3-cab.is-open .ay3-cab__glass::after { display: none; }
+@media (min-width: 900px) { .app-container:not([data-theme='dark']) .ay3-ecohero { padding-top: 88px !important; } }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-head__text { max-width: 640px; }
+@media (max-width: 899px) { .app-container .ay3-cab { justify-items: end; padding-right: 4px; } .app-container .ay3-cab__box { width: min(320px, 78vw); } .app-container .ay3-cab.is-open .ay3-cab__door { transform: rotateY(-100deg); } }
