@@ -283,3 +283,28 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 .app-container:not([data-theme='dark']) .lv-reads__img { background: var(--ay-paper) !important; }
 .app-container:not([data-theme='dark']) .cr-page a { color: var(--ay-ink) !important; }
 .app-container:not([data-theme='dark']) .cr-page a.cr-btn--primary { color: var(--ay-paper) !important; }
+
+/* ---------- popups, sheets, drawers ---------- */
+@keyframes ay3Pop { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes ay3Slide { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.app-container:not([data-theme='dark']) :is(.ay-auth-card, .wc-sheet, .eco3-sheet) { border: 2px solid var(--ay-ink) !important; border-radius: 26px !important; background: var(--ay-paper) !important; box-shadow: 8px 8px 0 var(--ay-ink) !important; animation: ay3Pop .32s cubic-bezier(.3, 1.3, .5, 1) both; }
+.app-container:not([data-theme='dark']) .ay-shopfilters__sheet { border-left: 2px solid var(--ay-ink) !important; background: var(--ay-paper) !important; animation: ay3Slide .3s cubic-bezier(.2, .8, .2, 1) both; }
+.app-container:not([data-theme='dark']) :is(.wc-sheet-backdrop, .eco3-sheet-overlay, .ay-shopfilters__scrim) { background: rgba(62, 39, 35, .42) !important; backdrop-filter: blur(3px); }
+.app-container:not([data-theme='dark']) :is(.wc-sheet, .eco3-sheet, .ay-shopfilters__sheet) :is(h2, h3) { font-family: var(--ay-font-display) !important; font-weight: 400 !important; letter-spacing: -.01em !important; }
+.app-container:not([data-theme='dark']) .wc-sheet > header h2 { font-size: 30px !important; }
+.app-container:not([data-theme='dark']) .ay-auth-card .ay-auth-logo { font-family: var(--ay-font-logo) !important; }
+.app-container:not([data-theme='dark']) .ay-auth-card .ay-auth-tagline { font: 400 22px/1.2 var(--ay-font-display) !important; color: var(--ay-ink) !important; }
+.app-container:not([data-theme='dark']) .ay-auth-card :is(input) { border: 2px solid var(--ay-ink) !important; border-radius: 14px !important; background: #fff !important; }
+.app-container:not([data-theme='dark']) .ay-auth-card :is(.ay-auth-close, .wc-sheet-close) { transition: transform .2s; }
+.app-container:not([data-theme='dark']) :is(.ay-auth-close, .wc-sheet-close):hover { transform: rotate(90deg); }
+.app-container:not([data-theme='dark']) .ay-shopfilters__sheet button[aria-pressed='true'], .app-container:not([data-theme='dark']) .ay-shopfilters__sheet button.is-on { background: var(--ay-rose) !important; }
+.app-container:not([data-theme='dark']) .mobile-nav-drawer { background: var(--ay-cream) !important; }
+.app-container:not([data-theme='dark']) .mobile-drawer-item { font: 400 30px/1.1 var(--ay-font-display) !important; }
+@media (prefers-reduced-motion: reduce) { .app-container :is(.ay-auth-card, .wc-sheet, .eco3-sheet, .ay-shopfilters__sheet) { animation: none !important; } }
+
+/* ---------- buttons + chips + fields site-wide (light) ---------- */
+.app-container:not([data-theme='dark']) :is(.btn-primary, .btn-navy, .ayna-landing-btn):hover { box-shadow: 3px 3px 0 var(--ay-rose) !important; }
+.app-container:not([data-theme='dark']) :is(.btn-secondary, .btn-outline, .btn-ghost) { transition: transform .15s cubic-bezier(.3, 1.5, .5, 1), box-shadow .15s; }
+.app-container:not([data-theme='dark']) :is(.btn-secondary, .btn-outline, .btn-ghost):hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ay-ink) !important; }
+.app-container:not([data-theme='dark']) main :is(input, textarea, select):focus-visible { outline: 3px solid var(--ay-sky) !important; outline-offset: 2px; }
+.app-container:not([data-theme='dark']) ::selection { background: var(--ay-rose); color: var(--ay-ink); }
