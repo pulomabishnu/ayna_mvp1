@@ -875,7 +875,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
   const open = (id) => setSelectedId(id);
   const card = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a))}</li>;
-  const shelf = (id, label, items) => items.length > 0 && <div key={id} className="ay-web-lib-cat ay3-news">
+  const shelf = (id, label, items) => items.length > 0 && <div key={id} id={`lib-${id}`} className="ay-web-lib-cat ay3-news">
     <h2><span>{label}</span></h2>
     <ul className="ay-web-lib-grid ay-lib-shelf">{items.map(card)}</ul>
   </div>;
@@ -911,6 +911,25 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
             <small>{next.label}</small><strong>{next.article.title}</strong><span aria-hidden="true">→</span>
           </button>}
         </article>
+        <aside className={`ay3-infobox${closing ? ' is-crumpling' : ''}`} aria-label="About this read">
+          <p className="ay3-infobox__title">{selected.title}</p>
+          <ArticleCover art={selected} />
+          <dl>
+            <div><dt>Reading time</dt><dd>{minutesFor(selected)} min</dd></div>
+            {(selected.tags || []).length > 0 && <div><dt>Topics</dt><dd>{selected.tags.join(', ')}</dd></div>}
+            {selected.source && <div><dt>Sources</dt><dd>{selected.source}</dd></div>}
+            <div><dt>Your progress</dt><dd>{label}</dd></div>
+          </dl>
+          {(() => {
+            const related = ARTICLES.filter((a) => a.id !== selected.id && (a.tags || []).some((t) => (selected.tags || []).includes(t))).slice(0, 4);
+            return related.length > 0 && (
+              <div className="ay3-infobox__rel">
+                <p className="ay3-libside__title">Related reads</p>
+                <ul>{related.map((a) => <li key={a.id}><button type="button" onClick={() => open(a.id)}>{a.title}</button></li>)}</ul>
+              </div>
+            );
+          })()}
+        </aside>
       </section>
     );
   }
@@ -957,7 +976,38 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       </div>}
       </div>
       <p className="ay3-news-mast" aria-hidden="true"><span>Vol. 1</span><strong>The ayna Library</strong><span>{ARTICLES.length} reads · all sourced</span></p>
+      <div className="ay3-libgrid">
+        <aside className="ay3-libside" aria-label="Library index">
+          {q.length < 2 && topic === 'all' && (
+            <nav className="ay3-libside__box">
+              <p className="ay3-libside__title">Contents</p>
+              <ol>
+                {keepReading.length > 0 && <li><a href="#lib-keep">Keep reading</a></li>}
+                {hasProfile && forYou.length > 0 && <li><a href="#lib-foryou">For you</a></li>}
+                {rows.filter((r) => r.items.length).map((r) => <li key={r.id}><a href={`#lib-${r.id}`}>{r.label}</a></li>)}
+              </ol>
+            </nav>
+          )}
+          <nav className="ay3-libside__box">
+            <p className="ay3-libside__title">A to Z</p>
+            <ul className="ay3-az">
+              {[...ARTICLES].sort((a, b) => a.title.localeCompare(b.title)).map((a, i, arr) => {
+                const letter = a.title[0].toUpperCase();
+                const first = i === 0 || arr[i - 1].title[0].toUpperCase() !== letter;
+                return (
+                  <li key={a.id} data-letter={first ? letter : undefined}>
+                    <button type="button" onClick={() => open(a.id)}>{a.title}</button>
+                    {progressOf(a) >= 1 && <span className="ay3-az__done" aria-label="Finished">✓</span>}
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        </aside>
+        <div className="ay3-libmain">
       {body}
+        </div>
+      </div>
       <FilmStrip photos={['robe-vanity', 'sink-flatlay', 'laundry-duo', 'sink-heels-dryer', 'pajamas-overhead', 'vanity-hairdryer', 'lilies', 'curlers-call']} />
       <SuggestBox mode="read" context="library" className="ay-web-lib-suggest" />
     </section>
