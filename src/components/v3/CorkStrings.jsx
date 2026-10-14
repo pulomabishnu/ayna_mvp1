@@ -1,0 +1,51 @@
+import React, { useEffect, useState } from 'react';
+
+/* Pink "investigation board" string between pinned items on the product
+   page. Finds the pinned elements inside `rootRef` (by selector, in order),
+   and draws a sagging string from pin to pin. Purely decorative. */
+export default function CorkStrings({ rootRef, selectors, hub = false }) {
+  const [paths, setPaths] = useState([]);
+  const key = selectors.join('|');
+  const star = Boolean(hub);
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || typeof ResizeObserver === 'undefined') return undefined;
+    let frame = 0;
+    const draw = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const box = root.getBoundingClientRect();
+        const pts = key.split('|')
+          .map((sel) => { const [q, at] = sel.split('@'); return [root.querySelector(q), at]; })
+          .filter(([el]) => el && el.offsetParent !== null)
+          .map(([el, at]) => {
+            const r = el.getBoundingClientRect();
+            if (at === 'left') return [r.left + 16 - box.left, r.top + r.height / 2 - box.top];
+            return [r.left + r.width / 2 - box.left, r.top + 10 - box.top];
+          });
+        const out = [];
+        for (let i = 1; i < pts.length; i += 1) {
+          const [x1, y1] = star ? pts[0] : pts[i - 1]; const [x2, y2] = pts[i];
+          const sag = Math.min(90, Math.hypot(x2 - x1, y2 - y1) * 0.18);
+          out.push(`M${x1.toFixed(1)} ${y1.toFixed(1)} Q${((x1 + x2) / 2).toFixed(1)} ${(Math.max(y1, y2) + sag).toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`);
+        }
+        setPaths(out);
+      });
+    };
+    draw();
+    const ro = new ResizeObserver(draw);
+    ro.observe(root);
+    window.addEventListener('resize', draw);
+    const tick = window.setInterval(draw, 400);
+    const t = window.setTimeout(() => window.clearInterval(tick), 4000);
+    root.addEventListener('load', draw, true);
+    root.addEventListener('transitionend', draw, true);
+    return () => { cancelAnimationFrame(frame); ro.disconnect(); window.removeEventListener('resize', draw); window.clearTimeout(t); window.clearInterval(tick); root.removeEventListener('load', draw, true); root.removeEventListener('transitionend', draw, true); };
+  }, [rootRef, key, star]);
+  if (!paths.length) return null;
+  return (
+    <svg className="ay3-strings" aria-hidden="true" focusable="false">
+      {paths.map((d, i) => <path key={i} d={d} />)}
+    </svg>
+  );
+}
