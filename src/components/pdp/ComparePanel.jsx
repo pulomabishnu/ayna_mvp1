@@ -14,7 +14,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
   return (
     <section className="ay-compare" id="ay-sec-compare" tabIndex={-1} aria-labelledby="ay-compare-h">
       <div className="ay-pdp-sechead">
-        <h2 id="ay-compare-h">Compare with similar</h2>
+        <h2 id="ay-compare-h">Compare with <em>similar.</em></h2>
         <p>Same type of product, side by side. From ayna’s catalog.</p>
       </div>
       <div className="ay-compare__scroll" role="region" aria-labelledby="ay-compare-h" tabIndex={0}>

@@ -49,3 +49,97 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .15 0 0 0 0 .14 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 @media print { body::after { display: none !important; } }
+
+/* =====================================================================
+   v3 layout system. Pages opt in with ay3-* classes so dark mode and
+   the mobile app are untouched. L = light-theme scope.
+   ===================================================================== */
+.app-container { overflow-x: clip; }
+
+/* full-bleed colour band: background reaches the window edges without
+   overflowing (border-image trick), content stays in the page column */
+.app-container:not([data-theme='dark']) .ay3-band {
+  position: relative !important; isolation: isolate; color: var(--ay-ink);
+  border-image: conic-gradient(var(--ay3-bg, var(--ay-paper)) 0 0) fill 0 / / 0 100vw !important;
+  padding-block: clamp(48px, 6vw, 88px);
+}
+.app-container:not([data-theme='dark']) .ay3-band--ink { --ay3-bg: var(--ay-ink); color: var(--ay-paper); }
+.app-container:not([data-theme='dark']) .ay3-band--sky { --ay3-bg: var(--ay-sky); }
+.app-container:not([data-theme='dark']) .ay3-band--rose { --ay3-bg: var(--ay-rose); }
+.app-container:not([data-theme='dark']) .ay3-band--paper { --ay3-bg: var(--ay-paper); }
+.app-container:not([data-theme='dark']) .ay3-band--stripes { --ay3-bg: var(--ay-sky); border-image: repeating-linear-gradient(90deg, var(--ay-sky) 0 28px, var(--ay-paper) 28px 56px) fill 0 / / 0 100vw !important; }
+.app-container:not([data-theme='dark']) .ay3-band--ink :is(h1, h2, h3, p, span, label, a:not(.btn)) { color: var(--ay-paper) !important; }
+.app-container:not([data-theme='dark']) .ay3-band--ink :is(h1, h2) em { color: var(--ay-rose) !important; }
+
+/* edges, drawn full-bleed under/over the band */
+.app-container:not([data-theme='dark']) :is(.ay3-edge-top, .ay3-edge-bottom)::before,
+.app-container:not([data-theme='dark']) .ay3-edge-bottom::after { content: ''; position: absolute; left: 50%; width: 100vw; transform: translateX(-50%); background: var(--ay3-bg, var(--ay-paper)); pointer-events: none; z-index: 1; }
+.app-container:not([data-theme='dark']) .ay3-edge-bottom::before { content: none; }
+/* scallop (shop) */
+.app-container:not([data-theme='dark']) .ay3-scallop.ay3-edge-top::before { top: -39px; height: 40px; -webkit-mask: var(--ay-scallop) repeat-x 0 0 / 160px 40px; mask: var(--ay-scallop) repeat-x 0 0 / 160px 40px; }
+.app-container:not([data-theme='dark']) .ay3-scallop.ay3-edge-bottom::after { bottom: -39px; height: 40px; transform: translateX(-50%) scaleY(-1); -webkit-mask: var(--ay-scallop) repeat-x 0 0 / 160px 40px; mask: var(--ay-scallop) repeat-x 0 0 / 160px 40px; }
+/* torn paper (reading) */
+.app-container:not([data-theme='dark']) .ay3-torn.ay3-edge-top::before { top: -23px; height: 24px; -webkit-mask: var(--ay-torn) repeat-x 0 0 / 600px 24px; mask: var(--ay-torn) repeat-x 0 0 / 600px 24px; }
+.app-container:not([data-theme='dark']) .ay3-torn.ay3-edge-bottom::after { bottom: -23px; height: 24px; transform: translateX(-50%) scaleY(-1); -webkit-mask: var(--ay-torn) repeat-x 0 0 / 600px 24px; mask: var(--ay-torn) repeat-x 0 0 / 600px 24px; }
+/* pinking-shears zigzag (account + tools) */
+.app-container:not([data-theme='dark']) .ay3-zigzag.ay3-edge-bottom::after { bottom: -17px; height: 18px; background: conic-gradient(from -45deg at top, var(--ay3-bg) 90deg, #0000 0) top / 36px 18px repeat-x; }
+/* straight ink rule */
+.app-container:not([data-theme='dark']) .ay3-rule { border-block-end: 2px solid var(--ay-ink); }
+
+/* type helpers */
+.app-container:not([data-theme='dark']) .ay3-kicker { margin: 0 0 12px; font: 400 13px/1.2 var(--ay-font-label) !important; letter-spacing: .1em !important; text-transform: uppercase; }
+.app-container:not([data-theme='dark']) .ay3-title { margin: 0; font: 400 clamp(44px, 2rem + 4vw, 84px)/1 var(--ay-font-display) !important; letter-spacing: -.015em !important; }
+.app-container:not([data-theme='dark']) .ay3-title em { font-style: italic; }
+.app-container:not([data-theme='dark']) .ay3-lead { max-width: 36em; margin: 16px 0 0; font: 400 18px/1.5 var(--ay-font-ui) !important; }
+
+/* motion */
+@keyframes ay3In { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.app-container:not([data-theme='dark']) .ay3-in { animation: ay3In .45s cubic-bezier(.2, .8, .2, 1) both; }
+@media (prefers-reduced-motion: reduce) { .app-container .ay3-in { animation: none; } }
+
+/* ---------- Shop ---------- */
+.app-container:not([data-theme='dark']) .ay3-shophero { margin: calc(-1 * var(--spacing-xl, 32px)) 0 72px; padding-top: clamp(48px, 5vw, 72px); padding-bottom: 40px; }
+.app-container:not([data-theme='dark']) .ay3-shophero .ayna-browse__heading { margin-bottom: 28px; }
+.app-container:not([data-theme='dark']) .ay3-shophero .ayna-browse__disclosure { margin-top: 14px; color: rgba(255, 248, 220, .82) !important; font-size: 15px; }
+.app-container:not([data-theme='dark']) .ay3-shophero .ayna-browse__disclosure a { color: var(--ay-rose) !important; }
+.app-container:not([data-theme='dark']) .ay3-shophero .ayna-browse__search input { height: 60px; border-color: var(--ay-paper) !important; background: var(--ay-paper) !important; box-shadow: 4px 4px 0 var(--ay-rose) !important; font-size: 17px !important; }
+.app-container:not([data-theme='dark']) .ay3-shophero .ayna-browse__categories button { border-color: var(--ay-paper) !important; background: transparent !important; color: var(--ay-paper) !important; }
+.app-container:not([data-theme='dark']) .ay3-shophero .ayna-browse__categories button:hover { background: rgba(255, 248, 220, .12) !important; transform: translateY(-2px); }
+.app-container:not([data-theme='dark']) .ay3-shophero .ayna-browse__categories button.is-active { border-color: var(--ay-rose) !important; background: var(--ay-rose) !important; color: var(--ay-ink) !important; }
+
+/* ---------- product cards everywhere: the landing tile ---------- */
+.app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card { position: relative; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; overflow: visible !important; transform: none !important; }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-browse-card__link { display: grid !important; gap: 12px; color: inherit; text-decoration: none; }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discover-card__tile { position: relative; aspect-ratio: 1 / 1; margin: 0 !important; padding: 18px !important; border: 2px solid var(--ay-ink) !important; border-radius: 18px !important; background: #fff !important; box-shadow: none !important; overflow: hidden; transition: transform .22s cubic-bezier(.3, 1.4, .5, 1), box-shadow .22s ease; }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discover-card__tile img { width: 100%; height: 100%; object-fit: contain; transition: transform .35s ease; }
+.app-container:not([data-theme='dark']) .ayna-browse-card:hover .ayna-discover-card__tile { transform: translate(-3px, -3px) rotate(-.6deg); box-shadow: 6px 6px 0 var(--ay-ink) !important; }
+.app-container:not([data-theme='dark']) .ayna-browse-card:hover .ayna-discover-card__tile img { transform: scale(1.04); }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discover-card__body { display: grid; gap: 4px; padding: 0 2px !important; background: none !important; }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discover-card__category { color: var(--ay-ink-soft) !important; font: 400 11px/1.2 var(--ay-font-label) !important; letter-spacing: .1em !important; text-transform: uppercase; }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discover-card__name { margin: 0 !important; color: var(--ay-ink) !important; font: 600 16px/1.3 var(--ay-font-ui) !important; letter-spacing: 0 !important; }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discover-card__price { color: var(--ay-ink) !important; font: 700 15px/1.3 var(--ay-font-ui) !important; }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-discover-card__price small { display: block; margin-top: 2px; color: var(--ay-ink-soft); font: 500 13px/1.3 var(--ay-font-ui); }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-browse-card__wishlist { position: absolute; top: 12px; right: 12px; z-index: 2; display: grid; place-items: center; width: 40px; height: 40px; border: 2px solid var(--ay-ink) !important; border-radius: 50% !important; background: var(--ay-paper) !important; transition: transform .2s cubic-bezier(.3, 1.5, .5, 1); }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-browse-card__wishlist:hover { transform: scale(1.1) rotate(-8deg); }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-browse-card__wishlist.is-saved { background: var(--ay-rose) !important; }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-browse-card__wishlist svg { width: 18px; height: 18px; stroke: var(--ay-ink); }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-browse-card__wishlist.is-saved svg { fill: var(--ay-ink); }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-browse-card__ecosystem { position: absolute; left: 12px; bottom: 12px; padding: 5px 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-sky); color: var(--ay-ink); font: 700 12px/1 var(--ay-font-ui); }
+.app-container:not([data-theme='dark']) .ayna-browse__grid { gap: 40px 24px !important; }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-browse-card__wishlist::before, .app-container:not([data-theme='dark']) .ayna-browse-card .ayna-browse-card__wishlist::after { content: none !important; display: none !important; }
+.app-container:not([data-theme='dark']) .ayna-browse-card .ayna-browse-card__wishlist { box-shadow: none !important; outline: 0; }
+.app-container:not([data-theme='dark']) .ayna-browse__toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+@media (max-width: 600px) { .app-container:not([data-theme='dark']) .ayna-browse__toolbar > * { flex: 1 1 100%; } .app-container:not([data-theme='dark']) .ayna-browse__sort select { width: 100%; } }
+
+/* ---------- Product page ---------- */
+.app-container:not([data-theme='dark']) .ay-pdp-sechead h2 { font-size: clamp(32px, 1.4rem + 2vw, 48px) !important; }
+.app-container:not([data-theme='dark']) .ay-pdp-sechead p { font-size: 16px !important; color: var(--ay-ink-soft) !important; }
+.app-container:not([data-theme='dark']) .pdp-head__name { font: 400 clamp(36px, 1.6rem + 2.4vw, 58px)/1.04 var(--ay-font-display) !important; letter-spacing: -.012em !important; }
+.app-container:not([data-theme='dark']) :is(.pdp-gallery, .pdp-media, .pdp-hero-media, .pdp-image) :is(img) { transition: transform .35s ease; }
+.app-container:not([data-theme='dark']) .pdp-askcard > :not(.ay-pdp-sechead) { border: 2px solid var(--ay-ink) !important; border-radius: 20px !important; background: var(--ay-paper) !important; box-shadow: 5px 5px 0 var(--ay-ink) !important; }
+.app-container:not([data-theme='dark']) .pdp-suggest.ay3-band { margin-top: 96px !important; padding-block: 72px 88px !important; border-width: 0 !important; background: none !important; box-shadow: none !important; }
+.app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ay-pdp-sechead p { color: rgba(255, 248, 220, .8) !important; }
+.app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__name, .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__price { color: var(--ay-paper) !important; }
+.app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__category, .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__price small { color: rgba(255, 248, 220, .72) !important; }
+.app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-browse-card .ayna-discover-card__tile { border-color: var(--ay-paper) !important; }
+.app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-browse-card:hover .ayna-discover-card__tile { box-shadow: 6px 6px 0 var(--ay-rose) !important; }

@@ -1486,9 +1486,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     return (
         <section className="container animate-fade-in-up ayna-browse" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
+            <div className="ay3-band ay3-band--ink ay3-scallop ay3-edge-bottom ay3-shophero">
             <div className="ayna-browse__heading">
                 <div>
-                    <h1>Shop</h1>
+                    <p className="ay3-kicker">The ayna shop</p>
+                    <h1 className="ay3-title">Shop by <em>need.</em></h1>
                     {/* One disclosure for the whole page instead of a pill on every card (S09). */}
                     <p className="ayna-browse__disclosure">
                         Some links earn ayna a commission. It never changes your matches.{' '}
@@ -1560,6 +1562,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         {group.label}
                     </button>
                 ))}
+            </div>
             </div>
 
             <div className="ayna-browse__toolbar">

@@ -845,7 +845,7 @@ export default function ProductModal({
 
           <section className="pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="pdp-ask-h">
             <div className="ay-pdp-sechead">
-              <h2 id="pdp-ask-h">Questions? Ask ayna</h2>
+              <h2 id="pdp-ask-h">Questions? Ask <em>ayna.</em></h2>
               <p>Ask anything about this product. Answers use what’s on this page and the brand’s own site.</p>
             </div>
             <AskAynaProductTab product={product} aiContext={{}} quizResults={quizResults} ecosystemProducts={ecosystemProducts} />
@@ -856,9 +856,9 @@ export default function ProductModal({
           )}
 
           {suggestions.more.length > 0 && (
-            <section className="pdp-suggest pdp-suggest--glance" aria-labelledby="pdp-more-h">
+            <section className="pdp-suggest pdp-suggest--glance ay3-band ay3-band--ink ay3-scallop ay3-edge-top" aria-labelledby="pdp-more-h">
               <div className="ay-pdp-sechead">
-                <h2 id="pdp-more-h">You may also like</h2>
+                <h2 id="pdp-more-h">You may also <em>like.</em></h2>
                 <p>{suggestions.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p>
               </div>
               <div className="pdp-suggest__grid">{suggestions.more.map(suggestionCard)}</div>
