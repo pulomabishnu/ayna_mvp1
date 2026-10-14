@@ -139,7 +139,7 @@ function escapeHtml(text) {
   return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function safePasteHtml(text) {
+export function safeCommunityPasteHtml(text) {
   const lines = String(text || '').replace(/\r\n?/g, '\n').split('\n');
   const chunks = [];
   let list = [];
@@ -218,7 +218,10 @@ export function CommunityRichTextEditor({
   useLayoutEffect(() => {
     const root = editorRef.current;
     if (!root) return;
-    const initial = sanitizeCommunityRichTextDoc(richValue) || plainTextToCommunityRichText(value, maxLength);
+    const provided = sanitizeCommunityRichTextDoc(richValue);
+    const initial = provided && communityRichTextToPlainText(provided) === value
+      ? provided
+      : plainTextToCommunityRichText(value, maxLength);
     renderDocIntoEditor(root, initial);
     const plain = communityRichTextToPlainText(initial);
     root.dataset.empty = plain ? 'false' : 'true';
@@ -228,10 +231,14 @@ export function CommunityRichTextEditor({
   useEffect(() => {
     const root = editorRef.current;
     if (!root || value === lastPlainRef.current) return;
-    const next = sanitizeCommunityRichTextDoc(richValue) || plainTextToCommunityRichText(value, maxLength);
+    const provided = sanitizeCommunityRichTextDoc(richValue);
+    const next = provided && communityRichTextToPlainText(provided) === value
+      ? provided
+      : plainTextToCommunityRichText(value, maxLength);
     renderDocIntoEditor(root, next);
-    root.dataset.empty = value ? 'false' : 'true';
-    lastPlainRef.current = communityRichTextToPlainText(next);
+    const plain = communityRichTextToPlainText(next);
+    root.dataset.empty = plain ? 'false' : 'true';
+    lastPlainRef.current = plain;
   }, [value, richValue, maxLength]);
 
   const syncSoon = () => window.requestAnimationFrame(emit);
@@ -290,7 +297,7 @@ export function CommunityRichTextEditor({
     const clipped = text.slice(0, room);
     if (!clipped) return;
     if (!clipped.includes('\n') && !/^\s*(?:[-*•])\s+/.test(clipped)) document.execCommand?.('insertText', false, clipped);
-    else document.execCommand?.('insertHTML', false, safePasteHtml(clipped));
+    else document.execCommand?.('insertHTML', false, safeCommunityPasteHtml(clipped));
     syncSoon();
   };
 
@@ -315,7 +322,6 @@ export function CommunityRichTextEditor({
       aria-multiline="true"
       aria-invalid={check.blocked || undefined}
       aria-describedby={describe || undefined}
-      aria-label={rest['aria-label']}
       data-placeholder={placeholder}
       data-empty="true"
       tabIndex={0}
