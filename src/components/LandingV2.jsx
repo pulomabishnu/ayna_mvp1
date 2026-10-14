@@ -24,14 +24,13 @@ const HERO = [
 ];
 
 const STRIP = [
-  { src: '/landing/curlers-call.webp', alt: 'A woman in hair curlers laughing on the phone in her bathroom' },
+  { src: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
   { src: '/landing/sink-flatlay.webp', alt: 'A sink full of brushes, makeup and hair tools, from above' },
   { src: '/landing/laundry-duo.webp', alt: 'Two friends in curlers reading magazines on a laundry room floor' },
   { src: '/landing/sink-heels-dryer.webp', alt: 'A vintage sink piled with a hair dryer, sunglasses and heels' },
   { src: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, from above' },
   { src: '/landing/vanity-hairdryer.webp', alt: 'A woman drying her hair at a crowded bedroom vanity' },
   { src: '/landing/pad-thread-art.webp', alt: 'Red thread arranged over a white pad, as still life' },
-  { src: '/landing/sink-tea.webp', alt: 'A bathroom sink holding heels, sunglasses, tea and makeup' },
   { src: '/landing/bag-tubes.webp', alt: 'A vintage leather bag overflowing with colorful product tubes' },
 ];
 
@@ -208,8 +207,8 @@ function Strip() {
 const WHY = [
   { t: 'Matched to your body', d: 'See how well each product fits you, based on what you tell us.', img: '/landing/lilies.webp', alt: 'Legs in pink socks with a bunch of lilies across the lap' },
   { t: 'Evidence beside each pick', d: 'What the research says, with sources, right next to the product.', img: '/landing/marble-counter.webp', alt: 'A marble bathroom counter full of products, seen from above' },
-  { t: 'Real experiences', d: 'Posts from women who have actually used it.', img: '/landing/sweater-toilet.webp', alt: 'A woman in a flower-dotted sweater sitting on the toilet, pink pants at her ankles' },
-  { t: 'Your whole routine', d: 'Save what you use and see what fits next.', img: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
+  { t: 'Real experiences', d: 'Posts from women who have actually used it.', img: '/landing/curlers-call.webp', alt: 'A woman in hair curlers laughing on the phone in her bathroom' },
+  { t: 'Your whole routine', d: 'Save what you use and see what fits next.', img: '/landing/sink-tea.webp', alt: 'A bathroom sink holding heels, sunglasses, tea and makeup' },
 ];
 
 function Why({ paused }) {
@@ -230,7 +229,6 @@ function Why({ paused }) {
             <button key={w.t} type="button" className={`lv-quad__cell${i === a ? ' is-on' : ''}`} aria-pressed={i === a} onClick={() => pick(i)}>
               <img src={w.img} alt={w.alt} loading="lazy" />
               <b aria-hidden="true">{i + 1}</b>
-              <span className="lv-quad__cap"><strong>{w.t}</strong>{w.d}</span>
             </button>
           ))}
         </div>
@@ -243,12 +241,11 @@ function Why({ paused }) {
               <li key={w.t} className={i === a ? 'is-on' : ''}>
                 <button type="button" aria-pressed={i === a} onClick={() => pick(i)}>
                   <b aria-hidden="true">{i + 1}</b>
-                  <strong>{w.t}</strong>
+                  <span className="lv-why__txt"><strong>{w.t}</strong>{i === a && <small key={a}>{w.d}</small>}</span>
                 </button>
               </li>
             ))}
           </ol>
-          <p key={a} className="lv-why__desc" aria-live="polite">{WHY[a].d}</p>
         </div>
       </div>
     </section>

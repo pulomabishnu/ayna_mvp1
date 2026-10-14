@@ -485,3 +485,16 @@ body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .site-
 .app-container .lv .lv-slide h2 { font-size: clamp(36px, 1.4rem + 3vw, 68px); }
 @media (max-width: 767px) { .app-container .lv .lv-stage { padding-block: 56px; } }
 .app-container .lv :is(.lv-slide--news, .lv-slide--app) { flex-direction: column; justify-content: center; align-items: flex-start; }
+/* numbers sit in the middle of each photo; detail card under the list */
+.app-container .lv .lv-quad__cell b { top: 50%; left: 50%; width: 76px; height: 76px; font-size: 40px; transform: translate(-50%, -50%); box-shadow: 4px 4px 0 var(--ink); }
+.app-container .lv .lv-quad__cell.is-on b { transform: translate(-50%, -50%) rotate(-8deg) scale(1.1); }
+.app-container .lv .lv-quad__cell:hover b { transform: translate(-50%, -50%) scale(1.06); }
+.lv-why__detail { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; align-items: start; margin-top: 20px; padding: 20px 22px; border: var(--bw) solid var(--ink); border-radius: var(--r-md); background: var(--paper); box-shadow: 4px 4px 0 var(--ink); animation: lvIn var(--m-base) var(--ease) both; }
+.lv-why__detail b { display: grid; place-items: center; width: 48px; height: 48px; border: var(--bw) solid var(--ink); border-radius: 50%; background: var(--rose); font: 400 24px/1 var(--display); }
+.lv-why__detail span { display: grid; gap: 6px; color: var(--ink); font: 400 var(--fs-body)/1.45 var(--ui); }
+.lv-why__detail strong { font: 400 22px/1.15 var(--display); }
+@media (max-width: 767px) { .app-container .lv .lv-quad__cell b { width: 52px; height: 52px; font-size: 28px; } }
+.lv-why__txt { display: grid; gap: 4px; min-width: 0; text-align: left; }
+.app-container .lv .lv-why__txt small { display: block; color: var(--ink); font: 400 15px/1.45 var(--ui) !important; animation: lvIn var(--m-base) var(--ease) both; }
+.app-container .lv .lv-why li.is-on button { padding-block: 14px; }
+.app-container .lv .lv-quad__cell b, .app-container .lv .lv-stage__chapters b { font-family: var(--display) !important; font-weight: 400 !important; }
