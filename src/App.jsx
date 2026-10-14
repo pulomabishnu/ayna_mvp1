@@ -6,22 +6,38 @@ import SiteFooter from './components/SiteFooter';
 import ConsentBanner from './components/ConsentBanner';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
-import WebIntake from './components/WebIntake';
 import WebYou from './components/WebYou';
-import WebCommunity from './components/WebCommunity';
-import WebWrapped from './components/WebWrapped';
 import { useThemeMode } from './mobile/hooks/useThemeMode.js';
-import HealthProfileEditor from './components/HealthProfileEditor';
-import DeleteAccountPage from './components/DeleteAccountPage';
-import AdminReviewsPage from './components/AdminReviewsPage';
-import PhoneVerification from './components/PhoneVerification';
-import Recommendations from './components/Recommendations';
-import TrackedItems from './components/TrackedItems';
 import MonthlyCheckin from './components/MonthlyCheckin';
 import OmittedProducts from './components/OmittedProducts';
-import Comparison from './components/Comparison';
-import DoctorPrep from './components/DoctorPrep';
-import Recalls from './components/Recalls';
+import ViewSkeleton from './components/skeletons/ViewSkeleton';
+import { markPerf } from './utils/perfTimings';
+
+// lazyView: React.lazy plus a built-in Suspense boundary, so converting an
+// eager view to a lazy one does not require touching its render site. Each
+// of these is a whole screen gated behind currentView; keeping them out of
+// the entry chunk means first paint does not pay for the quiz, Community,
+// admin tools or the post-quiz reveal.
+const lazyView = (loader, fallback) => {
+  const Lazy = React.lazy(loader);
+  const fb = fallback === undefined ? <ViewSkeleton /> : fallback;
+  return function LazyViewBoundary(props) {
+    return <Suspense fallback={fb}><Lazy {...props} /></Suspense>;
+  };
+};
+const WebIntake = lazyView(() => import('./components/WebIntake'));
+const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSkeleton label="Loading Community" cards={3} />);
+// Full-screen overlay after the quiz: keep the page behind it visible rather
+// than flashing a page skeleton under the overlay while the chunk loads.
+const WebWrapped = lazyView(() => import('./components/WebWrapped'), null);
+const DeleteAccountPage = lazyView(() => import('./components/DeleteAccountPage'));
+const AdminReviewsPage = lazyView(() => import('./components/AdminReviewsPage'));
+const PhoneVerification = lazyView(() => import('./components/PhoneVerification'));
+const Recommendations = lazyView(() => import('./components/Recommendations'));
+const TrackedItems = lazyView(() => import('./components/TrackedItems'));
+const Comparison = lazyView(() => import('./components/Comparison'));
+const DoctorPrep = lazyView(() => import('./components/DoctorPrep'));
+const Recalls = lazyView(() => import('./components/Recalls'));
 // Lazy: each of these pulls in src/data/startups.js (~1700 lines), deferring
 // them until the user actually navigates there keeps that out of the main
 // bundle. products.js itself is still eager (App.jsx needs getRecommendations/
@@ -38,7 +54,7 @@ const CampusResources = React.lazy(() => import('./components/CampusResources'))
 import { ALL_PRODUCTS, CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, hasStatedLifeStage } from './data/products';
 import { behaviorFrom } from './utils/matchDisplay';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
-import Screenings from './components/Screenings';
+const Screenings = lazyView(() => import('./components/Screenings'));
 import { useScrollPosition } from './hooks/useScrollPosition';
 import ProductModal from './components/ProductModal';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
@@ -245,11 +261,7 @@ function getInitialHomeCategory() {
 }
 
 function ViewLoadingFallback() {
-  return (
-    <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-secondary, #666)' }}>
-      Loading…
-    </div>
-  );
+  return <ViewSkeleton label="Loading" cards={3} lines={2} />;
 }
 
 /**
@@ -472,6 +484,9 @@ function App() {
   useEffect(() => { myProductsRef.current = myProducts; }, [myProducts]);
   const [authLoading, setAuthLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(false);
+  // Bumped by the ecosystem skeleton's Retry button: re-runs the per-user data
+  // load effect without touching any state that is already on screen.
+  const [dataLoadNonce, setDataLoadNonce] = useState(0);
   // Google account with no recorded consent (created straight from Log in): gate until agreed.
   const [consentGateOpen, setConsentGateOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -618,7 +633,9 @@ function App() {
         // Must run on BOTH paths. Without it a rejected getSession left
         // authLoading true forever, the PROTECTED_VIEWS redirect never fired,
         // and the user saw an empty ecosystem with no auth prompt.
-        .finally(() => setAuthLoading(false));
+        // "page opened → auth resolved", success or failure, same moment the
+        // UI stops gating on authLoading.
+        .finally(() => { setAuthLoading(false); markPerf('auth_resolved'); });
     } else {
       setAuthLoading(false);
     }
@@ -737,6 +754,15 @@ function App() {
     const loadForUserId = user.id;
     let cancelled = false;
     setDataLoading(true);
+    // Hung-request guard: every branch below already has catch/finally, but a
+    // fetch that never settles (dead network mid-request) would otherwise keep
+    // the ecosystem skeleton up forever. After 15s stop CLAIMING to load:
+    // whatever is already on screen stays (never overwritten with empty
+    // state), and late results still merge in through the same
+    // merge-don't-replace handlers below, so nothing is lost either way.
+    const dataLoadWatchdog = setTimeout(() => {
+      if (!cancelled) setDataLoading(false);
+    }, 15000);
     Promise.all([
       (async () => {
         const resetAt = getPendingEcosystemResetAt(loadForUserId);
@@ -829,10 +855,24 @@ function App() {
       }
       if (healthProfileResult?.profile) setHealthProfile(healthProfileResult.profile);
     }).finally(() => {
-      if (!cancelled) setDataLoading(false);
+      clearTimeout(dataLoadWatchdog);
+      if (!cancelled) {
+        setDataLoading(false);
+        // "page opened → ecosystem data loaded" (first settle only; markPerf
+        // dedupes retries and account switches).
+        markPerf('ecosystem_data_loaded');
+      }
     });
-    return () => { cancelled = true; };
-  }, [user?.id]);
+    return () => { cancelled = true; clearTimeout(dataLoadWatchdog); };
+    // dataLoadNonce: the ecosystem skeleton's Retry re-runs this load.
+  }, [user?.id, dataLoadNonce]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // PostHog perf marks: first time each major surface comes on screen this
+  // page load. Names and milliseconds only; markPerf never sends content.
+  React.useEffect(() => {
+    if (currentView === 'ecosystem') markPerf('ecosystem_first_render');
+    if (currentView === 'community') markPerf('community_first_render');
+  }, [currentView]);
 
   React.useEffect(() => {
     if (!user) return;
@@ -1894,6 +1934,8 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onViewEcosystem={handleViewEcosystem}
             onViewArticles={handleViewArticles}
+            onViewArticle={handleViewArticle}
+            onViewAbout={handleViewAbout}
             onViewCommunity={() => setCurrentView('community')}
             user={user}
             myProducts={myProducts}
@@ -2110,9 +2152,12 @@ function App() {
           }} />
         )}
         {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
-          <div style={{ padding: '3rem 1.5rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
-            Loading your ecosystem…
-          </div>
+          <ViewSkeleton
+            label="Loading your ecosystem"
+            cards={6}
+            slowAfterMs={8000}
+            onRetry={() => setDataLoadNonce((n) => n + 1)}
+          />
         )}
         {/* The bubble hero + shelves used to render here as two alternate
             App.jsx-level views (an "Ecosystem / Shelves" toggle) ABOVE

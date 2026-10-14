@@ -4,6 +4,8 @@ import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { formatPrice } from '../utils/formatPrice';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import MatchPill from './MatchPill';
+import { displayName } from '../mobile/utils/displayName.js';
+import { brandOf } from '../mobile/data/brandFallback.js';
 import '../styles/match-ui.css';
 import '../styles/verify-content.css';
 
@@ -32,6 +34,7 @@ export default function ProductCard({
 }) {
   if (!product) return null;
   const categoryLabel = CATEGORY_LABELS[product.category] || (product.category ? String(product.category).replace(/-/g, ' ') : 'Product');
+  const shownBrand = brandOf(product) || product.brand || '';
   const price = formatPrice(product);
   return (
     <article className={`ayna-discover-card ayna-browse-card ${className}`.trim()} style={style}>
@@ -53,10 +56,12 @@ export default function ProductCard({
         </div>
         <div className="ayna-discover-card__body">
           <div className="ayna-browse-card__labels">
-            <span className="ayna-discover-card__category">{product.brand || categoryLabel}</span>
+            <span className="ayna-discover-card__category">{shownBrand || categoryLabel}</span>
             {labels}
           </div>
-          <h3 className="ayna-discover-card__name">{product.name}</h3>
+          {/* Brand sits in the eyebrow, so a leading brand is trimmed from
+              the name ("Love Wellness Bye Bye Bloat" → "Bye Bye Bloat"). */}
+          <h3 className="ayna-discover-card__name">{shownBrand ? displayName(product) : product.name}</h3>
           <span className="ayna-discover-card__price">{price.main}{price.sub && <small>{price.sub}</small>}</span>
         </div>
       </a>

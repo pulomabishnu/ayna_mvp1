@@ -1,5 +1,5 @@
 // "Where did you hear about us?" on account creation (website AuthGate and the
-// app's SigninScreen). Optional, single choice. Saved in Supabase auth user
+// app's SigninScreen). Required on the create-account forms (2026-10 spec), single choice. Saved in Supabase auth user
 // metadata next to first_name and the consent fields, so no table or
 // migration is needed:
 //   heard_about        one of HEARD_ABOUT_OPTIONS[].value

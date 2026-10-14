@@ -118,6 +118,22 @@ export default defineConfig(async ({ command, mode }) => {
     // future config change cannot silently publish source maps.
     build: {
       sourcemap: false,
+      rollupOptions: {
+        output: {
+          // Stable vendor chunks: react/posthog/supabase change only when a
+          // dependency is upgraded, so splitting them out of the app chunk
+          // lets returning visitors keep them cached across our (frequent)
+          // deploys, and lets first visits download them in parallel with the
+          // app code instead of as one serial multi-MB file.
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return undefined;
+            if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return 'vendor-react';
+            if (id.includes('node_modules/posthog-js/')) return 'vendor-posthog';
+            if (id.includes('node_modules/@supabase/')) return 'vendor-supabase';
+            return undefined;
+          },
+        },
+      },
     },
     test: {
       environment: 'node',

@@ -3,8 +3,15 @@ import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../../utils/heardAbout.js';
 import { stashPendingSignupMeta } from '../../utils/pendingConsent.js';
+import { setRememberMe } from '../../utils/supabaseClient.js';
 import '../auth.css';
 import '../../styles/flow.css';
+
+/** "Where did you hear about us?" is REQUIRED on account creation (founder
+ * spec, 2026-10). Same check as src/components/AuthGate.jsx's copy. */
+function isHeardAboutAnswered(value) {
+  return HEARD_ABOUT_OPTIONS.some((o) => o.value === value);
+}
 
 // Same three statements, same order, same required-before-signup gate as
 // src/components/AuthGate.jsx's CONSENT_ITEMS, this is a real compliance
@@ -170,7 +177,11 @@ export default function SigninScreen({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [checked, setChecked] = useState([false, false, false]);
-  // Optional "Where did you hear about us?" (saved in user metadata).
+  // Remember me (sign-in): controls ONLY where the Supabase session token is
+  // stored (localStorage vs sessionStorage, src/utils/supabaseClient.js).
+  // Defaults on. Never deletes any account data.
+  const [rememberMe, setRememberMeChecked] = useState(true);
+  // Required "Where did you hear about us?" (saved in user metadata).
   const [heardAbout, setHeardAbout] = useState('');
   const [heardOther, setHeardOther] = useState('');
   // Create account is only offered in the save step after the quiz (opened
@@ -215,12 +226,19 @@ export default function SigninScreen({
   const toggleCheck = (i) => setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
 
   const handleSignUp = async () => {
+    if (!isHeardAboutAnswered(heardAbout)) {
+      setError('Tell us where you heard about ayna.');
+      return;
+    }
     if (!allConsented) {
       setError('Please agree to the three statements above before creating your account.');
       return;
     }
     setError('');
     setLoading(true);
+    // Signup always persists the new session (the Remember me choice is a
+    // sign-in option); see src/utils/supabaseClient.js.
+    setRememberMe(true);
     try {
       const { needsConfirmation } = await onSignUp({ email: email.trim(), password, firstName: firstName.trim(), metadata: heardAboutMetadata(heardAbout, heardOther) });
       if (needsConfirmation) setMode('check-email');
@@ -236,6 +254,7 @@ export default function SigninScreen({
   const handleSignIn = async () => {
     setError('');
     setLoading(true);
+    setRememberMe(rememberMe);
     try {
       await onSignIn({ email: email.trim(), password });
       onAuthenticated();
@@ -251,12 +270,19 @@ export default function SigninScreen({
     // statements above only render in signup mode, so this is the one place
     // stopping Google from creating a real account with none of them agreed
     // to. Signing in with an existing account needs no re-consent.
+    if (mode === 'signup' && !isHeardAboutAnswered(heardAbout)) {
+      setError('Tell us where you heard about ayna.');
+      return;
+    }
     if (mode === 'signup' && !allConsented) {
       setError('Please agree to the three statements above before continuing.');
       return;
     }
     setError('');
     stashPendingSignupMeta(mode === 'signup' ? heardAboutMetadata(heardAbout, heardOther) : null);
+    // Before the OAuth redirect: the flag must already be set when the
+    // returning setSession writes the session through the storage adapter.
+    setRememberMe(mode === 'signup' ? true : rememberMe);
     setGoogleLoading(true);
     try {
       await onGoogleSignIn();
@@ -268,13 +294,18 @@ export default function SigninScreen({
   };
 
   const handleApple = async () => {
-    // Same gate as handleGoogle above.
+    // Same gates as handleGoogle above.
+    if (mode === 'signup' && !isHeardAboutAnswered(heardAbout)) {
+      setError('Tell us where you heard about ayna.');
+      return;
+    }
     if (mode === 'signup' && !allConsented) {
       setError('Please agree to the three statements above before continuing.');
       return;
     }
     setError('');
     stashPendingSignupMeta(mode === 'signup' ? heardAboutMetadata(heardAbout, heardOther) : null);
+    setRememberMe(mode === 'signup' ? true : rememberMe);
     setAppleLoading(true);
     try {
       await onAppleSignIn();
@@ -381,7 +412,7 @@ export default function SigninScreen({
 
           {mode === 'signup' && (
             <div className="ay-auth-heard">
-              <label className="ay-auth-heard-label" htmlFor="ay-auth-heard">Where did you hear about us? <span>Optional</span></label>
+              <label className="ay-auth-heard-label" htmlFor="ay-auth-heard">Where did you hear about us?</label>
               <select id="ay-auth-heard" value={heardAbout} onChange={(e) => setHeardAbout(e.target.value)} className={heardAbout ? '' : 'is-empty'}>
                 <option value="">Choose one</option>
                 {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -401,6 +432,18 @@ export default function SigninScreen({
                 </label>
               ))}
             </div>
+          )}
+
+          {mode === 'signin' && (
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', margin: '2px 2px 10px' }}>
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMeChecked(e.target.checked)}
+                style={{ width: 18, height: 18, flex: 'none', margin: 0, accentColor: 'var(--ay-ink, #1d1a2b)' }}
+              />
+              <span style={{ fontFamily: "var(--ayna-font-ui)", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ay-ink, #1d1a2b)' }}>Remember me</span>
+            </label>
           )}
 
           {error && <div className="ay-auth-error" role="alert">{error}</div>}

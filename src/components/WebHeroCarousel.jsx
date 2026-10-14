@@ -1,22 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { TEAM_PHOTO, TEAM_CAPTION, getDailyFact } from '../data/welcomeSlides.js';
+import { getDailyFact } from '../data/welcomeSlides.js';
 import './WebHeroCarousel.css';
 
-// Website welcome stories: us, the app, what ayna does, today's fact and
-// what's new. A big stage with a chapter list whose bars fill as each slide
+// Website welcome stories: the app, what ayna does, today's fact and
+// what's new. (The team moved up the page into the landing's own founders
+// moment, so there is no team slide here any more.) A big stage with a chapter list whose bars fill as each slide
 // plays; the whole band takes the slide's colour. Swipe, arrows, chapter
 // buttons or keyboard. Pauses on hover; no autoplay with reduced motion.
 
-// First slide (the team) stays a little longer, then 2.5s each.
-const FIRST_DURATION = 3500;
 const DURATION = 2500;
-
-function TeamSlide() {
-  return <figure className="whc-team">
-    <img src={TEAM_PHOTO} alt="The ayna team together outdoors" draggable="false" />
-    <figcaption>{TEAM_CAPTION}</figcaption>
-  </figure>;
-}
 
 function AboutSlide({ onStartQuiz }) {
   return <>
@@ -79,7 +71,6 @@ function NewsSlide({ onViewCommunity }) {
 export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCommunity }) {
   const fact = useMemo(() => getDailyFact(), []);
   const slides = useMemo(() => [
-    { key: 'team', label: 'Meet ayna', tone: 'peri' },
     { key: 'app', label: 'The app', tone: 'butter' },
     { key: 'about', label: 'What ayna does', tone: 'mint' },
     ...(fact ? [{ key: 'fact', label: 'Daily ayna fact', tone: 'cream' }] : []),
@@ -93,7 +84,7 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
   const count = slides.length;
   const go = (step) => setIndex((i) => (i + step + count) % count);
   const playing = !paused && !hover && !reduced;
-  const duration = index === 0 ? FIRST_DURATION : DURATION;
+  const duration = DURATION;
 
   useEffect(() => {
     if (!playing) return undefined;
@@ -115,7 +106,6 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
   };
 
   const render = (key) => {
-    if (key === 'team') return <TeamSlide />;
     if (key === 'about') return <AboutSlide onStartQuiz={onStartQuiz} />;
     if (key === 'app') return <AppSlide />;
     if (key === 'fact') return <FactSlide fact={fact} onViewArticles={onViewArticles} />;

@@ -1114,15 +1114,45 @@ export default function MyEcosystem({
         [quizResults, needShelves]
     );
     // "Next step" highlights a different empty area on every page load.
+    // The pool never includes an area that conflicts with her real profile
+    // (no "Start your Pregnancy shelf" for someone who is not pregnant):
+    // life-stage areas only appear when her stages or chosen needs point
+    // there. Neutral areas (intimate care, gut, sleep, pelvic...) always may.
     const [gapSpin] = useState(() => Math.floor(Math.random() * 97));
     const gapAreas = useMemo(
         () => {
-            const gaps = ECOSYSTEM_AREAS.filter((a) => !areaGroups.some((g) => g.key === a.key));
+            const intakeSnap = quizResults?.fullHealthIntake || {};
+            const stages = new Set([
+                ...(Array.isArray(intakeSnap.lifeStageSelections) ? intakeSnap.lifeStageSelections : []),
+                ...(intakeSnap.lifeStage ? [intakeSnap.lifeStage] : []),
+            ]);
+            const needs = (Array.isArray(intakeSnap.supportSelections) ? intakeSnap.supportSelections : []).join(' | ').toLowerCase();
+            const age = Number(intakeSnap.age);
+            const noProfile = stages.size === 0 && !needs;
+            const pregnant = stages.has('I am pregnant');
+            const postpartum = stages.has('I am postpartum') || /postpartum|breastfeeding|lactation/.test(needs);
+            const ttc = stages.has('I am trying to conceive') || /trying to conceive|fertility|ovulation/.test(needs);
+            const midlife = stages.has('I am in perimenopause') || stages.has('I am in menopause') || stages.has('I am post-menopause');
+            const noPeriods = stages.has('I do not currently get periods');
+            const fits = (a) => {
+                if (noProfile) return !['pregnancy', 'postpartum', 'breast'].includes(a.key);
+                switch (a.key) {
+                    case 'pregnancy': return pregnant || ttc || /pregnan|prenatal/.test(needs);
+                    case 'postpartum': return postpartum;
+                    case 'breast': return pregnant || postpartum;
+                    case 'fertility': return ttc && !midlife;
+                    case 'birth-control': return !pregnant && !ttc && !midlife;
+                    case 'menopause': return midlife || (Number.isFinite(age) && age >= 40) || /menopause|hot flash/.test(needs);
+                    case 'period': return !pregnant && !midlife && !noPeriods;
+                    default: return true;
+                }
+            };
+            const gaps = ECOSYSTEM_AREAS.filter((a) => !areaGroups.some((g) => g.key === a.key)).filter(fits);
             if (gaps.length < 2) return gaps.slice(0, 6);
             const start = gapSpin % gaps.length;
             return [...gaps.slice(start), ...gaps.slice(0, start)].slice(0, 6);
         },
-        [areaGroups, gapSpin]
+        [areaGroups, gapSpin, quizResults]
     );
     const ecoQueryTrimmed = ecoQuery.trim();
     const visibleAreaGroups = useMemo(() => {

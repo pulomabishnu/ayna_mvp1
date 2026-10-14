@@ -50,7 +50,23 @@ export default function QuizIntro({ variant = 'app', enabled = true }) {
     return () => { window.removeEventListener('keydown', onKey); clearTimeout(timer); };
   }, [open, still, paused, close]);
 
-  if (!open) return null;
+  // She ticked "Don't show again": a tiny one-time hint on the first step
+  // keeps hold-to-define discoverable without replaying the whole intro.
+  const [hintGone, setHintGone] = useState(false);
+  useEffect(() => {
+    if (open || !enabled || hintGone) return undefined;
+    const t = setTimeout(() => setHintGone(true), 7000);
+    return () => clearTimeout(t);
+  }, [open, enabled, hintGone]);
+  if (!open) {
+    if (!enabled || hintGone || !quizIntroHidden()) return null;
+    return (
+      <p className={`qi-mini qi-mini--${variant}`} role="note">
+        Hold any answer to see what it means
+        <button type="button" aria-label="Dismiss tip" onClick={() => setHintGone(true)}>×</button>
+      </p>
+    );
+  }
   const manual = still || paused;
   return (
     <div className={`qi qi--${variant}${still ? ' is-still' : ''}${paused ? ' is-paused' : ''}${leaving ? ' is-leaving' : ''}`} role="dialog" aria-modal="true" aria-labelledby="qi-title" onClick={close}>

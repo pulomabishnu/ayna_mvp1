@@ -5,34 +5,79 @@
 -- Supabase SQL editor. Idempotent: safe to run again.
 --
 -- What it adds
---   1. community_team_members: the ayna team by sign-in email + public title.
---      Emails are never readable by clients; community_team_badges() exposes
---      only (user_id, title) so the app can show "CEO, ayna" next to names.
+--   1. community_team_members: the ayna team by sign-in email, public title
+--      and is_admin. Two separate concepts, per the founder's final rule:
+--        verified team member (badge): Puloma, Eliz, Ameera
+--        admin (may write Announcements): Puloma and Eliz ONLY
+--      Ameera keeps her "CMO, ayna" verified badge but cannot create, edit,
+--      publish or delete announcements. Emails are never readable by clients;
+--      community_team_badges() exposes only (user_id, title).
 --   2. community_announcements (+ reactions, replies). Everyone can read.
---      Only team members (matched by their confirmed auth email) can post.
+--      Only admins (matched by their CONFIRMED auth.users email) can write.
 --   3. community_text_breaks_rules(): a small backstop for the client filter
 --      (src/utils/communityRules.js). Posts are inserted straight through
 --      PostgREST, so this trigger is the only server-side check. It covers the
 --      unambiguous cases only (emails, phone numbers, "DM me", "link in bio",
 --      "kill yourself"); the client filter stays the main line.
+--
+-- Why this is not frontend-only authorization
+--   The checks in src/utils/aynaTeam.js only hide buttons. Anyone can call
+--   PostgREST directly with their own JWT, so the real gate is RLS here.
+--   Membership is keyed on auth.users.email, which is set by Supabase Auth and
+--   only changeable through a verified email-change flow, joined to a table
+--   clients can neither read nor write (RLS on, zero policies, all privileges
+--   revoked). It deliberately does NOT look at user_metadata /
+--   raw_user_meta_data: any signed-in user can set their own user_metadata via
+--   supabase.auth.updateUser(), so metadata like {"admin": true} or
+--   {"verified": true} must never grant anything, and here it grants nothing.
+--   Normal users therefore cannot self-verify or self-admin.
+--
+-- Tests to run after applying (Supabase SQL editor). Impersonation pattern:
+--     begin;
+--     select set_config('request.jwt.claims', json_build_object(
+--       'sub', (select id from auth.users where email = '<EMAIL>'),
+--       'role', 'authenticated', 'email', '<EMAIL>')::text, true);
+--     set local role authenticated;
+--     -- ... statements under test ...
+--     rollback;
+--   1. As any NORMAL user:
+--        insert into public.community_announcements (title) values ('hi');
+--          -> ERROR: new row violates row-level security policy   (DENIED)
+--        update public.community_announcements set title = 'x';   -- 0 rows (DENIED)
+--        delete from public.community_announcements;              -- 0 rows (DENIED)
+--   2. As ameera@aynahealth.co: same three statements -> same denials
+--      (verified badge only, not admin).
+--   3. As puloma@aynahealth.co, then eliz@aynahealth.co:
+--        insert into public.community_announcements (title) values ('test')
+--          returning id;                                          -- ALLOWED
+--        update public.community_announcements set title = 'test 2'
+--          where id = '<that id>';                                -- 1 row
+--        delete from public.community_announcements
+--          where id = '<that id>';                                -- 1 row
+--   4. Badges: select * from public.community_team_badges();
+--        -> one row per existing, email-confirmed team account (up to 3).
 
 -- ── 1. Team ────────────────────────────────────────────────────────────────
 
 create table if not exists public.community_team_members (
   email text primary key check (email = lower(email)),
   first_name text not null,
-  title text not null check (char_length(title) between 1 and 40)
+  title text not null check (char_length(title) between 1 and 40),
+  is_admin boolean not null default false
 );
+-- In case an earlier draft of this migration was ever applied without the column.
+alter table public.community_team_members add column if not exists is_admin boolean not null default false;
 
 alter table public.community_team_members enable row level security;
 -- No policies: clients can't read or write this table directly.
 revoke all on public.community_team_members from anon, authenticated;
 
-insert into public.community_team_members (email, first_name, title) values
-  ('puloma@aynahealth.co', 'Puloma', 'CEO, ayna'),
-  ('ameera@aynahealth.co', 'Ameera', 'CMO, ayna'),
-  ('eliz@aynahealth.co', 'Eliz', 'COO, ayna')
-on conflict (email) do update set first_name = excluded.first_name, title = excluded.title;
+insert into public.community_team_members (email, first_name, title, is_admin) values
+  ('puloma@aynahealth.co', 'Puloma', 'CEO, ayna', true),
+  ('ameera@aynahealth.co', 'Ameera', 'CMO, ayna', false),
+  ('eliz@aynahealth.co', 'Eliz', 'COO, ayna', true)
+on conflict (email) do update
+  set first_name = excluded.first_name, title = excluded.title, is_admin = excluded.is_admin;
 
 create or replace function public.community_is_team_member(uid uuid)
 returns boolean
@@ -48,6 +93,24 @@ as $$
 $$;
 revoke all on function public.community_is_team_member(uuid) from public;
 grant execute on function public.community_is_team_member(uuid) to anon, authenticated;
+
+-- Admin = may write Announcements. Puloma and Eliz only (is_admin above).
+-- Requires a confirmed email: an unconfirmed signup claiming a team address
+-- grants nothing until the real owner confirms it.
+create or replace function public.community_is_admin(uid uuid)
+returns boolean
+language sql stable security definer
+set search_path = public, auth
+as $$
+  select exists (
+    select 1
+    from auth.users u
+    join public.community_team_members t on t.email = lower(u.email)
+    where u.id = uid and t.is_admin and u.email_confirmed_at is not null
+  );
+$$;
+revoke all on function public.community_is_admin(uuid) from public;
+grant execute on function public.community_is_admin(uuid) to anon, authenticated;
 
 -- Verified badges: team user ids and titles only (no emails).
 create or replace function public.community_team_badges()
@@ -102,7 +165,9 @@ begin
       ('community_posts', 'body', 'body'),
       ('community_comments', 'body', 'body'),
       ('community_playlists', 'title, description', 'title,description'),
-      ('community_profiles', 'bio', 'bio')
+      ('community_profiles', 'bio, display_name', 'bio,display_name'),
+      ('community_playlist_items', 'note', 'note'),
+      ('community_product_recommendations', 'note', 'note')
     ) as s(tbl, cols, args)
   loop
     if to_regclass('public.' || spec.tbl) is not null then
@@ -141,18 +206,18 @@ create policy community_announcements_read on public.community_announcements
 drop policy if exists community_announcements_team_insert on public.community_announcements;
 create policy community_announcements_team_insert on public.community_announcements
   for insert to authenticated
-  with check (author_id = auth.uid() and public.community_is_team_member(auth.uid()));
+  with check (author_id = auth.uid() and public.community_is_admin(auth.uid()));
 
 drop policy if exists community_announcements_team_update on public.community_announcements;
 create policy community_announcements_team_update on public.community_announcements
   for update to authenticated
-  using (public.community_is_team_member(auth.uid()))
-  with check (public.community_is_team_member(auth.uid()));
+  using (public.community_is_admin(auth.uid()))
+  with check (public.community_is_admin(auth.uid()));
 
 drop policy if exists community_announcements_team_delete on public.community_announcements;
 create policy community_announcements_team_delete on public.community_announcements
   for delete to authenticated
-  using (public.community_is_team_member(auth.uid()));
+  using (public.community_is_admin(auth.uid()));
 
 grant select on public.community_announcements to anon, authenticated;
 grant insert, update, delete on public.community_announcements to authenticated;
@@ -204,7 +269,7 @@ create policy community_announcement_replies_insert on public.community_announce
 drop policy if exists community_announcement_replies_delete on public.community_announcement_replies;
 create policy community_announcement_replies_delete on public.community_announcement_replies
   for delete to authenticated
-  using (author_id = auth.uid() or public.community_is_team_member(auth.uid()));
+  using (author_id = auth.uid() or public.community_is_admin(auth.uid()));
 
 grant select on public.community_announcement_replies to anon, authenticated;
 grant insert, delete on public.community_announcement_replies to authenticated;
@@ -213,3 +278,64 @@ drop trigger if exists community_announcement_replies_rules on public.community_
 create trigger community_announcement_replies_rules
   before insert or update of body on public.community_announcement_replies
   for each row execute function public.community_enforce_rules('body');
+
+-- ── 4. Index proposals (NOT applied; commented out on purpose) ──────────────
+--
+-- These match how the app actually queries (src/utils/community/communityStore.js).
+-- Run the EXPLAIN first on production data; only create an index when the plan
+-- shows a Seq Scan on a table that has grown past a few thousand rows. All use
+-- IF NOT EXISTS and are safe to run during normal traffic (community tables
+-- are small; skip CONCURRENTLY unless a table has >100k rows).
+--
+-- Feed (community_feed_posts view reads community_posts ordered by
+-- created_at desc, id desc, filtered by kind / author_id):
+--   explain analyze select * from public.community_posts
+--     order by created_at desc, id desc limit 20;
+--   -- create index if not exists community_posts_created_idx
+--   --   on public.community_posts (created_at desc, id desc);
+--   explain analyze select * from public.community_posts
+--     where author_id = '<some uuid>' order by created_at desc limit 20;
+--   -- create index if not exists community_posts_author_idx
+--   --   on public.community_posts (author_id, created_at desc);
+--
+-- Comments by post:
+--   explain analyze select * from public.community_comments
+--     where post_id = '<some uuid>' order by created_at limit 100;
+--   -- create index if not exists community_comments_post_idx
+--   --   on public.community_comments (post_id, created_at);
+--
+-- Follows (listFollowingIds filters follower_id; listFollowers and
+-- profile stats filter followee_id). If the primary key is
+-- (follower_id, followee_id), only the followee side needs an index:
+--   explain analyze select follower_id from public.community_follows
+--     where followee_id = '<some uuid>' order by created_at desc limit 100;
+--   -- create index if not exists community_follows_followee_idx
+--   --   on public.community_follows (followee_id, created_at desc);
+--
+-- Friend requests (listMyFriendships: RLS filters requester/addressee = uid):
+--   -- create index if not exists community_friend_requests_requester_idx
+--   --   on public.community_friend_requests (requester_id);
+--   -- create index if not exists community_friend_requests_addressee_idx
+--   --   on public.community_friend_requests (addressee_id);
+--
+-- Notifications (listNotifications orders created_at desc; unread badge
+-- counts read_at is null, both RLS-filtered to the owner):
+--   explain analyze select id from public.community_notifications
+--     where user_id = '<some uuid>' and read_at is null;
+--   -- create index if not exists community_notifications_user_idx
+--   --   on public.community_notifications (user_id, created_at desc);
+--   -- create index if not exists community_notifications_unread_idx
+--   --   on public.community_notifications (user_id) where read_at is null;
+--
+-- Profiles by username (profile pages, @handle search). Skip if username
+-- already has a UNIQUE constraint (it should; check with \d community_profiles):
+--   -- create unique index if not exists community_profiles_username_idx
+--   --   on public.community_profiles (lower(username));
+--
+-- Playlists (public browse: visibility = 'public' ordered by updated_at):
+--   -- create index if not exists community_playlists_visibility_idx
+--   --   on public.community_playlists (visibility, updated_at desc);
+--
+-- Recommendations inbox:
+--   -- create index if not exists community_product_recs_recipient_idx
+--   --   on public.community_product_recommendations (recipient_id, created_at desc);

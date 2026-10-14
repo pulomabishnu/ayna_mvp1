@@ -1,0 +1,93 @@
+/* Brand skeletons: calm placeholder blocks shown while a lazy view or the
+   user's data loads. Ink-at-low-alpha so they read correctly on both the
+   paper (light) and neon-dark themes without theme-specific overrides. */
+
+.ay-skel {
+  padding: 48px 24px 64px;
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ay-skel__bar,
+.ay-skel__card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: rgba(29, 26, 43, 0.07); /* ink @ 7% */
+}
+
+.ay-skel__bar { height: 16px; margin-bottom: 16px; }
+.ay-skel__bar.is-title { height: 40px; width: min(420px, 70%); border-radius: 999px; margin-bottom: 24px; }
+.ay-skel__bar.is-sub { width: min(560px, 90%); }
+.ay-skel__bar.is-short { width: 40%; }
+
+.ay-skel__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.ay-skel__card { height: 200px; }
+
+/* Gentle sheen sweep; skipped entirely under reduced motion. */
+.ay-skel__bar::after,
+.ay-skel__card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 252, 245, 0.55), transparent);
+  animation: ay-skel-sheen 1.6s ease-in-out infinite;
+}
+
+@keyframes ay-skel-sheen {
+  to { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ay-skel__bar::after,
+  .ay-skel__card::after { animation: none; }
+}
+
+/* Dark theme: lighten the blocks instead of darkening. */
+[data-ay-theme='dark'] .ay-skel__bar,
+[data-ay-theme='dark'] .ay-skel__card,
+.theme-dark .ay-skel__bar,
+.theme-dark .ay-skel__card {
+  background: rgba(255, 252, 245, 0.1);
+}
+
+[data-ay-theme='dark'] .ay-skel__bar::after,
+[data-ay-theme='dark'] .ay-skel__card::after,
+.theme-dark .ay-skel__bar::after,
+.theme-dark .ay-skel__card::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 252, 245, 0.08), transparent);
+}
+
+.ay-skel__status {
+  margin-top: 24px;
+  text-align: center;
+  color: var(--color-text-muted, #6b6880);
+  font-size: 0.9rem;
+}
+
+.ay-skel__status .ay-skel__retry {
+  display: inline-block;
+  margin-left: 12px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 2px solid var(--ay-ink, #1d1a2b);
+  background: transparent;
+  color: var(--ay-ink, #1d1a2b);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+[data-ay-theme='dark'] .ay-skel__status .ay-skel__retry,
+.theme-dark .ay-skel__status .ay-skel__retry {
+  border-color: var(--ay-paper, #fffcf5);
+  color: var(--ay-paper, #fffcf5);
+}

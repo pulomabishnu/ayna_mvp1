@@ -71,11 +71,18 @@ export async function upsertCommunityProfile(supabase, userId, { username, displ
   // Insert or update explicitly: an upsert would need UPDATE on user_id, which
   // authenticated deliberately doesn't have.
   const existing = check(await supabase.from('community_profiles').select('user_id').eq('user_id', userId).maybeSingle());
+  const { user_id: _omit, ...patch } = row;
   if (existing) {
-    const { user_id: _omit, ...patch } = row;
     return check(await supabase.from('community_profiles').update(patch).eq('user_id', userId).select('*').single());
   }
-  return check(await supabase.from('community_profiles').insert(row).select('*').single());
+  const inserted = await supabase.from('community_profiles').insert(row).select('*').single();
+  // Race (double submit / second tab created the row first): the primary key
+  // on user_id rejects the duplicate insert. Fall back to updating the
+  // existing row so a returning account never ends up with two profiles.
+  if (inserted.error?.code === '23505' && /user_id|pkey/i.test(String(inserted.error.message || ''))) {
+    return check(await supabase.from('community_profiles').update(patch).eq('user_id', userId).select('*').single());
+  }
+  return check(inserted);
 }
 
 export async function setAvatarPath(supabase, userId, path) {
@@ -298,7 +305,7 @@ export async function removeFriendship(supabase, requestId) {
 }
 
 export async function listBlockedIds(supabase, userId) {
-  const rows = check(await supabase.from('community_blocks').select('blocked_id').eq('blocker_id', userId));
+  const rows = check(await supabase.from('community_blocks').select('blocked_id').eq('blocker_id', userId).limit(1000));
   return (rows || []).map((r) => r.blocked_id);
 }
 
@@ -334,7 +341,7 @@ export async function getPlaylist(supabase, playlistId) {
 
 export async function listPlaylistItems(supabase, playlistId) {
   return check(await supabase.from('community_playlist_items').select('product_id, note, position, added_at')
-    .eq('playlist_id', playlistId).order('position').order('added_at')) || [];
+    .eq('playlist_id', playlistId).order('position').order('added_at').limit(60)) || [];
 }
 
 export async function createPlaylist(supabase, userId, { title, description = '', visibility = 'public', coverUrl = null }) {

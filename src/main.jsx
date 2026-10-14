@@ -2,8 +2,15 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { Capacitor } from '@capacitor/core'
-import MobileApp from './mobile/MobileApp.jsx'
 import './index.css'
+import { markPerf } from './utils/perfTimings.js'
+
+// The whole mobile app (src/mobile/**, ~1.6MB of source) was bundled into the
+// web entry chunk even though the web only ever shows it on /mobile-preview.
+// Lazy-load it so normal website visitors never download it; native
+// (Capacitor) builds load it from local assets, where the extra request is
+// free.
+const MobileApp = React.lazy(() => import('./mobile/MobileApp.jsx'))
 import './styles/search-focus.css'
 import { installNoEmDash } from './utils/noEmDashDom.js'
 import posthog from 'posthog-js'
@@ -303,7 +310,15 @@ installNoEmDash(document.body)
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
-      {isMobilePreview ? <MobileApp /> : <App />}
+      {isMobilePreview ? (
+        <React.Suspense fallback={<div style={{ minHeight: '100vh', background: '#fffcf5' }} />}>
+          <MobileApp />
+        </React.Suspense>
+      ) : <App />}
     </ErrorBoundary>
   </React.StrictMode>
 );
+
+// "page opened → app shell visible": the double rAF fires after the first
+// frame React painted, which is exactly when the shell is on screen.
+requestAnimationFrame(() => requestAnimationFrame(() => markPerf('shell_visible')));

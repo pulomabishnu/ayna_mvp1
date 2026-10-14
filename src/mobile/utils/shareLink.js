@@ -1,6 +1,6 @@
 // Shares a LINK to the website (not an image) from ayna Wrapped. The text is
 // a short teaser only: never any of the person's answers or health details.
-export const SITE_URL = 'https://www.aynahealth.co/';
+export const SITE_URL = 'https://www.aynahealth.co/wrapped/';
 export const SHARE_TEXT = 'I just built my ayna ecosystem. Build yours:';
 
 // The website shares its own origin (so previews and staging link to
@@ -9,13 +9,16 @@ export const SHARE_TEXT = 'I just built my ayna ecosystem. Build yours:';
 export function shareUrl() {
   try {
     const { protocol, origin, pathname } = window.location;
-    if (/^https?:$/.test(protocol) && !pathname.startsWith('/mobile-preview')) return `${origin}/`;
+    // /wrapped/ is a static page whose only job is a clean link preview
+    // (og title, description and the branded card image); it sends people
+    // straight to the homepage and never carries any of her answers.
+    if (/^https?:$/.test(protocol) && !pathname.startsWith('/mobile-preview')) return `${origin}/wrapped/`;
   } catch { /* no window */ }
   return SITE_URL;
 }
 
 // Returns 'shared' | 'copied' | 'cancelled' | 'failed'.
-export async function shareAynaLink({ url = shareUrl(), title = 'ayna', text = SHARE_TEXT } = {}) {
+export async function shareAynaLink({ url = shareUrl(), title = 'ayna Wrapped', text = SHARE_TEXT } = {}) {
   if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
     try {
       await navigator.share({ title, text, url });

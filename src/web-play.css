@@ -1170,3 +1170,53 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 .app-container .ayna-browse-card .ayna-discover-card__body { justify-content: start; }
 .app-container .ayna-browse-card .ayna-discover-card__price { padding-top: 0 !important; margin-top: 4px !important; }
 .app-container .ayna-browse-card .ayna-discover-card__labels { margin-bottom: 0 !important; }
+
+/* ---------- Shop cards back to the original editorial structure (round 8) ----------
+   The founder's reference: the pre-redesign Browse card (afded1d) - a quiet,
+   borderless stack where the image tile is the card: square white tile,
+   tiny tracked eyebrow, two-line name, small muted price right under,
+   floating heart. Rebuilt here with today's tokens and the ink match pill. */
+.app-container .ayna-browse-card { padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+.app-container .ayna-browse-card:hover { transform: none !important; box-shadow: none !important; }
+.app-container .ayna-browse-card .ayna-discover-card__tile {
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 16px !important;
+  background: var(--ay-product-tile) !important;
+  box-shadow: inset 0 0 0 1.5px var(--ay-line) !important;
+  transition: transform .18s var(--ay-pop), box-shadow .18s;
+}
+.app-container .ayna-browse-card:hover .ayna-discover-card__tile,
+.app-container .ayna-browse-card:focus-within .ayna-discover-card__tile { transform: translateY(-2px); box-shadow: inset 0 0 0 1.5px var(--ay-ink), var(--ay-shadow-lg) !important; }
+.app-container .ayna-browse-card .ayna-discover-card__tile img { padding: 9% !important; }
+.app-container .ayna-browse-card .ayna-discover-card__body { gap: 2px !important; padding: 12px 2px 0 !important; }
+.app-container .ayna-browse-card__labels { min-height: 15px !important; height: auto !important; margin: 0 0 4px !important; gap: 8px !important; }
+.app-container .ayna-browse-card .ayna-discover-card__category {
+  color: var(--ay-ink-soft) !important;
+  font: 700 10.5px/1.2 var(--ay-font-ui) !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+}
+.app-container :is(.ayna-browse-card__eligibility, .ayna-browse-card__sponsored) {
+  padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important;
+  color: var(--ay-ink-soft) !important; font: 600 10.5px/1.2 var(--ay-font-ui) !important; letter-spacing: .08em !important; text-transform: uppercase !important;
+}
+.app-container :is(.ayna-browse-card__eligibility, .ayna-browse-card__sponsored)::before { content: '·'; margin-right: 8px; color: var(--ay-ink-soft); }
+.app-container .ayna-browse-card .ayna-discover-card__name {
+  min-height: 2.6em !important;
+  font: 600 15.5px/1.3 var(--ay-font-ui) !important;
+  letter-spacing: -.012em !important;
+  color: var(--ay-ink) !important;
+}
+.app-container .ayna-browse-card .ayna-discover-card__price { margin-top: 4px !important; color: var(--ay-ink) !important; font: 600 13px/1.3 var(--ay-font-ui) !important; }
+.app-container .ayna-browse-card .ayna-discover-card__price small { font: 500 12px/1.3 var(--ay-font-ui); color: var(--ay-ink-soft); }
+/* Heart floats on the tile; today's ink outline, old placement. */
+.app-container .ayna-browse-card__wishlist { top: 10px !important; right: 10px !important; }
+/* Match pill sits where the old match bubble lived: bottom-left of the tile. */
+.app-container .ayna-browse-card .ayna-browse-card__pill { top: auto !important; left: 10px !important; bottom: 10px !important; }
+.app-container .ayna-browse-card__ecosystem { left: auto !important; right: 10px !important; bottom: 10px !important; }
+/* Borderless cards breathe like the original grid. */
+.app-container .ayna-browse__grid { gap: 36px 20px !important; }
+/* Dark: the browse card stays borderless (the neon panel treatment is for real panels). */
+.app-container.app-container.app-container.app-container[data-theme='dark'] .ayna-browse-card { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.app-container.app-container.app-container.app-container[data-theme='dark'] .ayna-browse-card .ayna-discover-card__tile { background: #ffffff !important; box-shadow: inset 0 0 0 1.5px rgba(29, 26, 43, .12) !important; }
+.app-container.app-container.app-container.app-container[data-theme='dark'] .ayna-browse-card:hover .ayna-discover-card__tile { box-shadow: inset 0 0 0 1.5px rgba(29, 26, 43, .25), 0 0 20px rgba(168, 181, 255, .18) !important; }

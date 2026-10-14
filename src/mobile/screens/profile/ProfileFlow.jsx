@@ -681,7 +681,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
         <div className="ay-startups-hero">
           <span className="ay-startups-art" aria-hidden="true"><i /><i /><i /></span>
           <h2>Explore startups</h2>
-          <p>Ranked by your answers, not ad spend.</p>
+          <p>Early women's health startups you can try.</p>
         </div>
 
         <div className="ay-startups-filters" role="group" aria-label="Filter startups">

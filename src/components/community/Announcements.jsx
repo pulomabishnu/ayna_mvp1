@@ -13,8 +13,10 @@ import { VerifiedBadge } from './VerifiedBadge.jsx';
 import './community-shared.css';
 
 // Announcements: news from the ayna team. Everyone can read, react and reply;
-// only team accounts (src/utils/aynaTeam.js, enforced by RLS) can post. Shared
-// by the website (variant="web") and the app (variant="app").
+// only admins, Puloma and Eliz (src/utils/aynaTeam.js, enforced by RLS), can
+// create, edit or delete. Verified non-admin team accounts (Ameera) read like
+// everyone else. Shared by the website (variant="web") and the app
+// (variant="app").
 
 const KIND_LABEL = { playlist: 'Playlist', product: 'Product', read: 'Read', link: 'Link' };
 const dateLabel = (v) => (v ? new Date(v).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '');

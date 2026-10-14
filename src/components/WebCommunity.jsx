@@ -18,6 +18,7 @@ import { VerifiedBadge } from './community/VerifiedBadge.jsx';
 import { useTeamBadges } from './community/useTeamBadges.js';
 import Announcements from './community/Announcements.jsx';
 import { breaksCommunityRules } from '../utils/communityRules.js';
+import { markPerf } from '../utils/perfTimings';
 import './WebCommunity.css';
 import '../styles/audit-community.css';
 import '../styles/verify-content.css';
@@ -294,7 +295,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         const rows = await community.listFeedPosts(supabase, { kind: tab === 'question' || tab === 'review' ? tab : null, authorIds: tab === 'following' ? followingIds : null });
         if (active) { setPosts(tab === 'for-you' ? rankForYou(rows, { matchFor, followingIds: new Set(followingIds) }) : rows); setCursor(rows.length === community.PAGE_SIZE ? community.nextCursor(rows, 'recent') : null); }
       }
-    })().catch((e) => { if (active) notifyError(e); }).finally(() => { if (active) setLoading(false); });
+    })().catch((e) => { if (active) notifyError(e); }).finally(() => { if (active) setLoading(false); markPerf('community_feed_loaded'); });
     return () => { active = false; };
   }, [supabase, tab, page, search, refresh, followingIds, productsById, quizResults, playlistSection]); // eslint-disable-line react-hooks/exhaustive-deps
 

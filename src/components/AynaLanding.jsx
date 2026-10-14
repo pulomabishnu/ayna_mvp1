@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import WebHeroCarousel from './WebHeroCarousel';
 import { ExploreByNeed } from './HomeShowcase';
-import { EcoOrbit } from './EcoBuilder';
 import PartnerStrip from './PartnerStrip';
-import { useEcoSlots, useNeeds } from './landingNeeds';
+import { getRecommendedArticles } from './articleRecommendations';
 import WebEcosystemChart from './WebEcosystemChart';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import '../styles/eco-redesign.css';
@@ -17,9 +16,10 @@ import { getVerificationLinks } from '../utils/verificationLinks';
 /**
  * Website home, laid out by the design rulebook (/tmp figma RULEBOOK §14):
  *
- *   FirstVisitLanding  hero (Build your ecosystem + search + a small orbit),
- *                      brand partner strip, why ayna (3), how it works (3 +
- *                      CTA), shop by need, stories, final CTA band.
+ *   FirstVisitLanding  photo-first hero (Build your ecosystem + search),
+ *                      shop by need, trust band (partners + proof row),
+ *                      founders moment, how it works (3 + CTA), photo band,
+ *                      Reads preview, stories, final CTA band.
  *   WelcomeBack        signed in: greeting hero with the ecosystem ring (or
  *                      the build hero when it is empty), partner strip,
  *                      Picked for you.
@@ -277,13 +277,13 @@ function HeroTitle({ lead, word }) {
   );
 }
 
-/** "Build your ecosystem": headline, one primary CTA, search, a small orbit. */
-function BuildHero({ onStartQuiz, onViewDiscovery, onOpenProduct, greeting }) {
-  const needs = useNeeds();
-  // Plays once: three needs land in orbit, then it rests.
-  const { slots } = useEcoSlots(needs, { loop: false, step: 900 });
+/** "Build your ecosystem": photo-first hero. Two of the founder's own
+ * photographs (public/landing/), a short headline, one primary CTA and the
+ * search. The old orbit toy moved out so the first thing anyone sees is a
+ * real image, not UI. */
+function BuildHero({ onStartQuiz, onViewDiscovery, greeting }) {
   return (
-    <section className="lx-hero" aria-labelledby="lx-hero-title">
+    <section className="lx-hero lx-hero--photo" aria-labelledby="lx-hero-title">
       <div className="mockup-page lx-hero__inner">
         <div className="lx-hero__copy">
           {greeting && <p className="lx-hero__hello">{greeting}</p>}
@@ -299,7 +299,24 @@ function BuildHero({ onStartQuiz, onViewDiscovery, onOpenProduct, greeting }) {
           <HeroSearch onViewDiscovery={onViewDiscovery} />
         </div>
         <div className="lx-hero__visual">
-          <EcoOrbit needs={needs} slots={slots} onOpenProduct={onOpenProduct} />
+          <div className="lx-photo-stack">
+            <img
+              className="lx-photo-stack__main"
+              src="/landing/pink-tile-shelf.webp"
+              alt="Everyday care products lined up on a pink tiled bathroom ledge"
+              width="667"
+              height="1000"
+              fetchPriority="high"
+            />
+            <img
+              className="lx-photo-stack__small"
+              src="/landing/vanity-mirror.webp"
+              alt="A woman taking notes at her vanity table"
+              width="735"
+              height="490"
+              loading="lazy"
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -316,26 +333,104 @@ function Trust({ onViewDiscovery }) {
   );
 }
 
+/* Why ayna, compressed: the same three real promises as before, now one
+ * quiet proof row under the partner strip instead of three bordered cards. */
 const VALUE_PROPS = [
   { tone: 'pink', title: 'Matched to you', text: 'Your shop is ranked around your body and what you avoid.', icon: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></> },
   { tone: 'butter', title: 'Evidence beside each pick', text: 'Every match shows why it fits and where that comes from.', icon: <><path d="M7 4h7l4 4v12H7z" /><path d="M10 12h5M10 16h5" /></> },
   { tone: 'mint', title: 'Your data stays yours', text: 'We do not sell your personal health information.', icon: <><rect x="6" y="10" width="12" height="10" rx="2" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /></> },
 ];
 
-function ValueProps() {
+/** First-visit trust band: contracted brand partners plus the proof row. */
+function TrustBand({ onViewDiscovery }) {
   return (
-    <section className="lx-values" aria-labelledby="lx-values-title">
+    <div className="lx-trust lx-trust--full">
       <div className="mockup-page">
-        <h2 id="lx-values-title" className="lx-h2">Why ayna</h2>
-        <ul className="lx-values__list">
+        <PartnerStrip variant="web" title={'Shop ayna’s favorites'} onSelectBrand={(name) => onViewDiscovery?.(name)} />
+        <ul className="lx-proof" aria-label="Why ayna">
           {VALUE_PROPS.map((v) => (
             <li key={v.title} className={`tone-${v.tone}`}>
-              <span className="lx-values__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{v.icon}</svg></span>
-              <h3>{v.title}</h3>
-              <p>{v.text}</p>
+              <span className="lx-proof__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{v.icon}</svg></span>
+              <div>
+                <h3>{v.title}</h3>
+                <p>{v.text}</p>
+              </div>
             </li>
           ))}
         </ul>
+      </div>
+    </div>
+  );
+}
+
+/** Founders, high on the page: the real team photo, two lines, a link. */
+function FoundersMoment({ onViewAbout }) {
+  return (
+    <section className="lx-founders" aria-labelledby="lx-founders-title">
+      <div className="mockup-page lx-founders__inner">
+        <figure className="lx-founders__photo">
+          <img src="/about/team.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1600" height="1065" />
+        </figure>
+        <div className="lx-founders__copy">
+          <p className="lx-eyebrow">Who makes ayna</p>
+          <h2 id="lx-founders-title" className="lx-h2">Built by three women who wanted better answers.</h2>
+          <p className="lx-founders__sub">Puloma, Eliz and Ameera started ayna after one too many &ldquo;look it up&rdquo; answers to real health questions.</p>
+          <button type="button" className="lx-ghost" onClick={onViewAbout}>Meet us</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* A short photo interruption between UI sections: the founder's own shots. */
+const BAND_PHOTOS = [
+  { src: '/landing/curlers-call.webp', alt: 'A woman in hair curlers laughing on the phone in her bathroom', pos: '50% 20%' },
+  { src: '/landing/laundry-duo.webp', alt: 'Two friends in curlers and a towel reading magazines in a laundry room', pos: '50% 40%' },
+  { src: '/landing/pad-thread-art.webp', alt: 'Red thread arranged over a white pad, photographed as still life', pos: '50% 50%' },
+  { src: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, photographed from above', pos: '50% 35%' },
+  { src: '/landing/stalls-trio.webp', alt: 'Three friends chatting from neighboring bathroom stalls', pos: '50% 60%' },
+];
+
+function PhotoBand() {
+  return (
+    <section className="lx-photoband" aria-label="Photographs from ayna">
+      <ul>
+        {BAND_PHOTOS.map((p) => (
+          <li key={p.src}><img src={p.src} alt={p.alt} loading="lazy" style={{ objectPosition: p.pos }} /></li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** A small Reads preview: three real Library articles, then the Library. */
+function ReadsPreview({ onViewArticle, onViewArticles }) {
+  const reads = useMemo(() => getRecommendedArticles(null).slice(0, 3), []);
+  if (!reads.length) return null;
+  const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };
+  return (
+    <section className="lx-reads" aria-labelledby="lx-reads-title">
+      <div className="mockup-page">
+        <div className="lx-reads__head">
+          <div>
+            <p className="lx-eyebrow">From the Library</p>
+            <h2 id="lx-reads-title" className="lx-h2">Short reads, real sources.</h2>
+          </div>
+          <button type="button" className="lx-ghost" onClick={() => onViewArticles?.()}>Open the Library</button>
+        </div>
+        <div className="lx-reads__grid">
+          {reads.map((a) => (
+            <article key={a.id} className="lx-read">
+              <button type="button" className="lx-read__btn" onClick={() => open(a.id)}>
+                <span className="lx-read__img" aria-hidden="true">
+                  <img src={`/articles/${a.id}.webp`} alt="" loading="lazy" onError={(e) => { e.currentTarget.parentElement.style.display = 'none'; }} />
+                </span>
+                <h3>{a.title}</h3>
+                <p>{a.teaser}</p>
+              </button>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -693,13 +788,10 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
 /* Logged out                                                          */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onViewDiscovery, onOpenProduct }) {
+function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewArticle, onViewAbout, onViewCommunity, onViewDiscovery, onOpenProduct }) {
   return (
     <div className="mockup-landing mockup-landing--first lx">
-      <BuildHero onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} onOpenProduct={onOpenProduct} />
-      <Trust onViewDiscovery={onViewDiscovery} />
-      <ValueProps />
-      <HowItWorks onStartQuiz={onStartQuiz} />
+      <BuildHero onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
       <div className="lx-needs-wrap">
         <ExploreByNeed
           onOpenProduct={onOpenProduct}
@@ -707,6 +799,11 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewCommunity, onVie
           onViewAll={() => onViewDiscovery?.('')}
         />
       </div>
+      <TrustBand onViewDiscovery={onViewDiscovery} />
+      <FoundersMoment onViewAbout={onViewAbout} />
+      <HowItWorks onStartQuiz={onStartQuiz} />
+      <PhotoBand />
+      <ReadsPreview onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
       <div className="lx-stories">
         <WebHeroCarousel onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
       </div>
@@ -721,6 +818,8 @@ export default function AynaLanding({
   onOpenProduct,
   onViewEcosystem,
   onViewArticles,
+  onViewArticle,
+  onViewAbout,
   onViewCommunity,
   user,
   myProducts,
@@ -754,6 +853,8 @@ export default function AynaLanding({
     <FirstVisitLanding
       onStartQuiz={onStartQuiz}
       onViewArticles={onViewArticles}
+      onViewArticle={onViewArticle}
+      onViewAbout={onViewAbout}
       onViewCommunity={onViewCommunity}
       onViewDiscovery={onViewDiscovery}
       onOpenProduct={onOpenProduct}

@@ -33,7 +33,7 @@ function preserveLegacyLocally(userId, ecosystem, saved) {
         resetAt: Math.max(Number(ecosystem.resetAt || 0), Number(current?.resetAt || 0)),
         rows,
       }));
-    } catch (_) {}
+    } catch { /* storage unavailable */ }
   }
 
   if (saved && typeof saved === 'object') {
@@ -41,7 +41,7 @@ function preserveLegacyLocally(userId, ecosystem, saved) {
       const currentRaw = window.localStorage.getItem(SAVED_LOCAL_KEY);
       const current = currentRaw ? JSON.parse(currentRaw) : {};
       window.localStorage.setItem(SAVED_LOCAL_KEY, JSON.stringify({ ...(current || {}), ...saved }));
-    } catch (_) {}
+    } catch { /* storage unavailable */ }
   }
 }
 

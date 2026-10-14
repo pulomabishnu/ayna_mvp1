@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getSupabaseClient } from '../utils/supabaseClient';
+import { getSupabaseClient, setRememberMe } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { CONSENT_VERSION, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
 import { HEARD_ABOUT_OPTIONS, HEARD_ABOUT_OTHER_MAX, heardAboutMetadata } from '../utils/heardAbout.js';
@@ -32,6 +32,14 @@ const CONSENT_ITEMS = [
 
 const AGE_REQUIREMENT_VERSION = '18plus-v1';
 
+/** "Where did you hear about us?" is REQUIRED on account creation (founder
+ * spec, 2026-10): true only for a real listed choice. The app's
+ * SigninScreen.jsx keeps its own identical copy (importing a desktop
+ * component from the mobile bundle would drag AuthGate.css along). */
+function isHeardAboutAnswered(value) {
+  return HEARD_ABOUT_OPTIONS.some((o) => o.value === value);
+}
+
 /** "Where did you hear about us?" as the label string main's admin reviews
  * (api/reviews-admin.js) read from `heard_about_us`, written next to our
  * structured `heard_about` / `heard_about_other` fields. */
@@ -54,7 +62,7 @@ function consentMetadata() {
   };
 }
 
-export default function AuthGate({ isModal = false, embedded = false, onSkip, context, onBeforeOAuthRedirect, redirectTo, onStartEcosystem, initialMode, summary = null, allowSignup = false, onAuthenticated }) {
+export default function AuthGate({ isModal = false, embedded = false, onSkip, context, onBeforeOAuthRedirect, onStartEcosystem, initialMode, summary = null, allowSignup = false, onAuthenticated }) {
   useEscapeToClose(isModal, onSkip);
   // 'signup' | 'signin'. An account can only be created in the save step after
   // the quiz (allowSignup). Every other entry point is sign-in only, with
@@ -71,7 +79,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [checked, setChecked] = useState([false, false, false]);
-  // Optional "Where did you hear about us?" (saved in user metadata).
+  // Remember me (sign-in): controls ONLY where the Supabase session token is
+  // stored (localStorage vs sessionStorage, src/utils/supabaseClient.js).
+  // Defaults on. Never deletes any account data.
+  const [rememberMe, setRememberMeChecked] = useState(true);
+  // Required "Where did you hear about us?" (saved in user metadata).
   const [heardAbout, setHeardAbout] = useState('');
   const [heardOther, setHeardOther] = useState('');
   const heardLabel = heardAboutUsLabel(heardAbout, heardOther);
@@ -103,7 +115,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const [phoneStep, setPhoneStep] = useState('number');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneCode, setPhoneCode] = useState('');
-  const [phoneSending, setPhoneSending] = useState(false);
 
   const supabase = getSupabaseClient();
   const allConsented = checked.every(Boolean);
@@ -150,9 +161,25 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     else if (!EMAIL_RE.test(email.trim())) next.email = 'That email doesn’t look right.';
     if (!password) next.password = 'Add your password.';
     else if (isSignup && password.length < 8) next.password = 'Use at least 8 characters.';
+    if (isSignup && !isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Tell us where you heard about ayna.';
     if (isSignup && !allConsented) next.consent = 'Please tick all three to continue.';
     setFieldErrors(next);
     return Object.values(next).every((v) => !v);
+  };
+
+  // Shared signup gate for the paths that skip validate(): Google, Apple and
+  // phone. Returns true when signup prerequisites (consent + heard-about,
+  // both required) are satisfied, setting the field errors otherwise.
+  const signupPrereqsOk = () => {
+    if (!isSignup) return true;
+    const next = {};
+    if (!isHeardAboutAnswered(heardAbout)) next.heardAbout = 'Tell us where you heard about ayna.';
+    if (!allConsented) next.consent = 'Please tick all three to continue.';
+    if (Object.keys(next).length) {
+      setFieldErrors((prev) => ({ ...prev, ...next }));
+      return false;
+    }
+    return true;
   };
 
   const handleEmailAuth = async (e) => {
@@ -163,6 +190,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     setResendMsg('');
     setNeedsConfirmation(false);
     setLoading(true);
+    // Applies to the session this submit is about to create. Signup always
+    // persists (no checkbox there); the sign-in checkbox decides otherwise.
+    setRememberMe(isSignup ? true : rememberMe);
     try {
       const cleanEmail = email.trim().toLowerCase();
       if (isSignup) {
@@ -296,13 +326,12 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
   const handleSendPhoneOtp = async (e) => {
     e.preventDefault();
-    // Phone signup creates the account too, so the same consent bar applies.
-    if (!allConsented) {
-      setFieldErrors((prev) => ({ ...prev, consent: 'Please tick all three to continue.' }));
-      return;
-    }
+    // Phone signup creates the account too, so the same consent and
+    // heard-about requirements apply.
+    if (!signupPrereqsOk()) return;
     setError('');
     setLoading(true);
+    setRememberMe(true);
     try {
       const e164 = normalizePhoneE164(phoneNumber);
       if (!e164) throw new Error('Please enter a valid 10-digit phone number.');
@@ -350,16 +379,16 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   };
 
   const handleGoogle = async () => {
-    if (isSignup && !allConsented) {
-      setFieldErrors((prev) => ({ ...prev, consent: 'Please tick all three to continue.' }));
-      return;
-    }
+    if (!signupPrereqsOk()) return;
     if (!supabase) {
       setError('Supabase is not configured. Check environment variables.');
       return;
     }
     setError('');
     setGoogleLoading(true);
+    // Before the redirect: the flag must already be set when /auth/callback
+    // writes the returned session (setSession) through the storage adapter.
+    setRememberMe(isSignup ? true : rememberMe);
     try {
       // Persist consent so AuthCallback can write it to user metadata after the
       // redirect, ONLY when the boxes were actually ticked (signup mode).
@@ -390,16 +419,16 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   };
 
   const handleApple = async () => {
-    if (isSignup && !allConsented) {
-      setFieldErrors((prev) => ({ ...prev, consent: 'Please tick all three to continue.' }));
-      return;
-    }
+    if (!signupPrereqsOk()) return;
     if (!supabase) {
       setError('Supabase is not configured. Check environment variables.');
       return;
     }
     setError('');
     setAppleLoading(true);
+    // Same as handleGoogle: set before the redirect so the callback's
+    // setSession lands in the chosen store.
+    setRememberMe(isSignup ? true : rememberMe);
     try {
       // Same reasoning as handleGoogle just above: Apple's provider also
       // auto-provisions an account for any unseen Apple ID.
@@ -726,20 +755,38 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             {isSignup && !fieldErrors.password && <p className="ay-auth-hint">At least 8 characters.</p>}
           </Field>
           {!isSignup && (
-            <button
-              type="button"
-              className="ay-auth-linkbtn ay-auth-forgot"
-              onClick={handleForgotPassword}
-              disabled={resetting}
-              style={{ alignSelf: 'flex-start' }}
-            >
-              {resetting ? 'Sending reset link…' : 'Forgot password?'}
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <label className="ay-auth-remember">
+                <input
+                  type="checkbox"
+                  name="rememberMe"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMeChecked(e.target.checked)}
+                />
+                <span>Remember me</span>
+              </label>
+              <button
+                type="button"
+                className="ay-auth-linkbtn ay-auth-forgot"
+                onClick={handleForgotPassword}
+                disabled={resetting}
+              >
+                {resetting ? 'Sending reset link…' : 'Forgot password?'}
+              </button>
+            </div>
           )}
           {isSignup && (
             <div className="ay-auth-field ay-auth-heard">
-              <label htmlFor="auth-heard">Where did you hear about us? <span className="ay-auth-optional">Optional</span></label>
-              <select id="auth-heard" name="heardAbout" value={heardAbout} onChange={(e) => setHeardAbout(e.target.value)} className={heardAbout ? '' : 'is-empty'}>
+              <label htmlFor="auth-heard">Where did you hear about us?</label>
+              <select
+                id="auth-heard"
+                name="heardAbout"
+                value={heardAbout}
+                onChange={(e) => { setHeardAbout(e.target.value); clearFieldError('heardAbout'); }}
+                className={heardAbout ? '' : 'is-empty'}
+                aria-invalid={fieldErrors.heardAbout ? true : undefined}
+                aria-describedby={fieldErrors.heardAbout ? 'auth-heard-err' : undefined}
+              >
                 <option value="">Choose one</option>
                 {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
@@ -747,6 +794,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 <input id="auth-heard-other" name="heardAboutOther" type="text" aria-label="Where you heard about us" placeholder="Tell us where" maxLength={HEARD_ABOUT_OTHER_MAX}
                   value={heardOther} onChange={(e) => setHeardOther(e.target.value)} style={styles.input} autoComplete="off" />
               )}
+              {fieldErrors.heardAbout && <p id="auth-heard-err" className="ay-auth-err" role="alert">{fieldErrors.heardAbout}</p>}
             </div>
           )}
           {isSignup && (
@@ -906,6 +954,7 @@ export function ConsentGate({ onAgreed, onDecline }) {
   const allChecked = checked.every(Boolean);
 
   const submit = async () => {
+    if (!isHeardAboutAnswered(heardAbout)) { setError('Tell us where you heard about ayna.'); return; }
     if (!allChecked) { setError('Please tick all three to continue.'); return; }
     const supabase = getSupabaseClient();
     if (!supabase) { setError('Sign-in is unavailable right now. Please try again later.'); return; }
@@ -944,8 +993,8 @@ export function ConsentGate({ onAgreed, onDecline }) {
         <p id="ay-consent-gate-title" className="ay-auth-tagline" style={styles.tagline}>One more step. Please confirm the following to finish setting up your account.</p>
         <div style={styles.form}>
           <div className="ay-auth-field ay-auth-heard">
-            <label htmlFor="consent-gate-heard">Where did you hear about us? <span className="ay-auth-optional">Optional</span></label>
-            <select id="consent-gate-heard" name="heardAbout" value={heardAbout} onChange={(e) => setHeardAbout(e.target.value)} className={heardAbout ? '' : 'is-empty'}>
+            <label htmlFor="consent-gate-heard">Where did you hear about us?</label>
+            <select id="consent-gate-heard" name="heardAbout" value={heardAbout} onChange={(e) => { setHeardAbout(e.target.value); setError(''); }} className={heardAbout ? '' : 'is-empty'}>
               <option value="">Choose one</option>
               {HEARD_ABOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>

@@ -594,6 +594,13 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = atCheckpoint ? { id: CHECKPOINT_STEP, section: 'checkpoint', title: '', type: 'checkpoint' } : (visibleSteps[currentIndex] || visibleSteps[0]);
   const isLast = currentIndex === visibleSteps.length - 1;
+  // The website asks age and life stage on one "About you" screen, so its
+  // required count is one lower. For the header counter and dots, both
+  // screens here share one "About you" slot: the totals match the website's
+  // for the same answers, and neither quiz over- or under-counts.
+  const countedSteps = phase === 'required' ? visibleSteps.filter((s) => s.id !== 'lifeStage') : visibleSteps;
+  const countedIndex = Math.max(0, countedSteps.findIndex((s) => s.id === (stepId === 'lifeStage' ? 'age' : step.id)));
+  const countedRequiredTotal = requiredSteps.filter((s) => s.id !== 'lifeStage').length;
 
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
   const toggleExclusive = (key, value, exclusiveValues = []) => setIntake((prev) => {
@@ -881,10 +888,10 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
             <button type="button" className="ip-round" aria-label="Go back" onClick={goBack}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
             </button>
-            <span className="ip-count" aria-label={`All ${requiredSteps.length} required questions done`}>{String(requiredSteps.length).padStart(2, '0')}<i>/{String(requiredSteps.length).padStart(2, '0')}</i></span>
+            <span className="ip-count" aria-label={`All ${countedRequiredTotal} required questions done`}>{String(countedRequiredTotal).padStart(2, '0')}<i>/{String(countedRequiredTotal).padStart(2, '0')}</i></span>
             <span className="ip-skip-spacer" />
           </div>
-          <div className="ip-progress" aria-hidden="true">{requiredSteps.map((s) => <span key={s.id} className="is-done" />)}</div>
+          <div className="ip-progress" aria-hidden="true">{requiredSteps.filter((s) => s.id !== 'lifeStage').map((s) => <span key={s.id} className="is-done" />)}</div>
         </header>
         <div className="ip-body">
           <div className="ip-question" key="q-checkpoint">
@@ -916,11 +923,11 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
           <button type="button" className="ip-round" aria-label="Go back" onClick={goBack}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
-          <span className="ip-count" aria-label={`${phase === 'optional' ? 'Optional question' : 'Question'} ${currentIndex + 1} of ${visibleSteps.length}`}>{String(currentIndex + 1).padStart(2, '0')}<i>/{String(visibleSteps.length).padStart(2, '0')}</i></span>
+          <span className="ip-count" aria-label={`${phase === 'optional' ? 'Optional question' : 'Question'} ${countedIndex + 1} of ${countedSteps.length}`}>{String(countedIndex + 1).padStart(2, '0')}<i>/{String(countedSteps.length).padStart(2, '0')}</i></span>
           {step.optional ? <button type="button" className="ip-skip" onClick={skipStep}>Skip</button> : <span className="ip-skip-spacer" />}
         </div>
         <div className="ip-progress" aria-hidden="true">
-          {visibleSteps.map((s, i) => <span key={s.id} className={i < currentIndex ? 'is-done' : i === currentIndex ? 'is-now' : ''} />)}
+          {countedSteps.map((s, i) => <span key={s.id} className={i < countedIndex ? 'is-done' : i === countedIndex ? 'is-now' : ''} />)}
         </div>
       </header>
 
