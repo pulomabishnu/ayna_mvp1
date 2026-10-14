@@ -876,3 +876,13 @@
 .app-container .lx .lx-decoded__tag b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #1d1a2b; color: #fffcf5; font-size: 13px; }
 @media (max-width: 767px) { .app-container .lx .lx-decoded__list li button { grid-template-columns: 56px minmax(0, 1fr); padding: 10px; } .app-container .lx .lx-decoded__list .lx-how__icon { display: none; } .app-container .lx .lx-decoded__txt { grid-column: 2; } .app-container .lx .lx-decoded__list .lx-burst--n { width: 56px; height: 56px; } }
 @media (prefers-reduced-motion: reduce) { .app-container .lx .lx-decoded__tag { animation: none; } }
+
+/* Round 10: spacing audit against the design spec (sections 96px desktop / 64px mobile, 1280 container) */
+.app-container .lx .mockup-page { max-width: calc(1280px + 2 * var(--mockup-gutter)); }
+.app-container .lx--photo .lx-photoband { margin: 0; }
+.app-container .lx--photo .lx-founders { padding: 96px 0 0; }
+.app-container .lx--photo .lx-trending, .app-container .lx--photo .lx-decoded, .app-container .lx--photo .lx-reads, .app-container .lx--photo .lx-start { padding-top: var(--lx-sec); }
+.app-container .lx--photo .lx-start { padding-bottom: var(--lx-sec); }
+.app-container .lx--photo .lx-trending, .app-container .lx--photo .lx-founders, .app-container .lx--photo .lx-decoded, .app-container .lx--photo .lx-reads { padding-bottom: 0; }
+.app-container .lx--photo .lx-band { margin-top: calc(var(--lx-sec) + 40px); }
+@media (max-width: 767px) { .app-container .lx--photo .lx-photoband { margin: 0; } .app-container .lx--photo .lx-founders { padding-top: 64px; } }
