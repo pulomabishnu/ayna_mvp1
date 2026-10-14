@@ -1,5 +1,4 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import PhotoPile from './v3/PhotoPile.jsx';
 import { createPortal } from 'react-dom';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { getGuestClient, getGuestId, ensureGuestSession } from '../utils/community/guestClient.js';
@@ -556,7 +555,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     const menuOpen = menuId === post.id;
     const helpful = Number(post.helpful_count) || 0;
     const replies = Number(post.comment_count) || 0;
-    return <article className={`wc-post${full ? ' is-full' : ''}`} key={post.id}>
+    return <article className={`wc-post${full ? ' is-full' : ''}`} data-kind={post.kind || 'post'} key={post.id}>
       <header className="wc-post-head">
         <Avatar size={36} name={name} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
         <div className="wc-post-who">
@@ -809,8 +808,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
 
   return <section className="wc wc3">
     <div className={`wc-head${page ? '' : ' ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom ay3-commhero'}`}>
-      {page ? <button type="button" className="wc-back" onClick={closePage}>← Community</button> : <div><p className="ay3-kicker">ayna community</p><h1 className="ay3-title">Ask, review, <em>share.</em></h1></div>}
-      {!page && <PhotoPile label="Community photos" photos={['stalls-trio', 'tub-girls', 'robe-kiss']} />}
+      {page ? <button type="button" className="wc-back" onClick={closePage}>← Community</button> : <div><p className="ay3-kicker">The powder room</p><h1 className="ay3-title">Ask, review, <em>share.</em></h1><p className="wc-hero-sub">Real talk between women, about the products we actually use.</p></div>}
+      {!page && <div className="wc-mirror" aria-hidden="true"><span className="wc-mirror__frame"><img src="/landing/stalls-trio.webp" alt="" /></span><span className="wc-mirror__lip">say it here ♡</span></div>}
       <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
         <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount ? `Updates, ${unreadCount} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount > 0 && <span className="wc-bell-dot" aria-hidden="true" />}</button>
         <button type="button" className="wc-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Sign in for a Community profile'}><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /></button>
@@ -831,12 +830,12 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </nav>
       <div className="wc-main">{main}</div>
       <aside className="wc-side" aria-label="More from Community">
-        {questionsSide.length > 0 && <section className="wc-mod"><h2>Recent questions</h2><ul>{questionsSide.map((q) => <li key={q.id}><button type="button" className="wc-mod-q" onClick={() => openPost(q)}><span>{q.body}</span><small>{Number(q.comment_count) ? `${q.comment_count} ${Number(q.comment_count) === 1 ? 'reply' : 'replies'}` : 'No replies yet'}</small></button></li>)}</ul>
+        {questionsSide.length > 0 && <section className="wc-mod is-questions"><h2>Recent questions</h2><ul>{questionsSide.map((q) => <li key={q.id}><button type="button" className="wc-mod-q" onClick={() => openPost(q)}><span>{q.body}</span><small>{Number(q.comment_count) ? `${q.comment_count} ${Number(q.comment_count) === 1 ? 'reply' : 'replies'}` : 'No replies yet'}</small></button></li>)}</ul>
           {!(onFeed && tab === 'question') && <button type="button" className="wc-link" onClick={() => switchTab('question')}>All questions</button>}</section>}
-        {playlistsSide.length > 0 && <section className="wc-mod"><h2>Playlists</h2><ul>{playlistsSide.map((p) => <li key={p.id}><button type="button" className="wc-mod-pl" onClick={() => openPlaylist(p)}><PlaylistCover playlist={p} productsById={productsById} /><span><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · {p.owner_display_name || 'ayna community'}</small></span></button></li>)}</ul>
+        {playlistsSide.length > 0 && <section className="wc-mod is-playlists"><h2>Playlists</h2><ul>{playlistsSide.map((p) => <li key={p.id}><button type="button" className="wc-mod-pl" onClick={() => openPlaylist(p)}><PlaylistCover playlist={p} productsById={productsById} /><span><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · {p.owner_display_name || 'ayna community'}</small></span></button></li>)}</ul>
           {!(onFeed && tab === 'playlists') && <button type="button" className="wc-link" onClick={() => switchTab('playlists')}>All playlists</button>}</section>}
-        {peopleSide.length > 0 && <section className="wc-mod"><h2>People to follow</h2><ul>{peopleSide.map((p) => <li key={p.user_id} className="wc-mod-person"><button type="button" className="wc-suggest-who" onClick={() => openProfile(p.username)}><Avatar size={32} name={p.display_name || p.username} path={p.avatar_url} /><span><strong>{p.display_name || p.username}</strong><small>@{p.username}</small></span></button><button type="button" className="wc-btn is-small" onClick={() => toggleFollow(p.user_id)}>Follow</button></li>)}</ul></section>}
-        {topics.length > 0 && <section className="wc-mod"><h2>Topics</h2><div className="wc-mod-topics">{topics.map((t) => <button type="button" key={t} onClick={() => { if (page) closePage(); setSearch(t); setSearchResults(null); }}>#{t}</button>)}</div></section>}
+        {peopleSide.length > 0 && <section className="wc-mod is-people"><h2>People to follow</h2><ul>{peopleSide.map((p) => <li key={p.user_id} className="wc-mod-person"><button type="button" className="wc-suggest-who" onClick={() => openProfile(p.username)}><Avatar size={32} name={p.display_name || p.username} path={p.avatar_url} /><span><strong>{p.display_name || p.username}</strong><small>@{p.username}</small></span></button><button type="button" className="wc-btn is-small" onClick={() => toggleFollow(p.user_id)}>Follow</button></li>)}</ul></section>}
+        {topics.length > 0 && <section className="wc-mod is-topics"><h2>Topics</h2><div className="wc-mod-topics">{topics.map((t) => <button type="button" key={t} onClick={() => { if (page) closePage(); setSearch(t); setSearchResults(null); }}>#{t}</button>)}</div></section>}
       </aside>
     </div>
 
