@@ -1978,6 +1978,12 @@ export default function MyEcosystem({
 
                 <div className={careFirst ? 'eco3-secondary' : undefined}>
                 {careFirst && <p className="eco3-secondary__label">Products, when you are ready</p>}
+                <nav className="eco3-jump" aria-label="On this page">
+                    {!ecoQueryTrimmed && needShelves.length > 0 && <a href="#eco3-needs-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-needs-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>1</b>Prescriptions</a>}
+                    {visibleAreaGroups.length > 0 && <a href="#eco3-shelves-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-shelves-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>2</b>Shelves</a>}
+                    <a href="#eco3-tools-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-tools-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>3</b>Tools</a>
+                    <a href="#ayna-wishlist" onClick={(e) => { e.preventDefault(); document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>4</b>Saved</a>
+                </nav>
                 <form
                     className="ayna-browse__search eco3-search"
                     role="search"
@@ -2154,7 +2160,7 @@ export default function MyEcosystem({
                     />
                 )}
 
-                {visibleAreaGroups.length > 0 && <h2 className="eco3-shelves__title">Your <em>shelves.</em></h2>}
+                {visibleAreaGroups.length > 0 && <header className="eco3-sechead"><p className="eco3-needs__kicker">Your cabinet</p><h2 className="eco3-shelves__title" id="eco3-shelves-title">Your <em>shelves.</em></h2><span className="eco3-needs__sub">Everything you use, sorted by area of care.</span></header>}
                 {visibleAreaGroups.length > 0 && <div className="eco3-shelves">
                 {visibleAreaGroups.map((group) => {
                     const toneIndex = areaGroups.findIndex((g) => g.key === group.key);
@@ -2230,6 +2236,7 @@ export default function MyEcosystem({
 
                 </div>
 
+                <header className="eco3-sechead"><p className="eco3-needs__kicker">Extras</p><h2 className="eco3-shelves__title" id="eco3-tools-title">Your <em>tools.</em></h2><span className="eco3-needs__sub">Care near you, how your matches work, and more.</span></header>
                 <div className="eco3-details">
                     {smsCardShown && (
                         <div className="eco3-details__card eco3-details__sms">

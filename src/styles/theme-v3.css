@@ -1351,3 +1351,39 @@ html body .app-container:not([data-theme='dark']) .eco3-overview .eco3-overview_
 .app-container:not([data-theme='dark']) .eco3-needs { margin-top: 8px !important; }
 @media (min-width: 901px) { .app-container:not([data-theme='dark']) .eco3-shelves:has(> .eco3-area:only-child) { columns: 1; } }
 .app-container:not([data-theme='dark']) .eco3-shelves:has(> .eco3-area:only-child) .eco3-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)) !important; }
+
+/* =====================================================================
+   Ecosystem sweep: one rhythm for every section, a sticky jump bar,
+   cabinet shelves that fill from the top, tidy card actions.
+   ===================================================================== */
+/* jump bar */
+.app-container .eco3-jump { position: sticky; top: 80px; z-index: 20; display: flex; flex-wrap: wrap; gap: 8px; width: fit-content; margin: 0 auto 22px; padding: 8px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); box-shadow: 4px 4px 0 var(--ay-ink); }
+.app-container .eco3-jump a { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 99px; color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); text-decoration: none; transition: background .15s, transform .15s; }
+.app-container .eco3-jump a b { display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-rose); font: 400 13px/1 var(--ay-font-display); }
+.app-container .eco3-jump a:nth-child(even) b { background: #c5dcec; }
+.app-container .eco3-jump a:hover { background: var(--ay-cream); transform: translateY(-1px); }
+@media (max-width: 600px) { .app-container .eco3-jump { top: 72px; width: auto; justify-content: center; border-radius: 18px; } .app-container .eco3-jump a { padding: 6px 10px 6px 6px; font-size: 13px; } }
+/* every section header the same */
+.app-container:not([data-theme='dark']) .eco3-sechead, .app-container:not([data-theme='dark']) .eco3-needs__head, .app-container:not([data-theme='dark']) .eco-saved__head { display: grid !important; gap: 6px !important; margin: 64px 0 24px !important; padding: 0 !important; border: 0 !important; justify-items: start; }
+.app-container:not([data-theme='dark']) .eco3-needs__head { margin-top: 24px !important; }
+.app-container:not([data-theme='dark']) .eco3-sechead .eco3-shelves__title, .app-container:not([data-theme='dark']) .eco-saved__head h2 { margin: 0 !important; font: 400 clamp(44px, 2rem + 3vw, 72px)/1 var(--ay-font-display) !important; letter-spacing: -.015em !important; text-transform: none !important; }
+.app-container:not([data-theme='dark']) :is(.eco3-needs__head h2, .eco3-sechead h2, .eco-saved__head h2) { scroll-margin-top: 150px; }
+.app-container:not([data-theme='dark']) .eco-saved__head .eco3-area__count { display: none !important; }
+.app-container:not([data-theme='dark']) .eco3-details::before { content: none !important; }
+.app-container:not([data-theme='dark']) .eco-saved { margin-top: 0 !important; padding-top: 0 !important; }
+/* cabinet: shelves fill from the top, empty planks below */
+.app-container .ay3-cab__shelves { grid-template-rows: repeat(4, minmax(0, 1fr)); grid-auto-rows: 0; background: repeating-linear-gradient(180deg, transparent 0 calc(25% - 7px), #3e2723 calc(25% - 7px) 25%), linear-gradient(180deg, #fdf3d4, #f6e3b2); }
+.app-container .ay3-cab__items { align-items: flex-end; }
+.app-container .ay3-cab__more { align-self: flex-end; margin-bottom: 18px; padding: 2px 8px; border: 1.5px solid #3e2723; border-radius: 99px; background: #fff8dc; font-size: 18px; }
+/* shelf card actions on one tidy row */
+.app-container:not([data-theme='dark']) .eco3-card-actions { display: grid !important; grid-template-columns: 1fr 1fr auto; gap: 4px !important; align-items: center; }
+.app-container:not([data-theme='dark']) .eco3-card-actions button { width: 100%; min-height: 28px !important; padding: 0 6px !important; font-size: 12px !important; white-space: nowrap; }
+.app-container:not([data-theme='dark']) .eco3-card-actions .eco3-card-actions__remove { width: 28px !important; height: 28px; padding: 0 !important; }
+.app-container:not([data-theme='dark']) .eco3-card-actions:not(:has(.eco3-card-actions__swap)) { grid-template-columns: 1fr auto; }
+html body .app-container:not([data-theme='dark']) .eco-saved .eco-saved__head h2 { margin: 0 !important; font: 400 clamp(44px, 2rem + 3vw, 72px)/1 var(--ay-font-display) !important; letter-spacing: -.015em !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero { margin-bottom: 40px !important; }
+@media (max-width: 600px) {
+  .app-container:not([data-theme='dark']) .eco3-card-actions { display: grid !important; grid-template-columns: 1fr 1fr 26px !important; gap: 3px !important; }
+  .app-container:not([data-theme='dark']) .eco3-card-actions button { min-height: 26px !important; padding: 0 2px !important; font-size: 11px !important; letter-spacing: -.01em; }
+  .app-container:not([data-theme='dark']) .eco3-card-actions .eco3-card-actions__remove { width: 26px !important; height: 26px; }
+}

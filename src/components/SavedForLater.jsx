@@ -14,7 +14,8 @@ export default function SavedForLater({
   return (
     <section id="ayna-wishlist" className="eco-saved mockup-page wishlist-section">
       <div className="eco3-area__head eco-saved__head">
-        <h2>Saved</h2>
+        <p className="eco3-needs__kicker">For later</p>
+        <h2>Saved<em>.</em></h2>
         {items.length > 0 && <span className="eco3-area__count eco-saved__count">{items.length}</span>}
       </div>
 
