@@ -158,7 +158,7 @@ export default function CampusResources() {
   return (
     <div className="mockup-page cr-page">
       <div className="cr-wrap">
-        <header>
+        <header className="ay3-band ay3-band--paper ay3-crhero">
           <h1 className="cr-h1">Campus Resources</h1>
           <p className="cr-sub">Find sexual assault support and resources at your school.</p>
           <p className="cr-lede">Search for your college or university to find confidential support, reporting options, medical care, and other resources available to your campus community.</p>
