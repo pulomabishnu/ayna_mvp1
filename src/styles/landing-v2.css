@@ -307,3 +307,17 @@
 .lv-start__card { padding: calc(36px + var(--pad)) var(--pad) var(--pad); }
 .lv-chips { max-width: calc(100% - 2 * var(--pad)); }
 @media (max-width: 767px) { .lv-chips { max-width: none; padding-inline: var(--pad); } .lv-today article { padding: var(--pad); } .lv-start__card { padding: calc(36px + var(--pad)) var(--pad) var(--pad); } .lv-purpose, .lv-purpose__copy { padding: var(--pad); } }
+
+/* the app shell forces Bricolage/Poppins with high specificity; the landing's two families win here */
+.app-container .lv, .app-container .lv :is(p, span, li, a, button, input, label, figcaption, small, strong, b, summary) { font-family: var(--ui) !important; }
+.app-container .lv :is(h1, h2, h3), .app-container .lv :is(.lv-script, .lv-rank, .lv-stamp span, .lv-reads strong, .lv-steps b, .lv-spot, .lv-why__card b, .lv-why li b, .lv-why strong) { font-family: var(--display) !important; }
+.app-container .lv :is(h1, h2) { font-weight: 700 !important; letter-spacing: -.02em !important; line-height: 1.05 !important; text-transform: none !important; }
+.app-container .lv h3 { font-weight: 700 !important; letter-spacing: -.01em !important; text-transform: none !important; }
+.app-container .lv .lv-hero h1 { font-size: var(--fs-hero) !important; line-height: 1 !important; }
+.app-container .lv :is(.lv-btn, .lv-link, .lv-chips button) { font-weight: 600 !important; }
+.app-container .lv :is(p, li, span) { letter-spacing: normal; }
+.app-container .lv .lv-kicker, .app-container .lv .lv-ticker__row li { letter-spacing: .1em; }
+.app-container .lv .lv-search input, .app-container .lv .lv-search input::placeholder { font-family: var(--ui) !important; }
+.app-container .lv .lv-search label input[role="combobox"], .app-container .lv .lv-search input[type="search"], .app-container .lv .lv-search input[role="combobox"] { font-family: var(--ui) !important; }
+.app-container main .lv .lv-search label input[type="search"][role="combobox"] { font: 500 16px/1.3 var(--ui) !important; }
+.app-container .lv { --ay-font-ui: 'DM Sans', system-ui, sans-serif; --ay-font-display: 'Fraunces', Georgia, serif; --font-body: 'DM Sans', system-ui, sans-serif; }
