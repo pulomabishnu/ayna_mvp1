@@ -223,3 +223,34 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 .app-container:not([data-theme='dark']) .ay-info.ay-info--toc { max-width: min(1140px, 100%) !important; }
 .app-container:not([data-theme='dark']) .ay-info--toc .ay-info__content :is(p, li, ul, ol, section, div, article) { max-width: none !important; }
 .app-container:not([data-theme='dark']) .ay-info--toc .ay-info__content p { max-width: 68ch !important; }
+
+/* ---------- Quiz (website) ---------- */
+.app-container:not([data-theme='dark']) .wq-page { --ink: #3e2723; --soft: rgba(62, 39, 35, .74); --faint: rgba(62, 39, 35, .16); --paper: #fff8dc; --cream: #ffedac; --peri: #769ebe; --pink: #f7badd; --mint: #c5dcec; --butter: #ffedac; font-family: var(--ay-font-ui) !important; }
+.app-container:not([data-theme='dark']) .wq-page :is(p, span, button, label, input, li, small, b, strong) { font-family: var(--ay-font-ui) !important; }
+.app-container:not([data-theme='dark']) .wq-page .wq-title { font: 400 clamp(36px, 4vw, 54px)/1.04 var(--ay-font-display) !important; letter-spacing: -.012em !important; }
+.app-container:not([data-theme='dark']) .wq-page .wq-count { font: 400 22px/1 var(--ay-font-display) !important; letter-spacing: 0 !important; }
+.app-container:not([data-theme='dark']) .wq-page .wq-section { font: 400 11px/1 var(--ay-font-label) !important; letter-spacing: .1em; text-transform: uppercase; }
+.app-container:not([data-theme='dark']) .wq-page .wq-card { box-shadow: 6px 6px 0 var(--ink) !important; }
+.app-container:not([data-theme='dark']) .wq-page :is(.wq-chip, .wq-row) { transition: transform .15s cubic-bezier(.3, 1.5, .5, 1), background .15s, box-shadow .15s; }
+.app-container:not([data-theme='dark']) .wq-page :is(.wq-chip, .wq-row):hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+.app-container:not([data-theme='dark']) .qi { --qi-ink: #3e2723; --qi-paper: #fff8dc; --qi-soft: rgba(62, 39, 35, .74); --qi-shadow: 4px 4px 0 #3e2723; --qi-scrim: rgba(62, 39, 35, .4); --qi-dark: #3e2723; --qi-light: #fff8dc; }
+.app-container:not([data-theme='dark']) .qi :is(h2, h3, strong) { font-family: var(--ay-font-display) !important; font-weight: 400 !important; }
+/* ecosystem: text-ayna card in sky */
+.app-container:not([data-theme='dark']) .eco3-details__sms { background: var(--ay-sky) !important; }
+.app-container:not([data-theme='dark']) .qi--web .qi-stage { background: var(--ay-sky); }
+.app-container:not([data-theme='dark']) .qi--web.qi .qi-demo--hold .qi-stage { background: var(--ay-rose); }
+.app-container:not([data-theme='dark']) .qi--web .qi-tag::before { background: var(--ay-sky); }
+.app-container:not([data-theme='dark']) .qi--web :is(.qi-mock-chip) { --qi-hit: var(--ay-cream); }
+.app-container:not([data-theme='dark']) .qi--web.is-still .qi-mock-chip, .app-container:not([data-theme='dark']) .qi--web.is-paused .qi-mock-chip { background: var(--ay-cream); }
+
+/* ---------- My Ecosystem ---------- */
+.app-container:not([data-theme='dark']) .ay3-ecohero { display: flex !important; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; margin: 0 0 64px !important; padding-top: clamp(40px, 5vw, 72px) !important; padding-bottom: 44px !important; border-width: 0 !important; border-style: none !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-head__text { padding: 24px 28px; border: 2px solid var(--ay-ink); border-radius: 22px; background: var(--ay-paper); box-shadow: 5px 5px 0 var(--ay-ink); }
+.app-container:not([data-theme='dark']) .ay3-ecohero h1 { margin: 0 !important; font: 400 clamp(44px, 2rem + 3.4vw, 78px)/1 var(--ay-font-display) !important; letter-spacing: -.015em !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-head__sub { margin: 10px 0 0 !important; font: 500 16px/1.3 var(--ay-font-ui) !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-pill { background: var(--ay-paper) !important; box-shadow: 2px 2px 0 var(--ay-ink); transition: transform .15s; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-pill:hover { transform: translate(-2px, -2px); }
+.app-container:not([data-theme='dark']) .eco3 h2 { font: 400 clamp(30px, 1.2rem + 1.6vw, 42px)/1.08 var(--ay-font-display) !important; }
+.app-container:not([data-theme='dark']) .eco3 :is(.eco3-details__card, .eco3-card) { transition: transform .2s cubic-bezier(.3, 1.4, .5, 1), box-shadow .2s; }
+.app-container:not([data-theme='dark']) .eco3 .eco3-details__card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ay-ink) !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero .eco3-pill.eco3-pill--ink { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }

@@ -1926,9 +1926,10 @@ export default function MyEcosystem({
                 {/* Oct 2026 redesign: the website version of the app's
                     Ecosystem screen. Header + search, the ring overview, then
                     one section per area of care using the Shop card. */}
-                <header className="eco3-head">
+                <header className="eco3-head ay3-band ay3-band--stripes ay3-zigzag ay3-edge-bottom ay3-ecohero">
                     <div className="eco3-head__text">
-                        <h1 id="eco3-title">Your ecosystem</h1>
+                        <p className="ay3-kicker">My ecosystem</p>
+                        <h1 id="eco3-title">Your <em>ecosystem.</em></h1>
                         <p className="eco3-head__sub">
                             {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : (
                                 <>
