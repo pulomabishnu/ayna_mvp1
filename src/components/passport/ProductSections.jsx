@@ -69,7 +69,7 @@ function Para({ text, terms, refs, sources, pre = false, className = '' }) {
       </p>
       {long && (
         <button type="button" className="ay-gl-more" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
-          {open ? 'Less' : 'More'}
+          {open ? 'Show less' : 'Read more'}
         </button>
       )}
     </>
@@ -223,6 +223,26 @@ function Block({ block, k, plan, sources, onXref }) {
   }
 }
 
+
+/** First sentence of a section, taken from its own content (never written by us). */
+function sectionDigest(section) {
+  for (const b of section.blocks || []) {
+    let t = '';
+    if (['text', 'note', 'alert', 'empty'].includes(b.type)) t = b.text;
+    else if (['list', 'steps'].includes(b.type)) t = b.items?.[0];
+    else if (b.type === 'science') t = b.items?.[0] ? [b.items[0].title, b.items[0].text].filter(Boolean).join(': ') : '';
+    else if (b.type === 'reviews') t = b.items?.[0];
+    else if (b.type === 'tags' || b.type === 'chips') t = (b.items || []).map((x) => x.text || x).join(' · ');
+    else if (b.type === 'rating') t = `${b.value.toFixed(1)} from ${b.count} ayna member rating${b.count === 1 ? '' : 's'}`;
+    t = String(t || '').trim();
+    if (!t) continue;
+    const m = t.match(/^(.{20,180}?[.!?])(\s|$)/);
+    const one = m ? m[1] : t;
+    return one.length > 180 ? `${one.slice(0, 177).trimEnd()}…` : one;
+  }
+  return '';
+}
+
 const TONE = { evidence: 'peri', people: 'butter', brand: 'cream', unknown: 'cream', match: 'pink', safety: 'mint' };
 
 function Section({ section, plan, sources, extra, onXref, bare = false }) {
@@ -348,7 +368,27 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
         </dl>
       </div>
         )}
-
+        {cur.id === 'glance' && glance.sections.length > 0 && (
+          <div className="ay-gl-digest">
+            <Label>Everything on file, in one line each</Label>
+            <ul>
+              {glance.sections.map((sec) => {
+                const line = sectionDigest(sec);
+                const t = tabs.find((x) => x.id === sec.id);
+                return (
+                  <li key={sec.id} data-tone={t?.tone}>
+                    <button type="button" onClick={() => { setTab(sec.id); document.getElementById('ay-sec-glance')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
+                      <span className="ay-gl-digest__kind">{KIND_LABEL[sec.kind] || t?.label || ''}</span>
+                      <strong>{t?.label || sec.title}</strong>
+                      {line && <span className="ay-gl-digest__line">{line}</span>}
+                      <span className="ay-gl-digest__more">Read more <span aria-hidden="true">→</span></span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
 
         {cur.id !== 'glance' && cur.id !== 'sources' && curSection && (
           <Section bare section={curSection} plan={plan} sources={sources} extra={extras[curSection.id]} onXref={onXref} />

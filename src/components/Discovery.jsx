@@ -1487,7 +1487,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     return (
         <section className="container animate-fade-in-up ayna-browse" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-            <div className="ay3-band ay3-band--ink ay3-scallop ay3-edge-bottom ay3-shophero">
+            <div className="ay3-band ay3-band--rose ay3-scallop ay3-edge-bottom ay3-shophero">
             <div className="ayna-browse__heading ay3-withpile">
                 <div>
                     <p className="ay3-kicker">The ayna shop</p>

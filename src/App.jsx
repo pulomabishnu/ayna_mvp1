@@ -1779,7 +1779,7 @@ function App() {
 
 
   return (
-    <div className="app-container" data-theme={theme}>
+    <div className="app-container" data-theme={theme} data-view={currentView}>
       {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
           save-error banner and the ecosystem-generation bar stack instead of
           overlapping if both are showing at once, neither sets its own

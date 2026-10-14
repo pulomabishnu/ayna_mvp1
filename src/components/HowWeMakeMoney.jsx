@@ -39,7 +39,7 @@ const SECTIONS = [
 
 export default function HowWeMakeMoney({ onBack }) {
     return (
-        <InfoPage photos={['bag-tubes', 'pad-thread-art', 'sink-flatlay']} tone="ink"
+        <InfoPage photos={['bag-tubes', 'pad-thread-art', 'sink-flatlay']} tone="rose"
             eyebrow="Transparency"
             title="How we make money"
             lede="Health-product recommendations and commercial relationships should be easy to tell apart. Here is how ayna handles both."
