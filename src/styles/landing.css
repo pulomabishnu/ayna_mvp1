@@ -738,3 +738,55 @@
   .app-container .lx .lx-decoded__list .lx-how__icon { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .app-container .lx-phero__photos::before { animation: none !important; } }
+
+/* =====================================================================
+   Round 7: Y2K. Glossy bubble buttons, chrome and holographic gradients,
+   four-point sparkles, retro window title bars, icy blue accent.
+   Rules: sparkles only in the spots below, holographic only on stamps,
+   highlights and hovers, motion off for reduced-motion.
+   ===================================================================== */
+.app-container .lx--photo { --y2k-ice: #c9ecff; --y2k-holo: linear-gradient(120deg, #ffd3f0 0%, #cbd7ff 30%, #c3f6ee 55%, #fff3b0 80%, #ffd3f0 100%); }
+
+/* Glossy bubble buttons */
+.app-container .lx .lx-cta { position: relative; overflow: hidden; isolation: isolate; box-shadow: inset 0 -3px 0 rgba(29,26,43,.18); }
+.app-container .lx .lx-cta::before { content: ''; position: absolute; z-index: -1; left: 6%; right: 6%; top: 3px; height: 46%; border-radius: 99px; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0)); pointer-events: none; }
+.app-container .lx .lx-cta--photo { background: linear-gradient(180deg, #fff6b8, var(--ay-butter) 55%, #f3d95a); }
+.app-container .lx .lx-start__card .lx-cta { background: linear-gradient(180deg, #4a4668, #1d1a2b 55%); }
+.app-container .lx .lx-cta:hover { box-shadow: inset 0 -3px 0 rgba(29,26,43,.18), 4px 4px 0 var(--ay-pink); }
+
+/* Chrome headline + holographic tag, stamp and search ring */
+.app-container .lx--photo .lx-phero__title .lx-rise:first-child { background: linear-gradient(180deg, #ffffff 25%, #cfe4ff 52%, #ffffff 72%, #e8f1ff 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; filter: drop-shadow(0 2px 0 rgba(29,26,43,.55)) drop-shadow(0 0 14px rgba(29,26,43,.25)); }
+.app-container .lx .lx-tag { background: var(--y2k-holo); background-size: 200% 100%; animation: lxRise .4s ease-out both, lxHolo 6s linear infinite; }
+@keyframes lxHolo { to { background-position: 200% 0; } }
+.app-container .lx-stamp__disc { fill: url(#lx-holo); }
+.app-container .lx .lx-search--hero { background: linear-gradient(180deg, #fff, var(--y2k-ice)); box-shadow: inset 0 2px 0 rgba(255,255,255,.9), 0 4px 0 rgba(29,26,43,.35); }
+
+/* Sparkles */
+.app-container .lx .lx-sparkle { position: absolute; width: 28px; height: 28px; fill: #fff; stroke: #1d1a2b; stroke-width: 1.2; filter: drop-shadow(0 0 6px rgba(255,255,255,.8)); animation: lxTwinkle 2.8s ease-in-out infinite; pointer-events: none; }
+.app-container .lx .lx-sp--a { z-index: 3; top: 22%; left: 8%; width: 44px; height: 44px; }
+.app-container .lx .lx-sp--b { z-index: 3; top: 58%; right: 9%; width: 32px; height: 32px; fill: var(--ay-butter); animation-delay: -1s; }
+.app-container .lx .lx-sp--c { z-index: 3; top: 12%; left: 34%; width: 22px; height: 22px; fill: var(--ay-pink); animation-delay: -1.8s; }
+.app-container .lx .lx-band .lx-sparkle { position: static; display: inline-block; vertical-align: middle; fill: var(--ay-butter); stroke: none; width: 36px; height: 36px; margin: 0 12px; }
+.app-container .lx .lx-shopshelf__head { display: flex; justify-content: center; align-items: center; }
+.app-container .lx .lx-band .lx-sp--r { fill: var(--ay-pink); width: 26px; height: 26px; animation-delay: -1.4s; }
+@keyframes lxTwinkle { 0%, 100% { transform: scale(1) rotate(0); opacity: 1; } 50% { transform: scale(.7) rotate(18deg); opacity: .75; } }
+
+/* Retro window title bars on the two card moments */
+.app-container .lx .lx-winbox { position: relative; padding-top: 64px; }
+.app-container .lx .lx-win { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 12px; height: 36px; padding: 0 16px; border-bottom: 2px solid #1d1a2b; border-radius: 26px 26px 0 0; background: linear-gradient(180deg, #ffffff, var(--y2k-ice) 55%, #b4dcf5); }
+.app-container .lx .lx-win__dots { display: flex; gap: 6px; }
+.app-container .lx .lx-win__dots i { width: 12px; height: 12px; border: 2px solid #1d1a2b; border-radius: 50%; background: #fff; }
+.app-container .lx .lx-win__dots i:first-child { background: var(--ay-pink); }
+.app-container .lx .lx-win__dots i:nth-child(2) { background: var(--ay-butter); }
+.app-container .lx .lx-win__title { color: #1d1a2b; font: 700 13px/1 var(--ay-font-ui); letter-spacing: .04em; }
+.app-container .lx .lx-start__card.lx-winbox { padding-top: 72px; }
+@media (max-width: 767px) { .app-container .lx .lx-winbox { padding-top: 60px; } .app-container .lx .lx-start__card.lx-winbox { padding-top: 60px; } .app-container .lx .lx-win { border-radius: 22px 22px 0 0; } .app-container .lx .lx-sp--a { width: 30px; height: 30px; } .app-container .lx .lx-band .lx-sparkle { width: 24px; height: 24px; margin: 0 6px; } }
+
+/* Glassy product tiles with a holographic glare on hover */
+.app-container .lx .lx-shelf__img::after { content: ''; position: absolute; inset: 0; background: var(--y2k-holo); opacity: 0; mix-blend-mode: multiply; transition: opacity .25s ease-out; pointer-events: none; }
+.app-container .lx .lx-shelf__item:hover .lx-shelf__img::after { opacity: .35; }
+.app-container .lx .lx-needchips button.is-on { background: linear-gradient(180deg, #fff6b8, var(--ay-butter) 60%); box-shadow: inset 0 -2px 0 rgba(29,26,43,.2); }
+.app-container .lx-ticker__row li span { color: var(--y2k-ice, #c9ecff); }
+@media (prefers-reduced-motion: reduce) { .app-container .lx .lx-sparkle, .app-container .lx .lx-tag { animation: none !important; } }
+.app-container .lx--photo .lx-phero__title .lx-rise:first-child { background: linear-gradient(180deg, #ffffff 18%, #9cc4ff 50%, #ffffff 78%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 3px 0 #1d1a2b) drop-shadow(0 0 2px #1d1a2b); }
+.app-container .lx .lx-start__card .lx-cta::before { opacity: .45; }

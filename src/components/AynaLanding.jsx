@@ -402,6 +402,19 @@ function LandingSearch({ onViewDiscovery, className = '' }) {
   );
 }
 
+/** Y2K four-point sparkle, decorative. */
+function Sparkle({ className = '', style }) {
+  return (
+    <svg className={`lx-sparkle ${className}`} style={style} viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C13 7 17 11 24 12C17 13 13 17 12 24C11 17 7 13 0 12C7 11 11 7 12 0Z" /></svg>
+  );
+}
+
+function WinBar({ title }) {
+  return (
+    <div className="lx-win" aria-hidden="true"><span className="lx-win__dots"><i /><i /><i /></span><span className="lx-win__title">{title}</span></div>
+  );
+}
+
 function Ticker() {
   const names = ['Our brand partners', ...PARTNER_BRANDS.map((b) => b.name)];
   const row = (hidden) => (
@@ -443,9 +456,12 @@ function PhotoHero({ onStartQuiz, onViewDiscovery }) {
         <p className="lx-phero__note">Six quick questions.</p>
         <LandingSearch onViewDiscovery={onViewDiscovery} />
       </div>
+      <Sparkle className="lx-sp lx-sp--a" />
+      <Sparkle className="lx-sp lx-sp--b" />
+      <Sparkle className="lx-sp lx-sp--c" />
       <div className="lx-stamp" aria-hidden="true">
         <svg viewBox="0 0 200 200">
-          <defs><path id="lx-stamp-path" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" /></defs>
+          <defs><linearGradient id="lx-holo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ffd3f0" /><stop offset=".35" stopColor="#cbd7ff" /><stop offset=".65" stopColor="#c3f6ee" /><stop offset="1" stopColor="#fff3b0" /></linearGradient><path id="lx-stamp-path" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" /></defs>
           <circle cx="100" cy="100" r="98" className="lx-stamp__disc" />
           <text><textPath href="#lx-stamp-path" startOffset="0" textLength="455" lengthAdjust="spacing">MATCHED TO YOU {'\u2605'} MATCHED TO YOU {'\u2605'}</textPath></text>
         </svg>
@@ -470,7 +486,9 @@ function ShopRow({ onOpenProduct, onViewDiscovery }) {
     <section ref={ref} className="lx-shopshelf lx-band" aria-labelledby="lx-shop-title">
       <div className="mockup-page">
         <header className="lx-shopshelf__head">
+          <Sparkle className="lx-sp lx-sp--l" />
           <h2 id="lx-shop-title" className="lx-display">Shop by <span className="lx-script">need</span></h2>
+          <Sparkle className="lx-sp lx-sp--r" />
         </header>
         <div className="lx-needchips" role="group" aria-label="Choose a need">
           {needs.map((n) => (
@@ -523,7 +541,8 @@ function CounterDecoded() {
   return (
     <section ref={ref} className="lx-decoded" aria-labelledby="lx-decoded-title">
       <div className="mockup-page">
-        <div className="lx-decoded__panel">
+        <div className="lx-decoded__panel lx-winbox">
+          <WinBar title="counter.exe" />
           <div className="lx-decoded__head">
             <h2 id="lx-decoded-title" className="lx-h2">Your counter, <span className="lx-script">decoded.</span></h2>
             <p className="lx-decoded__lead">ayna is a women&rsquo;s health guide, not another store.</p>
@@ -660,7 +679,8 @@ function StartBlock({ onStartQuiz, onViewDiscovery }) {
   return (
     <section className="lx-start" aria-labelledby="lx-start-title">
       <div className="mockup-page lx-start__inner">
-        <div className="lx-start__card">
+        <div className="lx-start__card lx-winbox">
+          <WinBar title="start.exe" />
           <h2 id="lx-start-title" className="lx-display lx-start__title">Start with <span className="lx-script">six</span> questions.</h2>
           <img className="lx-start__photo" src="/landing/stalls-trio.webp" alt="Three friends chatting from neighboring bathroom stalls" width="734" height="397" loading="lazy" />
           <p className="lx-start__sub">Then a shop matched to you. Nothing is bought until you decide.</p>
