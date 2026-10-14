@@ -283,15 +283,22 @@ const TAB_GROUPS = [
   { id: 'research', label: 'Research & safety', ids: ['evidence', 'safety', 'inside', 'howto', 'unknown'], tone: 'peri' },
   { id: 'reviews', label: 'Reviews', ids: ['people', 'brand'], tone: 'pink' },
 ];
+const SUB_LABEL = { evidence: 'The evidence', safety: 'Safety', inside: 'Ingredients', howto: 'How to use', unknown: 'Still unknown', people: 'What people say', brand: 'What the brand claims' };
+const SUB_ICON = { evidence: '🔬', safety: '🛡', inside: '🧪', howto: '✋', unknown: '?', people: '💬', brand: '🏷' };
 const groupOf = (id) => (id === 'match' ? 'glance' : (TAB_GROUPS.find((g) => g.ids.includes(id)) || {}).id || id);
 
 export default function ProductSections({ glance, extras = {}, extraNav = [], onXref = null }) {
   const plan = glance?.glossary || {};
   const [tab, setTab] = useState('glance');
+  const [sub, setSub] = useState({});
   useEffect(() => {
     const on = (e) => {
       const id = e.detail;
-      if (id === 'sources' || (glance?.sections || []).some((x) => x.id === id)) setTab(groupOf(id));
+      if (id === 'sources' || (glance?.sections || []).some((x) => x.id === id)) {
+        const g = groupOf(id);
+        setTab(g);
+        if (g !== id && g !== 'glance') setSub((m) => ({ ...m, [g]: id }));
+      }
     };
     window.addEventListener('ay-open-section', on);
     return () => window.removeEventListener('ay-open-section', on);
@@ -401,12 +408,45 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
             <Section bare section={matchSection} plan={plan} sources={sources} extra={extras.match} onXref={onXref} />
           </div>
         )}
-        {groupSections.map((sec) => (
-          <div key={sec.id} className="ay-gl-group">
-            <h3 className="ay-gl-grouph">{sec.title}</h3>
-            <Section bare section={sec} plan={plan} sources={sources} extra={extras[sec.id]} onXref={onXref} />
+        {curGroup && curGroup.id === 'reviews' && groupSections.length > 0 && (
+          <div className={`ay-gl-split${groupSections.length === 1 ? ' is-one' : ''}`}>
+            {groupSections.map((sec) => (
+              <article key={sec.id} className={`ay-gl-card is-${sec.id}`}>
+                <h3 className="ay-gl-cardh"><span aria-hidden="true">{SUB_ICON[sec.id]}</span>{SUB_LABEL[sec.id] || sec.title}</h3>
+                <Section bare section={sec} plan={plan} sources={sources} extra={extras[sec.id]} onXref={onXref} />
+              </article>
+            ))}
           </div>
-        ))}
+        )}
+        {curGroup && curGroup.id !== 'reviews' && groupSections.length > 0 && (() => {
+          const active = groupSections.find((sec) => sec.id === sub[curGroup.id]) || groupSections[0];
+          return (
+            <div className="ay-gl-subs">
+              <ul className="ay-gl-subnav" aria-label={`${curGroup.label} topics`}>
+                {groupSections.map((sec) => {
+                  const d = sectionDigest(sec);
+                  return (
+                    <li key={sec.id}>
+                      <button type="button" aria-pressed={sec.id === active.id} className={sec.id === active.id ? 'is-on' : undefined} onClick={() => setSub((m) => ({ ...m, [curGroup.id]: sec.id }))}>
+                        <span className="ay-gl-subnav__i" aria-hidden="true">{SUB_ICON[sec.id]}</span>
+                        <span className="ay-gl-subnav__t"><strong>{SUB_LABEL[sec.id] || sec.title}</strong>{d && <small>{d}</small>}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+              <article className={`ay-gl-card is-${active.id}`} key={active.id}>
+                <h3 className="ay-gl-cardh"><span aria-hidden="true">{SUB_ICON[active.id]}</span>{active.title}</h3>
+                <Section bare section={active} plan={plan} sources={sources} extra={extras[active.id]} onXref={onXref} />
+                {groupSections.length > 1 && (() => {
+                  const i = groupSections.indexOf(active);
+                  const nx = groupSections[(i + 1) % groupSections.length];
+                  return <button type="button" className="ay-gl-next" onClick={() => setSub((m) => ({ ...m, [curGroup.id]: nx.id }))}>Next: {SUB_LABEL[nx.id] || nx.title} <span aria-hidden="true">→</span></button>;
+                })()}
+              </article>
+            </div>
+          );
+        })()}
         {cur.id === 'sources' && (
           <ol className="ay-gl-srclist">
             {sources.map((src) => (
