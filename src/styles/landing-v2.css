@@ -535,3 +535,27 @@ html body:has(.lv) .app-container :is(.app-nav__logo, .site-footer__logo) { font
 .app-container .lv .lv-final { margin-top: var(--sec); }
 .app-container .lv .lv-final .lv-start__card { margin-top: 0; }
 .app-container .lv .lv-start .lv-steps li:nth-child(even) figure b { background: #ffedac; }
+/* ---------- audit pass (Oct 14, 1:35am) ---------- */
+/* no cream strip between the last section and the footer */
+html body:has(.lv) .app-container, html body:has(.lv) .app-container main, html body:has(.lv) .mockup-landing { background: #ffedac !important; }
+/* polaroid caption sits on the white border, not on the photo */
+.app-container .lv .lv-polaroid { padding-bottom: 16px; }
+.app-container .lv .lv-polaroid figcaption { padding-top: 14px; }
+/* carousel chapters: easier to read, active one in the heading serif */
+.app-container .lv .whc .whc-chapters__label { opacity: .8; }
+.app-container .lv .whc .whc-chapters button.is-on .whc-chapters__label { font-family: 'DM Serif Display', Georgia, serif !important; font-weight: 400 !important; letter-spacing: -.01em; opacity: 1; }
+/* reads: side stories stack at the top instead of spreading out; images get the same ink border as everything else */
+.app-container .lv .lv-reads { align-items: start; grid-template-rows: auto 1fr; }
+.app-container .lv .lv-reads article:not(:first-child) { align-self: start; }
+.app-container .lv .lv-reads__img { border: var(--bw) solid var(--ink); }
+/* start card window bar in palette cream, not light blue */
+.app-container .lv .lv-win { background: var(--paper); }
+/* counter list numbers are circles, matching the numbers on the photos */
+.app-container .lv .lv-why li b { clip-path: none; border: var(--bw) solid var(--ink); border-radius: 50%; width: 44px; height: 44px; background: var(--paper); font-size: 20px; }
+.app-container .lv .lv-why li.is-on b { background: var(--rose); transform: none; }
+.app-container .lv .lv-why li button { grid-template-columns: 44px minmax(0, 1fr); }
+/* tighter rhythm between the counter and the carousel */
+.app-container .lv .lv-carousel { margin-top: calc(var(--sec) - 16px); }
+html body:has(.lv) .app-container footer.site-footer { margin-top: 0 !important; }
+.app-container .lv .lv-wrap { padding-bottom: var(--sec); }
+@media (max-width: 767px) { .app-container .lv .lv-wrap { padding-bottom: 0; } }
