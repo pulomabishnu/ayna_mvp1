@@ -883,6 +883,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           </div>
         </div>
         <article className="ay-web-lib-article">
+          <p className="ay3-kicker">{minutesFor(selected)} min read</p>
           <h1 className="ay-article-title">{selected.title}</h1>
           <div className="ay-lib-article__tags">
             {selected.tags.map((t) => <span key={t} className="ay-lib-tag">{t}</span>)}
@@ -921,9 +922,13 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
   return (
     <section className="container animate-fade-in-up ay-web-library">
+      <div className="ay3-band ay3-band--rose ay3-torn ay3-edge-bottom ay3-libhero">
       <div className="ay-web-lib-head">
         <div className="ay-web-lib-titlerow">
-          <h1>Library</h1>
+          <div>
+            <p className="ay3-kicker">The ayna library</p>
+            <h1 className="ay3-title">Short reads, <em>real sources.</em></h1>
+          </div>
           <span className="ay-lib-total" aria-label={`${finished} of ${ARTICLES.length} finished`}>
             <ProgressBar value={ARTICLES.length ? finished / ARTICLES.length : 0} />
             <span>{finished}/{ARTICLES.length} read</span>
@@ -938,6 +943,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       {q.length < 2 && <div className="ay-web-lib-filter ay-lib-chips" role="group" aria-label="Topics">
         {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
       </div>}
+      </div>
       {body}
       <SuggestBox mode="read" context="library" className="ay-web-lib-suggest" />
     </section>

@@ -143,3 +143,39 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__category, .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-discover-card__price small { color: rgba(255, 248, 220, .72) !important; }
 .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-browse-card .ayna-discover-card__tile { border-color: var(--ay-paper) !important; }
 .app-container:not([data-theme='dark']) .pdp-suggest.ay3-band .ayna-browse-card:hover .ayna-discover-card__tile { box-shadow: 6px 6px 0 var(--ay-rose) !important; }
+
+/* ---------- Library ---------- */
+.app-container:not([data-theme='dark']) .ay3-libhero { margin: calc(-1 * var(--spacing-xl, 32px)) 0 72px; padding-top: clamp(48px, 5vw, 72px); padding-bottom: 44px; }
+.app-container:not([data-theme='dark']) .ay3-libhero .ay-web-lib-titlerow { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; }
+.app-container:not([data-theme='dark']) .ay3-libhero .ay-lib-total { padding: 10px 14px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); box-shadow: 3px 3px 0 var(--ay-ink); transform: rotate(-2deg); }
+.app-container:not([data-theme='dark']) .ay3-libhero .ay-web-lib-search { margin-top: 28px; }
+.app-container:not([data-theme='dark']) .ay3-libhero .ay-web-lib-search input { height: 58px; background: var(--ay-paper) !important; box-shadow: 4px 4px 0 var(--ay-ink) !important; font-size: 17px !important; }
+.app-container:not([data-theme='dark']) .ay3-libhero .ay-lib-chips { margin-top: 18px; }
+.app-container:not([data-theme='dark']) .ay3-libhero .ay-lib-chips button { background: var(--ay-paper) !important; }
+.app-container:not([data-theme='dark']) .ay3-libhero .ay-lib-chips button.is-on { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+/* shelves */
+.app-container:not([data-theme='dark']) .ay-web-library h2 { font-size: clamp(30px, 1.2rem + 1.6vw, 42px) !important; }
+.app-container:not([data-theme='dark']) .ay-web-lib-card.ay-lib-card { display: grid; gap: 10px; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; text-align: left; }
+.app-container:not([data-theme='dark']) .ay-lib-card .ay-lib-cover { position: relative; display: flex; flex-direction: column; justify-content: space-between; aspect-ratio: 4 / 3; padding: 16px 18px; border: 2px solid var(--ay-ink) !important; border-radius: 18px !important; transition: transform .22s cubic-bezier(.3, 1.4, .5, 1), box-shadow .22s ease; }
+.app-container:not([data-theme='dark']) .ay-lib-card:hover .ay-lib-cover { transform: translate(-3px, -3px) rotate(-.8deg); box-shadow: 6px 6px 0 var(--ay-ink); }
+.app-container:not([data-theme='dark']) .ay-lib-card .ay-lib-cover strong { font: 400 clamp(30px, 1.2rem + 1.4vw, 42px)/1 var(--ay-font-display) !important; letter-spacing: -.01em !important; }
+.app-container:not([data-theme='dark']) .ay-lib-card .ay-lib-cover small { align-self: flex-start; padding: 4px 10px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-paper); font: 700 12px/1 var(--ay-font-ui); }
+.app-container:not([data-theme='dark']) .ay-lib-cover.is-pink { background: var(--ay-rose) !important; }
+.app-container:not([data-theme='dark']) .ay-lib-cover.is-peri { background: var(--ay-sky) !important; }
+.app-container:not([data-theme='dark']) .ay-lib-cover.is-mint { background: var(--ay-paper) !important; }
+.app-container:not([data-theme='dark']) .ay-lib-cover.is-butter { background: #fff !important; }
+.app-container:not([data-theme='dark']) .ay-lib-card > h3 { margin: 4px 0 0 !important; font: 400 21px/1.2 var(--ay-font-display) !important; }
+.app-container:not([data-theme='dark']) .ay-lib-card > p { margin: 0 !important; color: var(--ay-ink-soft) !important; font: 400 15px/1.45 var(--ay-font-ui) !important; }
+.app-container:not([data-theme='dark']) .ay-lib-personalize { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border: 2px solid var(--ay-ink); border-radius: 99px; background: var(--ay-sky); color: var(--ay-ink); font: 700 15px/1 var(--ay-font-ui); text-decoration: none; box-shadow: 3px 3px 0 var(--ay-ink); transition: transform .15s; }
+.app-container:not([data-theme='dark']) .ay-lib-personalize:hover { transform: translate(-2px, -2px); }
+/* reading view: an editorial column, not a box */
+.app-container:not([data-theme='dark']) .ay-lib-reading .ay-web-lib-article { max-width: 720px; margin-inline: auto; padding: 24px 0 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+.app-container:not([data-theme='dark']) .ay-lib-reading .ay-article-title { font: 400 clamp(44px, 1.8rem + 3.4vw, 76px)/1.02 var(--ay-font-display) !important; letter-spacing: -.015em !important; }
+.app-container:not([data-theme='dark']) .ay-lib-reading .article-body { font: 400 19px/1.65 var(--ay-font-ui) !important; }
+.app-container:not([data-theme='dark']) .ay-lib-reading .article-body :is(p, li) { font-size: 19px !important; line-height: 1.65 !important; }
+.app-container:not([data-theme='dark']) .ay-lib-reading .article-body :is(h2, h3) { margin-top: 1.6em !important; font-size: 30px !important; }
+.app-container:not([data-theme='dark']) .ay-lib-reading .article-body strong { font-weight: 700; }
+.app-container:not([data-theme='dark']) .ay-lib-reading .ay-lib-status { background: var(--ay-paper) !important; border-block: 2px solid var(--ay-ink) !important; }
+.app-container:not([data-theme='dark']) .ay-web-next-read { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; margin-top: 48px; padding: 24px 28px !important; border: 2px solid var(--ay-ink) !important; border-radius: 20px !important; background: var(--ay-sky) !important; box-shadow: 5px 5px 0 var(--ay-ink) !important; text-align: left; transition: transform .2s; }
+.app-container:not([data-theme='dark']) .ay-web-next-read:hover { transform: translate(-2px, -2px) rotate(-.4deg); }
+.app-container:not([data-theme='dark']) .ay-web-next-read strong { font: 400 28px/1.15 var(--ay-font-display) !important; }
