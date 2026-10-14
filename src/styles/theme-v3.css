@@ -316,3 +316,15 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 .app-container:not([data-theme='dark']) .lx .lx-mark { margin: 0; padding: 0; border: 0 !important; border-radius: 0; background: none !important; box-shadow: none !important; color: var(--ay-ink) !important; font-style: italic; text-decoration: underline; text-decoration-color: var(--ay-rose); text-decoration-thickness: .14em; text-underline-offset: .1em; }
 .app-container:not([data-theme='dark']) .lx :is(.lx-kicker, [class*='eyebrow']) { font-family: var(--ay-font-label) !important; font-weight: 400 !important; }
 .app-container:not([data-theme='dark']) .lx .lx-mark, .app-container:not([data-theme='dark']) .lx h1 .lx-mark * { font-family: 'DM Serif Display', Georgia, serif !important; font-weight: 400 !important; letter-spacing: -.012em !important; }
+/* soft text on sky surfaces: use full ink (soft ink drops to ~3:1 on sky) */
+.app-container:not([data-theme='dark']) :is(.ay-web-next-read, .eco3-details__sms, .wyou-hero, .ay3-band--sky, .ay-info-card--peri, [class*='--peri'], [class*='tone-peri']) :is(small, .eco3-details__soon, .ay-info__small, [class*='muted'], [class*='soft']) { color: var(--ay-ink) !important; opacity: 1 !important; }
+/* contents rail in the dark theme: same layout, dark tokens */
+.app-container[data-theme='dark'] .ay-info.ay-info--toc { max-width: min(1140px, 100%) !important; }
+.app-container[data-theme='dark'] .ay-info--toc .ay-info__layout { display: grid; grid-template-columns: 240px minmax(0, 720px); gap: 48px; justify-content: center; align-items: start; }
+.app-container[data-theme='dark'] .ay-info__toc { position: sticky; top: 96px; padding: 18px; border: 1px solid var(--ay-line); border-radius: 18px; background: var(--ay-paper); }
+.app-container[data-theme='dark'] .ay-info__toc-title { margin: 0 0 10px; color: var(--ay-ink-soft); font: 700 12px/1.2 var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; }
+.app-container[data-theme='dark'] .ay-info__toc ol { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.app-container[data-theme='dark'] .ay-info__toc a { display: grid; grid-template-columns: 24px 1fr; gap: 10px; padding: 6px 8px; border-radius: 10px; color: var(--ay-ink); font: 500 14px/1.3 var(--ay-font-ui); text-decoration: none; }
+.app-container[data-theme='dark'] .ay-info__toc a.is-on { background: var(--ay-tile); font-weight: 700; }
+.app-container[data-theme='dark'] .ay-info__toc a b { color: var(--ay-ink-soft); }
+@media (max-width: 960px) { .app-container[data-theme='dark'] .ay-info--toc .ay-info__layout { grid-template-columns: minmax(0, 1fr); } .app-container[data-theme='dark'] .ay-info__toc { position: static; } }
