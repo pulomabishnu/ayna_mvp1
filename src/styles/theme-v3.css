@@ -996,3 +996,35 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container:not([data-theme='dark']) .ay-404 h1 { font-size: clamp(40px, 6vw, 64px) !important; }
 .app-container:not([data-theme='dark']) .ay-404__badge { width: auto !important; height: auto !important; border-radius: 0 !important; transform: rotate(-3deg); }
 .app-container:not([data-theme='dark']) .ay-info-contact > :last-child { padding-top: 116px !important; }
+
+/* =====================================================================
+   Brands we work with: a little market street. Each brand is a shop
+   with a striped awning; products sit in the window as polaroids.
+   ===================================================================== */
+.app-container:not([data-theme='dark']) .brand-partner { position: relative; margin-top: 76px !important; padding-top: 0 !important; overflow: visible !important; border-radius: 0 0 18px 18px !important; background: #fffdf6 !important; box-shadow: 6px 7px 0 var(--ay-ink) !important; }
+.app-container:not([data-theme='dark']) .brand-partner::before { content: ''; position: absolute; left: -14px; right: -14px; top: -52px; height: 60px; border: 2px solid var(--ay-ink); border-radius: 8px 8px 0 0; background: repeating-linear-gradient(90deg, var(--aw, #f7badd) 0 46px, #fffdf6 46px 92px); box-shadow: 0 4px 0 rgba(62, 39, 35, .35); }
+.app-container:not([data-theme='dark']) .brand-partner::after { content: ''; position: absolute; left: -14px; right: -14px; top: 6px; height: 20px; background: radial-gradient(circle at 23px 0, var(--aw, #f7badd) 0 21px, var(--ay-ink) 21px 23px, transparent 23px) 0 0 / 92px 24px repeat-x, radial-gradient(circle at 69px 0, #fffdf6 0 21px, var(--ay-ink) 21px 23px, transparent 23px) 0 0 / 92px 24px repeat-x; }
+.app-container:not([data-theme='dark']) .brand-partner:nth-of-type(3n+2) { --aw: #769ebe; }
+.app-container:not([data-theme='dark']) .brand-partner:nth-of-type(3n) { --aw: #ffedac; }
+.app-container:not([data-theme='dark']) .brand-partner__head { padding-top: 46px !important; }
+.app-container:not([data-theme='dark']) .brand-partner__name { font: 400 34px/1 var(--ay-font-display) !important; }
+.app-container:not([data-theme='dark']) .brand-partner__wordmark { border-radius: 50% !important; transform: rotate(-6deg); font-family: var(--ay-hand) !important; font-weight: 700 !important; font-size: 18px !important; }
+.app-container:not([data-theme='dark']) .brand-partner .discovery-card { padding: 10px 10px 14px !important; border: 2px solid var(--ay-ink) !important; border-radius: 3px !important; background: #fffdf6 !important; box-shadow: 4px 5px 0 var(--ay-ink) !important; transform: rotate(-1deg); transition: transform .3s cubic-bezier(.3, 1.4, .5, 1); }
+.app-container:not([data-theme='dark']) .brand-partner .discovery-card:nth-child(even) { transform: rotate(1.2deg); }
+.app-container:not([data-theme='dark']) .brand-partner .discovery-card:hover { transform: rotate(0) translateY(-5px); }
+.app-container:not([data-theme='dark']) .brand-partner .discovery-card__tile { border-radius: 2px !important; border: 1.5px solid rgba(62, 39, 35, .18) !important; background: #fff !important; }
+.app-container:not([data-theme='dark']) .brand-partner .discovery-card__eyebrow { font: 700 20px/1 var(--ay-hand) !important; letter-spacing: 0 !important; text-transform: none !important; }
+
+/* =====================================================================
+   How it works: four recipe cards clipped to a line; the funnel is a
+   tape measure.
+   ===================================================================== */
+.app-container:not([data-theme='dark']) .ay-info-steps { position: relative; padding-top: 30px; }
+.app-container:not([data-theme='dark']) .ay-info-steps::before { content: ''; position: absolute; left: -2%; right: -2%; top: 8px; height: 30px; border-top: 2px solid var(--ay-ink); border-radius: 50%; }
+.app-container:not([data-theme='dark']) .ay-info-step { position: relative; border-radius: 3px !important; background: repeating-linear-gradient(#fffdf6 0 25px, rgba(247, 186, 221, .45) 25px 26px) !important; background-position: 0 44px !important; transform: rotate(var(--r, -1.5deg)); transform-origin: 50% -20px; transition: transform .4s cubic-bezier(.3, 1.4, .5, 1); }
+.app-container:not([data-theme='dark']) .ay-info-step:nth-child(2) { --r: 1.2deg; } .app-container:not([data-theme='dark']) .ay-info-step:nth-child(3) { --r: -.8deg; } .app-container:not([data-theme='dark']) .ay-info-step:nth-child(4) { --r: 1.8deg; }
+.app-container:not([data-theme='dark']) .ay-info-step:hover { transform: rotate(0); }
+.app-container:not([data-theme='dark']) .ay-info-step::before { content: ''; position: absolute; top: -20px; left: 50%; width: 16px; height: 34px; margin-left: -8px; border: 2px solid var(--ay-ink); border-radius: 4px; background: #d9b98c; }
+.app-container:not([data-theme='dark']) .ay-info-step:last-child { background: repeating-linear-gradient(#dbe8f2 0 25px, rgba(62, 39, 35, .12) 25px 26px) !important; }
+.app-container:not([data-theme='dark']) .ay-info-step .ay-info__pill { font: 700 22px/1 var(--ay-hand) !important; border: 0 !important; background: none !important; padding: 0 !important; text-transform: none !important; letter-spacing: 0 !important; }
+.app-container:not([data-theme='dark']) .ay-info-funnel, .app-container:not([data-theme='dark']) [class*='funnel'] [class*='bar'] { }
