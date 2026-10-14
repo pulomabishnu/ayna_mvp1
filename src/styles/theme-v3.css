@@ -2347,3 +2347,5 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'])
 .app-container .ay3-cab__toggle { padding: 6px 14px; border: 2px solid #3e2723; border-radius: 99px; background: #3e2723; color: #ffedac; font: 700 13px/1 'DM Sans', sans-serif; cursor: pointer; }
 .app-container .ay3-cab__toggle:hover { background: #f7badd; color: #3e2723; }
 .app-container .ay3-cab__door { z-index: 4; }
+html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved, html body .app-container:not([data-theme='dark']) .ay-saved { justify-content: safe center; }
+.app-container .ay-saved__nav { justify-content: center; }
