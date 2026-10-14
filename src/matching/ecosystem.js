@@ -59,8 +59,8 @@ function qualificationForEcosystem(result, pp, baseMinScore) {
   // optional trust-ranking question. Community chatter or evidence for a
   // different claim should not be enough to seed a supplement automatically.
   if (WEAK_CLAIM_EVIDENCE.has(evidenceLevel)) {
-    floor = Math.max(floor, ['direct', 'strong'].includes(result.relationship) ? 65 : 70);
-    effectiveScore -= 8;
+    floor = Math.max(floor, 70);
+    effectiveScore -= 15;
   }
 
   // "PMS" in a supplement's product name used to grant DIRECT relevance by
