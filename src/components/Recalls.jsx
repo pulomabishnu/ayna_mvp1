@@ -45,7 +45,7 @@ export default function Recalls({ myProducts = {} }) {
     );
 
     return (
-        <InfoPage
+        <InfoPage tone="sky"
             className="ay-recalls"
             eyebrow="Safety"
             title="Safety and recall center"

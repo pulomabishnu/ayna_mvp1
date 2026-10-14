@@ -14,7 +14,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
   };
 
   return (
-    <InfoPage
+    <InfoPage tone="sky"
       eyebrow="How it works"
       title="No mystery box."
       lede="ayna compares products with the health profile and preferences you choose to share, then adds cited research, clinical guidance, safety information and community context where available."

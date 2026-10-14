@@ -36,7 +36,7 @@ const GUIDELINE_LINKS = {
 export default function Screenings({ checkinData, onNavigate }) {
     if (!checkinData) {
         return (
-            <InfoPage eyebrow="Health maintenance" title="Recommended screenings" width="read">
+            <InfoPage tone="sky" eyebrow="Health maintenance" title="Recommended screenings" width="read">
                 <div className="ay-info-card ay-info-card--pad ay-info-empty">
                     <h2 className="ay-info__h3">No check-in yet</h2>
                     <p className="ay-info__body">
@@ -111,7 +111,7 @@ export default function Screenings({ checkinData, onNavigate }) {
     }
 
     return (
-        <InfoPage
+        <InfoPage tone="sky"
             eyebrow="Health maintenance"
             title="Recommended screenings"
             lede="Care reminders based on your health data and recent check-ins."

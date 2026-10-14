@@ -80,7 +80,7 @@ export default function PhoneVerification({ userSession, onVerified, onCancel })
   };
 
   return (
-    <InfoPage
+    <InfoPage tone="sky"
       eyebrow="By text"
       title="Text ayna"
       lede="Get personalized health texts from ayna anytime, without opening the app."
