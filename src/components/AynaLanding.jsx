@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { NEEDS, productsForNeed } from './landingNeeds';
+import { productsForNeed } from './landingNeeds';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
@@ -416,7 +416,7 @@ function WinBar({ title }) {
 }
 
 function Ticker() {
-  const names = ['Our brand partners', ...PARTNER_BRANDS.map((b) => b.name)];
+  const names = PARTNER_BRANDS.map((b) => b.name);
   const row = (hidden) => (
     <ul className="lx-ticker__row" aria-hidden={hidden || undefined}>
       {[...names, ...names].map((t, i) => (<li key={i}>{t}<span aria-hidden="true">{'\u2605'}</span></li>))}
@@ -477,7 +477,7 @@ const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || '
 
 /** Shop by need: pick a need, see four real products (partner brands first). */
 function ShopRow({ onOpenProduct, onViewDiscovery }) {
-  const needs = useMemo(() => NEEDS.map((n) => ({ ...n, pool: productsForNeed(n).filter(NEEDS_PHOTO).sort((a, b) => Number(isPartnerBrandItem(b)) - Number(isPartnerBrandItem(a))) })).filter((n) => n.pool.length >= 2), []);
+  const needs = useMemo(() => MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => ({ id: g.id, label: g.label, group: g.id })).map((n) => ({ ...n, pool: productsForNeed(n).filter(NEEDS_PHOTO).sort((a, b) => Number(isPartnerBrandItem(b)) - Number(isPartnerBrandItem(a))) })).filter((n) => n.pool.length >= 2), []);
   const [needId, setNeedId] = useState(needs[0]?.id);
   const need = needs.find((n) => n.id === needId) || needs[0];
   const ref = useReveal();
@@ -515,7 +515,7 @@ function ShelfList({ products, onOpenProduct }) {
             href={productHref(p.id)}
             onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(p); }}
           >
-            <span className="lx-shelf__img"><img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />{isPartnerBrandItem(p) && <span className="lx-shelf__badge">ayna<br />partner</span>}</span>
+            <span className="lx-shelf__img"><img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />{isPartnerBrandItem(p) && <span className="lx-shelf__badge">ayna<br />favorite</span>}</span>
             <span className="lx-shelf__row">
               <span className="lx-shelf__name">{p.name}</span>
               {/^\$/.test(String(p.price || '')) && <span className="lx-shelf__price">{String(p.price).split(/\s*[(\u2013-]\s*/)[0]}</span>}
@@ -535,9 +535,17 @@ const DECODED = [
   { title: 'Your whole routine', text: 'Save what you use and see what fits next.', tone: 'mint', icon: <><circle cx="12" cy="12" r="3" /><circle cx="12" cy="12" r="8" /><circle cx="18.5" cy="8" r="1.2" /></> },
 ];
 
-/** "Your counter, decoded": four numbered reasons, Goodies-style starbursts and line icons. */
+/** "Your counter, decoded": four numbered, tappable reasons (auto-cycles until you tap). */
 function CounterDecoded() {
   const ref = useReveal();
+  const [active, setActive] = useState(0);
+  const [touched, setTouched] = useState(false);
+  useEffect(() => {
+    if (touched || typeof window === 'undefined' || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const t = setInterval(() => setActive((a) => (a + 1) % DECODED.length), 4200);
+    return () => clearInterval(t);
+  }, [touched]);
+  const pick = (i) => { setTouched(true); setActive(i); };
   return (
     <section ref={ref} className="lx-decoded" aria-labelledby="lx-decoded-title">
       <div className="mockup-page">
@@ -546,6 +554,7 @@ function CounterDecoded() {
           <figure className="lx-decoded__fig">
             <img src="/landing/marble-counter.webp" alt="A woman doing her makeup at a marble bathroom counter, photographed from above" width="736" height="1308" loading="lazy" />
             <span className="lx-grain" aria-hidden="true" />
+            <figcaption key={active} className={`lx-decoded__tag tone-${DECODED[active].tone}`} aria-hidden="true"><b>{active + 1}</b> {DECODED[active].title}</figcaption>
           </figure>
           <div className="lx-decoded__head">
             <h2 id="lx-decoded-title" className="lx-h2">Your counter, <span className="lx-script">decoded.</span></h2>
@@ -553,11 +562,12 @@ function CounterDecoded() {
           </div>
           <ol className="lx-decoded__list">
             {DECODED.map((d, i) => (
-              <li key={d.title} className={`tone-${d.tone}`} style={{ '--i': i }}>
-                <span className="lx-burst lx-burst--n" aria-hidden="true"><b>{i + 1}</b></span>
-                <svg className="lx-how__icon" viewBox="0 0 24 24" aria-hidden="true">{d.icon}</svg>
-                <h3>{d.title}</h3>
-                <p>{d.text}</p>
+              <li key={d.title} className={`tone-${d.tone}${i === active ? ' is-on' : ''}`}>
+                <button type="button" aria-pressed={i === active} onClick={() => pick(i)} onMouseEnter={() => { setTouched(true); setActive(i); }}>
+                  <span className="lx-burst lx-burst--n" aria-hidden="true"><b>{i + 1}</b></span>
+                  <svg className="lx-how__icon" viewBox="0 0 24 24" aria-hidden="true">{d.icon}</svg>
+                  <span className="lx-decoded__txt"><strong>{d.title}</strong><em>{d.text}</em></span>
+                </button>
               </li>
             ))}
           </ol>
