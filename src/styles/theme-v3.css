@@ -328,3 +328,5 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 .app-container[data-theme='dark'] .ay-info__toc a.is-on { background: var(--ay-tile); font-weight: 700; }
 .app-container[data-theme='dark'] .ay-info__toc a b { color: var(--ay-ink-soft); }
 @media (max-width: 960px) { .app-container[data-theme='dark'] .ay-info--toc .ay-info__layout { grid-template-columns: minmax(0, 1fr); } .app-container[data-theme='dark'] .ay-info__toc { position: static; } }
+.app-container:not([data-theme='dark']) .care-near-panel { background: var(--ay-paper) !important; border: 2px solid var(--ay-ink) !important; border-radius: 20px !important; box-shadow: 4px 4px 0 var(--ay-ink) !important; }
+@media (max-width: 600px) { .app-container .pdp-actions__primary { grid-template-columns: minmax(0, 1fr) auto !important; } .app-container .pdp-actions__primary .pdp-actions__wishlist { width: auto !important; padding-inline: 16px !important; } }
