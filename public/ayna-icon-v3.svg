@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Ayna">
+  <rect x="12" y="14" width="108" height="108" rx="24" fill="#211d2c"/>
+  <rect x="5" y="5" width="108" height="108" rx="24" fill="#fae98e" stroke="#211d2c" stroke-width="6"/>
+  <path fill="#211d2c" fill-rule="evenodd" d="M45 57c3-9 12-14 23-14 15 0 23 8 23 22v29H79v-7c-5 6-11 9-19 9-12 0-19-7-19-17 0-9 7-15 20-18l18-4c-1-4-4-6-9-6-6 0-10 3-12 8l-13-2Zm34 12-16 4c-6 1-9 4-9 8 0 4 3 6 7 6 10 0 18-7 18-16v-2Z"/>
+</svg>

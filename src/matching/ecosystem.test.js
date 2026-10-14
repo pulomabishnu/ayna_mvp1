@@ -60,6 +60,46 @@ describe('buildEcosystem', () => {
     const eco2 = buildEcosystem(user({ supportSelections: ['Acne'], trustedBrands: ['Rael'] }), ALL_PRODUCTS, { picksPerNeed: 10 });
     expect(ids(shelf(eco2, 'skin.acne')).some((id) => id.includes('rael'))).toBe(false);
   });
+
+  it('does not auto-seed FLO just because PMS is in the product name', () => {
+    const pms = buildEcosystem(user({ supportSelections: ['PMS symptoms'] }), ALL_PRODUCTS, { picksPerNeed: 10 });
+    const pmsShelf = shelf(pms, 'cycle.pms');
+    expect(pmsShelf).toBeTruthy();
+    expect(ids(pmsShelf)).not.toContain('p-flo-gummies');
+  });
+
+  it('does not let a bare secondary supplement claim scrape over the exploratory bar', () => {
+    const generic = {
+      id: 'test-generic-cramp-supplement',
+      name: 'Generic Cramp Support Capsules',
+      category: 'supplement',
+      type: 'physical',
+      healthFunctions: ['cramp-relief'],
+      tags: ['cramps'],
+      price: '$20',
+      summary: 'Supplement marketed for menstrual cramps.',
+      ingredients: 'ginger',
+    };
+    const crampUser = user({ supportSelections: ['Cramps or period pain'] });
+    const crampEco = buildEcosystem(crampUser, [generic], { picksPerNeed: 10 });
+    expect(ids(shelf(crampEco, 'pain.menstrual_cramp'))).not.toContain(generic.id);
+  });
+
+  it('does not auto-seed an ingestible for bloating when the claim has no claim-specific evidence', () => {
+    const generic = {
+      id: 'test-generic-bloat-supplement',
+      name: 'Daily Bloat Support Capsules',
+      category: 'supplement',
+      type: 'physical',
+      tags: ['bloating'],
+      price: '$24',
+      summary: 'Daily supplement made for bloating and digestive comfort.',
+      ingredients: 'ginger, peppermint',
+    };
+    const bloatingUser = user({ supportSelections: ['Cycle-related bloating'] });
+    const bloatingEco = buildEcosystem(bloatingUser, [generic], { picksPerNeed: 10 });
+    expect(ids(shelf(bloatingEco, 'bloating.cycle_related'))).not.toContain(generic.id);
+  });
 });
 
 describe('ordering and tie-breaks', () => {
