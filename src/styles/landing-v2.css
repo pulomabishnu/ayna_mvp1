@@ -359,3 +359,6 @@
 /* soft teal page colour: clashes with the pink on purpose */
 .app-container .lv { --teal: #d4eee8; background: var(--teal); }
 .app-container .mockup-landing--first { background: var(--teal); }
+/* header + footer take the same teal on the landing page only */
+body:has(.lv) .app-nav, body:has(.lv) .site-footer { background: var(--teal, #d4eee8) !important; }
+body:has(.lv) main { background: #d4eee8 !important; }
