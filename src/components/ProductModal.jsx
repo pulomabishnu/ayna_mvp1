@@ -845,7 +845,7 @@ export default function ProductModal({
           )}
 
           {(onCommunityAction || onOmit) && (
-            <section className="pdp-community-actions pdp-community-actions--flat" aria-labelledby="pdp-community-h">
+            <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
               {onCommunityAction && <>
                 <h3 id="pdp-community-h">Community</h3>
                 <div className="pdp-community-actions__grid">

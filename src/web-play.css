@@ -1220,3 +1220,8 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 .app-container.app-container.app-container.app-container[data-theme='dark'] .ayna-browse-card { background: var(--ay-paper, #16131f) !important; border-color: var(--ay-line, rgba(255,255,255,.28)) !important; box-shadow: none !important; }
 .app-container.app-container.app-container.app-container[data-theme='dark'] .ayna-browse-card .ayna-discover-card__tile { background: #ffffff !important; box-shadow: inset 0 0 0 1.5px rgba(29, 26, 43, .12) !important; }
 .app-container.app-container.app-container.app-container[data-theme='dark'] .ayna-browse-card:hover .ayna-discover-card__tile { box-shadow: inset 0 0 0 1.5px rgba(29, 26, 43, .25), 0 0 20px rgba(168, 181, 255, .18) !important; }
+
+/* Product page: the pink Community card, as in the original design. */
+.app-container .pdp-page .pdp-below--glance > .pdp-community-actions { max-width: 760px; justify-self: start; margin-top: 8px !important; padding: 16px !important; border: 2px solid var(--ay-ink) !important; border-radius: 22px !important; background: var(--ay-pink) !important; box-shadow: 3px 3px 0 var(--ay-ink) !important; }
+.app-container .pdp-page .pdp-below--glance .pdp-community-actions__grid { grid-template-columns: 1fr 1fr !important; }
+.app-container .pdp-page .pdp-below--glance .pdp-community-actions__grid button { border-radius: 14px !important; }

@@ -1,7 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { GlossaryText } from '../GlossaryTerm';
 import { LONG_TEXT, NOT_ON_FILE } from '../pdp/glance';
 import { jumpTo } from '../pdp/jump';
+
+/** Tabs open their dropdown, then scroll to it. */
+const openSection = (id) => { try { window.dispatchEvent(new CustomEvent('ay-open-section', { detail: id })); } catch { /* ignore */ } };
+const jumpOpen = (id, domId) => { openSection(id); setTimeout(() => jumpTo(domId), 30); };
 import './ProductSections.css';
 
 /**
@@ -220,14 +224,23 @@ function Block({ block, k, plan, sources, onXref }) {
 }
 
 function Section({ section, plan, sources, extra, onXref }) {
+  const [open, setOpen] = useState(true);
+  useEffect(() => {
+    const on = (e) => { if (e.detail === section.id) setOpen(true); };
+    window.addEventListener('ay-open-section', on);
+    return () => window.removeEventListener('ay-open-section', on);
+  }, [section.id]);
   return (
-    <section className={`ay-gl-sec is-${section.kind}`} id={`ay-sec-${section.id}`} tabIndex={-1} aria-labelledby={`ay-sec-h-${section.id}`}>
-      <div className="ay-gl-sec__head">
+    <section className={`ay-gl-sec is-${section.kind}${open ? ' is-open' : ''}`} id={`ay-sec-${section.id}`} tabIndex={-1} aria-labelledby={`ay-sec-h-${section.id}`}>
+      <button type="button" className="ay-gl-sec__head ay-gl-sec__toggle" aria-expanded={open} aria-controls={`ay-sec-body-${section.id}`} onClick={() => setOpen((v) => !v)}>
         <span className="ay-gl-kind">{KIND_LABEL[section.kind] || ''}</span>
         <h3 id={`ay-sec-h-${section.id}`}>{section.title}</h3>
+        <span className="ay-gl-sec__chev" aria-hidden="true" />
+      </button>
+      <div className="ay-gl-sec__body" id={`ay-sec-body-${section.id}`} hidden={!open}>
+        {section.blocks.map((b, i) => <Block key={`${section.id}-${i}`} block={b} k={`${section.id}:${i}`} plan={plan} sources={sources} onXref={onXref} />)}
+        {extra}
       </div>
-      {section.blocks.map((b, i) => <Block key={`${section.id}-${i}`} block={b} k={`${section.id}:${i}`} plan={plan} sources={sources} onXref={onXref} />)}
-      {extra}
     </section>
   );
 }
@@ -273,7 +286,7 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
         <ul>
           {nav.filter((n) => n.id !== 'glance').map((n) => (
             <li key={n.id}>
-              <a href={`#ay-sec-${n.id}`} onClick={(e) => { e.preventDefault(); jumpTo(`ay-sec-${n.id}`); }}>{n.label}</a>
+              <a href={`#ay-sec-${n.id}`} onClick={(e) => { e.preventDefault(); jumpOpen(n.id, `ay-sec-${n.id}`); }}>{n.label}</a>
             </li>
           ))}
         </ul>
@@ -312,7 +325,7 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
               <dt>{f.label}</dt>
               <dd>
                 {f.jump && !f.unknown
-                  ? <a href={`#ay-sec-${f.jump}`} onClick={(e) => { e.preventDefault(); jumpTo(`ay-sec-${f.jump}`); }}>{f.value}</a>
+                  ? <a href={`#ay-sec-${f.jump}`} onClick={(e) => { e.preventDefault(); jumpOpen(f.jump, `ay-sec-${f.jump}`); }}>{f.value}</a>
                   : f.value}
                 <Refs refs={f.refs} sources={sources} />
               </dd>
