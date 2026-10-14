@@ -1994,3 +1994,62 @@ html body .app-container:not([data-theme='dark']) .ay-glance.is-tabbed .ay-glanc
 .app-container:not([data-theme='dark']) .ay-drawer__tray > li:nth-child(even) .ay-item:hover { transform: translateY(-3px) rotate(1deg); }
 .app-container .ay-item__brand { overflow-wrap: anywhere; }
 @media (max-width: 700px) { .app-container .ay-item__brand { font-size: 14px !important; line-height: 1.1; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; } .app-container:not([data-theme='dark']) .ay-drawer__label { padding: 7px 16px; } }
+
+/* ---- Drawers, prettier: painted vanity, gingham liners, ceramic knobs ---- */
+.app-container:not([data-theme='dark']) .ay-drawers { position: relative; }
+.app-container:not([data-theme='dark']) .ay-drawers__case { position: relative; gap: 14px; margin-top: 34px; padding: 22px 22px 26px; border: 2.5px solid var(--ay-ink); border-radius: 22px 22px 14px 14px; background: #fff3cf; box-shadow: inset 0 0 0 8px #ffedac, inset 0 0 0 10px rgba(62,39,35,.18), 8px 10px 0 var(--ay-ink); }
+/* scalloped crown on top of the vanity */
+.app-container:not([data-theme='dark']) .ay-drawers__case::before { content: ''; position: absolute; left: 34px; right: 34px; top: -26px; height: 26px; border: 2.5px solid var(--ay-ink); border-bottom: 0; border-radius: 14px 14px 0 0; background: radial-gradient(circle at 50% 100%, #f7badd 0 13px, transparent 13.5px) 0 100% / 36px 28px repeat-x, #ffedac; }
+/* little feet */
+.app-container:not([data-theme='dark']) .ay-drawers__case::after { content: ''; position: absolute; left: 40px; right: 40px; bottom: -18px; height: 18px; background: radial-gradient(ellipse at 50% 0, var(--ay-ink) 0 15px, transparent 16px) 0 0 / 100% 100% no-repeat; -webkit-mask: linear-gradient(90deg, #000 0 34px, transparent 34px calc(100% - 34px), #000 calc(100% - 34px)); mask: linear-gradient(90deg, #000 0 34px, transparent 34px calc(100% - 34px), #000 calc(100% - 34px)); background: var(--ay-ink); border-radius: 0 0 10px 10px; }
+.app-container:not([data-theme='dark']) .ay-drawers__bar { margin-bottom: 4px; }
+/* painted drawer fronts with inset molding */
+.app-container:not([data-theme='dark']) .ay-drawer { --paint: #fde3ef; }
+.app-container:not([data-theme='dark']) .ay-drawer:nth-child(3n+2) { --paint: #fff8dc; }
+.app-container:not([data-theme='dark']) .ay-drawer:nth-child(3n) { --paint: #dce8f2; }
+.app-container:not([data-theme='dark']) .ay-drawer__front,
+.app-container:not([data-theme='dark']) .ay-drawer.is-open .ay-drawer__front { grid-template-columns: auto 1fr auto auto; min-height: 84px; padding: 14px 22px; border-radius: 12px; background: var(--paint) !important; box-shadow: inset 0 0 0 7px var(--paint), inset 0 0 0 9px rgba(62,39,35,.35), 0 5px 0 rgba(62,39,35,.9) !important; }
+.app-container:not([data-theme='dark']) .ay-drawer.is-open .ay-drawer__front { border-radius: 12px 12px 0 0; box-shadow: inset 0 0 0 7px var(--paint), inset 0 0 0 9px rgba(62,39,35,.35) !important; transform: translateY(2px); }
+.app-container:not([data-theme='dark']) .ay-drawer__no { display: none; }
+/* brass label frame */
+.app-container:not([data-theme='dark']) .ay-drawer__label { justify-self: start; padding: 9px 26px 8px; border: 2px solid #9c7a3c; border-radius: 6px; background: #fffdf6; box-shadow: inset 0 0 0 2px #fffdf6, inset 0 0 0 3.5px #d8b46a, 0 2px 0 rgba(62,39,35,.35); font: 400 22px/1 var(--ay-font-display); letter-spacing: 0; text-transform: none; }
+.app-container:not([data-theme='dark']) .ay-drawer__label::before, .app-container:not([data-theme='dark']) .ay-drawer__label::after { width: 5px; height: 5px; margin-top: -2.5px; background: #9c7a3c; }
+.app-container:not([data-theme='dark']) .ay-drawer__count { order: 3; padding: 0; border: 0; background: none; font: 700 19px/1 var(--ay-hand); }
+.app-container:not([data-theme='dark']) .ay-drawer__peek { order: 2; justify-self: end; }
+.app-container:not([data-theme='dark']) .ay-drawer__dot { width: 38px; height: 38px; border-width: 1.5px; box-shadow: 0 2px 0 rgba(62,39,35,.25); }
+/* round ceramic knob */
+.app-container:not([data-theme='dark']) .ay-drawer__knob,
+.app-container:not([data-theme='dark']) .ay-drawer.is-open .ay-drawer__knob { order: 4; width: 30px; height: 30px; border: 2px solid var(--ay-ink); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 4px, transparent 5px), radial-gradient(circle, #f7badd 0 60%, #e2669c 100%); box-shadow: 0 3px 0 var(--ay-ink); }
+.app-container:not([data-theme='dark']) .ay-drawer.is-open .ay-drawer__knob { transform: rotate(90deg) translateY(0); background: radial-gradient(circle at 35% 30%, #fff 0 4px, transparent 5px), radial-gradient(circle, #ffedac 0 60%, #e6c35a 100%); }
+/* gingham liner inside */
+.app-container:not([data-theme='dark']) .ay-drawer__body { margin: 0 6px; padding: 20px 18px 20px; border-width: 2px; border-radius: 0 0 12px 12px; background:
+  linear-gradient(180deg, rgba(62,39,35,.22), rgba(62,39,35,0) 18px),
+  repeating-linear-gradient(0deg, rgba(247,186,221,.45) 0 14px, transparent 14px 28px),
+  repeating-linear-gradient(90deg, rgba(247,186,221,.45) 0 14px, transparent 14px 28px),
+  #fffaf3; }
+.app-container:not([data-theme='dark']) .ay-drawer:nth-child(3n+2) .ay-drawer__body { background: linear-gradient(180deg, rgba(62,39,35,.22), rgba(62,39,35,0) 18px), repeating-linear-gradient(0deg, rgba(255,226,140,.5) 0 14px, transparent 14px 28px), repeating-linear-gradient(90deg, rgba(255,226,140,.5) 0 14px, transparent 14px 28px), #fffaf3; }
+.app-container:not([data-theme='dark']) .ay-drawer:nth-child(3n) .ay-drawer__body { background: linear-gradient(180deg, rgba(62,39,35,.22), rgba(62,39,35,0) 18px), repeating-linear-gradient(0deg, rgba(118,158,190,.28) 0 14px, transparent 14px 28px), repeating-linear-gradient(90deg, rgba(118,158,190,.28) 0 14px, transparent 14px 28px), #fffaf3; }
+.app-container .ay-drawer__tray { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 14px; }
+.app-container:not([data-theme='dark']) .ay-item { border: 0 !important; border-radius: 12px; padding: 8px 9px 12px; background: #fff; box-shadow: 0 1px 0 rgba(62,39,35,.15), 0 6px 14px -6px rgba(62,39,35,.35); }
+.app-container:not([data-theme='dark']) .ay-item:hover { box-shadow: 0 1px 0 rgba(62,39,35,.15), 0 12px 20px -8px rgba(62,39,35,.45); }
+.app-container:not([data-theme='dark']) .ay-item.is-on { background: #fff !important; box-shadow: 0 0 0 2.5px var(--ay-ink), 4px 5px 0 2.5px #e2669c !important; }
+.app-container .ay-item__brand { font: italic 400 16px/1.1 var(--ay-font-display) !important; }
+.app-container .ay-item__name { color: rgba(62,39,35,.85); font-weight: 500 !important; }
+.app-container:not([data-theme='dark']) .ay-item--add { background: rgba(255,253,246,.7) !important; box-shadow: none; border: 2px dashed rgba(62,39,35,.6) !important; }
+/* details: a gift-tag */
+.app-container:not([data-theme='dark']) .ay-drawer__detail { position: relative; border-radius: 6px 22px 22px 6px; background: #fffdf6; box-shadow: 4px 5px 0 rgba(62,39,35,.85); }
+.app-container:not([data-theme='dark']) .ay-drawer__detail::before { content: ''; position: absolute; left: -9px; top: 50%; width: 14px; height: 14px; margin-top: -7px; border: 2px solid var(--ay-ink); border-radius: 50%; background: #f7badd; }
+@media (max-width: 700px) {
+  .app-container:not([data-theme='dark']) .ay-drawers__case { padding: 14px 10px 18px; }
+  .app-container:not([data-theme='dark']) .ay-drawers__case::before { left: 18px; right: 18px; }
+  .app-container:not([data-theme='dark']) .ay-drawer__front, .app-container:not([data-theme='dark']) .ay-drawer.is-open .ay-drawer__front { grid-template-columns: 1fr auto; grid-template-areas: 'label knob' 'count peek'; gap: 10px; padding: 14px; }
+  .app-container .ay-drawer__label { grid-area: label; font-size: 18px !important; }
+  .app-container .ay-drawer__count { grid-area: count; align-self: center; }
+  .app-container .ay-drawer__peek { grid-area: peek; }
+  .app-container .ay-drawer__knob { grid-area: knob; }
+  .app-container:not([data-theme='dark']) .ay-drawer__body { margin: 0 4px; padding: 14px 10px; }
+  .app-container .ay-drawer__tray { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+}
+.app-container:not([data-theme='dark']) .ay-drawers__case::after { left: 46px; right: 46px; height: 20px; bottom: -20px; border-radius: 0; -webkit-mask: none; mask: none; background:
+  linear-gradient(var(--ay-ink), var(--ay-ink)) left top / 34px 100% no-repeat,
+  linear-gradient(var(--ay-ink), var(--ay-ink)) right top / 34px 100% no-repeat; clip-path: polygon(0 0, 34px 0, 28px 100%, 6px 100%, 0 0, 100% 0, calc(100% - 6px) 100%, calc(100% - 28px) 100%, calc(100% - 34px) 0); }
