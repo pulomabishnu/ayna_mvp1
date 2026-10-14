@@ -1,0 +1,51 @@
+/* ayna theme v3 (Oct 2026): the landing page's look, site-wide.
+   Palette: butter page #ffedac, espresso ink #3e2723, cream paper #fff8dc,
+   sky #769ebe, rose #f7badd. Type: DM Serif Display headings, Archivo Black
+   labels, DM Sans for everything you read. Light theme only: the dark theme
+   keeps its own tokens (web-play.css). Loaded after every other site sheet.
+   See docs/landing-brand-lock.md. */
+
+/* ---------- tokens ---------- */
+:root:not([data-ay-theme='dark']):has(.app-container), .app-container:not([data-theme='dark']) {
+  --ay-ink: #3e2723;
+  --ay-ink-soft: rgba(62, 39, 35, .74);
+  --ay-ink-faint: rgba(62, 39, 35, .16);
+  --ay-paper: #fff8dc;
+  --ay-cream: #ffedac;
+  --ay-tile: #fbe5a0;
+  --ay-line: rgba(62, 39, 35, .14);
+  --ay-peri: #769ebe;
+  --ay-butter: #f7badd;
+  --ay-pink: #f7badd;
+  --ay-mint: #c5dcec;
+  --ay-peri-ink: #2f5573;
+  --ay-sky: #769ebe;
+  --ay-rose: #f7badd;
+  --ay-font-display: 'DM Serif Display', Georgia, serif;
+  --ay-font-ui: 'DM Sans', system-ui, sans-serif;
+  --ay-font-label: 'Archivo Black', 'DM Sans', sans-serif;
+  --ay-font-logo: 'Bricolage Grotesque', system-ui, sans-serif;
+  --ay-shadow: 3px 3px 0 var(--ay-ink);
+  --ay-shadow-lg: 6px 6px 0 var(--ay-ink);
+  --color-primary-hover: #2a1915;
+  --color-primary-fade: rgba(118, 158, 190, .3);
+  --color-secondary-fade: rgba(197, 220, 236, .4);
+  --ay-scallop: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V12C12 12 12 0 24 0s12 12 24 12 12-12 24-12 12 12 24 12v12z'/%3E%3C/svg%3E");
+  --ay-torn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V14l20-4 15 6 20-10 25 6 15-8 25 9 20-5 20 7 25-10 20 6 25-8 20 9 20-5 25 7 20-8 25 4 20-8 25 10 20-4 25 7 20-10 25 6 20-7 25 9 25-6 20 5 20-6 15 8v10z'/%3E%3C/svg%3E");
+}
+
+/* ---------- page + type ---------- */
+html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark'])) { background: #ffedac !important; }
+.app-container:not([data-theme='dark']) { background: var(--ay-cream); font-synthesis: weight style; font-synthesis-weight: none; }
+.app-container:not([data-theme='dark']) main :is(h1, h2) { font-family: var(--ay-font-display) !important; font-weight: 400 !important; letter-spacing: -.012em !important; line-height: 1.06 !important; }
+.app-container:not([data-theme='dark']) main h3 { font-family: var(--ay-font-display) !important; font-weight: 400 !important; letter-spacing: 0 !important; }
+.app-container:not([data-theme='dark']) main :is(p, li, label, small, td, th, dd, dt, input, textarea, select, button) { font-family: var(--ay-font-ui); }
+.app-container:not([data-theme='dark']) :is(h1, h2, h3) em { font-style: italic; }
+.app-container .app-nav.app-nav a.app-nav__logo, .app-container .site-footer .site-footer__logo { font-family: var(--ay-font-logo) !important; }
+
+/* vintage grain over everything, light theme only */
+html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']))::after {
+  content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .13;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .15 0 0 0 0 .14 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media print { body::after { display: none !important; } }

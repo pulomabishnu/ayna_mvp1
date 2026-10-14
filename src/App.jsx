@@ -92,6 +92,7 @@ import { INTAKE_DRAFT_KEY, getIntakeSteps, reconstructIntakeFromSnapshot } from 
 import './styles/flow.css';
 import './styles/web-neon-dark.css';
 import './styles/web-density.css';
+import './styles/theme-v3.css';
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
