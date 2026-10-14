@@ -1028,3 +1028,10 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container:not([data-theme='dark']) .ay-info-step:last-child { background: repeating-linear-gradient(#dbe8f2 0 25px, rgba(62, 39, 35, .12) 25px 26px) !important; }
 .app-container:not([data-theme='dark']) .ay-info-step .ay-info__pill { font: 700 22px/1 var(--ay-hand) !important; border: 0 !important; background: none !important; padding: 0 !important; text-transform: none !important; letter-spacing: 0 !important; }
 .app-container:not([data-theme='dark']) .ay-info-funnel, .app-container:not([data-theme='dark']) [class*='funnel'] [class*='bar'] { }
+/* dark theme keeps the plain library: hide the newspaper extras */
+.app-container[data-theme='dark'] :is(.ay3-news-mast, .ay3-clip__mast, .ay3-masthead) { display: none !important; }
+.app-container[data-theme='dark'] .ay3-libgrid { display: block; }
+.app-container[data-theme='dark'] .ay3-libside { display: none; }
+.app-container[data-theme='dark'] .ay3-infobox { display: none; }
+.app-container[data-theme='dark'] .ay-lib-reading { display: block !important; }
+.app-container[data-theme='dark'] .ay-gl-digest button { background: var(--ay-paper); }
