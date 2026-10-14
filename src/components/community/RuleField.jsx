@@ -1,5 +1,6 @@
 import { useId, useLayoutEffect, useMemo, useRef } from 'react';
 import { checkCommunityText, segmentCommunityText, COMMUNITY_RULES, CRISIS_LINE } from '../../utils/communityRules.js';
+import { CommunityRichTextEditor } from './CommunityRichText.jsx';
 import './community-shared.css';
 
 // Textarea / input that marks text breaking the community rules as you type.
@@ -26,6 +27,24 @@ export function RuleNote({ id, check, onShowRules }) {
 }
 
 export function RuleField({ as = 'textarea', value = '', onChange, autoGrow = false, minRows = 3, maxGrowPx = null, className = '', wrapClassName = '', onShowRules, 'aria-describedby': describedBy, ...rest }) {
+  // Rich text is deliberately scoped to the two existing Community post-body
+  // composer IDs. Every other RuleField in Community and every normal app
+  // input/textarea keeps the original plain-text behavior. Recommendation
+  // notes stay plain because they are private messages rather than posts.
+  const richCommunityComposer = as !== 'input'
+    && (rest.id === 'wc-compose-body' || rest.id === 'am-post-text')
+    && rest.placeholder !== 'Add a note (optional)';
+  if (richCommunityComposer) {
+    return <CommunityRichTextEditor
+      value={value}
+      onChange={onChange}
+      className={className}
+      onShowRules={onShowRules}
+      aria-describedby={describedBy}
+      {...rest}
+    />;
+  }
+
   const ref = useRef(null);
   const mirrorRef = useRef(null);
   const colorRef = useRef('');
