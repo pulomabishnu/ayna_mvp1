@@ -333,9 +333,9 @@ function BuildHero({ onStartQuiz, onViewDiscovery, greeting }) {
  *   Reads -> final CTA. One expressive face (Bricolage), her photographs,
  *   a yellow marker underline and a round sticker as the signature devices. */
 const HERO_PHOTOS = [
-  { src: '/landing/curlers-call.webp', alt: 'A woman in hair curlers laughing on the phone in her bathroom', pos: '50% 30%', w: 736, h: 1110 },
-  { src: '/landing/pink-tile-shelf.webp', alt: 'Everyday care products lined up on a pink tiled bathroom ledge', pos: '50% 55%', w: 667, h: 1000 },
-  { src: '/landing/laundry-duo.webp', alt: 'Two friends in curlers reading magazines on a laundry room floor', pos: '40% 45%', w: 736, h: 981 },
+  { src: '/landing/tub-girls.webp', alt: 'Two friends getting ready together in a bathtub, surrounded by makeup', pos: '50% 35%', w: 736, h: 1104 },
+  { src: '/landing/robe-kiss.webp', alt: 'A woman in a striped robe blowing a kiss to the mirror light', pos: '50% 30%', w: 736, h: 981 },
+  { src: '/landing/bed-selfie.webp', alt: 'A woman lying on a bed taking a selfie, her beauty routine laid out around her', pos: '50% 40%', w: 736, h: 1104 },
 ];
 
 /** Gentle scroll reveal for a few sections. Content is visible without JS or
@@ -543,6 +543,10 @@ function CounterDecoded() {
       <div className="mockup-page">
         <div className="lx-decoded__panel lx-winbox">
           <WinBar title="counter.exe" />
+          <figure className="lx-decoded__fig">
+            <img src="/landing/marble-counter.webp" alt="A woman doing her makeup at a marble bathroom counter, photographed from above" width="736" height="1308" loading="lazy" />
+            <span className="lx-grain" aria-hidden="true" />
+          </figure>
           <div className="lx-decoded__head">
             <h2 id="lx-decoded-title" className="lx-h2">Your counter, <span className="lx-script">decoded.</span></h2>
             <p className="lx-decoded__lead">ayna is a women&rsquo;s health guide, not another store.</p>
@@ -616,10 +620,15 @@ function FoundersMoment({ onViewAbout }) {
 /* A short photo interruption between UI sections: the founder's own shots. */
 const BAND_PHOTOS = [
   { src: '/landing/curlers-call.webp', alt: 'A woman in hair curlers laughing on the phone in her bathroom', pos: '50% 20%' },
+  { src: '/landing/sink-flatlay.webp', alt: 'A sink full of brushes, makeup and hair tools, photographed from above', pos: '50% 50%' },
   { src: '/landing/laundry-duo.webp', alt: 'Two friends in curlers and a towel reading magazines in a laundry room', pos: '50% 40%' },
-  { src: '/landing/pad-thread-art.webp', alt: 'Red thread arranged over a white pad, photographed as still life', pos: '50% 50%' },
+  { src: '/landing/sink-heels-dryer.webp', alt: 'A vintage sink piled with a hair dryer, sunglasses and a pair of heels', pos: '50% 50%' },
   { src: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, photographed from above', pos: '50% 35%' },
-  { src: '/landing/stalls-trio.webp', alt: 'Three friends chatting from neighboring bathroom stalls', pos: '50% 60%' },
+  { src: '/landing/robe-vanity.webp', alt: 'A woman in a white robe sitting at a marble vanity in a pink room', pos: '50% 50%' },
+  { src: '/landing/vanity-hairdryer.webp', alt: 'A woman drying her hair at a crowded bedroom vanity', pos: '50% 50%' },
+  { src: '/landing/pad-thread-art.webp', alt: 'Red thread arranged over a white pad, photographed as still life', pos: '50% 50%' },
+  { src: '/landing/sink-tea.webp', alt: 'A bathroom sink holding heels, sunglasses, a cup of tea and makeup', pos: '50% 50%' },
+  { src: '/landing/bag-tubes.webp', alt: 'A vintage leather bag overflowing with colorful product tubes', pos: '50% 50%' },
 ];
 
 function PhotoBand() {
@@ -1027,8 +1036,8 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewArticle, onViewA
       <FoundersMoment onViewAbout={onViewAbout} />
       <TrendingRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
       <ShopRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
-      <CounterDecoded />
       <PhotoBand />
+      <CounterDecoded />
       <ReadsPreview onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
       <StartBlock onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
     </div>
