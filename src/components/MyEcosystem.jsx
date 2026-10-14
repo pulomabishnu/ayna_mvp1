@@ -939,6 +939,7 @@ function estimateMonthlyCost(priceStr, product) {
 // generation from any page, not just while MyEcosystem itself is mounted.
 
 export default function MyEcosystem({
+    savedSlot = null,
     myProducts,
     ecosystemOrder = [],
     onToggleProduct,
@@ -2328,6 +2329,8 @@ export default function MyEcosystem({
 
                 </div>
 
+                <div className="eco3-extras">
+                <div className="eco3-extras__tools">
                 <header className="eco3-sechead"><p className="eco3-needs__kicker">Extras</p><h2 className="eco3-shelves__title" id="eco3-tools-title">Your <em>tools.</em></h2><span className="eco3-needs__sub">Care near you, how your matches work, and more.</span></header>
                 <div className="eco3-details">
                     {smsCardShown && (
@@ -2415,6 +2418,9 @@ export default function MyEcosystem({
                         <p className="eco3-details__soon">Sync coming soon.</p>
                     </div>
                     {!smsCardShown && <p className="eco3-details__soon eco3-details__soon--solo">Wearable sync is coming.</p>}
+                </div>
+                </div>
+                {savedSlot && <div className="eco3-extras__saved">{savedSlot}</div>}
                 </div>
 
                 {showMoreTools && (

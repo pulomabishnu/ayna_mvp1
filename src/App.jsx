@@ -2200,18 +2200,18 @@ function App() {
             user={user}
             userSession={userSession}
             isPremium={user?.app_metadata?.is_premium === true}
+            savedSlot={(
+              <SavedForLater
+                savedProducts={savedProducts}
+                onOpenProduct={handleOpenProduct}
+                onToggleSaved={toggleSavedProduct}
+                onAddToEcosystem={toggleMyProduct}
+                myProducts={myProducts}
+                onBrowse={() => handleViewDiscovery('')}
+              />
+            )}
           />
           </Suspense>
-        )}
-        {currentView === 'ecosystem' && (
-          <SavedForLater
-            savedProducts={savedProducts}
-            onOpenProduct={handleOpenProduct}
-            onToggleSaved={toggleSavedProduct}
-            onAddToEcosystem={toggleMyProduct}
-            myProducts={myProducts}
-            onBrowse={() => handleViewDiscovery('')}
-          />
         )}
         {(currentView === 'discovery' || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
           <div style={currentView === 'discovery' ? undefined : { display: 'none' }}>

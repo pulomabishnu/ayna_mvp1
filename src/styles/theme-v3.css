@@ -2255,3 +2255,29 @@ html body .app-container:not([data-theme='dark']) .eco-saved .wishlist-empty { m
 @media (max-width: 700px) { html body .app-container:not([data-theme='dark']) .ay-saved__item { flex-basis: 150px; } }
 html body .app-container:not([data-theme='dark']) .eco-saved__head { display: grid !important; grid-template-columns: auto auto 1fr; align-items: center; justify-items: start; }
 html body .app-container:not([data-theme='dark']) .eco-saved__head .eco3-needs__kicker { grid-column: 1 / -1; flex-basis: auto; width: fit-content; }
+
+/* ---- Tools + Saved side by side, sitting straight on the page ---- */
+.app-container .eco3-extras { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; align-items: start; margin: 72px 0 64px; }
+.app-container .eco3-extras > * { min-width: 0; }
+html body .app-container:not([data-theme='dark']) .eco3-extras :is(.eco3-sechead, .eco-saved__head) { margin: 0 0 22px !important; }
+html body .app-container:not([data-theme='dark']) .eco3-extras .eco-saved { margin: 0 !important; padding: 0 !important; max-width: none !important; background: none !important; border: 0 !important; box-shadow: none !important; }
+/* tools: no box, just ruled rows */
+html body .app-container:not([data-theme='dark']) .eco3-extras .eco3-details { max-width: none; border: 0; border-top: 2px solid var(--ay-ink); border-bottom: 2px solid var(--ay-ink); border-radius: 0; background: none; box-shadow: none; overflow: visible; }
+html body .app-container:not([data-theme='dark']) .eco3-extras .eco3-details__card { padding: 18px 0 !important; background: none !important; border-top: 1.5px solid rgba(62,39,35,.3) !important; }
+html body .app-container:not([data-theme='dark']) .eco3-extras .eco3-details__card:first-child { border-top: 0 !important; }
+html body .app-container:not([data-theme='dark']) .eco3-extras .eco3-details__card[open] { background: none !important; }
+html body .app-container:not([data-theme='dark']) .eco3-extras .eco3-details__hint, html body .app-container:not([data-theme='dark']) .eco3-extras .eco3-details__soon { color: var(--ay-ink) !important; }
+html body .app-container:not([data-theme='dark']) .eco3-extras .eco3-details__body { margin-left: 70px !important; border-top: 1.5px solid rgba(62,39,35,.3); }
+/* saved: polaroids in a neat grid in the right column */
+html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 26px 20px; overflow: visible; padding: 8px 6px 6px; }
+html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved__item { flex: none; }
+html body .app-container:not([data-theme='dark']) .eco3-extras .eco-saved .wishlist-empty { max-width: none; padding: 18px 0 !important; border: 0 !important; border-top: 2px solid var(--ay-ink) !important; border-bottom: 2px solid var(--ay-ink) !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+@media (max-width: 1000px) { .app-container .eco3-extras { grid-template-columns: minmax(0, 1fr); gap: 56px; margin-top: 56px; } }
+@media (max-width: 700px) {
+  html body .app-container:not([data-theme='dark']) .eco3-extras .eco3-details__body { margin-left: 0 !important; }
+  html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 14px; }
+}
+html body .app-container:not([data-theme='dark']) .eco-saved__sub { grid-column: 1 / -1; display: block; margin-top: 6px; }
+html body .app-container:not([data-theme='dark']) .eco3-extras .eco3-sechead { gap: 6px !important; }
+html body .app-container:not([data-theme='dark']) .eco3-extras :is(#eco3-tools-title, #ayna-wishlist h2) { margin: 4px 0 0 !important; line-height: 1.05 !important; }
+html body .app-container:not([data-theme='dark']) .ay-saved__price { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 4px); }
