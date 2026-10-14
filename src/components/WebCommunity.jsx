@@ -14,6 +14,7 @@ import SmartSearchInput from './search/SmartSearchInput.jsx';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { customProductId, customProductName } from '../utils/customProductTag.js';
 import { RuleField, CommunityRulesList } from './community/RuleField.jsx';
+import { CommunityRichTextContent } from './community/CommunityRichText.jsx';
 import { VerifiedBadge } from './community/VerifiedBadge.jsx';
 import { useTeamBadges } from './community/useTeamBadges.js';
 import Announcements from './community/Announcements.jsx';
@@ -569,7 +570,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         </div>
       </header>
       {post.kind === 'review' && <Stars value={post.rating} size={15} />}
-      {full ? <p className="wc-body">{post.body}</p> : <button type="button" className="wc-body" onClick={() => openPost(post)}>{post.body}</button>}
+      {full ? <p className="wc-body"><CommunityRichTextContent body={post.body} richBody={post.rich_body} /></p> : <button type="button" className="wc-body" onClick={() => openPost(post)}><CommunityRichTextContent body={post.body} richBody={post.rich_body} /></button>}
       {(post.media || []).length > 0 && <div className="wc-photos">{post.media.slice(0, 4).map((m) => <img key={m.path} src={publicMediaUrl(m.path)} alt="" loading="lazy" />)}</div>}
       {postProductIds(post).slice(0, 1).map((id) => <Mention key={id} productId={id} productsById={productsById} quizResults={quizResults} onOpenProduct={onOpenProduct} />)}
       <footer className="wc-actions">
@@ -828,7 +829,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </nav>
       <div className="wc-main">{main}</div>
       <aside className="wc-side" aria-label="More from Community">
-        {questionsSide.length > 0 && <section className="wc-mod"><h2>Recent questions</h2><ul>{questionsSide.map((q) => <li key={q.id}><button type="button" className="wc-mod-q" onClick={() => openPost(q)}><span>{q.body}</span><small>{Number(q.comment_count) ? `${q.comment_count} ${Number(q.comment_count) === 1 ? 'reply' : 'replies'}` : 'No replies yet'}</small></button></li>)}</ul>
+        {questionsSide.length > 0 && <section className="wc-mod"><h2>Recent questions</h2><ul>{questionsSide.map((q) => <li key={q.id}><button type="button" className="wc-mod-q" onClick={() => openPost(q)}><span><CommunityRichTextContent body={q.body} richBody={q.rich_body} /></span><small>{Number(q.comment_count) ? `${q.comment_count} ${Number(q.comment_count) === 1 ? 'reply' : 'replies'}` : 'No replies yet'}</small></button></li>)}</ul>
           {!(onFeed && tab === 'question') && <button type="button" className="wc-link" onClick={() => switchTab('question')}>All questions</button>}</section>}
         {playlistsSide.length > 0 && <section className="wc-mod"><h2>Playlists</h2><ul>{playlistsSide.map((p) => <li key={p.id}><button type="button" className="wc-mod-pl" onClick={() => openPlaylist(p)}><PlaylistCover playlist={p} productsById={productsById} /><span><strong>{p.title}</strong><small>{p.item_count || 0} {(p.item_count || 0) === 1 ? 'product' : 'products'} · {p.owner_display_name || 'ayna community'}</small></span></button></li>)}</ul>
           {!(onFeed && tab === 'playlists') && <button type="button" className="wc-link" onClick={() => switchTab('playlists')}>All playlists</button>}</section>}
