@@ -1744,3 +1744,86 @@ html body .app-container:not([data-theme='dark']) .ay-glance.is-tabbed .ay-glanc
 .app-container:not([data-theme='dark']) .eco3-mini__owned { white-space: nowrap; padding: 3px 7px; font-size: 10.5px; }
 .app-container .eco3-board > section:nth-of-type(3):last-of-type { margin-inline: -70px; }
 @media (max-width: 1000px) { .app-container .eco3-board > section:nth-of-type(3):last-of-type { margin-inline: 0; } }
+
+/* ---- Needs board: scattered pinboard, fits one screen ---- */
+.app-container .sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.app-container:not([data-theme='dark']) .ay3-corkband { padding: 40px 0 36px !important; }
+.app-container .eco3-board { grid-template-columns: minmax(0, 1fr) minmax(240px, 300px) minmax(0, 1fr) !important; gap: 18px 40px !important; align-items: center !important; }
+.app-container .eco3-board > section:nth-of-type(3):last-of-type { margin-inline: 0 !important; }
+.app-container:not([data-theme='dark']) .eco3-cl { padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+.app-container .eco3-board > section:nth-of-type(1) { transform: translate(10px, -6px); }
+.app-container .eco3-board > section:nth-of-type(2) { transform: translate(-6px, 26px); }
+.app-container .eco3-board > section:nth-of-type(3) { transform: translate(-30px, 0); }
+.app-container .eco3-board > section:nth-of-type(4) { transform: translate(30px, -14px); }
+/* title card: smaller */
+.app-container:not([data-theme='dark']) .eco3-board__title { padding: 20px 20px 18px 40px !important; transform: rotate(-2deg); }
+.app-container:not([data-theme='dark']) .eco3-board__title::before { left: 24px; }
+.app-container:not([data-theme='dark']) .eco3-board__title h2 { font-size: clamp(32px, 1rem + 1.8vw, 44px) !important; }
+.app-container:not([data-theme='dark']) .eco3-board__sub { font-size: 14px !important; margin-top: 8px !important; }
+/* need label: tag */
+.app-container:not([data-theme='dark']) .eco3-cl__label, .app-container:not([data-theme='dark']) .eco3-cl:nth-child(n) .eco3-cl__label { padding: 7px 14px 8px 8px !important; font-size: 18px !important; }
+.app-container:not([data-theme='dark']) .eco3-board > section:nth-of-type(odd) .eco3-cl__label { transform: rotate(-2.5deg) !important; }
+.app-container:not([data-theme='dark']) .eco3-board > section:nth-of-type(even) .eco3-cl__label { transform: rotate(2deg) !important; }
+.app-container:not([data-theme='dark']) .eco3-cl__label small { flex-basis: 28px; width: 28px; height: 28px; }
+.app-container .eco3-cl__short { font-size: 15px !important; margin-top: 6px !important; }
+/* products: loose polaroids */
+.app-container .eco3-cl__items, .app-container .eco3-cl__items:has(> :nth-child(4)) { display: flex !important; flex-wrap: wrap; justify-content: center; gap: 4px 14px !important; margin-top: 30px !important; }
+.app-container:not([data-theme='dark']) .eco3-mini, .app-container:not([data-theme='dark']) .eco3-mini:nth-child(n) { flex: 0 0 116px; gap: 0 !important; padding: 7px 7px 8px !important; border: 0 !important; border-radius: 2px !important; background: #fffdf6 !important; box-shadow: 2px 4px 0 rgba(62,39,35,.35), 0 0 0 1.5px rgba(62,39,35,.75) !important; }
+.app-container:not([data-theme='dark']) .eco3-mini:nth-child(3n+1) { transform: rotate(-4deg) translateY(4px) !important; }
+.app-container:not([data-theme='dark']) .eco3-mini:nth-child(3n+2) { transform: rotate(3deg) translateY(-10px) !important; }
+.app-container:not([data-theme='dark']) .eco3-mini:nth-child(3n) { transform: rotate(-1.5deg) translateY(12px) !important; }
+.app-container:not([data-theme='dark']) .eco3-mini:hover { transform: rotate(0) translateY(-4px) scale(1.05) !important; z-index: 6; }
+.app-container .eco3-mini__open { gap: 6px !important; }
+.app-container .eco3-mini__img { border: 0 !important; aspect-ratio: 1; }
+.app-container .eco3-mini__name { min-height: 0 !important; -webkit-line-clamp: 1 !important; text-align: center; font: 400 17px/1.1 var(--ay-hand) !important; font-weight: 700 !important; }
+.app-container:not([data-theme='dark']) .eco3-mini__score { position: absolute; top: -10px; right: -12px; z-index: 6; display: grid !important; place-items: center; align-content: center; width: 40px; height: 40px; margin: 0 !important; border: 2px solid var(--ay-ink); border-radius: 50%; background: #ffedac; box-shadow: 1px 2px 0 rgba(62,39,35,.5); text-transform: none; }
+.app-container:not([data-theme='dark']) .eco3-mini__score b { width: auto !important; height: auto !important; background: none !important; font: 400 15px/1 var(--ay-font-display) !important; }
+.app-container:not([data-theme='dark']) .eco3-mini__score small { font: 700 7.5px/1 var(--ay-font-ui); letter-spacing: .04em; text-transform: uppercase; }
+.app-container:not([data-theme='dark']) .eco3-mini__owned, .app-container:not([data-theme='dark']) .eco3-mini__add { position: absolute; left: -8px; bottom: 26px; z-index: 6; display: grid; place-items: center; width: 28px; height: 28px; min-height: 0 !important; padding: 0 !important; border: 2px solid var(--ay-ink) !important; border-radius: 50% !important; font: 700 15px/1 var(--ay-font-ui) !important; white-space: nowrap; }
+.app-container:not([data-theme='dark']) .eco3-mini__owned { background: #cfe0ee !important; color: var(--ay-ink); }
+.app-container:not([data-theme='dark']) .eco3-mini__add { background: var(--ay-ink) !important; color: #fff8dc !important; font-size: 18px !important; cursor: pointer; }
+.app-container:not([data-theme='dark']) .eco3-mini__add:hover { transform: scale(1.12); }
+.app-container:not([data-theme='dark']) .eco3-mini::before, .app-container:not([data-theme='dark']) .eco3-mini:nth-child(n)::before { width: 38px; margin-left: -19px; height: 13px; top: -7px; }
+@media (max-width: 1000px) {
+  .app-container .eco3-board > section:nth-of-type(n) { transform: none; }
+  .app-container .eco3-board { gap: 34px !important; }
+}
+@media (max-width: 600px) {
+  .app-container:not([data-theme='dark']) .eco3-mini, .app-container:not([data-theme='dark']) .eco3-mini:nth-child(n) { flex-basis: 98px; }
+  .app-container .eco3-cl__items { gap: 4px 10px !important; margin-top: 26px !important; }
+}
+.app-container:not([data-theme='dark']) .eco3-mini__score { width: 42px; height: 42px; top: -12px; right: -14px; }
+.app-container:not([data-theme='dark']) .eco3-mini__score b { font: 700 13px/1 var(--ay-font-ui) !important; letter-spacing: -.02em; }
+.app-container .eco3-mini__name { -webkit-line-clamp: 2 !important; min-height: 2.5em !important; text-align: left; font: 600 12.5px/1.25 var(--ay-font-ui) !important; }
+.app-container:not([data-theme='dark']) .eco3-mini__owned, .app-container:not([data-theme='dark']) .eco3-mini__add { bottom: 38px; }
+@media (min-width: 1001px) { .app-container .eco3-board > section:nth-of-type(3):last-of-type { width: 420px; justify-self: center; } }
+@media (max-width: 1000px) {
+  .app-container .eco3-board { grid-template-columns: minmax(0, 1fr) !important; gap: 40px !important; }
+  .app-container .eco3-board > .eco3-board__title { justify-self: center; max-width: 420px; }
+}
+
+/* ---- Needs board: tap a need to open it ---- */
+.app-container .eco3-cl__toggle { display: inline-flex; align-items: center; gap: 10px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.app-container:not([data-theme='dark']) .eco3-cl__label:has(.eco3-cl__toggle) { cursor: pointer; transition: transform .25s cubic-bezier(.3,1.4,.5,1); }
+.app-container:not([data-theme='dark']) .eco3-cl.is-closed .eco3-cl__label:hover { transform: rotate(0) scale(1.04) !important; }
+.app-container:not([data-theme='dark']) .eco3-cl__chev { display: grid; place-items: center; width: 26px; height: 26px; margin-left: 4px; border: 2px solid var(--ay-ink); border-radius: 50%; background: #fffdf6; font: 700 17px/1 var(--ay-font-ui); font-style: normal; }
+.app-container:not([data-theme='dark']) .eco3-cl.is-open .eco3-cl__chev { background: var(--ay-ink); color: #fff8dc; }
+.app-container .eco3-cl__toggle:focus-visible { outline: 3px solid var(--ay-ink); outline-offset: 6px; border-radius: 4px; }
+/* closed: a little fanned stack of polaroids */
+.app-container .eco3-peek { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 18px; padding: 6px 10px; border: 0; background: none; color: var(--ay-ink); cursor: pointer; font: inherit; }
+.app-container .eco3-peek__stack { position: relative; display: block; width: 150px; height: 92px; }
+.app-container:not([data-theme='dark']) .eco3-peek__card { position: absolute; top: 4px; left: 50%; width: 74px; height: 82px; margin-left: -37px; padding: 5px 5px 14px; background: #fffdf6; box-shadow: 0 0 0 1.5px rgba(62,39,35,.75), 2px 3px 0 rgba(62,39,35,.3); transition: transform .35s cubic-bezier(.3,1.4,.5,1); }
+.app-container .eco3-peek__card img { background: #fff; }
+.app-container .eco3-peek__card:nth-child(1) { transform: translateX(-38px) rotate(-10deg); }
+.app-container .eco3-peek__card:nth-child(2) { z-index: 2; transform: translateY(-4px) rotate(2deg); }
+.app-container .eco3-peek__card:nth-child(3) { transform: translateX(38px) rotate(9deg); }
+.app-container .eco3-peek:hover .eco3-peek__card:nth-child(1) { transform: translateX(-52px) rotate(-15deg); }
+.app-container .eco3-peek:hover .eco3-peek__card:nth-child(3) { transform: translateX(52px) rotate(14deg); }
+.app-container .eco3-peek:hover .eco3-peek__card:nth-child(2) { transform: translateY(-10px) rotate(0); }
+.app-container:not([data-theme='dark']) .eco3-peek__txt { padding: 3px 10px; background: #fffdf6; box-shadow: 2px 2px 0 rgba(62,39,35,.5); font: 700 17px/1.1 var(--ay-hand); transform: rotate(-1.5deg); }
+/* open: cards drop in */
+.app-container .eco3-cl.is-open .eco3-mini { animation: ayDrop .45s cubic-bezier(.3,1.4,.5,1) both; }
+.app-container .eco3-cl.is-open .eco3-mini:nth-child(2) { animation-delay: .07s; }
+.app-container .eco3-cl.is-open .eco3-mini:nth-child(3) { animation-delay: .14s; }
+@keyframes ayDrop { from { opacity: 0; translate: 0 -18px; } to { opacity: 1; translate: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .app-container .eco3-cl.is-open .eco3-mini { animation: none; } .app-container .eco3-peek__card { transition: none; } }

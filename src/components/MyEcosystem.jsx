@@ -1078,6 +1078,7 @@ export default function MyEcosystem({
     // up to six "Add a shelf" chips for areas she hasn't started.
     const [ecoQuery, setEcoQuery] = useState('');
     const needsBoardRef = useRef(null);
+    const [openNeed, setOpenNeed] = useState(null);
     const areaGroups = useMemo(() => {
         const byArea = new Map();
         myProductList.forEach((p) => {
@@ -2089,18 +2090,37 @@ export default function MyEcosystem({
                                 const phrase = needPhrases.get(shelf.needId) || shelf.label.toLowerCase();
                                 const short = shortNeedLabel(shelf.label);
                                 const picks = shelf.picks.map((pick) => ({ ...pick, product: myProducts[pick.productId] || getProductById(pick.productId) })).filter((p) => p.product);
+                                const firstOpen = (needShelves.find((x) => x.picks.length) || needShelves[0])?.needId;
+                                const isOpen = (openNeed ?? firstOpen) === shelf.needId;
+                                const toggle = () => setOpenNeed(isOpen ? '' : shelf.needId);
                                 return (
                                     <NeedCluster
                                         key={shelf.needId}
-                                        className={picks.length ? '' : 'is-empty'}
-                                        count={picks.length}
+                                        className={`${picks.length ? '' : 'is-empty'}${isOpen ? ' is-open' : ' is-closed'}`}
+                                        count={isOpen ? picks.length : 0}
                                         label={(
                                             <h3 className="eco3-cl__label">
-                                                <small aria-hidden="true">♡</small>
-                                                <span><i>For</i>{shelf.label}</span>
+                                                <button type="button" className="eco3-cl__toggle" aria-expanded={isOpen} onClick={toggle}>
+                                                    <small aria-hidden="true">♡</small>
+                                                    <span><i>For</i>{shelf.label}</span>
+                                                    <em className="eco3-cl__chev" aria-hidden="true">{isOpen ? '−' : '+'}</em>
+                                                </button>
                                             </h3>
                                         )}
                                     >
+                                        {!isOpen && (
+                                            <button type="button" className="eco3-peek" onClick={toggle} aria-label={`Show ${picks.length} pick${picks.length === 1 ? '' : 's'} for ${phrase}`}>
+                                                <span className="eco3-peek__stack" aria-hidden="true">
+                                                    {picks.slice(0, 3).map(({ product, productId }) => (
+                                                        <span key={productId} className="eco3-peek__card">
+                                                            <ProductTileImage product={product} alt="" imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }} letterNode={<ProductImageFallback compact />} />
+                                                        </span>
+                                                    ))}
+                                                </span>
+                                                <span className="eco3-peek__txt">{picks.length ? `${picks.length} pick${picks.length === 1 ? '' : 's'} · tap to open` : 'No matches yet · tap'}</span>
+                                            </button>
+                                        )}
+                                        {isOpen && (<>
                                         {picks.length > 0 && shelf.shortBy > 0 && (
                                             <p className="eco3-cl__short">Only {picks.length} strong match{picks.length === 1 ? '' : 'es'} so far</p>
                                         )}
@@ -2110,17 +2130,17 @@ export default function MyEcosystem({
                                                     const owned = Boolean(myProducts[productId]);
                                                     return (
                                                         <li key={productId} className={`eco3-mini${owned ? ' is-owned' : ''}`}>
-                                                            <button type="button" className="eco3-mini__open" onClick={() => onOpenProduct?.(product)} title={`${score}% for ${phrase}`}>
+                                                            <button type="button" className="eco3-mini__open" onClick={() => onOpenProduct?.(product)} aria-label={`${product.name}, ${score}% ${tierWord(tier, score).toLowerCase()} match for ${phrase}`}>
                                                                 <span className="eco3-mini__img" aria-hidden="true">
                                                                     <ProductTileImage product={product} alt="" imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }} letterNode={<ProductImageFallback compact />} />
                                                                 </span>
-                                                                <span className="eco3-mini__name">{product.name}</span>
-                                                                <span className="eco3-mini__score" style={{ '--s': Math.max(0, Math.min(100, Number(score) || 0)) }}><b>{score}</b>{tierWord(tier, score)}</span>
+                                                                <span className="eco3-mini__name" aria-hidden="true">{product.name}</span>
                                                             </button>
+                                                            <span className="eco3-mini__score" aria-hidden="true" title={`${score}% ${tierWord(tier, score).toLowerCase()} match`}><b>{score}%</b></span>
                                                             {owned ? (
-                                                                <span className="eco3-mini__owned">✓ In ecosystem</span>
+                                                                <span className="eco3-mini__owned" title="In your ecosystem"><span aria-hidden="true">✓</span><span className="sr-only">In your ecosystem</span></span>
                                                             ) : onToggleProduct && (
-                                                                <button type="button" className="eco3-mini__add" onClick={() => onToggleProduct(product)} aria-label={`Add ${product.name} to your ecosystem`}>+ Add</button>
+                                                                <button type="button" className="eco3-mini__add" onClick={() => onToggleProduct(product)} aria-label={`Add ${product.name} to your ecosystem`} title="Add to your ecosystem">+</button>
                                                             )}
                                                         </li>
                                                     );
@@ -2144,6 +2164,7 @@ export default function MyEcosystem({
                                                 </ul>
                                             </details>
                                         )}
+                                        </>)}
                                     </NeedCluster>
                                 );
                             })}
