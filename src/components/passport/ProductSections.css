@@ -206,3 +206,26 @@
 .ay-glance__grid { align-items: start; gap: 0 32px !important; }
 .ay-gl-col { gap: 16px !important; }
 @media (prefers-reduced-motion: reduce) { .ay-gl-sec__chev { transition: none; } }
+
+/* ---- Original product page: tab pills, one panel with a tone header (Oct 12 design) ---- */
+.ay-glance.is-tabbed { gap: 16px; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+.ay-glance.is-tabbed .ay-glance__nav ul { margin: 0; }
+.ay-glance.is-tabbed .ay-glance__nav button {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border: 2px solid var(--ay-ink); border-radius: 999px;
+  background: var(--ay-paper); color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); cursor: pointer; transition: transform .15s, box-shadow .15s;
+}
+.ay-glance.is-tabbed .ay-glance__nav button:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ay-ink); }
+.ay-glance.is-tabbed .ay-glance__nav button.is-on { background: var(--ay-butter); box-shadow: 3px 3px 0 var(--ay-ink); }
+.ay-glance.is-tabbed .ay-glance__nav button:focus-visible { outline: 3px solid var(--ay-peri); outline-offset: 2px; }
+.ay-glance__panel { display: grid; gap: 20px; padding: 20px; border: 2px solid var(--ay-ink); border-radius: 18px; background: var(--ay-paper); box-shadow: 4px 4px 0 var(--ay-ink); min-width: 0; }
+.ay-glance__panelhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -20px -20px 0; padding: 14px 20px; border-bottom: 2px solid var(--ay-ink); border-radius: 16px 16px 0 0; background: var(--ay-butter); }
+.ay-glance__panel[data-tone='peri'] .ay-glance__panelhead { background: var(--ay-peri); }
+.ay-glance__panel[data-tone='mint'] .ay-glance__panelhead { background: var(--ay-mint); }
+.ay-glance__panel[data-tone='pink'] .ay-glance__panelhead { background: var(--ay-pink); }
+.ay-glance__panel[data-tone='cream'] .ay-glance__panelhead { background: var(--ay-cream); }
+.ay-glance__panelhead h2 { margin: 0; font: 800 22px/1.1 var(--ay-font-display) !important; letter-spacing: -.02em !important; color: var(--ay-ink); }
+.ay-glance__chip { padding: 5px 10px; border: 1.5px solid var(--ay-ink); border-radius: 999px; background: var(--ay-paper); color: var(--ay-ink); font: 700 12px/1 var(--ay-font-ui); white-space: nowrap; }
+.ay-glance__panel .ay-gl-sec.is-bare { gap: 16px !important; }
+.ay-glance__panel .ay-gl-sec__body { gap: 16px; }
+.ay-glance.is-tabbed .ay-glance__nav button { white-space: nowrap; flex: none; }
+.ay-glance.is-tabbed .ay-glance__nav li { flex: none; }

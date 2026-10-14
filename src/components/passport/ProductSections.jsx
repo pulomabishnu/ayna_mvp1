@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GlossaryText } from '../GlossaryTerm';
 import { LONG_TEXT, NOT_ON_FILE } from '../pdp/glance';
 import { jumpTo } from '../pdp/jump';
@@ -223,13 +223,25 @@ function Block({ block, k, plan, sources, onXref }) {
   }
 }
 
-function Section({ section, plan, sources, extra, onXref }) {
+const TONE = { evidence: 'peri', people: 'butter', brand: 'cream', unknown: 'cream', match: 'pink', safety: 'mint' };
+
+function Section({ section, plan, sources, extra, onXref, bare = false }) {
   const [open, setOpen] = useState(true);
   useEffect(() => {
     const on = (e) => { if (e.detail === section.id) setOpen(true); };
     window.addEventListener('ay-open-section', on);
     return () => window.removeEventListener('ay-open-section', on);
   }, [section.id]);
+  if (bare) {
+    return (
+      <div className={`ay-gl-sec is-${section.kind} is-bare`} id={`ay-sec-${section.id}`} tabIndex={-1}>
+        <div className="ay-gl-sec__body">
+          {section.blocks.map((b, i) => <Block key={`${section.id}-${i}`} block={b} k={`${section.id}:${i}`} plan={plan} sources={sources} onXref={onXref} />)}
+          {extra}
+        </div>
+      </div>
+    );
+  }
   return (
     <section className={`ay-gl-sec is-${section.kind}${open ? ' is-open' : ''}`} id={`ay-sec-${section.id}`} tabIndex={-1} aria-labelledby={`ay-sec-h-${section.id}`}>
       <button type="button" className="ay-gl-sec__head ay-gl-sec__toggle" aria-expanded={open} aria-controls={`ay-sec-body-${section.id}`} onClick={() => setOpen((v) => !v)}>
@@ -245,53 +257,54 @@ function Section({ section, plan, sources, extra, onXref }) {
   );
 }
 
-/** Rough height so the two desktop columns come out even. */
-function weight(section) {
-  return section.blocks.reduce((n, b) => n + 80 + String(b.text || '').length * 0.5
-    + (b.items ? b.items.reduce((m, t) => m + 40 + String(t.text || t.title || t.summary || t).length * 0.4, 0) : 0)
-    + (b.rows ? b.rows.length * 48 : 0), 60);
-}
-
 export default function ProductSections({ glance, extras = {}, extraNav = [], onXref = null }) {
   const plan = glance?.glossary || {};
-  const [left, right] = useMemo(() => {
-    const L = [];
-    const R = [];
-    let lh = 0;
-    let rh = 0;
-    (glance?.sections || []).forEach((s, i) => {
-      const w = weight(s);
-      if (lh <= rh) { L.push({ s, i }); lh += w; } else { R.push({ s, i }); rh += w; }
-    });
-    return [L, R];
+  const [tab, setTab] = useState('glance');
+  useEffect(() => {
+    const on = (e) => {
+      const id = e.detail;
+      if (id === 'sources' || (glance?.sections || []).some((x) => x.id === id)) setTab(id);
+    };
+    window.addEventListener('ay-open-section', on);
+    return () => window.removeEventListener('ay-open-section', on);
   }, [glance]);
   if (!glance) return null;
   const { what, who, facts, sources } = glance;
   const nav = [...glance.nav, ...extraNav];
 
-  const renderCol = (list) => list.map(({ s, i }) => (
-    <div key={s.id} className="ay-gl-cell" style={{ order: i }}>
-      <Section section={s} plan={plan} sources={sources} extra={extras[s.id]} onXref={onXref} />
-    </div>
-  ));
+  const tabs = [
+    { id: 'glance', label: 'ayna summary', tone: 'butter' },
+    ...glance.sections.map((sec) => ({ id: sec.id, label: (nav.find((n) => n.id === sec.id) || {}).label || sec.title, tone: TONE[sec.kind] || 'mint' })),
+    ...(sources.length ? [{ id: 'sources', label: `Sources (${sources.length})`, tone: 'cream' }] : []),
+  ];
+  const outside = nav.filter((n) => !tabs.some((t) => t.id === n.id) && n.id !== 'glance');
+  const cur = tabs.find((t) => t.id === tab) || tabs[0];
+  const curSection = glance.sections.find((x) => x.id === cur.id);
+  const title = cur.id === 'glance' ? 'ayna summary' : cur.id === 'sources' ? 'Where this comes from' : (curSection?.title || cur.label);
 
   return (
-    <section className="ay-glance" id="ay-sec-glance" tabIndex={-1} aria-labelledby="ay-glance-h">
-      <header className="ay-glance__head">
-        <h2 id="ay-glance-h">ayna at a glance</h2>
-        <p>Everything we know about it in one place, with sources.</p>
-      </header>
-
-      <nav className="ay-glance__nav" aria-label="On this page">
+    <section className="ay-glance is-tabbed" id="ay-sec-glance" tabIndex={-1} aria-label="Product information">
+      <div className="ay-glance__nav" role="tablist" aria-label="Product information">
         <ul>
-          {nav.filter((n) => n.id !== 'glance').map((n) => (
+          {tabs.map((t) => (
+            <li key={t.id}>
+              <button type="button" role="tab" id={`ay-tab-${t.id}`} aria-selected={t.id === cur.id} aria-controls="ay-tabpanel" className={t.id === cur.id ? 'is-on' : undefined} onClick={() => setTab(t.id)}>{t.label}</button>
+            </li>
+          ))}
+          {outside.map((n) => (
             <li key={n.id}>
-              <a href={`#ay-sec-${n.id}`} onClick={(e) => { e.preventDefault(); jumpOpen(n.id, `ay-sec-${n.id}`); }}>{n.label}</a>
+              <button type="button" onClick={() => jumpTo(`ay-sec-${n.id}`)}>{n.label}</button>
             </li>
           ))}
         </ul>
-      </nav>
+      </div>
 
+      <div className="ay-glance__panel" id="ay-tabpanel" role="tabpanel" aria-labelledby={`ay-tab-${cur.id}`} data-tone={cur.tone}>
+        <div className="ay-glance__panelhead">
+          <h2>{title}</h2>
+          {cur.id === 'glance' && sources.length > 0 && <span className="ay-glance__chip">{sources.length} source{sources.length === 1 ? '' : 's'}</span>}
+        </div>
+      {cur.id === 'glance' && (
       <div className="ay-glance__top">
         <div className="ay-glance__what">
           {what.text && (
@@ -334,33 +347,28 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
           ))}
         </dl>
       </div>
+        )}
 
-      <div className="ay-glance__grid">
-        <div className="ay-gl-col">{renderCol(left)}</div>
-        <div className="ay-gl-col">{renderCol(right)}</div>
-      </div>
 
-      {sources.length > 0 && (
-        <section className="ay-gl-sec ay-gl-sources" id="ay-sec-sources" tabIndex={-1} aria-labelledby="ay-sec-h-sources">
-          <div className="ay-gl-sec__head">
-            <span className="ay-gl-kind">Sources</span>
-            <h3 id="ay-sec-h-sources">Where this comes from</h3>
-          </div>
+        {cur.id !== 'glance' && cur.id !== 'sources' && curSection && (
+          <Section bare section={curSection} plan={plan} sources={sources} extra={extras[curSection.id]} onXref={onXref} />
+        )}
+        {cur.id === 'sources' && (
           <ol className="ay-gl-srclist">
-            {sources.map((s) => (
-              <li key={s.url} id={`ay-src-${s.n}`} tabIndex={-1}>
-                <span className="ay-gl-cites__n">{s.n}</span>
+            {sources.map((src) => (
+              <li key={src.url} id={`ay-src-${src.n}`} tabIndex={-1}>
+                <span className="ay-gl-cites__n">{src.n}</span>
                 <div>
-                  <span className={`ay-gl-type is-${s.type}`}>{s.label}</span>
-                  <a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a>
-                  <small>{[s.publisher, s.year].filter(Boolean).join(' · ')}</small>
-                  {s.summary && <small>{s.summary}</small>}
+                  <span className={`ay-gl-type is-${src.type}`}>{src.label}</span>
+                  <a href={src.url} target="_blank" rel="noopener noreferrer">{src.title}</a>
+                  <small>{[src.publisher, src.year].filter(Boolean).join(' · ')}</small>
+                  {src.summary && <small>{src.summary}</small>}
                 </div>
               </li>
             ))}
           </ol>
-        </section>
-      )}
+        )}
+      </div>
     </section>
   );
 }

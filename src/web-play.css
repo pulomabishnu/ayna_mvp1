@@ -1225,3 +1225,10 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
 .app-container .pdp-page .pdp-below--glance > .pdp-community-actions { max-width: 760px; justify-self: start; margin-top: 8px !important; padding: 16px !important; border: 2px solid var(--ay-ink) !important; border-radius: 22px !important; background: var(--ay-pink) !important; box-shadow: 3px 3px 0 var(--ay-ink) !important; }
 .app-container .pdp-page .pdp-below--glance .pdp-community-actions__grid { grid-template-columns: 1fr 1fr !important; }
 .app-container .pdp-page .pdp-below--glance .pdp-community-actions__grid button { border-radius: 14px !important; }
+
+/* Product page photo sits in a pink frame, like the original page. */
+
+/* Product page photo: pink frame with the photo inset, as in the original page (founder). */
+.app-container .pdp-page .pdp-head .pdp-head__tile { background: var(--ay-pink) !important; padding: 8% !important; box-sizing: border-box; box-shadow: none; }
+.app-container .pdp-page .pdp-head .pdp-head__tile { padding: 0 !important; }
+.app-container .pdp-page .pdp-head .pdp-head__tile img { position: absolute !important; inset: 9% !important; width: 82% !important; height: 82% !important; padding: 0 !important; border-radius: 6px; background: #fff; }
