@@ -2202,3 +2202,56 @@ html body .app-container:not([data-theme='dark']) :is(#eco3-shelves-title, #eco3
 @media (hover: none) { .app-container .ay-drawer__tools, .app-container .ay-drawer__grip { opacity: .7; } }
 @media (max-width: 700px) { .app-container .ay-drawer__tools { top: 12px; } .app-container .ay-drawer__grip { display: none; } .app-container:not([data-theme='dark']) .ay-drawer__rename { left: 44px; top: 8px; } .app-container:not([data-theme='dark']) .ay-drawer__paints { left: 10px !important; right: 10px; flex-wrap: wrap; } .app-container .ay-drawers__sum small { display: none; } }
 @media (min-width: 701px) { .app-container:not([data-theme='dark']) .ay-drawer__front, .app-container:not([data-theme='dark']) .ay-drawer.is-open .ay-drawer__front { padding-left: 34px; } .app-container:not([data-theme='dark']) .ay-drawer__grip { top: 28px; left: 8px; } }
+
+/* ---- Tools: a tidy list, each row = icon, words, one action ---- */
+html body .app-container:not([data-theme='dark']) .eco3-details { display: flex !important; flex-direction: column; gap: 0 !important; max-width: 920px; border: 2px solid var(--ay-ink); border-radius: 18px; background: #ffedac; box-shadow: 6px 6px 0 var(--ay-ink); overflow: hidden; }
+html body .app-container:not([data-theme='dark']) .eco3-details__card { display: grid !important; grid-template-columns: 52px minmax(0, 1fr) auto; grid-template-areas: 'ic title act' 'ic note act'; align-items: center; column-gap: 18px; row-gap: 2px; padding: 18px 22px !important; border: 0 !important; border-top: 1.5px solid rgba(62,39,35,.22) !important; border-left: 0 !important; }
+html body .app-container:not([data-theme='dark']) .eco3-details__card:first-child { border-top: 0 !important; }
+html body .app-container:not([data-theme='dark']) .eco3-details__card[open] { order: 0; grid-column: auto; border-top: 1.5px solid rgba(62,39,35,.22) !important; }
+html body .app-container:not([data-theme='dark']) .eco3-details__item { display: block !important; }
+html body .app-container:not([data-theme='dark']) .eco3-details__item summary { display: grid !important; grid-template-columns: 52px minmax(0, 1fr) auto; grid-template-areas: 'ic title act' 'ic note act'; align-items: center; column-gap: 18px; row-gap: 2px; padding-right: 0 !important; }
+html body .app-container:not([data-theme='dark']) .eco3-details__item summary::after { position: static !important; grid-area: act; width: 36px !important; height: 36px !important; }
+.app-container .eco3-tool-ic { grid-area: ic; display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid var(--ay-ink); border-radius: 50%; }
+.app-container .eco3-tool-ic svg { width: 22px; height: 22px; fill: none; stroke: var(--ay-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .eco3-tool-ic.is-sms { background: #f7badd; }
+.app-container .eco3-tool-ic.is-care { background: #769ebe; }
+.app-container .eco3-tool-ic.is-why { background: #ffedac; }
+.app-container .eco3-tool-ic.is-resa { background: #f7badd; }
+html body .app-container:not([data-theme='dark']) .eco3-details__title { grid-area: title; margin: 0 !important; font: 400 22px/1.15 var(--ay-font-display) !important; }
+html body .app-container:not([data-theme='dark']) .eco3-details__hint { grid-area: note; margin: 0 !important; font: 500 15px/1.4 var(--ay-font-ui) !important; color: var(--ay-ink-soft) !important; }
+html body .app-container:not([data-theme='dark']) .eco3-details__soon { grid-area: note; margin: 0 !important; font: 500 15px/1.4 var(--ay-font-ui) !important; color: var(--ay-ink-soft) !important; }
+html body .app-container:not([data-theme='dark']) .eco3-details__soon::before { content: 'Soon'; display: inline-block; margin-right: 8px; padding: 2px 8px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: #769ebe; color: var(--ay-ink); font: 700 11px/1.4 var(--ay-font-ui); letter-spacing: .04em; text-transform: uppercase; vertical-align: 1px; }
+html body .app-container:not([data-theme='dark']) .eco3-details__row { grid-area: act; display: flex; gap: 8px; margin: 0 !important; }
+html body .app-container:not([data-theme='dark']) .eco3-details__number { grid-area: note; margin: 0 !important; font: 600 15px/1.3 var(--ay-font-ui); }
+html body .app-container:not([data-theme='dark']) .eco3-details__close { position: static !important; grid-area: act; justify-self: end; align-self: start; margin: -6px -8px 0 0; border: 0 !important; width: 30px; height: 30px; opacity: .6; }
+html body .app-container:not([data-theme='dark']) .eco3-details__sms { grid-template-areas: 'ic title close' 'ic note act'; }
+html body .app-container:not([data-theme='dark']) .eco3-details__sms .eco3-details__close { grid-area: close; }
+html body .app-container:not([data-theme='dark']) .eco3-details__sms .eco3-details__row { grid-area: act; }
+html body .app-container:not([data-theme='dark']) .eco3-details .eco3-pill { min-height: 40px; padding: 0 18px !important; font-size: 14px !important; }
+html body .app-container:not([data-theme='dark']) .eco3-details__body { margin: 16px 0 0 70px !important; padding: 16px 0 0 !important; }
+.app-container .eco3-details__soon--solo { display: none !important; }
+@media (max-width: 700px) {
+  html body .app-container:not([data-theme='dark']) .eco3-details__card, html body .app-container:not([data-theme='dark']) .eco3-details__item summary { grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: 'ic title act' 'ic note note'; column-gap: 12px; padding: 16px !important; }
+  html body .app-container:not([data-theme='dark']) .eco3-details__item summary { padding: 0 !important; }
+  html body .app-container:not([data-theme='dark']) .eco3-details__sms, html body .app-container:not([data-theme='dark']) .eco3-details__resa { grid-template-areas: 'ic title close' 'ic note note' 'ic act act'; row-gap: 8px; }
+  .app-container .eco3-tool-ic { width: 40px; height: 40px; }
+  html body .app-container:not([data-theme='dark']) .eco3-details__title { font-size: 19px !important; }
+  html body .app-container:not([data-theme='dark']) .eco3-details__body { margin-left: 0 !important; }
+}
+/* ---- Saved: polaroids on the page, no box ---- */
+html body .app-container:not([data-theme='dark']) .ay-saved { display: flex; gap: 22px; overflow-x: auto; padding: 14px 4px 18px; border: 0; background: none; scroll-snap-type: x mandatory; }
+html body .app-container:not([data-theme='dark']) .ay-saved__item { flex: 0 0 190px; scroll-snap-align: start; padding: 10px 10px 0; border: 2px solid var(--ay-ink); border-radius: 4px; background: #fff; box-shadow: 4px 5px 0 var(--ay-ink); transform: rotate(var(--r, -1.2deg)); transition: transform .2s ease; }
+html body .app-container:not([data-theme='dark']) .ay-saved__item:nth-child(3n+2) { --r: 1deg; }
+html body .app-container:not([data-theme='dark']) .ay-saved__item:nth-child(3n) { --r: -.4deg; }
+html body .app-container:not([data-theme='dark']) .ay-saved__item:hover { transform: rotate(0) translateY(-3px); }
+.app-container .ay-saved__img { border: 0 !important; margin-bottom: 10px !important; }
+.app-container .ay-saved__brand, .app-container .ay-saved__name { padding: 0 2px !important; }
+.app-container .ay-saved__price { margin: 6px 2px 0 !important; }
+.app-container .ay-saved__acts { margin: 10px -10px 0; padding: 8px 10px 10px !important; border-top: 1.5px solid var(--ay-ink) !important; background: #ffedac; }
+html body .app-container:not([data-theme='dark']) .eco-saved__head { display: flex !important; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+html body .app-container:not([data-theme='dark']) .eco-saved__head .eco3-needs__kicker { flex-basis: 100%; }
+html body .app-container:not([data-theme='dark']) .eco-saved__count { display: inline-grid !important; place-items: center; width: 34px; height: 34px; border: 2px solid var(--ay-ink); border-radius: 50%; background: #f7badd; font: 700 14px/1 var(--ay-font-ui) !important; }
+html body .app-container:not([data-theme='dark']) .eco-saved .wishlist-empty { max-width: 920px; border-radius: 18px !important; box-shadow: 6px 6px 0 var(--ay-ink); }
+@media (max-width: 700px) { html body .app-container:not([data-theme='dark']) .ay-saved__item { flex-basis: 150px; } }
+html body .app-container:not([data-theme='dark']) .eco-saved__head { display: grid !important; grid-template-columns: auto auto 1fr; align-items: center; justify-items: start; }
+html body .app-container:not([data-theme='dark']) .eco-saved__head .eco3-needs__kicker { grid-column: 1 / -1; flex-basis: auto; width: fit-content; }

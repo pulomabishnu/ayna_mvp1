@@ -2332,6 +2332,7 @@ export default function MyEcosystem({
                 <div className="eco3-details">
                     {smsCardShown && (
                         <div className="eco3-details__card eco3-details__sms">
+                            <span className="eco3-tool-ic is-sms" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" /></svg></span>
                             <button type="button" className="eco3-details__close" onClick={handleDismissSmsCard} aria-label="Dismiss">✕</button>
                             {phoneNumberInfo?.is_verified ? (
                                 <>
@@ -2360,6 +2361,7 @@ export default function MyEcosystem({
 
                     <details className="eco3-details__card eco3-details__item" ref={careNearYouDetailsRef}>
                         <summary>
+                            <span className="eco3-tool-ic is-care" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 7 3.5C19 14.8 12 21 12 21z" /><path d="M12 10v5M9.5 12.5h5" /></svg></span>
                             <span className="eco3-details__title">Care near you</span>
                             <span className="eco3-details__hint">Find a clinician, HRSA and Planned Parenthood links, and matching virtual care</span>
                         </summary>
@@ -2378,6 +2380,7 @@ export default function MyEcosystem({
 
                     <details className="eco3-details__card eco3-details__item">
                         <summary>
+                            <span className="eco3-tool-ic is-why" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg></span>
                             <span className="eco3-details__title">Why these matches</span>
                             <span className="eco3-details__hint">Sources and scoring behind your picks</span>
                         </summary>
@@ -2393,7 +2396,8 @@ export default function MyEcosystem({
                     </details>
                     {/* Rèsa: pre-launch partner, not syncable yet (from main). Opens the
                         partnership explainer for everyone, Premium or not. */}
-                    <div className="eco3-details__card">
+                    <div className="eco3-details__card eco3-details__resa">
+                        <span className="eco3-tool-ic is-resa" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" /></svg></span>
                         <p className="eco3-details__title">Rèsa, an ayna partner</p>
                         <div className="eco3-details__row">
                             <button
