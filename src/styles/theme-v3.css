@@ -952,3 +952,47 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container:not([data-theme='dark']) .wyou-stats > :not(:has(button)) { position: relative; background: var(--ay-paper) !important; padding: 16px 20px !important; border: 2px dashed var(--ay-ink) !important; border-radius: 6px !important; -webkit-mask: radial-gradient(9px at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(9px at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat; mask: radial-gradient(9px at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(9px at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat; border-style: dashed !important; }
 .app-container:not([data-theme='dark']) .wyou-stats strong, .app-container:not([data-theme='dark']) .wyou-stats b { font: 400 34px/1 var(--ay-font-display) !important; }
 .app-container:not([data-theme='dark']) .wyou-card h2, .app-container:not([data-theme='dark']) .wyou-col h2 { font: 400 26px/1.1 var(--ay-font-display) !important; }
+
+/* =====================================================================
+   About: a scrapbook page. Story typed on letter paper, the team photo
+   taped in with a handwritten caption, values as stickers, "mirror" as
+   a hand mirror note.
+   ===================================================================== */
+.app-container:not([data-theme='dark']) .ay-info-story__text { border-radius: 2px !important; background: repeating-linear-gradient(#fffdf6 0 29px, rgba(247, 186, 221, .5) 29px 30px) !important; background-position: 0 18px !important; box-shadow: 6px 7px 0 var(--ay-ink) !important; transform: rotate(-.6deg); }
+.app-container:not([data-theme='dark']) .ay-info-story__text p { font-size: 17px !important; line-height: 30px !important; }
+.app-container:not([data-theme='dark']) .ay-info-story figure, .app-container:not([data-theme='dark']) .ay-info-story > :not(.ay-info-story__text) { position: relative; padding: 12px 12px 14px !important; border-radius: 2px !important; background: #fff !important; box-shadow: 6px 7px 0 var(--ay-ink) !important; transform: rotate(2deg); transition: transform .4s cubic-bezier(.3, 1.4, .5, 1); }
+.app-container:not([data-theme='dark']) .ay-info-story > :not(.ay-info-story__text):hover { transform: rotate(0) scale(1.02); }
+.app-container:not([data-theme='dark']) .ay-info-story > :not(.ay-info-story__text)::before { content: ''; position: absolute; z-index: 2; top: -14px; left: 50%; width: 120px; height: 28px; margin-left: -60px; background: rgba(118, 158, 190, .8); transform: rotate(-3deg); }
+.app-container:not([data-theme='dark']) .ay-info-story :is(figcaption, p:last-child):not(.ay-info__body) { font: 700 24px/1.1 var(--ay-hand) !important; }
+.app-container:not([data-theme='dark']) .ay-info-tile { border-radius: 999px 999px 999px 24px !important; transform: rotate(-2deg); transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+.app-container:not([data-theme='dark']) .ay-info-tile:nth-child(even) { transform: rotate(2deg); border-radius: 24px 999px 999px 999px !important; }
+.app-container:not([data-theme='dark']) .ay-info-tile:hover { transform: rotate(0) scale(1.05); }
+.app-container:not([data-theme='dark']) .ay-info-tile--mint { background: var(--ay-paper) !important; }
+.app-container:not([data-theme='dark']) .ay-info-tile--butter { background: var(--ay-rose) !important; }
+.app-container:not([data-theme='dark']) .ay-info-mirror { position: relative; padding-left: 110px !important; }
+.app-container:not([data-theme='dark']) .ay-info-mirror::before { content: ''; position: absolute; left: 26px; top: 50%; width: 58px; height: 74px; margin-top: -48px; border: 3px solid var(--ay-ink); border-radius: 50%; background: radial-gradient(ellipse at 35% 30%, #fff 0 18%, #dbe8f2 19% 100%); }
+.app-container:not([data-theme='dark']) .ay-info-mirror::after { content: ''; position: absolute; left: 50px; top: 50%; width: 10px; height: 34px; margin-top: 26px; border: 3px solid var(--ay-ink); border-radius: 0 0 6px 6px; background: var(--ay-rose); }
+.app-container:not([data-theme='dark']) .ay-info-help { transition: transform .25s cubic-bezier(.3, 1.4, .5, 1); }
+.app-container:not([data-theme='dark']) .ay-info-help:hover { transform: translateY(-4px) rotate(-.5deg); }
+.app-container:not([data-theme='dark']) .ay-info-advisor { transform: rotate(-.8deg); }
+.app-container:not([data-theme='dark']) .ay-info-advisor:nth-child(even) { transform: rotate(.8deg); }
+
+/* =====================================================================
+   Contact: write us a letter. The form is airmail stationery with a
+   postage stamp; the topic list is a handwritten sticky note.
+   ===================================================================== */
+.app-container:not([data-theme='dark']) .ay-info-contact form, .app-container:not([data-theme='dark']) .ay-info-contact > :last-child { position: relative; border: 2px solid var(--ay-ink) !important; border-radius: 4px !important; background: #fffdf6 !important; box-shadow: 6px 7px 0 var(--ay-ink) !important; }
+.app-container:not([data-theme='dark']) .ay-info-contact > :last-child::before { content: ''; position: absolute; inset: 6px; border: 8px solid transparent; border-image: repeating-linear-gradient(45deg, #f7badd 0 12px, #fffdf6 12px 18px, #769ebe 18px 30px, #fffdf6 30px 36px) 8; pointer-events: none; }
+.app-container:not([data-theme='dark']) .ay-info-contact > :last-child::after { content: 'ayna\A post'; white-space: pre; position: absolute; top: 18px; right: 18px; display: grid; place-items: center; width: 70px; height: 84px; border: 2px solid var(--ay-ink); background: var(--ay-rose); text-align: center; font: 700 22px/1 var(--ay-hand); transform: rotate(4deg); outline: 3px dotted var(--ay-rose); outline-offset: 3px; }
+.app-container:not([data-theme='dark']) .ay-info-contact > :last-child { padding: 40px 34px 30px !important; }
+.app-container:not([data-theme='dark']) .ay-info-contact > :first-child { border-radius: 2px !important; background: var(--ay-cream) !important; transform: rotate(-1.5deg); box-shadow: 0 14px 14px -12px rgba(62, 39, 35, .5), 3px 3px 0 var(--ay-ink) !important; }
+.app-container:not([data-theme='dark']) .ay-info-contact > :first-child :is(h2, h3, b, strong) { font: 700 24px/1.1 var(--ay-hand) !important; }
+
+/* 404: a lost-and-found poster with tear-off tabs */
+.app-container:not([data-theme='dark']) .ay-404 { position: relative; max-width: 560px; margin: 56px auto 80px !important; padding: 44px 36px 120px !important; border: 2px solid var(--ay-ink); background: #fffdf6; box-shadow: 8px 9px 0 var(--ay-ink); text-align: center; transform: rotate(-1deg); }
+.app-container:not([data-theme='dark']) .ay-404::before { content: ''; position: absolute; top: -12px; left: 50%; width: 24px; height: 24px; margin-left: -12px; border: 2px solid var(--ay-ink); border-radius: 50%; background: radial-gradient(circle at 35% 32%, #fff 0 2.5px, transparent 3.5px), var(--ay-rose); }
+.app-container:not([data-theme='dark']) .ay-404::after { content: 'aynahealth.co aynahealth.co aynahealth.co aynahealth.co aynahealth.co aynahealth.co'; position: absolute; left: 0; right: 0; bottom: 0; height: 92px; border-top: 2px dashed var(--ay-ink); background: repeating-linear-gradient(90deg, transparent 0 calc(100% / 6 - 1px), var(--ay-ink) calc(100% / 6 - 1px) calc(100% / 6)); font: 500 11px/92px var(--ay-mono); letter-spacing: .02em; word-spacing: 14px; font-size: 10px; white-space: nowrap; overflow: hidden; }
+.app-container:not([data-theme='dark']) .ay-404__badge { display: inline-block; margin-bottom: 8px; padding: 6px 16px; border: 0 !important; background: var(--ay-ink) !important; color: var(--ay-cream) !important; font: 400 13px/1 var(--ay-font-label) !important; letter-spacing: .2em; }
+.app-container:not([data-theme='dark']) .ay-404 h1 { font-size: clamp(40px, 6vw, 64px) !important; }
+.app-container:not([data-theme='dark']) .ay-404__badge { width: auto !important; height: auto !important; border-radius: 0 !important; transform: rotate(-3deg); }
+.app-container:not([data-theme='dark']) .ay-info-contact > :last-child { padding-top: 116px !important; }
