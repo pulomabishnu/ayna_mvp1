@@ -323,3 +323,11 @@
 .app-container .lv { --ay-font-ui: 'DM Sans', system-ui, sans-serif; --ay-font-display: 'Fraunces', Georgia, serif; --font-body: 'DM Sans', system-ui, sans-serif; }
 /* nothing touches the viewport edge: ticker is inset like every other block */
 .app-container .lv .lv-ticker { width: calc(100% - 2 * var(--gut)); max-width: 1280px; margin: 12px auto 0; border-radius: 999px; }
+/* full-bleed: colour blocks run edge to edge, text stays inset */
+.app-container .lv .lv-wrap { max-width: none; padding-inline: 0; }
+.app-container .lv .lv-ticker { width: 100%; max-width: none; margin: 12px 0 0; border-radius: 0; }
+.app-container .lv .lv-hero { border-radius: 0; margin-top: 12px; }
+.app-container .lv .lv-purpose { border-radius: 0; border-inline: 0; padding-inline: max(var(--pad), calc((100% - 1280px) / 2 + var(--pad))); }
+.app-container .lv .lv-band { margin-inline: 0; border-radius: 0; }
+.app-container .lv .lv-strip { border-radius: 0; }
+.app-container .lv .lv-sec { padding-inline: max(var(--gut), calc((100% - 1280px) / 2)); }
