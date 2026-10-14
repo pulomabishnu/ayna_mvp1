@@ -305,7 +305,6 @@ function Today({ onViewArticles, onViewCommunity, paused }) {
                 <h2>Now introducing <em>ayna Community.</em></h2>
                 <button type="button" className="lv-btn lv-btn--ink" onClick={() => onViewCommunity?.()}>See Community<Arrow /></button>
               </div>
-              <ul className="lv-posts" aria-hidden="true"><li><i /><b /><b /></li><li><i /><b /><b /></li><li><i /><b /><b /></li></ul>
             </article>
           )}
           {tab === 1 && (
@@ -326,7 +325,6 @@ function Today({ onViewArticles, onViewCommunity, paused }) {
                 <h2>ayna, in your <em>pocket.</em></h2>
                 <a className="lv-btn lv-btn--ink" href="/mobile-preview">Try the app<Arrow /></a>
               </div>
-              <div className="lv-phone" aria-hidden="true"><span>ayna</span><i /><i /><i /><i /></div>
             </article>
           )}
         </div>

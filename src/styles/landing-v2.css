@@ -475,3 +475,13 @@ body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .site-
 /* how it works: pink band with straight edges (scallops stay unique to the shop band) */
 .app-container .lv .lv-start::before, .app-container .lv .lv-start::after { content: none; }
 .app-container .lv .lv-start { margin-top: var(--sec); border-block: var(--bw) solid var(--ink); }
+/* carousel: sky band is back (straight edges), slides are type only, no mock graphics */
+.app-container .lv .lv-stage { background: var(--skyb); padding-block: 88px; margin-top: var(--sec); border-block: var(--bw) solid var(--ink); }
+.app-container .lv .lv-stage__card { background: var(--paper); box-shadow: 6px 6px 0 var(--ink); }
+.app-container .lv .lv-stage__chapters button { background: var(--paper); }
+.app-container .lv .lv-stage__chapters button.is-on { background: var(--rose); }
+.app-container .lv :is(.lv-slide--news, .lv-slide--app) { display: flex; }
+.app-container .lv :is(.lv-slide--news, .lv-slide--app) > div { gap: 24px; }
+.app-container .lv .lv-slide h2 { font-size: clamp(36px, 1.4rem + 3vw, 68px); }
+@media (max-width: 767px) { .app-container .lv .lv-stage { padding-block: 56px; } }
+.app-container .lv :is(.lv-slide--news, .lv-slide--app) { flex-direction: column; justify-content: center; align-items: flex-start; }
