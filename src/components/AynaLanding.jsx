@@ -505,9 +505,9 @@ function ShopRow({ onOpenProduct, onViewDiscovery }) {
   );
 }
 
-function ShelfList({ products, onOpenProduct }) {
+function ShelfList({ products, onOpenProduct, numbered = false }) {
   return (
-    <ul className="lx-shelf">
+    <ul className={`lx-shelf${numbered ? ' lx-shelf--num' : ''}`}>
       {products.map((p, i) => (
         <li key={p.id} style={{ '--i': i }}>
           <a
@@ -515,7 +515,7 @@ function ShelfList({ products, onOpenProduct }) {
             href={productHref(p.id)}
             onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onOpenProduct?.(p); }}
           >
-            <span className="lx-shelf__img"><img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />{isPartnerBrandItem(p) && <span className="lx-shelf__badge">ayna<br />favorite</span>}</span>
+            <span className="lx-shelf__img">{numbered && <span className="lx-burst lx-burst--n lx-shelf__rank" aria-hidden="true"><b>{i + 1}</b></span>}<img src={p.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />{isPartnerBrandItem(p) && <span className="lx-shelf__badge">ayna<br />favorite</span>}</span>
             <span className="lx-shelf__row">
               <span className="lx-shelf__name">{p.name}</span>
               {/^\$/.test(String(p.price || '')) && <span className="lx-shelf__price">{String(p.price).split(/\s*[(\u2013-]\s*/)[0]}</span>}
@@ -589,7 +589,7 @@ function TrendingRow({ onOpenProduct, onViewDiscovery }) {
           <h2 id="lx-trending-title" className="lx-h2">Trending on <span className="lx-script">ayna</span></h2>
           <button type="button" className="lx-ghost" onClick={() => onViewDiscovery?.('')}>See the Shop</button>
         </div>
-        <ShelfList products={items} onOpenProduct={onOpenProduct} />
+        <ShelfList products={items} onOpenProduct={onOpenProduct} numbered />
       </div>
     </section>
   );
