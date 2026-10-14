@@ -2,6 +2,7 @@ import SmartSearchInput from './search/SmartSearchInput.jsx';
 import PhotoPile from './v3/PhotoPile.jsx';
 import EcoCabinet from './v3/EcoCabinet.jsx';
 import NeedCluster from './v3/NeedCluster.jsx';
+import CorkStrings from './v3/CorkStrings.jsx';
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import ResaPartnershipModal from './ResaPartnershipModal';
@@ -2077,14 +2078,13 @@ export default function MyEcosystem({
 
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-needs ay3-corkband" ref={needsBoardRef} aria-labelledby="eco3-needs-title">
-                        <div className="eco3-needs__head">
-                            <p className="eco3-needs__kicker">Your recommendations</p>
-                            <div className="eco3-needs__card">
-                                <h2 id="eco3-needs-title">For your <em>needs.</em></h2>
-                            </div>
-                            <span className="eco3-needs__sub">Our strongest picks for each need you chose, scored for you.</span>
-                        </div>
+                        <CorkStrings rootRef={needsBoardRef} hub pins className="is-hub" selectors={['.eco3-board__title@center', ...needShelves.slice(0, 8).map((_, i) => `.eco3-board > section:nth-of-type(${i + 1})@near`)]} />
                         <div className="eco3-board">
+                            <div className="eco3-board__title">
+                                <p className="eco3-board__kicker">Your recommendations</p>
+                                <h2 id="eco3-needs-title">For your <em>needs.</em></h2>
+                                <p className="eco3-board__sub">Our strongest picks for each need you chose, scored for you.</p>
+                            </div>
                             {[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => {
                                 const phrase = needPhrases.get(shelf.needId) || shelf.label.toLowerCase();
                                 const short = shortNeedLabel(shelf.label);

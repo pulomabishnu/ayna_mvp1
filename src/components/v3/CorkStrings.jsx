@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 /* Pink "investigation board" string between pinned items on the product
    page. Finds the pinned elements inside `rootRef` (by selector, in order),
    and draws a sagging string from pin to pin. Purely decorative. */
-export default function CorkStrings({ rootRef, selectors, hub = false, arcUp = false, drape = false }) {
+export default function CorkStrings({ rootRef, selectors, hub = false, arcUp = false, drape = false, pins = false, className = '' }) {
   const [paths, setPaths] = useState([]);
+  const [dots, setDots] = useState([]);
   const key = selectors.join('|');
   const star = Boolean(hub);
   const hang = Boolean(drape);
@@ -17,15 +18,26 @@ export default function CorkStrings({ rootRef, selectors, hub = false, arcUp = f
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const box = root.getBoundingClientRect();
+        let hubPt = null;
         const pts = key.split('|')
           .map((sel) => { const [q, at] = sel.split('@'); return [root.querySelector(q), at]; })
           .filter(([el]) => el && el.offsetParent !== null)
           .map(([el, at]) => {
             const r = el.getBoundingClientRect();
-            if (at === 'left') return [r.left + 16 - box.left, r.top + r.height / 2 - box.top];
-            if (at === 'bottom') return [r.left + r.width / 2 - box.left, r.bottom - 8 - box.top];
-            if (at === 'center') return [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top];
-            return [r.left + r.width / 2 - box.left, r.top + 10 - box.top];
+            let pt;
+            if (at === 'left') pt = [r.left + 16 - box.left, r.top + r.height / 2 - box.top];
+            else if (at === 'bottom') pt = [r.left + r.width / 2 - box.left, r.bottom - 8 - box.top];
+            else if (at === 'center') pt = [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top];
+            else if (at === 'near' && hubPt) {
+              // the edge of the box that faces the hub
+              const hx = hubPt[0] + box.left; const hy = hubPt[1] + box.top;
+              if (hx > r.right) pt = [r.right - box.left, Math.min(Math.max(hy, r.top + 40), r.bottom - 40) - box.top];
+              else if (hx < r.left) pt = [r.left - box.left, Math.min(Math.max(hy, r.top + 40), r.bottom - 40) - box.top];
+              else if (hy < r.top) pt = [r.left + r.width * 0.78 - box.left, r.top - box.top];
+              else pt = [r.left + r.width / 2 - box.left, r.bottom - box.top];
+            } else pt = [r.left + r.width / 2 - box.left, r.top + 10 - box.top];
+            if (!hubPt) hubPt = pt;
+            return pt;
           });
         if (hang && pts.length > 2) {
           // only the top row of a wrapped grid gets a string, so none run across a card
@@ -47,6 +59,7 @@ export default function CorkStrings({ rootRef, selectors, hub = false, arcUp = f
           out.push(`M${x1.toFixed(1)} ${y1.toFixed(1)} Q${((x1 + x2) / 2).toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`);
         }
         setPaths(out);
+        setDots(pins ? pts.slice(1) : []);
       });
     };
     draw();
@@ -58,11 +71,18 @@ export default function CorkStrings({ rootRef, selectors, hub = false, arcUp = f
     root.addEventListener('load', draw, true);
     root.addEventListener('transitionend', draw, true);
     return () => { cancelAnimationFrame(frame); ro.disconnect(); window.removeEventListener('resize', draw); window.clearTimeout(t); window.clearInterval(tick); root.removeEventListener('load', draw, true); root.removeEventListener('transitionend', draw, true); };
-  }, [rootRef, key, star, up]);
+  }, [rootRef, key, star, up, hang, pins]);
   if (!paths.length) return null;
   return (
-    <svg className="ay3-strings" aria-hidden="true" focusable="false">
-      {paths.map((d, i) => <path key={i} d={d} />)}
-    </svg>
+    <>
+      <svg className={`ay3-strings ${className}`.trim()} aria-hidden="true" focusable="false">
+        {paths.map((d, i) => <path key={i} d={d} />)}
+      </svg>
+      {dots.length > 0 && (
+        <svg className={`ay3-pins ${className}`.trim()} aria-hidden="true" focusable="false">
+          {dots.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="9" />)}
+        </svg>
+      )}
+    </>
   );
 }
