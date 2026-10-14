@@ -2151,6 +2151,7 @@ export default function MyEcosystem({
                     />
                 )}
 
+                {visibleAreaGroups.length > 0 && <div className="eco3-shelves">
                 {visibleAreaGroups.map((group) => {
                     const toneIndex = areaGroups.findIndex((g) => g.key === group.key);
                     return (
@@ -2203,6 +2204,7 @@ export default function MyEcosystem({
                         </section>
                     );
                 })}
+                </div>}
 
                 {!ecoQueryTrimmed && (
                     <div className="eco3-addrow">
