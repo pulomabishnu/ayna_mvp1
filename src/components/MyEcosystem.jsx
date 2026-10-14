@@ -2192,6 +2192,13 @@ export default function MyEcosystem({
                                         )}
                                     />
                                 ))}
+                                {group.key !== 'other' && typeof onGoToSearch === 'function' && (
+                                    <button type="button" className="eco3-slot" onClick={() => onGoToSearch(exploreAreaOptions(group))}>
+                                        <span aria-hidden="true">+</span>
+                                        <b>Room on this shelf</b>
+                                        <small>Find more for {String(group.label).toLowerCase()}</small>
+                                    </button>
+                                )}
                             </div>
                         </section>
                     );
