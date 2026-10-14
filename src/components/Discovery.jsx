@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import PhotoPile from './v3/PhotoPile.jsx';
 import { createPortal } from 'react-dom';
 import SuggestBox from './SuggestBox';
 import './Discovery.css';
@@ -1487,7 +1488,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     return (
         <section className="container animate-fade-in-up ayna-browse" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
             <div className="ay3-band ay3-band--ink ay3-scallop ay3-edge-bottom ay3-shophero">
-            <div className="ayna-browse__heading">
+            <div className="ayna-browse__heading ay3-withpile">
                 <div>
                     <p className="ay3-kicker">The ayna shop</p>
                     <h1 className="ay3-title">Shop by <em>need.</em></h1>
@@ -1497,6 +1498,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <a href="/how-we-make-money" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); setCurrentView?.('how-we-make-money'); }}>How we make money</a>
                     </p>
                 </div>
+                <PhotoPile label="Shop photos" photos={['bag-tubes', 'sink-heels-dryer', 'pink-tile-shelf']} />
             </div>
 
             <form onSubmit={handleSmartSearch} className="ayna-browse__search">

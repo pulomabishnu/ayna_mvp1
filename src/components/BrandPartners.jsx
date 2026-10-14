@@ -171,7 +171,7 @@ function BrandMark({ partner }) {
 
 export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToEcosystem, onBrowseBrand }) {
   return (
-    <InfoPage tone="ink"
+    <InfoPage photos={['sink-heels-dryer', 'vanity-hairdryer', 'bag-tubes']} tone="ink"
       eyebrow="Partnerships"
       title={PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
       lede={PARTNERS.length > 0

@@ -1,0 +1,23 @@
+/* Lifestyle photos in public/landing, with alt text. */
+export const PHOTOS = {
+  'tub-girls': 'Two friends getting ready together in a bathtub, surrounded by makeup',
+  'robe-kiss': 'A woman in a striped robe blowing a kiss to the mirror light',
+  'bed-selfie': 'A woman lying on a bed taking a selfie, her routine laid out around her',
+  'robe-vanity': 'A woman in a white robe at a marble vanity in a pink room',
+  'sink-flatlay': 'A sink full of brushes, makeup and hair tools, from above',
+  'laundry-duo': 'Two friends in curlers reading magazines on a laundry room floor',
+  'sink-heels-dryer': 'A vintage sink piled with a hair dryer, sunglasses and heels',
+  'pajamas-overhead': 'A woman in red striped pajamas on the phone, from above',
+  'vanity-hairdryer': 'A woman drying her hair at a crowded bedroom vanity',
+  'pad-thread-art': 'Red thread arranged over a white pad, as still life',
+  'bag-tubes': 'A vintage leather bag overflowing with colorful product tubes',
+  lilies: 'Legs in pink socks with a bunch of lilies across the lap',
+  'marble-counter': 'A marble bathroom counter full of products, seen from above',
+  'curlers-call': 'A woman in hair curlers laughing on the phone in her bathroom',
+  'sink-tea': 'A bathroom sink holding heels, sunglasses, tea and makeup',
+  'pink-tile-shelf': 'A pink tiled ledge crowded with bottles and a hair dryer',
+  'blue-sink': 'A woman at a bathroom sink with products lined up',
+  'robe-pickles': 'A woman in a white robe and hair curlers sitting in her bathroom',
+  'pink-stripe-floor': 'A woman sitting on a pink striped bathroom floor',
+  'stalls-trio': 'Three friends chatting from neighboring bathroom stalls',
+};

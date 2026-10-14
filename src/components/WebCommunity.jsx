@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import PhotoPile from './v3/PhotoPile.jsx';
 import { createPortal } from 'react-dom';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { getGuestClient, getGuestId, ensureGuestSession } from '../utils/community/guestClient.js';
@@ -809,6 +810,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   return <section className="wc wc3">
     <div className={`wc-head${page ? '' : ' ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom ay3-commhero'}`}>
       {page ? <button type="button" className="wc-back" onClick={closePage}>← Community</button> : <div><p className="ay3-kicker">ayna community</p><h1 className="ay3-title">Ask, review, <em>share.</em></h1></div>}
+      {!page && <PhotoPile label="Community photos" photos={['stalls-trio', 'tub-girls', 'robe-kiss']} />}
       <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
         <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount ? `Updates, ${unreadCount} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount > 0 && <span className="wc-bell-dot" aria-hidden="true" />}</button>
         <button type="button" className="wc-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Sign in for a Community profile'}><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /></button>

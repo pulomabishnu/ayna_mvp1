@@ -62,7 +62,7 @@ export default function Contact({ onBack }) {
   };
 
   return (
-    <InfoPage
+    <InfoPage photos={['curlers-call', 'pajamas-overhead', 'laundry-duo']}
       eyebrow="Contact"
       title="How can we help?"
       lede="Send us a note and we'll make sure it reaches the right person on the ayna team."

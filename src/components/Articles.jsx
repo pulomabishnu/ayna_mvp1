@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import PhotoPile, { FilmStrip } from './v3/PhotoPile.jsx';
 import ProductCard from './ProductCard';
 import SuggestBox from './SuggestBox';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
@@ -929,6 +930,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
             <p className="ay3-kicker">The ayna library</p>
             <h1 className="ay3-title">Short reads, <em>real sources.</em></h1>
           </div>
+          <PhotoPile label="Library photos" photos={['laundry-duo', 'pajamas-overhead', 'curlers-call']} />
           <span className="ay-lib-total" aria-label={`${finished} of ${ARTICLES.length} finished`}>
             <ProgressBar value={ARTICLES.length ? finished / ARTICLES.length : 0} />
             <span>{finished}/{ARTICLES.length} read</span>
@@ -945,6 +947,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       </div>}
       </div>
       {body}
+      <FilmStrip photos={['robe-vanity', 'sink-flatlay', 'laundry-duo', 'sink-heels-dryer', 'pajamas-overhead', 'vanity-hairdryer', 'lilies', 'curlers-call']} />
       <SuggestBox mode="read" context="library" className="ay-web-lib-suggest" />
     </section>
   );

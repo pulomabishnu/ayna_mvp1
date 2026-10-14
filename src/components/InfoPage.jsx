@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../styles/audit-info.css';
+import PhotoPile from './v3/PhotoPile.jsx';
 
 /**
  * Shared shell for the secondary info / legal pages (About, How It Works,
@@ -35,7 +36,7 @@ function useContents(rootRef, enabled) {
   return [items, active];
 }
 
-export function InfoPage({ eyebrow, title, lede, onBack, width = 'default', className = '', aside, tone, toc, children }) {
+export function InfoPage({ eyebrow, title, lede, onBack, width = 'default', className = '', aside, tone, toc, photos, children }) {
   const rootRef = useRef(null);
   const t = tone || TONE_BY_EYEBROW[String(eyebrow || '').toLowerCase()] || 'rose';
   const showToc = toc ?? width === 'read';
@@ -48,7 +49,7 @@ export function InfoPage({ eyebrow, title, lede, onBack, width = 'default', clas
   };
   return (
     <div ref={rootRef} className={`ay-info ay-info--${width}${showToc && items.length > 2 ? ' ay-info--toc' : ''}${className ? ` ${className}` : ''}`}>
-      <header className={`ay-info__head${aside ? ' ay-info__head--split' : ''} ay3-band ay3-band--${t} ${EDGE_BY_TONE[t] || ''} ay3-edge-bottom ay3-infohero`}>
+      <header className={`ay-info__head${aside ? ' ay-info__head--split' : ''}${!aside && photos?.length ? ' ay3-withpile' : ''} ay3-band ay3-band--${t} ${EDGE_BY_TONE[t] || ''} ay3-edge-bottom ay3-infohero`}>
         <div className="ay-info__head-main">
           {onBack && (
             <button type="button" className="ay-info__back" onClick={onBack}>
@@ -60,6 +61,7 @@ export function InfoPage({ eyebrow, title, lede, onBack, width = 'default', clas
           {lede && <p className="ay-info__lede">{lede}</p>}
         </div>
         {aside}
+        {!aside && photos?.length > 0 && <PhotoPile label={`${title} photos`} photos={photos} />}
       </header>
       {showToc && items.length > 2 ? (
         <div className="ay-info__layout">

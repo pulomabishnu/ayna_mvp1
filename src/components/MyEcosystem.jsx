@@ -1,4 +1,5 @@
 import SmartSearchInput from './search/SmartSearchInput.jsx';
+import PhotoPile from './v3/PhotoPile.jsx';
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import ResaPartnershipModal from './ResaPartnershipModal';
@@ -1940,6 +1941,7 @@ export default function MyEcosystem({
                             )}
                         </p>
                     </div>
+                    <PhotoPile label="Ecosystem photos" photos={['marble-counter', 'sink-flatlay', 'vanity-hairdryer']} className="ay3-pile--eco" />
                     <div className="eco3-actions" role="group" aria-label="Ecosystem actions">
                         {typeof onEditHealthProfile === 'function' && (
                             <button type="button" className="eco3-pill" onClick={onEditHealthProfile}>Update profile</button>

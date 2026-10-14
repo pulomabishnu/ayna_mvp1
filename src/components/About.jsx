@@ -134,7 +134,7 @@ function TeamPhoto() {
 
 export default function About({ onBack, onExplore, onStart }) {
   return (
-    <InfoPage
+    <InfoPage photos={['robe-pickles', 'lilies', 'pink-stripe-floor']}
       eyebrow="About ayna"
       title={<>We built the place we wished we could turn to.</>}
       lede="Women’s wellness discovery, shaped around you."
