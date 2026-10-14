@@ -8,7 +8,7 @@ import {
   setActiveCommunityRichTextDraft,
   truncateCommunityRichText,
 } from '../../utils/community/richText.js';
-import { RuleNote } from './RuleField.jsx';
+import { RuleNote } from './RuleNote.jsx';
 import './CommunityRichText.css';
 
 const BLOCK_TAGS = new Set(['P', 'DIV', 'LI']);
