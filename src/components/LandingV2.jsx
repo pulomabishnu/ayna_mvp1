@@ -29,7 +29,6 @@ const STRIP = [
   { src: '/landing/laundry-duo.webp', alt: 'Two friends in curlers reading magazines on a laundry room floor' },
   { src: '/landing/sink-heels-dryer.webp', alt: 'A vintage sink piled with a hair dryer, sunglasses and heels' },
   { src: '/landing/pajamas-overhead.webp', alt: 'A woman in red striped pajamas on the phone, from above' },
-  { src: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
   { src: '/landing/vanity-hairdryer.webp', alt: 'A woman drying her hair at a crowded bedroom vanity' },
   { src: '/landing/pad-thread-art.webp', alt: 'Red thread arranged over a white pad, as still life' },
   { src: '/landing/sink-tea.webp', alt: 'A bathroom sink holding heels, sunglasses, tea and makeup' },
@@ -207,10 +206,10 @@ function Strip() {
 
 /* ---------- why: numbered hotspots on the photo (tap a dot, or the list) ---------- */
 const WHY = [
-  { t: 'Matched to your body', d: 'See how well each product fits you, based on what you tell us.', x: 58, y: 40 },
-  { t: 'Evidence beside each pick', d: 'What the research says, with sources, right next to the product.', x: 30, y: 84 },
-  { t: 'Real experiences', d: 'Posts from women who have actually used it.', x: 78, y: 70 },
-  { t: 'Your whole routine', d: 'Save what you use and see what fits next.', x: 22, y: 30 },
+  { t: 'Matched to your body', d: 'See how well each product fits you, based on what you tell us.', img: '/landing/lilies.webp', alt: 'Legs in pink socks with a bunch of lilies across the lap' },
+  { t: 'Evidence beside each pick', d: 'What the research says, with sources, right next to the product.', img: '/landing/marble-counter.webp', alt: 'A marble bathroom counter full of products, seen from above' },
+  { t: 'Real experiences', d: 'Posts from women who have actually used it.', img: '/landing/sweater-toilet.webp', alt: 'A woman in a flower-dotted sweater sitting on the toilet, pink pants at her ankles' },
+  { t: 'Your whole routine', d: 'Save what you use and see what fits next.', img: '/landing/robe-vanity.webp', alt: 'A woman in a white robe at a marble vanity in a pink room' },
 ];
 
 function Why({ paused }) {
@@ -225,18 +224,20 @@ function Why({ paused }) {
   const pick = (i) => { setTouched(true); setA(i); };
   return (
     <section ref={ref} className="lv-sec" aria-labelledby="lv-why-title">
-      <div className="lv-why">
-        <div className="lv-why__stage">
-          <img src="/landing/marble-counter.webp" alt="A woman doing her makeup at a marble bathroom counter, photographed from above" loading="lazy" width="736" height="1308" />
+      <div className="lv-why lv-why--grid">
+        <div className="lv-quad" role="group" aria-label="What ayna does, in four photos">
           {WHY.map((w, i) => (
-            <button key={w.t} type="button" className={`lv-spot${i === a ? ' is-on' : ''}`} style={{ left: `${w.x}%`, top: `${w.y}%` }} aria-label={`${i + 1}. ${w.t}`} aria-pressed={i === a} onClick={() => pick(i)}>{i + 1}</button>
+            <button key={w.t} type="button" className={`lv-quad__cell${i === a ? ' is-on' : ''}`} aria-pressed={i === a} onClick={() => pick(i)}>
+              <img src={w.img} alt={w.alt} loading="lazy" />
+              <b aria-hidden="true">{i + 1}</b>
+              <span className="lv-quad__cap"><strong>{w.t}</strong>{w.d}</span>
+            </button>
           ))}
-          <p key={a} className="lv-why__card" aria-live="polite"><b>{a + 1}</b><span><strong>{WHY[a].t}</strong>{WHY[a].d}</span></p>
         </div>
         <div className="lv-why__body">
           <p className="lv-script">what ayna actually is</p>
           <h2 id="lv-why-title">Your counter, <em>decoded.</em></h2>
-          <p className="lv-why__lead">Tap a number on the photo.</p>
+          <p className="lv-why__lead">Tap a photo.</p>
           <ol>
             {WHY.map((w, i) => (
               <li key={w.t} className={i === a ? 'is-on' : ''}>
@@ -247,6 +248,7 @@ function Why({ paused }) {
               </li>
             ))}
           </ol>
+          <p key={a} className="lv-why__desc" aria-live="polite">{WHY[a].d}</p>
         </div>
       </div>
     </section>

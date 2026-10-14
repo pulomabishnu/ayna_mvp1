@@ -446,3 +446,32 @@ body:has(.lv), body:has(.lv) .app-container, body:has(.lv) .app-container .site-
 .app-container .lv .lv-start { position: relative; margin-top: calc(var(--sec) + 40px); padding-block: 88px; background: var(--rose); }
 .app-container .lv .lv-start .lv-start__card { margin-top: 64px; }
 .app-container .lv .lv-wrap { padding-bottom: 40px; }
+/* ---------- counter decoded: 4 photos in one rectangle, each a number ---------- */
+.lv-why--grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.lv-quad { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; aspect-ratio: 5 / 4; gap: 0; border: var(--bw) solid var(--ink); border-radius: var(--r-lg); overflow: hidden; box-shadow: 6px 6px 0 var(--ink); }
+.lv-quad__cell { position: relative; display: block; min-width: 0; min-height: 0; padding: 0; border: 0; background: var(--ink); cursor: pointer; overflow: hidden; }
+.lv-quad__cell + .lv-quad__cell { border-left: 0; }
+.lv-quad__cell:nth-child(odd) { border-right: var(--bw) solid var(--ink); }
+.lv-quad__cell:nth-child(-n+2) { border-bottom: var(--bw) solid var(--ink); }
+.lv-quad__cell img { width: 100%; height: 100%; object-fit: cover; filter: sepia(.12) saturate(.9) contrast(1.05); transition: transform var(--m-slow) var(--ease), filter var(--m-slow) var(--ease); }
+.lv-quad__cell:hover img { transform: scale(1.04); }
+.lv-quad:has(.is-on) .lv-quad__cell:not(.is-on) img { filter: sepia(.2) saturate(.6) brightness(.8); }
+.lv-quad__cell b { position: absolute; top: 14px; left: 14px; display: grid; place-items: center; width: 52px; height: 52px; border: var(--bw) solid var(--ink); border-radius: 50%; background: var(--paper); color: var(--ink); font: 400 28px/1 var(--display); box-shadow: 3px 3px 0 var(--ink); transition: transform var(--m-fast) var(--ease), background var(--m-fast) var(--ease); }
+.lv-quad__cell.is-on b { background: var(--rose); transform: rotate(-8deg) scale(1.08); }
+.lv-quad__cap { position: absolute; left: 12px; right: 12px; bottom: 12px; display: grid; gap: 4px; padding: 12px 14px; border: var(--bw) solid var(--ink); border-radius: var(--r-md); background: var(--paper); color: var(--ink); font: 500 var(--fs-small)/1.35 var(--ui); text-align: left; opacity: 0; transform: translateY(8px); transition: opacity var(--m-base) var(--ease), transform var(--m-base) var(--ease); pointer-events: none; }
+.lv-quad__cap strong { font: 400 18px/1.15 var(--display); }
+.lv-quad__cell.is-on .lv-quad__cap { opacity: 1; transform: none; }
+.lv-quad__cell:focus-visible { outline: 3px solid var(--rose); outline-offset: -6px; }
+.lv-why__desc { margin-top: 16px; max-width: 28em; color: var(--ink-2); font: 400 var(--fs-lead)/1.45 var(--ui); animation: lvIn var(--m-slow) var(--ease) both; }
+@media (max-width: 1023px) { .lv-why--grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 767px) { .lv-quad { aspect-ratio: 1 / 1; } .lv-quad__cell b { width: 40px; height: 40px; font-size: 22px; top: 10px; left: 10px; } .lv-quad__cap { display: none; } }
+/* carousel: no band, no fills. it sits on the page */
+.app-container .lv .lv-stage { background: transparent; padding-block: 0; margin-top: var(--sec); }
+.app-container .lv .lv-stage::before, .app-container .lv .lv-stage::after { content: none; }
+.app-container .lv .lv-stage__card { background: transparent; box-shadow: none; }
+.app-container .lv .lv-slide--news, .app-container .lv .lv-slide--app { background: transparent; }
+.app-container .lv .lv-stage__chapters button { background: transparent; }
+.app-container .lv .lv-stage__chapters button.is-on { background: var(--rose); }
+/* how it works: pink band with straight edges (scallops stay unique to the shop band) */
+.app-container .lv .lv-start::before, .app-container .lv .lv-start::after { content: none; }
+.app-container .lv .lv-start { margin-top: var(--sec); border-block: var(--bw) solid var(--ink); }
