@@ -24,6 +24,26 @@ import '../styles/audit-qya.css';
 // and controls are built for a browser.
 
 const SECTION_NAMES = { core: 'The basics', support: 'Your needs', safety: 'Safety', history: 'What you tried', preferences: 'Your preferences', trust: 'Last bits' };
+const SECTION_PHOTOS = {
+  core: ['robe-vanity', 'tub-girls', 'bed-selfie'],
+  support: ['curlers-call', 'pajamas-overhead', 'lilies'],
+  safety: ['sink-tea', 'marble-counter', 'blue-sink'],
+  history: ['bag-tubes', 'sink-flatlay', 'pink-tile-shelf'],
+  preferences: ['vanity-hairdryer', 'sink-heels-dryer', 'robe-kiss'],
+  trust: ['laundry-duo', 'stalls-trio', 'pink-stripe-floor'],
+};
+
+/* Decorative side panel (desktop): big question number, section in handwriting, a pile of photos. */
+function QuizSide({ n, total, section, photos }) {
+  return <aside className="wq-side" aria-hidden="true">
+    <p className="wq-side__q"><span>Q</span>{n}<small>of {total}</small></p>
+    <p className="wq-side__sec">{section}</p>
+    <div className="wq-side__pile" key={photos.join()}>
+      {photos.map((k, i) => <img key={k} className={`is-${i}`} src={`/landing/${k}.webp`} alt="" loading="lazy" />)}
+    </div>
+  </aside>;
+}
+
 const SECTION_TONES = { core: 'peri', support: 'pink', safety: 'butter', history: 'mint', preferences: 'peri', trust: 'pink' };
 
 /* ------------------------------ Controls ------------------------------ */
@@ -551,6 +571,9 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
 
   if (atCheckpoint) {
     return <div className="wq-page tone-mint" data-step="checkpoint">
+      <div className="wq-confetti" aria-hidden="true">{Array.from({ length: 18 }, (_, i) => <i key={i} />)}</div>
+      <div className="wq-stage">
+      <QuizSide n={coreSteps.length} total={coreSteps.length} section="All done" photos={['robe-kiss', 'tub-girls', 'stalls-trio']} />
       <div className="wq-card wq-checkpoint">
         <header className="wq-head">
           <button type="button" className="wq-round" aria-label="Previous question" onClick={back}>←</button>
@@ -567,11 +590,14 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         </div>
         <p className="wq-note">{moreSteps.length} more quick questions, all optional. Skip any of them.</p>
       </div>
+      </div>
     </div>;
   }
 
   return <div className={`wq-page tone-${tone}`} data-step={step.id} data-phase={phase}>
-    <div className="wq-card">
+    <div className="wq-stage">
+    <QuizSide n={index + 1} total={steps.length} section={phase === 'more' ? 'Optional' : SECTION_NAMES[step.section]} photos={SECTION_PHOTOS[step.section] || SECTION_PHOTOS.core} />
+    <div className="wq-card" key={step.id}>
       <header className="wq-head">
         <button type="button" className="wq-round" aria-label="Previous question" onClick={back} disabled={index === 0 && phase === 'core'}>←</button>
         <div className="wq-progress" aria-hidden="true">{steps.map((s, i) => <span key={s.id} className={i < index ? 'is-done' : i === index ? 'is-now' : ''} />)}</div>
@@ -598,8 +624,10 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
       {saveError && <p className="wq-alert">{saveError}</p>}
       <footer className="wq-foot">
         {step.optional ? <button type="button" className="wq-skip" onClick={skip} disabled={saving}>Skip</button> : <span className="wq-required">{step.section === 'safety' ? 'Needed for safety' : 'Needed for your matches'}</span>}
+        {ready && !saving && <span className="wq-noted" aria-hidden="true">noted</span>}
         <button type="button" className="wq-btn" onClick={next} disabled={!ready || saving}>{saving ? 'Saving…' : (isLast && phase === 'more') ? 'See my results' : 'Next'} <span aria-hidden="true">→</span></button>
       </footer>
+    </div>
     </div>
 
     <QuizIntro variant="web" enabled={introEnabled} />
