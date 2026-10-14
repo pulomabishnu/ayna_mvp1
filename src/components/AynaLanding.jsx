@@ -510,6 +510,46 @@ function ShelfList({ products, onOpenProduct }) {
   );
 }
 
+const DECODED = [
+  { title: 'Matched to your body', text: 'Every product shows how well it fits you, based on what you tell us.', x: 52, y: 47 },
+  { title: 'The evidence, right there', text: 'What the research says sits beside each product, with sources.', x: 62, y: 30 },
+  { title: 'Real experiences', text: 'Reviews and posts from women who have actually used it.', x: 52, y: 62 },
+  { title: 'Your whole routine', text: 'Save what you use into your ecosystem and see what fits next.', x: 22, y: 78 },
+];
+
+/** Eliz's numbered-counter idea: tap a dot on the photo or an item in the list. */
+function CounterDecoded() {
+  const [on, setOn] = useState(0);
+  const ref = useReveal();
+  return (
+    <section ref={ref} className="lx-decoded" aria-labelledby="lx-decoded-title">
+      <div className="mockup-page lx-decoded__inner">
+        <figure className="lx-decoded__photo">
+          <img src="/landing/pink-tile-shelf.webp" alt="Everyday care products lined up on a pink tiled bathroom ledge" width="667" height="1000" loading="lazy" />
+          {DECODED.map((d, i) => (
+            <button key={d.title} type="button" className={`lx-dot${i === on ? ' is-on' : ''}`} style={{ left: `${d.x}%`, top: `${d.y}%` }} aria-label={`${i + 1}. ${d.title}`} aria-pressed={i === on} onClick={() => setOn(i)}>{i + 1}</button>
+          ))}
+          <figcaption className="lx-script">tap the dots</figcaption>
+        </figure>
+        <div className="lx-decoded__copy">
+          <h2 id="lx-decoded-title" className="lx-h2">Your counter, <span className="lx-script">decoded.</span></h2>
+          <p className="lx-decoded__lead">ayna is a women&rsquo;s health guide, not another store.</p>
+          <ol className="lx-decoded__list">
+            {DECODED.map((d, i) => (
+              <li key={d.title}>
+                <button type="button" className={i === on ? 'is-on' : ''} aria-pressed={i === on} onClick={() => setOn(i)}>
+                  <b>{i + 1}</b>
+                  <span><strong>{d.title}</strong><em>{d.text}</em></span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** This week's Trending on ayna lineup (same rotation as the signed-in home). */
 function TrendingRow({ onOpenProduct, onViewDiscovery }) {
   const items = useMemo(() => getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product).filter((p) => p?.image && NEEDS_PHOTO(p)).slice(0, 4), []);
@@ -970,6 +1010,7 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewArticle, onViewA
       <Ticker />
       <PhotoHero onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
       <FoundersMoment onViewAbout={onViewAbout} />
+      <CounterDecoded />
       <TrendingRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
       <ShopRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
       <PhotoBand />
