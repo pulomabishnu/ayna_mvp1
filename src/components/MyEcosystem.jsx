@@ -2070,8 +2070,9 @@ export default function MyEcosystem({
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-needs" aria-labelledby="eco3-needs-title">
                         <div className="eco3-needs__head">
-                            <h2 id="eco3-needs-title">For your needs</h2>
-                            <span className="eco3-needs__sub">Our strongest picks for each need you chose</span>
+                            <p className="eco3-needs__kicker">Your prescriptions</p>
+                            <h2 id="eco3-needs-title">For your <em>needs.</em></h2>
+                            <span className="eco3-needs__sub">Our strongest picks for each need you chose, scored for you.</span>
                         </div>
                         <ul className="eco3-needs__list">
                             {[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => {
@@ -2081,6 +2082,8 @@ export default function MyEcosystem({
                                 return (
                                     <li key={shelf.needId} className={`eco3-need${picks.length ? '' : ' is-empty'}`}>
                                         <div className="eco3-need__label">
+                                            <span className="eco3-need__rx" aria-hidden="true">Rx</span>
+                                            <small className="eco3-need__for">For</small>
                                             <strong>{shelf.label}</strong>
                                             {picks.length > 0 && shelf.shortBy > 0 && (
                                                 <span className="eco3-need__short">Only {picks.length} strong match{picks.length === 1 ? '' : 'es'} for {phrase} so far</span>
@@ -2091,18 +2094,18 @@ export default function MyEcosystem({
                                                 {picks.map(({ product, score, tier, productId }) => {
                                                     const owned = Boolean(myProducts[productId]);
                                                     return (
-                                                        <div key={productId} className={`eco3-pick${owned ? ' is-owned' : ''}`}>
+                                                        <div key={productId} className={`eco3-pick${owned ? ' is-owned' : ''}`} style={{ '--s': Math.max(0, Math.min(100, Number(score) || 0)) }}>
                                                             <button type="button" className="eco3-pick__open" onClick={() => onOpenProduct?.(product)} title={`${score}% for ${phrase}`}>
                                                                 <span className="eco3-pick__img" aria-hidden="true">
                                                                     <ProductTileImage product={product} alt="" imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }} letterNode={<ProductImageFallback compact />} />
                                                                 </span>
                                                                 <span className="eco3-pick__text">
                                                                     <span className="eco3-pick__name">{product.name}</span>
-                                                                    <span className="eco3-pick__score"><b>{score}</b> {tierWord(tier, score)}</span>
+                                                                    <span className="eco3-pick__score"><b>{score}</b><i>{tierWord(tier, score)}</i></span>
                                                                 </span>
                                                             </button>
                                                             {owned ? (
-                                                                <span className="eco3-pick__state">In ecosystem</span>
+                                                                <span className="eco3-pick__state">✓ In your ecosystem</span>
                                                             ) : onToggleProduct && (
                                                                 <button type="button" className="eco3-pick__add" onClick={() => onToggleProduct(product)} aria-label={`Add ${product.name} to your ecosystem`}>+ Add</button>
                                                             )}
@@ -2151,6 +2154,7 @@ export default function MyEcosystem({
                     />
                 )}
 
+                {visibleAreaGroups.length > 0 && <h2 className="eco3-shelves__title">Your <em>shelves.</em></h2>}
                 {visibleAreaGroups.length > 0 && <div className="eco3-shelves">
                 {visibleAreaGroups.map((group) => {
                     const toneIndex = areaGroups.findIndex((g) => g.key === group.key);
