@@ -1035,3 +1035,17 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 .app-container[data-theme='dark'] .ay3-infobox { display: none; }
 .app-container[data-theme='dark'] .ay-lib-reading { display: block !important; }
 .app-container[data-theme='dark'] .ay-gl-digest button { background: var(--ay-paper); }
+
+/* audit: header bands sit flush under the nav on every page */
+.app-container:not([data-theme='dark']) .ay-info:has(> .ay3-band) { padding-top: 0 !important; }
+.app-container:not([data-theme='dark']) .wc.wc3:has(> .ay3-commhero) { padding-top: 0 !important; }
+.app-container:not([data-theme='dark']) .eco3:has(> .ay3-ecohero) { padding-top: 0 !important; }
+.app-container:not([data-theme='dark']) .ay-web-library:has(.ay3-libhero) { padding-top: 0 !important; }
+.app-container:not([data-theme='dark']) .ay3-libhero { margin-top: 0 !important; }
+.app-container:not([data-theme='dark']) .ay3-ecohero, .app-container:not([data-theme='dark']) .ay3-commhero, .app-container:not([data-theme='dark']) .ay3-infohero { margin-top: 0 !important; }
+/* audit: shop header shorter so products start above the fold */
+.app-container:not([data-theme='dark']) .ay3-shophero { padding-top: 28px !important; padding-bottom: 28px !important; margin-bottom: 56px !important; }
+.app-container:not([data-theme='dark']) .ay3-shophero .ay3-pile { width: clamp(170px, 15vw, 220px); }
+.app-container:not([data-theme='dark']) .ay3-shophero .ayna-browse__heading { margin-bottom: 14px !important; }
+.app-container:not([data-theme='dark']) .ay3-shophero .ay3-title { font-size: clamp(40px, 1.6rem + 3vw, 64px) !important; }
+@media (max-width: 767px) { .app-container:not([data-theme='dark']) .ay3-shophero .ay3-pile { display: none; } }
