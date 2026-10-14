@@ -9,7 +9,7 @@ Researched rule: one dominant color (60%), one secondary (30%), one scarce accen
 | 60% | paper | #fffcf5 | page background | 16.6:1 |
 | 30% | pink | #f7badd | Shop-by-need band, start card, founders stripes, number badges | 10.6:1 |
 | 10% | butter | #f7e78e | CTA, tags, "ayna favorite" badge, even-numbered badges, hero script word | 13.6:1 |
-| text/lines | ink #1d1a2b, ink-2 #4a4668 | | all text, 2px borders, sticker shadow | ink-2 is 8.7:1 on paper |
+| text/lines | ink #161616, ink-2 #4a4a4a | | all text, 2px borders, sticker shadow | ink-2 is 8.7:1 on paper |
 | support | pink-soft #fde3ef, white | | active states, product tiles, counter panel | 14.1:1 |
 | chrome only | sky #c9ecff | | window bars, hero chrome headline word | 13.7:1 |
 Lilac and mint are NOT used on the landing (they stay as category tones inside the app).
@@ -28,3 +28,6 @@ Scale 4 8 12 16 24 32 48 64 96. Sections 96px desktop / 64px mobile. Edges: 16 m
 
 ## Photos
 Her photographs only, vintage filter + grain, no photo used twice on the page. Product images are cutouts on plain page/pink (no color boxes behind products).
+
+## Update (Oct 14)
+Page color is now soft teal #c2efe3 (header and footer included, landing only). Ink is near-black #161616 (was indigo). Pink, butter and ink unchanged otherwise. Teal replaces cream as the 60 percent.

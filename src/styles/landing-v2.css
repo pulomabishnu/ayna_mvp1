@@ -1,7 +1,7 @@
 /* Landing v2: one palette (cream 60 / pink 30 / butter 10, ink for text + lines, one dark band),
    two fonts (Fraunces display, DM Sans UI), one radius/border/shadow/motion scale. */
 .lv {
-  --ink: #1d1a2b; --ink-2: #4a4668; --paper: #fffcf5; --white: #fff;
+  --ink: #161616; --ink-2: #4a4a4a; --paper: #fffcf5; --white: #fff;
   --pink: #f7badd; --pink-soft: #fde3ef; --butter: #f7e78e; --sky: #c9ecff;
   --display: 'Fraunces', Georgia, serif; --ui: 'DM Sans', system-ui, sans-serif;
   --fs-hero: clamp(44px, 2rem + 4.2vw, 80px); --fs-h2: clamp(30px, 1.3rem + 1.6vw, 48px); --fs-h3: 20px; --fs-lead: 18px; --fs-body: 16px; --fs-small: 14px; --fs-label: 13px;
@@ -57,12 +57,12 @@
 .lv-hero__photos { position: absolute; inset: 0; display: flex; z-index: -1; }
 .lv-hero__photos img { flex: 1 1 0; min-width: 0; height: 100%; object-fit: cover; filter: sepia(.14) saturate(.9) contrast(1.06) brightness(.9); transition: flex-grow var(--m-slow) var(--ease); }
 .lv-hero__photos img:hover { flex-grow: 1.7; }
-.lv-hero__photos::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(29,26,43,.2), rgba(29,26,43,.55)); pointer-events: none; }
+.lv-hero__photos::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(22,22,22,.2), rgba(22,22,22,.55)); pointer-events: none; }
 .lv-hero__copy { display: grid; justify-items: center; gap: 20px; padding: 64px 24px; text-align: center; color: var(--white); pointer-events: none; }
 .lv-hero__copy > * { pointer-events: auto; }
-.lv-hero h1 { font-size: var(--fs-hero); line-height: 1; text-shadow: 0 2px 24px rgba(29,26,43,.5); }
+.lv-hero h1 { font-size: var(--fs-hero); line-height: 1; text-shadow: 0 2px 24px rgba(22,22,22,.5); }
 .lv-hero h1 em { color: var(--butter); }
-.lv-hero__copy p { font: 500 var(--fs-lead)/1.4 var(--ui); text-shadow: 0 1px 12px rgba(29,26,43,.6); }
+.lv-hero__copy p { font: 500 var(--fs-lead)/1.4 var(--ui); text-shadow: 0 1px 12px rgba(22,22,22,.6); }
 .lv-stamp { position: absolute; top: 20px; right: 20px; width: 112px; height: 112px; display: grid; place-items: center; border-radius: 50%; background: var(--pink); border: var(--bw) solid var(--ink); animation: lvSpin 40s linear infinite; }
 .lv-stamp svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .lv-stamp text { font: 700 17px var(--ui); fill: var(--ink); letter-spacing: .08em; }
@@ -357,8 +357,10 @@
 .app-container .lv .lv-strip__row img { display: block; }
 .app-container .lv .lv-purpose { margin-top: 0; }
 /* soft teal page colour: clashes with the pink on purpose */
-.app-container .lv { --teal: #d4eee8; background: var(--teal); }
+.app-container .lv { --teal: #c2efe3; background: var(--teal); }
 .app-container .mockup-landing--first { background: var(--teal); }
 /* header + footer take the same teal on the landing page only */
-body:has(.lv) .app-nav, body:has(.lv) .site-footer { background: var(--teal, #d4eee8) !important; }
-body:has(.lv) main { background: #d4eee8 !important; }
+body:has(.lv) .app-nav, body:has(.lv) .site-footer { background: var(--teal, #c2efe3) !important; }
+body:has(.lv) main { background: #c2efe3 !important; }
+body:has(.lv) .site-footer, body:has(.lv) .site-footer > *, body:has(.lv) .ay-footer { background: #c2efe3 !important; }
+html body:has(.lv) .app-container footer.site-footer.ay-footer, html body:has(.lv) .app-container nav.app-nav.app-nav--landing { background: #c2efe3 !important; background-color: #c2efe3 !important; }
