@@ -1866,3 +1866,9 @@ html body .app-container:not([data-theme='dark']) .ay-glance.is-tabbed .ay-glanc
   .app-container:not([data-theme='dark']) .eco3-decor__hint, .app-container:not([data-theme='dark']) .eco3-decor__clip, .app-container:not([data-theme='dark']) .eco3-decor__heart.is-a, .app-container:not([data-theme='dark']) .eco3-decor__star.is-c, .app-container:not([data-theme='dark']) .eco3-decor__stamp { display: none; }
   .app-container:not([data-theme='dark']) .eco3-note { width: min(100%, 300px); }
 }
+
+/* ---- Needs board: a framed board sitting on the page, not full-bleed ---- */
+.app-container:not([data-theme='dark']) .ay3-corkband { margin: 36px 0 12px !important; padding: 48px 28px 40px !important; }
+.app-container:not([data-theme='dark']) .ay3-corkband::before { left: 0 !important; right: 0 !important; width: auto !important; transform: none !important; border: 12px solid #8a5a36 !important; border-radius: 12px; outline: 2px solid var(--ay-ink); outline-offset: 0; box-shadow: inset 0 0 0 2px var(--ay-ink), inset 0 3px 12px rgba(62,39,35,.35), 8px 10px 0 var(--ay-ink) !important; }
+.app-container .ay3-corkband .eco3-decor { inset: 12px; border-radius: 4px; }
+@media (max-width: 600px) { .app-container:not([data-theme='dark']) .ay3-corkband { padding: 40px 16px 32px !important; } .app-container:not([data-theme='dark']) .ay3-corkband::before { border-width: 8px !important; box-shadow: inset 0 0 0 2px var(--ay-ink), 5px 6px 0 var(--ay-ink) !important; } }
