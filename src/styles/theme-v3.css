@@ -2283,7 +2283,6 @@ html body .app-container:not([data-theme='dark']) .eco3-extras :is(#eco3-tools-t
 html body .app-container:not([data-theme='dark']) .ay-saved__price { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 4px); }
 
 /* ---- Ecosystem hero, cleaned: plain rose, no title box, mirror cabinet as the star ---- */
-.app-container:not([data-theme='dark'])[data-view='ecosystem'] .ay3-ecohero { border-image: linear-gradient(#f7badd, #f7badd) fill 0 / / 0 100vw !important; }
 .app-container:not([data-theme='dark']) .ay3-ecohero .eco3-head__text { padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
 .app-container:not([data-theme='dark']) .ay3-ecohero .ay3-kicker { display: inline-block; margin: 0 0 14px !important; padding: 5px 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: #ffedac; font: 400 12px/1 var(--ay-font-label) !important; letter-spacing: .12em; }
 .app-container:not([data-theme='dark']) .ay3-ecohero h1 { font-size: clamp(48px, 2rem + 4vw, 92px) !important; }
@@ -2295,9 +2294,6 @@ html body .app-container:not([data-theme='dark']) .ay-saved__price { white-space
   .app-container:not([data-theme='dark']) .ay3-ecohero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 26px 64px; padding-top: 56px !important; padding-bottom: 72px !important; }
   .app-container:not([data-theme='dark']) .ay3-ecohero .ay3-cab { justify-self: center; }
 }
-/* the door swings open, then gets out of the way */
-.app-container .ay3-cab__door { transition: transform .9s cubic-bezier(.5, -.2, .2, 1.15), box-shadow .9s, opacity .35s .75s, visibility 0s 1.1s; }
-.app-container .ay3-cab.is-open .ay3-cab__door { opacity: 0; visibility: hidden; pointer-events: none; }
 .app-container .ay3-cab__box { width: clamp(300px, 32vw, 440px); aspect-ratio: 1 / 1.05; }
 .app-container .ay3-cab__hint { margin-top: 10px; }
 /* saved: one row that scrolls, with arrows underneath */
@@ -2310,3 +2306,44 @@ html body .app-container:not([data-theme='dark']) .ay-saved__item, html body .ap
 .app-container .ay-saved__nav button:disabled { opacity: .35; cursor: default; }
 @media (max-width: 700px) { html body .app-container:not([data-theme='dark']) .ay-saved__item, html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved__item { flex-basis: calc((100% - 20px) / 2); } }
 @media (min-width: 900px) { .app-container:not([data-theme='dark']) .ay3-ecohero { padding-top: 40px !important; padding-bottom: 56px !important; } }
+
+/* ---- Hero: stripes + mirror kept; the mirror door swings out to the side and stays readable ---- */
+@media (min-width: 900px) {
+  .app-container:not([data-theme='dark']) .ay3-ecohero { grid-template-columns: minmax(0, 1fr) auto !important; column-gap: 40px !important; padding-top: 48px !important; padding-bottom: 64px !important; }
+  .app-container:not([data-theme='dark']) .ay3-ecohero .eco3-head__text { align-self: end; padding: 26px 30px !important; border: 2px solid var(--ay-ink) !important; border-radius: 20px !important; background: #ffedac !important; box-shadow: 5px 5px 0 var(--ay-ink) !important; max-width: 560px; }
+  .app-container:not([data-theme='dark']) .ay3-ecohero .ay3-cab { justify-self: end; margin-left: 300px; }
+  .app-container .ay3-cab__box { width: clamp(300px, 27vw, 380px); }
+  /* opened: the mirror door hangs open beside the shelves, flat, so "hi name" stays */
+  .app-container .ay3-cab.is-open .ay3-cab__door { transform: translateX(calc(-100% - 22px)) rotate(-3deg) scale(.92) !important; box-shadow: 6px 6px 0 #3e2723 !important; }
+  .app-container .ay3-cab.is-open .ay3-cab__door:hover { transform: translateX(calc(-100% - 22px)) rotate(0) scale(.94) !important; }
+  .app-container .ay3-cab__door { transform-origin: 50% 50%; transition: transform .9s cubic-bezier(.4, 1.3, .5, 1), box-shadow .9s; }
+}
+@media (min-width: 900px) and (max-width: 1250px) { .app-container:not([data-theme='dark']) .ay3-ecohero .ay3-cab { margin-left: 0; } .app-container .ay3-cab.is-open .ay3-cab__door { transform: rotateY(-104deg) !important; } }
+@media (min-width: 1251px) {
+  .app-container .ay3-cab.is-open .ay3-cab__lip { opacity: 1; }
+  .app-container .ay3-cab.is-open .ay3-cab__glass { background: linear-gradient(160deg, #dfe9f2 0%, #b9cfe0 55%, #a9c3d8 100%); }
+  .app-container .ay3-cab.is-open .ay3-cab__glass::after { display: block; }
+}
+
+/* ---- One colour per page: the top band always matches the page (no blue page with a pink top) ---- */
+/* Shop: pink */
+.app-container:not([data-theme='dark'])[data-view='discovery'] { --ay-page: #f7badd; }
+/* Ecosystem: blue, stripes in blue + butter */
+.app-container:not([data-theme='dark'])[data-view='ecosystem'] .ay3-ecohero { border-image: repeating-linear-gradient(90deg, #769ebe 0 28px, #ffedac 28px 56px) fill 0 / / 0 100vw !important; --ay3-bg: #769ebe; }
+/* Community: butter tiled wall, butter top */
+.app-container:not([data-theme='dark'])[data-view='community'] { --ay-page: #ffedac; }
+.app-container:not([data-theme='dark'])[data-view='community'] main { background:
+    linear-gradient(90deg, rgba(247, 186, 221, .7) 2px, transparent 2px) 0 0 / 46px 46px,
+    linear-gradient(rgba(247, 186, 221, .7) 2px, transparent 2px) 0 0 / 46px 46px, #ffedac !important; }
+.app-container:not([data-theme='dark'])[data-view='community'] .ay3-commhero { --ay3-bg: #ffedac; }
+html body .app-container:not([data-theme='dark'])[data-view='community'] main { background:
+    linear-gradient(90deg, rgba(247, 186, 221, .7) 2px, transparent 2px) 0 0 / 46px 46px,
+    linear-gradient(rgba(247, 186, 221, .7) 2px, transparent 2px) 0 0 / 46px 46px, #ffedac !important; }
+html body .app-container:not([data-theme='dark'])[data-view='community'] .ay3-commhero.ay3-band { --ay3-bg: #ffedac !important; border-image: linear-gradient(#ffedac, #ffedac) fill 0 / / 0 100vw !important; }
+html body .app-container.app-container:not([data-theme='dark'])[data-view='community'] > main { background-color: #ffedac !important; background-image: linear-gradient(90deg, rgba(247, 186, 221, .75) 2px, transparent 2px), linear-gradient(rgba(247, 186, 221, .75) 2px, transparent 2px) !important; background-size: 46px 46px !important; }
+html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community']) { background: #ffedac !important; }
+.app-container .ay3-cab__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+.app-container .ay3-cab__foot .ay3-cab__hint { margin: 0; }
+.app-container .ay3-cab__toggle { padding: 6px 14px; border: 2px solid #3e2723; border-radius: 99px; background: #3e2723; color: #ffedac; font: 700 13px/1 'DM Sans', sans-serif; cursor: pointer; }
+.app-container .ay3-cab__toggle:hover { background: #f7badd; color: #3e2723; }
+.app-container .ay3-cab__door { z-index: 4; }

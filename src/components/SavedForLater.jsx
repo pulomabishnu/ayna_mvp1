@@ -72,7 +72,7 @@ export default function SavedForLater({
             );
           })}
         </ul>
-        {!(edge.start && edge.end) && (
+        {(
           <div className="ay-saved__nav">
             <button type="button" onClick={() => page(-1)} disabled={edge.start} aria-label="Previous saved items">←</button>
             <button type="button" onClick={() => page(1)} disabled={edge.end} aria-label="More saved items">→</button>
