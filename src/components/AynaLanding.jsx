@@ -13,6 +13,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, itemMatchesMacroGroup } fr
 import ProductCard from './ProductCard';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { edgeFadeRef } from '../utils/edgeFade';
+import { getDailyFact } from '../data/welcomeSlides';
 import { getVerificationLinks } from '../utils/verificationLinks';
 
 /**
@@ -558,8 +559,7 @@ function CounterDecoded() {
           </figure>
           <div className="lx-decoded__head">
             <h2 id="lx-decoded-title" className="lx-h2">Your counter, <span className="lx-script">decoded.</span></h2>
-            <p className="lx-decoded__lead">ayna is a women&rsquo;s health guide, not another store.</p>
-          </div>
+                      </div>
           <ol className="lx-decoded__list">
             {DECODED.map((d, i) => (
               <li key={d.title} className={`tone-${d.tone}${i === active ? ' is-on' : ''}`}>
@@ -572,6 +572,38 @@ function CounterDecoded() {
             ))}
           </ol>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/** "Today on ayna": the daily fact (from the reviewed glossary) beside ayna news. */
+function TodayStrip({ onViewArticles, onViewCommunity }) {
+  const fact = useMemo(() => getDailyFact(), []);
+  const ref = useReveal();
+  if (!fact) return null;
+  return (
+    <section ref={ref} className="lx-today" aria-label="Today on ayna">
+      <div className="mockup-page lx-today__grid">
+        <article className="lx-today__card lx-today__fact lx-winbox">
+                    <p className="lx-today__kicker"><span className="lx-today__dot" aria-hidden="true" />Fact of the day</p>
+          <h2 className="lx-today__term"><span>{fact.term}</span></h2>
+          <p className="lx-today__text">{fact.text}</p>
+          <button type="button" className="lx-ghost" onClick={() => onViewArticles?.()}>Read more</button>
+        </article>
+        <article className="lx-today__card lx-today__news lx-winbox">
+                    <p className="lx-today__kicker"><span className="lx-today__dot" aria-hidden="true" />ayna news</p>
+          <h2 className="lx-today__headline">Now introducing <span className="lx-script">ayna Community.</span></h2>
+          <ul className="lx-today__posts" aria-hidden="true">
+            <li><i /><b /><b className="is-short" /></li>
+            <li><i /><b /><b className="is-short" /></li>
+            <li><i /><b /><b className="is-short" /></li>
+          </ul>
+          <button type="button" className="lx-cta" onClick={() => onViewCommunity?.()}>
+            See Community
+            <Arrow />
+          </button>
+        </article>
       </div>
     </section>
   );
@@ -1038,13 +1070,14 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
 /* Logged out                                                          */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewArticle, onViewAbout, onViewDiscovery, onOpenProduct }) {
+function FirstVisitLanding({ onStartQuiz, onViewCommunity, onViewArticles, onViewArticle, onViewAbout, onViewDiscovery, onOpenProduct }) {
   return (
     <div className="mockup-landing mockup-landing--first lx lx--photo">
       <Ticker />
       <PhotoHero onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
       <FoundersMoment onViewAbout={onViewAbout} />
       <TrendingRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
+      <TodayStrip onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
       <ShopRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
       <PhotoBand />
       <CounterDecoded />

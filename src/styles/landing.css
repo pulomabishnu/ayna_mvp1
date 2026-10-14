@@ -1006,3 +1006,39 @@
   .app-container .lx .lx-read:first-child .lx-read__img img { aspect-ratio: 16 / 10; }
   .app-container .lx .lx-read:not(:first-child) .lx-read__btn { grid-template-columns: 50% minmax(0, 1fr); }
 }
+
+/* Today on ayna: fact of the day + news, two window cards */
+.app-container .lx--photo .lx-today { padding-top: var(--lx-sec); }
+.app-container .lx-today__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px; align-items: stretch; }
+.app-container .lx .lx-today__card { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 72px 40px 40px; border: var(--bw) solid var(--bk-ink); border-radius: var(--r-lg); box-shadow: var(--lx-shadow); color: var(--bk-ink); overflow: hidden; }
+.app-container .lx .lx-today__fact { background: var(--bk-white); }
+.app-container .lx .lx-today__news { background: var(--bk-pink); }
+.app-container .lx .lx-today__kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font: 700 var(--fs-label)/1 var(--bk-ui); letter-spacing: .1em; text-transform: uppercase; }
+.app-container .lx .lx-today__dot { width: 10px; height: 10px; border: var(--bw) solid var(--bk-ink); border-radius: 50%; background: var(--bk-butter); animation: lxPulse 2.4s ease-out infinite; }
+.app-container .lx .lx-today__date { margin-left: 4px; padding: 4px 10px; border: var(--bw) solid var(--bk-ink); border-radius: var(--r-pill); background: var(--bk-butter); letter-spacing: .04em; }
+.app-container .lx .lx-today__term { margin: 0; font: 700 var(--fs-display)/1.02 var(--bk-display); letter-spacing: -.025em; }
+.app-container .lx .lx-today__term span { background: linear-gradient(transparent 58%, var(--bk-butter) 58% 92%, transparent 92%); padding-inline: 4px; margin-inline: -4px; }
+.app-container .lx .lx-today__text { max-width: 36em; margin: 0; color: var(--bk-ink-2); font: 400 var(--fs-lead)/1.5 var(--bk-ui); display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .lx .lx-today__fact .lx-ghost { margin-top: auto; }
+.app-container .lx .lx-today__headline { margin: 0; font: 700 var(--fs-h2)/1.08 var(--bk-display); letter-spacing: -.02em; }
+.app-container .lx .lx-today__headline .lx-script { display: block; color: var(--bk-ink); }
+.app-container .lx .lx-today__posts { display: grid; gap: 10px; width: 100%; margin: 4px 0 8px; padding: 0; list-style: none; }
+.app-container .lx .lx-today__posts li { display: grid; grid-template-columns: 36px minmax(0, 1fr); grid-template-rows: 10px 10px; gap: 6px 12px; align-items: center; padding: 12px 14px; border: var(--bw) solid var(--bk-ink); border-radius: var(--r-md); background: var(--bk-white); }
+.app-container .lx .lx-today__posts li:nth-child(2) { margin-left: 24px; }
+.app-container .lx .lx-today__posts li:nth-child(3) { margin-left: 8px; }
+.app-container .lx .lx-today__posts i { grid-row: 1 / span 2; width: 36px; height: 36px; border: var(--bw) solid var(--bk-ink); border-radius: 50%; background: var(--bk-butter); }
+.app-container .lx .lx-today__posts li:nth-child(2) i { background: var(--bk-pink); }
+.app-container .lx .lx-today__posts b { height: 10px; border-radius: var(--r-pill); background: var(--bk-ink); opacity: .85; }
+.app-container .lx .lx-today__posts b.is-short { width: 55%; opacity: .25; }
+.app-container .lx .lx-today__news .lx-cta { margin-top: auto; }
+@media (max-width: 1023px) { .app-container .lx-today__grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 767px) { .app-container .lx .lx-today__card { padding: 64px 20px 28px; } .app-container .lx--photo .lx-today { padding-top: 64px; } }
+@media (prefers-reduced-motion: reduce) { .app-container .lx .lx-today__dot { animation: none; } }
+/* lighter today strip: no window bars, no hard shadow, shorter text */
+.app-container .lx .lx-today__card { padding: 40px; box-shadow: none; }
+.app-container .lx .lx-today__text { -webkit-line-clamp: 3; font-size: var(--fs-body); }
+.app-container .lx .lx-today__headline { font-size: clamp(26px, 1.2rem + 1vw, 36px); }
+@media (max-width: 767px) { .app-container .lx .lx-today__card { padding: 28px 20px; } }
+.app-container .lx .lx-today__fact { justify-content: center; gap: 20px; }
+.app-container .lx .lx-today__fact .lx-today__text { font-size: 22px; line-height: 1.4; color: var(--bk-ink); }
+.app-container .lx .lx-today__fact .lx-ghost { margin-top: 8px; }
