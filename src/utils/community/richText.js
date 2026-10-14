@@ -3,6 +3,7 @@ export const COMMUNITY_RICH_TEXT_MAX_CHARS = 2000;
 const MAX_BLOCKS = 200;
 const MAX_LIST_ITEMS = 200;
 const MAX_SPANS = 500;
+let activeCommunityRichTextDraft = null;
 
 function cleanText(value) {
   return String(value ?? '').replace(/\u0000/g, '').replace(/\r\n?/g, '\n');
@@ -105,4 +106,24 @@ export function truncateCommunityRichText(value, maxChars = COMMUNITY_RICH_TEXT_
 
 export function communityRichTextCharacterCount(value) {
   return communityRichTextToPlainText(value).length;
+}
+
+// The current Community composer already submits a plain `body` through the
+// shared communityStore. Keep the structured draft beside that existing flow
+// so no normal app textarea/input needs a new global value shape. The store
+// only accepts this draft when its plain text exactly matches the body being
+// submitted, preventing stale formatting from leaking between composers.
+export function setActiveCommunityRichTextDraft(value) {
+  activeCommunityRichTextDraft = sanitizeCommunityRichTextDoc(value);
+}
+
+export function getActiveCommunityRichTextDraftForBody(body) {
+  const draft = sanitizeCommunityRichTextDoc(activeCommunityRichTextDraft);
+  if (!draft) return null;
+  const plain = communityRichTextToPlainText(draft).trim();
+  return plain === String(body || '').trim() ? draft : null;
+}
+
+export function clearActiveCommunityRichTextDraft() {
+  activeCommunityRichTextDraft = null;
 }
