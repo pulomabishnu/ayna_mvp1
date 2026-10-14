@@ -1,7 +1,7 @@
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import PhotoPile from './v3/PhotoPile.jsx';
 import EcoCabinet from './v3/EcoCabinet.jsx';
-import CorkStrings from './v3/CorkStrings.jsx';
+import NeedCluster from './v3/NeedCluster.jsx';
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import ResaPartnershipModal from './ResaPartnershipModal';
@@ -1981,7 +1981,7 @@ export default function MyEcosystem({
                 <div className={careFirst ? 'eco3-secondary' : undefined}>
                 {careFirst && <p className="eco3-secondary__label">Products, when you are ready</p>}
                 <nav className="eco3-jump" aria-label="On this page">
-                    {!ecoQueryTrimmed && needShelves.length > 0 && <a href="#eco3-needs-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-needs-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>1</b>Prescriptions</a>}
+                    {!ecoQueryTrimmed && needShelves.length > 0 && <a href="#eco3-needs-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-needs-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>1</b>Recommendations</a>}
                     {visibleAreaGroups.length > 0 && <a href="#eco3-shelves-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-shelves-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>2</b>Shelves</a>}
                     <a href="#eco3-tools-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-tools-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>3</b>Tools</a>
                     <a href="#ayna-wishlist" onClick={(e) => { e.preventDefault(); document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}><b>4</b>Saved</a>
@@ -2077,54 +2077,55 @@ export default function MyEcosystem({
 
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-needs ay3-corkband" ref={needsBoardRef} aria-labelledby="eco3-needs-title">
-                        <CorkStrings rootRef={needsBoardRef} hub drape selectors={['.eco3-needs__hub@center', '.eco3-need:nth-child(1)', '.eco3-need:nth-child(2)', '.eco3-need:nth-child(3)', '.eco3-need:nth-child(4)']} />
                         <div className="eco3-needs__head">
-                            <p className="eco3-needs__kicker">Your prescriptions</p>
+                            <p className="eco3-needs__kicker">Your recommendations</p>
                             <div className="eco3-needs__card">
                                 <h2 id="eco3-needs-title">For your <em>needs.</em></h2>
-                                <span className="eco3-needs__hub" aria-hidden="true" />
                             </div>
                             <span className="eco3-needs__sub">Our strongest picks for each need you chose, scored for you.</span>
                         </div>
-                        <ul className="eco3-needs__list">
+                        <div className="eco3-board">
                             {[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => {
                                 const phrase = needPhrases.get(shelf.needId) || shelf.label.toLowerCase();
                                 const short = shortNeedLabel(shelf.label);
                                 const picks = shelf.picks.map((pick) => ({ ...pick, product: myProducts[pick.productId] || getProductById(pick.productId) })).filter((p) => p.product);
                                 return (
-                                    <li key={shelf.needId} className={`eco3-need${picks.length ? '' : ' is-empty'}`}>
-                                        <div className="eco3-need__label">
-                                            <span className="eco3-need__rx" aria-hidden="true">Rx</span>
-                                            <small className="eco3-need__for">For</small>
-                                            <strong>{shelf.label}</strong>
-                                            {picks.length > 0 && shelf.shortBy > 0 && (
-                                                <span className="eco3-need__short">Only {picks.length} strong match{picks.length === 1 ? '' : 'es'} for {phrase} so far</span>
-                                            )}
-                                        </div>
+                                    <NeedCluster
+                                        key={shelf.needId}
+                                        className={picks.length ? '' : 'is-empty'}
+                                        count={picks.length}
+                                        label={(
+                                            <h3 className="eco3-cl__label">
+                                                <small aria-hidden="true">♡</small>
+                                                <span><i>For</i>{shelf.label}</span>
+                                            </h3>
+                                        )}
+                                    >
+                                        {picks.length > 0 && shelf.shortBy > 0 && (
+                                            <p className="eco3-cl__short">Only {picks.length} strong match{picks.length === 1 ? '' : 'es'} so far</p>
+                                        )}
                                         {picks.length > 0 ? (
-                                            <div className="eco3-need__picks">
+                                            <ul className="eco3-cl__items">
                                                 {picks.map(({ product, score, tier, productId }) => {
                                                     const owned = Boolean(myProducts[productId]);
                                                     return (
-                                                        <div key={productId} className={`eco3-pick${owned ? ' is-owned' : ''}`} style={{ '--s': Math.max(0, Math.min(100, Number(score) || 0)) }}>
-                                                            <button type="button" className="eco3-pick__open" onClick={() => onOpenProduct?.(product)} title={`${score}% for ${phrase}`}>
-                                                                <span className="eco3-pick__img" aria-hidden="true">
+                                                        <li key={productId} className={`eco3-mini${owned ? ' is-owned' : ''}`}>
+                                                            <button type="button" className="eco3-mini__open" onClick={() => onOpenProduct?.(product)} title={`${score}% for ${phrase}`}>
+                                                                <span className="eco3-mini__img" aria-hidden="true">
                                                                     <ProductTileImage product={product} alt="" imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }} letterNode={<ProductImageFallback compact />} />
                                                                 </span>
-                                                                <span className="eco3-pick__text">
-                                                                    <span className="eco3-pick__name">{product.name}</span>
-                                                                    <span className="eco3-pick__score"><b>{score}</b><i>{tierWord(tier, score)}</i></span>
-                                                                </span>
+                                                                <span className="eco3-mini__name">{product.name}</span>
+                                                                <span className="eco3-mini__score" style={{ '--s': Math.max(0, Math.min(100, Number(score) || 0)) }}><b>{score}</b>{tierWord(tier, score)}</span>
                                                             </button>
                                                             {owned ? (
-                                                                <span className="eco3-pick__state">✓ In your ecosystem</span>
+                                                                <span className="eco3-mini__owned">✓ In ecosystem</span>
                                                             ) : onToggleProduct && (
-                                                                <button type="button" className="eco3-pick__add" onClick={() => onToggleProduct(product)} aria-label={`Add ${product.name} to your ecosystem`}>+ Add</button>
+                                                                <button type="button" className="eco3-mini__add" onClick={() => onToggleProduct(product)} aria-label={`Add ${product.name} to your ecosystem`}>+ Add</button>
                                                             )}
-                                                        </div>
+                                                        </li>
                                                     );
                                                 })}
-                                            </div>
+                                            </ul>
                                         ) : (
                                             <div className="eco3-need__empty">
                                                 <span>No strong matches for {phrase} yet.</span>
@@ -2143,10 +2144,10 @@ export default function MyEcosystem({
                                                 </ul>
                                             </details>
                                         )}
-                                    </li>
+                                    </NeedCluster>
                                 );
                             })}
-                        </ul>
+                        </div>
                     </section>
                 )}
 

@@ -23,6 +23,7 @@ export default function CorkStrings({ rootRef, selectors, hub = false, arcUp = f
           .map(([el, at]) => {
             const r = el.getBoundingClientRect();
             if (at === 'left') return [r.left + 16 - box.left, r.top + r.height / 2 - box.top];
+            if (at === 'bottom') return [r.left + r.width / 2 - box.left, r.bottom - 8 - box.top];
             if (at === 'center') return [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top];
             return [r.left + r.width / 2 - box.left, r.top + 10 - box.top];
           });
