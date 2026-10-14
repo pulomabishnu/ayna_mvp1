@@ -55,7 +55,7 @@ export default function ShelfDrawers({ groups, toneOf, onOpenProduct, onTogglePr
                     ))}
                     {group.products.length > 5 && <span className="ay-drawer__more">+{group.products.length - 5}</span>}
                   </span>
-                  <span className="ay-drawer__knob" aria-hidden="true" />
+                  <span className="ay-drawer__cta" aria-hidden="true">{isOpen ? 'Close' : 'Open'}<i>{isOpen ? '↑' : '↓'}</i></span>
                 </button>
               </h3>
               <div className="ay-drawer__body" id={panelId} hidden={!isOpen}>
