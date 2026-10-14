@@ -511,36 +511,30 @@ function ShelfList({ products, onOpenProduct }) {
 }
 
 const DECODED = [
-  { title: 'Matched to your body', text: 'Every product shows how well it fits you, based on what you tell us.', x: 52, y: 47 },
-  { title: 'The evidence, right there', text: 'What the research says sits beside each product, with sources.', x: 62, y: 30 },
-  { title: 'Real experiences', text: 'Reviews and posts from women who have actually used it.', x: 52, y: 62 },
-  { title: 'Your whole routine', text: 'Save what you use into your ecosystem and see what fits next.', x: 22, y: 78 },
+  { title: 'Matched to your body', text: 'See how well each product fits you, based on what you tell us.', tone: 'pink', icon: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /></> },
+  { title: 'The evidence, right there', text: 'What the research says sits beside each product, with sources.', tone: 'butter', icon: <><path d="M7 4h7l4 4v12H7z" /><path d="M10 12h5M10 16h5" /></> },
+  { title: 'Real experiences', text: 'Reviews and posts from women who have used it.', tone: 'peri', icon: <><path d="M5 5h14v10H10l-5 4z" /><path d="M9 9h6" /></> },
+  { title: 'Your whole routine', text: 'Save what you use and see what fits next.', tone: 'mint', icon: <><circle cx="12" cy="12" r="3" /><circle cx="12" cy="12" r="8" /><circle cx="18.5" cy="8" r="1.2" /></> },
 ];
 
-/** Eliz's numbered-counter idea: tap a dot on the photo or an item in the list. */
+/** "Your counter, decoded": four numbered reasons, Goodies-style starbursts and line icons. */
 function CounterDecoded() {
-  const [on, setOn] = useState(0);
   const ref = useReveal();
   return (
     <section ref={ref} className="lx-decoded" aria-labelledby="lx-decoded-title">
-      <div className="mockup-page lx-decoded__inner">
-        <figure className="lx-decoded__photo">
-          <img src="/landing/pink-tile-shelf.webp" alt="Everyday care products lined up on a pink tiled bathroom ledge" width="667" height="1000" loading="lazy" />
-          {DECODED.map((d, i) => (
-            <button key={d.title} type="button" className={`lx-dot${i === on ? ' is-on' : ''}`} style={{ left: `${d.x}%`, top: `${d.y}%` }} aria-label={`${i + 1}. ${d.title}`} aria-pressed={i === on} onClick={() => setOn(i)}>{i + 1}</button>
-          ))}
-          <figcaption className="lx-script">tap the dots</figcaption>
-        </figure>
-        <div className="lx-decoded__copy">
-          <h2 id="lx-decoded-title" className="lx-h2">Your counter, <span className="lx-script">decoded.</span></h2>
-          <p className="lx-decoded__lead">ayna is a women&rsquo;s health guide, not another store.</p>
+      <div className="mockup-page">
+        <div className="lx-decoded__panel">
+          <div className="lx-decoded__head">
+            <h2 id="lx-decoded-title" className="lx-h2">Your counter, <span className="lx-script">decoded.</span></h2>
+            <p className="lx-decoded__lead">ayna is a women&rsquo;s health guide, not another store.</p>
+          </div>
           <ol className="lx-decoded__list">
             {DECODED.map((d, i) => (
-              <li key={d.title}>
-                <button type="button" className={i === on ? 'is-on' : ''} aria-pressed={i === on} onClick={() => setOn(i)}>
-                  <b>{i + 1}</b>
-                  <span><strong>{d.title}</strong><em>{d.text}</em></span>
-                </button>
+              <li key={d.title} className={`tone-${d.tone}`} style={{ '--i': i }}>
+                <span className="lx-burst lx-burst--n" aria-hidden="true"><b>{i + 1}</b></span>
+                <svg className="lx-how__icon" viewBox="0 0 24 24" aria-hidden="true">{d.icon}</svg>
+                <h3>{d.title}</h3>
+                <p>{d.text}</p>
               </li>
             ))}
           </ol>
@@ -592,6 +586,7 @@ function FoundersMoment({ onViewAbout }) {
         </div>
         <figure className="lx-founders__photo">
           <img src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1800" height="1198" />
+          <span className="lx-grain" aria-hidden="true" />
           <figcaption className="lx-script">the ayna team</figcaption>
         </figure>
       </div>
@@ -1010,9 +1005,9 @@ function FirstVisitLanding({ onStartQuiz, onViewArticles, onViewArticle, onViewA
       <Ticker />
       <PhotoHero onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />
       <FoundersMoment onViewAbout={onViewAbout} />
-      <CounterDecoded />
       <TrendingRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
       <ShopRow onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
+      <CounterDecoded />
       <PhotoBand />
       <ReadsPreview onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
       <StartBlock onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />

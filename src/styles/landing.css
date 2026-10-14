@@ -622,3 +622,119 @@
 /* Round sticker moves to the bottom-left so the two circles sit in different corners */
 .app-container .lx-sticker { right: auto; left: 56px; background: var(--ay-pink); }
 @media (max-width: 1023px) { .app-container .lx-sticker { left: 32px; } }
+
+/* =====================================================================
+   Round 5: "Your counter, decoded" redone Goodies-style, and everything
+   a size smaller (type, sections, container, buttons).
+   ===================================================================== */
+.app-container .lx-decoded { padding: 0 0 80px; }
+.app-container .lx-decoded__panel { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 48px; align-items: center; padding: 48px; border: 2px solid #1d1a2b; border-radius: 28px; background: var(--ay-butter); color: #1d1a2b; box-shadow: var(--ay-shadow-lg); }
+.app-container .lx .lx-decoded__panel .lx-h2 { color: #1d1a2b !important; }
+.app-container .lx .lx-decoded__lead { margin: 16px 0 0; font: 600 17px/26px var(--ay-font-ui); color: #1d1a2b; }
+.app-container .lx-decoded__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 40px; margin: 0; padding: 0; list-style: none; }
+.app-container .lx-decoded__list li { position: relative; display: grid; grid-template-columns: 72px 40px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 12px; row-gap: 2px; align-items: center; animation: none; }
+.app-container .lx .lx-decoded__list .lx-burst--n { width: 72px; height: 72px; grid-row: span 2; background: #fff; }
+.app-container .lx .lx-decoded__list .tone-pink .lx-burst--n { background: var(--ay-pink); }
+.app-container .lx .lx-decoded__list .tone-peri .lx-burst--n { background: var(--ay-peri); }
+.app-container .lx .lx-decoded__list .tone-mint .lx-burst--n { background: var(--ay-mint); }
+.app-container .lx .lx-decoded__list .lx-how__icon { width: 40px; height: 40px; grid-row: span 2; }
+.app-container .lx .lx-decoded__list h3 { align-self: end; margin: 0 !important; color: #1d1a2b !important; font: 800 17px/22px var(--ay-font-display) !important; letter-spacing: -.01em !important; }
+.app-container .lx .lx-decoded__list p { align-self: start; margin: 0; color: #1d1a2b; font: 500 14px/20px var(--ay-font-ui); }
+.app-container .lx .lx-decoded__list li:hover .lx-burst--n { transform: rotate(8deg) scale(1.1); }
+@media (max-width: 1023px) { .app-container .lx-decoded__panel { grid-template-columns: minmax(0, 1fr); gap: 32px; padding: 32px; } }
+@media (max-width: 767px) { .app-container .lx-decoded { padding-bottom: 56px; } .app-container .lx-decoded__panel { padding: 24px 16px; border-radius: 24px; } .app-container .lx-decoded__list { grid-template-columns: minmax(0, 1fr); gap: 24px; } .app-container .lx-decoded__list li { grid-template-columns: 64px minmax(0, 1fr); } .app-container .lx-decoded__list .lx-how__icon { display: none; } .app-container .lx .lx-decoded__list .lx-burst--n { width: 64px; height: 64px; } }
+
+/* One size smaller */
+.app-container .lx .mockup-page { max-width: calc(1160px + 2 * var(--mockup-gutter)); }
+.app-container .lx--photo .lx-display { font-size: clamp(44px, 1.6rem + 3vw, 80px) !important; }
+.app-container .lx--photo .lx-band .lx-display { font-size: clamp(38px, 1.4rem + 3vw, 68px) !important; }
+.app-container .lx--photo .lx-phero__title { font-size: clamp(38px, 1.4rem + 4vw, 76px) !important; }
+.app-container .lx--photo .lx-h2 { font-size: clamp(26px, 1.2rem + 1.2vw, 40px) !important; }
+.app-container .lx--photo .lx-start__title { font-size: clamp(40px, 1.6rem + 3vw, 72px) !important; }
+.app-container .lx-phero { min-height: clamp(480px, 40vw, 580px); }
+.app-container .lx-phero__copy { gap: 16px; padding: 64px 24px 72px; }
+.app-container .lx .lx-phero__sub { font-size: 17px; max-width: 26em; }
+.app-container .lx .lx-cta { min-height: 52px; font-size: 16px; }
+.app-container .lx .lx-cta__arrow { width: 36px; height: 36px; }
+.app-container .lx .lx-search--hero { height: 54px; width: min(100%, 460px); }
+.app-container .lx-stamp { width: 116px; height: 116px; }
+.app-container .lx-sticker { width: 116px; height: 116px; font-size: 18px; bottom: -56px; }
+.app-container .lx-ticker__row li { font-size: 12px; line-height: 34px; }
+.app-container .lx--photo .lx-founders { padding: 96px 0 72px; }
+.app-container .lx--photo .lx-founders__inner { padding: 40px; }
+.app-container .lx--photo .lx-founders__photo { max-width: 480px; }
+.app-container .lx-trending { padding-top: 80px; }
+.app-container .lx-band { margin: 96px 0 72px; padding: 72px 0 80px; }
+.app-container .lx-shelf { gap: 40px 24px; margin-top: 40px; }
+.app-container .lx .lx-shelf__name, .app-container .lx .lx-shelf__price { font-size: 15px; line-height: 20px; }
+.app-container .lx .lx-needchips button { min-height: 40px; font-size: 15px; padding: 0 16px; }
+.app-container .lx--photo .lx-photoband img { height: clamp(200px, 22vw, 320px); }
+.app-container .lx--photo .lx-reads { padding: 80px 0; }
+.app-container .lx-start { padding-bottom: 80px; }
+.app-container .lx-start__card { padding: 36px; }
+.app-container .lx .lx-burst--n { width: 72px; height: 72px; font-size: 26px; }
+.app-container .lx .lx-burst--n b { font-size: 26px; }
+@media (max-width: 767px) {
+  .app-container .lx-phero { min-height: 500px; }
+  .app-container .lx-band { margin: 72px 0 48px; padding: 56px 0 64px; }
+  .app-container .lx--photo .lx-founders { padding: 80px 0 48px; }
+  .app-container .lx-trending { padding-top: 64px; }
+  .app-container .lx--photo .lx-reads { padding: 56px 0; }
+  .app-container .lx-start__card { padding: 24px 16px; }
+  .app-container .lx-stamp { width: 84px; height: 84px; }
+}
+
+/* =====================================================================
+   Round 6: one vertical rhythm (design doc: 96px between major sections,
+   64px on mobile; 24-40px between content groups) and a vintage film
+   grain on her photographs.
+   ===================================================================== */
+.app-container .lx--photo { --lx-sec: 96px; --lx-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background: var(--ay-paper) !important; }
+/* every section on the same surface unless it is a deliberate colour moment */
+.app-container .lx--photo .lx-founders, .app-container .lx--photo .lx-reads, .app-container .lx--photo .lx-start, .app-container .lx--photo .lx-trending, .app-container .lx--photo .lx-decoded, .app-container .lx--photo .lx-photoband { background: transparent; }
+/* vertical rhythm: each section owns its top gap, none owns a bottom gap */
+.app-container .lx--photo .lx-founders { padding: 112px 0 0; }
+.app-container .lx--photo .lx-trending { padding: var(--lx-sec) 0 0; }
+.app-container .lx--photo .lx-band { margin: var(--lx-sec) 0 0; padding: 72px 0 80px; }
+.app-container .lx--photo .lx-decoded { padding: var(--lx-sec) 0 0; }
+.app-container .lx--photo .lx-photoband { margin-top: var(--lx-sec); }
+.app-container .lx--photo .lx-reads { padding: var(--lx-sec) 0 0; }
+.app-container .lx--photo .lx-start { padding: var(--lx-sec) 0 var(--lx-sec); }
+.app-container .lx--photo .lx-trending .lx-shelf, .app-container .lx--photo .lx-reads__grid { margin-top: 40px; }
+.app-container .lx--photo .lx-shopshelf__foot { margin-top: 48px; }
+.app-container .lx--photo .lx-needchips { margin-top: 32px; }
+.app-container .lx--photo .lx-band .lx-shelf { margin-top: 40px; }
+
+/* decoded: header on top, four calm columns */
+.app-container .lx-decoded__panel { grid-template-columns: minmax(0, 1fr); gap: 40px; padding: 48px; }
+.app-container .lx-decoded__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 32px; }
+.app-container .lx .lx-decoded__lead { margin: 0; }
+.app-container .lx-decoded__list { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
+.app-container .lx-decoded__list li { grid-template-columns: 72px minmax(0, 1fr); grid-template-rows: auto auto auto; row-gap: 8px; column-gap: 16px; align-items: center; }
+.app-container .lx-decoded__list .lx-burst--n { grid-row: span 1; }
+.app-container .lx-decoded__list .lx-how__icon { grid-row: span 1; justify-self: start; }
+.app-container .lx-decoded__list h3, .app-container .lx-decoded__list p { grid-column: 1 / -1; }
+.app-container .lx .lx-decoded__list h3 { font-size: 18px !important; line-height: 24px !important; margin-top: 8px !important; }
+.app-container .lx .lx-decoded__list p { font-size: 15px; line-height: 22px; }
+
+/* Vintage film: faded warm colour + fine grain on her photos only */
+.app-container .lx .lx-phero__photos img, .app-container .lx .lx-photoband img, .app-container .lx .lx-founders__photo img, .app-container .lx .lx-start__photo { filter: sepia(.14) saturate(.9) contrast(1.06) brightness(.98); }
+.app-container .lx-phero__photos::before, .app-container .lx-photoband li::after, .app-container .lx--photo .lx-founders__photo > .lx-grain { content: ''; position: absolute; inset: 0; z-index: 1; background: var(--lx-grain); background-size: 220px 220px; opacity: .26; mix-blend-mode: overlay; pointer-events: none; }
+.app-container .lx-photoband li { position: relative; }
+.app-container .lx--photo .lx-founders__photo > .lx-grain { inset: 16px 16px 64px; }
+.app-container .lx-phero__photos::before { animation: lxGrain .9s steps(6) infinite; }
+@keyframes lxGrain { 0% { background-position: 0 0; } 20% { background-position: -40px 22px; } 40% { background-position: 30px -50px; } 60% { background-position: -70px -20px; } 80% { background-position: 50px 60px; } 100% { background-position: 0 0; } }
+
+@media (max-width: 1023px) {
+  .app-container .lx-decoded__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .app-container .lx--photo { --lx-sec: 64px; }
+  .app-container .lx--photo .lx-founders { padding-top: 88px; }
+  .app-container .lx--photo .lx-band { padding: 56px 0 64px; }
+  .app-container .lx-decoded__panel { padding: 24px 16px; gap: 24px; }
+  .app-container .lx-decoded__list { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .app-container .lx-decoded__list li { grid-template-columns: 64px minmax(0, 1fr); }
+  .app-container .lx .lx-decoded__list .lx-how__icon { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .app-container .lx-phero__photos::before { animation: none !important; } }
