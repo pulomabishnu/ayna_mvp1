@@ -2168,6 +2168,47 @@ export default function MyEcosystem({
                                     </NeedCluster>
                                 );
                             })}
+                            {(() => {
+                                const allPicks = needShelves.flatMap((x) => x.picks.map((p) => p.productId));
+                                const uniq = [...new Set(allPicks)];
+                                const ownedN = uniq.filter((id) => myProducts[id]).length;
+                                return (
+                                    <>
+                                        <aside className="eco3-note eco3-note--stats" aria-label="Your board in numbers">
+                                            <p className="eco3-note__h">your board ♡</p>
+                                            <ul>
+                                                <li><b>{needShelves.length}</b> need{needShelves.length === 1 ? '' : 's'} you picked</li>
+                                                <li><b>{uniq.length}</b> pick{uniq.length === 1 ? '' : 's'} for you</li>
+                                                <li><b>{ownedN}</b> already on your shelves</li>
+                                            </ul>
+                                        </aside>
+                                        <aside className="eco3-note eco3-note--how" aria-label="How to use this board">
+                                            <p className="eco3-note__h">how to read it</p>
+                                            <ul>
+                                                <li><span className="eco3-note__ic is-pct" aria-hidden="true">%</span>how well a pick fits that need</li>
+                                                <li><span className="eco3-note__ic is-add" aria-hidden="true">+</span>add it to your shelves</li>
+                                                <li><span className="eco3-note__ic is-own" aria-hidden="true">✓</span>already yours</li>
+                                            </ul>
+                                            {visibleAreaGroups.length > 0 && (
+                                                <button type="button" className="eco3-note__go" onClick={() => document.getElementById('eco3-shelves-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>See your shelves ↓</button>
+                                            )}
+                                        </aside>
+                                    </>
+                                );
+                            })()}
+                        </div>
+                        <div className="eco3-decor" aria-hidden="true">
+                            <span className="eco3-decor__tape is-a" />
+                            <span className="eco3-decor__tape is-b" />
+                            <span className="eco3-decor__tape is-c" />
+                            <span className="eco3-decor__heart is-a">♡</span>
+                            <span className="eco3-decor__heart is-b">♥</span>
+                            <span className="eco3-decor__star is-a">✦</span>
+                            <span className="eco3-decor__star is-b">✧</span>
+                            <span className="eco3-decor__star is-c">✦</span>
+                            <span className="eco3-decor__stamp">made<br />for<br />you</span>
+                            <span className="eco3-decor__hint">tap a need to open it ↷</span>
+                            <span className="eco3-decor__clip" />
                         </div>
                     </section>
                 )}
