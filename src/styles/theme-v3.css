@@ -887,3 +887,40 @@ html:not([data-ay-theme='dark']) body:has(.app-container[data-view='community'],
 }
 @media (prefers-reduced-motion: reduce) { .app-container :is(.wq-card, .wq-side__pile img, .wq-noted, .wq-confetti i, .wq-progress span, .wq-side__q) { animation: none !important; } .app-container .wq-confetti { display: none; } }
 .app-container:not([data-theme='dark']) .wq-page .wq-label-row .wq-section { padding: 0 8px !important; background: #fff8dc !important; font: 700 26px/1.1 'Caveat', cursive !important; letter-spacing: 0 !important; text-transform: none !important; transform: rotate(-2deg); }
+
+/* =====================================================================
+   My Ecosystem: your bathroom shelves. Each area of care is a shelf
+   with a label-maker label; products stand on a plank with brackets.
+   ===================================================================== */
+.app-container:not([data-theme='dark']) .eco3-area { position: relative; margin-top: 64px !important; }
+.app-container:not([data-theme='dark']) .eco3-area__head { align-items: center !important; border-bottom: 0 !important; }
+.app-container:not([data-theme='dark']) .eco3-area__head h2 { display: inline-flex; align-items: center; gap: 12px; padding: 8px 18px 8px 10px; border: 2px solid var(--ay-ink); border-radius: 4px; background: var(--ay-rose); box-shadow: 3px 3px 0 var(--ay-ink); font: 500 20px/1 var(--ay-mono) !important; letter-spacing: .14em !important; text-transform: uppercase; transform: rotate(-1.5deg); }
+.app-container:not([data-theme='dark']) .eco3-area:nth-of-type(even) .eco3-area__head h2 { background: var(--ay-paper); transform: rotate(1deg); }
+.app-container:not([data-theme='dark']) .eco3-area__head h2 small { display: grid; place-items: center; width: 30px; height: 30px; border: 2px solid var(--ay-ink); border-radius: 50%; background: var(--ay-paper); font: 400 14px/1 var(--ay-font-display) !important; letter-spacing: 0; }
+.app-container:not([data-theme='dark']) .eco3-area__count { font: 700 26px/1 var(--ay-hand) !important; background: none !important; border: 0 !important; }
+.app-container:not([data-theme='dark']) .eco3-area__count::after { content: ' on this shelf'; }
+.app-container:not([data-theme='dark']) .eco3-grid { position: relative; padding-bottom: 34px; }
+.app-container:not([data-theme='dark']) .eco3-grid::after { content: ''; position: absolute; left: -12px; right: -12px; bottom: 40px; z-index: 0; height: 20px; border: 2px solid var(--ay-ink); border-radius: 3px; background: repeating-linear-gradient(90deg, #fff8dc 0 90px, #fbecc0 90px 92px, #fff8dc 92px 210px); box-shadow: 0 7px 0 var(--ay-ink); }
+.app-container:not([data-theme='dark']) .eco3-grid::before { content: ''; position: absolute; left: 10%; right: 10%; bottom: 0; height: 40px; z-index: 0; background: linear-gradient(135deg, transparent 49%, var(--ay-ink) 49% 55%, transparent 55%) left / 40px 40px no-repeat, linear-gradient(225deg, transparent 49%, var(--ay-ink) 49% 55%, transparent 55%) right / 40px 40px no-repeat; }
+.app-container:not([data-theme='dark']) .eco3-grid > * { position: relative; z-index: 1; margin-bottom: 52px; }
+.app-container:not([data-theme='dark']) .eco3-grid .ayna-discover-card.ayna-browse-card { --tilt: 0deg; }
+.app-container:not([data-theme='dark']) .eco3-grid .ayna-discover-card.ayna-browse-card:nth-child(even) { --tilt: 1deg; }
+.app-container:not([data-theme='dark']) .eco3-card-actions { margin-top: 10px; }
+.app-container:not([data-theme='dark']) .ay3-ecohero { margin-top: 0 !important; }
+/* shelf v2: the plank runs right under the photos (one piece per card, joined across the gap) */
+.app-container:not([data-theme='dark']) .eco3-grid::after, .app-container:not([data-theme='dark']) .eco3-grid::before { content: none; }
+.app-container:not([data-theme='dark']) .eco3-grid { padding-bottom: 0; }
+.app-container:not([data-theme='dark']) .eco3-grid > * { margin-bottom: 8px; }
+.app-container:not([data-theme='dark']) .eco3-grid .ayna-browse-card .ayna-browse-card__link { position: relative; }
+.app-container:not([data-theme='dark']) .eco3-grid .ayna-browse-card .ayna-browse-card__link::after { content: ''; position: absolute; left: -16px; right: -16px; bottom: -24px; z-index: -1; height: 18px; border-block: 2px solid var(--ay-ink); background: repeating-linear-gradient(90deg, #fff8dc 0 70px, #f3dfa8 70px 72px); box-shadow: 0 6px 0 rgba(62, 39, 35, .85); }
+.app-container:not([data-theme='dark']) .eco3-grid .ayna-discover-card.ayna-browse-card { --tilt: 0deg !important; transform: none !important; }
+.app-container:not([data-theme='dark']) .eco3-grid .ayna-discover-card.ayna-browse-card:hover { transform: translateY(-8px) !important; }
+.app-container:not([data-theme='dark']) .eco3-grid .ayna-discover-card.ayna-browse-card:hover .ayna-browse-card__link::after { transform: translateY(8px); }
+.app-container:not([data-theme='dark']) .eco3-card-actions { margin-top: 34px; }
+.app-container:not([data-theme='dark']) .eco3-area__count { white-space: nowrap; }
+.app-container:not([data-theme='dark']) .eco3-grid .ayna-browse-card .ayna-browse-card__link::after { top: auto !important; inset-block-start: auto !important; bottom: -14px !important; width: auto !important; display: block !important; }
+.app-container:not([data-theme='dark']) .eco3-area__count { display: inline-flex !important; align-items: baseline; gap: 6px; width: auto !important; min-width: 0 !important; height: auto !important; padding: 0 !important; }
+.app-container:not([data-theme='dark']) .eco3-area__count::after { content: 'on this shelf'; }
+.app-container:not([data-theme='dark']) .eco3-card-actions { margin-top: 12px; }
+.app-container:not([data-theme='dark']) .eco3-grid > * { margin-bottom: 30px; }
+.app-container:not([data-theme='dark']) .eco3-area__count { font: 700 26px/1 var(--ay-hand) !important; }
