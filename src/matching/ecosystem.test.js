@@ -84,6 +84,22 @@ describe('buildEcosystem', () => {
     const crampEco = buildEcosystem(crampUser, [generic], { picksPerNeed: 10 });
     expect(ids(shelf(crampEco, 'pain.menstrual_cramp'))).not.toContain(generic.id);
   });
+
+  it('does not auto-seed an ingestible for bloating when the claim has no claim-specific evidence', () => {
+    const generic = {
+      id: 'test-generic-bloat-supplement',
+      name: 'Daily Bloat Support Capsules',
+      category: 'supplement',
+      type: 'physical',
+      tags: ['bloating'],
+      price: '$24',
+      summary: 'Daily supplement made for bloating and digestive comfort.',
+      ingredients: 'ginger, peppermint',
+    };
+    const bloatingUser = user({ supportSelections: ['Cycle-related bloating'] });
+    const bloatingEco = buildEcosystem(bloatingUser, [generic], { picksPerNeed: 10 });
+    expect(ids(shelf(bloatingEco, 'bloating.cycle_related'))).not.toContain(generic.id);
+  });
 });
 
 describe('ordering and tie-breaks', () => {
