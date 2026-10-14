@@ -3,6 +3,19 @@ import PhotoPile from './v3/PhotoPile.jsx';
 import EcoCabinet from './v3/EcoCabinet.jsx';
 import NeedCluster from './v3/NeedCluster.jsx';
 import CorkStrings from './v3/CorkStrings.jsx';
+import { SUPPORT_GROUPS } from '../mobile/data/intakeModel.js';
+
+// Short names for the quiz's topic groups, used as tabs on the needs board.
+const BOARD_TOPIC_SHORT = {
+    'Period + cycle': 'Period + cycle',
+    'Hormonal + reproductive': 'Hormones',
+    'Sexual + reproductive health': 'Sexual health',
+    'Perimenopause + menopause + post-menopause': 'Menopause',
+    'Mood + mental wellbeing': 'Mood',
+    'Sleep + energy + cognition': 'Sleep + energy',
+    'Metabolic + physical wellness': 'Wellness',
+    'Care access': 'Care',
+};
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import ResaPartnershipModal from './ResaPartnershipModal';
@@ -1079,6 +1092,7 @@ export default function MyEcosystem({
     const [ecoQuery, setEcoQuery] = useState('');
     const needsBoardRef = useRef(null);
     const [openNeed, setOpenNeed] = useState(null);
+    const [openGroup, setOpenGroup] = useState(null);
     const areaGroups = useMemo(() => {
         const byArea = new Map();
         myProductList.forEach((p) => {
@@ -2079,20 +2093,34 @@ export default function MyEcosystem({
 
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-needs ay3-corkband" ref={needsBoardRef} aria-labelledby="eco3-needs-title">
-                        <CorkStrings rootRef={needsBoardRef} hub pins className="is-hub" selectors={['.eco3-board__title@center', ...needShelves.slice(0, 8).map((_, i) => `.eco3-board > section:nth-of-type(${i + 1})@near`)]} />
-                        <div className="eco3-board">
-                            <div className="eco3-board__title">
-                                <p className="eco3-board__kicker">Your recommendations</p>
-                                <h2 id="eco3-needs-title">For your <em>needs.</em></h2>
-                                <p className="eco3-board__sub">Our strongest picks for each need you chose, scored for you.</p>
-                            </div>
-                            {[...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length)).map((shelf) => {
+                        {(() => {
+                            const sorted = [...needShelves].sort((a, b) => Number(!a.picks.length) - Number(!b.picks.length));
+                            const many = sorted.length > 3;
+                            const groups = [];
+                            if (many) {
+                                const byLabel = new Map();
+                                sorted.forEach((shelf) => {
+                                    const g = SUPPORT_GROUPS.find((x) => x.items.includes(shelf.label));
+                                    const key = g ? g.label : 'More for you';
+                                    if (!byLabel.has(key)) byLabel.set(key, { key, label: BOARD_TOPIC_SHORT[key] || key, order: g ? SUPPORT_GROUPS.indexOf(g) : 99, shelves: [] });
+                                    byLabel.get(key).shelves.push(shelf);
+                                });
+                                groups.push(...[...byLabel.values()].sort((a, b) => a.order - b.order));
+                            }
+                            const curGroup = many ? (groups.find((g) => g.key === openGroup) || groups[0]) : null;
+                            const visible = many ? curGroup.shelves : sorted;
+                            const firstOpen = (visible.find((x) => x.picks.length) || visible[0])?.needId;
+                            const openId = openNeed && visible.some((x) => x.needId === openNeed) ? openNeed : (openNeed === '' ? '' : firstOpen);
+                            const allPicks = needShelves.flatMap((x) => x.picks.map((p) => p.productId));
+                            const uniq = [...new Set(allPicks)];
+                            const ownedN = uniq.filter((id) => myProducts[id]).length;
+                            const renderNeed = (shelf) => {
+                                const isOpen = openId === shelf.needId;
+                                const toggle = () => setOpenNeed(isOpen ? '' : shelf.needId);
+
                                 const phrase = needPhrases.get(shelf.needId) || shelf.label.toLowerCase();
                                 const short = shortNeedLabel(shelf.label);
                                 const picks = shelf.picks.map((pick) => ({ ...pick, product: myProducts[pick.productId] || getProductById(pick.productId) })).filter((p) => p.product);
-                                const firstOpen = (needShelves.find((x) => x.picks.length) || needShelves[0])?.needId;
-                                const isOpen = (openNeed ?? firstOpen) === shelf.needId;
-                                const toggle = () => setOpenNeed(isOpen ? '' : shelf.needId);
                                 return (
                                     <NeedCluster
                                         key={shelf.needId}
@@ -2167,13 +2195,8 @@ export default function MyEcosystem({
                                         </>)}
                                     </NeedCluster>
                                 );
-                            })}
-                            {(() => {
-                                const allPicks = needShelves.flatMap((x) => x.picks.map((p) => p.productId));
-                                const uniq = [...new Set(allPicks)];
-                                const ownedN = uniq.filter((id) => myProducts[id]).length;
-                                return (
-                                    <>
+                                                        };
+                            const statsNote = (
                                         <aside className="eco3-note eco3-note--stats" aria-label="Your board in numbers">
                                             <p className="eco3-note__h">your board ♡</p>
                                             <ul>
@@ -2182,6 +2205,8 @@ export default function MyEcosystem({
                                                 <li><b>{ownedN}</b> already on your shelves</li>
                                             </ul>
                                         </aside>
+                            );
+                            const howNote = (
                                         <aside className="eco3-note eco3-note--how" aria-label="How to use this board">
                                             <p className="eco3-note__h">how to read it</p>
                                             <ul>
@@ -2193,10 +2218,51 @@ export default function MyEcosystem({
                                                 <button type="button" className="eco3-note__go" onClick={() => document.getElementById('eco3-shelves-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>See your shelves ↓</button>
                                             )}
                                         </aside>
-                                    </>
-                                );
-                            })()}
-                        </div>
+                            );
+                            const hubSel = many
+                                ? ['.eco3-board__title@center', '.eco3-cat.is-on@near', '.eco3-spread__h@near']
+                                : ['.eco3-board__title@center', ...sorted.map((_, i) => `.eco3-board > section:nth-of-type(${i + 1})@near`)];
+                            return (
+                                <>
+                                    <CorkStrings rootRef={needsBoardRef} hub pins className="is-hub" selectors={hubSel} />
+                                    <div className={`eco3-board${many ? ' is-many' : ''}`}>
+                                        <div className="eco3-board__title">
+                                            <p className="eco3-board__kicker">Your recommendations</p>
+                                            <h2 id="eco3-needs-title">For your <em>needs.</em></h2>
+                                            <p className="eco3-board__sub">Our strongest picks for each need you chose, scored for you.</p>
+                                        </div>
+                                        {many ? (
+                                            <>
+                                                <ul className="eco3-cats" aria-label="Topics">
+                                                    {groups.map((g) => (
+                                                        <li key={g.key}>
+                                                            <button type="button" className={`eco3-cat${g === curGroup ? ' is-on' : ''}`} aria-pressed={g === curGroup} onClick={() => { setOpenGroup(g.key); setOpenNeed(null); }}>
+                                                                <span className="eco3-cat__name">{g.label}</span>
+                                                                <span className="eco3-cat__n">{g.shelves.length} need{g.shelves.length === 1 ? '' : 's'}</span>
+                                                            </button>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                                {statsNote}
+                                                <div className="eco3-spread">
+                                                    <p className="eco3-spread__h"><span>{curGroup.label}</span> <small>tap a need to see its picks</small></p>
+                                                    <div className="eco3-spread__grid">
+                                                        {curGroup.shelves.map(renderNeed)}
+                                                        {howNote}
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                {sorted.map(renderNeed)}
+                                                {statsNote}
+                                                {howNote}
+                                            </>
+                                        )}
+                                    </div>
+                                </>
+                            );
+                        })()}
                         <div className="eco3-decor" aria-hidden="true">
                             <span className="eco3-decor__tape is-a" />
                             <span className="eco3-decor__tape is-b" />

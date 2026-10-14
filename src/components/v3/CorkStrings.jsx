@@ -70,7 +70,14 @@ export default function CorkStrings({ rootRef, selectors, hub = false, arcUp = f
     const t = window.setTimeout(() => window.clearInterval(tick), 4000);
     root.addEventListener('load', draw, true);
     root.addEventListener('transitionend', draw, true);
-    return () => { cancelAnimationFrame(frame); ro.disconnect(); window.removeEventListener('resize', draw); window.clearTimeout(t); window.clearInterval(tick); root.removeEventListener('load', draw, true); root.removeEventListener('transitionend', draw, true); };
+    root.addEventListener('animationend', draw, true);
+    // layout changes elsewhere on the board (a need opening) move this one too
+    const mo = typeof MutationObserver !== 'undefined' ? new MutationObserver((list) => {
+      if (list.every((m) => m.target.closest && m.target.closest('.ay3-strings, .ay3-pins'))) return;
+      draw(); window.setTimeout(draw, 500);
+    }) : null;
+    if (mo) mo.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'aria-expanded'] });
+    return () => { cancelAnimationFrame(frame); ro.disconnect(); window.removeEventListener('resize', draw); window.clearTimeout(t); window.clearInterval(tick); root.removeEventListener('load', draw, true); root.removeEventListener('transitionend', draw, true); root.removeEventListener('animationend', draw, true); if (mo) mo.disconnect(); };
   }, [rootRef, key, star, up, hang, pins]);
   if (!paths.length) return null;
   return (
