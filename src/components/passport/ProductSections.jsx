@@ -307,7 +307,7 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
           )}
         </div>
         <dl className="ay-glance__facts" aria-label="Key facts">
-          {facts.map((f) => (
+          {[...facts].sort((a, b) => Number(!!a.unknown) - Number(!!b.unknown)).map((f) => (
             <div key={f.id} className={f.unknown ? 'is-unknown' : undefined}>
               <dt>{f.label}</dt>
               <dd>

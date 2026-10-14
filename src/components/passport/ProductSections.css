@@ -45,19 +45,19 @@
 .ay-glance a:focus-visible, .ay-glance button:focus-visible { outline: 3px solid var(--ay-peri); outline-offset: 2px; }
 
 /* Top: what it is + who it's for, beside the key facts. */
-.ay-glance__top { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px; align-items: stretch; }
+.ay-glance__top { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px; align-items: start; }
 .ay-glance__what { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
 .ay-glance .is-lead { font: 500 18px/1.55 var(--ay-font-ui) !important; }
-.ay-glance__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.ay-glance__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: min-content; align-content: start; align-items: stretch; gap: 8px; margin: 0; }
 .ay-glance__facts > div { display: grid; align-content: start; gap: 4px; min-width: 0; padding: 12px 16px; border: 2px solid var(--ay-ink); border-radius: 16px; background: var(--ay-paper); }
-.ay-glance__facts > div.is-unknown { border-color: var(--ay-line); border-style: dashed; background: var(--ay-cream); }
+.ay-glance__facts > div.is-unknown { border-color: var(--ay-line); border-style: dashed; background: var(--ay-cream); padding: 10px 16px; }
 .ay-glance__facts dt { color: var(--ay-ink-soft); font: 700 12px/1.3 var(--ay-font-ui); letter-spacing: .04em; text-transform: uppercase; }
-.ay-glance__facts dd { margin: 0; color: var(--ay-ink); font: 600 16px/1.4 var(--ay-font-ui); overflow-wrap: anywhere; }
+.ay-glance__facts dd { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin: 0; color: var(--ay-ink); font: 600 15px/1.4 var(--ay-font-ui); overflow-wrap: anywhere; }
 .ay-glance__facts dd a { text-decoration: underline; text-decoration-color: var(--ay-line); text-underline-offset: 3px; }
 .ay-glance__facts dd a:hover { text-decoration-color: currentColor; }
 .ay-glance__facts small { color: var(--ay-ink-soft); font: 500 12px/1.4 var(--ay-font-ui); }
 .ay-glance__facts > div.is-unknown dd { color: var(--ay-ink-soft); font-weight: 500; }
-.ay-glance .ay-glance__caveat { margin-top: auto !important; padding-top: 16px; color: var(--ay-ink-soft); font: 500 14px/1.5 var(--ay-font-ui); }
+.ay-glance .ay-glance__caveat { margin-top: 0 !important; padding-top: 0; color: var(--ay-ink-soft); font: 500 14px/1.5 var(--ay-font-ui); }
 
 /* Sections: two even columns on wide panels, one on narrow. */
 .ay-glance__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; align-items: start; }
