@@ -1,7 +1,10 @@
 import { useId, useLayoutEffect, useMemo, useRef } from 'react';
-import { checkCommunityText, segmentCommunityText, COMMUNITY_RULES, CRISIS_LINE } from '../../utils/communityRules.js';
+import { checkCommunityText, segmentCommunityText, COMMUNITY_RULES } from '../../utils/communityRules.js';
 import { CommunityRichTextEditor } from './CommunityRichText.jsx';
+import { RuleNote } from './RuleNote.jsx';
 import './community-shared.css';
+
+export { RuleNote } from './RuleNote.jsx';
 
 // Textarea / input that marks text breaking the community rules as you type.
 // Mirror technique: a copy of the text sits exactly on top of the field
@@ -14,37 +17,7 @@ import './community-shared.css';
 const COPY_STYLES = ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'lineHeight', 'letterSpacing', 'wordSpacing', 'textTransform', 'textIndent', 'textAlign', 'tabSize',
   'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius', 'boxSizing'];
 
-export function RuleNote({ id, check, onShowRules }) {
-  return <div id={id} className="cr-note-slot" aria-live="polite">
-    {check.blocked ? <p className="cr-note is-error">
-      <span className="cr-note-dot" aria-hidden="true" />
-      <span>{check.message}{onShowRules && <> <button type="button" className="cr-note-link" onClick={onShowRules}>See rules</button></>}</span>
-    </p> : check.crisis ? <p className="cr-note is-care">
-      <span className="cr-note-dot" aria-hidden="true" />
-      <span>{CRISIS_LINE}</span>
-    </p> : null}
-  </div>;
-}
-
-export function RuleField({ as = 'textarea', value = '', onChange, autoGrow = false, minRows = 3, maxGrowPx = null, className = '', wrapClassName = '', onShowRules, 'aria-describedby': describedBy, ...rest }) {
-  // Rich text is deliberately scoped to the two existing Community post-body
-  // composer IDs. Every other RuleField in Community and every normal app
-  // input/textarea keeps the original plain-text behavior. Recommendation
-  // notes stay plain because they are private messages rather than posts.
-  const richCommunityComposer = as !== 'input'
-    && (rest.id === 'wc-compose-body' || rest.id === 'am-post-text')
-    && rest.placeholder !== 'Add a note (optional)';
-  if (richCommunityComposer) {
-    return <CommunityRichTextEditor
-      value={value}
-      onChange={onChange}
-      className={className}
-      onShowRules={onShowRules}
-      aria-describedby={describedBy}
-      {...rest}
-    />;
-  }
-
+function PlainRuleField({ as = 'textarea', value = '', onChange, autoGrow = false, minRows = 3, maxGrowPx = null, className = '', wrapClassName = '', onShowRules, 'aria-describedby': describedBy, ...rest }) {
   const ref = useRef(null);
   const mirrorRef = useRef(null);
   const colorRef = useRef('');
@@ -103,6 +76,42 @@ export function RuleField({ as = 'textarea', value = '', onChange, autoGrow = fa
     </div>}
     <RuleNote id={noteId} check={check} onShowRules={onShowRules} />
   </div>;
+}
+
+export function RuleField(props) {
+  const {
+    as = 'textarea',
+    value = '',
+    onChange,
+    autoGrow: _autoGrow,
+    minRows: _minRows,
+    maxGrowPx: _maxGrowPx,
+    wrapClassName: _wrapClassName,
+    className = '',
+    onShowRules,
+    'aria-describedby': describedBy,
+    ...rest
+  } = props;
+
+  // Rich text is deliberately enabled only on the two existing Community
+  // post-body composers. Recommendation notes, comments, profiles, search,
+  // onboarding, Ask Ayna and every other app textarea/input stay plain text.
+  const richCommunityComposer = as !== 'input'
+    && (rest.id === 'wc-compose-body' || rest.id === 'am-post-text')
+    && rest.placeholder !== 'Add a note (optional)';
+
+  if (richCommunityComposer) {
+    return <CommunityRichTextEditor
+      value={value}
+      onChange={onChange}
+      className={className}
+      onShowRules={onShowRules}
+      aria-describedby={describedBy}
+      {...rest}
+    />;
+  }
+
+  return <PlainRuleField {...props} />;
 }
 
 export function CommunityRulesList() {
