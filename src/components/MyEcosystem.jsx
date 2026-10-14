@@ -2312,7 +2312,7 @@ export default function MyEcosystem({
                     <div className="eco3-addrow">
                         {gapAreas.length > 0 && typeof onGoToSearch === 'function' && (
                             <div className="eco3-addrow__shelf">
-                                <span className="eco3-addrow__label">Add a shelf</span>
+                                <span className="eco3-addrow__label">Add a drawer</span>
                                 <div className="eco3-addrow__chips">
                                     {gapAreas.map((area) => (
                                         <button key={area.key} type="button" className="eco3-chip" onClick={() => onGoToSearch(exploreAreaOptions(area))}>
