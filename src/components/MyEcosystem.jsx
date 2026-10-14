@@ -2077,10 +2077,13 @@ export default function MyEcosystem({
 
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
                     <section className="eco3-needs ay3-corkband" ref={needsBoardRef} aria-labelledby="eco3-needs-title">
-                        <CorkStrings rootRef={needsBoardRef} arcUp selectors={['.eco3-need:nth-child(1)', '.eco3-need:nth-child(2)', '.eco3-need:nth-child(3)', '.eco3-need:nth-child(4)', '.eco3-need:nth-child(5)', '.eco3-need:nth-child(6)', '.eco3-need:nth-child(7)', '.eco3-need:nth-child(8)']} />
+                        <CorkStrings rootRef={needsBoardRef} hub drape selectors={['.eco3-needs__hub@center', '.eco3-need:nth-child(1)', '.eco3-need:nth-child(2)', '.eco3-need:nth-child(3)', '.eco3-need:nth-child(4)']} />
                         <div className="eco3-needs__head">
                             <p className="eco3-needs__kicker">Your prescriptions</p>
-                            <h2 id="eco3-needs-title">For your <em>needs.</em></h2>
+                            <div className="eco3-needs__card">
+                                <h2 id="eco3-needs-title">For your <em>needs.</em></h2>
+                                <span className="eco3-needs__hub" aria-hidden="true" />
+                            </div>
                             <span className="eco3-needs__sub">Our strongest picks for each need you chose, scored for you.</span>
                         </div>
                         <ul className="eco3-needs__list">
