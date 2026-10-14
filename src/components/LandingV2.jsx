@@ -290,6 +290,7 @@ function Start({ onStartQuiz, onViewDiscovery }) {
   const ref = useReveal();
   const [s, setS] = useState(0);
   return (
+    <>
     <section ref={ref} className="lv-sec lv-start" aria-labelledby="lv-how-title">
       <header className="lv-head">
         <h2 id="lv-how-title">How it <em>works</em></h2>
@@ -306,6 +307,8 @@ function Start({ onStartQuiz, onViewDiscovery }) {
           </li>
         ))}
       </ol>
+    </section>
+    <section className="lv-sec lv-final" aria-labelledby="lv-start-title">
       <div className="lv-start__card lv-card">
         <Win title="start.exe" />
         <div className="lv-start__copy">
@@ -319,6 +322,7 @@ function Start({ onStartQuiz, onViewDiscovery }) {
         <img src="/landing/stalls-trio.webp" alt="Three friends chatting from neighboring bathroom stalls" loading="lazy" width="734" height="397" />
       </div>
     </section>
+    </>
   );
 }
 
