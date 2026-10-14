@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
-import CorkStrings from './v3/CorkStrings.jsx';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, CATEGORY_LABELS } from '../data/products';
 import { exclusionLines } from '../utils/matchDisplay';
 import '../styles/match-ui.css';
@@ -666,8 +665,6 @@ export default function ProductModal({
         ) : (
           <ProductImageFallback />
         )}
-        <span className="ay3-photo-cap" aria-hidden="true">{brand || CATEGORY_LABELS[product.category] || 'ayna'}</span>
-        <span className="ay3-stamp" aria-hidden="true"><span>ayna file</span><b>{CATEGORY_LABELS[product.category] || 'Product'}</b></span>
       </div>
       <GalleryThumbs images={images} index={photo} onSelect={setPhoto} name={product.name} />
     </div>
@@ -778,8 +775,7 @@ export default function ProductModal({
           </div>
         </div>
 
-        <div className="pdp-head ay3-board" ref={boardRef}>
-          <CorkStrings rootRef={boardRef} hub selectors={['.pdp-head__tile', '.pdp-head__name', '.pdp-h2-price@left', '.pdp-safety-flag@left', '.pdp-community-actions']} />
+        <div className="pdp-head ay3-simple" ref={boardRef}>
           <div className="pdp-head__media">
             {galleryTile}
             <ProductSections

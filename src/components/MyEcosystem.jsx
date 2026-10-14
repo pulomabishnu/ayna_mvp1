@@ -1075,6 +1075,7 @@ export default function MyEcosystem({
     // one section per area of care she has products in, largest first, plus
     // up to six "Add a shelf" chips for areas she hasn't started.
     const [ecoQuery, setEcoQuery] = useState('');
+    const needsBoardRef = useRef(null);
     const areaGroups = useMemo(() => {
         const byArea = new Map();
         myProductList.forEach((p) => {
@@ -1942,7 +1943,7 @@ export default function MyEcosystem({
                             )}
                         </p>
                     </div>
-                    <EcoCabinet areaGroups={areaGroups} total={myProductList.length} name={user?.user_metadata?.first_name || ''} onBuild={typeof onBuildEcosystem === 'function' ? onBuildEcosystem : null} />
+                    <EcoCabinet areaGroups={areaGroups} total={myProductList.length} name={(() => { const m = user?.user_metadata || {}; return String(m.first_name || m.firstName || m.given_name || m.full_name || m.name || '').trim().split(/\s+/)[0]; })()} onBuild={typeof onBuildEcosystem === 'function' ? onBuildEcosystem : null} />
                     <div className="eco3-actions" role="group" aria-label="Ecosystem actions">
                         {typeof onEditHealthProfile === 'function' && (
                             <button type="button" className="eco3-pill" onClick={onEditHealthProfile}>Update profile</button>
@@ -2074,7 +2075,7 @@ export default function MyEcosystem({
                 )}
 
                 {!ecoQueryTrimmed && needShelves.length > 0 && (
-                    <section className="eco3-needs" aria-labelledby="eco3-needs-title">
+                    <section className="eco3-needs ay3-corkband" ref={needsBoardRef} aria-labelledby="eco3-needs-title">
                         <div className="eco3-needs__head">
                             <p className="eco3-needs__kicker">Your prescriptions</p>
                             <h2 id="eco3-needs-title">For your <em>needs.</em></h2>

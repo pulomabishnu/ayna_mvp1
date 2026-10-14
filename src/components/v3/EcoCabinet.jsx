@@ -44,7 +44,7 @@ export default function EcoCabinet({ areaGroups = [], total = 0, name = '', onBu
         </div>
         <button type="button" className="ay3-cab__door" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={open ? 'Close the mirror' : 'Open the mirror'}>
           <span className="ay3-cab__glass" aria-hidden="true">
-            <span className="ay3-cab__lip">{name ? `hi ${name.toLowerCase()} ♡` : 'hi you ♡'}</span>
+            <span className="ay3-cab__lip">{name ? `hi ${name} ♡` : 'hi there ♡'}</span>
             <span className="ay3-cab__lip is-big">{total} pick{total === 1 ? '' : 's'}</span>
             <span className="ay3-cab__lip">{areaGroups.length} area{areaGroups.length === 1 ? '' : 's'} of care</span>
           </span>
