@@ -2,19 +2,17 @@
 
 Source of truth: the `BRAND LOCK` block at the end of `src/styles/landing.css` (tokens on `.app-container .lx`).
 
-## Color (WCAG AA checked)
-| Token | Hex | Role | Contrast with ink |
-|---|---|---|---|
-| ink | #1d1a2b | text, borders, shadows | n/a |
-| ink-2 | #4a4668 | secondary text (solid, never faint) | 8.7:1 on paper |
-| paper | #fffcf5 | page background | 16.6:1 |
-| pink | #f7badd | LEAD brand color: band, stickers, start card | 10.6:1 |
-| butter | #f7e78e | highlight only (CTA, counter panel, rank 1) | 13.6:1 |
-| peri | #b9c2f4 | support: founders stripes | 9.8:1 |
-| mint | #bdebd6 | support: small accents | 13.0:1 |
-| pink-soft | #fde3ef | Shop-by-need band (lets product cutouts melt in) | 14.1:1 |
-| sky | #c9ecff | window chrome only (.exe bars, hero chrome text) | 13.7:1 |
-Rule: pink leads, butter highlights, peri/mint support. No other hex values on the landing.
+## Color (60-30-10, WCAG AA checked)
+Researched rule: one dominant color (60%), one secondary (30%), one scarce accent (10%); accent only on key actions; text 4.5:1, large text and UI 3:1.
+| Share | Token | Hex | Where | Contrast with ink |
+|---|---|---|---|---|
+| 60% | paper | #fffcf5 | page background | 16.6:1 |
+| 30% | pink | #f7badd | Shop-by-need band, start card, founders stripes, number badges | 10.6:1 |
+| 10% | butter | #f7e78e | CTA, tags, "ayna favorite" badge, even-numbered badges, hero script word | 13.6:1 |
+| text/lines | ink #1d1a2b, ink-2 #4a4668 | | all text, 2px borders, sticker shadow | ink-2 is 8.7:1 on paper |
+| support | pink-soft #fde3ef, white | | active states, product tiles, counter panel | 14.1:1 |
+| chrome only | sky #c9ecff | | window bars, hero chrome headline word | 13.7:1 |
+Lilac and mint are NOT used on the landing (they stay as category tones inside the app).
 
 ## Type
 Two families. Display: Fraunces 700 (italic 700 for the accent word). UI/body: DM Sans 400/500/600/700.

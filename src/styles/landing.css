@@ -843,8 +843,7 @@
 .app-container .lx--photo .lx-display, .app-container .lx--photo .lx-h2, .app-container .lx--photo .lx-phero__title, .app-container .lx--photo .lx-start__title { text-transform: none !important; letter-spacing: -.025em !important; font-weight: 800 !important; line-height: 1.02 !important; }
 .app-container .lx .lx-ticker__row li, .app-container .lx .lx-eyebrow { font-family: var(--ay-font-ui); letter-spacing: .1em; }
 /* cutouts: no white tile, the product sits straight on the page */
-.app-container .lx .lx-shelf__img { background: transparent !important; box-shadow: none !important; border-radius: 0; overflow: visible; }
-.app-container .lx .lx-shelf li { mix-blend-mode: multiply; }
+.app-container .lx .lx-shelf__img { background: var(--bk-white) !important; box-shadow: none !important; border: var(--bw) solid var(--bk-ink); border-radius: var(--r-md); overflow: hidden; }
 .app-container .lx .lx-shelf__img img { padding: 4%; }
 .app-container .lx .lx-shelf__img::after { display: none; }
 /* band goes pink so the cutouts melt in */
@@ -970,4 +969,40 @@
   .app-container .lx .lx-read:not(:first-child) .lx-read__btn { grid-template-columns: 46% minmax(0, 1fr); align-items: center; height: 100%; }
   .app-container .lx .lx-read:not(:first-child) .lx-read__img { grid-row: 1 / span 2; align-self: center; }
   .app-container .lx .lx-read:not(:first-child) .lx-read__img img { aspect-ratio: 4 / 3; width: 100%; height: auto; }
+}
+
+/* products: clean white tile with the 2px ink border (no blend tricks, no tinted boxes) */
+.app-container .lx .lx-shelf__img { overflow: visible; }
+.app-container .lx .lx-shelf__img img { padding: 8%; filter: none; mix-blend-mode: normal; border-radius: calc(var(--r-md) - 2px); }
+.app-container .lx .lx-shelf__rank { left: -14px; top: -14px; }
+/* start: the steps column centers against the tall card and reads bigger, no dead white space */
+.app-container .lx--photo .lx-start__inner { align-items: center; }
+.app-container .lx .lx-how { display: grid; gap: 32px; align-content: center; }
+.app-container .lx .lx-how__steps { gap: 40px; }
+.app-container .lx .lx-how__steps h3 { font-size: 24px !important; }
+.app-container .lx .lx-how__steps p { font-size: var(--fs-body); }
+
+/* PALETTE LOCK (60-30-10): paper 60, pink 30, butter 10, ink for text/lines. No lilac/mint on the landing. */
+.app-container .lx { --bk-peri: var(--bk-pink-soft); --bk-mint: var(--bk-pink-soft); }
+.app-container .lx--photo { --y2k-holo: linear-gradient(120deg, var(--bk-pink) 0%, var(--bk-butter) 35%, var(--bk-pink-soft) 60%, var(--bk-butter) 85%, var(--bk-pink) 100%); }
+.app-container .lx--photo .lx-founders__inner { background: repeating-linear-gradient(90deg, var(--bk-pink) 0 28px, var(--bk-paper) 28px 56px); }
+.app-container .lx-band { --lx-band: var(--bk-pink); }
+.app-container .lx .lx-decoded__panel { background: var(--bk-white); }
+.app-container .lx .lx-decoded__list li.is-on button { background: var(--bk-pink-soft); }
+.app-container .lx .lx-decoded__list li .lx-burst--n, .app-container .lx .lx-how__steps li .lx-burst--n, .app-container .lx .lx-shelf__rank { background: var(--bk-pink) !important; }
+.app-container .lx .lx-decoded__list li:nth-child(even) .lx-burst--n, .app-container .lx .lx-how__steps li:nth-child(even) .lx-burst--n, .app-container .lx .lx-shelf--num li:nth-child(even) .lx-shelf__rank { background: var(--bk-butter) !important; }
+.app-container .lx .lx-decoded__tag, .app-container .lx .lx-decoded__tag.tone-butter, .app-container .lx .lx-decoded__tag.tone-peri, .app-container .lx .lx-decoded__tag.tone-mint { background: var(--bk-butter); }
+.app-container .lx .lx-band .lx-shelf__badge { background: var(--bk-butter); }
+
+/* white space: reads side stories stack tight beside the lead, steps hug the card */
+@media (min-width: 1024px) {
+  .app-container .lx--photo .lx-reads__grid { grid-template-rows: auto auto; align-content: start; }
+  .app-container .lx .lx-read:not(:first-child) .lx-read__btn { height: auto; padding-block: 0; }
+  .app-container .lx .lx-read:first-child .lx-read__img img { aspect-ratio: 3 / 2; }
+}
+.app-container .lx--photo .lx-start__inner { align-items: stretch; }
+.app-container .lx .lx-how { align-content: center; padding: 32px 0; }
+@media (min-width: 1024px) {
+  .app-container .lx .lx-read:first-child .lx-read__img img { aspect-ratio: 16 / 10; }
+  .app-container .lx .lx-read:not(:first-child) .lx-read__btn { grid-template-columns: 50% minmax(0, 1fr); }
 }
