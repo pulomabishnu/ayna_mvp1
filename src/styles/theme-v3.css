@@ -254,3 +254,11 @@ html:not([data-ay-theme='dark']) body:has(.app-container:not([data-theme='dark']
 .app-container:not([data-theme='dark']) .eco3 :is(.eco3-details__card, .eco3-card) { transition: transform .2s cubic-bezier(.3, 1.4, .5, 1), box-shadow .2s; }
 .app-container:not([data-theme='dark']) .eco3 .eco3-details__card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ay-ink) !important; }
 .app-container:not([data-theme='dark']) .ay3-ecohero .eco3-pill.eco3-pill--ink { background: var(--ay-ink) !important; color: var(--ay-paper) !important; }
+
+/* ---------- tool + account page headers (ay3-pagehead) ---------- */
+.app-container:not([data-theme='dark']) .ay3-pagehead { margin-top: calc(-1 * var(--spacing-xl, 32px)) !important; margin-bottom: 64px !important; padding-top: clamp(40px, 5vw, 72px) !important; padding-bottom: 44px !important; }
+.app-container:not([data-theme='dark']) .ay3-pagehead.ay3-band--paper { border-bottom: 2px solid var(--ay-ink); }
+.app-container:not([data-theme='dark']) .ay3-pagehead :is(h1, h2) { font: 400 clamp(40px, 1.8rem + 3vw, 72px)/1.02 var(--ay-font-display) !important; letter-spacing: -.015em !important; margin-bottom: 14px !important; }
+.app-container:not([data-theme='dark']) .ay3-pagehead p:not(.ay3-kicker) { max-width: 40em; margin-inline: auto; color: var(--ay-ink) !important; font-size: 17px !important; line-height: 1.5; }
+.app-container:not([data-theme='dark']) .ay3-pagehead > div:not(:has(h2)):first-child, .app-container:not([data-theme='dark']) .ay3-pagehead > div[style*='inline-block'] { padding: 0 !important; border-radius: 0 !important; background: none !important; color: var(--ay-ink) !important; font: 400 13px/1.2 var(--ay-font-label) !important; letter-spacing: .1em; text-transform: uppercase; }
+.app-container:not([data-theme='dark']) .ay3-pagehead .btn { background: var(--ay-paper) !important; }

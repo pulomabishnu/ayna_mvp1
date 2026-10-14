@@ -37,7 +37,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
 
     return (
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-            <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)', maxWidth: '800px', margin: '0 auto var(--spacing-xl)' }}>
+            <div className="ay3-pagehead ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom" style={{ textAlign: 'center', margin: '0 auto var(--spacing-xl)' }}>
                 <div style={{
                     background: 'var(--color-secondary-fade)',
                     color: 'var(--color-primary-hover)',
@@ -50,7 +50,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 }}>
                     My Account
                 </div>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Your Dashboard</h2>
+                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Your <em>dashboard.</em></h2>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.25rem' }}>
                     Everything in one place: your products, health and wearable data, and care options.
                 </p>

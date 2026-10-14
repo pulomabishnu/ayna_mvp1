@@ -8,8 +8,9 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
     if (compareList.length === 0) {
         return (
             <div className="container animate-fade-in" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-                <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                    <h2 style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>Product Comparison</h2>
+                <div className="ay3-pagehead ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                    <p className="ay3-kicker">Compare</p>
+                    <h2 style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>Side by <em>side.</em></h2>
                     <p style={{ color: 'var(--color-text-muted)', maxWidth: '520px', margin: '0 auto' }}>
                         Compare up to 3 products side-by-side: safety, ingredients, and expert opinions.
                     </p>
@@ -117,9 +118,10 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
 
     return (
         <div className="container animate-fade-in" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '1rem' }}>
+            <div className="ay3-pagehead ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '1rem' }}>
                 <div>
-                    <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Product Comparison</h2>
+                    <p className="ay3-kicker">Compare</p>
+                    <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Side by <em>side.</em></h2>
                     <p style={{ color: 'var(--color-text-muted)' }}>See how they differ on safety, how well they work, and value.</p>
                 </div>
                 <button className="btn btn-outline" onClick={onClear} style={{ color: 'var(--color-text-muted)' }}>Clear All</button>

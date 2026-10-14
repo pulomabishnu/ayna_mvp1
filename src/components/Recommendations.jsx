@@ -341,7 +341,7 @@ export default function Recommendations({
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
 
             {/* Header + Retake at top */}
-            <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', maxWidth: '700px', margin: '0 auto var(--spacing-lg)' }}>
+            <div className="ay3-pagehead ay3-band ay3-band--rose ay3-torn ay3-edge-bottom" style={{ textAlign: 'center', margin: '0 auto var(--spacing-lg)' }}>
                 <div style={{
                     background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)',
                     padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.875rem',
@@ -349,7 +349,7 @@ export default function Recommendations({
                 }}>
                     Your personalized ecosystem
                 </div>
-                <h2 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>Products picked for you</h2>
+                <h2 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>Products picked <em>for you.</em></h2>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
                     {results?.frustrations?.length > 0
                         ? <>We picked these using your quiz answers (<strong>{results.frustrations.join(', ')}</strong>), your chat messages, any medical records you've uploaded, and wearable data from My Account.</>

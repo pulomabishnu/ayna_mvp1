@@ -6,8 +6,9 @@ export default function OmittedProducts({ omittedProducts, toggleOmitProduct }) 
 
     return (
         <div className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-            <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Omitted Products</h2>
+            <div className="ay3-pagehead ay3-band ay3-band--paper ay3-edge-bottom" style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
+                <p className="ay3-kicker">Hidden</p>
+                <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Not for <em>me.</em></h2>
                 <p style={{ color: 'var(--color-text-muted)' }}>These products will no longer appear in your Discovery or Recommendations.</p>
             </div>
 
