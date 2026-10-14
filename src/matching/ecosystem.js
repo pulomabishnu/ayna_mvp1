@@ -4,6 +4,10 @@
 //   score >= 50, by default) are placed. "Restricted" products (a required
 //   safety answer is missing) are held back and counted, never shown as a
 //   low match.
+// - Ingested products have a slightly higher qualification bar when their
+//   relationship is only secondary/adjacent or the evidence is not for the
+//   claim being used. Marketing copy alone must not create a high-confidence
+//   ecosystem recommendation.
 // - A product appears only on shelves where it actually scores.
 // - Picks per need controls quantity, never quality: if fewer products
 //   qualify, the shelf is shorter. Standards are never lowered to fill it.
@@ -15,8 +19,10 @@
 //   so 94 vs 93-and-eligible can flip, 94 vs 55 never does. Community and
 //   popularity only act here, after eligibility and relevance.
 // - Diversity: picks are re-ranked so a shelf is not five products from one
-//   brand or five of the same approach (a few points at most).
-// - Every shelf answers "do we have a good recommendation?" (quality) and
+//   brand or five of the same approach (a few points at most), and a product
+//   already selected for another need gets a modest cross-shelf penalty so
+//   one broad "does everything" product does not dominate the whole ecosystem.
+// - Every shelf answers "do we actually have a good recommendation?" (quality) and
 //   names "best for" roles when they are true.
 
 import { buildProductProfile } from './productProfile.js';
@@ -25,6 +31,60 @@ import { NEED_BY_ID, needPhrase } from './ontology.js';
 
 export const TIE_BREAK = { fsaHsa: 1.5, other: 1.0 };
 export const DIVERSITY_PENALTY = { brand: 3, mechanism: 1.5, format: 1 };
+export const CROSS_SHELF_REPEAT_PENALTY = 8;
+
+// Supplements/other ingestibles should not make an ecosystem shelf merely
+// because a broad or secondary marketing claim barely clears the global 50
+// exploratory bar. These floors affect ecosystem seeding only; the displayed
+// match remains the real score and the product can still be found in Shop.
+export const INGESTED_RELATIONSHIP_MIN_SCORE = {
+  direct: 50,
+  strong: 55,
+  secondary: 58,
+  adjacent: 70,
+  weak: 100,
+  unrelated: 100,
+};
+const WEAK_CLAIM_EVIDENCE = new Set(['none', 'community_only', 'not_for_this_claim']);
+
+function qualificationForEcosystem(result, pp, baseMinScore) {
+  let floor = baseMinScore;
+  let effectiveScore = result.score;
+  if (!pp?.ingested) return { floor, effectiveScore };
+
+  floor = Math.max(floor, INGESTED_RELATIONSHIP_MIN_SCORE[result.relationship] ?? baseMinScore);
+  const evidenceLevel = result.evidence?.level || 'none';
+
+  // For swallowed products, evidence matters even if the user skipped the
+  // optional trust-ranking question. Community chatter or evidence for a
+  // different claim should not be enough to seed a supplement automatically.
+  if (WEAK_CLAIM_EVIDENCE.has(evidenceLevel)) {
+    floor = Math.max(floor, ['direct', 'strong'].includes(result.relationship) ? 65 : 70);
+    effectiveScore -= 8;
+  }
+
+  // "PMS" in a supplement's product name used to grant DIRECT relevance by
+  // itself. Keep that product discoverable, but do not let the marketing name
+  // alone create an ecosystem pick. Without product-specific/guideline
+  // evidence for PMS, treat the claim as below the automatic-seeding bar.
+  const relevanceRule = pp.health_need_relevance?.[result.needId]?.rule || null;
+  if (relevanceRule === 'pms_named' && !['product_specific', 'guideline'].includes(evidenceLevel)) {
+    floor = Math.max(floor, 65);
+    effectiveScore = Math.min(effectiveScore, 59);
+  }
+
+  return { floor, effectiveScore };
+}
+
+function applyCrossShelfPenalty(sorted, selectedCounts) {
+  return sorted
+    .map((r, i) => ({
+      r,
+      key: r.score - CROSS_SHELF_REPEAT_PENALTY * (selectedCounts.get(r.productId) || 0) - i * 1e-6,
+    }))
+    .sort((a, b) => b.key - a.key)
+    .map((x) => x.r);
+}
 
 // Which care resources a shelf needs, keyed by need id. Labels match
 // FRUSTRATION_TO_TAG in src/data/careResources.js so getCareResourceBundle
@@ -216,6 +276,7 @@ export function buildEcosystem(up, products, options = {}) {
   }
 
   const shelves = [];
+  const selectedAcrossShelves = new Map();
   let anyCareProminent = up.safety.careProminent;
   for (const need of up.healthIntent.needs) {
     const results = [];
@@ -231,7 +292,8 @@ export function buildEcosystem(up, products, options = {}) {
       careProminent = careProminent || r.careProminent;
       if (!r.safety.eligible) { excludedCount += 1; continue; }
       if (r.filtered) { excludedCount += 1; continue; }
-      if (r.score < minScore || !r.explainable) { belowThreshold += 1; continue; }
+      const qualification = qualificationForEcosystem(r, pp, minScore);
+      if (qualification.effectiveScore < qualification.floor || !r.explainable) { belowThreshold += 1; continue; }
       if (r.restricted && !options.includeRestricted) {
         restrictedCount += 1;
         r.safety.missingFields.forEach((f) => missingFields.add(f));
@@ -241,8 +303,10 @@ export function buildEcosystem(up, products, options = {}) {
       results.push(r);
     }
     const sorted = sortResults(results, up, profilesById);
-    const picks = (options.diversity === false ? sorted : diversify(sorted, profilesById, up, picksPerNeed)).slice(0, picksPerNeed);
-    const roles = assignRoles(sorted, profilesById, up);
+    const acrossNeeds = applyCrossShelfPenalty(sorted, selectedAcrossShelves);
+    const picks = (options.diversity === false ? acrossNeeds : diversify(acrossNeeds, profilesById, up, picksPerNeed)).slice(0, picksPerNeed);
+    picks.forEach((p) => selectedAcrossShelves.set(p.productId, (selectedAcrossShelves.get(p.productId) || 0) + 1));
+    const roles = assignRoles(acrossNeeds, profilesById, up);
     picks.forEach((p, i) => {
       p.roles = Object.entries(roles).filter(([, id]) => id === p.productId).map(([role]) => role);
       p.aboveNext = picks[i + 1] ? compareResults(p, picks[i + 1]) : [];
@@ -256,7 +320,7 @@ export function buildEcosystem(up, products, options = {}) {
       source: need.source,
       kind: need.kind || NEED_BY_ID[need.id]?.kind || null,
       picks,
-      qualifiedCount: sorted.length,
+      qualifiedCount: acrossNeeds.length,
       excludedCount,
       belowThresholdCount: belowThreshold,
       restrictedCount,
@@ -265,7 +329,7 @@ export function buildEcosystem(up, products, options = {}) {
       missingProductInfo: [...missingProductInfo],
       missingProductInfoText: [...missingProductInfo].map((f) => PRODUCT_INFO_TEXT[f]).filter(Boolean),
       shortBy: Math.max(0, picksPerNeed - picks.length),
-      emptyReason: picks.length ? null : restrictedCount ? 'needs_safety_details' : sorted.length === 0 && belowThreshold > 0 ? 'no_product_meets_quality_bar' : 'no_matching_products',
+      emptyReason: picks.length ? null : restrictedCount ? 'needs_safety_details' : acrossNeeds.length === 0 && belowThreshold > 0 ? 'no_product_meets_quality_bar' : 'no_matching_products',
       quality: quality.quality,
       qualityNote: quality.note,
       roles,
