@@ -65,10 +65,11 @@ function qualificationForEcosystem(result, pp, baseMinScore) {
 
   // "PMS" in a supplement's product name used to grant DIRECT relevance by
   // itself. Keep that product discoverable, but do not let the marketing name
-  // alone create an ecosystem pick. Without product-specific/guideline
-  // evidence for PMS, treat the claim as below the automatic-seeding bar.
+  // alone create an ecosystem pick. A general PMS guideline explains the
+  // condition; it does not validate that named supplement. Only evidence tied
+  // to the actual product preserves automatic ecosystem seeding here.
   const relevanceRule = pp.health_need_relevance?.[result.needId]?.rule || null;
-  if (relevanceRule === 'pms_named' && !['product_specific', 'guideline'].includes(evidenceLevel)) {
+  if (relevanceRule === 'pms_named' && evidenceLevel !== 'product_specific') {
     floor = Math.max(floor, 65);
     effectiveScore = Math.min(effectiveScore, 59);
   }
