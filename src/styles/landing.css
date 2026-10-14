@@ -364,3 +364,235 @@
 .app-container .lx--photo { padding-bottom: 0 !important; margin-bottom: 0 !important; }
 .app-container .lx--photo .lx-founders { background: var(--ay-paper); }
 .app-container main:has(.lx--photo) ~ footer, .app-container main:has(.lx--photo) + * { margin-top: 0 !important; }
+
+/* =====================================================================
+   Round 2: more of the Tindra / Goodies / Food Truck energy
+   ticker bar, script accent words, wavy plum band, starburst stickers,
+   inset rounded hero, big pink start card beside "How it works".
+   ===================================================================== */
+.app-container .lx .lx-script { display: inline-block; font-family: 'Caveat Brush', 'Bricolage Grotesque', cursive !important; font-weight: 400 !important; font-style: normal; letter-spacing: 0 !important; text-transform: none; font-size: 1.22em; line-height: .9; }
+
+/* Ticker: one slim moving bar, still when motion is reduced */
+.app-container .lx-ticker { overflow: hidden; background: var(--ay-pink); color: #1d1a2b; border-bottom: 2px solid #1d1a2b; }
+.app-container .lx-ticker__track { display: flex; width: max-content; animation: lxTicker 36s linear infinite; }
+.app-container .lx-ticker:hover .lx-ticker__track { animation-play-state: paused; }
+.app-container .lx-ticker__row { display: flex; flex: none; margin: 0; padding: 0; list-style: none; }
+.app-container .lx-ticker__row li { display: flex; align-items: center; gap: 24px; padding-right: 24px; font: 700 13px/40px var(--ay-font-ui); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+@keyframes lxTicker { to { transform: translateX(-50%); } }
+
+/* Hero: inset, rounded, white headline with a script word */
+.app-container .lx-phero { margin: 16px 16px 0; border-radius: 28px; background: transparent; z-index: 2; }
+.app-container .lx-phero__photos { border-radius: 28px; }
+.app-container .lx .lx-phero__title { color: #fff !important; }
+.app-container .lx .lx-phero__title .lx-script { color: var(--ay-butter); font-size: 1.28em; }
+.app-container .lx-sticker { right: 48px; bottom: -72px; background: var(--ay-butter); }
+
+/* Wavy plum band holding the shop */
+.app-container .lx-band { --lx-band: #1d1a2b; --lx-on: #fffcf5; position: relative; margin: 120px 0 56px; padding: 96px 0 104px; background: var(--lx-band); color: var(--lx-on); }
+.app-container[data-theme='dark'] .lx-band { --lx-band: #2b2547; }
+.app-container .lx-band::before, .app-container .lx-band::after { content: ''; position: absolute; left: 0; right: 0; height: 24px; background: var(--lx-band); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V12C12 12 12 0 24 0s12 12 24 12 12-12 24-12 12 12 24 12v12z'/%3E%3C/svg%3E") repeat-x 0 0 / 96px 24px; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 24' preserveAspectRatio='none'%3E%3Cpath d='M0 24V12C12 12 12 0 24 0s12 12 24 12 12-12 24-12 12 12 24 12v12z'/%3E%3C/svg%3E") repeat-x 0 0 / 96px 24px; }
+.app-container .lx-band::before { top: -23px; }
+.app-container .lx-band::after { bottom: -23px; transform: scaleY(-1); }
+.app-container .lx .lx-band .lx-display { color: var(--lx-on) !important; background: none; font-size: clamp(44px, 2rem + 3.6vw, 88px) !important; line-height: 1 !important; max-width: 12em; }
+.app-container .lx .lx-band .lx-display .lx-script { color: var(--ay-butter); font-size: 1.2em; }
+.app-container .lx .lx-band .lx-shopshelf__by { color: var(--lx-on); font-size: 32px; line-height: 1; font-weight: 400; }
+.app-container .lx .lx-band .lx-needchips button { border-color: var(--lx-on); color: var(--lx-on); }
+.app-container .lx .lx-band .lx-needchips button:hover { background: var(--ay-butter); color: #1d1a2b; }
+.app-container .lx .lx-band .lx-needchips button.is-on { background: var(--ay-butter); border-color: var(--ay-butter); color: #1d1a2b; }
+.app-container .lx .lx-band .lx-needchips button:focus-visible, .app-container .lx .lx-band .lx-ghost:focus-visible, .app-container .lx .lx-band .lx-link:focus-visible { outline-color: var(--lx-on); }
+.app-container .lx .lx-band .lx-shelf__item { color: var(--lx-on); }
+.app-container .lx .lx-band .lx-shelf__img { border-radius: 16px; box-shadow: none; }
+.app-container .lx .lx-band .lx-shelf__brand { color: color-mix(in srgb, var(--lx-on) 72%, transparent); }
+.app-container .lx .lx-band .lx-ghost { border-color: var(--lx-on); color: var(--lx-on); }
+.app-container .lx .lx-band .lx-ghost:hover { background: var(--lx-on); color: #1d1a2b; }
+.app-container .lx .lx-band .lx-link { color: var(--lx-on); }
+.app-container .lx .lx-band .lx-search { border-color: var(--lx-on); }
+
+/* Starburst stickers */
+.app-container .lx .lx-burst { position: absolute; display: grid; place-items: center; width: 136px; height: 136px; background: var(--ay-pink); color: #1d1a2b; clip-path: polygon(50.0% 0.0%, 59.1% 10.0%, 71.7% 5.0%, 75.6% 17.9%, 89.1% 18.8%, 86.9% 32.2%, 98.7% 38.9%, 91.0% 50.0%, 98.7% 61.1%, 86.9% 67.8%, 89.1% 81.2%, 75.6% 82.1%, 71.7% 95.0%, 59.1% 90.0%, 50.0% 100.0%, 40.9% 90.0%, 28.3% 95.0%, 24.4% 82.1%, 10.9% 81.2%, 13.1% 67.8%, 1.3% 61.1%, 9.0% 50.0%, 1.3% 38.9%, 13.1% 32.2%, 10.9% 18.8%, 24.4% 17.9%, 28.3% 5.0%, 40.9% 10.0%); text-align: center; font: 800 18px/1.05 var(--ay-font-display); letter-spacing: -.02em; transform: rotate(-8deg); }
+.app-container .lx .lx-founders__photo .lx-burst { left: -40px; bottom: 40px; }
+
+/* Our story: copy left, big rounded photo right */
+.app-container .lx--photo .lx-founders { padding: 96px 0 120px; }
+.app-container .lx--photo .lx-founders__inner { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; }
+.app-container .lx--photo .lx-founders__photo { position: relative; margin: 0; }
+.app-container .lx .lx-founders__label { margin: 0 0 8px; color: var(--ay-ink); font-size: 36px; }
+.app-container .lx--photo .lx-founders__photo img { border-radius: 28px !important; aspect-ratio: 4 / 3; object-position: 50% 30%; }
+
+/* Start card + how it works */
+.app-container .lx-start { padding: 0 0 120px; }
+.app-container .lx-start__inner { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; align-items: start; }
+.app-container .lx-start__card { display: grid; gap: 24px; padding: 48px; border: 2px solid #1d1a2b; border-radius: 28px; background: var(--ay-pink); color: #1d1a2b; box-shadow: var(--ay-shadow-lg); }
+.app-container .lx .lx-start__title { color: #1d1a2b !important; background: none; font-size: clamp(48px, 2rem + 4vw, 96px) !important; line-height: .95 !important; }
+.app-container .lx .lx-start__title .lx-script { font-size: 1.18em; }
+.app-container .lx .lx-start__photo { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; border: 2px solid #1d1a2b; border-radius: 12px; object-fit: cover; object-position: 50% 62%; }
+.app-container .lx .lx-start__sub { margin: 0; font: 500 18px/28px var(--ay-font-ui); }
+.app-container .lx .lx-start__card .lx-cta { width: 100%; background: #1d1a2b; color: #fffcf5; }
+.app-container .lx .lx-start__card .lx-link { justify-self: center; color: #1d1a2b; }
+.app-container .lx--photo .lx-start .lx-how { padding: 16px 0 0; border: 0; background: none; }
+.app-container .lx .lx-start .lx-how .lx-h2 .lx-script { font-size: 1.3em; }
+.app-container .lx--photo .lx-start .lx-how__steps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; margin: 40px 0 0; }
+.app-container .lx--photo .lx-start .lx-how__steps li { position: relative; display: grid; grid-template-columns: 88px 48px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 16px; row-gap: 4px; align-items: center; padding: 0; border: 0; }
+.app-container .lx--photo .lx-start .lx-how__steps li::after { content: none; }
+.app-container .lx .lx-burst--n { position: relative; grid-row: span 2; width: 88px; height: 88px; font-size: 32px; }
+.app-container .lx .lx-how__steps .tone-pink .lx-burst--n { background: var(--ay-pink); }
+.app-container .lx .lx-how__steps .tone-butter .lx-burst--n { background: var(--ay-butter); }
+.app-container .lx .lx-how__steps .tone-peri .lx-burst--n { background: var(--ay-peri); }
+.app-container .lx .lx-burst--n b { all: unset; font: 800 32px/1 var(--ay-font-display); }
+.app-container .lx .lx-how__icon { grid-row: span 2; width: 48px; height: 48px; fill: none; stroke: var(--ay-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.app-container .lx--photo .lx-start .lx-how__steps h3 { align-self: end; margin: 0 !important; }
+.app-container .lx--photo .lx-start .lx-how__steps p { align-self: start; }
+
+@media (max-width: 1023px) {
+  .app-container .lx-start__inner { grid-template-columns: minmax(0, 1fr); gap: 56px; }
+  .app-container .lx--photo .lx-founders__inner { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .app-container .lx .lx-founders__photo .lx-burst { left: 16px; bottom: -32px; width: 112px; height: 112px; font-size: 15px; }
+  .app-container .lx-sticker { right: 32px; }
+}
+@media (max-width: 767px) {
+  .app-container .lx-phero { margin: 8px 8px 0; border-radius: 20px; }
+  .app-container .lx-phero__photos { border-radius: 20px; }
+  .app-container .lx-sticker { right: 16px; bottom: -48px; }
+  .app-container .lx-band { margin: 88px 0 40px; padding: 64px 0 72px; }
+  .app-container .lx .lx-band .lx-shopshelf__by { font-size: 26px; }
+  .app-container .lx--photo .lx-founders { padding: 64px 0 80px; }
+  .app-container .lx-start { padding-bottom: 80px; }
+  .app-container .lx-start__card { padding: 24px 16px; border-radius: 24px; gap: 16px; }
+  .app-container .lx--photo .lx-start .lx-how__steps li { grid-template-columns: 72px minmax(0, 1fr); }
+  .app-container .lx .lx-how__icon { display: none; }
+  .app-container .lx .lx-burst--n { width: 72px; height: 72px; }
+}
+
+/* =====================================================================
+   Round 3: order from the all-hands + Eliz's mockup.
+   hero (tagline, action, search) -> who we are -> trending -> shop by need
+   -> photos -> reads -> start. Ticker = real categories. Team photo as a
+   taped polaroid. Gentle reveal on four sections.
+   ===================================================================== */
+.app-container .lx .lx-search--hero { width: min(100%, 520px); max-width: none; height: 60px; margin: 8px 0 0; }
+.app-container .lx-phero__copy { gap: 20px; padding: 80px 24px 96px; }
+
+.app-container .lx--photo .lx-founders { padding: 128px 0 96px; background: var(--ay-peri); color: #1d1a2b; }
+.app-container .lx--photo .lx-founders .lx-h2, .app-container .lx--photo .lx-founders .lx-founders__label { color: #1d1a2b !important; }
+.app-container .lx--photo .lx-founders .lx-founders__sub { color: #1d1a2b; font-weight: 600; }
+.app-container .lx--photo .lx-founders .lx-ghost { border-color: #1d1a2b; color: #1d1a2b; }
+.app-container .lx--photo .lx-founders .lx-ghost:hover { background: #fffcf5; }
+.app-container .lx--photo .lx-founders__inner { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: center; }
+.app-container .lx--photo .lx-founders__photo { max-width: 560px; margin: 0 auto; padding: 16px 16px 64px; background: #fff; box-shadow: 0 12px 32px rgba(29,26,43,.22); transform: rotate(2deg); }
+.app-container .lx--photo .lx-founders__photo::before { content: ''; position: absolute; top: -16px; left: 50%; width: 112px; height: 32px; background: rgba(247,231,142,.92); transform: translateX(-50%) rotate(-3deg); }
+.app-container .lx--photo .lx-founders__photo img { border-radius: 2px !important; aspect-ratio: 4 / 3; }
+.app-container .lx--photo .lx-founders__photo figcaption { position: absolute; left: 24px; bottom: 14px; color: #1d1a2b; font-size: 32px; }
+
+.app-container .lx-trending { padding: 112px 0 0; }
+.app-container .lx-trending__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
+.app-container .lx-trending .lx-shelf { margin-top: 40px; }
+.app-container .lx-band { margin-top: 128px; }
+
+/* Scroll reveal: opacity and a small rise, once */
+.app-container .lx [data-reveal='wait'] { opacity: 0; transform: translateY(24px); }
+.app-container .lx [data-reveal='in'] { opacity: 1; transform: none; transition: opacity .4s ease-out, transform .4s ease-out; }
+
+@media (max-width: 1023px) {
+  .app-container .lx--photo .lx-founders__inner { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 767px) {
+  .app-container .lx .lx-search--hero { height: 56px; }
+  .app-container .lx-phero__copy { padding: 56px 16px 80px; }
+  .app-container .lx--photo .lx-founders { padding: 96px 0 64px; }
+  .app-container .lx--photo .lx-founders__photo { max-width: 100%; transform: rotate(1deg); }
+  .app-container .lx-trending { padding-top: 80px; }
+  .app-container .lx-band { margin-top: 96px; }
+}
+
+/* =====================================================================
+   Round 4: closer to Tindra / Food Truck Club / Goodies, and animated.
+   caps heavy headlines + script accents, spinning stamp, brand-partner
+   ticker, moving photo collage, striped panel, bouncy stickers.
+   All motion is off under prefers-reduced-motion.
+   ===================================================================== */
+/* Heavy caps display type */
+.app-container .lx--photo .lx-display, .app-container .lx--photo .lx-h2, .app-container .lx--photo .lx-phero__title, .app-container .lx--photo .lx-start__title { text-transform: uppercase !important; letter-spacing: -.035em !important; }
+.app-container .lx--photo .lx-phero__title { font-size: clamp(44px, 1.6rem + 5vw, 96px) !important; line-height: .98 !important; }
+.app-container .lx--photo .lx-phero__title .lx-script, .app-container .lx--photo .lx-display .lx-script, .app-container .lx--photo .lx-h2 .lx-script, .app-container .lx--photo .lx-start__title .lx-script { text-transform: none; }
+.app-container .lx--photo .lx-phero__title .lx-script { font-size: 1.3em; display: inline-block; }
+.app-container .lx--photo .lx-band .lx-display { font-size: clamp(44px, 1.6rem + 4vw, 88px) !important; }
+.app-container .lx--photo .lx-h2 { font-size: clamp(30px, 1.4rem + 1.6vw, 52px) !important; }
+
+/* Ticker: brand partners, ink strip like the Goodies / Food Truck top bars */
+.app-container .lx-ticker { background: #1d1a2b; color: var(--ay-butter); border-bottom: 0; }
+.app-container .lx-ticker__row li { font-size: 14px; }
+.app-container .lx-ticker__row li:first-child { color: #fff; }
+.app-container .lx-ticker__row li span { color: var(--ay-pink); }
+
+/* Hero tag pill (lime tag on Food Truck, "safe for all skin" on Tindra) */
+.app-container .lx .lx-tag { margin: 0; padding: 4px 16px; border: 2px solid #1d1a2b; border-radius: 99px; background: var(--ay-butter); color: #1d1a2b; font: 700 14px/24px var(--ay-font-ui); animation: lxRise .4s ease-out both; }
+.app-container .lx .lx-rise { display: inline-block; animation: lxPop .6s cubic-bezier(.2,.9,.3,1.3) both; animation-delay: calc(var(--i, 0) * 120ms + 100ms); }
+@keyframes lxPop { from { opacity: 0; transform: translateY(32px) scale(.92) rotate(-2deg); } }
+/* slow push-in on the hero photos */
+.app-container .lx .lx-phero__photos img { animation: lxKen 18s ease-in-out infinite alternate; transform-origin: 50% 40%; }
+.app-container .lx .lx-phero__photos img:nth-child(2) { animation-delay: -6s; }
+.app-container .lx .lx-phero__photos img:nth-child(3) { animation-delay: -12s; }
+@keyframes lxKen { to { transform: scale(1.08); } }
+
+/* Spinning stamp, top right of the hero (Tindra's round badge) */
+.app-container .lx-stamp { position: absolute; z-index: 3; top: -16px; right: 40px; width: 140px; height: 140px; display: grid; place-items: center; }
+.app-container .lx-stamp svg { position: absolute; inset: 0; width: 100%; height: 100%; animation: lxSpin 22s linear infinite; }
+.app-container .lx-stamp__disc { fill: var(--ay-butter); stroke: #1d1a2b; stroke-width: 3; }
+.app-container .lx-stamp text { fill: #1d1a2b; font: 800 15px var(--ay-font-ui); letter-spacing: .08em; }
+.app-container .lx .lx-stamp__core { position: relative; display: grid; place-items: center; width: 54px; height: 54px; border: 2px solid #1d1a2b; border-radius: 50%; background: var(--ay-pink); color: #1d1a2b; font: 400 26px/1 'Caveat Brush', cursive; }
+@keyframes lxSpin { to { transform: rotate(360deg); } }
+/* bottom sticker bobs */
+.app-container .lx-sticker { animation: lxBob 3.2s ease-in-out infinite; }
+@keyframes lxBob { 0%, 100% { transform: rotate(10deg) translateY(0); } 50% { transform: rotate(6deg) translateY(-8px); } }
+
+/* Striped panel for "who we are" (Tindra's lilac stripes) */
+.app-container .lx--photo .lx-founders { padding: 128px 0 96px; background: var(--ay-paper); }
+.app-container .lx--photo .lx-founders__inner { position: relative; padding: 64px; border-radius: 28px; background: repeating-linear-gradient(90deg, var(--ay-peri) 0 28px, #fffcf5 28px 56px); box-shadow: inset 0 0 0 2px #1d1a2b; }
+.app-container .lx--photo .lx-founders__copy { padding: 32px; border-radius: 20px; background: #fffcf5; box-shadow: inset 0 0 0 2px #1d1a2b; }
+.app-container .lx--photo .lx-founders .lx-founders__sub { color: #1d1a2b; }
+
+/* Product tiles: stagger in, wiggle the partner badge, tilt on hover */
+.app-container .lx [data-reveal='in'] .lx-shelf li { animation: lxPop .5s cubic-bezier(.2,.9,.3,1.2) both; animation-delay: calc(var(--i, 0) * 90ms); }
+.app-container .lx .lx-shelf__img { position: relative; }
+.app-container .lx .lx-shelf__item:hover .lx-shelf__img { transform: translateY(-6px) rotate(-1.2deg); }
+.app-container .lx .lx-shelf__badge { position: absolute; top: 8px; right: 8px; display: grid; place-items: center; width: 64px; height: 64px; background: var(--ay-pink); color: #1d1a2b; clip-path: polygon(50% 0%, 59.8% 8.2%, 71.6% 4.2%, 77.2% 15.4%, 89.4% 17.3%, 89.6% 29.7%, 100% 36.5%, 93.3% 47%, 98.6% 58.3%, 88.2% 65.4%, 87.5% 77.7%, 75.2% 78.7%, 69.1% 89.4%, 57.6% 85.6%, 50% 95.3%, 42.4% 85.6%, 30.9% 89.4%, 24.8% 78.7%, 12.5% 77.7%, 11.8% 65.4%, 1.4% 58.3%, 6.7% 47%, 0% 36.5%, 10.4% 29.7%, 10.6% 17.3%, 22.8% 15.4%, 28.4% 4.2%, 40.2% 8.2%); font: 800 10px/1.05 var(--ay-font-display); text-align: center; text-transform: lowercase; transform: rotate(10deg); animation: lxWiggle 2.6s ease-in-out infinite; }
+@keyframes lxWiggle { 0%, 100% { transform: rotate(10deg); } 50% { transform: rotate(-6deg) scale(1.06); } }
+
+/* Moving photo collage */
+.app-container .lx--photo .lx-photoband { overflow: hidden; }
+.app-container .lx-photoband__track { display: flex; width: max-content; animation: lxTicker 70s linear infinite; }
+.app-container .lx-photoband__track:hover { animation-play-state: paused; }
+.app-container .lx--photo .lx-photoband ul { display: flex; flex: none; gap: 4px; padding: 0 2px; }
+.app-container .lx--photo .lx-photoband li { flex: none; }
+.app-container .lx--photo .lx-photoband img { width: auto; height: clamp(260px, 30vw, 440px); }
+.app-container .lx--photo .lx-photoband li:nth-child(n) { display: block; }
+
+/* Start card + steps: bounce the bursts when revealed */
+.app-container .lx .lx-start .lx-burst--n { transition: transform .2s ease-out; }
+.app-container .lx .lx-start li:hover .lx-burst--n { transform: rotate(8deg) scale(1.1); }
+.app-container .lx .lx-start__card .lx-cta:hover { box-shadow: 4px 4px 0 #fffcf5; }
+
+@media (max-width: 1023px) {
+  .app-container .lx--photo .lx-founders__inner { padding: 32px; }
+  .app-container .lx-stamp { right: 24px; width: 112px; height: 112px; }
+}
+@media (max-width: 767px) {
+  .app-container .lx-stamp { top: -12px; right: 12px; width: 92px; height: 92px; }
+  .app-container .lx-stamp text { font-size: 17px; }
+  .app-container .lx .lx-stamp__core { width: 38px; height: 38px; font-size: 20px; }
+  .app-container .lx--photo .lx-founders { padding: 96px 0 64px; }
+  .app-container .lx--photo .lx-founders__inner { padding: 16px; border-radius: 20px; }
+  .app-container .lx--photo .lx-founders__copy { padding: 24px 16px; }
+  .app-container .lx--photo .lx-photoband li:nth-child(n+3) { display: block; }
+  .app-container .lx-photoband img { height: 240px !important; }
+  .app-container .lx .lx-shelf__badge { width: 52px; height: 52px; font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-container .lx-ticker__track, .app-container .lx-photoband__track { animation: none !important; }
+  .app-container .lx-ticker, .app-container .lx-photoband { overflow-x: auto; }
+}
+.app-container .lx--photo .lx-start { background: var(--ay-paper); padding-top: 0; }
+@media (max-width: 767px) {
+  .app-container .lx-phero__copy { padding-top: 88px; }
+  .app-container .lx-sticker { display: none; }
+}
