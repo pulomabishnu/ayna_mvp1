@@ -1,0 +1,121 @@
+.cr-rich-field {
+  width: 100%;
+  min-width: 0;
+}
+
+.cr-rich-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 30px;
+  margin: 0 0 5px;
+}
+
+.cr-rich-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cr-rich-toolbar button:hover,
+.cr-rich-toolbar button:focus-visible {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.cr-rich-toolbar button.is-active {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.cr-rich-editor {
+  width: 100%;
+  min-height: 112px;
+  max-height: 320px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  outline: none;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  cursor: text;
+}
+
+.cr-rich-editor[data-empty="true"]::before {
+  content: attr(data-placeholder);
+  color: var(--muted, #77736e);
+  opacity: .72;
+  pointer-events: none;
+}
+
+.cr-rich-editor p {
+  margin: 0;
+  min-height: 1.45em;
+}
+
+.cr-rich-editor ul {
+  margin: 0;
+  padding-left: 1.35em;
+}
+
+.cr-rich-editor li {
+  min-height: 1.45em;
+  padding-left: .08em;
+}
+
+.cr-rich-output {
+  display: block;
+  white-space: normal;
+}
+
+.cr-rich-paragraph,
+.cr-rich-list {
+  display: block;
+}
+
+.cr-rich-paragraph + .cr-rich-paragraph,
+.cr-rich-list + .cr-rich-paragraph,
+.cr-rich-paragraph + .cr-rich-list,
+.cr-rich-list + .cr-rich-list {
+  margin-top: .55em;
+}
+
+.cr-rich-bullet {
+  display: grid;
+  grid-template-columns: .9em minmax(0, 1fr);
+  align-items: start;
+}
+
+.cr-rich-bullet-mark {
+  line-height: inherit;
+}
+
+.app-container .wc-compose .cr-rich-editor,
+.am-compose-sheet .cr-rich-editor {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+@media (max-width: 700px) {
+  .cr-rich-toolbar {
+    margin-bottom: 3px;
+  }
+
+  .cr-rich-toolbar button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .am-compose-sheet .cr-rich-editor {
+    min-height: 104px;
+  }
+}
