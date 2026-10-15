@@ -885,7 +885,7 @@ export default function ProductModal({
               const priceText = `${product.price || ''} ${price.sub || ''}`;
               const quick = [
                 // Long pack lists live once, in Buy; the header keeps short ones.
-                size?.text && size.text.length <= 40 ? size.text : null,
+                size?.text && size.text.length <= 40 && !String(price.sub || '').toLowerCase().includes(size.text.toLowerCase()) ? size.text : null,
                 fsa && fsa.value === 'Eligible' ? 'FSA/HSA eligible' : null,
                 // A one-time "3-month program" is not a subscription; only recurring billing is.
                 /\/month|per month|subscription|\/mo\b|per year|\/year|monthly|annually/i.test(priceText) ? 'Subscription' : null,

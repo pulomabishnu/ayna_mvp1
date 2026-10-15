@@ -4852,3 +4852,7 @@ html body .app-container.app-container.app-container.app-container .ay3-shophero
 html body .app-container.app-container.app-container.app-container .ay3-shophero .ay3-title { margin-bottom: 4px !important; font-size: clamp(32px, 3.2vw, 44px) !important; }
 html body .app-container.app-container.app-container.app-container .ay3-shophero .ayna-browse__disclosure { margin: 0 0 12px !important; }
 html body .app-container.app-container.app-container.app-container .ayna-browse { padding-top: 0 !important; }
+/* Pass 7: header facts as one quiet line, not pills. */
+html body .app-container.app-container.app-container.app-container .pdp-quick { display: flex !important; flex-wrap: wrap !important; gap: 0 !important; padding: 0 !important; margin: 6px 0 14px !important; list-style: none !important; }
+html body .app-container.app-container.app-container.app-container .pdp-quick li { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; font: 500 14px/1.5 'DM Sans', sans-serif !important; color: var(--ay-ink-soft, #3e2723) !important; }
+html body .app-container.app-container.app-container.app-container .pdp-quick li + li::before { content: '\00B7'; margin: 0 8px; }
