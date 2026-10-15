@@ -140,11 +140,14 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   // Password reset (2026-09-22 audit): the emailed link lands on
   // /auth/callback, which handles type=recovery with a new-password form.
   const [resetting, setResetting] = useState(false);
+  // Forgot password is its own small step with its own email field (it used to
+  // answer the click with an error asking for the email first).
+  const [resetView, setResetView] = useState(false);
   const handleForgotPassword = async () => {
     const cleanEmail = email.trim().toLowerCase();
     setError('');
     setSuccessMsg('');
-    if (!cleanEmail) { setFieldErrors((prev) => ({ ...prev, email: 'Add your email above, then choose "Forgot password?".' })); return; }
+    if (!cleanEmail) { setFieldErrors((prev) => ({ ...prev, email: 'Add the email you signed up with.' })); return; }
     if (!supabase) return;
     setResetting(true);
     try {
@@ -634,6 +637,21 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           </div>
         )}
 
+        {resetView ? (
+          <form className="ay-auth-reset" onSubmit={(e) => { e.preventDefault(); handleForgotPassword(); }} noValidate>
+            <h3 className="ay-auth-reset__h">Reset your password</h3>
+            <p className="ay-auth-reset__p">Enter the email you signed up with and we’ll send you a link to choose a new password.</p>
+            <div className="ay-auth-field">
+              <label htmlFor="auth-reset-email">Email</label>
+              <input id="auth-reset-email" type="email" autoComplete="email" value={email} onChange={(e) => { setEmail(e.target.value); clearFieldError('email'); }} {...fieldProps('email')} />
+              {fieldErrors.email && <p id="auth-email-err" className="ay-auth-err" role="alert">{fieldErrors.email}</p>}
+            </div>
+            {error && <p className="ay-auth-err" role="alert">{error}</p>}
+            {successMsg && <p className="ay-auth-ok" role="status">{successMsg}</p>}
+            <button type="submit" className="ay-auth-submit" disabled={resetting}>{resetting ? 'Sending…' : 'Send reset link'}</button>
+            <button type="button" className="ay-auth-linkbtn" onClick={() => { setResetView(false); setError(''); setSuccessMsg(''); }}>Back to sign in</button>
+          </form>
+        ) : (
         <form
           onSubmit={
             isSignup && authMethod === 'phone'
@@ -807,10 +825,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               <button
                 type="button"
                 className="ay-auth-linkbtn ay-auth-forgot"
-                onClick={handleForgotPassword}
-                disabled={resetting}
+                onClick={() => { setError(''); setSuccessMsg(''); setFieldErrors({}); setResetView(true); }}
               >
-                {resetting ? 'Sending reset link…' : 'Forgot password?'}
+                Forgot password?
               </button>
             </div>
           )}
@@ -916,6 +933,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             </p>
           )}
         </form>
+        )}
 
         <div style={styles.divider}>
           <span style={styles.dividerLine} />

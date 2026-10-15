@@ -3503,3 +3503,7 @@ html body .app-container .site-footer :is(a, button) { display: inline-flex; ali
   html body .app-container .pdp-buybox .pdp-btn { width: 100% !important; justify-content: center; white-space: normal; }
 }
 @media (max-width: 767px) { html body .app-container .pdp-buybox .pdp-actions__primary.pdp-actions__primary { grid-template-columns: 1fr !important; } }
+html body .ay-auth-reset { display: grid; gap: 12px; }
+html body .ay-auth-reset__h { margin: 0; font: 400 26px/1.15 'DM Serif Display', Georgia, serif; color: #3e2723; }
+html body .ay-auth-reset__p { margin: 0; font: 400 15px/1.45 'DM Sans', system-ui, sans-serif; color: #3e2723; }
+html body .ay-auth-ok { margin: 0; padding: 10px 12px; border: 2px solid #3e2723; border-radius: 10px; background: #769ebe; color: #3e2723; font: 500 14px/1.4 'DM Sans', system-ui, sans-serif; }

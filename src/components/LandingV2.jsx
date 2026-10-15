@@ -3,10 +3,8 @@ import { productsForNeed } from './landingNeeds';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../utils/partnerBrands';
 import { getWeeklyTrendingLineup } from '../utils/trendingLineup';
-import TopicCover from './v3/TopicCover.jsx';
-import { getRecommendedArticles } from './articleRecommendations';
 import { ALL_PRODUCTS, MACRO_GROUPS } from '../data/products';
-import WebHeroCarousel from './WebHeroCarousel.jsx';
+import { getDailyFact } from '../data/welcomeSlides.js';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
 import '../styles/landing-v2.css';
 
@@ -261,29 +259,36 @@ function Why({ paused }) {
   );
 }
 
-/* ---------- reads ---------- */
+/* ---------- reads: three equal photo cards with their sources, today's fact above ---------- */
+// The reads that earn trust lead (pass 5), each on a real photo from the shoot.
+const LEAD_READS = [
+  { id: 'heavy-bleeding', title: 'Heavy Menstrual Bleeding', teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated.', source: 'UpToDate · ACOG · CDC', src: '/landing/sink-tea.webp', alt: 'A cup of tea on the edge of a bathroom sink' },
+  { id: 'period-pain-when-to-seek-care', title: 'Period Pain: When to Seek Care', teaser: 'Normal cramps vs. signs that something else may be going on, and what clinicians may suggest.', source: 'ACOG · UpToDate · Mayo Clinic', src: '/landing/pajamas-overhead.webp', alt: 'Seen from above, a woman in pajamas resting' },
+  { id: 'pcos-basics', title: 'PCOS: What It Is and How It’s Managed', teaser: 'Diagnosis, symptoms, and evidence-based treatment, including lifestyle and medication.', source: 'ACOG · Endocrine Society · UpToDate', src: '/landing/marble-counter.webp', alt: 'Everyday care products on a marble counter' },
+];
 function Reads({ onViewArticle, onViewArticles }) {
-  const reads = useMemo(() => getRecommendedArticles(null).slice(0, 3), []);
   const ref = useReveal();
-  if (!reads.length) return null;
+  const fact = useMemo(() => { try { return getDailyFact(); } catch { return null; } }, []);
   const open = (id) => { if (onViewArticle) onViewArticle(id); else onViewArticles?.(); };
   return (
-    <section ref={ref} className="lv-sec" aria-labelledby="lv-reads-title">
+    <section ref={ref} className="lv-sec lv-reads2" aria-labelledby="lv-reads-title">
       <header className="lv-head">
         <h2 id="lv-reads-title">Short reads, real sources.</h2>
-        <button type="button" className="lv-btn lv-btn--line" onClick={() => onViewArticles?.()}>Open the Library</button>
+        <a className="lv-btn lv-btn--line" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}>Open the Library</a>
       </header>
-      <div className="lv-reads">
-        {reads.map((a) => (
-          <article key={a.id}>
-            <button type="button" onClick={() => open(a.id)}>
-              {/* Topic drawings in brand colours (the vector art read as stock). */}
-              <span className="lv-reads__img"><TopicCover id={a.id} title={a.title} /></span>
-              <span className="lv-reads__txt"><strong>{a.title}</strong><span>{a.teaser}</span></span>
-            </button>
-          </article>
+      {fact && <p className="lv-fact"><b>Today: {fact.term}.</b> {fact.text}</p>}
+      <ul className="lv-reads2__row">
+        {LEAD_READS.map((r) => (
+          <li key={r.id}>
+            <a href={`/library/${r.id}`} onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); open(r.id); }}>
+              <span className="lv-reads2__img"><img src={r.src} alt={r.alt} loading="lazy" /></span>
+              <strong>{r.title}</strong>
+              <span className="lv-reads2__teaser">{r.teaser}</span>
+              <small>Sources: {r.source}</small>
+            </a>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
@@ -338,11 +343,11 @@ function Start({ onStartQuiz, onViewDiscovery }) {
 /* ---------- page ---------- */
 // `personal` (signed in): the same page with a welcome-back hero, and
 // `personalSlot` (her next step, top picks, Powder Room) right under it.
-export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewCommunity, onSearch, personal = null, personalSlot = null }) {
-  const [paused, setPaused] = useState(false);
+export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onSearch, personal = null, personalSlot = null }) {
+  // One motion control for the whole site: the footer's "Pause motion".
+  const paused = useMotionPaused();
   return (
     <div className={`lv${paused ? ' is-paused' : ''}`}>
-      <Ticker />
       <div className="lv-wrap">
         <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} />
         {personalSlot}
@@ -351,15 +356,23 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
         <Strip />
         <Why paused={paused} />
-        <div className="lv-sec lv-carousel"><WebHeroCarousel onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} onStartQuiz={onStartQuiz} /></div>
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
+        <section className="lv-partners" aria-labelledby="lv-partners-title">
+          <h2 id="lv-partners-title" className="lv-partners__h"><a href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}>Brands we work with <span aria-hidden="true">→</span></a></h2>
+          <Ticker />
+        </section>
       </div>
-      <button type="button" className="lv-pause" aria-pressed={paused} aria-label={paused ? 'Play motion' : 'Pause motion'} title={paused ? 'Play motion' : 'Pause motion'} onClick={() => setPaused((v) => !v)}>
-        {paused
-          ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" /></svg>
-          : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /></svg>}
-      </button>
     </div>
   );
+}
+function useMotionPaused() {
+  const read = () => { try { return document.documentElement.classList.contains('ay-motion-paused') || localStorage.getItem('ayna_motion_paused') === '1'; } catch { return false; } };
+  const [paused, setPaused] = useState(read);
+  useEffect(() => {
+    const mo = new MutationObserver(() => setPaused(document.documentElement.classList.contains('ay-motion-paused')));
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => mo.disconnect();
+  }, []);
+  return paused;
 }
