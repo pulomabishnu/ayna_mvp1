@@ -143,8 +143,11 @@ export function sameNeedProducts(product, { pool = ALL_PRODUCTS, limit = 4, excl
   const needs = (product.healthFunctions || []).filter((id) => HEALTH_FUNCTIONS[id] && id !== 'supplement' && id !== 'telehealth');
   if (!needs.length) return [];
   const skip = new Set([product.id, ...exclude]);
+  // The product's main need must be shared (a TENS device's is cramp relief), so
+  // a supplement that only shares a side tag never shows up under it.
+  const primary = needs[0];
   return pool
-    .filter((p) => p && p.id && p.name && !skip.has(p.id) && p.category !== product.category && overlap(p.healthFunctions, needs) > 0)
+    .filter((p) => p && p.id && p.name && !skip.has(p.id) && p.category !== product.category && (p.healthFunctions || []).includes(primary))
     .map((p) => ({ p, s: overlap(p.healthFunctions, needs) * 2 + (galleryImages(p).length ? 1 : 0) + (priceParts(p).known ? 1 : 0) }))
     .sort((a, b) => b.s - a.s || String(a.p.name).localeCompare(String(b.p.name)))
     .slice(0, limit)
@@ -159,6 +162,18 @@ export function whereToBuyLine(product) {
   if (!link) return NOT_ON_FILE;
   const brand = brandOf(product);
   return brand ? `${brand} (online)` : `${hostKey(link)} (online)`;
+}
+
+const RESEARCH_TYPES = ['product_study', 'clinical_guideline', 'regulatory', 'ingredient_research', 'expert_guidance'];
+const researchCountCache = new Map();
+/** How many research sources the product page lists (the same count everywhere: card, page, compare). */
+export function researchSourceCount(product) {
+  if (!product?.id) return 0;
+  if (researchCountCache.has(product.id)) return researchCountCache.get(product.id);
+  let n = 0;
+  try { n = (buildGlance(product, {})?.sources || []).filter((s) => RESEARCH_TYPES.includes(s.type)).length; } catch { n = 0; }
+  researchCountCache.set(product.id, n);
+  return n;
 }
 
 function evidenceSummary(product) {

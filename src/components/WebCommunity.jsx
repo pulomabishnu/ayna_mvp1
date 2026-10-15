@@ -60,6 +60,7 @@ const ICONS = {
   heart: <path d="M20.5 8.5c0 4.2-8.5 10-8.5 10s-8.5-5.8-8.5-10a4.5 4.5 0 0 1 8.5-2 4.5 4.5 0 0 1 8.5 2Z" />,
   comment: <path d="M20 11.5a8 8 0 0 1-8 8 8.4 8.4 0 0 1-3.3-.7L4 20l1.2-4.7A8 8 0 1 1 20 11.5Z" />,
   bookmark: <path d="M6 4.5h12v15l-6-4-6 4v-15Z" />,
+  thumb: <path d="M7 10.5v9H4.5v-9H7Zm0 0 4-6.5c1.4 0 2.3 1.1 2 2.4L12.4 10H18a2 2 0 0 1 2 2.3l-1.1 5.6a2 2 0 0 1-2 1.6H7" />,
   bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 9h18c0-1-3-2-3-9Z" /><path d="M10 21h4" /></>,
   plus: <path d="M12 5v14M5 12h14" />,
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
@@ -210,7 +211,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [body, setBody] = useState('');
   const [productId, setProductId] = useState(seedProductId);
   const [anonymous, setAnonymous] = useState(false);
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(null);
   const [playlistTitle, setPlaylistTitle] = useState('');
   const [playlistVisibility, setPlaylistVisibility] = useState('public');
   const [coverColor, setCoverColor] = useState(COVER_COLORS[0]);
@@ -393,7 +394,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           community.listPlaylists(supabase, { section: p.user_id === user?.id ? 'mine' : 'owner', ownerIds: [p.user_id], limit: PROFILE_LIST_MAX }),
           community.getProfileStats(supabase, p.user_id),
         ]);
-        if (a.status === 'fulfilled') setProfilePosts(a.value);
+        // Only this person's own, signed posts (never an anonymous one, never someone else's).
+        if (a.status === 'fulfilled') setProfilePosts((a.value || []).filter((x) => x.author_id === p.user_id && !x.is_anonymous));
         if (b.status === 'fulfilled') setProfilePlaylists(b.value);
         if (c.status === 'fulfilled' && c.value) setProfileStats(c.value);
       }
@@ -486,7 +488,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           for (const photo of photos) media.push(await uploadCommunityImage(client, photo, { folder: 'posts' }));
           result = await community.createPost(client, userId, { kind: compose, body, topics, media, isAnonymous: !user || anonymous, productId: compose === 'review' ? productId : null, rating: compose === 'review' ? rating : null, taggedProductIds: compose === 'review' || !productId ? [] : [productId] });
         } catch (e) { await Promise.all(media.map((m) => deleteCommunityImage(client, m.path))); throw e; }
-        setCompose(null); setBody(''); setProductId(null); setAnonymous(false); setPhotos([]); setRefresh((v) => v + 1);
+        setCompose(null); setBody(''); setProductId(null); setAnonymous(false); setPhotos([]); setRating(null); setRefresh((v) => v + 1);
         if (composeOnly) { finishCompose('Posted'); return; }
         const post = await community.getFeedPost(client, result.id);
         if (post) await openPost(post);
@@ -622,6 +624,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     if (!compose) return '';
     if (user && !profile) return 'Set up your community profile first.';
     if (compose === 'review' && !productId) return 'Choose the product you’re reviewing.';
+    if (compose === 'review' && !rating) return 'Pick a star rating.';
     if (compose === 'recommend' && !productId) return 'Choose a product to recommend.';
     if (compose === 'recommend' && !selectedFriendIds.length) return 'Pick at least one friend.';
     if (compose !== 'playlist' && body.length > bodyMax) return `Keep it under ${bodyMax} characters.`;
@@ -662,9 +665,9 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {(post.media || []).length > 0 && <div className="wc-photos">{post.media.slice(0, 4).map((m) => <img key={m.path} src={publicMediaUrl(m.path)} alt="" loading="lazy" />)}</div>}
       {postProductIds(post).slice(0, 1).map((id) => <Mention key={id} productId={id} productsById={productsById} quizResults={quizResults} onOpenProduct={onOpenProduct} />)}
       <footer className="wc-actions">
-        <button type="button" aria-pressed={Boolean(post.viewer_found_helpful)} aria-label={`Helpful${helpful ? `, ${helpful}` : ''}`} title="Helpful" onClick={() => togglePost(post, 'helpful')}><Icon name="heart" size={17} /><span aria-hidden="true">{helpful ? `Helpful ${helpful}` : 'Helpful'}</span></button>
+        <button type="button" aria-pressed={Boolean(post.viewer_found_helpful)} aria-label={`Helpful${helpful ? `, ${helpful}` : ''}`} title="Helpful" onClick={() => togglePost(post, 'helpful')}><Icon name="thumb" size={17} /><span aria-hidden="true">{helpful ? `Helpful ${helpful}` : 'Helpful'}</span></button>
         <button type="button" aria-label={`Reply${replies ? `, ${replies} replies` : ''}`} title="Reply" onClick={() => openPost(post)}><Icon name="comment" size={17} /><span aria-hidden="true">{replies ? `Reply ${replies}` : 'Reply'}</span></button>
-        <button type="button" className="wc-save" aria-pressed={Boolean(post.viewer_saved)} aria-label={post.viewer_saved ? 'Saved' : 'Save'} title={post.viewer_saved ? 'Saved' : 'Save'} onClick={() => togglePost(post, 'save')}><Icon name="bookmark" size={17} /><span aria-hidden="true">{post.viewer_saved ? 'Saved' : 'Save'}</span></button>
+        <button type="button" className="wc-save" aria-pressed={Boolean(post.viewer_saved)} aria-label={post.viewer_saved ? 'Saved' : 'Save'} title={post.viewer_saved ? 'Saved' : 'Save'} onClick={() => togglePost(post, 'save')}><Icon name="heart" size={17} /><span aria-hidden="true">{post.viewer_saved ? 'Saved' : 'Save'}</span></button>
       </footer>
     </article>;
   };
@@ -704,18 +707,41 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           <Picker products={products} value={productId} onChange={setProductId} placeholder="Search products to add" />
         </section>
       </> : <>
+        {/* A review starts with what you're reviewing and how many stars, then the words. */}
+        {compose === 'review' && <section className="wc-group">
+          <h3 className="wc-label">Product you’re reviewing</h3>
+          <Picker products={products} value={productId} onChange={setProductId} placeholder="Search products" />
+        </section>}
+        {compose === 'review' && <section className="wc-group">
+          <h3 className="wc-label" id="wc-rating-label">Your rating</h3>
+          <div className="wc-rating" role="radiogroup" aria-labelledby="wc-rating-label">{[1, 2, 3, 4, 5].map((n) => <button type="button" key={n} role="radio" aria-checked={rating === n} aria-label={`${n} ${n === 1 ? 'star' : 'stars'}`} className={rating && n <= rating ? 'is-on' : ''} onClick={() => setRating(n)}><Star on={Boolean(rating) && n <= rating} size={28} /></button>)}</div>
+        </section>}
         <section className="wc-group">
           <label className="wc-label" htmlFor="wc-compose-body">{composeLabel}</label>
-          <RuleField id="wc-compose-body" autoGrow data-autofocus minRows={4} value={body} maxLength={bodyMax} onChange={(e) => setBody(e.target.value)} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} onShowRules={openRules} />
+          <RuleField id="wc-compose-body" autoGrow data-autofocus={compose !== 'review' || undefined} minRows={4} value={body} maxLength={bodyMax} onChange={(e) => setBody(e.target.value)} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} onShowRules={openRules} />
           <Counter length={body.length} max={bodyMax} />
+          {compose === 'question' && (() => {
+            // Before she asks, show questions already asked that share her words.
+            const words = body.toLowerCase().match(/[a-z]{4,}/g) || [];
+            if (words.length < 2) return null;
+            const seen = new Set();
+            const similar = [...sideQuestions, ...posts.filter((x) => x.kind === 'question')]
+              .filter((q) => q?.id && !seen.has(q.id) && seen.add(q.id))
+              .map((q) => ({ q, n: words.filter((w) => String(q.body || '').toLowerCase().includes(w)).length }))
+              .filter((x) => x.n >= 2)
+              .sort((a, b) => b.n - a.n)
+              .slice(0, 3);
+            return similar.length ? <div className="wc-similar"><p className="wc-label">Already asked</p><ul>{similar.map(({ q }) => <li key={q.id}><button type="button" className="wc-link" onClick={() => { setCompose(null); openPost(q); }}>{String(q.body).slice(0, 120)}</button></li>)}</ul></div> : null;
+          })()}
           {hashtagSuggestions.length > 0 && <div className="wc-tags">{hashtagSuggestions.map((t) => <button type="button" key={t.key} onClick={() => setBody((x) => x.replace(/#(?:[A-Za-z][\w-]*)?$/, `${t.tag} `))}>{t.tag}</button>)}</div>}
-          {compose === 'review' && <div className="wc-rating" role="radiogroup" aria-label="Your rating">{[1, 2, 3, 4, 5].map((n) => <button type="button" key={n} role="radio" aria-checked={rating === n} aria-label={`${n} ${n === 1 ? 'star' : 'stars'}`} className={n <= rating ? 'is-on' : ''} onClick={() => setRating(n)}><Star on={n <= rating} size={28} /></button>)}</div>}
         </section>
         <section className="wc-group">
-          <h3 className="wc-label">{compose === 'review' ? 'Product you’re reviewing' : compose === 'recommend' ? 'Product to recommend' : <>Product <small>Optional</small></>}</h3>
-          <Picker products={products} value={productId} onChange={setProductId} placeholder="Search products" />
+          {compose !== 'review' && <>
+            <h3 className="wc-label">{compose === 'recommend' ? 'Product to recommend' : <>Product <small>Optional</small></>}</h3>
+            <Picker products={products} value={productId} onChange={setProductId} placeholder="Search products" />
+          </>}
           {compose !== 'recommend' && <div className="wc-photo-pick">
-            <label className="wc-btn is-ghost is-small wc-upload">{photos.length ? 'Change photos' : 'Add photos'}<input type="file" accept="image/*" multiple className="wc-file" onChange={(e) => { try { const f = Array.from(e.target.files || []).slice(0, MAX_POST_PHOTOS); f.forEach(checkImageFile); setPhotos(f); setError(''); } catch (err) { setError(err.message); } e.target.value = ''; }} /></label>
+            <label className="wc-btn is-ghost is-small wc-upload">{photos.length ? 'Change photos' : 'Add photos'}<input type="file" accept="image/*" multiple className="wc-file" aria-label="Add photos" onChange={(e) => { try { const f = Array.from(e.target.files || []).slice(0, MAX_POST_PHOTOS); f.forEach(checkImageFile); setPhotos(f); setError(''); } catch (err) { setError(err.message); } e.target.value = ''; }} /></label>
             <small>{photos.length ? photos.map((f) => f.name).join(', ') : `Up to ${MAX_POST_PHOTOS}`}</small>
           </div>}
         </section>
@@ -916,7 +942,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   })();
   const questionsSide = sideQuestions.filter((q) => !(page?.type === 'post' && page.id === q.id)).slice(0, SIDE_MAX);
   const playlistsSide = page?.type === 'playlist' ? [] : sidePlaylists.slice(0, SIDE_MAX);
-  const peopleSide = suggestedPeople.slice(0, SIDE_MAX);
+  // People to follow is for members (a visitor can't follow anyone yet); visitors get the questions.
+  const peopleSide = user ? suggestedPeople.slice(0, SIDE_MAX) : [];
 
   return <section className="wc wc3">
     <div className={`wc-head${page ? '' : ` ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom ay3-commhero${seenBefore ? ' is-compact' : ''}`}`}>
@@ -924,7 +951,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       {!page && <div className="wc-mirror" aria-hidden="true"><span className="wc-mirror__frame"><img src="/landing/stalls-trio.webp" alt="" /></span><span className="wc-mirror__lip">say it here ♡</span></div>}
       <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
         {user && <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount ? `Updates, ${unreadCount} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount > 0 && <span className="wc-bell-dot" aria-hidden="true" />}</button>}
-        <button type="button" className="wc-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Sign in for a Community profile'}><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /></button>
+        {user && <button type="button" className="wc-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Set up your Community profile'}><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /></button>}
       </div>
     </div>
     {error && <p className="wc-error" role="alert">{error}</p>}
@@ -953,13 +980,15 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     </div>
 
     {composeSheet}
-    {showUpdates && <Sheet title="Updates" onClose={() => setShowUpdates(false)}>
+    {showUpdates && <Sheet title="Updates" className="wc-updates" onClose={() => setShowUpdates(false)}>
       {!notifications ? <div className="wc-skel-list" aria-busy="true" aria-label="Loading updates"><span className="wc-skel-line" /><span className="wc-skel-line is-mid" /></div>
         : notifications.length ? (() => {
           // People, not system strings: "Eliz accepted your friend request".
           const VERBS = { follow: 'followed you', followed: 'followed you', friend_accepted: 'accepted your friend request', friend_request: 'sent you a friend request', comment: 'replied to your post', reply: 'replied to you', reaction: 'found your post helpful', helpful: 'found your post helpful', recommendation: 'recommended a product to you', recommend: 'recommended a product to you', mention: 'mentioned you' };
-          const day = 86400000; const now = Date.now();
-          const group = (n) => { const t = new Date(n.created_at).getTime(); return now - t < day ? 'Today' : now - t < 7 * day ? 'This week' : 'Earlier'; };
+          // Calendar days in her own time zone (a 24-hour window put yesterday under Today).
+          const startToday = new Date(); startToday.setHours(0, 0, 0, 0);
+          const t0 = startToday.getTime(); const week = t0 - 6 * 86400000;
+          const group = (n) => { const t = new Date(n.created_at).getTime(); return t >= t0 ? 'Today' : t >= week ? 'This week' : 'Earlier'; };
           const items = notifications.slice(0, 20);
           return ['Today', 'This week', 'Earlier'].map((g) => {
             const list = items.filter((n) => group(n) === g);
@@ -969,7 +998,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
               const verb = VERBS[String(n.type || '').toLowerCase()];
               const text = verb ? `${who} ${verb}` : (n.message || n.body || `${who}: ${String(n.type || 'update').replace(/_/g, ' ')}`);
               return <li key={n.id}>
-                <span className="wc-notes-av" aria-hidden="true">{String(who).replace('@', '').charAt(0).toUpperCase()}</span>
+                <Avatar size={32} name={String(who).replace('@', '')} path={n.actor?.avatar_url} />
                 {(() => {
                   const postId = n.post_id || n.data?.post_id || n.payload?.post_id || null;
                   const aboutPost = postId && /comment|reply|reaction|helpful|mention/i.test(String(n.type || ''));

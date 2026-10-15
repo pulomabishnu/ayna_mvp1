@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { formatPrice } from '../utils/formatPrice';
@@ -14,18 +14,6 @@ export default function SavedForLater({
   onBrowse,
 }) {
   const items = Object.values(savedProducts || {});
-  const rowRef = useRef(null);
-  const [edge, setEdge] = useState({ start: true, end: true });
-  useEffect(() => {
-    const el = rowRef.current;
-    if (!el) return undefined;
-    const read = () => setEdge({ start: el.scrollLeft < 4, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4 });
-    read();
-    el.addEventListener('scroll', read, { passive: true });
-    window.addEventListener('resize', read);
-    return () => { el.removeEventListener('scroll', read); window.removeEventListener('resize', read); };
-  }, [items.length]);
-  const page = (dir) => { const el = rowRef.current; if (el) el.scrollBy({ left: dir * el.clientWidth * 0.9, behavior: 'smooth' }); };
 
   return (
     <section id="ayna-wishlist" className="eco-saved mockup-page wishlist-section">
@@ -43,7 +31,7 @@ export default function SavedForLater({
         </div>
       ) : (
         <>
-        <ul className="ay-saved" ref={rowRef}>
+        <ul className="ay-saved ay-saved--grid">
           {items.map((product) => {
             const inEcosystem = !!myProducts[product.id];
             const brand = brandOf(product) || product.brand || '';
@@ -72,12 +60,6 @@ export default function SavedForLater({
             );
           })}
         </ul>
-        {(
-          <div className="ay-saved__nav">
-            <button type="button" onClick={() => page(-1)} disabled={edge.start} aria-label="Previous saved items">←</button>
-            <button type="button" onClick={() => page(1)} disabled={edge.end} aria-label="More saved items">→</button>
-          </div>
-        )}
         </>
       )}
     </section>

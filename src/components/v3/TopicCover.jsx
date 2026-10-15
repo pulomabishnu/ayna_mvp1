@@ -20,6 +20,13 @@ const COVERS = {
   'hormonal-birth-control': ['Birth control', 'peri', 'pills'],
 };
 
+const SECTION_TONE = {
+  'heavy-bleeding': 'pink', 'period-pain-when-to-seek-care': 'pink', fibroids: 'pink', 'iron-deficiency-anemia': 'pink',
+  'pcos-basics': 'peri', 'menopause-basics': 'peri', pmdd: 'peri', 'hormonal-birth-control': 'peri',
+  'endometriosis-basics': 'butter', 'pelvic-floor-dysfunction': 'butter', 'ovarian-cysts': 'butter',
+  'intimate-wash': 'ink', 'uti-prevention': 'ink', 'yeast-infection-basics': 'ink', 'bacterial-vaginosis': 'ink',
+};
+
 /* Small spot drawings for each topic, one stroke weight, drawn in the
    tile's ink colour. They teach the topic at a glance. */
 const SPOTS = {
@@ -41,7 +48,9 @@ const SPOTS = {
 
 
 export default function TopicCover({ id, title = '', className = '' }) {
-  const [word, tone, spot] = COVERS[id] || [title, 'peri', null];
+  const [word, , spot] = COVERS[id] || [title, 'peri', null];
+  // Colour means the Library section: menstrual pink, hormonal sky, chronic and pelvic butter, vaginal and urinary espresso.
+  const tone = SECTION_TONE[id] || 'peri';
   return (
     <span className={`ay-lib-cover is-${tone}${spot ? ' has-spot' : ''} ${className}`.trim()} aria-hidden="true">
       {spot && SPOTS[spot] && <svg className="ay-lib-cover__spot" viewBox="0 0 48 48">{SPOTS[spot]}</svg>}

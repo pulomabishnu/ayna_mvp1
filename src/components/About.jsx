@@ -29,40 +29,6 @@ const PRINCIPLES = [
   { title: 'Never pay-to-match', body: 'Sponsorship is never a match input.' },
 ];
 
-const HELPS = [
-  {
-    title: 'Start with your needs',
-    body: 'Explore by wellness concern or share your preferences for a more personalized experience.',
-    icon: (
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
-        <circle cx="10.5" cy="10.5" r="6.5" />
-        <path d="M15.5 15.5 21 21" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Look beyond the label',
-    body: 'Find ingredient details, available research and product information together, with sources you can explore further.',
-    icon: (
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z" />
-        <path d="M14 3v5h5M8.5 12.5h7M8.5 16h7" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Hear other perspectives',
-    body: 'Read consumer experiences alongside product information. Someone else’s experience can offer context, even when their needs differ from yours.',
-    icon: (
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
-        <circle cx="9" cy="8" r="3.5" />
-        <path d="M2.5 20c.8-3.5 3.3-5.5 6.5-5.5s5.7 2 6.5 5.5" />
-        <circle cx="17" cy="9" r="2.8" />
-        <path d="M17.5 14.5c2.3.3 3.6 2 4 4.5" />
-      </svg>
-    ),
-  },
-];
 
 const ADVISORS = [
   { name: 'Dr. David Orbach', title: 'BME, MD, Startup Advisor', photo: '/advisors/david-orbach.png', linkedin: 'https://www.linkedin.com/in/davidorbach/' },
@@ -145,14 +111,15 @@ export default function About({ onBack, onExplore, onStart }) {
         title="Your body. Your questions. A clearer place to start."
         intro="ayna helps you discover women’s wellness products with your needs in mind. Explore product information, research and reviews in one place, so you can spend less time searching and more time understanding your options."
       >
-        <div className="ay-info-grid ay-info-grid--4">
+        {/* Numbered like the landing's "Your counter, decoded" (was four colour blobs). */}
+        <ol className="ay-info-principles">
           {PRINCIPLES.map((p, i) => (
-            <div key={p.title} className={`ay-info-tile ay-info-tile--${['peri', 'pink', 'mint', 'butter'][i]}`}>
-              <div className="ay-info-tile__title">{p.title}</div>
-              <p className="ay-info-tile__body">{p.body}</p>
-            </div>
+            <li key={p.title}>
+              <span className="ay-info-principles__n" aria-hidden="true">{i + 1}</span>
+              <div><h3>{p.title}</h3><p>{p.body}</p></div>
+            </li>
           ))}
-        </div>
+        </ol>
       </InfoSection>
 
       <InfoSection eyebrow="Our story" title="Different stories. One shared question.">
@@ -187,18 +154,7 @@ export default function About({ onBack, onExplore, onStart }) {
         </div>
       </InfoSection>
 
-      <InfoSection eyebrow="How ayna helps" title="More context for the choices you make.">
-        <div className="ay-info-grid ay-info-grid--3">
-          {HELPS.map((item) => (
-            <div key={item.title} className="ay-info-card ay-info-card--pad ay-info-help">
-              <span className="ay-info-help__icon">{item.icon}</span>
-              <h3 className="ay-info-card__title">{item.title}</h3>
-              <p className="ay-info__body">{item.body}</p>
-            </div>
-          ))}
-        </div>
-      </InfoSection>
-
+      {/* The icon + title + line ×3 block was cut: the landing's "Your counter, decoded" says it better. */}
       <InfoSection
         eyebrow="Meet the founders"
         title="Three founders. A shared reason to build."

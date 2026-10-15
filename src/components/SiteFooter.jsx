@@ -120,7 +120,7 @@ export default function SiteFooter({
 
         <FooterColumn title="Company">
           <a className="ay-footer-link" href="/about" onClick={(e) => footerGo(e, onViewAbout)}>About</a>
-          <a className="ay-footer-link" href="/startups" onClick={(e) => footerGo(e, onViewWaitlist)}>Partner brands</a>
+          <a className="ay-footer-link" href="/partners" onClick={(e) => footerGo(e, onViewWaitlist)}>Partner brands</a>
         </FooterColumn>
 
         <FooterColumn title="Get in touch">

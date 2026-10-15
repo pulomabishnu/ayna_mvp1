@@ -107,7 +107,7 @@ export function isPrelaunchPartnerItem(item) {
 
 /** Browse badge text for a partner item. */
 export function getPartnerBadgeLabel(item) {
-  return isPrelaunchPartnerItem(item) ? 'ayna Favorite · Waitlist' : 'ayna Favorite';
+  return isPrelaunchPartnerItem(item) ? 'ayna partner · Waitlist' : 'ayna partner';
 }
 
 export function isPartnerBrandItem(item) {

@@ -1,78 +1,97 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ProductCard from '../ProductCard';
 
-/* "Fill the gaps": the needs she picked as pinned tags on one cork strip.
-   Pick a tag to see ayna's strongest picks for that need, with the match
-   percentage on every card. A tick on a tag means one of its picks is
-   already in her ecosystem. */
-export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProduct, onShop }) {
-  const firstGap = needs.find((n) => n.picks.length && !n.picks.some((p) => isOwned(p.productId))) || needs.find((n) => n.picks.length) || needs[0];
-  const [sel, setSel] = useState(firstGap ? firstGap.id : null);
-  const cur = needs.find((n) => n.id === sel) || firstGap;
-  // Gaps first. Needs she already covers fold away as "Covered by …".
+/* "Fill the gaps": the needs she picked that nothing on her shelves covers
+   yet, as tags on one strip. Pick a tag to see ayna's strongest picks for
+   that need (never something she already owns). Needs she already covers
+   fold away as "Covered by …". A need with no strong pick says what to do
+   instead of a dead "no match". */
+export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProduct, onShop, onFindCare }) {
   const coveredBy = (n) => n.picks.find((p) => isOwned(p.productId));
   const gaps = needs.filter((n) => !coveredBy(n));
   const covered = needs.filter((n) => coveredBy(n));
-  if (!cur) return null;
+  const [sel, setSel] = useState(gaps[0] ? gaps[0].id : null);
+  const cur = needs.find((n) => n.id === sel) || null;
+
+  const rowRef = useRef(null);
+  const [edge, setEdge] = useState({ start: true, end: true });
+  const measure = () => {
+    const el = rowRef.current;
+    if (!el) return;
+    setEdge({ start: el.scrollLeft <= 4, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4 });
+  };
+  useEffect(() => { measure(); window.addEventListener('resize', measure); return () => window.removeEventListener('resize', measure); }, [gaps.length]);
+  const page = (dir) => rowRef.current?.scrollBy({ left: dir * rowRef.current.clientWidth * 0.8, behavior: 'smooth' });
+
+  if (!needs.length) return null;
+  const picks = cur ? cur.picks.filter((p) => !isOwned(p.productId)) : [];
+  const owner = cur ? coveredBy(cur) : null;
+
   return (
     <div className="ay-needs">
-      {gaps.length === 0 && <p className="ay-needs__done">Every need you picked has something on a shelf.</p>}
-      <ul className="ay-needs__tags" aria-label="Needs with nothing on a shelf yet">
-        {gaps.map((n, i) => {
-          const covered = n.picks.some((p) => isOwned(p.productId));
-          return (
-            <li key={n.id} style={{ '--r': `${[-2, 1.5, -1, 2, -.5][i % 5]}deg` }}>
-              <button type="button" className={`ay-needs__tag${n.id === cur.id ? ' is-on' : ''}`} aria-pressed={n.id === cur.id} onClick={() => setSel(n.id)}>
-                {covered && <span className="ay-needs__tick" aria-label="Covered">✓</span>}
-                {n.label}
-                <small>{n.picks.length ? `${n.picks.length} pick${n.picks.length === 1 ? '' : 's'}` : 'no match yet'}</small>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      {gaps.length === 0 ? (
+        <p className="ay-needs__done">Every need you picked has something on a shelf.</p>
+      ) : (
+        <div className="ay-needs__row">
+          {!edge.start && <button type="button" className="ay-needs__arrow is-prev" onClick={() => page(-1)} aria-label="Scroll needs back">←</button>}
+          <ul className="ay-needs__tags" ref={rowRef} onScroll={measure} aria-label="Needs with nothing on a shelf yet">
+            {gaps.map((n, i) => (
+              <li key={n.id} style={{ '--r': `${[-2, 1.5, -1, 2, -.5][i % 5]}deg` }}>
+                <button type="button" className={`ay-needs__tag${cur && n.id === cur.id ? ' is-on' : ''}`} aria-pressed={Boolean(cur && n.id === cur.id)} onClick={() => setSel(n.id)}>
+                  {n.label}
+                  <small>{n.picks.length ? `${n.picks.length} pick${n.picks.length === 1 ? '' : 's'}` : 'See what to do'}</small>
+                </button>
+              </li>
+            ))}
+          </ul>
+          {!edge.end && <button type="button" className="ay-needs__arrow is-next" onClick={() => page(1)} aria-label="Scroll needs forward">→</button>}
+        </div>
+      )}
       {covered.length > 0 && (
         <details className="ay-needs__covered">
           <summary>Already covered: {covered.length} need{covered.length === 1 ? '' : 's'}</summary>
-          <ul>{covered.map((n) => <li key={n.id}><button type="button" className={n.id === cur.id ? 'is-on' : ''} onClick={() => setSel(n.id)}><strong>{n.label}</strong> covered by {coveredBy(n).product?.name || 'a product on your shelf'}</button></li>)}</ul>
+          <ul>{covered.map((n) => <li key={n.id}><button type="button" className={cur && n.id === cur.id ? 'is-on' : ''} onClick={() => setSel(n.id)}><strong>{n.label}</strong> covered by {coveredBy(n).product?.name || 'a product on your shelf'}</button></li>)}</ul>
         </details>
       )}
-      <div className="ay-needs__panel" aria-live="polite">
-        <p className="ay-needs__for">For <strong>{cur.phrase}</strong></p>
-        {cur.picks.length > 0 ? (
-          <ul className="ay-needs__grid">
-            {cur.picks.map((p) => {
-              const owned = isOwned(p.productId);
-              return (
+      {cur && (
+        <div className="ay-needs__panel" aria-live="polite">
+          <p className="ay-needs__for">For <strong>{cur.phrase}</strong></p>
+          {owner && <p className="ay-needs__ownedline">Covered by {owner.product?.name || 'a product on your shelf'}.{picks.length ? ' Other strong picks:' : ''}</p>}
+          {picks.length > 0 ? (
+            <ul className="ay-needs__grid">
+              {picks.map((p) => (
                 <li key={p.productId}>
                   <ProductCard
                     product={p.product}
                     matchPercent={p.score}
                     matchLabel={`${p.score}% match for ${cur.phrase}`}
                     onOpen={onOpenProduct}
-                    action={owned ? <span className="ay-needs__owned">✓ In your ecosystem</span> : onToggleProduct && (
+                    action={onToggleProduct && (
                       <button type="button" className="ay-card-add" onClick={() => onToggleProduct(p.product)}>+ Add to my ecosystem</button>
                     )}
                   />
                 </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <p className="ay-needs__none">
-            No strong match for {cur.phrase} yet. We would rather show nothing than a weak pick.
-            {onShop && <button type="button" className="eco3-pill" onClick={() => onShop(cur.short)}>Browse {cur.short.toLowerCase()}</button>}
-          </p>
-        )}
-        {cur.care && (
-          <details className="ay-needs__care">
-            <summary>Care options for {cur.phrase}</summary>
-            <ul>
-              {cur.care.map((link) => <li key={link.href}><a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a> <span>{link.hint}</span></li>)}
+              ))}
             </ul>
-          </details>
-        )}
-      </div>
+          ) : !owner && (
+            <div className="ay-needs__none">
+              <p>Nothing in the shop is a strong enough fit for {cur.phrase} to recommend. A clinician is the best next step for this one.</p>
+              <div className="ay-needs__noneacts">
+                {onFindCare && <button type="button" className="eco3-pill eco3-pill--ink" onClick={onFindCare}>Find care</button>}
+                {onShop && <button type="button" className="eco3-pill" onClick={() => onShop(cur.short)}>Browse {cur.short.toLowerCase()} anyway</button>}
+              </div>
+            </div>
+          )}
+          {cur.care && (
+            <details className="ay-needs__care">
+              <summary>Care options for {cur.phrase}</summary>
+              <ul>
+                {cur.care.map((link) => <li key={link.href}><a href={link.href} target="_blank" rel="noopener noreferrer">{link.label} ↗</a> <span>{link.hint}</span></li>)}
+              </ul>
+            </details>
+          )}
+        </div>
+      )}
     </div>
   );
 }

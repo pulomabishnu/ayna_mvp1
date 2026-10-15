@@ -220,8 +220,8 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
               ? 'Pre-launch brand partner. Join the waitlist; ayna earns no commission.'
               : 'Commercial brand partner. Partnership does not change your personalized match score.'}
             aria-label={isPrelaunchPartnerItem(product)
-              ? 'ayna Favorite, a pre-launch brand partner with a waitlist'
-              : 'ayna Favorite, a commercial brand partner'}
+              ? 'ayna partner, a pre-launch brand partner with a waitlist'
+              : 'ayna partner, a commercial brand partner'}
           >
             {getPartnerBadgeLabel(product)}
           </span>

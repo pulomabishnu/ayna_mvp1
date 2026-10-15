@@ -118,7 +118,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                         ))}
                         {userChatMessages.length > 0 && (
                             <>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginTop: '0.5rem', marginBottom: '0.25rem', letterSpacing: '0.05em' }}>Based on what you shared with ayna</p>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', marginBottom: '0.25rem' }}>Based on what you shared with ayna</p>
                                 {userChatMessages.slice(0, 5).map((text, i) => (
                                     <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', background: 'var(--color-primary-fade)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
                                         <div>

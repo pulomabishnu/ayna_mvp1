@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom';
 import SuggestBox from './SuggestBox';
 import './Discovery.css';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct, isTeenProduct } from '../data/products';
 import { behaviorFrom, matchBadge } from '../utils/matchDisplay';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { scoreSearchMatch, correctedSearchQuery } from '../utils/search/index.js';
@@ -504,7 +504,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
     });
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
-    const [typeFilter] = useState('all');
+    const [typeFilter, setTypeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const searchPlaceholder = useStaticPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
@@ -524,6 +524,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // Remembered choice wins, so a reload never flips the toggle after first paint (S02).
     const storedPersonalized = (() => { try { return localStorage.getItem(PERSONALIZED_KEY); } catch { return null; } })();
     const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (storedPersonalized === null ? true : storedPersonalized === '1'));
+    const hasProfileForSort = Boolean(user) && Boolean(hasQuizFrustrations || hasHealthImport);
     const [showFilters, setShowFilters] = useState(false);
     const [priceFilter, setPriceFilter] = useState('all');
     const [ratingFilter, setRatingFilter] = useState('all');
@@ -531,7 +532,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [sustainabilityFilter, setSustainabilityFilter] = useState('all');
     const [lifeStageFilter, setLifeStageFilter] = useState('all');
     const [aynaFilter, setAynaFilter] = useState('all');
-    const [preferenceFilter, setPreferenceFilter] = useState('all');
+    // Her own "avoid fragrance" answer starts the Fragrance-free filter on, labelled as from her profile.
+    const profileAvoidsFragrance = Boolean(user) && (quizResults?.fullHealthIntake?.avoidIngredients || quizResults?.avoidIngredients || []).some((x) => /fragrance|scent/i.test(String(x)));
+    const [preferenceFilter, setPreferenceFilter] = useState(profileAvoidsFragrance ? 'fragrance-free' : 'all');
 
     // Signing in mid-visit applies her remembered choice once; nothing flips after that.
     const hadUser = useRef(Boolean(user));
@@ -613,7 +616,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // the actual render-cost bottleneck, not image loading, which already had
     // caching/concurrency limits. "Load more" reveals additional batches
     // instead of mounting everything up front.
-    const PAGE_SIZE = 30;
+    const PAGE_SIZE = 60;
     // Bounds how many browse-AI generation rounds a single browse context
     // (macro group + category + personalization) can trigger. Raised from 2
     // to 10 per explicit direction: browsing a category should feel
@@ -768,6 +771,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const passesActiveFilters = useCallback((item, skipCategory = false) => {
             if (omittedProducts[item.id]) return false;
+            // ayna is 18+: products made for teens are not sold or suggested here.
+            if (isTeenProduct(item)) return false;
             // An explicit FSA/HSA filter should search the full eligible catalog,
             // not only the user's personalized subset.
             // Personalized RANKS the catalog (best matches first); it never hides
@@ -778,7 +783,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (!skipCategory && !itemMatchesMacroGroup(item, macroGroup)) return false;
             // Sub-category filter within the selected group
             if (!skipCategory && categoryFilter !== 'all' && item.category !== categoryFilter) return false;
-            if (typeFilter !== 'all' && item.type !== typeFilter) return false;
+            // Products vs apps and services (telehealth is care, whatever its record says).
+            if (typeFilter !== 'all') {
+                const service = item.type === 'digital' || ['telehealth', 'tracker', 'mental-health'].includes(item.category) || /\bapp\b|telehealth|online (visit|program)|membership/i.test(`${item.name} ${item.price || ''}`);
+                if (typeFilter === 'services' ? !service : service) return false;
+            }
             if (!skipCategory && categoryFilter === 'pad' && !padMatchesSubFilters(item, padFlowFilter, padPreferenceFilter, padUseCaseFilter)) return false;
             if (!skipCategory && categoryFilter === 'supplement' && symptomFilter !== 'all') {
                 const ids = SYMPTOM_TO_SUPPLEMENTS[symptomFilter];
@@ -856,8 +865,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const sortByShownMatch = sortBy === 'default' && personalizationFilter && Boolean(hasQuizFrustrations || hasHealthImport);
         const shownPct = sortByShownMatch ? new Map(list.map((it) => [it.id, matchBadge(getProductMatchDetailsForProduct(it, quizResults, healthProfile, matchOpts))?.percent ?? 0])) : null;
 
+        // Price sorts compare like with like: products first, then apps and services
+        // (a free app or "$0-15/visit" used to lead "low to high").
+        const isServiceItem = (it) => it.type === 'digital' || ['telehealth', 'tracker', 'mental-health'].includes(it.category);
         if (sortBy === 'price-asc') {
             list = [...list].sort((a, b) => {
+                if (isServiceItem(a) !== isServiceItem(b)) return isServiceItem(a) ? 1 : -1;
                 const pa = getSortPrice(a);
                 const pb = getSortPrice(b);
                 if (pa == null && pb == null) {
@@ -872,6 +885,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             });
         } else if (sortBy === 'price-desc') {
             list = [...list].sort((a, b) => {
+                if (isServiceItem(a) !== isServiceItem(b)) return isServiceItem(a) ? 1 : -1;
                 const pa = getSortPrice(a);
                 const pb = getSortPrice(b);
                 if (pa == null && pb == null) {
@@ -1483,6 +1497,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     // Only the values inside the Filters sheet (not search, category or sort).
     const clearSheetFilters = () => {
+        setTypeFilter('all');
         setPriceFilter('all');
         setEligibilityFilter('all');
         setLifeStageFilter('all');
@@ -1490,29 +1505,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setSustainabilityFilter('all');
         setAynaFilter('all');
     };
-    const sheetFilterCount = [priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length;
+    const sheetFilterCount = [typeFilter, priceFilter, eligibilityFilter, lifeStageFilter, preferenceFilter, sustainabilityFilter, aynaFilter].filter((v) => v && v !== 'all').length;
     const activeFilterCount = [priceFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, typeFilter].filter((v) => v && v !== 'all').length + (categoryFilter !== 'all' && !submittedQuery ? 1 : 0);
-    const personalizedToggle = (
-        <label className="ayna-browse__personalized-toggle">
-            <span>Personalized</span>
-            <span className="ayna-browse__personalized-switch">
-                <input
-                    type="checkbox"
-                    role="switch"
-                    aria-checked={personalizationFilter}
-                    checked={personalizationFilter}
-                    onChange={(e) => {
-                        setPersonalizationFilter(e.target.checked);
-                        // A fresh scope: drop any live-search state from the old one (S03).
-                        setAiSuggestions([]);
-                        setAiRelatedSearches([]);
-                        try { localStorage.setItem(PERSONALIZED_KEY, e.target.checked ? '1' : '0'); } catch { /* private mode */ }
-                    }}
-                />
-                <span className="ayna-browse__personalized-track" aria-hidden="true" />
-            </span>
-        </label>
-    );
 
     return (
         <section className="container animate-fade-in-up ayna-browse" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
@@ -1564,7 +1558,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 />
                 <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
             </form>
-            {submittedQuery && <SearchAssist query={submittedQuery} resultCount={filtered.length} showTries={false} onUse={(text) => runSearch(text)} />}
+            {submittedQuery && filtered.length > 0 && <SearchAssist query={submittedQuery} resultCount={filtered.length} showTries={false} onUse={(text) => runSearch(text)} />}
             {submittedQuery && categoryFilter !== 'all' && (
                 <div className="ayna-browse__inferred">
                     <button type="button" onClick={() => setCategoryFilter('all')} aria-label={`Remove ${CATEGORY_LABELS[categoryFilter] || categoryFilter} filter`}>
@@ -1580,7 +1574,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <button
                         key={group.id}
                         type="button"
-                        className={macroGroup === group.id ? 'is-active' : ''}
+                        className={macroGroup === group.id && !(group.id === 'all' && submittedQuery) ? 'is-active' : ''}
                         onClick={() => {
                             setMacroGroup(group.id);
                             setCategoryFilter('all');
@@ -1604,29 +1598,47 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <button type="button" className={`ayna-browse__filter-button${activeFilterCount ? ' is-active' : ''}${showFilters ? ' is-open' : ''}`} onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
                         Filters{activeFilterCount ? ` · ${activeFilterCount}` : ''}
                     </button>
-                    {user ? personalizedToggle : (
-                        <button type="button" className="ayna-browse__personalize-cta" onClick={() => onRequirePersonalizeAuth?.()}>Personalize →</button>
+                    {!user && (
+                        <button type="button" className="ayna-browse__personalize-cta" onClick={() => onRequirePersonalizeAuth?.()}>See my matches →</button>
                     )}
                 </div>
+                {/* "Best match" is a sort (first, and the default once she has a profile), not a separate switch. */}
                 <label className="ayna-browse__sort">
                     <span>Sort</span>
-                    <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                        {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.value === "default" && personalizationFilter && (hasQuizFrustrations || hasHealthImport) ? "Best match" : option.label}</option>)}
+                    <select
+                        value={hasProfileForSort && personalizationFilter && sortBy === 'default' ? 'best' : sortBy}
+                        onChange={(e) => {
+                            const v = e.target.value;
+                            if (v === 'best' || v === 'default') {
+                                const on = v === 'best';
+                                setPersonalizationFilter(on);
+                                setAiSuggestions([]);
+                                setAiRelatedSearches([]);
+                                try { localStorage.setItem(PERSONALIZED_KEY, on ? '1' : '0'); } catch { /* private mode */ }
+                                setSortBy('default');
+                            } else {
+                                if (hasProfileForSort && !personalizationFilter) setPersonalizationFilter(true);
+                                setSortBy(v);
+                            }
+                        }}
+                    >
+                        {hasProfileForSort && <option value="best">Best match</option>}
+                        {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                     </select>
                 </label>
             </div>
 
             {(() => {
-                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: 'Clinician backed', community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Fertility', pregnancy: 'Pregnancy', postpartum: 'Postpartum', perimenopause: 'Perimenopause', menopause: 'Menopause' };
-                const applied = [[priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
+                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription or membership', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: 'Clinician backed', community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Trying to conceive', pregnancy: 'Pregnant', postpartum: 'Postpartum', perimenopause: 'Perimenopause and menopause', menopause: 'Menopause', period: 'Period years', products: 'Products', services: 'Apps & services' };
+                const applied = [[typeFilter, setTypeFilter], [priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayna-browse__applied" role="status">
-                        <span className="ayna-browse__count">{applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.length}` : shownCount == null ? '\u00a0' : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
+                        <span className="ayna-browse__count">{submittedQuery ? ((shownCount ?? catalogShown) === 0 ? '\u00a0' : `${shownCount ?? catalogShown} result${(shownCount ?? catalogShown) === 1 ? '' : 's'} for “${submittedQuery}”`) : applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.filter((it) => !isTeenProduct(it)).length}` : shownCount == null ? '\u00a0' : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
                         {sortBy === 'default' && !(personalizationFilter && (hasQuizFrustrations || hasHealthImport)) && !searchSubmitted && (
-                            <span className="ayna-browse__featured-note">Featured order includes partner brands.{(hasQuizFrustrations || hasHealthImport) ? ' Turn on Personalized to sort by your match.' : ''}</span>
+                            <span className="ayna-browse__featured-note">Featured order includes partner brands.{(hasQuizFrustrations || hasHealthImport) ? ' Sort by Best match to see your order.' : ''}</span>
                         )}
                         {applied.map(([v, set]) => (
-                            <button key={v} type="button" className="ayna-browse__chip-x" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
+                            <button key={v} type="button" className="ayna-browse__chip-x" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v}{v === 'fragrance-free' && profileAvoidsFragrance ? ' (from your profile)' : ''} <span aria-hidden="true">×</span></button>
                         ))}
                         {applied.length > 0 && <button type="button" className="ayna-browse__clearall" onClick={clearSheetFilters}>Clear all</button>}
                     </div>
@@ -1636,15 +1648,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {showFilters && (
                 <FilterSheet
                     groups={[
-                        ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–49'], ['50-100', '$50–99'], ['100-plus', '$100+'], ['subscription', 'Subscription']]],
+                        ['Type', typeFilter, setTypeFilter, [['products', 'Products'], ['services', 'Apps & services']]],
+                        ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–49'], ['50-100', '$50–99'], ['100-plus', '$100+']]],
+                        ['Billing', priceFilter, setPriceFilter, [['subscription', 'Subscription or membership']]],
                         ['Eligibility', eligibilityFilter, setEligibilityFilter, [['fsa-hsa', 'FSA/HSA eligible']]],
                         // Fertility, Pregnancy, Postpartum and Menopause are category chips on the page already.
-                        ['Life stage', lifeStageFilter, setLifeStageFilter, [['perimenopause', 'Perimenopause']]],
+                        ['Life stage', lifeStageFilter, setLifeStageFilter, [['period', 'Period years'], ['fertility', 'Trying to conceive'], ['pregnancy', 'Pregnant'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause and menopause']]],
                         ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Paraben or chlorine free (as labeled)']].filter(([v]) => v === preferenceFilter || preferenceOptions.some((o) => o.value === v))],
                         ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']].filter(([v]) => sustainabilityOptions.some((o) => o.value === v))],
                         ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favorite'], ...(user ? [['ecosystem', 'In my ecosystem']] : [])]],
                     ]}
-                    personalizedToggle={user ? personalizedToggle : null}
+                    personalizedToggle={null}
                     resultCount={gridItems.length}
                     activeCount={sheetFilterCount}
                     onClear={clearSheetFilters}
@@ -1720,7 +1734,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             onToggleSaved={onToggleSaved}
                             labels={<>
                                 {isSponsoredItem(item) && <span className="ayna-browse-card__sponsored">Sponsored</span>}
-                                {!isSponsoredItem(item) && isPartnerBrandItem(item) && <span className="ayna-browse-card__partner">Partner</span>}
+                                {!isSponsoredItem(item) && isPartnerBrandItem(item) && <span className="ayna-browse-card__partner">ayna partner</span>}
                                 {eligibilityLabel && <span className="ayna-browse-card__eligibility">{eligibilityLabel}</span>}
                             </>}
                             tile={cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (

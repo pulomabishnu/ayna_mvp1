@@ -642,6 +642,13 @@ export default function ProductModal({
       {recall.status === 'past' && <p className="pdp-chiprow"><span className="pdp-chip is-warn">{'\u26a0'} {recall.detail ? recall.detail.replace(/\.$/, '') : recall.label}</span></p>}
       <div className="pdp-actions__primary">
         {buyButton()}
+        {/* No buy link: the same button slot says where to get it (first, before Add). */}
+        {!buyUrl && (() => {
+          const sites = (product.whereToBuy || []).filter((w) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(String(w).trim()));
+          return sites.length
+            ? <a className="pdp-btn pdp-btn--navy pdp-btn--buy" href={`https://${sites[0].trim()}`} target="_blank" rel="noopener noreferrer">{product.category === 'telehealth' ? 'Book at' : 'Visit'} {sites[0]} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+            : <p className="pdp-buybox__note">{(product.whereToBuy || []).length ? `Sold at ${product.whereToBuy.join(', ')}.` : 'We don’t have a link for where to get this yet.'}</p>;
+        })()}
         {onAddToEcosystem && user && (
           <button
             type="button"
@@ -690,12 +697,6 @@ export default function ProductModal({
           </ul>
         </div>
       )}
-      {!buyUrl && (() => {
-        const sites = (product.whereToBuy || []).filter((w) => /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(String(w).trim()));
-        return sites.length
-          ? <a className="pdp-btn pdp-btn--navy pdp-btn--buy" href={`https://${sites[0].trim()}`} target="_blank" rel="noopener noreferrer">{product.category === 'telehealth' ? 'Book at' : 'Visit'} {sites[0]} <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
-          : <p className="pdp-buybox__note">{(product.whereToBuy || []).length ? `Sold at ${product.whereToBuy.join(', ')}.` : 'We don’t have a link for where to get this yet.'}</p>;
-      })()}
       {isPartner && showDisclosure && <p className="pdp-buybox__note pdp-partner-note">{getPartnerDisclosureText(product)}</p>}
 
     </div>
@@ -860,7 +861,8 @@ export default function ProductModal({
                 // Long pack lists live once, in Buy; the header keeps short ones.
                 size?.text && size.text.length <= 40 ? size.text : null,
                 fsa && fsa.value === 'Eligible' ? 'FSA/HSA eligible' : null,
-                /month|subscription|\/mo\b|per year|\/year/i.test(priceText) ? 'Subscription' : null,
+                // A one-time "3-month program" is not a subscription; only recurring billing is.
+                /\/month|per month|subscription|\/mo\b|per year|\/year|monthly|annually/i.test(priceText) ? 'Subscription' : null,
                 product.type === 'digital' ? 'At home, online' : null,
                 product.requiresPrescription ? 'Prescription required' : null,
               ].filter(Boolean);
@@ -939,7 +941,7 @@ export default function ProductModal({
             <section className="pdp-suggest pdp-suggest--glance ay3-band ay3-band--ink ay3-scallop ay3-edge-top" aria-labelledby="pdp-more-h">
               <div className="ay-pdp-sechead">
                 <h2 id="pdp-more-h">You may also <em>like.</em></h2>
-                <p>{suggestions.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p>
+                <p>{suggestions.personal ? 'For the same need, ordered by how well each fits you.' : 'For the same need, from other parts of the shop.'}</p>
               </div>
               <div className="pdp-suggest__grid">{suggestions.more.map(suggestionCard)}</div>
             </section>

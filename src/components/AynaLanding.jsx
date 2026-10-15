@@ -330,7 +330,7 @@ function Trust({ onViewDiscovery }) {
   return (
     <div className="lx-trust">
       <div className="mockup-page">
-        <PartnerStrip variant="web" title={'Shop ayna\u2019s favorites'} onSelectBrand={(name) => onViewDiscovery?.(name)} />
+        <PartnerStrip variant="web" title={'Brands we work with'} onSelectBrand={(name) => onViewDiscovery?.(name)} />
       </div>
     </div>
   );

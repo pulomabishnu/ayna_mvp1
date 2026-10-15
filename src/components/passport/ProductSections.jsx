@@ -319,6 +319,15 @@ function splitSections(sections = []) {
   return out;
 }
 
+// "Brand cites X, brand-hosted figures, not independently verified here." reads as
+// a hedge stuck on a hedge; the label under the block already says it once.
+function brandLine(text) {
+  return String(text || '')
+    .replace(/^Brand (cites|says|states|claims)\s+/i, 'The brand reports ')
+    .replace(/,?\s*(brand-hosted figures,?\s*)?(and\s+)?not (independently )?verified( here| by ayna)?\.?\s*$/i, '.')
+    .replace(/\.\.$/, '.');
+}
+
 export default function ProductSections({ glance, extras = {}, extraNav = [], onXref = null }) {
   const plan = glance?.glossary || {};
   const [tab, setTab] = useState('glance');
@@ -614,7 +623,7 @@ export function ProductTrust({ glance, aynaRating = null, ratingCount = 0, extra
           {peopleEmpty
             ? <p className="ay-trust__muted">No ayna member reviews yet. Be the first.</p>
             : <Section bare section={peopleOnly} plan={plan} sources={glance.sources} onXref={onXref} />}
-          {brandBlocks.length > 0 && <div className="ay-trust__brand"><h4>What the brand says</h4>{brandBlocks.map((b) => <p key={b.key || b.text}>{b.text}</p>)}<small>Not verified by ayna.</small></div>}
+          {brandBlocks.length > 0 && <div className="ay-trust__brand"><h4>What the brand says</h4>{brandBlocks.map((b) => <p key={b.key || b.text}>{brandLine(b.text)}</p>)}<small>The brand's own figures. Not verified by ayna.</small></div>}
           {extras.people}
         </article>
         {clinician && (

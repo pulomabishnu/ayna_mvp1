@@ -197,8 +197,14 @@ const ROW_NOTES = {
   'iron-deficiency-anemia': 'Check your iron levels with a blood test before you start a supplement.',
   'uti-prevention': 'Evidence for these is mixed. Each card shows what research is linked.',
   'ovarian-cysts': 'Most cysts need no treatment. Sudden, severe pain needs care right away.',
+  fibroids: 'Fibroids are diagnosed and treated by a clinician. These help with heavy bleeding in the meantime.',
+  'heavy-bleeding': 'Products can make heavy periods easier to manage. They don’t treat the cause, so check in with a clinician too.',
+  'pcos-basics': 'PCOS care is led by a clinician. These are tracking and support tools, not treatment.',
+  'menopause-basics': 'Talk to a clinician first about treatment options. The rest is support for common symptoms.',
 };
-const CARE_FIRST = new Set(['menopause-basics', 'pmdd', 'endometriosis-basics']);
+const CARE_FIRST = new Set(['menopause-basics', 'pmdd', 'endometriosis-basics', 'fibroids', 'pcos-basics']);
+// Menopause rows keep to products made for it (no $2,000 mattress or gym creatine next to it).
+const MENOPAUSE_RE = /menopaus|perimenopaus|hot[- ]?flash|night sweat|vaginal dryness/i;
 
 function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct }) {
   const items = useMemo(() => {
@@ -206,7 +212,8 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
     const care = (x) => x.product.category === 'telehealth' || x.product.type === 'digital';
     // One product per brand in a row.
     const seen = new Set();
-    list = list.filter((x) => { const b = String(x.product.brand || x.product.name).toLowerCase(); if (seen.has(b)) return false; seen.add(b); return true; });
+    list = list.filter((x) => { const b = String(x.product.brand || String(x.product.name).split(/\s+/).slice(0, 2).join(' ')).toLowerCase().trim(); if (seen.has(b)) return false; seen.add(b); return true; });
+    if (articleId === 'menopause-basics') list = list.filter((x) => care(x) || MENOPAUSE_RE.test(`${x.product.name} ${(x.product.tags || []).join(' ')} ${(x.product.healthFunctions || []).join(' ')} ${x.product.summary || ''}`));
     // Care before supplements where the read is about clinical care.
     if (CARE_FIRST.has(articleId)) list = [...list].sort((a, b) => Number(care(b)) - Number(care(a)));
     if (articleId === 'iron-deficiency-anemia') list = [...list].sort((a, b) => Number(/\biron\b/i.test(b.product.name)) - Number(/\biron\b/i.test(a.product.name)));
@@ -334,7 +341,7 @@ const ARTICLES = [
     body: (
       <>
         <p>The vagina is self-cleaning and maintains its own pH and bacterial balance. Douching is not recommended by major medical organizations and can increase the risk of bacterial vaginosis, yeast infection, and pelvic inflammatory disease. For the vulva (the external skin), warm water alone is often sufficient for daily hygiene.</p>
-        <p>If you choose to use a cleanser. For example after exercise or for personal preference. Clinicians advise selecting one that is fragrance-free, pH-balanced (around 3.5–4.5 for the vulvar area), and labeled for external use only. Avoid anything that goes inside the vagina, as well as scented soaps, body washes with strong surfactants, and vaginal deodorants or sprays.</p>
+        <p>If you choose to use a cleanser, for example after exercise or for personal preference, clinicians advise selecting one that is fragrance-free, pH-balanced (around 3.5–4.5 for the vulvar area), and labeled for external use only. Avoid anything that goes inside the vagina, as well as scented soaps, body washes with strong surfactants, and vaginal deodorants or sprays.</p>
         <p><strong>Key guidelines (from UpToDate, ACOG, and CDC):</strong></p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
           <li>Avoid douching, scented soaps, and vaginal deodorants.</li>
@@ -809,7 +816,8 @@ function ProgressBar({ value = 0, className = '' }) {
 }
 
 function ReadState({ value = 0 }) {
-  if (!(value > 0)) return <span className="ay-lib-state"><span className="ay-lib-new">New</span></span>;
+  // Unread reads show nothing (a "New" tag on every read meant nothing).
+  if (!(value > 0)) return null;
   const done = value >= 1;
   return <span className="ay-lib-state">
     <ProgressBar value={value} />
@@ -990,12 +998,12 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           </div>
         </div>
         <article key={selected.id} className={`ay-web-lib-article ay3-paper${closing ? ' is-crumpling' : ''}`}>
-          <p className="ay3-masthead" aria-hidden="true"><span>The ayna Library</span><span>{sectionOf(selected.id)?.label || 'Health'}</span><span>{minutesFor(selected)} min read</span></p>
           <h1 className="ay-article-title">{selected.title}</h1>
           <div className="ay-lib-article__tags">
             <span className="ay-lib-tag">{sectionOf(selected.id)?.label || 'Health'}</span>
           </div>
-          <p className="ay-lib-article__src">Sources: {selected.source}</p>
+          {/* Category once (the tag above), sources once in full at the end; this line jumps there. */}
+          <button type="button" className="ay-lib-article__src ay-lib-article__srclink" onClick={() => bodyRef.current?.querySelector('.ay-lib-sources')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Sources: {selected.source} <span aria-hidden="true">↓</span></button>
           <ArticleCover art={selected} large />
           <div className="article-body" ref={bodyRef}>
             {withHeadings(selected.body)}
@@ -1045,7 +1053,11 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   } else {
     body = <>
       {shelf('keep', 'Keep reading', keepReading)}
-      {hasProfile ? <>{shelf('foryou', 'Top 3 for you', forYou.slice(0, 3))}{forYou.length > 3 && <button type="button" className="ay-lib-more" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button>}</> : <a className="ay-lib-personalize" href="/quiz">Personalize my reading list <span aria-hidden="true">→</span></a>}
+      {hasProfile ? <>{shelf('foryou', 'Top 3 for you', forYou.slice(0, 3))}{(() => {
+        // Say why these are "for you", in her words from the quiz.
+        const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
+        return said.length && forYou.length ? <p className="ay-lib-foryou-why">Based on what you told us: {said.map((x) => x.toLowerCase()).join(', ')}.</p> : null;
+      })()}{forYou.length > 3 && <button type="button" className="ay-lib-more" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button>}</> : <a className="ay-lib-personalize" href="/quiz">See my matches <span aria-hidden="true">→</span></a>}
       {rows.map((r) => shelf(r.id, r.label, r.items))}
     </>;
   }

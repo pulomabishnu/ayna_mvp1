@@ -11,7 +11,8 @@ export function activesOf(p) {
     .filter((t) => t.length > 2 && t.length < 40 && !NOT_ACTIVE.test(t));
 }
 
-export const isService = (p) => p?.type === 'digital' || /telehealth|tracker|mental-health/.test(String(p?.category || ''));
+// Apps and care programs (a smart mattress cover filed as 'digital' is still a thing you own, not a service).
+export const isService = (p) => /telehealth|tracker|mental-health|app/.test(String(p?.category || '')) || (p?.type === 'digital' && !/sleep|device|pod|ring|monitor/i.test(`${p?.category || ''} ${p?.name || ''}`));
 
 /** [[active, [product names]]] for actives found in 2+ products, at most `limit`. */
 export function findSharedActives(products, limit = 4) {

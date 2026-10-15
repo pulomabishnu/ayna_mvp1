@@ -22,6 +22,7 @@ const PAGE_BY_PATH = new Map([
   ['/recalls', 'recalls'],
   ['/omitted', 'omitted'],
   ['/startups', 'startups'],
+  ['/partners', 'startups'],
   ['/text-ayna', 'text-ayna'],
   ['/confirmed', 'confirmed'],
   ['/auth/callback', 'auth'],

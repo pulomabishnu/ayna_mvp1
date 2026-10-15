@@ -3577,3 +3577,180 @@ html body .app-container main :is(h1, h2) em { font-style: normal !important; co
 html body .app-container main :is(.lv, .ay-info) :is(h1, h2) em { font-style: italic !important; }
 html body .app-container main .lv :is(h1, h2) em { color: #f7badd !important; }
 html body .app-container main .lv .lv-band :is(h1, h2) em, html body .app-container main .lv .lv-stage :is(h1, h2) em { color: inherit !important; }
+/* Brand dark, triple-check round: info cards (Contact, legal pages, How we make money) are open on the brown page, so their text is butter; chips, inputs and filled buttons keep espresso. */
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card :is(h2, h3, h4, .ay-info__h3, p, li, div, strong, em, span, label, dt, dd, a, button:not([class*='btn']):not([type='submit'])) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card :is(.ay-info-chip, input, select, textarea, .ay-info-chip *) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card :is(input, select, textarea) { background: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-story--ask .ay-ask__head h2, .lv-fact, .lv-fact b, .lv-fact a) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-match__cta { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .wyou-avatar { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-info-funnel, .ay-info-founder, .ay-info-step__demo, .ay-info-metric, .ay-info-example) :is(h2, h3, h4, p, li, div, strong, em, span, label, a, small) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-info-example, .ay-info-metric) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .app-nav .ay-login .ay-login-text { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .app-nav .ay-login .ay-login-text { background: transparent !important; }
+/* Fill the gaps: butter strip (no off-palette cork), scroll arrows, owned items never suggested, dark mode readable. */
+html body .app-container .ay-needs__row { position: relative; }
+html body .app-container .ay-needs .ay-needs__tags.ay-needs__tags { background: radial-gradient(circle at 30% 40%, rgba(62, 39, 35, .16) 0 1px, transparent 1.4px) 0 0 / 20px 20px, #f7badd; box-shadow: none; }
+html body .app-container .ay-needs__arrow { position: absolute; z-index: 2; top: 50%; transform: translateY(-60%); width: 40px; height: 40px; border: 2px solid #3e2723; border-radius: 50%; background: #ffedac; color: #3e2723; font: 700 18px/1 'DM Sans', system-ui, sans-serif; cursor: pointer; }
+html body .app-container .ay-needs__arrow.is-prev { left: -8px; }
+html body .app-container .ay-needs__arrow.is-next { right: -8px; }
+html body .app-container .ay-needs__ownedline { margin: 0 0 8px; font: 500 15px/1.4 'DM Sans', system-ui, sans-serif; color: #3e2723; }
+html body .app-container .ay-needs__none { display: grid; gap: 10px; }
+html body .app-container .ay-needs__none p { margin: 0; }
+html body .app-container .ay-needs__noneacts { display: flex; flex-wrap: wrap; gap: 10px; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-needs__done, .ay-needs__covered, .ay-needs__covered summary, .ay-needs__covered button:not(.is-on), .ay-needs__covered strong, .ay-needs__ownedline, .ay-needs__none, .ay-needs__none p, .ay-needs__care, .ay-needs__care a, .ay-needs__care span, .ay-shelf__name, .ay-shelf__add, .ay-shelf__addtile, .ay-shelf__addtile span, .ay-shelf__count, .ay-shelf__tool, .ay-shelf__grip) { color: #ffedac !important; border-color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-needs__covered button.is-on { color: #3e2723 !important; }
+/* Ecosystem: the header's More menu and cost note open above the sticky search bar. */
+html body .app-container .eco3 .eco3-head { position: relative; z-index: 40; }
+/* Ecosystem hero: no awning stripes and no framed title card. The title sits on the page gutter like Shop and Library, the buttons line up beside it. */
+html body .app-container.app-container[data-view='ecosystem'] .ay3-ecohero.ay3-ecohero { border-image: linear-gradient(#ffedac, #ffedac) fill 0 / / 0 100vw !important; --ay3-bg: #ffedac; align-items: center !important; padding-bottom: 32px !important; margin-bottom: 24px !important; }
+html body .app-container.app-container .ay3-ecohero.ay3-ecohero .eco3-head__text { padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+html body .app-container.app-container[data-theme='brand-dark'][data-view='ecosystem'] .ay3-ecohero.ay3-ecohero { border-image: linear-gradient(#3e2723, #3e2723) fill 0 / / 0 100vw !important; --ay3-bg: #3e2723; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.eco3-head__text h1, .eco3-head__text h1 em, .eco3-head__text p, .eco3-head__sub, .eco3-head__sub summary, .eco3-head .ay3-kicker) { color: #ffedac !important; }
+/* Shelf cards: the ⋯ menu sits inside the card's top corner (same spot on every card), the menu opens downward. */
+html body .app-container .ay-shelf .ayna-discover-card.ayna-browse-card { position: relative; }
+html body .app-container .ay-shelf .ayna-browse-card__action { position: absolute; z-index: 4; top: 10px; right: 10px; margin: 0 !important; }
+html body .app-container .ay-shelf .ay-shelf__menu > summary { width: 34px; height: 34px; box-shadow: 2px 2px 0 #3e2723; }
+html body .app-container .ay-shelf .ay-shelf__menu-list { bottom: auto; top: calc(100% + 6px); }
+html body .app-container .ay-shelf__menu-h { text-transform: none; letter-spacing: 0; font-size: 13px; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay3-ecohero .eco3-pill.eco3-pill--ink { background: #f7badd !important; color: #3e2723 !important; border-color: #f7badd !important; }
+html body .app-container .ay-404__search { display: flex; gap: 8px; width: min(520px, 100%); margin: 8px auto 12px; }
+html body .app-container .ay-404__search input { flex: 1; min-width: 0; min-height: 48px; padding: 0 18px; border: 2px solid #3e2723; border-radius: 999px; background: #ffedac; color: #3e2723; font: 400 16px/1 'DM Sans', system-ui, sans-serif; }
+html body .app-container .ay-404__alt { border: 0; background: none; color: #3e2723; font: 600 15px/1.4 'DM Sans', system-ui, sans-serif; text-decoration: underline; cursor: pointer; min-height: 44px; }
+html body .app-container[data-theme='brand-dark'] .ay-404__alt { color: #ffedac; }
+/* Community Updates: a panel anchored under the bell, not a centred modal; rows read as a feed, links only where they go somewhere. */
+@media (min-width: 768px) {
+  html body .app-container .wc-sheet-backdrop:has(> .wc-updates) { background: transparent !important; backdrop-filter: none !important; align-items: flex-start !important; justify-content: flex-end !important; padding: 150px 32px 24px !important; }
+  html body .app-container .wc-sheet.wc-updates { width: min(400px, 100%) !important; max-height: calc(100vh - 180px); overflow-y: auto; margin: 0 !important; animation: none !important; }
+}
+html body .app-container .wc-updates .wc-notes-link { text-decoration: none !important; font-weight: 500; }
+html body .app-container .wc-updates .wc-notes-link:hover { text-decoration: underline !important; }
+html body .app-container .wc-updates .wc-notes-h { text-transform: none !important; letter-spacing: 0 !important; font: 600 14px/1.2 'DM Sans', system-ui, sans-serif !important; }
+html body .app-container .ay-lib-foryou-why { margin: -8px 0 16px; font: 400 15px/1.4 'DM Sans', system-ui, sans-serif; color: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .ay-lib-foryou-why { color: #ffedac; }
+html body .app-container .ay-lib-article__srclink { display: inline-block; padding: 6px 0; min-height: 32px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+/* Shop card labels (Partner, FSA/HSA, Sponsored) are facts, not buttons: plain text with dot separators, no outlined pill. */
+html body .app-container.app-container.app-container.app-container .ayna-browse-card__labels :is(.ayna-browse-card__partner, .ayna-browse-card__eligibility, .ayna-browse-card__sponsored) { display: inline; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; font: 600 12px/1.3 'DM Sans', system-ui, sans-serif !important; letter-spacing: 0 !important; color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container .ayna-browse-card__labels :is(.ayna-browse-card__partner, .ayna-browse-card__eligibility, .ayna-browse-card__sponsored)::before { content: '· '; }
+html body .app-container .ayna-browse-card__labels { flex-wrap: wrap; min-width: 0; }
+html body .app-container .ayna-browse-card__labels .ayna-discover-card__category { min-width: 0; overflow-wrap: anywhere; white-space: normal !important; }
+/* Shop card heart sits by the price (bottom right), off the product photo. */
+html body .app-container .ayna-discover-card.ayna-browse-card { position: relative; }
+html body .app-container.app-container .ayna-browse-card .ayna-browse-card__wishlist.ayna-browse-card__wishlist { top: auto !important; bottom: 12px !important; right: 12px !important; left: auto !important; }
+html body .app-container .ayna-browse-card .ayna-browse-card__link { padding-bottom: 20px; }
+html body .app-container .ayna-browse-card .ayna-discover-card__body { padding-right: 44px; }
+html body .app-container .wyou .wyou-glance__shelves { margin: 0 0 12px; font: 400 15px/1.5 'DM Sans', system-ui, sans-serif; }
+html body .app-container .wyou .wyou-glance__facts { display: grid; gap: 8px; margin: 0; }
+html body .app-container .wyou .wyou-glance__facts > div { display: grid; grid-template-columns: 150px 1fr; gap: 12px; padding-top: 8px; border-top: 1px solid rgba(62, 39, 35, .2); }
+html body .app-container .wyou .wyou-glance__facts dt { font: 600 14px/1.4 'DM Sans', system-ui, sans-serif; }
+html body .app-container .wyou .wyou-glance__facts dd { margin: 0; font: 400 15px/1.4 'DM Sans', system-ui, sans-serif; }
+/* Things you can't press don't look like buttons: example labels and signal lists are plain text with dot separators. */
+html body .app-container.app-container.app-container .ay-info-example { display: block; margin: 0 0 8px; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; text-transform: none !important; letter-spacing: 0 !important; font: 600 13px/1.3 'DM Sans', system-ui, sans-serif !important; }
+html body .app-container.app-container.app-container .ay-info-chip-row { display: block !important; }
+html body .app-container.app-container.app-container .ay-info-chip-row .ay-info-chip { display: inline !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; font: 500 15px/1.6 'DM Sans', system-ui, sans-serif !important; transform: none !important; }
+html body .app-container.app-container.app-container .ay-info-chip-row .ay-info-chip:not(:last-child)::after { content: ' · '; }
+html body .app-container .ay-why-inputs { display: block !important; padding: 0 !important; list-style: none; }
+html body .app-container .ay-why-inputs li { display: inline !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; font: 500 15px/1.6 'DM Sans', system-ui, sans-serif !important; }
+html body .app-container .ay-why-inputs li:not(:last-child)::after { content: ' · '; }
+/* Health profile update prompt: brand colours (was purple, orange and grey on white). */
+.ay-hpu { position: fixed; inset: 0; z-index: 10050; display: grid; place-items: center; padding: 20px; background: rgba(62, 39, 35, .5); }
+.ay-hpu__card { width: min(460px, 100%); padding: 30px; border: 2px solid #3e2723; border-radius: 20px; background: #ffedac; color: #3e2723; box-shadow: 6px 6px 0 #3e2723; font-family: 'DM Sans', system-ui, sans-serif; }
+.ay-hpu__eyebrow { margin: 0 0 8px; font: 600 14px/1.3 'DM Sans', system-ui, sans-serif; }
+.ay-hpu__card h2 { margin: 0 0 10px; font: 400 32px/1.1 'DM Serif Display', Georgia, serif; color: #3e2723; }
+.ay-hpu__body { margin: 0 0 22px; font-size: 16px; line-height: 1.55; }
+.ay-hpu__actions { display: grid; gap: 10px; }
+.ay-hpu__primary, .ay-hpu__ghost { width: 100%; min-height: 48px; border-radius: 999px; font: 700 15px/1 'DM Sans', system-ui, sans-serif; cursor: pointer; }
+.ay-hpu__primary { border: 2px solid #3e2723; background: #3e2723; color: #ffedac; }
+.ay-hpu__ghost { border: 2px solid #3e2723; background: transparent; color: #3e2723; }
+.ay-hpu__note { margin: 14px 0 0; font-size: 13px; line-height: 1.5; text-align: center; }
+/* Avatar: no offset shadow (only buttons that act get one). Focus ring in brand espresso (butter in dark). */
+html body .app-container .app-nav.app-nav .app-nav__circle.ay-avatar.ay-avatar, html body .app-container .app-nav.app-nav .app-nav__circle.ay-avatar.ay-avatar:hover { box-shadow: none !important; transform: none !important; }
+html body .app-container :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline: 3px solid #3e2723 !important; outline-offset: 2px !important; }
+html body .app-container[data-theme='brand-dark'] :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline-color: #ffedac !important; }
+/* Errors and destructive links in brand colours: espresso text, rose fill for error boxes (no off-palette red). */
+html body .app-container :is(.wyou-link-danger, .wc-link.is-danger, .wq-link-danger, .wq-alert, .wq-zip-err) { color: #3e2723 !important; --zip-err: #3e2723; }
+html body .app-container :is(.wc-error, .wc-sheet .wc-error) { background: #f7badd !important; color: #3e2723 !important; border: 2px solid #3e2723; }
+html body .app-container .wq-zip-wrap .wq-zip[aria-invalid='true'] { border-color: #3e2723 !important; box-shadow: 0 0 0 3px #f7badd; }
+html body .app-container .ay-auth-card { --qya-err: #3e2723; }
+html body .app-container[data-theme='brand-dark'] :is(.wyou-link-danger, .wc-link.is-danger) { color: #f7badd !important; }
+/* Ask panel: Chat/Voice switch, composer and disabled send in brand colours (were greys). */
+html body .app-container :is(.ayna-ask-mode) { background: #ffedac !important; border: 2px solid #3e2723 !important; }
+html body .app-container .ayna-ask-mode button { color: #3e2723 !important; }
+html body .app-container .ayna-ask-mode button:is([aria-pressed='true'], [aria-selected='true'], .is-active, .active) { background: #3e2723 !important; color: #ffedac !important; }
+html body .app-container .ayna-ask-panel__composer { background: #ffedac !important; border-color: #3e2723 !important; }
+html body .app-container .ayna-ask-panel__composer input, html body .app-container .ayna-ask-panel__composer textarea { color: #3e2723 !important; background: transparent !important; }
+html body .app-container .ayna-ask-panel__composer button:disabled { background: transparent !important; color: #3e2723 !important; border: 2px solid #3e2723 !important; opacity: .4 !important; }
+html body .app-container .ay-suggest__icon, html body .app-container .ay-suggest__icon svg { color: #3e2723 !important; stroke: currentColor; }
+.ay-info-principles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px 32px; }
+.ay-info-principles li { display: flex; align-items: flex-start; gap: 14px; }
+.ay-info-principles__n { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 2px solid #3e2723; border-radius: 50%; background: #ffedac; color: #3e2723; font: 400 22px/1 'DM Serif Display', Georgia, serif; }
+.ay-info-principles h3 { margin: 6px 0 4px; font: 400 24px/1.15 'DM Serif Display', Georgia, serif; color: #3e2723; }
+.ay-info-principles p { margin: 0; font: 400 16px/1.5 'DM Sans', system-ui, sans-serif; color: #3e2723; }
+html body .app-container[data-theme='brand-dark'] .ay-info-principles :is(h3, p) { color: #ffedac; }
+html body .wq-round.is-spacer { visibility: hidden; }
+html body .wq-age-slide.is-empty input[type='range']::-webkit-slider-thumb { opacity: 0; }
+html body .wq-age-slide.is-empty input[type='range']::-moz-range-thumb { opacity: 0; }
+/* Campus Resources is a support page, not a store: no shopping tabs or Saved heart in the header there. */
+html body .app-container[data-view='campus-resources'] :is(.app-nav__links, .app-nav__circle--wishlist, .ay-start-here) { display: none !important; }
+html body .app-container .lv a.lv-btn, html body .app-container .lv a.lv-link { text-decoration: none; }
+html body .app-container .lv a.lv-link { text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container .lv-fact__src { font-size: 13px; opacity: .85; }
+/* Italic accent words on butter use espresso (rose on butter was about 1.3:1). */
+html body .app-container:not([data-theme='brand-dark']) :is(.lx-h2 em, .lx-powder__head em, .lx-personal em) { color: #3e2723 !important; }
+html body .app-container:not([data-theme='brand-dark']) .lv :is(.lv-head h2 em, .lv-why__body h2 em, .lv-sec > header h2 em) { color: #3e2723 !important; }
+/* Saved: a grid (no carousel, no arrows for two items), one action style for "In ecosystem" and "+ Add". */
+html body .app-container .ay-saved.ay-saved--grid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; overflow: visible !important; padding: 8px 0 0 !important; margin: 0; list-style: none; }
+html body .app-container .ay-saved--grid .ay-saved__item { width: auto !important; min-width: 0 !important; flex: none !important; }
+html body .app-container .ay-saved--grid :is(.ay-saved__in, .ay-saved__add) { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border: 2px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font: 700 13px/1 'DM Sans', system-ui, sans-serif; }
+html body .app-container .ay-saved--grid .ay-saved__in { background: #f7badd; }
+/* Ecosystem sticky bar on tablets and phones: tabs sit together (not spread across the width), each a 44px tap target. */
+html body .app-container .eco3-jump a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; }
+@media (max-width: 1023px) {
+  html body .app-container .eco3-stickybar { flex-wrap: wrap; row-gap: 4px; }
+  html body .app-container .eco3-stickybar .eco3-jump { display: flex !important; justify-content: flex-start !important; gap: 20px !important; width: auto; }
+}
+/* Ecosystem text links and small buttons get at least a 24px (44px on phones) tap area. */
+html body .app-container .eco3 :is(.cr-link, .eco3-details__item a, .care-near-panel a, .care-near-panel button, .ay-shelves__reset, .ay-needs__care a, .ay-needs__covered button) { display: inline-flex; align-items: center; min-height: 24px; }
+@media (max-width: 767px) {
+  html body .app-container .eco3 :is(.care-near-panel a, .care-near-panel button, .ay-shelves__reset, .ay-needs__care a, .ay-needs__covered button, .eco3-pill) { min-height: 44px; }
+}
+/* Phone: the Ecosystem search collapses to its icon until tapped, so the sticky bar is one slim row. */
+@media (max-width: 599px) {
+  html body .app-container .eco3-stickybar { flex-wrap: nowrap !important; align-items: center; }
+  html body .app-container .eco3-stickybar .eco3-search { flex: 0 0 48px !important; width: 48px !important; min-width: 48px; transition: flex-basis .2s ease, width .2s ease; }
+  html body .app-container .eco3-stickybar .eco3-search:focus-within { flex: 1 1 100% !important; width: auto !important; }
+  html body .app-container .eco3-stickybar .eco3-search:not(:focus-within) input { color: transparent; cursor: pointer; }
+  html body .app-container .eco3-stickybar .eco3-search:not(:focus-within) input::placeholder { color: transparent; }
+  html body .app-container .eco3-stickybar .eco3-search:focus-within + .eco3-jump { display: none !important; }
+  html body .app-container .eco3-stickybar .eco3-jump { overflow-x: auto; scrollbar-width: none; gap: 14px !important; }
+}
+/* Type scale clean-up (triple check): section heading sizes from the scale, no fractional sizes in Find care and Campus. */
+html body .app-container .ay-lib-care__h { font-size: var(--ay-t-section, 32px) !important; }
+html body .app-container .care-near-panel h4 { font-size: 14px !important; }
+html body .app-container .care-near-panel :is(p, li, a, button, div) { font-size: 15px !important; }
+html body .app-container .care-near-panel :is(small, .care-near-panel__foot) { font-size: 14px !important; }
+html body .app-container .cr-page :is(.cr-small, .cr-status, .cr-result span) { font-size: 14px !important; }
+html body .app-container .cr-page .cr-sub { font-size: 18px !important; }
+html body .app-container .ay-lib-next, html body .app-container .ay-lib-next * { font-size: 14px; }
+@media (max-width: 767px) {
+  html body .app-container :is(.ay-footer-link, .ay-footer-legal__link) { display: inline-flex; align-items: center; min-height: 44px; }
+}
+html body .app-container.app-container.app-container .ay-lib-care .ay-lib-care__h { font-size: var(--ay-t-section, 32px) !important; }
+html body .app-container.app-container .app-nav__start { font-size: 12px !important; }
+html body .app-container.app-container :is(.wc-view, .cr-badge, .cr-case__kind) { font-size: 12px !important; }
+html body .app-container.app-container .cr-page :is(p, li, a, button, span, dd, dt) { font-size: max(14px, min(1em, 18px)); }
+html body .app-container.app-container :is(button, input, select, textarea) { font-size: max(12px, 1em); }
+/* You: no decorative barcode on the member card (it doesn't scan or do anything). */
+html body .app-container .wyou-hero::after { content: none !important; display: none !important; }
+/* How it works step labels in DM Sans, not handwriting. */
+html body .app-container .ay-info-step .ay-info__pill, html body .app-container .ay-info__pill { font-family: 'DM Sans', system-ui, sans-serif !important; font-weight: 600 !important; }
+html body .app-container .wc-similar { margin-top: 10px; padding: 10px 12px; border: 2px solid #3e2723; border-radius: 12px; background: #ffedac; }
+html body .app-container .wc-similar ul { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+html body .app-container .wc-similar .wc-link { text-align: left; min-height: 32px; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .wc-similar :is(p, .wc-label, .wc-link, li) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ayna-browse__clearall, .ayna-browse__chip-x) { color: #ffedac !important; border-color: #ffedac !important; background: transparent !important; }
+/* Library topic covers: four tones, one per section. Butter and the outlined tone keep a border so they read on the butter page. */
+html body .app-container .ay-lib-cover.ay-lib-cover.is-butter { background: #ffedac !important; border: 2px solid #3e2723 !important; }
+html body .app-container[data-theme='brand-dark'] .ay-lib-cover.ay-lib-cover.is-ink { border: 2px solid #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-lib-cover.is-ink, html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-lib-cover.is-ink * { color: #ffedac !important; }
+html body .app-container .wyou-hero::before { text-transform: none !important; letter-spacing: 0 !important; font-family: 'DM Sans', system-ui, sans-serif !important; font-weight: 700 !important; }

@@ -141,7 +141,9 @@ function AddOwn({ placeholder, onAdd }) {
 function AgeField({ value, onChange, underage, onOpenGate }) {
   // Type it or slide it, like the app's dial (founder meeting note).
   const n = Number.parseInt(value, 10);
-  const slider = Number.isFinite(n) ? Math.min(80, Math.max(18, n)) : 29;
+  const set = Number.isFinite(n);
+  // The slider and the box never disagree: until she picks an age the slider has no thumb.
+  const slider = set ? Math.min(80, Math.max(18, n)) : 18;
   return <div className={`wq-age${underage ? ' is-under' : ''}`}>
     <label className="wq-age-field">
       <span>Your age</span>
@@ -149,10 +151,10 @@ function AgeField({ value, onChange, underage, onOpenGate }) {
         onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 2))} />
       <small>years</small>
     </label>
-    <div className="wq-age-slide">
+    <div className={`wq-age-slide${set ? '' : ' is-empty'}`}>
       <span aria-hidden="true">18</span>
-      <input type="range" min={18} max={80} step={1} value={slider} aria-label="Slide to pick your age" onChange={(e) => onChange(String(e.target.value))} />
-      <span aria-hidden="true">80</span>
+      <input type="range" min={18} max={80} step={1} value={slider} aria-label="Slide to pick your age" aria-valuetext={set ? (n >= 80 ? '80 or older' : `${n} years`) : 'Not set'} onChange={(e) => onChange(String(e.target.value))} />
+      <span aria-hidden="true">80+</span>
     </div>
     {underage && <p className="wq-alert" id="wq-age-alert">ayna is for people 18 and over. <button type="button" onClick={onOpenGate}>What you can do instead</button></p>}
   </div>;
@@ -635,7 +637,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     <QuizSide n={index + 1} total={steps.length} section={phase === 'more' ? 'Optional' : SECTION_NAMES[step.section]} photos={SECTION_PHOTOS[step.section] || SECTION_PHOTOS.core} />
     <div className="wq-card" key={step.id}>
       <header className="wq-head">
-        <button type="button" className="wq-round" aria-label="Previous question" onClick={back} disabled={index === 0 && phase === 'core'}>←</button>
+        {index === 0 && phase === 'core' ? <span className="wq-round is-spacer" aria-hidden="true" /> : <button type="button" className="wq-round" aria-label="Previous question" onClick={back}>←</button>}
         <div className="wq-progress" aria-hidden="true">{steps.map((s, i) => <span key={s.id} className={i < index ? 'is-done' : i === index ? 'is-now' : ''} />)}</div>
         <span className="wq-count" aria-label={`${phase === 'more' ? 'Optional question' : 'Question'} ${index + 1} of ${steps.length}`}>{index + 1}<i>/{steps.length}</i></span>
       </header>

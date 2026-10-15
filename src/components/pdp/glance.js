@@ -159,13 +159,23 @@ function numberSources(passport) {
 const RETAIL_RE = /\/\/(www\.)?(walmart|amazon|target|cvs|walgreens|ulta|sephora|costco|iherb|ebay)\./i;
 const FORUM_RE = /\/\/(www\.|old\.)?(reddit\.com|quora\.com|facebook\.com\/groups|tiktok\.com)/i;
 
+// A doi.org link names its publisher by the DOI's registrant prefix (10.1016 is Elsevier, and so on).
+const DOI_PUBLISHERS = { '1016': 'Elsevier', '1001': 'JAMA Network', '1056': 'NEJM', '1136': 'BMJ', '1093': 'Oxford University Press', '1111': 'Wiley', '1002': 'Wiley', '1097': 'Wolters Kluwer', '3390': 'MDPI', '3389': 'Frontiers', '1007': 'Springer', '1371': 'PLOS', '1186': 'BMC', '1038': 'Nature', '1080': 'Taylor & Francis', '1089': 'Mary Ann Liebert', '1210': 'Endocrine Society', '1177': 'SAGE', '1155': 'Hindawi', '2147': 'Dove Medical Press', '1017': 'Cambridge University Press', '1159': 'European Respiratory Society', '7759': 'Cureus' };
 function hostOf(url) {
-  try { return humanPublisher(new URL(url).hostname.replace(/^www\./, '')); } catch { return ''; }
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, '');
+    if (/^(dx\.)?doi\.org$/i.test(host)) {
+      const m = u.pathname.match(/^\/10\.(\d{4,5})\//);
+      if (m && DOI_PUBLISHERS[m[1]]) return `${DOI_PUBLISHERS[m[1]]} (journal article)`;
+    }
+    return humanPublisher(host);
+  } catch { return ''; }
 }
 
 // "Cochranelibrary" / "doi.org" / "ncbi.nlm.nih.gov" read as people would say them.
 const PUBLISHER_NAMES = [
-  [/cochrane/i, 'Cochrane Library'], [/^doi(\.org)?$/i, 'Journal article (DOI)'], [/pubmed|ncbi\.nlm\.nih/i, 'PubMed'],
+  [/cochrane/i, 'Cochrane Library'], [/^doi(\.org)?$/i, 'Journal article'], [/pubmed|ncbi\.nlm\.nih/i, 'PubMed'],
   [/acog/i, 'ACOG'], [/fda\.gov|^fda$/i, 'FDA'], [/nih\.gov|^nih$/i, 'NIH'], [/cdc\.gov|^cdc$/i, 'CDC'], [/mayoclinic/i, 'Mayo Clinic'],
   [/who\.int/i, 'WHO'], [/clevelandclinic/i, 'Cleveland Clinic'], [/uptodate/i, 'UpToDate'], [/nejm/i, 'NEJM'], [/jamanetwork|^jama$/i, 'JAMA'],
   [/thelancet|lancet/i, 'The Lancet'], [/bmj/i, 'BMJ'], [/sciencedirect/i, 'ScienceDirect'], [/springer/i, 'Springer'], [/wiley/i, 'Wiley'], [/frontiersin/i, 'Frontiers'], [/mdpi/i, 'MDPI'],

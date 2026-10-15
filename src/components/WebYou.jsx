@@ -9,7 +9,7 @@ import { ROUTINE_BUCKETS, ROUTINE_BUCKET_LABELS, useRoutine } from '../mobile/ho
 import { fetchDataExport } from '../mobile/utils/dataExportApi.js';
 import { AnalyticsToggle } from './SiteFooter';
 import { findSharedActives } from '../utils/sharedActives';
-import ShopperCard from '../mobile/components/ShopperCard.jsx';
+import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import BadgesPanel from './BadgesPanel';
 import './WebYou.css';
 import '../styles/audit-qya.css';
@@ -47,6 +47,20 @@ function ecosystemInsights(products) {
   const allCats = [...new Set(ALL_PRODUCTS.map((p) => p?.category).filter(Boolean))];
   const missing = allCats.filter((c) => !counts.has(c)).slice(0, 3).map(CATEGORY_LABEL);
   return { top, missing };
+}
+
+/* At a glance: what she told us, in a few facts, and her shelves by the same
+   names My Ecosystem uses. No personality label (she never asked for one). */
+function Glance({ profile, products }) {
+  const rows = (profile?.rows || []).filter((r) => r.key !== 'type').slice(0, 4);
+  const counts = new Map();
+  products.forEach((p) => { const a = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS); const k = a ? a.label : 'Other'; counts.set(k, (counts.get(k) || 0) + 1); });
+  const shelves = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  return <section className="wyou-card wyou-glance" aria-labelledby="wyou-glance-h">
+    <div className="wyou-card-head"><h2 id="wyou-glance-h">At a glance</h2></div>
+    {shelves.length > 0 && <p className="wyou-glance__shelves"><b>Your shelves:</b> {shelves.map(([k, n]) => `${k} ${n}`).join(' · ')}</p>}
+    {rows.length > 0 && <dl className="wyou-glance__facts">{rows.map((r) => <div key={r.key}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}</dl>}
+  </section>;
 }
 
 function Routine({ products, total }) {
@@ -157,7 +171,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
       const fyi = alerts.length - active;
       // First sentence, without cutting at "v." or "e.g." (it used to stop at "Manson v."), and no emoji.
       const firstLine = (t) => {
-        const text = String(t || '').replace(/^[\u26a0\ufe0f\s]+/, '').trim();
+        const text = String(t || '').replace(/^(?:\u26a0\ufe0f?|\s)+/, '').trim();
         const re = /[.!?](?=\s+[A-Z(]|$)/g; let m;
         while ((m = re.exec(text))) {
           const before = text.slice(0, m.index + 1);
@@ -169,11 +183,11 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
       return <section className="wyou-card is-safety wyou-safety-top">
         <div className="wyou-card-head"><h2>Safety alerts</h2><span>{active ? `${active} to check` : 'Nothing urgent'}{fyi > 0 ? ` · ${fyi} FYI` : ''}</span></div>
         {sorted.length ? <ul className="wyou-alerts">{sorted.map((a) => {
-          const one = firstLine(a.body);
+          const one = a.kind === 'note' ? '' : firstLine(a.body);
           return <li key={a.id} className={`is-${a.kind}`}>
             <span className="wyou-tier">{TIER[a.kind]?.[1] || 'Note'}</span>
             <strong>{a.title}</strong>
-            <p>{one}</p>
+            {one && <p>{one}</p>}
             {one !== a.body && <details><summary>Details</summary><p>{a.body}</p></details>}
             {a.kind === 'sensitivity' ? (() => {
               const named = products.filter((p) => p?.name && String(a.body).includes(p.name));
@@ -188,7 +202,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
 
     <div className="wyou-grid">
       <div className="wyou-col">
-        {shopper ? <ShopperCard profile={shopper} /> : <section className="wyou-card is-shopper-empty"><h2>At a glance</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
+        {shopper ? <Glance profile={shopper} products={products} /> : <section className="wyou-card is-shopper-empty"><h2>At a glance</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
         <BadgesPanel userId={user.id} myProducts={products} quizAnswers={quizResults} variant="web" />
       </div>
 

@@ -1,4 +1,4 @@
-import { ALL_PRODUCTS, getProfileMatchPercentForProduct, filterPrescriptionCareGate } from '../data/products';
+import { ALL_PRODUCTS, getProfileMatchPercentForProduct, filterPrescriptionCareGate, isTeenProduct } from '../data/products';
 import { RELEASED_STARTUPS } from '../data/startups';
 
 // How It Works funnel, computed live from the real catalog and the real
@@ -17,7 +17,7 @@ export function getSampleFunnel() {
   const scores = ALL_PRODUCTS.map((p) => getProfileMatchPercentForProduct(p, SAMPLE_PROFILE, null) || 0);
   cached = {
     // Same catalog the Shop counts: shoppable products plus released services.
-    catalog: filterPrescriptionCareGate(ALL_PRODUCTS).length + RELEASED_STARTUPS.length,
+    catalog: filterPrescriptionCareGate(ALL_PRODUCTS).filter((p) => !isTeenProduct(p)).length + RELEASED_STARTUPS.length,
     matched: scores.filter((s) => s > 0).length,
     strong: scores.filter((s) => s >= 90).length,
   };

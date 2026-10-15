@@ -64,7 +64,7 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn }) {
           </span>
           <h2 className="ay-ecoprev__locktitle">Your shelves are waiting</h2>
           <p className="ay-ecoprev__locktext">Build your ecosystem to fill these with products picked for you.</p>
-          <button type="button" className="ay-ecoprev__primary" onClick={onBuild}>Build my ecosystem</button>
+          <button type="button" className="ay-ecoprev__primary" onClick={onBuild}>See my matches</button>
           <button type="button" className="ay-ecoprev__secondary" onClick={onSignIn}>I already have one. Sign in</button>
         </div>
       </div>

@@ -55,3 +55,8 @@
 @keyframes wwr-toast { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .wwr-hint { margin: 0; text-align: center; font: 600 12px/1 'DM Sans', sans-serif; opacity: .7; }
 @media (prefers-reduced-motion: reduce) { .wwr-stage, .wwr-ranks li, .wwr-facts div, .wwr-tile { animation: none; } }
+/* Brand palette and type (was lavender, mint and a heavy sans): espresso, butter, sky, rose; headlines in the serif. */
+.wwr { --ink: #3e2723; --paper: #ffedac; --peri: #769ebe; --pink: #f7badd; --mint: #f7badd; --butter: #ffedac; }
+.wwr h1, .wwr-stats strong, .wwr-ranks strong, .wwr-badge strong, .wwr-card strong, .wwr-card-mark { font-family: 'DM Serif Display', Georgia, serif !important; font-weight: 400 !important; letter-spacing: -.01em !important; }
+.wwr h1 em { color: var(--ink); -webkit-text-stroke: 0; font-style: italic; }
+.wwr-card li { border-top-color: rgba(62, 39, 35, .18); }

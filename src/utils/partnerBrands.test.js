@@ -60,7 +60,7 @@ describe('partnerBrands', () => {
     });
 
     it('gets the waitlist badge and the no-commission disclosure', () => {
-      expect(getPartnerBadgeLabel(resa)).toBe('ayna Favorite · Waitlist');
+      expect(getPartnerBadgeLabel(resa)).toBe('ayna partner · Waitlist');
       expect(getPartnerDisclosureText(resa)).toMatch(/does not earn a commission/);
     });
 
@@ -71,7 +71,7 @@ describe('partnerBrands', () => {
     it('leaves regular partners on the standard badge and disclosure', () => {
       const buni = { brand: 'BUNI', name: 'Vulva Balm' };
       expect(isPrelaunchPartnerItem(buni)).toBe(false);
-      expect(getPartnerBadgeLabel(buni)).toBe('ayna Favorite');
+      expect(getPartnerBadgeLabel(buni)).toBe('ayna partner');
       expect(getPartnerDisclosureText(buni)).toMatch(/may earn a commission/);
     });
 

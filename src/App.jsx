@@ -135,7 +135,7 @@ function clearPendingEcosystemReset(userId) {
 
 const VIEW_TO_PATH = {
   welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem', you: '/you', community: '/community',
-  discovery: '/shop', waitlist: '/startups', recommendations: '/recommendations',
+  discovery: '/shop', waitlist: '/partners', recommendations: '/recommendations',
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
@@ -217,7 +217,7 @@ const PATH_TO_VIEW = Object.fromEntries(
 PATH_TO_VIEW['/my-ecosystem'] = 'ecosystem';
 PATH_TO_VIEW['/terms'] = 'terms-of-use';
 PATH_TO_VIEW['/privacy'] = 'privacy-policy';
-PATH_TO_VIEW['/partners'] = 'waitlist';
+PATH_TO_VIEW['/startups'] = 'waitlist'; // old address keeps working
 PATH_TO_VIEW['/partner-brands'] = 'waitlist';
 
 PATH_TO_VIEW['/'] = 'welcome';
@@ -309,13 +309,20 @@ function ViewLoadingFallback() {
  * live, 2026-08-24 bug bash). Same component now backs both, instead of a
  * one-off block duplicated just for products.
  */
-function NotFoundState({ title, subtitle, ctaLabel, onCta }) {
+function NotFoundState({ title, subtitle, ctaLabel, onCta, onSearch, searchPlaceholder = 'Search the shop' }) {
   return (
     <div className="mockup-page ay-404">
       <span className="ay-404__badge" aria-hidden="true">404</span>
       <h1>{title}</h1>
       <p>{subtitle}</p>
-      <button type="button" className="btn btn-navy" onClick={onCta}>{ctaLabel}</button>
+      {onSearch && (
+        <form className="ay-404__search" role="search" onSubmit={(e) => { e.preventDefault(); const q = String(new FormData(e.currentTarget).get('q') || '').trim(); onSearch(q); }}>
+          <label className="sr-only" htmlFor="ay-404-q">{searchPlaceholder}</label>
+          <input id="ay-404-q" name="q" type="search" placeholder={searchPlaceholder} autoComplete="off" />
+          <button type="submit" className="btn btn-navy">Search</button>
+        </form>
+      )}
+      <button type="button" className={onSearch ? 'ay-404__alt' : 'btn btn-navy'} onClick={onCta}>{ctaLabel}</button>
     </div>
   );
 }
@@ -570,7 +577,7 @@ function App() {
   const [askPrefill, setAskPrefill] = useState('');
   // Opens Ask ayna, optionally with a question typed in (Shop's empty state).
   const openAsk = useCallback((text = '') => {
-    if (!user) { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); return; }
+    if (!user) { setAuthFeature('Ask ayna'); setPendingAction('feature'); pendingActionRef.current = 'feature'; setShowAuthModal(true); return; }
     if (!quizResults) { setCurrentView('quiz'); return; }
     setAskPrefill(text);
     setAskOpenSignal((n) => n + 1);
@@ -1054,8 +1061,11 @@ function App() {
   const PROTECTED_VIEWS = ['comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account'];
   useEffect(() => {
     if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
+      // Say what the page was, so the sign-in sheet explains itself.
+      const FEATURE = { 'doctor-prep': 'appointment prep', recalls: 'recall alerts', tracked: 'recall alerts', comparison: 'comparisons', omitted: 'your hidden products', 'profile-edit': 'your health profile', 'phone-verify': 'ayna by text', screenings: 'screening reminders', 'delete-account': 'account settings' };
       setCurrentView('welcome', { replace: true });
-      setPendingAction('login'); pendingActionRef.current = 'login';
+      setAuthFeature(FEATURE[currentView] || '');
+      setPendingAction(FEATURE[currentView] ? 'feature' : 'login'); pendingActionRef.current = FEATURE[currentView] ? 'feature' : 'login';
       setShowAuthModal(true);
     }
   }, [user, currentView, authLoading]);
@@ -2536,7 +2546,8 @@ function App() {
                 const seed = { kind, productId: displayedProduct?.id || null, token: Date.now() };
                 if (!user && kind !== 'post') {
                   setCommunitySeed(null);
-                  setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true);
+                  setAuthFeature(kind === 'review' ? 'reviews' : kind === 'question' ? 'questions' : 'Community');
+                  setPendingAction('feature'); pendingActionRef.current = 'feature'; setShowAuthModal(true);
                   return;
                 }
                 setComposerSeed(seed);
@@ -2549,8 +2560,10 @@ function App() {
             <NotFoundState
               title="Product not found"
               subtitle="This product may have been removed, or the link may be incorrect."
-              ctaLabel="Go to Shop"
+              ctaLabel="Or browse the whole Shop"
               onCta={() => handleViewDiscovery('')}
+              onSearch={(q) => handleViewDiscovery(q || (productRouteId ? String(productRouteId).replace(/[-_]+/g, ' ') : ''))}
+              searchPlaceholder="Search for the product"
             />
           )
         )}
@@ -2569,120 +2582,19 @@ function App() {
         )}
 
         {showHealthProfileUpdateNotice && user && currentView !== 'campus-resources' && (
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="ayna-health-profile-update-title"
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 10050,
-              background: 'rgba(28, 19, 43, 0.58)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              display: 'grid',
-              placeItems: 'center',
-              padding: '20px',
-            }}
-          >
-            <div
-              style={{
-                width: 'min(460px, 100%)',
-                borderRadius: '24px',
-                background: '#FFF9F2',
-                color: '#2A1F4E',
-                padding: '30px',
-                boxShadow: '0 28px 80px rgba(28,19,43,.28)',
-                border: '1px solid rgba(42,31,78,.08)',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  letterSpacing: '.08em',
-                  textTransform: 'uppercase',
-                  color: '#D97A2B',
-                  marginBottom: '10px',
-                }}
-              >
-                Health profile update
-              </div>
-
-              <h2
-                id="ayna-health-profile-update-title"
-                style={{
-                  margin: '0 0 10px',
-                  fontFamily: 'var(--font-serif, Georgia, serif)',
-                  fontSize: '28px',
-                  fontWeight: 500,
-                  lineHeight: 1.15,
-                }}
-              >
-                {accountFirstName(user) ? `Hi ${accountFirstName(user)},` : 'Hi,'}
-              </h2>
-
-              <p
-                style={{
-                  margin: '0 0 22px',
-                  color: '#6F6580',
-                  fontSize: '14px',
-                  lineHeight: 1.6,
-                }}
-              >
+          <div className="ay-hpu" role="dialog" aria-modal="true" aria-labelledby="ayna-health-profile-update-title">
+            <div className="ay-hpu__card">
+              <p className="ay-hpu__eyebrow">Health profile update</p>
+              <h2 id="ayna-health-profile-update-title">{accountFirstName(user) ? `Hi ${accountFirstName(user)},` : 'Hi,'}</h2>
+              <p className="ay-hpu__body">
                 We’ve updated our health profile to make personalization more useful.
                 You can redo it now, or keep your current profile exactly as it is.
               </p>
-
-              <div style={{ display: 'grid', gap: '10px' }}>
-                <button
-                  type="button"
-                  onClick={handleRedoUpdatedHealthProfile}
-                  style={{
-                    width: '100%',
-                    border: 'none',
-                    borderRadius: '999px',
-                    background: '#2A1F4E',
-                    color: '#FFF9F2',
-                    padding: '13px 18px',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Redo health profile
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleKeepCurrentHealthProfile}
-                  style={{
-                    width: '100%',
-                    border: '1px solid rgba(42,31,78,.16)',
-                    borderRadius: '999px',
-                    background: 'transparent',
-                    color: '#2A1F4E',
-                    padding: '12px 18px',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Keep my current profile
-                </button>
+              <div className="ay-hpu__actions">
+                <button type="button" className="ay-hpu__primary" onClick={handleRedoUpdatedHealthProfile} autoFocus>Redo health profile</button>
+                <button type="button" className="ay-hpu__ghost" onClick={handleKeepCurrentHealthProfile}>Keep my current profile</button>
               </div>
-
-              <p
-                style={{
-                  margin: '14px 0 0',
-                  color: '#8C8078',
-                  fontSize: '11.5px',
-                  lineHeight: 1.5,
-                  textAlign: 'center',
-                }}
-              >
-                Keeping your current profile will not change or remove any saved information.
-              </p>
+              <p className="ay-hpu__note">Keeping your current profile will not change or remove any saved information.</p>
             </div>
           </div>
         )}

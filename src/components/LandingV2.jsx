@@ -101,12 +101,12 @@ function Hero({ onStartQuiz, onSearch, personal = null }) {
           <h1 id="lv-hero-title">Welcome back, <em>{personal.name}.</em></h1>
           <p>{personal.ecoCount > 0 ? `${personal.ecoCount} product${personal.ecoCount === 1 ? '' : 's'} in your ecosystem.` : 'Health products matched to your body.'}</p>
           {personal.ecoCount > 0 || personal.hasQuiz
-            ? <button type="button" className="lv-btn lv-btn--butter" onClick={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></button>
-            : <button type="button" className="lv-btn lv-btn--butter" onClick={onStartQuiz}>See my matches<Arrow /></button>}
+            ? <Go className="lv-btn lv-btn--butter" href="/ecosystem" onGo={personal.onOpenEcosystem}>Open my ecosystem<Arrow /></Go>
+            : <Go className="lv-btn lv-btn--butter" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>}
         </> : <>
           <h1 id="lv-hero-title">Build your <em>ecosystem.</em></h1>
           <p>Health products matched to your body.</p>
-          <button type="button" className="lv-btn lv-btn--butter" onClick={onStartQuiz}>See my matches<Arrow /></button>
+          <Go className="lv-btn lv-btn--butter" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
         </>}
         <Search onSearch={onSearch} />
       </div>
@@ -127,7 +127,7 @@ function Purpose({ onViewAbout }) {
       <div className="lv-purpose__copy">
         <p className="lv-script">who we are</p>
         <h2 id="lv-purpose-title">Built by three women who wanted better answers.</h2>
-        <button type="button" className="lv-btn lv-btn--line" onClick={onViewAbout}>Meet us</button>
+        <Go className="lv-btn lv-btn--line" href="/about" onGo={onViewAbout}>Meet us</Go>
       </div>
       <figure className="lv-polaroid">
         <img src="/team/ayna-founders.jpg" alt="Puloma, Eliz and Ameera, ayna's founders, sitting together in Central Park" loading="lazy" width="1800" height="1198" />
@@ -135,6 +135,11 @@ function Purpose({ onViewAbout }) {
       </figure>
     </section>
   );
+}
+
+/* CTAs that go somewhere are links (open in a new tab, copy the address), not buttons. */
+function Go({ href, onGo, className, children }) {
+  return <a className={className} href={href} onClick={(e) => { if (!onGo || !isPlainLeftClick(e)) return; e.preventDefault(); onGo(); }}>{children}</a>;
 }
 
 /* ---------- product tiles ---------- */
@@ -169,7 +174,7 @@ function Trending({ onOpenProduct, onViewDiscovery }) {
     <section ref={ref} className="lv-sec" aria-labelledby="lv-trend-title">
       <header className="lv-head">
         <h2 id="lv-trend-title">This week’s <em>picks</em></h2>
-        <button type="button" className="lv-btn lv-btn--line" onClick={() => onViewDiscovery?.('')}>See the Shop</button>
+        <Go className="lv-btn lv-btn--line" href="/shop" onGo={() => onViewDiscovery?.('')}>See the Shop</Go>
       </header>
       <Tiles products={items} onOpenProduct={onOpenProduct} ranked />
     </section>
@@ -192,10 +197,10 @@ function ShopBand({ onOpenProduct, onViewDiscovery }) {
       <div className="lv-chips" role="group" aria-label="Choose a need">
         {needs.map((n) => (<button key={n.id} type="button" aria-pressed={n.id === need.id} onClick={() => setId(n.id)}>{n.label}</button>))}
       </div>
-      <div key={need.id} className="lv-band__grid"><Tiles products={need.pool.slice(0, 4)} onOpenProduct={onOpenProduct} /></div>
+      <div key={need.id} className="lv-band__grid"><Tiles products={(() => { const partner = need.pool.filter((p) => isPartnerBrandItem(p)).slice(0, 1); const rest = need.pool.filter((p) => !isPartnerBrandItem(p)); return [...partner, ...rest].slice(0, 4).sort((a, b) => need.pool.indexOf(a) - need.pool.indexOf(b)); })()} onOpenProduct={onOpenProduct} /></div>
       <div className="lv-band__foot">
-        <button type="button" className="lv-btn lv-btn--butter" onClick={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label} products</button>
-        <button type="button" className="lv-link" onClick={() => onViewDiscovery?.('')}>Browse the whole Shop</button>
+        <Go className="lv-btn lv-btn--butter" href="/shop" onGo={() => onViewDiscovery?.(need.group ? { initialMacroGroup: need.group } : '')}>See all {need.label} products</Go>
+        <Go className="lv-link" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the whole Shop</Go>
       </div>
     </section>
   );
@@ -276,7 +281,7 @@ function Reads({ onViewArticle, onViewArticles }) {
         <h2 id="lv-reads-title">Short reads, real sources.</h2>
         <a className="lv-btn lv-btn--line" href="/library" onClick={(e) => { if (!isPlainLeftClick(e)) return; e.preventDefault(); onViewArticles?.(); }}>Open the Library</a>
       </header>
-      {fact && <p className="lv-fact"><b>Today: {fact.term}.</b> {fact.text}</p>}
+      {fact && <p className="lv-fact"><b>Today: {fact.term}.</b> {fact.text} <small className="lv-fact__src">From the ayna glossary.</small></p>}
       <ul className="lv-reads2__row">
         {LEAD_READS.map((r) => (
           <li key={r.id}>
@@ -329,8 +334,8 @@ function Start({ onStartQuiz, onViewDiscovery }) {
           <h2 id="lv-start-title">Start with <em>six</em> questions.</h2>
           <p>Then a shop matched to you.</p>
           <div className="lv-start__cta">
-            <button type="button" className="lv-btn lv-btn--ink" onClick={onStartQuiz}>See my matches<Arrow /></button>
-            <button type="button" className="lv-link" onClick={() => onViewDiscovery?.('')}>Browse the Shop</button>
+            <Go className="lv-btn lv-btn--ink" href="/quiz" onGo={onStartQuiz}>See my matches<Arrow /></Go>
+            <Go className="lv-link" href="/shop" onGo={() => onViewDiscovery?.('')}>Browse the Shop</Go>
           </div>
         </div>
         <img src="/landing/stalls-trio.webp" alt="Three friends chatting from neighboring bathroom stalls" loading="lazy" width="734" height="397" />

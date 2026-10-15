@@ -72,10 +72,10 @@ function normalizePartnerLabels() {
   document.querySelectorAll('.ayna-browse-card__affiliate').forEach((badge) => {
     // Pre-launch partners (Rèsa) carry their own "· Waitlist" label and tooltip.
     if (badge.classList.contains('ayna-browse-card__affiliate--prelaunch')) return;
-    if (/ayna favorite/i.test(clean(badge.textContent))) {
-      badge.textContent = 'ayna Favorite';
+    if (/ayna (favorite|partner)/i.test(clean(badge.textContent))) {
+      badge.textContent = 'ayna partner';
       badge.setAttribute('title', 'Commercial brand partner. Partnership does not change your personalized match score.');
-      badge.setAttribute('aria-label', 'ayna Favorite, a commercial brand partner');
+      badge.setAttribute('aria-label', 'ayna partner, a commercial brand partner');
     }
   });
 }

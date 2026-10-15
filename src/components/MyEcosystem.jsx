@@ -1953,7 +1953,7 @@ export default function MyEcosystem({
                             {llmLoading && myProductList.length === 0 ? 'Building your matches…' : myProductList.length === 0 ? 'No picks yet' : (
                                 <>
                                     {myProductList.length} product{myProductList.length === 1 ? '' : 's'} on {areaGroups.length} {areaGroups.length === 1 ? 'shelf' : 'shelves'}
-                                    {estimatedMonthlyTotal.counted > 0 && (
+                                    {estimatedMonthlyTotal.counted > 0 && estimatedMonthlyTotal.total >= 1 && (
                                         <details className="eco3-cost">
                                             <summary>about ${estimatedMonthlyTotal.total.toFixed(0)}{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}/month</summary>
                                             <span>Estimated from the listed prices of {estimatedMonthlyTotal.counted} of your {estimatedMonthlyTotal.totalItems} products, spread over how long each usually lasts.{estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? ` ${estimatedMonthlyTotal.totalItems - estimatedMonthlyTotal.counted} without a listed price are not counted.` : ''} It is an estimate, not what you spend.</span>
@@ -2081,7 +2081,7 @@ export default function MyEcosystem({
                             <p className="eco3-empty__body">Answer a few questions or pick things from the Shop.</p>
                             <div className="eco3-empty__actions">
                                 {typeof onBuildEcosystem === 'function' && (
-                                    <button type="button" className="eco3-pill eco3-pill--ink" onClick={onBuildEcosystem}>Build ecosystem</button>
+                                    <button type="button" className="eco3-pill eco3-pill--ink" onClick={onBuildEcosystem}>See my matches</button>
                                 )}
                                 <button type="button" className="eco3-pill" onClick={() => searchShop('')}>Go to Shop</button>
                             </div>
@@ -2146,6 +2146,7 @@ export default function MyEcosystem({
                             onOpenProduct={onOpenProduct}
                             onToggleProduct={onToggleProduct}
                             onShop={typeof onGoToSearch === 'function' ? (q) => onGoToSearch({ query: q }) : null}
+                            onFindCare={() => setShowCareSheet(true)}
                         />
                     </section>
                 )}
