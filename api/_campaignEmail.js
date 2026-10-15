@@ -3,10 +3,10 @@
  * Free product campaign emails: one renderer for the announcement and every
  * transactional message, so they all look the same.
  *
- * Look: the website's sticker language translated to what email clients can
- * draw. White canvas, ink (#1d1a2b) 2px outlines, the offset shadow drawn as a
- * thicker right/bottom border, butter / periwinkle / pink fills, Bricolage
- * Grotesque headlines falling back to Arial. Tables + inline styles only.
+ * Look: ayna theme v3 translated to what email clients can draw. Butter page,
+ * espresso (#3e2723) 2px outlines, the hard shadow drawn as a thicker
+ * right/bottom border, sky and rose fills, white product tiles, DM Serif
+ * Display headlines (Georgia fallback), DM Sans body. Tables + inline styles.
  *
  * Sending goes through Resend (already used by api/contact.js). Nothing is
  * sent unless RESEND_API_KEY is set.
@@ -14,14 +14,16 @@
 
 export const SITE_URL = (process.env.SITE_URL || 'https://www.aynahealth.co').replace(/\/+$/, '');
 
-const INK = '#1d1a2b';
-const SOFT = '#5d5a6a';
-const BUTTER = '#f7e78e';
-const PERI = '#b9c2f4';
-const PINK = '#f7badd';
-const LINE = '#e4e1ea';
-const DISPLAY = "'Bricolage Grotesque', 'Poppins', Arial, Helvetica, sans-serif";
-const UI = "'Poppins', Arial, Helvetica, sans-serif";
+// Theme v3 (src/styles/theme-v3.css): butter page, espresso ink, sky + rose.
+const INK = '#3e2723';
+const SOFT = '#6b524d';
+const PAGE = '#ffedac';
+const SKY = '#769ebe';
+const ROSE = '#f7badd';
+const LINE = '#e8d58f';
+const DISPLAY = "'DM Serif Display', Georgia, 'Times New Roman', serif";
+const UI = "'DM Sans', Arial, Helvetica, sans-serif";
+const LOGO = "'Bricolage Grotesque', 'DM Sans', Arial, sans-serif";
 
 export function escapeHtml(value) {
   return String(value ?? '')
@@ -44,7 +46,7 @@ function button(label, href) {
   return `
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 8px">
     <tr><td style="border-radius:99px;background:${INK};border:2px solid ${INK}">
-      <a href="${escapeHtml(href)}" style="display:inline-block;padding:15px 28px;font:600 17px/22px ${UI};color:#ffffff;text-decoration:none;border-radius:99px">${escapeHtml(label)}&nbsp;&nbsp;&rarr;</a>
+      <a href="${escapeHtml(href)}" style="display:inline-block;padding:15px 28px;font:600 17px/22px ${UI};color:${PAGE};text-decoration:none;border-radius:99px">${escapeHtml(label)}&nbsp;&nbsp;&rarr;</a>
     </td></tr>
   </table>`;
 }
@@ -55,21 +57,21 @@ function equation() {
     <td class="eq-tile" width="30%" valign="top" style="padding:0">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr><td style="background:${fill};border:2px solid ${INK};border-right-width:5px;border-bottom-width:5px;border-radius:16px;padding:16px 14px">
-          <div style="font:800 40px/40px ${DISPLAY};color:${INK};letter-spacing:-1px">${n}</div>
+          <div style="font:400 44px/44px ${DISPLAY};color:${INK}">${n}</div>
           <div style="margin-top:8px;font:700 15px/20px ${UI};color:${INK}">${line1}</div>
           <div style="margin-top:2px;font:500 13px/18px ${UI};color:${INK}">${line2}</div>
         </td></tr>
       </table>
     </td>`;
-  const op = (s) => `<td class="eq-op" width="5%" align="center" valign="middle" style="font:800 28px/28px ${DISPLAY};color:${INK};padding:0 4px">${s}</td>`;
+  const op = (s) => `<td class="eq-op" width="5%" align="center" valign="middle" style="font:400 32px/32px ${DISPLAY};color:${INK};padding:0 4px">${s}</td>`;
   return `
   <table role="presentation" class="eq" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px">
     <tr>
-      ${tile('3', 'thoughtful answers', 'a few real sentences each', BUTTER)}
+      ${tile('3', 'thoughtful answers', 'a few real sentences each', SKY)}
       ${op('+')}
-      ${tile('3', 'friends who join', 'and verify their account', PERI)}
+      ${tile('3', 'friends who join', 'and verify their account', ROSE)}
       ${op('=')}
-      ${tile('1', 'free product', 'you pick it', PINK)}
+      ${tile('1', 'free product', 'you pick it', '#ffffff')}
     </tr>
   </table>`;
 }
@@ -80,7 +82,7 @@ function steps(items) {
     ${items.map(([title, body], i) => `
     <tr>
       <td width="40" valign="top" style="padding:0 12px 16px 0">
-        <div style="width:28px;height:28px;border:2px solid ${INK};border-radius:99px;text-align:center;font:700 14px/28px ${UI};color:${INK}">${i + 1}</div>
+        <div style="width:30px;height:30px;border:2px solid ${INK};border-radius:99px;background:${ROSE};text-align:center;font:400 17px/30px ${DISPLAY};color:${INK}">${i + 1}</div>
       </td>
       <td valign="top" style="padding:0 0 16px">
         <div style="font:700 16px/22px ${UI};color:${INK}">${title}</div>
@@ -97,12 +99,12 @@ function productCard(product) {
     : '';
   return `
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px">
-    <tr><td style="border:2px solid ${INK};border-right-width:5px;border-bottom-width:5px;border-radius:20px;padding:16px">
+    <tr><td style="border:2px solid ${INK};border-right-width:5px;border-bottom-width:5px;border-radius:20px;padding:16px;background:${PAGE}">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-        ${img ? `<td width="136" valign="middle" style="padding-right:16px"><div style="background:#ffffff;border:1px solid ${LINE};border-radius:12px;padding:8px">${img}</div></td>` : ''}
+        ${img ? `<td width="136" valign="middle" style="padding-right:16px"><div style="background:#ffffff;border:2px solid ${INK};border-radius:14px;padding:8px">${img}</div></td>` : ''}
         <td valign="middle">
-          ${product.brand ? `<div style="font:700 11px/16px ${UI};letter-spacing:1.4px;text-transform:uppercase;color:${SOFT}">${escapeHtml(product.brand)}</div>` : ''}
-          <div style="margin-top:4px;font:800 22px/26px ${DISPLAY};color:${INK};letter-spacing:-.5px">${escapeHtml(product.name)}</div>
+          ${product.brand ? `<div style="font:700 14px/18px ${UI};color:${SOFT}">${escapeHtml(product.brand)}</div>` : ''}
+          <div style="margin-top:4px;font:400 26px/30px ${DISPLAY};color:${INK}">${escapeHtml(product.name)}</div>
         </td>
       </tr></table>
     </td></tr>
@@ -113,7 +115,7 @@ function footer({ reason, unsubscribeUrl }) {
   const address = process.env.CAMPAIGN_POSTAL_ADDRESS || '{{COMPANY_POSTAL_ADDRESS}}';
   return `
   <tr><td style="padding:24px 32px 32px;border-top:2px solid ${INK}" class="px">
-    <div style="font:800 20px/24px ${DISPLAY};color:${INK};letter-spacing:-.5px">ayna</div>
+    <div style="font:800 22px/26px ${LOGO};color:${INK};letter-spacing:-1px">ayna</div>
     <div style="margin-top:8px;font:500 13px/20px ${UI};color:${SOFT}">${reason}</div>
     <div style="margin-top:8px;font:500 13px/20px ${UI};color:${SOFT}">
       <a href="${SITE_URL}/privacy-policy" style="color:${INK};text-decoration:underline">Privacy</a>
@@ -139,9 +141,9 @@ export function renderLayout({ title, preheader, body, reason, unsubscribeUrl = 
 <meta name="color-scheme" content="light only">
 <meta name="supported-color-schemes" content="light">
 <title>${escapeHtml(title)}</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;700&family=Bricolage+Grotesque:wght@800&display=swap" rel="stylesheet">
 <style>
-  body { margin:0; padding:0; background:#ffffff; -webkit-text-size-adjust:100%; }
+  body { margin:0; padding:0; background:${PAGE}; -webkit-text-size-adjust:100%; }
   a { color:${INK}; }
   @media (max-width: 600px) {
     .px { padding-left:20px !important; padding-right:20px !important; }
@@ -151,13 +153,13 @@ export function renderLayout({ title, preheader, body, reason, unsubscribeUrl = 
   }
 </style>
 </head>
-<body style="margin:0;padding:0;background:#ffffff">
+<body style="margin:0;padding:0;background:${PAGE}">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${escapeHtml(preheader)}&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAGE}">
   <tr><td align="center" style="padding:24px 12px">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;border:2px solid ${INK};border-radius:24px;background:#ffffff">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;border:2px solid ${INK};border-right-width:6px;border-bottom-width:6px;border-radius:26px;background:${PAGE}">
       <tr><td class="px" style="padding:28px 32px 8px">
-        <a href="${SITE_URL}" style="text-decoration:none;font:800 26px/30px ${DISPLAY};color:${INK};letter-spacing:-1px">ayna</a>
+        <a href="${SITE_URL}" style="text-decoration:none;font:800 28px/32px ${LOGO};color:${INK};letter-spacing:-1px">ayna</a>
       </td></tr>
       <tr><td class="px" style="padding:16px 32px 16px">
         ${body}
@@ -170,9 +172,9 @@ export function renderLayout({ title, preheader, body, reason, unsubscribeUrl = 
 </html>`;
 }
 
-const h1 = (html) => `<h1 class="h1" style="margin:0 0 16px;font:800 44px/48px ${DISPLAY};color:${INK};letter-spacing:-1.5px">${html}</h1>`;
-const sticker = (text, fill = BUTTER) =>
-  `<span style="display:inline-block;padding:0 10px 2px;background:${fill};border:2px solid ${INK};border-radius:12px">${text}</span>`;
+const h1 = (html) => `<h1 class="h1" style="margin:0 0 16px;font:400 48px/50px ${DISPLAY};color:${INK};letter-spacing:-.5px">${html}</h1>`;
+// v3: an italic accent word belongs to marketing headlines only (the announcement).
+const accent = (text) => `<em style="font-style:italic">${text}</em>`;
 
 const ACCOUNT_REASON = 'You are getting this because you have an ayna account and this is about your free product.';
 
@@ -182,12 +184,12 @@ const ACCOUNT_REASON = 'You are getting this because you have an ayna account an
 export function announcementEmail({ unsubscribeUrl = '{{{RESEND_UNSUBSCRIBE_URL}}}' } = {}) {
   const url = campaignUrl('/free-product', 'campaign_email');
   const body = `
-    ${h1(`Give us your thoughts.<br>Get something ${sticker('on us.')}`)}
+    ${h1(`Give us your thoughts.<br>Get something ${accent('on us.')}`)}
     ${p('Tell us what you really think of ayna, bring three friends, and pick a free product. That is the whole thing:', `color:${SOFT}`)}
     ${equation()}
     ${button('Start earning your free product', url)}
     <div style="height:24px"></div>
-    <div style="font:800 22px/28px ${DISPLAY};color:${INK};letter-spacing:-.5px;margin:0 0 16px">How it works</div>
+    <div style="font:400 28px/32px ${DISPLAY};color:${INK};margin:0 0 16px">How it works</div>
     ${steps([
       ['Verify your account', 'Most accounts already are. If yours is not, the page shows you how.'],
       ['Answer three short questions', 'What you like, what bugs you, what you would change. A couple of real sentences each, 120 characters or more.'],
@@ -229,7 +231,7 @@ export function announcementEmail({ unsubscribeUrl = '{{{RESEND_UNSUBSCRIBE_URL}
 export function unlockedEmail() {
   const url = campaignUrl('/free-product/reward', 'unlocked_email');
   const body = `
-    ${h1(`Your free product is ${sticker('unlocked.', PERI)}`)}
+    ${h1('Your free product is unlocked.')}
     ${p('Your answers are in and three friends are verified. Thank you, really. Come spin for something you will actually want.')}
     ${button('Pick my free product', url)}
     ${p('Products are limited and go to whoever claims them first, so we would not wait too long.', `font-size:14px;line-height:22px;color:${SOFT};margin-top:16px`)}
@@ -245,7 +247,7 @@ export function claimedEmail({ product }) {
   const url = campaignUrl('/free-product/reward', 'claimed_email');
   const name = escapeHtml(product?.name || 'your free product');
   const body = `
-    ${h1(`It's ${sticker('yours.', PINK)}`)}
+    ${h1("It's yours.")}
     ${productCard(product)}
     ${p(`One more step: add the address you want ${name} shipped to. Our team packs and sends these ourselves.`)}
     ${button('Add my address', url)}
@@ -261,7 +263,7 @@ export function claimedEmail({ product }) {
 export function shippedEmail({ product }) {
   const url = campaignUrl('/free-product/reward', 'shipped_email');
   const body = `
-    ${h1(`It's on ${sticker('the way.', BUTTER)}`)}
+    ${h1("It's on the way.")}
     ${productCard(product)}
     ${p('Your free product has shipped. Thanks again for helping us make ayna better.')}
     ${button('See my free product', url)}

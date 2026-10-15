@@ -65,7 +65,7 @@ export default function CampaignAdminPage({ onBack }) {
   if (state !== 'ok') {
     return (
       <section className="fp mockup-page">
-        <h1 className="fp-h1">Free product campaign</h1>
+        <header className="fp-head ay3-band ay3-band--paper"><h1 className="fp-h1">Free product campaign</h1></header>
         <p className="fp-sub">{{ loading: 'Loading…', forbidden: 'This page is for the ayna team.', unauthenticated: 'Sign in with an admin account to see this.', error: 'Could not load the campaign.' }[state]}</p>
         <button type="button" className="fp-btn" onClick={onBack}>Back</button>
       </section>
@@ -79,15 +79,14 @@ export default function CampaignAdminPage({ onBack }) {
 
   return (
     <section className="fp fp-admin mockup-page">
-      <header style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'space-between', alignItems: 'flex-end' }}>
-        <div>
-          <h1 className="fp-h1">Free product campaign</h1>
-          <p className="fp-sub">
-            {live ? 'Live' : c.starts_at ? (c.ends_at && new Date(c.ends_at) <= new Date() ? 'Ended' : 'Paused') : 'Not launched'}
-            {c.starts_at ? ` · friends count if they joined after ${new Date(c.starts_at).toLocaleString()}` : ''}
-          </p>
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      <header className="fp-head ay3-band ay3-band--paper">
+        <p className="fp-kicker">Team only</p>
+        <h1 className="fp-h1">Free product campaign</h1>
+        <p className="fp-sub">
+          {live ? 'Live' : c.starts_at ? (c.ends_at && new Date(c.ends_at) <= new Date() ? 'Ended' : 'Paused') : 'Not launched'}
+          {c.starts_at ? `. Friends count if they joined after ${new Date(c.starts_at).toLocaleString()}.` : '. Nothing is visible to anyone until you launch.'}
+        </p>
+        <div className="fp-actions">
           {!c.starts_at && <button type="button" className="fp-btn is-ink" onClick={() => { if (window.confirm('Launch now? Friends who join from this moment count.')) act({ action: 'campaign', state: 'launch' }); }}>Launch</button>}
           {c.starts_at && live && <button type="button" className="fp-btn" onClick={() => act({ action: 'campaign', state: 'pause' })}>Pause</button>}
           {c.starts_at && !c.is_active && <button type="button" className="fp-btn" onClick={() => act({ action: 'campaign', state: 'resume' })}>Resume</button>}
@@ -98,7 +97,7 @@ export default function CampaignAdminPage({ onBack }) {
       </header>
       {msg && <div className="fp-notice tone-soft" role="status"><div>{msg}</div></div>}
 
-      <ul className="fp-steps" aria-label="Totals" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
+      <ul className="fp-steps" aria-label="Totals">
         {[['Participants', t.participants], ['All 3 answers', t.feedbackDone], ['Requirements met', t.requirementsMet], ['Spins', t.spins], ['Claims', t.claims], ['Waiting for stock', t.waitingForStock]].map(([k, v]) => (
           <li key={k} className="fp-step" style={{ padding: 16 }}><h2>{k}</h2><p className="fp-step__big">{v}</p></li>
         ))}

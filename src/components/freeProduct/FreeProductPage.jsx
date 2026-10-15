@@ -60,12 +60,25 @@ function useToast() {
 function Equation({ compact = false }) {
   return (
     <ol className={`fp-eq${compact ? ' is-compact' : ''}`} aria-label="3 thoughtful answers plus 3 friends who join ayna equals 1 free product you pick">
-      <li className="fp-eq__tile tone-butter"><b>3</b><span>thoughtful answers</span></li>
+      <li className="fp-eq__tile tone-sky"><b>3</b><span>thoughtful answers</span></li>
       <li className="fp-eq__op" aria-hidden="true">+</li>
-      <li className="fp-eq__tile tone-peri"><b>3</b><span>friends who join</span></li>
+      <li className="fp-eq__tile tone-rose"><b>3</b><span>friends who join</span></li>
       <li className="fp-eq__op" aria-hidden="true">=</li>
-      <li className="fp-eq__tile tone-pink"><b>1</b><span>free product, your pick</span></li>
+      <li className="fp-eq__tile tone-ink"><b>1</b><span>free product, your pick</span></li>
     </ol>
+  );
+}
+
+/** Page header: a full-bleed v3 colour band with an edge, like every other ayna page head. */
+const EDGE = { rose: 'ay3-torn', sky: 'ay3-zigzag', ink: 'ay3-scallop', paper: '' };
+function PageHead({ tone = 'rose', kicker, title, lead, center = false, headingRef, children }) {
+  return (
+    <header className={`fp-head ay3-band ay3-band--${tone} ${EDGE[tone]} ay3-edge-bottom${center ? ' is-center' : ''}`}>
+      {kicker && <p className="fp-kicker">{kicker}</p>}
+      <h1 className="fp-h1" tabIndex={headingRef ? -1 : undefined} ref={headingRef}>{title}</h1>
+      {lead && <p className="fp-sub">{lead}</p>}
+      {children}
+    </header>
   );
 }
 
@@ -142,7 +155,7 @@ function FeedbackCard({ index, q, saved, minChars, userId, allSaved, onSaved, lo
       <div className="fp-fb__head">
         <span className="fp-fb__num" aria-hidden="true">{index + 1}</span>
         <h3>{q.title}</h3>
-        {done && <span className="fp-pill tone-mint"><i>{Icon.check}</i>Done</span>}
+        {done && <span className="fp-pill tone-sky"><i>{Icon.check}</i>Done</span>}
       </div>
       <label htmlFor={id} className="fp-fb__q">{q.question}</label>
       {done ? (
@@ -255,20 +268,20 @@ function ProgressView({ status, user, onUnlock, onRefresh, toast }) {
   return (
     <>
       <ul className="fp-steps" aria-label="What you need to do">
-        <li className={`fp-step tone-butter${status.verified ? ' is-done' : ''}`} ref={accountRef}>
+        <li className={`fp-step tone-sky${status.verified ? ' is-done' : ''}`} ref={accountRef}>
           <span className="fp-step__n" aria-hidden="true">1</span>
           <h2>Your account</h2>
           <p className="fp-step__big">{status.verified ? 'Verified' : 'Not verified'}</p>
           <StatusLine done={status.verified}>{status.verified ? 'All set' : 'Confirm your email or phone'}</StatusLine>
           {!status.verified && <p className="fp-muted">Sign out, then sign back in with your email or phone. We'll send a code to confirm it's you.</p>}
         </li>
-        <li className={`fp-step tone-peri${fbDone ? ' is-done' : ''}`}>
+        <li className={`fp-step tone-rose${fbDone ? ' is-done' : ''}`}>
           <span className="fp-step__n" aria-hidden="true">2</span>
           <h2>Your feedback</h2>
           <p className="fp-step__big">{status.feedbackComplete}/{c.feedbackRequired} <small>completed</small></p>
           <StatusLine done={fbDone} partial={status.feedbackComplete > 0}>{fbDone ? 'Thank you' : `${c.feedbackRequired - status.feedbackComplete} to go`}</StatusLine>
         </li>
-        <li className={`fp-step tone-pink${frDone ? ' is-done' : ''}`}>
+        <li className={`fp-step tone-white${frDone ? ' is-done' : ''}`}>
           <span className="fp-step__n" aria-hidden="true">3</span>
           <h2>Your referrals</h2>
           <p className="fp-step__big">{Math.min(status.referralsVerified, c.referralsRequired)}/{c.referralsRequired} <small>verified friends</small></p>
@@ -340,7 +353,7 @@ function ResultCard({ product, headingRef }) {
       <div className="fp-result__body">
         {product.brand && <p className="fp-result__brand">{product.brand}</p>}
         <h2 tabIndex={-1} ref={headingRef}>{product.name}</h2>
-        {product.category && <span className="fp-pill">{String(product.category).replace(/[-_]/g, ' ')}</span>}
+        {product.category && <span className="fp-pill tone-sky">{String(product.category).replace(/[-_]/g, ' ').replace(/^\w/, (c) => c.toUpperCase())}</span>}
         {summary && <p className="fp-result__summary">{summary}</p>}
       </div>
     </article>
@@ -467,7 +480,7 @@ function ClaimedView({ claim, user, onUpdated, onBack }) {
 
   return (
     <div className="fp-claimed">
-      <h1 tabIndex={-1} ref={headingRef} className="fp-h1">It's <span className="fp-mark tone-pink">yours.</span></h1>
+      <PageHead tone="rose" kicker="Your free product" title="It's yours." headingRef={headingRef} />
       <ResultCard product={claim.product} />
       <p className="fp-muted">Claimed {date}. Status: <b>{FULFILLMENT_LABELS[s] || s}</b></p>
       {s !== 'canceled' && (
@@ -582,7 +595,7 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
   if (!status.inventoryAvailable && !current) {
     return (
       <div className="fp-reward">
-        <h1 className="fp-h1">Your free product is unlocked.</h1>
+        <PageHead tone="sky" kicker="Your free product" title="Your free product is unlocked." center />
         <Notice tone="soft"><b>Every product has been claimed for now.</b> You're still eligible and we've saved your spot. We'll email you as soon as we add more.</Notice>
         <button type="button" className="fp-link" onClick={onBack}>Back to your progress</button>
       </div>
@@ -591,10 +604,7 @@ function RewardView({ status, user, onRefresh, onBack, toast, setStatus }) {
 
   return (
     <div className="fp-reward">
-      <header className="fp-reward__head">
-        <h1 className="fp-h1">Your free product is <span className="fp-mark tone-peri">unlocked.</span></h1>
-        <p className="fp-sub">Spin for something you'll actually want. Spin as many times as you like. Claiming one is final.</p>
-      </header>
+      <PageHead tone="sky" kicker="Your free product" title="Your free product is unlocked." lead="Spin for something you'll actually want. Spin as many times as you like. Claiming one is final." center />
 
       {pool.length > 0 && <ProductReel pool={pool} spinning={spinning} result={current} onSettled={onSettled} />}
       <p className="fp-sr" aria-live="polite">{announce}</p>
@@ -698,8 +708,7 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
   } else if (!user) {
     content = (
       <div className="fp-intro">
-        <h1 className="fp-h1">Give us your thoughts. Get something <span className="fp-mark">on us.</span></h1>
-        <p className="fp-sub">Tell us what you really think of ayna, bring three friends, and pick a free product.</p>
+        <PageHead tone="ink" kicker="Free product" title="Give us your thoughts. Get something on us." lead="Tell us what you really think of ayna, bring three friends, and pick a free product." />
         <Equation />
         <div className="fp-intro__actions">
           <Cta onClick={onSignIn}>Sign in to start</Cta>
@@ -717,8 +726,7 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
   } else if (!status.campaign || (!status.campaign.launched && !status.claim)) {
     content = (
       <div className="fp-intro">
-        <h1 className="fp-h1">Nothing to earn right now.</h1>
-        <p className="fp-sub">This isn't running at the moment. Keep an eye on your inbox.</p>
+        <PageHead tone="paper" kicker="Free product" title="Nothing to earn right now." lead="This isn't running at the moment. Keep an eye on your inbox." />
       </div>
     );
   } else if (status.claim) {
@@ -726,8 +734,7 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
   } else if (status.campaign.ended) {
     content = (
       <div className="fp-intro">
-        <h1 className="fp-h1">This one has wrapped up.</h1>
-        <p className="fp-sub">Thank you to everyone who sent us feedback and brought friends. Your answers still help us build ayna.</p>
+        <PageHead tone="paper" kicker="Free product" title="This one has wrapped up." lead="Thank you to everyone who sent us feedback and brought friends. Your answers still help us build ayna." />
       </div>
     );
   } else if (!status.campaign.live) {
@@ -742,19 +749,16 @@ export default function FreeProductPage({ user, authLoading, stage = 'progress',
       ? <RewardView status={status} user={user} onRefresh={load} onBack={() => go('free-product')} toast={toastNode} setStatus={setStatus} />
       : (
         <div className="fp-intro">
-          <h1 className="fp-h1">Not unlocked yet.</h1>
-          <p className="fp-sub">{remainingLabel(status) || 'Finish every step first.'}</p>
+          <PageHead tone="paper" kicker="Your free product" title="Not unlocked yet." lead={remainingLabel(status) || 'Finish every step first.'} />
           <Cta onClick={() => go('free-product')}>See what's left</Cta>
         </div>
       );
   } else {
     content = (
       <>
-        <header className="fp-head">
-          <h1 className="fp-h1">Your free product progress</h1>
-          <p className="fp-sub">{status.eligible ? 'Your free product is unlocked.' : "Three thoughtful answers and three friends who join ayna. Then you pick something free."}</p>
+        <PageHead tone="rose" kicker="Free product" title="Your free product progress" lead={status.eligible ? 'Your free product is unlocked.' : 'Three thoughtful answers and three friends who join ayna. Then you pick something free.'}>
           <Equation compact />
-        </header>
+        </PageHead>
         <ProgressView status={status} user={user} onUnlock={() => go('free-product-reward')} onRefresh={load} toast={toast} />
       </>
     );

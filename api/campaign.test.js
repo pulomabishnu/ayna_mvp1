@@ -1,3 +1,4 @@
+/* global process */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockReq, mockRes, mockSupabase } from './_test-helpers.js';
 
