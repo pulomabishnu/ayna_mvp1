@@ -180,6 +180,15 @@ const VIEW_DESCRIPTIONS = {
   'not-found': "This page doesn't exist on ayna.",
   'campus-resources': 'Find verified sexual assault support, advocacy, reporting, medical, and campus resources for your college or university.',
 };
+// One canonical address per page (preview and production domains must not compete in search).
+function setCanonical(path) {
+  try {
+    let el = document.querySelector('link[rel="canonical"]');
+    if (!el) { el = document.createElement('link'); el.setAttribute('rel', 'canonical'); document.head.appendChild(el); }
+    el.setAttribute('href', `https://www.aynahealth.co${String(path || '/').replace(/\/+$/, '') || '/'}`);
+  } catch { /* no document */ }
+}
+
 function setMetaDescription(text) {
   let el = document.querySelector('meta[name="description"]');
   if (!el) { el = document.createElement('meta'); el.setAttribute('name', 'description'); document.head.appendChild(el); }
@@ -209,9 +218,13 @@ function communityHandleFromPath(path) {
   const m = String(path || '').match(/^\/community\/@([a-z0-9_]+)\/?$/i);
   return m ? m[1].toLowerCase() : null;
 }
+function communityPostFromPath(path) {
+  const m = String(path || '').match(/^\/community\/p\/([a-z0-9-]+)\/?$/i);
+  return m ? m[1] : null;
+}
 function viewFromSubPath(path) {
   if (articleIdFromPath(path)) return 'articles';
-  if (communityHandleFromPath(path)) return 'community';
+  if (communityHandleFromPath(path) || communityPostFromPath(path)) return 'community';
   return null;
 }
 
@@ -472,6 +485,8 @@ function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const [selectedArticleId, setSelectedArticleId] = useState(() => articleIdFromPath(window.location.pathname));
   const [communityHandle, setCommunityHandle] = useState(() => communityHandleFromPath(window.location.pathname));
+  // Posts have their own address: /community/p/:id (shareable, linkable from updates).
+  const [communityPostId] = useState(() => communityPostFromPath(window.location.pathname));
   // Product page: the post/review composer opens over the page (P07).
   const [composerSeed, setComposerSeed] = useState(null);
   // Signed-out quiz finish: her matches, shown before the sign-up ask.
@@ -1697,6 +1712,13 @@ function App() {
     }
 
     raw ||= getProductById(productRouteId);
+    // Forgiving product links: /product/sootheher-elaris-pod finds
+    // "sootheher-s-elaris-pod" (apostrophes became "-s-" in slugs).
+    if (!raw) {
+      const loose = (x) => String(x || '').toLowerCase().replace(/-s-/g, '-').replace(/[^a-z0-9]/g, '');
+      const want = loose(productRouteId);
+      raw = want.length > 4 ? ALL_PRODUCTS.find((p) => loose(productRouteKey(p)) === want) || null : null;
+    }
 
     if (!raw) return null;
     return raw.llmGenerated ? enrichLlmProductForDiscovery(raw) : raw;
@@ -1770,6 +1792,7 @@ function App() {
         : (productStillResolving ? 'Loading… | ayna' : 'Product Not Found | ayna');
       return;
     }
+    setCanonical(window.location.pathname);
     const label = VIEW_TITLES[currentView];
     document.title = label ? `${label} | ayna` : base;
     setMetaDescription(VIEW_DESCRIPTIONS[currentView] || DEFAULT_DESCRIPTION);
@@ -2032,6 +2055,12 @@ function App() {
             seedKind={communitySeed?.kind || null}
             seedProductId={communitySeed?.productId || null}
             initialProfileHandle={communityHandle}
+            initialPostId={communityPostId}
+            onPostChange={(id) => {
+              const here = window.location.pathname;
+              if (id) { const next = `/community/p/${id}`; if (here !== next) window.history.pushState({ view: 'community' }, '', next); }
+              else if (/^\/community\/p\//.test(here)) window.history.pushState({ view: 'community' }, '', '/community');
+            }}
             onProfileChange={(h) => {
               setCommunityHandle(h);
               const next = h ? `/community/@${h}` : '/community';

@@ -68,6 +68,16 @@ function FooterColumn({ title, children }) {
 }
 
 // Real links (open in a new tab, copy, crawl) that still route in-app on a plain click.
+/* One control that pauses every moving thing on the site (marquees, carousels, film strips). */
+function MotionToggle() {
+  const [paused, setPaused] = React.useState(() => { try { return localStorage.getItem('ayna_motion_paused') === '1'; } catch { return false; } });
+  React.useEffect(() => {
+    document.documentElement.classList.toggle('ay-motion-paused', paused);
+    try { localStorage.setItem('ayna_motion_paused', paused ? '1' : '0'); } catch { /* storage unavailable */ }
+  }, [paused]);
+  return <button type="button" className="ay-footer-legal__link" aria-pressed={paused} onClick={() => setPaused((v) => !v)}>{paused ? 'Play motion' : 'Pause motion'}</button>;
+}
+
 function footerGo(e, fn) {
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
@@ -137,6 +147,7 @@ export default function SiteFooter({
           <a className="ay-footer-legal__link" href="/terms-of-use" onClick={(e) => footerGo(e, onViewTermsOfUse)}>Terms of Use</a>
           <a className="ay-footer-legal__link" href="/how-we-make-money" onClick={(e) => footerGo(e, onViewHowWeMakeMoney)}>How We Make Money</a>
           <AnalyticsToggle />
+          <MotionToggle />
         </nav>
       </div>
     </footer>

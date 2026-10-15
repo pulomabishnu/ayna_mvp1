@@ -3170,3 +3170,18 @@ html body .app-container .wc3 .wc-post:nth-of-type(5n + 2) { transform: rotate(-
 .wc-sheet .wc-compose-foot { position: sticky; bottom: 0; padding-top: 10px; padding-bottom: 6px; background: #ffedac; }
 html body .app-container .wc-team-tag { white-space: nowrap; }
 html body .app-container .lx .ay-partners .ay-partners-title { color: #3e2723 !important; }
+/* Global "Pause motion" */
+html.ay-motion-paused *, html.ay-motion-paused *::before, html.ay-motion-paused *::after { animation-play-state: paused !important; scroll-behavior: auto !important; }
+/* Tablet (701–900px): the four nav links fit, so keep the text nav instead of a hamburger. */
+@media (min-width: 701px) and (max-width: 900px) {
+  html body .app-container .app-nav .desktop-only { display: flex !important; }
+  html body .app-container .app-nav .mobile-menu-btn { display: none !important; }
+  html body .app-container .app-nav.app-nav a.app-nav__tab--main { padding: 0 12px !important; font-size: 14px !important; height: 40px; }
+  html body .app-container .app-nav.app-nav a.app-nav__tab--quiet { padding: 0 8px !important; font-size: 13px !important; }
+  html body .app-container .app-nav.app-nav .app-nav__divider { margin: 0 2px; }
+  html body .app-container .app-nav.app-nav .app-nav__beta-badge { display: none !important; }
+}
+/* Tablet Shop grid: three across. */
+@media (min-width: 701px) and (max-width: 1000px) {
+  html body .app-container .ayna-browse__grid:not(.ayna-browse__grid--skeleton) { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}

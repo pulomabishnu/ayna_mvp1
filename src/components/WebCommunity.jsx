@@ -182,7 +182,7 @@ function Sheet({ title, onClose, children, className = '' }) {
   </div></div>, host);
 }
 
-export default function WebCommunity({ user, products = [], quizResults = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, initialProfileHandle = null, onProfileChange, composeOnly = false, onDone }) {
+export default function WebCommunity({ user, products = [], quizResults = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
   const supabase = user ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   const [tab, setTab] = useState('for-you');
@@ -228,6 +228,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [reportPost, setReportPost] = useState(null);
   const [reportReason, setReportReason] = useState('misinformation');
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [editPost, setEditPost] = useState(null);
+  const [editBody, setEditBody] = useState('');
   const [notifications, setNotifications] = useState(null);
   const [showUpdates, setShowUpdates] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -547,6 +549,22 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     else if (currentHandle) { reportedHandle.current = null; closePage(); }
   }, [initialProfileHandle, supabase]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Post URL sync (/community/p/:id): open a linked post on mount, report the open post up.
+  const currentPostId = page?.type === 'post' ? page.id : null;
+  const postSynced = useRef(false);
+  useEffect(() => {
+    if (!initialPostId || !supabase || postSynced.current) return;
+    postSynced.current = true;
+    community.getFeedPost(supabase, initialPostId).then((post) => { if (post) openPost(post); else setError('This post isn’t available anymore.'); }).catch(notifyError);
+  }, [initialPostId, supabase]); // eslint-disable-line react-hooks/exhaustive-deps
+  const lastPost = useRef(initialPostId);
+  useEffect(() => {
+    if (currentPostId === lastPost.current) return;
+    if (!currentPostId && initialPostId && !postSynced.current) return;
+    lastPost.current = currentPostId;
+    onPostChange?.(currentPostId);
+  }, [currentPostId]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // People to follow, only from profiles already loaded with the feed.
   const suggestedPeople = useMemo(() => [...profileById.values()]
     .filter((p) => p?.user_id && p.username && p.user_id !== user?.id && p.user_id !== profile?.user_id && !followingIds.includes(p.user_id))
@@ -586,7 +604,10 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         {post.kind && post.kind !== 'post' && <Tag kind={post.kind} />}
         <div className="wc-menu-wrap">
           <button type="button" className="wc-more" aria-label={`More options for ${name}'s post`} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuId(menuOpen ? null : post.id)}><Icon name="more" size={18} /></button>
-          {menuOpen && <div className="wc-menu" role="menu"><button type="button" role="menuitem" onClick={() => { setMenuId(null); if (post.is_mine) setDeleteTarget(post); else setReportPost(post); }}>{post.is_mine ? 'Delete post' : 'Report post'}</button></div>}
+          {menuOpen && <div className="wc-menu" role="menu">
+            {post.is_mine && user && <button type="button" role="menuitem" onClick={() => { setMenuId(null); setEditPost(post); setEditBody(post.body || ''); }}>Edit post</button>}
+            <button type="button" role="menuitem" onClick={() => { setMenuId(null); if (post.is_mine) setDeleteTarget(post); else setReportPost(post); }}>{post.is_mine ? 'Delete post' : 'Report post'}</button>
+          </div>}
         </div>
       </header>
       {post.kind === 'review' && <Stars value={post.rating} size={15} />}
@@ -875,7 +896,13 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
               const text = verb ? `${who} ${verb}` : (n.message || n.body || `${who}: ${String(n.type || 'update').replace(/_/g, ' ')}`);
               return <li key={n.id}>
                 <span className="wc-notes-av" aria-hidden="true">{String(who).replace('@', '').charAt(0).toUpperCase()}</span>
-                {n.actor?.username ? <button type="button" className="wc-notes-link" onClick={() => { setShowUpdates(false); openProfile(n.actor.username); }}>{text}</button> : <span>{text}</span>}
+                {(() => {
+                  const postId = n.post_id || n.data?.post_id || n.payload?.post_id || null;
+                  const aboutPost = postId && /comment|reply|reaction|helpful|mention/i.test(String(n.type || ''));
+                  if (aboutPost) return <button type="button" className="wc-notes-link" onClick={async () => { setShowUpdates(false); try { const post = await community.getFeedPost(supabase, postId); if (post) openPost(post); } catch (e) { notifyError(e); } }}>{text}</button>;
+                  if (n.actor?.username) return <button type="button" className="wc-notes-link" onClick={() => { setShowUpdates(false); openProfile(n.actor.username); }}>{text}</button>;
+                  return <span>{text}</span>;
+                })()}
                 <small>{timeLabel(n.created_at)}</small>
               </li>;
             })}</ul></div>;
@@ -884,6 +911,18 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         : <p className="wc-muted">You’re all caught up.</p>}
     </Sheet>}
     {showRules && <Sheet title="Community rules" onClose={() => setShowRules(false)} className="wc-rules-sheet"><CommunityRulesList /><button type="button" className="wc-btn" onClick={() => setShowRules(false)}>Got it</button></Sheet>}
+    {editPost && <Sheet title="Edit post" onClose={() => setEditPost(null)}>
+      <RuleField autoGrow minRows={4} value={editBody} maxLength={POST_MAX} onChange={(e) => setEditBody(e.target.value)} onShowRules={openRules} />
+      <div className="wc-compose-foot"><button type="button" className="wc-btn" disabled={busy || !editBody.trim() || breaksCommunityRules(editBody)} onClick={async () => {
+        setBusy(true);
+        try {
+          await community.updatePostBody(supabase, editPost.id, editBody.trim());
+          setPosts((prev) => prev.map((p) => (p.id === editPost.id ? { ...p, body: editBody.trim() } : p)));
+          if (details?.id === editPost.id) setDetails((d) => ({ ...d, body: editBody.trim() }));
+          setEditPost(null); toast('Post updated');
+        } catch (e) { notifyError(e); } finally { setBusy(false); }
+      }}>{busy ? 'Saving…' : 'Save changes'}</button></div>
+    </Sheet>}
     {deleteTarget && <Sheet title="Delete post?" onClose={() => setDeleteTarget(null)}><p className="wc-muted">This removes your post and its replies.</p><button type="button" className="wc-btn" disabled={busy} onClick={confirmDelete}>{busy ? 'Deleting…' : 'Delete post'}</button></Sheet>}
     {reportPost && <Sheet title="Report post" onClose={() => setReportPost(null)}><select data-autofocus value={reportReason} onChange={(e) => setReportReason(e.target.value)} aria-label="Reason"><option value="misinformation">Health misinformation</option><option value="harassment">Harassment</option><option value="spam">Spam</option><option value="other">Something else</option></select><button type="button" className="wc-btn" disabled={busy} onClick={submitReport}>Send report</button></Sheet>}
   </section>;

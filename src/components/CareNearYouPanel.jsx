@@ -75,7 +75,7 @@ export default function CareNearYouPanel({
           </button>
           {(userZipCode || zipInput) && (
             <span style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
-              Using <strong>{(userZipCode || zipInput).slice(0, 5)}</strong> for HRSA links
+              Searching near <strong>{(userZipCode || zipInput).slice(0, 5)}</strong>. These links share this ZIP with the outside finder you open.
             </span>
           )}
         </div>

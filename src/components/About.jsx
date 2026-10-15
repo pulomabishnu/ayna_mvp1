@@ -159,7 +159,7 @@ export default function About({ onBack, onExplore, onStart }) {
         <div className="ay-info-story">
           <div className="ay-info-card ay-info-card--pad ay-info-story__text">
             <p className="ay-info__body">
-              For our co-founder Puloma, getting a PMOS diagnosis took visits to three doctors. When she asked her OB-GYN
+              For our co-founder Puloma, getting a PMOS (PCOS) diagnosis took visits to three doctors. When she asked her OB-GYN
               which products could help manage her symptoms, she was told to “look it up.” Finding guidance on
               non-prescription products brought another challenge: figuring out where to begin.
             </p>
