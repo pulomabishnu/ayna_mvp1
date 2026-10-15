@@ -56,7 +56,8 @@ export function sizeCount(product) {
   const passport = getPassport(product);
   const verified = passport?.pricing?.size_count;
   if (verified?.known && verified.source_type !== 'ayna_catalog') {
-    const text = noDash(String(verified.value));
+    // "1.7 oz (page also says 2 oz)" is a note for the team, not for the page.
+    const text = noDash(String(verified.value)).replace(/\s*\([^()]*\b(?:also says|also lists|conflict|unconfirmed)\b[^()]*\)/i, '').trim();
     const m = text.match(COUNT_RE);
     const word = m && !/^(count|ct|pack)$/i.test(m[2]) ? m[2].toLowerCase().replace(/^caps$/, 'capsules') : null;
     return { text, n: Number.parseInt(text, 10) || null, word, fact: verified };

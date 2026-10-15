@@ -16,7 +16,8 @@ import MatchPill from './MatchPill';
 import { matchLine, priceParts } from '../data/passport/content';
 import { buildGlance, perUnitLabel, sizeCount } from './pdp/glance';
 import { getPassport } from '../data/passport';
-import { ProductMatch, ProductAsk, ProductMore } from './passport/ProductSections';
+import { ProductMatch, ProductAsk } from './passport/ProductSections';
+import ProductDetails from './pdp/ProductDetails';
 import ProductEvidence from './pdp/ProductEvidence';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import GalleryThumbs from './pdp/GalleryThumbs';
@@ -554,6 +555,7 @@ export default function ProductModal({
   const perUnit = choice.hasVariants || /\b(bundle|kit|set|starter)\b/i.test(String(product?.name || '')) ? '' : perUnitLabel(product);
   const priceText = product.price || product.stage || '';
   const brand = glance?.brand && glance.brand.toLowerCase() !== String(product.name).toLowerCase() ? glance.brand : '';
+  // eslint-disable-next-line no-unused-vars
   const openProductByName = (name) => {
     const target = ALL_PRODUCTS.find((p) => String(p?.name || '').toLowerCase() === String(name || '').toLowerCase());
     if (target && onOpenProduct) onOpenProduct(target);
@@ -577,6 +579,14 @@ export default function ProductModal({
     const pv = preg?.known && !preg.notApplicable ? (Array.isArray(preg.value) ? preg.value.join(', ') : String(preg.value || '')) : '';
     if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) out.push(`Pregnancy: ${first(pv)}`);
     return [...new Set(out.filter(Boolean))].slice(0, 2);
+  })();
+  const topWarning = (() => {
+    const first = (t) => { const m = String(t || '').replace(/^⚠️?\s*/, '').match(/^(.{8,220}?[.!?])(\s|$)/); return (m ? m[1] : String(t || '')).replace(/\s*—\s*/g, ', ').trim(); };
+    if (recall.status === 'past' || recall.status === 'note') return first(recall.detail || recall.label);
+    if (glance?.alert) return first(glance.alert);
+    if (keyCautions[0]) return keyCautions[0].replace(/^Pregnancy:\s*Brand:\s*(.*?)\.?$/i, 'Pregnancy: $1 (per the brand).');
+    const w = (product.warnings || []).find(Boolean);
+    return w ? first(w) : '';
   })();
   // Who actually sells it, so the button says where it goes ("Buy at LOLA ↗").
   let sellerName = '';
@@ -639,8 +649,6 @@ export default function ProductModal({
           </small>
         </label>
       )}
-      {recall.status === 'none' && product.type !== 'digital' && product.category !== 'telehealth' && <p className="pdp-chiprow"><span className="pdp-chip is-ok">{'\u2713'} No recalls found</span></p>}
-      {recall.status === 'past' && <p className="pdp-chiprow"><span className="pdp-chip is-warn">{'\u26a0'} {recall.detail ? recall.detail.replace(/\.$/, '') : recall.label}</span></p>}
       <div className="pdp-actions__primary">
         {buyButton()}
         {/* No buy link: the same button slot says where to get it (first, before Add). */}
@@ -783,6 +791,7 @@ export default function ProductModal({
   ) : null;
 
   const safetySources = Array.isArray(product.safetyNoteSources) ? product.safetyNoteSources.filter((src) => src?.url) : [];
+  // eslint-disable-next-line no-unused-vars
   const sectionExtras = {
     // Links backing the safety note (product.safetyNoteSources, from main).
     safety: safetySources.length > 0 ? (
@@ -845,6 +854,12 @@ export default function ProductModal({
           <div className="pdp-head__detail pdp-h2">
             {brand && !String(displayName || '').toLowerCase().startsWith(String(brand).toLowerCase()) && <div className="pdp-head__eyebrow">{brand}</div>}
             <h1 className="pdp-head__name">{displayName}</h1>
+            {(() => {
+              const raw = String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim();
+              const m = raw.match(/^(.{20,240}?[.!?])(\s|$)/);
+              const lead = m ? m[1] : raw.slice(0, 200);
+              return lead ? <p className="pdp-lead"><span className="pdp-lead__k">ayna summary</span>{lead}</p> : null;
+            })()}
 
             {(() => {
               // A deposit isn't a price; programs, services and subscriptions have no "per unit".
@@ -884,31 +899,17 @@ export default function ProductModal({
 
             <section className="ay-story ay-story--buy" aria-labelledby="ay-buy-h">
               <h2 id="ay-buy-h">Buy</h2>
-              {(() => {
-                const pp = getPassport(product);
-                const checked = pp?.pricing?.price?.verified_at;
-                let seller = '';
-                try { seller = buyUrl ? (isAmazonBuyLink ? 'Amazon' : isPartner ? `${brand || product.brand || (() => { try { return new URL(buyUrl).hostname.replace(/^www\./, ''); } catch { return 'The brand'; } })()} (ayna partner)` : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { seller = ''; }
-                return (
-                  <dl className="ay-buy__facts">
-                    <div><dt>Price</dt><dd>{/deposit/i.test(String(product.price || '')) ? `Waitlist deposit ${(String(product.price).match(/\$\s?\d[\d,.]*/) || [''])[0]} (not the product price)` : price.known && !price.isPlaceholder ? `${price.main}${price.sub ? ` ${price.sub}` : ''}` : `Price at ${seller || 'the retailer'}`}</dd></div>
-                    {sizeCount(product)?.text && <div><dt>Size</dt><dd>{choice.variant?.label || sizeCount(product).text}</dd></div>}
-                    {seller && <div><dt>Sold by</dt><dd>{seller}</dd></div>}
-                    {checked && price.known && !price.isPlaceholder && !/^free\b/i.test(String(price.main)) && <div><dt>Price check</dt><dd>{checked ? `Checked ${(() => { const d = new Date(`${String(checked).slice(0, 10)}T12:00:00`); return Number.isNaN(d.getTime()) ? checked : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); })()}` : 'Price at retailer'}</dd></div>}
-                  </dl>
-                );
-              })()}
-              {keyCautions.length > 0 && (
-                <div className="ay-buy__cautions" role="note" aria-label="Before you buy">
-                  <p className="ay-buy__cautions-h"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v5M12 18v.5" /></svg>Before you buy</p>
-                  <ul>{keyCautions.map((t) => <li key={t}>{t}</li>)}</ul>
-                  <button type="button" className="pdp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-section', { detail: 'safety' }))}>All safety details</button>
-                </div>
-              )}
               {actionButtons}
+              {/* One line: the single most important thing to know, then the full Safety section. */}
+              {topWarning && (
+                <p className="ay-buy__warn" role="note">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v5M12 18v.5" /></svg>
+                  <span>{topWarning}</span>
+                  <button type="button" className="pdp-textlink" onClick={() => document.getElementById('ay-sec-safety')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>All safety info</button>
+                </p>
+              )}
             </section>
 
-            {glance?.alert && <SafetyFlag />}
 
 
 
@@ -922,10 +923,20 @@ export default function ProductModal({
         <div className="pdp-below pdp-below--glance">
           {/* Full width, one reading column: the evidence tabs, then Ask ayna. */}
           <div className="pdp-read">
-            <ProductEvidence product={product} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenProduct={onOpenProduct} />
+            <ProductEvidence product={product} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} recall={recall} alertText={glance?.alert || ''} />
             <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
           </div>
-          <ProductMore glance={glance} extras={sectionExtras} onXref={openProductByName} />
+          <ProductDetails product={product} glance={glance} extraRows={(() => {
+            const pp = getPassport(product);
+            const checked = pp?.pricing?.price?.verified_at;
+            let seller = '';
+            try { seller = buyUrl ? (isAmazonBuyLink ? 'Amazon' : isPartner ? `${brand || product.brand} (ayna partner)` : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { seller = ''; }
+            const d = checked ? new Date(`${String(checked).slice(0, 10)}T12:00:00`) : null;
+            return [
+              { label: 'Sold by', value: seller },
+              { label: 'Price check', value: d && !Number.isNaN(d.getTime()) && price.known && !price.isPlaceholder ? `Checked ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '' },
+            ];
+          })()} />
             {onCommunityAction && (
             <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
               {onCommunityAction && <>

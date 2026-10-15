@@ -4430,8 +4430,10 @@ export const BRAND_PRODUCTS = [
             sideEffects: 'Brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition, consult a clinician first if any of these apply.',
             opinionAlerts: 'Brand cites a 4.8-star rating across 718 reviews and offers a 30-day money-back guarantee, brand-hosted figures, not independently verified here.',
         },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: "Sourced from SootheHer's own site marketing claims, not independent clinical literature.",
+        // Per the Oct 15 product page audit: the opinion is ayna's summary of a
+        // Cochrane review and a systematic review/meta-analysis, so it is independent.
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: "ayna's summary of a 2024 Cochrane review and a systematic review and meta-analysis of TENS for period pain. Not a direct clinician quote.",
         doctorOpinion: 'TENS (transcutaneous electrical nerve stimulation) has real supportive evidence for reducing primary dysmenorrhea pain via the gate-control mechanism the brand describes; this does not independently establish that the Elaris Pod specifically matches published TENS study outcomes. A 2024 Cochrane review found both high- and low-frequency TENS may reduce period pain compared with placebo or no treatment, though the reviewers downgraded their certainty because of risk of bias in the underlying trials, and a separate 2024 meta-analysis (10 RCTs, 469 women) found a statistically significant effect but with very high heterogeneity between studies, real evidence for the modality, with genuine uncertainty about how much relief to expect from any one device.',
         doctorOpinionCitations: [
             { url: 'https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/abstract', label: 'Cochrane: TENS for pain control in primary dysmenorrhea (2024)' },

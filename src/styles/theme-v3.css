@@ -4234,3 +4234,105 @@ html body .app-container[data-theme='brand-dark'] .lst-band__h { color: #ffedac;
 html body .app-container .lv .lst-band h2.lst-band__h { font: 400 clamp(30px, 3.4vw, 44px)/1.1 'DM Serif Display', serif !important; color: #3e2723 !important; letter-spacing: 0 !important; }
 html body .app-container .lv .lst-band h2.lst-band__h em { font-family: 'DM Serif Display', serif !important; font-style: italic; color: #ffedac !important; }
 html body .app-container .lv .lst h3.lst__title { margin: 0; font: 400 clamp(32px, 3.6vw, 46px)/1.08 'DM Serif Display', serif !important; color: var(--lst-fg) !important; } @media (max-width: 760px) { html body .app-container .lv .lst h3.lst__title { font-size: 30px !important; } }
+/* Stories: no band behind. The card's own colour changes per slide, so a
+   second colour behind it fought with it. Plain page, heading, one card. */
+html body .app-container .lst-band { background: transparent !important; border-block: 0 !important; padding: 0 !important; margin: 72px 0 !important; }
+html body .app-container .lst-band::before { display: none !important; }
+html body .app-container .lv .lst-band h2.lst-band__h em { color: #3e2723 !important; text-shadow: none !important; }
+html body .app-container .lst-band .lst.is-sky { --lst-bg: #769ebe; }
+html body .app-container[data-theme='brand-dark'] .lst-band { background: transparent !important; }
+html body .app-container[data-theme='brand-dark'] .lv .lst-band h2.lst-band__h, html body .app-container[data-theme='brand-dark'] .lv .lst-band h2.lst-band__h em { color: #ffedac !important; }
+
+/* ===== Product page, audit pass (Oct 15) =====
+   One card style for every research section: plain surface, thin border,
+   same radius and padding. Colour only on small badges and the warning.
+   Two heading sizes: the product name, and every section. */
+html body .app-container .pdp-page--glance { --pdp-h: 30px; }
+html body .app-container .pdp-lead { margin: 10px 0 0; font: 400 17px/1.55 'DM Sans', sans-serif; color: inherit; max-width: 52ch; }
+html body .app-container .pdp-lead__k { display: block; margin-bottom: 2px; font: 700 13px/1.3 'DM Sans', sans-serif; }
+html body .app-container .ay-buy__warn { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; margin: 12px 0 0; padding: 10px 14px; border: 2px solid #3e2723; border-radius: 12px; background: #f7badd; color: #3e2723; font: 500 14px/1.45 'DM Sans', sans-serif; }
+html body .app-container .ay-buy__warn svg { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; align-self: center; }
+html body .app-container .ay-buy__warn span { flex: 1 1 200px; }
+html body .app-container .ay-buy__warn .pdp-textlink { font-weight: 700; min-height: 32px; }
+html body .app-container .ay-fitline { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 16px 0 0; font: 600 15px/1.3 'DM Sans', sans-serif; color: inherit; }
+html body .app-container .ay-fitline button { min-height: 40px; padding: 0 16px; border: 2px solid #3e2723; border-radius: 99px; background: #f7badd; color: #3e2723; font: 700 14px/1 'DM Sans', sans-serif; cursor: pointer; }
+html body .app-container .pdp-page--glance .pdp-head__fit:empty { display: none; }
+
+html body .app-container .ay-ev2 { display: grid; gap: 24px; }
+html body .app-container .ay-ev2__jump { position: sticky; top: 76px; z-index: 20; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; background: #ffedac; border-bottom: 2px solid #3e2723; }
+html body .app-container .ay-ev2__jump button { min-height: 40px; padding: 0 16px; border: 2px solid #3e2723; border-radius: 99px; background: transparent; color: #3e2723; font: 700 14px/1 'DM Sans', sans-serif; cursor: pointer; }
+html body .app-container .ay-ev2__jump button:hover { background: #f7badd; }
+html body .app-container .ay-ev2__sec { scroll-margin-top: 140px; padding: 24px 28px; border: 2px solid #3e2723; border-radius: 18px; background: #fff8dd; color: #3e2723; }
+html body .app-container .ay-ev2__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 12px; }
+html body .app-container .pdp-page--glance .ay-ev2__head h2 { margin: 0 !important; font: 400 var(--pdp-h)/1.15 'DM Serif Display', serif !important; color: inherit !important; }
+html body .app-container .ay-ev2__badge { display: inline-flex; align-items: center; min-height: 26px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 99px; font: 700 12px/1 'DM Sans', sans-serif; }
+html body .app-container .ay-ev2__badge.is-indep { background: #769ebe; }
+html body .app-container .ay-ev2__badge.is-brand { background: #f7badd; }
+html body .app-container .ay-ev2__sub { margin: 18px 0 6px; font: 700 15px/1.3 'DM Sans', sans-serif; color: inherit; }
+html body .app-container .ay-ev2 .ay-ev__body { font: 400 17px/1.65 'DM Sans', sans-serif !important; color: inherit; max-width: 72ch; margin: 0 0 10px; }
+html body .app-container .ay-ev2 .ay-ev__by { margin: 10px 0 0; font: 400 14px/1.5 'DM Sans', sans-serif; color: inherit; opacity: .85; }
+html body .app-container .ay-ev2 .ay-ev__empty { margin: 0; font: 400 16px/1.5 'DM Sans', sans-serif; }
+html body .app-container .ay-ev__more > summary { display: inline-flex; align-items: center; min-height: 40px; font: 700 15px/1 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; list-style: none; }
+html body .app-container .ay-ev__more > summary::-webkit-details-marker { display: none; }
+html body .app-container .ay-ev__more .is-open, html body .app-container .ay-ev__more[open] .is-closed { display: none; }
+html body .app-container .ay-ev__more[open] .is-open { display: inline; }
+html body .app-container .ay-ev__more[open] > summary { order: 2; }
+html body .app-container .ay-ev2 .ay-ev__links { margin-top: 14px; }
+html body .app-container .ay-ev2 .ay-ev__links-h { margin: 0 0 8px; font: 700 15px/1.3 'DM Sans', sans-serif !important; }
+html body .app-container .ay-ev2 .ay-ev__links ul { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1.5px solid rgba(62, 39, 35, .25); }
+html body .app-container .ay-ev2 .ay-ev__links li { padding: 12px 0; border: 0; border-bottom: 1.5px solid rgba(62, 39, 35, .25); border-radius: 0; background: transparent; }
+html body .app-container .ay-ev2__ingr { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1.5px solid rgba(62, 39, 35, .25); }
+html body .app-container .ay-ev2__ingr > li { padding: 12px 0; border-bottom: 1.5px solid rgba(62, 39, 35, .25); }
+html body .app-container .ay-ev2__ingr strong { font: 700 16px/1.3 'DM Sans', sans-serif; }
+html body .app-container .ay-ev2__ingr p { margin: 4px 0 0; font: 400 15px/1.55 'DM Sans', sans-serif; }
+html body .app-container .ay-ev2__ingr-links { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+html body .app-container .ay-ev2__ingr-links a { color: inherit; font: 600 14px/1.4 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container .ay-ev2__ingr-links small { font: 400 13px/1 'DM Sans', sans-serif; opacity: .8; }
+html body .app-container .ay-ev2__showall { margin-top: 10px; min-height: 40px; padding: 0 16px; border: 2px solid #3e2723; border-radius: 99px; background: transparent; color: #3e2723; font: 700 14px/1 'DM Sans', sans-serif; cursor: pointer; }
+html body .app-container .ay-ev2__alert { margin: 0 0 12px; padding: 10px 14px; border: 2px solid #3e2723; border-radius: 12px; background: #f7badd; font: 500 15px/1.5 'DM Sans', sans-serif; }
+html body .app-container .ay-ev2__list { margin: 0; padding-left: 20px; font: 400 16px/1.6 'DM Sans', sans-serif; }
+html body .app-container .ay-ev2__rows { display: grid; gap: 0; margin: 14px 0 0; border-top: 1.5px solid rgba(62, 39, 35, .25); }
+html body .app-container .ay-ev2__rows > div { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1.5px solid rgba(62, 39, 35, .25); }
+html body .app-container .ay-ev2__rows dt { font: 700 14px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-ev2__rows dd { margin: 0; font: 400 15px/1.55 'DM Sans', sans-serif; }
+html body .app-container .ay-ev2 .ay-ev__rating .ay-ev2__badge { margin-left: 6px; vertical-align: middle; }
+@media (max-width: 600px) {
+  html body .app-container .ay-ev2__sec { padding: 18px 16px; }
+  html body .app-container .ay-ev2__rows > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  html body .app-container .ay-ev2__jump { top: 64px; overflow-x: auto; flex-wrap: nowrap; }
+  html body .app-container .ay-ev2__jump button { flex: none; }
+}
+/* Product details drawer. */
+html body .app-container .ay-pd__drawer { border-top: 2px solid #3e2723; border-bottom: 2px solid #3e2723; }
+html body .app-container .ay-pd__drawer > summary { display: flex; align-items: center; justify-content: space-between; min-height: 64px; cursor: pointer; list-style: none; }
+html body .app-container .ay-pd__drawer > summary::-webkit-details-marker { display: none; }
+html body .app-container .pdp-page--glance .ay-pd__drawer > summary h2 { margin: 0 !important; font: 400 var(--pdp-h)/1.15 'DM Serif Display', serif !important; }
+html body .app-container .ay-pd__chev { display: grid; place-items: center; width: 36px; height: 36px; border: 2px solid #3e2723; border-radius: 50%; font: 700 18px/1 'DM Sans', sans-serif; }
+html body .app-container .ay-pd__drawer[open] .ay-pd__chev { transform: rotate(45deg); }
+html body .app-container .ay-pd__body { display: grid; gap: 22px; padding: 4px 0 28px; }
+html body .app-container .ay-pd__block h3 { margin: 0 0 6px; font: 700 15px/1.3 'DM Sans', sans-serif; }
+html body .app-container .ay-pd__block p, html body .app-container .ay-pd__block li { font: 400 16px/1.6 'DM Sans', sans-serif; margin: 0 0 6px; }
+html body .app-container .ay-pd__block ul, html body .app-container .ay-pd__block ol { margin: 0; padding-left: 20px; }
+html body .app-container .ay-pd__pre { white-space: pre-line; }
+html body .app-container .ay-pd__rows { margin: 0; border-top: 1.5px solid rgba(62, 39, 35, .25); }
+html body .app-container .ay-pd__rows > div { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; padding: 10px 0; border-bottom: 1.5px solid rgba(62, 39, 35, .25); }
+html body .app-container .ay-pd__rows dt { font: 700 14px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-pd__rows dd { margin: 0; font: 400 15px/1.5 'DM Sans', sans-serif; }
+html body .app-container .ay-pd__rows small { display: block; margin-top: 2px; font-size: 13px; opacity: .8; }
+html body .app-container .ay-pd__sources > summary { min-height: 40px; display: inline-flex; align-items: center; font: 700 15px/1 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+html body .app-container .ay-pd__sources ol { margin: 8px 0 0; padding-left: 22px; display: grid; gap: 6px; }
+html body .app-container .ay-pd__sources a { color: inherit; font: 600 14px/1.4 'DM Sans', sans-serif; }
+@media (max-width: 600px) { html body .app-container .ay-pd__rows > div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+/* Same section heading size everywhere below the top. */
+html body .app-container .pdp-page--glance .pdp-below :is(.ay-compare .ay-pdp-sechead h2, .pdp-suggest .ay-pdp-sechead h2, .pdp-community-actions > h3, .ay-story--ask h2, .ay-story--ask h3) { font: 400 var(--pdp-h)/1.15 'DM Serif Display', serif !important; }
+/* Dark mode. */
+html body .app-container[data-theme='brand-dark'] .ay-ev2__jump { background: #3e2723; border-color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-ev2__jump button, html body .app-container[data-theme='brand-dark'] .ay-ev2__showall, html body .app-container[data-theme='brand-dark'] .ay-fitline { color: #ffedac; border-color: #ffedac; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev2__sec, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev2__sec :is(h2, h3, h4, p, li, a, span, b, strong, small, dt, dd, blockquote) { color: #3e2723 !important; }
+html body .app-container[data-theme='brand-dark'] .ay-pd__drawer, html body .app-container[data-theme='brand-dark'] .ay-pd__chev { border-color: #ffedac; }
+html body .app-container .pdp-page--glance .ay-ev2 h3.ay-ev2__sub, html body .app-container .pdp-page--glance .ay-ev2 h4.ay-ev__links-h, html body .app-container .pdp-page--glance .ay-pd__block h3 { font: 700 15px/1.3 'DM Sans', sans-serif !important; letter-spacing: 0 !important; text-transform: none !important; color: inherit !important; }
+html body .app-container .pdp-lead__k { opacity: .85; }
+html body .app-container .pdp-page--glance .pdp-lead { margin-top: 14px !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-lead, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-lead__k, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-pd, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-pd :is(h2, h3, p, li, dt, dd, small, a, summary) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-ev2__sec .ay-ev2__showall { color: #3e2723 !important; border-color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-pd__rows, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-pd__rows > div { border-color: rgba(255, 237, 172, .3) !important; }

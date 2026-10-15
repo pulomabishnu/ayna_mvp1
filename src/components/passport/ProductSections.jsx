@@ -541,16 +541,10 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
     // Logged out (or no profile yet): the best moment to say what ayna does.
     if (!onFindFit) return null;
     return (
-      <section className="ay-story ay-story--match is-ask" aria-labelledby="ay-match-h">
-        <button type="button" className="ay-match__score" onClick={onFindFit} aria-label="Find out how well this fits you">
-          <span className="ay-match__big is-none">?</span>
-        </button>
-        <div className="ay-match__body">
-          <h2 id="ay-match-h">How well does this fit <em>you?</em></h2>
-          <p className="ay-match__lede">Answer a short quiz and every product shows a match score with the reasons.</p>
-          <div className="ay-match__links"><button type="button" className="ay-match__cta" onClick={onFindFit}>See my matches</button><a href="/how-it-works">How we match</a></div>
-        </div>
-      </section>
+      <p className="ay-fitline">
+        <span>How well does this fit you?</span>
+        <button type="button" onClick={onFindFit}>See my matches <span aria-hidden="true">→</span></button>
+      </p>
     );
   }
   const sec = splitSections(glance.sections).find((s) => s.id === 'match');
