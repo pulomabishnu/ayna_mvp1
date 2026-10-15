@@ -137,18 +137,16 @@ function Paras({ text }) {
   return String(text).split(/\n{2,}/).map((p) => p.trim()).filter(Boolean).map((p) => <p key={p.slice(0, 48)} className="ay-ev__body">{withTerms(p, used)}</p>);
 }
 
-/** Short version first; the full text one tap away. */
+/** Short version first; the full text one tap away (it replaces the short one, nothing is hidden). */
 function ShortThenFull({ short, full }) {
+  const [open, setOpen] = useState(false);
   const lead = short || sentences(full).slice(0, 2).join(' ');
   if (!full || full.length <= lead.length + 40) return <Paras text={full || lead} />;
   return (
-    <>
-      <Paras text={lead} />
-      <details className="ay-ev__more">
-        <summary><span className="is-closed">Read more</span><span className="is-open">Show less</span></summary>
-        <Paras text={full} />
-      </details>
-    </>
+    <div className="ay-ev__stf">
+      <Paras text={open ? full : lead} />
+      <button type="button" className="ay-ev__morebtn" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Show less' : 'Read more'}</button>
+    </div>
   );
 }
 
@@ -197,7 +195,7 @@ function useEvidence(product, aynaData) {
         const words = (t) => new Set(String(t).toLowerCase().match(/[a-z]{4,}/g) || []);
         const sw = words(s);
         if (!sw.size) return true;
-        return !warnings.some((w) => { const ww = words(w); let hit = 0; sw.forEach((x) => { if (ww.has(x)) hit += 1; }); return hit / sw.size >= 0.5; });
+        return !warnings.some((w) => { const ww = words(w); let hit = 0; sw.forEach((x) => { if (ww.has(x)) hit += 1; }); return hit / sw.size >= 0.85; });
       })
       .join(' ');
     const fdaRaw = noDash(meaningful(product.safety?.fdaStatus));
@@ -230,7 +228,7 @@ function useEvidence(product, aynaData) {
       ratingNote: noDash(meaningful(product.ratingNote)),
       userRating: product.userRating && product.userRatingSourceUrl ? { value: product.userRating, url: product.userRatingSourceUrl } : null,
       who: (product.whoItsFor || []).map(noDash).filter(Boolean),
-      how: product.howToUse?.steps?.length ? { intro: noDash(product.howToUse.intro), steps: product.howToUse.steps.map(noDash).filter(Boolean), url: product.howToUse.sourceUrl || '' } : null,
+      how: product.howToUse?.steps?.length ? { intro: noDash(product.howToUse.intro), steps: product.howToUse.steps.map(noDash).filter(Boolean), url: product.howToUse.sourceUrl || '', label: noDash(product.howToUse.sourceLabel || '') } : null,
       platform: noDash(meaningful(product.platform)),
       integrations: (product.integrations || []).map((x) => noDash(typeof x === 'string' ? x : x?.name)).filter(Boolean),
       ingredientsText: noDash(meaningful(product.ingredients)),
@@ -312,7 +310,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     ? <p className="ay-ev__rating"><b>★ {aynaRating.toFixed(1)}</b> from {plural(ratingCount, 'ayna member')}</p>
     : d.brandRating ? <p className="ay-ev__rating"><b>★ {d.brandRating.value}</b> from {d.brandRating.count} reviews <span className="ay-ev2__badge is-brand">Brand-reported, not verified by ayna</span></p>
       : d.userRating ? <p className="ay-ev__rating"><b>★ {d.userRating.value}</b> <a href={d.userRating.url} target="_blank" rel="noopener noreferrer">online rating<span aria-hidden="true"> ↗</span></a></p> : null;
-  const showMaterials = d.materials && !/^various|^varies/i.test(d.materials) && d.materials !== d.ingredientsText && d.ingredients.filter((i) => d.materials.toLowerCase().includes(i.name.toLowerCase().split(/\s|&|and/)[0])).length < 3;
+  const showMaterials = Boolean(d.materials) && !/^various|^varies/i.test(d.materials) && d.materials.trim().toLowerCase() !== String(d.ingredientsText || '').trim().toLowerCase();
   const unknowns = (() => {
     const unk = (glance?.sections || []).find((x) => x.id === 'unknown');
     return (unk?.blocks || []).filter((b) => b.type === 'list').flatMap((b) => b.items || []).map((t) => noDash(typeof t === 'string' ? t : t?.text)).filter(Boolean);
@@ -347,7 +345,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           <ol className="ay-tabs__steps">{d.how.steps.map((st, i) => <li key={st}><b aria-hidden="true">{i + 1}</b><span>{st}</span></li>)}</ol>
           <Links items={[
             d.faq && { url: d.faq, title: `${d.brand || 'The brand'}’s FAQ`, publisher: d.brand || 'Brand' },
-            d.how.url && { url: d.how.url, title: `${d.brand || 'The brand'}’s instructions`, publisher: d.brand || 'Brand' },
+            d.how.url && { url: d.how.url, title: d.how.label || `${d.brand || 'The brand'}’s instructions`, publisher: d.brand || 'Brand' },
           ].filter(Boolean)} />
         </>}
 
@@ -395,8 +393,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             {d.incentivized.length > 0 && <p className="ay-ev__by">Reviews on {d.incentivized.join(', ')} may include incentivized reviews.</p>}
             <p className="ay-ev__by">Online reviews and posts are people’s experiences, not clinical evidence.</p>
           </> },
-          d.brand && { id: 'online', label: 'Read online', node: <>
-            <Links items={[...onlineLinks, { url: `https://www.trustpilot.com/search?query=${encodeURIComponent(d.brand)}`, title: `${d.brand} on Trustpilot`, publisher: 'Trustpilot', summary: 'Independent review site.' }]} />
+          (d.brand || onlineLinks.length > 0) && { id: 'online', label: 'Read online', node: <>
+            <Links items={[...onlineLinks, ...(d.brand ? [{ url: `https://www.trustpilot.com/search?query=${encodeURIComponent(d.brand)}`, title: `${d.brand} on Trustpilot`, publisher: 'Trustpilot', summary: 'Independent review site.' }] : [])]} />
           </> },
           { id: 'ayna', label: ratingCount > 0 ? `ayna reviews (${ratingCount})` : 'ayna reviews', node: <>
             {aynaRating != null && ratingCount > 0 && <p className="ay-ev__rating"><b>★ {aynaRating.toFixed(1)}</b> from {plural(ratingCount, 'ayna member')}</p>}
