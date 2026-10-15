@@ -842,18 +842,6 @@ export default function ProductModal({
         <div className="pdp-head ay3-simple" ref={boardRef}>
           <div className="pdp-head__media">
             {galleryTile}
-            {/* Fit sits under the photo so both columns carry equal weight. */}
-            <div className="pdp-head__fit">
-              <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} />
-              {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
-                <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
-              )}
-              {onOmit && (
-                <button type="button" className="pdp-omit-link pdp-omit-link--match" onClick={() => onOmit(product)}>
-                  {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
-                </button>
-              )}
-            </div>
           </div>
 
           <div className="pdp-head__detail pdp-h2">
@@ -862,7 +850,7 @@ export default function ProductModal({
             {(() => {
               const raw = String(product.summary || '').replace(/\s*\(see [^()]+\)/i, '').replace(/\s*—\s*/g, ', ').trim();
               const lead = firstSentence(raw, { min: 20, max: 240 });
-              return lead ? <p className="pdp-lead"><span className="pdp-lead__k">ayna summary</span>{lead}</p> : null;
+              return lead ? <p className="pdp-lead">{lead}</p> : null;
             })()}
 
             {(() => {
@@ -914,10 +902,18 @@ export default function ProductModal({
               )}
             </section>
 
-
-
-
-
+            {/* How well it fits you sits right after Buy, in the same column. */}
+            <div className="pdp-head__fit">
+              <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} />
+              {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
+                <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
+              )}
+              {onOmit && (
+                <button type="button" className="pdp-omit-link pdp-omit-link--match" onClick={() => onOmit(product)}>
+                  {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
+                </button>
+              )}
+            </div>
 
             {/* "Good to know" is gone: its chips repeated FSA/HSA and listed claims the page says it hasn't checked. */}
 
