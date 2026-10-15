@@ -9,11 +9,16 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
   const firstGap = needs.find((n) => n.picks.length && !n.picks.some((p) => isOwned(p.productId))) || needs.find((n) => n.picks.length) || needs[0];
   const [sel, setSel] = useState(firstGap ? firstGap.id : null);
   const cur = needs.find((n) => n.id === sel) || firstGap;
+  // Gaps first. Needs she already covers fold away as "Covered by …".
+  const coveredBy = (n) => n.picks.find((p) => isOwned(p.productId));
+  const gaps = needs.filter((n) => !coveredBy(n));
+  const covered = needs.filter((n) => coveredBy(n));
   if (!cur) return null;
   return (
     <div className="ay-needs">
-      <ul className="ay-needs__tags" aria-label="Your needs">
-        {needs.map((n, i) => {
+      {gaps.length === 0 && <p className="ay-needs__done">Every need you picked has something on a shelf.</p>}
+      <ul className="ay-needs__tags" aria-label="Needs with nothing on a shelf yet">
+        {gaps.map((n, i) => {
           const covered = n.picks.some((p) => isOwned(p.productId));
           return (
             <li key={n.id} style={{ '--r': `${[-2, 1.5, -1, 2, -.5][i % 5]}deg` }}>
@@ -26,6 +31,12 @@ export default function NeedsStrip({ needs, isOwned, onOpenProduct, onToggleProd
           );
         })}
       </ul>
+      {covered.length > 0 && (
+        <details className="ay-needs__covered">
+          <summary>Already covered: {covered.length} need{covered.length === 1 ? '' : 's'}</summary>
+          <ul>{covered.map((n) => <li key={n.id}><button type="button" className={n.id === cur.id ? 'is-on' : ''} onClick={() => setSel(n.id)}><strong>{n.label}</strong> covered by {coveredBy(n).product?.name || 'a product on your shelf'}</button></li>)}</ul>
+        </details>
+      )}
       <div className="ay-needs__panel" aria-live="polite">
         <p className="ay-needs__for">For <strong>{cur.phrase}</strong></p>
         {cur.picks.length > 0 ? (

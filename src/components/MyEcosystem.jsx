@@ -958,6 +958,19 @@ export default function MyEcosystem({
     const careNearYouDetailsRef = useRef(null);
     const [showSyncPaywall, setShowSyncPaywall] = useState(false);
     const [showResaPartnership, setShowResaPartnership] = useState(false);
+    // Scroll-spy for the sticky "On this page" links.
+    const [jumpOn, setJumpOn] = useState('');
+    useEffect(() => {
+        const ids = ['eco3-shelves-title', 'eco3-needs-title', 'eco3-tools-title', 'ayna-wishlist'];
+        const on = () => {
+            let cur = '';
+            for (const id of ids) { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top < 220) cur = id; }
+            setJumpOn(cur);
+        };
+        on();
+        window.addEventListener('scroll', on, { passive: true });
+        return () => window.removeEventListener('scroll', on);
+    }, []);
     const [searchTerm, setSearchTerm] = useState('');
     const [ecosystemCompareOpen, setEcosystemCompareOpen] = useState({});
     const [ecosystemAltMiniKey, setEcosystemAltMiniKey] = useState('');
@@ -1958,10 +1971,12 @@ export default function MyEcosystem({
                             <summary className="eco3-pill">More</summary>
                             <div className="eco3-more__menu" role="menu">
                                 <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; setShowMoreTools(true); }}>More tools</button>
+                                {/* Partner news lives here, not among her tools (it read as an ad in a private space). */}
+                                <button type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; posthog.capture('resa_sync_chip_clicked'); setShowResaPartnership(true); }}>About our Rèsa partnership</button>
                                 {typeof onBuildEcosystem === 'function' && (
                                     <button type="button" role="menuitem" onClick={(e) => {
                                         e.currentTarget.closest('details').open = false;
-                                        if (!myProductList.length || window.confirm('Rebuild your ecosystem from your answers? Products you added yourself stay.')) onBuildEcosystem();
+                                        if (!myProductList.length || window.confirm('Refresh your picks from your answers? Products you added yourself stay on your shelves.')) onBuildEcosystem();
                                     }}>{myProductList.length ? 'Refresh picks from my answers (your shelves stay)' : 'Build my ecosystem'}</button>
                                 )}
                             </div>
@@ -2008,10 +2023,15 @@ export default function MyEcosystem({
                     <svg className="ayna-browse__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
                 </form>
                 <nav className="eco3-jump" aria-label="On this page">
-                    {!ecoQueryTrimmed && needShelves.length > 0 && <a href="#eco3-needs-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-needs-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>Fill the gaps</a>}
-                    {visibleAreaGroups.length > 0 && <a href="#eco3-shelves-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-shelves-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>Shelves</a>}
-                    <a href="#eco3-tools-title" onClick={(e) => { e.preventDefault(); document.getElementById('eco3-tools-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>Tools</a>
-                    <a href="#ayna-wishlist" onClick={(e) => { e.preventDefault(); document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>Saved</a>
+                    {/* Same order as the page; the section you're in is underlined. */}
+                    {[
+                        visibleAreaGroups.length > 0 && ['eco3-shelves-title', 'Shelves'],
+                        !ecoQueryTrimmed && needShelves.length > 0 && ['eco3-needs-title', 'Fill the gaps'],
+                        ['eco3-tools-title', 'Tools'],
+                        ['ayna-wishlist', 'Saved'],
+                    ].filter(Boolean).map(([id, label]) => (
+                        <a key={id} href={`#${id}`} className={jumpOn === id ? 'is-on' : undefined} aria-current={jumpOn === id ? 'location' : undefined} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{label}</a>
+                    ))}
                 </nav>
                 </div>
                 {ecoQueryTrimmed && (
@@ -2200,26 +2220,6 @@ export default function MyEcosystem({
                             </p>
                         </div>
                     </details>
-                    {/* Rèsa: pre-launch partner, not syncable yet (from main). Opens the
-                        partnership explainer for everyone, Premium or not. */}
-                    <div className="eco3-details__card eco3-details__resa">
-                        <span className="eco3-tool-ic is-resa" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" /></svg></span>
-                        <p className="eco3-details__title">Rèsa, an ayna partner</p>
-                        <div className="eco3-details__row">
-                            <button
-                                type="button"
-                                className="eco3-pill"
-                                onClick={() => {
-                                    posthog.capture('resa_sync_chip_clicked');
-                                    setShowResaPartnership(true);
-                                }}
-                                title="Rèsa, an ayna partner. Coming soon. Read about the partnership"
-                            >
-                                Read about the partnership
-                            </button>
-                        </div>
-                        <p className="eco3-details__soon">Sync coming soon.</p>
-                    </div>
                 </div>
                 </div>
                 {savedSlot && <div className="eco3-extras__saved">{savedSlot}</div>}

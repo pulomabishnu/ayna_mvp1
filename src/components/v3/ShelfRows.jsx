@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ProductCard from '../ProductCard';
+import { toast } from '../../utils/toast';
 
 /* "Your shelves": one row per area of care, products as the same polaroid
    card used in the Shop, scrolling sideways with an Add tile at the end.
@@ -153,17 +154,23 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
                     product={p}
                     onOpen={onOpenProduct}
                     action={(
-                      <div className="ay-shelf__acts">
-                        {arranged.length > 1 && (
-                          <label className="ay-shelf__move">
-                            <span className="sr-only">Move to shelf</span>
-                            <select value={group.key} onChange={(e) => moveProduct(p.id, e.target.value)} aria-label={`Move ${p.name} to another shelf`}>
-                              {arranged.map((g) => <option key={g.key} value={g.key}>{g.key === group.key ? 'Move to…' : nameOf(g)}</option>)}
-                            </select>
-                          </label>
-                        )}
-                        {onToggleProduct && <button type="button" className="ay-shelf__remove" onClick={() => onToggleProduct(p)} aria-label={`Remove ${p.name} from your ecosystem`} title="Remove">×</button>}
-                      </div>
+                      // One "⋯" per card (was a Move select plus an unlabeled ×).
+                      <details className="ay-shelf__menu">
+                        <summary aria-label={`Options for ${p.name}`}>⋯</summary>
+                        <div className="ay-shelf__menu-list" role="menu">
+                          {arranged.length > 1 && <p className="ay-shelf__menu-h">Move to shelf</p>}
+                          {arranged.length > 1 && arranged.filter((g) => g.key !== group.key).map((g) => (
+                            <button key={g.key} type="button" role="menuitem" onClick={(e) => { e.currentTarget.closest('details').open = false; moveProduct(p.id, g.key); }}>{nameOf(g)}</button>
+                          ))}
+                          {onToggleProduct && (
+                            <button type="button" role="menuitem" className="is-remove" onClick={(e) => {
+                              e.currentTarget.closest('details').open = false;
+                              onToggleProduct(p);
+                              toast(`Removed ${p.name}`, { label: 'Undo', onClick: () => onToggleProduct(p) });
+                            }}>Remove from my ecosystem</button>
+                          )}
+                        </div>
+                      </details>
                     )}
                   />
                 </li>

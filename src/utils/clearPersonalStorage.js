@@ -10,7 +10,7 @@
 const KEEP = new Set([
   'ayna_v6_site_theme', 'ayna_v6_quiz_theme', 'ayna_analytics_consent', 'ayna_product_catalog_v4',
   'ayna_product_images_v11', 'ayna_chunk_reload_attempted', 'ayna_internal_analytics_v1', 'ayna_ask_tucked_v1',
-  'ayna.powderroom.seen', 'ayna_reviews', 'ayna.drawers.v1',
+  'ayna.powderroom.seen', 'ayna_reviews', 'ayna.drawers.v1', 'ayna_web_quiz_intro_seen',
 ]);
 const KEEP_PREFIX = ['ayna_read_progress_v1:'];
 

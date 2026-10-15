@@ -283,6 +283,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     return initialSnapshot ? firstUnansweredStep(reconstructIntakeFromSnapshot(initialSnapshot)) : 'age';
   });
   const [search, setSearch] = useState('');
+  // The "Two helpers" tips show once per browser, and never when editing a profile.
+  const [showIntro] = useState(() => {
+    if (initialSnapshot) return false;
+    try { const seen = localStorage.getItem('ayna_web_quiz_intro_seen') === '1'; localStorage.setItem('ayna_web_quiz_intro_seen', '1'); return !seen; } catch { return true; }
+  });
   const [infoOpen, setInfoOpen] = useState(false);
   const [glossary, setGlossary] = useState(null);
   // Escape closes the meaning card, like every other dialog on the site.
@@ -349,7 +354,10 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     else if (phase === 'more') go(CHECKPOINT);
   };
   // After the six core questions: a checkpoint. In "more detail", the last step finishes.
+  // Editing one answer from the summary returns to the summary.
+  const [fromSummary, setFromSummary] = useState(false);
   const advance = (answers = intake) => {
+    if (fromSummary) { setFromSummary(false); go(CHECKPOINT); return; }
     if (!isLast) { go(steps[index + 1].id); return; }
     if (phase === 'core') go(CHECKPOINT); else finish(answers);
   };
@@ -569,6 +577,34 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
   const ready = step.id === 'zip' ? String(intake.zipcode || '').length > 0 : requiredReady(answerId, intake) && isStepAnswered(answerId, intake) && !minorBlocked;
   const tone = atCheckpoint ? 'mint' : (SECTION_TONES[step.section] || 'peri');
 
+  // A returning person editing her profile sees her answers, each with Edit,
+  // not the first-timer's "matches are ready" celebration.
+  if (atCheckpoint && initialSnapshot) {
+    const all = [...coreSteps, ...moreSteps];
+    return <div className="wq-page tone-mint" data-step="summary">
+      <div className="wq-stage wq-stage--summary">
+      <div className="wq-card wq-summary">
+        <h1 className="wq-title">Your health profile</h1>
+        <p className="wq-subtitle">Change any answer. Nothing is saved until you select Save.</p>
+        <ul className="wq-summary__list">
+          {all.map((st) => {
+            const done = isStepAnswered(st.type === 'aboutYou' ? 'aboutYou' : st.id, intake);
+            return <li key={st.id}>
+              <span className={`wq-summary__state${done ? ' is-done' : ''}`} aria-hidden="true">{done ? '✓' : '·'}</span>
+              <span className="wq-summary__q">{st.title}<small>{done ? 'Answered' : 'Not answered yet'}</small></span>
+              <button type="button" className="wq-summary__edit" onClick={() => { setFromSummary(true); go(st.id); }}>{done ? 'Edit' : 'Answer'}</button>
+            </li>;
+          })}
+        </ul>
+        {saveError && <p className="wq-alert">{saveError}</p>}
+        <div className="wq-checkpoint-actions">
+          <button type="button" className="wq-btn" onClick={() => finish()} disabled={saving}>{saving ? 'Saving…' : 'Save and see my matches'} <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+      </div>
+    </div>;
+  }
+
   if (atCheckpoint) {
     return <div className="wq-page tone-mint" data-step="checkpoint">
       <div className="wq-confetti" aria-hidden="true">{Array.from({ length: 18 }, (_, i) => <i key={i} />)}</div>
@@ -630,7 +666,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
     </div>
     </div>
 
-    <QuizIntro variant="web" enabled={introEnabled} />
+    <QuizIntro variant="web" enabled={introEnabled && showIntro} />
     {glossary && <div className="wq-glossary" role="dialog" aria-label={glossary.term} onClick={() => setGlossary(null)}>
       <div onClick={(e) => e.stopPropagation()}><strong>{glossary.term}</strong><p>{glossary.definition}</p><button type="button" className="wq-btn" onClick={() => setGlossary(null)}>Got it</button></div>
     </div>}
