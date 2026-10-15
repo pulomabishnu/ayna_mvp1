@@ -406,9 +406,11 @@ function App() {
     // A 404 keeps the URL she typed (it used to be rewritten to '/').
     const keepPath = currentView === 'not-found' || viewFromSubPath(window.location.pathname) === currentView;
     const path = keepPath ? window.location.pathname : pathForView(currentView, productRouteId);
+    // Community search lives in ?q= (shareable, survives a refresh); keep only that.
+    const communityQ = currentView === 'community' ? new URLSearchParams(window.location.search).get('q') : null;
     const initialUrl = (currentView === 'auth-callback' || currentView === 'campus-resources')
       ? `${path}${window.location.search}${window.location.hash}`
-      : path;
+      : communityQ ? `${path}?q=${encodeURIComponent(communityQ)}` : path;
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

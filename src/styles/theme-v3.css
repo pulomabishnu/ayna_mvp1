@@ -3392,3 +3392,23 @@ html body .app-container .wyou .wyou-stats > button { position: relative; border
 html body .app-container .wyou .wyou-stats > button::after { content: '→'; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font: 700 20px/1 'DM Sans', system-ui, sans-serif; color: #3e2723; transition: transform .2s; }
 html body .app-container .wyou .wyou-stats > button:hover::after { transform: translate(4px, -50%); }
 html body .app-container[data-theme='brand-dark'] .wyou .wyou-stats > button::after { color: #3e2723; }
+/* Community: relationship state as text + ⋯ menu, search sections with counts, playlists filter, one search border. */
+html body .app-container .wc3 .wc-rel { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; position: relative; }
+html body .app-container .wc3 .wc-rel-state { font: 600 15px/1.2 'DM Sans', system-ui, sans-serif; color: #3e2723; }
+html body .app-container .wc3 .wc-rel-menu { position: relative; }
+html body .app-container .wc3 .wc-rel-menu > summary { list-style: none; display: grid; place-items: center; width: 40px; height: 40px; border: 2px solid #3e2723; border-radius: 50%; color: #3e2723; font-size: 20px; line-height: 1; cursor: pointer; }
+html body .app-container .wc3 .wc-rel-menu > summary::-webkit-details-marker { display: none; }
+html body .app-container .wc3 .wc-rel-list { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; min-width: 200px; display: grid; padding: 6px; border: 2px solid #3e2723; border-radius: 12px; background: #ffedac; box-shadow: 4px 4px 0 #3e2723; }
+html body .app-container .wc3 .wc-rel-list button { padding: 10px 12px; border: 0; border-radius: 8px; background: none; color: #3e2723; font: 600 14px/1.2 'DM Sans', system-ui, sans-serif; text-align: left; cursor: pointer; }
+html body .app-container .wc3 .wc-rel-list button:hover, html body .app-container .wc3 .wc-rel-list button:focus-visible { background: #f7badd; }
+html body .app-container .wc3 .wc-sr-sum { margin: 0 0 8px; font: 600 15px/1.4 'DM Sans', system-ui, sans-serif; }
+html body .app-container .wc3 .wc-sr > section { margin-bottom: 24px; }
+html body .app-container .wc3 .wc-sr-n { display: inline-grid; place-items: center; min-width: 26px; height: 26px; margin-left: 6px; padding: 0 6px; border: 2px solid currentColor; border-radius: 999px; font: 700 13px/1 'DM Sans', system-ui, sans-serif; vertical-align: middle; }
+html body .app-container .wc3 .wc-plfilter { display: inline-flex; align-items: center; gap: 8px; font: 600 14px/1 'DM Sans', system-ui, sans-serif; color: #3e2723; }
+html body .app-container .wc3 .wc-plfilter select { min-height: 40px; padding: 0 12px; border: 2px solid #3e2723; border-radius: 999px; background: #ffedac; color: #3e2723; font: 600 14px/1 'DM Sans', system-ui, sans-serif; }
+html body .app-container .wc3 .wc-empty .wc-btn { margin-top: 12px; }
+html body .app-container .wc3 .wc-search input:focus, html body .app-container .wc3 .wc-search input:focus-visible { outline: none !important; border: 0 !important; box-shadow: none !important; }
+html body .app-container .wc3 .wc-search:focus-within { outline: 3px solid #3e2723; outline-offset: 2px; }
+html body .app-container .wc3 .wc-people .wc-team-tag, html body .app-container .wc3 .wc-mod-person .wc-team-tag, html body .app-container .wc3 .wc-prof-id .wc-team-tag { display: inline-block; margin-top: 4px; }
+html body .app-container[data-theme='brand-dark'] .wc3 :is(.wc-rel-state, .wc-plfilter > span, .wc-sr-sum, .wc-sr-h) { color: #ffedac !important; }
+html body .app-container[data-theme='brand-dark'] .wc3 .wc-rel-menu > summary { color: #ffedac; border-color: #ffedac; }
