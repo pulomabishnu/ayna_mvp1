@@ -36,7 +36,7 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
       : { key: 'news', tab: 'ayna news', tone: 'rose', kicker: 'ayna news', title: 'ayna Community is open.', body: 'Ask questions, review what you use and share playlists with women who get it.', cta: 'See Community', go: onViewCommunity, img: '/landing/stalls-trio.webp', alt: 'Three friends chatting from neighboring bathroom stalls' },
     ...(fact ? [{ key: 'fact', tab: 'Word of the day', tone: 'butter', kicker: 'Word of the day', title: fact.term, body: fact.text, note: 'From the ayna glossary. General information, not medical advice.', cta: 'Read more in the Library', go: onViewArticles, img: '/landing/sweater-toilet.webp', alt: 'A woman in a sweater sitting on the toilet, chin in her hand, thinking' }] : []),
     { key: 'about', tab: 'What ayna does', tone: 'sky', kicker: 'What ayna does', title: 'Health, matched to you.', body: 'Answer six questions. See the products that fit your body, with the research and real reviews beside each one.', cta: 'See my matches', go: onStartQuiz, img: '/landing/blue-sink.webp', alt: 'A blue bathroom sink with everyday products around it' },
-    { key: 'community', tab: 'Real reviews', tone: 'ink', kicker: 'The powder room', title: 'Real talk about what women actually use.', body: 'Reviews, questions and routines from the ayna community, in one place.', cta: 'Read reviews', go: onViewCommunity, img: '/landing/tub-girls.webp', alt: 'Two friends laughing in a bathtub' },
+    { key: 'community', tab: 'Real reviews', tone: 'ink', kicker: 'Community', title: 'Real talk about what women actually use.', body: 'Reviews, questions and routines from the ayna community, in one place.', cta: 'Read reviews', go: onViewCommunity, img: '/landing/tub-girls.webp', alt: 'Two friends laughing in a bathtub' },
   ], [fact, news, onStartQuiz, onViewArticles, onViewCommunity]);
 
   const [i, setI] = useState(0);
@@ -52,7 +52,8 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  const playing = !paused && !hold && !reduced && inView;
+  // You move the stories; they never advance on their own (audit: auto-forwarding gets ignored).
+  const playing = false; void paused; void hold; void reduced; void inView;
   const n = slides.length;
   const go = (k) => { setI(((k % n) + n) % n); setProgress(0); };
   useEffect(() => {

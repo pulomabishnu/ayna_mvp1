@@ -14,7 +14,7 @@ import '../styles/landing-v2.css';
  * cream (60) / pink (30) / butter (10) with ink for text and lines, plus one
  * dark band. Everything moving can be paused with a single control (WCAG 2.2.2). */
 
-const SEARCH_HINTS = ['organic pads', 'PCOS support', 'postpartum recovery', 'vaginal dryness', 'pelvic floor', 'sleep support'];
+const SEARCH_HINTS = ['organic pads, PCOS support, pelvic floor…'];
 const NEEDS_PHOTO = (p) => !/tampon tribe|herau|r[eè]sa/i.test(`${p?.brand || ''} ${p?.name || ''}`);
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -69,12 +69,8 @@ function Ticker() {
 /* ---------- hero ---------- */
 function Search({ onSearch }) {
   const [q, setQ] = useState('');
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    if (reducedMotion()) return undefined;
-    const t = window.setInterval(() => { if (!document.hidden) setI((v) => (v + 1) % SEARCH_HINTS.length); }, 2600);
-    return () => window.clearInterval(t);
-  }, []);
+  // One fixed hint: text that changes while you read it was a Pass 6/7 audit fix.
+  const i = 0;
   return (
     <form className="lv-search" role="search" onSubmit={(e) => { e.preventDefault(); onSearch(q); }}>
       <label>
@@ -168,10 +164,16 @@ function Tiles({ products, onOpenProduct, ranked = false }) {
   );
 }
 
+// Core needs lead (periods, intimate care, menopause, pelvic floor); creams, sleep and gadgets come after.
+const CORE = /pad|tampon|cup|disc|period|intimate|vaginal|menopause|pelvic|uti|cramp|fertility|postpartum|pregnan/i;
 function Trending({ onOpenProduct, onViewDiscovery }) {
   // The first four products a new visitor sees: everyday picks, not sex tech.
-  const items = useMemo(() => getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
-    .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo/i.test(String(p.name || ''))).slice(0, 4), []);
+  const items = useMemo(() => {
+    const list = getWeeklyTrendingLineup(ALL_PRODUCTS).map((x) => x.product)
+      .filter((p) => p?.image && NEEDS_PHOTO(p) && !/sex|intimacy|toy/i.test(String(p.category || '')) && !/\banal\b|vibrator|dildo|mouth tape/i.test(String(p.name || '')));
+    const core = list.filter((p) => CORE.test(`${p.category} ${(p.healthFunctions || []).join(' ')}`));
+    return [...core, ...list.filter((p) => !core.includes(p))].slice(0, 4);
+  }, []);
   const ref = useReveal();
   if (items.length < 2) return null;
   return (
@@ -237,11 +239,8 @@ function Why({ paused }) {
   const ref = useReveal();
   const [a, setA] = useState(0);
   const [touched, setTouched] = useState(false);
-  useEffect(() => {
-    if (touched || paused || reducedMotion()) return undefined;
-    const t = window.setInterval(() => setA((v) => (v + 1) % WHY.length), 4500);
-    return () => window.clearInterval(t);
-  }, [touched, paused]);
+  // Nothing moves on its own: the numbers change when you tap them.
+  void paused; void touched;
   const pick = (i) => { setTouched(true); setA(i); };
   return (
     <section ref={ref} className="lv-sec" aria-labelledby="lv-why-title">
@@ -380,14 +379,14 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         {/* Partner brands carousel up top, right under the hero. */}
         <PartnersTop onViewWaitlist={onViewWaitlist} />
         {personalSlot}
-        <Purpose onViewAbout={onViewAbout} />
+        {/* Story order (Pass 7): what it is, how it works, real products, reads, who we are, start. */}
+        {!personal && <Why paused={paused} />}
         <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
         <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
-        <Strip />
         {/* ayna news, word of the day and more: a little way down the page, not first. */}
         <LandingStories paused={paused} onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
-        <Why paused={paused} />
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
+        {!personal && <Purpose onViewAbout={onViewAbout} />}
         {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
       </div>
     </div>

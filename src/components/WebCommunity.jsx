@@ -935,13 +935,14 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <div className="wc-row is-split wc-subbar"><label className="wc-plfilter"><span>Show</span><select value={playlistSection} onChange={(e) => switchSection(e.target.value)}>{[['recent', 'Everyone’s playlists'], ['friends', 'Friends’ playlists'], ['mine', 'My playlists']].map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></label><button type="button" className="wc-btn" onClick={() => openCompose('playlist')}>Create playlist</button></div>
         {firstLoad ? <SkeletonPlaylists /> : playlists.length ? <div className="wc-pl-grid">{playlists.map(playlistCard)}</div> : <div className="wc-empty"><h2>{playlistSection === 'mine' ? 'You haven’t made a playlist yet' : playlistSection === 'friends' ? 'No playlists from friends yet' : 'No playlists yet'}</h2><p>Collect your favorites in one place.</p><button type="button" className="wc-btn" onClick={() => openCompose('playlist')}>Create playlist</button></div>}
       </> : <>
-        <div className="wc-composer">
+        {/* Reading is open to everyone; the share box is for members (logged out there's a Join card). */}
+        {user && <div className="wc-composer">
           {user && <Avatar size={36} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} />}
           <button type="button" className="wc-share" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}>{tab === 'question' ? 'Ask the community a question' : tab === 'review' ? 'Review a product you’ve tried' : 'Share with the community'}</button>
           <div className="wc-composer-kinds" aria-label="Or start a">
             {Object.keys(KIND_TITLES).map((k) => <button type="button" key={k} className={`is-${k}`} onClick={() => openCompose(k)}>{VERB[k] || k}</button>)}
           </div>
-        </div>
+        </div>}
         {tab === 'for-you' && <div className="wc-pinned"><Announcements supabase={supabase} user={user} products={products} productsById={productsById} loadArticles={loadArticles} teamBadges={teamBadges} variant="web" onOpenProduct={onOpenProduct} onOpenPlaylist={openPlaylistById} onOpenArticle={onOpenArticle} onOpenProfile={openProfile} onRequireAuth={requireAccount} onShowRules={openRules} /></div>}
         {firstLoad ? <div className="wc-skel-list" aria-busy="true" aria-label="Loading posts"><SkeletonPost /><SkeletonPost /><SkeletonPost /></div> : posts.filter((p) => !isBlocked(p.author_id)).map((p) => renderPost(p))}
         {!loading && posts.length === 0 && (tab === 'following' ? <div className="wc-empty">
@@ -987,7 +988,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
 
   return <section className="wc wc3">
     <div className={`wc-head${page ? '' : ` ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom ay3-commhero${seenBefore ? ' is-compact' : ''}`}`}>
-      {page ? <button type="button" className="wc-back" onClick={closePage}>{page.type === 'post' ? '← Back to feed' : '← Community'}</button> : <div><p className="ay3-kicker is-keep">The powder room</p><h1 className="ay3-title">Ask, review, <em>share.</em></h1><p className="wc-hero-sub">Real talk between women, about the products we actually use.</p></div>}
+      {page ? <button type="button" className="wc-back" onClick={closePage}>{page.type === 'post' ? '← Back to feed' : '← Community'}</button> : <div><h1 className="ay3-title">Ask, review, <em>share.</em></h1><p className="wc-hero-sub">Real talk between women, about the products we actually use.</p></div>}
       {!page && <div className="wc-mirror" aria-hidden="true"><span className="wc-mirror__frame"><img src="/landing/stalls-trio.webp" alt="" /></span><span className="wc-mirror__lip">say it here ♡</span></div>}
       <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
         {user && <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount ? `Updates, ${unreadCount} new` : 'Updates'}><Icon name="bell" size={20} /><span className="wc-bell-label" aria-hidden="true">Updates</span>{unreadCount > 0 && <span className="wc-bell-dot is-count" aria-hidden="true">{unreadCount > 9 ? '9+' : unreadCount}</span>}</button>}

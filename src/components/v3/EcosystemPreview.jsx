@@ -19,7 +19,7 @@ function pick(products, cats, n) {
   return out;
 }
 
-export default function EcosystemPreview({ products = [], onBuild, onSignIn }) {
+export default function EcosystemPreview({ products = [], onBuild, onSignIn, matches = [], onSave, onOpenProduct, onBrowse }) {
   const shelves = useMemo(() => {
     const used = new Set();
     return SAMPLE_SHELVES.map((s) => {
@@ -28,6 +28,35 @@ export default function EcosystemPreview({ products = [], onBuild, onSignIn }) {
       return { ...s, items };
     }).filter((s) => s.items.length > 0);
   }, [products]);
+
+  // Just finished the quiz without an account: show her matches, never a lock.
+  if (matches.length) {
+    return (
+      <section className="ay-ecoprev is-mine" aria-labelledby="ay-ecoprev-title">
+        <header className="ay-ecoprev__head">
+          <h1 id="ay-ecoprev-title" className="ay-ecoprev__title">Your <em>matches</em></h1>
+          <p className="ay-ecoprev__lede">{matches.length} picks from your answers. Tap one to see why it fits.</p>
+        </header>
+        <div className="ay-ecoprev__save" role="note">
+          <p>Save them with a free account so they’re here next time. Your answers stay on this device until you do.</p>
+          <div>
+            <button type="button" className="ay-ecoprev__primary" onClick={onSave}>Save my matches</button>
+            {onBrowse && <button type="button" className="ay-ecoprev__secondary" onClick={onBrowse}>Browse the Shop by best match</button>}
+          </div>
+        </div>
+        <ul className="ay-ecoprev__mine">
+          {matches.map((p) => (
+            <li key={p.id}>
+              <button type="button" onClick={() => onOpenProduct && onOpenProduct(p)}>
+                <span className="ay-ecoprev__mineimg"><ProductTileImage product={p} alt="" letterNode={<ProductImageFallback />} /></span>
+                <span className="ay-ecoprev__minename">{p.brand && !String(p.name || '').startsWith(p.brand) ? <small>{p.brand}</small> : null}{p.name}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
+  }
 
   return (
     <section className="ay-ecoprev" aria-labelledby="ay-ecoprev-title">

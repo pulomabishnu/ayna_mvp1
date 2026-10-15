@@ -1,4 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+// 60 cards per load on desktop; 20 on phones, so the Shop isn't 22 screens long.
+const PAGE_SIZE = typeof window !== 'undefined' && window.matchMedia?.('(max-width: 700px)').matches ? 20 : 60;
 import { createPortal } from 'react-dom';
 import SuggestBox from './SuggestBox';
 import './Discovery.css';
@@ -616,7 +618,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // the actual render-cost bottleneck, not image loading, which already had
     // caching/concurrency limits. "Load more" reveals additional batches
     // instead of mounting everything up front.
-    const PAGE_SIZE = 60;
     // Bounds how many browse-AI generation rounds a single browse context
     // (macro group + category + personalization) can trigger. Raised from 2
     // to 10 per explicit direction: browsing a category should feel

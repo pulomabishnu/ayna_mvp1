@@ -213,8 +213,8 @@ export default function About({ onBack, onExplore, onStart }) {
           </div>
           {(onStart || onExplore) && (
             <div className="ay-info-btn-row">
-              {onStart && <button type="button" className="ay-info-btn" onClick={() => onStart()}>Find your starting point</button>}
-              {onExplore && <button type="button" className="ay-info-btn ay-info-btn--ghost" onClick={() => onExplore()}>Explore ayna</button>}
+              {onStart && <button type="button" className="ay-info-btn" onClick={() => onStart()}>See my matches</button>}
+              {onExplore && <button type="button" className="ay-info-btn ay-info-btn--ghost" onClick={() => onExplore()}>Browse the Shop</button>}
             </div>
           )}
         </div>

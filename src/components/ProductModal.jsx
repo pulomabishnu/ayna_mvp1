@@ -633,7 +633,13 @@ export default function ProductModal({
       {/* A size picker only when picking changes something here (price, link or photo);
           otherwise just say which sizes exist. */}
       {choice.hasVariants && !variantsMatter && (
-        <p className="pdp-variants-line">Sizes: {product.variants.map((v) => String(v.label || '').replace(/\s*\u2014\s*/g, ', ')).join(' · ')}.{sizeChosenOnAmazon ? ' Pick yours on Amazon.' : ''}</p>
+        <p className="pdp-variants-line">{(() => {
+          // A long list of colors or prints isn't a size list: say how many there are.
+          const labels = product.variants.map((v) => String(v.label || '').replace(/\s*\u2014\s*/g, ', '));
+          const sizey = labels.some((l) => /\d|\b(xs|s|m|l|xl|small|medium|large|regular|super|light|heavy|mini|plus|size|model|pack|count|oz|ml)\b/i.test(l));
+          if (labels.length > 8 || !sizey) return `Comes in ${labels.length} ${sizey ? 'sizes' : 'styles'}.${sizeChosenOnAmazon ? ' Pick yours on Amazon.' : ''}`;
+          return `Sizes: ${labels.join(' · ')}.${sizeChosenOnAmazon ? ' Pick yours on Amazon.' : ''}`;
+        })()}</p>
       )}
       {choice.hasVariants && variantsMatter && (
         <label className="pdp-variant" style={{ display: 'block', width: '100%', marginBottom: '0.8rem', fontSize: '0.9rem' }}>

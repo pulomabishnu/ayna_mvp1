@@ -866,9 +866,9 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const [closing, setClosing] = useState(false);
   const closeRead = () => {
     const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) { setSelectedId(null); return; }
-    setClosing(true);
-    window.setTimeout(() => { setClosing(false); setSelectedId(null); }, 520);
+    // No crumple animation: reads open and close straight away (Pass 7 audit).
+    void reduce; void setClosing;
+    setSelectedId(null);
   };
 
   // Same personalised shelves as the app's Library: reads matched to the

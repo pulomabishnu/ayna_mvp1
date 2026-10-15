@@ -1,7 +1,6 @@
 import React from 'react';
 import { CATEGORY_LABELS } from '../data/products';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
-import { researchSourceCount } from './pdp/commerce';
 import { formatPrice } from '../utils/formatPrice';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import MatchPill from './MatchPill';
@@ -84,14 +83,13 @@ export default function ProductCard({
             ? <small><span className="sr-only">List price </span><s>{price.sub.replace(/^list\s+/i, '')}</s></small>
             : <small>{price.sub}</small>)}</span>
           {(() => {
-            // One trust line, counted exactly like the product page ("N research sources").
-            const research = isMine ? 0 : researchSourceCount(product);
+            // Cards stay simple: the research count lives on the product page.
             const hasRating = rating && Number.isFinite(rating.value) && rating.count > 0;
-            if (!research && !hasRating) return null;
+            if (!hasRating) return null;
             return (
               <span className="ay-card-trust">
                 {hasRating && <span className="ay-card-trust__rating"><span aria-hidden="true">★</span> {rating.value.toFixed(1)} · {rating.count} review{rating.count === 1 ? '' : 's'}</span>}
-                {research > 0 && <span className="ay-card-trust__tag">{research} research source{research === 1 ? '' : 's'}</span>}
+                
               </span>
             );
           })()}

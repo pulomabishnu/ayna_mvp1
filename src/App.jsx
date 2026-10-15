@@ -2112,7 +2112,13 @@ function App() {
             primaryLabel="Save my matches →"
             onPrimary={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
             onClose={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
-            onBrowse={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
+            onBrowse={() => {
+              // Browse means browse: her matches come along, no sign-up wall.
+              setGuestPreview((g) => ({ ...g, done: true }));
+              if (pendingQuizResults || guestPreview?.results) setQuizResults(pendingQuizResults || guestPreview.results);
+              setPendingAction(null); pendingActionRef.current = null;
+              handleViewDiscovery('');
+            }}
           />
         )}
         {showWrapped && (
@@ -2334,8 +2340,16 @@ function App() {
         {currentView === 'ecosystem' && !user && !authLoading && (
           <EcosystemPreview
             products={ALL_PRODUCTS}
+            matches={guestPreview?.products || []}
             onBuild={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
             onSignIn={() => { setPendingAction('ecosystem'); pendingActionRef.current = 'ecosystem'; setShowAuthModal(true); }}
+            onSave={() => {
+              if (guestPreview?.results) setPendingQuizResults(guestPreview.results);
+              setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
+              setShowAuthModal(true);
+            }}
+            onOpenProduct={handleOpenProduct}
+            onBrowse={() => handleViewDiscovery('')}
           />
         )}
         {currentView === 'ecosystem' && user && (
