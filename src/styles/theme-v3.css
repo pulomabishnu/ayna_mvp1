@@ -3435,3 +3435,10 @@ html body .app-container main h1:not(#lv-hero-title):not(.pdp-head__name):not(.s
 html body .app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card.ayna-browse-card { --tilt: -1deg !important; }
 html body .app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card.ayna-browse-card:nth-child(even) { --tilt: 1deg !important; }
 html body .app-container:not([data-theme='dark']) .ayna-browse__grid.ayna-browse__grid { gap: 52px 32px !important; }
+/* Brand dark: Campus Resources page text (cards keep espresso on butter), partner footer line. */
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .cr-page :is(.cr-lede, .cr-label, .cr-small, .cr-small summary, .cr-schools-list .cr-link, .cr-h2, .cr-h3, .cr-status, .cr-change, .cr-jump a) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .cr-page :is(.ay3-crhero, .ay3-crhero *, .cr-emergency, .cr-emergency *, .cr-case h2, .cr-case .cr-h2) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .cr-page .cr-jump a { border-color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .cr-page :is(.cr-card, .cr-unverified, .cr-case) :is(p, h3, h4, li, dt, dd, span, strong, small, .cr-lede, .cr-small) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-partners__more { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .wc-mod .wc-mod-pl small { color: #ffedac !important; }
