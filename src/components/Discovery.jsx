@@ -331,12 +331,14 @@ function applyColdStartFloor(rankedList, pageSize) {
         if (!isPartnerBrandItem(page[i])) displaceable.push(i);
     }
     const newPage = [...page];
+    const bumped = [];
     displaceable.forEach((pageIdx, i) => {
-        if (i < promotable.length) newPage[pageIdx] = promotable[i];
+        if (i < promotable.length) { bumped.push(newPage[pageIdx]); newPage[pageIdx] = promotable[i]; }
     });
     const promotedIds = new Set(promotable.map((p) => p.id));
     const remainingRest = rest.filter((p) => !promotedIds.has(p.id));
-    return [...newPage, ...remainingRest];
+    // Displaced products move to the top of the next page; they used to vanish.
+    return [...newPage, ...bumped.reverse(), ...remainingRest];
 }
 
 // 'Highest rated' is hidden until cards show ratings (S18).
@@ -896,9 +898,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             list = [...list].sort((a, b) => ((shownPct.get(b.id) ?? 0) - (shownPct.get(a.id) ?? 0)) || matchTieBreak(a, b));
         } else {
             const browsingWithoutTextQuery = !scoreById;
-            if (browsingWithoutTextQuery && !personalizationFilter) {
-                list = pickOnePerPartnerBrand(list, shuffleSeed);
-            }
+            // Featured leads with one product per partner brand; the brand's other
+            // products stay in the Shop in their normal place (they used to be
+            // hidden, so the count changed from load to load).
+            const featuredLead = browsingWithoutTextQuery && !personalizationFilter
+                ? new Set(pickOnePerPartnerBrand(list, shuffleSeed).filter((it) => getPartnerBrandRank(it) !== null).map((it) => it.id))
+                : null;
+            const leadRank = (it) => (featuredLead && featuredLead.has(it.id) ? getPartnerBrandRank(it) : null);
             list = [...list].sort((a, b) => {
                 const m = matchTieBreak(a, b);
                 if (m !== 0) return m;
@@ -915,9 +921,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 // Partners are pinned AND ordered (by PARTNER_BRAND_ORDER's explicit
                 // priority, requested 2026-09-16) in general browse only.
                 // Partnership never changes personalized match scores or recommendation order.
-                if (browsingWithoutTextQuery && !personalizationFilter) {
-                    const ra = getPartnerBrandRank(a);
-                    const rb = getPartnerBrandRank(b);
+                if (featuredLead) {
+                    const ra = leadRank(a);
+                    const rb = leadRank(b);
                     if (ra !== null && rb !== null) {
                         if (ra !== rb) return ra - rb;
                     } else if (ra !== null || rb !== null) {
@@ -1063,14 +1069,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         }
         return [...out.filter((p) => !p.llmGenerated), ...out.filter((p) => p.llmGenerated)];
     }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi, passesActiveFilters]);
+    // The count is the catalog, never the live web suggestions mixed in after it,
+    // so it reads the same on every load (it used to move between 243 and 270).
+    const catalogShown = useMemo(() => gridItems.filter((p) => !p.llmGenerated).length, [gridItems]);
     useEffect(() => {
-        const t = window.setTimeout(() => setShownCount(gridItems.length), 700);
+        const t = window.setTimeout(() => setShownCount(catalogShown), 700);
         return () => window.clearTimeout(t);
-    }, [gridItems.length]);
-    useEffect(() => {
-        const t = window.setTimeout(() => setShownCount(gridItems.length), 700);
-        return () => window.clearTimeout(t);
-    }, [gridItems.length]);
+    }, [catalogShown]);
     const firstWebIndex = useMemo(() => gridItems.findIndex((p) => p.llmGenerated), [gridItems]);
 
     useEffect(() => {
@@ -1616,7 +1621,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const applied = [[priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayna-browse__applied" role="status">
-                        <span className="ayna-browse__count">{applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? gridItems.length} of ${combined.length}` : shownCount == null ? '\u00a0' : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
+                        <span className="ayna-browse__count">{applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${shownCount ?? catalogShown} of ${combined.length}` : shownCount == null ? '\u00a0' : (shownCount === 1 ? '1 product' : `${shownCount} products`)}</span>
                         {sortBy === 'default' && !(personalizationFilter && (hasQuizFrustrations || hasHealthImport)) && !searchSubmitted && (
                             <span className="ayna-browse__featured-note">Featured order includes partner brands.{(hasQuizFrustrations || hasHealthImport) ? ' Turn on Personalized to sort by your match.' : ''}</span>
                         )}

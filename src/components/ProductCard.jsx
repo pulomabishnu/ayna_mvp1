@@ -40,7 +40,9 @@ export default function ProductCard({
   // Something she added herself (not in the catalog yet): no page to open
   // and no facts to show, so the card says whose it is and stays put.
   const isMine = product.userAdded === true;
-  const rawPrice = isMine ? { main: 'Added by you', sub: '' } : formatPrice(product);
+  // A waitlist deposit is not a price: say what it is, same as the product page.
+  const isDeposit = /deposit/i.test(String(product.price || ''));
+  const rawPrice = isMine ? { main: 'Added by you', sub: '' } : isDeposit ? { main: 'Coming soon', sub: 'Waitlist' } : formatPrice(product);
   // Long "check the retailer" notes ran past the card edge; say it short.
   const price = /check (the )?retailer|varies by retailer/i.test(String(rawPrice.main || '')) ? { main: 'Price at retailer', sub: '' } : rawPrice;
   const Link = isMine ? 'div' : 'a';
@@ -62,6 +64,7 @@ export default function ProductCard({
         </div>
         <div className="ayna-discover-card__body">
           <div className="ayna-browse-card__labels">
+            {isDeposit && <span className="ay-card-preorder">Pre-order</span>}
             <span className="ayna-discover-card__category">{isMine ? categoryLabel : (shownBrand || categoryLabel)}</span>
             {labels}
           </div>

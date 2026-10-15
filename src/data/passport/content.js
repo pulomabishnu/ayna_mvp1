@@ -7,6 +7,7 @@
  * know" instead of being papered over. ayna-written copy is labelled as
  * ayna's, manufacturer copy as the brand's, community copy as people's.
  */
+import { recallFacts } from '../../utils/productFacts.js';
 import { HEALTH_FUNCTIONS, CATEGORY_LABELS } from '../products.js';
 import { getPassport } from './index.js';
 import { formatPrice } from '../../utils/formatPrice.js';
@@ -121,13 +122,12 @@ export function headerFacts(product, { blockedClaims = [], max = 3 } = {}) {
   const passport = getPassport(product);
   const tags = buildTypedTags(product).filter((t) => !isClaimBlocked(t.label, blockedClaims));
   const reviewer = getNamedReviewer(product);
-  const recalls = String(product?.safety?.recalls || '');
   const trust = [
     reviewer ? { label: `Reviewed by ${reviewer.name}, ${reviewer.credential}`, type: 'check', url: reviewer.url } : null,
     passport?.pricing.fsa_hsa.value === 'eligible' ? { label: 'FSA/HSA eligible', type: 'check' } : null,
     shortFda(product) ? { label: shortFda(product), type: 'check' } : null,
     String(product?.privacy?.sellsData || '').includes('❌') ? { label: 'Doesn’t sell your data', type: 'check' } : null,
-    recalls && !recalls.includes('⚠') ? { label: 'No recalls on file', type: 'check' } : null,
+    recallFacts(product).status === 'none' ? { label: 'No recalls found', type: 'check' } : null,
   ].filter(Boolean);
   const fit = tags.filter((t) => t.type === 'fit').slice(0, 2);
   const out = [...fit];

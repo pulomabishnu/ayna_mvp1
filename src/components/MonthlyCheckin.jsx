@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { findGlossaryTermInText } from '../data/glossary';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
+import { useFocusTrap } from '../utils/useFocusTrap';
 
 // Map check-in focus options → quiz frustrations (for getRecommendations)
 const FOCUS_TO_FRUSTRATION = {
@@ -75,6 +76,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
   const [multiSelections, setMultiSelections] = useState(new Set());
   const [screeningValues, setScreeningValues] = useState({ sexuallyActive: '', lastSTI: '', lastPap: '' });
   const [isComplete, setIsComplete] = useState(false);
+  const trapRef = useFocusTrap(isComplete ? 'done' : 'asking');
 
   const showFocusStep = answers.howIsRoutine && answers.howIsRoutine !== 'Great. No changes';
   const focusIncludesScreening = multiSelections.has('Remind me about Pap / STI screenings');
@@ -184,7 +186,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
         }}
         onClick={onClose}
       >
-        <div className="card animate-fade-in-up ay-checkin" role="dialog" aria-modal="true" aria-labelledby="ay-checkin-done" style={{ maxWidth: '520px', width: '100%', padding: '2rem' }} onClick={e => e.stopPropagation()}>
+        <div ref={trapRef} className="card animate-fade-in-up ay-checkin" role="dialog" aria-modal="true" aria-labelledby="ay-checkin-done" style={{ maxWidth: '520px', width: '100%', padding: '2rem' }} onClick={e => e.stopPropagation()}>
           <h2 id="ay-checkin-done" style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>{title}</h2>
           <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>{message}</p>
           {tips.length > 0 && (
@@ -207,7 +209,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
       }}
       onClick={onClose}
     >
-      <div className="card animate-fade-in-up ay-checkin" role="dialog" aria-modal="true" aria-labelledby="ay-checkin-q" style={{ position: 'relative', maxWidth: '520px', width: '100%', maxHeight: 'min(90vh, 600px)', display: 'flex', flexDirection: 'column', padding: '2rem' }} onClick={e => e.stopPropagation()}>
+      <div ref={trapRef} className="card animate-fade-in-up ay-checkin" role="dialog" aria-modal="true" aria-labelledby="ay-checkin-q" style={{ position: 'relative', maxWidth: '520px', width: '100%', maxHeight: 'min(90vh, 600px)', display: 'flex', flexDirection: 'column', padding: '2rem' }} onClick={e => e.stopPropagation()}>
         <button type="button" className="ay-checkin__close" onClick={onClose} aria-label="Close" autoFocus>×</button>
         <div style={{ flexShrink: 0 }}>
           {/* A one-question check-in doesn't need wizard chrome; later steps just say where she is. */}

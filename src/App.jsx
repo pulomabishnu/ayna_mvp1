@@ -215,7 +215,7 @@ function articleIdFromPath(path) {
   return m ? m[1].toLowerCase() : null;
 }
 function communityHandleFromPath(path) {
-  const m = String(path || '').match(/^\/community\/@([a-z0-9_]+)\/?$/i);
+  const m = String(path || '').match(/^\/community\/@([^/?#]{1,40})\/?$/i);
   return m ? m[1].toLowerCase() : null;
 }
 function communityPostFromPath(path) {

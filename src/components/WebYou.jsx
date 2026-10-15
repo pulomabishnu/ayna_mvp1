@@ -155,7 +155,17 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
       const sorted = [...alerts].sort((x, y) => (TIER[x.kind]?.[0] ?? 3) - (TIER[y.kind]?.[0] ?? 3));
       const active = alerts.filter((a) => a.kind !== 'note').length;
       const fyi = alerts.length - active;
-      const firstLine = (t) => { const m = String(t || '').match(/^(.{10,160}?[.!?])(\s|$)/); return m ? m[1] : String(t || ''); };
+      // First sentence, without cutting at "v." or "e.g." (it used to stop at "Manson v."), and no emoji.
+      const firstLine = (t) => {
+        const text = String(t || '').replace(/^[\u26a0\ufe0f\s]+/, '').trim();
+        const re = /[.!?](?=\s+[A-Z(]|$)/g; let m;
+        while ((m = re.exec(text))) {
+          const before = text.slice(0, m.index + 1);
+          if (/\b(v|vs|e\.g|i\.e|etc|inc|no|dr|st)\.$/i.test(before) || before.length < 10) continue;
+          return before;
+        }
+        return text;
+      };
       return <section className="wyou-card is-safety wyou-safety-top">
         <div className="wyou-card-head"><h2>Safety alerts</h2><span>{active ? `${active} to check` : 'Nothing urgent'}{fyi > 0 ? ` · ${fyi} FYI` : ''}</span></div>
         {sorted.length ? <ul className="wyou-alerts">{sorted.map((a) => {

@@ -3442,3 +3442,28 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
 html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .cr-page :is(.cr-card, .cr-unverified, .cr-case) :is(p, h3, h4, li, dt, dd, span, strong, small, .cr-lede, .cr-small) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-partners__more { color: #ffedac !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .wc-mod .wc-mod-pl small { color: #ffedac !important; }
+/* Match pill: one look everywhere, espresso with butter text (navy was off-palette and unreadable on the brown band). */
+html body .app-container .ay-match-pill.ay-match-pill, html body .app-container .pdp-page .pdp-h2-match .ay-match-pill { background: #3e2723 !important; color: #ffedac !important; }
+html body .app-container .ay-match-pill.ay-match-pill :is(strong, span) { color: #ffedac !important; opacity: 1; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-match-pill.ay-match-pill :is(strong, span) { color: #ffedac !important; }
+html body .app-container { --brand-ink: #3e2723; }
+html body .app-container .cr-verified-seal { fill: #769ebe; stroke: #3e2723; }
+html body .app-container .cr-verified-tick { stroke: #3e2723; }
+html body .app-container :is(.cr-rules-n, .cr-att-kind) { color: #3e2723; }
+/* Brand dark, round 5: signed-in Home block sits on the espresso page; price meta, tier tags, need labels. */
+html body .app-container.app-container.app-container[data-theme='brand-dark'] :is(.lx-personal, .lx-personal .lx-shop) { background: transparent !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lx-personal :is(.lx-h2, .lx-h2 em, .lx-chips__more, .lx-ghost, .lx-today__link, .lx-powder__head h2, .lx-powder__head em, .lx-today h2, .lx-today h2 em) { color: #ffedac !important; border-color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.pdp-quick li, .ay-needs__for, .ay-needs__for strong) { color: #ffedac !important; border-color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-gl-type.is-tier-high { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-lib-more { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lx-personal :is(.lx-chips button:not(.is-on):not([aria-pressed='true']), .lx-post__meta, .lx-post__body, .lx-post__meta *) { color: #ffedac !important; border-color: #ffedac !important; }
+html body .app-container .wyou-hero::before { color: #3e2723 !important; font-size: 12px !important; }
+/* Ecosystem summary: one separator dot, butter popover (no white). */
+html body .app-container .eco3-cost.eco3-cost summary::before { content: none !important; }
+html body .app-container .eco3-cost.eco3-cost span { background: #ffedac !important; color: #3e2723 !important; }
+/* Product page: the photo stays in view while the right column scrolls (no blank left half). */
+@media (min-width: 900px) { html body .app-container .pdp-head .pdp-head__media.pdp-head__media { position: sticky !important; top: 104px; align-self: start; } }
+/* Product page: one Ask entry point (the inline "Ask ayna about this product" block); the floating pill is hidden there so it never covers Buy. */
+html body .app-container:has(.pdp-page) .ayna-ask-dock { display: none !important; }
+html body .app-container .pdp-chip.is-warn { display: inline-flex; gap: 6px; padding: 6px 10px; border: 2px solid #3e2723; border-radius: 8px; background: #f7badd; color: #3e2723; font: 600 14px/1.35 'DM Sans', system-ui, sans-serif; }
+html body .app-container .ay-card-preorder { display: inline-block; margin-right: 6px; padding: 2px 8px; border: 2px solid #3e2723; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 12px/1.2 'DM Sans', system-ui, sans-serif; }

@@ -1,3 +1,4 @@
+import { recallFacts } from '../utils/productFacts';
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { ProductImageFallback } from './ProductTileImage';
 import ProductCard from './ProductCard';
@@ -544,8 +545,10 @@ export default function ProductModal({
   if (!product) return null;
 
   const basePrice = priceParts(product);
-  const price = choice.hasVariants
-    ? { known: true, main: choice.variant?.priceLabel || 'See retailer for price', sub: '', isPlaceholder: !choice.variant?.priceLabel }
+  // One price for the whole page: a variant's own price when it has one,
+  // otherwise the catalog price (the same one the compare table uses).
+  const price = choice.hasVariants && choice.variant?.priceLabel
+    ? { known: true, main: choice.variant.priceLabel, sub: '', isPlaceholder: false }
     : basePrice;
   const perUnit = choice.hasVariants ? '' : perUnitLabel(product);
   const priceText = product.price || product.stage || '';
@@ -555,7 +558,13 @@ export default function ProductModal({
     if (target && onOpenProduct) onOpenProduct(target);
   };
 
-  const noRecalls = (() => { const r = String(product?.safety?.recalls || ''); return Boolean(r) && !r.includes('\u26a0'); })();
+  // One recall answer for the whole page (utils/productFacts): a named recall is
+  // never shown as "No recalls", and "check current notices" isn't a check.
+  const recall = (() => {
+    const live = getPassport(product)?.recall;
+    if (live?.status === 'recalled') return { status: 'past', label: 'Active recall found', detail: '' };
+    return recallFacts(product);
+  })();
 
   // The one or two cautions that should sit next to the Buy button (pregnancy,
   // the product's own safety alert), in plain words from the record.
@@ -624,7 +633,8 @@ export default function ProductModal({
           </small>
         </label>
       )}
-      {noRecalls && <p className="pdp-chiprow"><span className="pdp-chip is-ok">{'\u2713'} No recalls on file</span></p>}
+      {recall.status === 'none' && <p className="pdp-chiprow"><span className="pdp-chip is-ok">{'\u2713'} No recalls found</span></p>}
+      {recall.status === 'past' && <p className="pdp-chiprow"><span className="pdp-chip is-warn">{'\u26a0'} {recall.detail ? recall.detail.replace(/\.$/, '') : recall.label}</span></p>}
       <div className="pdp-actions__primary">
         {buyButton()}
         {onAddToEcosystem && user && (

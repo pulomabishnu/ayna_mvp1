@@ -802,7 +802,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       ['Playlists', countLabel(profilePlaylists.length)],
       ...(profileStats ? [['Followers', String(profileStats.followers ?? 0)], ['Following', String(profileStats.following ?? 0)]] : []),
     ] : [];
-    main = !details ? (profileLoading ? <div className="wc-prof-skel" aria-busy="true" aria-label="Loading profile"><span className="wc-skel-dot is-big" /><div><span className="wc-skel-line is-mid" /><span className="wc-skel-line is-short" /></div></div> : <div className="wc-empty"><h2>Profile not found</h2><p>Check the handle and try again.</p></div>) : <section className="wc-profile">
+    main = !details ? (profileLoading ? <div className="wc-prof-skel" aria-busy="true" aria-label="Loading profile"><span className="wc-skel-dot is-big" /><div><span className="wc-skel-line is-mid" /><span className="wc-skel-line is-short" /></div></div> : <div className="wc-empty"><h2>We couldn’t find {page?.id ? `@${page.id}` : 'that member'}</h2><p>The handle may have changed, or the profile was removed.</p><button type="button" className="wc-btn" onClick={closePage}>Back to Community</button></div>) : <section className="wc-profile">
       <div className="wc-prof-hero">
         <Avatar size={88} name={details.display_name} path={details.avatar_url} />
         <div className="wc-prof-id">

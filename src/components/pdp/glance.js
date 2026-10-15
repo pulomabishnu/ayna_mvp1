@@ -449,6 +449,32 @@ export function buildGlance(product, ctx = {}) {
     ...(sources.length ? [{ id: 'sources', label: `Sources (${sources.length})` }] : []),
   ];
 
+  // Footnotes run 1, 2, 3 in reading order (they used to read 7, 1, 2, 5):
+  // number sources by where they're first cited on the page, then the rest.
+  const READ_ORDER = ['people', 'clinician', 'howto', '#facts', 'brand', 'inside', 'safety', 'evidence', 'unknown'];
+  const firstSeen = [];
+  const collect = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) { node.forEach(collect); return; }
+    if (Array.isArray(node.refs)) node.refs.forEach((n) => { if (!firstSeen.includes(n)) firstSeen.push(n); });
+    for (const [k, v] of Object.entries(node)) if (k !== 'refs' && v && typeof v === 'object') collect(v);
+  };
+  const secById = Object.fromEntries(sections.map((sec) => [sec.id, sec]));
+  READ_ORDER.forEach((id) => collect(id === '#facts' ? facts : secById[id]));
+  sections.filter((sec) => !READ_ORDER.includes(sec.id)).forEach(collect);
+  const remap = new Map();
+  firstSeen.forEach((n) => { if (sources.some((src) => src.n === n)) remap.set(n, remap.size + 1); });
+  sources.forEach((src) => { if (!remap.has(src.n)) remap.set(src.n, remap.size + 1); });
+  const renumber = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) { node.forEach(renumber); return; }
+    if (Array.isArray(node.refs)) node.refs = [...new Set(node.refs.map((n) => remap.get(n) || n))].sort((a, b) => a - b);
+    for (const [k, v] of Object.entries(node)) if (k !== 'refs' && v && typeof v === 'object') renumber(v);
+  };
+  renumber(sections); renumber(facts); renumber(what); renumber(who);
+  sources.forEach((src) => { src.n = remap.get(src.n) || src.n; });
+  sources.sort((a, b) => a.n - b.n);
+
   return {
     brand: brandOf(product),
     what,

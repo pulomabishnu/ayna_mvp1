@@ -10,6 +10,7 @@ import { getPassport } from '../../data/passport/index.js';
 import { priceParts, safetyAlertText } from '../../data/passport/content.js';
 import { isPlaceholderProductImage } from '../../utils/resolveProductImage.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
+import { recallFacts } from '../../utils/productFacts.js';
 import { categoryLabel, ingredientHeadline, perUnitLabel, sizeCount, NOT_ON_FILE } from './glance.js';
 
 // ---------------------------------------------------------------------------
@@ -150,6 +151,16 @@ export function sameNeedProducts(product, { pool = ALL_PRODUCTS, limit = 4, excl
     .map((x) => x.p);
 }
 
+/** Where to buy, the same answer the product page gives: named retailers, else the seller its Buy link goes to. */
+export function whereToBuyLine(product) {
+  const named = [...new Set((product?.whereToBuy || []).map((x) => String(x).trim()).filter(Boolean))];
+  if (named.length) return named.slice(0, 4).join(', ');
+  const link = [product?.affiliateUrl, product?.buyUrl, product?.purchaseUrl, product?.url, product?.website].find((u) => isExactUrl(u) || /^https?:\/\//i.test(String(u || '')));
+  if (!link) return NOT_ON_FILE;
+  const brand = brandOf(product);
+  return brand ? `${brand} (online)` : `${hostKey(link)} (online)`;
+}
+
 function evidenceSummary(product) {
   const pp = getPassport(product);
   const srcs = pp?.sources?.all?.known ? pp.sources.all.value.filter((s) => !['manufacturer', 'community'].includes(s.evidence_type)) : [];
@@ -168,15 +179,23 @@ function evidenceSummary(product) {
 export function compareRows(products, { matchFor = null } = {}) {
   const isDigital = products.every((p) => p?.type === 'digital');
   const rows = [
-    { label: 'Price', get: (p) => { const pr = priceParts(p); return pr.known ? pr.main : NOT_ON_FILE; } },
+    { label: 'Price', get: (p) => { const pr = priceParts(p); return pr.known ? pr.main : 'At the retailer'; } },
     !isDigital ? { label: 'Size or count', get: (p) => sizeCount(p)?.text || NOT_ON_FILE } : null,
     !isDigital ? { label: 'Price per unit', get: (p) => perUnitLabel(p) || NOT_ON_FILE } : null,
     isDigital ? { label: 'Available on', get: (p) => String(p.platform || '').trim() || NOT_ON_FILE } : null,
     !isDigital ? { label: 'Ingredients or materials', get: (p) => ingredientHeadline(p, 48) || NOT_ON_FILE } : null,
     { label: 'Evidence on file', get: evidenceSummary },
-    { label: 'Safety note on file', get: (p) => (safetyAlertText(p) ? 'Yes, see its page' : 'None flagged') },
+    { label: 'Safety notes', get: (p) => {
+      const notes = [];
+      if (recallFacts(p).status === 'past') notes.push('Past recall');
+      if (safetyAlertText(p)) notes.push('Safety note');
+      const preg = getPassport(p)?.safety?.pregnancy;
+      const pv = preg?.known && !preg.notApplicable ? String(Array.isArray(preg.value) ? preg.value.join(' ') : preg.value || '') : '';
+      if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) notes.push('Pregnancy caution');
+      return notes.length ? `${notes.join(', ')}, see its page` : 'None flagged';
+    } },
     { label: 'FSA/HSA', get: (p) => { if (['pad', 'tampon', 'cup', 'disc'].includes(p?.category)) return 'Eligible'; const f = getPassport(p)?.pricing?.fsa_hsa; return f?.known ? (f.value === 'eligible' ? 'Eligible' : 'Not eligible') : NOT_ON_FILE; } },
-    { label: 'Where to buy', get: (p) => (p.whereToBuy || []).slice(0, 3).join(', ') || NOT_ON_FILE },
+    { label: 'Where to buy', get: whereToBuyLine },
     matchFor ? { label: 'Your match', get: (p) => { const m = matchFor(p); return Number.isFinite(m) && m > 0 ? `${Math.round(m)}%` : 'No clear match'; } } : null,
   ].filter(Boolean);
   return rows
