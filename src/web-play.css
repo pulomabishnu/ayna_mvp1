@@ -17,8 +17,8 @@
   --ay-pink: #f7badd;
   --ay-mint: #bdebd6;
   --ay-peri-ink: #4652b0;
-  --ay-font-display: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
-  --ay-font-ui: 'Poppins', system-ui, sans-serif;
+  --ay-font-display: 'DM Sans', 'DM Sans', system-ui, sans-serif;
+  --ay-font-ui: 'DM Sans', system-ui, sans-serif;
   --ay-shadow: 3px 3px 0 var(--ay-ink);
   --ay-shadow-lg: 5px 5px 0 var(--ay-ink);
   --ay-pop: cubic-bezier(.3, 1.5, .5, 1);
@@ -369,9 +369,9 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .eco2-sheet { border: 2px solid var(--ay-ink) !important; border-radius: 24px !important; background: var(--ay-paper) !important; }
 
 /* ---------- Sign-in modal ---------- */
-.ay-auth-card { border: 2px solid #1d1a2b !important; border-radius: 28px !important; background: #fffcf5 !important; box-shadow: 6px 6px 0 #1d1a2b !important; font-family: 'Poppins', system-ui, sans-serif; }
-.ay-auth-card :is(input, button, p, a, span) { font-family: 'Poppins', system-ui, sans-serif !important; }
-.ay-auth-logo { color: #1d1a2b !important; font: 800 34px/1 'Bricolage Grotesque', 'Poppins', sans-serif !important; font-style: normal !important; letter-spacing: -.085em !important; }
+.ay-auth-card { border: 2px solid #1d1a2b !important; border-radius: 28px !important; background: #fffcf5 !important; box-shadow: 6px 6px 0 #1d1a2b !important; font-family: 'DM Sans', system-ui, sans-serif; }
+.ay-auth-card :is(input, button, p, a, span) { font-family: 'DM Sans', system-ui, sans-serif !important; }
+.ay-auth-logo { color: #1d1a2b !important; font: 800 34px/1 'Bricolage Grotesque', 'DM Sans', sans-serif !important; font-style: normal !important; letter-spacing: -.085em !important; }
 .ay-auth-card input { border: 2px solid #1d1a2b !important; border-radius: 14px !important; background: #fffcf5 !important; color: #1d1a2b !important; }
 .ay-auth-toggle { padding: 3px !important; border: 2px solid #1d1a2b !important; border-radius: 99px !important; background: #fffcf5 !important; }
 .ay-auth-toggle button { border: 0 !important; border-radius: 99px !important; background: transparent !important; color: #1d1a2b !important; font-weight: 700 !important; box-shadow: none !important; }
@@ -430,28 +430,28 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .app-container .pdp-share svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
 .ay-why-backdrop { position: fixed; inset: 0; z-index: 3000; display: flex; justify-content: flex-end; background: rgba(29, 26, 43, .45); }
-.ay-why { width: min(480px, 100%); height: 100%; overflow-y: auto; padding: 28px; border-left: 2px solid #1d1a2b; background: #fffcf5; color: #1d1a2b; font-family: 'Poppins', system-ui, sans-serif; animation: ay-why-in .25s ease-out both; }
+.ay-why { width: min(480px, 100%); height: 100%; overflow-y: auto; padding: 28px; border-left: 2px solid #1d1a2b; background: #fffcf5; color: #1d1a2b; font-family: 'DM Sans', system-ui, sans-serif; animation: ay-why-in .25s ease-out both; }
 @keyframes ay-why-in { from { transform: translateX(40px); opacity: 0; } }
 .ay-why header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
-.ay-why h2 { margin: 0; font: 800 32px/1 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.045em; }
+.ay-why h2 { margin: 0; font: 800 32px/1 'DM Sans', 'DM Sans', sans-serif; letter-spacing: -.045em; }
 .ay-why header button { width: 40px; height: 40px; border: 2px solid #1d1a2b; border-radius: 50%; background: #fffcf5; font-size: 22px; cursor: pointer; }
 .ay-why section { margin-top: 22px; }
-.ay-why h3 { margin: 0 0 10px; font: 700 15px/1.2 'Poppins', sans-serif; }
-.ay-why p { margin: 0 0 8px; font: 500 14px/1.55 'Poppins', sans-serif; }
+.ay-why h3 { margin: 0 0 10px; font: 700 15px/1.2 'DM Sans', sans-serif; }
+.ay-why p { margin: 0 0 8px; font: 500 14px/1.55 'DM Sans', sans-serif; }
 .ay-why-hero { display: flex; align-items: center; gap: 18px; padding: 18px; border: 2px solid #1d1a2b; border-radius: 22px; background: #bdebd6; box-shadow: 3px 3px 0 #1d1a2b; }
 .ay-why-hero.is-good { background: #f7e78e; } .ay-why-hero.is-partial { background: #f7badd; }
-.ay-why-hero strong { font: 800 22px/1 'Bricolage Grotesque', 'Poppins', sans-serif; }
+.ay-why-hero strong { font: 800 22px/1 'DM Sans', 'DM Sans', sans-serif; }
 .ay-why-ring { display: grid; place-items: center; width: 84px; height: 84px; flex: none; border-radius: 50%; background: conic-gradient(#1d1a2b var(--a), #fffcf5 0); }
-.ay-why-ring span { display: grid; place-items: center; width: 62px; height: 62px; border-radius: 50%; background: #fffcf5; font: 800 22px/1 'Bricolage Grotesque', 'Poppins', sans-serif; }
+.ay-why-ring span { display: grid; place-items: center; width: 62px; height: 62px; border-radius: 50%; background: #fffcf5; font: 800 22px/1 'DM Sans', 'DM Sans', sans-serif; }
 .ay-why-ring small { font-size: 12px; }
 .ay-why-reasons { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .ay-why-reasons li { padding: 12px 14px; border: 2px solid #1d1a2b; border-radius: 16px; }
-.ay-why-reasons span { display: inline-block; margin-bottom: 6px; padding: 3px 8px; border-radius: 99px; background: #b9c2f4; font: 700 11px/1 'Poppins', sans-serif; }
+.ay-why-reasons span { display: inline-block; margin-bottom: 6px; padding: 3px 8px; border-radius: 99px; background: #b9c2f4; font: 700 11px/1 'DM Sans', sans-serif; }
 .ay-why-reasons p { margin: 0; }
 .ay-why-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.ay-why-chips li { padding: 6px 12px; border: 1.5px dashed #1d1a2b; border-radius: 99px; font: 600 13px/1.2 'Poppins', sans-serif; }
+.ay-why-chips li { padding: 6px 12px; border: 1.5px dashed #1d1a2b; border-radius: 99px; font: 600 13px/1.2 'DM Sans', sans-serif; }
 .ay-why-cautions { padding: 14px; border: 2px solid #1d1a2b; border-radius: 16px; background: #faede8; }
-.ay-why-cta { margin-top: 20px; min-height: 48px; padding: 0 22px; border: 2px solid #1d1a2b; border-radius: 99px; background: #1d1a2b; color: #fffcf5; font: 700 15px/1 'Poppins', sans-serif; cursor: pointer; }
+.ay-why-cta { margin-top: 20px; min-height: 48px; padding: 0 22px; border: 2px solid #1d1a2b; border-radius: 99px; background: #1d1a2b; color: #fffcf5; font: 700 15px/1 'DM Sans', sans-serif; cursor: pointer; }
 .ay-why-fine { margin-top: 24px !important; color: rgba(29, 26, 43, .62); font-size: 12px !important; }
 /* Centre tab (Ecosystem) gets the app's raised-button emphasis */
 
@@ -780,7 +780,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
   .app-container .pdp-below .pdp-tabs::-webkit-scrollbar { display: none; }
   .app-container .pdp-below .pdp-tabs button { flex: none; }
 }
-.ay-auth-new { display: block; width: 100%; margin-top: 16px; padding: 8px 0; border: 0; background: none; color: #1d1a2b; font: 600 14px/1.4 'Poppins', system-ui, sans-serif; text-align: center; cursor: pointer; } .ay-auth-new b { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+.ay-auth-new { display: block; width: 100%; margin-top: 16px; padding: 8px 0; border: 0; background: none; color: #1d1a2b; font: 600 14px/1.4 'DM Sans', system-ui, sans-serif; text-align: center; cursor: pointer; } .ay-auth-new b { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 .app-container .ay-web-discover__cards i:last-child { background: var(--ay-pink) !important; }
 
 /* ==========================================================================
@@ -825,7 +825,7 @@ body:has(.ay-auth-card, .wdeck-backdrop, .wwr-backdrop, .ay-why-backdrop, [role=
    ========================================================================== */
 .app-container .app-nav-wrap { position: sticky; top: 0; z-index: 1001; }
 .app-container .app-nav.app-nav { position: relative !important; top: auto !important; }
-.ay-skip { position: absolute; left: 12px; top: -60px; z-index: 3000; padding: 10px 16px; border: 2px solid #1d1a2b; border-radius: 99px; background: #f7e78e; color: #1d1a2b; font: 700 14px/1 'Poppins', sans-serif; text-decoration: none; }
+.ay-skip { position: absolute; left: 12px; top: -60px; z-index: 3000; padding: 10px 16px; border: 2px solid #1d1a2b; border-radius: 99px; background: #f7e78e; color: #1d1a2b; font: 700 14px/1 'DM Sans', sans-serif; text-decoration: none; }
 .ay-skip:focus { top: 12px; }
 #ay-content:focus { outline: none; }
 .app-container a.app-nav__logo { display: inline-flex; align-items: center; text-decoration: none !important; }

@@ -1828,7 +1828,6 @@ function App() {
             <a href="/shop" className={`app-nav__tab ${['discovery', 'hero', 'product'].includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'discovery' ? 'page' : undefined} {...linkProps(() => handleViewDiscovery(''))}>Shop</a>
             <a href="/ecosystem" className={`app-nav__tab ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewEcosystem())}>
               My Ecosystem
-              <span className={`ay-badge${user && ecosystemCount > 0 ? '' : ' is-empty'}`} aria-hidden={!(user && ecosystemCount > 0)}>{user && ecosystemCount > 0 ? ecosystemCount : ''}</span>
             </a>
             <a href="/community" className={`app-nav__tab ${currentView === 'community' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
           </div>
@@ -1907,7 +1906,6 @@ function App() {
               ].map(([view, href, label, go]) => (
                 <a key={view} href={href} className={`mobile-drawer-item${(view === 'ecosystem' ? ECOSYSTEM_NAV_VIEWS.includes(currentView) : currentView === view) ? ' is-active' : ''}`} {...linkProps(() => { go(); setMobileMenuOpen(false); })}>
                   {label}
-                  {view === 'ecosystem' && user && ecosystemCount > 0 && <span className="ay-badge">{ecosystemCount}</span>}
                 </a>
               ))}
               <a href="/ecosystem" className="mobile-drawer-item" {...linkProps(() => { handleViewWishlist(); setMobileMenuOpen(false); })}>

@@ -65,7 +65,7 @@ body.v6-signed-out .ayna-browse-card__match {
   border: 1px solid #635a60 !important;
   background: rgba(203, 191, 199, .45) !important;
   color: #373238 !important;
-  font: 500 10px/1 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace) !important;
+  font: 500 10px/1 var(--v6-film-ui, 'DM Sans', ui-monospace, monospace) !important;
   letter-spacing: .04em;
   text-transform: lowercase;
   cursor: pointer;

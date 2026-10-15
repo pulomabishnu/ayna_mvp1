@@ -29,10 +29,10 @@
   --hero-gradient: #b9c2f4;
 
   /* Typography, same feel as the public waitlist (clean, editorial weight) */
-  --font-heading: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
-  --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
-  --font-serif: 'Bricolage Grotesque', 'Poppins', system-ui, sans-serif;
-  --font-label: 'Poppins', system-ui, sans-serif;
+  --font-heading: 'DM Sans', 'DM Sans', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: 'DM Sans', 'DM Sans', system-ui, sans-serif;
+  --font-label: 'DM Sans', system-ui, sans-serif;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -1220,7 +1220,7 @@ html {
   background: var(--mockup-cream);
   border-top: 1px solid rgba(23, 20, 41, 0.08);
   padding: 56px 0 34px;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   color: var(--mockup-ink);
 }
 
@@ -1289,7 +1289,7 @@ html {
 
 .mockup-landing {
   background: var(--mockup-cream-deep);
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   color: var(--mockup-ink);
 }
 
@@ -1312,7 +1312,7 @@ html {
 }
 
 .ayna-landing-eyebrow {
-  font: 500 11.5px/1 'DM Mono', ui-monospace, monospace;
+  font: 500 11.5px/1 'DM Sans', ui-monospace, monospace;
   letter-spacing: 0.17em;
   text-transform: uppercase;
   color: #F0C070;
@@ -1428,7 +1428,7 @@ html {
   display: block;
   margin-top: 10px;
   color: var(--mockup-ink-soft);
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.5;
 }
@@ -1613,7 +1613,7 @@ html {
 }
 
 .app-nav__tab {
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: normal;
@@ -1657,7 +1657,7 @@ html {
 }
 
 .app-nav__circle--account {
-  font-family: 'DM Mono', ui-monospace, monospace;
+  font-family: 'DM Sans', ui-monospace, monospace;
   font-size: 12px;
   font-weight: 500;
 }
@@ -1893,7 +1893,7 @@ html {
 }
 
 .discovery-card__eyebrow {
-  font: 500 9.5px 'DM Mono', ui-monospace, monospace;
+  font: 500 9.5px 'DM Sans', ui-monospace, monospace;
   letter-spacing: 0.1em;
   color: #B4732A;
   margin-top: 12px;
@@ -1978,7 +1978,7 @@ html {
   gap: 52px;
   align-items: start;
   padding: 44px clamp(1rem, 5vw, 56px) 32px;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   color: #1A1714;
 }
 
@@ -2007,7 +2007,7 @@ html {
 }
 
 .pdp-head__eyebrow {
-  font: 500 10px 'DM Mono', ui-monospace, monospace;
+  font: 500 10px 'DM Sans', ui-monospace, monospace;
   letter-spacing: 0.12em;
   color: #B4732A;
 }
@@ -2167,7 +2167,7 @@ a.pdp-head__badge:focus-visible {
   cursor: pointer;
   padding: 1.25rem clamp(1rem, 5vw, 56px) 0;
   margin: 0;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--color-navy);
@@ -2199,7 +2199,7 @@ a.pdp-head__badge:focus-visible {
 }
 
 .pdp-rail__label {
-  font: 500 9.5px 'DM Mono', ui-monospace, monospace;
+  font: 500 9.5px 'DM Sans', ui-monospace, monospace;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #9a8d82;
@@ -2476,7 +2476,7 @@ footer a[href*="career" i],
   border: 0;
   background: transparent;
   color: var(--color-primary);
-  font: 600 17px 'Poppins', system-ui, sans-serif;
+  font: 600 17px 'DM Sans', system-ui, sans-serif;
   padding: 10px 0;
   margin-top: 4px;
   text-decoration: underline;
@@ -2541,7 +2541,7 @@ footer a[href*="career" i],
   align-items: start;
   padding-top: 44px;
   padding-bottom: 52px;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   color: #1A1714;
 }
 
@@ -2589,7 +2589,7 @@ footer a[href*="career" i],
 }
 
 .eco-bubbles__centre-tags {
-  font: 500 9.5px/1.4 'DM Mono', ui-monospace, monospace;
+  font: 500 9.5px/1.4 'DM Sans', ui-monospace, monospace;
   letter-spacing: 0.1em;
   color: rgba(246, 239, 230, 0.65);
 }
@@ -2628,7 +2628,7 @@ footer a[href*="career" i],
 }
 
 .eco-bubble__label {
-  font: 500 9px 'DM Mono', ui-monospace, monospace;
+  font: 500 9px 'DM Sans', ui-monospace, monospace;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   color: #B4732A;
@@ -2678,7 +2678,7 @@ footer a[href*="career" i],
 }
 
 .eco-bubbles__card-label {
-  font: 500 10px 'DM Mono', ui-monospace, monospace;
+  font: 500 10px 'DM Sans', ui-monospace, monospace;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #9a8d82;
@@ -2750,7 +2750,7 @@ footer a[href*="career" i],
 .eco-saved {
   padding-top: 8px;
   padding-bottom: 52px;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
 }
 
 .eco-saved__head {
@@ -2777,7 +2777,7 @@ footer a[href*="career" i],
 .eco-shelf {
   padding-top: 44px;
   padding-bottom: 52px;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   color: #1A1714;
   max-width: 900px;
   margin: 0 auto;
@@ -2822,7 +2822,7 @@ footer a[href*="career" i],
 }
 
 .eco-shelf__row-eyebrow {
-  font: 500 9.5px 'DM Mono', ui-monospace, monospace;
+  font: 500 9.5px 'DM Sans', ui-monospace, monospace;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #B4732A;
@@ -2972,7 +2972,7 @@ footer a[href*="career" i],
 .brands {
   background: #F8F8F3;
   color: #1A1714;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   padding-bottom: 56px;
 }
 
@@ -3063,7 +3063,7 @@ footer a[href*="career" i],
 
 :root {
   /* Kept in step with the base tokens at the top of this file. */
-  --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
   --color-bg: #faf8f1;
   --color-surface-soft: #fffcf5;
   --color-text-main: #1d1a2b;
@@ -3125,7 +3125,7 @@ h6 {
 
 /* Small uppercase labels are DM Mono on the boards. */
 .ayna-eyebrow {
-  font-family: 'DM Mono', ui-monospace, monospace;
+  font-family: 'DM Sans', ui-monospace, monospace;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -3198,7 +3198,7 @@ textarea {
 }
 .ayna-landing-filter-panel label { display: grid; gap: 6px; }
 .ayna-landing-filter-panel label>span {
-  font: 500 9px/1 'DM Mono',monospace;
+  font: 500 9px/1 'DM Sans',monospace;
   letter-spacing: .09em;
   text-transform: uppercase;
   color: #8c8078;

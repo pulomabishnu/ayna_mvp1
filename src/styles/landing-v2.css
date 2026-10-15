@@ -3,7 +3,7 @@
 .lv {
   --ink: #161616; --ink-2: #4a4a4a; --paper: #fffcf5; --white: #fff;
   --pink: #f7badd; --pink-soft: #fde3ef; --butter: #f7e78e; --sky: #c9ecff;
-  --display: 'Fraunces', Georgia, serif; --ui: 'DM Sans', system-ui, sans-serif;
+  --display: 'DM Serif Display', Georgia, serif; --ui: 'DM Sans', system-ui, sans-serif;
   --fs-hero: clamp(44px, 2rem + 4.2vw, 80px); --fs-h2: clamp(30px, 1.3rem + 1.6vw, 48px); --fs-h3: 20px; --fs-lead: 18px; --fs-body: 16px; --fs-small: 14px; --fs-label: 13px;
   --r-sm: 8px; --r-md: 16px; --r-lg: 24px; --bw: 2px; --shadow: 4px 4px 0 var(--ink);
   --m-fast: 150ms; --m-med: 250ms; --m-slow: 400ms; --ease: cubic-bezier(.2,.9,.3,1.1);
@@ -320,7 +320,7 @@
 .app-container .lv .lv-search input, .app-container .lv .lv-search input::placeholder { font-family: var(--ui) !important; }
 .app-container .lv .lv-search label input[role="combobox"], .app-container .lv .lv-search input[type="search"], .app-container .lv .lv-search input[role="combobox"] { font-family: var(--ui) !important; }
 .app-container main .lv .lv-search label input[type="search"][role="combobox"] { font: 500 16px/1.3 var(--ui) !important; }
-.app-container .lv { --ay-font-ui: 'DM Sans', system-ui, sans-serif; --ay-font-display: 'Fraunces', Georgia, serif; --font-body: 'DM Sans', system-ui, sans-serif; }
+.app-container .lv { --ay-font-ui: 'DM Sans', system-ui, sans-serif; --ay-font-display: 'DM Serif Display', Georgia, serif; --font-body: 'DM Sans', system-ui, sans-serif; }
 /* nothing touches the viewport edge: ticker is inset like every other block */
 .app-container .lv .lv-ticker { width: calc(100% - 2 * var(--gut)); max-width: 1280px; margin: 12px auto 0; border-radius: 999px; }
 /* full-bleed: colour blocks run edge to edge, text stays inset */
@@ -372,7 +372,7 @@ body:has(.lv)::after { content: ''; position: fixed; inset: 0; z-index: 9999; po
 /* palette v3 (Oct 14): butter page, espresso ink, sky + pink accents, vintage grain.
    Variable names kept for the cascade: --pink now holds sky, --butter holds pink. */
 .app-container .lv { --ink: #3e2723 !important; --ink-2: #5a4540 !important; --paper: #fff8dc !important; --pink: #769ebe !important; --butter: #f7badd !important; --teal: #ffedac; background: #ffedac;
-  --display: 'DM Serif Display', Georgia, serif !important; --label: 'Archivo Black', 'DM Sans', sans-serif; }
+  --display: 'DM Serif Display', Georgia, serif !important; --label: 'DM Sans', 'DM Sans', sans-serif; }
 .app-container .lv :is(h1, h2, h3) { font-weight: 400 !important; letter-spacing: -.01em !important; }
 .app-container .lv :is(.lv-kicker, .lv-ticker__row li, .lv-stamp span) { font-family: var(--label) !important; font-weight: 400 !important; letter-spacing: .08em; }
 body:has(.lv)::after { content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .14;

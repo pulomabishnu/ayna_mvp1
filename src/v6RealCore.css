@@ -19,7 +19,7 @@
   --v6-light-gradient:linear-gradient(135deg,#e4e4ef 0%,#e6dce7 54%,#efd7ca 100%);
   --v6-serif:'Playfair Display',Georgia,serif;
   --v6-sans:'DM Sans',system-ui,sans-serif;
-  --v6-mono:'DM Mono',monospace;
+  --v6-mono:'DM Sans',monospace;
   --v6-fast:160ms;
   --v6-med:240ms;
   --v6-ease:cubic-bezier(.2,.7,.2,1);

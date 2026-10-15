@@ -9,12 +9,12 @@
   gap: 12px;
   margin: 0;
   color: var(--ps-ink);
-  font-family: var(--ay-font-ui, 'Poppins', system-ui, sans-serif);
+  font-family: var(--ay-font-ui, 'DM Sans', system-ui, sans-serif);
 }
 .ay-partners-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; }
 .ay-partners .ay-partners-title {
   margin: 0;
-  font: 700 14px/20px var(--ay-font-ui, 'Poppins', system-ui, sans-serif);
+  font: 700 14px/20px var(--ay-font-ui, 'DM Sans', system-ui, sans-serif);
   letter-spacing: .04em;
   text-transform: uppercase;
   color: var(--ps-soft);
@@ -81,7 +81,7 @@
 
 .ay-partner-name {
   min-width: 0;
-  font: 800 18px/24px var(--ay-font-display, 'Bricolage Grotesque', 'Poppins', sans-serif);
+  font: 800 18px/24px var(--ay-font-display, 'DM Sans', 'DM Sans', sans-serif);
   letter-spacing: -.02em;
   overflow-wrap: anywhere;
 }

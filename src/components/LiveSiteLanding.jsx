@@ -228,7 +228,7 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
         )}
         {badge && (
           <span style={{
-            font: "500 9px 'DM Mono', monospace",
+            font: "500 9px 'DM Sans', monospace",
             letterSpacing: '0.08em',
             background: 'rgba(255,255,255,0.9)',
             padding: '5px 9px',
@@ -259,7 +259,7 @@ function ShopGrid({ items, onOpenProduct }) {
         >
           <ProductTile product={product} badge={badge} />
           <div style={{
-            font: "500 9.5px 'DM Mono', monospace",
+            font: "500 9.5px 'DM Sans', monospace",
             letterSpacing: '0.1em',
             color: '#C0761F',
             marginTop: '12px',
@@ -492,7 +492,7 @@ function WelcomeBack({ healthIntake, user, myProducts, ecosystemCount, recommend
 
           <button type="button" className="ayna-landing-ecocard" onClick={onViewEcosystem}>
             <div style={{
-              font: "500 10px 'DM Mono', monospace",
+              font: "500 10px 'DM Sans', monospace",
               letterSpacing: '0.1em',
               color: 'rgba(244,240,250,0.6)',
             }}>

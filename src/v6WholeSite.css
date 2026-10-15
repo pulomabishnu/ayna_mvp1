@@ -29,7 +29,7 @@
   --v6-ws-dark-gradient: linear-gradient(135deg, #303354 0%, #554561 54%, #8b6256 100%);
   --v6-ws-serif: 'Playfair Display', Georgia, serif;
   --v6-ws-sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --v6-ws-mono: 'DM Mono', ui-monospace, monospace;
+  --v6-ws-mono: 'DM Sans', ui-monospace, monospace;
   --v6-ws-radius-xl: 30px;
   --v6-ws-radius-lg: 22px;
   --v6-ws-radius-md: 15px;

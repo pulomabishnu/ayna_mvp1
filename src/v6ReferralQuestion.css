@@ -22,7 +22,7 @@
 
 .v6-referral-step__eyebrow {
   margin-bottom: 9px;
-  font: 500 10px/1.2 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace);
+  font: 500 10px/1.2 var(--v6-film-ui, 'DM Sans', ui-monospace, monospace);
   letter-spacing: .13em;
   text-transform: lowercase;
   color: #50484e;

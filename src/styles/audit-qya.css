@@ -5,20 +5,20 @@
 .app-container .wq-label-tools { display: inline-flex; align-items: center; gap: 16px; }
 .app-container .wq-to-results { font-size: 14px !important; }
 .app-container .wq-skip:disabled { opacity: .4; cursor: default; }
-.app-container .wq-required { color: var(--soft); font: 600 13px/1.2 var(--ay-font-ui, 'Poppins'), sans-serif; }
+.app-container .wq-required { color: var(--soft); font: 600 13px/1.2 var(--ay-font-ui, 'DM Sans'), sans-serif; }
 .app-container .wq-page .wq-btn:disabled, .app-container[data-theme='dark'] .wq-page .wq-btn:disabled { background: var(--cream) !important; color: var(--soft) !important; border-color: var(--faint) !important; box-shadow: none !important; transform: none !important; }
 
 /* Q02: age is a plain number field */
 .app-container .wq-age { gap: 8px; padding: 24px; }
 .app-container .wq-age-field { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; align-items: end; justify-content: start; column-gap: 12px; row-gap: 8px; }
-.app-container .wq-age-field > span { grid-column: 1 / -1; font: 700 15px/1.2 'Poppins', system-ui, sans-serif; }
-.app-container .wq-age-field input { width: 160px; min-height: 72px; padding: 0 16px; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper); color: var(--ink); font: 800 48px/1 'Bricolage Grotesque', 'Poppins', sans-serif; letter-spacing: -.03em; outline: none; box-sizing: border-box; }
+.app-container .wq-age-field > span { grid-column: 1 / -1; font: 700 15px/1.2 'DM Sans', system-ui, sans-serif; }
+.app-container .wq-age-field input { width: 160px; min-height: 72px; padding: 0 16px; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper); color: var(--ink); font: 800 48px/1 'DM Sans', 'DM Sans', sans-serif; letter-spacing: -.03em; outline: none; box-sizing: border-box; }
 .app-container .wq-age-field input::placeholder { color: var(--soft); opacity: .5; font-size: 32px; }
 .app-container .wq-age-field input:focus-visible { box-shadow: 3px 3px 0 var(--ink); }
-.app-container .wq-age-field small { padding-bottom: 12px; color: var(--soft); font: 600 15px/1 'Poppins', system-ui, sans-serif; }
+.app-container .wq-age-field small { padding-bottom: 12px; color: var(--soft); font: 600 15px/1 'DM Sans', system-ui, sans-serif; }
 .app-container[data-theme='dark'] .wq-age.is-under { background: var(--cream); border-color: #ff9b85; }
 .app-container[data-theme='dark'] .wq-alert { color: #ff9b85; }
-.app-container .wq-sub-q { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin: 8px 0 -8px; font: 700 15px/1.2 'Poppins', system-ui, sans-serif; }
+.app-container .wq-sub-q { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin: 8px 0 -8px; font: 700 15px/1.2 'DM Sans', system-ui, sans-serif; }
 .app-container .wq-sub-q small { color: var(--soft); font-weight: 500; font-size: 13px; }
 
 /* Q03: square checkboxes, 56px tiles, "i" for definitions */

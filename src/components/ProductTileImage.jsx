@@ -36,7 +36,7 @@ export function ProductImageFallback({ compact = false, style, className }) {
       <span
         aria-hidden="true"
         style={{
-          fontFamily: "'Bricolage Grotesque', 'Poppins', sans-serif",
+          fontFamily: "'DM Sans', 'DM Sans', sans-serif",
           fontWeight: 800,
           letterSpacing: '-0.06em',
           fontSize: compact ? '0.95rem' : '1.6rem',

@@ -38,7 +38,7 @@
   animation: ayGlossIn 150ms ease-out both;
 }
 .ay-gloss-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-.ay-gloss-card__head strong { padding-top: 8px; font: 800 18px/1.2 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.01em; }
+.ay-gloss-card__head strong { padding-top: 8px; font: 800 18px/1.2 var(--ay-font-display, 'DM Sans', sans-serif); letter-spacing: -.01em; }
 .ay-gloss-card__x {
   flex: none;
   display: grid;

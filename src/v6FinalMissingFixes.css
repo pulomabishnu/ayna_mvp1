@@ -72,7 +72,7 @@ html[data-v6-site-theme='dark'] .v6-quick-links button:focus-visible {
 .v6-add-product-helper button span {
   grid-column: 1 !important;
   grid-row: 1 !important;
-  font: 600 11px/1.25 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace) !important;
+  font: 600 11px/1.25 var(--v6-film-ui, 'DM Sans', ui-monospace, monospace) !important;
   white-space: normal !important;
 }
 .v6-add-product-helper button b {
@@ -168,7 +168,7 @@ html[data-v6-site-theme='dark'] .v6-master-suggestion-bubble {
 }
 .v6-ask-locked-fallback__star { font-size: 16px; line-height: 1; }
 .v6-ask-locked-fallback__label {
-  font: 600 10px/1 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace);
+  font: 600 10px/1 var(--v6-film-ui, 'DM Sans', ui-monospace, monospace);
   letter-spacing: .02em;
 }
 .v6-ask-locked-fallback__lock {

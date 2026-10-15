@@ -34,7 +34,7 @@ html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match::after {
   width: max-content;
   max-width: 62px;
   color: #725d6f;
-  font: 600 7.5px/1 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace);
+  font: 600 7.5px/1 var(--v6-film-ui, 'DM Sans', ui-monospace, monospace);
   letter-spacing: .025em;
   text-transform: lowercase;
 }

@@ -1265,7 +1265,7 @@ body.v6-signed-out .ayna-browse-card__match {
   border: 1px solid #635a60 !important;
   background: rgba(203, 191, 199, .45) !important;
   color: #373238 !important;
-  font: 500 10px/1 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace) !important;
+  font: 500 10px/1 var(--v6-film-ui, 'DM Sans', ui-monospace, monospace) !important;
   letter-spacing: .04em;
   text-transform: lowercase;
   cursor: pointer;
@@ -1337,7 +1337,7 @@ html[data-v6-site-theme='dark'] .v6-explore-refresh {
 
 .v6-referral-step__eyebrow {
   margin-bottom: 9px;
-  font: 500 10px/1.2 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace);
+  font: 500 10px/1.2 var(--v6-film-ui, 'DM Sans', ui-monospace, monospace);
   letter-spacing: .13em;
   text-transform: lowercase;
   color: #50484e;
@@ -1562,7 +1562,7 @@ html.v6-reduced-motion-static .v6-quick-static{display:block!important}
 .v6-add-product-helper button span {
   grid-column: 1 !important;
   grid-row: 1 !important;
-  font: 600 11px/1.25 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace) !important;
+  font: 600 11px/1.25 var(--v6-film-ui, 'DM Sans', ui-monospace, monospace) !important;
   white-space: normal !important;
 }
 .v6-add-product-helper button b {
@@ -1654,7 +1654,7 @@ html[data-v6-site-theme='dark'] .v6-master-suggestion-bubble {
 }
 .v6-ask-locked-fallback__star { font-size: 16px; line-height: 1; }
 .v6-ask-locked-fallback__label {
-  font: 600 10px/1 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace);
+  font: 600 10px/1 var(--v6-film-ui, 'DM Sans', ui-monospace, monospace);
   letter-spacing: .02em;
 }
 .v6-ask-locked-fallback__lock {
