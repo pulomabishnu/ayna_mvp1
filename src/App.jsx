@@ -96,6 +96,7 @@ import './styles/theme-v3.css';
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
+import EcosystemPreview from './components/v3/EcosystemPreview';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
@@ -930,8 +931,13 @@ function App() {
       setShowWrapped(true);
     } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
-    } else if (pendingAction === 'login') {
+    } else if (pendingAction === 'login' || pendingAction === 'ecosystem') {
       setCurrentView('ecosystem');
+    } else if (pendingAction === 'saved') {
+      setCurrentView('ecosystem');
+      window.setTimeout(() => {
+        document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 400);
     } else if (pendingAction === 'delete-account') {
       // Returning from the Google re-confirmation redirect the delete-account
       // page kicks off before it lets someone delete a Google-linked account.
@@ -1001,7 +1007,7 @@ function App() {
     return () => clearTimeout(timer);
   }, [user, authLoading, currentView]);
 
-  const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account'];
+  const PROTECTED_VIEWS = ['comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account'];
   useEffect(() => {
     if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
       setCurrentView('welcome', { replace: true });
@@ -1221,8 +1227,8 @@ function App() {
   const handleViewEcosystem = () => setCurrentView('ecosystem');
   const handleViewWishlist = () => {
     if (!user) {
-      setPendingAction('login');
-      pendingActionRef.current = 'login';
+      setPendingAction('saved');
+      pendingActionRef.current = 'saved';
       setShowAuthModal(true);
       return;
     }
@@ -1822,14 +1828,16 @@ function App() {
             </a>
           </div>
 
-          {/* Same order as the app's tab bar: Library · Shop · Ecosystem · Community. Real links (G02). */}
+          {/* Shop and My Ecosystem lead (filled pills); Library and Community follow, quieter. Real links (G02). */}
           <div className="app-nav__links desktop-only">
-            <a href="/library" className={`app-nav__tab ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => { setSelectedArticleId(null); setCurrentView('articles'); })}>Library</a>
-            <a href="/shop" className={`app-nav__tab ${['discovery', 'hero', 'product'].includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'discovery' ? 'page' : undefined} {...linkProps(() => handleViewDiscovery(''))}>Shop</a>
-            <a href="/ecosystem" className={`app-nav__tab ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewEcosystem())}>
+            <a href="/shop" className={`app-nav__tab app-nav__tab--main ${['discovery', 'hero', 'product'].includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'discovery' ? 'page' : undefined} {...linkProps(() => handleViewDiscovery(''))}>Shop</a>
+            <a href="/ecosystem" className={`app-nav__tab app-nav__tab--main app-nav__tab--eco ${!user && !authLoading ? 'is-start' : ''} ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active' : ''}`} aria-current={ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'page' : undefined} {...linkProps(() => handleViewEcosystem())}>
+              {!user && !authLoading && <span className="app-nav__start" aria-hidden="true">Start here</span>}
               My Ecosystem
             </a>
-            <a href="/community" className={`app-nav__tab ${currentView === 'community' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
+            <span className="app-nav__divider" aria-hidden="true" />
+            <a href="/library" className={`app-nav__tab app-nav__tab--quiet ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'articles' ? 'page' : undefined} {...linkProps(() => { setSelectedArticleId(null); setCurrentView('articles'); })}>Library</a>
+            <a href="/community" className={`app-nav__tab app-nav__tab--quiet ${currentView === 'community' ? 'app-nav__tab--active' : ''}`} aria-current={currentView === 'community' ? 'page' : undefined} {...linkProps(() => setCurrentView('community'))}>Community</a>
           </div>
 
           <div className="app-nav__actions">
@@ -1837,7 +1845,8 @@ function App() {
               href="/ecosystem"
               className="app-nav__circle app-nav__circle--wishlist"
               {...linkProps(handleViewWishlist)}
-              aria-label={`Saved${user && savedCount ? `, ${savedCount}` : ''}`}
+              aria-label={`Saved products${user && savedCount ? `, ${savedCount}` : ''}`}
+              data-tip={user ? 'Saved products' : 'Saved products · sign in'}
             >
               <svg viewBox="0 0 24 24" aria-hidden="true" className="app-nav__wishlist-icon">
                 <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
@@ -1898,9 +1907,9 @@ function App() {
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
               </button>
               {[
-                ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
                 ['discovery', '/shop', 'Shop', () => handleViewDiscovery('')],
                 ['ecosystem', '/ecosystem', 'My Ecosystem', () => handleViewEcosystem()],
+                ['articles', '/library', 'Library', () => { setSelectedArticleId(null); setCurrentView('articles'); }],
                 ['community', '/community', 'Community', () => setCurrentView('community')],
                 ...(user ? [['you', '/you', 'You', () => setCurrentView('you')]] : []),
               ].map(([view, href, label, go]) => (
@@ -2167,7 +2176,14 @@ function App() {
             ecosystem" headers stacked on the same page. MyEcosystem now
             renders both combined (board 2a), so this toggle is gone rather
             than becoming a third, redundant copy. */}
-        {currentView === 'ecosystem' && (
+        {currentView === 'ecosystem' && !user && !authLoading && (
+          <EcosystemPreview
+            products={ALL_PRODUCTS}
+            onBuild={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
+            onSignIn={() => { setPendingAction('ecosystem'); pendingActionRef.current = 'ecosystem'; setShowAuthModal(true); }}
+          />
+        )}
+        {currentView === 'ecosystem' && user && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
             matchOpts={matchOpts}
@@ -2615,7 +2631,7 @@ function App() {
             // Everywhere else: sign in, or "Build your ecosystem" to start the quiz.
             allowSignup={pendingAction === 'quiz-complete'}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
-            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
+            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'ecosystem' ? 'ecosystem' : undefined}
             onBeforeOAuthRedirect={() => {
               markOAuthSource(pendingAction === 'quiz-complete' ? 'save' : 'signin');
               try {

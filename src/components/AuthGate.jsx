@@ -119,7 +119,13 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const supabase = getSupabaseClient();
   const allConsented = checked.every(Boolean);
   const isSignup = allowSignup && mode === 'signup';
-  const subtitle = isSignup && summary ? 'Save your matches. Create an account to keep them.' : SUBTITLES[mode];
+  // Why we are asking, when the user came from a specific door (Saved heart, My Ecosystem).
+  const CONTEXT_COPY = {
+    saved: { title: 'Looking for your favorites?', line: 'Sign in to see the products you saved, all in one place.' },
+    ecosystem: { title: 'Your ecosystem lives here', line: 'Sign in to see your shelves, or build one with a short quiz.' },
+  };
+  const ctxCopy = !isSignup ? CONTEXT_COPY[context] : null;
+  const subtitle = isSignup && summary ? 'Save your matches. Create an account to keep them.' : (ctxCopy ? ctxCopy.line : SUBTITLES[mode]);
 
   // Password reset (2026-09-22 audit): the emailed link lands on
   // /auth/callback, which handles type=recovery with a new-password form.
@@ -517,6 +523,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         )}
 
         <div className="ay-auth-logo" style={styles.logo}>ayna</div>
+        {ctxCopy && <h2 className="ay-auth-context-title">{ctxCopy.title}</h2>}
         <p className="ay-auth-tagline" style={styles.tagline}>{subtitle}</p>
 
         {!supabase && (
