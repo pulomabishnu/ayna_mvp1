@@ -172,96 +172,161 @@ function useEvidence(product, aynaData) {
       avoidIf: (product.avoidIfSensitivity || []).map((t) => String(t).replace(/[-_]/g, ' ')),
       isDigital: product.type === 'digital',
       privacy: product.privacy && typeof product.privacy === 'object' ? product.privacy : null,
+      badges: (product.badges || []).map(noDash).filter(Boolean),
+      thingsRaised: noDash(meaningful(String(product.safety?.opinionAlerts || '').replace(/^⚠️?\s*/, ''))),
+      ratingNote: noDash(meaningful(product.ratingNote)),
+      userRating: product.userRating && product.userRatingSourceUrl ? { value: product.userRating, url: product.userRatingSourceUrl } : null,
+      who: (product.whoItsFor || []).map(noDash).filter(Boolean),
+      how: product.howToUse?.steps?.length ? { intro: noDash(product.howToUse.intro), steps: product.howToUse.steps.map(noDash).filter(Boolean), url: product.howToUse.sourceUrl || '' } : null,
+      platform: noDash(meaningful(product.platform)),
+      integrations: (product.integrations || []).map((x) => noDash(typeof x === 'string' ? x : x?.name)).filter(Boolean),
+      ingredientsText: noDash(meaningful(product.ingredients)),
+      materials: noDash(meaningful(product.safety?.materials)),
+      ingredientNote: noDash(meaningful(product.ingredientScienceNote)),
+      priceNote: noDash(meaningful(product.priceNote)),
     };
   }, [product, aynaData]);
 }
 
-export default function ProductEvidence({ product, aynaData = null, aynaRating = null, ratingCount = 0, rateControls = null }) {
+// Retail and brand pages are where to buy, not reviews: they stay off the Reviews tab.
+const RETAIL = /amzn\.|amazon\.|walmart\.|target\.com|cvs\.com|walgreens\.|ulta\.|sephora\./i;
+
+export default function ProductEvidence({ product, glance = null, aynaData = null, aynaRating = null, ratingCount = 0, rateControls = null, safety = null, extraRows = [] }) {
   const d = useEvidence(product, aynaData);
+  const [tab, setTab] = useState('summary');
   const [allIngredients, setAllIngredients] = useState(false);
-  const [active, setActive] = useState('clinical');
+  // "All safety info" under Buy opens the Details and safety tab.
   useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined') return undefined;
-    const els = ['summary', 'clinical', 'science', 'reviews'].map((id) => document.getElementById(`ay-sec-${id}`)).filter(Boolean);
-    const io = new IntersectionObserver((entries) => {
-      const vis = entries.filter((e) => e.isIntersecting).sort((x, y) => x.boundingClientRect.top - y.boundingClientRect.top)[0];
-      if (vis) setActive(vis.target.id.replace('ay-sec-', ''));
-    }, { rootMargin: '-140px 0px -55% 0px' });
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [d]);
+    const on = (e) => { setTab(e.detail || 'details'); window.setTimeout(() => document.getElementById('ay-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30); };
+    window.addEventListener('ay-open-tab', on);
+    return () => window.removeEventListener('ay-open-tab', on);
+  }, []);
   if (!d) return null;
 
-  const jumps = [['summary', 'ayna summary', 0], ['clinical', 'Clinical opinion', d.clinicalLinks.length], ['science', 'Scientific literature', d.studies.length + d.ingredients.length], ['reviews', 'Reviews', d.community.length]];
-  const jump = (id) => document.getElementById(`ay-sec-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const brandSlug = String(d.brand).toLowerCase().replace(/[^a-z0-9]/g, '');
+  const onlineLinks = d.community.filter((l) => { let h = ''; try { h = new URL(l.url).hostname; } catch { return false; } return !RETAIL.test(h) && !(brandSlug.length >= 3 && h.replace(/[^a-z0-9]/g, '').includes(brandSlug)); });
+  const helps = glance?.who?.helps || [];
+  const facts = (glance?.facts || []).filter((f) => !f.unknown && !['inside', 'fda'].includes(f.id));
+  const allSources = glance?.sources || [];
   const shownIngredients = allIngredients ? d.ingredients : d.ingredients.slice(0, 3);
-  const noReviews = !d.communityText && !d.community.length && !(ratingCount > 0) && !d.memberReviews.length;
 
-  // Each hard word is underlined once, where it first appears (max 8 on the page).
+  const tabs = [
+    { id: 'summary', label: 'ayna summary' },
+    (d.who.length || helps.length || d.avoidIf.length) && { id: 'who', label: 'Who it’s for' },
+    d.how && { id: 'how', label: 'How to use' },
+    { id: 'clinical', label: 'Clinical opinion' },
+    { id: 'science', label: 'Scientific literature' },
+    { id: 'reviews', label: 'Reviews' },
+    { id: 'details', label: 'Details and safety' },
+  ].filter(Boolean);
+  const cur = tabs.find((t) => t.id === tab) || tabs[0];
+  const keyNav = (e) => {
+    const i = tabs.findIndex((t) => t.id === cur.id);
+    const n = e.key === 'ArrowRight' ? tabs[(i + 1) % tabs.length] : e.key === 'ArrowLeft' ? tabs[(i - 1 + tabs.length) % tabs.length] : null;
+    if (!n) return;
+    e.preventDefault(); setTab(n.id);
+    window.requestAnimationFrame(() => document.getElementById(`ay-tab-${n.id}`)?.focus());
+  };
+
+  // Each hard word is underlined once per tab, where it first appears (max 6).
   const paras = (t) => String(t || '').split(/\n{2,}/).map((x) => x.trim()).filter(Boolean);
-  const lead = d.clinicianShort || sentences(d.clinician).slice(0, 2).join(' ');
-  const order = [...paras([d.aynaSummary, d.aynaDetail].filter(Boolean).join('\n\n')), ...paras(lead), ...paras(d.clinician), ...paras(d.bottomLine), ...d.ingredients.map((i) => i.text), ...paras(d.communityText)].filter(Boolean);
-  const usedTerms = planGlossaryTerms(order.map((t) => ({ key: t, text: t })), 8);
+  const textsFor = {
+    summary: paras([d.aynaSummary, d.aynaDetail].filter(Boolean).join('\n\n')),
+    clinical: [...paras(d.clinicianShort || sentences(d.clinician).slice(0, 2).join(' ')), ...paras(d.clinician)],
+    science: [...paras(d.bottomLine), ...d.ingredients.map((i) => i.text)],
+    reviews: [...paras(d.communityText), ...paras(d.thingsRaised)],
+  };
+  const plan = planGlossaryTerms((textsFor[cur.id] || []).map((t) => ({ key: t, text: t })), 6);
+
   return (
-    <TermsCtx.Provider value={usedTerms}>
-    <div className="ay-ev2">
-      <nav className="ay-ev2__jump" aria-label="The research">
-        <p className="ay-ev2__jump-h">The research</p>
-        {jumps.map(([id, label]) => <button key={id} type="button" className={`is-${id}${active === id ? ' is-on' : ''}`} aria-current={active === id ? 'true' : undefined} onClick={() => jump(id)}>{label}</button>)}
-      </nav>
-      <div className="ay-ev2__main">
-
-      <section id="ay-sec-summary" className="ay-ev2__sec" aria-labelledby="ay-summary-h">
-        <header className="ay-ev2__head"><h2 id="ay-summary-h">ayna summary</h2></header>
-        {d.aynaSummary ? <ShortThenFull full={[d.aynaSummary, d.aynaDetail].filter(Boolean).join('\n\n')} /> : <p className="ay-ev__empty">No summary on file yet.</p>}
-        {d.evidenceStrength && <p className="ay-ev__by">Evidence level on file: {d.evidenceStrength}</p>}
-      </section>
-
-      <section id="ay-sec-clinical" className="ay-ev2__sec" aria-labelledby="ay-clinical-h">
-        <header className="ay-ev2__head">
-          <h2 id="ay-clinical-h">Clinical opinion</h2>
-          <span className={`ay-ev2__badge ${d.independent ? 'is-indep' : 'is-brand'}`}>{d.independent ? 'Independent sources' : 'Based on brand claims'}</span>
-        </header>
-        {d.clinician ? <ShortThenFull short={d.clinicianShort} full={d.clinician} /> : <p className="ay-ev__empty">No clinical opinion on file yet.</p>}
-        {d.attribution && <p className="ay-ev__by">{d.attribution}</p>}
-        <Links items={d.clinicalLinks} label={d.clinicalLinks.length ? plural(d.clinicalLinks.length, 'source') : ''} />
-      </section>
-
-      <section id="ay-sec-science" className="ay-ev2__sec" aria-labelledby="ay-science-h">
-        <header className="ay-ev2__head"><h2 id="ay-science-h">Scientific literature</h2></header>
-        {d.bottomLine && <><h3 className="ay-ev2__sub">The bottom line</h3><Paras text={d.bottomLine} /></>}
-        {d.ingredients.length > 0 && <>
-          <h3 className="ay-ev2__sub">What’s inside, and the research</h3>
-          <ul className="ay-ev2__ingr">
-            {shownIngredients.map((i) => (
-              <li key={i.name}>
-                <strong>{i.name}</strong>
-                {i.text && <p>{withTerms(i.text, usedTerms)}</p>}
-                {i.links.length > 0 && <ul className="ay-ev2__ingr-links">{i.links.map((l) => <li key={l.url}><a href={l.url} target="_blank" rel="noopener noreferrer">{l.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a> <small>{l.publisher}</small></li>)}</ul>}
-              </li>
-            ))}
-          </ul>
-          {d.ingredients.length > 3 && <button type="button" className="ay-ev2__showall" aria-expanded={allIngredients} onClick={() => setAllIngredients((v) => !v)}>{allIngredients ? 'Show fewer' : `Show all ${d.ingredients.length}`}</button>}
-        </>}
-        <Links items={d.studies} label={d.studies.length ? plural(d.studies.length, 'study', 'studies') : ''} />
-        {(d.ingredients.length > 0 || d.studies.length > 0) && !d.productSpecific && <p className="ay-ev__by">This research is about the ingredients or this type of product, not a study of this exact product.</p>}
-        {!d.bottomLine && !d.ingredients.length && !d.studies.length && <p className="ay-ev__empty">No studies linked yet.</p>}
-      </section>
-
-      <section id="ay-sec-reviews" className="ay-ev2__sec" aria-labelledby="ay-reviews-h">
-        <header className="ay-ev2__head"><h2 id="ay-reviews-h">Reviews</h2></header>
-        {aynaRating != null && ratingCount > 0
-          ? <p className="ay-ev__rating"><b>★ {aynaRating.toFixed(1)}</b> from {plural(ratingCount, 'ayna member')}</p>
-          : d.brandRating && <p className="ay-ev__rating"><b>★ {d.brandRating.value}</b> from {d.brandRating.count} reviews <span className="ay-ev2__badge is-brand">Brand-reported, not verified by ayna</span></p>}
-        {d.memberReviews.map((r) => <blockquote key={r.slice(0, 40)} className="ay-ev__quote">{r}</blockquote>)}
-        {!(ratingCount > 0) && <p className="ay-ev__by">No independent ayna reviews yet.</p>}
-        {d.communityText && <><h3 className="ay-ev2__sub">What people say online</h3><Paras text={d.communityText} /></>}
-        <Links items={d.community} label={d.community.length ? 'Where people talk about it' : ''} />
-        {!noReviews && <p className="ay-ev__by">Public posts and ratings. Not clinical evidence.</p>}
-        {rateControls}
-      </section>
+    <TermsCtx.Provider value={plan}>
+    <section id="ay-tabs" className="ay-tabs" aria-label="About this product">
+      <div className="ay-tabs__bar" role="tablist" aria-label="About this product" onKeyDown={keyNav}>
+        {tabs.map((t) => (
+          <button key={t.id} id={`ay-tab-${t.id}`} type="button" role="tab" aria-selected={t.id === cur.id} aria-controls="ay-tab-panel" tabIndex={t.id === cur.id ? 0 : -1} className={`ay-tabs__tab is-${t.id}${t.id === cur.id ? ' is-on' : ''}`} onClick={() => setTab(t.id)}>{t.label}</button>
+        ))}
       </div>
-    </div>
+      <div id="ay-tab-panel" role="tabpanel" aria-labelledby={`ay-tab-${cur.id}`} className={`ay-tabs__panel is-${cur.id}`} key={cur.id}>
+
+        {cur.id === 'summary' && <>
+          {d.aynaSummary ? <ShortThenFull full={[d.aynaSummary, d.aynaDetail].filter(Boolean).join('\n\n')} /> : <p className="ay-ev__empty">No summary on file yet.</p>}
+          {d.evidenceStrength && <p className="ay-ev__by">Evidence level on file: {d.evidenceStrength}</p>}
+          {d.badges.length > 0 && <div className="ay-tabs__block"><h3>What the brand says about it</h3><ul className="ay-tabs__chips">{d.badges.map((b) => <li key={b}>{b}</li>)}</ul><p className="ay-ev__by">The brand’s own labels and awards. Not checked by ayna.</p></div>}
+        </>}
+
+        {cur.id === 'who' && <>
+          {d.who.length > 0 && <ul className="ay-tabs__list">{d.who.map((w) => <li key={w}>{withTerms(w, plan)}</li>)}</ul>}
+          {helps.length > 0 && <div className="ay-tabs__block"><h3>Helps with</h3><ul className="ay-tabs__chips">{helps.map((h) => <li key={h}>{h}</li>)}</ul></div>}
+          {d.avoidIf.length > 0 && <div className="ay-tabs__block"><h3>Skip it if you react to</h3><p className="ay-ev__body">{d.avoidIf.join(', ')}</p></div>}
+          {(d.platform || d.integrations.length > 0) && <div className="ay-tabs__block"><h3>Works with</h3><p className="ay-ev__body">{[d.platform, ...d.integrations].filter(Boolean).join(', ')}</p></div>}
+        </>}
+
+        {cur.id === 'how' && d.how && <>
+          {d.how.intro && <Paras text={d.how.intro} />}
+          <ol className="ay-tabs__steps">{d.how.steps.map((st, i) => <li key={st}><b aria-hidden="true">{i + 1}</b><span>{st}</span></li>)}</ol>
+          {d.how.url && <p className="ay-ev__by"><a href={d.how.url} target="_blank" rel="noopener noreferrer">From {d.brand || 'the brand'}’s instructions<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></p>}
+        </>}
+
+        {cur.id === 'clinical' && <>
+          <p className={`ay-ev2__badge ${d.independent ? 'is-indep' : 'is-brand'}`}>{d.independent ? 'Independent sources' : 'Based on brand claims'}</p>
+          {d.clinician ? <ShortThenFull short={d.clinicianShort} full={d.clinician} /> : <p className="ay-ev__empty">No clinical opinion on file yet.</p>}
+          {d.attribution && <p className="ay-ev__by">{d.attribution}</p>}
+          <Links items={d.clinicalLinks} label={d.clinicalLinks.length ? plural(d.clinicalLinks.length, 'source') : ''} />
+        </>}
+
+        {cur.id === 'science' && <>
+          {d.bottomLine && <><h3 className="ay-ev2__sub">The bottom line</h3><ShortThenFull full={d.bottomLine} /></>}
+          {d.ingredients.length > 0 && <>
+            <h3 className="ay-ev2__sub">What’s inside, and the research</h3>
+            <ul className="ay-ev2__ingr">
+              {shownIngredients.map((i) => (
+                <li key={i.name}>
+                  <strong>{i.name}</strong>
+                  {i.text && <p>{withTerms(i.text, plan)}</p>}
+                  {i.links.length > 0 && <ul className="ay-ev2__ingr-links">{i.links.map((l) => <li key={l.url}><a href={l.url} target="_blank" rel="noopener noreferrer">{l.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a> <small>{l.publisher}</small></li>)}</ul>}
+                </li>
+              ))}
+            </ul>
+            {d.ingredients.length > 3 && <button type="button" className="ay-ev2__showall" aria-expanded={allIngredients} onClick={() => setAllIngredients((v) => !v)}>{allIngredients ? 'Show fewer' : `Show all ${d.ingredients.length}`}</button>}
+            {d.ingredientNote && <p className="ay-ev__by">{d.ingredientNote}</p>}
+          </>}
+          <Links items={d.studies} label={d.studies.length ? plural(d.studies.length, 'study', 'studies') : ''} />
+          {(d.ingredients.length > 0 || d.studies.length > 0) && !d.productSpecific && <p className="ay-ev__by">This research is about the ingredients or this type of product, not a study of this exact product.</p>}
+          {!d.bottomLine && !d.ingredients.length && !d.studies.length && <p className="ay-ev__empty">No studies linked yet.</p>}
+        </>}
+
+        {cur.id === 'reviews' && <>
+          {aynaRating != null && ratingCount > 0
+            ? <p className="ay-ev__rating"><b>★ {aynaRating.toFixed(1)}</b> from {plural(ratingCount, 'ayna member')}</p>
+            : d.brandRating ? <p className="ay-ev__rating"><b>★ {d.brandRating.value}</b> from {d.brandRating.count} reviews <span className="ay-ev2__badge is-brand">Brand-reported, not verified by ayna</span></p>
+              : d.userRating ? <p className="ay-ev__rating"><b>★ {d.userRating.value}</b> <a href={d.userRating.url} target="_blank" rel="noopener noreferrer">online rating<span aria-hidden="true"> ↗</span></a></p> : null}
+          {d.memberReviews.map((r) => <blockquote key={r.slice(0, 40)} className="ay-ev__quote">{r}</blockquote>)}
+          {!(ratingCount > 0) && <p className="ay-ev__by">No ayna member reviews yet.</p>}
+          {d.communityText && <><h3 className="ay-ev2__sub">What people say in online reviews</h3><ShortThenFull full={d.communityText} /></>}
+          {d.thingsRaised && <><h3 className="ay-ev2__sub">Things people raise</h3><ShortThenFull full={d.thingsRaised} /></>}
+          {d.ratingNote && <p className="ay-ev__by">{d.ratingNote}</p>}
+          <Links items={onlineLinks} label={onlineLinks.length ? 'Read more online' : ''} />
+          {d.brand && <div className="ay-tabs__block"><h3>Third-party review sites</h3><p className="ay-ev__body"><a href={`https://www.trustpilot.com/search?query=${encodeURIComponent(d.brand)}`} target="_blank" rel="noopener noreferrer">Look up {d.brand} on Trustpilot<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></p></div>}
+          <p className="ay-ev__by">Online reviews and posts are people’s experiences, not clinical evidence.</p>
+          {rateControls}
+        </>}
+
+        {cur.id === 'details' && <>
+          {safety}
+          {d.ingredientsText && <div className="ay-tabs__block"><h3>{d.isDigital ? 'What’s included' : 'Ingredients'}</h3><p className="ay-ev__body ay-pd__pre">{d.ingredientsText}</p></div>}
+          {d.materials && !/^various|^varies/i.test(d.materials) && d.materials !== d.ingredientsText && d.ingredients.filter((i) => d.materials.toLowerCase().includes(i.name.toLowerCase().split(/\s|&|and/)[0])).length < 3 && <div className="ay-tabs__block"><h3>Materials and what’s in the box</h3><p className="ay-ev__body">{d.materials}</p></div>}
+          {(facts.length > 0 || extraRows.some((r) => r && r.value) || d.priceNote) && <div className="ay-tabs__block"><h3>Size, price and where to buy</h3>
+            <dl className="ay-pd__rows">
+              {facts.map((f) => <div key={f.id}><dt>{f.label}</dt><dd>{f.value}{f.note ? <small>{fmtDate(f.note)}</small> : null}</dd></div>)}
+              {extraRows.filter((r) => r && r.value).map((r) => <div key={r.label}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}
+              {d.priceNote && <div><dt>Price note</dt><dd>{d.priceNote}</dd></div>}
+            </dl></div>}
+          {allSources.length > 0 && <details className="ay-pd__sources"><summary>All sources ({allSources.length})</summary>
+            <ol>{allSources.map((x) => <li key={x.url}><a href={x.url} target="_blank" rel="noopener noreferrer">{x.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a> <small>{[x.publisher, x.year].filter(Boolean).join(' · ')}</small></li>)}</ol>
+          </details>}
+        </>}
+      </div>
+    </section>
     </TermsCtx.Provider>
   );
 }

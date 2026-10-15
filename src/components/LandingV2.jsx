@@ -231,6 +231,8 @@ const WHY = [
   { t: 'Your whole routine', d: 'Save what you use and see what fits next.', img: '/landing/sink-tea.webp', alt: 'A bathroom sink holding heels, sunglasses, tea and makeup' },
 ];
 
+const SPOTS = [['18%', '26%'], ['70%', '18%'], ['34%', '70%'], ['80%', '62%']];
+
 function Why({ paused }) {
   const ref = useReveal();
   const [a, setA] = useState(0);
@@ -244,18 +246,17 @@ function Why({ paused }) {
   return (
     <section ref={ref} className="lv-sec" aria-labelledby="lv-why-title">
       <div className="lv-why lv-why--grid">
-        <div className="lv-quad" role="group" aria-label="What ayna does, in four photos">
+        {/* One counter photo with the four numbers scattered on it. */}
+        <div className="lv-cnt" role="group" aria-label="What ayna does: tap a number">
+          <img src="/landing/marble-counter.webp" alt="A marble bathroom counter full of products, seen from above" loading="lazy" />
           {WHY.map((w, i) => (
-            <button key={w.t} type="button" className={`lv-quad__cell${i === a ? ' is-on' : ''}`} aria-pressed={i === a} onClick={() => pick(i)}>
-              <img src={w.img} alt={w.alt} loading="lazy" />
-              <b aria-hidden="true">{i + 1}</b>
-            </button>
+            <button key={w.t} type="button" className={`lv-cnt__n${i === a ? ' is-on' : ''}`} style={{ left: SPOTS[i][0], top: SPOTS[i][1] }} aria-pressed={i === a} aria-label={`${i + 1}. ${w.t}`} onClick={() => pick(i)}>{i + 1}</button>
           ))}
         </div>
         <div className="lv-why__body">
           <p className="lv-script">what ayna actually is</p>
           <h2 id="lv-why-title">Your counter, <em>decoded.</em></h2>
-          <p className="lv-why__lead">Pick a photo.</p>
+          <p className="lv-why__lead">Tap a number.</p>
           <ol>
             {WHY.map((w, i) => (
               <li key={w.t} className={i === a ? 'is-on' : ''}>
@@ -353,19 +354,15 @@ function Start({ onStartQuiz, onViewDiscovery }) {
   );
 }
 
-/* Partner brands: just the label until you hover (or tap) it, then the
-   brand names slide out beside it. */
+/* Partner brands: the brown strip of names always runs; the pink
+   "Brands we work with" label slides in when you hover (or focus) it. */
 function PartnersTop({ onViewWaitlist }) {
-  const [open, setOpen] = useState(false);
   return (
-    <section className={`lv-partners lv-partners--top${open ? ' is-open' : ''}`} aria-labelledby="lv-partners-title"
-      onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}
-      onFocus={() => setOpen(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false); }}>
+    <section className="lv-partners lv-partners--top lv-partners--peek" aria-labelledby="lv-partners-title">
       <h2 id="lv-partners-title" className="lv-partners__h">
-        <button type="button" className="lv-partners__toggle" aria-expanded={open} aria-controls="lv-partners-list" onClick={() => setOpen((v) => !v)}>Brands we work with</button>
-        <a href="/partners" aria-label="See all partner brands" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}><span aria-hidden="true">→</span></a>
+        <a href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}>Brands we work with <span aria-hidden="true">→</span></a>
       </h2>
-      <div id="lv-partners-list" className="lv-partners__reveal" hidden={!open}><Ticker /></div>
+      <Ticker />
     </section>
   );
 }

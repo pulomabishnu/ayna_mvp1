@@ -4459,3 +4459,89 @@ html body .app-container .lv .lv-partners__reveal[hidden] { display: none; }
 html body .app-container .lv .lv-partners__reveal .lv-ticker { flex: 1; }
 @keyframes lvReveal { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 @media (prefers-reduced-motion: reduce) { html body .app-container .lv .lv-partners__reveal { animation: none; } }
+
+/* ===== Product info as tabs (Oct 15, v3) =====
+   One card under the product: a row of tabs, one panel. Nothing to scroll
+   past; each tab opens with the short version and "Read more". */
+html body .app-container .pdp-page--glance .pdp-read { margin-top: 40px !important; }
+html body .app-container .ay-tabs { scroll-margin-top: 96px; }
+html body .app-container .ay-tabs__bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+html body .app-container .ay-tabs__tab { min-height: 44px; padding: 0 18px; border: 2px solid #3e2723; border-radius: 99px; background: transparent; color: #3e2723; font: 600 15px/1 'DM Sans', sans-serif; cursor: pointer; }
+html body .app-container .ay-tabs__tab:hover { background: rgba(247, 186, 221, .5); }
+html body .app-container .ay-tabs__tab.is-on { background: #3e2723; color: #ffedac; }
+html body .app-container .ay-tabs__tab:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+html body .app-container .ay-tabs__panel { --rule: #3e2723; min-height: 260px; padding: 32px 36px; border: 2px solid #3e2723; border-radius: 20px; background: #fff8dd; color: #3e2723; box-shadow: 5px 5px 0 #3e2723; }
+html body .app-container .ay-tabs__panel.is-clinical { --rule: #769ebe; }
+html body .app-container .ay-tabs__panel.is-science { --rule: #f7badd; }
+html body .app-container .ay-tabs__panel > *, html body .app-container .ay-tabs__panel .ay-tabs__block > * { max-width: 70ch; }
+html body .app-container .ay-tabs__panel > .ay-ev__body:first-of-type, html body .app-container .ay-tabs__panel > .ay-ev2__badge + .ay-ev__body { padding-left: 18px; border-left: 4px solid var(--rule); font-size: 19px !important; line-height: 1.6 !important; }
+html body .app-container .ay-tabs__panel .ay-ev__body { margin: 0 0 14px; font: 400 17px/1.7 'DM Sans', sans-serif; color: inherit; }
+html body .app-container .ay-tabs__panel .ay-ev__by { margin: 12px 0 0; font: 400 14px/1.55 'DM Sans', sans-serif; opacity: .8; }
+html body .app-container .ay-tabs__panel .ay-ev__by a { color: inherit; font-weight: 600; }
+html body .app-container .ay-tabs__panel .ay-ev2__badge { display: inline-flex; align-items: center; margin: 0 0 14px; min-height: 26px; padding: 0 10px; border: 1.5px solid #3e2723; border-radius: 99px; background: transparent; font: 600 12px/1 'DM Sans', sans-serif; }
+html body .app-container .ay-tabs__panel .ay-ev2__badge::before { content: ''; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; border: 1px solid #3e2723; background: #769ebe; }
+html body .app-container .ay-tabs__panel .ay-ev2__badge.is-brand::before { background: #f7badd; }
+html body .app-container .ay-tabs__panel h3, html body .app-container .ay-tabs__panel .ay-ev2__sub, html body .app-container .ay-tabs__panel .ay-ev__links-h { margin: 26px 0 10px !important; font: 700 15px/1.3 'DM Sans', sans-serif !important; color: inherit !important; text-transform: none !important; letter-spacing: 0 !important; }
+html body .app-container .ay-tabs__panel > h3:first-child, html body .app-container .ay-tabs__panel > .ay-ev2__sub:first-child { margin-top: 0 !important; }
+html body .app-container .ay-tabs__list { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+html body .app-container .ay-tabs__list li { position: relative; padding-left: 26px; font: 400 17px/1.6 'DM Sans', sans-serif; }
+html body .app-container .ay-tabs__list li::before { content: ''; position: absolute; left: 4px; top: .6em; width: 10px; height: 10px; border-radius: 50%; background: #f7badd; border: 1.5px solid #3e2723; }
+html body .app-container .ay-tabs__chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+html body .app-container .ay-tabs__chips li { padding: 6px 12px; border: 1.5px solid #3e2723; border-radius: 99px; font: 600 14px/1.2 'DM Sans', sans-serif; background: #ffedac; }
+html body .app-container .ay-tabs__steps { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+html body .app-container .ay-tabs__steps li { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; align-items: start; font: 400 17px/1.6 'DM Sans', sans-serif; }
+html body .app-container .ay-tabs__steps b { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #3e2723; color: #ffedac; font: 400 18px/1 'DM Serif Display', serif; }
+html body .app-container .ay-tabs__panel .ay-ev__more { margin: 0 0 0 22px; }
+html body .app-container .ay-tabs__panel .ay-ev__rating { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin: 0 0 12px; font: 400 16px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-tabs__panel .ay-ev__rating b { font: 400 40px/1 'DM Serif Display', serif; }
+html body .app-container .ay-tabs__panel .ay-ev__rating a { color: inherit; }
+html body .app-container .ay-tabs__panel .ay-ev__links ul { margin: 0; padding: 0; list-style: none; border-top: 1.5px solid rgba(62, 39, 35, .2); }
+html body .app-container .ay-tabs__panel .ay-ev__links li { padding: 12px 0; border-bottom: 1.5px solid rgba(62, 39, 35, .2); }
+html body .app-container .ay-tabs__panel .ay-ev__links li:last-child { border-bottom: 0; }
+html body .app-container .ay-tabs__panel .ay-ev__links a { display: flex; flex-direction: column; gap: 2px; color: inherit; text-decoration: none; }
+html body .app-container .ay-tabs__panel .ay-ev__pub { font: 600 13px/1.3 'DM Sans', sans-serif; opacity: .75; }
+html body .app-container .ay-tabs__panel .ay-ev__title { font: 600 16px/1.4 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(62, 39, 35, .35); }
+html body .app-container .ay-tabs__panel .ay-ev__links li p { margin: 4px 0 0; font: 400 15px/1.55 'DM Sans', sans-serif; }
+html body .app-container .ay-tabs__panel .ay-safety { margin: 0 0 6px; padding: 18px 20px; border-radius: 14px; background: rgba(247, 186, 221, .4); display: block; border: 0; }
+html body .app-container .ay-tabs__panel .ay-safety h3 { margin: 0 0 10px !important; font: 400 22px/1.2 'DM Serif Display', serif !important; }
+html body .app-container .ay-tabs__panel .ay-safety .ay-safety__list { background: none !important; padding: 0 0 0 20px !important; }
+html body .app-container .ay-tabs__panel .ay-pd__rows { margin: 0; border-top: 1.5px solid rgba(62, 39, 35, .2); }
+html body .app-container .ay-tabs__panel .ay-pd__rows > div { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 14px; padding: 10px 0; border-bottom: 1.5px solid rgba(62, 39, 35, .2); }
+html body .app-container .ay-tabs__panel .ay-pd__rows dt { font: 700 14px/1.4 'DM Sans', sans-serif; }
+html body .app-container .ay-tabs__panel .ay-pd__rows dd { margin: 0; font: 400 15px/1.55 'DM Sans', sans-serif; }
+html body .app-container .ay-tabs__panel .ay-pd__rows small { display: block; font-size: 13px; opacity: .8; }
+@media (max-width: 760px) {
+  html body .app-container .ay-tabs__bar { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px 12px; padding: 2px 16px 6px; scrollbar-width: none; }
+  html body .app-container .ay-tabs__tab { flex: none; }
+  html body .app-container .ay-tabs__panel { padding: 20px 18px; box-shadow: 4px 4px 0 #3e2723; }
+  html body .app-container .ay-tabs__panel > .ay-ev__body:first-of-type { font-size: 17px !important; }
+  html body .app-container .ay-tabs__panel .ay-pd__rows > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
+html body .app-container[data-theme='brand-dark'] .ay-tabs__tab { border-color: #ffedac; color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .ay-tabs__tab.is-on { background: #ffedac; color: #3e2723; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel :is(h3, p, li, a, span, b, strong, small, dt, dd, blockquote, summary) { color: #3e2723 !important; }
+html body .app-container[data-theme='brand-dark'] .ay-tabs__panel { border-color: #ffedac; box-shadow: 5px 5px 0 #ffedac; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__steps b { color: #ffedac !important; }
+html body .app-container.app-container .ay-tabs__panel .ay-ev__links li { margin: 0 !important; padding: 12px 0 !important; border: 0 !important; border-bottom: 1.5px solid rgba(62, 39, 35, .2) !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+html body .app-container.app-container .ay-tabs__panel .ay-ev__links li:last-child { border-bottom: 0 !important; }
+html body .app-container .ay-tabs__panel .ay-ev__links { max-width: 70ch; }
+@media (min-width: 761px) { html body .app-container .ay-tabs__bar { gap: 6px; } html body .app-container .ay-tabs__tab { padding: 0 14px; font-size: 14px; } }
+@media (min-width: 900px) { html body .app-container .ay-tabs__panel .ay-ev__links ul { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; } html body .app-container.app-container .ay-tabs__panel .ay-ev__links li:nth-last-child(2):nth-child(odd) { border-bottom: 0 !important; } html body .app-container .ay-tabs__panel .ay-ev__links { max-width: none; } }
+/* Your counter, decoded: one photo, numbers scattered on it. */
+html body .app-container .lv .lv-cnt { position: relative; align-self: start; aspect-ratio: 4 / 5; border: 2px solid #3e2723; border-radius: 22px; overflow: hidden; box-shadow: 6px 6px 0 #3e2723; }
+html body .app-container .lv .lv-cnt img { display: block; width: 100%; height: 100%; object-fit: cover; }
+html body .app-container .lv .lv-cnt__n { position: absolute; transform: translate(-50%, -50%); display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid #3e2723; border-radius: 50%; background: #ffedac; color: #3e2723; font: 400 24px/1 'DM Serif Display', serif; cursor: pointer; box-shadow: 3px 3px 0 #3e2723; transition: transform .2s ease, background .2s ease; }
+html body .app-container .lv .lv-cnt__n:hover { transform: translate(-50%, -50%) scale(1.08); }
+html body .app-container .lv .lv-cnt__n.is-on { background: #f7badd; transform: translate(-50%, -50%) scale(1.15); }
+html body .app-container .lv .lv-cnt__n:focus-visible { outline: 3px solid #ffedac; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { html body .app-container .lv .lv-cnt__n { transition: none; } }
+/* Brands strip v3: brown names always; the pink label peeks in on hover/focus. */
+html body .app-container .lv .lv-partners--top.lv-partners--peek { position: relative; width: 100% !important; background: #3e2723 !important; }
+html body .app-container .lv .lv-partners--peek .lv-partners__h { position: absolute !important; left: 0; top: 0; bottom: 0; z-index: 2; transform: translateX(-100%); transition: transform .25s ease; border-right: 2px solid #3e2723 !important; border-radius: 0 !important; background: #f7badd; }
+html body .app-container .lv .lv-partners--peek:hover .lv-partners__h, html body .app-container .lv .lv-partners--peek:focus-within .lv-partners__h { transform: translateX(0); }
+html body .app-container.app-container .lv .lv-partners.lv-partners--peek h2.lv-partners__h a { padding: 0 18px !important; font: 700 14px/1 'DM Sans', sans-serif !important; }
+html body .app-container .lv .lv-partners--peek .lv-ticker { width: 100% !important; }
+@media (hover: none) { html body .app-container .lv .lv-partners--peek .lv-partners__h { transform: none; } }
+@media (prefers-reduced-motion: reduce) { html body .app-container .lv .lv-partners--peek .lv-partners__h { transition: none; } }
+html body .app-container .lv .lv-cnt { aspect-ratio: 1 / 1; max-height: 620px; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-tabs__panel .ay-gloss { color: #3e2723 !important; border-color: #3e2723 !important; }

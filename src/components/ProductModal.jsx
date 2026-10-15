@@ -17,7 +17,6 @@ import { matchLine, priceParts } from '../data/passport/content';
 import { buildGlance, perUnitLabel, sizeCount } from './pdp/glance';
 import { getPassport } from '../data/passport';
 import { ProductMatch, ProductAsk } from './passport/ProductSections';
-import ProductDetails from './pdp/ProductDetails';
 import ProductEvidence, { ProductSafety } from './pdp/ProductEvidence';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import GalleryThumbs from './pdp/GalleryThumbs';
@@ -199,7 +198,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
 // header shows one line that jumps to the full note in the Safety section.
 function SafetyFlag() {
   return (
-    <button type="button" className="pdp-safety-flag" onClick={() => { const d = document.getElementById('ay-more-details'); if (d) d.open = true; window.setTimeout(() => document.getElementById('ay-sec-safety')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30); }}>
+    <button type="button" className="pdp-safety-flag" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'details' }))}>
       <span aria-hidden="true">⚠️</span>
       <strong>Safety note on file</strong>
       <span>See it</span>
@@ -904,7 +903,7 @@ export default function ProductModal({
                 <p className="ay-buy__warn" role="note">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v5M12 18v.5" /></svg>
                   <span>{topWarning}</span>
-                  <button type="button" className="pdp-textlink" onClick={() => { const d = document.getElementById('ay-more-details'); if (d) d.open = true; window.setTimeout(() => document.getElementById('ay-sec-safety')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30); }}>All safety info</button>
+                  <button type="button" className="pdp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-tab', { detail: 'details' }))}>All safety info</button>
                 </p>
               )}
             </section>
@@ -922,10 +921,7 @@ export default function ProductModal({
         <div className="pdp-below pdp-below--glance">
           {/* Full width, one reading column: the evidence tabs, then Ask ayna. */}
           <div className="pdp-read">
-            <ProductEvidence product={product} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} />
-            <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
-          </div>
-          <ProductDetails product={product} glance={glance} safety={<ProductSafety product={product} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
+            <ProductEvidence product={product} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} safety={<ProductSafety product={product} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
             const pp = getPassport(product);
             const checked = pp?.pricing?.price?.verified_at;
             let seller = '';
@@ -936,6 +932,9 @@ export default function ProductModal({
               { label: 'Price check', value: d && !Number.isNaN(d.getTime()) && price.known && !price.isPlaceholder ? `Checked ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : '' },
             ];
           })()} />
+            <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
+          </div>
+
             {onCommunityAction && (
             <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
               {onCommunityAction && <>
