@@ -2934,3 +2934,21 @@ html body .app-container .wc3 .wc-composer .wc-share { flex: 1 1 calc(100% - 60p
 html body .app-container .wc3 .wc-composer .wc-composer-kinds { flex: 1 1 100% !important; padding-left: 50px; display: flex; gap: 8px; }
 @media (max-width: 720px) { html body .app-container .wc3 .wc-composer .wc-composer-kinds { padding-left: 0; } }
 html body .app-container:not([data-theme='dark']) .wc3 .wc-composer .wc-composer-kinds > button { background: #ffedac !important; color: #3e2723 !important; }
+/* Mobile overflow sweep: grid items may never be wider than their column. */
+html body .app-container .ay-web-library > *, html body .app-container .ayna-browse__grid > *, html body .app-container .ayna-browse-card__link > * { min-width: 0; }
+@media (max-width: 720px) {
+  html body .app-container .ay-web-library { grid-template-columns: minmax(0, 1fr) !important; }
+  html body .app-container .ayna-browse__toolbar { flex-wrap: wrap; row-gap: 10px; }
+  html body .app-container .ayna-browse__sort { margin-left: 0 !important; max-width: 100%; }
+  html body .app-container .ayna-browse__sort select { max-width: 60vw; }
+}
+.ay-ecoprev__row { overflow: hidden; }
+/* More menu: open toward the page, above the sticky search bar. */
+html body .app-container .eco3-more { position: relative; z-index: 60; }
+html body .app-container .eco3-more__menu { z-index: 80 !important; }
+@media (max-width: 720px) { html body .app-container .eco3-more__menu { left: 0 !important; right: auto !important; } }
+@media (max-width: 1100px) { html body .app-container .ay-lib-reading .ay-web-lib-article { width: 100% !important; box-sizing: border-box; } }
+@media (max-width: 720px) { html body .app-container .ayna-browse .ayna-browse__toolbar { flex-wrap: wrap !important; row-gap: 10px; } }
+/* Article paper in brand butter, not off-white; no drop cap on phones. */
+html body .app-container:not([data-theme='dark']) .ay-lib-reading .ay3-paper { background: #ffedac !important; }
+@media (max-width: 600px) { html body .app-container .ay-lib-reading .article-body > p:first-of-type::first-letter { float: none !important; font-size: inherit !important; line-height: inherit !important; margin: 0 !important; padding: 0 !important; font-family: inherit !important; } }
