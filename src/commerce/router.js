@@ -23,6 +23,8 @@ import { PROVIDERS, providerForUrl, capabilitiesFor } from './policy.js';
 import { asinFromUrl, amazonVerification, creatorsApiConfigured } from './amazon.js';
 import { priceLabelFor, formatMoney } from './freshness.js';
 
+const AMAZON_IMAGE_HOST = /(^|\/\/)([^/]*\.)?(media-amazon\.com|ssl-images-amazon\.com|images-amazon\.com)\//i;
+
 /** Categories that are services (telehealth, apps) even if a row says "physical". */
 export const SERVICE_CATEGORIES = new Set(['telehealth', 'app', 'tracker', 'therapy', 'service']);
 
@@ -170,6 +172,11 @@ export function resolveCommerce(product, selectedVariant = null, ctx = {}) {
       : null,
     priceDisplay,
     availability,
+    // The image follows the chosen option; a chosen option never borrows the
+    // product photo, since that may show a different pack. Amazon-hosted image
+    // files are flagged (Amazon allows keeping an image URL for 24 h at most).
+    image: variant ? variant.image || '' : product.image || '',
+    imageAmazonHosted: AMAZON_IMAGE_HOST.test(String(variant ? variant.image || '' : product.image || '')),
     sku: variantFacts?.sku || null,
     barcode: variantFacts?.barcode || null,
     verificationMethod: isAmazon ? 'asin_extracted_only' : verified?.verificationMethod || 'unable_to_verify',

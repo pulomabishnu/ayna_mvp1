@@ -142,6 +142,33 @@ describe('price follows the active route', () => {
     expect(r.price.source).toBe(PRICE_SOURCES.MERCHANT_FEED);
   });
 
+  it('the image follows the chosen option and never borrows another pack\'s photo', () => {
+    const withImages = {
+      ...product,
+      image: 'https://testbrand.com/img/30.jpg',
+      variants: [
+        { ...product.variants[0], image: 'https://testbrand.com/img/30.jpg' },
+        { ...product.variants[1], image: 'https://testbrand.com/img/60.jpg' },
+        { id: 'v90', label: '90 count', url: 'https://testbrand.com/products/magnesium?variant=v90' },
+      ],
+    };
+    expect(resolveCommerce(withImages, withImages.variants[1], ctx()).image).toBe('https://testbrand.com/img/60.jpg');
+    expect(resolveCommerce(withImages, withImages.variants[2], ctx()).image).toBe('');
+    const amazonImg = { ...product, variants: [], image: 'https://m.media-amazon.com/images/I/abc.jpg' };
+    expect(resolveCommerce(amazonImg, null, ctx()).imageAmazonHosted).toBe(true);
+  });
+
+  it('merchant change moves price, link and merchant together and keeps the chosen option', () => {
+    const onAmazon = resolveCommerce(product, product.variants[0], ctx());
+    const onBrand = resolveCommerce(product, product.variants[0], ctx({ platform: 'native' }));
+    expect(onAmazon.merchant).toBe('Amazon');
+    expect(onBrand.merchant).toBe('Testbrand');
+    expect(new URL(onBrand.destinationUrl).hostname).toBe('testbrand.com');
+    expect(onAmazon.variantId).toBe(onBrand.variantId);
+    expect(onAmazon.priceDisplay.show).toBe(false);
+    expect(onBrand.priceDisplay.main).toBe('$18');
+  });
+
   it('a stale verified price is not shown', () => {
     const r = resolveCommerce(product, product.variants[1], ctx({ now: NOW + 40 * 24 * 3600 * 1000 }));
     expect(r.priceDisplay.show).toBe(false);
