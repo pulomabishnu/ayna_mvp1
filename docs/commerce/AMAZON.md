@@ -25,7 +25,7 @@ Amazon lets an Associate show prices only from Creators API or a link Amazon ser
 
 ## Price display switch (needs your OK)
 
-- `VITE_COMMERCE_PRICE_MODE=verified_only` (Vercel env, then redeploy) turns 108 Amazon product cards into "See current price on Amazon". 82 of those cards show a number today.
+- `VITE_COMMERCE_PRICE_MODE=verified_only` (Vercel env, then redeploy) turns 108 Amazon product cards into "See current price on Amazon". 81 of those cards show a dollar figure today.
 - It also turns 25 brand-site cards with no verified price into "See current price at <brand>".
 - The per-unit price next to those is hidden too.
 - Off (the default in this PR): cards keep today's text, except brand prices verified as different on the brand's own site.

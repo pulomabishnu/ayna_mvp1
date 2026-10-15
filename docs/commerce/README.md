@@ -9,6 +9,7 @@ This PR is separate from the design PRs.
 | [AMAZON_SIZED_AND_SERVICES.md](AMAZON_SIZED_AND_SERVICES.md) | the 22 per-size Amazon products, the 10 not-exact ones, and the 27 apps/services, one by one |
 | [PROVIDERS_AND_PARTNERS.md](PROVIDERS_AND_PARTNERS.md) | checkout readiness, partner candidates and questions, Shoppable, Zinc, Stripe |
 | `commerce_catalog_audit.csv` | one row per product (227) with route, price, size, image, Amazon statuses, severity |
+| `amazon_priced_vs_brand_site.csv` | the 81 Amazon products whose card shows a dollar figure, compared with the brand's own site (for count and identity checks only; never shown on an Amazon card) |
 | `amazon_human_review.csv` | 254 rows to check by hand on Amazon, one per exact variant |
 | `audit/` | raw evidence: catalog snapshot, merchant checks, blocked rechecks, mismatch reasons, no-link investigation |
 
