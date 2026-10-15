@@ -79,11 +79,11 @@ describe('live catalog commerce invariants', () => {
 
 describe('Amazon listings confirmed wrong or unavailable (Chrome check 2026-10-15)', () => {
   it('never route to a blocked ASIN, for the product or any option', async () => {
-    const { AMAZON_ASIN_BLOCKS } = await import('../data/amazonAsinBlocks.js');
+    const { isBlockedAmazon } = await import('../data/amazonAsinBlocks.js');
     for (const p of catalog) {
       for (const v of [null, ...(p.variants || [])]) {
         const r = resolveCommerce(p, v);
-        if (r.amazon) expect(AMAZON_ASIN_BLOCKS[r.amazon.asin], `${p.id} ${v?.label || ''} ${r.amazon.asin}`).toBeUndefined();
+        if (r.amazon) expect(isBlockedAmazon(r.amazon.asin, { productLevel: !v }), `${p.id} ${v?.label || ''} ${r.amazon.asin}`).toBe(false);
       }
     }
   });
@@ -94,5 +94,51 @@ describe('Amazon listings confirmed wrong or unavailable (Chrome check 2026-10-1
     expect(resolveCommerce(p, null).selectionReason).toBe(SELECTION_REASONS.AMAZON_NOT_AVAILABLE);
     const small = p.variants.find((v) => v.label === 'Cream / S');
     expect(resolveCommerce(p, small).amazon.asin).toBe('B005XNCE12');
+  });
+});
+
+describe('exact means exact (Amazon follow-up 2026-10-15)', () => {
+  it('never sends anyone to an Amazon search or store page', () => {
+    for (const p of catalog) {
+      for (const v of [null, ...(p.variants || [])]) {
+        const r = resolveCommerce(p, v);
+        if (r.destinationUrl && /amazon\./.test(r.destinationUrl)) expect(r.destinationUrl, `${p.id} ${v?.label || ''}`).toMatch(/\/dp\/[A-Z0-9]{10}\?tag=aynahealth-20$/);
+      }
+    }
+  });
+
+  it('a product with sizes never sends a no-size click to one pinned size on Amazon', async () => {
+    const { AMAZON_ASIN_BLOCKS } = await import('../data/amazonAsinBlocks.js');
+    for (const id of ['p-boppy-pillow', 'p-lumma-disc', 'p-estroven-mood', 'p-rael-liners', 'p-rael-organic-pad']) {
+      const p = catalog.find((x) => x.id === id);
+      const r = resolveCommerce(p, null);
+      if (r.amazon) expect(AMAZON_ASIN_BLOCKS[r.amazon.asin], id).toBeUndefined();
+    }
+  });
+
+  it('confirmed per-option listings route to their own ASIN', () => {
+    const cases = [['p-lumma-disc', 'High / Clear', 'B07Y5K7ZVJ'], ['p-boppy-pillow', 'Soft Pink Daisies', 'B0GV16DDD9'], ['p-saalt-cup', 'Ocean Blue / Small', 'B079DX4242'], ['p-diva-cup', 'Model 0', 'B07KGZ9NMV'], ['p-rael-liners', '60 Count', 'B071YSFXMN']];
+    for (const [id, label, asin] of cases) {
+      const p = catalog.find((x) => x.id === id);
+      const v = p.variants.find((x) => x.label === label);
+      expect(resolveCommerce(p, v).amazon?.asin, `${id} ${label}`).toBe(asin);
+    }
+  });
+
+  it('bundles, other flavours and Target-only counts go to the exact brand or retailer option', () => {
+    const cases = [['p-diva-cup', 'Model 1'], ['p-flex-cup', 'Size 01'], ['p-rituals-prenatal', 'Mint'], ['p-cora-organic-tampons', 'Regular — 32 count'], ['p-saalt-cup', 'Seafoam Green / Small']];
+    for (const [id, label] of cases) {
+      const p = catalog.find((x) => x.id === id);
+      const v = p.variants.find((x) => x.label === label);
+      const r = resolveCommerce(p, v);
+      expect(r.amazon, `${id} ${label}`).toBeNull();
+      expect(r.destinationUrl, `${id} ${label}`).toBe(String(v.url).trim());
+    }
+  });
+
+  it('product-level listings confirmed for the exact count are used', () => {
+    for (const [id, asin] of [['p-cranberry-supplement', 'B0012JY42I'], ['p-magnesium-glycinate', 'B08XXHCGZT'], ['p-natures-bounty-d3-125mcg', 'B002Y27LLS'], ['p-d-mannose-now', 'B0C545MBRC'], ['p-l-pad', 'B0FQPVVD1S'], ['p-remifemin', 'B0CRKXS5LJ'], ['p-tena-intimates-very-light-liner', 'B08D74XH82']]) {
+      expect(resolveCommerce(catalog.find((x) => x.id === id), null).amazon?.asin, id).toBe(asin);
+    }
   });
 });

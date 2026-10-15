@@ -16,7 +16,7 @@ describe('Buy Now destinations', () => {
     expect(onAmazon.length).toBeGreaterThan(100);
     for (const product of onAmazon) {
       // Listings a person found to be the wrong item or unavailable never route.
-      if (isBlockedAmazon(getAmazonAffiliateUrlForProduct(product))) {
+      if (isBlockedAmazon(getAmazonAffiliateUrlForProduct(product), { productLevel: true })) {
         expect(isAmazonUrl(resolveBuyUrl(product, null)), product.id).toBe(false);
         continue;
       }
@@ -93,8 +93,10 @@ describe('Buy Now destinations', () => {
   });
 
   it('keeps the affiliate link for products renamed by catalog corrections', () => {
-    expect(resolveBuyUrl(byId['p-magnesium-glycinate'])).toBe('https://www.amazon.com/dp/B086RQVNDV?tag=aynahealth-20');
-    expect(resolveBuyUrl(byId['p-rael-organic-pad'])).toBe('https://www.amazon.com/dp/B071VBZLPX?tag=aynahealth-20');
+    // 2026-10-15: the 60-capsule listing replaced the 180-count one; Rael's
+    // Regular-56 listing is not the Large pad, so no-size clicks go to Rael.
+    expect(resolveBuyUrl(byId['p-magnesium-glycinate'])).toBe('https://www.amazon.com/dp/B08XXHCGZT?tag=aynahealth-20');
+    expect(isAmazonUrl(resolveBuyUrl(byId['p-rael-organic-pad']))).toBe(false);
   });
 
   it('uses an exact per-size ASIN when one is supplied', () => {
@@ -114,9 +116,11 @@ describe('Buy Now destinations', () => {
   it('sends each DivaCup model to its own model-specific Amazon listing', () => {
     const diva = byId['p-diva-cup'];
     const byLabel = Object.fromEntries(diva.variants.map((v) => [v.label, v]));
-    expect(resolveBuyUrl(diva, byLabel['Model 0'])).toBe('https://www.amazon.com/dp/B08TLT6BF7?tag=aynahealth-20');
-    expect(resolveBuyUrl(diva, byLabel['Model 1'])).toBe('https://www.amazon.com/dp/B08TLJPR71?tag=aynahealth-20');
-    expect(resolveBuyUrl(diva, byLabel['Model 2'])).toBe('https://www.amazon.com/dp/B08TLMWZB4?tag=aynahealth-20');
+    // 2026-10-15: the earlier ASINs were cup + DivaWash bundles. Model 0 has a
+    // cup-only listing; Models 1 and 2 don't, so they go to Diva's own page.
+    expect(resolveBuyUrl(diva, byLabel['Model 0'])).toBe('https://www.amazon.com/dp/B07KGZ9NMV?tag=aynahealth-20');
+    expect(resolveBuyUrl(diva, byLabel['Model 1'])).toBe(byLabel['Model 1'].url);
+    expect(resolveBuyUrl(diva, byLabel['Model 2'])).toBe(byLabel['Model 2'].url);
   });
 
   it('sends each Lunette flow size to its own Amazon listing', () => {
@@ -135,11 +139,11 @@ describe('Buy Now destinations', () => {
     expect(resolveBuyUrl(cup, byLabel['Mini'])).toBe('https://www.amazon.com/dp/B07SC244TV?tag=aynahealth-20');
   });
 
-  it('sends each Flex Cup size to its own Amazon listing', () => {
+  it('sends each Flex Cup size to its own Flex page (Amazon only sells starter kits)', () => {
     const cup = byId['p-flex-cup'];
     const [size01, size02] = cup.variants;
-    expect(resolveBuyUrl(cup, size01)).toBe('https://www.amazon.com/dp/B07QD4W7RQ?tag=aynahealth-20');
-    expect(resolveBuyUrl(cup, size02)).toBe('https://www.amazon.com/dp/B07QHG6ZY8?tag=aynahealth-20');
+    expect(resolveBuyUrl(cup, size01)).toBe(size01.url);
+    expect(resolveBuyUrl(cup, size02)).toBe(size02.url);
   });
 
   it('sends each Saalt Disc size to its own Amazon listing', () => {
@@ -149,19 +153,19 @@ describe('Buy Now destinations', () => {
     expect(resolveBuyUrl(disc, small)).toBe('https://www.amazon.com/dp/B0B13XG62P?tag=aynahealth-20');
   });
 
-  it('sends each Cora pad/tampon absorbency to its own Amazon listing', () => {
+  it('sends each Cora pad/tampon absorbency to its exact Target pack (Amazon packs are different counts)', () => {
     const pads = byId['p-cora-organic-pads'];
     const byLabel = Object.fromEntries(pads.variants.map((v) => [v.label, v]));
-    expect(resolveBuyUrl(pads, byLabel['Regular — 32 count'])).toBe('https://www.amazon.com/dp/B07XR7DVL4?tag=aynahealth-20');
-    expect(resolveBuyUrl(pads, byLabel['Super — 30 count'])).toBe('https://www.amazon.com/dp/B08288RTFX?tag=aynahealth-20');
-    expect(resolveBuyUrl(pads, byLabel['Overnight — 28 count'])).toBe('https://www.amazon.com/dp/B07XL578S2?tag=aynahealth-20');
-    expect(resolveBuyUrl(pads, byLabel['Extra Heavy Overnight — 20 count'])).toBe('https://www.amazon.com/dp/B0DH6S25DP?tag=aynahealth-20');
+    expect(resolveBuyUrl(pads, byLabel['Regular — 32 count'])).toBe(byLabel['Regular — 32 count'].url);
+    expect(resolveBuyUrl(pads, byLabel['Super — 30 count'])).toBe(byLabel['Super — 30 count'].url);
+    expect(resolveBuyUrl(pads, byLabel['Overnight — 28 count'])).toBe(byLabel['Overnight — 28 count'].url);
+    expect(resolveBuyUrl(pads, byLabel['Extra Heavy Overnight — 20 count'])).toBe(byLabel['Extra Heavy Overnight — 20 count'].url);
 
     const tampons = byId['p-cora-organic-tampons'];
     const tByLabel = Object.fromEntries(tampons.variants.map((v) => [v.label, v]));
-    expect(resolveBuyUrl(tampons, tByLabel['Regular — 32 count'])).toBe('https://www.amazon.com/dp/B06XKF4RMW?tag=aynahealth-20');
-    expect(resolveBuyUrl(tampons, tByLabel['Regular / Super — 32 count'])).toBe('https://www.amazon.com/dp/B06ZYRXLNV?tag=aynahealth-20');
-    expect(resolveBuyUrl(tampons, tByLabel['Light / Regular — 32 count'])).toBe('https://www.amazon.com/dp/B0742LBKKS?tag=aynahealth-20');
+    expect(resolveBuyUrl(tampons, tByLabel['Regular — 32 count'])).toBe(tByLabel['Regular — 32 count'].url);
+    expect(resolveBuyUrl(tampons, tByLabel['Regular / Super — 32 count'])).toBe(tByLabel['Regular / Super — 32 count'].url);
+    expect(resolveBuyUrl(tampons, tByLabel['Light / Regular — 32 count'])).toBe(tByLabel['Light / Regular — 32 count'].url);
   });
 
   it('never sends Good Kitty to Amazon (no real Amazon listing exists for it)', () => {
@@ -189,8 +193,12 @@ describe('Buy Now destinations', () => {
     // Regression: this used to be mapped to ASIN B08B7X49FP, which is
     // Rael's "Micro Thin" liners — a different, separate product line from
     // our "Regular Unscented" liners. Fixed to the closest correct-line ASIN.
-    const url = resolveBuyUrl(byId['p-rael-liners']);
-    expect(url).toBe('https://www.amazon.com/dp/B07258JQ9M?tag=aynahealth-20');
+    // 2026-10-15: no-size clicks go to Rael (Amazon's Regular listing is a
+    // 44-count Ayna doesn't sell); the 60 Count option has its own listing.
+    const rael = byId['p-rael-liners'];
+    expect(isAmazonUrl(resolveBuyUrl(rael))).toBe(false);
+    expect(resolveBuyUrl(rael, rael.variants.find((v) => v.label === '60 Count'))).toBe('https://www.amazon.com/dp/B071YSFXMN?tag=aynahealth-20');
+    expect(resolveBuyUrl(rael)).not.toContain('B08B7X49FP');
   });
 
   it('sends each Belly Bandit color/size combination to its own Amazon listing', () => {
