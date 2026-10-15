@@ -12,7 +12,7 @@ import { findHardTerms, planGlossaryTerms } from '../../data/glossary';
 // medical societies and academic medical centers. Anything else (brand sites,
 // retailers, magazines, health blogs, court dockets) stays in the All sources
 // index under Product details, never in these two sections.
-const CREDIBLE = /(\.gov|\.gov\.[a-z]{2}|\.mil|\.nhs\.uk|nice\.org\.uk|who\.int|europa\.eu|ncbi\.nlm\.nih|pubmed|cochranelibrary|cochrane\.org|doi\.org|nejm\.org|jamanetwork|thelancet|bmj\.com|nature\.com|sciencedirect|springer|wiley|tandfonline|sagepub|frontiersin|mdpi|plos|oup\.com|academic\.oup|journals\.lww|ajog\.org|acog\.org|aafp\.org|asrm\.org|menopause\.org|endocrine\.org|ics\.org|uptodate|mayoclinic\.org|clevelandclinic\.org|hopkinsmedicine|health\.harvard\.edu|medlineplus|cancer\.org|acs\.org|nccih|fda\.gov|cdc\.gov)/i;
+const CREDIBLE = /(\.gov|\.gov\.[a-z]{2}|\.mil|\.nhs\.uk|nice\.org\.uk|who\.int|europa\.eu|ncbi\.nlm\.nih|pubmed|cochranelibrary|cochrane\.org|doi\.org|nejm\.org|jamanetwork|thelancet|bmj\.com|nature\.com|sciencedirect|springer|wiley|tandfonline|sagepub|frontiersin|mdpi|plos|oup\.com|academic\.oup|journals\.lww|ajog\.org|acog\.org|aafp\.org|asrm\.org|menopause\.org|endocrine\.org|ics\.org|uptodate|mayoclinic\.org|clevelandclinic\.org|hopkinsmedicine|health\.harvard\.edu|medlineplus|cancer\.org|acs\.org|nccih|aad\.org|apa\.org|jmir\.org|healthychildren\.org|aap\.org|fda\.gov|cdc\.gov)/i;
 const isCredible = (url) => { try { const u = new URL(url); if (/\/search\b|[?&#](q|query|search)=/i.test(u.pathname + u.search + u.hash)) return false; return CREDIBLE.test(u.hostname + u.pathname); } catch { return false; } };
 
 /**
