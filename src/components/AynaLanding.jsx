@@ -471,7 +471,7 @@ function useCategoryParam(initialCategory) {
 }
 
 /** Shop section shared by both homes: title, chips, Filters, Personalize, grid. */
-function ShopSection({ title, chips, filter, setFilter, filters, setFilters, productTypes, ecosystem, personalizeControl, onViewDiscovery, children }) {
+function ShopSection({ title, chips, filter, setFilter, filters, setFilters, productTypes, ecosystem, personalizeControl, onViewDiscovery, children, minimal = false }) {
   const [open, setOpen] = useState(false);
   const active = Object.keys(NO_FILTERS).filter((k) => filters[k] !== 'all').length;
   return (
@@ -479,13 +479,13 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
       <div className="mockup-page">
         <div className="lx-shop__head">
           <h2 id="lx-shop-title" className="lx-h2">{title}</h2>
-          <div className="lx-shop__tools">
+          {!minimal && <div className="lx-shop__tools">
             <button type="button" className={`lx-pill${open ? ' is-on' : ''}`} onClick={() => setOpen((v) => !v)} aria-expanded={open}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
               Filters{active ? ` (${active})` : ''}
             </button>
             {personalizeControl}
-          </div>
+          </div>}
         </div>
         <div className="lx-chips" ref={edgeFadeRef}>
           {chips.map((item) => (
@@ -495,7 +495,7 @@ function ShopSection({ title, chips, filter, setFilter, filters, setFilters, pro
           ))}
           <button type="button" className="lx-chips__more" onClick={() => onViewDiscovery?.('')}>More in Shop</button>
         </div>
-        {open && (
+        {open && !minimal && (
           <FilterPanel
             f={filters}
             set={(k, v) => setFilters((prev) => ({ ...prev, [k]: v }))}
@@ -536,12 +536,19 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
   const shownProducts = useMemo(() => {
     let list = ALL_PRODUCTS.filter((p) => p?.id && p?.name && !ownedIds.has(p.id) && matchesShopFilter(p, filter));
     list = applyFilters(list, filters, { ownedIds, recommendedIds });
+    if (personalize && quizResults) {
+      // Top picks by the same match % the cards show; nothing under 70% is
+      // called "for your needs".
+      const scored = list.map((p) => ({ p, m: matchBadge(getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts))?.percent ?? 0 }))
+        .filter((x) => x.m >= 70).sort((a, b) => b.m - a.m);
+      if (scored.length >= 4) return scored.slice(0, 8).map((x) => x.p);
+    }
     if (personalize) {
       const score = (p) => (recommendedIds.has(p.id) ? 2 : ownedCategories.has(p.category) ? 1 : 0);
       list = [...list].sort((a, b) => score(b) - score(a));
     }
     return list.slice(0, 8);
-  }, [filter, filters, personalize, ownedIds, recommendedIds, ownedCategories]);
+  }, [filter, filters, personalize, ownedIds, recommendedIds, ownedCategories, quizResults, healthProfile, matchOpts]);
 
   // HI03: the one next step. A random empty core area, picked once per page load
   // (seed fixed at mount so it does not flicker when her shelf changes).
@@ -551,7 +558,10 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
     let live = true;
     const supabase = getSupabaseClient();
     if (!supabase) return undefined;
-    communityStore.listFeedPosts(supabase, { limit: 2 }).then((rows) => { if (live) setPosts(rows || []); }).catch(() => {});
+    // The two most helpful real posts (very short ones, like test posts, are skipped).
+    communityStore.listFeedPosts(supabase, { limit: 12, sort: 'helpful' }).then((rows) => {
+      if (live) setPosts((rows || []).filter((r) => String(r.body || '').trim().length >= 20).slice(0, 2));
+    }).catch(() => {});
     return () => { live = false; };
   }, []);
   const hasProfile = Boolean(quizResults);
@@ -588,7 +598,8 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
       )}
 
       <ShopSection
-        title={personalize ? 'New for your needs' : 'Popular on ayna'}
+        title={personalize && quizResults ? 'Top picks for your needs' : 'Popular on ayna'}
+        minimal
         chips={chips}
         filter={filter}
         setFilter={setFilter}
@@ -612,7 +623,7 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
               isSaved={!!savedProducts?.[product.id]}
               onOpen={onOpenProduct}
               onToggleSaved={onToggleSaved}
-              matchPercent={personalize ? (badgeFor(product)?.percent ?? null) : null}
+              matchPercent={personalize ? ((badgeFor(product)?.percent ?? 0) >= 70 ? badgeFor(product).percent : null) : null}
               matchLabel={personalize ? (badgeFor(product)?.label || '') : ''}
             />
           ))}

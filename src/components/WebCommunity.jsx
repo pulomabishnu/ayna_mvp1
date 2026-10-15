@@ -15,6 +15,7 @@ import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { customProductId, customProductName } from '../utils/customProductTag.js';
 import { RuleField, CommunityRulesList } from './community/RuleField.jsx';
 import { VerifiedBadge } from './community/VerifiedBadge.jsx';
+import { toast } from '../utils/toast';
 import { useTeamBadges } from './community/useTeamBadges.js';
 import Announcements from './community/Announcements.jsx';
 import { breaksCommunityRules } from '../utils/communityRules.js';
@@ -492,17 +493,25 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       if (page?.type === 'post') setDetails(await community.getFeedPost(supabase, post.id));
     } catch (e) { notifyError(e); }
   };
+  // Delete waits 5 seconds with an Undo before it really happens.
+  const pendingDelete = useRef(null);
   const confirmDelete = async () => {
     if (!deleteTarget || busy) return;
-    setBusy(true); setError('');
-    try {
-      const client = user ? supabase : getGuestClient();
-      const userId = user?.id || await getGuestId();
-      await community.deletePost(client, deleteTarget.id, userId);
-      setPosts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
-      if (page?.type === 'post' && page.id === deleteTarget.id) closePage();
-      setDeleteTarget(null); setNotice('Post deleted.'); setRefresh((v) => v + 1);
-    } catch (e) { notifyError(e); } finally { setBusy(false); }
+    const target = deleteTarget;
+    setDeleteTarget(null); setError('');
+    setPosts((prev) => prev.filter((p) => p.id !== target.id));
+    if (page?.type === 'post' && page.id === target.id) closePage();
+    const timer = window.setTimeout(async () => {
+      pendingDelete.current = null;
+      try {
+        const client = user ? supabase : getGuestClient();
+        const userId = user?.id || await getGuestId();
+        await community.deletePost(client, target.id, userId);
+        setRefresh((v) => v + 1);
+      } catch (e) { notifyError(e); setRefresh((v) => v + 1); }
+    }, 5000);
+    pendingDelete.current = timer;
+    toast('Post deleted', { label: 'Undo', onClick: () => { window.clearTimeout(timer); pendingDelete.current = null; setRefresh((v) => v + 1); } });
   };
   const submitReport = async () => {
     if (!reportPost) return;
@@ -570,11 +579,11 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         <Avatar size={36} name={name} path={!anon ? profileById.get(post.author_id)?.avatar_url : null} anonymous={anon} />
         <div className="wc-post-who">
           {anon || !post.author_username ? <strong>{name}</strong> : <button type="button" className="wc-name" onClick={() => openProfile(post.author_username)}>{name}</button>}
-          <VerifiedBadge title={badgeFor(post.author_id, anon)} />
-          {badgeFor(post.author_id, anon) && <span className="wc-team-tag">ayna team</span>}
+          {/* One label for staff: "ayna team · CMO" (was check + title + pill). */}
+          {badgeFor(post.author_id, anon) && <span className="wc-team-tag">ayna team · {String(badgeFor(post.author_id, anon)).replace(/,\s*ayna\s*$/i, '')}</span>}
           <time dateTime={post.created_at || undefined}>{timeLabel(post.created_at)}</time>
         </div>
-        <Tag kind={post.kind} />
+        {post.kind && post.kind !== 'post' && <Tag kind={post.kind} />}
         <div className="wc-menu-wrap">
           <button type="button" className="wc-more" aria-label={`More options for ${name}'s post`} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuId(menuOpen ? null : post.id)}><Icon name="more" size={18} /></button>
           {menuOpen && <div className="wc-menu" role="menu"><button type="button" role="menuitem" onClick={() => { setMenuId(null); if (post.is_mine) setDeleteTarget(post); else setReportPost(post); }}>{post.is_mine ? 'Delete post' : 'Report post'}</button></div>}
@@ -646,7 +655,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </>}
       <div className="wc-compose-foot">
         {user && compose !== 'playlist' && compose !== 'recommend' && <Check checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)}>Post anonymously</Check>}
-        {composeIssue && !composeEmpty && <p className="wc-hint" role="status">{composeIssue}</p>}
+        {composeIssue && !composeEmpty && (compose !== 'recommend' || body.trim() || productId) && <p className="wc-hint" role="status">{composeIssue}</p>}
         {error && <p className="wc-error" role="alert">{error}</p>}
         <div className="wc-compose-actions">
           <button type="button" className="wc-link wc-rules-link" onClick={openRules}>Community rules</button>
@@ -732,7 +741,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           <h1>{details.display_name || details.username}</h1>
           <small className="wc-prof-handle">@{details.username}<VerifiedBadge title={badgeFor(details.user_id)} /></small>
           {details.bio && <p className="wc-prof-bio">{details.bio}</p>}
-          {!details.bio && own && <p className="wc-prof-bio is-empty">Add a short bio so people know what you’re into.</p>}
+          {!details.bio && own && <button type="button" className="wc-prof-bio is-empty" onClick={startEditProfile}>+ Add a short bio so people know what you’re into</button>}
         </div>
       </div>
       <dl className="wc-prof-counts">{counts.map(([l, v]) => <div key={l}><dt>{l}</dt><dd>{v}</dd></div>)}</dl>
@@ -828,7 +837,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     {notice && <p className="wc-notice" role="status">{notice}</p>}
     <div className="wc-layout">
       <nav className="wc-nav" aria-label="Community">
-        <div className="wc-tabs" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className={onFeed && tab === k ? 'is-on' : ''} onClick={() => switchTab(k)}>{l}</button>)}</div>
+        {page?.type !== 'profile' && <div className="wc-tabs" role="tablist" aria-label="Community feeds">{TABS.map(([k, l]) => <button type="button" role="tab" key={k} aria-selected={onFeed && tab === k} className={onFeed && tab === k ? 'is-on' : ''} onClick={() => switchTab(k)}>{l}</button>)}</div>}
         {user && !profile ? <div className="wc-card wc-join"><h3>Join Community</h3><p className="wc-muted">Your health answers stay private.</p>
           <RuleField as="input" value={profileName} maxLength={50} onChange={(e) => setProfileName(e.target.value)} placeholder="Display name" aria-label="Display name" onShowRules={openRules} />
           <RuleField as="input" value={profileHandle} maxLength={30} onChange={(e) => setProfileHandle(e.target.value.toLowerCase())} placeholder="Username" aria-label="Username" onShowRules={openRules} />

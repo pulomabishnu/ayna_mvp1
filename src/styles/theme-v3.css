@@ -3154,3 +3154,19 @@ html body .app-container .wq-stage--summary { display: block; max-width: 720px; 
 /* Quiz answer tiles in brand butter, not white; disabled Next readable. */
 html body .app-container:not([data-theme='dark']) :is(.wq-tile, .wq-row, .wq-chip:not(.is-on):not([aria-pressed='true'])) { background-color: #ffedac !important; }
 html body .app-container .wq-foot .wq-btn:disabled { opacity: .5 !important; }
+/* Home: eyebrow in the landing's voice (lowercase serif italic); partner row title in sentence case. */
+html body .app-container .lx-nextcard__label { font: italic 400 18px/1.1 'DM Serif Display', serif !important; text-transform: none !important; letter-spacing: 0 !important; }
+html body .app-container .lx .ay-partners .ay-partners-title, html body .app-container .ay-partners .ay-partners-title { text-transform: none !important; letter-spacing: 0 !important; font: 400 24px/1.2 'DM Serif Display', serif !important; }
+/* Powder Room eyebrow: lowercase serif italic, no pill (landing's voice). */
+html body .app-container .wc3 :is(.wc-kicker, .ay3-kicker.is-keep) { border: 0 !important; background: none !important; padding: 0 !important; font: italic 400 20px/1.1 'DM Serif Display', serif !important; text-transform: lowercase !important; letter-spacing: 0 !important; box-shadow: none !important; }
+/* Community profile: counts are facts, not buttons; bio prompt is a real button. */
+html body .app-container .wc-prof-counts > div { border: 0 !important; background: none !important; padding: 4px 12px 4px 0 !important; box-shadow: none !important; }
+html body .app-container button.wc-prof-bio.is-empty { padding: 0; border: 0; background: none; color: #3e2723; font: 600 15px/1.4 'DM Sans', sans-serif; text-decoration: underline; cursor: pointer; text-align: left; }
+/* Posts: only one in five tilts, so the tilt reads as intentional. */
+html body .app-container .wc3 .wc-post { transform: none !important; }
+html body .app-container .wc3 .wc-post:nth-of-type(5n + 2) { transform: rotate(-.8deg) !important; }
+/* Recommend and other composers: the sheet scrolls inside, the Send button stays visible. */
+.wc-sheet { max-height: calc(100vh - 32px) !important; overflow-y: auto !important; }
+.wc-sheet .wc-compose-foot { position: sticky; bottom: 0; padding-top: 10px; padding-bottom: 6px; background: #ffedac; }
+html body .app-container .wc-team-tag { white-space: nowrap; }
+html body .app-container .lx .ay-partners .ay-partners-title { color: #3e2723 !important; }
