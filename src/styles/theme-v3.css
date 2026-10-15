@@ -2371,3 +2371,9 @@ html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved, html b
 .app-container:not([data-theme='dark']):is([data-view='ecosystem'], [data-view='contact'], [data-view='recommendations'], [data-view='recalls']) .ayna-discover-card.ayna-browse-card:nth-child(n) { --tape: rgba(247, 186, 221, .9); }
 .app-container .eco3-flow { display: contents; }
 html body .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-search input { border: 0 !important; background: transparent !important; box-shadow: none !important; height: 44px !important; }
+
+/* ---- Sticky bar: touches the striped top and runs edge to edge ---- */
+html body .app-container:not([data-theme='dark']) .ay3-ecohero { margin-bottom: 0 !important; }
+html body .app-container:not([data-theme='dark']) .eco3-stickybar { margin: 0 calc(50% - 50vw) 40px !important; padding: 10px calc(50vw - 50%) !important; border: 0 !important; border-top: 2px solid var(--ay-ink) !important; border-bottom: 2px solid var(--ay-ink) !important; border-radius: 0 !important; box-shadow: 0 4px 0 rgba(62,39,35,.18) !important; }
+html body .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-search input { border: 2px solid var(--ay-ink) !important; background: #fff !important; border-radius: 99px !important; }
+@media (max-width: 900px) { html body .app-container:not([data-theme='dark']) .eco3-stickybar { padding: 10px calc(50vw - 50%) !important; } }
