@@ -691,12 +691,12 @@ function ArticleCover({ art, large = false }) {
 
 function renderArticleCard(art, setSelectedId, progress = 0) {
   return (
-    <button type="button" className="ay-web-lib-card ay-lib-card ay3-clip" onClick={() => setSelectedId(art.id)}>
+    <button type="button" className="ay-web-lib-card ay-lib-card" onClick={() => setSelectedId(art.id)}>
       <span className="ay3-clip__mast" aria-hidden="true"><span>ayna library</span><span>{minutesFor(art)} min</span></span>
       <ArticleCover art={art} />
       <h3>{art.title}</h3>
       <p>{art.teaser}</p>
-      <span className="ay-lib-card__foot">
+      <span className="ay-lib-card__foot" data-min={`${minutesFor(art)} min read ·`}>
         <span className="ay-lib-card__tags">
           {(art.tags || []).map((t) => <span key={t} className="ay-lib-tag">{t}</span>)}
         </span>
@@ -875,7 +875,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
   const open = (id) => setSelectedId(id);
   const card = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a))}</li>;
-  const shelf = (id, label, items) => items.length > 0 && <div key={id} id={`lib-${id}`} className="ay-web-lib-cat ay3-news">
+  const shelf = (id, label, items) => items.length > 0 && <div key={id} id={`lib-${id}`} className="ay-web-lib-cat ay-wiki-sec">
     <h2><span>{label}</span></h2>
     <ul className="ay-web-lib-grid ay-lib-shelf">{items.map(card)}</ul>
   </div>;
@@ -951,31 +951,28 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   }
 
   return (
-    <section className="container animate-fade-in-up ay-web-library">
-      <div className="ay3-band ay3-band--rose ay3-torn ay3-edge-bottom ay3-libhero">
-      <div className="ay-web-lib-head">
-        <div className="ay-web-lib-titlerow">
-          <div>
-            <p className="ay3-kicker">The ayna library</p>
-            <h1 className="ay3-title">Short reads, <em>real sources.</em></h1>
-          </div>
-          <PhotoPile label="Library photos" photos={['laundry-duo', 'pajamas-overhead', 'curlers-call']} />
-          <span className="ay-lib-total" aria-label={`${finished} of ${ARTICLES.length} finished`}>
-            <ProgressBar value={ARTICLES.length ? finished / ARTICLES.length : 0} />
-            <span>{finished}/{ARTICLES.length} read</span>
-          </span>
+    <section className="container animate-fade-in-up ay-web-library is-wiki">
+      <header className="ay-wiki-top">
+        <div className="ay-wiki-top__text">
+          <p className="ay3-kicker">The ayna library</p>
+          <h1 className="ay3-title">Short reads, <em>real sources.</em></h1>
+          <p className="ay-wiki-top__sub">{ARTICLES.length} plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
         </div>
+        <span className="ay-lib-total" aria-label={`${finished} of ${ARTICLES.length} finished`}>
+          <span>{finished}/{ARTICLES.length} read</span>
+          <ProgressBar value={ARTICLES.length ? finished / ARTICLES.length : 0} />
+        </span>
+      </header>
+      <div className="ay-wiki-bar">
         <label className="ay-web-lib-search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-          <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search reads" aria-label="Search reads" />
+          <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search reads, like heavy periods or PCOS" aria-label="Search reads" />
         </label>
+        {q.length < 2 && <div className="ay-web-lib-filter ay-lib-chips" role="group" aria-label="Topics">
+          {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
+        </div>}
       </div>
       {q.length >= 2 && <SearchAssist query={query} resultCount={searchArticles(query, ARTICLES).length} onUse={setQuery} />}
-      {q.length < 2 && <div className="ay-web-lib-filter ay-lib-chips" role="group" aria-label="Topics">
-        {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
-      </div>}
-      </div>
-      <p className="ay3-news-mast" aria-hidden="true"><span>Vol. 1</span><strong>The ayna Library</strong><span>{ARTICLES.length} reads · all sourced</span></p>
       <div className="ay3-libgrid">
         <aside className="ay3-libside" aria-label="Library index">
           {q.length < 2 && topic === 'all' && (
@@ -1008,7 +1005,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       {body}
         </div>
       </div>
-      <FilmStrip photos={['robe-vanity', 'sink-flatlay', 'laundry-duo', 'sink-heels-dryer', 'pajamas-overhead', 'vanity-hairdryer', 'lilies', 'curlers-call']} />
       <SuggestBox mode="read" context="library" className="ay-web-lib-suggest" />
     </section>
   );

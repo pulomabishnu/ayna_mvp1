@@ -2377,3 +2377,95 @@ html body .app-container:not([data-theme='dark']) .ay3-ecohero { margin-bottom: 
 html body .app-container:not([data-theme='dark']) .eco3-stickybar { margin: 0 calc(50% - 50vw) 40px !important; padding: 10px calc(50vw - 50%) !important; border: 0 !important; border-top: 2px solid var(--ay-ink) !important; border-bottom: 2px solid var(--ay-ink) !important; border-radius: 0 !important; box-shadow: 0 4px 0 rgba(62,39,35,.18) !important; }
 html body .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-search input { border: 2px solid var(--ay-ink) !important; background: #fff !important; border-radius: 99px !important; }
 @media (max-width: 900px) { html body .app-container:not([data-theme='dark']) .eco3-stickybar { padding: 10px calc(50vw - 50%) !important; } }
+
+/* =====================================================================
+   Library index, wiki style: one butter page, a plain header, a sticky
+   search + topics bar, a sticky contents rail, and every read as the
+   same simple row (cover, title, one line, meta). Easy to scan.
+   ===================================================================== */
+html body .app-container:not([data-theme='dark']) .ay-web-library.is-wiki { padding-top: 0 !important; }
+.app-container .ay-wiki-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: 48px 0 28px; }
+.app-container .ay-wiki-top .ay3-kicker { display: inline-block; margin: 0 0 12px !important; padding: 5px 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; background: #f7badd; font: 400 12px/1 var(--ay-font-label) !important; letter-spacing: .12em; text-transform: uppercase; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-top h1 { margin: 0 !important; font: 400 clamp(44px, 2rem + 3vw, 76px)/1 var(--ay-font-display) !important; }
+.app-container .ay-wiki-top__sub { max-width: 560px; margin: 14px 0 0; font: 500 17px/1.45 var(--ay-font-ui); color: var(--ay-ink); }
+html body .app-container:not([data-theme='dark']) .ay-wiki-top .ay-lib-total { display: grid; gap: 8px; min-width: 200px; padding: 0; border: 0; background: none; box-shadow: none; font: 600 14px/1 var(--ay-font-ui); }
+/* sticky bar, edge to edge, same as the ecosystem bar */
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar { position: sticky; top: 74px; z-index: 30; display: grid; gap: 10px; margin: 0 calc(50% - 50vw) 36px; padding: 12px calc(50vw - 50%); border-top: 2px solid var(--ay-ink); border-bottom: 2px solid var(--ay-ink); background: #f7badd; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-web-lib-search { position: relative; display: block; margin: 0 !important; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-web-lib-search svg { position: absolute; left: 16px; top: 50%; width: 18px; height: 18px; margin-top: -9px; fill: none; stroke: var(--ay-ink); stroke-width: 2; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-web-lib-search input { width: 100%; height: 48px; padding: 0 16px 0 44px; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: #ffedac !important; box-shadow: none !important; font: 500 16px/1 var(--ay-font-ui); color: var(--ay-ink); }
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-lib-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 !important; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-lib-chips button { min-height: 36px; padding: 0 16px; border: 1.5px solid var(--ay-ink) !important; border-radius: 99px !important; background: transparent !important; color: var(--ay-ink) !important; font: 600 14px/1 var(--ay-font-ui) !important; box-shadow: none !important; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-lib-chips button.is-on { background: var(--ay-ink) !important; color: #ffedac !important; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-lib-chips button:hover:not(.is-on) { background: #ffedac !important; }
+/* layout: rail + list */
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libgrid { display: grid !important; grid-template-columns: 240px minmax(0, 1fr); gap: 48px; align-items: start; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside { position: sticky; top: 210px; max-height: calc(100vh - 230px); overflow: auto; display: grid; gap: 26px; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside__box { padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside__title { margin: 0 0 10px !important; padding-bottom: 8px; border-bottom: 2px solid var(--ay-ink); font: 400 12px/1 var(--ay-font-label) !important; letter-spacing: .12em; text-transform: uppercase; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside ol, html body .app-container:not([data-theme='dark']) .is-wiki .ay3-az { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside a, html body .app-container:not([data-theme='dark']) .is-wiki .ay3-az button { display: block; width: 100%; padding: 6px 8px; border: 0; border-radius: 6px; background: none; color: var(--ay-ink) !important; font: 500 15px/1.3 var(--ay-font-ui) !important; text-align: left; text-decoration: none; cursor: pointer; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside a:hover, html body .app-container:not([data-theme='dark']) .is-wiki .ay3-az button:hover { background: #f7badd; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-az li { position: relative; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-az li[data-letter]::before { content: attr(data-letter); display: block; margin: 10px 0 2px 8px; font: 400 20px/1 var(--ay-font-display); }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-az__done { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 12px; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-az li[data-letter] .ay3-az__done { top: auto; bottom: 6px; transform: none; }
+/* sections */
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-cat { margin: 0 0 48px !important; padding: 0 !important; border: 0 !important; background: none !important; scroll-margin-top: 220px; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-cat > h2 { display: flex; align-items: baseline; gap: 12px; margin: 0 0 6px !important; padding: 0 0 10px !important; border: 0 !important; border-bottom: 2px solid var(--ay-ink) !important; background: none !important; font: 400 34px/1.05 var(--ay-font-display) !important; color: var(--ay-ink) !important; text-transform: none !important; letter-spacing: -.01em !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-cat > h2 span { padding: 0 !important; background: none !important; color: inherit !important; font: inherit !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-cat > h2::before, html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-cat > h2::after { content: none !important; }
+/* every read is the same row */
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-grid { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; margin: 0; padding: 0; list-style: none; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-grid > li { grid-column: auto !important; grid-row: auto !important; border-bottom: 1.5px solid rgba(62,39,35,.25); }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card { display: grid !important; grid-template-columns: 132px minmax(0, 1fr); grid-template-areas: 'cov title' 'cov text' 'cov foot'; align-content: start; column-gap: 22px; row-gap: 6px; width: 100%; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 20px 10px !important; border: 0 !important; border-radius: 10px !important; background: none !important; box-shadow: none !important; transform: none !important; text-align: left; cursor: pointer; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card:hover { background: rgba(247,186,221,.55) !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card::before, html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card::after { content: none !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay3-clip__mast { display: none !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card :is(.ay-lib-cover, .ay-web-lib-card__img) { grid-area: cov; align-self: start; width: 132px !important; height: 100px !important; min-height: 0 !important; margin: 0 !important; border: 1.5px solid var(--ay-ink) !important; border-radius: 8px !important; box-shadow: none !important; object-fit: cover; overflow: hidden; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover strong { font-size: 22px !important; line-height: 1 !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover small { display: none !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card h3 { grid-area: title; margin: 0 !important; font: 400 26px/1.15 var(--ay-font-display) !important; color: var(--ay-ink) !important; text-transform: none !important; letter-spacing: -.005em !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card:hover h3 { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card > p { grid-area: text; margin: 0 !important; font: 400 16px/1.5 var(--ay-font-ui) !important; color: var(--ay-ink) !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card > p::first-letter { all: unset; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card__foot { grid-area: foot; display: flex !important; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 4px 0 0 !important; font: 500 13px/1.3 var(--ay-font-ui); }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card__foot::before { content: attr(data-min); }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-tag { padding: 3px 9px !important; border: 1px solid var(--ay-ink) !important; border-radius: 99px !important; background: transparent !important; font: 600 12px/1.2 var(--ay-font-ui) !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card__src { color: var(--ay-ink-soft); }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-personalize { display: inline-flex; margin: 0 0 32px; }
+@media (max-width: 900px) {
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libgrid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside { position: static; max-height: none; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside .ay3-libside__box:has(.ay3-az) { display: none; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside ol { display: flex; flex-wrap: wrap; gap: 6px; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay3-libside ol a { padding: 6px 12px; border: 1.5px solid var(--ay-ink); border-radius: 99px; font-size: 14px !important; }
+  .app-container .ay-wiki-top { flex-direction: column; align-items: flex-start; padding-top: 28px; }
+  html body .app-container:not([data-theme='dark']) .ay-wiki-bar { top: 68px; }
+  html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-lib-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-lib-chips button { flex: none; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card { grid-template-columns: 84px minmax(0, 1fr); column-gap: 14px; padding: 16px 4px !important; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card :is(.ay-lib-cover, .ay-web-lib-card__img) { width: 84px !important; height: 84px !important; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover strong { font-size: 15px !important; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card h3 { font-size: 21px !important; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card > p { font-size: 15px !important; }
+  html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card__src { display: none; }
+}
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card :is(h3, p) { display: block; -webkit-line-clamp: unset; overflow: visible; min-height: 0; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card > p { display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical; overflow: hidden !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-grid > li { padding: 0 !important; border-left: 0 !important; border-top: 0 !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card, html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card * { text-shadow: none !important; column-count: auto !important; columns: auto !important; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-web-lib-search input[type], html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-web-lib-search input { padding-left: 46px !important; }
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-web-lib-search svg { z-index: 2; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-grid, html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-grid.ay-lib-shelf { display: grid !important; grid-auto-flow: row !important; grid-template-columns: minmax(0, 1fr) !important; overflow: visible !important; scroll-snap-type: none !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-web-lib-grid > li { width: auto !important; min-width: 0 !important; max-width: none !important; flex: none !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card__foot { justify-content: flex-start !important; text-align: left !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-state { display: inline-flex; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-new { padding: 2px 8px; border: 1px solid var(--ay-ink); border-radius: 99px; background: #f7badd; font: 700 11px/1.3 var(--ay-font-ui); }
+html body .app-container:not([data-theme='dark']) .ay-wiki-bar .ay-web-lib-search { border: 0 !important; background: none !important; box-shadow: none !important; padding: 0 !important; height: auto !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card__foot { flex-direction: row !important; align-items: center !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card__foot > * { width: auto !important; margin: 0 !important; text-align: left !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-card__tags { display: inline-flex !important; flex-wrap: wrap; gap: 6px; justify-content: flex-start !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover::before, html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover::after { content: none !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover { display: flex !important; align-items: flex-end; padding: 10px !important; }
+html body .app-container:not([data-theme='dark']) .is-wiki .ay-lib-cover strong { align-self: flex-end; text-align: left; position: static !important; }
