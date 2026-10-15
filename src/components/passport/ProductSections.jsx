@@ -461,3 +461,161 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
     </section>
   );
 }
+
+/* ===================================================================
+   Product page as a story (Oct 2026): what is it, why it's right for me,
+   ask ayna, can I trust it, good to know; then the deep details folded
+   away. Every line comes from the product's own data; nothing is invented.
+   =================================================================== */
+const ASK_QUESTIONS = [
+  'Is this right for me?',
+  'Why did you recommend this?',
+  'What do the reviews say?',
+  'Any ingredients I should know about?',
+  'Compare this to another product',
+  'Is it worth the price?',
+];
+
+function firstSentence(text, max = 220) {
+  const t = String(text || '').trim();
+  const m = t.match(/^(.{20,}?[.!?])(\s|$)/);
+  const one = m ? m[1] : t;
+  return one.length > max ? `${one.slice(0, max - 1).trimEnd()}…` : one;
+}
+
+export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy }) {
+  if (!(matchPercent > 0) || !glance) return null;
+  const sec = splitSections(glance.sections).find((s) => s.id === 'match');
+  const list = sec?.blocks?.find((b) => b.type === 'list');
+  const reasons = (list?.items || []).map((r) => String(typeof r === 'string' ? r : r?.text || '')).filter(Boolean).slice(0, 4);
+  const lines = reasons.length ? reasons : (fallback ? [fallback] : []);
+  return (
+    <section className="ay-story ay-story--match" aria-labelledby="ay-match-h">
+      <button type="button" className="ay-match__score" onClick={onShowWhy} aria-label={`${matchPercent}% match. See the breakdown`}>
+        <b>{matchPercent}%</b><span>match</span>
+      </button>
+      <div className="ay-match__body">
+        <h2 id="ay-match-h">Why it fits <em>you.</em></h2>
+        {lines.length > 0 && <ul className="ay-match__reasons">{lines.map((r) => <li key={r}>{r}</li>)}</ul>}
+        <div className="ay-match__links">
+          <button type="button" onClick={onShowWhy}>See the breakdown</button>
+          <a href="/how-it-works">How we match</a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function ProductAsk({ productName, onAsk }) {
+  if (!onAsk) return null;
+  return (
+    <section className="ay-story ay-story--ask" aria-labelledby="ay-ask-h">
+      <div className="ay-ask__head">
+        <span className="ay-ask__orb" aria-hidden="true">✦</span>
+        <h2 id="ay-ask-h">Ask ayna about this product</h2>
+      </div>
+      <ul className="ay-ask__qs">
+        {ASK_QUESTIONS.map((q) => <li key={q}><button type="button" onClick={() => onAsk(`About ${productName}: ${q}`)}>{q}</button></li>)}
+      </ul>
+      <button type="button" className="ay-ask__cta" onClick={() => onAsk(`About ${productName}: `)}>Ask your own question</button>
+    </section>
+  );
+}
+
+export function ProductTrust({ glance, aynaRating = null, ratingCount = 0, extras = {}, evidenceStrength = '', onXref = null }) {
+  if (!glance) return null;
+  const plan = glance.glossary || {};
+  const secs = splitSections(glance.sections);
+  const people = secs.find((s) => s.id === 'people');
+  const clinician = secs.find((s) => s.id === 'clinician');
+  const evidence = secs.find((s) => s.id === 'evidence');
+  const evText = evidence ? sectionDigest(evidence) : '';
+  const evCount = glance.sources.filter((s) => ['product_study', 'clinical_guideline', 'regulatory', 'ingredient_research', 'expert_guidance'].includes(s.type)).length;
+  const peopleEmpty = !people || people.blocks.every((b) => b.type === 'empty');
+  return (
+    <section className="ay-story ay-story--trust" aria-labelledby="ay-trust-h">
+      <h2 id="ay-trust-h">Can you <em>trust it?</em></h2>
+      <div className="ay-trust">
+        <article className="ay-trust__card is-reviews">
+          <header><h3>Reviews</h3>{aynaRating != null && ratingCount > 0 && <span className="ay-trust__rating"><b>★ {aynaRating.toFixed(1)}</b> · {ratingCount} ayna member review{ratingCount === 1 ? '' : 's'}</span>}</header>
+          {peopleEmpty
+            ? <p className="ay-trust__muted">No ayna member reviews yet. Be the first.</p>
+            : <Section bare section={people} plan={plan} sources={glance.sources} onXref={onXref} />}
+          {extras.people}
+        </article>
+        {clinician && (
+          <article className="ay-trust__card is-clinical">
+            <header><h3>Clinical view</h3></header>
+            <details className="ay-trust__more">
+              <summary>{firstSentence(sectionDigest(clinician) || '')}</summary>
+              <Section bare section={clinician} plan={plan} sources={glance.sources} onXref={onXref} />
+            </details>
+          </article>
+        )}
+        <article className="ay-trust__card is-evidence">
+          <header><h3>Evidence</h3>{evidenceStrength ? <span className={`ay-trust__level is-${evidenceStrength.toLowerCase()}`}>{evidenceStrength}</span> : null}</header>
+          <p>{evCount ? firstSentence(evText) || `${evCount} source${evCount === 1 ? '' : 's'} on file.` : 'We have no research or clinical sources linked for it yet.'}</p>
+          {evCount > 0 && <button type="button" className="ay-trust__link" onClick={() => { const d = document.getElementById('ay-more-research'); if (d) { d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }}>See the {evCount} source{evCount === 1 ? '' : 's'}</button>}
+        </article>
+      </div>
+    </section>
+  );
+}
+
+export function ProductGoodToKnow({ items = [] }) {
+  if (!items.length) return null;
+  return (
+    <section className="ay-story ay-story--know" aria-labelledby="ay-know-h">
+      <h2 id="ay-know-h">Good to know</h2>
+      <ul className="ay-know">{items.map((t) => <li key={t}>{t}</li>)}</ul>
+    </section>
+  );
+}
+
+const MORE_FOR = { safety: 'safety', inside: 'ingredients', evidence: 'research', unknown: 'research', sources: 'research', howto: 'details', brand: 'details', glance: 'details' };
+export function ProductMore({ glance, extras = {}, onXref = null }) {
+  useEffect(() => {
+    const on = (e) => {
+      const key = MORE_FOR[e.detail];
+      const d = key && document.getElementById(`ay-more-${key}`);
+      if (d) { d.open = true; window.setTimeout(() => d.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30); }
+    };
+    window.addEventListener('ay-open-section', on);
+    return () => window.removeEventListener('ay-open-section', on);
+  }, []);
+  if (!glance) return null;
+  const plan = glance.glossary || {};
+  const secs = splitSections(glance.sections);
+  const get = (id) => secs.find((s) => s.id === id);
+  const { what, who, facts, sources } = glance;
+  const fold = (id, title, children, open = false) => (
+    <details className="ay-more" id={`ay-more-${id}`} open={open}>
+      <summary><span>{title}</span><span className="ay-more__chev" aria-hidden="true">+</span></summary>
+      <div className="ay-more__body">{children}</div>
+    </details>
+  );
+  const S = (sec) => sec && <Section bare section={sec} plan={plan} sources={sources} extra={extras[sec.id]} onXref={onXref} />;
+  return (
+    <section className="ay-story ay-story--more" aria-label="More about this product">
+      {fold('details', 'Product details', <>
+        {what.text && <><Label>What it is</Label><Para className="is-lead" text={what.text} terms={plan.what || []} />{what.detail && <Para text={what.detail} terms={plan['what:detail'] || []} />}</>}
+        {(who.items.length > 0 || who.helps.length > 0) && <><Label>Who it’s for</Label>{who.items.length > 0 ? <List items={who.items} k="who" plan={plan} max={4} /> : <ul className="ay-gl-chips is-fit">{who.helps.map((t) => <li key={t}>{t}</li>)}</ul>}</>}
+        {get('howto') && <><Label>How to use</Label>{S(get('howto'))}</>}
+        {facts.length > 0 && <><Label>Size and specs</Label><dl className="ay-glance__facts">{facts.filter((f) => !f.unknown).map((f) => <div key={f.id}><dt>{f.label}</dt><dd>{f.value}<Refs refs={f.refs} sources={sources} /></dd>{f.note && <small>{f.note}</small>}</div>)}</dl></>}
+        {get('brand') && <><Label>From the manufacturer</Label>{S(get('brand'))}</>}
+      </>)}
+      {get('inside') && fold('ingredients', 'Ingredients', S(get('inside')))}
+      {get('safety') && fold('safety', 'Safety', S(get('safety')))}
+      {fold('research', `Research & sources${sources.length ? ` (${sources.length})` : ''}`, <>
+        {get('evidence') && S(get('evidence'))}
+        {get('unknown') && <><Label>What we don’t know</Label>{S(get('unknown'))}</>}
+        {sources.length > 0 && <ol className="ay-gl-srclist">{sources.map((src) => (
+          <li key={src.url} id={`ay-src-${src.n}`} tabIndex={-1}>
+            <span className="ay-gl-cites__n">{src.n}</span>
+            <div><span className={`ay-gl-type is-${src.type}`}>{src.label}</span><a href={src.url} target="_blank" rel="noopener noreferrer">{src.title}</a><small>{[src.publisher, src.year].filter(Boolean).join(' · ')}</small></div>
+          </li>
+        ))}</ol>}
+      </>)}
+    </section>
+  );
+}

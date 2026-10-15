@@ -2416,6 +2416,7 @@ function App() {
               matchOpts={matchOpts}
               user={user}
               userSession={userSession}
+              onAskAyna={(q) => openAsk(q)}
               onOpenProduct={handleOpenProduct}
               onBack={handleBackFromProduct}
               onOpenShop={(category) => handleViewDiscovery(category ? { initialCategory: category } : '')}

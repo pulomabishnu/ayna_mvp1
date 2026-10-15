@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { ALL_PRODUCTS } from '../../data/products';
 import { compareRows } from './commerce';
 import { NOT_ON_FILE } from './glance';
 import './pdp.css';
@@ -8,16 +9,38 @@ import './pdp.css';
  * catalog, real fields only. Scrolls sideways on phones.
  */
 export default function ComparePanel({ product, others = [], onOpen, matchFor = null, renderThumb = null }) {
-  const cols = useMemo(() => [product, ...others].filter(Boolean), [product, others]);
-  const rows = useMemo(() => compareRows(cols, { matchFor }), [cols, matchFor]);
-  if (cols.length < 2 || !rows.length) return null;
+  // Starts with the closest alternatives; she can swap in anything from the catalog.
+  const [picked, setPicked] = useState(() => others.slice(0, 2).map((p) => p.id));
+  const [q, setQ] = useState('');
+  const byId = useMemo(() => new Map(ALL_PRODUCTS.map((p) => [p.id, p])), []);
+  const chosen = picked.map((id) => byId.get(id) || others.find((o) => o.id === id)).filter(Boolean);
+  const cols = [product, ...chosen].filter(Boolean);
+  const rows = compareRows(cols, { matchFor });
+  const term = q.trim().toLowerCase();
+  const results = term.length < 2 ? [] : ALL_PRODUCTS.filter((p) => p.id !== product.id && !picked.includes(p.id) && `${p.brand || ''} ${p.name}`.toLowerCase().includes(term)).slice(0, 6);
+  const suggestions = others.filter((o) => !picked.includes(o.id)).slice(0, 5);
+  const add = (p) => { setPicked((cur) => [...cur.filter((id) => id !== p.id), p.id].slice(-3)); setQ(''); };
+  const remove = (id) => setPicked((cur) => cur.filter((x) => x !== id));
+  if (!product) return null;
   return (
     <section className="ay-compare" id="ay-sec-compare" tabIndex={-1} aria-labelledby="ay-compare-h">
       <div className="ay-pdp-sechead">
         <h2 id="ay-compare-h">Compare with <em>similar.</em></h2>
-        <p>Same type of product, side by side. From ayna’s catalog.</p>
+        <p>Side by side, from ayna’s catalog. Search any product, or pick a related one.</p>
       </div>
-      <div className="ay-compare__scroll" role="region" aria-labelledby="ay-compare-h" tabIndex={0}>
+      <div className="ay-compare__pick">
+        <label className="ay-compare__search">
+          <span className="sr-only">Search a product to compare</span>
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a product to compare" />
+        </label>
+        {results.length > 0 && (
+          <ul className="ay-compare__results">{results.map((p) => <li key={p.id}><button type="button" onClick={() => add(p)}>{p.brand ? `${p.brand} · ` : ''}{p.name}</button></li>)}</ul>
+        )}
+        {suggestions.length > 0 && (
+          <div className="ay-compare__sugg"><span>Related:</span>{suggestions.map((p) => <button key={p.id} type="button" onClick={() => add(p)}>+ {p.name}</button>)}</div>
+        )}
+      </div>
+      {cols.length < 2 || !rows.length ? <p className="ay-compare__empty">Pick a product above to compare.</p> : <div className="ay-compare__scroll" role="region" aria-labelledby="ay-compare-h" tabIndex={0}>
         <table>
           <thead>
             <tr>
@@ -27,7 +50,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
                   {renderThumb && <span className="ay-compare__thumb">{renderThumb(p)}</span>}
                   {i === 0
                     ? <span className="ay-compare__name">{p.name}<small>This product</small></span>
-                    : <button type="button" className="ay-compare__name" onClick={() => onOpen && onOpen(p)}>{p.name}</button>}
+                    : <span className="ay-compare__name"><button type="button" onClick={() => onOpen && onOpen(p)}>{p.name}</button><button type="button" className="ay-compare__x" onClick={() => remove(p.id)} aria-label={`Remove ${p.name} from comparison`}>Remove</button></span>}
                 </th>
               ))}
             </tr>
@@ -41,7 +64,7 @@ export default function ComparePanel({ product, others = [], onOpen, matchFor = 
             ))}
           </tbody>
         </table>
-      </div>
+      </div>}
     </section>
   );
 }

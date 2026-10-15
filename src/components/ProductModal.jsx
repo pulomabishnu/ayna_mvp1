@@ -12,9 +12,11 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import WhyMatchPanel from './WhyMatchPanel';
 import MatchPill from './MatchPill';
-import ProductSections from './passport/ProductSections';
 import { matchLine, priceParts } from '../data/passport/content';
-import { buildGlance, perUnitLabel } from './pdp/glance';
+import { buildGlance, perUnitLabel, sizeCount } from './pdp/glance';
+import { getPassport } from '../data/passport';
+import { buildTypedTags } from '../data/passport/content';
+import { ProductMatch, ProductAsk, ProductTrust, ProductGoodToKnow, ProductMore } from './passport/ProductSections';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import GalleryThumbs from './pdp/GalleryThumbs';
 import ComparePanel from './pdp/ComparePanel';
@@ -378,6 +380,7 @@ export default function ProductModal({
   matchOpts = undefined,
   // Navigates to another product's own dedicated page.
   onOpenProduct = null,
+  onAskAyna = null,
   // Set only when this product page was reached by clicking a search
   // result, so Buy now can carry the same searchQuery (search -> click ->
   // purchase in PostHog).
@@ -739,10 +742,6 @@ export default function ProductModal({
     people: rateControls,
     match: <button type="button" className="ay-psec-action" onClick={() => setShowWhy(true)}>See the full breakdown</button>,
   };
-  const extraNav = [
-    { id: 'ask', label: 'Ask ayna' },
-    ...(suggestions.compare.length ? [{ id: 'compare', label: 'Compare' }] : []),
-  ];
 
   return (
     <div className="mockup-page pdp-page-wrap">
@@ -775,13 +774,6 @@ export default function ProductModal({
         <div className="pdp-head ay3-simple" ref={boardRef}>
           <div className="pdp-head__media">
             {galleryTile}
-            <ProductSections
-            key={product.id}
-            glance={glance}
-            extras={sectionExtras}
-            extraNav={extraNav}
-            onXref={openProductByName}
-            />
           </div>
 
           <div className="pdp-head__detail pdp-h2">
@@ -795,24 +787,23 @@ export default function ProductModal({
                 {price.known && price.sub && <small>{price.sub}</small>}
               </div>
             )}
+            {(() => {
+              const size = sizeCount(product);
+              const fsa = (glance?.facts || []).find((f) => f.id === 'fsa' && !f.unknown);
+              const priceText = `${product.price || ''} ${price.sub || ''}`;
+              const quick = [
+                size?.text,
+                fsa && fsa.value === 'Eligible' ? 'FSA/HSA eligible' : null,
+                /month|subscription|\/mo\b|per year|\/year/i.test(priceText) ? 'Subscription' : null,
+                product.type === 'digital' ? 'At home, online' : null,
+                product.requiresPrescription ? 'Prescription required' : null,
+              ].filter(Boolean);
+              return quick.length > 0 && <ul className="pdp-quick">{quick.map((t) => <li key={t}>{t}</li>)}</ul>;
+            })()}
 
-            {aynaRating != null && ratingCount > 0 && (
-              <p className="ay-pdp-rating"><span aria-hidden="true">★</span> {aynaRating.toFixed(1)} <span>from {ratingCount} ayna member rating{ratingCount === 1 ? '' : 's'}</span></p>
-            )}
+            {glance?.alert && <SafetyFlag />}
 
-            {matchPercent > 0 && (
-              <div className="pdp-h2-match">
-                <MatchPill percent={matchPercent} onClick={() => setShowWhy(true)} label={`${matchPercent}% match${headMatchLine ? `. ${headMatchLine}` : ''}. See why`} />
-                <p className="pdp-h2-why">
-                  {headMatchLine || 'Scored against the needs and preferences you shared.'}
-                  {matchExclusions.length > 0 && <><br />{matchExclusions[0]}</>}
-                </p>
-                <p className="pdp-h2-whylinks">
-                  <button type="button" onClick={() => setShowWhy(true)}>See why</button>
-                  <a href="/how-it-works">How we match</a>
-                </p>
-              </div>
-            )}
+            <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} />
             {!(matchPercent > 0) && matchExclusions.length > 0 && (
               <button type="button" className="pdp-h2-fitnote" onClick={() => setShowWhy(true)}>
                 {matchExclusions[0]}
@@ -822,9 +813,44 @@ export default function ProductModal({
               <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
             )}
 
-            {glance?.alert && <SafetyFlag />}
+            <ProductAsk productName={displayName} onAsk={onAskAyna} />
 
-            {actionButtons}
+            <ProductTrust glance={glance} aynaRating={aynaRating} ratingCount={ratingCount} extras={sectionExtras} evidenceStrength={String(product.evidenceStrength || '').trim()} onXref={openProductByName} />
+
+            {(() => {
+              const pp = getPassport(product);
+              const priceText = `${product.price || ''} ${price.sub || ''}`;
+              const fsa = (glance?.facts || []).find((f) => f.id === 'fsa' && !f.unknown);
+              const attrs = buildTypedTags(product).filter((t) => t.type === 'attribute').map((t) => t.label);
+              const preg = pp?.safety?.pregnancy;
+              const items = [
+                fsa ? (fsa.value === 'Eligible' ? 'FSA/HSA eligible' : 'Not FSA/HSA eligible') : null,
+                ...attrs,
+                product.requiresPrescription ? 'Prescription required' : null,
+                /month|subscription|\/mo\b|per year|\/year/i.test(priceText) ? 'Subscription' : (price.known && /one-time/i.test(priceText) ? 'One-time purchase' : null),
+                preg?.known ? 'Pregnancy: see Safety' : null,
+              ].filter(Boolean);
+              return <ProductGoodToKnow items={[...new Set(items)].slice(0, 8)} />;
+            })()}
+
+            <section className="ay-story ay-story--buy" aria-labelledby="ay-buy-h">
+              <h2 id="ay-buy-h">Buy</h2>
+              {(() => {
+                const pp = getPassport(product);
+                const checked = pp?.pricing?.price?.verified_at;
+                let seller = '';
+                try { seller = buyUrl ? (isAmazonBuyLink ? 'Amazon' : isPartner ? `${brand || 'The brand'} (ayna partner)` : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { seller = ''; }
+                return (
+                  <dl className="ay-buy__facts">
+                    {price.known && <div><dt>Price</dt><dd>{price.main}{price.sub ? ` ${price.sub}` : ''}</dd></div>}
+                    {sizeCount(product)?.text && <div><dt>Size</dt><dd>{choice.variant?.label || sizeCount(product).text}</dd></div>}
+                    {seller && <div><dt>Sold by</dt><dd>{seller}</dd></div>}
+                    <div><dt>Price check</dt><dd>{checked ? `Verified ${checked}` : 'Confirm the price with the seller'}</dd></div>
+                  </dl>
+                );
+              })()}
+              {actionButtons}
+            </section>
 
 
             {(onCommunityAction || onOmit) && (
@@ -848,9 +874,10 @@ export default function ProductModal({
         </div>
 
         <div className="pdp-below pdp-below--glance">
+          <ProductMore glance={glance} extras={sectionExtras} onXref={openProductByName} />
 
 
-          {suggestions.compare.length > 0 && (
+          {(
             <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />
           )}
 
