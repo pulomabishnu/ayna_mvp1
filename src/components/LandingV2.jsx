@@ -369,11 +369,12 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
           <Ticker />
         </section>
         {personalSlot}
-        <LandingStories paused={paused} onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
         <Purpose onViewAbout={onViewAbout} />
         <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
         <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
         <Strip />
+        {/* ayna news, word of the day and more: a little way down the page, not first. */}
+        <LandingStories paused={paused} onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
         <Why paused={paused} />
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
