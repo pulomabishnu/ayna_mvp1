@@ -106,7 +106,7 @@ export function resolveCommerce(product, selectedVariant = null, ctx = {}) {
   const isAmazon = isAmazonUrl(destinationUrl);
   // The Amazon listing for this product/option was checked and is the wrong
   // item or unavailable (src/data/amazonAsinBlocks.js).
-  const amazonBlockedHere = !isAmazon && (variant?.amazonAsin ? isBlockedAmazon(variant.amazonAsin) : isBlockedAmazon(productAmazonUrl));
+  const amazonBlockedHere = !isAmazon && (variant?.amazonAsin ? isBlockedAmazon(variant.amazonAsin) : isBlockedAmazon(productAmazonUrl, { productLevel: true }));
   let provider = destinationUrl ? providerForUrl(destinationUrl) : PROVIDERS.UNKNOWN;
   if (isService && !isAmazon && destinationUrl) provider = PROVIDERS.APP_OR_SERVICE;
   if (isPartner && provider === PROVIDERS.BRAND_DIRECT && /[?&](ref|af|sca_ref|bg_ref|dt_id)=/i.test(destinationUrl || '')) provider = PROVIDERS.BRAND_AFFILIATE;

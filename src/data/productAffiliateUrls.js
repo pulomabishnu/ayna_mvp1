@@ -1,3 +1,4 @@
+import { AMAZON_EXACT_PRODUCT_LISTINGS } from './amazonExactListings.js';
 /**
  * Amazon Associates links supplied for ayna catalog products.
  * Product-specific affiliateUrl values still take priority over these.
@@ -214,6 +215,9 @@ export function getAmazonAffiliateUrl(productName) {
  * then its current name, then any earlier catalog name it carried.
  */
 export function getAmazonAffiliateUrlForProduct(product) {
+  // A listing confirmed as the exact item and count wins over the name rows.
+  const exact = AMAZON_EXACT_PRODUCT_LISTINGS[product?.id];
+  if (exact) return amazonAffiliateUrlForAsin(exact.asin);
   const byId = AMAZON_ROW_BY_PRODUCT_ID[product?.id];
   if (byId) {
     const url = amazonAffiliateUrlForAsin(AMAZON_ASINS_BY_NORMALIZED_NAME[byId]);

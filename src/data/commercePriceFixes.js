@@ -43,6 +43,16 @@ export const COMMERCE_PRICE_TEXT_FIXES = {
     from: '$12 for 60', to: '$12 for 100',
     evidence: 'Ayna variant data maps this Buy link (ASIN B0070SKP1O) to the 100-pad pack; lansinoh.com sells 100 pads at $11.99 (60 pads $8.99)',
   },
+  // Count fixes from the brand's own site (2026-10-15). The old dollar figure
+  // was never verified for the new count, so no price is shown with it.
+  'p-love-wellness-bloat': {
+    from: '$24 for 30 capsules', to: 'See current price (60 capsules, 30-day supply)',
+    evidence: 'lovewellness.com/products/bye-bye-bloat: Standard is 60 capsules; Amazon B07TCQS4QJ is the 30-day supply, unit count 60',
+  },
+  'p-fish-oil': {
+    from: '$23 for 60 softgels', to: 'See current price (120 softgels)',
+    evidence: 'nordic.com/products/omega-woman/ lists one size, 120 Count - Lemon; no 60-count',
+  },
 };
 
 /**

@@ -131,8 +131,8 @@ function standardBuyUrl(product, variant, { amazonAllowed = true } = {}) {
     const exactBrandOption = variant && isExactBuyUrl(variant.url) && !isAmazonUrl(variant.url);
     if (!exactBrandOption) {
       const amazon = getAmazonAffiliateUrlForProduct(product);
-      if (amazon && !isBlockedAmazon(amazon)) return amazon;
-      if (isExactBuyUrl(product?.affiliateUrl) && isAmazonUrl(product.affiliateUrl) && !isBlockedAmazon(product.affiliateUrl)) {
+      if (amazon && !isBlockedAmazon(amazon, { productLevel: true })) return amazon;
+      if (isExactBuyUrl(product?.affiliateUrl) && isAmazonUrl(product.affiliateUrl) && !isBlockedAmazon(product.affiliateUrl, { productLevel: true })) {
         return String(product.affiliateUrl).trim();
       }
     }
@@ -140,7 +140,8 @@ function standardBuyUrl(product, variant, { amazonAllowed = true } = {}) {
 
   // 2. Not on Amazon for us: the exact option, then reviewed destinations.
   // A blocked Amazon listing (wrong product or unavailable) is never a destination.
-  const notAmazon = (u) => (amazonAllowed && !isBlockedAmazon(u)) || !isAmazonUrl(u);
+  // An Amazon link must name one exact listing (/dp/ASIN), never a search page.
+  const notAmazon = (u) => !isAmazonUrl(u) || (amazonAllowed && /\/(dp|gp\/product)\/[A-Z0-9]{10}/i.test(String(u)) && !isBlockedAmazon(u, { productLevel: true }));
   if (isExactBuyUrl(variant?.url) && notAmazon(variant.url)) return String(variant.url).trim();
   const candidates = [
     product?.affiliateUrl,
