@@ -2887,3 +2887,28 @@ html body .app-container .app-nav.app-nav a.app-nav__tab--eco.is-start.app-nav__
 html body .app-container .app-nav.app-nav .app-nav__start { top: -10px; }
 .ay-ecoprev__shelves { filter: blur(4px); opacity: 1; }
 .ay-auth-context-title + .ay-auth-tagline { font: 400 16px/1.45 'DM Sans', sans-serif !important; color: #3e2723 !important; margin-top: 4px !important; }
+/* Audit: no eyebrow labels on the info pages; the heading carries it. */
+html body .app-container .ay-info__eyebrow { display: none !important; }
+/* Library: each topic tile gets a small spot drawing; brand colours only. */
+html body .app-container:not([data-theme='dark']) .ay-lib-cover.is-pink { background: #f7badd !important; }
+html body .app-container:not([data-theme='dark']) .ay-lib-cover.is-peri { background: #769ebe !important; }
+html body .app-container:not([data-theme='dark']) .ay-lib-cover.is-ink { background: #3e2723 !important; }
+html body .app-container .ay-lib-cover.is-ink strong { color: #ffedac !important; }
+html body .app-container .ay-lib-cover.has-spot::after { display: none; }
+html body .app-container .ay-lib-cover.has-spot { display: flex !important; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; }
+html body .app-container .ay-lib-cover__spot { width: 46%; max-width: 56px; height: auto; fill: none; stroke: #3e2723; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+html body .app-container .ay-lib-cover.is-ink .ay-lib-cover__spot { stroke: #ffedac; }
+html body .app-container .ay-lib-cover.has-spot strong { font: 400 15px/1.1 'DM Serif Display', serif !important; letter-spacing: 0 !important; overflow-wrap: normal !important; word-break: normal !important; }
+html body .app-container .ay-lib-cover.has-spot { align-items: center !important; justify-content: center !important; padding: 8px !important; }
+html body .app-container .ay-lib-cover.has-spot .ay-lib-cover__spot { position: static !important; width: 40px !important; height: 40px !important; flex: 0 0 auto; margin: 0 auto; }
+html body .app-container .ay-lib-cover.has-spot strong { position: static !important; width: 100%; text-align: center !important; margin: 0 !important; }
+@media (max-width: 720px) { html body .app-container .ay-lib-cover.has-spot .ay-lib-cover__spot { width: 30px !important; height: 30px !important; } }
+/* Shop categories: arrows at both ends, greyed when that side has nothing more. */
+html body .app-container .ay-catrow { display: flex; align-items: center; gap: 8px; }
+html body .app-container .ay-catrow .ayna-browse__categories { flex: 1 1 auto; min-width: 0; }
+html body .app-container .ay-catrow__arrow { flex: 0 0 auto; width: 36px; height: 36px; border: 2px solid #3e2723; border-radius: 50%; background: #ffedac; color: #3e2723; font: 700 16px/1 'DM Sans', sans-serif; cursor: pointer; }
+html body .app-container .ay-catrow__arrow:hover { box-shadow: 2px 2px 0 #3e2723; }
+html body .app-container .ay-catrow:has(.ayna-browse__categories[data-fade-start='0']) .ay-catrow__arrow.is-back,
+html body .app-container .ay-catrow:has(.ayna-browse__categories[data-fade-end='0']) .ay-catrow__arrow.is-next { opacity: .3; pointer-events: none; }
+@media (max-width: 720px) { html body .app-container .ay-catrow__arrow { display: none; } }
+html body .app-container .ay-catrow { align-items: flex-start; } html body .app-container .ay-catrow__arrow { margin-top: 2px; }

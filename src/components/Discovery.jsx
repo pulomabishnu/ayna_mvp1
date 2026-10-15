@@ -1543,6 +1543,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </div>
             )}
 
+            <div className="ay-catrow">
+            <button type="button" className="ay-catrow__arrow is-back" aria-label="Scroll categories back" onClick={(e) => e.currentTarget.parentElement.querySelector('.ayna-browse__categories')?.scrollBy({ left: -360, behavior: 'smooth' })}>←</button>
             <div className="ayna-browse__categories" aria-label="Product categories" ref={edgeFadeRef}>
                 {availableMacroGroups.map((group) => (
                     <button
@@ -1562,6 +1564,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         {group.label}
                     </button>
                 ))}
+            </div>
+            <button type="button" className="ay-catrow__arrow is-next" aria-label="Scroll categories forward" onClick={(e) => e.currentTarget.parentElement.querySelector('.ayna-browse__categories')?.scrollBy({ left: 360, behavior: 'smooth' })}>→</button>
             </div>
             </div>
 

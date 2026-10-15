@@ -182,7 +182,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
             <button type="button" className="wyou-btn is-ghost" onClick={onSignOut}>Log out</button>
             <button type="button" className="wyou-link-danger" onClick={onDeleteAccount}>Delete account</button>
           </div>
-          <p className="wyou-legal"><a href="/privacy-policy">Privacy</a> · <a href="/terms-of-use">Terms</a> · <a href="/how-we-make-money">How we make money</a> · <a href="/contact">Contact</a></p>
+          <p className="wyou-legal"><a href="/privacy-policy">Privacy</a> · <a href="/terms-of-use">Terms</a> · <a href="/how-we-make-money">How we make money</a> · <a href="/contact">Contact</a> · <a href="/campus-resources">Campus resources</a></p>
         </section>
       </div>
     </div>
