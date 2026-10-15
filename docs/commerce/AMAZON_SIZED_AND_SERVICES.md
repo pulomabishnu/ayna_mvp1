@@ -486,7 +486,7 @@ Amazon logic doesn't apply except to the two physical devices listed as digital 
 | Happi Pelvic Floor App | **no link** | none | Free trial, then subscription | — | NO_BUY_LINK |
 | Headspace | headspace.com | none | $13/month or $70/year | — | EXACT_MATCH |
 | Hers | forhers.com | none | Subscription + per-visit; varies by treatment | 12 USD | PRICE_MISMATCH (price_range_vs_single) |
-| Inito Fertility Monitor | amazon.com | amazon_associates | $149 monitor + $50/15 strips | — | IMAGE_MISMATCH (amazon_route_price_not_comparable) |
+| Inito Fertility Monitor | inito.com | none | $149 monitor + $50/15 strips | 119 USD | PRICE_MISMATCH (amazon_route_price_not_comparable) |
 | Maven Clinic | mavenclinic.com | none | Free through employer / $15-35 per session | — | EXACT_MATCH |
 | Midi Health | joinmidi.com | none | Membership / per visit; varies by plan and state | — | EXACT_MATCH |
 | Natural Cycles | naturalcycles.com | none | $100/year or $13/month | — | EXACT_MATCH |
