@@ -62,13 +62,14 @@ function Routine({ products }) {
   </section>;
 }
 
-export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenStartups, onOpenProduct, onSignOut, onDeleteAccount, onStartQuiz, theme = 'light', onThemeChange }) {
+export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenStartups, onOpenProduct, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const consumables = useMemo(() => products.filter(isConsumable), [products]);
   const intake = quizResults?.fullHealthIntake || null;
   const pct = getProfileCompletionPct(intake);
   const shopper = buildShopperProfile(intake, products);
-  const alerts = getSafetyAlerts(products, quizResults);
+  // A note that says "(not a recall)" is never labelled Recall.
+  const alerts = getSafetyAlerts(products, quizResults).map((a) => (a.kind === 'recall' && /not a recall/i.test(`${a.title} ${a.body}`) ? { ...a, kind: 'accuracy' } : a));
   const affinity = getBrandAffinity(quizResults, products);
   const { top, missing } = useMemo(() => ecosystemInsights(products), [products]);
   const savedCount = Object.values(savedProducts || {}).filter(Boolean).length;
@@ -107,7 +108,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
   };
 
   if (!user) {
-    return <section className="wyou"><div className="wyou-card wyou-signedout"><h1>You</h1><p>Sign in to see your shopper profile, badges, routine and settings.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></div></section>;
+    return <section className="wyou"><div className="wyou-card wyou-signedout"><h1>You</h1><p>Your profile, safety alerts and settings live here once you have an account.</p><div className="wyou-signedout__doors"><button type="button" className="wyou-btn" onClick={onStartQuiz}>New here? See my matches</button>{onSignIn && <button type="button" className="wyou-btn is-ghost" onClick={onSignIn}>Sign in</button>}</div></div></section>;
   }
 
   const initial = avatarInitials(user, (name || 'Y').charAt(0).toUpperCase());
@@ -122,12 +123,13 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
     </header>
 
     {(() => {
-      const TIER = { recall: [0, 'Recall'], sensitivity: [1, 'Your sensitivity'], note: [2, 'FYI'] };
+      const TIER = { recall: [0, 'Recall'], sensitivity: [1, 'Your sensitivity'], accuracy: [2, 'Accuracy note'], note: [3, 'FYI'] };
       const sorted = [...alerts].sort((x, y) => (TIER[x.kind]?.[0] ?? 3) - (TIER[y.kind]?.[0] ?? 3));
       const active = alerts.filter((a) => a.kind !== 'note').length;
+      const fyi = alerts.length - active;
       const firstLine = (t) => { const m = String(t || '').match(/^(.{10,160}?[.!?])(\s|$)/); return m ? m[1] : String(t || ''); };
       return <section className="wyou-card is-safety wyou-safety-top">
-        <div className="wyou-card-head"><h2>Safety alerts</h2><span>{active ? `${active} to check` : 'Nothing urgent'}{alerts.length - active > 0 ? ` · ${alerts.length - active} FYI` : ''}</span></div>
+        <div className="wyou-card-head"><h2>Safety alerts</h2><span>{active ? `${active} to check` : 'Nothing urgent'}{fyi > 0 ? ` · ${fyi} FYI` : ''}</span></div>
         {sorted.length ? <ul className="wyou-alerts">{sorted.map((a) => {
           const one = firstLine(a.body);
           return <li key={a.id} className={`is-${a.kind}`}>
@@ -135,7 +137,12 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
             <strong>{a.title}</strong>
             <p>{one}</p>
             {one !== a.body && <details><summary>Details</summary><p>{a.body}</p></details>}
-            {a.product && <button type="button" onClick={() => onOpenProduct?.(a.product)}>View product</button>}
+            {a.kind === 'sensitivity' ? (() => {
+              const named = products.filter((p) => p?.name && String(a.body).includes(p.name));
+              return named.length > 1
+                ? <div className="wyou-alert-links">{named.map((p) => <button key={p.id} type="button" onClick={() => onOpenProduct?.(p)}>{p.name}</button>)}</div>
+                : a.product && <button type="button" onClick={() => onOpenProduct?.(a.product)}>View product</button>;
+            })() : a.product && <button type="button" onClick={() => onOpenProduct?.(a.product)}>View product</button>}
           </li>;
         })}</ul> : <p className="wyou-muted">No alerts on your ecosystem.</p>}
       </section>;

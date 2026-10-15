@@ -772,10 +772,29 @@ const ARTICLE_CATEGORIES = [
   },
 ];
 
-const READ_PROGRESS_KEY = 'ayna_read_progress_v1'; // same key as the app, so progress carries over
-function loadReadProgress() {
-  try { return JSON.parse(localStorage.getItem(READ_PROGRESS_KEY) || '{}') || {}; } catch { return {}; }
+const READ_PROGRESS_KEY = 'ayna_read_progress_v1';
+// Reading history is kept per account, so after logout (or on a shared
+// computer) nobody sees which topics the last person read about. The old
+// shared key is handed to the first account that signs in on this browser.
+function progressKey(userId) { return `${READ_PROGRESS_KEY}:${userId || 'guest'}`; }
+function loadReadProgress(userId) {
+  try {
+    const own = localStorage.getItem(progressKey(userId));
+    if (own) return JSON.parse(own) || {};
+    if (userId) {
+      const legacy = localStorage.getItem(READ_PROGRESS_KEY);
+      if (legacy) {
+        localStorage.setItem(progressKey(userId), legacy);
+        localStorage.removeItem(READ_PROGRESS_KEY);
+        return JSON.parse(legacy) || {};
+      }
+    }
+    return {};
+  } catch { return {}; }
 }
+// A read counts as finished only after real reading: most of the body
+// scrolled AND some time on the page (not a quick scroll to the bottom).
+const FINISH_MIN_MS = 45000;
 
 /** One progress style everywhere: mint fill on an ink outline + label. Unread reads get a small "New" tag instead of an empty bar. */
 function ProgressBar({ value = 0, className = '' }) {
@@ -804,11 +823,12 @@ const validId = (id) => (id && ARTICLES.some((a) => a.id === id) ? id : null);
  *   Changing it later opens that read, or closes the open one when it becomes null.
  * - `onArticleChange(idOrNull)`: called whenever the open read changes (not on mount).
  */
-export default function Articles({ initialArticleId, onOpenProduct, quizResults, healthProfile = null, onArticleChange }) {
+export default function Articles({ initialArticleId, onOpenProduct, quizResults, healthProfile = null, onArticleChange, userId = null }) {
   const [selectedId, setSelectedId] = useState(() => validId(initialArticleId));
   const [query, setQuery] = useState('');
   const [topic, setTopic] = useState('all');
-  const [progress, setProgress] = useState(loadReadProgress);
+  const [progress, setProgress] = useState(() => loadReadProgress(userId));
+  React.useEffect(() => { setProgress(loadReadProgress(userId)); }, [userId]);
   const selected = ARTICLES.find((a) => a.id === selectedId);
   // Opening a read un-crumples the page; closing crumples it back before the
   // shelf returns. Reduced motion skips the delay.
@@ -857,9 +877,9 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     const v = Math.round(Math.min(1, value) * 20) / 20;
     if (!id || (prev[id] || 0) >= v) return prev;
     const next = { ...prev, [id]: v };
-    try { localStorage.setItem(READ_PROGRESS_KEY, JSON.stringify(next)); } catch { /* storage blocked */ }
+    try { localStorage.setItem(progressKey(userId), JSON.stringify(next)); } catch { /* storage blocked */ }
     return next;
-  }), []);
+  }), [userId]);
 
   // Reading progress: how far you've scrolled through the article body,
   // starting from 0 at the top (not how much happens to fit on screen).
@@ -872,6 +892,9 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     // Only count scrolling the reader does (wheel, touch, keys, scrollbar),
     // so opening a read never jumps straight to "39% read" or "Finished".
     let engaged = false;
+    const openedAt = Date.now();
+    let maxValue = 0;
+    const finishTimer = window.setTimeout(() => { if (maxValue >= 0.6) record(selected.id, 1); }, FINISH_MIN_MS);
     const onScroll = () => {
       const el = bodyRef.current;
       if (!el || !engaged) return;
@@ -879,13 +902,18 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       const total = bottom - window.innerHeight;
       const value = total <= 0 ? 1 : Math.min(1, Math.max(0, window.scrollY / total));
       setScrolled(value);
-      if (value > 0.02) record(selected.id, value);
+      // Past 60% for 45 seconds counts as finished; before that, cap below 100%.
+      maxValue = Math.max(maxValue, value);
+      const longEnough = Date.now() - openedAt >= FINISH_MIN_MS;
+      const counted = value >= 0.6 && longEnough ? 1 : Math.min(value, 0.95);
+      if (value > 0.02) record(selected.id, counted);
     };
     const engage = () => { engaged = true; };
     const engageEvents = ['wheel', 'touchmove', 'keydown', 'pointerdown'];
     engageEvents.forEach((t) => window.addEventListener(t, engage, { passive: true }));
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
+      window.clearTimeout(finishTimer);
       engageEvents.forEach((t) => window.removeEventListener(t, engage));
       window.removeEventListener('scroll', onScroll);
     };
@@ -926,7 +954,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
   if (selected) {
     const next = getNextArticle(selected, ARTICLES, Object.keys(progress).filter((id) => progress[id] >= 1), forYou);
-    const done = scrolled >= 0.98 || progressOf(selected) >= 1;
+    const done = progressOf(selected) >= 1;
     const label = done ? 'Finished' : scrolled > 0.02 ? `${Math.round(scrolled * 100)}% read` : `${minutesFor(selected)} min read`;
     return (
       <section className="container animate-fade-in-up ay-web-library ay-lib-reading">

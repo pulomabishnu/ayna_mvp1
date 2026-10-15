@@ -393,6 +393,10 @@ export default function ProductModal({
   // Opens the composer with this product attached ('post' | 'review' |
   // 'playlist' | 'recommend').
   onCommunityAction = null,
+  // Signed-in person, if any. Logged out, the page offers Save instead of
+  // "Add to my ecosystem" (there is no ecosystem yet).
+  user = undefined,
+  onStartQuiz = null,
 }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   // Size / pack options (product.variants): Buy now, photo, name and price
@@ -546,6 +550,21 @@ export default function ProductModal({
 
   const noRecalls = (() => { const r = String(product?.safety?.recalls || ''); return Boolean(r) && !r.includes('\u26a0'); })();
 
+  // The one or two cautions that should sit next to the Buy button (pregnancy,
+  // the product's own safety alert), in plain words from the record.
+  const keyCautions = (() => {
+    const out = [];
+    const first = (t) => { const m = String(t || '').match(/^(.{8,200}?[.!?])(\s|$)/); return (m ? m[1] : String(t || '')).trim(); };
+    const pp = getPassport(product);
+    const preg = pp?.safety?.pregnancy;
+    const pv = preg?.known && !preg.notApplicable ? (Array.isArray(preg.value) ? preg.value.join(', ') : String(preg.value || '')) : '';
+    if (pv && /not|avoid|consult|ask|doctor|clinician|don.t|do not|unsafe|caution/i.test(pv)) out.push(`Pregnancy: ${first(pv)}`);
+    return [...new Set(out.filter(Boolean))].slice(0, 2);
+  })();
+  // Who actually sells it, so the button says where it goes ("Buy at LOLA ↗").
+  let sellerName = '';
+  try { sellerName = buyUrl ? (isAmazonBuyLink ? 'Amazon' : (isPartner && brand) ? brand : new URL(buyUrl).hostname.replace(/^www\./, '')) : ''; } catch { sellerName = ''; }
+  const buyLabel = sellerName && sellerName.length <= 22 ? `Buy at ${sellerName}` : 'Buy from the seller';
   const buyButton = (extraClass = '') => (buyUrl ? (
     <a
       className={`pdp-btn pdp-btn--navy pdp-btn--buy ${extraClass}`.trim()}
@@ -565,7 +584,9 @@ export default function ProductModal({
         });
       }}
     >
-      {isPrelaunch ? (product.waitlistCtaLabel || 'Join the waitlist') : product.type === 'digital' ? 'Get started' : 'Buy now'}
+      {isPrelaunch ? (product.waitlistCtaLabel || 'Join the waitlist') : product.type === 'digital' ? `Get started${sellerName ? ` at ${sellerName}` : ''}` : buyLabel}
+      {!isPrelaunch && <span className="pdp-btn__ext" aria-hidden="true"> ↗</span>}
+      <span className="sr-only"> (opens the seller’s site in a new tab)</span>
     </a>
   ) : (
     <button type="button" className={`pdp-btn pdp-btn--navy pdp-btn--buy ${extraClass}`.trim()} disabled>
@@ -589,26 +610,32 @@ export default function ProductModal({
           </select>
           <small style={{ display: 'block', marginTop: '0.35rem' }}>
             {sizeChosenOnAmazon
-              ? 'Buy now opens this product on Amazon. Pick the same size there, and confirm current price and availability with the retailer.'
-              : 'Buy now opens this exact option. Confirm current price and availability with the retailer.'}
+              ? 'The Buy button opens this product on Amazon. Pick the same size there, and confirm current price and availability with the retailer.'
+              : 'The Buy button opens this exact option. Confirm current price and availability with the retailer.'}
           </small>
         </label>
       )}
       {noRecalls && <p className="pdp-chiprow"><span className="pdp-chip is-ok">{'\u2713'} No recalls on file</span></p>}
       <div className="pdp-actions__primary">
         {buyButton()}
-        {onAddToEcosystem && (
+        {onAddToEcosystem && user && (
           <button
             type="button"
             className={`pdp-btn pdp-actions__eco${isInEcosystem ? ' is-on' : ''}`}
             aria-pressed={isInEcosystem}
             onClick={() => onAddToEcosystem(product)}
-            title={isInEcosystem ? 'Tap to remove from your ecosystem' : undefined}
+            title={isInEcosystem ? 'Remove from my ecosystem' : undefined}
           >
-            {isInEcosystem ? 'In my ecosystem ✓' : 'Add to my ecosystem'}
+            {isInEcosystem ? <><span className="pdp-eco__on">In my ecosystem ✓</span><span className="pdp-eco__off" aria-hidden="true">Remove</span></> : 'Add to my ecosystem'}
+          </button>
+        )}
+        {!user && onToggleSaved && (
+          <button type="button" className={`pdp-btn pdp-actions__eco${isSaved ? ' is-on' : ''}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}>
+            {isSaved ? 'Saved ♥' : 'Save ♡'}
           </button>
         )}
       </div>
+      {buyUrl && !isPrelaunch && <p className="pdp-commission">ayna may earn a commission. It never changes your match.</p>}
       {isPartner && (
         <p className="pdp-partner-line">
           ayna Partner. Partnership never changes your match.{' '}
@@ -792,7 +819,8 @@ export default function ProductModal({
               const fsa = (glance?.facts || []).find((f) => f.id === 'fsa' && !f.unknown);
               const priceText = `${product.price || ''} ${price.sub || ''}`;
               const quick = [
-                size?.text,
+                // Long pack lists live once, in Buy; the header keeps short ones.
+                size?.text && size.text.length <= 40 ? size.text : null,
                 fsa && fsa.value === 'Eligible' ? 'FSA/HSA eligible' : null,
                 /month|subscription|\/mo\b|per year|\/year/i.test(priceText) ? 'Subscription' : null,
                 product.type === 'digital' ? 'At home, online' : null,
@@ -803,7 +831,7 @@ export default function ProductModal({
 
             {glance?.alert && <SafetyFlag />}
 
-            <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} />
+            <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} />
             {!(matchPercent > 0) && matchExclusions.length > 0 && (
               <button type="button" className="pdp-h2-fitnote" onClick={() => setShowWhy(true)}>
                 {matchExclusions[0]}
@@ -812,26 +840,6 @@ export default function ProductModal({
             {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
               <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
             )}
-
-            <ProductAsk productName={displayName} onAsk={onAskAyna} />
-
-            <ProductTrust glance={glance} aynaRating={aynaRating} ratingCount={ratingCount} extras={sectionExtras} evidenceStrength={String(product.evidenceStrength || '').trim()} onXref={openProductByName} />
-
-            {(() => {
-              const pp = getPassport(product);
-              const priceText = `${product.price || ''} ${price.sub || ''}`;
-              const fsa = (glance?.facts || []).find((f) => f.id === 'fsa' && !f.unknown);
-              const attrs = buildTypedTags(product).filter((t) => t.type === 'attribute').map((t) => t.label);
-              const preg = pp?.safety?.pregnancy;
-              const items = [
-                fsa ? (fsa.value === 'Eligible' ? 'FSA/HSA eligible' : 'Not FSA/HSA eligible') : null,
-                ...attrs,
-                product.requiresPrescription ? 'Prescription required' : null,
-                /month|subscription|\/mo\b|per year|\/year/i.test(priceText) ? 'Subscription' : (price.known && /one-time/i.test(priceText) ? 'One-time purchase' : null),
-                preg?.known ? 'Pregnancy: see Safety' : null,
-              ].filter(Boolean);
-              return <ProductGoodToKnow items={[...new Set(items)].slice(0, 8)} />;
-            })()}
 
             <section className="ay-story ay-story--buy" aria-labelledby="ay-buy-h">
               <h2 id="ay-buy-h">Buy</h2>
@@ -845,36 +853,60 @@ export default function ProductModal({
                     {price.known && <div><dt>Price</dt><dd>{price.main}{price.sub ? ` ${price.sub}` : ''}</dd></div>}
                     {sizeCount(product)?.text && <div><dt>Size</dt><dd>{choice.variant?.label || sizeCount(product).text}</dd></div>}
                     {seller && <div><dt>Sold by</dt><dd>{seller}</dd></div>}
-                    <div><dt>Price check</dt><dd>{checked ? `Verified ${checked}` : 'Confirm the price with the seller'}</dd></div>
+                    <div><dt>Price check</dt><dd>{checked ? `Checked ${(() => { const d = new Date(`${String(checked).slice(0, 10)}T12:00:00`); return Number.isNaN(d.getTime()) ? checked : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); })()}` : 'Price at retailer'}</dd></div>
                   </dl>
                 );
               })()}
+              {keyCautions.length > 0 && (
+                <div className="ay-buy__cautions" role="note" aria-label="Before you buy">
+                  <p className="ay-buy__cautions-h"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v5M12 18v.5" /></svg>Before you buy</p>
+                  <ul>{keyCautions.map((t) => <li key={t}>{t}</li>)}</ul>
+                  <button type="button" className="pdp-textlink" onClick={() => window.dispatchEvent(new CustomEvent('ay-open-section', { detail: 'safety' }))}>All safety details</button>
+                </div>
+              )}
               {actionButtons}
             </section>
 
 
-            {(onCommunityAction || onOmit) && (
-              <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
-                {onCommunityAction && <>
-                  <h3 id="pdp-community-h">Community</h3>
-                  <div className="pdp-community-actions__grid">
-                    {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
-                      <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
-                    ))}
-                  </div>
-                </>}
-                {onOmit && (
-                  <button type="button" className="pdp-omit-link" onClick={() => onOmit(product)}>
-                    {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
-                  </button>
-                )}
-              </section>
-            )}
+            <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
+
+            <ProductTrust glance={glance} aynaRating={aynaRating} ratingCount={ratingCount} extras={sectionExtras} evidenceStrength={String(product.evidenceStrength || '').trim()} onXref={openProductByName} />
+
+            {(() => {
+              const priceText = `${product.price || ''} ${price.sub || ''}`;
+              const fsa = (glance?.facts || []).find((f) => f.id === 'fsa' && !f.unknown);
+              const attrs = buildTypedTags(product).filter((t) => t.type === 'attribute').map((t) => t.label);
+              const items = [
+                fsa ? (fsa.value === 'Eligible' ? 'FSA/HSA eligible' : 'Not FSA/HSA eligible') : null,
+                ...attrs,
+                product.requiresPrescription ? 'Prescription required' : null,
+                /month|subscription|\/mo\b|per year|\/year/i.test(priceText) ? 'Subscription' : (price.known && /one-time/i.test(priceText) ? 'One-time purchase' : null),
+              ].filter(Boolean);
+              return <ProductGoodToKnow items={[...new Set(items)].slice(0, 8)} />;
+            })()}
+
           </div>
         </div>
 
         <div className="pdp-below pdp-below--glance">
           <ProductMore glance={glance} extras={sectionExtras} onXref={openProductByName} />
+            {(onCommunityAction || onOmit) && (
+            <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
+              {onCommunityAction && <>
+                <h3 id="pdp-community-h">Community</h3>
+                <div className="pdp-community-actions__grid">
+                  {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
+                    <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
+                  ))}
+                </div>
+              </>}
+              {onOmit && (
+                <button type="button" className="pdp-omit-link" onClick={() => onOmit(product)}>
+                  {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
+                </button>
+              )}
+            </section>
+          )}
 
 
           {(

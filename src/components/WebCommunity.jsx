@@ -252,7 +252,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const requireAccount = (feature = 'this feature') => onRequireAuth?.(feature);
   const closePage = () => { setPage(null); setDetails(null); setComments([]); setItems([]); setError(''); setEditingProfile(false); setProfileStats(null); };
   const openCompose = (kind = 'post') => {
-    if (!user && ['review', 'playlist', 'recommend'].includes(kind)) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : 'friend recommendations'); return; }
+    // Posting in a health community needs an account (no anonymous guest posts).
+    if (!user) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : kind === 'recommend' ? 'friend recommendations' : 'posting'); return; }
     setCompose(kind); setError('');
   };
   const matchFor = (id) => { const p = productsById.get(String(id)); return p && quizResults ? getProfileMatchPercentForProduct(p, quizResults) : null; };
@@ -427,6 +428,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
 
   const submit = async () => {
     if (busy) return;
+    if (!user) { requireAccount('posting'); return; }
     if (composeEmpty || composeIssue || composeBlocked) return;
     if (compose === 'review' && !productId) { setError('Choose a product to review.'); return; }
     if (compose === 'recommend' && (!productId || !selectedFriendIds.length)) { setError('Choose a product and at least one friend.'); return; }
@@ -466,6 +468,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     } catch (e) { notifyError(e); } finally { setBusy(false); }
   };
   const submitComment = async () => {
+    if (!user) { requireAccount('replying'); return; }
     if (!commentBody.trim() || !details?.id || breaksCommunityRules(commentBody)) return;
     setBusy(true); setError('');
     try {
@@ -639,7 +642,6 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       </>}
       <div className="wc-compose-foot">
         {user && compose !== 'playlist' && compose !== 'recommend' && <Check checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)}>Post anonymously</Check>}
-        {!user && <p className="wc-muted">You’re not signed in, so this posts anonymously.</p>}
         {composeIssue && !composeEmpty && <p className="wc-hint" role="status">{composeIssue}</p>}
         {error && <p className="wc-error" role="alert">{error}</p>}
         <div className="wc-compose-actions">

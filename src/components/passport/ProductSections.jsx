@@ -483,16 +483,45 @@ function firstSentence(text, max = 220) {
   return one.length > max ? `${one.slice(0, max - 1).trimEnd()}…` : one;
 }
 
-export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy }) {
-  if (!(matchPercent > 0) || !glance) return null;
+/* The landing's "MATCHED TO YOU" seal, set around the score. */
+function MatchSeal({ children }) {
+  return (
+    <span className="ay-seal" aria-hidden="true">
+      <svg viewBox="0 0 120 120" className="ay-seal__ring">
+        <defs><path id="ay-seal-path" d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0" /></defs>
+        <text><textPath href="#ay-seal-path" startOffset="0">MATCHED TO YOU ★ MATCHED TO YOU ★ </textPath></text>
+      </svg>
+      <span className="ay-seal__core">{children}</span>
+    </span>
+  );
+}
+
+export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, onFindFit = null }) {
+  if (!glance) return null;
+  if (!(matchPercent > 0)) {
+    // Logged out (or no profile yet): the best moment to say what ayna does.
+    if (!onFindFit) return null;
+    return (
+      <section className="ay-story ay-story--match is-ask" aria-labelledby="ay-match-h">
+        <button type="button" className="ay-match__score" onClick={onFindFit} aria-label="Find out how well this fits you">
+          <MatchSeal><b>?</b></MatchSeal>
+        </button>
+        <div className="ay-match__body">
+          <h2 id="ay-match-h">How well does this fit <em>you?</em></h2>
+          <p className="ay-match__lede">Answer a short quiz and every product shows a match score with the reasons.</p>
+          <div className="ay-match__links"><button type="button" className="ay-match__cta" onClick={onFindFit}>See my matches</button><a href="/how-it-works">How we match</a></div>
+        </div>
+      </section>
+    );
+  }
   const sec = splitSections(glance.sections).find((s) => s.id === 'match');
   const list = sec?.blocks?.find((b) => b.type === 'list');
   const reasons = (list?.items || []).map((r) => String(typeof r === 'string' ? r : r?.text || '')).filter(Boolean).slice(0, 4);
   const lines = reasons.length ? reasons : (fallback ? [fallback] : []);
   return (
     <section className="ay-story ay-story--match" aria-labelledby="ay-match-h">
-      <button type="button" className="ay-match__score" onClick={onShowWhy} aria-label={`${matchPercent}% match. See the breakdown`}>
-        <b>{matchPercent}%</b><span>match</span>
+      <button type="button" className="ay-match__score" onClick={onShowWhy} aria-label={`${matchPercent}% match. See why`}>
+        <MatchSeal><b>{matchPercent}%</b><span>Why? ›</span></MatchSeal>
       </button>
       <div className="ay-match__body">
         <h2 id="ay-match-h">Why it fits <em>you.</em></h2>
@@ -506,8 +535,11 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy })
   );
 }
 
-export function ProductAsk({ productName, onAsk }) {
+const ASK_GENERAL = ['What is it?', 'Who is it for?', 'Any safety concerns?'];
+export function ProductAsk({ productName, onAsk, signedIn = false }) {
   if (!onAsk) return null;
+  // Three at most. Logged out, only questions ayna can answer without a profile.
+  const qs = signedIn ? ASK_QUESTIONS.filter((q) => !/recommend/i.test(q)).slice(0, 3) : ASK_GENERAL;
   return (
     <section className="ay-story ay-story--ask" aria-labelledby="ay-ask-h">
       <div className="ay-ask__head">
@@ -515,7 +547,7 @@ export function ProductAsk({ productName, onAsk }) {
         <h2 id="ay-ask-h">Ask ayna about this product</h2>
       </div>
       <ul className="ay-ask__qs">
-        {ASK_QUESTIONS.map((q) => <li key={q}><button type="button" onClick={() => onAsk(`About ${productName}: ${q}`)}>{q}</button></li>)}
+        {qs.map((q) => <li key={q}><button type="button" onClick={() => onAsk(`About ${productName}: ${q}`)}>{q}</button></li>)}
       </ul>
       <button type="button" className="ay-ask__cta" onClick={() => onAsk(`About ${productName}: `)}>Ask your own question</button>
     </section>

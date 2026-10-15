@@ -97,6 +97,9 @@ import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './components/EcosystemBubbles';
 import EcosystemPreview from './components/v3/EcosystemPreview';
+import { clearPersonalStorage } from './utils/clearPersonalStorage';
+import { toast } from './utils/toast';
+import GlobalToast from './components/v3/GlobalToast';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
@@ -188,6 +191,10 @@ const PATH_TO_VIEW = Object.fromEntries(
 );
 // The redesign previews linked the ecosystem page as /my-ecosystem; keep it working.
 PATH_TO_VIEW['/my-ecosystem'] = 'ecosystem';
+PATH_TO_VIEW['/terms'] = 'terms-of-use';
+PATH_TO_VIEW['/privacy'] = 'privacy-policy';
+PATH_TO_VIEW['/partners'] = 'startups';
+PATH_TO_VIEW['/partner-brands'] = 'startups';
 
 PATH_TO_VIEW['/'] = 'welcome';
 // Old Shop URL keeps working (bookmarks, shared links); it is replaced with /shop on load.
@@ -492,6 +499,7 @@ function App() {
   // Google account with no recorded consent (created straight from Log in): gate until agreed.
   const [consentGateOpen, setConsentGateOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authFeature, setAuthFeature] = useState('');
   const [pendingAction, setPendingAction] = useState(null);
   // Ref mirrors pendingAction so onAuthStateChange (async callback) can read it synchronously
   const pendingActionRef = useRef(null);
@@ -651,7 +659,7 @@ function App() {
     const STATIC_VIEWS = [
       'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles', 'you', 'community',
-      'how-it-works', 'how-we-make-money', 'campus-resources',
+      'how-it-works', 'how-we-make-money', 'campus-resources', 'about', 'contact', 'startups', 'not-found', 'ecosystem',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
@@ -1277,6 +1285,8 @@ function App() {
   // auth event, then land on the top of Home (audit G20, G09).
   const handleSignOut = () => {
     getSupabaseClient()?.auth.signOut();
+    clearPersonalStorage();
+    toast('You’re signed out.');
     setMyProducts({});
     setTrackedProducts({});
     setOmittedProducts({});
@@ -1812,6 +1822,7 @@ function App() {
             >×</button>
           </div>
         )}
+        <GlobalToast />
         <EcosystemGenerationBar intakeFingerprint={ecosystemIntakeFingerprint} onViewEcosystem={handleViewEcosystem} hasEcosystem={ecosystemCount > 0} />
       </div>
       <main data-view={currentView}>
@@ -2003,11 +2014,12 @@ function App() {
             quizResults={quizResults}
             onOpenProduct={handleOpenProduct}
             onOpenArticle={(a) => { setSelectedArticleId(a.id); setCurrentView('articles'); }}
-            onRequireAuth={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
           />
         )}
         {currentView === 'you' && (
           <WebYou
+            onSignIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             user={user}
             quizResults={quizResults}
             myProducts={myProducts}
@@ -2108,6 +2120,7 @@ function App() {
         {currentView === 'articles' && (
           <Suspense fallback={<ViewLoadingFallback />}>
             <Articles
+              userId={user?.id || null}
               initialArticleId={selectedArticleId}
               onArticleChange={(id) => {
                 setSelectedArticleId(id);
@@ -2374,7 +2387,7 @@ function App() {
 
         {currentView !== 'quiz' && currentView !== 'campus-resources' && (
           <ProfileChatbot
-            onRequireAuth={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
             openSignal={askOpenSignal}
             prefill={askPrefill}
             profile={quizResults}
@@ -2398,7 +2411,7 @@ function App() {
             products={ALL_PRODUCTS}
             quizResults={quizResults}
             onOpenProduct={handleOpenProduct}
-            onRequireAuth={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
+            onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
             onDone={() => setComposerSeed(null)}
           />
         )}
@@ -2410,6 +2423,7 @@ function App() {
             // product's own defaults instead of carrying the previous
             // product's state over.
             <ProductModal
+              onStartQuiz={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
               key={displayedProduct.id}
               product={displayedProduct}
               isTracked={!!trackedProducts[displayedProduct.id]}
@@ -2632,7 +2646,8 @@ function App() {
             // Everywhere else: sign in, or "Build your ecosystem" to start the quiz.
             allowSignup={pendingAction === 'quiz-complete'}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
-            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'ecosystem' ? 'ecosystem' : undefined}
+            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : pendingAction === 'saved' ? 'saved' : pendingAction === 'ecosystem' ? 'ecosystem' : pendingAction === 'feature' ? 'feature' : undefined}
+            feature={authFeature}
             onBeforeOAuthRedirect={() => {
               markOAuthSource(pendingAction === 'quiz-complete' ? 'save' : 'signin');
               try {

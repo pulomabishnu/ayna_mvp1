@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getSupabaseClient, setRememberMe } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { CONSENT_VERSION, stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
@@ -7,7 +7,7 @@ import '../styles/audit-qya.css';
 import './AuthGate.css';
 
 // One short line per tab (audit AU01).
-const SUBTITLES = { signup: 'Make your shop yours.', signin: 'Welcome back.' };
+const SUBTITLES = { signup: 'Make your shop yours.', signin: 'Sign in to your ayna account.' };
 
 /** Visible label above an input, with its error underneath (audit AU03). */
 function Field({ id, label, error, children }) {
@@ -62,7 +62,7 @@ function consentMetadata() {
   };
 }
 
-export default function AuthGate({ isModal = false, embedded = false, onSkip, context, onBeforeOAuthRedirect, onStartEcosystem, initialMode, summary = null, allowSignup = false, onAuthenticated }) {
+export default function AuthGate({ isModal = false, embedded = false, onSkip, context, feature = '', onBeforeOAuthRedirect, onStartEcosystem, initialMode, summary = null, allowSignup = false, onAuthenticated }) {
   useEscapeToClose(isModal, onSkip);
   // 'signup' | 'signin'. An account can only be created in the save step after
   // the quiz (allowSignup). Every other entry point is sign-in only, with
@@ -82,7 +82,8 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   // Remember me (sign-in): controls ONLY where the Supabase session token is
   // stored (localStorage vs sessionStorage, src/utils/supabaseClient.js).
   // Defaults on. Never deletes any account data.
-  const [rememberMe, setRememberMeChecked] = useState(true);
+  // Off by default: on a shared or library computer a health app should not stay signed in.
+  const [rememberMe, setRememberMeChecked] = useState(false);
   // Required "Where did you hear about us?" (saved in user metadata).
   const [heardAbout, setHeardAbout] = useState('');
   const [heardOther, setHeardOther] = useState('');
@@ -123,8 +124,17 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const CONTEXT_COPY = {
     saved: { title: 'Looking for your favorites?', line: 'Sign in to see the products you saved, all in one place.' },
     ecosystem: { title: 'Your ecosystem lives here', line: 'Sign in to see your shelves, or build one with a short quiz.' },
+    feature: { title: feature ? `An account unlocks ${feature}` : 'This needs an account', line: 'Take the short quiz to start, or sign in if you already have an account.' },
+    login: { title: 'Sign in', line: 'Welcome to ayna. New here? Start with the quiz.' },
   };
   const ctxCopy = !isSignup ? CONTEXT_COPY[context] : null;
+  const cardRef = useRef(null);
+  useEffect(() => {
+    if (!isModal) return undefined;
+    const prev = document.activeElement;
+    const t = window.setTimeout(() => cardRef.current?.querySelector('input, button')?.focus(), 30);
+    return () => { window.clearTimeout(t); try { prev?.focus?.(); } catch { /* element gone */ } };
+  }, [isModal]);
   const subtitle = isSignup && summary ? 'Save your matches. Create an account to keep them.' : (ctxCopy ? ctxCopy.line : SUBTITLES[mode]);
 
   // Password reset (2026-09-22 audit): the emailed link lands on
@@ -517,7 +527,20 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       style={overlayStyle}
       onClick={isModal && onSkip ? (e) => { if (e.target === e.currentTarget) onSkip(); } : undefined}
     >
-      <div className="ay-auth-card" style={styles.card}>
+      <div
+        className="ay-auth-card"
+        style={styles.card}
+        ref={cardRef}
+        {...(isModal ? { role: 'dialog', 'aria-modal': 'true', 'aria-label': ctxCopy ? ctxCopy.title : 'Sign in to ayna' } : {})}
+        onKeyDown={isModal ? (e) => {
+          if (e.key !== 'Tab' || !cardRef.current) return;
+          const f = [...cardRef.current.querySelectorAll('button, a[href], input, select, textarea')].filter((el) => !el.disabled && el.offsetParent !== null);
+          if (!f.length) return;
+          const first = f[0]; const last = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        } : undefined}
+      >
         {isModal && onSkip && (
           <button type="button" className="ay-auth-close" onClick={onSkip} style={styles.closeBtn} aria-label="Close">×</button>
         )}
@@ -525,6 +548,15 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         <div className="ay-auth-logo" style={styles.logo}>ayna</div>
         {ctxCopy && <h2 className="ay-auth-context-title">{ctxCopy.title}</h2>}
         <p className="ay-auth-tagline" style={styles.tagline}>{subtitle}</p>
+        {!isSignup && !allowSignup && onStartEcosystem && (
+          <div className="ay-auth-doors">
+            <button type="button" className="ay-auth-doors__new" onClick={onStartEcosystem}>
+              <b>New here? See my matches</b>
+              <span>A short quiz, then products matched to you</span>
+            </button>
+            <p className="ay-auth-doors__or">Have an account? Sign in below</p>
+          </div>
+        )}
 
         {!supabase && (
           // Without this, a missing/blank .env.local silently disabled the
@@ -926,11 +958,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           </p>
         )}
 
-        {!isSignup && !allowSignup && onStartEcosystem && (
-          <button type="button" className="ay-auth-new" onClick={onStartEcosystem}>
-            Don’t have an account? <b>Build your ecosystem</b>
-          </button>
-        )}
         {!isSignup && (
           <p style={styles.fine}>New to ayna? Continuing with Google or Apple creates your account. We&apos;ll ask you to confirm a few statements first.</p>
         )}
