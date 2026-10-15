@@ -870,18 +870,6 @@ export default function ProductModal({
               return quick.length > 0 && <ul className="pdp-quick">{quick.map((t) => <li key={t}>{t}</li>)}</ul>;
             })()}
 
-            {glance?.alert && <SafetyFlag />}
-
-            <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} />
-            {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
-              <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
-            )}
-            {onOmit && (
-              <button type="button" className="pdp-omit-link pdp-omit-link--match" onClick={() => onOmit(product)}>
-                {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
-              </button>
-            )}
-
             <section className="ay-story ay-story--buy" aria-labelledby="ay-buy-h">
               <h2 id="ay-buy-h">Buy</h2>
               {(() => {
@@ -908,11 +896,20 @@ export default function ProductModal({
               {actionButtons}
             </section>
 
+            {glance?.alert && <SafetyFlag />}
 
-            {/* The team's curated evidence, word for word, with each tab's links under it. */}
-            <ProductEvidence product={product} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenProduct={onOpenProduct} />
+            <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} />
+            {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
+              <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
+            )}
+            {onOmit && (
+              <button type="button" className="pdp-omit-link pdp-omit-link--match" onClick={() => onOmit(product)}>
+                {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
+              </button>
+            )}
 
-            <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
+
+
 
             {/* "Good to know" is gone: its chips repeated FSA/HSA and listed claims the page says it hasn't checked. */}
 
@@ -920,6 +917,11 @@ export default function ProductModal({
         </div>
 
         <div className="pdp-below pdp-below--glance">
+          {/* Full width, one reading column: the evidence tabs, then Ask ayna. */}
+          <div className="pdp-read">
+            <ProductEvidence product={product} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenProduct={onOpenProduct} />
+            <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
+          </div>
           <ProductMore glance={glance} extras={sectionExtras} onXref={openProductByName} />
             {onCommunityAction && (
             <section className="pdp-community-actions" aria-labelledby="pdp-community-h">

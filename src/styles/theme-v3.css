@@ -4060,3 +4060,31 @@ html body .app-container[data-theme='brand-dark'] .ay-ev__tab.is-ink.is-on { bac
 html body .app-container[data-theme='brand-dark'] .ay-ev__tab.is-ink.is-on b { background: #3e2723; color: #ffedac; }
 html body .app-container[data-theme='brand-dark'] .ay-ev__tab:not(.is-on) b { background: #ffedac; color: #3e2723; }
 html body .app-container .ay-ev__tab { min-height: 48px !important; line-height: 1.15 !important; }
+
+/* Product page, easy to read: the photo stays put (no sticky column), Buy
+   sits right under the price, and the evidence tabs, Ask ayna and the rest
+   run full width in one reading column. */
+html body .app-container .pdp-head .pdp-head__media.pdp-head__media,
+html body .app-container .pdp-gallery.pdp-gallery,
+html body .app-container:not([data-theme='dark']) .pdp-head.ay3-simple .pdp-head__media { position: static !important; top: auto !important; }
+html body .app-container .ay-story--buy { display: flex !important; flex-direction: column; margin-top: 16px !important; }
+html body .app-container .ay-story--buy > #ay-buy-h { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+html body .app-container .ay-story--buy > .pdp-actions { order: -1; margin: 0 0 14px !important; }
+html body .app-container .ay-story--buy > .ay-buy__facts { order: 1; }
+html body .app-container .ay-story--buy > .ay-buy__cautions { order: 2; }
+html body .app-container .pdp-read { max-width: 860px; margin: 8px auto 40px; padding: 0 16px; }
+html body .app-container .pdp-read .ay-ev { margin-top: 24px; }
+html body .app-container .pdp-read .ay-ev__tabs { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+html body .app-container .pdp-read .ay-ev__body { font-size: 18px !important; line-height: 1.7 !important; max-width: 70ch; }
+html body .app-container .pdp-read .ay-ev__panel { padding: 28px 32px !important; }
+@media (max-width: 760px) {
+  html body .app-container .pdp-read .ay-ev__tabs { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  html body .app-container .pdp-read .ay-ev__panel { padding: 20px 16px !important; }
+  html body .app-container .pdp-read .ay-ev__body { font-size: 17px !important; }
+}
+html body .app-container .pdp-below--glance > .ay-story--more { max-width: 860px; margin-left: auto; margin-right: auto; }
+html body .app-container .pdp-below > .pdp-read.pdp-read { max-width: 860px !important; width: 100%; margin-left: auto !important; margin-right: auto !important; padding: 0 !important; box-sizing: border-box; }
+/* Links read as one list, top to bottom, not a grid of uneven boxes. */
+html body .app-container .ay-ev__links ul { grid-template-columns: minmax(0, 1fr) !important; gap: 8px !important; }
+html body .app-container .ay-ev__links li a { min-height: 0; }
+html body .app-container .ay-ev__links li { padding: 12px 16px; }
