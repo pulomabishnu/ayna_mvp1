@@ -13,7 +13,6 @@ const flat = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
 export default function ProductDetails({ product, glance, extraRows = [], safety = null }) {
   if (!product || !glance) return null;
-  const what = glance.what || {};
   const who = glance.who || { items: [], helps: [] };
   const how = product.howToUse?.steps?.length ? product.howToUse : null;
   const ingredients = noDash(meaningful(product.ingredients));
@@ -29,7 +28,6 @@ export default function ProductDetails({ product, glance, extraRows = [], safety
         <summary><h2>Product details</h2><span className="ay-pd__chev" aria-hidden="true">+</span></summary>
         <div className="ay-pd__body">
           {safety}
-          {what.text && <div className="ay-pd__block"><h3>What it is</h3><p>{what.text}</p>{what.detail && <p>{what.detail}</p>}</div>}
           {(who.items.length > 0 || who.helps.length > 0) && <div className="ay-pd__block"><h3>Who it’s for</h3>
             {who.items.length > 0 ? <ul>{who.items.map((t) => <li key={t}>{t}</li>)}</ul> : <p>{who.helps.join(', ')}</p>}
           </div>}

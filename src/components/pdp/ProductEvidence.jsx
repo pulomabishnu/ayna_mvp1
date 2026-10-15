@@ -123,6 +123,9 @@ function useEvidence(product, aynaData) {
     const safetyLinks = collect((product.safetyNoteSources || []).map((s) => ({ ...s, title: s.label })), brand);
     return {
       brand, independent, pp,
+      aynaSummary: noDash(meaningful(String(product.summary || '').replace(/\s*\(see [^()]+\)/i, ''))),
+      aynaDetail: noDash(meaningful(product.recommendationWhyDetail)),
+      evidenceStrength: noDash(meaningful(product.evidenceStrength)),
       clinician: noDash(meaningful(product.doctorOpinion)),
       clinicianShort: noDash(meaningful(product.doctorOpinionShort)),
       attribution: noDash(meaningful(product.clinicianAttribution)),
@@ -149,7 +152,7 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
   const [active, setActive] = useState('clinical');
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return undefined;
-    const els = ['clinical', 'science', 'reviews'].map((id) => document.getElementById(`ay-sec-${id}`)).filter(Boolean);
+    const els = ['summary', 'clinical', 'science', 'reviews'].map((id) => document.getElementById(`ay-sec-${id}`)).filter(Boolean);
     const io = new IntersectionObserver((entries) => {
       const vis = entries.filter((e) => e.isIntersecting).sort((x, y) => x.boundingClientRect.top - y.boundingClientRect.top)[0];
       if (vis) setActive(vis.target.id.replace('ay-sec-', ''));
@@ -159,7 +162,7 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
   }, [d]);
   if (!d) return null;
 
-  const jumps = [['clinical', 'Clinical opinion', d.clinicalLinks.length], ['science', 'Scientific literature', d.studies.length + d.ingredients.length], ['reviews', 'Reviews', d.community.length]];
+  const jumps = [['summary', 'ayna summary', 0], ['clinical', 'Clinical opinion', d.clinicalLinks.length], ['science', 'Scientific literature', d.studies.length + d.ingredients.length], ['reviews', 'Reviews', d.community.length]];
   const jump = (id) => document.getElementById(`ay-sec-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   const shownIngredients = allIngredients ? d.ingredients : d.ingredients.slice(0, 3);
   const noReviews = !d.communityText && !d.community.length && !(ratingCount > 0) && !d.memberReviews.length;
@@ -171,6 +174,12 @@ export default function ProductEvidence({ product, aynaData = null, aynaRating =
         {jumps.map(([id, label]) => <button key={id} type="button" className={`is-${id}${active === id ? ' is-on' : ''}`} aria-current={active === id ? 'true' : undefined} onClick={() => jump(id)}>{label}</button>)}
       </nav>
       <div className="ay-ev2__main">
+
+      <section id="ay-sec-summary" className="ay-ev2__sec" aria-labelledby="ay-summary-h">
+        <header className="ay-ev2__head"><h2 id="ay-summary-h">ayna summary</h2></header>
+        {d.aynaSummary ? <ShortThenFull full={[d.aynaSummary, d.aynaDetail].filter(Boolean).join('\n\n')} /> : <p className="ay-ev__empty">No summary on file yet.</p>}
+        {d.evidenceStrength && <p className="ay-ev__by">Evidence level on file: {d.evidenceStrength}</p>}
+      </section>
 
       <section id="ay-sec-clinical" className="ay-ev2__sec" aria-labelledby="ay-clinical-h">
         <header className="ay-ev2__head">
