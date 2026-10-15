@@ -17,6 +17,11 @@ describe('summarizeCareNotes', () => {
     expect(lines).toHaveLength(2);
     expect(lines[0]).toBe('Severe period pain is worth raising with a clinician.');
   });
+  it('says which answers a note comes from on the website', () => {
+    const notes = [{ code: 'severe_pain', text: 'x' }, { code: 'very_heavy_flow', text: 'y' }];
+    expect(summarizeCareNotes({ notes: [notes[0]] }, { sayWhy: true })).toEqual(['You mentioned severe period pain. That is worth raising with a clinician.']);
+    expect(summarizeCareNotes({ notes }, { sayWhy: true })).toEqual(['You mentioned severe period pain and very heavy periods. Both are worth raising with a clinician.']);
+  });
   it('handles empty input', () => {
     expect(summarizeCareNotes(null)).toEqual([]);
     expect(firstCareLink(null)).toBeNull();

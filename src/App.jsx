@@ -2112,6 +2112,7 @@ function App() {
             user={user}
             products={ALL_PRODUCTS}
             quizResults={quizResults}
+            myProducts={myProducts}
             onOpenProduct={handleOpenProduct}
             onOpenArticle={(a) => { setSelectedArticleId(a.id); setCurrentView('articles'); }}
             onRequireAuth={(feature) => { setAuthFeature(typeof feature === 'string' ? feature : ''); setPendingAction(typeof feature === 'string' && feature ? 'feature' : 'login'); pendingActionRef.current = typeof feature === 'string' && feature ? 'feature' : 'login'; setShowAuthModal(true); }}
@@ -2684,6 +2685,8 @@ function App() {
           onViewPrivacyPolicy={() => setCurrentView('privacy-policy')}
           onViewTermsOfUse={() => setCurrentView('terms-of-use')}
         onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
+        onViewEcosystem={() => handleViewEcosystem()}
+        onViewCommunity={() => setCurrentView('community')}
       />
       {/* Floating Ask pill comes after the page and footer in the DOM, so it is the last stop when tabbing, not the first. */}
       {currentView !== 'quiz' && currentView !== 'campus-resources' && (

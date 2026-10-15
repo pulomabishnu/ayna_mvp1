@@ -104,7 +104,7 @@ export default function ShelfRows({ groups, onOpenProduct, onToggleProduct, onAd
           <section
             key={group.key}
             id={`eco-area-${group.key}`}
-            className={`ay-shelf${dragOver === group.key ? ' is-drop' : ''}`}
+            className={`ay-shelf${group.products.length <= 1 ? ' is-small' : ''}${dragOver === group.key ? ' is-drop' : ''}`}
             style={paint ? { '--shelf-tab': paint.bg } : undefined}
             aria-labelledby={`eco-area-title-${group.key}`}
             onDragOver={(e) => { if (drag.current) { e.preventDefault(); if (dragOver !== group.key) setDragOver(group.key); } }}

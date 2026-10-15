@@ -94,6 +94,8 @@ export default function SiteFooter({
   onViewPrivacyPolicy,
   onViewTermsOfUse,
   onViewHowWeMakeMoney,
+  onViewEcosystem,
+  onViewCommunity,
 }) {
   // The footer is on every website page: capture ?ref invite codes here
   // (idempotent, a no-op without Supabase).
@@ -112,10 +114,12 @@ export default function SiteFooter({
         </div>
 
         <FooterColumn title="Explore">
-          <a className="ay-footer-link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How It Works</a>
+          <a className="ay-footer-link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How it works</a>
           <a className="ay-footer-link" href="/shop" onClick={(e) => footerGo(e, () => onViewDiscovery?.(''))}>Shop</a>
+          <a className="ay-footer-link" href="/ecosystem" onClick={(e) => footerGo(e, onViewEcosystem)}>My ecosystem</a>
           <a className="ay-footer-link" href="/library" onClick={(e) => footerGo(e, onViewArticles)}>Library</a>
-          <a className="ay-footer-link" href="/campus-resources">Campus Resources</a>
+          <a className="ay-footer-link" href="/community" onClick={(e) => footerGo(e, onViewCommunity)}>Community</a>
+          <a className="ay-footer-link" href="/campus-resources">Campus resources</a>
         </FooterColumn>
 
         <FooterColumn title="Company">
@@ -125,7 +129,7 @@ export default function SiteFooter({
 
         <FooterColumn title="Get in touch">
           <a className="ay-footer-link" href="/contact" onClick={(e) => footerGo(e, onViewContact)}>Contact</a>
-          <a className="ay-footer-link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.co" target="_blank" rel="noreferrer">Give us Feedback <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
+          <a className="ay-footer-link" href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.co" target="_blank" rel="noreferrer">Give us feedback <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
           <a className="ay-footer-link" href="https://www.instagram.com/ayna.health/" target="_blank" rel="noreferrer">Instagram <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
           <a className="ay-footer-link" href="https://www.tiktok.com/@aynahealth" target="_blank" rel="noreferrer">TikTok <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span></a>
         </FooterColumn>
@@ -142,10 +146,10 @@ export default function SiteFooter({
           qualified healthcare provider for medical decisions. We do not sell your personal health information.
         </p>
         <nav className="ay-footer-legal__links" aria-label="Legal">
-          <a className="ay-footer-legal__link" href="/privacy-policy" onClick={(e) => footerGo(e, onViewPrivacyPolicy)}>Privacy Policy</a>
-          <a className="ay-footer-legal__link" href="/consumer-health-data.html">Consumer Health Data Privacy</a>
-          <a className="ay-footer-legal__link" href="/terms-of-use" onClick={(e) => footerGo(e, onViewTermsOfUse)}>Terms of Use</a>
-          <a className="ay-footer-legal__link" href="/how-we-make-money" onClick={(e) => footerGo(e, onViewHowWeMakeMoney)}>How We Make Money</a>
+          <a className="ay-footer-legal__link" href="/privacy-policy" onClick={(e) => footerGo(e, onViewPrivacyPolicy)}>Privacy policy</a>
+          <a className="ay-footer-legal__link" href="/consumer-health-data.html">Consumer health data privacy</a>
+          <a className="ay-footer-legal__link" href="/terms-of-use" onClick={(e) => footerGo(e, onViewTermsOfUse)}>Terms of use</a>
+          <a className="ay-footer-legal__link" href="/how-we-make-money" onClick={(e) => footerGo(e, onViewHowWeMakeMoney)}>How we make money</a>
           <AnalyticsToggle />
           <MotionToggle />
         </nav>

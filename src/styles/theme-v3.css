@@ -3758,3 +3758,93 @@ html body .app-container .wyou-invite__row { display: flex; gap: 8px; margin-top
 html body .app-container .wyou-invite__row input { flex: 1; min-width: 0; min-height: 44px; padding: 0 14px; border: 2px solid #3e2723; border-radius: 999px; background: #ffedac; color: #3e2723; font: 400 14px/1 'DM Sans', system-ui, sans-serif; }
 /* You: the two-line quick action is a rectangle (text was 6px from a pill's curve). */
 html body .app-container .wyou .wyou-quickbtn { border-radius: 12px !important; padding: 12px 16px !important; text-align: left; }
+
+/* Pass 5 Home: footer shares the page gutter; "See all in Shop" sits left under the grid. */
+@media (min-width: 900px) {
+  .app-container .site-footer.ay-footer > * { padding-left: 48px !important; padding-right: 48px !important; }
+}
+.app-container .lx-shop__foot { justify-content: flex-start !important; text-align: left !important; }
+
+/* Pass 5 Shop: arrows only where they can move, a tighter pink header, a
+   search box sized for a sentence, straight product grids, brands that wrap,
+   and "Price at retailer" quieter than a real price. */
+html body .app-container .ay-catrow:has(.ayna-browse__categories[data-fade-start='0']) .ay-catrow__arrow.is-back { display: none; }
+html body .app-container .ay-catrow:has(.ayna-browse__categories[data-fade-end='0']) .ay-catrow__arrow.is-next { visibility: hidden; }
+html body .app-container:not([data-theme='dark']) .ay3-shophero.ay3-shophero, html body .app-container .ay3-shophero.ay3-shophero { padding-bottom: 4px !important; }
+html body .app-container .ay3-shophero .ayna-browse__search { max-width: 640px; }
+html body .app-container .ayna-browse__grid .ayna-browse-card,
+html body .app-container .ayna-browse__grid .ayna-browse-card:hover,
+html body .app-container .ayna-browse__grid > * { rotate: 0deg !important; }
+html body .app-container .ayna-browse__grid .ayna-discover-card.ayna-browse-card { --tilt: 0deg !important; transform: none !important; }
+html body .app-container .ayna-browse__grid .ayna-browse-card:hover { transform: translate(-2px, -2px) !important; }
+html body .app-container .ayna-browse-card__labels .ayna-discover-card__category { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; }
+html body .app-container .ayna-browse-card__labels { flex-wrap: wrap; }
+html body .app-container .ayna-discover-card__price.is-unknown { font-weight: 500 !important; font-size: 14px !important; color: #3e2723 !important; opacity: .85; }
+
+/* Pass 5 Ecosystem: one-product shelves sit two to a row instead of a
+   card and a screen of blank cream; "Add a shelf" gets its full border;
+   the care note reads left like the rest of the page. */
+@media (min-width: 900px) {
+  html body .app-container .ay-shelves { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
+  html body .app-container .ay-shelves > :not(.ay-shelf.is-small) { grid-column: 1 / -1; }
+}
+html body .app-container:not([data-theme='dark']) .eco3-addrow.eco3-addrow { margin: 0 0 var(--eco-gap, 48px) !important; border: 2px dashed #3e2723 !important; border-radius: 14px !important; }
+html body .app-container[data-theme='brand-dark'] .eco3-addrow.eco3-addrow { border: 2px dashed #ffedac !important; border-radius: 14px !important; margin-top: 0 !important; }
+html body .app-container .ay-carenote.eco3-carenote2 { margin-left: 0 !important; margin-right: auto !important; text-align: left !important; justify-content: flex-start !important; }
+html body .app-container .ay-carenote.eco3-carenote2 .ay-carenote__body { text-align: left !important; }
+
+/* Pass 5 Library: the swash sits under the descenders; the meta row shares one
+   line box; progress lives beside "Keep reading"; the "for you" count says
+   where the rest are; the A to Z column stays in view. */
+html body .app-container:not([data-theme='dark']) .ay-wiki-top h1 em::after { bottom: -.16em !important; height: .24em !important; }
+html body .app-container .is-wiki .ay-lib-card__foot { align-items: center !important; }
+html body .app-container .is-wiki .ay-lib-card__foot::before,
+html body .app-container .is-wiki .ay-lib-card__foot > *,
+html body .app-container .is-wiki .ay-lib-card__foot .ay-lib-tag { display: inline-flex !important; align-items: center; height: 20px; line-height: 20px !important; padding-top: 0 !important; padding-bottom: 0 !important; vertical-align: middle; }
+html body .app-container .is-wiki .ay-lib-card__foot:not([data-min])::before { display: none !important; }
+html body .app-container .ay-wiki-sec h2 .ay-lib-total.is-inline { display: inline-flex; align-items: center; gap: 10px; margin-left: auto; font: 600 14px/1 'DM Sans', sans-serif; }
+html body .app-container .ay-wiki-sec h2 .ay-lib-total.is-inline .ay-lib-bar { width: 120px; }
+html body .app-container .ay-lib-more-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 4px 0 28px; }
+html body .app-container .ay-lib-more-row small { font: 400 14px/1.4 'DM Sans', sans-serif; color: inherit; opacity: .85; }
+html body .app-container .ay-lib-more-row .ay-lib-more { margin: 0 !important; }
+@media (min-width: 900px) { html body .app-container .ay3-libgrid > .ay3-libside.ay3-libside { position: sticky !important; top: 160px !important; align-self: start; max-height: calc(100vh - 180px) !important; overflow: auto !important; } }
+
+/* Pass 5 Article: a 3px reading line under the header instead of a second
+   sticky bar; Related reads in its own column with a real gap; products sit
+   under the read, outside the article card. */
+html body .app-container .ay-lib-reading > .ay-lib-line { grid-column: 1 / -1; grid-row: 1; position: sticky; top: var(--ay-lib-sticky-top, 78px); z-index: 30; height: 3px; margin: 0 calc(50% - 50vw); background: rgba(62, 39, 35, .15); }
+html body .app-container .ay-lib-reading > .ay-lib-line > span { display: block; height: 100%; background: #3e2723; transition: width .15s linear; }
+html body .app-container[data-theme='brand-dark'] .ay-lib-reading > .ay-lib-line { background: rgba(255, 237, 172, .2); }
+html body .app-container[data-theme='brand-dark'] .ay-lib-reading > .ay-lib-line > span { background: #ffedac; }
+html body .app-container .ay-lib-reading > .ay-lib-backlink { grid-column: 1; grid-row: 2; justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin: 16px 0 8px; padding: 0 16px; border: 2px solid currentColor; border-radius: 99px; background: transparent; color: inherit; font: 700 14px/1 'DM Sans', sans-serif; cursor: pointer; }
+html body .app-container .ay-lib-reading > article { grid-column: 1; grid-row: 3; }
+html body .app-container .ay-lib-reading > .ay3-infobox { grid-column: 2; grid-row: 3; margin-top: 0 !important; top: 100px !important; }
+html body .app-container .ay-lib-reading > .ay-lib-products-wrap { grid-column: 1; grid-row: 4; margin-top: 32px; }
+html body .app-container .ay-lib-reading > .ay-lib-products-wrap:empty { display: none; }
+html body .app-container .ay-lib-products__disc { flex-basis: 100%; order: 3; margin: 4px 0 0; font: 400 13px/1.4 'DM Sans', sans-serif; opacity: .85; }
+@media (max-width: 1100px) {
+  html body .app-container .ay-lib-reading > .ay3-infobox { grid-column: 1; grid-row: 5; }
+}
+html body .app-container .ay-lib-products__head { flex-wrap: wrap; }
+
+/* Pass 5 Community: profile counts are buttons; the bell says what it is and
+   how many; composer kinds look tappable; the post menu opens to the left so
+   it never covers the card's actions; "+ Tag a product" is a small link. */
+html body .app-container .wc-prof-counts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+html body .app-container .wc-prof-counts > li > button { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 88px; min-height: 44px; padding: 8px 14px; border: 2px solid #3e2723; border-radius: 14px; background: transparent; color: #3e2723; cursor: pointer; text-align: left; }
+html body .app-container .wc-prof-counts > li > button:hover { background: #f7badd; }
+html body .app-container .wc-prof-counts strong { font: 400 22px/1 'DM Serif Display', serif; }
+html body .app-container .wc-prof-counts span { font: 600 13px/1 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; }
+html body .app-container[data-theme='brand-dark'] .wc-prof-counts > li > button { border-color: #ffedac; color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .wc-prof-counts > li > button:hover { background: rgba(247, 186, 221, .2); }
+html body .app-container .wc3 .wc-bell.wc-bell { width: auto; min-width: 44px; height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px 0 12px; border-radius: 99px; }
+html body .app-container .wc-bell-label { font: 700 14px/1 'DM Sans', sans-serif; }
+html body .app-container .wc3 .wc-bell-dot.is-count { top: -6px; right: -6px; width: auto; min-width: 20px; height: 20px; padding: 0 5px; display: grid; place-items: center; background: #f7badd; color: #3e2723; font: 700 11px/1 'DM Sans', sans-serif; border-radius: 99px; }
+html body .app-container .wc3 .wc-composer-kinds button { background: #ffedac !important; box-shadow: 2px 2px 0 #3e2723 !important; cursor: pointer; }
+html body .app-container .wc3 .wc-composer-kinds button:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #3e2723 !important; }
+html body .app-container[data-theme='brand-dark'] .wc3 .wc-composer-kinds button { background: #3e2723 !important; color: #ffedac !important; border-color: #ffedac !important; box-shadow: 2px 2px 0 #ffedac !important; }
+html body .app-container .wc3 .wc-menu-wrap { position: relative; }
+html body .app-container .wc3 .wc-menu { top: 0 !important; right: calc(100% + 6px) !important; }
+html body .app-container .wc-tag-link { align-self: flex-start; min-height: 32px; padding: 0; border: 0; background: none; color: inherit; font: 600 13px/1 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+html body .app-container .wc-inline-name { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+html body .app-container .wc-review-own { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 0 14px; padding: 0; list-style: none; }

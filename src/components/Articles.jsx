@@ -243,6 +243,7 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
     <section className="ay-lib-products" aria-labelledby="ay-lib-products-h">
       <div className="ay-lib-products__head">
         <h3 id="ay-lib-products-h">Products for this topic</h3>
+        <p className="ay-lib-products__disc">Products, not medical advice. Some links earn ayna a commission. It never changes what we show.</p>
         <div className="ay-lib-products__nav">
           <button type="button" onClick={() => page(-1)} disabled={edge.start} aria-label="Previous products">←</button>
           <button type="button" onClick={() => page(1)} disabled={edge.end} aria-label="More products">→</button>
@@ -267,9 +268,9 @@ const Chevron = () => (
   <svg className="ay-lib-row__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
 );
 
-function CareRow({ title, children }) {
+function CareRow({ title, children, open = false }) {
   return (
-    <details className="ay-lib-row">
+    <details className="ay-lib-row" open={open}>
       <summary><span>{title}</span><Chevron /></summary>
       <div className="ay-lib-row__body">{children}</div>
     </details>
@@ -281,13 +282,14 @@ const ExtLink = ({ href, children }) => (
 );
 
 function TelehealthSuggestions({ articleId, onOpenProduct }) {
-  const platforms = useMemo(() => getRelevantTelehealth(articleId), [articleId]);
+  // Planned Parenthood already has its own row; don't list it twice.
+  const platforms = useMemo(() => getRelevantTelehealth(articleId).filter((t) => !/planned parenthood/i.test(t.name || '')), [articleId]);
 
   return (
     <section className="ay-lib-care" aria-labelledby="ay-lib-care-h">
       <h2 id="ay-lib-care-h" className="ay-lib-care__h">Can&apos;t reach your doctor?</h2>
 
-      <CareRow title="Nurse line (insurer)">
+      <CareRow title="Nurse line (insurer)" open>
         <p>Many plans offer a 24/7 nurse line for symptom guidance and when to seek care. Check your insurance card or member portal for the number.</p>
       </CareRow>
 
@@ -302,7 +304,6 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
       <CareRow title="Find clinics near you (by zip)">
         <p>Search for low-cost and sliding-scale health centers by zip code.</p>
         <ul>
-          <li><ExtLink href="https://www.plannedparenthood.org/health-center">Planned Parenthood locations</ExtLink></li>
           <li><ExtLink href="https://findahealthcenter.hrsa.gov/">HRSA health centers by zip</ExtLink></li>
         </ul>
       </CareRow>
@@ -755,7 +756,7 @@ function renderArticleCard(art, setSelectedId, progress = 0) {
       <ArticleCover art={art} />
       <h3>{art.title}</h3>
       <p>{art.teaser}</p>
-      <span className="ay-lib-card__foot" data-min={`${minutesFor(art)} min read ·`}>
+      <span className="ay-lib-card__foot" data-min={minutesFor(art) > 3 ? `${minutesFor(art)} min read ·` : undefined}>
         <span className="ay-lib-card__tags">
           <span className="ay-lib-tag">{sectionOf(art.id)?.label || 'Health'}</span>
         </span>
@@ -980,7 +981,9 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const open = (id) => setSelectedId(id);
   const card = (a) => <li key={a.id}>{renderArticleCard(a, open, progressOf(a))}</li>;
   const shelf = (id, label, items) => items.length > 0 && <div key={id} id={`lib-${id}`} className="ay-web-lib-cat ay-wiki-sec">
-    <h2><span>{label}</span><small>{items.length} read{items.length === 1 ? '' : 's'}</small></h2>
+    <h2><span>{label}</span>{id === 'keep' && finished > 0
+      ? <span className="ay-lib-total is-inline" aria-label={`${finished} of ${ARTICLES.length} finished`}><span>{finished}/{ARTICLES.length} read</span><ProgressBar value={finished / ARTICLES.length} /></span>
+      : <small>{items.length} read{items.length === 1 ? '' : 's'}</small>}</h2>
     <ul className="ay-web-lib-grid ay-lib-shelf">{items.map(card)}</ul>
   </div>;
 
@@ -990,13 +993,11 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
     const label = done ? 'Finished' : scrolled > 0.02 ? `${Math.round(scrolled * 100)}% read` : `${minutesFor(selected)} min read`;
     return (
       <section className="container animate-fade-in-up ay-web-library ay-lib-reading">
-        <div className="ay-lib-status" ref={statusRef} role="status" aria-live="polite">
-          <div className="ay-lib-status__in">
-            <button type="button" onClick={closeRead}><span aria-hidden="true">←</span> Library</button>
-            <ProgressBar value={done ? 1 : scrolled} className="ay-lib-bar--wide" />
-            <small>{label}</small>
-          </div>
+        {/* A thin reading line under the header, not a second sticky bar. */}
+        <div className="ay-lib-line" ref={statusRef} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((done ? 1 : scrolled) * 100)} aria-valuetext={label}>
+          <span style={{ width: `${Math.round((done ? 1 : scrolled) * 100)}%` }} />
         </div>
+        <button type="button" className="ay-lib-backlink" onClick={closeRead}><span aria-hidden="true">←</span> Library</button>
         <article key={selected.id} className={`ay-web-lib-article ay3-paper${closing ? ' is-crumpling' : ''}`}>
           <h1 className="ay-article-title">{selected.title}</h1>
           <div className="ay-lib-article__tags">
@@ -1010,11 +1011,14 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           </div>
 
           <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
-          <ArticleProducts articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
           {next && <button type="button" className="ay-web-next-read" onClick={() => open(next.article.id)}>
             <small>{next.label}</small><strong>{next.article.title}</strong><span aria-hidden="true">→</span>
           </button>}
         </article>
+        {/* Shopping sits outside the medical read, labelled as products. */}
+        <div className="ay-lib-products-wrap">
+          <ArticleProducts articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
+        </div>
         <aside className={`ay3-infobox${closing ? ' is-crumpling' : ''}`} aria-label="About this read">
                     {(() => {
             const related = ARTICLES.filter((a) => a.id !== selected.id && (a.tags || []).some((t) => (selected.tags || []).includes(t))).slice(0, 4);
@@ -1057,7 +1061,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         // Say why these are "for you", in her words from the quiz.
         const said = [...new Set([...(quizResults?.fullHealthIntake?.supportSelections || []), ...(quizResults?.frustrations || [])].map((x) => String(x).trim()).filter(Boolean))].slice(0, 3);
         return said.length && forYou.length ? <p className="ay-lib-foryou-why">Based on what you told us: {said.map((x) => x.toLowerCase()).join(', ')}.</p> : null;
-      })()}{forYou.length > 3 && <button type="button" className="ay-lib-more" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button>}</> : <a className="ay-lib-personalize" href="/quiz">See my matches <span aria-hidden="true">→</span></a>}
+      })()}{forYou.length > 3 && <p className="ay-lib-more-row"><button type="button" className="ay-lib-more" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button>{ARTICLES.length > forYou.length && <small>The other {ARTICLES.length - forYou.length} cover topics you didn&apos;t pick. They&apos;re in the sections below.</small>}</p>}</> : <a className="ay-lib-personalize" href="/quiz">See my matches <span aria-hidden="true">→</span></a>}
       {rows.map((r) => shelf(r.id, r.label, r.items))}
     </>;
   }
@@ -1078,10 +1082,6 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <h1 className="ay3-title">Short reads, <em>real sources.</em></h1>
           <p className="ay-wiki-top__sub">Plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
         </div>
-        <span className="ay-lib-total" aria-label={`${finished} of ${ARTICLES.length} finished`}>
-          <span>{finished > 0 ? `${finished}/${ARTICLES.length} read` : `${ARTICLES.length} reads`}</span>
-          <ProgressBar value={ARTICLES.length ? finished / ARTICLES.length : 0} />
-        </span>
       </header>
       <div className={`ay-wiki-bar${barSmall ? ' is-small' : ''}`}>
         <label className="ay-web-lib-search">

@@ -187,7 +187,7 @@ function Sheet({ title, onClose, children, className = '' }) {
   </div></div>, host);
 }
 
-export default function WebCommunity({ user, products = [], quizResults = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
+export default function WebCommunity({ user, products = [], quizResults = null, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, seedKind = null, seedProductId = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
   const supabase = user ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   const [tab, setTab] = useState('for-you');
@@ -239,6 +239,11 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  // A confirmation clears itself after a few seconds.
+  useEffect(() => { if (!notice) return undefined; const t = setTimeout(() => setNotice(''), 5000); return () => clearTimeout(t); }, [notice]);
+  // Followers / Following lists on a profile.
+  const [peopleList, setPeopleList] = useState(null);
+  const [showTagPicker, setShowTagPicker] = useState(false);
   const [profile, setProfile] = useState(null);
   const [profileById, setProfileById] = useState(new Map());
   const [profileName, setProfileName] = useState('');
@@ -278,6 +283,15 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
     if (!user) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : kind === 'recommend' ? 'friend recommendations' : 'posting'); return; }
     setCompose(kind); setError('');
   };
+  // Names for the Following empty state.
+  useEffect(() => {
+    if (!supabase || tab !== 'following' || !followingIds.length) return undefined;
+    const missing = followingIds.filter((id) => !profileById.has(id)).slice(0, 20);
+    if (!missing.length) return undefined;
+    let active = true;
+    community.getProfilesByIds(supabase, missing).then((m) => { if (active) setProfileById((prev) => new Map([...prev, ...m])); }).catch(() => {});
+    return () => { active = false; };
+  }, [supabase, tab, followingIds]); // eslint-disable-line react-hooks/exhaustive-deps
   const matchFor = (id) => { const p = productsById.get(String(id)); return p && quizResults ? getProfileMatchPercentForProduct(p, quizResults) : null; };
 
   useEffect(() => {
@@ -503,7 +517,7 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
       const client = user ? supabase : getGuestClient();
       const userId = user?.id || await ensureGuestSession();
       await community.createComment(client, userId, { postId: details.id, parentId: replyTo, body: commentBody, isAnonymous: !user || anonymous, productId });
-      setComments(await community.listComments(client, details.id)); setCommentBody(''); setReplyTo(null); setProductId(null);
+      setComments(await community.listComments(client, details.id)); setCommentBody(''); setReplyTo(null); setProductId(null); setShowTagPicker(false);
     } catch (e) { notifyError(e); } finally { setBusy(false); }
   };
   const togglePost = async (post, kind) => {
@@ -769,26 +783,42 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
   }
   if (!supabase) return <section className="wc"><div className="wc-empty"><h1>Community isn’t loading</h1><p>Try again later.</p></div></section>;
 
+  const openPeopleList = async (kind, owner) => {
+    const title = kind === 'followers' ? 'Followers' : 'Following';
+    setPeopleList({ title, people: null });
+    try {
+      const ids = kind === 'followers' ? await community.listFollowers(supabase, owner) : await community.listFollowingIds(supabase, owner);
+      const found = ids.length ? await community.getProfilesByIds(supabase, ids) : new Map();
+      setPeopleList({ title, people: ids.map((id) => found.get(id)).filter((x) => x && !isBlocked(x.user_id)) });
+    } catch (e) { setPeopleList(null); notifyError(e); }
+  };
+  const ownedProducts = Object.entries(myProducts || {})
+    .map(([id, v]) => (v && typeof v === 'object' && v.name ? v : productsById.get(String(id))))
+    .filter((x) => x && x.name && !x.userAdded).slice(0, 4);
+
+  const REPLY_BOX = <div className="wc-reply">
+        {replyTo && <button type="button" className="wc-link" onClick={() => setReplyTo(null)}>Replying to a comment · cancel</button>}
+        <RuleField autoGrow minRows={3} value={commentBody} maxLength={COMMENT_MAX} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" aria-label="Your reply" onShowRules={openRules} />
+        <Counter length={commentBody.length} max={COMMENT_MAX} />
+        {showTagPicker || productId ? <Picker products={products} value={productId} onChange={setProductId} placeholder="Search a product to tag" /> : <button type="button" className="wc-link wc-tag-link" onClick={() => setShowTagPicker(true)}>+ Tag a product</button>}
+        {user && <Check checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)}>Reply anonymously</Check>}
+        <button type="button" className="wc-btn" disabled={busy || !commentBody.trim() || breaksCommunityRules(commentBody)} onClick={submitComment}>Post reply</button>
+      </div>;
+  const replyEmpty = <p className="wc-muted">No replies yet.</p>;
+
   let main;
   if (page?.type === 'post' && details) {
     main = <>
       {renderPost(details, true)}
       <h2 className="wc-h2">Replies</h2>
-      {comments.length === 0 && <p className="wc-muted">No replies yet.</p>}
+      {comments.length === 0 && <>{REPLY_BOX}{replyEmpty}</>}
       {comments.map((c) => <div className="wc-comment" key={c.id}>
         <header><Avatar size={30} name={c.author_display_name || c.author_username} path={!c.is_anonymous && c.author_id ? profileById.get(c.author_id)?.avatar_url : null} anonymous={c.is_anonymous || !c.author_id} /><strong>{c.is_anonymous || !c.author_id ? 'Anonymous' : c.author_display_name || c.author_username}</strong><TeamTag title={badgeFor(c.author_id, c.is_anonymous)} /><small>{timeLabel(c.created_at)}</small></header>
         <p>{c.body}</p>
         {c.product_id && <Mention productId={c.product_id} productsById={productsById} quizResults={quizResults} onOpenProduct={onOpenProduct} />}
         <button type="button" className="wc-link" onClick={() => setReplyTo(c.id)}>Reply</button>
       </div>)}
-      <div className="wc-reply">
-        {replyTo && <button type="button" className="wc-link" onClick={() => setReplyTo(null)}>Replying to a comment · cancel</button>}
-        <RuleField autoGrow minRows={3} value={commentBody} maxLength={COMMENT_MAX} onChange={(e) => setCommentBody(e.target.value)} placeholder="Add to the conversation" aria-label="Your reply" onShowRules={openRules} />
-        <Counter length={commentBody.length} max={COMMENT_MAX} />
-        <Picker products={products} value={productId} onChange={setProductId} />
-        {user && <Check checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)}>Reply anonymously</Check>}
-        <button type="button" className="wc-btn" disabled={busy || !commentBody.trim() || breaksCommunityRules(commentBody)} onClick={submitComment}>Post reply</button>
-      </div>
+      {comments.length > 0 && REPLY_BOX}
     </>;
   } else if (page?.type === 'playlist' && details) {
     const mine = user?.id === details.owner_id;
@@ -839,7 +869,11 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           {!details.bio && own && <button type="button" className="wc-prof-bio is-empty" onClick={startEditProfile}>+ Add a short bio so people know what you’re into</button>}
         </div>
       </div>
-      <dl className="wc-prof-counts">{counts.map(([l, v]) => <div key={l}><dt>{l}</dt><dd>{v}</dd></div>)}</dl>
+      <ul className="wc-prof-counts">{counts.map(([l, v]) => <li key={l}><button type="button" onClick={() => {
+        if (l === 'Followers') openPeopleList('followers', details.user_id);
+        else if (l === 'Following') openPeopleList('following', details.user_id);
+        else document.getElementById(l === 'Posts' ? 'wc-prof-posts' : 'wc-prof-playlists')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }}><strong>{v}</strong><span>{l}</span></button></li>)}</ul>
       {own && !editingProfile && <div className="wc-row"><button type="button" className="wc-btn is-ghost" onClick={startEditProfile}>Edit profile</button></div>}
       {own && editingProfile && <form className="wc-card wc-prof-edit" onSubmit={(e) => { e.preventDefault(); saveProfileEdits(); }}>
         <h3>Edit profile</h3>
@@ -875,9 +909,9 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         </div>;
       })()}
       {!user && <div className="wc-row"><button type="button" className="wc-btn" onClick={() => requireAccount('following people')}>Follow</button></div>}
-      <h2 className="wc-h2">Playlists</h2>
+      <h2 className="wc-h2" id="wc-prof-playlists">Playlists</h2>
       {profilePlaylists.length ? <div className="wc-pl-grid">{profilePlaylists.map(playlistCard)}</div> : <p className="wc-muted">No playlists shared yet.</p>}
-      <h2 className="wc-h2">Posts</h2>
+      <h2 className="wc-h2" id="wc-prof-posts">Posts</h2>
       {isBlocked(details.user_id) ? <p className="wc-muted">You blocked this person, so their posts are hidden.</p> : profilePosts.length ? profilePosts.map((p) => renderPost(p)) : <p className="wc-muted">No posts shared yet.</p>}
     </section>;
   } else if (search) {
@@ -911,14 +945,20 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         {tab === 'for-you' && <div className="wc-pinned"><Announcements supabase={supabase} user={user} products={products} productsById={productsById} loadArticles={loadArticles} teamBadges={teamBadges} variant="web" onOpenProduct={onOpenProduct} onOpenPlaylist={openPlaylistById} onOpenArticle={onOpenArticle} onOpenProfile={openProfile} onRequireAuth={requireAccount} onShowRules={openRules} /></div>}
         {firstLoad ? <div className="wc-skel-list" aria-busy="true" aria-label="Loading posts"><SkeletonPost /><SkeletonPost /><SkeletonPost /></div> : posts.filter((p) => !isBlocked(p.author_id)).map((p) => renderPost(p))}
         {!loading && posts.length === 0 && (tab === 'following' ? <div className="wc-empty">
-          <h2>{followingIds.length ? 'People you follow haven’t posted yet' : 'You’re not following anyone yet'}</h2>
-          <p>{followingIds.length ? 'Their posts will show up here.' : 'Follow people to see their posts here.'}</p>
+          {(() => {
+            const named = followingIds.map((id) => profileById.get(id)).filter(Boolean).slice(0, 3);
+            if (!followingIds.length) return <><h2>You’re not following anyone yet</h2><p>Follow people to see their posts here.</p></>;
+            if (!named.length) return <><h2>People you follow haven’t posted yet</h2><p>Their posts will show up here.</p></>;
+            const extra = followingIds.length - named.length;
+            return <><h2>{named.map((p, i) => <React.Fragment key={p.user_id}>{i > 0 && (i === named.length - 1 && !extra ? ' and ' : ', ')}<button type="button" className="wc-inline-name" onClick={() => openProfile(p.username)}>{p.display_name || p.username}</button></React.Fragment>)}{extra > 0 ? ` and ${extra} more` : ''} {named.length + Math.max(extra, 0) === 1 ? 'hasn’t' : 'haven’t'} posted yet</h2><p>Their posts will show up here.</p></>;
+          })()}
           <button type="button" className="wc-btn" onClick={() => { const el = document.querySelector('.wc-search input'); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.focus({ preventScroll: true }); } }}>Find people</button>
           {suggestedPeople.length > 0 && <ul className="wc-suggest" aria-label="People to follow">{suggestedPeople.map((p) => <li key={p.user_id}>
             <button type="button" className="wc-suggest-who" onClick={() => openProfile(p.username)}><Avatar name={p.display_name || p.username} path={p.avatar_url} /><span><strong>{p.display_name || p.username}</strong><small>@{p.username}</small></span></button>
             <button type="button" className="wc-btn is-small" onClick={() => toggleFollow(p.user_id)}>Follow</button>
           </li>)}</ul>}
-        </div> : <div className="wc-empty"><h2>{tab === 'question' ? 'No questions yet' : tab === 'review' ? 'No reviews yet' : 'No posts yet'}</h2><p>Be the first.</p><button type="button" className="wc-btn" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}>{tab === 'question' ? 'Ask a question' : tab === 'review' ? 'Write a review' : 'Share a post'}</button></div>)}
+        </div> : <div className="wc-empty"><h2>{tab === 'question' ? 'No questions yet' : tab === 'review' ? 'No reviews yet' : 'No posts yet'}</h2><p>{tab === 'review' && ownedProducts.length ? 'Review something in your ecosystem:' : 'Be the first.'}</p>
+          {tab === 'review' && ownedProducts.length > 0 && <ul className="wc-review-own">{ownedProducts.map((p) => <li key={p.id}><button type="button" className="wc-btn is-ghost is-small" onClick={() => { setProductId(p.id); openCompose('review'); }}>{p.brand ? `${p.brand} ` : ''}{p.name}</button></li>)}</ul>}<button type="button" className="wc-btn" onClick={() => openCompose(tab === 'question' ? 'question' : tab === 'review' ? 'review' : 'post')}>{tab === 'question' ? 'Ask a question' : tab === 'review' ? 'Write a review' : 'Share a post'}</button></div>)}
         {cursor && <button type="button" className="wc-btn is-ghost wc-more-btn" disabled={loading} onClick={loadMore}>{loading ? 'Loading…' : 'Show more posts'}</button>}
       </>}
     </>;
@@ -947,10 +987,10 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
 
   return <section className="wc wc3">
     <div className={`wc-head${page ? '' : ` ay3-band ay3-band--sky ay3-zigzag ay3-edge-bottom ay3-commhero${seenBefore ? ' is-compact' : ''}`}`}>
-      {page ? <button type="button" className="wc-back" onClick={closePage}>← Community</button> : <div><p className="ay3-kicker is-keep">The powder room</p><h1 className="ay3-title">Ask, review, <em>share.</em></h1><p className="wc-hero-sub">Real talk between women, about the products we actually use.</p></div>}
+      {page ? <button type="button" className="wc-back" onClick={closePage}>{page.type === 'post' ? '← Back to feed' : '← Community'}</button> : <div><p className="ay3-kicker is-keep">The powder room</p><h1 className="ay3-title">Ask, review, <em>share.</em></h1><p className="wc-hero-sub">Real talk between women, about the products we actually use.</p></div>}
       {!page && <div className="wc-mirror" aria-hidden="true"><span className="wc-mirror__frame"><img src="/landing/stalls-trio.webp" alt="" /></span><span className="wc-mirror__lip">say it here ♡</span></div>}
       <div className="wc-head-actions"><label className="wc-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m16 16 4.5 4.5" /></svg><input value={search} onChange={(e) => { setSearch(e.target.value); setSearchResults(null); if (page) closePage(); }} placeholder="Search people, posts, playlists" aria-label="Search Community" />{search && <button type="button" aria-label="Clear search" onClick={() => { setSearch(''); setSearchResults(null); }}>×</button>}</label>
-        {user && <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount ? `Updates, ${unreadCount} new` : 'Updates'}><Icon name="bell" size={20} />{unreadCount > 0 && <span className="wc-bell-dot" aria-hidden="true" />}</button>}
+        {user && <button type="button" className="wc-bell" onClick={openUpdates} aria-label={unreadCount ? `Updates, ${unreadCount} new` : 'Updates'}><Icon name="bell" size={20} /><span className="wc-bell-label" aria-hidden="true">Updates</span>{unreadCount > 0 && <span className="wc-bell-dot is-count" aria-hidden="true">{unreadCount > 9 ? '9+' : unreadCount}</span>}</button>}
         {user && <button type="button" className="wc-head-me" onClick={openMe} aria-label={profile ? 'Your Community profile' : 'Set up your Community profile'}><Avatar size={40} name={profile?.display_name || 'You'} path={profile?.avatar_url} anonymous={!profile} /></button>}
       </div>
     </div>
@@ -1014,6 +1054,12 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
         : <p className="wc-muted">You’re all caught up.</p>}
     </Sheet>}
     {showRules && <Sheet title="Community rules" onClose={() => setShowRules(false)} className="wc-rules-sheet"><CommunityRulesList /><button type="button" className="wc-btn" onClick={() => setShowRules(false)}>Got it</button></Sheet>}
+    {peopleList && <Sheet title={peopleList.title} onClose={() => setPeopleList(null)} className="wc-people-sheet">
+      {!peopleList.people ? <p className="wc-muted">Loading…</p> : peopleList.people.length === 0 ? <p className="wc-muted">{peopleList.title === 'Followers' ? 'No followers yet.' : 'Not following anyone yet.'}</p> : <ul className="wc-suggest">{peopleList.people.map((p) => <li key={p.user_id}>
+        <button type="button" className="wc-suggest-who" onClick={() => { setPeopleList(null); openProfile(p.username); }}><Avatar name={p.display_name || p.username} path={p.avatar_url} /><span><strong>{p.display_name || p.username}</strong><small>@{p.username}</small></span></button>
+        {user && p.user_id !== user.id && (followingIds.includes(p.user_id) ? <span className="wc-rel-state">✓ Following</span> : <button type="button" className="wc-btn is-small" onClick={() => toggleFollow(p.user_id)}>{peopleList.title === 'Followers' ? 'Follow back' : 'Follow'}</button>)}
+      </li>)}</ul>}
+    </Sheet>}
     {editPost && <Sheet title="Edit post" onClose={() => setEditPost(null)}>
       <RuleField autoGrow minRows={4} value={editBody} maxLength={POST_MAX} onChange={(e) => setEditBody(e.target.value)} onShowRules={openRules} />
       <div className="wc-compose-foot"><button type="button" className="wc-btn" disabled={busy || !editBody.trim() || breaksCommunityRules(editBody)} onClick={async () => {

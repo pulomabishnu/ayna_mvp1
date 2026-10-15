@@ -1128,7 +1128,7 @@ export default function MyEcosystem({
     const careFlags = needSeed?.careFlags || null;
     const careFirst = Boolean(careFlags?.careFirst);
     const careNoteLines = careNotes(careFlags);
-    const careSummaryLines = useMemo(() => summarizeCareNotes(careFlags), [careFlags]);
+    const careSummaryLines = useMemo(() => summarizeCareNotes(careFlags, { sayWhy: true }), [careFlags]);
     // Care links keyed to the needs she actually chose (the engine's reading),
     // not the older broad concern mapping.
     const careQuizResults = useMemo(

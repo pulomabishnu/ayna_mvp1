@@ -10,7 +10,11 @@ export function formatPrice(item) {
   const raw = String(item?.price || item?.stage || '').trim();
   if (!raw || !/\d|free|covered/i.test(raw)) return { main: 'Price at retailer', sub: '' };
 
-  let text = dash(raw.replace(/\s+/g, ' '));
+  // A deposit to join a waitlist is not what the product costs.
+  if (/waitlist|deposit/i.test(raw) && !/\bthen\b/i.test(raw)) return { main: 'Waitlist', sub: raw.replace(/\$(\d+)\.00\b/g, '$$$1') };
+
+  // Whole-dollar prices drop the cents ("$49.00" -> "$49").
+  let text = dash(raw.replace(/\s+/g, ' ')).replace(/\$(\d[\d,]*)\.00\b/g, '$$$1');
   let sub = '';
 
   // Approximate prices: "~$20-35" -> "About $20–35"
