@@ -3239,12 +3239,12 @@ html body .app-container .wyou-rows .ay-footer-legal__link { font: 700 14px/1 'D
 html body .app-container[data-theme='brand-dark'] { --ay-page: #3e2723; background: #3e2723 !important; color-scheme: dark; }
 html body .app-container[data-theme='brand-dark'] :is(main, .app-nav-wrap, .app-nav.app-nav, .site-footer, .ay-footer-legal) { background: #3e2723 !important; }
 /* Page-level text (not inside cards) in butter. */
-html body .app-container[data-theme='brand-dark'] :is(
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(
   .ay3-title, .ay3-title em, .ay3-kicker, .lx-h2, .lx-h2 em, .lx-today__title, .lx-today__sub, .lx-today__link, .lx-powder__head h2, .lx-shop__head,
   .ay-wiki-top__text, .ay-wiki-top__sub, .ay-web-lib-cat > h2, .ay-wiki-sec > h2, .ay-wiki-sec > h2 small,
   .ayna-browse__count, .ayna-browse__featured-note, .ayna-browse__sort, .ay-shop-head, .ayna-browse h1, .ayna-browse h1 em, .ayna-browse > p,
   .wc-hero-sub, .ay-info__title, .ay-info__lede, .ay-info-section > h2, .ay-info__h2, .eco3-head__title, .eco3-head__sub, .eco3-jump a,
-  #eco3-shelves-title, #eco3-needs-title, #eco3-tools-title, .ay-story > h2, .ay-story h2 em, .pdp-head__name, .pdp-head__eyebrow, .pdp-h2-price, .pdp-h2-price small,
+  .ay-story > h2, .ay-story h2 em, .pdp-head__name, .pdp-head__eyebrow, .pdp-h2-price, .pdp-h2-price small,
   .ay-pdp-sechead, .ay-pdp-sechead h2, .ay-pdp-sechead p, .pdp-crumbs, .pdp-crumbs a, .ay-buy__facts, .ay-buy__facts dt, .ay-buy__facts dd, .pdp-commission, .pdp-partner-line,
   .ay-know__src, .ay-match__body, .ay-match__body h2, .ay-match__reasons, .ay-match__links a, .ay-match__links button, .ay-match__lede,
   .site-footer, .site-footer a, .site-footer p, .site-footer span, .site-footer h3, .site-footer h4, .ay-footer-legal__link, .ay-footer-link,
@@ -3290,3 +3290,36 @@ html body .app-container.app-container.app-container.app-container[data-theme='b
 html body .app-container .lx-personal { padding: 32px 0 8px; }
 html body .app-container .lx-personal__next { margin-bottom: 8px; }
 html body .app-container .lx-personal .lx-shop { padding-top: 24px; }
+/* Brand dark, round 3: sections that kept a butter page fill. */
+html body .app-container.app-container.app-container[data-theme='brand-dark'] :is(.eco3-stickybar) { background-color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .app-nav.app-nav .app-nav__links a.app-nav__tab.app-nav__tab--active, html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .app-nav.app-nav .app-nav__links a.app-nav__tab.app-nav__tab--active * { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .pdp-buybox :is(.pdp-commission, .pdp-partner-line, .pdp-partner-line .pdp-textlink) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-suggest .ay-suggest__btn { background: #3e2723 !important; color: #ffedac !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] :is(.lv, .mockup-landing--first, main, .site-footer, .site-footer > *, .ay-footer) { --teal: #3e2723; background-color: #3e2723 !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .lv { color: #ffedac; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.wc-rules-btn, .wc-mod h2, .wc-mirror__lip, .wc-nav button, .wc-nav a) { color: #ffedac !important; }
+/* Brand dark landing: butter / sky / pink cards keep espresso text, open sections take butter. */
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv :is(.lv-purpose__copy, .lv-purpose__copy *, .lv-start__card, .lv-start__card *:not(.lv-btn):not(.lv-btn *), .lv-polaroid figcaption) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv :is(.lv-head h2, .lv-head h2 em, .lv-reads__txt strong, .lv-reads__txt span, .lv-btn--line) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv li:not(.is-on) :is(.lv-why__txt strong, .whc-chapters__label) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv li.is-on :is(.lv-why__txt, .lv-why__txt *) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv .whc-chapters__label { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv .lv-btn--line { border-color: #ffedac !important; background: transparent !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv .lv-purpose__copy .lv-btn--line { border-color: #3e2723 !important; color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lv :is(#lv-how-title, #lv-how-title em) { color: #3e2723 !important; }
+/* Topic covers: brand colours only (no white outside product photos); in brand dark the pale ones read as butter cards. */
+html body .app-container:not([data-theme='dark']) .ay-lib-cover.ay-lib-cover.is-butter { background: #ffedac !important; }
+html body .app-container.app-container[data-theme='brand-dark'] .ay-lib-cover.ay-lib-cover:is(.is-butter, .is-mint) { background: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-lib-cover, html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-lib-cover * { color: #3e2723 !important; }
+html body .app-container[data-theme='brand-dark'] :where(#eco3-shelves-title, #eco3-needs-title, #eco3-tools-title) { color: #ffedac !important; }
+/* Brand dark, round 4: buttons on butter cards, and text inside butter cards. */
+html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-suggest .ay-suggest__btn, .pdp-buybox a.pdp-btn.pdp-btn--navy, .pdp-buybox a.pdp-btn.pdp-btn--navy *) { color: #ffedac !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.wc-mod:not(.is-topics), .wc-me, .wyou-card.is-account, .ay-web-lib-article.ay3-paper .ay-lib-article__tags) :is(h2, h3, p, a, span, button:not([aria-pressed='true']):not(.is-on), small, strong, time, .ay-footer-legal__link, .ay-lib-tag) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.eco3-head__text h1, .eco3-head__text h1 em, .eco3-head__text p, .eco3-head__sub) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-login .ay-login-text, .wc-tabs button:not(.is-on)) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] :is(.ay-ecoprev__title, .ay-ecoprev__title em, .wc-mod.is-topics h2) { color: #ffedac !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay3-commhero { background-color: #3e2723 !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay3-commhero::before { background-color: #3e2723 !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'] .ay-ecoprev__steps li::before { color: #3e2723 !important; border-color: #f7badd; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'][data-view] .ay3-commhero { --ay3-bg: #3e2723 !important; }
+html body .app-container.app-container.app-container[data-theme='brand-dark'][data-view='community'] .ay3-commhero.ay3-band.ay3-band { border-image: linear-gradient(#3e2723, #3e2723) fill 0 / / 0 100vw !important; }
