@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './campusResources.css';
 import { SCHOOLS, getSchoolById, searchSchools, groupResources, formatVerified } from '../data/campusResources';
 import { NATIONAL_RESOURCES, EMERGENCY_NOTICE } from '../data/campusResources/national';
@@ -143,15 +143,25 @@ export default function CampusResources() {
   const selected = selectedId ? getSchoolById(selectedId) : null;
   const matches = useMemo(() => searchSchools(query), [query]);
 
+  // The school is never written to the address bar: on a shared device the
+  // history would show which school was searched on a sexual-assault page.
+  // An incoming ?school= link still opens that school, then the URL is cleaned.
   useEffect(() => {
     try {
       const url = new URL(window.location.href);
-      if (selectedId) url.searchParams.set(SCHOOL_PARAM, selectedId); else url.searchParams.delete(SCHOOL_PARAM);
+      if (!url.searchParams.has(SCHOOL_PARAM)) return;
+      url.searchParams.delete(SCHOOL_PARAM);
       window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
     } catch { /* non-critical */ }
-  }, [selectedId]);
+  }, []);
 
-  const pick = (id) => { setSelectedId(id); setQuery(''); };
+  const inputRef = useRef(null);
+  const pick = (id) => {
+    setSelectedId(id); setQuery('');
+    // Go straight to what she asked for: her school's support, first on the page.
+    window.requestAnimationFrame(() => document.getElementById('cr-school-h')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+  const clearSchool = () => { setSelectedId(null); setQuery(''); window.requestAnimationFrame(() => inputRef.current?.focus()); };
   const trimmed = query.trim();
   const unverified = trimmed.length >= 2 && matches.length === 0;
 
@@ -172,7 +182,14 @@ export default function CampusResources() {
 
         <div className="cr-search" role="search">
           <label htmlFor="cr-school-search" className="cr-label">Your school</label>
+          {selected && !query ? (
+            <div className="cr-picked">
+              <span>{selected.name}</span>
+              <button type="button" className="cr-picked__x" onClick={clearSchool} aria-label={`Clear ${selected.name}`}>×</button>
+            </div>
+          ) : (
           <input
+            ref={inputRef}
             id="cr-school-search"
             className="cr-input"
             type="search"
@@ -185,6 +202,7 @@ export default function CampusResources() {
             onChange={(e) => setQuery(e.target.value)}
             aria-describedby="cr-search-status"
           />
+          )}
           <p id="cr-search-status" className="cr-status" role="status" aria-live="polite">
             {unverified ? 'We’re still verifying resources for this school.' : matches.length ? `${matches.length} verified ${matches.length === 1 ? 'school' : 'schools'} found` : ''}
           </p>
@@ -213,16 +231,12 @@ export default function CampusResources() {
           )}
         </div>
 
+        {selected && !unverified && <SchoolSection school={selected} />}
+        {selected?.id === 'cornell-university' && !unverified && <JaneDoeSection />}
+
         <NationalSection school={selected} />
 
-        {selected && !unverified && (
-          <>
-            <button type="button" className="cr-link cr-change" onClick={() => setSelectedId(null)}>Choose a different school</button>
-            <SchoolSection school={selected} />
-          </>
-        )}
-
-        <JaneDoeSection />
+        {!(selected?.id === 'cornell-university' && !unverified) && <JaneDoeSection />}
       </div>
     </div>
   );
