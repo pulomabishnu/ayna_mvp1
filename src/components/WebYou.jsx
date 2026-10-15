@@ -11,6 +11,7 @@ import { AnalyticsToggle } from './SiteFooter';
 import { findSharedActives } from '../utils/sharedActives';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import { inviteLinkFor } from '../utils/badges';
+import FreeProductAccountCard from './freeProduct/FreeProductAccountCard';
 import { getCareProfile } from '../utils/careProfile';
 import './WebYou.css';
 import '../styles/audit-qya.css';
@@ -116,7 +117,7 @@ function Routine({ products, total }) {
   </section>;
 }
 
-export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange }) {
+export default function WebYou({ user, quizResults, myProducts = {}, savedProducts = {}, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenCheckin, onOpenProduct, onOpenPhoneVerify, onSignOut, onDeleteAccount, onStartQuiz, onSignIn, theme = 'light', onThemeChange, onOpenFreeProduct }) {
   const products = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const consumables = useMemo(() => products.filter(isConsumable), [products]);
   const intake = quizResults?.fullHealthIntake || null;
@@ -256,6 +257,7 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
       <div className="wyou-col">
         {shopper ? <Glance profile={shopper} products={products} quizResults={quizResults} /> : <section className="wyou-card is-shopper-empty"><h2>At a glance</h2><p className="wyou-muted">Take the quiz to see it.</p><button type="button" className="wyou-btn" onClick={onStartQuiz}>Take the quiz</button></section>}
         <InviteCard userId={user.id} />
+        {onOpenFreeProduct && <FreeProductAccountCard onOpen={onOpenFreeProduct} />}
       </div>
 
       <div className="wyou-col">
