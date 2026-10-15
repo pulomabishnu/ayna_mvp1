@@ -876,7 +876,7 @@ export function withResearch(product) {
     const out = { ...product };
     const filled = [];
     if (!(out.whoItsFor || []).length && (r.whoItsFor || []).length) { out.whoItsFor = r.whoItsFor; filled.push('whoItsFor'); }
-    if (!(out.howToUse?.steps || []).length && (r.howToUse?.steps || []).length) { out.howToUse = r.howToUse; filled.push('howToUse'); }
+    if (!(out.howToUse?.steps || []).length && !String(out.howToUse?.intro || '').trim() && (r.howToUse?.steps || []).length) { out.howToUse = r.howToUse; filled.push('howToUse'); }
     // Kept in their own fields: page reading only, so matching and evidence scores don't shift.
     if ((r.clinicalSources || []).length) { out.researchClinicalSources = r.clinicalSources.map((x) => ({ url: x.url, label: x.label, summary: x.summary })); filled.push('clinicalSources'); }
     if (r.clinicalNote && !out.clinicalNote) { out.clinicalNote = r.clinicalNote; filled.push('clinicalNote'); }

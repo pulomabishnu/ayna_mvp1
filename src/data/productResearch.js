@@ -1649,7 +1649,18 @@ export const PRODUCT_RESEARCH = {
         "summary": "Pads absorb flow after it leaves the body and can also be used for other discharge, unlike tampons and cups, and wearing any product too long lets bacteria grow."
       }
     ],
-    "clinicalNote": "The FDA regulates menstrual pads as medical devices. It advises changing pads every few hours, even on light days, and stopping use if you notice itching, rash or swelling."
+    "clinicalNote": "The FDA regulates menstrual pads as medical devices. It advises changing pads every few hours, even on light days, and stopping use if you notice itching, rash or swelling.",
+    "communityReview": "Reviews are mostly positive. People often say the pads feel light and comfortable, don't cause irritation, and that the wings help keep them in place. The complaints that come up are pads that feel bulkier than the \"ultra thin\" name suggests and wing adhesive that is inconsistent, in one case sticking so hard to underwear it wouldn't come off.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.influenster.com/reviews/u-by-kotex-cleanwear-ultra-thin-pads-with-wings",
+        "label": "Influenster reviews: U by Kotex CleanWear Ultra Thin Pads with Wings"
+      },
+      {
+        "url": "https://www.walmart.com/ip/430392368",
+        "label": "Walmart customer reviews: U by Kotex CleanWear Ultra Thin Pads with Wings"
+      }
+    ]
   },
   "p-bodyform-pad": {
     "whoItsFor": [
@@ -1707,7 +1718,22 @@ export const PRODUCT_RESEARCH = {
         "summary": "Pads absorb flow after it leaves the body and can also be used for other discharge, unlike tampons and cups, and wearing any product too long lets bacteria grow."
       }
     ],
-    "clinicalNote": "The FDA regulates menstrual pads as medical devices and notes some people react to scents or other materials added to pads. If you get itching, rash or swelling, stop using the pad and check in with your provider."
+    "clinicalNote": "The FDA regulates menstrual pads as medical devices and notes some people react to scents or other materials added to pads. If you get itching, rash or swelling, stop using the pad and check in with your provider.",
+    "communityReview": "Reviewers mostly like these. Common praise is for strong absorbency, comfort, no chemical smell, and extra length that covers more than other overnight pads. Complaints are that wings can come unstuck or shift, the pads feel bulky to some, they cost more than supermarket brands, and some people are put off that only the top layer is cotton while the backing is plastic.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.walmart.com/ip/seort/634726416",
+        "label": "Walmart customer reviews: Rael Organic Cotton Cover Overnight Pads"
+      },
+      {
+        "url": "https://helloclue.com/es/articulos/culture/clue-reviews-rael-disposable-menstrual-pads",
+        "label": "Clue: staff test Rael disposable pads"
+      },
+      {
+        "url": "https://well.ca/products/rael-organic-overnight-pad_171205.html",
+        "label": "Well.ca customer review: Rael Organic Overnight Pad"
+      }
+    ]
   },
   "p-cora-overnight": {
     "whoItsFor": [
@@ -1948,7 +1974,20 @@ export const PRODUCT_RESEARCH = {
         "label": "NIEHS (NIH): Metals detected in tampons (Shearston et al., Environment International, 2024)",
         "summary": "Testing of 30 tampons from 14 brands found measurable metals in all of them; lead was higher in non-organic tampons and arsenic higher in organic ones, and whether any metals leave the tampon or reach the body is not yet known."
       }
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per FDA tampon guidance (follow the insert in your Seventh Generation box for applicator steps):",
+      "steps": [
+        "Wash your hands before you insert and after you remove a tampon.",
+        "Follow the package directions for your applicator type.",
+        "Use the lowest absorbency that handles your flow.",
+        "Change it every 4 to 8 hours, even on light days, and never wear one longer than 8 hours.",
+        "Use tampons only for your period, not for other bleeding or discharge.",
+        "Take it out and call your provider if you get a sudden high fever, rash or dizziness, which can be signs of toxic shock syndrome."
+      ],
+      "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+      "sourceLabel": "FDA: Tampons, facts and safe use"
+    }
   },
   "p-rael-tampon": {
     "whoItsFor": [
@@ -1963,41 +2002,137 @@ export const PRODUCT_RESEARCH = {
         "label": "NIEHS (NIH): Metals detected in tampons (Shearston et al., Environment International, 2024)",
         "summary": "Testing of 30 tampons from 14 brands found measurable metals in all of them; lead was higher in non-organic tampons and arsenic higher in organic ones, and whether any metals leave the tampon or reach the body is not yet known."
       }
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per Rael's package directions and FDA tampon guidance:",
+      "steps": [
+        "Wash your hands, unwrap the tampon, and gently pull out the back of the applicator until it clicks into place.",
+        "Hold the applicator between your thumb and middle finger and insert it with the tip angled slightly up.",
+        "Push the inner tube with your index finger, then remove the applicator and leave the string outside.",
+        "Use the lowest absorbency that handles your flow, and change it every 4 to 8 hours, never longer than 8.",
+        "To remove, hold the string and pull slowly forward at an angle.",
+        "Take it out and call your provider if you get a sudden high fever, rash or dizziness, which can be signs of toxic shock syndrome."
+      ],
+      "sourceUrl": "https://www.dodoskin.com/products/rael-organic-cotton-compact-tampons-super-4-packs",
+      "sourceLabel": "Rael compact tampon directions (retailer listing) and FDA tampon guidance"
+    }
   },
   "p-lena-cup": {
     "whoItsFor": [
       "First-time cup users, especially with the softer Sensitive version",
       "People who prefer a firmer feel, who can choose the Original",
       "Anyone who wants one reusable product instead of buying tampons or pads every cycle"
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per Lena's own user manual:",
+      "steps": [
+        "Wash your hands and the cup, and boil it for 5 to 7 minutes before first use if you like.",
+        "Fold the cup (7 fold, punch-down or C-fold), relax, and guide it in pointing toward your tailbone.",
+        "Let it open, then run a finger around the base and give it a gentle twist to check it has sealed.",
+        "Wear it for up to 12 hours, including overnight, and empty it at least twice a day.",
+        "To remove, pinch the base to break the seal and wiggle it out upright instead of pulling on the stem.",
+        "Rinse with cold water, wash with warm water and mild soap, and clean it thoroughly at the end of your cycle."
+      ],
+      "sourceUrl": "https://cdn.shopify.com/s/files/1/1274/0057/files/LENA_Manual_English.pdf",
+      "sourceLabel": "Lena Cup: User Manual (English)"
+    }
   },
   "p-ruby-cup": {
     "whoItsFor": [
       "People who want a reusable medical-grade silicone cup",
       "Shoppers who care about social impact: for every cup sold, one is donated to someone without access to period products",
       "Anyone looking to cut down on disposable period waste"
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per FDA menstrual cup guidance (follow the leaflet in your Ruby Cup box for folding and insertion steps):",
+      "steps": [
+        "Wash your hands before and after handling the cup.",
+        "Wash the cup with soap and water before you insert it.",
+        "Follow Ruby Cup's own instructions for folding, inserting and removing it.",
+        "Empty it every 8 to 12 hours, and don't leave it in longer than the label allows.",
+        "Boil it for 1 to 2 minutes at the end of each cycle.",
+        "Stop using it and call your provider if you get itching, rash, pain or swelling, and check with your gynecologist first if you have an IUD."
+      ],
+      "sourceUrl": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+      "sourceLabel": "FDA: Menstrual Cups"
+    }
   },
   "p-organicup": {
     "whoItsFor": [
       "Teens and first-time cup users, who can start with the Mini",
       "People with a low cervix, who may find the Mini fits better",
       "Anyone who wants a soft silicone cup with several sizes to choose from"
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per AllMatters' (OrganiCup's) own product page and FAQ:",
+      "steps": [
+        "Pick a comfortable position and fold the cup with a C-fold or punch-down fold.",
+        "Slide it in angled toward your tailbone until the whole cup and stem are inside, then let it open.",
+        "Check the seal: the base should feel round, and a gentle tug on the stem should meet resistance.",
+        "Wear it for up to 12 hours, then pinch the base to break the seal and wiggle it out upright.",
+        "Empty it, rinse it with water (keeping the air holes clear), and reinsert.",
+        "Once your period ends, sanitize it in boiling water for 3 to 5 minutes."
+      ],
+      "sourceUrl": "https://allmatters.com/products/menstrual-cup",
+      "sourceLabel": "AllMatters: OrganiCup Menstrual Cup"
+    }
   },
   "p-femmycycle": {
     "whoItsFor": [
       "People who find cup stems uncomfortable or hard to grip",
       "Those with a high cervix who want a ring pull to reach for",
       "Anyone who wants a reusable silicone cup with a stemless design"
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per FemmyCycle's product listing and FDA menstrual cup guidance:",
+      "steps": [
+        "Read the instructions that come in the box before your first use.",
+        "Pick your size by how high your cervix sits, as FemmyCycle recommends.",
+        "Wash your hands and the cup with soap and water before inserting it.",
+        "Wear it for up to 12 hours, or empty it sooner if your flow is heavy.",
+        "Use the ring handle to help pull it out, and use the spout to empty it without spilling.",
+        "Boil it for 1 to 2 minutes at the end of each cycle, and check with your gynecologist first if you have an IUD."
+      ],
+      "sourceUrl": "https://www.apotea.se/femmycycle-normal",
+      "sourceLabel": "Apotea: FemmyCycle Normal product listing (plus FDA: Menstrual Cups)"
+    }
   },
   "p-flex-cup": {
     "whoItsFor": [
       "First-time cup users who are nervous about removal",
       "Anyone who has struggled to break the seal on a traditional cup",
       "People who want a reusable medical-grade silicone option"
+    ],
+    "howToUse": {
+      "intro": "Per Flex's own How to Use page:",
+      "steps": [
+        "Wash the cup with mild soap before first use, and boil it for 10 minutes between periods.",
+        "Fold it (Flex suggests the punch-down fold), relax, and insert it; it can sit low, and the pull tab can hang outside or tuck up.",
+        "Pinch and twist the base, then run a finger around it to check it has fully opened.",
+        "Wear it for up to 12 hours at a time.",
+        "To remove, wash your hands and pull the tab down gently to break the seal, going slowly to avoid spills.",
+        "Empty it into the toilet, rinse, wash with mild soap and reinsert."
+      ],
+      "sourceUrl": "https://flexfits.com/pages/how-to-use-cup",
+      "sourceLabel": "Flex: How to use Flex Cup"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA advises washing your hands and the cup before use, emptying it every 8 to 12 hours, boiling reusable cups for 1 to 2 minutes at the end of each cycle, and asking your gynecologist first if you have an IUD, since a cup could interfere with the strings or placement."
+      }
+    ],
+    "communityReview": "Feedback is mostly positive about removal. Reviewers, including people with limited hand dexterity, say the pull tab makes breaking the seal much easier than pinching a regular cup, and many report comfortable, leak-free wear. Complaints are that the tab makes the cup harder to fold and clean, some feel an uncomfortable pop when the seal breaks, and one tester found the suction too strong and had leaks where the tab exits. Some cup fans also say they avoid the brand over claims that its design copies the Keela cup.",
+    "communityReviewSources": [
+      {
+        "url": "https://reviewed.com/health/content/flex-cup-review",
+        "label": "Reviewed: Flex Cup review"
+      },
+      {
+        "url": "https://putacupinit.com/flex-cup/comment-page-1/",
+        "label": "Put A Cup In It: Flex Cup post and reader comments"
+      }
     ]
   },
   "p-ziggy-disc": {
@@ -2011,6 +2146,26 @@ export const PRODUCT_RESEARCH = {
         "url": "https://srh.bmj.com/content/50/1/21",
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
         "summary": "In lab testing with red blood cells, discs held the most of any product type (about 61 mL on average), and the Ziggy disc held the most of all products tested, about 80 mL."
+      }
+    ],
+    "howToUse": {
+      "intro": "Per Intimina's Ziggy Cup directions as published by retailers:",
+      "steps": [
+        "Boil the cup for 5 minutes before first use and again after each period.",
+        "Wash your hands, then squeeze the rim into an 8 shape with the back rim against your palm.",
+        "Relax, push the back rim down and back as far as it goes, then tuck the front rim up behind your pubic bone.",
+        "Follow the wear time on your box: retailer copies of the directions list 8 to 12 hours.",
+        "To remove, wash your hands, hook a finger under the front rim, and pull it out level to avoid spills.",
+        "Empty it into the toilet, rinse, and reinsert, keeping it in its case between periods."
+      ],
+      "sourceUrl": "https://pureeros.com/products/ziggy-cup",
+      "sourceLabel": "Pure Eros: Intimina Ziggy Cup listing with directions"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA, which groups menstrual discs with cups, says to wash your hands and the device before use, empty it every 8 to 12 hours, boil reusable ones for 1 to 2 minutes at the end of each cycle, and check with your gynecologist first if you have an IUD."
       }
     ]
   },
@@ -2026,6 +2181,26 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
         "summary": "In lab testing with red blood cells, menstrual discs held the most of any product type, about 61 mL on average, versus roughly 20 to 50 mL for tampons, cups and heavy pads."
       }
+    ],
+    "howToUse": {
+      "intro": "Per Lumma's directions on Period Nirvana's shop page:",
+      "steps": [
+        "Practice before your period, and wear a liner or period underwear as backup while you learn.",
+        "Pinch the rim together lengthwise to fold it, then guide it in angled down toward your tailbone until it sits below your cervix.",
+        "Lift the front rim and tuck it behind your pubic bone, which the brand calls the key step for preventing leaks.",
+        "Wear it for up to 12 hours, emptying sooner on heavy days.",
+        "To remove, relax, use the string to find the rim, hook a finger under the front edge, and pull forward and down while keeping it level.",
+        "Wash it with gentle soap every time you empty it, and boil it monthly or use a cup steamer."
+      ],
+      "sourceUrl": "https://shop.periodnirvana.com/products/lumma-disc",
+      "sourceLabel": "Period Nirvana shop: Lumma menstrual disc"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA, which groups menstrual discs with cups, notes that finding the right size can be hard, and advises emptying every 8 to 12 hours, boiling reusable ones at the end of each cycle, and checking with your gynecologist first if you have an IUD."
+      }
     ]
   },
   "p-softdisc": {
@@ -2033,6 +2208,26 @@ export const PRODUCT_RESEARCH = {
       "People curious about discs who want to try one before buying a reusable",
       "Those who want up to 12 hours of wear",
       "Not the pick if cutting waste is your goal: it's single-use"
+    ],
+    "howToUse": {
+      "intro": "Per Softdisc's package directions:",
+      "steps": [
+        "Wash your hands, then squeeze opposite sides of the rim together.",
+        "Insert the disc fully into the vagina, where it molds to your shape.",
+        "Wear it for up to 12 hours, and never longer.",
+        "To remove, hook a finger under the rim and pull slowly.",
+        "Throw it away after one use.",
+        "Don't use it if you have an IUD or have ever had toxic shock syndrome, and check with your doctor first after childbirth, gynecologic surgery, miscarriage or abortion."
+      ],
+      "sourceUrl": "https://pbis.instacart.com/products/17365289-softdisc-disposable-14-ea",
+      "sourceLabel": "Softdisc Disposable listing with package directions (Instacart)"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA, which groups menstrual discs with cups, says to wash your hands before handling one, follow the label for wear time, use it only for period bleeding, and stop and call your provider if you have itching, rash, pain or swelling."
+      }
     ]
   },
   "p-period-nirvana-disc": {
@@ -2047,6 +2242,13 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
         "summary": "In lab testing with red blood cells, menstrual discs held the most of any product type, about 61 mL on average, versus roughly 20 to 50 mL for tampons, cups and heavy pads."
       }
+    ],
+    "clinicalSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+        "label": "FDA: Menstrual Cups",
+        "summary": "FDA, which groups menstrual discs with cups, says to wash your hands and the device before use, empty it every 8 to 12 hours, boil reusable ones for 1 to 2 minutes at the end of each cycle, and check with your gynecologist first if you have an IUD."
+      }
     ]
   },
   "p-aisle-underwear": {
@@ -2054,6 +2256,32 @@ export const PRODUCT_RESEARCH = {
       "People who want to adjust absorbency by swapping inserts instead of buying separate pairs",
       "Those looking for PFAS-free period underwear in inclusive sizing",
       "Anyone who prefers organic cotton against their skin"
+    ],
+    "howToUse": {
+      "intro": "Per Aisle's own guidance on wear and care:",
+      "steps": [
+        "Change when you feel damp or uncomfortable, roughly every 6 to 8 hours on heavy days and 10 to 12 hours on light days.",
+        "On heavier days, add a removable Booster if your style has one, and pack a spare pair or Booster in case your flow changes.",
+        "Rinse in cold water right after wearing to get out excess blood.",
+        "Machine wash cold on a gentle cycle, with no fabric softener or bleach.",
+        "Hang to dry if you can, since air drying protects the absorbent layers."
+      ],
+      "sourceUrl": "https://periodaisle.com/blogs/all/how-often-should-you-change-period-underwear-best-practices-for-maximum-comfort",
+      "sourceLabel": "Aisle: How often should you change period underwear?"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use",
+        "label": "FDA: Menstrual Product Options, Facts, and Safe Use",
+        "summary": "FDA counts period underwear as a type of menstrual pad that absorbs flow outside the body, and its general advice for all period products is to change them regularly and contact your provider if you have pain, fever or other unusual symptoms."
+      }
+    ],
+    "communityReview": "Reviews of the underwear itself are mostly positive: people say it feels soft and not bulky, handles overnight flow without leaks, holds up in the wash, and comes in an inclusive size range. The most common complaints are about the company rather than the product, including long shipping waits even with priority shipping, slow customer service and refunds, and a final-sale policy some only noticed after ordering. A few mention the Booster shifting out of place, staining over time, or needing to size up.",
+    "communityReviewSources": [
+      {
+        "url": "https://thingtesting.com/brands/aisle/reviews",
+        "label": "Thingtesting: Aisle reviews"
+      }
     ]
   },
   "p-period-co-underwear": {
@@ -2069,7 +2297,19 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
         "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
       }
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per The Period Company's product page:",
+      "steps": [
+        "Wear them like regular underwear, ideally on your heaviest days.",
+        "Check after about 4 hours on a heavy day, then stretch the time gradually to learn your limit (the brand says about 8 hours is average).",
+        "Plan on roughly 3 to 4 pairs for each of your first two heavy days.",
+        "Rinse for a few seconds, then hand wash or machine wash on regular settings without bleach.",
+        "Tumble dry low or hang dry, and don't dry clean."
+      ],
+      "sourceUrl": "https://www.period.co/products/the-bikini",
+      "sourceLabel": "The Period Company: The Bikini Period. in Organic Cotton For Heavy Flows"
+    }
   },
   "p-wuka-underwear": {
     "whoItsFor": [
@@ -2084,7 +2324,19 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
         "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
       }
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per WUKA's own product page:",
+      "steps": [
+        "Wear them like regular underwear and change based on your flow, for up to 12 hours.",
+        "Rinse in cold water after each use.",
+        "Machine wash with similar dark colors at 30 to 40°C (Perform styles cold), using a mesh bag for lace or mesh styles.",
+        "Skip fabric conditioner.",
+        "Line dry or air dry, and don't tumble dry."
+      ],
+      "sourceUrl": "https://wuka.co.uk/products/wuka-ultimate-midi-brief-heavy-overnight",
+      "sourceLabel": "WUKA: Ultimate Midi Brief, Heavy Overnight Flow"
+    }
   },
   "p-tomboyx-period": {
     "whoItsFor": [
@@ -2099,7 +2351,19 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
         "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
       }
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per TomboyX's instructions for its First Line Period styles:",
+      "steps": [
+        "Give a new pair a quick cold wash before you first wear it.",
+        "On your heaviest days, add a liner or winged pad as backup.",
+        "Wash in cold water with like colors, by hand or on a delicate cycle.",
+        "Skip fabric softener and bleach, which wear down the absorbent fabric.",
+        "Lay flat or hang to dry, or tumble dry on low and avoid high heat."
+      ],
+      "sourceUrl": "https://tomboyx.com/products/first-line-period-bikini-x-black",
+      "sourceLabel": "TomboyX First Line Period Bikini product page"
+    }
   },
   "p-dear-kate-underwear": {
     "whoItsFor": [
@@ -2114,7 +2378,18 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
         "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
       }
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per Dear Kate's care guide:",
+      "steps": [
+        "If a pair gets heavily soaked while you're out, rinse it and keep it in a sealable pouch until you can wash it.",
+        "Machine wash on a delicate cycle with a gentle detergent, and avoid hot water.",
+        "Skip fabric softener, which can block absorbency, plus bleach and dry cleaning.",
+        "Line dry when you can, or use a low dryer setting."
+      ],
+      "sourceUrl": "https://dearkate.com/blogs/blog/how-to-properly-care-for-your-dear-kate-period-undies",
+      "sourceLabel": "Dear Kate: How to Properly Care for Your Period Undies"
+    }
   },
   "p-proof-period": {
     "whoItsFor": [
@@ -2129,7 +2404,18 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
         "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
       }
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per Proof's FAQ:",
+      "steps": [
+        "Pick the absorbency that fits your flow: lighter styles for light days, higher ones for heavy days, overnight styles for sleep.",
+        "For bladder leaks, choose Moderate for light leaks, Heavy for moderate leaks and Super Heavy for heavy leaks.",
+        "Put on a fresh pair each day rather than rewearing the same one.",
+        "Wash on a delicate cycle in cold water with a gentle detergent, or wash by hand."
+      ],
+      "sourceUrl": "https://shopproof.com/pages/faq",
+      "sourceLabel": "Proof Leak Proof Underwear FAQs"
+    }
   },
   "p-hanes-period": {
     "whoItsFor": [
@@ -2143,7 +2429,17 @@ export const PRODUCT_RESEARCH = {
         "label": "DeLoughery et al., BMJ Sexual & Reproductive Health (2024): red blood cell capacity of menstrual products",
         "summary": "In lab testing with red blood cells, super-absorbency period underwear held about 2 mL on average, far less than tampons, cups, discs or heavy pads, so it works best as backup or for lighter flow."
       }
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per Hanes' Comfort, Period. collection page:",
+      "steps": [
+        "Choose light, moderate or super protection to match your flow or leaks.",
+        "Wear them on their own, or as backup to a pad, tampon or cup on heavy days and overnight.",
+        "Wash in cold water and reuse."
+      ],
+      "sourceUrl": "https://www.hanes.com/women/collections/period-underwear",
+      "sourceLabel": "Hanes Comfort, Period. Underwear collection"
+    }
   },
   "p-neycher-vaginal-moisturizer": {
     "clinicalSources": [
@@ -2424,7 +2720,14 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://oboo.love/products/moon",
       "sourceLabel": "Oboo: Moon Anal Training Kit product page"
-    }
+    },
+    "clinicalSources": [
+      {
+        "url": "https://health.clevelandclinic.org/anal-sex-safety",
+        "label": "Cleveland Clinic: Is Anal Sex Safe?",
+        "summary": "A Cleveland Clinic gastroenterologist explains that the anus makes no natural lubrication and its lining tears easily, so you need ample lube, a slow gradual pace, clean toys between uses, and to stop with sharp pain or seek care for heavy or lasting bleeding."
+      }
+    ]
   },
   "p-oboo-oooh": {
     "whoItsFor": [
@@ -2710,7 +3013,19 @@ export const PRODUCT_RESEARCH = {
         "label": "Mayo Clinic: Hot flashes, diagnosis and treatment",
         "summary": "Suggests staying cool with layers, fans and a cold drink for mild hot flashes, and covers hormone and nonhormone treatments for more bothersome ones."
       }
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per Oboo's product page:",
+      "steps": [
+        "Shake the bottle before each use.",
+        "Hold it about six inches away and mist your neck, chest, wrists or face.",
+        "Breathe in the scent as you spray.",
+        "Reapply whenever a hot flash starts.",
+        "If your skin is very reactive, start with a small amount first."
+      ],
+      "sourceUrl": "https://oboo.love/products/cool-spray-for-hot-flashes",
+      "sourceLabel": "Oboo Cool Spray for Hot Flashes product page"
+    }
   },
   "p-proov-empower": {
     "clinicalSources": [
@@ -2760,7 +3075,20 @@ export const PRODUCT_RESEARCH = {
         "label": "Cochrane Review: Interventions for treating painful nipples among breastfeeding women",
         "summary": "Found no clear benefit from lanolin or other ointments for nipple pain and noted most women's pain eased to mild levels 7 to 10 days after birth, based on low-quality evidence."
       }
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per BUNI's bundle and product pages:",
+      "steps": [
+        "Pump REJUVENATE onto the outer vulva only; it is not for internal vaginal use.",
+        "Smooth SOOTHE onto nipples after each feed, or before pumping to cut friction; there's no need to wipe it off before nursing.",
+        "Roll TRANSFORM onto the scar or stretch marks once a day.",
+        "Follow with the onyx gua sha to massage the oil in, about 5 minutes in total.",
+        "Expect older scars to need daily use for at least 8 to 12 weeks.",
+        "Get your doctor's OK before using TRANSFORM on a new or C-section scar, and before using REJUVENATE while pregnant or breastfeeding."
+      ],
+      "sourceUrl": "https://www.bunibody.com/products/buni-bundle",
+      "sourceLabel": "BUNI Bundle page, with directions from the REJUVENATE, SOOTHE and TRANSFORM product pages on bunibody.com"
+    }
   },
   "p-joylux-vfit": {
     "communityReview": "Reviews of Joylux's devices on its Trustpilot page are mixed. Several longtime vFit users say it helped with tone, lubrication, and comfort during sex. Common complaints are lights or devices that stopped working after a few weeks, a size that some people with vaginal atrophy found painful to insert, the price, and trouble reaching customer service or getting a refund.",
@@ -2772,6 +3100,18 @@ export const PRODUCT_RESEARCH = {
       {
         "url": "https://au.trustpilot.com/review/joylux.com?page=3",
         "label": "Trustpilot: Joylux reviews (page 3)"
+      }
+    ],
+    "clinicalSources": [
+      {
+        "url": "https://www.mayoclinic.org/diseases-conditions/stress-incontinence/diagnosis-treatment/drc-20355732",
+        "label": "Mayo Clinic: Stress incontinence, diagnosis and treatment",
+        "summary": "Lists regular pelvic floor (Kegel) exercises, taught by a clinician or physical therapist and sometimes paired with biofeedback, plus over-the-counter vaginal inserts and pessaries as non-drug options for bladder leaks."
+      },
+      {
+        "url": "https://www.isswsh.org/images/content/2020-NAMS-GSM-Paper.pdf",
+        "label": "The 2020 genitourinary syndrome of menopause position statement of The North American Menopause Society (Menopause, 2020)",
+        "summary": "Names lubricants and regularly used vaginal moisturizers as first-line for mild menopausal dryness, and says energy-based vaginal devices are still under investigation, none are FDA-approved for this use, and larger sham-controlled trials are needed."
       }
     ]
   },
@@ -2792,13 +3132,43 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://shop.equinox.com/products/respin-x-joylux-vfit%C2%AE-plus-red-light-intimate-wellness-device",
       "sourceLabel": "Equinox: Respin x Joylux vFit PLUS listing"
-    }
+    },
+    "scienceSources": [
+      {
+        "url": "https://link.springer.com/article/10.1007/s00192-016-3248-5",
+        "label": "de la Torre and Miller, Multimodal vaginal toning for bladder symptoms and quality of life in stress urinary incontinence, International Urogynecology Journal (2017)",
+        "summary": "An uncontrolled case series of 55 women using the original device (then called vSculpt) at home found less leakage and better symptom scores after about 24 sessions; Joylux funded it and both authors were Joylux consultants, and it did not test the PLUS version."
+      }
+    ],
+    "communityReview": "No reviews that clearly name vFit PLUS could be opened, so this reflects Joylux's Trustpilot reviews of its vFit devices in general. Longtime users often say it helped with tone, lubrication and comfort during sex. Common complaints are devices or lights that stopped working after a few weeks or months, a size some people with vaginal atrophy found painful, app and subscription requirements that weren't clear up front, and trouble getting refunds.",
+    "communityReviewSources": [
+      {
+        "url": "https://au.trustpilot.com/review/joylux.com?page=3",
+        "label": "Trustpilot: Joylux reviews (page 3)"
+      },
+      {
+        "url": "https://www.trustpilot.com/review/joylux.com?page=4",
+        "label": "Trustpilot: Joylux reviews (page 4)"
+      }
+    ]
   },
   "p-joylux-juicy-like-a-peach": {
     "whoItsFor": [
       "People in menopause who want a hormone-free gel for vaginal dryness and pain during sex",
       "Those who prefer a short, simple ingredient list with a vaginal-range pH (3.8, per Joylux)",
       "Not the pick if you use natural rubber latex or polyurethane condoms, which Joylux says it isn't compatible with"
+    ],
+    "scienceSources": [
+      {
+        "url": "https://thieme-connect.de/products/ejournals/html/10.1055/s-0042-1756148",
+        "label": "Sarmento et al., Efficacy of Hormonal and Nonhormonal Approaches to Vaginal Atrophy and Sexual Dysfunctions in Postmenopausal Women: A Systematic Review, Revista Brasileira de Ginecologia e Obstetrícia (2022)",
+        "summary": "Across 55 randomized trials, lubricants and moisturizers helped most with dryness and pain during sex but had a smaller effect than vaginal estrogen, with mild side effects and low to moderate certainty evidence."
+      },
+      {
+        "url": "https://www.informahealthcare.com/doi/abs/10.1080/13697137.2020.1820478",
+        "label": "Potter and Panay, review of vaginal lubricants and moisturizers, Climacteric",
+        "summary": "Advises choosing over-the-counter products whose pH and osmolality are close to natural vaginal fluid and that avoid potentially harmful additives, using moisturizers for ongoing symptoms."
+      }
     ]
   },
   "p-joylux-lets-spin": {
@@ -2806,6 +3176,29 @@ export const PRODUCT_RESEARCH = {
       "People who want a water-based gel to add moisture and make sex more comfortable when dryness or hormone changes get in the way",
       "Those who like hyaluronic acid and aloe in an intimacy product",
       "Not the pick if you use polyurethane condoms, which Joylux says it isn't compatible with"
+    ],
+    "howToUse": {
+      "intro": "Per Joylux's directions on its Ulta listing:",
+      "steps": [
+        "Remove the cap.",
+        "Squeeze the desired amount onto your intimate areas for moisture.",
+        "Reapply as often as you like.",
+        "Replace the cap and store the tube at room temperature."
+      ],
+      "sourceUrl": "https://www.ulta.com/p/p-pimprod2052232",
+      "sourceLabel": "Ulta: Joylux LET'S SPIN Intimacy Gel"
+    },
+    "scienceSources": [
+      {
+        "url": "https://www.informahealthcare.com/doi/abs/10.1080/13697137.2020.1820478",
+        "label": "Potter and Panay, review of vaginal lubricants and moisturizers, Climacteric",
+        "summary": "Recommends lubricants for sex and moisturizers for ongoing dryness, choosing products whose pH and osmolality are close to natural vaginal fluid and that avoid potentially harmful additives."
+      },
+      {
+        "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
+        "label": "Albalawi et al., Comparison of the Efficacy of Vaginal Hyaluronic Acid to Estrogen for the Treatment of Vaginal Atrophy in Postmenopausal Women: A Systematic Review, Cureus (2023)",
+        "summary": "Six small trials suggest vaginal hyaluronic acid works about as well as estrogen for menopausal vaginal symptoms, though not better, and the studies had real limitations; it did not test this gel."
+      }
     ]
   },
   "p-joylux-reliefher": {
@@ -2813,6 +3206,18 @@ export const PRODUCT_RESEARCH = {
       "People who want a non-hormonal vaginal moisturizer used at bedtime every 2 to 3 days rather than daily",
       "Those who prefer an oil-based melt with hyaluronic acid over a water-based gel",
       "Not the pick if you rely on condoms: it contains oils, and the CDC warns oil-based products can cause condoms to break"
+    ],
+    "scienceSources": [
+      {
+        "url": "https://assets.cureus.com/uploads/review_article/pdf/177678/20230827-27812-1h41f02.pdf",
+        "label": "Albalawi et al., Comparison of the Efficacy of Vaginal Hyaluronic Acid to Estrogen for the Treatment of Vaginal Atrophy in Postmenopausal Women: A Systematic Review, Cureus (2023)",
+        "summary": "Six small trials suggest vaginal hyaluronic acid works about as well as estrogen for menopausal vaginal symptoms, though not better, and the authors flag limitations in the studies."
+      },
+      {
+        "url": "https://thieme-connect.de/products/ejournals/html/10.1055/s-0042-1756148",
+        "label": "Sarmento et al., Efficacy of Hormonal and Nonhormonal Approaches to Vaginal Atrophy and Sexual Dysfunctions in Postmenopausal Women: A Systematic Review, Revista Brasileira de Ginecologia e Obstetrícia (2022)",
+        "summary": "Found hyaluronic acid effective and well tolerated for vaginal atrophy symptoms compared with vaginal estrogen, while noting low to moderate certainty evidence."
+      }
     ]
   },
   "p-joylux-revitalizher": {
@@ -2820,6 +3225,43 @@ export const PRODUCT_RESEARCH = {
       "People with dryness on the outer vulva who want an oil-based protective layer",
       "Those who prefer plant oils and beeswax over water-based creams",
       "Not the pick for internal vaginal dryness: it's for external use only"
+    ],
+    "howToUse": {
+      "intro": "Per Joylux's directions on its Equinox and Ulta listings:",
+      "steps": [
+        "Cleanse the area first, then gently pat it dry.",
+        "Massage the amount you like into the skin of your vulva.",
+        "Use it on the outside only, not inside the vagina.",
+        "Leave it on; don't rinse it off."
+      ],
+      "sourceUrl": "https://shop.equinox.com/products/revitalizher%E2%84%A2-hydrating-serum",
+      "sourceLabel": "Equinox: Joylux revitalizHER Hydrating Serum"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://www.stgeorges.nhs.uk/wp-content/uploads/2023/02/DER_VSC.pdf",
+        "label": "St George's University Hospitals NHS dermatology: Vulval skin care leaflet",
+        "summary": "Says emollients can be used on vulval skin as often as needed for soothing relief and as a barrier, and lists fragranced or perfumed products among irritants to avoid."
+      }
+    ],
+    "clinicalNote": "NHS dermatology advice supports using a moisturizer on vulval skin as often as you need it, including as a barrier before sex or peeing. The same advice lists perfumed products as common irritants, so stop if this serum stings.",
+    "scienceSources": [
+      {
+        "url": "https://www.mdpi.com/1422-0067/19/1/70",
+        "label": "Lin et al., Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils, International Journal of Molecular Sciences (2018)",
+        "summary": "Reviews evidence that coconut oil works about as well as mineral oil for dry skin and that jojoba oil's wax esters may help repair a damaged skin barrier; it did not study vulvar skin or this serum."
+      }
+    ],
+    "communityReview": "Retail reviews are mostly positive but few. Reviewers often say it feels silky, hydrating and gentle on sensitive skin, and some postmenopausal buyers say it eased external dryness quickly. Complaints include the price, a smell one buyer disliked, irritation for at least one reviewer, and no noticeable change after a couple of weeks for another.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.ulta.com/p/revitalizher-intimate-hydrating-serum-pimprod2054091",
+        "label": "Ulta: revitalizHER Intimate Hydrating Serum reviews"
+      },
+      {
+        "url": "https://www.lovelyskin.com/o/reviews/joylux-revitalizher-hydrating-serum",
+        "label": "LovelySkin: revitalizHER Hydrating Serum reviews"
+      }
     ]
   },
   "p-joylux-shebar": {
@@ -2827,6 +3269,35 @@ export const PRODUCT_RESEARCH = {
       "People who want a soap-free bar for washing the outer intimate area",
       "Those who find regular soap drying and prefer a gentler syndet cleanser",
       "Not the pick if fragrance irritates your skin: this bar contains added fragrance"
+    ],
+    "howToUse": {
+      "intro": "Per Joylux's directions on its Ulta listing:",
+      "steps": [
+        "Wet the skin of your outer intimate area.",
+        "Rub the bar onto the wet skin, outside only.",
+        "Gently lather and massage.",
+        "Rinse thoroughly."
+      ],
+      "sourceUrl": "https://www.ulta.com/p/shebar-intimate-cleansing-bar-pimprod2048012",
+      "sourceLabel": "Ulta: Joylux SHEbar Intimate Cleansing Bar"
+    },
+    "scienceSources": [
+      {
+        "url": "https://www.nigjdermatology.com/index.php/NJD/article/download/243/228/1301",
+        "label": "Cole-Adeife et al., The pH of Common Soaps and Cleansers in Nigeria and Implications for Skin Health and Inflammatory Dermatoses, Nigerian Journal of Dermatology (2024)",
+        "summary": "Testing 60 cleansers, every alkaline product was a soap and every acidic one a syndet, and the authors explain why alkaline soaps can strip skin lipids and raise skin pH while syndets are designed to keep skin's natural acidity."
+      }
+    ],
+    "communityReview": "Retail reviews are very positive. Reviewers often say it cleans without drying or irritating, feels gentle and leaves skin soft, and many like the scent and reorder. The main complaint, from a small number of buyers, is that the fragrance is too strong.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.ulta.com/p/shebar-intimate-cleansing-bar-pimprod2048012",
+        "label": "Ulta: SHEbar Intimate Cleansing Bar reviews"
+      },
+      {
+        "url": "https://www.lovelyskin.com/o/reviews/joylux-shebar-intimate-soap",
+        "label": "LovelySkin: SHEbar Intimate Soap reviews"
+      }
     ]
   },
   "p-joylux-ilyeo-body": {
@@ -2834,6 +3305,25 @@ export const PRODUCT_RESEARCH = {
       "Midlife women looking for a drug-free, at-home option for minor muscle and joint aches, like sore shoulders or knees",
       "People who already like heat for stiffness and want a cordless wrap with red light and vibration added",
       "Not the pick if you take light-sensitizing medications, have reduced feeling in the area, or have active skin cancer or suspicious lesions, per Joylux"
+    ],
+    "clinicalSources": [
+      {
+        "url": "https://www.mdanderson.org/cancerwise/what-is-red-light-therapy.h00-159701490.html",
+        "label": "MD Anderson Cancer Center: What is red light therapy?",
+        "summary": "MD Anderson pain specialists say red light therapy may ease muscle pain but is still investigational for pain management with no trials defining how often or how long to use it, and that at-home devices are less intense than clinic ones and low risk when used safely."
+      }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://www.lni.wa.gov/patient-care/_docs/HTAupdateLLLT_011818.pdf",
+        "label": "Washington State Department of Labor and Industries: Low-level laser therapy for musculoskeletal conditions, technology assessment update (2018)",
+        "summary": "Reviewing systematic reviews of randomized trials, it rated the evidence for low-level light therapy on muscle and joint pain as low or very low quality, with small, short-term and inconsistent benefits; it covered clinic lasers, not wearable LED wraps like this one."
+      },
+      {
+        "url": "https://journals.sbmu.ac.ir/jlms/article/view/48441",
+        "label": "High- and Low-Level Laser Therapy for the Treatment of Orthopedic Pain: A Systematic Review, Journal of Lasers in Medical Sciences (2025)",
+        "summary": "Eight randomized trials suggest laser therapy is a safe, helpful add-on for orthopedic pain, but differences in devices and settings ruled out pooling the results."
+      }
     ]
   },
   "p-joylux-coldher": {
@@ -2854,6 +3344,20 @@ export const PRODUCT_RESEARCH = {
         "label": "Mayo Clinic: Hot flashes, diagnosis and treatment",
         "summary": "Suggests staying cool with layers, fans and a cold drink for mild hot flashes, and covers hormone and nonhormone treatments for more bothersome ones."
       }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://www.bumc.bu.edu/camed/news-events/articles/2025/study-finds-wrist-cooling-represents-a-promising-approach-for-managing-hot-flashes/",
+        "label": "Boston University Chobanian & Avedisian School of Medicine: Study finds wrist cooling represents a promising approach for managing hot flashes (2025)",
+        "summary": "Describes a small randomized, double-blind crossover trial of 27 people, including 5 postmenopausal women, in which a wrist cooling device cut severe hot flashes by 46% versus baseline; it tested a different cooling device, not bra inserts."
+      }
+    ],
+    "communityReview": "Retail reviews are mostly positive. Reviewers like that the pads cool quickly during a hot flash, are discreet enough to keep in a bra or handbag, and also soothe sore breasts. Complaints are that the cold doesn't last long, the pads don't sit well in some bras, and for some buyers they stopped firming up after about 10 uses or stayed soft for hours in a warm room until refrigerated.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.ulta.com/p/coldher-cooling-bra-inserts-pimprod2048010",
+        "label": "Ulta: coldHER Cooling Bra Inserts reviews"
+      }
     ]
   },
   "p-mypelvicbra-waistband-extenders": {
@@ -2868,6 +3372,30 @@ export const PRODUCT_RESEARCH = {
       "Elaris Pod owners whose gel pads have lost their stick or reached the end of their roughly 30 to 40 uses",
       "People who use the Elaris Pod often and want spares on hand",
       "Not the pick if you don't own an Elaris Pod: these pads are made for that device"
+    ],
+    "howToUse": {
+      "intro": "SootheHer's own pad instructions couldn't be opened, so these steps follow NHS guidance on TENS pads:",
+      "steps": [
+        "Put the pad on clean skin near the painful area.",
+        "Don't place it on irritated, broken, infected or numb skin.",
+        "Turn the device off and remove the pad if your skin gets itchy, irritated or red."
+      ],
+      "sourceUrl": "https://www.nhs.uk/conditions/transcutaneous-electrical-nerve-stimulation-tens/",
+      "sourceLabel": "NHS: TENS (transcutaneous electrical nerve stimulation)"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://www.nhs.uk/conditions/transcutaneous-electrical-nerve-stimulation-tens/",
+        "label": "NHS: TENS (transcutaneous electrical nerve stimulation)",
+        "summary": "Says to place TENS pads on clean skin, never on irritated, broken, infected or numb areas, and to stop and remove them if the skin becomes itchy, irritated or red."
+      }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013331.pub2/pdf/CDSR/CD013331/CD013331_abstract.pdf",
+        "label": "Han et al., Transcutaneous electrical nerve stimulation (TENS) for pain control in women with primary dysmenorrhoea, Cochrane Database of Systematic Reviews (2024)",
+        "summary": "Across 20 small trials, TENS may reduce period pain compared with placebo or no treatment (low certainty evidence), and mild skin redness or irritation at the pad sites is the main possible side effect."
+      }
     ]
   },
   "p-gina-insertion-applicator-refills": {
@@ -2875,6 +3403,13 @@ export const PRODUCT_RESEARCH = {
       "gina Vaginal Moisturizing Glides users who lost or wore out their applicator",
       "People who find it easier to place a Glide deeper and more precisely with an applicator than with fingers",
       "Not the pick if you don't use gina Glides: it's designed only for them"
+    ],
+    "clinicalSources": [
+      {
+        "url": "https://www.mayoclinic.org/diseases-conditions/menopause/expert-answers/vaginal-dryness/faq-20115086",
+        "label": "Mayo Clinic: Vaginal dryness after menopause, how to treat it?",
+        "summary": "Says vaginal moisturizers are put into the vagina or around the vulva every day or every few days to keep tissues healthy, which is the kind of product this applicator is used to place."
+      }
     ]
   },
   "p-livlabs-pippa-fit-kit": {
@@ -3178,6 +3713,33 @@ export const PRODUCT_RESEARCH = {
         "label": "Mayo Clinic: Heavy menstrual bleeding",
         "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
       }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
+        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
+        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
+      },
+      {
+        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
+        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
+        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
+      }
+    ],
+    "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.target.com/p/-/A-14013693",
+        "label": "Target: o.b. Applicator-Free Tampons Multipack reviews"
+      },
+      {
+        "url": "https://www.target.com/p/-/A-13293258",
+        "label": "Target: o.b. Original Super Plus reviews"
+      },
+      {
+        "url": "https://walmart.com/ip/seort/14089583",
+        "label": "Walmart: o.b. Tampons Multi-Pack reviews"
+      }
     ]
   },
   "p-ob-original-multipack-80": {
@@ -3211,6 +3773,33 @@ export const PRODUCT_RESEARCH = {
         "label": "Mayo Clinic: Heavy menstrual bleeding",
         "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
       }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
+        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
+        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
+      },
+      {
+        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
+        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
+        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
+      }
+    ],
+    "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.target.com/p/-/A-14013693",
+        "label": "Target: o.b. Applicator-Free Tampons Multipack reviews"
+      },
+      {
+        "url": "https://www.target.com/p/-/A-13293258",
+        "label": "Target: o.b. Original Super Plus reviews"
+      },
+      {
+        "url": "https://walmart.com/ip/seort/14089583",
+        "label": "Walmart: o.b. Tampons Multi-Pack reviews"
+      }
     ]
   },
   "p-ob-original-regular-40": {
@@ -3237,6 +3826,33 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.fda.gov/ForConsumers/ConsumerUpdates/ucm612029.htm",
         "label": "FDA: The Facts on Tampons, and How to Use Them Safely",
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
+      }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
+        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
+        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
+      },
+      {
+        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
+        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
+        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
+      }
+    ],
+    "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.target.com/p/-/A-14013693",
+        "label": "Target: o.b. Applicator-Free Tampons Multipack reviews"
+      },
+      {
+        "url": "https://www.target.com/p/-/A-13293258",
+        "label": "Target: o.b. Original Super Plus reviews"
+      },
+      {
+        "url": "https://walmart.com/ip/seort/14089583",
+        "label": "Walmart: o.b. Tampons Multi-Pack reviews"
       }
     ]
   },
@@ -3271,6 +3887,33 @@ export const PRODUCT_RESEARCH = {
         "label": "Mayo Clinic: Heavy menstrual bleeding",
         "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
       }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
+        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
+        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
+      },
+      {
+        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
+        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
+        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
+      }
+    ],
+    "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.target.com/p/-/A-14013693",
+        "label": "Target: o.b. Applicator-Free Tampons Multipack reviews"
+      },
+      {
+        "url": "https://www.target.com/p/-/A-13293258",
+        "label": "Target: o.b. Original Super Plus reviews"
+      },
+      {
+        "url": "https://walmart.com/ip/seort/14089583",
+        "label": "Walmart: o.b. Tampons Multi-Pack reviews"
+      }
     ]
   },
   "p-ob-original-super-plus-40": {
@@ -3303,6 +3946,33 @@ export const PRODUCT_RESEARCH = {
         "url": "https://www.mayoclinic.org/diseases-conditions/menorrhagia/symptoms-causes/syc-20352829",
         "label": "Mayo Clinic: Heavy menstrual bleeding",
         "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
+      }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
+        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
+        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
+      },
+      {
+        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
+        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
+        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
+      }
+    ],
+    "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.target.com/p/-/A-14013693",
+        "label": "Target: o.b. Applicator-Free Tampons Multipack reviews"
+      },
+      {
+        "url": "https://www.target.com/p/-/A-13293258",
+        "label": "Target: o.b. Original Super Plus reviews"
+      },
+      {
+        "url": "https://walmart.com/ip/seort/14089583",
+        "label": "Walmart: o.b. Tampons Multi-Pack reviews"
       }
     ]
   },
@@ -3337,6 +4007,33 @@ export const PRODUCT_RESEARCH = {
         "label": "Mayo Clinic: Heavy menstrual bleeding",
         "summary": "Lists signs of heavy bleeding, like soaking one or more pads an hour for several hours or waking at night to change protection, and says to see a doctor if that happens."
       }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
+        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
+        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
+      },
+      {
+        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
+        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
+        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
+      }
+    ],
+    "communityReview": "Reviewers often praise how comfortable these feel once inserted, the lack of applicator waste, and how compact they are to carry. Common complaints are finger insertion, which some people just don't like, a dry or scratchy feel for some users, and a minority who find absorbency lacking. Some recent reviewers also dislike a newer twist-off wrapper that is hard to open, especially with arthritic hands. A few longtime Ultra users say the redesigned version feels stiffer and less absorbent than before.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.target.com/p/-/A-14013693",
+        "label": "Target: o.b. Applicator-Free Tampons Multipack reviews"
+      },
+      {
+        "url": "https://www.target.com/p/-/A-13293258",
+        "label": "Target: o.b. Original Super Plus reviews"
+      },
+      {
+        "url": "https://walmart.com/ip/seort/14089583",
+        "label": "Walmart: o.b. Tampons Multi-Pack reviews"
+      }
     ]
   },
   "p-ob-procomfort-mini-32": {
@@ -3365,7 +4062,26 @@ export const PRODUCT_RESEARCH = {
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
       }
     ],
-    "clinicalNote": "The FDA says to change a tampon every 4 to 8 hours and never wear one longer than 8. If a tampon lasts a full 8 hours without filling, the absorbency may be more than you need."
+    "clinicalNote": "The FDA says to change a tampon every 4 to 8 hours and never wear one longer than 8. If a tampon lasts a full 8 hours without filling, the absorbency may be more than you need.",
+    "scienceSources": [
+      {
+        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
+        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
+        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
+      },
+      {
+        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
+        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
+        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
+      }
+    ],
+    "communityReview": "Reviewers on a German pharmacy site often say they barely feel the tampon once it's in and find the smooth surface easy to insert, including first-time users. Most treat Mini as a light-day or start-and-end-of-period size, and the main complaint is that it doesn't last on heavier days. One reviewer noticed loose fibers on the surface. Many of these reviews were posted during a promotion, and the site says it doesn't verify them.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.medpex.de/o-b-tampons-procomfort-mini/00723767/erfahrungen",
+        "label": "medpex.de: o.b. ProComfort Mini customer reviews (German)"
+      }
+    ]
   },
   "p-ob-procomfort-mini-16": {
     "whoItsFor": [
@@ -3393,7 +4109,26 @@ export const PRODUCT_RESEARCH = {
         "summary": "FDA advises using the lowest absorbency you need, changing every 4 to 8 hours, never wearing one tampon longer than 8 hours, and stopping use and getting care for TSS warning signs."
       }
     ],
-    "clinicalNote": "The FDA says to change a tampon every 4 to 8 hours and never wear one longer than 8. If a tampon lasts a full 8 hours without filling, the absorbency may be more than you need."
+    "clinicalNote": "The FDA says to change a tampon every 4 to 8 hours and never wear one longer than 8. If a tampon lasts a full 8 hours without filling, the absorbency may be more than you need.",
+    "scienceSources": [
+      {
+        "url": "https://doaj.org/article/d9f207d69fc14542886e4880f6c81a75",
+        "label": "Shearston et al., Environment International (2024): Tampons as a source of exposure to metal(loid)s",
+        "summary": "Tested 30 tampons from 14 brands and found metals such as lead and arsenic across product types, with no category (organic, store or name brand, US or EU) consistently lower; whether metals are absorbed through vaginal tissue was not tested."
+      },
+      {
+        "url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/Device-Associated-Menstrual-Toxic-Shock-Syndrome/9984066349902771",
+        "label": "Schlievert and Davis, Clinical Microbiology Reviews (2020): Device-Associated Menstrual Toxic Shock Syndrome",
+        "summary": "Peer-reviewed review linking tampon use to menstrual toxic shock syndrome, explaining why standard absorbency labeling exists, and noting that cases still occur."
+      }
+    ],
+    "communityReview": "Reviewers on a German pharmacy site often say they barely feel the tampon once it's in and find the smooth surface easy to insert, including first-time users. Most treat Mini as a light-day or start-and-end-of-period size, and the main complaint is that it doesn't last on heavier days. One reviewer noticed loose fibers on the surface. Many of these reviews were posted during a promotion, and the site says it doesn't verify them.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.medpex.de/o-b-tampons-procomfort-mini/00723767/erfahrungen",
+        "label": "medpex.de: o.b. ProComfort Mini customer reviews (German)"
+      }
+    ]
   },
   "p-poise-ultra-thin-moderate": {
     "whoItsFor": [
@@ -3401,7 +4136,18 @@ export const PRODUCT_RESEARCH = {
       "People in perimenopause or postpartum dealing with new bladder leaks",
       "Anyone using menstrual pads for urine who wants a pad built to absorb urine and control its odor",
       "Not the pick for period bleeding: it's designed for urine, not menstrual flow"
-    ]
+    ],
+    "howToUse": {
+      "intro": "Per Poise's label directions (as listed for Poise pads on Carewell):",
+      "steps": [
+        "Read the instructions in the pack before your first use.",
+        "Press the pad sticky side down onto the inside of your underwear.",
+        "Change it as needed.",
+        "Don't wear one pad for longer than 12 hours."
+      ],
+      "sourceUrl": "https://www.carewell.com/product/poise-original-pads-maximum/",
+      "sourceLabel": "Carewell: Poise Original Pads, Maximum (directions)"
+    }
   },
   "p-always-discreet-boutique-liners": {
     "whoItsFor": [
@@ -3409,6 +4155,24 @@ export const PRODUCT_RESEARCH = {
       "Anyone using a menstrual panty liner for urine who wants one designed to absorb urine and control its odor",
       "People who want a thin, discreet option for occasional leaks",
       "Anyone whose leaks are frequent or getting worse, since a clinician can check for treatable pelvic floor causes"
+    ],
+    "clinicalSources": [
+      {
+        "url": "https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-control-problems/treatment",
+        "label": "NIDDK (NIH): Treatments for Bladder Control Problems (Urinary Incontinence)",
+        "summary": "Lists disposable pads worn in your underwear as a way to manage leaks alongside pelvic floor exercises and bladder training, and says to talk with a health care professional if lifestyle changes don't help."
+      }
+    ],
+    "communityReview": "No reviews specific to the Boutique version could be opened, so this reflects reviews of Always Discreet's standard very light long liners. Many reviewers say they are thin, comfortable, stick well and handle small leaks and odor without bulk. Common complaints are the added scent, which some found irritating or headache-inducing, liners slipping out of place, side leaks once damp, and a length that felt shorter than described.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.samsclub.com/reviews/product/3700052225?page=3",
+        "label": "Sam's Club: Always Discreet Plus Incontinence Liners, Very Light Long reviews"
+      },
+      {
+        "url": "https://www.walmart.com/ip/39878650",
+        "label": "Walmart: Always Discreet Incontinence Liners, Very Light Long"
+      }
     ]
   },
   "p-depend-silhouette-underwear": {
@@ -3416,6 +4180,45 @@ export const PRODUCT_RESEARCH = {
       "Women with moderate to heavy bladder leaks, where a liner alone isn't enough",
       "People who want pull-on protection that looks and feels closer to regular underwear than a pad",
       "Anyone whose leaks are frequent or getting worse, since a clinician can check for treatable pelvic floor causes"
+    ],
+    "howToUse": {
+      "intro": "Per Depend's sizing chart and IUGA and MedlinePlus guidance on incontinence products:",
+      "steps": [
+        "Measure your waist and pick your size from Depend's chart: S 26 to 34 in, M 32 to 42 in, L 40 to 52 in, XL 50 to 60 in.",
+        "Pull them on like regular underwear and check they sit snugly, since a loose fit lets urine escape.",
+        "Change when the underwear is wet, and remove a soaked pair right away.",
+        "Clean and dry your skin at each change with a gentle wash or incontinence wipe rather than baby wipes."
+      ],
+      "sourceUrl": "https://cm.depend.com/en-us/incontinence-products/women/silhouette-classic-underwear",
+      "sourceLabel": "Depend Silhouette product page (sizing), with IUGA and MedlinePlus pad-care guidance"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://medlineplus.gov/ency/article/003973.htm",
+        "label": "MedlinePlus (NIH): Urinary incontinence products",
+        "summary": "Describes pads, pull-on and reusable underwear for leaks, advises a snug fit for disposables, and says to remove soaked products right away and clean and dry the skin to prevent breakdown."
+      },
+      {
+        "url": "https://www.yourpelvicfloor.org/media/Continence_Pads_and_Perineal_Care-new-1.pdf",
+        "label": "IUGA: Continence Pads and Perineal Care, A Guide for Women",
+        "summary": "Explains that menstrual pads are made for blood, not urine, and recommends dedicated continence products chosen by leak volume, worn snugly, changed by wetness, with gentle pH-balanced skin cleansing."
+      },
+      {
+        "url": "https://www.cochrane.org/zh-hant/about-us/news/featured-review-pelvic-floor-muscle-training-versus-no-treatment-or-inactive-control-treatmen-0",
+        "label": "Cochrane featured review (2018): Pelvic floor muscle training for urinary incontinence in women",
+        "summary": "Concludes with confidence that pelvic floor muscle training can cure or improve stress and other types of urinary incontinence and could be part of first-line care."
+      }
+    ],
+    "communityReview": "Reviewers often say these hold up overnight and during activity, feel close to regular underwear, and are hard to spot under clothes, especially the black version. Common complaints are a pad area that feels too short or narrow, waistbands that dig in or irritate skin, and reports that newer packs leak more than older ones. Fit for larger bodies is another recurring sticking point.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.target.com/p/depend-silhouette-women-s-small-postpartum-incontinence-disposable-underwear/-/A-94947533",
+        "label": "Target: Depend Silhouette Maximum Absorbency reviews"
+      },
+      {
+        "url": "https://www.walmart.com/ip/960731633",
+        "label": "Walmart: Depend Silhouette for Women reviews"
+      }
     ]
   },
   "p-tena-intimates-very-light-liner": {
@@ -3423,6 +4226,42 @@ export const PRODUCT_RESEARCH = {
       "Women with occasional, very light bladder leaks",
       "People in or after perimenopause noticing small leaks",
       "Anyone using a menstrual liner for urine who wants one designed to lock away urine odor"
+    ],
+    "howToUse": {
+      "intro": "TENA's product page has no step-by-step directions, so these follow IUGA and MedlinePlus guidance on continence pads:",
+      "steps": [
+        "Use a bladder-leak liner for urine rather than a menstrual pad or liner.",
+        "Place it in close-fitting regular underwear so it sits snugly against your body.",
+        "Change it when it feels wet rather than after every small drip, since changing too often can dry out your skin.",
+        "Clean your skin at each change with a gentle wash or incontinence wipe rather than baby wipes.",
+        "Move up to a more absorbent pad if your leaks outgrow a very light liner."
+      ],
+      "sourceUrl": "https://www.yourpelvicfloor.org/media/Continence_Pads_and_Perineal_Care-new-1.pdf",
+      "sourceLabel": "IUGA: Continence Pads and Perineal Care, A Guide for Women"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://www.yourpelvicfloor.org/media/Continence_Pads_and_Perineal_Care-new-1.pdf",
+        "label": "IUGA: Continence Pads and Perineal Care, A Guide for Women",
+        "summary": "Explains that menstrual pads are made for blood, not urine, and recommends dedicated continence products chosen by leak volume, worn snugly, changed by wetness, with gentle pH-balanced skin cleansing."
+      },
+      {
+        "url": "https://medlineplus.gov/ency/article/003973.htm",
+        "label": "MedlinePlus (NIH): Urinary incontinence products",
+        "summary": "Describes pads, pull-on and reusable underwear for leaks, advises a snug fit for disposables, and says to remove soaked products right away and clean and dry the skin to prevent breakdown."
+      },
+      {
+        "url": "https://www.cochrane.org/zh-hant/about-us/news/featured-review-pelvic-floor-muscle-training-versus-no-treatment-or-inactive-control-treatmen-0",
+        "label": "Cochrane featured review (2018): Pelvic floor muscle training for urinary incontinence in women",
+        "summary": "Concludes with confidence that pelvic floor muscle training can cure or improve stress and other types of urinary incontinence and could be part of first-line care."
+      }
+    ],
+    "communityReview": "Reviewers often say this liner handles light drips without noticeable urine smell, stays in place, and feels gentle on sensitive skin. The main limit people mention is capacity: it works for small leaks but not bigger ones. A real share of ratings are negative, though the visible reviews don't point to one common complaint.",
+    "communityReviewSources": [
+      {
+        "url": "https://www.walmart.com/ip/796765417",
+        "label": "Walmart: TENA Sensitive Care Extra Coverage Very Light Liner reviews"
+      }
     ]
   },
   "p-lim-method-shoe-covers": {
@@ -5009,6 +5848,164 @@ export const PRODUCT_RESEARCH = {
       ],
       "sourceUrl": "https://phdfemininehealth.com/products/ph-d-boric-acid-honey-lavender-foam-wash",
       "sourceLabel": "pH-D Boric Acid Foam Wash product page"
+    }
+  },
+  "p-sweetspot-buff-brighten": {
+    "whoItsFor": [
+      "People who shave or wax the bikini line, underarms or legs and keep getting ingrown hairs or razor bumps",
+      "Those who want a fragrance-free exfoliant for dark spots or darkening from repeated hair removal, which the brand says the pads target",
+      "Anyone who prefers a pre-soaked, single-use pad over a scrub or lotion",
+      "Not the pick for use right after shaving or waxing: the brand says to wait 24 hours, and to check with your doctor first if you're pregnant"
+    ],
+    "howToUse": {
+      "intro": "Per SweetSpot Labs' instructions on the product listing:",
+      "steps": [
+        "Wait at least 24 hours after shaving or waxing before you use a pad.",
+        "Swipe one pad over dry skin in a gentle circular motion.",
+        "Throw the pad away after one use, don't flush it, and close the lid tightly.",
+        "Start with about three times a week and build up to daily if your skin tolerates it.",
+        "Wear sunscreen and limit sun exposure while using it and for a week after, since AHAs can raise sun sensitivity.",
+        "Stop using it if you get a rash or discomfort, and keep it away from your eyes."
+      ],
+      "sourceUrl": "https://www.ulta.com/p/p-xlsImpprod18651011",
+      "sourceLabel": "Ulta: SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://www.aad.org/public/everyday-care/skin-care-basics/hair/razor-bump-prevention",
+        "label": "American Academy of Dermatology: 6 razor bump prevention tips from dermatologists",
+        "summary": "The AAD's prevention basics are shaving with the grain, softening hair first, using a cleanser, shave cream and an aftershave made to reduce bumps, and seeing a dermatologist if bumps keep coming back."
+      }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://cdn.mdedge.com/files/s3fs-public/issues/articles/CT115004135.pdf",
+        "label": "Cutis (2025): Beyond the Razor: Managing Pseudofolliculitis Barbae in Skin of Color",
+        "summary": "This dermatology review says alpha hydroxy acids such as glycolic acid can reduce the curvature of the hair and that hydroxy acids help by loosening the buildup of skin around hair follicles, though it cites no trial results of its own."
+      }
+    ]
+  },
+  "p-gennev-care": {
+    "whoItsFor": [
+      "People in perimenopause or menopause who want a virtual visit with a menopause-trained, board-certified doctor",
+      "Those who want to talk through hormone therapy or other prescription options and get prescriptions renewed in follow-up visits",
+      "Anyone who wants support beyond medication, since Gennev offers health coaches, dietitians and mental health specialists for sleep, nutrition, stress and lifestyle",
+      "People with Aetna, Anthem or other in-network plans who want to use insurance (check your plan with Gennev's lookup tool first)"
+    ],
+    "howToUse": {
+      "intro": "Per Gennev's own How It Works page:",
+      "steps": [
+        "Create a free account on Gennev's site.",
+        "Fill out the short health history, sign the privacy form, and choose insurance or direct billing.",
+        "Book a 30-minute video visit with a menopause-trained doctor to build your care plan.",
+        "Join from a computer if you can, using the link sent by text and email about 15 minutes before.",
+        "Check your visit summary in the Gennev portal, fill any prescriptions, and book follow-ups or coaching sessions your doctor recommends."
+      ],
+      "sourceUrl": "https://www.gennev.com/how-gennev-works",
+      "sourceLabel": "Gennev: How Gennev Works"
+    },
+    "clinicalSources": [
+      {
+        "url": "https://newsnetwork.mayoclinic.org/discussion/menopause-symptoms-mayo-clinic-expert-outlines-hormone-and-nonhormonal-therapies/",
+        "label": "Mayo Clinic News Network: Menopause symptoms, hormone and nonhormonal therapies",
+        "summary": "A Mayo Clinic women's health specialist explains that hormone therapy's benefits generally outweigh risks for healthy people under 60 or within 10 years of their last period, that it's usually not an option after breast cancer or blood clots, and that nonhormonal options include low-dose paroxetine, CBT and clinical hypnosis."
+      }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
+        "label": "Menopause (2021): Delivery of menopause care during a pandemic, patient satisfaction with telephone visits",
+        "summary": "In 246 visits at a Toronto menopause clinic in 2020, patients rated remote visits highly (4.23 out of 5) and about 80% of those who had tried both preferred them, though this was one clinic and not a study of Gennev."
+      }
+    ]
+  },
+  "p-womaness-me": {
+    "whoItsFor": [
+      "Adults in perimenopause or menopause looking for a hormone-free daily supplement for hot flashes, night sweats, mood and sleep",
+      "People who want to avoid estrogen and phytoestrogens, since Womaness says the formula contains neither",
+      "Those willing to take it every day for about three months, which is how long the brand says to try it for best results",
+      "Not the pick to start on your own if you're pregnant, nursing, take medications or have a medical condition: the label says to check with your doctor first"
+    ],
+    "howToUse": {
+      "intro": "Per Womaness's label directions:",
+      "steps": [
+        "Take 1 capsule a day with water, ideally with a meal, or as your doctor directs.",
+        "Take it at any time of day that suits you, since the brand says timing is flexible.",
+        "Stick with it for at least three months before judging results, as the brand recommends.",
+        "Don't use it if the clear neck seal is broken or missing, and store it in a dry place at room temperature.",
+        "Check with your doctor if you're pregnant, breastfeeding or take other medicines, including hormone therapy."
+      ],
+      "sourceUrl": "https://womaness.com/products/me-no-pause",
+      "sourceLabel": "Womaness: Me.No.Pause. product page"
+    },
+    "scienceSources": [
+      {
+        "url": "https://www.frontiersin.org/articles/10.3389/frph.2025.1647721/full",
+        "label": "Frontiers in Reproductive Health (2025): Ashwagandha root extract for menopausal symptoms, randomized placebo-controlled trial",
+        "summary": "In 60 women aged 45 to 55, 300 mg of one branded ashwagandha extract twice daily for 8 weeks lowered Menopause Rating Scale scores more than placebo, but the trial was small and short and did not test Me.No.Pause. or its dose."
+      }
+    ]
+  },
+  "d-evernow": {
+    "whoItsFor": [
+      "People in perimenopause or menopause who want ongoing virtual care from a clinician licensed in their state, available in all 50 states and D.C.",
+      "Those who want to discuss hormone therapy or non-hormonal prescriptions without an in-person appointment",
+      "Anyone who likes being able to message their provider any time, which comes with the membership",
+      "Not the pick if you rely on Medicare or Medicaid, which Evernow says it doesn't currently accept, or if you need in-person exams"
+    ],
+    "howToUse": {
+      "intro": "Per Evernow's How It Works and FAQ pages:",
+      "steps": [
+        "Choose a monthly membership for ongoing care or a single pay-per-visit appointment.",
+        "Answer a short set of health questions and pick your plan.",
+        "Get matched with a menopause provider licensed in your state, often within 24 hours.",
+        "Build your care plan with your provider in a video visit or by secure messaging.",
+        "Fill prescriptions at your local pharmacy or get them delivered, and message your provider with questions as you go."
+      ],
+      "sourceUrl": "https://www.evernow.com/faq",
+      "sourceLabel": "Evernow: FAQ"
+    },
+    "scienceSources": [
+      {
+        "url": "https://cochranelibrary.com/cdsr/doi/10.1002/14651858.CD002978.pub2/pdf/CDSR/CD002978/CD002978_abstract.pdf",
+        "label": "Cochrane Review: Oral oestrogen and combined oestrogen/progestogen therapy versus placebo for hot flushes",
+        "summary": "Across 24 trials with 3,329 women, oral hormone therapy cut weekly hot flushes by about 75% compared with placebo and also lowered their severity."
+      },
+      {
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8785511",
+        "label": "Menopause (2021): Delivery of menopause care during a pandemic, patient satisfaction with telephone visits",
+        "summary": "At one Toronto menopause clinic, patients rated remote visits highly and most who had tried both preferred them, which supports virtual menopause care in general, though this was not a study of Evernow."
+      }
+    ]
+  },
+  "p-mypelvicbra-sports": {
+    "clinicalSources": [
+      {
+        "url": "https://mayoclinic.org/diseases-conditions/pelvic-organ-prolapse/diagnosis-treatment/drc-20562951?p=1",
+        "label": "Mayo Clinic: Pelvic organ prolapse, diagnosis and treatment",
+        "summary": "Lists pelvic floor exercises with biofeedback and a fitted pessary as the main nonsurgical treatments for prolapse, plus steps like avoiding heavy lifting and straining; it does not mention support garments."
+      }
+    ],
+    "scienceSources": [
+      {
+        "url": "https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2025.1691794/full",
+        "label": "Donnelly et al., Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction, Frontiers in Sports and Active Living (2026)",
+        "summary": "In 13 postpartum runners, compression shorts (a different brand, not a Pelvic Bra) smoothed pelvic motion, raised perceived support and lowered fear of symptoms, but did not change reported symptoms over a 7-minute run."
+      }
+    ]
+  },
+  "p-sootheher-elaris-pod": {
+    "howToUse": {
+      "intro": "SootheHer's own instructions couldn't be opened, so these steps follow NHS guidance on using a TENS device:",
+      "steps": [
+        "Stick the gel pad onto clean skin near where it hurts, such as your lower belly.",
+        "Start on the lowest setting and turn it up slowly until you feel a tingling that isn't painful.",
+        "Don't use it while you sleep, in the bath or shower, or while driving.",
+        "Turn it off and remove the pad if your skin gets itchy, irritated or red.",
+        "Skip it if you have epilepsy or a pacemaker, or if you're pregnant unless your doctor says otherwise."
+      ],
+      "sourceUrl": "https://www.nhs.uk/conditions/transcutaneous-electrical-nerve-stimulation-tens/",
+      "sourceLabel": "NHS: TENS (transcutaneous electrical nerve stimulation)"
     }
   }
 };
