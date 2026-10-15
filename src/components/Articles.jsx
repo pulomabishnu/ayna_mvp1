@@ -253,7 +253,7 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
 
   return (
     <section className="ay-lib-care" aria-labelledby="ay-lib-care-h">
-      <h3 id="ay-lib-care-h">Can&apos;t reach your doctor?</h3>
+      <h2 id="ay-lib-care-h" className="ay-lib-care__h">Can&apos;t reach your doctor?</h2>
 
       <CareRow title="Nurse line (insurer)">
         <p>Many plans offer a 24/7 nurse line for symptom guidance and when to seek care. Check your insurance card or member portal for the number.</p>
@@ -726,9 +726,37 @@ function ArticleCover({ art, large = false }) {
   );
 }
 
+/* Bold lead-ins ("When to seek care:") become real H2 subheadings, so the
+   read can be skimmed and screen readers get structure. */
+function withHeadings(body) {
+  const kids = React.isValidElement(body) ? React.Children.toArray(body.props.children) : [];
+  if (!kids.length) return body;
+  const out = [];
+  kids.forEach((el, i) => {
+    if (React.isValidElement(el) && el.type === 'p') {
+      const parts = React.Children.toArray(el.props.children);
+      const lead = parts[0];
+      if (React.isValidElement(lead) && lead.type === 'strong') {
+        const text = React.Children.toArray(lead.props.children).join('').trim();
+        if (/:$/.test(text) && text.length < 70) {
+          const label = text.replace(/:$/, '').replace(/\s*\(from [^)]*\)\s*$/i, '');
+          out.push(<h2 key={`h-${i}`} className="ay-lib-h2">{label}</h2>);
+          const rest = parts.slice(1);
+          const hasText = rest.some((r) => (typeof r === 'string' ? r.trim() : true));
+          if (hasText) out.push(<p key={`p-${i}`}>{rest.map((r) => (typeof r === 'string' ? r.replace(/^\s+/, '') : r))}</p>);
+          return;
+        }
+      }
+    }
+    out.push(el);
+  });
+  return <>{out}</>;
+}
+
 function renderArticleCard(art, setSelectedId, progress = 0) {
+  // A real link: open in a new tab, copy the address, see where it goes.
   return (
-    <button type="button" className="ay-web-lib-card ay-lib-card" onClick={() => setSelectedId(art.id)}>
+    <a href={`/library/${art.id}`} className="ay-web-lib-card ay-lib-card" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); setSelectedId(art.id); }}>
       <span className="ay3-clip__mast" aria-hidden="true"><span>ayna library</span><span>{minutesFor(art)} min</span></span>
       <ArticleCover art={art} />
       <h3>{art.title}</h3>
@@ -740,7 +768,7 @@ function renderArticleCard(art, setSelectedId, progress = 0) {
         <span className="ay-lib-card__src">{art.source}</span>
         <ReadState value={progress} />
       </span>
-    </button>
+    </a>
   );
 }
 
@@ -823,7 +851,7 @@ const validId = (id) => (id && ARTICLES.some((a) => a.id === id) ? id : null);
  *   Changing it later opens that read, or closes the open one when it becomes null.
  * - `onArticleChange(idOrNull)`: called whenever the open read changes (not on mount).
  */
-export default function Articles({ initialArticleId, onOpenProduct, quizResults, healthProfile = null, onArticleChange, userId = null }) {
+export default function Articles({ initialArticleId, onOpenProduct, quizResults, healthProfile = null, onArticleChange, userId = null, onAsk = null }) {
   const [selectedId, setSelectedId] = useState(() => validId(initialArticleId));
   const [query, setQuery] = useState('');
   const [topic, setTopic] = useState('all');
@@ -974,7 +1002,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <p className="ay-lib-article__src">Sources: {selected.source}</p>
           <ArticleCover art={selected} large />
           <div className="article-body" ref={bodyRef}>
-            {selected.body}
+            {withHeadings(selected.body)}
           </div>
 
           <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
@@ -1000,16 +1028,28 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
   const q = query.trim().toLowerCase();
   let body;
+  const inTopic = (a) => topic === 'all' || (topic === 'foryou' ? forYou.some((f) => f.id === a.id) : (rows.find((r) => r.id === topic)?.items || []).some((x) => x.id === a.id));
+  const shown = q.length >= 2 ? searchArticles(query, ARTICLES).filter(inTopic) : null;
   if (q.length >= 2) {
-    const results = searchArticles(query, ARTICLES);
-    body = results.length ? <ul className="ay-web-lib-grid">{results.map(card)}</ul> : <p className="ay-web-lib-empty">No reads match.</p>;
+    const results = shown;
+    body = results.length ? <ul className="ay-web-lib-grid">{results.map(card)}</ul> : (
+      <div className="ay-lib-zero" role="status">
+        <p className="ay-lib-zero__h">Nothing for “{query.trim()}” yet.</p>
+        <p>Try a topic:</p>
+        <div className="ay-lib-zero__chips">{rows.slice(0, 3).map((r) => <button type="button" key={r.id} onClick={() => { setQuery(''); setTopic(r.id); }}>{r.label}</button>)}</div>
+        <div className="ay-lib-zero__actions">
+          {onAsk && <button type="button" className="ay-lib-zero__ask" onClick={() => onAsk(query.trim())}>Ask ayna about {query.trim()}</button>}
+          <button type="button" className="ay-lib-zero__req" onClick={() => document.querySelector('.ay-web-lib-suggest')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>Request a read</button>
+        </div>
+      </div>
+    );
   } else if (topic !== 'all') {
     const items = topic === 'foryou' ? forYou : (rows.find((r) => r.id === topic)?.items || []);
     body = <ul className="ay-web-lib-grid">{items.map(card)}</ul>;
   } else {
     body = <>
       {shelf('keep', 'Keep reading', keepReading)}
-      {hasProfile ? shelf('foryou', 'For you', forYou) : <a className="ay-lib-personalize" href="/quiz">Personalize my reading list <span aria-hidden="true">→</span></a>}
+      {hasProfile ? <>{shelf('foryou', 'Top 3 for you', forYou.slice(0, 3))}{forYou.length > 3 && <button type="button" className="ay-lib-more" onClick={() => setTopic('foryou')}>All {forYou.length} for you</button>}</> : <a className="ay-lib-personalize" href="/quiz">Personalize my reading list <span aria-hidden="true">→</span></a>}
       {rows.map((r) => shelf(r.id, r.label, r.items))}
     </>;
   }
@@ -1020,10 +1060,10 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
         <div className="ay-wiki-top__text">
           <p className="ay3-kicker">The ayna library</p>
           <h1 className="ay3-title">Short reads, <em>real sources.</em></h1>
-          <p className="ay-wiki-top__sub">{ARTICLES.length} plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
+          <p className="ay-wiki-top__sub">Plain-language reads on women&apos;s health, each one checked against clinical sources.</p>
         </div>
         <span className="ay-lib-total" aria-label={`${finished} of ${ARTICLES.length} finished`}>
-          <span>{finished}/{ARTICLES.length} read</span>
+          <span>{finished > 0 ? `${finished}/${ARTICLES.length} read` : `${ARTICLES.length} reads`}</span>
           <ProgressBar value={ARTICLES.length ? finished / ARTICLES.length : 0} />
         </span>
       </header>
@@ -1032,7 +1072,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
           <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Try: heavy periods or PCOS" aria-label="Search reads" />
         </label>
-        {q.length < 2 && <div className="ay-web-lib-filter ay-lib-chips" role="group" aria-label="Topics">
+        {<div className="ay-web-lib-filter ay-lib-chips" role="group" aria-label="Topics">
           {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}
         </div>}
       </div>
@@ -1042,7 +1082,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <nav className="ay3-libside__box">
             <p className="ay3-libside__title">A to Z</p>
             <ul className="ay3-az">
-              {[...ARTICLES].sort((a, b) => a.title.localeCompare(b.title)).map((a, i, arr) => {
+              {[...(shown || ARTICLES.filter(inTopic))].sort((a, b) => a.title.localeCompare(b.title)).map((a, i, arr) => {
                 const letter = a.title[0].toUpperCase();
                 const first = i === 0 || arr[i - 1].title[0].toUpperCase() !== letter;
                 return (

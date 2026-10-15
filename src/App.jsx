@@ -2149,6 +2149,7 @@ function App() {
           <Suspense fallback={<ViewLoadingFallback />}>
             <Articles
               userId={user?.id || null}
+              onAsk={(q) => openAsk(q)}
               initialArticleId={selectedArticleId}
               onArticleChange={(id) => {
                 setSelectedArticleId(id);
