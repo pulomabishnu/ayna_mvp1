@@ -7,6 +7,7 @@ import { ALL_PRODUCTS, MACRO_GROUPS } from '../data/products';
 import { getDailyFact } from '../data/welcomeSlides.js';
 import { formatPrice } from '../utils/formatPrice';
 import SmartSearchInput from './search/SmartSearchInput.jsx';
+import LandingStories from './LandingStories';
 import '../styles/landing-v2.css';
 
 /* First-visit landing, v2. One job per section, minimal words, one palette:
@@ -355,14 +356,20 @@ function Start({ onStartQuiz, onViewDiscovery }) {
 /* ---------- page ---------- */
 // `personal` (signed in): the same page with a welcome-back hero, and
 // `personalSlot` (her next step, top picks, Powder Room) right under it.
-export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onSearch, personal = null, personalSlot = null }) {
+export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct, onViewArticles, onViewArticle, onViewAbout, onViewWaitlist, onViewCommunity, onSearch, personal = null, personalSlot = null }) {
   // One motion control for the whole site: the footer's "Pause motion".
   const paused = useMotionPaused();
   return (
     <div className={`lv${paused ? ' is-paused' : ''}`}>
       <div className="lv-wrap">
         <Hero onStartQuiz={onStartQuiz} onSearch={onSearch} personal={personal} />
+        {/* Partner brands carousel up top, right under the hero. */}
+        <section className="lv-partners lv-partners--top" aria-labelledby="lv-partners-title">
+          <h2 id="lv-partners-title" className="lv-partners__h"><a href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}>Brands we work with <span aria-hidden="true">→</span></a></h2>
+          <Ticker />
+        </section>
         {personalSlot}
+        <LandingStories paused={paused} onStartQuiz={onStartQuiz} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} />
         <Purpose onViewAbout={onViewAbout} />
         <Trending onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
         <ShopBand onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} />
@@ -370,10 +377,6 @@ export default function LandingV2({ onStartQuiz, onViewDiscovery, onOpenProduct,
         <Why paused={paused} />
         <Reads onViewArticle={onViewArticle} onViewArticles={onViewArticles} />
         {!(personal && personal.hasQuiz) && <Start onStartQuiz={onStartQuiz} onViewDiscovery={onViewDiscovery} />}
-        <section className="lv-partners" aria-labelledby="lv-partners-title">
-          <h2 id="lv-partners-title" className="lv-partners__h"><a href="/partners" onClick={(e) => { if (!onViewWaitlist || !isPlainLeftClick(e)) return; e.preventDefault(); onViewWaitlist(); }}>Brands we work with <span aria-hidden="true">→</span></a></h2>
-          <Ticker />
-        </section>
       </div>
     </div>
   );
