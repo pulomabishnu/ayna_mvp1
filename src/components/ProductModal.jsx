@@ -898,8 +898,8 @@ export default function ProductModal({
               {onCommunityAction && <>
                 <h3 id="pdp-community-h">Community</h3>
                 <div className="pdp-community-actions__grid">
-                  {[['post', 'Mention in a post'], ['review', 'Write a review'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
-                    <button key={kind} type="button" className={kind === 'post' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
+                  {[['review', 'Write a review'], ['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
+                    <button key={kind} type="button" className={kind === 'review' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
                   ))}
                 </div>
               </>}
