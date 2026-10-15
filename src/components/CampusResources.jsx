@@ -157,6 +157,10 @@ export default function CampusResources() {
 
   return (
     <div className="mockup-page cr-page">
+      {/* Quick exit: leaves for a neutral site and replaces this page in history, so Back does not return here. */}
+      <button type="button" className="cr-quickexit" onClick={() => { try { window.location.replace('https://www.google.com/search?q=weather'); } catch { window.location.href = 'https://www.google.com'; } }}>
+        Leave this page quickly
+      </button>
       <div className="cr-wrap">
         <header className="ay3-band ay3-band--paper ay3-crhero">
           <h1 className="cr-h1">Campus Resources</h1>
@@ -167,7 +171,7 @@ export default function CampusResources() {
         <p className="cr-emergency" role="note"><strong>{EMERGENCY_NOTICE}</strong></p>
 
         <div className="cr-search" role="search">
-          <label htmlFor="cr-school-search" className="cr-label">Search your school…</label>
+          <label htmlFor="cr-school-search" className="cr-label">Your school</label>
           <input
             id="cr-school-search"
             className="cr-input"
@@ -176,7 +180,7 @@ export default function CampusResources() {
             autoComplete="off"
             autoCorrect="off"
             spellCheck="false"
-            placeholder="Search your school…"
+            placeholder="e.g. Cornell University"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             aria-describedby="cr-search-status"
@@ -208,8 +212,6 @@ export default function CampusResources() {
             </div>
           )}
         </div>
-
-        <p className="cr-small"><a href="#jane-doe">Jane Doe case &amp; petition (Cornell)</a></p>
 
         <NationalSection school={selected} />
 

@@ -343,7 +343,8 @@ function applyColdStartFloor(rankedList, pageSize) {
 const PERSONALIZED_KEY = 'ayna_shop_personalized_v1';
 const LIVE_SEARCH_TIMEOUT_MS = 25000;
 const SORT_OPTIONS = [
-    { value: 'default', label: 'Best match' },
+    // Label is swapped to "Best match" only when it really sorts by match (see render).
+    { value: 'default', label: 'Featured' },
     { value: 'price-asc', label: 'Price: low to high' },
     { value: 'price-desc', label: 'Price: high to low' },
 ];
@@ -840,6 +841,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (!scoreById) return 0;
             return (scoreById.get(b.id) ?? 0) - (scoreById.get(a.id) ?? 0);
         };
+        // "Best match" (personalized on, with a profile) sorts by the same
+        // match % the cards show, highest first, so the order never contradicts
+        // the numbers.
+        const sortByShownMatch = sortBy === 'default' && personalizationFilter && Boolean(hasQuizFrustrations || hasHealthImport);
+        const shownPct = sortByShownMatch ? new Map(list.map((it) => [it.id, matchBadge(getProductMatchDetailsForProduct(it, quizResults, healthProfile, matchOpts))?.percent ?? 0])) : null;
 
         if (sortBy === 'price-asc') {
             list = [...list].sort((a, b) => {
@@ -879,6 +885,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 if (rb !== ra) return rb - ra;
                 return matchTieBreak(a, b);
             });
+        } else if (sortByShownMatch) {
+            list = [...list].sort((a, b) => ((shownPct.get(b.id) ?? 0) - (shownPct.get(a.id) ?? 0)) || matchTieBreak(a, b));
         } else {
             const browsingWithoutTextQuery = !scoreById;
             if (browsingWithoutTextQuery && !personalizationFilter) {
@@ -932,7 +940,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             }
         }
         return list;
-    }, [combined, passesActiveFilters, categoryFilter, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, shuffleSeed]);
+    }, [combined, passesActiveFilters, categoryFilter, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, combinedRelevance, aynaReviews, shuffleSeed, hasQuizFrustrations, hasHealthImport, quizResults, healthProfile, matchOpts]);
 
     // Back to the first page whenever the underlying result set actually
     // changes (new filter/search/sort), not when AI suggestions arrive later
@@ -1581,17 +1589,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <label className="ayna-browse__sort">
                     <span>Sort</span>
                     <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                        {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                        {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.value === "default" && personalizationFilter && (hasQuizFrustrations || hasHealthImport) ? "Best match" : option.label}</option>)}
                     </select>
                 </label>
             </div>
 
             {(() => {
-                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–50', '50-100': '$50–100', '100-plus': '$100+', 'fsa-hsa': 'FSA or HSA', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Clean ingredients', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Better packaging', clinician: 'Clinician backed', community: 'Community favourite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Fertility', pregnancy: 'Pregnancy', postpartum: 'Postpartum', perimenopause: 'Perimenopause', menopause: 'Menopause' };
+                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–50', '50-100': '$50–100', '100-plus': '$100+', 'fsa-hsa': 'FSA or HSA', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Clean ingredients', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Better packaging', clinician: 'Clinician backed', community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Fertility', pregnancy: 'Pregnancy', postpartum: 'Postpartum', perimenopause: 'Perimenopause', menopause: 'Menopause' };
                 const applied = [[priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayna-browse__applied" role="status">
-                        <span className="ayna-browse__count">{gridItems.length === 1 ? '1 product' : `${gridItems.length} products`}</span>
+                        <span className="ayna-browse__count">{applied.length > 0 || (categoryFilter && categoryFilter !== 'all') || macroGroup !== 'all' ? `Showing ${gridItems.length} of ${combined.length}` : (gridItems.length === 1 ? '1 product' : `${gridItems.length} products`)}</span>
+                        {sortBy === 'default' && !(personalizationFilter && (hasQuizFrustrations || hasHealthImport)) && !searchSubmitted && (
+                            <span className="ayna-browse__featured-note">Featured order includes partner brands.{(hasQuizFrustrations || hasHealthImport) ? ' Turn on Personalized to sort by your match.' : ''}</span>
+                        )}
                         {applied.map(([v, set]) => (
                             <button key={v} type="button" className="ayna-browse__chip-x" onClick={() => set('all')} aria-label={`Remove filter ${LABELS[v] || v}`}>{LABELS[v] || v} <span aria-hidden="true">×</span></button>
                         ))}
@@ -1608,7 +1619,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         ['Life stage', lifeStageFilter, setLifeStageFilter, [['fertility', 'Fertility'], ['pregnancy', 'Pregnancy'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause'], ['menopause', 'Menopause']]],
                         ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']].filter(([v]) => v === preferenceFilter || preferenceOptions.some((o) => o.value === v))],
                         ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Better packaging']].filter(([v]) => sustainabilityOptions.some((o) => o.value === v))],
-                        ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favourite'], ...(user ? [['best-match', 'Best matches'], ['ecosystem', 'In my ecosystem']] : [])]],
+                        ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favorite'], ...(user ? [['best-match', 'Best matches'], ['ecosystem', 'In my ecosystem']] : [])]],
                     ]}
                     personalizedToggle={user ? personalizedToggle : null}
                     resultCount={gridItems.length}
@@ -1656,9 +1667,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
                     // Badge = best need score, only with a profile and 50+ ("82% for period cramps").
-                    const hasProfile = Boolean(hasQuizFrustrations || hasHealthImport);
+                    // Personalized off means no scores on cards (the toggle does what it says).
+                    const hasProfile = Boolean(hasQuizFrustrations || hasHealthImport) && personalizationFilter;
                     const badge = hasProfile ? matchBadge(getProductMatchDetailsForProduct(item, quizResults, healthProfile, matchOpts)) : null;
-                    const matchPercent = hasProfile ? (badge ? badge.percent : null) : getExplicitMatchPercent(item);
+                    const matchPercent = hasProfile ? (badge ? badge.percent : null) : (personalizationFilter ? getExplicitMatchPercent(item) : null);
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];
@@ -1685,6 +1697,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             onToggleSaved={onToggleSaved}
                             labels={<>
                                 {isSponsoredItem(item) && <span className="ayna-browse-card__sponsored">Sponsored</span>}
+                                {!isSponsoredItem(item) && isPartnerBrandItem(item) && <span className="ayna-browse-card__partner">Partner</span>}
                                 {eligibilityLabel && <span className="ayna-browse-card__eligibility">{eligibilityLabel}</span>}
                             </>}
                             tile={cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (

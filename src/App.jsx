@@ -166,7 +166,7 @@ const VIEW_TITLES = {
   'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
-  'campus-resources': 'Campus Sexual Assault Support Resources',
+  'campus-resources': 'Campus Support',
   'admin-reviews': 'All Reviews',
 };
 
@@ -2308,6 +2308,7 @@ function App() {
             myProducts={myProducts}
             quizResults={quizResults}
             chatHistory={chatHistory}
+            onOpenCheckin={() => setShowCheckin(true)}
             onBack={() => setCurrentView('ecosystem')}
           />
         )}
@@ -2359,7 +2360,7 @@ function App() {
           />
         )}
 
-        {currentView !== 'quiz' && (
+        {currentView !== 'quiz' && currentView !== 'campus-resources' && (
           <nav className="ay-tabbar" aria-label="Main">
             <a href="/" className={['hero', 'welcome'].includes(currentView) ? 'is-on' : ''} {...linkProps(navigateHome)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z" /></svg><span>Home</span>

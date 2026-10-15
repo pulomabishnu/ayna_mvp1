@@ -3001,3 +3001,21 @@ html body .app-container:not([data-theme='dark']) .pdp-actions__eco.is-on { back
 .pdp-actions__eco .pdp-eco__off { display: none; }
 .pdp-actions__eco.is-on:is(:hover, :focus-visible) .pdp-eco__on { display: none; }
 .pdp-actions__eco.is-on:is(:hover, :focus-visible) .pdp-eco__off { display: inline; }
+/* Doctor prep */
+.dp-h { margin: 14px 0 4px; font: 700 13px/1.2 'DM Sans', sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #3e2723; }
+.dp-h:first-child { margin-top: 0; }
+.dp-v { margin: 0; font: 400 16px/1.45 'DM Sans', sans-serif; color: #3e2723; }
+.dp-link { padding: 0; border: 0; background: none; color: #3e2723; font: 700 16px/1.45 'DM Sans', sans-serif; text-decoration: underline; cursor: pointer; }
+.dp-shared { margin-top: 12px; padding: 10px 12px; border: 2px solid #3e2723; border-radius: 10px; background: #f7badd; color: #3e2723; font-size: 15px; }
+.dp-shared ul { margin: 4px 0 0; padding-left: 18px; }
+/* Campus Resources: quick exit always in reach; no shopping chrome on this page. */
+.cr-quickexit { position: fixed; right: 16px; bottom: 16px; z-index: 10040; min-height: 48px; padding: 0 18px; border: 2px solid #3e2723; border-radius: 99px; background: #3e2723; color: #ffedac; font: 700 15px/1 'DM Sans', sans-serif; box-shadow: 3px 3px 0 #f7badd; cursor: pointer; }
+.cr-quickexit:focus-visible { outline: 3px solid #769ebe; outline-offset: 3px; }
+html body .app-container[data-view='campus-resources'] .app-nav__circle--wishlist { display: none !important; }
+/* Shop: partner tag in plain text style; featured note under the count. */
+html body .app-container .ayna-browse-card__partner { display: inline-block; padding: 2px 8px; border: 1.5px solid #3e2723; border-radius: 99px; background: #ffedac; color: #3e2723; font: 700 11px/1.3 'DM Sans', sans-serif; letter-spacing: .04em; }
+.ayna-browse__featured-note { flex-basis: 100%; font: 400 14px/1.4 'DM Sans', sans-serif; color: #3e2723; }
+.ay-trust__brand { margin-top: 10px; padding-top: 8px; border-top: 1.5px dashed #3e2723; }
+.ay-trust__brand h4 { margin: 0 0 4px; font: 700 13px/1.2 'DM Sans', sans-serif; text-transform: uppercase; letter-spacing: .04em; }
+.ay-trust__brand p { margin: 0 0 4px; font-size: 15px; line-height: 1.45; }
+.ay-trust__brand small { font-size: 13px; }

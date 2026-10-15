@@ -563,7 +563,12 @@ export function ProductTrust({ glance, aynaRating = null, ratingCount = 0, extra
   const evidence = secs.find((s) => s.id === 'evidence');
   const evText = evidence ? sectionDigest(evidence) : '';
   const evCount = glance.sources.filter((s) => ['product_study', 'clinical_guideline', 'regulatory', 'ingredient_research', 'expert_guidance'].includes(s.type)).length;
-  const peopleEmpty = !people || people.blocks.every((b) => b.type === 'empty');
+  // Brand-hosted ratings are not "what people say": file them under the brand.
+  const isBrandClaim = (b) => /\bbrand(-hosted)?\b[^.]{0,40}\b(cites|reports|claims|hosted|says)\b|brand-hosted/i.test(String(b?.text || ''));
+  const brandBlocks = people ? people.blocks.filter(isBrandClaim) : [];
+  const peopleOnly = people ? { ...people, blocks: people.blocks.filter((b) => !isBrandClaim(b)) } : null;
+  const peopleEmpty = !peopleOnly || peopleOnly.blocks.length === 0 || peopleOnly.blocks.every((b) => b.type === 'empty');
+  const totalSources = glance.sources.length;
   return (
     <section className="ay-story ay-story--trust" aria-labelledby="ay-trust-h">
       <h2 id="ay-trust-h">Can you <em>trust it?</em></h2>
@@ -572,7 +577,8 @@ export function ProductTrust({ glance, aynaRating = null, ratingCount = 0, extra
           <header><h3>Reviews</h3>{aynaRating != null && ratingCount > 0 && <span className="ay-trust__rating"><b>★ {aynaRating.toFixed(1)}</b> · {ratingCount} ayna member review{ratingCount === 1 ? '' : 's'}</span>}</header>
           {peopleEmpty
             ? <p className="ay-trust__muted">No ayna member reviews yet. Be the first.</p>
-            : <Section bare section={people} plan={plan} sources={glance.sources} onXref={onXref} />}
+            : <Section bare section={peopleOnly} plan={plan} sources={glance.sources} onXref={onXref} />}
+          {brandBlocks.length > 0 && <div className="ay-trust__brand"><h4>What the brand says</h4>{brandBlocks.map((b) => <p key={b.key || b.text}>{b.text}</p>)}<small>Not verified by ayna.</small></div>}
           {extras.people}
         </article>
         {clinician && (
@@ -587,7 +593,7 @@ export function ProductTrust({ glance, aynaRating = null, ratingCount = 0, extra
         <article className="ay-trust__card is-evidence">
           <header><h3>Evidence</h3>{evidenceStrength ? <span className={`ay-trust__level is-${evidenceStrength.toLowerCase()}`}>{evidenceStrength}</span> : null}</header>
           <p>{evCount ? firstSentence(evText) || `${evCount} source${evCount === 1 ? '' : 's'} on file.` : 'We have no research or clinical sources linked for it yet.'}</p>
-          {evCount > 0 && <button type="button" className="ay-trust__link" onClick={() => { const d = document.getElementById('ay-more-research'); if (d) { d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }}>See the {evCount} source{evCount === 1 ? '' : 's'}</button>}
+          {evCount > 0 && <button type="button" className="ay-trust__link" onClick={() => { const d = document.getElementById('ay-more-research'); if (d) { d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }}>{totalSources > evCount ? `${evCount} research source${evCount === 1 ? '' : 's'} · ${totalSources} sources in all` : `See the ${evCount} source${evCount === 1 ? '' : 's'}`}</button>}
         </article>
       </div>
     </section>

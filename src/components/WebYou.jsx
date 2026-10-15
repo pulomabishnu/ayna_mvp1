@@ -67,7 +67,16 @@ export default function WebYou({ user, quizResults, myProducts = {}, savedProduc
   const consumables = useMemo(() => products.filter(isConsumable), [products]);
   const intake = quizResults?.fullHealthIntake || null;
   const pct = getProfileCompletionPct(intake);
-  const shopper = buildShopperProfile(intake, products);
+  // "No unscented" read as the opposite of a fragrance sensitivity. Say what it must be.
+  const shopper = (() => {
+    const sp = buildShopperProfile(intake, products);
+    if (!sp?.rows) return sp;
+    return { ...sp, rows: sp.rows.map((r) => (r.key !== 'non' ? r : {
+      ...r,
+      label: 'Must be',
+      value: String(r.value).split(' · ').map((v) => (/unscented|fragrance/i.test(v) ? 'Fragrance-free' : v)).join(' · '),
+    })) };
+  })();
   // A note that says "(not a recall)" is never labelled Recall.
   const alerts = getSafetyAlerts(products, quizResults).map((a) => (a.kind === 'recall' && /not a recall/i.test(`${a.title} ${a.body}`) ? { ...a, kind: 'accuracy' } : a));
   const affinity = getBrandAffinity(quizResults, products);

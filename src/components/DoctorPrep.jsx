@@ -1,20 +1,34 @@
 import React from 'react';
 import GlossaryTerm from './GlossaryTerm';
+import { getCareProfile } from '../utils/careProfile';
 
-export default function DoctorPrep({ checkinData = null, myProducts = {}, quizResults = {}, chatHistory = [], onBack }) {
-    const ecosystemStats = Object.values(myProducts || {}).length;
-    const goal = Array.isArray(quizResults?.frustrations) && quizResults.frustrations.length > 0
-        ? quizResults.frustrations.join(', ')
-        : (quizResults?.frustration || 'General Wellness');
-    const age = quizResults?.age || 'N/A';
-    // An empty array is truthy in JS, so `quizResults.sensitivities || 'None reported'`
-    // never fired when it was `[]`, the line rendered "Sensitivities:" with nothing
-    // after it instead of falling back (found live, 2026-08-24 bug bash).
-    const sensitivitiesList = Array.isArray(quizResults?.sensitivities)
-        ? quizResults.sensitivities
-        : (quizResults?.sensitivities ? [quizResults.sensitivities] : []);
-    const sensitivities = sensitivitiesList.length > 0 ? sensitivitiesList.join(', ') : 'None reported';
-    const prefs = Array.isArray(quizResults?.preference) ? quizResults.preference.join(', ') : (quizResults?.preference || '');
+// Filler words that appear in many labels and say nothing about overlap.
+const NOT_ACTIVE = /^(water|aqua|glycerin|cellulose|gelatin|silica|rice flour|magnesium stearate|cotton|organic cotton|sugar|natural flavors?|citric acid|pectin|cane sugar|tapioca|vegetable cellulose|microcrystalline cellulose|stearic acid|not listed.*)$/i;
+function actives(p) {
+  return String(p.ingredients || '').split(/[,;]|\band\b/i)
+    .map((t) => t.replace(/\([^)]*\)/g, '').replace(/\d+(\.\d+)?\s*(mg|mcg|g|iu|%)/gi, '').trim().toLowerCase())
+    .filter((t) => t.length > 2 && t.length < 40 && !NOT_ACTIVE.test(t));
+}
+const isService = (p) => p?.type === 'digital' || /telehealth|tracker|mental-health/.test(String(p?.category || ''));
+
+export default function DoctorPrep({ checkinData = null, myProducts = {}, quizResults = {}, chatHistory = [], onBack, onOpenCheckin = null }) {
+    const products = Object.values(myProducts || {}).filter(Boolean);
+    const ecosystemStats = products.length;
+    const care = getCareProfile(quizResults);
+    const age = care.age || 'Not given';
+    const list = (xs, none = 'None reported') => (xs.length ? xs.join(', ') : none);
+    // Two or more products sharing an active ingredient (e.g. two with chasteberry).
+    const shared = (() => {
+        const seen = new Map();
+        products.filter((p) => !isService(p)).forEach((p) => new Set(actives(p)).forEach((a) => seen.set(a, [...(seen.get(a) || []), p.name])));
+        return [...seen.entries()].filter(([, names]) => names.length > 1).slice(0, 4);
+    })();
+    // Questions drawn from what she told us, not generic.
+    const questions = [
+        ...care.symptoms.slice(0, 2).map((s) => `What could be behind my ${s.toLowerCase()}, and is anything worth checking?`),
+        care.diagnoses[0] ? `Is my current plan for ${care.diagnoses[0]} still the right one, or should we look at other options?` : null,
+        care.medications.length ? 'Do any of the products below interact with what I already take?' : 'Do you see any concerns with the products I use?',
+    ].filter(Boolean).slice(0, 3);
 
     const focusAreas = checkinData?.focusAreas || [];
     const routineNote = checkinData?.howIsRoutine;
@@ -44,7 +58,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                     Appointment Prep Tool
                 </div>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Get ready for your <em>appointment.</em></h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>A short summary of your health goals and products to bring to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care doctor. So your visit goes smoothly.</p>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>A one-page summary of what you told ayna and the products you use. Bring it to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care visit.</p>
             </div>
 
             <div className="card" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>
@@ -58,38 +72,48 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '3rem' }}>
                     <div>
-                        <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Key Health Profile</h4>
-                        <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <li><strong>Goal:</strong> {goal}</li>
-                            <li><strong>Age:</strong> {age}</li>
-                            <li><strong>Sensitivities:</strong> {sensitivities}</li>
-                            {prefs && <li><strong>Product priorities:</strong> {prefs}</li>}
-                        </ul>
+                        <h4 className="dp-h">Medications and supplements</h4>
+                        <p className="dp-v">{care.medicationStatus === 'No' ? 'None' : list(care.medications, care.medicationStatus ? care.medicationStatus : 'Not answered')}</p>
+                        <h4 className="dp-h">Allergies</h4>
+                        <p className="dp-v">{care.allergyStatus === 'No' ? 'None' : list(care.allergies, care.allergyStatus || 'Not answered')}</p>
+                        {care.mustBe.length > 0 && <><h4 className="dp-h">Products must be</h4><p className="dp-v">{care.mustBe.join(', ')}</p></>}
+                        <h4 className="dp-h">Age</h4>
+                        <p className="dp-v">{age}</p>
                     </div>
                     <div>
-                        <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Check-in &amp; notes</h4>
-                        <p style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>
-                            {checkinSummary || (
-                                <>Do a monthly check-in from your Profile to add quick notes. Like flow, cramps, or sleep. For your next visit.</>
-                            )}
-                        </p>
+                        <h4 className="dp-h">Symptoms and needs</h4>
+                        <p className="dp-v">{list(care.symptoms)}</p>
+                        <h4 className="dp-h">Diagnoses (you shared)</h4>
+                        <p className="dp-v">{list(care.diagnoses)}</p>
+                        {care.goals.length > 0 && <><h4 className="dp-h">Goals</h4><p className="dp-v">{care.goals.join(', ')}</p></>}
+                        <h4 className="dp-h">Check-in and notes</h4>
+                        {checkinSummary ? <p className="dp-v">{checkinSummary}</p> : (
+                            <p className="dp-v">No check-ins yet.{onOpenCheckin && <> <button type="button" className="dp-link" onClick={onOpenCheckin}>Log how this month went</button></>}</p>
+                        )}
                     </div>
                 </div>
 
                 <div style={{ marginBottom: '3rem' }}>
-                    <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Current Product Ecosystem ({ecosystemStats} items)</h4>
+                    <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Products I use ({ecosystemStats})</h4>
                     <div style={{ background: 'var(--color-bg)', padding: '1.5rem', borderRadius: 'var(--radius-md)' }}>
                         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {Object.values(myProducts).map(p => (
+                            {products.map(p => (
                                 <li key={p.id} style={{ background: 'white', border: '1px solid var(--color-border)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)' }}>
                                     <strong style={{ fontSize: '0.95rem', display: 'block', marginBottom: '0.35rem' }}>{p.name}</strong>
                                     <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                                        {isService(p) ? <strong style={{ color: 'var(--color-text-main)' }}>Care service</strong> : <>
                                         <strong style={{ color: 'var(--color-text-main)' }}>Main ingredients:</strong>{' '}
-                                        {p.ingredients || p.tagline || 'Not listed, check the product label or brand website for the full ingredient list.'}
+                                        {p.ingredients || 'Not listed, check the product label or brand website for the full ingredient list.'}</>}
                                     </span>
                                 </li>
                             ))}
                         </ul>
+                        {shared.length > 0 && (
+                            <div className="dp-shared" role="note">
+                                <strong>Shared ingredients</strong>
+                                <ul>{shared.map(([a, names]) => <li key={a}>{names.length} products contain {a}: {names.join(', ')}</li>)}</ul>
+                            </div>
+                        )}
                         <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
                             *Sharing this list helps your doctor spot things that might cause irritation or not mix well with other products you take.
                         </p>
@@ -97,18 +121,13 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '2rem' }}>
-                    <h4 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Suggested Questions for Your Provider</h4>
+                    <h4 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Questions to ask</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        {/* Pure questions, not a re-quote of the Health Summary card above
-                            the provider already sees the goal and product list there, so
-                            repeating them here word-for-word was pure redundancy, not new
-                            information (found live, 2026-08-24 bug bash). */}
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
-                            <p style={{ fontSize: '0.95rem' }}>"Does my current care plan address my main concern well, or should we consider other options?"</p>
-                        </div>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
-                            <p style={{ fontSize: '0.95rem' }}>"Do you see any concerns with the products I'm currently using, given my health goals?"</p>
-                        </div>
+                        {questions.map((q) => (
+                            <div key={q} style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
+                                <p style={{ fontSize: '0.95rem' }}>“{q}”</p>
+                            </div>
+                        ))}
                         {userChatMessages.length > 0 && (
                             <>
                                 <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginTop: '0.5rem', marginBottom: '0.25rem', letterSpacing: '0.05em' }}>Based on what you shared with ayna</p>
