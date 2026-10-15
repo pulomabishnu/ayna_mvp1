@@ -14,6 +14,7 @@ import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
 import { amazonAffiliateUrlForAsin, getAmazonAffiliateUrlForProduct } from '../data/productAffiliateUrls';
 import { isPartnerBrandItem } from './partnerBrands';
 import { findBrandPartner } from '../data/brandPartners.js';
+import { isBlockedAmazon } from '../data/amazonAsinBlocks.js';
 
 function hasRealPath(url) {
   try {
@@ -125,20 +126,21 @@ function standardBuyUrl(product, variant, { amazonAllowed = true } = {}) {
   //    a generic Amazon listing (rule set by ayna, 2026-10-14: exact variant
   //    matters more than finding an Amazon listing).
   if (amazonAllowed) {
-    const variantAmazon = amazonAffiliateUrlForAsin(variant?.amazonAsin);
+    const variantAmazon = isBlockedAmazon(variant?.amazonAsin) ? null : amazonAffiliateUrlForAsin(variant?.amazonAsin);
     if (variantAmazon) return variantAmazon;
     const exactBrandOption = variant && isExactBuyUrl(variant.url) && !isAmazonUrl(variant.url);
     if (!exactBrandOption) {
       const amazon = getAmazonAffiliateUrlForProduct(product);
-      if (amazon) return amazon;
-      if (isExactBuyUrl(product?.affiliateUrl) && isAmazonUrl(product.affiliateUrl)) {
+      if (amazon && !isBlockedAmazon(amazon)) return amazon;
+      if (isExactBuyUrl(product?.affiliateUrl) && isAmazonUrl(product.affiliateUrl) && !isBlockedAmazon(product.affiliateUrl)) {
         return String(product.affiliateUrl).trim();
       }
     }
   }
 
   // 2. Not on Amazon for us: the exact option, then reviewed destinations.
-  const notAmazon = (u) => amazonAllowed || !isAmazonUrl(u);
+  // A blocked Amazon listing (wrong product or unavailable) is never a destination.
+  const notAmazon = (u) => (amazonAllowed && !isBlockedAmazon(u)) || !isAmazonUrl(u);
   if (isExactBuyUrl(variant?.url) && notAmazon(variant.url)) return String(variant.url).trim();
   const candidates = [
     product?.affiliateUrl,

@@ -4,6 +4,7 @@ import { applyCatalogCorrections } from '../data/catalogCorrections';
 import { getAmazonAffiliateUrlForProduct } from '../data/productAffiliateUrls';
 import { isPartnerBrandItem } from './partnerBrands';
 import { isAmazonUrl, resolveBuyUrl } from './buyLink';
+import { isBlockedAmazon } from '../data/amazonAsinBlocks.js';
 
 const catalog = ALL_PRODUCTS.map(applyCatalogCorrections);
 const partners = catalog.filter(isPartnerBrandItem);
@@ -14,6 +15,11 @@ describe('Buy Now destinations', () => {
   it('sends every non-partner in the Amazon catalog to the tagged Amazon listing when no size is chosen', () => {
     expect(onAmazon.length).toBeGreaterThan(100);
     for (const product of onAmazon) {
+      // Listings a person found to be the wrong item or unavailable never route.
+      if (isBlockedAmazon(getAmazonAffiliateUrlForProduct(product))) {
+        expect(isAmazonUrl(resolveBuyUrl(product, null)), product.id).toBe(false);
+        continue;
+      }
       expect(resolveBuyUrl(product, null), product.id).toMatch(/^https:\/\/www\.amazon\.com\/dp\/[A-Z0-9]{10}\?tag=aynahealth-20$/);
     }
   });
@@ -23,7 +29,9 @@ describe('Buy Now destinations', () => {
     for (const product of onAmazon) {
       for (const variant of product.variants || []) {
         const url = resolveBuyUrl(product, variant);
-        if (variant.amazonAsin) {
+        if (variant.amazonAsin && isBlockedAmazon(variant.amazonAsin)) {
+          expect(isAmazonUrl(url), `${product.id} ${variant.label}`).toBe(false);
+        } else if (variant.amazonAsin) {
           expect(url, `${product.id} ${variant.label}`).toBe(`https://www.amazon.com/dp/${variant.amazonAsin.toUpperCase()}?tag=aynahealth-20`);
         } else if (variant.url) {
           expect(isAmazonUrl(url), `${product.id} ${variant.label}`).toBe(false);

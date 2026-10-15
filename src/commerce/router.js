@@ -18,6 +18,7 @@ import { CATALOG_CORRECTIONS } from '../data/catalogCorrections.js';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls.js';
 import { isPartnerBrandItem, isPrelaunchPartnerItem } from '../utils/partnerBrands.js';
 import { getAmazonAffiliateUrlForProduct } from '../data/productAffiliateUrls.js';
+import { isBlockedAmazon } from '../data/amazonAsinBlocks.js';
 import { COMMERCE_VERIFIED_OFFERS } from '../data/commerceVerifiedOffers.js';
 import { PROVIDERS, providerForUrl, capabilitiesFor } from './policy.js';
 import { asinFromUrl, amazonVerification, creatorsApiConfigured } from './amazon.js';
@@ -103,6 +104,9 @@ export function resolveCommerce(product, selectedVariant = null, ctx = {}) {
     if (destinationUrl) destinationUrl = String(destinationUrl).trim();
   }
   const isAmazon = isAmazonUrl(destinationUrl);
+  // The Amazon listing for this product/option was checked and is the wrong
+  // item or unavailable (src/data/amazonAsinBlocks.js).
+  const amazonBlockedHere = !isAmazon && (variant?.amazonAsin ? isBlockedAmazon(variant.amazonAsin) : isBlockedAmazon(productAmazonUrl));
   let provider = destinationUrl ? providerForUrl(destinationUrl) : PROVIDERS.UNKNOWN;
   if (isService && !isAmazon && destinationUrl) provider = PROVIDERS.APP_OR_SERVICE;
   if (isPartner && provider === PROVIDERS.BRAND_DIRECT && /[?&](ref|af|sca_ref|bg_ref|dt_id)=/i.test(destinationUrl || '')) provider = PROVIDERS.BRAND_AFFILIATE;
@@ -113,6 +117,7 @@ export function resolveCommerce(product, selectedVariant = null, ctx = {}) {
   else if (isPartner) selectionReason = SELECTION_REASONS.PARTNER_ROUTE_PRIORITY;
   else if (isAmazon) selectionReason = SELECTION_REASONS.NONPARTNER_AMAZON_EXACT_MATCH;
   else if (hasAmazonListing && !amazonAllowed) selectionReason = SELECTION_REASONS.AMAZON_NOT_AVAILABLE;
+  else if (amazonBlockedHere) selectionReason = SELECTION_REASONS.AMAZON_NOT_AVAILABLE;
   else if (hasAmazonListing) selectionReason = SELECTION_REASONS.AMAZON_VARIANT_NOT_EXACT;
   else selectionReason = SELECTION_REASONS.NONPARTNER_BRAND_SITE_FALLBACK;
 

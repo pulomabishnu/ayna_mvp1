@@ -76,3 +76,23 @@ describe('live catalog commerce invariants', () => {
     }
   });
 });
+
+describe('Amazon listings confirmed wrong or unavailable (Chrome check 2026-10-15)', () => {
+  it('never route to a blocked ASIN, for the product or any option', async () => {
+    const { AMAZON_ASIN_BLOCKS } = await import('../data/amazonAsinBlocks.js');
+    for (const p of catalog) {
+      for (const v of [null, ...(p.variants || [])]) {
+        const r = resolveCommerce(p, v);
+        if (r.amazon) expect(AMAZON_ASIN_BLOCKS[r.amazon.asin], `${p.id} ${v?.label || ''} ${r.amazon.asin}`).toBeUndefined();
+      }
+    }
+  });
+
+  it('Belly Bandit sizes keep their exact child ASINs after the wrong-brand listing is blocked', () => {
+    const p = catalog.find((x) => x.id === 'p-belly-bandit');
+    expect(resolveCommerce(p, null).amazon).toBeNull();
+    expect(resolveCommerce(p, null).selectionReason).toBe(SELECTION_REASONS.AMAZON_NOT_AVAILABLE);
+    const small = p.variants.find((v) => v.label === 'Cream / S');
+    expect(resolveCommerce(p, small).amazon.asin).toBe('B005XNCE12');
+  });
+});
