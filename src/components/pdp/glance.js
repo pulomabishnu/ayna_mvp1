@@ -320,22 +320,21 @@ export function buildGlance(product, ctx = {}) {
   };
 
   // Evidence
-  const typeCounts = {};
-  evidenceSources.forEach((s) => { typeCounts[s.label] = (typeCounts[s.label] || 0) + 1; });
+  const publishers = [...new Set(evidenceSources.filter((x) => x.tier !== 'low').map((x) => x.publisher).filter(Boolean))];
+  const backedBy = publishers.length ? `${publishers.slice(0, 3).join(', ')}${publishers.length > 3 ? ` and ${publishers.length - 3} more` : ''}` : '';
   const strength = clean(product.evidenceStrength);
   const doctorSummary = clean(product.verificationLinks?.doctor?.aiSummary);
   const sciSummary = clean(product.verificationLinks?.scientific?.aiSummary);
   push('evidence', 'What the evidence says', 'evidence', [
     (strength || evidenceSources.length) ? { type: 'tags', items: [
       ...(strength ? [{ text: `Evidence on file: ${strength.toLowerCase()}`, tone: 'strong' }] : []),
-      ...Object.entries(typeCounts).map(([label, n]) => ({ text: `${n} ${label.toLowerCase()}${n === 1 || /(research|guidance|information|experience)$/i.test(label) ? '' : 's'}`, tone: 'type' })),
     ] } : null,
-    { type: 'text', label: 'ayna summary', text: clean(product.effectiveness) },
+    // Who backs it, in plain names ("FDA, Mayo Clinic"), not internal category counts.
+    backedBy ? { type: 'text', label: '', text: `Backed by: ${backedBy}.` } : null,
     !brandVoice ? { type: 'text', label: 'Clinical view', text: clean(product.doctorOpinion), note: clean(product.clinicianAttribution), refs: byType(['clinical_guideline', 'expert_guidance', 'regulatory']).map((s) => s.n) } : null,
     doctorSummary && !same(doctorSummary, clean(product.doctorOpinion)) ? { type: 'text', label: 'What clinical sources say', text: doctorSummary, refs: byType(['clinical_guideline', 'expert_guidance']).map((s) => s.n) } : null,
     sciSummary ? { type: 'text', label: 'What the research says', text: sciSummary, refs: byType(['product_study', 'ingredient_research']).map((s) => s.n) } : null,
     evidenceSources.length && !pp.evidence.product_specific ? { type: 'note', text: 'The research linked here is about the ingredients or this type of product, not this exact product.' } : null,
-    { type: 'cites', items: evidenceSources },
   ]);
 
   // Safety
@@ -386,7 +385,7 @@ export function buildGlance(product, ctx = {}) {
   push('people', 'What people say', 'people', [
     aynaRating != null && ratingCount > 0 ? { type: 'rating', value: aynaRating, count: ratingCount } : null,
     reviews.length ? { type: 'reviews', items: reviews } : null,
-    { type: 'text', label: 'Summary of public posts', text: clean(product.communityReview), note: 'Not verified, and not a safety finding.', refs: communitySources.map((s) => s.n) },
+    { type: 'text', label: 'What people say', text: clean(product.communityReview), note: 'From public posts. Not verified, not medical evidence, and not a safety finding.', refs: communitySources.map((s) => s.n) },
     !alert ? { type: 'text', label: 'Things people raise', text: clean(product.safety?.opinionAlerts) } : null,
     { type: 'note', text: clean(product.ratingNote) },
   ]);
@@ -395,7 +394,6 @@ export function buildGlance(product, ctx = {}) {
   push('brand', 'What the brand says', 'brand', [
     brandVoice ? { type: 'text', label: 'Manufacturer information', text: clean(product.doctorOpinion), note: clean(product.clinicianAttribution), refs: brandSources.map((s) => s.n) } : null,
     (product.badges || []).length ? { type: 'chips', label: 'Claims and labels, not independently checked', items: product.badges.map(noDash) } : null,
-    !brandVoice && brandSources.length ? { type: 'cites', items: brandSources } : null,
   ]);
 
   // What we don't know (spec 29)
@@ -411,10 +409,10 @@ export function buildGlance(product, ctx = {}) {
   if (pp.kind === 'physical' && !pp.identity.variant?.known && ['pad', 'tampon', 'period-underwear', 'supplement', 'incontinence', 'intimate-care'].includes(product.category)) unknown.push('We have not recorded the exact version (size, absorbency, scent or formula), so check the one you pick.');
   if (!evidenceSources.length) unknown.push('We have no research or clinical sources linked for it yet.');
   else if (!pp.evidence.product_specific) unknown.push('The ingredient or product type has research, but we found no study of this exact product.');
-  if (pp.kind === 'physical' && !pp.pricing.fsa_hsa?.known) unknown.push('We have not confirmed whether it is FSA/HSA eligible.');
+  if (pp.kind === 'physical' && !pp.pricing.fsa_hsa?.known && !['pad', 'tampon', 'cup', 'disc'].includes(product?.category)) unknown.push('We have not confirmed whether it is FSA/HSA eligible.');
   push('unknown', 'What we don’t know', 'unknown', [
     { type: 'list', items: unknown },
-    pp.qa.status !== 'verified' ? { type: 'note', text: 'ayna has not independently verified these product details yet. Check the label before you buy.' } : null,
+    pp.qa.status !== 'verified' ? { type: 'note', text: 'A person at ayna hasn’t signed off this whole page yet. Facts marked “Verified” were checked against the source shown; check the label for the rest.' } : null,
   ]);
 
   // Why ayna matched it to you
@@ -451,7 +449,17 @@ export function buildGlance(product, ctx = {}) {
 
   // Footnotes run 1, 2, 3 in reading order (they used to read 7, 1, 2, 5):
   // number sources by where they're first cited on the page, then the rest.
-  const READ_ORDER = ['people', 'clinician', 'howto', '#facts', 'brand', 'inside', 'safety', 'evidence', 'unknown'];
+  // Clinical and research sources come first; posts from Reddit or TikTok are
+  // "what people say", capped at 3 and numbered last.
+  let communityKept = 0;
+  for (let i = sources.length - 1; i >= 0; i -= 1) if (sources[i].type === 'community') { communityKept += 1; }
+  if (communityKept > 3) {
+    let seenC = 0;
+    for (let i = 0; i < sources.length; i += 1) {
+      if (sources[i].type === 'community') { seenC += 1; if (seenC > 3) { sources.splice(i, 1); i -= 1; } }
+    }
+  }
+  const READ_ORDER = ['clinician', 'evidence', 'howto', '#facts', 'brand', 'inside', 'safety', 'unknown', 'people'];
   const firstSeen = [];
   const collect = (node) => {
     if (!node || typeof node !== 'object') return;
@@ -468,7 +476,7 @@ export function buildGlance(product, ctx = {}) {
   const renumber = (node) => {
     if (!node || typeof node !== 'object') return;
     if (Array.isArray(node)) { node.forEach(renumber); return; }
-    if (Array.isArray(node.refs)) node.refs = [...new Set(node.refs.map((n) => remap.get(n) || n))].sort((a, b) => a - b);
+    if (Array.isArray(node.refs)) node.refs = [...new Set(node.refs.map((n) => remap.get(n)).filter(Boolean))].sort((a, b) => a - b);
     for (const [k, v] of Object.entries(node)) if (k !== 'refs' && v && typeof v === 'object') renumber(v);
   };
   renumber(sections); renumber(facts); renumber(what); renumber(who);
@@ -476,6 +484,8 @@ export function buildGlance(product, ctx = {}) {
   sources.sort((a, b) => a.n - b.n);
 
   return {
+    // Devices have materials and parts, not ingredients.
+    insideTitle: ingredientRoute ? 'Ingredients' : isDigital ? 'Ingredients' : 'Materials and what’s in the box',
     brand: brandOf(product),
     what,
     who,

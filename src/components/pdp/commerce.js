@@ -11,7 +11,7 @@ import { priceParts, safetyAlertText } from '../../data/passport/content.js';
 import { isPlaceholderProductImage } from '../../utils/resolveProductImage.js';
 import { brandOf } from '../../mobile/data/brandFallback.js';
 import { recallFacts } from '../../utils/productFacts.js';
-import { categoryLabel, ingredientHeadline, perUnitLabel, sizeCount, NOT_ON_FILE } from './glance.js';
+import { categoryLabel, ingredientHeadline, perUnitLabel, sizeCount, NOT_ON_FILE, buildGlance } from './glance.js';
 
 // ---------------------------------------------------------------------------
 // Gallery
@@ -162,13 +162,16 @@ export function whereToBuyLine(product) {
 }
 
 function evidenceSummary(product) {
+  // Counted exactly like the product page's Evidence card (same sources, same types).
+  const RESEARCH = ['product_study', 'clinical_guideline', 'regulatory', 'ingredient_research', 'expert_guidance'];
+  let srcs = [];
+  try { srcs = (buildGlance(product, {})?.sources || []).filter((s) => RESEARCH.includes(s.type)); } catch { srcs = []; }
   const pp = getPassport(product);
-  const srcs = pp?.sources?.all?.known ? pp.sources.all.value.filter((s) => !['manufacturer', 'community'].includes(s.evidence_type)) : [];
   const strength = String(product?.evidenceStrength || '').trim();
   if (!srcs.length && !strength) return NOT_ON_FILE;
   const parts = [];
   if (strength) parts.push(`${strength.charAt(0).toUpperCase()}${strength.slice(1)}`);
-  if (srcs.length) parts.push(`${srcs.length} source${srcs.length === 1 ? '' : 's'}${pp.evidence.product_specific ? ', incl. a product study' : ''}`);
+  if (srcs.length) parts.push(`${srcs.length} research source${srcs.length === 1 ? '' : 's'}${pp?.evidence?.product_specific ? ', incl. a product study' : ''}`);
   return parts.join(' · ');
 }
 

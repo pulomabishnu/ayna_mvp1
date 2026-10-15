@@ -193,6 +193,21 @@ function setMetaDescription(text) {
   let el = document.querySelector('meta[name="description"]');
   if (!el) { el = document.createElement('meta'); el.setAttribute('name', 'description'); document.head.appendChild(el); }
   el.setAttribute('content', text);
+  setOg('og:description', text);
+}
+// Share previews follow the page (they were the homepage card everywhere).
+function setOg(property, value) {
+  try {
+    if (!value) return;
+    let el = document.querySelector(`meta[property="${property}"]`);
+    if (!el) { el = document.createElement('meta'); el.setAttribute('property', property); document.head.appendChild(el); }
+    el.setAttribute('content', value);
+  } catch { /* no document */ }
+}
+function setShareCard({ title, image } = {}) {
+  setOg('og:title', title || "ayna | Personalized Women's Health Product Discovery");
+  const abs = image ? (/^https?:/i.test(image) ? image : `https://www.aynahealth.co${image.startsWith('/') ? '' : '/'}${image}`) : 'https://www.aynahealth.co/og/wrapped.png';
+  setOg('og:image', abs);
 }
 
 const PATH_TO_VIEW = Object.fromEntries(
@@ -1796,12 +1811,23 @@ function App() {
       document.title = displayedProduct?.name
         ? `${displayedProduct.name} | ayna`
         : (productStillResolving ? 'Loading… | ayna' : 'Product Not Found | ayna');
+      // A product sets its own description, canonical and share card, so it never
+      // inherits the page before it (an article's description used to stick).
+      if (displayedProduct?.name) {
+        setCanonical(window.location.pathname);
+        const brandName = String(displayedProduct.brand || '').trim();
+        const summary = String(displayedProduct.summary || '').replace(/\s+/g, ' ').trim();
+        const lead = summary ? (summary.match(/^(.{20,200}?[.!?])(\s|$)/)?.[1] || summary.slice(0, 200)) : '';
+        setMetaDescription(lead ? `${displayedProduct.name}${brandName && !displayedProduct.name.toLowerCase().startsWith(brandName.toLowerCase()) ? ` by ${brandName}` : ''}: ${lead}` : `${displayedProduct.name} on ayna: price, evidence, safety notes and how it fits you.`);
+        setShareCard({ title: `${displayedProduct.name} | ayna`, image: displayedProduct.image });
+      }
       return;
     }
     setCanonical(window.location.pathname);
     const label = VIEW_TITLES[currentView];
     document.title = label ? `${label} | ayna` : base;
     setMetaDescription(VIEW_DESCRIPTIONS[currentView] || DEFAULT_DESCRIPTION);
+    setShareCard({ title: document.title });
     // G10: an article and a community profile each get their own title and
     // description (Articles is lazy, so its data is read from the same chunk).
     let cancelled = false;
@@ -1811,6 +1837,7 @@ function App() {
         if (cancelled || !a) return;
         document.title = `${a.title} | Library | ayna`;
         if (a.teaser) setMetaDescription(a.teaser);
+        setShareCard({ title: document.title, image: a.image });
       }).catch(() => {});
     } else if (currentView === 'community' && communityHandle) {
       document.title = `@${communityHandle} | Community | ayna`;

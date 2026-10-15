@@ -16,8 +16,7 @@ import MatchPill from './MatchPill';
 import { matchLine, priceParts } from '../data/passport/content';
 import { buildGlance, perUnitLabel, sizeCount } from './pdp/glance';
 import { getPassport } from '../data/passport';
-import { buildTypedTags } from '../data/passport/content';
-import { ProductMatch, ProductAsk, ProductTrust, ProductGoodToKnow, ProductMore } from './passport/ProductSections';
+import { ProductMatch, ProductAsk, ProductTrust, ProductMore } from './passport/ProductSections';
 import { galleryImages, retailerLinks, similarProducts, sameNeedProducts, productJsonLd, breadcrumbJsonLd } from './pdp/commerce';
 import GalleryThumbs from './pdp/GalleryThumbs';
 import ComparePanel from './pdp/ComparePanel';
@@ -483,10 +482,10 @@ export default function ProductModal({
   // ayna's Amazon link when Amazon carries it, else the brand/retailer page.
   const buyUrl = product ? resolveBuyUrl(product, choice.variant) : null;
   const sizeChosenOnAmazon = choice.hasVariants && product ? buyGoesToAmazonListing(product, choice.variant) : false;
+  const variantsMatter = Boolean(product?.variants?.some((v) => v?.priceLabel || (v?.url && !sizeChosenOnAmazon)));
   const isAmazonBuyLink = isAmazonUrl(buyUrl);
   const isPartner = isPartnerBrandItem(product);
   const isPrelaunch = isPrelaunchPartnerItem(product);
-  const usesAffiliateLink = Boolean(!isPartner && !isAmazonBuyLink && product?.affiliateUrl && buyUrl === String(product.affiliateUrl).trim());
   const retailers = retailerLinks(product, buyUrl);
 
   const aynaData = useMemo(
@@ -550,7 +549,8 @@ export default function ProductModal({
   const price = choice.hasVariants && choice.variant?.priceLabel
     ? { known: true, main: choice.variant.priceLabel, sub: '', isPlaceholder: false }
     : basePrice;
-  const perUnit = choice.hasVariants ? '' : perUnitLabel(product);
+  // "Per unit" only when the units are the same thing (not a bundle or kit of different products).
+  const perUnit = choice.hasVariants || /\b(bundle|kit|set|starter)\b/i.test(String(product?.name || '')) ? '' : perUnitLabel(product);
   const priceText = product.price || product.stage || '';
   const brand = glance?.brand && glance.brand.toLowerCase() !== String(product.name).toLowerCase() ? glance.brand : '';
   const openProductByName = (name) => {
@@ -614,7 +614,12 @@ export default function ProductModal({
 
   const actionButtons = (
     <div className="pdp-actions pdp-buybox">
-      {choice.hasVariants && (
+      {/* A size picker only when picking changes something here (price, link or photo);
+          otherwise just say which sizes exist. */}
+      {choice.hasVariants && !variantsMatter && (
+        <p className="pdp-variants-line">Sizes: {product.variants.map((v) => String(v.label || '').replace(/\s*\u2014\s*/g, ', ')).join(' · ')}.{sizeChosenOnAmazon ? ' Pick yours on Amazon.' : ''}</p>
+      )}
+      {choice.hasVariants && variantsMatter && (
         <label className="pdp-variant" style={{ display: 'block', width: '100%', marginBottom: '0.8rem', fontSize: '0.9rem' }}>
           Size / option
           <select
@@ -633,7 +638,7 @@ export default function ProductModal({
           </small>
         </label>
       )}
-      {recall.status === 'none' && <p className="pdp-chiprow"><span className="pdp-chip is-ok">{'\u2713'} No recalls found</span></p>}
+      {recall.status === 'none' && product.type !== 'digital' && product.category !== 'telehealth' && <p className="pdp-chiprow"><span className="pdp-chip is-ok">{'\u2713'} No recalls found</span></p>}
       {recall.status === 'past' && <p className="pdp-chiprow"><span className="pdp-chip is-warn">{'\u26a0'} {recall.detail ? recall.detail.replace(/\.$/, '') : recall.label}</span></p>}
       <div className="pdp-actions__primary">
         {buyButton()}
@@ -654,11 +659,15 @@ export default function ProductModal({
           </button>
         )}
       </div>
-      {buyUrl && !isPrelaunch && <p className="pdp-commission">ayna may earn a commission. It never changes your match.</p>}
-      {isPartner && (
-        <p className="pdp-partner-line">
-          ayna Partner. Partnership never changes your match.{' '}
-          <button type="button" className="pdp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'More'}</button>
+      {/* One commission line (there used to be two that said different things). */}
+      {buyUrl && !isPrelaunch && (
+        <p className="pdp-commission">
+          {isPartner
+            ? 'ayna partner. ayna may earn a commission. Neither changes your match.'
+            : isAmazonBuyLink
+              ? 'ayna may earn a commission from Amazon (no partnership with this brand). It never changes your match.'
+              : 'ayna may earn a commission. It never changes your match.'}
+          {' '}{isPartner && <button type="button" className="pdp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button>}
         </p>
       )}
       {retailers.length > 0 && (
@@ -688,10 +697,7 @@ export default function ProductModal({
           : <p className="pdp-buybox__note">{(product.whereToBuy || []).length ? `Sold at ${product.whereToBuy.join(', ')}.` : 'We don’t have a link for where to get this yet.'}</p>;
       })()}
       {isPartner && showDisclosure && <p className="pdp-buybox__note pdp-partner-note">{getPartnerDisclosureText(product)}</p>}
-      {buyUrl && isAmazonBuyLink && !isPartner && (
-        <p className="pdp-buybox__note pdp-amazon-disclosure">ayna receives a commission on purchases. We have no direct partnership with this brand.</p>
-      )}
-      {usesAffiliateLink && <p className="pdp-buybox__note">ayna may earn a commission if you buy through this link.</p>}
+
     </div>
   );
 
@@ -810,11 +816,6 @@ export default function ProductModal({
             <Breadcrumbs product={product} onNavigate={onOpenShop} />
           </div>
           <div className="pdp-topbar__right">
-            {!(matchPercent > 0) && quizResults && (
-              <button type="button" className="pdp-fit-link" onClick={() => setShowWhy(true)}>
-                How this fits you
-              </button>
-            )}
             <button type="button" className="pdp-share" onClick={handleShare} aria-label={`Share ${product?.name || 'this product'}`}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
               Share
@@ -828,7 +829,7 @@ export default function ProductModal({
           </div>
 
           <div className="pdp-head__detail pdp-h2">
-            {brand && <div className="pdp-head__eyebrow">{brand}</div>}
+            {brand && !String(displayName || '').toLowerCase().startsWith(String(brand).toLowerCase()) && <div className="pdp-head__eyebrow">{brand}</div>}
             <h1 className="pdp-head__name">{displayName}</h1>
 
             {(() => {
@@ -868,14 +869,14 @@ export default function ProductModal({
 
             {glance?.alert && <SafetyFlag />}
 
-            <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} />
-            {!(matchPercent > 0) && matchExclusions.length > 0 && (
-              <button type="button" className="pdp-h2-fitnote" onClick={() => setShowWhy(true)}>
-                {matchExclusions[0]}
-              </button>
-            )}
+            <ProductMatch glance={glance} matchPercent={matchPercent} fallback={headMatchLine} onShowWhy={() => setShowWhy(true)} onFindFit={!user && onStartQuiz ? onStartQuiz : null} hasProfile={Boolean(quizResults)} exclusions={matchExclusions} />
             {!(matchPercent > 0) && !matchExclusions.length && isInEcosystem && (
               <p className="pdp-h2-fitnote is-static">In your ecosystem</p>
+            )}
+            {onOmit && (
+              <button type="button" className="pdp-omit-link pdp-omit-link--match" onClick={() => onOmit(product)}>
+                {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
+              </button>
             )}
 
             <section className="ay-story ay-story--buy" aria-labelledby="ay-buy-h">
@@ -890,7 +891,7 @@ export default function ProductModal({
                     <div><dt>Price</dt><dd>{/deposit/i.test(String(product.price || '')) ? `Waitlist deposit ${(String(product.price).match(/\$\s?\d[\d,.]*/) || [''])[0]} (not the product price)` : price.known && !price.isPlaceholder ? `${price.main}${price.sub ? ` ${price.sub}` : ''}` : `Price at ${seller || 'the retailer'}`}</dd></div>
                     {sizeCount(product)?.text && <div><dt>Size</dt><dd>{choice.variant?.label || sizeCount(product).text}</dd></div>}
                     {seller && <div><dt>Sold by</dt><dd>{seller}</dd></div>}
-                    {checked && price.known && !price.isPlaceholder && <div><dt>Price check</dt><dd>{checked ? `Checked ${(() => { const d = new Date(`${String(checked).slice(0, 10)}T12:00:00`); return Number.isNaN(d.getTime()) ? checked : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); })()}` : 'Price at retailer'}</dd></div>}
+                    {checked && price.known && !price.isPlaceholder && !/^free\b/i.test(String(price.main)) && <div><dt>Price check</dt><dd>{checked ? `Checked ${(() => { const d = new Date(`${String(checked).slice(0, 10)}T12:00:00`); return Number.isNaN(d.getTime()) ? checked : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); })()}` : 'Price at retailer'}</dd></div>}
                   </dl>
                 );
               })()}
@@ -905,29 +906,18 @@ export default function ProductModal({
             </section>
 
 
-            <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
-
             <ProductTrust glance={glance} aynaRating={aynaRating} ratingCount={ratingCount} extras={sectionExtras} evidenceStrength={String(product.evidenceStrength || '').trim()} onXref={openProductByName} />
 
-            {(() => {
-              const priceText = `${product.price || ''} ${price.sub || ''}`;
-              const fsa = (glance?.facts || []).find((f) => f.id === 'fsa' && !f.unknown);
-              const attrs = buildTypedTags(product).filter((t) => t.type === 'attribute').map((t) => t.label);
-              const items = [
-                fsa && fsa.value === 'Eligible' ? 'FSA/HSA eligible' : null,
-                ...attrs,
-                product.requiresPrescription ? 'Prescription required' : null,
-                /month|subscription|\/mo\b|per year|\/year/i.test(priceText) ? 'Subscription' : (price.known && /one-time/i.test(priceText) ? 'One-time purchase' : null),
-              ].filter(Boolean);
-              return <ProductGoodToKnow items={[...new Set(items)].slice(0, 8)} />;
-            })()}
+            <ProductAsk productName={displayName} onAsk={onAskAyna} signedIn={Boolean(user)} />
+
+            {/* "Good to know" is gone: its chips repeated FSA/HSA and listed claims the page says it hasn't checked. */}
 
           </div>
         </div>
 
         <div className="pdp-below pdp-below--glance">
           <ProductMore glance={glance} extras={sectionExtras} onXref={openProductByName} />
-            {(onCommunityAction || onOmit) && (
+            {onCommunityAction && (
             <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
               {onCommunityAction && <>
                 <h3 id="pdp-community-h">Community</h3>
@@ -937,11 +927,6 @@ export default function ProductModal({
                   ))}
                 </div>
               </>}
-              {onOmit && (
-                <button type="button" className="pdp-omit-link" onClick={() => onOmit(product)}>
-                  {isOmitted ? 'Undo “Not for me”' : 'Not for me'}
-                </button>
-              )}
             </section>
           )}
 

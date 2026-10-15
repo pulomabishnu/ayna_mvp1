@@ -300,7 +300,7 @@ export function buildProductSections(product, ctx = {}) {
   else if (!passport.evidence.product_specific) unknown.push('The ingredient or product type has research, but we found no study of this exact product.');
   push('unknown', 'What we don’t know', [
     { type: 'list', items: unknown },
-    passport.qa.status !== 'verified' ? { type: 'note', text: 'ayna has not independently verified these product details yet. Check the label before you buy.' } : null,
+    passport.qa.status !== 'verified' ? { type: 'note', text: 'A person at ayna hasn’t signed off this whole page yet. Facts marked “Verified” were checked against the source shown; check the label for the rest.' } : null,
   ], unknown.length ? countLabel(unknown.length, 'gap') : '');
 
   // 12. Why ayna matched it to you

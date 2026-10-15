@@ -172,9 +172,9 @@ describe('flow and menstrual characteristics', () => {
     // confirmed fragrance-free product rather than the variant-unknown case.
     const always = score('p-always-infinity', up, 'period.heavy');
     expect(always.safety.eligible).toBe(true);
-    expect(always.explanations).toContain('Fragrance-free, which matters with your fragrance allergy');
+    expect(always.explanations).toContain('Fragrance-free (matches your sensitivities)');
     const rael = score('p-rael-overnight', up, 'period.heavy');
-    expect(rael.explanations).toContain('Fragrance-free, which matters with your fragrance allergy');
+    expect(rael.explanations).toContain('Fragrance-free (matches your sensitivities)');
   });
 
   it('"no periods" flow with a period need is treated as a contradiction', () => {
@@ -193,7 +193,7 @@ describe('allergies and leave-out', () => {
     expect(unknown.safety.blockedClaims).toContain('latex_free');
     expect(unknown.explanations.join(' ')).not.toMatch(/Latex-free/);
     const known = score('p-lunette-cup', up, 'period.product_support');
-    expect(known.explanations).toContain('Latex-free, which matters with your latex allergy');
+    expect(known.explanations).toContain('Latex-free (matches your sensitivities)');
     expect(known.confidenceReasons.map((c) => c.code)).not.toContain('allergen_unknown');
   });
 

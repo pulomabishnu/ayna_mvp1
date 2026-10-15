@@ -265,8 +265,8 @@ export function evaluateSafety(productOrProfile, up) {
     if (a.attr) {
       const d = pp.safety.details[a.attr] || { status: 'unknown' };
       const phrase = ATTRIBUTE_PHRASE[a.attr] || a.attr;
-      if (d.status === 'yes') reasons.push({ code: 'allergen_conflict', attr: a.attr, text: `Contains ${phrase}, which you react to` });
-      else if (d.status === 'no') confirmed.push({ attr: a.attr, text: `${capitalize(phrase)}-free, which matters with your ${phrase} allergy` });
+      if (d.status === 'yes') reasons.push({ code: 'allergen_conflict', attr: a.attr, text: `Contains ${phrase} (one of your sensitivities)` });
+      else if (d.status === 'no') confirmed.push({ attr: a.attr, text: `${capitalize(phrase)}-free (matches your sensitivities)` });
       else if (d.status === 'unknown') {
         blockedClaims.add(`${a.attr}_free`);
         if (d.variant) {

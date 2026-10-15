@@ -510,15 +510,31 @@ function MatchSeal({ children }) {
   );
 }
 
-export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, onFindFit = null }) {
+export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, onFindFit = null, hasProfile = false, exclusions = [] }) {
   if (!glance) return null;
+  // Signed in with a profile but no score (a partner bundle, an excluded item):
+  // the block still shows, worded honestly, instead of disappearing.
+  if (!(matchPercent > 0) && hasProfile) {
+    return (
+      <section className="ay-story ay-story--match is-none" aria-labelledby="ay-match-h">
+        <button type="button" className="ay-match__score" onClick={onShowWhy} aria-label="No match score. See why">
+          <span className="ay-match__big is-none">No match</span>
+        </button>
+        <div className="ay-match__body">
+          <h2 id="ay-match-h">How it compares to <em>your needs.</em></h2>
+          <ul className="ay-match__reasons">{(exclusions.length ? exclusions.slice(0, 3) : ['It doesn’t line up with the needs you told us about.']).map((r) => <li key={r} className="is-miss"><span className="sr-only">Counts against: </span>{r}</li>)}</ul>
+          <div className="ay-match__links"><button type="button" onClick={onShowWhy}>See the breakdown</button><a href="/how-it-works">How we match</a></div>
+        </div>
+      </section>
+    );
+  }
   if (!(matchPercent > 0)) {
     // Logged out (or no profile yet): the best moment to say what ayna does.
     if (!onFindFit) return null;
     return (
       <section className="ay-story ay-story--match is-ask" aria-labelledby="ay-match-h">
         <button type="button" className="ay-match__score" onClick={onFindFit} aria-label="Find out how well this fits you">
-          <MatchSeal><b>?</b></MatchSeal>
+          <span className="ay-match__big is-none">?</span>
         </button>
         <div className="ay-match__body">
           <h2 id="ay-match-h">How well does this fit <em>you?</em></h2>
@@ -540,7 +556,7 @@ export function ProductMatch({ glance, matchPercent, fallback = '', onShowWhy, o
   return (
     <section className={`ay-story ay-story--match is-${band}`} aria-labelledby="ay-match-h">
       <button type="button" className="ay-match__score" onClick={onShowWhy} aria-label={`${matchPercent}% match. See why`}>
-        <MatchSeal><b>{matchPercent}%</b><span>Why? ›</span></MatchSeal>
+        <span className="ay-match__big"><b>{matchPercent}%</b> match</span>
       </button>
       <div className="ay-match__body">
         <h2 id="ay-match-h">{heading}</h2>
@@ -580,12 +596,13 @@ export function ProductTrust({ glance, aynaRating = null, ratingCount = 0, extra
   const people = secs.find((s) => s.id === 'people');
   const clinician = secs.find((s) => s.id === 'clinician');
   const evidence = secs.find((s) => s.id === 'evidence');
-  const evText = evidence ? sectionDigest(evidence) : '';
+  const evText = evidence ? ((evidence.blocks || []).find((b) => b.type === 'text' && /^Backed by:/.test(String(b.text || '')))?.text || sectionDigest(evidence)) : '';
   const evCount = glance.sources.filter((s) => ['product_study', 'clinical_guideline', 'regulatory', 'ingredient_research', 'expert_guidance'].includes(s.type)).length;
   // Brand-hosted ratings are not "what people say": file them under the brand.
   const isBrandClaim = (b) => /\bbrand(-hosted)?\b[^.]{0,40}\b(cites|reports|claims|hosted|says)\b|brand-hosted/i.test(String(b?.text || ''));
   const brandBlocks = people ? people.blocks.filter(isBrandClaim) : [];
-  const peopleOnly = people ? { ...people, blocks: people.blocks.filter((b) => !isBrandClaim(b)) } : null;
+  // What people say is not evidence: no footnote numbers here (the posts are listed last under Research & sources).
+  const peopleOnly = people ? { ...people, blocks: people.blocks.filter((b) => !isBrandClaim(b)).map((b) => ({ ...b, refs: [] })) } : null;
   const peopleEmpty = !peopleOnly || peopleOnly.blocks.length === 0 || peopleOnly.blocks.every((b) => b.type === 'empty');
   const totalSources = glance.sources.length;
   return (
@@ -602,11 +619,15 @@ export function ProductTrust({ glance, aynaRating = null, ratingCount = 0, extra
         </article>
         {clinician && (
           <article className="ay-trust__card is-clinical">
-            <header><h3>Clinical view</h3></header>
-            <details className="ay-trust__more">
-              <summary>{firstSentence(sectionDigest(clinician) || '')}</summary>
-              <Section bare section={clinician} plan={plan} sources={glance.sources} onXref={onXref} />
-            </details>
+            <header><h3>What clinicians say</h3></header>
+            {(() => {
+              const lead = firstSentence(sectionDigest(clinician) || '');
+              const full = (clinician.blocks || []).map((b) => b.text || '').join(' ').trim();
+              // "Read more" only when there is more than the sentence already shown.
+              return full.length > lead.length + 40
+                ? <details className="ay-trust__more"><summary>{lead}</summary><Section bare section={clinician} plan={plan} sources={glance.sources} onXref={onXref} /></details>
+                : <Section bare section={clinician} plan={plan} sources={glance.sources} onXref={onXref} />;
+            })()}
           </article>
         )}
         <article className="ay-trust__card is-evidence">
@@ -659,10 +680,10 @@ export function ProductMore({ glance, extras = {}, onXref = null }) {
         {what.text && <><Label>What it is</Label><Para className="is-lead" text={what.text} terms={plan.what || []} />{what.detail && <Para text={what.detail} terms={plan['what:detail'] || []} />}</>}
         {(who.items.length > 0 || who.helps.length > 0) && <><Label>Who it’s for</Label>{who.items.length > 0 ? <List items={who.items} k="who" plan={plan} max={4} /> : <ul className="ay-gl-chips is-fit">{who.helps.map((t) => <li key={t}>{t}</li>)}</ul>}</>}
         {get('howto') && <><Label>How to use</Label>{S(get('howto'))}</>}
-        {facts.length > 0 && <><Label>Size and specs</Label><dl className="ay-glance__facts">{facts.filter((f) => !f.unknown).map((f) => <div key={f.id}><dt>{f.label}</dt><dd>{f.value}<Refs refs={f.refs} sources={sources} /></dd>{f.note && <small>{f.note}</small>}</div>)}</dl></>}
-        {get('brand') && <><Label>From the manufacturer</Label>{S(get('brand'))}</>}
+        {facts.filter((f) => !f.unknown).length > 0 && <><Label>Size and specs</Label><dl className="ay-glance__facts">{facts.filter((f) => !f.unknown).map((f) => <div key={f.id}><dt>{f.label}</dt><dd>{f.value}<Refs refs={f.refs} sources={sources} /></dd>{f.note && <small>{f.note}</small>}</div>)}</dl></>}
+        {get('brand')?.blocks?.some((b) => b.type !== 'empty') && <><Label>From the manufacturer</Label>{S(get('brand'))}</>}
       </>)}
-      {get('inside') && fold('ingredients', 'Ingredients', S(get('inside')))}
+      {get('inside') && fold('ingredients', glance.insideTitle || 'Ingredients', S(get('inside')))}
       {get('safety') && fold('safety', 'Safety', S(get('safety')))}
       {fold('research', `Research & sources${sources.length ? ` (${sources.length})` : ''}`, <>
         {get('evidence') && S(get('evidence'))}

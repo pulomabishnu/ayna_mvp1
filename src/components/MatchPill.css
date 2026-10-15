@@ -32,8 +32,9 @@ button.ay-match-pill:active { transform: scale(.98); }
 button.ay-match-pill:focus-visible { outline: 3px solid var(--ay-peri, #b9c2f4); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { button.ay-match-pill { transition: none; } button.ay-match-pill:hover, button.ay-match-pill:active { transform: none; } }
 /* Page-level button/text rules (cabinet.css, web-play.css) must not recolor the pill. */
-.ayna-mobile.ayna-mobile.ayna-mobile .ay-match-pill.ay-match-pill,
-.app-container.app-container .ay-match-pill.ay-match-pill { background: #1d1a2b !important; color: #fff !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile .ay-match-pill.ay-match-pill { background: #1d1a2b !important; color: #fff !important; }
+/* Website: brand espresso with butter text (navy is not a brand colour). */
+.app-container.app-container .ay-match-pill.ay-match-pill { background: #3e2723 !important; color: #ffedac !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-match-pill.ay-match-pill,
 .app-container.app-container[data-theme='dark'] .ay-match-pill.ay-match-pill,
 :root[data-ay-theme='dark'] .app-container.app-container .ay-match-pill.ay-match-pill { background: #fff !important; color: #1d1a2b !important; }

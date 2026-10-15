@@ -1690,7 +1690,7 @@ function componentForExplanation(text) {
     if (/budget|over time/i.test(text)) return 'price';
     if (/brand you trust/.test(text)) return 'trustedBrands';
     if (/ranked first/.test(text)) return 'trustRanking';
-    if (/which you asked for|which matters with your/.test(text)) return 'attributes';
+    if (/which you asked for|which matters with your|matches your sensitivities/.test(text)) return 'attributes';
     if (/^Also a match for/.test(text)) return 'otherNeeds';
     return 'otherNeeds';
 }
