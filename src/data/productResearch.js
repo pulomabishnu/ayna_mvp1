@@ -7550,6 +7550,19 @@ export const PRODUCT_RESEARCH = {
       "People already doing LiM Method sessions with the LiM Sliding Board",
       "Anyone who needs their feet to glide on the board during LiM movements",
       "Not the pick as a pelvic floor treatment on its own: it's an accessory for the LiM exercise system"
+    ],
+    "clinicalNote": "These shoe covers are an add-on for LiM Method exercise sessions, not a treatment by themselves. The bigger clinical picture is pelvic floor muscle training: a Cochrane review found it can cure or improve symptoms of stress incontinence (leaking when you cough, sneeze or lift) and other types of bladder leakage, with rare side effects. That evidence is for supervised pelvic floor training in general, not for this product or the LiM program specifically. Cleveland Clinic notes pelvic floor muscles can become weak, but also tight or spastic, which is why pelvic floor physical therapists often use relaxation and breathing work, not only strengthening.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cochrane.org/ja/about-us/news/featured-review-pelvic-floor-muscle-training-versus-no-treatment-or-inactive-control-treatmen-0",
+        "label": "Cochrane: Pelvic floor muscle training versus no treatment for urinary incontinence in women",
+        "summary": "Cochrane review concluding pelvic floor muscle training can cure or improve stress and other types of urinary incontinence in women, with rare side effects."
+      },
+      {
+        "url": "https://my.clevelandclinic.org/departments/rehabilitation/services/pelvic-health",
+        "label": "Cleveland Clinic: Pelvic Health Physical Therapy",
+        "summary": "Explains that pelvic floor muscles may become weak, tight or spastic, and that therapy can include strengthening, relaxation techniques, diaphragmatic breathing and a home exercise program."
+      }
     ]
   },
   "p-lim-method-kneeling-pad": {
@@ -7557,6 +7570,19 @@ export const PRODUCT_RESEARCH = {
       "People doing LiM Method sessions who want extra cushioning in low-to-the-ground positions",
       "Anyone whose knees get sore kneeling on a hard floor during exercise",
       "Not the pick as a pelvic floor treatment on its own: it's a cushioning accessory"
+    ],
+    "clinicalNote": "This kneeling pad is a comfort accessory for LiM Method exercise sessions, not a treatment by itself. The bigger clinical picture is pelvic floor muscle training: a Cochrane review found it can cure or improve symptoms of stress incontinence (leaking when you cough, sneeze or lift) and other types of bladder leakage, with rare side effects. That evidence is for supervised pelvic floor training in general, not for this product or the LiM program specifically. Cleveland Clinic notes pelvic floor muscles can become weak, but also tight or spastic, which is why pelvic floor physical therapists often use relaxation and breathing work, not only strengthening.",
+    "clinicalNoteSources": [
+      {
+        "url": "https://www.cochrane.org/ja/about-us/news/featured-review-pelvic-floor-muscle-training-versus-no-treatment-or-inactive-control-treatmen-0",
+        "label": "Cochrane: Pelvic floor muscle training versus no treatment for urinary incontinence in women",
+        "summary": "Cochrane review concluding pelvic floor muscle training can cure or improve stress and other types of urinary incontinence in women, with rare side effects."
+      },
+      {
+        "url": "https://my.clevelandclinic.org/departments/rehabilitation/services/pelvic-health",
+        "label": "Cleveland Clinic: Pelvic Health Physical Therapy",
+        "summary": "Explains that pelvic floor muscles may become weak, tight or spastic, and that therapy can include strengthening, relaxation techniques, diaphragmatic breathing and a home exercise program."
+      }
     ]
   },
   "p-magnesium-glycinate": {
