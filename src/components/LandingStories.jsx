@@ -75,6 +75,8 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
   };
 
   return (
+    <div className="lst-band">
+    <h2 className="lst-band__h">What’s new <em>on ayna</em></h2>
     <section ref={rootRef} className={`lst is-${s.tone}`} aria-roledescription="carousel" aria-label="On ayna" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setHold(false); }} onKeyDown={onKey}>
       <div className="lst__tabs" role="tablist" aria-label="Stories">
         {slides.map((x, k) => (
@@ -87,7 +89,7 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
       <div id="lst-slide" className="lst__slide" role="tabpanel" aria-roledescription="slide" aria-label={`${i + 1} of ${n}: ${s.tab}`} key={s.key}>
         <div className="lst__copy">
           <p className="lst__kicker">{s.kicker}</p>
-          <h2 className="lst__title">{s.title}</h2>
+          <h3 className="lst__title">{s.title}</h3>
           {s.body && <p className="lst__body">{s.body}</p>}
           {s.note && <p className="lst__note">{s.note}</p>}
           {s.go && <button type="button" className="lst__cta" onClick={s.go}>{s.cta} <span aria-hidden="true">→</span></button>}
@@ -100,5 +102,6 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
         <button type="button" onClick={() => go(i + 1)} aria-label="Next story">→</button>
       </div>
     </section>
+    </div>
   );
 }

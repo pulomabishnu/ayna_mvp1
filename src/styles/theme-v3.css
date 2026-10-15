@@ -4220,3 +4220,17 @@ html body .app-container .lst__photo img { object-position: 50% 20%; }
   html body .app-container .lst__title { font-size: 30px !important; }
   html body .app-container .lst__body { font-size: 16px; }
 }
+/* Stories sit on their own sky band so they read as a feature, not a loose card. */
+html body .app-container .lst-band { position: relative; margin: 72px 0; padding: 56px 0 64px; background: #769ebe; border-block: 2px solid #3e2723; }
+html body .app-container .lst-band::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(62, 39, 35, .14) 1.5px, transparent 1.6px); background-size: 18px 18px; pointer-events: none; }
+html body .app-container .lst-band > * { position: relative; }
+html body .app-container .lst-band__h { max-width: 1180px; width: calc(100% - 64px); margin: 0 auto 20px; font: 400 clamp(30px, 3.4vw, 44px)/1.1 'DM Serif Display', serif; color: #3e2723; }
+html body .app-container .lst-band__h em { font-style: italic; color: #ffedac; -webkit-text-stroke: 0; text-shadow: 2px 2px 0 #3e2723; }
+html body .app-container .lst-band .lst { margin: 0 auto !important; }
+html body .app-container .lst-band .lst.is-sky { --lst-bg: #ffedac; }
+@media (max-width: 760px) { html body .app-container .lst-band { padding: 36px 0 44px; margin: 48px 0; } html body .app-container .lst-band__h { width: calc(100% - 32px); } }
+html body .app-container[data-theme='brand-dark'] .lst-band { background: #2b1b18; border-color: #ffedac; }
+html body .app-container[data-theme='brand-dark'] .lst-band__h { color: #ffedac; }
+html body .app-container .lv .lst-band h2.lst-band__h { font: 400 clamp(30px, 3.4vw, 44px)/1.1 'DM Serif Display', serif !important; color: #3e2723 !important; letter-spacing: 0 !important; }
+html body .app-container .lv .lst-band h2.lst-band__h em { font-family: 'DM Serif Display', serif !important; font-style: italic; color: #ffedac !important; }
+html body .app-container .lv .lst h3.lst__title { margin: 0; font: 400 clamp(32px, 3.6vw, 46px)/1.08 'DM Serif Display', serif !important; color: var(--lst-fg) !important; } @media (max-width: 760px) { html body .app-container .lv .lst h3.lst__title { font-size: 30px !important; } }
