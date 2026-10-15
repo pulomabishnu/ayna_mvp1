@@ -1,5 +1,6 @@
 import { PRODUCT_PACKAGING } from './productPackaging.js';
 import { applyProductVariants } from './productVariants.js';
+import { applyCommercePriceFix } from './commercePriceFixes.js';
 /** Reviewed catalog corrections, 2026-09-25.
  * Applied to bundled records, database responses and saved snapshots.
  * Explicit empty images remove known incorrect imagery; never merge them away.
@@ -470,5 +471,5 @@ export function applyCatalogCorrections(product) {
         : {}),
     }
     : product;
-  return applyProductVariants(PRODUCT_PACKAGING[product?.id] ? { ...corrected, ...PRODUCT_PACKAGING[product.id] } : corrected);
+  return applyCommercePriceFix(applyProductVariants(PRODUCT_PACKAGING[product?.id] ? { ...corrected, ...PRODUCT_PACKAGING[product.id] } : corrected));
 }
