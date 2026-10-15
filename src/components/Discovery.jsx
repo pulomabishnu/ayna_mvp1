@@ -507,6 +507,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const searchPlaceholder = useStaticPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
+    // Cards fade in on first load only; after that, filter changes swap in place.
+    const [gridSettled, setGridSettled] = useState(false);
+    useEffect(() => { const t = window.setTimeout(() => setGridSettled(true), 1200); return () => window.clearTimeout(t); }, []);
     // Freshly generated on every mount, Discovery unmounts/remounts on each navigation to it,
     // so this reshuffles the browsing grid's default order every time a user lands on the page,
     // without reshuffling mid-visit as filters/sort change.
@@ -780,9 +783,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             const numericPrice = getSortPrice(item);
             if (priceFilter === 'under-25' && !(numericPrice != null && numericPrice < 25)) return false;
-            if (priceFilter === '25-50' && !(numericPrice != null && numericPrice >= 25 && numericPrice <= 50)) return false;
-            if (priceFilter === '50-100' && !(numericPrice != null && numericPrice > 50 && numericPrice <= 100)) return false;
-            if (priceFilter === '100-plus' && !(numericPrice != null && numericPrice > 100)) return false;
+            // Ranges no longer overlap at $50 and $100; subscriptions have their own option.
+            if (priceFilter === '25-50' && !(numericPrice != null && numericPrice >= 25 && numericPrice < 50)) return false;
+            if (priceFilter === '50-100' && !(numericPrice != null && numericPrice >= 50 && numericPrice < 100)) return false;
+            if (priceFilter === '100-plus' && !(numericPrice != null && numericPrice >= 100)) return false;
+            if (priceFilter === 'subscription' && !/month|subscription|\/mo\b|per year|\/year|annual/i.test(`${item.price || ''} ${item.priceNote || ''} ${item.priceSub || ''}`)) return false;
 
             if (ratingFilter === '4-plus') {
                 const rating = item.ratingNote ? null : (getAynaRating(item, aynaReviews[item.id]) ?? (item.userRating != null ? Number(item.userRating) : null));
@@ -1595,7 +1600,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             </div>
 
             {(() => {
-                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–50', '50-100': '$50–100', '100-plus': '$100+', 'fsa-hsa': 'FSA or HSA', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Clean ingredients', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Better packaging', clinician: 'Clinician backed', community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Fertility', pregnancy: 'Pregnancy', postpartum: 'Postpartum', perimenopause: 'Perimenopause', menopause: 'Menopause' };
+                const LABELS = { 'under-25': 'Under $25', '25-50': '$25–49', '50-100': '$50–99', '100-plus': '$100+', subscription: 'Subscription', 'fsa-hsa': 'FSA/HSA eligible', fsa: 'FSA', hsa: 'HSA', 'fragrance-free': 'Fragrance-free', 'sensitive-skin': 'Sensitive skin', vegan: 'Vegan', 'cruelty-free': 'Cruelty-free', organic: 'Organic', 'clean-ingredients': 'Paraben or chlorine free', reusable: 'Reusable', recyclable: 'Recyclable', 'low-waste': 'Low waste', packaging: 'Sustainable packaging', clinician: 'Clinician backed', community: 'Community favorite', 'best-match': 'Best matches', ecosystem: 'In my ecosystem', fertility: 'Fertility', pregnancy: 'Pregnancy', postpartum: 'Postpartum', perimenopause: 'Perimenopause', menopause: 'Menopause' };
                 const applied = [[priceFilter, setPriceFilter], [eligibilityFilter, setEligibilityFilter], [lifeStageFilter, setLifeStageFilter], [preferenceFilter, setPreferenceFilter], [sustainabilityFilter, setSustainabilityFilter], [aynaFilter, setAynaFilter]].filter(([v]) => v && v !== 'all');
                 return (
                     <div className="ayna-browse__applied" role="status">
@@ -1614,12 +1619,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {showFilters && (
                 <FilterSheet
                     groups={[
-                        ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–50'], ['50-100', '$50–100'], ['100-plus', '$100+']]],
-                        ['Eligibility', eligibilityFilter, setEligibilityFilter, [['fsa-hsa', 'FSA or HSA'], ['fsa', 'FSA'], ['hsa', 'HSA']]],
-                        ['Life stage', lifeStageFilter, setLifeStageFilter, [['fertility', 'Fertility'], ['pregnancy', 'Pregnancy'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause'], ['menopause', 'Menopause']]],
-                        ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Clean ingredients']].filter(([v]) => v === preferenceFilter || preferenceOptions.some((o) => o.value === v))],
-                        ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Better packaging']].filter(([v]) => sustainabilityOptions.some((o) => o.value === v))],
-                        ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favorite'], ...(user ? [['best-match', 'Best matches'], ['ecosystem', 'In my ecosystem']] : [])]],
+                        ['Price', priceFilter, setPriceFilter, [['under-25', 'Under $25'], ['25-50', '$25–49'], ['50-100', '$50–99'], ['100-plus', '$100+'], ['subscription', 'Subscription']]],
+                        ['Eligibility', eligibilityFilter, setEligibilityFilter, [['fsa-hsa', 'FSA/HSA eligible']]],
+                        // Fertility, Pregnancy, Postpartum and Menopause are category chips on the page already.
+                        ['Life stage', lifeStageFilter, setLifeStageFilter, [['perimenopause', 'Perimenopause']]],
+                        ['Preferences', preferenceFilter, setPreferenceFilter, [['fragrance-free', 'Fragrance-free'], ['sensitive-skin', 'Sensitive skin'], ['vegan', 'Vegan'], ['cruelty-free', 'Cruelty-free'], ['organic', 'Organic'], ['clean-ingredients', 'Paraben or chlorine free (as labeled)']].filter(([v]) => v === preferenceFilter || preferenceOptions.some((o) => o.value === v))],
+                        ['Sustainability', sustainabilityFilter, setSustainabilityFilter, [['reusable', 'Reusable'], ['recyclable', 'Recyclable'], ['low-waste', 'Low waste'], ['packaging', 'Sustainable packaging']].filter(([v]) => sustainabilityOptions.some((o) => o.value === v))],
+                        ['Show only', aynaFilter, setAynaFilter, [['clinician', 'Clinician backed'], ['community', 'Community favorite'], ...(user ? [['ecosystem', 'In my ecosystem']] : [])]],
                     ]}
                     personalizedToggle={user ? personalizedToggle : null}
                     resultCount={gridItems.length}
@@ -1654,7 +1660,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Product Grid */}
             {(!searchSubmitted || !aiLoading || gridItems.length > 0) && (
             <>
-            <div className="ayna-browse__grid">
+            <div className={`ayna-browse__grid${gridSettled ? ' is-settled' : ''}`}>
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
                     // A defined (even empty-string) resolvedImages[item.id] came back
                     // from the server's type-aware /api/product-image resolution
@@ -1750,7 +1756,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         Load more
                     </button>
                 </div>
-            ) : browseAiLoading ? (
+            ) : browseAiLoading && gridItems.length > 0 ? (
                 // A browse-AI round is fetching more results for this scope in the
                 // background, show a disabled, clearly-labeled state instead of
                 // "Load more" just disappearing (which would look broken) or being

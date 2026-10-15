@@ -3066,3 +3066,21 @@ html body .app-container .ayna-ask-panel__header.is-compact :is(.ayna-ask-panel_
 html body .app-container .ayna-ask-panel__header.is-compact h3 { font-size: 18px !important; margin: 0 !important; }
 html body .app-container:not([data-theme='dark']) :is(.ayna-ask-panel, .ayna-ask-panel__messages, .ayna-ask-panel__composer) { background: #ffedac !important; }
 html body .app-container:not([data-theme='dark']) .ayna-ask-message--ayna { background: transparent !important; border: 2px solid #3e2723 !important; }
+/* Product cards: two fixed tilts so rows read as deliberate; tape means something
+   (pink = in your ecosystem, blue otherwise); names hold two lines so prices align. */
+html body .app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card { --tilt: -1.5deg !important; --tape: rgba(118, 158, 190, .85) !important; }
+html body .app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card:nth-child(even) { --tilt: 1deg !important; }
+html body .app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card.is-in-eco { --tape: rgba(247, 186, 221, .92) !important; }
+html body .app-container .ayna-discover-card__name { display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.5em; }
+html body .app-container .ay-card-match { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 2px 0 4px; }
+html body .app-container .ay-card-match .ayna-browse-card__pill { position: static !important; inset: auto !important; transform: none !important; }
+.ay-card-match__eco { font: 700 12px/1.2 'DM Sans', sans-serif; color: #3e2723; }
+html body .app-container .ay-card-trust { display: flex; flex-wrap: wrap; gap: 4px 10px; min-height: 1.4em; }
+html body .app-container .ayna-discover-card__price { overflow-wrap: anywhere; }
+/* Cards animate in on first load only (filter changes swap in place). */
+html body .app-container .ayna-browse__grid.is-settled .ayna-discover-card { animation: none !important; }
+/* Selected chips say so without colour too. */
+html body .app-container :is(.ayna-browse__categories button.is-active, .ay-shopfilters__chips button[aria-pressed='true'])::before { content: '✓ '; font-weight: 700; }
+@keyframes ayBump { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+html body .app-container .app-nav__circle--wishlist.is-bump { animation: ayBump .45s ease; }
+@media (prefers-reduced-motion: reduce) { html body .app-container .app-nav__circle--wishlist.is-bump { animation: none; } }

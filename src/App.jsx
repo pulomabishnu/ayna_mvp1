@@ -1538,6 +1538,14 @@ function App() {
     setSavedProducts(next);
     persistSavedProducts(next);
     if (!wasSaved) posthog.capture('product_saved_for_later', { category: product.category });
+    // Say it saved, and where it went; give the header heart a small bump.
+    toast(wasSaved ? 'Removed from Saved' : 'Saved', wasSaved ? null : { label: 'View saved', onClick: () => handleViewWishlist() });
+    if (!wasSaved) {
+      try {
+        const h = document.querySelector('.app-nav__circle--wishlist');
+        if (h) { h.classList.remove('is-bump'); void h.offsetWidth; h.classList.add('is-bump'); }
+      } catch { /* decorative */ }
+    }
     if (user) {
       setSavedForUser(getSupabaseClient(), user.id, product, !wasSaved)
         .catch(e => reportSaveFailure('Could not save that change', e));

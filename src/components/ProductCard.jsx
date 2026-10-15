@@ -37,9 +37,11 @@ export default function ProductCard({
   if (!product) return null;
   const categoryLabel = CATEGORY_LABELS[product.category] || (product.category ? String(product.category).replace(/-/g, ' ') : 'Product');
   const shownBrand = brandOf(product) || product.brand || '';
-  const price = formatPrice(product);
+  const rawPrice = formatPrice(product);
+  // Long "check the retailer" notes ran past the card edge; say it short.
+  const price = /check (the )?retailer|varies by retailer/i.test(String(rawPrice.main || '')) ? { main: 'Price at retailer', sub: '' } : rawPrice;
   return (
-    <article className={`ayna-discover-card ayna-browse-card ${className}`.trim()} style={style}>
+    <article className={`ayna-discover-card ayna-browse-card${inEcosystem ? ' is-in-eco' : ''} ${className}`.trim()} style={style}>
       <a
         className="ayna-browse-card__link"
         href={productHref(product)}
@@ -51,10 +53,6 @@ export default function ProductCard({
       >
         <div className="ayna-discover-card__tile">
           {tile || <ProductTileImage product={product} alt={product.name} letterNode={<ProductImageFallback />} />}
-          {matchPercent != null && matchPercent > 0 && (
-            <MatchPill percent={matchPercent} size="sm" className="ayna-browse-card__pill" label={matchLabel || `${Math.round(matchPercent)}% match`} />
-          )}
-          {inEcosystem && <span className="ayna-browse-card__ecosystem">In ecosystem</span>}
         </div>
         <div className="ayna-discover-card__body">
           <div className="ayna-browse-card__labels">
@@ -63,6 +61,13 @@ export default function ProductCard({
           </div>
           {/* Brand sits in the eyebrow, so a leading brand is trimmed from
               the name ("Love Wellness Bye Bye Bloat" → "Bye Bye Bloat"). */}
+          {/* Match and ownership read as text, never over the product photo. */}
+          {((matchPercent != null && matchPercent > 0) || inEcosystem) && (
+            <span className="ay-card-match">
+              {matchPercent != null && matchPercent > 0 && <MatchPill percent={matchPercent} size="sm" className="ayna-browse-card__pill" label={matchLabel || `${Math.round(matchPercent)}% match`} />}
+              {inEcosystem && <span className="ay-card-match__eco">✓ In your ecosystem</span>}
+            </span>
+          )}
           <h3 className="ayna-discover-card__name">{shownBrand ? displayName(product) : product.name}</h3>
           <span className="ayna-discover-card__price">{price.main}{price.sub && <small>{price.sub}</small>}</span>
           {(() => {

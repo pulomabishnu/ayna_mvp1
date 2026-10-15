@@ -1030,7 +1030,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
       <div className={`ay-wiki-bar${barSmall ? ' is-small' : ''}`}>
         <label className="ay-web-lib-search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-          <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search reads, like heavy periods or PCOS" aria-label="Search reads" />
+          <SmartSearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Try: heavy periods or PCOS" aria-label="Search reads" />
         </label>
         {q.length < 2 && <div className="ay-web-lib-filter ay-lib-chips" role="group" aria-label="Topics">
           {topics.map(([id, label]) => <button type="button" key={id} className={topic === id ? 'is-on' : ''} aria-pressed={topic === id} onClick={() => setTopic(id)}>{label}</button>)}

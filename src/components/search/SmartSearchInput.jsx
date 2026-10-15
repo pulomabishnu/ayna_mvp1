@@ -157,6 +157,8 @@ const SmartSearchInput = forwardRef(function SmartSearchInput({
       if (e.key === 'Escape') { e.preventDefault(); setOpen(false); setActive(-1); return; }
       if (e.key === 'Enter' && active >= 0 && items[active]) { e.preventDefault(); pick(items[active]); return; }
     }
+    // Enter submits the search: close the list so it doesn't cover the results.
+    if (e.key === 'Enter') { setOpen(false); setActive(-1); }
     onKeyDown?.(e);
   };
 
