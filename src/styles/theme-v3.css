@@ -3981,3 +3981,20 @@ html body .app-container.app-container.app-container.app-container.app-container
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card .ay-contact-chips button[type='button'][role='radio'] { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card.ay-chd .callout.callout, html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card.ay-chd .callout.callout :is(strong, em, span, a, p)[class=''], html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-card.ay-chd .callout.callout > :is(strong, em, span, a, p) { color: #3e2723 !important; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-lib-more-row small { color: #ffedac !important; }
+
+/* Re-audit fixes. */
+@media (min-width: 900px) {
+  html body .app-container .site-footer.ay-footer > * { padding-left: clamp(16px, 3vw, 48px) !important; padding-right: clamp(16px, 3vw, 48px) !important; }
+}
+@media (max-width: 899px) {
+  html body .app-container .site-footer.ay-footer > * { padding-left: 16px !important; padding-right: 16px !important; }
+}
+html body .app-container .wq-side__q { display: none !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-step, html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay-info-step :is(h2, h3, h4, p, li, div, strong, em, span, small, a, b) { color: #3e2723 !important; }
+html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ay3-shophero :is(h1, h1 em, p, p a, .ay3-kicker, .ayna-browse__heading) { color: #3e2723 !important; }
+html body .app-container .brand-panel .brand-partner__prelaunch-tag { display: inline-block; margin-left: 10px; padding: 3px 10px; font: 700 12px/1.3 'DM Sans', sans-serif !important; vertical-align: middle; border: 1.5px solid currentColor; border-radius: 99px; }
+@media (max-width: 600px) { html body .app-container .ay-info-contact { padding: 0 10px; } }
+@media (pointer: coarse), (max-width: 720px) {
+  html body .app-container.app-container .cr-schools-list li > button, html body .app-container.app-container .ay-info .ay-info-advisor__link.ay-info-advisor__link, html body .app-container.app-container .ay-lib-row__body a, html body .app-container.app-container .app-nav__exitquiz { display: inline-flex !important; align-items: center !important; min-height: 44px !important; }
+  html body .app-container .wq-age-slide input[type='range'] { height: 44px !important; }
+}

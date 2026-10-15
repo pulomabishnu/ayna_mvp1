@@ -626,7 +626,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, initialSnapshot
         <header className="wq-head">
           <button type="button" className="wq-round" aria-label="Previous question" onClick={back}>←</button>
           <div className="wq-progress" aria-hidden="true">{coreSteps.map((s) => <span key={s.id} className="is-done" />)}</div>
-          <span className="wq-count">{coreSteps.length}<i>/{coreSteps.length}</i></span>
+          <span className="wq-count">{coreSteps.filter((st) => !FOLLOWUP_STEP_IDS.has(st.id)).length}<i>/{coreSteps.filter((st) => !FOLLOWUP_STEP_IDS.has(st.id)).length}</i></span>
         </header>
         <span className="wq-section">Done</span>
         <h1 className="wq-title">Your first matches are ready</h1>
