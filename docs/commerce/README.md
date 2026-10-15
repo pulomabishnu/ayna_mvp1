@@ -6,6 +6,7 @@ This PR is separate from the design PRs.
 | --- | --- |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | how the product/offer/variant model, router, bag, payment and fulfilment work |
 | [AMAZON.md](AMAZON.md) | Amazon answers, what's blocked, the price switch, the human review, the draft question for Amazon |
+| [AMAZON_SIZED_AND_SERVICES.md](AMAZON_SIZED_AND_SERVICES.md) | the 22 per-size Amazon products, the 10 not-exact ones, and the 27 apps/services, one by one |
 | [PROVIDERS_AND_PARTNERS.md](PROVIDERS_AND_PARTNERS.md) | checkout readiness, partner candidates and questions, Shoppable, Zinc, Stripe |
 | `commerce_catalog_audit.csv` | one row per product (227) with route, price, size, image, Amazon statuses, severity |
 | `amazon_human_review.csv` | 254 rows to check by hand on Amazon, one per exact variant |
@@ -61,7 +62,7 @@ Severity: 0 critical, 30 high, 145 medium, 52 low.
 - **Sizes:** a chosen size now only goes to Amazon with its own child ASIN; otherwise it goes to that exact size on the brand site.
 - **Disclosure:** "Paid link. As an Amazon Associate I earn from qualifying purchases." on Amazon products, web and app.
 
-**Not changed (needs a person):** LOLA's lvnta.com links, a pelvic-bra link for p-pelvic-wand, Ziggy Cup 2 vs Ziggy Cup, Gennev's "$199/consult" (gennev.com shows insurance-based visits, no self-pay price), and every Amazon item.
+**Not changed (needs a person):** Evernow price text (site now says membership "starting at $35/month"; only medium confidence), Planned Parenthood Direct price text (fees vary by state and pickup method), Bloom app (discontinued, still linked), LOLA's lvnta.com links, a pelvic-bra link for p-pelvic-wand, Ziggy Cup 2 vs Ziggy Cup, Gennev's "$199/consult" (gennev.com shows insurance-based visits, no self-pay price), and every Amazon item.
 
 ## The 10 products with no Buy link (Gennev now has one)
 

@@ -8,7 +8,7 @@ Sources: [Associates Program Policies](https://affiliate-program.amazon.com/help
 2. **Valid affiliate links:** all 110 Amazon destinations are `amazon.com/dp/<ASIN>?tag=aynahealth-20` with no other parameters, enforced by test. No Amazon page was opened, so whether each link loads is unverified.
 3. **ASINs found:** 194 mapped (169 distinct): 110 product-level plus 84 per-size child ASINs.
 4. **Parent vs child:** unknown without Amazon data; parent ASINs are recorded as "unknown". 22 products map a child ASIN for every Ayna size, 6 for some sizes, 4 use one generic listing for a sized product, and 79 have one ASIN and no Ayna sizes.
-5. **Variation mismatches:** 10 products are `AMAZON_VARIANT_NOT_EXACT` (54 sizes have no child ASIN). Those sizes now route to the exact brand-site size. In the 22 fully mapped products, no child ASIN is shared by two sizes. In 3 of them (Belly Bandit, Lena, Rael pads) the product-level listing ASIN isn't any of the size ASINs, so a reviewer should check it.
+5. **Variation mismatches:** 10 products are `AMAZON_VARIANT_NOT_EXACT` (54 sizes have no child ASIN). Those sizes now route to the exact brand-site size. In the 22 fully mapped products, no child ASIN is shared by two sizes. In 4 of them (Belly Bandit, AZO Cranberry, Lena, Rael pads) the product-level listing ASIN isn't any of the size ASINs, so a reviewer should check it. Per-product detail: [AMAZON_SIZED_AND_SERVICES.md](AMAZON_SIZED_AND_SERVICES.md).
 6. **Prices verified:** 0. Availability verified: 0. Identity verified by a person in this audit: 0. A team review on Oct 4 removed 10 wrong-brand rows.
 7. **Creators API credentials:** none (no env vars, nothing in code).
 8. **Setup that remains:** see below. Two separate blockers: credentials, and Amazon's written OK for a multi-retailer site.
@@ -37,7 +37,7 @@ Amazon lets an Associate show prices only from Creators API or a link Amazon ser
 
 Priority order:
 1. The 10 not-exact products.
-2. The 3 listing ASINs that aren't any size ASIN.
+2. The 4 listing ASINs that aren't any size ASIN.
 3. The 22 per-size products.
 4. The 79 single-ASIN products: check count, pack, volume, formula and model.
 5. The 6 search-found candidates for products with no Buy link.
