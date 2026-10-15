@@ -921,7 +921,7 @@ export default function ProductModal({
         <div className="pdp-below pdp-below--glance">
           {/* Full width, one reading column: the evidence tabs, then Ask ayna. */}
           <div className="pdp-read">
-            <ProductEvidence product={product} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} safety={<ProductSafety product={product} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
+            <ProductEvidence product={product} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} safety={<ProductSafety product={product} glance={glance} recall={recall} alertText={glance?.alert || ''} />} extraRows={(() => {
             const pp = getPassport(product);
             const checked = pp?.pricing?.price?.verified_at;
             let seller = '';

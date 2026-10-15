@@ -184,6 +184,9 @@ function useEvidence(product, aynaData) {
       materials: noDash(meaningful(product.safety?.materials)),
       ingredientNote: noDash(meaningful(product.ingredientScienceNote)),
       priceNote: noDash(meaningful(product.priceNote)),
+      faq: /^https:\/\//.test(String(product.faqUrl || '')) ? product.faqUrl : '',
+      incentivized: (product.incentivizedReviewSites || []).filter((x) => x?.site).map((x) => `${noDash(x.site)}${x.source ? ` (per ${noDash(x.source)})` : ''}`),
+      inStock: Object.entries(product.whereToBuyInStock || {}).filter(([, v]) => v).map(([k]) => k),
     };
   }, [product, aynaData]);
 }
@@ -264,6 +267,7 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
         {cur.id === 'how' && d.how && <>
           {d.how.intro && <Paras text={d.how.intro} />}
           <ol className="ay-tabs__steps">{d.how.steps.map((st, i) => <li key={st}><b aria-hidden="true">{i + 1}</b><span>{st}</span></li>)}</ol>
+          {d.faq && <p className="ay-ev__by"><a href={d.faq} target="_blank" rel="noopener noreferrer">{d.brand || 'The brand'}’s FAQ<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></p>}
           {d.how.url && <p className="ay-ev__by"><a href={d.how.url} target="_blank" rel="noopener noreferrer">From {d.brand || 'the brand'}’s instructions<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></p>}
         </>}
 
@@ -305,6 +309,7 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
           {d.communityText && <><h3 className="ay-ev2__sub">What people say in online reviews</h3><ShortThenFull full={d.communityText} /></>}
           {d.thingsRaised && <><h3 className="ay-ev2__sub">Things people raise</h3><ShortThenFull full={d.thingsRaised} /></>}
           {d.ratingNote && <p className="ay-ev__by">{d.ratingNote}</p>}
+          {d.incentivized.length > 0 && <p className="ay-ev__by">Reviews on {d.incentivized.join(', ')} may include incentivized reviews.</p>}
           <Links items={onlineLinks} label={onlineLinks.length ? 'Read more online' : ''} />
           {d.brand && <div className="ay-tabs__block"><h3>Third-party review sites</h3><p className="ay-ev__body"><a href={`https://www.trustpilot.com/search?query=${encodeURIComponent(d.brand)}`} target="_blank" rel="noopener noreferrer">Look up {d.brand} on Trustpilot<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a></p></div>}
           <p className="ay-ev__by">Online reviews and posts are people’s experiences, not clinical evidence.</p>
@@ -320,7 +325,13 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
               {facts.map((f) => <div key={f.id}><dt>{f.label}</dt><dd>{f.value}{f.note ? <small>{fmtDate(f.note)}</small> : null}</dd></div>)}
               {extraRows.filter((r) => r && r.value).map((r) => <div key={r.label}><dt>{r.label}</dt><dd>{r.value}</dd></div>)}
               {d.priceNote && <div><dt>Price note</dt><dd>{d.priceNote}</dd></div>}
+              {d.inStock.length > 0 && <div><dt>In stock at</dt><dd>{d.inStock.join(', ')}</dd></div>}
             </dl></div>}
+          {(() => {
+            const unk = (glance?.sections || []).find((x) => x.id === 'unknown');
+            const items = (unk?.blocks || []).filter((b) => b.type === 'list').flatMap((b) => b.items || []).map((t) => noDash(typeof t === 'string' ? t : t?.text)).filter(Boolean);
+            return items.length ? <div className="ay-tabs__block"><h3>What we don’t know yet</h3><ul className="ay-safety__list">{items.map((t) => <li key={t}>{t}</li>)}</ul></div> : null;
+          })()}
           {allSources.length > 0 && <details className="ay-pd__sources"><summary>All sources ({allSources.length})</summary>
             <ol>{allSources.map((x) => <li key={x.url}><a href={x.url} target="_blank" rel="noopener noreferrer">{x.title}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens in a new tab)</span></a> <small>{[x.publisher, x.year].filter(Boolean).join(' · ')}</small></li>)}</ol>
           </details>}
@@ -332,7 +343,7 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
 }
 
 /** Safety lives inside Product details; the warning line under Buy opens it there. */
-export function ProductSafety({ product, recall = null, alertText = '' }) {
+export function ProductSafety({ product, recall = null, alertText = '', glance = null }) {
   const d = useEvidence(product, null);
   if (!d) return null;
   const showRecall = !d.isDigital && recall && recall.status !== 'unknown';
@@ -346,6 +357,10 @@ export function ProductSafety({ product, recall = null, alertText = '' }) {
         {!d.isDigital && d.fdaRaw && <div><dt>FDA status</dt><dd>{d.fda?.label ? <><b>{d.fda.label}.</b> </> : null}{fmtDate(d.fdaRaw)}</dd></div>}
         {d.sideEffects && <div><dt>{d.isDigital ? 'Things to know' : 'Possible side effects'}</dt><dd>{d.sideEffects}</dd></div>}
         {d.allergens && <div><dt>Allergens</dt><dd>{d.allergens}</dd></div>}
+        {/* The team's verified label checks (breastfeeding, medicines, fragrance, latex...). */}
+        {(((glance?.sections || []).find((x) => x.id === 'safety')?.blocks || []).filter((b) => b.type === 'rows').flatMap((b) => b.rows || []))
+          .filter((r) => r && !r.unknown && r.value && !/^(pregnancy|allergens|recalls|data storage|privacy)$/i.test(r.label) && !(/pregnan/i.test(r.label) && d.pregnancy === ''))
+          .map((r) => <div key={r.label}><dt>{r.label}</dt><dd>{noDash(r.value)}</dd></div>)}
         {d.avoidIf.length > 0 && <div><dt>Skip if you react to</dt><dd>{d.avoidIf.join(', ')}</dd></div>}
         {showRecall && <div><dt>Recalls</dt><dd>{recall.status === 'none' ? 'No recalls found.' : noDash(recall.detail || recall.label || '')}</dd></div>}
         {d.privacy && meaningful(d.privacy.dataStorage) && <div><dt>Data storage</dt><dd>{noDash(d.privacy.dataStorage)}</dd></div>}
