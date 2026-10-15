@@ -248,17 +248,6 @@ function useEvidence(product, aynaData) {
 }
 
 // Retail and brand pages are where to buy, not reviews: they stay off the Reviews tab.
-// One plain line under each section heading: what it is and where it comes from.
-const DECK = {
-  summary: 'What this is, in plain words, from the ayna team.',
-  who: 'Who it suits, what it helps with, and when to skip it.',
-  how: 'Step by step.',
-  clinical: 'What clinicians and clinical guidance say about it.',
-  science: 'Research from government health agencies, medical journals and medical societies.',
-  reviews: 'What people who use it say, on ayna and online.',
-  details: 'Safety, ingredients, size, price and every source we used.',
-};
-
 const RETAIL = /amzn\.|amazon\.|walmart\.|target\.com|cvs\.com|walgreens\.|ulta\.|sephora\./i;
 
 export default function ProductEvidence({ product, glance = null, aynaData = null, aynaRating = null, ratingCount = 0, rateControls = null, safety = null, extraRows = [] }) {
@@ -325,6 +314,14 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
     const unk = (glance?.sections || []).find((x) => x.id === 'unknown');
     return (unk?.blocks || []).filter((b) => b.type === 'list').flatMap((b) => b.items || []).map((t) => noDash(typeof t === 'string' ? t : t?.text)).filter(Boolean);
   })();
+  // A safety note (a lawsuit, a warning) belongs in Safety, not in Reviews: show it once.
+  const thingsRaised = (() => {
+    const t = d.thingsRaised;
+    if (!t || !glance?.alert) return t;
+    const w = (x) => new Set(String(x).toLowerCase().match(/[a-z]{4,}/g) || []);
+    const a = w(glance.alert); const tw = w(t); let hit = 0; tw.forEach((x) => { if (a.has(x)) hit += 1; });
+    return tw.size && hit / tw.size >= 0.5 ? '' : t;
+  })();
   const hasRows = facts.length > 0 || extraRows.some((r) => r && r.value) || d.priceNote || d.inStock.length > 0;
 
   const renderPanel = (id) => (<>
@@ -332,7 +329,7 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
         {id === 'summary' && <>
           {d.aynaSummary ? <ShortThenFull full={[d.aynaSummary, d.aynaDetail].filter(Boolean).join('\n\n')} /> : <p className="ay-ev__empty">No summary on file yet.</p>}
           {d.evidenceStrength && <p className="ay-ev__by">Evidence level on file: {d.evidenceStrength}</p>}
-          {d.badges.length > 0 && <div className="ay-tabs__block"><h3>What the brand says about it</h3><ul className="ay-tabs__chips">{d.badges.map((b) => <li key={b}>{b}</li>)}</ul><p className="ay-ev__by">The brand’s own labels and awards. Not checked by ayna.</p></div>}
+          {d.badges.length > 0 && <div className="ay-tabs__block"><ul className="ay-tabs__chips">{d.badges.map((b) => <li key={b}>{b}</li>)}</ul><p className="ay-ev__by">The brand’s own labels and awards. Not checked by ayna.</p></div>}
         </>}
 
         {id === 'who' && <>
@@ -348,25 +345,25 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
           <Links items={[
             d.faq && { url: d.faq, title: `${d.brand || 'The brand'}’s FAQ`, publisher: d.brand || 'Brand' },
             d.how.url && { url: d.how.url, title: `${d.brand || 'The brand'}’s instructions`, publisher: d.brand || 'Brand' },
-          ].filter(Boolean)} label="From the brand" />
+          ].filter(Boolean)} />
         </>}
 
         {id === 'clinical' && <SubTabs key="clinical" items={[
-          { id: 'opinion', label: 'The opinion', node: <>
+          { id: 'opinion', label: 'Opinion', node: <>
             <p className={`ay-ev2__badge ${d.independent ? 'is-indep' : 'is-brand'}`}>{d.independent ? 'Independent sources' : 'Based on brand claims'}</p>
             {d.clinician ? <ShortThenFull short={d.clinicianShort} full={d.clinician} /> : <p className="ay-ev__empty">No clinical opinion on file yet.</p>}
             {d.attribution && <p className="ay-ev__by">{d.attribution}</p>}
           </> },
           (d.clinicalLinks.length > 0 || d.clinicalSummary) && { id: 'src', label: `Sources${d.clinicalLinks.length ? ` (${d.clinicalLinks.length})` : ''}`, node: <>
-            {d.clinicalSummary && <><h3 className="ay-ev2__sub">What the sources say</h3><ShortThenFull full={d.clinicalSummary} /></>}
+            {d.clinicalSummary && <ShortThenFull full={d.clinicalSummary} />}
             <Links items={d.clinicalLinks} />
           </> },
         ]} />}
 
         {id === 'science' && <SubTabs key="science" empty={<p className="ay-ev__empty">No studies linked yet.</p>} items={[
-          (d.bottomLine || d.scienceSummary) && { id: 'bottom', label: 'Bottom line', node: <>
+          (d.bottomLine || d.scienceSummary) && { id: 'bottom', label: 'Summary', node: <>
             {d.bottomLine && <ShortThenFull full={d.bottomLine} />}
-            {d.scienceSummary && <><h3 className="ay-ev2__sub">What the research says</h3><ShortThenFull full={d.scienceSummary} /></>}
+            {d.scienceSummary && <ShortThenFull full={d.scienceSummary} />}
           </> },
           d.ingredients.length > 0 && { id: 'ingr', label: `Ingredients (${d.ingredients.length})`, node: <>
             <ul className="ay-ev2__ingr">
@@ -385,11 +382,11 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
         ]} foot={(d.ingredients.length > 0 || d.studies.length > 0) && !d.productSpecific ? <p className="ay-ev__by">This research is about the ingredients or this type of product, not a study of this exact product.</p> : null} />}
 
         {id === 'reviews' && <SubTabs key="reviews" items={[
-          (ratingLine || d.communityText || d.thingsRaised || d.communitySummary) && { id: 'say', label: 'What people say', node: <>
+          (ratingLine || d.communityText || thingsRaised || d.communitySummary) && { id: 'say', label: 'What people say', node: <>
             {ratingLine}
-            {d.communityText && <><h3 className="ay-ev2__sub">In online reviews</h3><ShortThenFull full={d.communityText} /></>}
-            {d.communitySummary && <><h3 className="ay-ev2__sub">Across forums and social media</h3><ShortThenFull full={d.communitySummary} /></>}
-            {d.thingsRaised && <><h3 className="ay-ev2__sub">Things people raise</h3><ShortThenFull full={d.thingsRaised} /></>}
+            {d.communityText && <ShortThenFull full={d.communityText} />}
+            {d.communitySummary && <ShortThenFull full={d.communitySummary} />}
+            {thingsRaised && <ShortThenFull full={thingsRaised} />}
             {d.ratingNote && <p className="ay-ev__by">{d.ratingNote}</p>}
             {d.incentivized.length > 0 && <p className="ay-ev__by">Reviews on {d.incentivized.join(', ')} may include incentivized reviews.</p>}
             <p className="ay-ev__by">Online reviews and posts are people’s experiences, not clinical evidence.</p>
@@ -400,7 +397,7 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
           { id: 'ayna', label: ratingCount > 0 ? `ayna reviews (${ratingCount})` : 'ayna reviews', node: <>
             {aynaRating != null && ratingCount > 0 && <p className="ay-ev__rating"><b>★ {aynaRating.toFixed(1)}</b> from {plural(ratingCount, 'ayna member')}</p>}
             {d.memberReviews.map((r) => <blockquote key={r.slice(0, 40)} className="ay-ev__quote">{r}</blockquote>)}
-            {!(ratingCount > 0) && <p className="ay-ev__by">No ayna member reviews yet. Tried it? Be the first.</p>}
+            {!(ratingCount > 0) && <p className="ay-ev__by">No ayna member reviews yet.</p>}
             {rateControls}
           </> },
         ]} />}
@@ -408,8 +405,9 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
         {id === 'details' && <SubTabs key="details" items={[
           safety && { id: 'safety', label: 'Safety', node: safety },
           (d.ingredientsText || showMaterials) && { id: 'inside', label: d.isDigital ? 'What’s included' : 'What’s in it', node: <>
-            {d.ingredientsText && <><h3 className="ay-ev2__sub">{d.isDigital ? 'What’s included' : 'Ingredients'}</h3><p className="ay-ev__body ay-pd__pre">{d.ingredientsText}</p></>}
-            {showMaterials && <><h3 className="ay-ev2__sub">Materials and what’s in the box</h3><p className="ay-ev__body">{d.materials}</p></>}
+            {/* Labels only when both are shown; one block needs no title. */}
+            {d.ingredientsText && <>{showMaterials && <h3 className="ay-ev2__sub">{d.isDigital ? 'Included' : 'Ingredients'}</h3>}<p className="ay-ev__body ay-pd__pre">{d.ingredientsText}</p></>}
+            {showMaterials && <>{d.ingredientsText && <h3 className="ay-ev2__sub">Materials</h3>}<p className="ay-ev__body">{d.materials}</p></>}
           </> },
           hasRows && { id: 'buy', label: 'Size and price', node: (
             <dl className="ay-pd__rows">
@@ -421,7 +419,7 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
           ) },
           (allSources.length > 0 || unknowns.length > 0) && { id: 'sources', label: `Sources${allSources.length ? ` (${allSources.length})` : ''}`, node: <>
             {unknowns.length > 0 && <div className="ay-unknown"><h3 className="ay-ev2__sub">What we don’t know yet</h3><ul>{unknowns.map((t) => <li key={t}>{t}</li>)}</ul></div>}
-            <Links items={allSources.map((x) => ({ url: x.url, title: noDash(x.title), publisher: x.publisher, year: x.year }))} label={allSources.length ? 'Every source on this page' : ''} />
+            <Links items={allSources.map((x) => ({ url: x.url, title: noDash(x.title), publisher: x.publisher, year: x.year }))}  />
           </> },
         ]} />}
   </>);
@@ -430,7 +428,6 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
     <TermsCtx.Provider value={plan}>
     <section id="ay-tabs" className={`ay-tabs${tab ? '' : ' is-collapsed'}`} aria-label="About this product">
       <nav className="ay-tabs__nav" aria-label="About this product">
-        <p className="ay-tabs__navh" aria-hidden="true">About this product</p>
         <ul>
           {tabs.map((t) => (
             <li key={t.id}><button type="button" id={`ay-tab-${t.id}`} aria-current={t.id === cur.id ? 'true' : undefined} aria-controls="ay-tab-panel" className={`ay-tabs__tab is-${t.id}${t.id === cur.id ? ' is-on' : ''}`} onClick={() => pick(t.id)} onKeyDown={keyNav}>{t.label}</button></li>
@@ -445,10 +442,6 @@ export default function ProductEvidence({ product, glance = null, aynaData = nul
             </button>
             {t.id === cur.id && (
               <div id="ay-tab-panel" role="region" aria-label={t.label} className={`ay-tabs__panel is-${t.id}`}>
-                <header className="ay-tabs__head">
-                  <h2>{t.label}</h2>
-                  {DECK[t.id] && <p>{DECK[t.id]}</p>}
-                </header>
                 {renderPanel(t.id)}
               </div>
             )}
@@ -492,7 +485,7 @@ export function ProductSafety({ product, recall = null, alertText = '', glance =
         {d.privacy && typeof d.privacy.sellsData === 'string' && meaningful(d.privacy.sellsData) && <div><dt>Selling your data</dt><dd>{noDash(d.privacy.sellsData)}</dd></div>}
         {d.privacy && typeof d.privacy.hipaa === 'string' && meaningful(d.privacy.hipaa) && <div><dt>HIPAA and data rules</dt><dd>{noDash(d.privacy.hipaa)}</dd></div>}
       </dl>
-      <Links items={d.safetyLinks} label={d.safetyLinks.length ? 'Safety sources' : ''} />
+      <Links items={d.safetyLinks} label={d.safetyLinks.length ? 'Sources' : ''} />
     </div>
   );
 }

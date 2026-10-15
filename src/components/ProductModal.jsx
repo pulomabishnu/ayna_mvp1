@@ -944,7 +944,6 @@ export default function ProductModal({
               <section className="pdp-community-actions" aria-labelledby="pdp-community-h">
                 {onCommunityAction && <>
                   <h3 id="pdp-community-h">Tried it?</h3>
-                  <p className="pdp-pair__deck">Tell other women how it went, or share it with a friend.</p>
                   <div className="pdp-community-actions__grid">
                     {[['review', 'Write a review'], ['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => (
                       <button key={kind} type="button" className={kind === 'review' ? 'is-primary' : undefined} onClick={() => onCommunityAction(kind)}>{label}</button>
