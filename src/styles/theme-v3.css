@@ -4846,3 +4846,9 @@ html body .app-container.app-container.app-container.app-container .pdp-pair > .
 
 /* Campus: the pinned quick-exit button never covers the last link on a phone. */
 @media (max-width: 767px) { html body .app-container .cr-page { padding-bottom: 96px; } }
+/* Shop: products in the first screen. A slimmer pink band, no wave. */
+html body .app-container.app-container.app-container.app-container .ay3-shophero { padding-top: 22px !important; padding-bottom: 18px !important; }
+html body .app-container.app-container.app-container.app-container .ay3-shophero.ay3-scallop::after, html body .app-container.app-container.app-container.app-container .ay3-shophero.ay3-edge-bottom::after { display: none !important; }
+html body .app-container.app-container.app-container.app-container .ay3-shophero .ay3-title { margin-bottom: 4px !important; font-size: clamp(32px, 3.2vw, 44px) !important; }
+html body .app-container.app-container.app-container.app-container .ay3-shophero .ayna-browse__disclosure { margin: 0 0 12px !important; }
+html body .app-container.app-container.app-container.app-container .ayna-browse { padding-top: 0 !important; }

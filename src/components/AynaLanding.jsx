@@ -543,7 +543,15 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
       // called "for your needs".
       const scored = list.map((p) => ({ p, m: matchBadge(getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts))?.percent ?? 0 }))
         .filter((x) => x.m >= 70).sort((a, b) => b.m - a.m);
-      if (scored.length >= 4) return scored.slice(0, 4).map((x) => x.p);
+      if (scored.length >= 4) {
+        // Spread across her needs: one per area first (on "All"), then fill by score.
+        if (filter && filter !== 'all') return scored.slice(0, 4).map((x) => x.p);
+        const areaOf = (p) => MACRO_GROUPS.find((g) => g.id !== 'all' && itemMatchesMacroGroup(p, g.id))?.id || p.category;
+        const seen = new Set(); const first = [];
+        for (const x of scored) { const a = areaOf(x.p); if (!seen.has(a)) { seen.add(a); first.push(x); } if (first.length === 4) break; }
+        const rest = scored.filter((x) => !first.includes(x));
+        return [...first, ...rest].slice(0, 4).map((x) => x.p);
+      }
     }
     if (personalize) {
       const score = (p) => (recommendedIds.has(p.id) ? 2 : ownedCategories.has(p.category) ? 1 : 0);
@@ -572,8 +580,15 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
     const owned = Object.values(myProducts || {});
     const core = ['period', 'intimate', 'hormones', 'pelvic', 'sleep-stress', 'skin'];
     const empty = MACRO_GROUPS.filter((g) => core.includes(g.id) && !owned.some((p) => itemMatchesMacroGroup(p, g.id)));
+    // From her answers first: the area of her best matches that she has nothing in yet.
+    const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
+    for (const id of recommendedProductIds || []) {
+      const p = byId.get(id);
+      const g = p && MACRO_GROUPS.find((x) => x.id !== 'all' && itemMatchesMacroGroup(p, x.id) && !owned.some((o) => itemMatchesMacroGroup(o, x.id)));
+      if (g) return g;
+    }
     return empty.length ? empty[Math.floor(nextSeed * empty.length)] : null;
-  }, [myProducts, nextSeed]);
+  }, [myProducts, nextSeed, recommendedProductIds]);
   const picks = Object.keys(myProducts || {}).length;
 
   // Signed in, Home is the landing page (same layout and story) with her own
@@ -584,7 +599,7 @@ function WelcomeBack({ user, myProducts, recommendedProductIds = [], onStartQuiz
         <div className="mockup-page lx-personal__next">
           <button type="button" className="lx-nextcard" onClick={() => onViewDiscovery?.({ initialMacroGroup: nextArea.id })}>
             <span className="lx-nextcard__label">your next step</span>
-            <strong>Start your {nextArea.label} shelf</strong>
+            <strong>{recommendedProductIds?.length ? `Your matches in ${nextArea.label}` : `Start your ${nextArea.label} shelf`}</strong>
             <span className="lx-nextcard__go">Browse {nextArea.label} <Arrow /></span>
           </button>
         </div>
