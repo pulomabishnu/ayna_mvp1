@@ -1672,6 +1672,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             style={{ animation: `fadeInUp 0.4s ${Math.min(idx * 0.04, 0.24)}s backwards` }}
                             matchPercent={matchPercent}
                             matchLabel={badge ? badge.label : ''}
+                            rating={(() => { const d = aynaReviews[item.id]; const v = getAynaRating(item, d); const n = Array.isArray(d?.ratings) ? d.ratings.length : 0; return v != null && n > 0 ? { value: Number(v), count: n } : null; })()}
                             isSaved={isWishlisted}
                             inEcosystem={isInEcosystem}
                             onOpen={(p) => onOpenProduct?.(p, searchSubmitted

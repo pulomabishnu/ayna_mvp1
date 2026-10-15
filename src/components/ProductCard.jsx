@@ -4,6 +4,7 @@ import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import { formatPrice } from '../utils/formatPrice';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import MatchPill from './MatchPill';
+import { getVerificationLinks } from '../utils/verificationLinks';
 import { displayName } from '../mobile/utils/displayName.js';
 import { brandOf } from '../mobile/data/brandFallback.js';
 import '../styles/match-ui.css';
@@ -25,6 +26,7 @@ export default function ProductCard({
   isSaved = false,
   inEcosystem = false,
   labels = null,
+  rating = null,
   tile = null,
   onOpen,
   onToggleSaved,
@@ -63,6 +65,19 @@ export default function ProductCard({
               the name ("Love Wellness Bye Bye Bloat" → "Bye Bye Bloat"). */}
           <h3 className="ayna-discover-card__name">{shownBrand ? displayName(product) : product.name}</h3>
           <span className="ayna-discover-card__price">{price.main}{price.sub && <small>{price.sub}</small>}</span>
+          {(() => {
+            const clinician = getVerificationLinks(product, 'doctor').length > 0;
+            const evidence = getVerificationLinks(product, 'scientific').length > 0;
+            const hasRating = rating && Number.isFinite(rating.value) && rating.count > 0;
+            if (!clinician && !evidence && !hasRating) return null;
+            return (
+              <span className="ay-card-trust">
+                {hasRating && <span className="ay-card-trust__rating"><span aria-hidden="true">★</span> {rating.value.toFixed(1)} · {rating.count} review{rating.count === 1 ? '' : 's'}</span>}
+                {clinician && <span className="ay-card-trust__tag">Clinical sources</span>}
+                {evidence && <span className="ay-card-trust__tag">Research linked</span>}
+              </span>
+            );
+          })()}
         </div>
       </a>
       {onToggleSaved && (

@@ -280,12 +280,30 @@ function Section({ section, plan, sources, extra, onXref, bare = false }) {
 /* Tabs are grouped so there are only a few, in plain words:
    summary (plus why it matched), research and safety, reviews, sources. */
 const TAB_GROUPS = [
-  { id: 'research', label: 'Research & safety', ids: ['evidence', 'safety', 'inside', 'howto', 'unknown'], tone: 'peri' },
+  { id: 'match', label: 'Your match', ids: ['match'], tone: 'pink' },
+  { id: 'clinician', label: 'Clinical view', ids: ['clinician'], tone: 'peri' },
   { id: 'reviews', label: 'Reviews', ids: ['people', 'brand'], tone: 'pink' },
+  { id: 'evidence', label: 'Evidence', ids: ['evidence', 'unknown'], tone: 'peri' },
+  { id: 'safety', label: 'Safety', ids: ['safety'], tone: 'pink' },
+  { id: 'details', label: 'Ingredients & use', ids: ['inside', 'howto'], tone: 'peri' },
 ];
-const SUB_LABEL = { evidence: 'The evidence', safety: 'Safety', inside: 'Ingredients', howto: 'How to use', unknown: 'Still unknown', people: 'What people say', brand: 'What the brand claims' };
-const SUB_ICON = { evidence: '🔬', safety: '🛡', inside: '🧪', howto: '✋', unknown: '?', people: '💬', brand: '🏷' };
-const groupOf = (id) => (id === 'match' ? 'glance' : (TAB_GROUPS.find((g) => g.ids.includes(id)) || {}).id || id);
+const SUB_LABEL = { evidence: 'The evidence', safety: 'Safety', inside: 'Ingredients', howto: 'How to use', unknown: 'Still unknown', people: 'What people say', brand: 'What the brand claims', clinician: 'Clinical view', match: 'Why it matches you' };
+const SUB_ICON = { evidence: '🔬', safety: '🛡', inside: '🧪', howto: '✋', unknown: '?', people: '💬', brand: '🏷', clinician: '🩺', match: '♡' };
+const groupOf = (id) => (TAB_GROUPS.find((g) => g.ids.includes(id)) || {}).id || id;
+
+/* The clinician's own view (when we have one) gets its own tab instead of
+   sitting inside the evidence list. Nothing is added that isn't in the data. */
+function splitSections(sections = []) {
+  const out = [];
+  sections.forEach((sec) => {
+    if (sec.id !== 'evidence') { out.push(sec); return; }
+    const clin = (sec.blocks || []).filter((b) => b && b.label === 'Clinical view');
+    const rest = (sec.blocks || []).filter((b) => !(b && b.label === 'Clinical view'));
+    if (clin.length) out.push({ id: 'clinician', title: 'Clinical view', kind: 'evidence', blocks: clin.map((b) => ({ ...b, label: undefined })) });
+    if (rest.length) out.push({ ...sec, blocks: rest });
+  });
+  return out;
+}
 
 export default function ProductSections({ glance, extras = {}, extraNav = [], onXref = null }) {
   const plan = glance?.glossary || {};
@@ -294,7 +312,7 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
   useEffect(() => {
     const on = (e) => {
       const id = e.detail;
-      if (id === 'sources' || (glance?.sections || []).some((x) => x.id === id)) {
+      if (id === 'sources' || id === 'clinician' || (glance?.sections || []).some((x) => x.id === id)) {
         const g = groupOf(id);
         setTab(g);
         if (g !== id && g !== 'glance') setSub((m) => ({ ...m, [g]: id }));
@@ -305,19 +323,19 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
   }, [glance]);
   if (!glance) return null;
   const { what, who, facts, sources } = glance;
+  const secs = splitSections(glance.sections);
   const nav = [...glance.nav, ...extraNav];
 
   const tabs = [
-    { id: 'glance', label: 'ayna summary', tone: 'butter' },
-    ...TAB_GROUPS.filter((g) => glance.sections.some((sec) => g.ids.includes(sec.id))).map((g) => ({ id: g.id, label: g.label, tone: g.tone })),
+    { id: 'glance', label: 'Overview', tone: 'butter' },
+    ...TAB_GROUPS.filter((g) => secs.some((sec) => g.ids.includes(sec.id))).map((g) => ({ id: g.id, label: g.label, tone: g.tone })),
     ...(sources.length ? [{ id: 'sources', label: `Sources (${sources.length})`, tone: 'cream' }] : []),
   ];
   void nav; void extraNav;
   const cur = tabs.find((t) => t.id === tab) || tabs[0];
   const curGroup = TAB_GROUPS.find((g) => g.id === cur.id);
-  const groupSections = curGroup ? glance.sections.filter((sec) => curGroup.ids.includes(sec.id)) : [];
-  const matchSection = glance.sections.find((sec) => sec.id === 'match');
-  const title = cur.id === 'glance' ? 'ayna summary' : cur.id === 'sources' ? 'Where this comes from' : cur.label;
+  const groupSections = curGroup ? secs.filter((sec) => curGroup.ids.includes(sec.id)) : [];
+  const title = cur.id === 'glance' ? 'Overview' : cur.id === 'sources' ? 'Where this comes from' : cur.label;
 
   return (
     <section className="ay-glance is-tabbed" id="ay-sec-glance" tabIndex={-1} aria-label="Product information">
@@ -380,12 +398,6 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
         </dl>
       </div>
         )}
-        {cur.id === 'glance' && matchSection && (
-          <div className="ay-gl-group" id="ay-sec-match-inline">
-            <h3 className="ay-gl-grouph">{matchSection.title}</h3>
-            <Section bare section={matchSection} plan={plan} sources={sources} extra={extras.match} onXref={onXref} />
-          </div>
-        )}
         {curGroup && curGroup.id === 'reviews' && groupSections.length > 0 && (
           <div className={`ay-gl-split${groupSections.length === 1 ? ' is-one' : ''}`}>
             {groupSections.map((sec) => (
@@ -396,7 +408,12 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
             ))}
           </div>
         )}
-        {curGroup && curGroup.id !== 'reviews' && groupSections.length > 0 && (() => {
+        {curGroup && curGroup.id !== 'reviews' && groupSections.length === 1 && (
+          <article className={`ay-gl-card is-single is-${groupSections[0].id}`}>
+            <Section bare section={groupSections[0]} plan={plan} sources={sources} extra={extras[groupSections[0].id]} onXref={onXref} />
+          </article>
+        )}
+        {curGroup && curGroup.id !== 'reviews' && groupSections.length > 1 && (() => {
           const active = groupSections.find((sec) => sec.id === sub[curGroup.id]) || groupSections[0];
           return (
             <div className="ay-gl-subs">
