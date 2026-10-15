@@ -202,7 +202,8 @@ export function buildKeyFacts(product, { passport, sources, details } = {}) {
   const fsa = pp?.pricing?.fsa_hsa;
   add('fsa', 'FSA/HSA', fsa?.known ? (fsa.value === 'eligible' ? 'Eligible' : 'Not eligible') : '', { note: verifiedNote(fsa), refs: factRefs(fsa) });
   const where = (product?.whereToBuy || []).map(clean).filter(Boolean);
-  add('where', isDigital ? 'Where to get it' : 'Where to buy', where.join(', ') || (details?.access?.label || ''));
+  const hasBuyLink = Boolean(product?.affiliateUrl || product?.url || product?.amazonUrl || product?.buyUrl);
+  add('where', isDigital ? 'Where to get it' : 'Where to buy', where.join(', ') || (details?.access?.known ? details.access.label : (hasBuyLink ? 'Online, through the Buy button' : '')));
   if (!isDigital) {
     const reg = pp?.safety?.regulatory_status;
     if (reg?.known) add('fda', 'Regulatory status', String(reg.value).replace(/⚠️?/g, '').trim(), { note: verifiedNote(reg), refs: factRefs(reg) });

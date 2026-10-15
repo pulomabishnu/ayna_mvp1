@@ -380,28 +380,6 @@ export default function ProductSections({ glance, extras = {}, extraNav = [], on
         </dl>
       </div>
         )}
-        {cur.id === 'glance' && tabs.length > 1 && (
-          <div className="ay-gl-digest">
-            <Label>More on this product</Label>
-            <ul>
-              {tabs.filter((t) => t.id !== 'glance').map((t) => {
-                const g = TAB_GROUPS.find((x) => x.id === t.id);
-                const secs = g ? glance.sections.filter((sec) => g.ids.includes(sec.id)) : [];
-                const line = secs.map(sectionDigest).find(Boolean) || (t.id === 'sources' ? `${sources.length} sources behind this page.` : '');
-                return (
-                  <li key={t.id} data-tone={t.tone}>
-                    <button type="button" onClick={() => { setTab(t.id); document.getElementById('ay-sec-glance')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
-                      <strong>{t.label}</strong>
-                      {secs.length > 0 && <span className="ay-gl-digest__kind">{secs.map((sec) => sec.title).join(' · ')}</span>}
-                      {line && <span className="ay-gl-digest__line">{line}</span>}
-                      <span className="ay-gl-digest__more">Read more <span aria-hidden="true">→</span></span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
         {cur.id === 'glance' && matchSection && (
           <div className="ay-gl-group" id="ay-sec-match-inline">
             <h3 className="ay-gl-grouph">{matchSection.title}</h3>

@@ -594,25 +594,22 @@ export default function ProductModal({
       {noRecalls && <p className="pdp-chiprow"><span className="pdp-chip is-ok">{'\u2713'} No recalls on file</span></p>}
       <div className="pdp-actions__primary">
         {buyButton()}
-        {onToggleSaved && (
-          <button type="button" className={`pdp-btn pdp-actions__wishlist${isSaved ? ' is-on' : ''}`} aria-pressed={isSaved} onClick={() => onToggleSaved(product)}>
-            {isSaved ? 'Saved' : 'Wishlist'}
+        {onAddToEcosystem && (
+          <button
+            type="button"
+            className={`pdp-btn pdp-actions__eco${isInEcosystem ? ' is-on' : ''}`}
+            aria-pressed={isInEcosystem}
+            onClick={() => onAddToEcosystem(product)}
+            title={isInEcosystem ? 'Tap to remove from your ecosystem' : undefined}
+          >
+            {isInEcosystem ? 'In my ecosystem ✓' : 'Add to my ecosystem'}
           </button>
         )}
       </div>
-      {onAddToEcosystem && (
-        <button
-          type="button"
-          className={`pdp-ecolink${isInEcosystem ? ' is-on' : ''}`}
-          aria-pressed={isInEcosystem}
-          onClick={() => onAddToEcosystem(product)}
-        >
-          {isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
-        </button>
-      )}
       {isPartner && (
-        <p className="pdp-chiprow">
-          <button type="button" className="pdp-chip is-partner" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>ayna Partner</button>
+        <p className="pdp-partner-line">
+          ayna Partner. Partnership never changes your match.{' '}
+          <button type="button" className="pdp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'More'}</button>
         </p>
       )}
       {retailers.length > 0 && (
@@ -806,7 +803,15 @@ export default function ProductModal({
             {matchPercent > 0 && (
               <div className="pdp-h2-match">
                 <MatchPill percent={matchPercent} onClick={() => setShowWhy(true)} label={`${matchPercent}% match${headMatchLine ? `. ${headMatchLine}` : ''}. See why`} />
-                              </div>
+                <p className="pdp-h2-why">
+                  {headMatchLine || 'Scored against the needs and preferences you shared.'}
+                  {matchExclusions.length > 0 && <><br />{matchExclusions[0]}</>}
+                </p>
+                <p className="pdp-h2-whylinks">
+                  <button type="button" onClick={() => setShowWhy(true)}>See why</button>
+                  <a href="/how-it-works">How we match</a>
+                </p>
+              </div>
             )}
             {!(matchPercent > 0) && matchExclusions.length > 0 && (
               <button type="button" className="pdp-h2-fitnote" onClick={() => setShowWhy(true)}>
@@ -844,13 +849,6 @@ export default function ProductModal({
 
         <div className="pdp-below pdp-below--glance">
 
-          <section className="pdp-askcard" id="ay-sec-ask" tabIndex={-1} aria-labelledby="pdp-ask-h">
-            <div className="ay-pdp-sechead">
-              <h2 id="pdp-ask-h">Questions? Ask <em>ayna.</em></h2>
-              <p>Ask anything about this product. Answers use what’s on this page and the brand’s own site.</p>
-            </div>
-            <AskAynaProductTab product={product} aiContext={{}} quizResults={quizResults} ecosystemProducts={ecosystemProducts} />
-          </section>
 
           {suggestions.compare.length > 0 && (
             <ComparePanel product={product} others={suggestions.compare} onOpen={(p) => onOpenProduct && onOpenProduct(p)} matchFor={matchFor} renderThumb={compareThumb} />

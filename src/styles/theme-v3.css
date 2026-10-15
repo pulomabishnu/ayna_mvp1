@@ -2637,3 +2637,16 @@ html body .app-container:not([data-theme='dark']) .ay3-ecohero .eco3-head__sub {
   .app-container:not([data-theme='dark']) .ay-shelf__name { font-size: 22px !important; }
 }
 .app-container .ay-needs__owned { font: 700 13px/1.2 var(--ay-font-ui); color: var(--ay-ink); }
+/* ---- Product page (audit) ---- */
+html body .app-container:not([data-theme='dark']) .pdp-h2-match { display: grid; gap: 6px; justify-items: start; }
+.app-container .pdp-h2-why { margin: 2px 0 0; max-width: 460px; font: 500 16px/1.45 var(--ay-font-ui); color: var(--ay-ink); }
+.app-container .pdp-h2-whylinks { display: flex; gap: 16px; margin: 0; }
+.app-container:not([data-theme='dark']) .pdp-h2-whylinks :is(button, a) { padding: 0; border: 0; background: none; color: var(--ay-ink); font: 700 14px/1.3 var(--ay-font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+html body .app-container:not([data-theme='dark']) .pdp-actions__primary { display: grid !important; grid-template-columns: 1fr 1fr; gap: 10px; }
+html body .app-container:not([data-theme='dark']) .pdp-actions__eco { min-height: 52px; border: 2px solid var(--ay-ink) !important; border-radius: 99px !important; background: #fff !important; color: var(--ay-ink) !important; font: 700 16px/1.1 var(--ay-font-ui) !important; box-shadow: none !important; }
+html body .app-container:not([data-theme='dark']) .pdp-actions__eco.is-on { background: #769ebe !important; }
+.app-container .pdp-partner-line { margin: 10px 0 0; font: 500 14px/1.45 var(--ay-font-ui); color: var(--ay-ink); }
+.app-container:not([data-theme='dark']) .pdp-textlink { padding: 0; border: 0; background: none; color: var(--ay-ink); font: 700 14px/1 var(--ay-font-ui); text-decoration: underline; cursor: pointer; }
+html body .app-container:not([data-theme='dark']) .ay-glance.is-tabbed .ay-glance__panel, html body .app-container:not([data-theme='dark']) .ay3-simple .ay-glance__panel { background: #fff !important; }
+html body .app-container:not([data-theme='dark']) .pdp-chip.is-ok { padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; font: 600 14px/1.3 var(--ay-font-ui) !important; }
+@media (max-width: 500px) { html body .app-container:not([data-theme='dark']) .pdp-actions__primary { grid-template-columns: 1fr; } }
