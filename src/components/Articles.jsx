@@ -10,7 +10,6 @@ import { ALL_PRODUCTS, getPersonalizedProductIds } from '../data/products';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { buildLibrary } from '../mobile/utils/personalReads.js';
-import { getNextArticle } from '../mobile/utils/nextArticle.js';
 
 /** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort), only tags that match the article heading. */
 export const ARTICLE_TOPIC_TAGS = {
@@ -190,11 +189,36 @@ function getArticleProducts(articleId, quizResults = null, healthProfile = null)
   return ranked.slice(0, MAX_ARTICLE_PRODUCTS);
 }
 
+// What to know before the product row, so it never contradicts the read above it.
+const ROW_NOTES = {
+  'intimate-wash': 'Most people don’t need a wash. If you use one, choose fragrance-free and outside use only.',
+  'yeast-infection-basics': 'The usual first step is an over-the-counter antifungal from a pharmacy. The products below are tests and support, not treatment.',
+  'bacterial-vaginosis': 'BV is treated with a prescription. The products below are tests and support, not treatment.',
+  'iron-deficiency-anemia': 'Check your iron levels with a blood test before you start a supplement.',
+  'uti-prevention': 'Evidence for these is mixed. Each card shows what research is linked.',
+  'ovarian-cysts': 'Most cysts need no treatment. Sudden, severe pain needs care right away.',
+};
+const CARE_FIRST = new Set(['menopause-basics', 'pmdd', 'endometriosis-basics']);
+
 function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct }) {
-  const items = useMemo(
-    () => getArticleProducts(articleId, quizResults, healthProfile),
-    [articleId, quizResults, healthProfile]
-  );
+  const items = useMemo(() => {
+    let list = getArticleProducts(articleId, quizResults, healthProfile);
+    const care = (x) => x.product.category === 'telehealth' || x.product.type === 'digital';
+    // One product per brand in a row.
+    const seen = new Set();
+    list = list.filter((x) => { const b = String(x.product.brand || x.product.name).toLowerCase(); if (seen.has(b)) return false; seen.add(b); return true; });
+    // Care before supplements where the read is about clinical care.
+    if (CARE_FIRST.has(articleId)) list = [...list].sort((a, b) => Number(care(b)) - Number(care(a)));
+    if (articleId === 'iron-deficiency-anemia') list = [...list].sort((a, b) => Number(/\biron\b/i.test(b.product.name)) - Number(/\biron\b/i.test(a.product.name)));
+    // Washes: only fragrance-free, outside-use options under a read that says most people don't need one.
+    if (articleId === 'intimate-wash') list = list.filter((x) => /fragrance[- ]?free|unscented/i.test(`${x.product.name} ${(x.product.tags || []).join(' ')} ${x.product.summary || ''}`));
+    return list.map((x) => {
+      if (articleId === 'hormonal-birth-control' && /natural cycles/i.test(x.product.name)) return { ...x, why: 'Non-hormonal alternative' };
+      if (articleId === 'pcos-basics' && /proov/i.test(x.product.name)) return { ...x, why: 'For PCOS when trying to conceive' };
+      return x;
+    });
+  }, [articleId, quizResults, healthProfile]);
+  const note = ROW_NOTES[articleId];
   const rowRef = React.useRef(null);
   const [edge, setEdge] = React.useState({ start: true, end: true });
   React.useEffect(() => {
@@ -206,7 +230,7 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
     window.addEventListener('resize', read);
     return () => { el.removeEventListener('scroll', read); window.removeEventListener('resize', read); };
   }, [items.length]);
-  if (items.length === 0) return null;
+  if (items.length === 0) return note ? <section className="ay-lib-products"><p className="ay-lib-products__note">{note}</p></section> : null;
   const page = (dir) => { const el = rowRef.current; if (el) el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: 'smooth' }); };
   return (
     <section className="ay-lib-products" aria-labelledby="ay-lib-products-h">
@@ -217,6 +241,7 @@ function ArticleProducts({ articleId, quizResults, healthProfile, onOpenProduct 
           <button type="button" onClick={() => page(1)} disabled={edge.end} aria-label="More products">→</button>
         </div>
       </div>
+      {note && <p className="ay-lib-products__note">{note}</p>}
       <div className="ay-lib-products__grid" ref={rowRef}>
         {items.map(({ product, why }) => (
           <ProductCard
@@ -316,6 +341,7 @@ const ARTICLES = [
           <li>Cleanse the vulva gently with warm water or an unfragranced, mild soap substitute.</li>
           <li>If you have recurrent irritation or infection, discuss your routine with a clinician; sometimes less is more.</li>
         </ul>
+        <p><strong>When to seek care:</strong> Itching, burning, a change in discharge or smell, sores, or pain don’t need a wash; they need a check. See a clinician, since these can be signs of an infection such as BV, yeast or an STI.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal Health</a></li>
@@ -357,6 +383,7 @@ const ARTICLES = [
       <>
         <p>Perimenopause is the transition period before menopause, often lasting several years, when hormone levels fluctuate and periods may become irregular. Menopause is defined as 12 consecutive months without a period and marks the end of ovarian function. Symptoms during this time can include hot flashes, night sweats, sleep problems, mood changes, vaginal dryness, and changes in skin or hair. Severity and duration vary widely.</p>
         <p>Management options include lifestyle changes (e.g., cooling strategies, sleep hygiene, exercise) and, when appropriate, hormone therapy (HT). HT can be very effective for vasomotor symptoms and vaginal dryness. Benefits and risks depend on your age, health history, and how soon after menopause you start; for many healthy people under 60 or within 10 years of menopause, benefits often outweigh risks when used at the lowest effective dose. Decisions should be made with a clinician who can review your personal and family history.</p>
+        <p><strong>When to seek care:</strong> Any bleeding after your periods have stopped for 12 months should always be checked. Also see a clinician if hot flashes, sleep problems or mood changes are getting in the way of daily life.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NAMS – Menopause FAQs</a></li>
@@ -377,6 +404,7 @@ const ARTICLES = [
       <>
         <p>Recurrent urinary tract infections (UTIs) are common, especially in women. Evidence-supported prevention strategies include drinking adequate fluids, urinating after intercourse, and. When recommended by a clinician. Prophylactic low-dose antibiotics or topical estrogen for postmenopausal people (to support vaginal and urethral tissue). Cranberry products are sometimes used; evidence on effectiveness is mixed, and they are not a substitute for medical evaluation if you have frequent UTIs.</p>
         <p>If you have recurrent UTIs (e.g., several per year), it’s important to see a clinician. They can rule out structural or other causes and tailor a prevention or treatment plan, which might include behavioral changes, short-course antibiotics, or post-coital prophylaxis. Self-treating repeatedly without evaluation can mask other conditions or lead to resistance.</p>
+        <p><strong>When to seek care:</strong> Get care promptly for fever, chills, back or side pain, nausea or vomiting, blood in your urine, if you’re pregnant, or if symptoms don’t improve within a day or two. These can mean a kidney infection.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.uptodate.com/contents/urinary-tract-infections-in-adults-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – UTIs in adults (patient education)</a></li>
@@ -397,6 +425,7 @@ const ARTICLES = [
       <>
         <p>Vulvovaginal candidiasis (yeast infection) is common and is usually caused by the fungus <em>Candida albicans</em>. Symptoms often include itching, burning, redness, and a thick white discharge. Many people can recognize recurring yeast infections and use an over-the-counter antifungal (e.g., clotrimazole, miconazole) with success, but it’s important not to self-diagnose if you’re unsure. Other conditions (like bacterial vaginosis or sexually transmitted infections) can look similar and need different treatment.</p>
         <p>See a clinician if this is your first time with these symptoms, if OTC treatment hasn’t helped after a few days, if you have severe symptoms, or if infections keep coming back. Recurrent yeast infections may need a longer course of treatment or maintenance therapy. Avoiding unnecessary antibiotics, wearing breathable underwear, and limiting douches and scented products can help reduce the risk of recurrence.</p>
+        <p><strong>When to seek care:</strong> See a clinician if it’s your first time, you’re pregnant, you get four or more infections a year, symptoms are severe, or they don’t clear after an over-the-counter treatment. Other infections can look similar.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.uptodate.com/contents/candidiasis-vulvovaginal-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Vulvovaginal candidiasis (patient education)</a></li>
@@ -721,7 +750,7 @@ function renderArticleCard(art, setSelectedId, progress = 0) {
       <p>{art.teaser}</p>
       <span className="ay-lib-card__foot" data-min={`${minutesFor(art)} min read ·`}>
         <span className="ay-lib-card__tags">
-          {(art.tags || []).map((t) => <span key={t} className="ay-lib-tag">{t}</span>)}
+          <span className="ay-lib-tag">{sectionOf(art.id)?.label || 'Health'}</span>
         </span>
         <span className="ay-lib-card__src">{art.source}</span>
         <ReadState value={progress} />
@@ -730,33 +759,25 @@ function renderArticleCard(art, setSelectedId, progress = 0) {
   );
 }
 
+// One taxonomy: every read lives in exactly one section, and the read's own
+// header, the filter chips and "Next in …" all use it.
 const ARTICLE_CATEGORIES = [
-  {
-    id: 'menstrual',
-    label: 'Menstrual Health',
-    articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'],
-  },
-  {
-    id: 'hormonal',
-    label: 'Hormonal Health',
-    articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'],
-  },
-  {
-    id: 'chronic',
-    label: 'Chronic Conditions',
-    articleIds: ['pcos-basics', 'endometriosis-basics', 'pelvic-floor-dysfunction', 'fibroids', 'pmdd', 'iron-deficiency-anemia', 'ovarian-cysts'],
-  },
-  {
-    id: 'vaginal-urinary',
-    label: 'Vaginal & Urinary Health',
-    articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'],
-  },
-  {
-    id: 'pelvic',
-    label: 'Pelvic Health',
-    articleIds: ['pelvic-floor-dysfunction', 'endometriosis-basics', 'ovarian-cysts'],
-  },
+  { id: 'menstrual', label: 'Menstrual Health', articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'] },
+  { id: 'hormonal', label: 'Hormonal Health', articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'] },
+  { id: 'chronic', label: 'Chronic & Pelvic Conditions', articleIds: ['endometriosis-basics', 'pelvic-floor-dysfunction', 'ovarian-cysts'] },
+  { id: 'vaginal-urinary', label: 'Vaginal & Urinary Health', articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'] },
 ];
+const sectionOf = (id) => ARTICLE_CATEGORIES.find((c) => c.articleIds.includes(id)) || null;
+// Next read: the next one in the same section, looping (never a funnel to one page).
+function nextInSection(id) {
+  const sec = sectionOf(id);
+  if (!sec || sec.articleIds.length < 2) return null;
+  const i = sec.articleIds.indexOf(id);
+  const nextId = sec.articleIds[(i + 1) % sec.articleIds.length];
+  const article = ARTICLES.find((x) => x.id === nextId);
+  return article ? { article, label: `Next in ${sec.label}` } : null;
+}
+
 
 const READ_PROGRESS_KEY = 'ayna_read_progress_v1';
 // Reading history is kept per account, so after logout (or on a shared
@@ -796,9 +817,22 @@ function ReadState({ value = 0 }) {
   </span>;
 }
 
+// Read time from the article's real words (about 220 a minute), never a fixed number.
+function textOf(node) {
+  if (node == null || typeof node === 'boolean') return '';
+  if (typeof node === 'string' || typeof node === 'number') return ` ${node} `;
+  if (Array.isArray(node)) return node.map(textOf).join(' ');
+  if (React.isValidElement(node)) return textOf(node.props.children);
+  return '';
+}
+const MINUTES = new Map();
 function minutesFor(article) {
-  const words = String(article?.teaser || '').split(/\s+/).length + 900;
-  return Math.max(3, Math.round(words / 220));
+  if (!article) return 1;
+  if (!MINUTES.has(article.id)) {
+    const words = textOf(article.body).split(/\s+/).filter(Boolean).length;
+    MINUTES.set(article.id, Math.max(1, Math.round(words / 220)));
+  }
+  return MINUTES.get(article.id);
 }
 
 const validId = (id) => (id && ARTICLES.some((a) => a.id === id) ? id : null);
@@ -811,6 +845,8 @@ const validId = (id) => (id && ARTICLES.some((a) => a.id === id) ? id : null);
  */
 export default function Articles({ initialArticleId, onOpenProduct, quizResults, healthProfile = null, onArticleChange, userId = null, onAsk = null }) {
   const [selectedId, setSelectedId] = useState(() => validId(initialArticleId));
+  // A broken read link says so (it used to quietly show the whole list at the wrong address).
+  const missingRead = Boolean(initialArticleId) && !validId(initialArticleId) && !selectedId;
   const [query, setQuery] = useState('');
   const [topic, setTopic] = useState('all');
   const [progress, setProgress] = useState(() => loadReadProgress(userId));
@@ -828,7 +864,9 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
   // Same personalised shelves as the app's Library: reads matched to the
   // quiz answers first, then each topic with no repeats.
-  const { forYou, rows, hasProfile } = useMemo(() => {
+  // Same four sections signed in or out (only "For you" is added for members).
+  const rows = useMemo(() => ARTICLE_CATEGORIES.map((c) => ({ id: c.id, label: c.label, items: c.articleIds.map((id) => ARTICLES.find((a) => a.id === id)).filter(Boolean) })), []);
+  const { forYou, hasProfile } = useMemo(() => {
     const lib = buildLibrary(ARTICLES, quizResults);
     if (lib.forYou.length) return lib;
     // Older website profiles: fall back to the website's own relevance ranking.
@@ -939,7 +977,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   </div>;
 
   if (selected) {
-    const next = getNextArticle(selected, ARTICLES, Object.keys(progress).filter((id) => progress[id] >= 1), forYou);
+    const next = nextInSection(selected.id);
     const done = progressOf(selected) >= 1;
     const label = done ? 'Finished' : scrolled > 0.02 ? `${Math.round(scrolled * 100)}% read` : `${minutesFor(selected)} min read`;
     return (
@@ -952,10 +990,10 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           </div>
         </div>
         <article key={selected.id} className={`ay-web-lib-article ay3-paper${closing ? ' is-crumpling' : ''}`}>
-          <p className="ay3-masthead" aria-hidden="true"><span>The ayna Library</span><span>{(selected.tags || [])[0] || 'Health'}</span><span>{minutesFor(selected)} min read</span></p>
+          <p className="ay3-masthead" aria-hidden="true"><span>The ayna Library</span><span>{sectionOf(selected.id)?.label || 'Health'}</span><span>{minutesFor(selected)} min read</span></p>
           <h1 className="ay-article-title">{selected.title}</h1>
           <div className="ay-lib-article__tags">
-            {selected.tags.map((t) => <span key={t} className="ay-lib-tag">{t}</span>)}
+            <span className="ay-lib-tag">{sectionOf(selected.id)?.label || 'Health'}</span>
           </div>
           <p className="ay-lib-article__src">Sources: {selected.source}</p>
           <ArticleCover art={selected} large />
@@ -1014,6 +1052,14 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
 
   return (
     <section className="container animate-fade-in-up ay-web-library is-wiki">
+      {missingRead && (
+        <div className="ay-lib-404" role="alert">
+          <p className="ay-lib-404__code">404</p>
+          <h2>We couldn’t find that read.</h2>
+          <p>It may have moved, or the link may be wrong.</p>
+          <a href="/library" className="ay-lib-404__btn" onClick={(e) => { e.preventDefault(); onArticleChange?.(null); }}>See all reads</a>
+        </div>
+      )}
       <header className="ay-wiki-top">
         <div className="ay-wiki-top__text">
           <p className="ay3-kicker">The ayna library</p>

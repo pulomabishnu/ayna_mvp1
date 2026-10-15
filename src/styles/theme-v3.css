@@ -3220,3 +3220,8 @@ html body .app-container a.ay-fn { display: inline-flex !important; align-items:
 html body .app-container a.ay-fn:focus-visible { outline: 3px solid #769ebe; }
 .pdp-badge-preorder { display: inline-block; margin-left: 8px; padding: 3px 10px; border: 2px solid #3e2723; border-radius: 99px; background: #769ebe; color: #3e2723; font: 700 12px/1.2 'DM Sans', sans-serif; vertical-align: middle; }
 .pdp-rx { margin: 6px 0 0; padding: 6px 10px; border-left: 4px solid #3e2723; font: 600 14px/1.4 'DM Sans', sans-serif; color: #3e2723; }
+.ay-lib-products__note { margin: 0 0 12px; padding: 10px 12px; border-left: 4px solid #3e2723; background: #f7badd; color: #3e2723; font: 600 15px/1.45 'DM Sans', sans-serif; }
+.ay-lib-404 { margin: 0 0 24px; padding: 20px; border: 2px solid #3e2723; border-radius: 16px; background: #f7badd; color: #3e2723; box-shadow: 4px 4px 0 #3e2723; }
+.ay-lib-404__code { margin: 0; font: 400 40px/1 'DM Serif Display', serif; }
+.ay-lib-404 h2 { margin: 6px 0; font: 400 26px/1.2 'DM Serif Display', serif; }
+.ay-lib-404__btn { display: inline-block; margin-top: 8px; padding: 10px 16px; border: 2px solid #3e2723; border-radius: 99px; background: #ffedac; color: #3e2723; font: 700 15px/1 'DM Sans', sans-serif; text-decoration: none; }
